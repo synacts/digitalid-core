@@ -1,0 +1,25 @@
+package ch.virtualid.interfaces;
+
+import javax.annotation.Nonnull;
+
+/**
+ * Classes that implement this interface allow their objects to transition from a mutable into an {@link Immutable immutable} state.
+ * 
+ * @see FrozenObject
+ * 
+ * @author Kaspar Etter (kaspar.etter@virtualid.ch)
+ * @version 1.0
+ */
+public interface Freezable extends Readonly {
+    
+    /**
+     * Freezes this object and thus makes it immutable.
+     * Make sure to overwrite this method and freeze all mutable fields!
+     * 
+     * @return a reference to this object in order to allow chaining.
+     * 
+     * @ensure isFrozen() : "This object is now frozen.";
+     */
+    public @Nonnull Readonly freeze();
+    
+}
