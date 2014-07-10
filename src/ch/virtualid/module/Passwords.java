@@ -1,6 +1,6 @@
 package ch.virtualid.module;
 
-import ch.virtualid.authorization.Agent;
+import ch.virtualid.agent.Agent;
 import ch.virtualid.agent.Restrictions;
 import ch.virtualid.database.Database;
 import ch.virtualid.concept.Entity;

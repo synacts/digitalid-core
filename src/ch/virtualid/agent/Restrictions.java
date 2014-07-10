@@ -5,7 +5,8 @@ import ch.virtualid.concept.Context;
 import ch.virtualid.identity.FailedIdentityException;
 import ch.virtualid.identity.NonHostIdentifier;
 import ch.virtualid.identity.Person;
-import ch.virtualid.interfaces.BlockableObject;
+import ch.virtualid.identity.SemanticType;
+import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.packet.PacketError;
 import ch.virtualid.packet.PacketException;
@@ -13,6 +14,7 @@ import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.ReadonlyArray;
 import ch.xdf.Block;
 import ch.xdf.BooleanWrapper;
+import ch.xdf.Int64Wrapper;
 import ch.xdf.TupleWrapper;
 import ch.xdf.exceptions.InvalidEncodingException;
 import java.sql.Connection;
@@ -31,7 +33,12 @@ import javax.annotation.Nullable;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 0.9
  */
-public final class Restrictions extends BlockableObject implements Immutable {
+public final class Restrictions implements Immutable, Blockable {
+    
+    /**
+     * Stores the semantic type {@code time@virtualid.ch}.
+     */
+    public static final @Nonnull SemanticType TYPE = SemanticType.create("time@virtualid.ch").load(Int64Wrapper.TYPE);
     
     /**
      * Stores the weakest restrictions (without a context and contact).
@@ -50,7 +57,7 @@ public final class Restrictions extends BlockableObject implements Immutable {
     private final boolean role;
     
     /**
-     * Stores whether the authorization is restricted to agents that can writeTo (to contexts).
+     * Stores whether the authorization is restricted to agents that can write (to contexts).
      */
     private final boolean writing;
     
@@ -61,8 +68,6 @@ public final class Restrictions extends BlockableObject implements Immutable {
     
     /**
      * Stores the contact to which the authorization is restricted (or null).
-     * The contact always denotes the same person and since the block of these restrictions
-     * is generated only once, a merged person does not violate the immutability of this type.
      */
     private final @Nullable Person contact;
     
@@ -72,7 +77,7 @@ public final class Restrictions extends BlockableObject implements Immutable {
      * 
      * @param client whether the authorization is restricted to clients.
      * @param role whether the authorization is restricted to agents that can assume incoming roles.
-     * @param writing whether the authorization is restricted to agents that can writeTo (to contexts).
+     * @param writing whether the authorization is restricted to agents that can write (to contexts).
      */
     public Restrictions(boolean client, boolean role, boolean writing) {
         this(client, role, writing, null, null);
@@ -83,7 +88,7 @@ public final class Restrictions extends BlockableObject implements Immutable {
      * 
      * @param client whether the authorization is restricted to clients.
      * @param role whether the authorization is restricted to agents that can assume incoming roles.
-     * @param writing whether the authorization is restricted to agents that can writeTo (to contexts).
+     * @param writing whether the authorization is restricted to agents that can write (to contexts).
      * @param context the context to which the authorization is restricted.
      */
     public Restrictions(boolean client, boolean role, boolean writing, @Nonnull Context context) {
@@ -95,7 +100,7 @@ public final class Restrictions extends BlockableObject implements Immutable {
      * 
      * @param client whether the authorization is restricted to clients.
      * @param role whether the authorization is restricted to agents that can assume incoming roles.
-     * @param writing whether the authorization is restricted to agents that can writeTo (to contexts).
+     * @param writing whether the authorization is restricted to agents that can write (to contexts).
      * @param contact the contact to which the authorization is restricted.
      */
     public Restrictions(boolean client, boolean role, boolean writing, @Nonnull Person contact) {
@@ -107,7 +112,7 @@ public final class Restrictions extends BlockableObject implements Immutable {
      * 
      * @param client whether the authorization is restricted to clients.
      * @param role whether the authorization is restricted to agents that can assume incoming roles.
-     * @param writing whether the authorization is restricted to agents that can writeTo (to contexts).
+     * @param writing whether the authorization is restricted to agents that can write (to contexts).
      * @param context the context to which the authorization is restricted (or null).
      * @param contact the contact to which the authorization is restricted (or null).
      * 
@@ -143,7 +148,7 @@ public final class Restrictions extends BlockableObject implements Immutable {
     
     @Pure
     @Override
-    protected @Nonnull Block encode() {
+    protected @Nonnull Block toBlock() {
         @Nonnull FreezableArray<Block> elements = new FreezableArray<Block>(5);
         elements.set(0, new BooleanWrapper(client).toBlock());
         elements.set(1, new BooleanWrapper(role).toBlock());
@@ -175,9 +180,9 @@ public final class Restrictions extends BlockableObject implements Immutable {
     }
     
     /**
-     * Returns whether the authorization is restricted to agents that can writeTo (to contexts).
+     * Returns whether the authorization is restricted to agents that can write (to contexts).
      * 
-     * @return whether the authorization is restricted to agents that can writeTo (to contexts).
+     * @return whether the authorization is restricted to agents that can write (to contexts).
      */
     @Pure
     public boolean isWriting() {
@@ -222,7 +227,7 @@ public final class Restrictions extends BlockableObject implements Immutable {
     }
     
     /**
-     * Checks that the authorization is restricted to agents that can writeTo (to contexts) and throws a {@link PacketException} if not.
+     * Checks that the authorization is restricted to agents that can write (to contexts) and throws a {@link PacketException} if not.
      */
     @Pure
     public void checkWriting() throws PacketException {

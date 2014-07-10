@@ -1,10 +1,10 @@
 package ch.virtualid.module;
 
-import ch.virtualid.authorization.Agent;
-import ch.virtualid.authorization.Authorization;
-import ch.virtualid.authorization.ClientAgent;
-import ch.virtualid.authorization.IncomingRole;
-import ch.virtualid.authorization.OutgoingRole;
+import ch.virtualid.agent.Agent;
+import ch.virtualid.agent.Authorization;
+import ch.virtualid.agent.ClientAgent;
+import ch.virtualid.agent.IncomingRole;
+import ch.virtualid.agent.OutgoingRole;
 import ch.virtualid.client.Commitment;
 import ch.virtualid.agent.Permissions;
 import ch.virtualid.agent.Restrictions;

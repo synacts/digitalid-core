@@ -1,4 +1,4 @@
-package ch.virtualid.authorization;
+package ch.virtualid.agent;
 
 import ch.virtualid.identity.FailedIdentityException;
 import ch.virtualid.identity.NonHostIdentity;

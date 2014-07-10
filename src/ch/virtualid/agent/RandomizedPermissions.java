@@ -4,12 +4,14 @@ import ch.virtualid.annotation.Pure;
 import ch.virtualid.client.Commitment;
 import ch.virtualid.cryptography.Parameters;
 import ch.virtualid.identity.FailedIdentityException;
-import ch.virtualid.interfaces.BlockableObject;
+import ch.virtualid.identity.SemanticType;
+import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.ReadonlyArray;
 import ch.xdf.Block;
 import ch.xdf.HashWrapper;
+import ch.xdf.Int64Wrapper;
 import ch.xdf.TupleWrapper;
 import ch.xdf.exceptions.InvalidEncodingException;
 import java.math.BigInteger;
@@ -24,7 +26,13 @@ import javax.annotation.Nullable;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 1.0
  */
-public final class RandomizedPermissions extends BlockableObject implements Immutable {
+public final class RandomizedPermissions implements Immutable, Blockable {
+    
+    /**
+     * Stores the semantic type {@code time@virtualid.ch}.
+     */
+    public static final @Nonnull SemanticType TYPE = SemanticType.create("time@virtualid.ch").load(Int64Wrapper.TYPE);
+    
     
     /**
      * Stores the hash of the randomized permissions.
@@ -85,7 +93,7 @@ public final class RandomizedPermissions extends BlockableObject implements Immu
     
     @Pure
     @Override
-    public @Nonnull Block encode() {
+    public @Nonnull Block toBlock() {
         if (permissions == null) return Block.EMPTY;
         
         @Nonnull FreezableArray<Block> array = new FreezableArray<Block>(2);

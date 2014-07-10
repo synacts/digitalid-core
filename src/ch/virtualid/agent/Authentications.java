@@ -33,7 +33,7 @@ public final class Authentications extends FreezableLinkedHashSet<SemanticType> 
     /**
      * Stores an identity-based authentication.
      */
-    public static final @Nonnull Authentications IDENTITY_BASED = new Authentications(SemanticType.IDENTITY_BASED_AUTHENTICATION);
+    public static final @Nonnull Authentications IDENTITY_BASED = new Authentications(IDENTITY_BASED_AUTHENTICATION);
     
     /**
      * Creates an empty set of authentications.

@@ -1,4 +1,4 @@
-package ch.virtualid.authorization;
+package ch.virtualid.agent;
 
 import ch.virtualid.agent.Restrictions;
 import ch.virtualid.database.Database;
@@ -20,7 +20,7 @@ import javax.annotation.Nullable;
 /**
  * This class models an incoming role that acts as an agent on behalf of a virtual identity.
  * 
- * TODO: Delete this class?!
+ * TODO: Delete this class?! -> Rather just no longer inherit from Authorization and model "incoming_role (entity, issuer, relation)" instead.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 0.8

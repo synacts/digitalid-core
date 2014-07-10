@@ -1,4 +1,4 @@
-package ch.virtualid.authorization;
+package ch.virtualid.agent;
 
 import ch.virtualid.agent.Permissions;
 import ch.virtualid.agent.Restrictions;

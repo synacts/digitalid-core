@@ -1,6 +1,6 @@
 package ch.virtualid.handler.action.internal;
 
-import ch.virtualid.authorization.Agent;
+import ch.virtualid.agent.Agent;
 import ch.virtualid.agent.Permissions;
 import ch.virtualid.concept.Entity;
 import ch.virtualid.concept.Role;

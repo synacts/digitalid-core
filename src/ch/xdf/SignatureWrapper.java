@@ -2,8 +2,8 @@ package ch.xdf;
 
 import ch.virtualid.annotation.Exposed;
 import ch.virtualid.annotation.Pure;
-import ch.virtualid.authorization.Agent;
-import ch.virtualid.authorization.OutgoingRole;
+import ch.virtualid.agent.Agent;
+import ch.virtualid.agent.OutgoingRole;
 import ch.virtualid.concept.Time;
 import ch.virtualid.credential.Credential;
 import ch.virtualid.identity.FailedIdentityException;

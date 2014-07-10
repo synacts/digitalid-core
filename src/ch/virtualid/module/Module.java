@@ -1,6 +1,6 @@
 package ch.virtualid.module;
 
-import ch.virtualid.authorization.Agent;
+import ch.virtualid.agent.Agent;
 import ch.virtualid.database.HostEntity;
 import ch.xdf.Block;
 import ch.xdf.exceptions.InvalidEncodingException;

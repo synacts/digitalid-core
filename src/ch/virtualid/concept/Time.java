@@ -2,7 +2,7 @@ package ch.virtualid.concept;
 
 import ch.virtualid.annotation.Pure;
 import ch.virtualid.identity.SemanticType;
-import ch.virtualid.interfaces.BlockableObject;
+import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
 import ch.xdf.Block;
@@ -23,7 +23,7 @@ import javax.annotation.Nullable;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public final class Time extends BlockableObject implements Immutable, Comparable<Time>, SQLizable {
+public final class Time implements Immutable, Blockable, Comparable<Time>, SQLizable {
     
     /**
      * Stores the semantic type {@code time@virtualid.ch}.
@@ -116,7 +116,7 @@ public final class Time extends BlockableObject implements Immutable, Comparable
      * @require block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
      */
     public Time(@Nonnull Block block) throws InvalidEncodingException {
-        super(block);
+        assert block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
         
         value = new Int64Wrapper(block).getValue();
     }
@@ -129,7 +129,7 @@ public final class Time extends BlockableObject implements Immutable, Comparable
     
     @Pure
     @Override
-    public @Nonnull Block encode() {
+    public @Nonnull Block toBlock() {
         return new Int64Wrapper(getType(), value).toBlock();
     }
     
