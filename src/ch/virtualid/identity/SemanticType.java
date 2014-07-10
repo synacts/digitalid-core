@@ -1,8 +1,8 @@
 package ch.virtualid.identity;
 
 import ch.virtualid.annotation.Pure;
-import ch.virtualid.concept.Context;
-import ch.virtualid.concept.Time;
+import ch.virtualid.concepts.Context;
+import ch.virtualid.concepts.Time;
 import ch.virtualid.database.Database;
 import ch.virtualid.exception.InvalidDeclarationException;
 import ch.virtualid.interfaces.Immutable;

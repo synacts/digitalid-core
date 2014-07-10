@@ -2,7 +2,7 @@ package ch.virtualid.module.host;
 
 import ch.virtualid.agent.Agent;
 import ch.virtualid.agent.Restrictions;
-import ch.virtualid.concept.Context;
+import ch.virtualid.concepts.Context;
 import ch.virtualid.identity.Identity;
 import ch.virtualid.identity.Mapper;
 import ch.virtualid.identity.NonHostIdentity;

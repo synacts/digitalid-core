@@ -1,5 +1,6 @@
-package ch.virtualid.concept;
+package ch.virtualid.concepts;
 
+import ch.virtualid.concept.Concept;
 import ch.virtualid.identity.NonHostIdentifier;
 import ch.virtualid.identity.NonHostIdentity;
 import ch.virtualid.identity.Person;

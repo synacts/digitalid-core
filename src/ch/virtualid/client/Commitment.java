@@ -1,7 +1,7 @@
 package ch.virtualid.client;
 
 import ch.virtualid.annotation.Pure;
-import ch.virtualid.concept.Time;
+import ch.virtualid.concepts.Time;
 import ch.virtualid.cryptography.Element;
 import ch.virtualid.cryptography.PublicKey;
 import ch.virtualid.cryptography.PublicKeyChain;

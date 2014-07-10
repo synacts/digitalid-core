@@ -1,7 +1,7 @@
 package ch.virtualid.module;
 
 import ch.virtualid.agent.Agent;
-import ch.virtualid.concept.Context;
+import ch.virtualid.concepts.Context;
 import ch.virtualid.database.Entity;
 import ch.virtualid.exception.ShouldNeverHappenError;
 import ch.virtualid.identity.Category;

@@ -1,7 +1,7 @@
 package ch.virtualid.cryptography;
 
 import ch.virtualid.annotation.Pure;
-import ch.virtualid.concept.Time;
+import ch.virtualid.concepts.Time;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.util.ReadonlyList;

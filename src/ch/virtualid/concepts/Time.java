@@ -1,4 +1,4 @@
-package ch.virtualid.concept;
+package ch.virtualid.concepts;
 
 import ch.virtualid.annotation.Pure;
 import ch.virtualid.identity.SemanticType;

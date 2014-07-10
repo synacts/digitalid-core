@@ -3,7 +3,7 @@ package ch.xdf;
 import ch.virtualid.annotation.Exposed;
 import ch.virtualid.annotation.Pure;
 import ch.virtualid.client.Client;
-import ch.virtualid.concept.Time;
+import ch.virtualid.concepts.Time;
 import ch.virtualid.cryptography.PrivateKey;
 import ch.virtualid.cryptography.PublicKey;
 import ch.virtualid.cryptography.PublicKeyChain;

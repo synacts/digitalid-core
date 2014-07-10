@@ -4,7 +4,6 @@ import ch.virtualid.annotation.Pure;
 import ch.virtualid.database.ClientEntity;
 import ch.virtualid.database.Database;
 import ch.virtualid.database.Entity;
-import ch.xdf.Block;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -18,7 +17,7 @@ import javax.annotation.Nullable;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 1.0
  */
-public abstract class Concept /* extends BlockableObject implements Immutable */ {
+public abstract class Concept {
     
     /**
      * Stores the entity to which this concept belongs or null if it is impersonal.
@@ -31,18 +30,6 @@ public abstract class Concept /* extends BlockableObject implements Immutable */
      * @param entity the entity to which this concept belongs or null if it is impersonal.
      */
     protected Concept(@Nullable Entity entity) {
-        this.entity = entity;
-    }
-    
-    /**
-     * Creates a new concept with the given block and entity.
-     * 
-     * @param block the block that encodes this concept.
-     * @param entity the entity to which this concept belongs or null if it is impersonal.
-     */
-    protected Concept(@Nonnull Block block, @Nullable Entity entity) {
-        super(block);
-        
         this.entity = entity;
     }
     

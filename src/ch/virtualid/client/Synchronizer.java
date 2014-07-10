@@ -1,6 +1,6 @@
 package ch.virtualid.client;
 
-import ch.virtualid.concept.Role;
+import ch.virtualid.concepts.Role;
 import ch.virtualid.handler.Action;
 import ch.virtualid.handler.InternalAction;
 import ch.virtualid.module.client.Synchronization;

@@ -8,7 +8,7 @@ import ch.virtualid.agent.OutgoingRole;
 import ch.virtualid.client.Commitment;
 import ch.virtualid.agent.Permissions;
 import ch.virtualid.agent.Restrictions;
-import ch.virtualid.concept.Context;
+import ch.virtualid.concepts.Context;
 import ch.virtualid.concept.Entity;
 import ch.virtualid.database.Entity;
 import ch.virtualid.identity.Category;

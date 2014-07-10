@@ -1,7 +1,7 @@
 package ch.virtualid.agent;
 
 import ch.virtualid.annotation.Pure;
-import ch.virtualid.concept.Context;
+import ch.virtualid.concepts.Context;
 import ch.virtualid.identity.FailedIdentityException;
 import ch.virtualid.identity.NonHostIdentifier;
 import ch.virtualid.identity.Person;

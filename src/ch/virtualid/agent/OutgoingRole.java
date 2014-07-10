@@ -2,7 +2,7 @@ package ch.virtualid.agent;
 
 import ch.virtualid.agent.Permissions;
 import ch.virtualid.agent.Restrictions;
-import ch.virtualid.concept.Context;
+import ch.virtualid.concepts.Context;
 import ch.virtualid.credential.Credential;
 import ch.virtualid.database.Database;
 import ch.virtualid.exception.ShouldNeverHappenError;

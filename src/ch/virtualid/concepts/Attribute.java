@@ -1,6 +1,8 @@
-package ch.virtualid.concept;
+package ch.virtualid.concepts;
 
 import ch.virtualid.client.Synchronizer;
+import ch.virtualid.concept.Aspect;
+import ch.virtualid.concept.Concept;
 import ch.virtualid.database.Database;
 import ch.virtualid.expression.PassiveExpression;
 import ch.virtualid.handler.action.internal.AttributeValueReplace;
