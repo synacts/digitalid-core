@@ -1,7 +1,7 @@
 package ch.virtualid.interfaces;
 
-import ch.virtualid.annotation.Capturable;
-import ch.virtualid.annotation.Pure;
+import ch.virtualid.annotations.Capturable;
+import ch.virtualid.annotations.Pure;
 import javax.annotation.Nonnull;
 
 /**

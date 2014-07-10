@@ -1,4 +1,4 @@
-package ch.virtualid.annotation;
+package ch.virtualid.annotations;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -7,8 +7,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * This annotation indicates that the result of a method can be captured by the caller.
- * This requires that the returned object has been created locally and has not been leaked.
+ * This annotation indicates that a method should only be invoked on {@link Exposed exposed} objects.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 1.0
@@ -16,4 +15,4 @@ import java.lang.annotation.Target;
 @Documented
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Capturable {}
+public @interface ExposedRecipient {}

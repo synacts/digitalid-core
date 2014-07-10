@@ -1,8 +1,8 @@
 package ch.virtualid.util;
 
-import ch.virtualid.annotation.Capturable;
-import ch.virtualid.annotation.Captured;
-import ch.virtualid.annotation.Pure;
+import ch.virtualid.annotations.Capturable;
+import ch.virtualid.annotations.Captured;
+import ch.virtualid.annotations.Pure;
 import ch.virtualid.interfaces.Freezable;
 import ch.virtualid.interfaces.FreezableObject;
 import ch.virtualid.interfaces.Immutable;

@@ -1,6 +1,6 @@
 package ch.virtualid.identity;
 
-import ch.virtualid.annotation.Pure;
+import ch.virtualid.annotations.Pure;
 import javax.annotation.Nonnull;
 import javax.naming.NamingException;
 import javax.naming.directory.Attributes;

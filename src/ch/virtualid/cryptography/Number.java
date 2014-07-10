@@ -1,6 +1,6 @@
 package ch.virtualid.cryptography;
 
-import ch.virtualid.annotation.Pure;
+import ch.virtualid.annotations.Pure;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.BlockableObject;
 import ch.virtualid.interfaces.Immutable;

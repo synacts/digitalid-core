@@ -1,6 +1,6 @@
 package ch.virtualid.agent;
 
-import ch.virtualid.annotation.Pure;
+import ch.virtualid.annotations.Pure;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.packet.PacketException;
 import ch.virtualid.util.ReadonlyMap;

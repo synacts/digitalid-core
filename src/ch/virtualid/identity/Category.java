@@ -1,6 +1,6 @@
 package ch.virtualid.identity;
 
-import ch.virtualid.annotation.Pure;
+import ch.virtualid.annotations.Pure;
 import ch.virtualid.database.Database;
 import ch.virtualid.exception.ShouldNeverHappenError;
 import ch.virtualid.interfaces.Blockable;

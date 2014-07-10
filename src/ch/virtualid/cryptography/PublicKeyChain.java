@@ -1,6 +1,6 @@
 package ch.virtualid.cryptography;
 
-import ch.virtualid.annotation.Pure;
+import ch.virtualid.annotations.Pure;
 import ch.virtualid.concepts.Time;
 import ch.virtualid.identity.Category;
 import ch.virtualid.identity.SemanticType;

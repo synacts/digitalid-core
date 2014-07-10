@@ -1,6 +1,6 @@
 package ch.virtualid.cryptography;
 
-import ch.virtualid.annotation.Pure;
+import ch.virtualid.annotations.Pure;
 import static ch.virtualid.cryptography.PublicKey.TI;
 import static ch.virtualid.cryptography.PublicKey.TO;
 import static ch.virtualid.cryptography.PublicKey.TU;

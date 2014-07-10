@@ -1,6 +1,6 @@
 package ch.virtualid.identity;
 
-import ch.virtualid.annotation.Pure;
+import ch.virtualid.annotations.Pure;
 import ch.virtualid.concepts.Context;
 import ch.virtualid.concepts.Time;
 import ch.virtualid.database.Database;

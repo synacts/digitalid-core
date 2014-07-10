@@ -3,7 +3,7 @@ package ch.virtualid.handler;
 import ch.virtualid.agent.Authentications;
 import ch.virtualid.agent.Permissions;
 import ch.virtualid.agent.ReadonlyPermissions;
-import ch.virtualid.annotation.Pure;
+import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Synchronizer;
 import ch.virtualid.concepts.Role;
 import ch.virtualid.database.ClientEntity;

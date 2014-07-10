@@ -1,6 +1,6 @@
 package ch.virtualid.concept;
 
-import ch.virtualid.annotation.Pure;
+import ch.virtualid.annotations.Pure;
 import ch.virtualid.database.ClientEntity;
 import ch.virtualid.database.Database;
 import ch.virtualid.database.Entity;

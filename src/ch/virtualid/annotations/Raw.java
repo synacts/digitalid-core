@@ -1,4 +1,4 @@
-package ch.virtualid.annotation;
+package ch.virtualid.annotations;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

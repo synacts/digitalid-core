@@ -1,6 +1,6 @@
 package ch.virtualid.interfaces;
 
-import ch.virtualid.annotation.Pure;
+import ch.virtualid.annotations.Pure;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;

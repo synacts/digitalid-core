@@ -1,6 +1,6 @@
 package ch.virtualid.interfaces;
 
-import ch.virtualid.annotation.Pure;
+import ch.virtualid.annotations.Pure;
 import ch.virtualid.identity.SemanticType;
 import ch.xdf.Block;
 import javax.annotation.Nonnull;

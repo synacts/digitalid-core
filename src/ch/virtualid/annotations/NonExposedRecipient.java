@@ -1,4 +1,4 @@
-package ch.virtualid.annotation;
+package ch.virtualid.annotations;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -7,7 +7,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * This annotation indicates that a method can be invoked on {@link Raw raw} objects.
+ * This annotation indicates that a method should only be invoked on non-{@link Exposed exposed} objects.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 1.0
@@ -15,4 +15,4 @@ import java.lang.annotation.Target;
 @Documented
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface RawRecipient {}
+public @interface NonExposedRecipient {}

@@ -1,7 +1,7 @@
 package ch.xdf;
 
-import ch.virtualid.annotation.Exposed;
-import ch.virtualid.annotation.Pure;
+import ch.virtualid.annotations.Exposed;
+import ch.virtualid.annotations.Pure;
 import ch.virtualid.exception.InvalidDeclarationException;
 import ch.virtualid.identity.FailedIdentityException;
 import ch.virtualid.identity.NonHostIdentifier;

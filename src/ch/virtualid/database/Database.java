@@ -1,6 +1,6 @@
 package ch.virtualid.database;
 
-import ch.virtualid.annotation.Pure;
+import ch.virtualid.annotations.Pure;
 import ch.virtualid.exception.InitializationError;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.io.Level;

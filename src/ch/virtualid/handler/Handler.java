@@ -1,6 +1,6 @@
 package ch.virtualid.handler;
 
-import ch.virtualid.annotation.Pure;
+import ch.virtualid.annotations.Pure;
 import ch.virtualid.database.Entity;
 import ch.virtualid.identity.Identifier;
 import ch.virtualid.identity.NonHostIdentifier;

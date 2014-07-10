@@ -1,6 +1,6 @@
 package ch.virtualid.client;
 
-import ch.virtualid.annotation.Pure;
+import ch.virtualid.annotations.Pure;
 import ch.virtualid.concepts.Time;
 import ch.virtualid.cryptography.Exponent;
 import ch.virtualid.identity.HostIdentity;

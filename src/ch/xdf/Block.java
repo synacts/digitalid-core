@@ -1,11 +1,11 @@
 package ch.xdf;
 
-import ch.virtualid.annotation.Capturable;
-import ch.virtualid.annotation.Captured;
-import ch.virtualid.annotation.Exposed;
-import ch.virtualid.annotation.ExposedRecipient;
-import ch.virtualid.annotation.NonExposedRecipient;
-import ch.virtualid.annotation.Pure;
+import ch.virtualid.annotations.Capturable;
+import ch.virtualid.annotations.Captured;
+import ch.virtualid.annotations.Exposed;
+import ch.virtualid.annotations.ExposedRecipient;
+import ch.virtualid.annotations.NonExposedRecipient;
+import ch.virtualid.annotations.Pure;
 import ch.virtualid.cryptography.SymmetricKey;
 import ch.virtualid.database.Database;
 import ch.virtualid.exception.ShouldNeverHappenError;
