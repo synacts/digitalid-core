@@ -1,7 +1,7 @@
 package ch.virtualid.client;
 
 import ch.virtualid.database.Database;
-import ch.virtualid.exception.InitializationError;
+import ch.virtualid.exceptions.InitializationError;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.HostIdentity;
 import ch.virtualid.identity.Identity;

@@ -6,7 +6,7 @@ import ch.virtualid.agent.Restrictions;
 import ch.virtualid.client.Client;
 import ch.virtualid.cryptography.Exponent;
 import ch.virtualid.cryptography.PublicKey;
-import ch.virtualid.exception.InvalidDeclarationException;
+import ch.virtualid.exceptions.InvalidDeclarationException;
 import ch.virtualid.identity.FailedIdentityException;
 import ch.virtualid.identity.NonHostIdentifier;
 import ch.virtualid.identity.SemanticType;

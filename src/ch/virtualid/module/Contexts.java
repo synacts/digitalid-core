@@ -3,7 +3,7 @@ package ch.virtualid.module;
 import ch.virtualid.agent.Agent;
 import ch.virtualid.concepts.Context;
 import ch.virtualid.database.Entity;
-import ch.virtualid.exception.ShouldNeverHappenError;
+import ch.virtualid.exceptions.ShouldNeverHappenError;
 import ch.virtualid.identity.Category;
 import ch.virtualid.identity.Identity;
 import ch.virtualid.identity.Mapper;

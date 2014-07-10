@@ -1,6 +1,6 @@
 package ch.virtualid.identity;
 
-import ch.virtualid.exception.InvalidDeclarationException;
+import ch.virtualid.exceptions.InvalidDeclarationException;
 import ch.virtualid.interfaces.Immutable;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;

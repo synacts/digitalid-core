@@ -5,7 +5,7 @@ import ch.virtualid.agent.Restrictions;
 import ch.virtualid.concepts.Context;
 import ch.virtualid.credential.Credential;
 import ch.virtualid.database.Database;
-import ch.virtualid.exception.ShouldNeverHappenError;
+import ch.virtualid.exceptions.ShouldNeverHappenError;
 import ch.virtualid.identity.FailedIdentityException;
 import ch.virtualid.identity.NonHostIdentifier;
 import ch.virtualid.identity.NonHostIdentity;

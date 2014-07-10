@@ -1,6 +1,6 @@
 package ch.virtualid.io;
 
-import ch.virtualid.exception.ShouldNeverHappenError;
+import ch.virtualid.exceptions.ShouldNeverHappenError;
 import static ch.virtualid.io.Level.INFORMATION;
 import java.io.File;
 import java.io.FileNotFoundException;

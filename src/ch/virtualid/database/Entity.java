@@ -3,7 +3,7 @@ package ch.virtualid.database;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Client;
 import ch.virtualid.concept.Concept;
-import ch.virtualid.exception.ShouldNeverHappenError;
+import ch.virtualid.exceptions.ShouldNeverHappenError;
 import ch.virtualid.identity.Identity;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;

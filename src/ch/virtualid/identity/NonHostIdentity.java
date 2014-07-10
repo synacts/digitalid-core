@@ -1,6 +1,6 @@
 package ch.virtualid.identity;
 
-import ch.virtualid.exception.ShouldNeverHappenError;
+import ch.virtualid.exceptions.ShouldNeverHappenError;
 import ch.virtualid.interfaces.Immutable;
 import ch.xdf.exceptions.InvalidEncodingException;
 import javax.annotation.Nonnull;

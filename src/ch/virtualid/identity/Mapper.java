@@ -2,9 +2,9 @@ package ch.virtualid.identity;
 
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.database.Database;
-import ch.virtualid.exception.InitializationError;
-import ch.virtualid.exception.InvalidDeclarationException;
-import ch.virtualid.exception.ShouldNeverHappenError;
+import ch.virtualid.exceptions.InitializationError;
+import ch.virtualid.exceptions.InvalidDeclarationException;
+import ch.virtualid.exceptions.ShouldNeverHappenError;
 import ch.virtualid.handler.Reply;
 import static ch.virtualid.identity.Category.ARTIFICIAL_PERSON;
 import static ch.virtualid.identity.Category.EMAIL_PERSON;

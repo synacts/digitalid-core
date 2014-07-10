@@ -2,8 +2,8 @@ package ch.virtualid.identity;
 
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.database.Database;
-import ch.virtualid.exception.InitializationError;
-import ch.virtualid.exception.ShouldNeverHappenError;
+import ch.virtualid.exceptions.InitializationError;
+import ch.virtualid.exceptions.ShouldNeverHappenError;
 import ch.virtualid.interfaces.Immutable;
 import ch.xdf.exceptions.InvalidEncodingException;
 import java.sql.SQLException;

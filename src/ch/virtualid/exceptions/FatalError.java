@@ -1,4 +1,4 @@
-package ch.virtualid.exception;
+package ch.virtualid.exceptions;
 
 import static ch.virtualid.io.Level.ERROR;
 import ch.virtualid.io.Logger;

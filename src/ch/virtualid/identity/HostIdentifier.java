@@ -1,7 +1,7 @@
 package ch.virtualid.identity;
 
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.exception.ShouldNeverHappenError;
+import ch.virtualid.exceptions.ShouldNeverHappenError;
 import ch.virtualid.interfaces.Immutable;
 import ch.xdf.Block;
 import ch.xdf.StringWrapper;

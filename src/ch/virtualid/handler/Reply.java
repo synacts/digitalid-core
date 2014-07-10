@@ -2,8 +2,8 @@ package ch.virtualid.handler;
 
 import ch.virtualid.database.Database;
 import ch.virtualid.database.Entity;
-import ch.virtualid.exception.InitializationError;
-import ch.virtualid.exception.ShouldNeverHappenError;
+import ch.virtualid.exceptions.InitializationError;
+import ch.virtualid.exceptions.ShouldNeverHappenError;
 import ch.virtualid.identity.FailedIdentityException;
 import ch.virtualid.identity.Identifier;
 import ch.virtualid.identity.Identity;

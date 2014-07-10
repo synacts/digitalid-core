@@ -6,7 +6,7 @@ import ch.virtualid.cryptography.Element;
 import ch.virtualid.cryptography.Exponent;
 import ch.virtualid.cryptography.Parameters;
 import ch.virtualid.cryptography.PublicKey;
-import ch.virtualid.exception.ShouldNeverHappenError;
+import ch.virtualid.exceptions.ShouldNeverHappenError;
 import ch.virtualid.identity.NonHostIdentifier;
 import ch.xdf.Block;
 import ch.xdf.exceptions.InvalidSignatureException;

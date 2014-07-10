@@ -2,7 +2,7 @@ package ch.virtualid.cryptography;
 
 import ch.virtualid.annotations.Capturable;
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.exception.ShouldNeverHappenError;
+import ch.virtualid.exceptions.ShouldNeverHappenError;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.BlockableObject;
 import ch.virtualid.interfaces.Immutable;

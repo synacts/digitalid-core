@@ -3,7 +3,7 @@ package ch.virtualid.packet;
 import ch.virtualid.client.Commitment;
 import ch.virtualid.credential.Credential;
 import ch.virtualid.cryptography.SymmetricKey;
-import ch.virtualid.exception.InvalidDeclarationException;
+import ch.virtualid.exceptions.InvalidDeclarationException;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.Identifier;
 import ch.virtualid.identity.FailedIdentityException;

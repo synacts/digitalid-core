@@ -1,4 +1,4 @@
 /**
  * Provides classes indicating various exceptions.
  */
-package ch.virtualid.exception;
+package ch.virtualid.exceptions;

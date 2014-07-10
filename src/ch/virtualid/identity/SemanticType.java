@@ -4,7 +4,7 @@ import ch.virtualid.annotations.Pure;
 import ch.virtualid.concepts.Context;
 import ch.virtualid.concepts.Time;
 import ch.virtualid.database.Database;
-import ch.virtualid.exception.InvalidDeclarationException;
+import ch.virtualid.exceptions.InvalidDeclarationException;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.FreezableLinkedList;

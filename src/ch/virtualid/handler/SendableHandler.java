@@ -10,7 +10,7 @@ import ch.virtualid.database.ClientEntity;
 import ch.virtualid.database.Database;
 import ch.virtualid.database.Entity;
 import ch.virtualid.database.HostEntity;
-import ch.virtualid.exception.ShouldNeverHappenError;
+import ch.virtualid.exceptions.ShouldNeverHappenError;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.Identifier;
 import ch.virtualid.identity.FailedIdentityException;

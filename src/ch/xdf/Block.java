@@ -8,7 +8,7 @@ import ch.virtualid.annotations.NonExposedRecipient;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.cryptography.SymmetricKey;
 import ch.virtualid.database.Database;
-import ch.virtualid.exception.ShouldNeverHappenError;
+import ch.virtualid.exceptions.ShouldNeverHappenError;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;

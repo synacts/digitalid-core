@@ -1,4 +1,4 @@
-package ch.virtualid.exception;
+package ch.virtualid.exceptions;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
