@@ -1,4 +1,4 @@
-package ch.virtualid.taglet;
+package ch.virtualid.taglets;
 
 import com.sun.javadoc.Tag;
 import java.beans.Introspector;

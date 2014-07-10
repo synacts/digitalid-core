@@ -1,17 +1,17 @@
-package ch.virtualid.taglet;
+package ch.virtualid.taglets;
 
 import java.util.Map;
 
 /**
- * This class defines a custom block tag for constructor and method preconditions.
+ * This class defines a custom block tag for constructor and method post-conditions.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 1.0
  */
-public final class Require extends Taglet {
+public final class Ensure extends Taglet {
     
     public static void register(Map<String, Taglet> map) {
-        Taglet.register(map, new Require());
+        Taglet.register(map, new Ensure());
     }
     
     @Override
@@ -26,12 +26,12 @@ public final class Require extends Taglet {
     
     @Override
     public String getName() {
-        return "require";
+        return "ensure";
     }
     
     @Override
     public String getTitle() {
-        return "Requires";
+        return "Ensures";
     }
     
 }

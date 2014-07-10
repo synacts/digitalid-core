@@ -1,4 +1,4 @@
-package ch.virtualid.taglet;
+package ch.virtualid.taglets;
 
 import java.util.Map;
 import java.util.regex.Matcher;

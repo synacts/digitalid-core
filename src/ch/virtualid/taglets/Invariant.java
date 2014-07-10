@@ -1,37 +1,37 @@
-package ch.virtualid.taglet;
+package ch.virtualid.taglets;
 
 import java.util.Map;
 
 /**
- * This class defines a custom block tag for constructor and method post-conditions.
+ * This class defines a custom block tag for class (and field) invariants.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 1.0
  */
-public final class Ensure extends Taglet {
+public final class Invariant extends Taglet {
     
     public static void register(Map<String, Taglet> map) {
-        Taglet.register(map, new Ensure());
+        Taglet.register(map, new Invariant());
     }
     
     @Override
-    public boolean inConstructor() {
+    public boolean inField() {
         return true;
     }
     
     @Override
-    public boolean inMethod() {
+    public boolean inType() {
         return true;
     }
     
     @Override
     public String getName() {
-        return "ensure";
+        return "invariant";
     }
     
     @Override
     public String getTitle() {
-        return "Ensures";
+        return "Invariant";
     }
     
 }
