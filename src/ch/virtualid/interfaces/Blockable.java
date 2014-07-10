@@ -29,7 +29,7 @@ public interface Blockable {
      * 
      * @return this object encoded as a block.
      * 
-     * @ensure return.getType().isBasedOn(getType()) : "The returned block is based on the indicated type.";
+     * @ensure return.getType().equals(getType()) : "The returned block has the indicated type.";
      */
     @Pure
     public @Nonnull Block toBlock();

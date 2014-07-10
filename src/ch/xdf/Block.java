@@ -219,10 +219,6 @@ public final class Block implements Immutable, SQLizable {
     
     /**
      * Sets the semantic type of this block.
-     * <p>
-     * <em>Important:</em> Be very careful when downcasting the type of shared blocks!
-     * 
-     * TODO: Maybe remove this possibility altogether and include it into the toBlock() method?
      * 
      * @param type the type to set for this block.
      * 
