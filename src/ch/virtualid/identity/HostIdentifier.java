@@ -36,20 +36,18 @@ public final class HostIdentifier extends Identifier implements Immutable {
      * @param string the string of the host identifier.
      * 
      * @require Identifier.isValid(string) : "The string is a valid identifier.";
-     * @require Identifier.isHost(string) : "The string has to denote a host.";
+     * @require Identifier.isHost(string) : "The string denotes a host.";
      */
     public HostIdentifier(@Nonnull String string) {
         super(string);
         
-        assert Identifier.isHost(string) : "The string has to denote a host.";
+        assert Identifier.isHost(string) : "The string denotes a host.";
     }
     
     /**
      * Creates a host identifier from the given block.
      * 
      * @param block the block containing the host identifier.
-     * 
-     * @throws InvalidEncodingException if the given block does not contain a valid host identifier.
      * 
      * @require block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
      */
@@ -62,8 +60,6 @@ public final class HostIdentifier extends Identifier implements Immutable {
      * 
      * @param block the block containing the host identifier.
      * @param string the string of the host identifier.
-     * 
-     * @throws InvalidEncodingException if the given block does not contain a valid host identifier.
      * 
      * @require block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
      */

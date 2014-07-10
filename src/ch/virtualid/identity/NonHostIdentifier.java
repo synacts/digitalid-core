@@ -37,20 +37,18 @@ public final class NonHostIdentifier extends Identifier implements Immutable {
      * @param string the string of the non-host identifier.
      * 
      * @require Identifier.isValid(string) : "The string is a valid identifier.";
-     * @require !Identifier.isHost(string) : "The string may not denote a host identifier.";
+     * @require !Identifier.isHost(string) : "The string does not denote a host.";
      */
     public NonHostIdentifier(@Nonnull String string) {
         super(string);
         
-        assert !Identifier.isHost(string) : "The string may not denote a host identifier.";
+        assert !Identifier.isHost(string) : "The string does not denote a host.";
     }
     
     /**
      * Creates a non-host identifier from the given block.
      * 
      * @param block the block containing the non-host identifier.
-     * 
-     * @throws InvalidEncodingException if the given block does not contain a valid non-host identifier.
      * 
      * @require block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
      */
@@ -64,14 +62,12 @@ public final class NonHostIdentifier extends Identifier implements Immutable {
      * @param block the block containing the non-host identifier.
      * @param string the string of the non-host identifier.
      * 
-     * @throws InvalidEncodingException if the given block does not contain a valid non-host identifier.
-     * 
      * @require block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
      */
     NonHostIdentifier(@Nonnull Block block, @Nonnull String string) throws InvalidEncodingException {
         super(block, string);
         
-        if (Identifier.isHost(string)) throw new InvalidEncodingException("" + this + " is not a valid non-host identifier.");
+        if (Identifier.isHost(string)) throw new InvalidEncodingException("" + this + " is not a non-host identifier.");
     }
     
     

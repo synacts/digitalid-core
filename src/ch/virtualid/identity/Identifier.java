@@ -3,7 +3,7 @@ package ch.virtualid.identity;
 import ch.virtualid.annotation.Pure;
 import ch.virtualid.database.Database;
 import ch.virtualid.exception.InvalidDeclarationException;
-import ch.virtualid.interfaces.BlockableObject;
+import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
 import ch.xdf.Block;
@@ -25,7 +25,7 @@ import javax.annotation.Nullable;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public abstract class Identifier extends BlockableObject implements Immutable, SQLizable {
+public abstract class Identifier implements Immutable, Blockable, SQLizable {
     
     /**
      * The pattern that valid identifiers have to match.
@@ -79,7 +79,6 @@ public abstract class Identifier extends BlockableObject implements Immutable, S
     
     /**
      * Returns a new identifier from the given block.
-     * Please note that the block is recast to either a host or non-host identifier.
      * 
      * @param block the block containing the identifier.
      * 
@@ -126,12 +125,10 @@ public abstract class Identifier extends BlockableObject implements Immutable, S
      * @param block the block of the identifier.
      * @param string the string of the identifier.
      * 
-     * @throws InvalidEncodingException if the given string is not a valid identifier.
-     * 
      * @require block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
      */
     protected Identifier(@Nonnull Block block, @Nonnull String string) throws InvalidEncodingException {
-        super(block);
+        assert block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
         
         this.string = string;
         if (!Identifier.isValid(string)) throw new InvalidEncodingException("" + this + " is not a valid identifier.");
@@ -139,7 +136,7 @@ public abstract class Identifier extends BlockableObject implements Immutable, S
     
     @Pure
     @Override
-    public final @Nonnull Block encode() {
+    public final @Nonnull Block toBlock() {
         return new StringWrapper(getType(), string).toBlock();
     }
     
