@@ -1,11 +1,12 @@
 package ch.virtualid.handler;
 
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.database.Entity;
+import ch.virtualid.concept.Concept;
+import ch.virtualid.entity.Entity;
 import ch.virtualid.identity.Identifier;
 import ch.virtualid.identity.NonHostIdentifier;
 import ch.virtualid.identity.SemanticType;
-import ch.virtualid.interfaces.BlockableObject;
+import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.xdf.Block;
 import ch.xdf.SignatureWrapper;
@@ -21,7 +22,7 @@ import javax.annotation.Nullable;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 1.0
  */
-public abstract class Handler extends /* Concept */ BlockableObject implements Immutable {
+public abstract class Handler extends Concept implements Immutable, Blockable {
     
     /**
      * Stores the semantic type {@code @virtualid.ch}.

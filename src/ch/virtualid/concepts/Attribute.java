@@ -9,7 +9,7 @@ import ch.virtualid.handler.action.internal.AttributeValueReplace;
 import ch.virtualid.identity.FailedIdentityException;
 import ch.virtualid.identity.NonHostIdentifier;
 import ch.virtualid.identity.SemanticType;
-import ch.virtualid.module.Attributes;
+import ch.virtualid.module.both.Attributes;
 import ch.xdf.Block;
 import ch.xdf.exceptions.InvalidEncodingException;
 import java.sql.Connection;
@@ -23,16 +23,13 @@ import org.javatuples.Pair;
 
 /**
  * This class models an attribute with its value and visibility.
- * <p>
- * TODO:
- * - Separate Connection and Site.
- * - Site captures the site (host, client or neither) with its prefix and entity (immutable).
- * - Site can be kept per concept, connection is passed around.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 0.0
+ * @version 0.3
  */
 public final class Attribute extends Concept {
+    
+    // TODO: Add aspects for adding and removing attributes?
     
     /**
      * Stores the aspect of a published attribute changing its value.

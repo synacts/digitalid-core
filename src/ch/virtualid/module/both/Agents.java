@@ -1,16 +1,18 @@
-package ch.virtualid.module;
+package ch.virtualid.module.both;
 
 import ch.virtualid.agent.Agent;
 import ch.virtualid.agent.Authorization;
 import ch.virtualid.agent.ClientAgent;
 import ch.virtualid.agent.IncomingRole;
 import ch.virtualid.agent.OutgoingRole;
-import ch.virtualid.client.Commitment;
 import ch.virtualid.agent.Permissions;
 import ch.virtualid.agent.Restrictions;
+import ch.virtualid.annotations.Pure;
+import ch.virtualid.client.Commitment;
 import ch.virtualid.concepts.Context;
-import ch.virtualid.concept.Entity;
-import ch.virtualid.database.Entity;
+import ch.virtualid.database.Database;
+import ch.virtualid.entity.Entity;
+import ch.virtualid.entity.Site;
 import ch.virtualid.identity.Category;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.HostIdentity;
@@ -19,8 +21,10 @@ import ch.virtualid.identity.Mapper;
 import ch.virtualid.identity.NonHostIdentifier;
 import ch.virtualid.identity.NonHostIdentity;
 import ch.virtualid.identity.SemanticType;
-import ch.virtualid.database.Database;
+import ch.virtualid.module.BothModule;
+import ch.virtualid.module.Module;
 import ch.xdf.Block;
+import ch.xdf.TupleWrapper;
 import ch.xdf.exceptions.InvalidEncodingException;
 import java.math.BigInteger;
 import java.sql.PreparedStatement;
@@ -38,15 +42,25 @@ import javax.annotation.Nullable;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 0.0
  */
-public final class Authorizations extends Module {
+public final class Agents extends BothModule {
     
     /**
-     * Initializes the database by creating the appropriate tables if necessary.
-     * 
-     * @param connection an open client or host connection to the database.
+     * Stores the semantic type {@code agents.module@virtualid.ch}.
      */
-    Authorizations(@Nonnull Entity connection) throws SQLException {
-        try (@Nonnull Statement statement = connection.createStatement()) {
+    public static final @Nonnull SemanticType TYPE = SemanticType.create("agents.module@virtualid.ch").load(TupleWrapper.TYPE, );
+    
+    @Pure
+    @Override
+    public @Nonnull SemanticType getType() {
+        return TYPE;
+    }
+    
+    
+    static { Module.add(new Agents()); }
+    
+    @Override
+    protected void createTables(@Nonnull Site site) throws SQLException {
+        try (@Nonnull Statement statement = Database.getConnection().createStatement()) {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS authorization (authorizationID " + Database.PRIMARY_KEY + ", identity BIGINT NOT NULL, removed BOOLEAN NOT NULL DEFAULT FALSE, FOREIGN KEY (identity) REFERENCES map_identity (identity))");
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS authorization_restrictions (authorizationID BIGINT NOT NULL, client BOOLEAN NOT NULL, context BIGINT NOT NULL, writing BOOLEAN NOT NULL, history BIGINT NOT NULL, role BOOLEAN NOT NULL, PRIMARY KEY (authorizationID), FOREIGN KEY (authorizationID) REFERENCES authorization (authorizationID) ON DELETE CASCADE)");
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS authorization_permission (authorizationID BIGINT NOT NULL, preference BOOLEAN NOT NULL, type BIGINT NOT NULL, writing BOOLEAN NOT NULL, PRIMARY KEY (authorizationID, preference, type), FOREIGN KEY (authorizationID) REFERENCES authorization (authorizationID) ON DELETE CASCADE, FOREIGN KEY (type) REFERENCES map_identity (identity))");
@@ -58,23 +72,20 @@ public final class Authorizations extends Module {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS incoming_role (authorizationID BIGINT NOT NULL, issuer BIGINT NOT NULL, relation BIGINT NOT NULL, PRIMARY KEY (authorizationID), FOREIGN KEY (authorizationID) REFERENCES authorization (authorizationID) ON DELETE CASCADE, FOREIGN KEY (issuer) REFERENCES map_identity (identity), FOREIGN KEY (relation) REFERENCES map_identity (identity))");
         }
         
-        Mapper.addIdentityReference("incoming_role", "issuer");
-        Mapper.addTypeReference("authorization_permission", "type");
-        Mapper.addTypeReference("outgoing_role", "relation");
-        Mapper.addTypeReference("incoming_role", "relation");
+        Mapper.addReference("incoming_role", "issuer");
     }
+    
     
     /**
      * Adds the client with the given commitment to the given identity and returns the generated agent.
      * 
-     * @param connection an open connection to the database.
      * @param identity the identity to which the client is to be added.
      * @param commitment the commitment of the client to be added.
      * @param name the name of the client to be added.
      * @return the generated agent for this client.
      * @require name.length() <= 50 : "The client name may have at most 50 characters.";
      */
-    static @Nonnull ClientAgent addClientAgent(@Nonnull Entity connection, @Nonnull NonHostIdentity identity, @Nonnull Commitment commitment, @Nonnull String name) throws SQLException {
+    static @Nonnull ClientAgent addClientAgent(@Nonnull NonHostIdentity identity, @Nonnull Commitment commitment, @Nonnull String name) throws SQLException {
         assert name.length() <= 50 : "The client name may have at most 50 characters.";
         
         long number = Database.executeInsert(connection, "INSERT INTO authorization (identity) VALUES (" + identity + ")");
@@ -94,12 +105,11 @@ public final class Authorizations extends Module {
     /**
      * Returns the client with the given commitment at the given identity or null if no such client is found.
      * 
-     * @param connection an open connection to the database.
      * @param identity the identity whose client is to be returned.
      * @param commitment the commitment of the client which is to be returned.
      * @return the client with the given commitment at the given identity or null if no such client is found.
      */
-    public static @Nullable ClientAgent getClientAgent(@Nonnull Entity connection, @Nonnull NonHostIdentity identity, @Nonnull Commitment commitment) throws SQLException {
+    public static @Nullable ClientAgent getClientAgent(@Nonnull NonHostIdentity identity, @Nonnull Commitment commitment) throws SQLException {
         @Nonnull String sql = "SELECT authorization.authorizationID, client.name FROM authorization JOIN client ON authorization.authorizationID = client.authorizationID WHERE authorization.identity = ? AND NOT authorization.removed AND client.host = ? AND client.time = ? AND client.commitment = ?";
         try (@Nonnull PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setLong(1, identity.getNumber());
@@ -116,14 +126,13 @@ public final class Authorizations extends Module {
     /**
      * Adds the outgoing role with the given relation, context and visibility to the given identity and returns the generated agent.
      * 
-     * @param connection an open connection to the database.
      * @param identity the identity to which the outgoing role is to be added.
      * @param relation the relation between the issuing and the receiving identity.
      * @param context the context to which the outgoing role is to be assigned.
      * @return the generated agent for this outgoing role.
      * @require relation.isRoleType() : "The relation is a role type.";
      */
-    static @Nonnull OutgoingRole addOutgoingRole(@Nonnull Entity connection, @Nonnull NonHostIdentity identity, @Nonnull SemanticType relation, @Nonnull Context context) throws SQLException {
+    static @Nonnull OutgoingRole addOutgoingRole(@Nonnull NonHostIdentity identity, @Nonnull SemanticType relation, @Nonnull Context context) throws SQLException {
         assert relation.isRoleType() : "The relation is a role type.";
         
         try (@Nonnull Statement statement = connection.createStatement()) {
@@ -139,13 +148,12 @@ public final class Authorizations extends Module {
     /**
      * Returns the outgoing role with the given relation at the given identity or null if no such role is found.
      * 
-     * @param connection an open connection to the database.
      * @param identity the identity whose outgoing role is to be returned.
      * @param relation the relation between the issuing and the receiving identity.
      * @return the outgoing role with the given relation at the given identity or null if no such role is found.
      * @require relation.isRoleType() : "The relation is a role type.";
      */
-    public static @Nullable OutgoingRole getOutgoingRole(@Nonnull Entity connection, @Nonnull NonHostIdentity identity, @Nonnull SemanticType relation) throws SQLException {
+    public static @Nullable OutgoingRole getOutgoingRole(@Nonnull NonHostIdentity identity, @Nonnull SemanticType relation) throws SQLException {
         assert relation.isRoleType() : "The relation is a role type.";
         
         @Nonnull String sql = "SELECT authorization.authorizationID, outgoing_role.context FROM authorization JOIN outgoing_role ON authorization.authorizationID = outgoing_role.authorizationID WHERE authorization.identity = " + identity + " AND NOT authorization.removed AND outgoing_role.relation = " + relation;
@@ -164,10 +172,9 @@ public final class Authorizations extends Module {
     /**
      * Removes the given agent.
      * 
-     * @param connection an open connection to the database.
      * @param agent the agent to be removed.
      */
-    public static void removeAgent(@Nonnull Entity connection, @Nonnull Agent agent) throws SQLException {
+    public static void removeAgent(@Nonnull Agent agent) throws SQLException {
         try (@Nonnull Statement statement = connection.createStatement()) {
             statement.executeUpdate("UPDATE authorization SET removed = TRUE WHERE authorizationID = " + agent);
         }
@@ -176,14 +183,13 @@ public final class Authorizations extends Module {
     /**
      * Adds the incoming role with the given issuer and relation to the given identity and returns the generated authorization.
      * 
-     * @param connection an open connection to the database.
      * @param identity the identity to which the incoming role is to be added.
      * @param issuer the issuer of the incoming role.
      * @param relation the relation of the incoming role.
      * @return the generated authorization for this incoming role.
      * @require relation.isRoleType() : "The relation is a role type.";
      */
-    static @Nonnull IncomingRole addIncomingRole(@Nonnull Entity connection, @Nonnull NonHostIdentity identity, @Nonnull NonHostIdentity issuer, @Nonnull SemanticType relation) throws SQLException {
+    static @Nonnull IncomingRole addIncomingRole(@Nonnull NonHostIdentity identity, @Nonnull NonHostIdentity issuer, @Nonnull SemanticType relation) throws SQLException {
         assert relation.isRoleType() : "The relation is a role type.";
         
         try (@Nonnull Statement statement = connection.createStatement()) {
@@ -199,14 +205,13 @@ public final class Authorizations extends Module {
     /**
      * Returns the incoming role with the given issuer and relation at the given identity or null if no such role is found.
      * 
-     * @param connection an open connection to the database.
      * @param identity the identity whose incoming role is to be returned.
      * @param issuer the issuer of the incoming role which is to be returned.
      * @param relation the relation of the incoming role which is to be returned.
      * @return the incoming role with the given issuer and relation at the given identity or null if no such role is found.
      * @require relation.isRoleType() : "The relation is a role type.";
      */
-    static @Nullable IncomingRole getIncomingRole(@Nonnull Entity connection, @Nonnull NonHostIdentity identity, @Nonnull NonHostIdentity issuer, @Nonnull SemanticType relation) throws SQLException {
+    static @Nullable IncomingRole getIncomingRole(@Nonnull NonHostIdentity identity, @Nonnull NonHostIdentity issuer, @Nonnull SemanticType relation) throws SQLException {
         assert relation.isRoleType() : "The relation is a role type.";
         
         @Nonnull String sql = "SELECT authorization.authorizationID FROM authorization JOIN incoming_role ON authorization.authorizationID = incoming_role.authorizationID WHERE authorization.identity = " + identity + " AND NOT authorization.removed AND incoming_role.issuer = " + issuer + " AND incoming_role.relation = " + relation;
@@ -223,13 +228,12 @@ public final class Authorizations extends Module {
     /**
      * Returns the incoming roles of the given identity restricted by the given agent.
      * 
-     * @param connection an open connection to the database.
      * @param identity the identity whose incoming roles are to be returned.
      * @param agent the agent with which to restrict the incoming roles.
      * @return the incoming roles of the given identity restricted by the given agent.
      * @require agent.getRestrictions() != null : "The restrictions of the agent is not null.";
      */
-    static @Nonnull Set<IncomingRole> getIncomingRoles(@Nonnull Entity connection, @Nonnull NonHostIdentity identity, @Nonnull Agent agent) throws SQLException {
+    static @Nonnull Set<IncomingRole> getIncomingRoles(@Nonnull NonHostIdentity identity, @Nonnull Agent agent) throws SQLException {
         assert agent.getRestrictions() != null : "The restrictions of the agent is not null.";
         
         @Nonnull String sql = "SELECT authorization.authorizationID, issuer.identity, issuer.category, issuer.address, relation.identity, relation.category, relation.address FROM authorization JOIN incoming_role ON authorization.authorizationID = incoming_role.authorizationID JOIN map_identity AS issuer ON incoming_role.issuer = map_identity.identity JOIN map_identity AS relation ON incoming_role.relation = map_identity.identity WHERE authorization.identity = " + identity;
@@ -251,10 +255,9 @@ public final class Authorizations extends Module {
     /**
      * Removes the given incoming role.
      * 
-     * @param connection an open connection to the database.
      * @param incomingRole the incoming role to be removed.
      */
-    public static void removeIncomingRole(@Nonnull Entity connection, @Nonnull IncomingRole incomingRole) throws SQLException {
+    public static void removeIncomingRole(@Nonnull IncomingRole incomingRole) throws SQLException {
         try (@Nonnull Statement statement = connection.createStatement()) {
             statement.executeUpdate("DELETE FROM authorization WHERE authorizationID = " + incomingRole);
         }
@@ -264,11 +267,10 @@ public final class Authorizations extends Module {
     /**
      * Returns the restrictions of the given authorization or null if not yet set.
      * 
-     * @param connection an open connection to the database.
      * @param authorization the authorization whose restrictions are to be returned.
      * @return the restrictions of the given authorization or null if not yet set.
      */
-    public static @Nullable Restrictions getRestrictions(@Nonnull Entity connection, @Nonnull Authorization authorization) throws SQLException {
+    public static @Nullable Restrictions getRestrictions(@Nonnull Authorization authorization) throws SQLException {
         @Nonnull String query = "SELECT client, context, writing, history, role FROM authorization_restrictions WHERE authorizationID = " + authorization;
         try (@Nonnull Statement statement = connection.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(query)) {
             if (resultSet.next()) return new Restrictions(resultSet.getBoolean(1), new Context(resultSet.getLong(2)), resultSet.getBoolean(3), resultSet.getLong(4), resultSet.getBoolean(5));
@@ -281,11 +283,10 @@ public final class Authorizations extends Module {
     /**
      * Sets (respectively replaces) the restrictions of the given authorization.
      * 
-     * @param connection an open connection to the database.
      * @param authorization the authorization whose restrictions are to be set.
      * @param restrictions the restrictions to be set for the given authorization.
      */
-    public static void setRestrictions(@Nonnull Entity connection, @Nonnull Authorization authorization, @Nonnull Restrictions restrictions) throws SQLException {
+    public static void setRestrictions(@Nonnull Authorization authorization, @Nonnull Restrictions restrictions) throws SQLException {
         try (@Nonnull Statement statement = connection.createStatement()) {
             statement.executeUpdate("REPLACE INTO authorization_restrictions (authorizationID, client, context, writing, history, role) VALUES (" + authorization + ", " + restrictions.isClient() + ", " + restrictions.getContext() + ", " + restrictions.isWriting() + ", " + restrictions.getHistory() + ", " + restrictions.isRole() + ")");
         }
@@ -294,12 +295,11 @@ public final class Authorizations extends Module {
     /**
      * Returns the permissions (or preferences) of the given authorization.
      * 
-     * @param connection an open connection to the database.
      * @param authorization the authorization whose permissions (or preferences) are to be returned.
      * @param preference whether the preferences or the actual permissions are to be returned.
      * @return the permissions (or preferences) of the given authorization.
      */
-    public static @Nonnull Permissions getPermissions(@Nonnull Entity connection, @Nonnull Authorization authorization, boolean preference) throws SQLException {
+    public static @Nonnull Permissions getPermissions(@Nonnull Authorization authorization, boolean preference) throws SQLException {
         @Nonnull String query = "SELECT map_identity.identity, map_identity.category, map_identity.address, authorization_permission.writing FROM authorization_permission JOIN map_identity ON authorization_permission.type = map_identity.identity WHERE authorizationID = " + authorization + " AND preference = " + preference;
         try (@Nonnull Statement statement = connection.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(query)) {
             @Nonnull Permissions permissions = new Permissions();
@@ -320,12 +320,11 @@ public final class Authorizations extends Module {
      * Adds the given permissions (or preferences) to the given authorization.
      * Please note that a different writing property for a permission (or a preference) replaces the existing entry.
      * 
-     * @param connection an open connection to the database.
      * @param authorization the authorization to which the permissions (or preferences) are to be added.
      * @param preference whether the preferences or the actual permissions are to be extended.
      * @param permissions the permissions (or preferences) to be added to the given authorization.
      */
-    public static void addPermissions(@Nonnull Entity connection, @Nonnull Authorization authorization, boolean preference, @Nonnull Permissions permissions) throws SQLException {
+    public static void addPermissions(@Nonnull Authorization authorization, boolean preference, @Nonnull Permissions permissions) throws SQLException {
         @Nonnull String sql = "REPLACE INTO authorization_permission (authorizationID, preference, type, writing) VALUES (" + authorization + ", " + preference + ", ?, ?)";
         try (@Nonnull PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             for (@Nonnull SemanticType type : permissions.keySet()) {
@@ -347,12 +346,11 @@ public final class Authorizations extends Module {
     /**
      * Sets the given permissions (or preferences) in the given authorization.
      * 
-     * @param connection an open connection to the database.
      * @param authorization the authorization whose permissions (or preferences) are to be set.
      * @param preference whether the preferences or the actual permissions are to be set.
      * @param permissions the permissions (or preferences) to be set in the given authorization.
      */
-    public static void setPermissions(@Nonnull Entity connection, @Nonnull Authorization authorization, boolean preference, @Nonnull Permissions permissions) throws SQLException {
+    public static void setPermissions(@Nonnull Authorization authorization, boolean preference, @Nonnull Permissions permissions) throws SQLException {
         try (@Nonnull Statement statement = connection.createStatement()) {
             statement.executeUpdate("DELETE FROM authorization_permission WHERE authorizationID = " + authorization + " AND preference = " + preference);
         }
@@ -364,13 +362,12 @@ public final class Authorizations extends Module {
      * Removes the given permissions (or preferences) from the given authorization.
      * Please note that the writing property of the permissions (or preferences) is ignored for this operation.
      * 
-     * @param connection an open connection to the database.
      * @param authorization the authorization whose permissions (or preferences) are to be removed.
      * @param preference whether the preferences or the actual permissions are to be removed.
      * @param permissions the permissions (or preferences) to be removed from the given authorization.
      * @return the number of rows deleted from the database.
      */
-    public static int removePermissions(@Nonnull Entity connection, @Nonnull Authorization authorization, boolean preference, @Nonnull Permissions permissions) throws SQLException {
+    public static int removePermissions(@Nonnull Authorization authorization, boolean preference, @Nonnull Permissions permissions) throws SQLException {
         @Nonnull String sql = "DELETE FROM authorization_permission WHERE authorizationID = " + authorization + " AND preference = " + preference + " AND type = ?";
         try (@Nonnull PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             for (@Nonnull SemanticType type : permissions.keySet()) {
@@ -397,12 +394,11 @@ public final class Authorizations extends Module {
     /**
      * Returns the agents that are weaker than the given agent.
      * 
-     * @param connection an open connection to the database.
      * @param agent the agent whose weaker agents are to be returned.
      * @return the agents that are weaker than the given agent.
      * @require agent.getRestrictions() != null : "The restrictions of the agent is not null.";
      */
-    public static @Nonnull Set<Agent> getAgents(@Nonnull Entity connection, @Nonnull Agent agent) throws SQLException {
+    public static @Nonnull Set<Agent> getAgents(@Nonnull Agent agent) throws SQLException {
         assert agent.getRestrictions() != null : "The restrictions of the agent is not null.";
         
         @Nonnull String sql = "SELECT agent_order.weaker, identity.identity, identity.category, identity.address, host.identity, host.category, host.address, client.time, client.commitment, client.name, relation.identity, relation.category, relation.address, outgoing_role.context FROM agent_order JOIN authorization ON agent_order.weaker = authorization.authorizationID JOIN map_identity AS identity ON authorization.identity = map_identity.identity LEFT JOIN (client JOIN map_identity AS host ON client.host = map_identity.identity) ON agent_order.weaker = client.authorizationID LEFT JOIN (outgoing_role JOIN map_identity AS relation ON outgoing_role.relation = map_identity.identity) ON agent_order.weaker = outgoing_role.authorizationID WHERE agent_order.stronger = " + agent + " AND NOT authorization.removed";
@@ -429,10 +425,9 @@ public final class Authorizations extends Module {
     /**
      * Redetermines which agents are stronger and weaker than the given agent.
      * 
-     * @param connection an open connection to the database.
      * @param agent the agent which is to be redetermined.
      */
-    public static void redetermineAgents(@Nonnull Entity connection, @Nonnull Agent agent) throws SQLException {
+    public static void redetermineAgents(@Nonnull Agent agent) throws SQLException {
         try (@Nonnull Statement statement = connection.createStatement()) {
             statement.executeUpdate("DELETE FROM agent_order WHERE stronger = " + agent + " OR weaker = " + agent);
             
@@ -474,11 +469,10 @@ public final class Authorizations extends Module {
     /**
      * Sets the commitment of the given client agent to the given value.
      * 
-     * @param connection an open connection to the database.
      * @param clientAgent the client agent whose commitment is to be set.
      * @param commitment the commitment to set for the given client agent.
      */
-    public static void setClientCommitment(@Nonnull Entity connection, @Nonnull ClientAgent clientAgent, @Nonnull Commitment commitment) throws SQLException {
+    public static void setClientCommitment(@Nonnull ClientAgent clientAgent, @Nonnull Commitment commitment) throws SQLException {
         @Nonnull String sql = "UPDATE client SET host = ?, time = ?, commitment = ? WHERE authorizationID = ?";
         try (@Nonnull PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setLong(1, commitment.getHost().getNumber());
@@ -492,12 +486,11 @@ public final class Authorizations extends Module {
     /**
      * Sets the name of the given client agent to the given string.
      * 
-     * @param connection an open connection to the database.
      * @param clientAgent the client agent whose name is to be set.
      * @param name the name to set for the given client agent.
      * @require name.length() <= 50 : "The client name may have at most 50 characters.";
      */
-    public static void setClientName(@Nonnull Entity connection, @Nonnull ClientAgent clientAgent, @Nonnull String name) throws SQLException {
+    public static void setClientName(@Nonnull ClientAgent clientAgent, @Nonnull String name) throws SQLException {
         assert name.length() <= 50 : "The client name may have at most 50 characters.";
         
         @Nonnull String sql = "UPDATE client SET name = ? WHERE authorizationID = ?";
@@ -511,11 +504,10 @@ public final class Authorizations extends Module {
     /**
      * Sets the context of the given outgoing role to the given value.
      * 
-     * @param connection an open connection to the database.
      * @param outgoingRole the outgoing role whose context is to be set.
      * @param context the context to set for the given outgoing role.
      */
-    public static void setOutgoingRoleContext(@Nonnull Entity connection, @Nonnull OutgoingRole outgoingRole, @Nonnull Context context) throws SQLException {
+    public static void setOutgoingRoleContext(@Nonnull OutgoingRole outgoingRole, @Nonnull Context context) throws SQLException {
         try (@Nonnull Statement statement = connection.createStatement()) {
             statement.executeUpdate("UPDATE outgoing_role SET context = " + context + " WHERE authorizationID = " + outgoingRole);
         }
@@ -525,36 +517,34 @@ public final class Authorizations extends Module {
     /**
      * Returns the state of the given entity restricted by the authorization of the given agent.
      * 
-     * @param connection an open connection to the database.
      * @param entity the entity whose state is to be returned.
      * @param agent the agent whose authorization restricts the returned state.
+     * 
      * @return the state of the given entity restricted by the authorization of the given agent.
      */
     @Override
-    protected @Nonnull Block getAll(@Nonnull Entity connection, @Nonnull Entity entity, @Nonnull Agent agent) throws SQLException {
+    protected @Nonnull Block getAll(@Nonnull Entity entity, @Nonnull Agent agent) throws SQLException {
         return Block.EMPTY;
     }
     
     /**
      * Adds the state in the given block to the given entity.
      * 
-     * @param connection an open connection to the database.
      * @param entity the entity to which the state is to be added.
      * @param block the block containing the state to be added.
      */
     @Override
-    protected void addAll(@Nonnull Entity connection, @Nonnull Entity entity, @Nonnull Block block) throws SQLException {
+    protected void addAll(@Nonnull Entity entity, @Nonnull Block block) throws SQLException {
         
     }
     
     /**
      * Removes all the entries of the given entity in this module.
      * 
-     * @param connection an open connection to the database.
      * @param entity the entity whose entries are to be removed.
      */
     @Override
-    protected void removeAll(@Nonnull Entity connection, @Nonnull Entity entity) throws SQLException {
+    protected void removeAll(@Nonnull Entity entity) throws SQLException {
         
     }
     

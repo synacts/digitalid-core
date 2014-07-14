@@ -1,46 +1,81 @@
 package ch.virtualid.module;
 
-import ch.virtualid.agent.Agent;
-import ch.virtualid.database.HostEntity;
-import ch.xdf.Block;
-import ch.xdf.exceptions.InvalidEncodingException;
-import java.sql.Connection;
+import ch.virtualid.client.Client;
+import ch.virtualid.entity.Site;
+import ch.virtualid.server.Host;
 import java.sql.SQLException;
+import java.util.LinkedList;
+import java.util.List;
 import javax.annotation.Nonnull;
 
 /**
- * Database modules that represent a part of an entity's state have to extend this class.
+ * A module manages an {@link Entity entity}'s partial state in the {@link Database database}.
+ * 
+ * @see BothModule
+ * @see HostModule
+ * @see ClientModule
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 1.0
+ * @version 2.0
  */
 public abstract class Module {
     
     /**
-     * Returns the state of the given entity restricted by the authorization of the given agent.
-     * 
-     * @param connection an open connection to the database.
-     * @param entity the entity whose state is to be returned.
-     * @param agent the agent whose authorization restricts the returned state.
-     * @return the state of the given entity restricted by the authorization of the given agent.
+     * Stores all the modules that are used on hosts.
      */
-    protected abstract @Nonnull Block getAll(@Nonnull Connection connection, @Nonnull Entity entity, @Nonnull Agent agent) throws SQLException;
+    private static final List<Module> hostModules = new LinkedList<Module>();
     
     /**
-     * Adds the state in the given block to the given entity.
-     * 
-     * @param connection an open connection to the database.
-     * @param entity the entity to which the state is to be added.
-     * @param block the block containing the state to be added.
+     * Stores all the modules that are used on clients.
      */
-    protected abstract void addAll(@Nonnull Connection connection, @Nonnull Entity entity, @Nonnull Block block) throws SQLException, InvalidEncodingException;
+    private static final List<Module> clientModules = new LinkedList<Module>();
     
     /**
-     * Removes all the entries of the given entity in this module.
+     * Adds the given both module to both the list of host and client modules.
      * 
-     * @param connection an open host connection to the database.
-     * @param entity the entity whose entries are to be removed.
+     * @param bothModule the module to add to both the list of host and client modules.
      */
-    protected abstract void removeAll(@Nonnull HostEntity connection, @Nonnull Entity entity) throws SQLException;
+    protected static void add(@Nonnull BothModule bothModule) {
+        hostModules.add(bothModule);
+        clientModules.add(bothModule);
+    }
+    
+    /**
+     * Adds the given host module to the list of host modules.
+     * 
+     * @param hostModule the module to add to the list of host modules.
+     */
+    protected static void add(@Nonnull HostModule hostModule) {
+        hostModules.add(hostModule);
+    }
+    
+    /**
+     * Adds the given client module to the list of client modules.
+     * 
+     * @param clientModule the module to add to the list of client modules.
+     */
+    protected static void add(@Nonnull ClientModule clientModule) {
+        clientModules.add(clientModule);
+    }
+    
+    /**
+     * Initializes the database tables for the given site.
+     * 
+     * @param site the site for which to initialize the database tables.
+     */
+    public static void initialize(@Nonnull Site site) throws SQLException {
+        if (site instanceof Host) {
+            for (final @Nonnull Module module : hostModules) module.createTables(site);
+        } else if (site instanceof Client) {
+            for (final @Nonnull Module module : clientModules) module.createTables(site);
+        }
+    }
+    
+    /**
+     * Creates the database tables for the given site.
+     * 
+     * @param site the site for which to create the database tables.
+     */
+    protected abstract void createTables(@Nonnull Site site) throws SQLException;
     
 }

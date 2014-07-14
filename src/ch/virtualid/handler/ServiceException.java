@@ -7,7 +7,7 @@ import javax.annotation.Nullable;
  * This exception is thrown when a service is not implemented correctly.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 1.0
+ * @version 2.0
  */
 public final class ServiceException extends Exception {
     

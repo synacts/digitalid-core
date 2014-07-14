@@ -3,6 +3,7 @@ package ch.virtualid.client;
 import ch.virtualid.agent.Permissions;
 import ch.virtualid.agent.RandomizedPermissions;
 import ch.virtualid.agent.Restrictions;
+import ch.virtualid.annotations.Pure;
 import ch.virtualid.credential.ClientCredential;
 import ch.virtualid.credential.Credential;
 import ch.virtualid.cryptography.Element;
@@ -12,7 +13,7 @@ import ch.virtualid.cryptography.Parameters;
 import ch.virtualid.cryptography.PublicKey;
 import ch.virtualid.cryptography.SymmetricKey;
 import ch.virtualid.database.Database;
-import ch.virtualid.database.Site;
+import ch.virtualid.entity.Site;
 import ch.virtualid.expression.Expression;
 import ch.virtualid.identity.Category;
 import ch.virtualid.identity.Identifier;
@@ -91,9 +92,10 @@ public final class Client extends Site {
         return name.length() <= 50 && pattern.matcher(name).matches();
     }
     
+    @Pure
     @Override
     public @Nonnull String getReference() {
-        return "client_role (role) ON DELETE CASCADE";
+        return "REFERENCES " + this + "_role (role) ON DELETE CASCADE";
     }
     
     

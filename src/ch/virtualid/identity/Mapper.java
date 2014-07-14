@@ -137,11 +137,6 @@ public final class Mapper {
     }
     
     
-    /**
-     * Initializes the mapper by creating the corresponding database tables if necessary.
-     * 
-     * @require Database.isMainThread(): "This block is called in the main thread.";
-     */
     static {
         assert Database.isMainThread(): "This method block is called in the main thread.";
         

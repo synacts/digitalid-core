@@ -1,6 +1,9 @@
 package ch.virtualid.module.client;
 
-import ch.virtualid.database.ClientEntity;
+import ch.virtualid.database.Database;
+import ch.virtualid.entity.Site;
+import ch.virtualid.module.ClientModule;
+import ch.virtualid.module.Module;
 import java.sql.SQLException;
 import java.sql.Statement;
 import javax.annotation.Nonnull;
@@ -13,15 +16,13 @@ import javax.annotation.Nonnull;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 0.0
  */
-public final class Requests {
+public final class Requests extends ClientModule {
     
-    /**
-     * Initializes the database by creating the appropriate tables if necessary.
-     * 
-     * @param connection an open client connection to the database.
-     */
-    public static void initialize(@Nonnull ClientEntity connection) throws SQLException {
-        try (@Nonnull Statement statement = connection.createStatement()) {
+    static { Module.add(new Requests()); }
+    
+    @Override
+    protected void createTables(@Nonnull Site site) throws SQLException {
+        try (@Nonnull Statement statement = Database.getConnection().createStatement()) {
             
         }
     }

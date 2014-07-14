@@ -3,7 +3,7 @@ package ch.virtualid.handler;
 import ch.virtualid.agent.Permissions;
 import ch.virtualid.agent.Restrictions;
 import ch.virtualid.concept.Entity;
-import ch.virtualid.database.Entity;
+import ch.virtualid.entity.Entity;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.Identifier;
 import ch.xdf.Block;

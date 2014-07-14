@@ -1,9 +1,9 @@
 package ch.virtualid.concept;
 
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.database.ClientEntity;
+import ch.virtualid.entity.ClientEntity;
 import ch.virtualid.database.Database;
-import ch.virtualid.database.Entity;
+import ch.virtualid.entity.Entity;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -100,7 +100,7 @@ public abstract class Concept {
     
     
     /**
-     * Stores the observers that observe an aspect independently of any concept.
+     * Stores the observers that observe an aspect independently of a particular instance.
      */
     private static final @Nonnull Map<Aspect, Set<Observer>> aspectObservers = new HashMap<Aspect, Set<Observer>>();
     
@@ -112,8 +112,8 @@ public abstract class Concept {
      * 
      * @require !aspects.isEmpty() : "The set of aspects is not empty.";
      */
-    public static final void observeAspects(@Nonnull Set<Aspect> aspects, @Nonnull Observer observer) {
-        observe(aspectObservers, aspects, observer);
+    public static void observeAspects(@Nonnull Observer observer, @Nonnull Aspect... aspects) {
+        observe(aspectObservers, observer, aspects);
     }
     
     /**
@@ -124,7 +124,7 @@ public abstract class Concept {
      * 
      * @require !aspects.isEmpty() : "The set of aspects is not empty.";
      */
-    public static final void unobserveAspects(@Nonnull Set<Aspect> aspects, @Nonnull Observer observer) {
+    public static void unobserveAspects(@Nonnull Set<Aspect> aspects, @Nonnull Observer observer) {
         unobserve(aspectObservers, aspects, observer);
     }
     

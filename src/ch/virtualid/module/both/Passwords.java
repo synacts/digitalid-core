@@ -1,10 +1,14 @@
-package ch.virtualid.module;
+package ch.virtualid.module.both;
 
 import ch.virtualid.agent.Agent;
 import ch.virtualid.agent.Restrictions;
+import ch.virtualid.annotations.Pure;
 import ch.virtualid.database.Database;
-import ch.virtualid.concept.Entity;
-import ch.virtualid.database.Entity;
+import ch.virtualid.entity.Entity;
+import ch.virtualid.entity.Site;
+import ch.virtualid.identity.SemanticType;
+import ch.virtualid.module.BothModule;
+import ch.virtualid.module.Module;
 import ch.xdf.Block;
 import ch.xdf.StringWrapper;
 import ch.xdf.exceptions.InvalidEncodingException;
@@ -19,29 +23,39 @@ import javax.annotation.Nullable;
  * This class provides database access to the passwords of the core service.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 1.0
+ * @version 1.8
  */
-public final class Passwords extends Module {
+public final class Passwords extends BothModule {
     
     /**
-     * Initializes the database by creating the appropriate tables if necessary.
-     * 
-     * @param connection an open client or host connection to the database.
+     * Stores the semantic type {@code passwords.module@virtualid.ch}.
      */
-    Passwords(@Nonnull Entity connection) throws SQLException {
-        try (@Nonnull Statement statement = connection.createStatement()) {
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS password (entity BIGINT NOT NULL, password VARCHAR(50) NOT NULL COLLATE " + Database.UTF16_BIN + ", PRIMARY KEY (entity), FOREIGN KEY (entity) REFERENCES " + connection.getReference() + ")");
+    public static final @Nonnull SemanticType TYPE = SemanticType.create("passwords.module@virtualid.ch").load(StringWrapper.TYPE);
+    
+    @Pure
+    @Override
+    public @Nonnull SemanticType getType() {
+        return TYPE;
+    }
+    
+    
+    static { Module.add(new Passwords()); }
+    
+    @Override
+    protected void createTables(@Nonnull Site site) throws SQLException {
+        try (@Nonnull Statement statement = Database.getConnection().createStatement()) {
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "_password (entity BIGINT NOT NULL, password VARCHAR(50) NOT NULL COLLATE " + Database.UTF16_BIN + ", PRIMARY KEY (entity), FOREIGN KEY (entity) REFERENCES " + connection.getReference() + ")");
         }
     }
+    
     
     /**
      * Returns the password of the given entity or null if not available.
      * 
-     * @param connection an open connection to the database.
      * @param entity the entity whose password is to be returned.
      * @return the password of the given entity or null if not available.
      */
-    public static @Nullable String get(@Nonnull Entity connection, @Nonnull Entity entity) throws SQLException {
+    public static @Nullable String get(@Nonnull Entity entity) throws SQLException {
         @Nonnull String SQL = "SELECT password FROM password WHERE entity = " + entity;
         try (@Nonnull Statement statement = connection.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
             return resultSet.next() ? resultSet.getString(1) : null;
@@ -51,12 +65,11 @@ public final class Passwords extends Module {
     /**
      * Sets the password of the given entity.
      * 
-     * @param connection an open connection to the database.
      * @param entity the entity whose password is to be set.
      * @param password the password to be set.
      * @require password.length() <= 50 : "The password may have at most 50 characters.";
      */
-    public static void set(@Nonnull Entity connection, @Nonnull Entity entity, @Nonnull String password) throws SQLException {
+    public static void set(@Nonnull Entity entity, @Nonnull String password) throws SQLException {
         assert password.length() <= 50 : "The password may have at most 50 characters.";
         
         @Nonnull String SQL = "REPLACE INTO password (entity, password) VALUES (?, ?)";
@@ -70,10 +83,9 @@ public final class Passwords extends Module {
     /**
      * Removes the password from the given entity.
      * 
-     * @param connection an open connection to the database.
      * @param entity the entity whose password is to be removed.
      */
-    public static void remove(@Nonnull Entity connection, @Nonnull Entity entity) throws SQLException {
+    public static void remove(@Nonnull Entity entity) throws SQLException {
         @Nonnull String SQL = "DELETE FROM password WHERE entity = " + entity;
         try (@Nonnull Statement statement = connection.createStatement()) {
             statement.executeUpdate(SQL);
@@ -83,13 +95,12 @@ public final class Passwords extends Module {
     /**
      * Replaces the password of the given entity or throws an {@link SQLException} if it is not the old password of the given entity.
      * 
-     * @param connection an open connection to the database.
      * @param entity the entity whose password is to be replaced.
      * @param oldPassword the old password to be replaced by the new password.
      * @param newPassword the new password by which the old password is replaced.
      * @require oldPassword.length() <= 50 && newPassword.length() <= 50 : "The passwords may have at most 50 characters.";
      */
-    public static void replace(@Nonnull Entity connection, @Nonnull Entity entity, @Nonnull String oldPassword, @Nonnull String newPassword) throws SQLException {
+    public static void replace(@Nonnull Entity entity, @Nonnull String oldPassword, @Nonnull String newPassword) throws SQLException {
         assert oldPassword.length() <= 50 && newPassword.length() <= 50 : "The passwords may have at most 50 characters.";
         
         @Nonnull String SQL = "UPDATE password SET password = ? WHERE entity = ? AND password = ?";
@@ -102,45 +113,25 @@ public final class Passwords extends Module {
     }
     
     
-    /**
-     * Returns the state of the given entity restricted by the authorization of the given agent.
-     * 
-     * @param connection an open connection to the database.
-     * @param entity the entity whose state is to be returned.
-     * @param agent the agent whose authorization restricts the returned state.
-     * @return the state of the given entity restricted by the authorization of the given agent.
-     */
+    @Pure
     @Override
-    protected @Nonnull Block getAll(@Nonnull Entity connection, @Nonnull Entity entity, @Nonnull Agent agent) throws SQLException {
+    protected @Nonnull Block getAll(@Nonnull Entity entity, @Nonnull Agent agent) throws SQLException {
         @Nullable Restrictions restrictions = agent.getRestrictions();
         if (restrictions != null && restrictions.isClient()) {
-            @Nullable String password = get(connection, entity);
-            if (password != null) return new StringWrapper(password).toBlock();
+            @Nullable String password = get(entity);
+            if (password != null) return new StringWrapper(TYPE, password).toBlock();
         }
-        return Block.EMPTY;
+        return null;
     }
     
-    /**
-     * Adds the state in the given block to the given entity.
-     * 
-     * @param connection an open connection to the database.
-     * @param entity the entity to which the state is to be added.
-     * @param block the block containing the state to be added.
-     */
     @Override
-    protected void addAll(@Nonnull Entity connection, @Nonnull Entity entity, @Nonnull Block block) throws SQLException, InvalidEncodingException {
-        set(connection, entity, new StringWrapper(block).getString());
+    protected void addAll(@Nonnull Entity entity, @Nonnull Block block) throws SQLException, InvalidEncodingException {
+        set(entity, new StringWrapper(block).getString());
     }
     
-    /**
-     * Removes all the entries of the given entity in this module.
-     * 
-     * @param connection an open connection to the database.
-     * @param entity the entity whose entries are to be removed.
-     */
     @Override
-    protected void removeAll(@Nonnull Entity connection, @Nonnull Entity entity) throws SQLException {
-        try (@Nonnull Statement statement = connection.createStatement()) {
+    protected void removeAll(@Nonnull Entity entity) throws SQLException {
+        try (@Nonnull Statement statement = Database.getConnection().createStatement()) {
             statement.executeUpdate("DELETE FROM password WHERE entity = " + entity);
         }
     }

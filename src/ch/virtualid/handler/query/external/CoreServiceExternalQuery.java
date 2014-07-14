@@ -1,7 +1,7 @@
 package ch.virtualid.handler.query.external;
 
 import ch.virtualid.concept.Entity;
-import ch.virtualid.database.Entity;
+import ch.virtualid.entity.Entity;
 import ch.virtualid.handler.ExternalQuery;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.Identifier;

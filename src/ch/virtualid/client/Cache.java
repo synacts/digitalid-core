@@ -45,6 +45,7 @@ public final class Cache {
      */
     static {
         try (@Nonnull Connection connection = Database.getConnection(); @Nonnull Statement statement = connection.createStatement()) {
+            // TODO: Leave requester as an idenitity reference, as the role tables are not global but per client.
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS cache_attribute (requester BIGINT NOT NULL, requestee BIGINT NOT NULL, type BIGINT NOT NULL, time BIGINT NOT NULL, value LONGBLOB NOT NULL, PRIMARY KEY (requester, requestee, type), FOREIGN KEY (requester) REFERENCES map_identity (identity), FOREIGN KEY (requestee) REFERENCES map_identity (identity), FOREIGN KEY (type) REFERENCES map_identity (identity))");
             connection.commit();
             
@@ -134,6 +135,8 @@ public final class Cache {
      */
     public static @Nullable Block getAttribute(@Nullable Person requester, @Nonnull Identity requestee, @Nonnull SemanticType type, long time) throws SQLException {
         assert time >= 0 : "The time value is non-negative.";
+        
+        // TODO: Use a role instead of a person for the requester.
         
         @Nullable Block result = null;
         @Nonnull String query = "SELECT value FROM cache_attribute WHERE (requester = " + (requester == null ? 1 : requester) + " OR requester = 1) AND requestee = " + requestee + "  AND type = " + type + " AND time >= " + time;

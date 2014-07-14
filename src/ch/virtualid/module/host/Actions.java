@@ -3,18 +3,21 @@ package ch.virtualid.module.host;
 import ch.virtualid.agent.Agent;
 import ch.virtualid.agent.Restrictions;
 import ch.virtualid.concepts.Context;
+import ch.virtualid.concepts.Time;
+import ch.virtualid.database.Database;
+import ch.virtualid.entity.Site;
 import ch.virtualid.identity.Identity;
 import ch.virtualid.identity.Mapper;
 import ch.virtualid.identity.NonHostIdentity;
 import ch.virtualid.identity.Person;
 import ch.virtualid.identity.SemanticType;
-import ch.virtualid.database.Database;
-import ch.virtualid.database.HostEntity;
+import ch.virtualid.module.HostModule;
+import ch.virtualid.module.Module;
 import ch.virtualid.packet.Audit;
 import ch.virtualid.packet.Packet;
-import static ch.virtualid.server.Server.YEAR;
 import ch.xdf.Block;
 import ch.xdf.SignatureWrapper;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -33,42 +36,38 @@ import org.javatuples.Pair;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 0.0
  */
-public final class Actions {
+public final class Actions extends HostModule {
     
-    /**
-     * Initializes the database by creating the appropriate tables if necessary.
-     * 
-     * @param connection an open host connection to the database.
-     */
-    public static void initialize(@Nonnull HostEntity connection) throws SQLException {
-        try (@Nonnull Statement statement = connection.createStatement()) {
+    static { Module.add(new Actions()); }
+    
+    @Override
+    protected void createTables(@Nonnull Site site) throws SQLException {
+        try (@Nonnull Statement statement = Database.getConnection().createStatement()) {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS action (identity BIGINT NOT NULL, time BIGINT NOT NULL, client BOOLEAN, role BOOLEAN, context BIGINT, contact BIGINT, type BIGINT, writing BOOLEAN, authorizationID BIGINT, request LONGBLOB NOT NULL, PRIMARY KEY (identity, time), INDEX(time), FOREIGN KEY (identity) REFERENCES map_identity (identity), FOREIGN KEY (authorizationID) REFERENCES authorization (authorizationID), FOREIGN KEY (contact) REFERENCES map_identity (identity), FOREIGN KEY (type) REFERENCES map_identity (identity))");
         }
         
-        Mapper.addIdentityReference("action", "identity");
-        Mapper.addTypeReference("action", "type");
+        Mapper.addReference("action", "identity");
         Mapper.addReference("action", "contact");
         
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
                 try (@Nonnull Connection connection = Database.getConnection(); @Nonnull Statement statement = connection.createStatement()) {
-                    statement.executeUpdate("DELETE FROM request WHERE time < UNIX_TIMESTAMP() * 1000 - " + YEAR);
+                    statement.executeUpdate("DELETE FROM request WHERE time < UNIX_TIMESTAMP() * 1000 - " + Time.TROPICAL_YEAR.getValue());
                 } catch (@Nonnull SQLException exception) {}
             }
-        }, 0, YEAR);
+        }, 0, Time.TROPICAL_YEAR.getValue());
     }
     
     /**
      * Returns the audit trail of the given identity from the given time restricted for the given agent.
      * 
-     * @param connection an open connection to the database.
      * @param identity the identity whose audit trail is to be returned.
      * @param time the time of the last audited request.
      * @param agent the agent for which the audit trail is to be restricted.
      * @return the audit trail of the given identity from the given time restricted for the given agent.
      */
-    private static @Nonnull Audit getAudit(@Nonnull Connection connection, @Nonnull Identity identity, long time, @Nonnull Agent agent) throws SQLException {
+    private static @Nonnull Audit getAudit(@Nonnull Identity identity, long time, @Nonnull Agent agent) throws SQLException {
         @Nullable Restrictions restrictions = agent.getRestrictions();
         if (restrictions != null && restrictions.getHistory() > time) time = restrictions.getHistory();
         
@@ -103,7 +102,6 @@ public final class Actions {
     /**
      * Adds the given request to the audit trail of the given identity.
      * 
-     * @param connection an open connection to the database.
      * @param identity the identity whose audit trail is extended.
      * @param client whether the modification of the request can only be seen by directly accredited clients (or null if it is irrelevant).
      * @param role whether the modification of the request can only be seen by agents that can assume roles (or null if it is irrelevant).
@@ -114,7 +112,7 @@ public final class Actions {
      * @param agent the agent modified in the request or null.
      * @param request the request to be added to the audit trail.
      */
-    private static void addToAuditTrail(@Nonnull Connection connection, @Nonnull NonHostIdentity identity, @Nullable Boolean client, @Nullable Boolean role, @Nullable Context context, @Nullable Person contact, @Nullable SemanticType type, @Nullable Boolean writing, @Nullable Agent agent, @Nonnull Packet request) throws SQLException {
+    private static void addToAuditTrail(@Nonnull NonHostIdentity identity, @Nullable Boolean client, @Nullable Boolean role, @Nullable Context context, @Nullable Person contact, @Nullable SemanticType type, @Nullable Boolean writing, @Nullable Agent agent, @Nonnull Packet request) throws SQLException {
         @Nonnull String time = Database.GREATEST + "(MAX(time) + 1, " + Database.CURRENT_TIME + ")";
         @Nonnull String statement = "INSERT INTO request (identity, time, client, role, context, contact, type, writing, agent, request) SELECT ?, " + time + ", ?, ?, ?, ?, ?, ?, ?, ? FROM request";
         try (@Nonnull PreparedStatement preparedStatement = connection.prepareStatement(statement)) {
@@ -135,13 +133,12 @@ public final class Actions {
      * Returns the given block with the requested audit or null if no agent is provided.
      * 
      * @param block the block containing the response of the request.
-     * @param connection an open connection to the database.
      * @param identity the subject of the request.
      * @param signature the signature of the request.
      * @param agent the agent signing the request or null.
      * @return the given block with the requested audit or null if no agent is provided.
      */
-    private static @Nonnull Pair<Block, Audit> withAudit(@Nonnull Block block, @Nonnull Connection connection, @Nonnull Identity identity, @Nonnull SignatureWrapper signature, @Nullable Agent agent) throws SQLException {
+    private static @Nonnull Pair<Block, Audit> withAudit(@Nonnull Block block, @Nonnull Identity identity, @Nonnull SignatureWrapper signature, @Nullable Agent agent) throws SQLException {
         @Nullable Audit audit = signature.getAudit();
         if (audit != null && agent != null) audit = getAudit(connection, identity, audit.getLastTime(), agent);
         return new Pair<Block, Audit>(block, audit);

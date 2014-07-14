@@ -2,7 +2,7 @@ package ch.virtualid.handler;
 
 import ch.virtualid.agent.Authentications;
 import ch.virtualid.concepts.Role;
-import ch.virtualid.database.Entity;
+import ch.virtualid.entity.Entity;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.FailedIdentityException;
 import ch.xdf.Block;

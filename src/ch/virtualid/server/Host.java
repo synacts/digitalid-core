@@ -6,7 +6,7 @@ import ch.virtualid.cryptography.PrivateKeyChain;
 import ch.virtualid.cryptography.PublicKey;
 import ch.virtualid.cryptography.PublicKeyChain;
 import ch.virtualid.database.Database;
-import ch.virtualid.database.Site;
+import ch.virtualid.entity.Site;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.HostIdentity;
 import ch.virtualid.identity.Identity;
@@ -38,7 +38,7 @@ public final class Host extends Site {
     
     @Override
     public @Nonnull String getReference() {
-        return "map_identity (identity)";
+        return "REFERENCES map_identity (identity)";
     }
     
     

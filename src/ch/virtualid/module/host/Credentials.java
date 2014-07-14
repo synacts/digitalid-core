@@ -1,6 +1,9 @@
 package ch.virtualid.module.host;
 
-import ch.virtualid.database.HostEntity;
+import ch.virtualid.database.Database;
+import ch.virtualid.entity.Site;
+import ch.virtualid.module.HostModule;
+import ch.virtualid.module.Module;
 import java.sql.SQLException;
 import java.sql.Statement;
 import javax.annotation.Nonnull;
@@ -13,15 +16,13 @@ import javax.annotation.Nonnull;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 0.0
  */
-public final class Credentials {
+public final class Credentials extends HostModule {
     
-    /**
-     * Initializes the database by creating the appropriate tables if necessary.
-     * 
-     * @param connection an open host connection to the database.
-     */
-    public static void initialize(@Nonnull HostEntity connection) throws SQLException {
-        try (@Nonnull Statement statement = connection.createStatement()) {
+    static { Module.add(new Credentials()); }
+    
+    @Override
+    protected void createTables(@Nonnull Site site) throws SQLException {
+        try (@Nonnull Statement statement = Database.getConnection().createStatement()) {
             
         }
     }
