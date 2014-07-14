@@ -1,4 +1,4 @@
-package ch.virtualid.database;
+package ch.virtualid.entity;
 
 import ch.virtualid.client.Client;
 import ch.virtualid.concepts.Role;

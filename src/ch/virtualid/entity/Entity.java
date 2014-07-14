@@ -1,8 +1,9 @@
-package ch.virtualid.database;
+package ch.virtualid.entity;
 
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Client;
 import ch.virtualid.concept.Concept;
+import ch.virtualid.concepts.Role;
 import ch.virtualid.exceptions.ShouldNeverHappenError;
 import ch.virtualid.identity.Identity;
 import ch.virtualid.interfaces.Immutable;
@@ -12,8 +13,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
-
-import todo;
 
 /**
  * An entity captures the {@link Site site} and the {@link Identity identity} of a {@link Concept concept}.
@@ -37,6 +36,7 @@ public abstract class Entity implements Immutable, SQLizable {
      * 
      * @return the site of this entity.
      */
+    @Pure
     public abstract @Nonnull Site getSite();
     
     /**
@@ -44,6 +44,7 @@ public abstract class Entity implements Immutable, SQLizable {
      * 
      * @return the identity of this entity.
      */
+    @Pure
     public abstract @Nonnull Identity getIdentity();
     
     /**
@@ -51,6 +52,7 @@ public abstract class Entity implements Immutable, SQLizable {
      * 
      * @return the number that references this entity in the database.
      */
+    @Pure
     public abstract long getNumber();
     
     
@@ -65,9 +67,9 @@ public abstract class Entity implements Immutable, SQLizable {
     @Pure
     public static @Nonnull Entity get(@Nonnull Site site, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
         if (site instanceof Client) {
-            // TODO
+            return new ClientEntity((Client) site, Role.get((Client) site, resultSet, columnIndex));
         } else if (site instanceof Host) {
-            
+            return new HostEntity((Host) site, Identity.get(resultSet, columnIndex));
         } else {
             throw new ShouldNeverHappenError("A site is either a client or a host.");
         }
@@ -78,6 +80,7 @@ public abstract class Entity implements Immutable, SQLizable {
         preparedStatement.setLong(parameterIndex, getNumber());
     }
     
+    @Pure
     @Override
     public abstract @Nonnull String toString();
     

@@ -1,4 +1,4 @@
-package ch.virtualid.database;
+package ch.virtualid.entity;
 
 import ch.virtualid.identity.Identity;
 import ch.virtualid.interfaces.Immutable;
