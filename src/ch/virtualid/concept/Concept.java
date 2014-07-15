@@ -15,7 +15,7 @@ import javax.annotation.Nullable;
  * This class models an abstract {@link Concept concept} in the {@link Database database}.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 1.0
+ * @version 2.0
  */
 public abstract class Concept {
     
@@ -48,15 +48,15 @@ public abstract class Concept {
      * Adds the given observer to the sets of observers of the given aspects in the given map.
      * 
      * @param map the mapping from aspects to sets of observers.
-     * @param aspects the aspects to be observed.
      * @param observer the observer to be added.
+     * @param aspects the aspects to be observed.
      * 
-     * @require !aspects.isEmpty() : "The set of aspects is not empty.";
+     * @require aspects.length > 0 : "At least one aspect is provided.";
      */
-    private static void observe(@Nonnull Map<Aspect, Set<Observer>> map, @Nonnull Set<Aspect> aspects, @Nonnull Observer observer) {
-        assert !aspects.isEmpty() : "The set of aspects is not empty.";
+    private static void observe(@Nonnull Map<Aspect, Set<Observer>> map, @Nonnull Observer observer, @Nonnull Aspect... aspects) {
+        assert aspects.length > 0 : "At least one aspect is provided.";
         
-        for (@Nonnull Aspect aspect : aspects) {
+        for (final @Nonnull Aspect aspect : aspects) {
             @Nullable Set<Observer> observers = map.get(aspect);
             if (observers == null) {
                 observers = new LinkedHashSet<Observer>();
@@ -70,16 +70,16 @@ public abstract class Concept {
      * Removes the given observer from the sets of observers of the given aspects in the given map.
      * 
      * @param map the mapping from aspects to sets of observers.
-     * @param aspects the aspects to be unobserved.
      * @param observer the observer to be removed.
+     * @param aspects the aspects to be unobserved.
      * 
-     * @require !aspects.isEmpty() : "The set of aspects is not empty.";
+     * @require aspects.length > 0 : "At least one aspect is provided.";
      */
-    private static void unobserve(@Nonnull Map<Aspect, Set<Observer>> map, @Nonnull Set<Aspect> aspects, @Nonnull Observer observer) {
-        assert !aspects.isEmpty() : "The set of aspects is not empty.";
+    private static void unobserve(@Nonnull Map<Aspect, Set<Observer>> map, @Nonnull Observer observer, @Nonnull Aspect... aspects) {
+        assert aspects.length > 0 : "At least one aspect is provided.";
         
-        for (@Nonnull Aspect aspect : aspects) {
-            @Nullable Set<Observer> observers = map.get(aspect);
+        for (final @Nonnull Aspect aspect : aspects) {
+            final @Nullable Set<Observer> observers = map.get(aspect);
             if (observers != null) observers.remove(observer);
         }
     }
@@ -92,9 +92,9 @@ public abstract class Concept {
      * @param concept the concept in which the change has occurred.
      */
     private static void notify(@Nonnull Map<Aspect, Set<Observer>> map, @Nonnull Aspect aspect, @Nonnull Concept concept) {
-        @Nullable Set<Observer> observers = map.get(aspect);
+        final @Nullable Set<Observer> observers = map.get(aspect);
         if (observers != null) {
-            for (@Nonnull Observer observer : observers) observer.notify(aspect, concept);
+            for (final @Nonnull Observer observer : observers) observer.notify(aspect, concept);
         }
     }
     
@@ -137,26 +137,26 @@ public abstract class Concept {
     /**
      * Observes the given aspects of this concept and notifies the given observer on change.
      * 
-     * @param aspects the aspects to be observed.
      * @param observer the observer to be notified.
+     * @param aspects the aspects to be observed.
      * 
-     * @require !aspects.isEmpty() : "The set of aspects is not empty.";
+     * @require aspects.length > 0 : "At least one aspect is provided.";
      */
-    public final void observe(@Nonnull Set<Aspect> aspects, @Nonnull Observer observer) {
+    public final void observe(@Nonnull Observer observer, @Nonnull Aspect... aspects) {
         if (conceptObservers == null) conceptObservers = new HashMap<Aspect, Set<Observer>>();
-        observe(conceptObservers, aspects, observer);
+        observe(conceptObservers, observer, aspects);
     }
     
     /**
      * Unobserves the given aspects of this concept so that the given observer is no longer notified on change.
      * 
-     * @param aspects the aspects to be unobserved.
      * @param observer the observer no longer to be notified.
+     * @param aspects the aspects to be unobserved.
      * 
-     * @require !aspects.isEmpty() : "The set of aspects is not empty.";
+     * @require aspects.length > 0 : "At least one aspect is provided.";
      */
-    public final void unobserve(@Nonnull Set<Aspect> aspects, @Nonnull Observer observer) {
-        if (conceptObservers != null) unobserve(conceptObservers, aspects, observer);
+    public final void unobserve(@Nonnull Observer observer, @Nonnull Aspect... aspects) {
+        if (conceptObservers != null) unobserve(conceptObservers, observer, aspects);
     }
     
     /**
