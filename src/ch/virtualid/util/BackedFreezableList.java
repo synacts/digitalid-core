@@ -155,6 +155,55 @@ class BackedFreezableList<E> extends BackedFreezableCollection<E> implements Fre
     }
     
     
+    /**
+     * Returns whether the elements in this list are ordered (excluding null values).
+     * 
+     * @param strictly whether the ordering is strict (i.e. without equal values).
+     * @param ascending whether the ordering is ascending (true) or descending (false).
+     * 
+     * @return {@code true} if the elements in this list are ordered, {@code false} otherwise.
+     */
+    @Pure
+    @SuppressWarnings("unchecked")
+    private boolean isOrdered(boolean strictly, boolean ascending) {
+        @Nullable E lastElement = null;
+        for (final @Nullable E element : this) {
+            if (element == null) continue;
+            if (lastElement != null) {
+                if (element instanceof Comparable) {
+                    if (((Comparable) element).compareTo(lastElement) * (ascending ? 1 : -1) < (strictly ? 1 : 0)) return false;
+                }
+            }
+            lastElement = element;
+        }
+        return true;
+    }
+    
+    @Pure
+    @Override
+    public boolean isAscending() {
+        return isOrdered(false, true);
+    }
+    
+    @Pure
+    @Override
+    public boolean isStrictlyAscending() {
+        return isOrdered(true, true);
+    }
+    
+    @Pure
+    @Override
+    public boolean isDescending() {
+        return isOrdered(false, false);
+    }
+    
+    @Pure
+    @Override
+    public boolean isStrictlyDescending() {
+        return isOrdered(true, false);
+    }
+    
+    
     @Pure
     @Override
     public @Capturable @Nonnull FreezableList<E> clone() {
