@@ -1,7 +1,7 @@
 package ch.virtualid.client;
 
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.concepts.Time;
+import ch.virtualid.auxiliary.Time;
 import ch.virtualid.cryptography.Exponent;
 import ch.virtualid.identity.HostIdentity;
 import ch.virtualid.interfaces.Immutable;

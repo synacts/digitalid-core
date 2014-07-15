@@ -5,7 +5,7 @@ import ch.virtualid.agent.Permissions;
 import ch.virtualid.agent.ReadonlyPermissions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Synchronizer;
-import ch.virtualid.concepts.Role;
+import ch.virtualid.client.Role;
 import ch.virtualid.entity.ClientEntity;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.Entity;

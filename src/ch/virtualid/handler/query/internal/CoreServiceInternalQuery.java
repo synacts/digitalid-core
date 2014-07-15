@@ -3,7 +3,7 @@ package ch.virtualid.handler.query.internal;
 import ch.virtualid.agent.Agent;
 import ch.virtualid.agent.Permissions;
 import ch.virtualid.concept.Entity;
-import ch.virtualid.concepts.Role;
+import ch.virtualid.client.Role;
 import ch.virtualid.entity.ClientEntity;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.handler.InternalQuery;

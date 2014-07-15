@@ -1,8 +1,8 @@
 package ch.virtualid.concept;
 
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.entity.ClientEntity;
 import ch.virtualid.database.Database;
+import ch.virtualid.entity.ClientEntity;
 import ch.virtualid.entity.Entity;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -105,27 +105,27 @@ public abstract class Concept {
     private static final @Nonnull Map<Aspect, Set<Observer>> aspectObservers = new HashMap<Aspect, Set<Observer>>();
     
     /**
-     * Observes the given aspects independently of any concept and notifies the given observer on change.
+     * Observes the given aspects independently of a particular instance and notifies the given observer on change.
      * 
-     * @param aspects the aspects to be observed.
      * @param observer the observer to be notified.
+     * @param aspects the aspects to be observed.
      * 
-     * @require !aspects.isEmpty() : "The set of aspects is not empty.";
+     * @require aspects.length > 0 : "At least one aspect is provided.";
      */
     public static void observeAspects(@Nonnull Observer observer, @Nonnull Aspect... aspects) {
         observe(aspectObservers, observer, aspects);
     }
     
     /**
-     * Unobserves the given aspects independently of any concept so that the given observer is no longer notified on change.
+     * Unobserves the given aspects independently of a particular instance so that the given observer is no longer notified on change.
      * 
-     * @param aspects the aspects to be unobserved.
      * @param observer the observer no longer to be notified.
+     * @param aspects the aspects to be unobserved.
      * 
-     * @require !aspects.isEmpty() : "The set of aspects is not empty.";
+     * @require aspects.length > 0 : "At least one aspect is provided.";
      */
-    public static void unobserveAspects(@Nonnull Set<Aspect> aspects, @Nonnull Observer observer) {
-        unobserve(aspectObservers, aspects, observer);
+    public static void unobserveAspects(@Nonnull Observer observer, @Nonnull Aspect... aspects) {
+        unobserve(aspectObservers, observer, aspects);
     }
     
     

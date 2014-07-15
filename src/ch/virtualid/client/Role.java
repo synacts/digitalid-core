@@ -1,8 +1,7 @@
-package ch.virtualid.concepts;
+package ch.virtualid.client;
 
 import ch.virtualid.agent.Agent;
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.client.Client;
 import ch.virtualid.identity.NonHostIdentity;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Immutable;

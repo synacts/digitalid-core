@@ -1,4 +1,4 @@
 /**
- * Provides classes for running clients, managing credentials and issuing requests.
+ * Provides classes for running clients and their modules.
  */
 package ch.virtualid.client;

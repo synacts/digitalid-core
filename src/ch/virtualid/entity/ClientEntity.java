@@ -1,7 +1,7 @@
 package ch.virtualid.entity;
 
 import ch.virtualid.client.Client;
-import ch.virtualid.concepts.Role;
+import ch.virtualid.client.Role;
 import ch.virtualid.identity.NonHostIdentity;
 import ch.virtualid.interfaces.Immutable;
 import javax.annotation.Nonnull;

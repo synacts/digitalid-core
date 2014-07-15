@@ -3,7 +3,7 @@ package ch.virtualid.entity;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Client;
 import ch.virtualid.concept.Concept;
-import ch.virtualid.concepts.Role;
+import ch.virtualid.client.Role;
 import ch.virtualid.exceptions.ShouldNeverHappenError;
 import ch.virtualid.identity.Identity;
 import ch.virtualid.interfaces.Immutable;

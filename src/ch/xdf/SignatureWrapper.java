@@ -4,7 +4,7 @@ import ch.virtualid.annotations.Exposed;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.agent.Agent;
 import ch.virtualid.agent.OutgoingRole;
-import ch.virtualid.concepts.Time;
+import ch.virtualid.auxiliary.Time;
 import ch.virtualid.credential.Credential;
 import ch.virtualid.identity.FailedIdentityException;
 import ch.virtualid.identity.Identifier;

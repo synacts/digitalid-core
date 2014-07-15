@@ -1,7 +1,7 @@
 package ch.virtualid.cryptography;
 
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.concepts.Time;
+import ch.virtualid.auxiliary.Time;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.BlockableObject;
