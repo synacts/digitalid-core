@@ -2,6 +2,7 @@ package ch.virtualid.entity;
 
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Client;
+import ch.virtualid.concept.Instance;
 import ch.virtualid.module.Module;
 import ch.virtualid.server.Host;
 import java.sql.SQLException;
@@ -16,7 +17,7 @@ import javax.annotation.Nonnull;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public abstract class Site {
+public abstract class Site extends Instance {
     
     /**
      * Stores the prefix of the site-specific database tables.

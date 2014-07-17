@@ -157,9 +157,9 @@ public final class DatabaseTest {
     }
     
     public static void main(String[] args) throws SQLException, IOException {
-//        Database.initialize(new MySQLConfiguration());
-        Database.initialize(new PostgreSQLConfiguration());
-//        Database.initialize(new SQLiteConfiguration());
+//        Database.initialize(new MySQLConfiguration(), true);
+        Database.initialize(new PostgreSQLConfiguration(), true);
+//        Database.initialize(new SQLiteConfiguration(), true);
     }
     
 }

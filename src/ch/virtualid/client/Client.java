@@ -1,9 +1,11 @@
 package ch.virtualid.client;
 
+import ch.virtualid.agent.IncomingRole;
 import ch.virtualid.agent.Permissions;
 import ch.virtualid.agent.RandomizedPermissions;
 import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
+import ch.virtualid.concept.Aspect;
 import ch.virtualid.credential.ClientCredential;
 import ch.virtualid.credential.Credential;
 import ch.virtualid.cryptography.Element;
@@ -13,6 +15,7 @@ import ch.virtualid.cryptography.Parameters;
 import ch.virtualid.cryptography.PublicKey;
 import ch.virtualid.cryptography.SymmetricKey;
 import ch.virtualid.database.Database;
+import ch.virtualid.entity.Role;
 import ch.virtualid.entity.Site;
 import ch.virtualid.expression.Expression;
 import ch.virtualid.identity.Category;
@@ -23,9 +26,11 @@ import ch.virtualid.identity.NonHostIdentifier;
 import ch.virtualid.identity.NonHostIdentity;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.io.Directory;
-import ch.virtualid.module.CoreService;
+import ch.virtualid.module.client.Roles;
 import ch.virtualid.packet.ClientRequest;
 import ch.virtualid.packet.Packet;
+import ch.virtualid.util.FreezableList;
+import ch.virtualid.util.ReadonlyList;
 import ch.xdf.Block;
 import ch.xdf.Int32Wrapper;
 import ch.xdf.Int8Wrapper;
@@ -61,21 +66,16 @@ import javax.annotation.Nullable;
 /**
  * A client is configured with a name and a secret and stores credentials.
  * 
- * TODO: Introduce methods like getRoles and getCredential.
- * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 0.6
  */
 public final class Client extends Site {
     
-    public static void initialize() {
-        try (@Nonnull ClientClientSitection = Database.getClientConnection()) {
-            CoreService.initialize(connection); // TODO: Clients are no longer static!
-            connection.commit();
-        } catch (@Nonnull SQLException exception) {
-//            throw new ServiceException("Could not create the database tables of the core service.", exception);
-        }
-    }
+    /**
+     * Stores the aspect of a new role being added to the observed client.
+     */
+    public static final @Nonnull Aspect ROLE_ADDED = new Aspect(Client.class, "role added");
+    
     
     /**
      * The pattern that valid client names have to match.
@@ -169,6 +169,46 @@ public final class Client extends Site {
     public BigInteger getSecret() {
         return secret;
     }
+    
+    
+    /**
+     * Stores the roles of this client.
+     */
+    private @Nullable FreezableList<Role> roles;
+    
+    /**
+     * Stores whether the roles are loaded.
+     */
+    private boolean rolesLoaded = false;
+    
+    /**
+     * Returns the roles of this client.
+     * 
+     * @return the roles of this client.
+     */
+    @Pure
+    public @Nonnull ReadonlyList<Role> getRoles() throws SQLException {
+        if (!rolesLoaded) {
+            roles = Roles.getRoles(this);
+            rolesLoaded = true;
+        }
+        assert roles != null;
+        return roles;
+    }
+    
+    /**
+     * Adds the given role to the roles of this client.
+     * 
+     * @param issuer the issuer of the role to add.
+     * @param authorization the incoming role with the authorization for role to add.
+     */
+    public void addRole(@Nonnull NonHostIdentity issuer, @Nonnull IncomingRole authorization) throws SQLException {
+        getRoles();
+        assert roles != null;
+        roles.add(Role.get(this, issuer, null, null, authorization));
+        notify(ROLE_ADDED);
+    }
+    
     
     /**
      * Returns whether this client is accredited at the given VID.

@@ -111,7 +111,7 @@ public abstract class Identity implements Immutable, SQLizable {
         if (object == this) return true;
         if (object == null || !(object instanceof Identity)) return false;
         final @Nonnull Identity other = (Identity) object;
-        return number == other.number;
+        return this.number == other.number;
     }
     
     @Pure

@@ -3,7 +3,7 @@ package ch.virtualid.entity;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Client;
 import ch.virtualid.concept.Concept;
-import ch.virtualid.client.Role;
+import ch.virtualid.concept.Instance;
 import ch.virtualid.exceptions.ShouldNeverHappenError;
 import ch.virtualid.identity.Identity;
 import ch.virtualid.interfaces.Immutable;
@@ -17,13 +17,13 @@ import javax.annotation.Nonnull;
 /**
  * An entity captures the {@link Site site} and the {@link Identity identity} of a {@link Concept concept}.
  * 
- * @see HostEntity
- * @see ClientEntity
+ * @see Account
+ * @see Role
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 1.8
+ * @version 2.0
  */
-public abstract class Entity implements Immutable, SQLizable {
+public abstract class Entity extends Instance implements Immutable, SQLizable {
     
     /**
      * Stores the data type used to reference instances of this class.
@@ -59,6 +59,7 @@ public abstract class Entity implements Immutable, SQLizable {
     /**
      * Returns the given column of the result set as an instance of this class.
      * 
+     * @param site the site that accommodates the returned entity.
      * @param resultSet the result set to retrieve the data from.
      * @param columnIndex the index of the column containing the data.
      * 
@@ -66,22 +67,24 @@ public abstract class Entity implements Immutable, SQLizable {
      */
     @Pure
     public static @Nonnull Entity get(@Nonnull Site site, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
-        if (site instanceof Client) {
-            return new ClientEntity((Client) site, Role.get((Client) site, resultSet, columnIndex));
-        } else if (site instanceof Host) {
-            return new HostEntity((Host) site, Identity.get(resultSet, columnIndex));
+        if (site instanceof Host) {
+            return Account.get((Host) site, resultSet, columnIndex);
+        } else if (site instanceof Client) {
+            return Role.get((Client) site, resultSet, columnIndex);
         } else {
-            throw new ShouldNeverHappenError("A site is either a client or a host.");
+            throw new ShouldNeverHappenError("A site is either a host or a client.");
         }
     }
     
     @Override
-    public void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+    public final void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
         preparedStatement.setLong(parameterIndex, getNumber());
     }
     
     @Pure
     @Override
-    public abstract @Nonnull String toString();
+    public final @Nonnull String toString() {
+        return String.valueOf(getNumber());
+    }
     
 }

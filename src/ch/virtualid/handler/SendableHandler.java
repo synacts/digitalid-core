@@ -5,11 +5,11 @@ import ch.virtualid.agent.Permissions;
 import ch.virtualid.agent.ReadonlyPermissions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Synchronizer;
-import ch.virtualid.client.Role;
+import ch.virtualid.entity.Role;
 import ch.virtualid.entity.ClientEntity;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.Entity;
-import ch.virtualid.entity.HostEntity;
+import ch.virtualid.entity.Account;
 import ch.virtualid.exceptions.ShouldNeverHappenError;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.Identifier;
@@ -85,7 +85,7 @@ public abstract class SendableHandler extends Handler {
     protected SendableHandler(@Nullable Entity entity, @Nonnull Identifier subject, @Nonnull HostIdentifier recipient) {
         super(entity, subject);
         
-        assert !(entity instanceof HostEntity)|| canBeSentByHost() : "Handlers encoded on hosts have to be sendable by hosts.";
+        assert !(entity instanceof Account)|| canBeSentByHost() : "Handlers encoded on hosts have to be sendable by hosts.";
         assert !(entity instanceof ClientEntity) || !canOnlyBeSentByHost() : "Handlers only sendable by hosts may not occur on clients.";
         
         this.recipient = recipient;

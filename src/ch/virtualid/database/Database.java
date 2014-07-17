@@ -53,6 +53,36 @@ public final class Database implements Immutable {
     
     
     /**
+     * Stores whether the database is set up for single-access.
+     * In case of single-access, only one process accesses the
+     * database, which allows to keep the objects in memory up
+     * to date with no need to reload them all the time.
+     * (Clients on hosts are run in multi-access mode.)
+     */
+    private static boolean singleAccess;
+    
+    /**
+     * Returns whether the database is set up for single-access.
+     * 
+     * @return whether the database is set up for single-access.
+     */
+    @Pure
+    public static boolean isSingleAccess() {
+        return singleAccess;
+    }
+    
+    /**
+     * Returns whether the database is set up for multi-access.
+     * 
+     * @return whether the database is set up for multi-access.
+     */
+    @Pure
+    public static boolean isMultiAccess() {
+        return !singleAccess;
+    }
+    
+    
+    /**
      * Initializes all classes in the given directory.
      * 
      * @param directory the directory containing the classes.
@@ -99,15 +129,17 @@ public final class Database implements Immutable {
      * otherwise their initialization might be lost by a rollback.
      * 
      * @param configuration the configuration of the database.
+     * @param singleAccess whether the database is accessed by a single process.
      */
-    public static void initialize(@Nonnull Configuration configuration) {
+    public static void initialize(@Nonnull Configuration configuration, boolean singleAccess) {
         Database.configuration = configuration;
+        Database.singleAccess = singleAccess;
         mainThread.set(true);
         
         try {
             final @Nonnull File root = new File(Database.class.getProtectionDomain().getCodeSource().getLocation().toURI());
-            System.out.println("Root of classes: " + root);
-
+            logger.log(Level.INFORMATION, "Root of classes: " + root);
+            
             if (root.getName().endsWith(".jar")) {
                 initializeJarFile(new JarFile(root));
             } else {
