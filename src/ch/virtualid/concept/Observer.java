@@ -3,7 +3,7 @@ package ch.virtualid.concept;
 import javax.annotation.Nonnull;
 
 /**
- * Implementing this interface allows a class to observe changes in {@link Concept concepts}.
+ * Implementing this interface allows a class to observe changes in {@link Instance instances}.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
@@ -11,11 +11,11 @@ import javax.annotation.Nonnull;
 public interface Observer {
     
     /**
-     * Notifies the object about a change in the given aspect of the given concept.
+     * Notifies the object about a change in the given aspect of the given instance.
      * 
-     * @param aspect the aspect that changed in the given concept.
-     * @param concept the concept that reported a change in the given aspect.
+     * @param aspect the aspect that changed in the given instance.
+     * @param instance the instance that reported a change in the given aspect.
      */
-    public void notify(@Nonnull Aspect aspect, @Nonnull Concept concept);
+    public void notify(@Nonnull Aspect aspect, @Nonnull Instance instance);
     
 }
