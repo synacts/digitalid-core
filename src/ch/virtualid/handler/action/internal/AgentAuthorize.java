@@ -48,8 +48,8 @@ public class AgentAuthorize {
             restrictionsOfAuthorizer.checkCoverage(restrictionsOfAuthorizee);
             restrictionsOfAuthorizer.checkCoverage(newRestrictionsOfAuthorizee);
             
-            authorizationOfAuthorizer.checkCoverage(authorizationOfAuthorizee);
-            authorizationOfAuthorizer.checkCoverage(newAuthorizationOfAuthorizee);
+            authorizationOfAuthorizer.checkDoesCover(authorizationOfAuthorizee);
+            authorizationOfAuthorizer.checkDoesCover(newAuthorizationOfAuthorizee);
             
             host.authorizeClient(connection, vid, commitmentOfAuthorizee, newRestrictionsOfAuthorizee, newAuthorizationOfAuthorizee);
             

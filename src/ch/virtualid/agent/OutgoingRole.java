@@ -1,7 +1,5 @@
 package ch.virtualid.agent;
 
-import ch.virtualid.agent.Permissions;
-import ch.virtualid.agent.Restrictions;
 import ch.virtualid.concepts.Context;
 import ch.virtualid.credential.Credential;
 import ch.virtualid.database.Database;
@@ -147,7 +145,7 @@ public final class OutgoingRole extends Agent {
         assert permissions != null : "The permissions of the credential is not null.";
         
         getRestrictions().checkCoverage(restrictions);
-        getPermissions().checkCoverage(permissions);
+        getPermissions().checkDoesCover(permissions);
     }
     
     /**

@@ -175,22 +175,15 @@ public final class Role extends Entity implements Immutable, SQLizable {
     private @Nullable FreezableList<Role> roles;
     
     /**
-     * Stores whether the roles are loaded.
-     */
-    private boolean rolesLoaded = false;
-    
-    /**
      * Returns the roles of this role.
      * 
      * @return the roles of this role.
      */
     @Pure
     public @Nonnull ReadonlyList<Role> getRoles() throws SQLException {
-        if (!rolesLoaded) {
+        if (roles == null) {
             roles = Roles.getRoles(this);
-            rolesLoaded = true;
         }
-        assert roles != null;
         return roles;
     }
     

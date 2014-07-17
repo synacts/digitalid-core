@@ -1,8 +1,6 @@
 package ch.virtualid.agent;
 
 import ch.virtualid.client.Commitment;
-import ch.virtualid.agent.Permissions;
-import ch.virtualid.agent.Restrictions;
 import ch.virtualid.database.Database;
 import ch.virtualid.exceptions.ShouldNeverHappenError;
 import ch.virtualid.identity.FailedIdentityException;
@@ -35,11 +33,6 @@ public final class ClientAgent extends Agent {
      * Stores the name of this client.
      */
     private @Nonnull String name;
-    
-    /**
-     * Stores the preferences of this agent or null if not yet loaded.
-     */
-    private @Nullable Permissions preferences;
     
     
     /**

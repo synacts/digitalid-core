@@ -57,6 +57,22 @@ public final class Block implements Immutable, SQLizable {
         return blockable == null ? null : blockable.toBlock();
     }
     
+    /**
+     * Returns the blockable instance as a block of the given type or null if the instance is null.
+     * 
+     * @param type the type to set for the returned block.
+     * @param blockable the instance to be returned as a block.
+     * 
+     * @return the blockable instance as a block of the given type or null if the instance is null.
+     * 
+     * @require type.isLoaded() : "The type declaration is loaded.";
+     * @require blockable == null || type.isBasedOn(blockable.getType()) : "If the blockable instance is not null, the type is based on its type.";
+     */
+    @Pure
+    public static @Nullable Block toBlock(@Nonnull SemanticType type, @Nullable Blockable blockable) {
+        return blockable == null ? null : blockable.toBlock().setType(type);
+    }
+    
     
     /**
      * Asserts that the class invariant still holds.

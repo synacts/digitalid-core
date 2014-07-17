@@ -48,7 +48,7 @@ public class GetCredentialQuery {
             Permissions authorization = host.getAuthorization(connection, vid, commitment);
             if (restrictions == null) throw new PacketException(PacketException.AUTHORIZATION);
             RandomizedAuthorization randomizedAuthorization = new RandomizedAuthorization(element);
-            authorization.checkCoverage(randomizedAuthorization.getAuthorization());
+            authorization.checkDoesCover(randomizedAuthorization.getAuthorization());
             
             PublicKey publicKey = host.getPublicKey();
             PrivateKey privateKey = host.getPrivateKey();

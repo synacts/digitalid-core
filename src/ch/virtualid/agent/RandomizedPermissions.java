@@ -3,6 +3,7 @@ package ch.virtualid.agent;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Commitment;
 import ch.virtualid.cryptography.Parameters;
+import ch.virtualid.exceptions.InvalidDeclarationException;
 import ch.virtualid.identity.FailedIdentityException;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
@@ -16,26 +17,37 @@ import ch.xdf.TupleWrapper;
 import ch.xdf.exceptions.InvalidEncodingException;
 import java.math.BigInteger;
 import java.security.SecureRandom;
+import java.sql.SQLException;
 import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * This class models the randomized permissions of clients.
+ * This class models the randomized {@link Permissions permissions} of {@link IncomingRole incoming roles}.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 1.0
+ * @version 2.0
  */
 public final class RandomizedPermissions implements Immutable, Blockable {
     
     /**
-     * Stores the semantic type {@code time@virtualid.ch}.
+     * Stores the semantic type {@code salt.randomized.permission.agent@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("time@virtualid.ch").load(Int64Wrapper.TYPE);
+    private static final @Nonnull SemanticType SALT = SemanticType.create("salt.randomized.permission.agent@virtualid.ch").load(HashWrapper.TYPE);
+    
+    /**
+     * Stores the semantic type {@code permissions.randomized.permission.agent@virtualid.ch}.
+     */
+    private static final @Nonnull SemanticType PERMISSIONS = SemanticType.create("permissions.randomized.permission.agent@virtualid.ch").load(Permissions.TYPE);
+    
+    /**
+     * Stores the semantic type {@code randomized.permission.agent@virtualid.ch}.
+     */
+    public static final @Nonnull SemanticType TYPE = SemanticType.create("randomized.permission.agent@virtualid.ch").load(Int64Wrapper.TYPE);
     
     
     /**
-     * Stores the hash of the randomized permissions.
+     * Stores the hash of these randomized permissions.
      */
     private final @Nonnull BigInteger hash;
     
@@ -81,25 +93,31 @@ public final class RandomizedPermissions implements Immutable, Blockable {
      * Creates new randomized permissions from the given block.
      * 
      * @param block the block containing the randomized permissions.
+     * 
+     * @require block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
      */
-    public RandomizedPermissions(@Nonnull Block block) throws InvalidEncodingException, FailedIdentityException {
-        super(block);
+    public RandomizedPermissions(@Nonnull Block block) throws InvalidEncodingException, FailedIdentityException, SQLException, InvalidDeclarationException {
+        assert block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
         
         this.hash = block.getHash();
-        @Nonnull ReadonlyArray<Block> tuple = new TupleWrapper(block).getElementsNotNull(2);
+        final @Nonnull ReadonlyArray<Block> tuple = new TupleWrapper(block).getElementsNotNull(2);
         this.salt = new HashWrapper(tuple.getNotNull(0)).getValue();
         this.permissions = new Permissions(tuple.getNotNull(1)).freeze();
     }
     
     @Pure
     @Override
+    public @Nonnull SemanticType getType() {
+        return TYPE;
+    }
+    
+    @Pure
+    @Override
     public @Nonnull Block toBlock() {
-        if (permissions == null) return Block.EMPTY;
-        
-        @Nonnull FreezableArray<Block> array = new FreezableArray<Block>(2);
-        array.set(0, new HashWrapper(salt).toBlock());
-        array.set(1, permissions.toBlock());
-        return new TupleWrapper(array.freeze()).toBlock();
+        final @Nonnull FreezableArray<Block> array = new FreezableArray<Block>(2);
+        array.set(0, new HashWrapper(SALT, salt).toBlock());
+        array.set(1, Block.toBlock(PERMISSIONS, permissions));
+        return new TupleWrapper(TYPE, array.freeze()).toBlock();
     }
     
     
@@ -129,9 +147,10 @@ public final class RandomizedPermissions implements Immutable, Blockable {
     @Pure
     @Override
     public boolean equals(@Nullable Object object) {
+        if (object == this) return true;
         if (object == null || !(object instanceof Commitment)) return false;
-        @Nonnull RandomizedPermissions other = (RandomizedPermissions) object;
-        return hash.equals(other.hash) && Objects.equals(salt, other.salt) && Objects.equals(permissions, other.permissions);
+        final @Nonnull RandomizedPermissions other = (RandomizedPermissions) object;
+        return this.hash.equals(other.hash) && Objects.equals(this.salt, other.salt) && Objects.equals(this.permissions, other.permissions);
     }
     
     @Pure

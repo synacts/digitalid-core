@@ -1,8 +1,8 @@
 package ch.virtualid.identity;
 
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.concepts.Context;
 import ch.virtualid.auxiliary.Time;
+import ch.virtualid.concepts.Context;
 import ch.virtualid.database.Database;
 import ch.virtualid.exceptions.InvalidDeclarationException;
 import ch.virtualid.interfaces.Immutable;
@@ -11,6 +11,7 @@ import ch.virtualid.util.FreezableLinkedList;
 import ch.virtualid.util.ReadonlyList;
 import ch.xdf.DataWrapper;
 import ch.xdf.ListWrapper;
+import ch.xdf.exceptions.InvalidEncodingException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -527,6 +528,14 @@ public final class SemanticType extends Type implements Immutable {
     }
     
     /**
+     * Checks that this semantic type can be used as an attribute and throws a {@link InvalidEncodingException} if not.
+     */
+    @Pure
+    public void checkIsAttributeType() throws InvalidEncodingException {
+        if (!isAttributeType()) throw new InvalidEncodingException(this + " is not an attribute type.");
+    }
+    
+    /**
      * Returns whether this semantic type can be used as an attribute for the given category.
      * 
      * @param category the category of interest.
@@ -587,6 +596,14 @@ public final class SemanticType extends Type implements Immutable {
     @Pure
     public boolean isRoleType() {
         return isBasedOn(Context.FLAT);
+    }
+    
+    /**
+     * Checks that this semantic type can be used to denote roles and throws a {@link InvalidEncodingException} if not.
+     */
+    @Pure
+    public void checkIsRoleType() throws InvalidEncodingException {
+        if (!isRoleType()) throw new InvalidEncodingException(this + " is not a role type.");
     }
     
 }

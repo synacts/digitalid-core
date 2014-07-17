@@ -1,6 +1,5 @@
 package ch.virtualid.agent;
 
-import ch.virtualid.agent.Restrictions;
 import ch.virtualid.database.Database;
 import ch.virtualid.exceptions.ShouldNeverHappenError;
 import ch.virtualid.identity.FailedIdentityException;

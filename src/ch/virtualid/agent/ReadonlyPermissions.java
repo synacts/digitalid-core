@@ -1,10 +1,11 @@
 package ch.virtualid.agent;
 
+import ch.virtualid.annotations.Capturable;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.identity.SemanticType;
+import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.packet.PacketException;
 import ch.virtualid.util.ReadonlyMap;
-import ch.virtualid.interfaces.Blockable;
 import javax.annotation.Nonnull;
 
 /**
@@ -15,7 +16,7 @@ import javax.annotation.Nonnull;
  * @see Permissions
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 1.0
+ * @version 2.0
  */
 public interface ReadonlyPermissions extends ReadonlyMap<SemanticType, Boolean>, Blockable {
     
@@ -51,7 +52,7 @@ public interface ReadonlyPermissions extends ReadonlyMap<SemanticType, Boolean>,
      * @param type the semantic type to check.
      */
     @Pure
-    public void checkRead(@Nonnull SemanticType type) throws PacketException;
+    public void checkCanRead(@Nonnull SemanticType type) throws PacketException;
     
     /**
      * Returns whether an agent with these permissions can write the given type.
@@ -69,7 +70,7 @@ public interface ReadonlyPermissions extends ReadonlyMap<SemanticType, Boolean>,
      * @param type the semantic type to check.
      */
     @Pure
-    public void checkWrite(@Nonnull SemanticType type) throws PacketException;
+    public void checkCanWrite(@Nonnull SemanticType type) throws PacketException;
     
     /**
      * Returns whether these permissions cover the given permissions.
@@ -87,6 +88,11 @@ public interface ReadonlyPermissions extends ReadonlyMap<SemanticType, Boolean>,
      * @param permissions the permissions that need to be covered.
      */
     @Pure
-    public void checkCoverage(@Nonnull ReadonlyPermissions permissions) throws PacketException;
+    public void checkDoesCover(@Nonnull ReadonlyPermissions permissions) throws PacketException;
+    
+    
+    @Pure
+    @Override
+    public @Capturable @Nonnull Permissions clone();
     
 }

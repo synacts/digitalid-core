@@ -1,7 +1,6 @@
 package ch.virtualid.module.both;
 
 import ch.virtualid.agent.Agent;
-import ch.virtualid.agent.Authorization;
 import ch.virtualid.agent.ClientAgent;
 import ch.virtualid.agent.IncomingRole;
 import ch.virtualid.agent.OutgoingRole;
@@ -295,12 +294,12 @@ public final class Agents extends BothModule {
     /**
      * Returns the permissions (or preferences) of the given authorization.
      * 
-     * @param authorization the authorization whose permissions (or preferences) are to be returned.
+     * @param agent the authorization whose permissions (or preferences) are to be returned.
      * @param preference whether the preferences or the actual permissions are to be returned.
      * @return the permissions (or preferences) of the given authorization.
      */
-    public static @Nonnull Permissions getPermissions(@Nonnull Authorization authorization, boolean preference) throws SQLException {
-        @Nonnull String query = "SELECT map_identity.identity, map_identity.category, map_identity.address, authorization_permission.writing FROM authorization_permission JOIN map_identity ON authorization_permission.type = map_identity.identity WHERE authorizationID = " + authorization + " AND preference = " + preference;
+    public static @Nonnull Permissions getPermissions(@Nonnull Agent agent) throws SQLException {
+        @Nonnull String query = "SELECT map_identity.identity, map_identity.category, map_identity.address, authorization_permission.writing FROM authorization_permission JOIN map_identity ON authorization_permission.type = map_identity.identity WHERE authorizationID = " + agent + " AND preference = " + preference;
         try (@Nonnull Statement statement = connection.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(query)) {
             @Nonnull Permissions permissions = new Permissions();
             while (resultSet.next()) {

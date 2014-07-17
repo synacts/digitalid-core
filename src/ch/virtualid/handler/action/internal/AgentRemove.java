@@ -41,7 +41,7 @@ public class AgentRemove {
             
             Permissions authorizationOfRemover = host.getAuthorization(connection, vid, commitmentOfRemover);
             Permissions authorizationOfRemovee = host.getAuthorization(connection, vid, commitmentOfRemovee);
-            authorizationOfRemover.checkCoverage(authorizationOfRemovee);
+            authorizationOfRemover.checkDoesCover(authorizationOfRemovee);
             
             host.removeClient(connection, vid, commitmentOfRemovee);
             
