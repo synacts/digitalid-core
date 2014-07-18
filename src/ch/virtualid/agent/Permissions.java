@@ -27,7 +27,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * This class models the permissions of clients as a mapping from attribute types to writings.
+ * This class models the permissions of agents as a mapping from attribute types to writings.
  * 
  * @invariant areValid() : "These permissions are always valid.";
  * 
@@ -39,28 +39,28 @@ public final class Permissions extends FreezableLinkedHashMap<SemanticType, Bool
     /**
      * Stores the semantic type {@code type.permission.agent@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType ATTRIBUTE_TYPE = SemanticType.create("type.permission.agent@virtualid.ch").load(SemanticType.IDENTIFIER);    
+    private static final @Nonnull SemanticType ATTRIBUTE_TYPE = SemanticType.create("type.permission.agent@virtualid.ch").load(SemanticType.IDENTIFIER);
     
     /**
      * Stores the semantic type {@code writing.permission.agent@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType WRITING = SemanticType.create("writing.permission.agent@virtualid.ch").load(BooleanWrapper.TYPE);    
+    private static final @Nonnull SemanticType WRITING = SemanticType.create("writing.permission.agent@virtualid.ch").load(BooleanWrapper.TYPE);
     
     /**
      * Stores the semantic type {@code permission.agent@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType PERMISSION = SemanticType.create("permission.agent@virtualid.ch").load(TupleWrapper.TYPE, ATTRIBUTE_TYPE, WRITING);    
+    private static final @Nonnull SemanticType PERMISSION = SemanticType.create("permission.agent@virtualid.ch").load(TupleWrapper.TYPE, ATTRIBUTE_TYPE, WRITING); 
     
     /**
      * Stores the semantic type {@code list.permission.agent@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("list.permission.agent@virtualid.ch").load(ListWrapper.TYPE, PERMISSION);    
+    public static final @Nonnull SemanticType TYPE = SemanticType.create("list.permission.agent@virtualid.ch").load(ListWrapper.TYPE, PERMISSION);
     
     
     /**
      * Stores the semantic type {@code general.permission.agent@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType GENERAL = SemanticType.create("general.permission.agent@virtualid.ch").load(new Category[] {Category.HOST}, Time.TROPICAL_YEAR, BooleanWrapper.TYPE);    
+    public static final @Nonnull SemanticType GENERAL = SemanticType.create("general.permission.agent@virtualid.ch").load(new Category[] {Category.HOST}, Time.TROPICAL_YEAR, BooleanWrapper.TYPE);
     
     /**
      * Stores an empty set of permissions.
@@ -69,7 +69,7 @@ public final class Permissions extends FreezableLinkedHashMap<SemanticType, Bool
     
     
     /**
-     * Creates an empty set of permissions.
+     * Creates an empty map of permissions.
      */
     public Permissions() {}
     
@@ -268,6 +268,9 @@ public final class Permissions extends FreezableLinkedHashMap<SemanticType, Bool
      * 
      * @param type the attribute type of the permission to add.
      * @param writing the access to the given attribute type.
+     * 
+     * @return the previous value associated with <tt>key</tt> or
+     *         <tt>null</tt> if there was no mapping for <tt>key</tt>.
      * 
      * @require isNotFrozen() : "This object is not frozen.";
      * @require type.isAttributeType() : "The type is an attribute type.";
