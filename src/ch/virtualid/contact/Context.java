@@ -1,8 +1,7 @@
 package ch.virtualid.contact;
 
 import ch.virtualid.agent.IncomingRole;
-import ch.virtualid.agent.AgentPermissions;
-import ch.virtualid.agent.ReadonlyAgentPermissions;
+import ch.virtualid.annotations.OnlyForActions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Client;
 import ch.virtualid.client.Synchronizer;
@@ -38,7 +37,7 @@ import org.javatuples.Pair;
  * This class represents the context for contacts.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 0.4
+ * @version 0.6
  */
 public final class Context extends Concept implements Immutable, Blockable, SQLizable {
     
@@ -160,6 +159,7 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
      * 
      * @return the number that denotes this context.
      */
+    @Pure
     public long getNumber() {
         return number;
     }
@@ -169,6 +169,7 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
      * 
      * @return whether this context is the root.
      */
+    @Pure
     public boolean isRoot() {
         return number == ROOT;
     }
@@ -187,7 +188,8 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
      * 
      * @return whether the given name is valid.
      */
-    public boolean isValid(@Nonnull String name) {
+    @Pure
+    public static boolean isValid(@Nonnull String name) {
         return name.length() <= 50;
     }
     
@@ -198,6 +200,7 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
      * 
      * @ensure isValid(return) : "The returned name is valid.";
      */
+    @Pure
     public @Nonnull String getName() throws SQLException {
         if (name == null) {
             name = Contexts.getName(this);
@@ -230,6 +233,7 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
      * @require isValid(oldName) : "The old name is valid.";
      * @require isValid(newName) : "The new name is valid.";
      */
+    @OnlyForActions
     public void replaceName(@Nonnull String oldName, @Nonnull String newName) throws SQLException {
         assert isValid(oldName) : "The old name is valid.";
         assert isValid(newName) : "The new name is valid.";
@@ -243,15 +247,19 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
     /**
      * Stores the permissions of this context.
      */
-    private @Nullable AgentPermissions permissions;
+    private @Nullable ContactPermissions permissions;
     
     /**
      * Returns the permissions of this context.
      * 
      * @return the permissions of this context.
      */
-    public @Nonnull ReadonlyAgentPermissions getPermissions() throws SQLException {
-        
+    @Pure
+    public @Nonnull ReadonlyContactPermissions getPermissions() throws SQLException {
+        if (permissions == null) {
+            permissions = Contexts.getPermissions(this);
+        }
+        return permissions;
     }
     
     /**
@@ -259,8 +267,28 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
      * 
      * @param permissions the permissions to be added to this context.
      */
-    public void addPermissions(@Nonnull ReadonlyAgentPermissions permissions) throws SQLException {
+    public void addPermissions(@Nonnull ReadonlyContactPermissions permissions) throws SQLException {
+        if (!permissions.isEmpty()) {
+            Synchronizer.execute(new ContextPermissionsAdd(this, permissions));
+        }
+    }
+    
+    /**
+     * Adds the given permissions to this context.
+     * 
+     * @param newPermissions the permissions to be added to this context.
+     * 
+     * @require !newPermissions.isEmpty() : "The new permissions are not empty.";
+     */
+    @OnlyForActions
+    public void addPermissionsForActions(@Nonnull ReadonlyContactPermissions newPermissions) throws SQLException {
+        assert !newPermissions.isEmpty() : "The new permissions are not empty.";
         
+        Contexts.addPermissions(this, newPermissions);
+        getPermissions();
+        assert permissions != null;
+        permissions.addAll(newPermissions);
+        notify(PERMISSIONS);
     }
     
     /**
@@ -268,8 +296,28 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
      * 
      * @param permissions the permissions to be removed from this context.
      */
-    public void removePermissions(@Nonnull ReadonlyAgentPermissions permissions) throws SQLException {
+    public void removePermissions(@Nonnull ReadonlyContactPermissions permissions) throws SQLException {
+        if (!permissions.isEmpty()) {
+            Synchronizer.execute(new ContextPermissionsRemove(this, permissions));
+        }
+    }
+    
+    /**
+     * Removes the given permissions from this context.
+     * 
+     * @param oldPermissions the permissions to be removed from this context.
+     * 
+     * @require !oldPermissions.isEmpty() : "The old permissions are not empty.";
+     */
+    @OnlyForActions
+    public void removePermissionsForActions(@Nonnull ReadonlyContactPermissions oldPermissions) throws SQLException {
+        assert !oldPermissions.isEmpty() : "The old permissions are not empty.";
         
+        Contexts.removePermissions(this, oldPermissions);
+        getPermissions();
+        assert permissions != null;
+        permissions.removeAll(permissions);
+        notify(PERMISSIONS);
     }
     
     

@@ -23,7 +23,7 @@ import javax.annotation.Nonnull;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-abstract class AttributeSet extends FreezableLinkedHashSet<SemanticType> implements ReadonlyAttributeSet, Blockable {
+public abstract class AttributeSet extends FreezableLinkedHashSet<SemanticType> implements ReadonlyAttributeSet, Blockable {
     
     /**
      * Creates an empty set of attribute types.
