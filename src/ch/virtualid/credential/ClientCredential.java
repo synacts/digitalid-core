@@ -1,6 +1,6 @@
 package ch.virtualid.credential;
 
-import ch.virtualid.agent.RandomizedPermissions;
+import ch.virtualid.agent.RandomizedAgentPermissions;
 import ch.virtualid.agent.Restrictions;
 import ch.virtualid.cryptography.Element;
 import ch.virtualid.cryptography.Exponent;
@@ -74,7 +74,7 @@ public final class ClientCredential extends Credential {
      * @require randomizedPermissions.getPermissions() != null : "The permissions may never be null for client credentials.";
      * @require restrictions.toBlock().getHash().equals(v.getValue()) : "The restrictions either have to equal v when hashed.";
      */
-    public ClientCredential(@Nonnull PublicKey publicKey, @Nonnull NonHostIdentifier issuer, long issuance, @Nonnull RandomizedPermissions randomizedPermissions, @Nullable NonHostIdentifier role, @Nonnull Restrictions restrictions, @Nonnull Element c, @Nonnull Exponent e, @Nonnull Exponent b, @Nonnull Exponent u, @Nonnull Exponent i, @Nonnull Exponent v) throws InvalidSignatureException {
+    public ClientCredential(@Nonnull PublicKey publicKey, @Nonnull NonHostIdentifier issuer, long issuance, @Nonnull RandomizedAgentPermissions randomizedPermissions, @Nullable NonHostIdentifier role, @Nonnull Restrictions restrictions, @Nonnull Element c, @Nonnull Exponent e, @Nonnull Exponent b, @Nonnull Exponent u, @Nonnull Exponent i, @Nonnull Exponent v) throws InvalidSignatureException {
         this(publicKey, issuer, issuance, randomizedPermissions, role, null, restrictions, c, e, b, u, i, v, false);
     }
     
@@ -99,7 +99,7 @@ public final class ClientCredential extends Credential {
      * @require issuance > 0l && issuance % Credential.ROUNDING == 0 : "The issuance time is always positive and a multiple of the rounding interval.";
      * @require randomizedPermissions.getPermissions() != null : "The permissions may never be null for client credential.";
      */
-    public ClientCredential(@Nonnull PublicKey publicKey, @Nonnull NonHostIdentifier issuer, long issuance, @Nonnull RandomizedPermissions randomizedPermissions, @Nonnull Block attribute, @Nonnull Element c, @Nonnull Exponent e, @Nonnull Exponent b, @Nonnull Exponent u, @Nonnull Exponent i, @Nonnull Exponent v, boolean oneTime) throws InvalidSignatureException {
+    public ClientCredential(@Nonnull PublicKey publicKey, @Nonnull NonHostIdentifier issuer, long issuance, @Nonnull RandomizedAgentPermissions randomizedPermissions, @Nonnull Block attribute, @Nonnull Element c, @Nonnull Exponent e, @Nonnull Exponent b, @Nonnull Exponent u, @Nonnull Exponent i, @Nonnull Exponent v, boolean oneTime) throws InvalidSignatureException {
         this(publicKey, issuer, issuance, randomizedPermissions, null, attribute, null, c, e, b, u, i, v, oneTime);
     }
     
@@ -130,7 +130,7 @@ public final class ClientCredential extends Credential {
      * @require role == null || restrictions != null : "If a role is given, the restrictions is not null.";
      * @require restrictions == null || restrictions.toBlock().getHash().equals(v.getValue()) && !oneTime : "If the restrictions are not null, they have to equal v when hashed and the one time flag is false.";
      */
-    private ClientCredential(@Nonnull PublicKey publicKey, @Nonnull NonHostIdentifier issuer, long issuance, @Nonnull RandomizedPermissions randomizedPermissions, @Nullable NonHostIdentifier role, @Nullable Block attribute, @Nullable Restrictions restrictions, @Nonnull Element c, @Nonnull Exponent e, @Nonnull Exponent b, @Nonnull Exponent u, @Nonnull Exponent i, @Nonnull Exponent v, boolean oneTime) throws InvalidSignatureException {
+    private ClientCredential(@Nonnull PublicKey publicKey, @Nonnull NonHostIdentifier issuer, long issuance, @Nonnull RandomizedAgentPermissions randomizedPermissions, @Nullable NonHostIdentifier role, @Nullable Block attribute, @Nullable Restrictions restrictions, @Nonnull Element c, @Nonnull Exponent e, @Nonnull Exponent b, @Nonnull Exponent u, @Nonnull Exponent i, @Nonnull Exponent v, boolean oneTime) throws InvalidSignatureException {
         super(publicKey, issuer, issuance, randomizedPermissions, role, attribute, restrictions, i);
         
         assert restrictions == null || restrictions.toBlock().getHash().equals(v.getValue()) && !oneTime : "If the restrictions are not null, they have to equal v when hashed and the one time flag is false.";

@@ -1,6 +1,6 @@
 package ch.virtualid.handler.action.internal;
 
-import ch.virtualid.agent.Permissions;
+import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.agent.Restrictions;
 import ch.virtualid.handler.Handler;
 import ch.virtualid.packet.PacketException;
@@ -36,14 +36,14 @@ public class AgentAuthorize {
             
             BigInteger commitmentOfAuthorizer = signature.getClient();
             Restrictions restrictionsOfAuthorizer = host.getRestrictions(connection, vid, commitmentOfAuthorizer);
-            Permissions authorizationOfAuthorizer = host.getAuthorization(connection, vid, commitmentOfAuthorizer);
+            AgentPermissions authorizationOfAuthorizer = host.getAuthorization(connection, vid, commitmentOfAuthorizer);
             if (restrictionsOfAuthorizer == null) throw new PacketException(PacketException.AUTHORIZATION);
             
             BigInteger commitmentOfAuthorizee = new IntegerWrapper(elements[0]).getValue();
             Restrictions newRestrictionsOfAuthorizee = new Restrictions(elements[1]);
-            Permissions newAuthorizationOfAuthorizee = new Permissions(elements[2]);
+            AgentPermissions newAuthorizationOfAuthorizee = new AgentPermissions(elements[2]);
             Restrictions restrictionsOfAuthorizee = host.getRestrictions(connection, vid, commitmentOfAuthorizee);
-            Permissions authorizationOfAuthorizee = host.getAuthorization(connection, vid, commitmentOfAuthorizee);
+            AgentPermissions authorizationOfAuthorizee = host.getAuthorization(connection, vid, commitmentOfAuthorizee);
             
             restrictionsOfAuthorizer.checkCoverage(restrictionsOfAuthorizee);
             restrictionsOfAuthorizer.checkCoverage(newRestrictionsOfAuthorizee);

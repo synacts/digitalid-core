@@ -1,8 +1,8 @@
 package ch.virtualid.client;
 
 import ch.virtualid.agent.IncomingRole;
-import ch.virtualid.agent.Permissions;
-import ch.virtualid.agent.RandomizedPermissions;
+import ch.virtualid.agent.AgentPermissions;
+import ch.virtualid.agent.RandomizedAgentPermissions;
 import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.concept.Aspect;
@@ -117,7 +117,7 @@ public final class Client extends Site {
     /**
      * Stores the credentials of this client and is never null. (Mapping: (Requester, Issuer, Authorization) => Credential.)
      */
-    private final Map<Long, Map<Long, Map<RandomizedPermissions, Credential>>> credentials = new HashMap<Long, Map<Long, Map<RandomizedPermissions, Credential>>>();
+    private final Map<Long, Map<Long, Map<RandomizedAgentPermissions, Credential>>> credentials = new HashMap<Long, Map<Long, Map<RandomizedAgentPermissions, Credential>>>();
     
     /**
      * Creates a new client with the given name.
@@ -145,7 +145,7 @@ public final class Client extends Site {
             ResultSet resultSet = statement.executeQuery("SELECT vid, time FROM " + getName() + "_natives");
             while (resultSet.next()) {
                 natives.put(resultSet.getLong(1), resultSet.getLong(2));
-                credentials.put(resultSet.getLong(1), new HashMap<Long, Map<RandomizedPermissions, Credential>>());
+                credentials.put(resultSet.getLong(1), new HashMap<Long, Map<RandomizedAgentPermissions, Credential>>());
             }
             
             connection.commit();
@@ -253,7 +253,7 @@ public final class Client extends Site {
     synchronized void setTimeOfLastRequest(@Nonnull Identity identity, long time) throws SQLException {
         assert time > 0 : "The time value is positive.";
         
-        if (!isNative(identity)) credentials.put(identity, new HashMap<Long, Map<RandomizedPermissions, Credential>>());
+        if (!isNative(identity)) credentials.put(identity, new HashMap<Long, Map<RandomizedAgentPermissions, Credential>>());
         
         try (@Nonnull Connection connection = Database.getConnection(); @Nonnull Statement statement = connection.createStatement()) {
             statement.executeUpdate("REPLACE INTO " + getName() + "_natives (vid, time) VALUES (" + identity + ", " + time + ")");
@@ -282,7 +282,7 @@ public final class Client extends Site {
      * @require Mapper.isVid(issuer) && (Category.isSemanticType(issuer) || issuer == requester) : "The issuer is either a semantic type or the requester itself (roles are not yet supported).";
      * @require authorization != null && !authorization.isEmpty() : "The authorization is not empty.";
      */
-    public RandomizedAuthorization getRandomizedAuthorization(long requester, long issuer, Permissions authorization) throws SQLException {
+    public RandomizedAuthorization getRandomizedAuthorization(long requester, long issuer, AgentPermissions authorization) throws SQLException {
         assert Mapper.isVid(requester) && Category.isPerson(requester) : "The requester has to denote a person.";
         assert Mapper.isVid(issuer) && (Category.isSemanticType(issuer) || issuer == requester) : "The issuer is either a semantic type or the requester itself (roles are not yet supported).";
         assert authorization != null && !authorization.isEmpty() : "The authorization is not empty.";
@@ -470,7 +470,7 @@ public final class Client extends Site {
             if (requester == requestee) {
                 response = new Packet(content, Mapper.getIdentifier(Mapper.getHost(requestee)), symmetricKey, Mapper.getIdentifier(requestee), 0l, client.getSecret()).send(verification);
             } else if (requester != 0 && Category.isPerson(requestee)) {
-                Permissions authorization = new Permissions();
+                AgentPermissions authorization = new AgentPermissions();
                 for (int i : indexesToStore) authorization.put(types[i], false);
                 Credential[] credentials = new Credential[]{client.getCredential(requester, requester, client.getRandomizedAuthorization(requester, requester, authorization))};
                 response = new Packet(content, Mapper.getIdentifier(Mapper.getHost(requestee)), symmetricKey, Mapper.getIdentifier(requestee), 0l, credentials, false).send(verification);
@@ -772,14 +772,14 @@ public final class Client extends Site {
      * @require client != null : "The client is not null.";
      * @require Mapper.isVid(vid) : "The value has to denote a VID.";
      */
-    public static Permissions getAuthorization(Client client, long vid) throws Exception {
+    public static AgentPermissions getAuthorization(Client client, long vid) throws Exception {
         assert client != null : "The client is not null.";
         assert Mapper.isVid(vid) : "The value has to denote a VID.";
         
         SelfcontainedWrapper content = new SelfcontainedWrapper("request.get.authorization.client@virtualid.ch", Block.EMPTY);
         Packet response = new Packet(content, Mapper.getIdentifier(Mapper.getHost(vid)), new SymmetricKey(), Mapper.getIdentifier(vid), 0, client.getSecret()).send();
         
-        return new Permissions(respongetContentsent().getElement());
+        return new AgentPermissions(respongetContentsent().getElement());
     }
     
     /**
@@ -829,7 +829,7 @@ public final class Client extends Site {
      * @require restrictions != null : "The restrictions is not null.";
      * @require authorization != null : "The authorization is not null.";
      */
-    public static void authorizeClient(Client client, long vid, BigInteger commitment, Restrictions restrictions, Permissions authorization) throws Exception {
+    public static void authorizeClient(Client client, long vid, BigInteger commitment, Restrictions restrictions, AgentPermissions authorization) throws Exception {
         assert client != null : "The client is not null.";
         assert Mapper.isVid(vid) : "The value has to denote a VID.";
         assert commitment != null : "The commitment is not null.";
@@ -853,7 +853,7 @@ public final class Client extends Site {
      * @require name != null : "The name is not null.";
      * @require preference != null : "The preference is not null.";
      */
-    public static void accreditClient(Client client, long vid, String name, Permissions preference) throws Exception {
+    public static void accreditClient(Client client, long vid, String name, AgentPermissions preference) throws Exception {
         assert client != null : "The client is not null.";
         assert Mapper.isVid(vid) : "The value has to denote a VID.";
         assert name != null : "The name is not null.";

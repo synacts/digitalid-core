@@ -1,6 +1,6 @@
 package ch.virtualid.handler.query.internal;
 
-import ch.virtualid.agent.Permissions;
+import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.agent.Restrictions;
 import ch.virtualid.handler.Handler;
 import ch.virtualid.handler.InternalQuery;
@@ -84,7 +84,7 @@ public final class GetStateQuery extends InternalQuery {
         
         @Override
         public Block handle(Connection connection, Host host, long vid, Block element, SignatureWrapper signature) throws Exception {
-            Permissions authorization = host.getAuthorization(connection, vid, signature.getClient());
+            AgentPermissions authorization = host.getAuthorization(connection, vid, signature.getClient());
             return authorization.toBlock();
         }
         
@@ -100,7 +100,7 @@ public final class GetStateQuery extends InternalQuery {
         @Override
         public Block handle(Connection connection, Host host, long vid, Block element, SignatureWrapper signature) throws Exception {
             Restrictions restrictions = host.getRestrictions(connection, vid, signature.getClient());
-            Permissions authorization = host.getAuthorization(connection, vid, signature.getClient());
+            AgentPermissions authorization = host.getAuthorization(connection, vid, signature.getClient());
             
             return restrictions == null ? Block.EMPTY: host.getClients(connection, vid, restrictions, authorization);
         }

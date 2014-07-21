@@ -1,6 +1,6 @@
 package ch.virtualid.handler.action.internal;
 
-import ch.virtualid.agent.Permissions;
+import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.handler.Handler;
 import ch.xdf.Block;
 import ch.xdf.SignatureWrapper;
@@ -33,7 +33,7 @@ public class ClientAccredit {
             Block[] elements = new TupleWrapper(element).getElementsNotNull(2);
             String name = new StringWrapper(elements[0]).getString();
             if (name.length() > 255) throw new InvalidEncodingException("The name of the new client may be at most 255 bytes.");
-            Permissions preference = new Permissions(elements[1]);
+            AgentPermissions preference = new AgentPermissions(elements[1]);
             
             host.accreditClient(connection, vid, signature.getClient(), name, preference);
             

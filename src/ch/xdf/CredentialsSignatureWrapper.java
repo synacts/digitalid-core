@@ -1,6 +1,6 @@
 package ch.xdf;
 
-import ch.virtualid.agent.Permissions;
+import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.client.Client;
 import ch.virtualid.credential.ClientCredential;
 import ch.virtualid.credential.Credential;
@@ -421,7 +421,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
      */
     public boolean canRead(@Nonnull SemanticType type) {
         for (@Nonnull Credential credential : credentials) {
-            @Nullable Permissions permissions = credential.getPermissions();
+            @Nullable AgentPermissions permissions = credential.getPermissions();
             if (permissions == null || !permissions.canRead(type)) return false;
         }
         return true;
@@ -445,7 +445,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
      */
     public boolean canWrite(@Nonnull SemanticType type) {
         for (@Nonnull Credential credential : credentials) {
-            @Nullable Permissions permissions = credential.getPermissions();
+            @Nullable AgentPermissions permissions = credential.getPermissions();
             if (permissions == null || !permissions.canWrite(type)) return false;
         }
         return true;
@@ -467,9 +467,9 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
      * 
      * @return whether the permissions of each credential covers the given permissions.
      */
-    public boolean cover(@Nonnull Permissions permissions) {
+    public boolean cover(@Nonnull AgentPermissions permissions) {
         for (@Nonnull Credential credential : credentials) {
-            @Nullable Permissions _permissions = credential.getPermissions();
+            @Nullable AgentPermissions _permissions = credential.getPermissions();
             if (_permissions == null || !_permissions.cover(permissions)) return false;
         }
         return true;
@@ -480,7 +480,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
      * 
      * @param permissions the permissions that need to be covered.
      */
-    public void checkCoverage(@Nonnull Permissions permissions) throws PacketException {
+    public void checkCoverage(@Nonnull AgentPermissions permissions) throws PacketException {
         if (!cover(permissions)) throw new PacketException(PacketError.AUTHORIZATION);
     }
     

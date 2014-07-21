@@ -23,12 +23,12 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * This class models the randomized {@link Permissions permissions} of {@link IncomingRole incoming roles}.
+ * This class models the randomized {@link AgentPermissions permissions} of {@link IncomingRole incoming roles}.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public final class RandomizedPermissions implements Immutable, Blockable {
+public final class RandomizedAgentPermissions implements Immutable, Blockable {
     
     /**
      * Stores the semantic type {@code salt.randomized.permission.agent@virtualid.ch}.
@@ -38,7 +38,7 @@ public final class RandomizedPermissions implements Immutable, Blockable {
     /**
      * Stores the semantic type {@code permissions.randomized.permission.agent@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType PERMISSIONS = SemanticType.create("permissions.randomized.permission.agent@virtualid.ch").load(Permissions.TYPE);
+    private static final @Nonnull SemanticType PERMISSIONS = SemanticType.create("permissions.randomized.permission.agent@virtualid.ch").load(AgentPermissions.TYPE);
     
     /**
      * Stores the semantic type {@code randomized.permission.agent@virtualid.ch}.
@@ -61,7 +61,7 @@ public final class RandomizedPermissions implements Immutable, Blockable {
      * 
      * @invariant permissions.isFrozen() : "The permissions are frozen.";
      */
-    private final @Nullable ReadonlyPermissions permissions;
+    private final @Nullable ReadonlyAgentPermissions permissions;
     
     /**
      * Creates new randomized permissions with the given permissions.
@@ -70,7 +70,7 @@ public final class RandomizedPermissions implements Immutable, Blockable {
      * 
      * @require permissions.isFrozen() : "The permissions have to be frozen.";
      */
-    public RandomizedPermissions(@Nonnull ReadonlyPermissions permissions) {
+    public RandomizedAgentPermissions(@Nonnull ReadonlyAgentPermissions permissions) {
         assert permissions.isFrozen() : "The permissions have to be frozen.";
         
         this.permissions = permissions;
@@ -83,7 +83,7 @@ public final class RandomizedPermissions implements Immutable, Blockable {
      * 
      * @param hash the hash of the randomized permissions.
      */
-    public RandomizedPermissions(@Nonnull BigInteger hash) {
+    public RandomizedAgentPermissions(@Nonnull BigInteger hash) {
         this.hash = hash;
         this.salt = null;
         this.permissions = null;
@@ -96,13 +96,13 @@ public final class RandomizedPermissions implements Immutable, Blockable {
      * 
      * @require block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
      */
-    public RandomizedPermissions(@Nonnull Block block) throws InvalidEncodingException, FailedIdentityException, SQLException, InvalidDeclarationException {
+    public RandomizedAgentPermissions(@Nonnull Block block) throws InvalidEncodingException, FailedIdentityException, SQLException, InvalidDeclarationException {
         assert block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
         
         this.hash = block.getHash();
         final @Nonnull ReadonlyArray<Block> tuple = new TupleWrapper(block).getElementsNotNull(2);
         this.salt = new HashWrapper(tuple.getNotNull(0)).getValue();
-        this.permissions = new Permissions(tuple.getNotNull(1)).freeze();
+        this.permissions = new AgentPermissions(tuple.getNotNull(1)).freeze();
     }
     
     @Pure
@@ -139,7 +139,7 @@ public final class RandomizedPermissions implements Immutable, Blockable {
      * @ensure permissions.isFrozen() : "The permissions are frozen.";
      */
     @Pure
-    public @Nullable ReadonlyPermissions getPermissions() {
+    public @Nullable ReadonlyAgentPermissions getPermissions() {
         return permissions;
     }
     
@@ -149,7 +149,7 @@ public final class RandomizedPermissions implements Immutable, Blockable {
     public boolean equals(@Nullable Object object) {
         if (object == this) return true;
         if (object == null || !(object instanceof Commitment)) return false;
-        final @Nonnull RandomizedPermissions other = (RandomizedPermissions) object;
+        final @Nonnull RandomizedAgentPermissions other = (RandomizedAgentPermissions) object;
         return this.hash.equals(other.hash) && Objects.equals(this.salt, other.salt) && Objects.equals(this.permissions, other.permissions);
     }
     

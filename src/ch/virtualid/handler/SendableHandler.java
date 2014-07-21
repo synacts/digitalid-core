@@ -1,8 +1,8 @@
 package ch.virtualid.handler;
 
 import ch.virtualid.contact.Authentications;
-import ch.virtualid.agent.Permissions;
-import ch.virtualid.agent.ReadonlyPermissions;
+import ch.virtualid.agent.AgentPermissions;
+import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Synchronizer;
 import ch.virtualid.entity.Role;
@@ -156,7 +156,7 @@ public abstract class SendableHandler extends Handler {
      * @return the permissions required for this handler.
      */
     @Pure
-    public abstract @Nonnull ReadonlyPermissions getRequiredPermissions(); // TODO: or capturable?
+    public abstract @Nonnull ReadonlyAgentPermissions getRequiredPermissions(); // TODO: or capturable?
     
     
     /**
@@ -228,7 +228,7 @@ public abstract class SendableHandler extends Handler {
         } else if (isOnClient()) {
             // !canOnlyBeSentByHost();
             
-            @Nonnull Permissions permissions = new Permissions();
+            @Nonnull AgentPermissions permissions = new AgentPermissions();
             for (@Nonnull SendableHandler handler : handlers) {
                 permissions.putAll(handler.getRequiredPermissions());
             }

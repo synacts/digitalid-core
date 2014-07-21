@@ -141,7 +141,7 @@ public final class OutgoingRole extends Agent {
     public void checkCoverage(@Nonnull Credential credential) throws SQLException, PacketException {
         @Nullable Restrictions restrictions = credential.getRestrictions();
         assert restrictions != null : "The restrictions of the credential is not null.";
-        @Nullable Permissions permissions = credential.getPermissions();
+        @Nullable AgentPermissions permissions = credential.getPermissions();
         assert permissions != null : "The permissions of the credential is not null.";
         
         getRestrictions().checkCoverage(restrictions);
@@ -159,7 +159,7 @@ public final class OutgoingRole extends Agent {
     public void restrictTo(@Nonnull Credential credential) throws SQLException {
         @Nullable Restrictions restrictions = credential.getRestrictions();
         assert restrictions != null : "The restrictions of the credential is not null.";
-        @Nullable Permissions permissions = credential.getPermissions();
+        @NullAgentPermissionssions permissions = credential.getPermissions();
         assert permissions != null : "The permissions of the credential is not null.";
         
         getRestrictions().restrictTo(restrictions);

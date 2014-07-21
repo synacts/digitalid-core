@@ -29,12 +29,12 @@ import javax.annotation.Nullable;
 /**
  * This class models the permissions of agents as a mapping from attribute types to writings.
  * 
- * @invariant areValid() : "These permissions are always valid.";
+ * @invariant areValid() : "These agent permissions are always valid.";
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public final class Permissions extends FreezableLinkedHashMap<SemanticType, Boolean> implements ReadonlyPermissions, Blockable {
+public final class AgentPermissions extends FreezableLinkedHashMap<SemanticType, Boolean> implements ReadonlyAgentPermissions, Blockable {
     
     /**
      * Stores the semantic type {@code type.permission.agent@virtualid.ch}.
@@ -63,49 +63,49 @@ public final class Permissions extends FreezableLinkedHashMap<SemanticType, Bool
     public static final @Nonnull SemanticType GENERAL = SemanticType.create("general.permission.agent@virtualid.ch").load(new Category[] {Category.HOST}, Time.TROPICAL_YEAR, BooleanWrapper.TYPE);
     
     /**
-     * Stores an empty set of permissions.
+     * Stores an empty set of agent permissions.
      */
-    public static final @Nonnull ReadonlyPermissions NONE = new Permissions().freeze();
+    public static final @Nonnull ReadonlyAgentPermissions NONE = new AgentPermissions().freeze();
     
     
     /**
-     * Creates an empty map of permissions.
+     * Creates an empty map of agent permissions.
      */
-    public Permissions() {}
+    public AgentPermissions() {}
     
     /**
-     * Creates new permissions with the given type and access.
+     * Creates new agent permissions with the given type and access.
      * 
-     * @param type the attribute type of the permission.
+     * @param type the attribute type of the agent permission.
      * @param writing the access to the given attribute type.
      * 
      * @require type.isAttributeType() : "The type is an attribute type.";
      * 
-     * @ensure areSingle() : "The new permissions are single.";
+     * @ensure areSingle() : "The new agent permissions are single.";
      */
-    public Permissions(@Nonnull SemanticType type, @Nonnull Boolean writing) {
+    public AgentPermissions(@Nonnull SemanticType type, @Nonnull Boolean writing) {
         assert type.isAttributeType() : "The type is an attribute type.";
         
         put(type, writing);
     }
     
     /**
-     * Creates new permissions with the given permissions.
+     * Creates new agent permissions from the given agent permissions.
      * 
-     * @param permissions the permissions to add to the new permissions.
+     * @param permissions the agent permissions to add to the new agent permissions.
      */
-    public Permissions(@Nonnull ReadonlyPermissions permissions) {
+    public AgentPermissions(@Nonnull ReadonlyAgentPermissions permissions) {
         putAll(permissions);
     }
     
     /**
-     * Creates new permissions from the given block.
+     * Creates new agent permissions from the given block.
      * 
-     * @param block the block containing the permissions.
+     * @param block the block containing the agent permissions.
      * 
      * @require block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
      */
-    public Permissions(@Nonnull Block block) throws InvalidEncodingException, SQLException, FailedIdentityException, InvalidDeclarationException {
+    public AgentPermissions(@Nonnull Block block) throws InvalidEncodingException, SQLException, FailedIdentityException, InvalidDeclarationException {
         assert block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
         
         final @Nonnull ReadonlyList<Block> elements = new ListWrapper(block).getElementsNotNull();
@@ -116,7 +116,7 @@ public final class Permissions extends FreezableLinkedHashMap<SemanticType, Bool
             put(type, new BooleanWrapper(subelements.getNotNull(1)).getValue());
         }
         
-        if (!areValid()) throw new InvalidEncodingException("The permissions in the given block are not valid.");
+        if (!areValid()) throw new InvalidEncodingException("The agent permissions in the given block are not valid.");
     }
     
     @Pure
@@ -140,7 +140,7 @@ public final class Permissions extends FreezableLinkedHashMap<SemanticType, Bool
     
     
     @Override
-    public @Nonnull ReadonlyPermissions freeze() {
+    public @Nonnull ReadonlyAgentPermissions freeze() {
         super.freeze();
         return this;
     }
@@ -196,7 +196,7 @@ public final class Permissions extends FreezableLinkedHashMap<SemanticType, Bool
     
     @Pure
     @Override
-    public boolean cover(@Nonnull ReadonlyPermissions permissions) {
+    public boolean cover(@Nonnull ReadonlyAgentPermissions permissions) {
         final boolean generalPermission = containsKey(GENERAL);
         final boolean writingPermission = generalPermission ? get(GENERAL) : false;
         for (@Nonnull SemanticType type : permissions.keySet()) {
@@ -213,19 +213,19 @@ public final class Permissions extends FreezableLinkedHashMap<SemanticType, Bool
     
     @Pure
     @Override
-    public void checkDoesCover(@Nonnull ReadonlyPermissions permissions) throws PacketException {
+    public void checkDoesCover(@Nonnull ReadonlyAgentPermissions permissions) throws PacketException {
         if (!cover(permissions)) throw new PacketException(PacketError.AUTHORIZATION);
     }
     
     
     /**
-     * Restricts these permissions to the given permissions.
+     * Restricts these agent permissions to the given agent permissions.
      * 
-     * @param permissions the permissions with which to restrict these permissions.
+     * @param permissions the agent permissions with which to restrict these agent permissions.
      * 
      * @require isNotFrozen() : "This object is not frozen.";
      */
-    public void restrictTo(@Nonnull ReadonlyPermissions permissions) {
+    public void restrictTo(@Nonnull ReadonlyAgentPermissions permissions) {
         assert isNotFrozen() : "This object is not frozen.";
         
         if (containsKey(GENERAL)) {
@@ -264,7 +264,7 @@ public final class Permissions extends FreezableLinkedHashMap<SemanticType, Bool
     
     
     /**
-     * The permission is only added if it is not yet covered.
+     * The agent permission is only added if it is not yet covered.
      * 
      * @param type the attribute type of the permission to add.
      * @param writing the access to the given attribute type.
@@ -296,13 +296,13 @@ public final class Permissions extends FreezableLinkedHashMap<SemanticType, Bool
     }
     
     /**
-     * Only those permissions are added that are not yet covered.
+     * Only those agent permissions are added that are not yet covered.
      * 
      * @param permissions the permissions to add to these permissions.
      * 
      * @require isNotFrozen() : "This object is not frozen.";
      */
-    public void putAll(@Nonnull ReadonlyPermissions permissions) {
+    public void putAll(@Nonnull ReadonlyAgentPermissions permissions) {
         for (final @Nonnull SemanticType type : permissions.keySet()) {
             put(type, permissions.get(type));
         }
@@ -311,8 +311,8 @@ public final class Permissions extends FreezableLinkedHashMap<SemanticType, Bool
     
     @Pure
     @Override
-    public @Capturable @Nonnull Permissions clone() {
-        return new Permissions(this);
+    public @Capturable @Nonnull AgentPermissions clone() {
+        return new AgentPermissions(this);
     }
     
     

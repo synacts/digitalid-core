@@ -1,6 +1,6 @@
 package ch.virtualid.handler.action.internal;
 
-import ch.virtualid.agent.Permissions;
+import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.agent.Restrictions;
 import ch.virtualid.handler.Handler;
 import ch.virtualid.packet.PacketException;
@@ -39,8 +39,8 @@ public class AgentRemove {
             if (restrictionsOfRemover == null) throw new PacketException(PacketException.AUTHORIZATION);
             restrictionsOfRemover.checkCoverage(restrictionsOfRemovee);
             
-            Permissions authorizationOfRemover = host.getAuthorization(connection, vid, commitmentOfRemover);
-            Permissions authorizationOfRemovee = host.getAuthorization(connection, vid, commitmentOfRemovee);
+            AgentPermissions authorizationOfRemover = host.getAuthorization(connection, vid, commitmentOfRemover);
+            AgentPermissions authorizationOfRemovee = host.getAuthorization(connection, vid, commitmentOfRemovee);
             authorizationOfRemover.checkDoesCover(authorizationOfRemovee);
             
             host.removeClient(connection, vid, commitmentOfRemovee);

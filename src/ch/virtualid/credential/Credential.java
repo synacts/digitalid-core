@@ -1,7 +1,7 @@
 package ch.virtualid.credential;
 
-import ch.virtualid.agent.Permissions;
-import ch.virtualid.agent.RandomizedPermissions;
+import ch.virtualid.agent.AgentPermissions;
+import ch.virtualid.agent.RandomizedAgentPermissions;
 import ch.virtualid.agent.Restrictions;
 import ch.virtualid.client.Client;
 import ch.virtualid.cryptography.Exponent;
@@ -78,7 +78,7 @@ public abstract class Credential implements Immutable {
     /**
      * Stores the client's randomized permissions or its randomized hash.
      */
-    private final @Nonnull RandomizedPermissions randomizedPermissions;
+    private final @Nonnull RandomizedAgentPermissions randomizedPermissions;
     
     /**
      * Stores the role that is assumed by the client or null in case no role is assumed.
@@ -131,7 +131,7 @@ public abstract class Credential implements Immutable {
      * @require attribute == null || role == null && restrictions == null : "If the attribute is not null, both the role and the restrictions have to be null.";
      * @require role == null || restrictions != null : "If a role is given, the restrictions is not null.";
      */
-    Credential(@Nonnull PublicKey publicKey, @Nonnull NonHostIdentifier issuer, long issuance, @Nonnull RandomizedPermissions randomizedPermissions, @Nullable NonHostIdentifier role, @Nullable Block attribute, @Nullable Restrictions restrictions, @Nonnull Exponent i) {
+    Credential(@Nonnull PublicKey publicKey, @Nonnull NonHostIdentifier issuer, long issuance, @Nonnull RandomizedAgentPermissions randomizedPermissions, @Nullable NonHostIdentifier role, @Nullable Block attribute, @Nullable Restrictions restrictions, @Nonnull Exponent i) {
         assert issuance > 0l && issuance % ROUNDING == 0 : "The issuance time is always positive and a multiple of the rounding interval.";
         assert randomizedPermissions.getPermissions() != null : "The permissions may never be null for client credentials.";
         assert (attribute == null) != (restrictions == null) : "Either the attribute or the restrictions is not null (but not both).";
@@ -169,10 +169,10 @@ public abstract class Credential implements Immutable {
         if (issuance <= 0l && issuance % ROUNDING != 0) throw new InvalidEncodingException("The issuance time is positive and a multiple of the rounding interval.");
         @Nonnull BigInteger hash = new HashWrapper(elements[2]).getValue();
         if (randomizedPermissions.isNotEmpty()) {
-            this.randomizedPermissions = new RandomizedPermissions(randomizedPermissions);
+            this.randomizedPermissions = new RandomizedAgentPermissions(randomizedPermissions);
             if (!randomizedPermissions.getHash().equals(hash)) throw new InvalidEncodingException("The hash of the given permissions has to equal the credential's exposed hash.");
         } else {
-            this.randomizedPermissions = new RandomizedPermissions(hash);
+            this.randomizedPermissions = new RandomizedAgentPermissions(hash);
         }
         this.role = elements[3].isNotEmpty() ? new NonHostIdentifier(elements[3]) : null;
         this.attribute = elements[4].isNotEmpty() ? elements[4] : null;
@@ -225,7 +225,7 @@ public abstract class Credential implements Immutable {
      * 
      * @return the client's randomized permissions or simply its hash.
      */
-    public final @Nonnull RandomizedPermissions getRandomizedPermissions() {
+    public final @Nonnull RandomizedAgentPermissions getRandomizedPermissions() {
         return randomizedPermissions;
     }
     
@@ -234,7 +234,7 @@ public abstract class Credential implements Immutable {
      * 
      * @return the client's permissions or null if it is not disclosed.
      */
-    public final @Nullable Permissions getPermissions() {
+    public final @Nullable AgentPermissions getPermissions() {
         return randomizedPermissions.getPermissions();
     }
     
@@ -366,7 +366,7 @@ public abstract class Credential implements Immutable {
      * 
      * @require issuance > 0l && issuance % Credential.ROUNDING == 0 : "The issuance time is always positive and a multiple of the rounding interval.";
      */
-    public static @Nonnull Block getExposed(@Nonnull NonHostIdentifier issuer, long issuance, @Nonnull RandomizedPermissions randomizedPermissions, @Nullable NonHostIdentifier role, @Nullable Block attribute) {
+    public static @Nonnull Block getExposed(@Nonnull NonHostIdentifier issuer, long issuance, @Nonnull RandomizedAgentPermissions randomizedPermissions, @Nullable NonHostIdentifier role, @Nullable Block attribute) {
         assert issuance > 0l && issuance % ROUNDING == 0 : "The issuance time is always positive and a multiple of the rounding interval.";
         
         @Nonnull Block[] elements = new Block[5];

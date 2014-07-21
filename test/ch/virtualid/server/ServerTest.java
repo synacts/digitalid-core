@@ -7,7 +7,7 @@ import ch.virtualid.identity.Mapper;
 import ch.virtualid.identity.Vid;
 import ch.virtualid.client.Client;
 import ch.virtualid.credential.Credential.RandomizedAuthorization;
-import ch.virtualid.agent.Permissions;
+import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.client.Request;
 import ch.virtualid.agent.Restrictions;
 import ch.virtualid.identity.SemanticType;
@@ -79,7 +79,7 @@ public class ServerTest {
         
         // Clients (1)
         Restrictions restrictions = new Restrictions(0, true, 0l);
-        Permissions authorization = new Permissions(SemanticType.CLIENT_GENERAL_PERMISSION, true);
+        AgentPermissions authorization = new AgentPermissions(SemanticType.CLIENT_GENERAL_PERMISSION, true);
         
         assertEquals(restrictions, Request.getRestrictions(client, vid));
         assertEquals(authorization, Request.getAuthorization(client, vid));
@@ -100,8 +100,8 @@ public class ServerTest {
         BigInteger commitment = new IntegerWrapper(elements[0]).getValue();
         assertEquals("Tester", new StringWrapper(elements[1]).getString());
         assertEquals(restrictions, new Restrictions(elements[2]));
-        assertEquals(authorization, new Permissions(elements[3]));
-        assertEquals(authorization, new Permissions(elements[4]));
+        assertEquals(authorization, new AgentPermissions(elements[3]));
+        assertEquals(authorization, new AgentPermissions(elements[4]));
         Request.authorizeClient(client, vid, commitment, restrictions, authorization);
         Request.removeClient(client, vid, commitment);
     }

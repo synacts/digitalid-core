@@ -1,6 +1,6 @@
 package ch.virtualid.handler;
 
-import ch.virtualid.agent.Permissions;
+import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.agent.Restrictions;
 import ch.virtualid.concept.Entity;
 import ch.virtualid.entity.Entity;
@@ -74,7 +74,7 @@ public abstract class Action extends SendableHandler {
     
     
     // TODO:
-    public abstract @Nonnull Permissions getAuditPermissions();
+    public abstract @Nonnull AgentPermissions getAuditPermissions();
     
     public abstract @Nonnull Restrictions getAuditRestrictions();
     

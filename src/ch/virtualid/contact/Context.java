@@ -1,8 +1,8 @@
 package ch.virtualid.contact;
 
 import ch.virtualid.agent.IncomingRole;
-import ch.virtualid.agent.Permissions;
-import ch.virtualid.agent.ReadonlyPermissions;
+import ch.virtualid.agent.AgentPermissions;
+import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Client;
 import ch.virtualid.client.Synchronizer;
@@ -243,14 +243,14 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
     /**
      * Stores the permissions of this context.
      */
-    private @Nullable Permissions permissions;
+    private @Nullable AgentPermissions permissions;
     
     /**
      * Returns the permissions of this context.
      * 
      * @return the permissions of this context.
      */
-    public @Nonnull ReadonlyPermissions getPermissions() throws SQLException {
+    public @Nonnull ReadonlyAgentPermissions getPermissions() throws SQLException {
         
     }
     
@@ -259,7 +259,7 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
      * 
      * @param permissions the permissions to be added to this context.
      */
-    public void addPermissions(@Nonnull ReadonlyPermissions permissions) throws SQLException {
+    public void addPermissions(@Nonnull ReadonlyAgentPermissions permissions) throws SQLException {
         
     }
     
@@ -268,7 +268,7 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
      * 
      * @param permissions the permissions to be removed from this context.
      */
-    public void removePermissions(@Nonnull ReadonlyPermissions permissions) throws SQLException {
+    public void removePermissions(@Nonnull ReadonlyAgentPermissions permissions) throws SQLException {
         
     }
     

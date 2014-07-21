@@ -1,6 +1,6 @@
 package ch.virtualid.handler.query.external;
 
-import ch.virtualid.agent.Permissions;
+import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.credential.Credential;
 import ch.virtualid.expression.Expression;
 import ch.virtualid.handler.ExternalQuery;
@@ -50,7 +50,7 @@ public final class GetAttributesQuery extends ExternalQuery {
         
         @Override
         public Block handle(Connection connection, Host host, long vid, Block element, SignatureWrapper signature) throws Exception {
-            Permissions authorization = null;
+            AgentPermissions authorization = null;
             if (signature.getClient() != null) authorization = host.getAuthorization(connection, vid, signature.getClient());
             
             List<Block> types = new ListWrapper(element).getElements();

@@ -4,7 +4,7 @@ import ch.virtualid.agent.Agent;
 import ch.virtualid.agent.ClientAgent;
 import ch.virtualid.agent.IncomingRole;
 import ch.virtualid.agent.OutgoingRole;
-import ch.virtualid.agent.Permissions;
+import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Commitment;
@@ -298,10 +298,10 @@ public final class Agents extends BothModule {
      * @param preference whether the preferences or the actual permissions are to be returned.
      * @return the permissions (or preferences) of the given authorization.
      */
-    public static @Nonnull Permissions getPermissions(@Nonnull Agent agent) throws SQLException {
+    public static @NonAgentPermissionssions getPermissions(@Nonnull Agent agent) throws SQLException {
         @Nonnull String query = "SELECT map_identity.identity, map_identity.category, map_identity.address, authorization_permission.writing FROM authorization_permission JOIN map_identity ON authorization_permission.type = map_identity.identity WHERE authorizationID = " + agent + " AND preference = " + preference;
         try (@Nonnull Statement statement = connection.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(query)) {
-            @Nonnull Permissions permissions = new Permissions();
+           AgentPermissionsermissions perAgentPermissionsnew Permissions();
             while (resultSet.next()) {
                 long number = resultSet.getLong(1);
                 @Nonnull Category category = Category.get(resultSet.getByte(2));
@@ -323,7 +323,7 @@ public final class Agents extends BothModule {
      * @param preference whether the preferences or the actual permissions are to be extended.
      * @param permissions the permissions (or preferences) to be added to the given authorization.
      */
-    public static void addPermissions(@Nonnull Authorization authorization, boolean preference, @Nonnull Permissions permissions) throws SQLException {
+    public static void addPermissions(@Nonnull Authorization authorization, boolean pAgentPermissions@Nonnull Permissions permissions) throws SQLException {
         @Nonnull String sql = "REPLACE INTO authorization_permission (authorizationID, preference, type, writing) VALUES (" + authorization + ", " + preference + ", ?, ?)";
         try (@Nonnull PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             for (@Nonnull SemanticType type : permissions.keySet()) {
@@ -349,7 +349,7 @@ public final class Agents extends BothModule {
      * @param preference whether the preferences or the actual permissions are to be set.
      * @param permissions the permissions (or preferences) to be set in the given authorization.
      */
-    public static void setPermissions(@Nonnull Authorization authorization, boolean preference, @Nonnull Permissions permissions) throws SQLException {
+    public static void setPermissions(@Nonnull Authorization authorization, boolAgentPermissionsnce, @Nonnull Permissions permissions) throws SQLException {
         try (@Nonnull Statement statement = connection.createStatement()) {
             statement.executeUpdate("DELETE FROM authorization_permission WHERE authorizationID = " + authorization + " AND preference = " + preference);
         }
@@ -366,7 +366,7 @@ public final class Agents extends BothModule {
      * @param permissions the permissions (or preferences) to be removed from the given authorization.
      * @return the number of rows deleted from the database.
      */
-    public static int removePermissions(@Nonnull Authorization authorization, boolean preference, @Nonnull Permissions permissions) throws SQLException {
+    public static int removePermissions(@Nonnull Authorization authorization,AgentPermissionseference, @Nonnull Permissions permissions) throws SQLException {
         @Nonnull String sql = "DELETE FROM authorization_permission WHERE authorizationID = " + authorization + " AND preference = " + preference + " AND type = ?";
         try (@Nonnull PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             for (@Nonnull SemanticType type : permissions.keySet()) {
@@ -375,8 +375,8 @@ public final class Agents extends BothModule {
             }
             int[] updated = preparedStatement.executeBatch();
             
-            int sum = 0;
-            @Nonnull Permissions merged = new Permissions();
+           AgentPermissions0;
+      AgentPermissionsull Permissions merged = new Permissions();
             for (int i = 0; i < updated.length; i++) {
                 sum += updated[i];
                 if (updated[i] < 1) {

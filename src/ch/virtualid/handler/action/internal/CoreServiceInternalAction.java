@@ -1,7 +1,7 @@
 package ch.virtualid.handler.action.internal;
 
 import ch.virtualid.agent.Agent;
-import ch.virtualid.agent.Permissions;
+import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.concept.Entity;
 import ch.virtualid.entity.Role;
 import ch.virtualid.entity.ClientEntity;
@@ -73,8 +73,8 @@ public abstract class CoreServiceInternalAction extends InternalAction {
     
     
     @Override
-    public @Nonnull Permissions getRequiredPermissions() {
-        return Permissions.NONE;
+    public @Nonnull AgentPermissions getRequiredPermissions() {
+        return AgentPermissions.NONE;
     }
     
     

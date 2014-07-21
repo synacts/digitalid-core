@@ -68,7 +68,7 @@ public final class ClientAgent extends Agent {
         @Nonnull Block[] tuple = new TupleWrapper(block).getElementsNotNull(3);
         commitment = new Commitment(tuple[0]);
         name = new StringWrapper(tuple[1]).getString();
-        preferences = new Permissions(tuple[2]);
+        preferences = new AgentPermissions(tuple[2]);
         
         if (name.length() > 50) throw new InvalidEncodingException("The client name may have at most 50 characters.");
         
@@ -127,7 +127,7 @@ public final class ClientAgent extends Agent {
      * 
      * @return the preferences of this client.
      */
-    public @Nonnull Permissions getPreferences() throws SQLException {
+    public @NonAgentPermissionssions getPreferences() throws SQLException {
         if (preferences == null) {
             preferences = Host.getPermissions(getConnection(), this, true);
         }
@@ -139,7 +139,7 @@ public final class ClientAgent extends Agent {
      * 
      * @param preferences the preferences to be set.
      */
-    public void setPreferences(@Nonnull Permissions preferences) throws SQLException {
+    public void setPreferencesAgentPermissionsermissions preferences) throws SQLException {
         Host.setPermissions(getConnection(), this, true, preferences);
         this.preferences = preferences;
     }

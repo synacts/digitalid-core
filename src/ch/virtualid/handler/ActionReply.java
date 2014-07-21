@@ -1,6 +1,6 @@
 package ch.virtualid.handler;
 
-import ch.virtualid.agent.Permissions;
+import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.agent.Restrictions;
 import javax.annotation.Nonnull;
 
@@ -19,7 +19,7 @@ public abstract class ActionReply extends Reply {
     }
     
     // TODO:
-    public abstract @Nonnull Permissions getAuditPermissions();
+    public abstract @Nonnull AgentPermissions getAuditPermissions();
     
     public abstract @Nonnull Restrictions getAuditRestrictions();
     

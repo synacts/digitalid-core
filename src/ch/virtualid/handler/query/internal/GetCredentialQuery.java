@@ -1,6 +1,6 @@
 package ch.virtualid.handler.query.internal;
 
-import ch.virtualid.agent.Permissions;
+import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.agent.Restrictions;
 import ch.virtualid.credential.Credential;
 import ch.virtualid.cryptography.Element;
@@ -45,7 +45,7 @@ public class GetCredentialQuery {
             
             BigInteger commitment = signature.getClient();
             Restrictions restrictions = host.getRestrictions(connection, vid, commitment);
-            Permissions authorization = host.getAuthorization(connection, vid, commitment);
+            AgentPermissions authorization = host.getAuthorization(connection, vid, commitment);
             if (restrictions == null) throw new PacketException(PacketException.AUTHORIZATION);
             RandomizedAuthorization randomizedAuthorization = new RandomizedAuthorization(element);
             authorization.checkDoesCover(randomizedAuthorization.getAuthorization());

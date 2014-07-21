@@ -1,6 +1,6 @@
 package ch.virtualid.handler.action.internal;
 
-import ch.virtualid.agent.Permissions;
+import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.agent.Restrictions;
 import ch.virtualid.handler.Handler;
 import ch.virtualid.identity.Category;
@@ -55,7 +55,7 @@ public class AccountOpen {
 
             @Nonnull NonHostIdentity identity = Mapper.mapIdentity(identifier, category).toNonHostIdentity();
             Restrictions restrictions = new Restrictions(0, true, 0l);
-            Permissions authorization = new Permissions(SemanticType.CLIENT_GENERAL_AUTHORIZATION, true);
+            AgentPermissions authorization = new AgentPermissions(SemanticType.CLIENT_GENERAL_AUTHORIZATION, true);
             accreditClient(connection, identity, commitment, name, authorization);
             authorizeClient(connection, identity, commitment, restrictions, authorization);
             return identity;

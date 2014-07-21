@@ -1,6 +1,6 @@
 package ch.virtualid.contact;
 
-import ch.virtualid.agent.ReadonlyPermissions;
+import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.concept.Concept;
 import ch.virtualid.entity.Entity;
@@ -82,7 +82,7 @@ public final class Contact extends Concept implements Immutable, Blockable {
         return person;
     }
     
-    public @Nonnull ReadonlyPermissions getPermissions() {
+    public @Nonnull ReadonlyAgentPermissions getPermissions() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
     

@@ -35,7 +35,7 @@ public abstract class Agent extends Concept {
     /**
      * Stores the permissions of this agent or null if not yet loaded.
      */
-    private @Nullable Permissions permissions;
+    private @Nullable AgentPermissions permissions;
     
     /**
      * Stores whether the restrictions have been loaded from the database.
@@ -79,7 +79,7 @@ public abstract class Agent extends Concept {
         
         @Nonnull Block[] tuple = new TupleWrapper(block).getElementsNotNull(2);
         this.restrictions = tuple[1].isEmpty() ? null : new Restrictions(tuple[1]);
-        this.permissions = new Permissions(tuple[2]);
+        this.permissions = new AgentPermissions(tuple[2]);
     }
     
     
@@ -98,7 +98,7 @@ public abstract class Agent extends Concept {
      * 
      * @return the permissions of this agent.
      */
-    public final @Nonnull ReadonlyPermissions getPermissions() throws SQLException {
+    public final @Nonnull ReadonlyAgentPermissions getPermissions() throws SQLException {
         if (permissions == null) {
             permissions = Agents.getPermissions(this);
         }
@@ -112,7 +112,7 @@ public abstract class Agent extends Concept {
      * @param permissions the permissions to be set.
      * @require !isRestricted() : "This authorization may not have been restricted.";
      */
-    public final void setPermissions(@Nonnull Permissions permissions) throws SQLException {
+    public final void setPermissions(@Nonnull AgentPermissions permissions) throws SQLException {
         assert !isRestricted() : "This authorization may not have been restricted.";
         
         Host.setPermissions(this, false, permissions);
