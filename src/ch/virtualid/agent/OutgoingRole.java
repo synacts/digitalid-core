@@ -1,6 +1,6 @@
 package ch.virtualid.agent;
 
-import ch.virtualid.concepts.Context;
+import ch.virtualid.contact.Context;
 import ch.virtualid.credential.Credential;
 import ch.virtualid.database.Database;
 import ch.virtualid.exceptions.ShouldNeverHappenError;

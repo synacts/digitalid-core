@@ -2,7 +2,7 @@ package ch.virtualid.identity;
 
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
-import ch.virtualid.concepts.Context;
+import ch.virtualid.contact.Context;
 import ch.virtualid.database.Database;
 import ch.virtualid.exceptions.InvalidDeclarationException;
 import ch.virtualid.interfaces.Immutable;

@@ -1,6 +1,6 @@
 package ch.virtualid.client;
 
-import ch.virtualid.concepts.Context;
+import ch.virtualid.contact.Context;
 import ch.xdf.exceptions.InvalidEncodingException;
 import java.util.LinkedList;
 import java.util.List;

@@ -1,8 +1,7 @@
-package ch.virtualid.concepts;
+package ch.virtualid.contact;
 
 import ch.virtualid.agent.IncomingRole;
 import ch.virtualid.agent.Permissions;
-import ch.virtualid.agent.ReadonlyAuthentications;
 import ch.virtualid.agent.ReadonlyPermissions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Client;

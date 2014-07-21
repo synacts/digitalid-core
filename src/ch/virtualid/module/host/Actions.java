@@ -2,7 +2,7 @@ package ch.virtualid.module.host;
 
 import ch.virtualid.agent.Agent;
 import ch.virtualid.agent.Restrictions;
-import ch.virtualid.concepts.Context;
+import ch.virtualid.contact.Context;
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.Site;

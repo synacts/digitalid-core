@@ -1,6 +1,6 @@
 package ch.virtualid.handler;
 
-import ch.virtualid.agent.Authentications;
+import ch.virtualid.contact.Authentications;
 import ch.virtualid.agent.Permissions;
 import ch.virtualid.agent.ReadonlyPermissions;
 import ch.virtualid.annotations.Pure;

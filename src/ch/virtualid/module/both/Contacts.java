@@ -2,7 +2,7 @@ package ch.virtualid.module.both;
 
 import ch.virtualid.agent.Agent;
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.concepts.Context;
+import ch.virtualid.contact.Context;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.Site;

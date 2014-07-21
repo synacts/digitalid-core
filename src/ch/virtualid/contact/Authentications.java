@@ -1,4 +1,4 @@
-package ch.virtualid.agent;
+package ch.virtualid.contact;
 
 import ch.virtualid.annotations.Capturable;
 import ch.virtualid.annotations.Pure;
