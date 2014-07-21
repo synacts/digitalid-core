@@ -205,7 +205,7 @@ public final class Client extends Site {
     public void addRole(@Nonnull NonHostIdentity issuer, @Nonnull IncomingRole authorization) throws SQLException {
         getRoles();
         assert roles != null;
-        roles.add(Role.get(this, issuer, null, null, authorization));
+        roles.add(Role.add(this, issuer, null, null, authorization));
         notify(ROLE_ADDED);
     }
     

@@ -62,10 +62,17 @@ public abstract class Instance {
      * @param map the mapping from aspects to sets of observers.
      * @param aspect the aspect to notify the registered observers about.
      * @param instance the instance in which the change has occurred.
+     * 
+     * @require aspect.getClazz().isInstance(instance) : "The instance is an instance of the aspect's class.";
      */
     private static void notify(@Nonnull Map<Aspect, Set<Observer>> map, @Nonnull Aspect aspect, @Nonnull Instance instance) {
+        assert aspect.getClazz().isInstance(instance) : "The instance is an instance of the aspect's class.";
+        
         final @Nullable Set<Observer> observers = map.get(aspect);
         if (observers != null) {
+            if (aspect.getClazz().isInstance(instance)) {
+                new Object();
+            }
             for (final @Nonnull Observer observer : observers) observer.notify(aspect, instance);
         }
     }
@@ -148,8 +155,12 @@ public abstract class Instance {
      * Please note that the notification mechanism is only enabled if the database is in single-access mode.
      * 
      * @param aspect the aspect to notify the registered observers about.
+     * 
+     * @require aspect.getClazz().isInstance(this) : "This is an instance of the aspect's class.";
      */
     protected final void notify(@Nonnull Aspect aspect) {
+        assert aspect.getClazz().isInstance(this) : "This is an instance of the aspect's class.";
+        
         if (Database.isSingleAccess()) {
             if (instanceObservers != null) notify(instanceObservers, aspect, this);
             notify(aspectObservers, aspect, this);

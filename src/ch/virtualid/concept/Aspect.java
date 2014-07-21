@@ -13,9 +13,9 @@ import javax.annotation.Nonnull;
 public final class Aspect implements Immutable {
     
     /**
-     * Stores the class of the instance to which this aspect belongs.
+     * Stores the class to which this aspect belongs.
      */
-    private final @Nonnull Class<? extends Instance> instance;
+    private final @Nonnull Class<? extends Instance> clazz;
     
     /**
      * Stores the name of this aspect.
@@ -23,24 +23,24 @@ public final class Aspect implements Immutable {
     private final @Nonnull String name;
     
     /**
-     * Creates a new aspect of the given instance with the given name.
+     * Creates a new aspect of the given class with the given name.
      * 
-     * @param instance the class of the instance to which this aspect belongs.
+     * @param clazz the class to which this aspect belongs.
      * @param name the name of this aspect.
      */
-    public Aspect(@Nonnull Class<? extends Instance> instance, @Nonnull String name) {
-        this.instance = instance;
+    public Aspect(@Nonnull Class<? extends Instance> clazz, @Nonnull String name) {
+        this.clazz = clazz;
         this.name = name;
     }
     
     /**
-     * Returns the class of the instance to which this aspect belongs.
+     * Returns the class to which this aspect belongs.
      * 
-     * @return the class of the instance to which this aspect belongs.
+     * @return the class to which this aspect belongs.
      */
     @Pure
-    public @Nonnull Class<? extends Instance> getInstance() {
-        return instance;
+    public @Nonnull Class<? extends Instance> getClazz() {
+        return clazz;
     }
     
     /**
@@ -56,7 +56,7 @@ public final class Aspect implements Immutable {
     @Pure
     @Override
     public @Nonnull String toString() {
-        return instance.getName() + " " + name;
+        return clazz.getName() + " " + name;
     }
     
 }

@@ -15,6 +15,8 @@ public interface Observer {
      * 
      * @param aspect the aspect that changed in the given instance.
      * @param instance the instance that reported a change in the given aspect.
+     * 
+     * @require aspect.getClazz().isInstance(instance) : "The instance is an instance of the aspect's class.";
      */
     public void notify(@Nonnull Aspect aspect, @Nonnull Instance instance);
     

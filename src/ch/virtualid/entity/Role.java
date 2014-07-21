@@ -197,7 +197,7 @@ public final class Role extends Entity implements Immutable, SQLizable {
     public void addRole(@Nonnull NonHostIdentity issuer, @Nonnull SemanticType relation, @Nonnull IncomingRole authorization) throws SQLException {
         getRoles();
         assert roles != null;
-        roles.add(get(client, issuer, relation, this, authorization));
+        roles.add(add(client, issuer, relation, this, authorization));
         notify(ADDED);
     }
     
@@ -232,7 +232,7 @@ public final class Role extends Entity implements Immutable, SQLizable {
      * 
      * @require relation == null || relation.isRoleType() : "The relation is either null or a role type.";
      */
-    public static @Nonnull Role get(@Nonnull Client client, @Nonnull NonHostIdentity issuer, @Nullable SemanticType relation, @Nullable Role recipient, @Nonnull IncomingRole authorization) throws SQLException {
+    public static @Nonnull Role add(@Nonnull Client client, @Nonnull NonHostIdentity issuer, @Nullable SemanticType relation, @Nullable Role recipient, @Nonnull IncomingRole authorization) throws SQLException {
         assert relation == null || relation.isRoleType() : "The relation is either null or a role type.";
         
         final long number = Roles.map(client, issuer, relation, recipient, authorization);

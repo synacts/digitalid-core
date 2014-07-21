@@ -29,20 +29,20 @@ import javax.annotation.Nonnull;
 public final class Authentications extends FreezableLinkedHashSet<SemanticType> implements ReadonlyAuthentications, Blockable {
     
     /**
-     * Stores the semantic type {@code type.authentication@virtualid.ch}.
+     * Stores the semantic type {@code type.authentication.agent@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType ATTRIBUTE_TYPE = SemanticType.create("type.authentication@virtualid.ch").load(SemanticType.IDENTIFIER);
+    private static final @Nonnull SemanticType ATTRIBUTE_TYPE = SemanticType.create("type.authentication.agent@virtualid.ch").load(SemanticType.IDENTIFIER);
     
     /**
-     * Stores the semantic type {@code authentication@virtualid.ch}.
+     * Stores the semantic type {@code authentication.agent@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("authentication@virtualid.ch").load(ListWrapper.TYPE, ATTRIBUTE_TYPE);
+    public static final @Nonnull SemanticType TYPE = SemanticType.create("authentication.agent@virtualid.ch").load(ListWrapper.TYPE, ATTRIBUTE_TYPE);
     
     
     /**
-     * Stores the semantic type {@code identity.based.authentication@virtualid.ch}.
+     * Stores the semantic type {@code identity.based.authentication.agent@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType IDENTITY_BASED_TYPE = SemanticType.create("identity.based.authentication@virtualid.ch").load(new Category[] {Category.HOST}, Time.TROPICAL_YEAR, BooleanWrapper.TYPE);
+    public static final @Nonnull SemanticType IDENTITY_BASED_TYPE = SemanticType.create("identity.based.authentication.agent@virtualid.ch").load(new Category[] {Category.HOST}, Time.TROPICAL_YEAR, BooleanWrapper.TYPE);
     
     /**
      * Stores an empty set of authentications.

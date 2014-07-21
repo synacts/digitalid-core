@@ -1,9 +1,9 @@
 package ch.virtualid.agent;
 
 import ch.virtualid.annotations.Pure;
+import ch.virtualid.concepts.Contact;
 import ch.virtualid.concepts.Context;
 import ch.virtualid.identity.FailedIdentityException;
-import ch.virtualid.identity.NonHostIdentifier;
 import ch.virtualid.identity.Person;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
@@ -11,10 +11,8 @@ import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.packet.PacketError;
 import ch.virtualid.packet.PacketException;
 import ch.virtualid.util.FreezableArray;
-import ch.virtualid.util.ReadonlyArray;
 import ch.xdf.Block;
 import ch.xdf.BooleanWrapper;
-import ch.xdf.Int64Wrapper;
 import ch.xdf.TupleWrapper;
 import ch.xdf.exceptions.InvalidEncodingException;
 import java.sql.Connection;
@@ -24,7 +22,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * This class models the restrictions of an authorization.
+ * This class models the restrictions of an agent.
  * <p>
  * <em>Important:</em> Though this class promises that its objects are immutable, their hash may change!
  * 
@@ -36,9 +34,35 @@ import javax.annotation.Nullable;
 public final class Restrictions implements Immutable, Blockable {
     
     /**
-     * Stores the semantic type {@code time@virtualid.ch}.
+     * Stores the semantic type {@code client.restrictions.agent@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("time@virtualid.ch").load(Int64Wrapper.TYPE);
+    private static final @Nonnull SemanticType CLIENT = SemanticType.create("client.restrictions.agent@virtualid.ch").load(BooleanWrapper.TYPE);
+    
+    /**
+     * Stores the semantic type {@code role.restrictions.agent@virtualid.ch}.
+     */
+    private static final @Nonnull SemanticType ROLE = SemanticType.create("role.restrictions.agent@virtualid.ch").load(BooleanWrapper.TYPE);
+    
+    /**
+     * Stores the semantic type {@code writing.restrictions.agent@virtualid.ch}.
+     */
+    private static final @Nonnull SemanticType WRITING = SemanticType.create("writing.restrictions.agent@virtualid.ch").load(BooleanWrapper.TYPE);
+    
+    /**
+     * Stores the semantic type {@code context.restrictions.agent@virtualid.ch}.
+     */
+    private static final @Nonnull SemanticType CONTEXT = SemanticType.create("context.restrictions.agent@virtualid.ch").load(Context.TYPE);
+    
+    /**
+     * Stores the semantic type {@code contact.restrictions.agent@virtualid.ch}.
+     */
+    private static final @Nonnull SemanticType CONTACT = SemanticType.create("contact.restrictions.agent@virtualid.ch").load(Contact.TYPE);
+    
+    /**
+     * Stores the semantic type {@code restrictions.agent@virtualid.ch}.
+     */
+    public static final @Nonnull SemanticType TYPE = SemanticType.create("restrictions.agent@virtualid.ch").load(TupleWrapper.TYPE, CLIENT, ROLE, WRITING, CONTEXT, CONTACT);
+    
     
     /**
      * Stores the weakest restrictions (without a context and contact).
@@ -89,9 +113,9 @@ public final class Restrictions implements Immutable, Blockable {
      * @param client whether the authorization is restricted to clients.
      * @param role whether the authorization is restricted to agents that can assume incoming roles.
      * @param writing whether the authorization is restricted to agents that can write (to contexts).
-     * @param context the context to which the authorization is restricted.
+     * @param context the context to which the authorization is restricted (or null).
      */
-    public Restrictions(boolean client, boolean role, boolean writing, @Nonnull Context context) {
+    public Restrictions(boolean client, boolean role, boolean writing, @Nullable Context context) {
         this(client, role, writing, context, null);
     }
     
@@ -101,9 +125,9 @@ public final class Restrictions implements Immutable, Blockable {
      * @param client whether the authorization is restricted to clients.
      * @param role whether the authorization is restricted to agents that can assume incoming roles.
      * @param writing whether the authorization is restricted to agents that can write (to contexts).
-     * @param contact the contact to which the authorization is restricted.
+     * @param contact the contact to which the authorization is restricted (or null).
      */
-    public Restrictions(boolean client, boolean role, boolean writing, @Nonnull Person contact) {
+    public Restrictions(boolean client, boolean role, boolean writing, @Nullable Person contact) {
         this(client, role, writing, null, contact);
     }
     
@@ -116,10 +140,10 @@ public final class Restrictions implements Immutable, Blockable {
      * @param context the context to which the authorization is restricted (or null).
      * @param contact the contact to which the authorization is restricted (or null).
      * 
-     * @require context == null || contact == null : "The context or the contact have to be null.";
+     * @require context == null || contact == null : "The context or the contact is null.";
      */
     private Restrictions(boolean client, boolean role, boolean writing, @Nullable Context context, @Nullable Person contact) {
-        assert context == null || contact == null : "The context or the contact have to be null.";
+        assert context == null || contact == null : "The context or the contact is null.";
         
         this.client = client;
         this.role = role;
@@ -132,18 +156,26 @@ public final class Restrictions implements Immutable, Blockable {
      * Creates new restrictions from the given block.
      * 
      * @param block the block containing the restrictions.
+     * 
+     * @require block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
      */
     public Restrictions(@Nonnull Block block) throws InvalidEncodingException, FailedIdentityException {
-        super(block);
+        assert block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
         
-        @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(5);
-        client = new BooleanWrapper(elements.getNotNull(0)).getValue();
-        role = new BooleanWrapper(elements.getNotNull(1)).getValue();
-        writing = new BooleanWrapper(elements.getNotNull(2)).getValue();
-        context = elements.getNotNull(3).isNotEmpty() ? new Context(elements.getNotNull(3)) : null;
-        contact = elements.getNotNull(4).isNotEmpty() ? new NonHostIdentifier(elements.getNotNull(4)).getIdentity().toPerson() : null;
+        final @Nonnull TupleWrapper tuple = new TupleWrapper(block);
+        this.client = new BooleanWrapper(tuple.getElementNotNull(0)).getValue();
+        this.role = new BooleanWrapper(tuple.getElementNotNull(1)).getValue();
+        this.writing = new BooleanWrapper(tuple.getElementNotNull(2)).getValue();
+        this.context = tuple.isElementNull(3) ? null : new Context(tuple.getElementNotNull(3));
+        this.contact = tuple.isElementNull(4) ? null : new Contact(tuple.getElementNotNull(4));
         
-        if (context != null && contact != null) throw new InvalidEncodingException("The context or the contact is null.");
+        if (context != null && contact != null) throw new InvalidEncodingException("The context and the contact are not null.");
+    }
+    
+    @Pure
+    @Override
+    public @Nonnull SemanticType getType() {
+        return TYPE;
     }
     
     @Pure
