@@ -2,7 +2,6 @@ package ch.virtualid.cryptography;
 
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.interfaces.Blockable;
-import ch.virtualid.interfaces.BlockableObject;
 import ch.virtualid.interfaces.Immutable;
 import ch.xdf.Block;
 import ch.xdf.IntegerWrapper;
@@ -20,7 +19,7 @@ import javax.annotation.Nullable;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-abstract class Number extends BlockableObject implements Immutable {
+abstract class Number implements Immutable, Blockable {
     
     /**
      * Stores the value of this number.
@@ -44,14 +43,14 @@ abstract class Number extends BlockableObject implements Immutable {
      * @require block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
      */
     Number(@Nonnull Block block) throws InvalidEncodingException {
-        super(block);
+        assert block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
         
         this.value = new IntegerWrapper(block).getValue();
     }
     
     @Pure
     @Override
-    public final @Nonnull Block encode() {
+    public final @Nonnull Block toBlock() {
         return new IntegerWrapper(getType(), value).toBlock();
     }
     

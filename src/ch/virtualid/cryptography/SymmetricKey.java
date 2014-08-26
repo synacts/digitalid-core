@@ -4,7 +4,7 @@ import ch.virtualid.annotations.Capturable;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.exceptions.ShouldNeverHappenError;
 import ch.virtualid.identity.SemanticType;
-import ch.virtualid.interfaces.BlockableObject;
+import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.xdf.Block;
 import ch.xdf.IntegerWrapper;
@@ -28,7 +28,7 @@ import javax.crypto.spec.SecretKeySpec;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public final class SymmetricKey extends BlockableObject implements Immutable {
+public final class SymmetricKey implements Immutable, Blockable {
     
     /**
      * Stores the semantic type {@code symmetric.key@virtualid.ch}.
@@ -84,7 +84,7 @@ public final class SymmetricKey extends BlockableObject implements Immutable {
      * @require block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
      */
     public SymmetricKey(@Nonnull Block block) throws InvalidEncodingException {
-        super(block);
+        assert block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
         
         value = new IntegerWrapper(block).getValue();
         final @Nonnull byte[] bytes = value.toByteArray();
@@ -101,7 +101,7 @@ public final class SymmetricKey extends BlockableObject implements Immutable {
     
     @Pure
     @Override
-    public @Nonnull Block encode() {
+    public @Nonnull Block toBlock() {
         return new IntegerWrapper(TYPE, value).toBlock();
     }
     

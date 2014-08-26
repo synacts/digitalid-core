@@ -4,7 +4,6 @@ import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
-import ch.virtualid.interfaces.BlockableObject;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.FreezableArrayList;
@@ -29,7 +28,7 @@ import org.javatuples.Pair;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-abstract class KeyChain<Key extends Blockable> extends BlockableObject implements Immutable {
+abstract class KeyChain<Key extends Blockable> implements Immutable, Blockable {
     
     /**
      * Stores the items of this key chain in chronological order with the newest one first.
@@ -79,7 +78,7 @@ abstract class KeyChain<Key extends Blockable> extends BlockableObject implement
      * @require block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
      */
     protected KeyChain(@Nonnull Block block) throws InvalidEncodingException {
-        super(block);
+        assert block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
         
         final @Nonnull ReadonlyList<Block> elements = new ListWrapper(block).getElementsNotNull();
         if (elements.isEmpty()) throw new InvalidEncodingException("The list of elements may not be empty.");
@@ -98,7 +97,7 @@ abstract class KeyChain<Key extends Blockable> extends BlockableObject implement
     
     @Pure
     @Override
-    protected final @Nonnull Block encode() {
+    public final @Nonnull Block toBlock() {
         final @Nonnull FreezableArrayList<Block> elements = new FreezableArrayList<Block>(items.size());
         for (final @Nonnull Pair<Time, Key> item : items) {
             final @Nonnull FreezableArray<Block> pair = new FreezableArray<Block>(2);

@@ -2,7 +2,7 @@ package ch.virtualid.cryptography;
 
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.identity.SemanticType;
-import ch.virtualid.interfaces.BlockableObject;
+import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.ReadonlyArray;
@@ -20,7 +20,7 @@ import javax.annotation.Nullable;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public final class PrivateKey extends BlockableObject implements Immutable {
+public final class PrivateKey implements Immutable, Blockable {
     
     /**
      * Stores the semantic type {@code composite.group.private.key.host@virtualid.ch}.
@@ -146,7 +146,7 @@ public final class PrivateKey extends BlockableObject implements Immutable {
      * @require block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
      */
     public PrivateKey(@Nonnull Block block) throws InvalidEncodingException {
-        super(block);
+        assert block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
         
         final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(5);
         this.compositeGroup = new Group(elements.getNotNull(0));
@@ -176,7 +176,7 @@ public final class PrivateKey extends BlockableObject implements Immutable {
     
     @Pure
     @Override
-    protected @Nonnull Block encode() {
+    public @Nonnull Block toBlock() {
         final @Nonnull FreezableArray<Block> elements = new FreezableArray<Block>(5);
         elements.set(0, compositeGroup.toBlock().setType(COMPOSITE_GROUP));
         elements.set(1, new IntegerWrapper(P, p).toBlock());
