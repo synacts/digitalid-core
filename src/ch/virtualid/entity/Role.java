@@ -1,6 +1,7 @@
 package ch.virtualid.entity;
 
-import ch.virtualid.agent.IncomingRole;
+import ch.virtualid.agent.Agent;
+import ch.virtualid.agent.OutgoingRole;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Client;
 import ch.virtualid.concept.Aspect;
@@ -67,9 +68,9 @@ public final class Role extends Entity implements Immutable, SQLizable {
     private final @Nullable Role recipient;
     
     /**
-     * Stores the incoming role with the authorization for this role.
+     * Stores the agent of this role.
      */
-    private final @Nonnull IncomingRole authorization;
+    private final @Nonnull Agent agent;
     
     /**
      * Creates a new role for the given client with the given number, issuer, relation, recipient and agent.
@@ -82,11 +83,11 @@ public final class Role extends Entity implements Immutable, SQLizable {
      * @param issuer the issuer of the new role.
      * @param relation the relation of the new role.
      * @param recipient the recipient of the new role.
-     * @param authorization the incoming role with the authorization for this role.
+     * @param agent the agent of the new role.
      * 
      * @require relation == null || relation.isRoleType() : "The relation is either null or a role type.";
      */
-    public Role(@Nonnull Client client, long number, @Nonnull NonHostIdentity issuer, @Nullable SemanticType relation, @Nullable Role recipient, @Nonnull IncomingRole authorization) {
+    public Role(@Nonnull Client client, long number, @Nonnull NonHostIdentity issuer, @Nullable SemanticType relation, @Nullable Role recipient, @Nonnull Agent agent) {
         assert relation == null || relation.isRoleType() : "The relation is either null or a role type.";
         
         this.client = client;
@@ -94,7 +95,7 @@ public final class Role extends Entity implements Immutable, SQLizable {
         this.issuer = issuer;
         this.relation = relation;
         this.recipient = recipient;
-        this.authorization = authorization;
+        this.agent = agent;
     }
     
     /**
@@ -140,13 +141,13 @@ public final class Role extends Entity implements Immutable, SQLizable {
     }
     
     /**
-     * Returns the incoming role with the authorization for this role.
+     * Returns the agent of this role.
      * 
-     * @return the incoming role with the authorization for this role.
+     * @return the agent of this role.
      */
     @Pure
-    public @Nonnull IncomingRole getAuthorization() {
-        return authorization;
+    public @Nonnull Agent getAgent() {
+        return agent;
     }
     
     
@@ -192,12 +193,12 @@ public final class Role extends Entity implements Immutable, SQLizable {
      * 
      * @param issuer the issuer of the role to add.
      * @param relation the relation of the role to add.
-     * @param authorization the incoming role with the authorization for role to add.
+     * @param agent the outgoing role of the role to add.
      */
-    public void addRole(@Nonnull NonHostIdentity issuer, @Nonnull SemanticType relation, @Nonnull IncomingRole authorization) throws SQLException {
+    public void addRole(@Nonnull NonHostIdentity issuer, @Nonnull SemanticType relation, @Nonnull OutgoingRole agent) throws SQLException {
         getRoles();
         assert roles != null;
-        roles.add(add(client, issuer, relation, this, authorization));
+        roles.add(add(client, issuer, relation, this, agent));
         notify(ADDED);
     }
     
@@ -219,35 +220,35 @@ public final class Role extends Entity implements Immutable, SQLizable {
      * Returns a new or existing role with the given arguments.
      * <p>
      * <em>Important:</em> This method should not be called directly.
-     * (Use {@link #addRole(ch.virtualid.identity.NonHostIdentity, ch.virtualid.identity.SemanticType, ch.virtualid.agent.IncomingRole)}
-     * or {@link Client#addRole(ch.virtualid.identity.NonHostIdentity, ch.virtualid.agent.IncomingRole)} instead.)
+     * (Use {@link #addRole(ch.virtualid.identity.NonHostIdentity, ch.virtualid.identity.SemanticType, ch.virtualid.agent.Agent)}
+     * or {@link Client#addRole(ch.virtualid.identity.NonHostIdentity, ch.virtualid.agent.ClientAgent)} instead.)
      * 
      * @param client the client that can assume the returned role.
      * @param issuer the issuer of the returned role.
      * @param relation the relation of the returned role.
      * @param recipient the recipient of the returned role.
-     * @param authorization the incoming role with the authorization for the returned role.
+     * @param agent the agent of the returned role.
      * 
      * @return a new or existing role with the given arguments.
      * 
      * @require relation == null || relation.isRoleType() : "The relation is either null or a role type.";
      */
-    public static @Nonnull Role add(@Nonnull Client client, @Nonnull NonHostIdentity issuer, @Nullable SemanticType relation, @Nullable Role recipient, @Nonnull IncomingRole authorization) throws SQLException {
+    public static @Nonnull Role add(@Nonnull Client client, @Nonnull NonHostIdentity issuer, @Nullable SemanticType relation, @Nullable Role recipient, @Nonnull Agent agent) throws SQLException {
         assert relation == null || relation.isRoleType() : "The relation is either null or a role type.";
         
-        final long number = Roles.map(client, issuer, relation, recipient, authorization);
+        final long number = Roles.map(client, issuer, relation, recipient, agent);
         if (Database.isSingleAccess()) {
             synchronized(index) {
                 final @Nonnull Pair<Client, Long> pair = new Pair<Client, Long>(client, number);
                 @Nullable Role role = index.get(pair);
                 if (role == null) {
-                    role = new Role(client, number, issuer, relation, recipient, authorization);
+                    role = new Role(client, number, issuer, relation, recipient, agent);
                     index.put(pair, role);
                 }
                 return role;
             }
         } else {
-            return new Role(client, number, issuer, relation, recipient, authorization);
+            return new Role(client, number, issuer, relation, recipient, agent);
         }
     }
     

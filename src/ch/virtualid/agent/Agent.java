@@ -1,5 +1,8 @@
 package ch.virtualid.agent;
 
+import ch.virtualid.annotations.OnlyForActions;
+import ch.virtualid.client.Synchronizer;
+import ch.virtualid.concept.Aspect;
 import ch.virtualid.concept.Concept;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.Entity;
@@ -28,6 +31,32 @@ import javax.annotation.Nullable;
 public abstract class Agent extends Concept {
     
     /**
+     * Stores the aspect of the permissions being changed at the observed agent.
+     */
+    public static final @Nonnull Aspect PERMISSIONS = new Aspect(Agent.class, "permissions changed");
+    
+    /**
+     * Stores the aspect of the restrictions being changed at the observed agent.
+     */
+    public static final @Nonnull Aspect RESTRICTIONS = new Aspect(Agent.class, "authentications changed");
+    
+    /**
+     * Stores the aspect of the authorization being restricted at the observed agent.
+     */
+    public static final @Nonnull Aspect RESTRICTED = new Aspect(Agent.class, "authorization restricted");
+    
+    /**
+     * Stores the aspect of the observed agent being created in the database.
+     */
+    public static final @Nonnull Aspect CREATED = new Aspect(Agent.class, "created");
+    
+    /**
+     * Stores the aspect of the observed agent being deleted from the database.
+     */
+    public static final @Nonnull Aspect DELETED = new Aspect(Agent.class, "deleted");
+    
+    
+    /**
      * Stores the number that references this agent in the database.
      */
     private final long number;
@@ -54,32 +83,15 @@ public abstract class Agent extends Concept {
     
     
     /**
-     * Creates a new authorization with the given connection, identity and number.
+     * Creates a new authorization with the given entity and number.
      * 
-     * @param identity the identity to which this authorization belongs.
-     * @param number the internal number that represents and indexes this authorization.
+     * @param entity the entity to which this authorization belongs.
+     * @param number the number that references this authorization.
      */
     protected Agent(@Nonnull Entity entity, long number) {
         super(entity);
+        
         this.number = number;
-    }
-    
-    /**
-     * Creates a new authorization with the given connection and identity from the given block.
-     * 
-     * @param connection an open connection to the database.
-     * @param identity the identity to which this authorization belongs.
-     * @param block the block containing the authorization.
-     */
-    protected Authorization(@Nonnull NonHostIdentity identity, @Nonnull Block block) throws InvalidEncodingException, FailedIdentityException {
-        super(connection, identity);
-        
-        this.number = 0l; // TODO
-        this.restrictionsLoaded = true;
-        
-        @Nonnull Block[] tuple = new TupleWrapper(block).getElementsNotNull(2);
-        this.restrictions = tuple[1].isEmpty() ? null : new Restrictions(tuple[1]);
-        this.permissions = new AgentPermissions(tuple[2]);
     }
     
     
@@ -106,17 +118,62 @@ public abstract class Agent extends Concept {
     }
     
     /**
-     * Sets the permissions of this authorization and stores them in the database.
-     * Make sure to call {@link Agent#redetermineAgents()} afterwards in case of agents.
+     * Adds the given permissions to this agent.
      * 
-     * @param permissions the permissions to be set.
-     * @require !isRestricted() : "This authorization may not have been restricted.";
+     * @param permissions the permissions to be add.
+     * 
+     * @require !isRestricted() : "The authorization of this agent may not have been restricted.";
      */
-    public final void setPermissions(@Nonnull AgentPermissions permissions) throws SQLException {
-        assert !isRestricted() : "This authorization may not have been restricted.";
+    public final void addPermissions(@Nonnull ReadonlyAgentPermissions permissions) throws SQLException {
+        assert !isRestricted() : "The authorization of this agent may not have been restricted.";
         
-        Host.setPermissions(this, false, permissions);
-        this.permissions = permissions;
+        if (!permissions.isEmpty()) {
+            Synchronizer.execute(new AgentPermissionsAdd(this, permissions));
+        }
+    }
+    
+    
+    /**
+     * Adds the given permissions to this agent.
+     * 
+     * @param newPermissions the permissions to be added to this agent.
+     * 
+     * @require !newPermissions.isEmpty() : "The new permissions are not empty.";
+     */
+    @OnlyForActions
+    public void addPermissionsForActions(@Nonnull ReadonlyAgentPermissions newPermissions) throws SQLException {
+        assert !newPermissions.isEmpty() : "The new permissions are not empty.";
+        
+        Agents.addPermissions(this, newPermissions);
+        if (permissions != null) permissions.addAll(newPermissions);
+        notify(PERMISSIONS);
+    }
+    
+    /**
+     * Removes the given permissions from this agent.
+     * 
+     * @param permissions the permissions to be removed from this agent.
+     */
+    public void removePermissions(@Nonnull ReadonlyAgentPermissions permissions) throws SQLException {
+        if (!permissions.isEmpty()) {
+            Synchronizer.execute(new AgentPermissionsRemove(this, permissions));
+        }
+    }
+    
+    /**
+     * Removes the given permissions from this agent.
+     * 
+     * @param oldPermissions the permissions to be removed from this agent.
+     * 
+     * @require !oldPermissions.isEmpty() : "The old permissions are not empty.";
+     */
+    @OnlyForActions
+    public void removePermissionsForActions(@Nonnull ReadonlyAgentPermissions oldPermissions) throws SQLException {
+        assert !oldPermissions.isEmpty() : "The old permissions are not empty.";
+        
+        Agents.removePermissions(this, oldPermissions);
+        if (permissions != null) permissions.removeAll(permissions);
+        notify(PERMISSIONS);
     }
     
     

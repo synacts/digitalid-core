@@ -1,6 +1,6 @@
 package ch.virtualid.module.client;
 
-import ch.virtualid.agent.IncomingRole;
+import ch.virtualid.agent.Agent;
 import ch.virtualid.annotations.Capturable;
 import ch.virtualid.client.Client;
 import ch.virtualid.database.Database;
@@ -46,13 +46,13 @@ public final class Roles extends ClientModule {
      * @param issuer the issuer of the given role.
      * @param relation the relation of the given role.
      * @param recipient the recipient of the given role.
-     * @param authorization the incoming role with the authorization for the given role.
+     * @param agent the agent of the given role.
      * 
      * @return the existing or newly mapped number for the given role.
      * 
      * @require relation == null || relation.isRoleType() : "The relation is either null or a role type.";
      */
-    public static long map(@Nonnull Client client, @Nonnull NonHostIdentity issuer, @Nullable SemanticType relation, @Nullable Role recipient, @Nonnull IncomingRole authorization) throws SQLException {
+    public static long map(@Nonnull Client client, @Nonnull NonHostIdentity issuer, @Nullable SemanticType relation, @Nullable Role recipient, @Nonnull Agent agent) throws SQLException {
         assert relation == null || relation.isRoleType() : "The relation is either null or a role type.";
         
         throw new UnsupportedOperationException("Not supported yet.");

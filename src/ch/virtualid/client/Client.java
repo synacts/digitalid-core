@@ -1,7 +1,7 @@
 package ch.virtualid.client;
 
-import ch.virtualid.agent.IncomingRole;
 import ch.virtualid.agent.AgentPermissions;
+import ch.virtualid.agent.ClientAgent;
 import ch.virtualid.agent.RandomizedAgentPermissions;
 import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
@@ -200,12 +200,12 @@ public final class Client extends Site {
      * Adds the given role to the roles of this client.
      * 
      * @param issuer the issuer of the role to add.
-     * @param authorization the incoming role with the authorization for role to add.
+     * @param agent the client agent of the role to add.
      */
-    public void addRole(@Nonnull NonHostIdentity issuer, @Nonnull IncomingRole authorization) throws SQLException {
+    public void addRole(@Nonnull NonHostIdentity issuer, @Nonnull ClientAgent agent) throws SQLException {
         getRoles();
         assert roles != null;
-        roles.add(Role.add(this, issuer, null, null, authorization));
+        roles.add(Role.add(this, issuer, null, null, agent));
         notify(ROLE_ADDED);
     }
     

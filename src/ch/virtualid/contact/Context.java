@@ -1,6 +1,6 @@
 package ch.virtualid.contact;
 
-import ch.virtualid.agent.IncomingRole;
+import ch.virtualid.agent.Agent;
 import ch.virtualid.annotations.OnlyForActions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Client;
@@ -285,9 +285,7 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
         assert !newPermissions.isEmpty() : "The new permissions are not empty.";
         
         Contexts.addPermissions(this, newPermissions);
-        getPermissions();
-        assert permissions != null;
-        permissions.addAll(newPermissions);
+        if (permissions != null) permissions.addAll(newPermissions);
         notify(PERMISSIONS);
     }
     
@@ -314,9 +312,7 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
         assert !oldPermissions.isEmpty() : "The old permissions are not empty.";
         
         Contexts.removePermissions(this, oldPermissions);
-        getPermissions();
-        assert permissions != null;
-        permissions.removeAll(permissions);
+        if (permissions != null) permissions.removeAll(permissions);
         notify(PERMISSIONS);
     }
     
@@ -477,6 +473,8 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
     }
     
     /**
+     * TODO!
+     * 
      * Returns a new or existing role with the given arguments.
      * <p>
      * <em>Important:</em> This method should not be called directly.
@@ -487,28 +485,28 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
      * @param issuer the issuer of the returned role.
      * @param relation the relation of the returned role.
      * @param recipient the recipient of the returned role.
-     * @param authorization the incoming role with the authorization for the returned role.
+     * @param agent the agent of the returned role.
      * 
      * @return a new or existing role with the given arguments.
      * 
      * @require relation == null || relation.isRoleType() : "The relation is either null or a role type.";
      */
-    public static @Nonnull Role add(@Nonnull Client client, @Nonnull NonHostIdentity issuer, @Nullable SemanticType relation, @Nullable Role recipient, @Nonnull IncomingRole authorization) throws SQLException {
+    public static @Nonnull Context add(@Nonnull Client client, @Nonnull NonHostIdentity issuer, @Nullable SemanticType relation, @Nullable Role recipient, @Nonnull Agent agent) throws SQLException {
         assert relation == null || relation.isRoleType() : "The relation is either null or a role type.";
         
-        final long number = Roles.map(client, issuer, relation, recipient, authorization);
+        final long number = Roles.map(client, issuer, relation, recipient, agent);
         if (Database.isSingleAccess()) {
             synchronized(index) {
                 final @Nonnull Pair<Client, Long> pair = new Pair<Client, Long>(client, number);
                 @Nullable Role role = index.get(pair);
                 if (role == null) {
-                    role = new Role(client, number, issuer, relation, recipient, authorization);
+                    role = new Role(client, number, issuer, relation, recipient, agent);
                     index.put(pair, role);
                 }
                 return role;
             }
         } else {
-            return new Role(client, number, issuer, relation, recipient, authorization);
+            return new Role(client, number, issuer, relation, recipient, agent);
         }
     }
     

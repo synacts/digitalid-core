@@ -2,7 +2,7 @@ package ch.virtualid.agent;
 
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.contact.Contact;
-import ch.virtualid.ccontactContext;
+import ch.virtualid.contact.Context;
 import ch.virtualid.identity.FailedIdentityException;
 import ch.virtualid.identity.Person;
 import ch.virtualid.identity.SemanticType;

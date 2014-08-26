@@ -308,6 +308,19 @@ public final class AgentPermissions extends FreezableLinkedHashMap<SemanticType,
         }
     }
     
+    /**
+     * Removes the given permissions from these permissions.
+     * 
+     * @param permissions the permissions to remove from these permissions.
+     * 
+     * @require isNotFrozen() : "This object is not frozen.";
+     */
+    public void removeAll(@Nonnull ReadonlyAgentPermissions permissions) {
+        for (final @Nonnull SemanticType type : permissions.keySet()) {
+            remove(type);
+        }
+    }
+    
     
     @Pure
     @Override
