@@ -3,11 +3,15 @@ package ch.virtualid.agent;
 import ch.virtualid.contact.Context;
 import ch.virtualid.credential.Credential;
 import ch.virtualid.database.Database;
+import ch.virtualid.entity.Entity;
 import ch.virtualid.exceptions.ShouldNeverHappenError;
 import ch.virtualid.identity.FailedIdentityException;
 import ch.virtualid.identity.NonHostIdentifier;
 import ch.virtualid.identity.NonHostIdentity;
 import ch.virtualid.identity.SemanticType;
+import ch.virtualid.interfaces.Blockable;
+import ch.virtualid.interfaces.Immutable;
+import ch.virtualid.interfaces.SQLizable;
 import static ch.virtualid.io.Level.ERROR;
 import ch.virtualid.packet.PacketException;
 import ch.virtualid.server.Host;
@@ -25,7 +29,7 @@ import javax.annotation.Nullable;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 0.9
  */
-public final class OutgoingRole extends Agent {
+public final class OutgoingRole extends Agent implements Immutable, Blockable, SQLizable {
     
     /**
      * Stores the relation between the issuing and the receiving identity.
@@ -39,6 +43,16 @@ public final class OutgoingRole extends Agent {
     
     
     /**
+     * Creates a new outgoing role with the given entity and number.
+     * 
+     * @param entity the entity to which this outgoing role belongs.
+     * @param number the number that references this outgoing role.
+     */
+    private OutgoingRole(@Nonnull Entity entity, long number) {
+        super(entity, number);
+    }
+    
+    /**
      * Creates a new outgoing role agent with the given connection, number, identity, relation and context.
      * 
      * @param connection an open connection to the database.
@@ -48,6 +62,7 @@ public final class OutgoingRole extends Agent {
      * @param context the context to which this outgoing role is assigned.
      * @require relation.isRoleType() : "The relation is a role type.";
      */
+    @Deprecated
     public OutgoingRole(@Nonnull Connection connection, @Nonnull NonHostIdentity identity, long number, @Nonnull SemanticType relation, @Nonnull Context context) {
         super(connection, identity, number);
         
@@ -65,6 +80,7 @@ public final class OutgoingRole extends Agent {
      * @param block the block containing the outgoing role.
      * @ensure !getRestrictions().isClient() : "The restrictions are not for a client.";
      */
+    @Deprecated
     public OutgoingRole(@Nonnull Connection connection, @Nonnull NonHostIdentity identity, @Nonnull Block block) throws InvalidEncodingException, FailedIdentityException {
         super(connection, identity, new TupleWrapper(block).getElementsNotNull(2)[0]);
         

@@ -1,23 +1,17 @@
 package ch.virtualid.contact;
 
-import ch.virtualid.agent.Agent;
 import ch.virtualid.annotations.OnlyForActions;
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.client.Client;
 import ch.virtualid.client.Synchronizer;
 import ch.virtualid.concept.Aspect;
 import ch.virtualid.concept.Concept;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.Entity;
-import ch.virtualid.entity.Role;
-import ch.virtualid.identity.NonHostIdentity;
-import ch.virtualid.identity.Person;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
 import ch.virtualid.module.both.Contexts;
-import ch.virtualid.module.client.Roles;
 import ch.xdf.Block;
 import ch.xdf.Int64Wrapper;
 import ch.xdf.exceptions.InvalidEncodingException;
@@ -37,7 +31,7 @@ import org.javatuples.Pair;
  * This class represents the context for contacts.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 0.6
+ * @version 1.4
  */
 public final class Context extends Concept implements Immutable, Blockable, SQLizable {
     
@@ -81,16 +75,16 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
      */
     public static final @Nonnull Aspect CREATED = new Aspect(Context.class, "created");
     
-    /**
-     * Stores the aspect of the observed context being deleted from the database.
-     */
-    public static final @Nonnull Aspect DELETED = new Aspect(Context.class, "deleted");
-    
     
     /**
      * Stores the data type used to reference instances of this class.
      */
     public static final @Nonnull String FORMAT = "BIGINT";
+    
+    /**
+     * Stores the foreign key constraint used to reference instances of this class.
+     */
+    public static final @Nonnull String REFERENCE = "REFERENCES context (entity, context) ON DELETE CASCADE ON UPDATE CASCADE";
     
     
     /**
@@ -127,18 +121,25 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
     }
     
     /**
-     * Creates a new context at the given entity with the given name.
+     * Creates a new context at the given entity.
      * 
      * @param entity the entity to which the context belongs.
-     * @param name the name of the context which is to be created.
      */
-    public Context(@Nonnull Entity entity, @Nonnull String name) {
-        super(entity);
-        
-        this.number = new SecureRandom().nextLong();
-        this.name = name;
-        Synchronizer.execute(ContextCreate(entity, number, name));
-        notify(CREATED);
+    public static @Nonnull Context create(@Nonnull Entity entity) {
+        final @Nonnull Context context = get(entity, new SecureRandom().nextLong());
+        Synchronizer.execute(new ContextCreate(context));
+        return context;
+    }
+    
+    /**
+     * Creates the given context in the database.
+     * 
+     * @param context the context to create in the database.
+     */
+    @OnlyForActions
+    public static void createForActions(@Nonnull Context context) {
+        Contexts.create(context);
+        context.notify(CREATED);
     }
     
     @Pure
@@ -414,7 +415,7 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
      * 
      * @return a set with the contacts of this context.
      */
-    public @Nonnull Set<Person> getContacts() throws SQLException;
+    public @Nonnull Set<Contact> getContacts() throws SQLException;
     
     /**
      * Adds the given contacts to this context.
@@ -435,93 +436,24 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
      * 
      * @return a set with all the contacts of this context (i.e. the contacts from subcontexts are included as well).
      */
-    public @Nonnull Set<Person> getAllContacts() throws SQLException;
+    public @Nonnull Set<Contact> getAllContacts() throws SQLException;
     
     
     /**
-     * Caches the context given their entity and number.
+     * Caches contexts given their entity and number.
      */
     private static final @Nonnull Map<Pair<Entity, Long>, Context> index = new HashMap<Pair<Entity, Long>, Context>();
     
     /**
-     * Creates a new context from the given entity and string in hexadecimal notation.
+     * Returns a (locally cached) context that might not (yet) exist in the database.
      * 
      * @param entity the entity to which the context belongs.
-     * @param string a string in hexadecimal notation encoding the context number.
-     */
-    public Context(@Nonnull Entity entity, @Nonnull String string) throws InvalidEncodingException {
-        this(entity, parse(string));
-    }
-    
-    /**
-     * Creates a new context from the given entity and block.
+     * @param number the number that denotes the context.
      * 
-     * @param entity the entity to which the context belongs.
-     * @param block a block of the syntactic type {@code int64@xdf.ch}.
-     */
-    public Context(@Nonnull Entity entity, @Nonnull Block block) throws InvalidEncodingException {
-        this(entity, new Int64Wrapper(block).getValue());
-    }
-    
-    /**
-     * Creates a new context for the given entity.
-     * 
-     * @param entity the entity to which the context belongs.
-     */
-    public Context(@Nonnull Entity entity) {
-        this(entity, new SecureRandom().nextLong());
-    }
-    
-    /**
-     * TODO!
-     * 
-     * Returns a new or existing role with the given arguments.
-     * <p>
-     * <em>Important:</em> This method should not be called directly.
-     * (Use {@link #addRole(ch.virtualid.identity.NonHostIdentity, ch.virtualid.identity.SemanticType, ch.virtualid.agent.IncomingRole)}
-     * or {@link Client#addRole(ch.virtualid.identity.NonHostIdentity, ch.virtualid.agent.IncomingRole)} instead.)
-     * 
-     * @param client the client that can assume the returned role.
-     * @param issuer the issuer of the returned role.
-     * @param relation the relation of the returned role.
-     * @param recipient the recipient of the returned role.
-     * @param agent the agent of the returned role.
-     * 
-     * @return a new or existing role with the given arguments.
-     * 
-     * @require relation == null || relation.isRoleType() : "The relation is either null or a role type.";
-     */
-    public static @Nonnull Context add(@Nonnull Client client, @Nonnull NonHostIdentity issuer, @Nullable SemanticType relation, @Nullable Role recipient, @Nonnull Agent agent) throws SQLException {
-        assert relation == null || relation.isRoleType() : "The relation is either null or a role type.";
-        
-        final long number = Roles.map(client, issuer, relation, recipient, agent);
-        if (Database.isSingleAccess()) {
-            synchronized(index) {
-                final @Nonnull Pair<Client, Long> pair = new Pair<Client, Long>(client, number);
-                @Nullable Role role = index.get(pair);
-                if (role == null) {
-                    role = new Role(client, number, issuer, relation, recipient, agent);
-                    index.put(pair, role);
-                }
-                return role;
-            }
-        } else {
-            return new Role(client, number, issuer, relation, recipient, agent);
-        }
-    }
-    
-    /**
-     * Returns the given column of the result set as an instance of this class.
-     * 
-     * @param entity the entity to which the context belongs.
-     * @param resultSet the result set to retrieve the data from.
-     * @param columnIndex the index of the column containing the data.
-     * 
-     * @return the given column of the result set as an instance of this class.
+     * @return a new or existing context with the given entity and number.
      */
     @Pure
-    public static @Nonnull Context get(@Nonnull Entity entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
-        final long number = resultSet.getLong(columnIndex);
+    public static @Nonnull Context get(@Nonnull Entity entity, long number) {
         if (Database.isSingleAccess()) {
             synchronized(index) {
                 final @Nonnull Pair<Entity, Long> pair = new Pair<Entity, Long>(entity, number);
@@ -535,6 +467,46 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
         } else {
             return new Context(entity, number);
         }
+    }
+    
+    /**
+     * Returns the context with the number given by the string in hexadecimal notation.
+     * 
+     * @param entity the entity to which the context belongs.
+     * @param string a string in hexadecimal notation encoding the context number.
+     */
+    @Pure
+    public static @Nonnull Context get(@Nonnull Entity entity, @Nonnull String string) throws InvalidEncodingException {
+        return get(entity, parse(string));
+    }
+    
+    /**
+     * Returns the context with the number given by the block.
+     * 
+     * @param entity the entity to which the context belongs.
+     * @param block a block containing the number of the context.
+     * 
+     * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
+     */
+    @Pure
+    public static @Nonnull Context get(@Nonnull Entity entity, @Nonnull Block block) throws InvalidEncodingException {
+        assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
+        
+        return get(entity, new Int64Wrapper(block).getValue());
+    }
+    
+    /**
+     * Returns the given column of the result set as an instance of this class.
+     * 
+     * @param entity the entity to which the context belongs.
+     * @param resultSet the result set to retrieve the data from.
+     * @param columnIndex the index of the column containing the data.
+     * 
+     * @return the given column of the result set as an instance of this class.
+     */
+    @Pure
+    public static @Nonnull Context get(@Nonnull Entity entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+        return get(entity, resultSet.getLong(columnIndex));
     }
     
     @Override
@@ -569,6 +541,7 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
      * 
      * @return a hexadecimal representation of this context.
      */
+    @Pure
     public @Nonnull String toHexString() {
         return String.format("0x%016X", number);
     }
@@ -580,6 +553,7 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
      * 
      * @return the given string in hexadecimal notation as long.
      */
+    @Pure
     private static long parse(@Nonnull String string) throws InvalidEncodingException {
         if (string.length() != 18 || !string.startsWith("0x")) throw new InvalidEncodingException("'" + string + "' does not consist of 18 characters and start with '0x'.");
         return (Long.parseLong(string.substring(2, 10), 16) << 32) | Long.parseLong(string.substring(10, 18), 16);

@@ -1,11 +1,12 @@
 package ch.virtualid.client;
 
 import ch.virtualid.agent.AgentPermissions;
-import ch.virtualid.agent.ClientAgent;
 import ch.virtualid.agent.RandomizedAgentPermissions;
 import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.concept.Aspect;
+import ch.virtualid.concept.Instance;
+import ch.virtualid.concept.Observer;
 import ch.virtualid.credential.ClientCredential;
 import ch.virtualid.credential.Credential;
 import ch.virtualid.cryptography.Element;
@@ -69,7 +70,7 @@ import javax.annotation.Nullable;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 0.6
  */
-public final class Client extends Site {
+public final class Client extends Site implements Observer {
     
     /**
      * Stores the aspect of a new role being added to the observed client.
@@ -177,22 +178,15 @@ public final class Client extends Site {
     private @Nullable FreezableList<Role> roles;
     
     /**
-     * Stores whether the roles are loaded.
-     */
-    private boolean rolesLoaded = false;
-    
-    /**
      * Returns the roles of this client.
      * 
      * @return the roles of this client.
      */
     @Pure
     public @Nonnull ReadonlyList<Role> getRoles() throws SQLException {
-        if (!rolesLoaded) {
+        if (roles == null) {
             roles = Roles.getRoles(this);
-            rolesLoaded = true;
         }
-        assert roles != null;
         return roles;
     }
     
@@ -200,13 +194,20 @@ public final class Client extends Site {
      * Adds the given role to the roles of this client.
      * 
      * @param issuer the issuer of the role to add.
-     * @param agent the client agent of the role to add.
      */
-    public void addRole(@Nonnull NonHostIdentity issuer, @Nonnull ClientAgent agent) throws SQLException {
-        getRoles();
-        assert roles != null;
-        roles.add(Role.add(this, issuer, null, null, agent));
+    public void addRole(@Nonnull NonHostIdentity issuer) throws SQLException {
+        final @Nonnull Role role = Role.add(this, issuer, null, null, true, new SecureRandom().nextLong());
+        role.observe(this, Role.REMOVED);
+        
+        if (roles != null) roles.add(role);
         notify(ROLE_ADDED);
+    }
+    
+    @Override
+    public void notify(@Nonnull Aspect aspect, @Nonnull Instance instance) {
+        if (aspect.equals(Role.REMOVED) && roles != null) {
+            roles.remove(instance);
+        }
     }
     
     

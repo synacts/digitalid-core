@@ -1,6 +1,7 @@
 package ch.virtualid.agent;
 
 import ch.virtualid.annotations.OnlyForActions;
+import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Synchronizer;
 import ch.virtualid.concept.Aspect;
 import ch.virtualid.concept.Concept;
@@ -8,6 +9,9 @@ import ch.virtualid.database.Database;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.identity.FailedIdentityException;
 import ch.virtualid.identity.NonHostIdentity;
+import ch.virtualid.interfaces.Blockable;
+import ch.virtualid.interfaces.Immutable;
+import ch.virtualid.interfaces.SQLizable;
 import static ch.virtualid.io.Level.ERROR;
 import ch.virtualid.module.both.Agents;
 import ch.virtualid.packet.PacketError;
@@ -28,7 +32,7 @@ import javax.annotation.Nullable;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 0.9
  */
-public abstract class Agent extends Concept {
+public abstract class Agent extends Concept implements Immutable, Blockable, SQLizable {
     
     /**
      * Stores the aspect of the permissions being changed at the observed agent.
@@ -81,12 +85,22 @@ public abstract class Agent extends Concept {
      */
     private boolean restricted = false;
     
+    /**
+     * Stores whether the removed status has been loaded from the database.
+     */
+    private boolean removedLoaded = false;
     
     /**
-     * Creates a new authorization with the given entity and number.
+     * Stores whether this agent has been removed from the database.
+     */
+    private boolean removed = false;
+    
+    
+    /**
+     * Creates a new agent with the given entity and number.
      * 
-     * @param entity the entity to which this authorization belongs.
-     * @param number the number that references this authorization.
+     * @param entity the entity to which this agent belongs.
+     * @param number the number that references this agent.
      */
     protected Agent(@Nonnull Entity entity, long number) {
         super(entity);
@@ -96,10 +110,11 @@ public abstract class Agent extends Concept {
     
     
     /**
-     * Returns the number that references this agent in the database.
+     * Returns the number that references this agent.
      * 
-     * @return the number that references this agent in the database.
+     * @return the number that references this agent.
      */
+    @Pure
     public final long getNumber() {
         return number;
     }
@@ -110,6 +125,7 @@ public abstract class Agent extends Concept {
      * 
      * @return the permissions of this agent.
      */
+    @Pure
     public final @Nonnull ReadonlyAgentPermissions getPermissions() throws SQLException {
         if (permissions == null) {
             permissions = Agents.getPermissions(this);
@@ -141,7 +157,7 @@ public abstract class Agent extends Concept {
      * @require !newPermissions.isEmpty() : "The new permissions are not empty.";
      */
     @OnlyForActions
-    public void addPermissionsForActions(@Nonnull ReadonlyAgentPermissions newPermissions) throws SQLException {
+    public final void addPermissionsForActions(@Nonnull ReadonlyAgentPermissions newPermissions) throws SQLException {
         assert !newPermissions.isEmpty() : "The new permissions are not empty.";
         
         Agents.addPermissions(this, newPermissions);
@@ -153,8 +169,12 @@ public abstract class Agent extends Concept {
      * Removes the given permissions from this agent.
      * 
      * @param permissions the permissions to be removed from this agent.
+     * 
+     * @require !isRestricted() : "The authorization of this agent may not have been restricted.";
      */
-    public void removePermissions(@Nonnull ReadonlyAgentPermissions permissions) throws SQLException {
+    public final void removePermissions(@Nonnull ReadonlyAgentPermissions permissions) throws SQLException {
+        assert !isRestricted() : "The authorization of this agent may not have been restricted.";
+        
         if (!permissions.isEmpty()) {
             Synchronizer.execute(new AgentPermissionsRemove(this, permissions));
         }
@@ -168,7 +188,7 @@ public abstract class Agent extends Concept {
      * @require !oldPermissions.isEmpty() : "The old permissions are not empty.";
      */
     @OnlyForActions
-    public void removePermissionsForActions(@Nonnull ReadonlyAgentPermissions oldPermissions) throws SQLException {
+    public final void removePermissionsForActions(@Nonnull ReadonlyAgentPermissions oldPermissions) throws SQLException {
         assert !oldPermissions.isEmpty() : "The old permissions are not empty.";
         
         Agents.removePermissions(this, oldPermissions);
@@ -178,30 +198,31 @@ public abstract class Agent extends Concept {
     
     
     /**
-     * Returns the restrictions of this authorization or null if not yet set.
+     * Returns the restrictions of this agent or null if not yet set.
      * 
-     * @return the restrictions of this authorization or null if not yet set.
+     * @return the restrictions of this agent or null if not yet set.
      */
-    public @Nullable Restrictions getRestrictions() throws SQLException {
+    @Pure
+    public final @Nullable Restrictions getRestrictions() throws SQLException {
         if (!restrictionsLoaded) {
-            restrictions = Host.getRestrictions(this);
+            restrictions = Agents.getRestrictions(this);
             restrictionsLoaded = true;
         }
         return restrictions;
     }
     
     /**
-     * Sets the restrictions of this authorization and stores them in the database.
-     * Make sure to call {@link Agent#redetermineAgents()} afterwards in case of agents.
+     * Sets the restrictions of this agent.
      * 
-     * @param restrictions the restrictions to be set.
-     * @require !isRestricted() : "This authorization may not have been restricted.";
+     * @param newRestrictions the new restrictions of this agent.
+     * 
+     * @require !isRestricted() : "The authorization of this agent may not have been restricted.";
      */
-    public final void setRestrictions(@Nonnull Restrictions restrictions) throws SQLException {
-        assert !isRestricted() : "This authorization may not have been restricted.";
+    public final void setRestrictions(@Nonnull Restrictions newRestrictions) throws SQLException {
+        assert !isRestricted() : "The authorization of this agent may not have been restricted.";
         
-        Host.setRestrictions(this, restrictions);
-        this.restrictions = restrictions;
+        Host.setRestrictions(this, newRestrictions);
+        this.restrictions = newRestrictions;
         this.restrictionsLoaded = true;
         
         // TODO: notify(null);
@@ -214,7 +235,7 @@ public abstract class Agent extends Concept {
      * @param authorization the authorization that needs to be covered.
      * @return whether this authorization covers the given authorization.
      */
-    public boolean covers(@Nonnull Authorization authorization) throws SQLException {
+    public boolean covers(@Nonnull Agent authorization) throws SQLException {
         @Nullable Restrictions thisRestrictions = getRestrictions();
         @Nullable Restrictions otherRestrictions = authorization.getRestrictions();
         return (otherRestrictions == null || thisRestrictions != null && thisRestrictions.cover(otherRestrictions)) && getPermissions().cover(authorization.getPermissions());
@@ -225,7 +246,7 @@ public abstract class Agent extends Concept {
      * 
      * @param authorization the authorization that needs to be covered.
      */
-    public void checkCoverage(@Nonnull Authorization authorization) throws PacketException, SQLException {
+    public void checkCoverage(@Nonnull Agent authorization) throws PacketException, SQLException {
         if (!covers(authorization)) throw new PacketException(PacketError.AUTHORIZATION);
     }
     
@@ -248,37 +269,58 @@ public abstract class Agent extends Concept {
     
     
     /**
-     * Removes this authorization from the database.
+     * Returns whether this agent has been removed from the database.
      * 
-     * @require !isRestricted() : "This authorization may not have been restricted.";
+     * @return whether this agent has been removed from the database.
      */
-    public abstract void remove() throws SQLException;
+    public final boolean isRemoved() throws SQLException {
+        if (!removedLoaded) {
+            removed = Agents.isRemoved(this);
+            removedLoaded = true;
+        }
+        return removed;
+    }
+    
+    /**
+     * Removes this agent from the database.
+     * 
+     * @require !isRestricted() : "This agent may not have been restricted.";
+     */
+    public final void remove() throws SQLException {
+        // TODO
+    }
     
     /**
      * Returns whether this authorization belongs to a client.
      * 
      * @return whether this authorization belongs to a client.
      */
+    @Pure
     public abstract boolean isClient();
     
     
+    @Pure
     @Override
     public final boolean equals(Object object) {
-        if (object == null || !(object instanceof Authorization)) return false;
-        @Nonnull Authorization other = (Authorization) object;
+        if (object == this) return true;
+        if (object == null || !(object instanceof Agent)) return false;
+        @Nonnull Agent other = (Agent) object;
         return this.number == other.number;
     }
     
+    @Pure
     @Override
     public final int hashCode() {
         return (int) (this.number ^ (this.number >>> 32));
     }
     
+    @Pure
     @Override
     public final @Nonnull String toString() {
         return String.valueOf(number);
     }
     
+    @Pure
     @Override
     public @Nonnull Block toBlock() {
         try {
@@ -294,32 +336,6 @@ public abstract class Agent extends Concept {
         }
     }
     
-    
-    
-    
-    
-    
-    /**
-     * Creates a new agent with the given connection, identity and number.
-     * 
-     * @param connection an open connection to the database.
-     * @param identity the identity at which this agent is authorized.
-     * @param number the internal number that represents and indexes this agent.
-     */
-    protected Agent(@Nonnull Connection connection, @Nonnull NonHostIdentity identity, long number) {
-        super(connection, identity, number);
-    }
-    
-    /**
-     * Creates a new agent with the given connection and identity from the given block.
-     * 
-     * @param connection an open connection to the database.
-     * @param identity the identity at which this agent is authorized.
-     * @param block the block containing the agent.
-     */
-    protected Agent(@Nonnull Connection connection, @Nonnull NonHostIdentity identity, @Nonnull Block block) throws InvalidEncodingException, FailedIdentityException {
-        super(connection, identity, new TupleWrapper(block).getElementsNotNull(2)[0]);
-    }
     
     /**
      * Creates a new agent with the given connection and identity from the given block.
@@ -352,6 +368,7 @@ public abstract class Agent extends Concept {
         Host.removeAgent(this);
     }
     
+    @Pure
     @Override
     public @Nonnull Block toBlock() {
         @Nonnull Block[] tuple = new Block[2];

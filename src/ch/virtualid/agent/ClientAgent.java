@@ -2,9 +2,13 @@ package ch.virtualid.agent;
 
 import ch.virtualid.client.Commitment;
 import ch.virtualid.database.Database;
+import ch.virtualid.entity.Entity;
 import ch.virtualid.exceptions.ShouldNeverHappenError;
 import ch.virtualid.identity.FailedIdentityException;
 import ch.virtualid.identity.NonHostIdentity;
+import ch.virtualid.interfaces.Blockable;
+import ch.virtualid.interfaces.Immutable;
+import ch.virtualid.interfaces.SQLizable;
 import static ch.virtualid.io.Level.ERROR;
 import ch.virtualid.server.Host;
 import ch.xdf.Block;
@@ -22,7 +26,7 @@ import javax.annotation.Nullable;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 0.9
  */
-public final class ClientAgent extends Agent {
+public final class ClientAgent extends Agent implements Immutable, Blockable, SQLizable {
     
     /**
      * Stores the commitment of this client.
@@ -36,6 +40,16 @@ public final class ClientAgent extends Agent {
     
     
     /**
+     * Creates a new client agent with the given entity and number.
+     * 
+     * @param entity the entity to which this client agent belongs.
+     * @param number the number that references this client agent.
+     */
+    private ClientAgent(@Nonnull Entity entity, long number) {
+        super(entity, number);
+    }
+    
+    /**
      * Creates a new client agent with the given connection, identity, number, commitment and name.
      * 
      * @param connection an open connection to the database.
@@ -45,7 +59,8 @@ public final class ClientAgent extends Agent {
      * @param name the name of this client.
      * @require name.length() <= 50 : "The client name may have at most 50 characters.";
      */
-    public ClientAgent(@Nonnull Connection connection, @Nonnull NonHostIdentity identity, long number, @Nonnull Commitment commitment, @Nonnull String name) {
+    @Deprecated
+    public ClientAgent(@Nonnull NonHostIdentity identity, long number, @Nonnull Commitment commitment, @Nonnull String name) {
         super(connection, identity, number);
         
         assert name.length() <= 50 : "The client name may have at most 50 characters.";
@@ -62,6 +77,7 @@ public final class ClientAgent extends Agent {
      * @param block the block containing the client agent.
      * @ensure getRestrictions() == null || getRestrictions().isClient() : "The restrictions are either null or for a client.";
      */
+    @Deprecated
     protected ClientAgent(@Nonnull Connection connection, @Nonnull NonHostIdentity identity, @Nonnull Block block) throws InvalidEncodingException, FailedIdentityException {
         super(connection, identity, new TupleWrapper(block).getElementsNotNull(2)[0]);
         

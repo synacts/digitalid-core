@@ -18,6 +18,8 @@ import javax.annotation.Nullable;
  * @see HostIdentity
  * @see NonHostIdentity
  * 
+ * @see Mapper
+ * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */

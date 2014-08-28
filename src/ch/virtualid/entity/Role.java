@@ -1,10 +1,14 @@
 package ch.virtualid.entity;
 
 import ch.virtualid.agent.Agent;
+import ch.virtualid.agent.ClientAgent;
 import ch.virtualid.agent.OutgoingRole;
+import ch.virtualid.annotations.OnlyForActions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Client;
 import ch.virtualid.concept.Aspect;
+import ch.virtualid.concept.Instance;
+import ch.virtualid.concept.Observer;
 import ch.virtualid.database.Database;
 import ch.virtualid.identity.NonHostIdentity;
 import ch.virtualid.identity.SemanticType;
@@ -27,7 +31,7 @@ import org.javatuples.Pair;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public final class Role extends Entity implements Immutable, SQLizable {
+public final class Role extends Entity implements Immutable, SQLizable, Observer {
     
     /**
      * Stores the aspect of a new role being added to the observed role.
@@ -76,18 +80,19 @@ public final class Role extends Entity implements Immutable, SQLizable {
      * Creates a new role for the given client with the given number, issuer, relation, recipient and agent.
      * <p>
      * <em>Important:</em> This constructor should only be called from this class and the roles module.
-     * For all other purposes, please use {@link #get(ch.virtualid.client.Client, ch.virtualid.identity.NonHostIdentity, ch.virtualid.identity.SemanticType, ch.virtualid.entity.Role, ch.virtualid.agent.Agent)} or {@link #get(ch.virtualid.client.Client, java.sql.ResultSet, int)}.
+     * For all other purposes, please use {@link #add(ch.virtualid.client.Client, ch.virtualid.identity.NonHostIdentity, ch.virtualid.identity.SemanticType, ch.virtualid.entity.Role, ch.virtualid.agent.Agent)} or {@link #get(ch.virtualid.client.Client, java.sql.ResultSet, int)}.
      * 
      * @param client the client that can assume the new role.
      * @param number the number that references the new role.
      * @param issuer the issuer of the new role.
      * @param relation the relation of the new role.
      * @param recipient the recipient of the new role.
-     * @param agent the agent of the new role.
+     * @param isClient whether the agent number denotes a client.
+     * @param agentNumber the agent number of the new role.
      * 
      * @require relation == null || relation.isRoleType() : "The relation is either null or a role type.";
      */
-    public Role(@Nonnull Client client, long number, @Nonnull NonHostIdentity issuer, @Nullable SemanticType relation, @Nullable Role recipient, @Nonnull Agent agent) {
+    public Role(@Nonnull Client client, long number, @Nonnull NonHostIdentity issuer, @Nullable SemanticType relation, @Nullable Role recipient, boolean isClient, long agentNumber) {
         assert relation == null || relation.isRoleType() : "The relation is either null or a role type.";
         
         this.client = client;
@@ -95,7 +100,7 @@ public final class Role extends Entity implements Immutable, SQLizable {
         this.issuer = issuer;
         this.relation = relation;
         this.recipient = recipient;
-        this.agent = agent;
+        this.agent = isClient ? ClientAgent.get(this, agentNumber) : OutgoingRole.get(this, agentNumber);
     }
     
     /**
@@ -193,20 +198,30 @@ public final class Role extends Entity implements Immutable, SQLizable {
      * 
      * @param issuer the issuer of the role to add.
      * @param relation the relation of the role to add.
-     * @param agent the outgoing role of the role to add.
+     * @param isClient whether the agent number denotes a client.
+     * @param agentNumber the agent number of the role to add.
      */
-    public void addRole(@Nonnull NonHostIdentity issuer, @Nonnull SemanticType relation, @Nonnull OutgoingRole agent) throws SQLException {
-        getRoles();
-        assert roles != null;
-        roles.add(add(client, issuer, relation, this, agent));
+    @OnlyForActions
+    public void addRole(@Nonnull NonHostIdentity issuer, @Nonnull SemanticType relation, long agentNumber) throws SQLException {
+        final @Nonnull Role role = add(client, issuer, relation, this, false, agentNumber);
+        role.observe(this, REMOVED);
+        
+        if (roles != null) roles.add(role);
         notify(ADDED);
+    }
+    
+    @Override
+    public void notify(@Nonnull Aspect aspect, @Nonnull Instance instance) {
+        if (aspect.equals(REMOVED) && roles != null) {
+            roles.remove(instance);
+        }
     }
     
     /**
      * Removes this role.
      */
     public void remove() throws SQLException {
-        Roles.remove(this);
+        remove(this);
         notify(REMOVED);
     }
     
@@ -221,34 +236,49 @@ public final class Role extends Entity implements Immutable, SQLizable {
      * <p>
      * <em>Important:</em> This method should not be called directly.
      * (Use {@link #addRole(ch.virtualid.identity.NonHostIdentity, ch.virtualid.identity.SemanticType, ch.virtualid.agent.Agent)}
-     * or {@link Client#addRole(ch.virtualid.identity.NonHostIdentity, ch.virtualid.agent.ClientAgent)} instead.)
+     * or {@link Client#addRole(ch.virtualid.identity.NonHostIdentity)} instead.)
      * 
      * @param client the client that can assume the returned role.
      * @param issuer the issuer of the returned role.
      * @param relation the relation of the returned role.
      * @param recipient the recipient of the returned role.
-     * @param agent the agent of the returned role.
+     * @param isClient whether the agent number denotes a client.
+     * @param agentNumber the agent number of the returned role.
      * 
      * @return a new or existing role with the given arguments.
      * 
      * @require relation == null || relation.isRoleType() : "The relation is either null or a role type.";
      */
-    public static @Nonnull Role add(@Nonnull Client client, @Nonnull NonHostIdentity issuer, @Nullable SemanticType relation, @Nullable Role recipient, @Nonnull Agent agent) throws SQLException {
+    public static @Nonnull Role add(@Nonnull Client client, @Nonnull NonHostIdentity issuer, @Nullable SemanticType relation, @Nullable Role recipient, boolean isClient, long agentNumber) throws SQLException {
         assert relation == null || relation.isRoleType() : "The relation is either null or a role type.";
         
-        final long number = Roles.map(client, issuer, relation, recipient, agent);
+        final long number = Roles.map(client, issuer, relation, recipient, agentNumber);
         if (Database.isSingleAccess()) {
             synchronized(index) {
                 final @Nonnull Pair<Client, Long> pair = new Pair<Client, Long>(client, number);
                 @Nullable Role role = index.get(pair);
                 if (role == null) {
-                    role = new Role(client, number, issuer, relation, recipient, agent);
+                    role = new Role(client, number, issuer, relation, recipient, isClient, agentNumber);
                     index.put(pair, role);
                 }
                 return role;
             }
         } else {
-            return new Role(client, number, issuer, relation, recipient, agent);
+            return new Role(client, number, issuer, relation, recipient, isClient, agentNumber);
+        }
+    }
+    
+    /**
+     * Removes the given role from the database and index.
+     * 
+     * @param role the role to be removed.
+     */
+    private static void remove(@Nonnull Role role) throws SQLException {
+        Roles.remove(role);
+        if (Database.isSingleAccess()) {
+            synchronized(index) {
+                index.remove(new Pair<Client, Long>(role.getClient(), role.getNumber()));
+            }
         }
     }
     
