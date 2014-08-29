@@ -3,8 +3,7 @@ package ch.virtualid.agent;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.contact.Contact;
 import ch.virtualid.contact.Context;
-import ch.virtualid.identity.FailedIdentityException;
-import ch.virtualid.identity.Person;
+import ch.virtualid.entity.Entity;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
@@ -15,7 +14,6 @@ import ch.xdf.Block;
 import ch.xdf.BooleanWrapper;
 import ch.xdf.TupleWrapper;
 import ch.xdf.exceptions.InvalidEncodingException;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Objects;
 import javax.annotation.Nonnull;
@@ -29,7 +27,7 @@ import javax.annotation.Nullable;
  * @invariant getContext() == null || getContact() == null : "The context or the contact is null.";
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 0.9
+ * @version 2.0
  */
 public final class Restrictions implements Immutable, Blockable {
     
@@ -81,7 +79,7 @@ public final class Restrictions implements Immutable, Blockable {
     private final boolean role;
     
     /**
-     * Stores whether the authorization is restricted to agents that can write (to contexts).
+     * Stores whether the authorization is restricted to agents that can write to contexts.
      */
     private final boolean writing;
     
@@ -93,7 +91,7 @@ public final class Restrictions implements Immutable, Blockable {
     /**
      * Stores the contact to which the authorization is restricted (or null).
      */
-    private final @Nullable Person contact;
+    private final @Nullable Contact contact;
     
     
     /**
@@ -101,7 +99,7 @@ public final class Restrictions implements Immutable, Blockable {
      * 
      * @param client whether the authorization is restricted to clients.
      * @param role whether the authorization is restricted to agents that can assume incoming roles.
-     * @param writing whether the authorization is restricted to agents that can write (to contexts).
+     * @param writing whether the authorization is restricted to agents that can write to contexts.
      */
     public Restrictions(boolean client, boolean role, boolean writing) {
         this(client, role, writing, null, null);
@@ -112,7 +110,7 @@ public final class Restrictions implements Immutable, Blockable {
      * 
      * @param client whether the authorization is restricted to clients.
      * @param role whether the authorization is restricted to agents that can assume incoming roles.
-     * @param writing whether the authorization is restricted to agents that can write (to contexts).
+     * @param writing whether the authorization is restricted to agents that can write to contexts.
      * @param context the context to which the authorization is restricted (or null).
      */
     public Restrictions(boolean client, boolean role, boolean writing, @Nullable Context context) {
@@ -124,10 +122,10 @@ public final class Restrictions implements Immutable, Blockable {
      * 
      * @param client whether the authorization is restricted to clients.
      * @param role whether the authorization is restricted to agents that can assume incoming roles.
-     * @param writing whether the authorization is restricted to agents that can write (to contexts).
+     * @param writing whether the authorization is restricted to agents that can write to contexts.
      * @param contact the contact to which the authorization is restricted (or null).
      */
-    public Restrictions(boolean client, boolean role, boolean writing, @Nullable Person contact) {
+    public Restrictions(boolean client, boolean role, boolean writing, @Nullable Contact contact) {
         this(client, role, writing, null, contact);
     }
     
@@ -136,13 +134,13 @@ public final class Restrictions implements Immutable, Blockable {
      * 
      * @param client whether the authorization is restricted to clients.
      * @param role whether the authorization is restricted to agents that can assume incoming roles.
-     * @param writing whether the authorization is restricted to agents that can write (to contexts).
+     * @param writing whether the authorization is restricted to agents that can write to contexts.
      * @param context the context to which the authorization is restricted (or null).
      * @param contact the contact to which the authorization is restricted (or null).
      * 
      * @require context == null || contact == null : "The context or the contact is null.";
      */
-    private Restrictions(boolean client, boolean role, boolean writing, @Nullable Context context, @Nullable Person contact) {
+    private Restrictions(boolean client, boolean role, boolean writing, @Nullable Context context, @Nullable Contact contact) {
         assert context == null || contact == null : "The context or the contact is null.";
         
         this.client = client;
@@ -155,19 +153,20 @@ public final class Restrictions implements Immutable, Blockable {
     /**
      * Creates new restrictions from the given block.
      * 
+     * @param entity the entity to which these restrictions belongs.
      * @param block the block containing the restrictions.
      * 
      * @require block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
      */
-    public Restrictions(@Nonnull Block block) throws InvalidEncodingException, FailedIdentityException {
+    public Restrictions(@Nonnull Entity entity, @Nonnull Block block) throws InvalidEncodingException {
         assert block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
         
         final @Nonnull TupleWrapper tuple = new TupleWrapper(block);
         this.client = new BooleanWrapper(tuple.getElementNotNull(0)).getValue();
         this.role = new BooleanWrapper(tuple.getElementNotNull(1)).getValue();
         this.writing = new BooleanWrapper(tuple.getElementNotNull(2)).getValue();
-        this.context = tuple.isElementNull(3) ? null : new Context(tuple.getElementNotNull(3));
-        this.contact = tuple.isElementNull(4) ? null : new Contact(tuple.getElementNotNull(4));
+        this.context = tuple.isElementNull(3) ? null : Context.get(entity, tuple.getElementNotNull(3));
+        this.contact = tuple.isElementNull(4) ? null : Contact.get(entity, tuple.getElementNotNull(4));
         
         if (context != null && contact != null) throw new InvalidEncodingException("The context and the contact are not null.");
     }
@@ -180,14 +179,14 @@ public final class Restrictions implements Immutable, Blockable {
     
     @Pure
     @Override
-    protected @Nonnull Block toBlock() {
+    public @Nonnull Block toBlock() {
         @Nonnull FreezableArray<Block> elements = new FreezableArray<Block>(5);
-        elements.set(0, new BooleanWrapper(client).toBlock());
-        elements.set(1, new BooleanWrapper(role).toBlock());
-        elements.set(2, new BooleanWrapper(writing).toBlock());
-        elements.set(3, Block.toBlock(context));
-        elements.set(4, Block.toBlock(contact));
-        return new TupleWrapper(elements.freeze()).toBlock();
+        elements.set(0, new BooleanWrapper(CLIENT, client).toBlock());
+        elements.set(1, new BooleanWrapper(ROLE, role).toBlock());
+        elements.set(2, new BooleanWrapper(WRITING, writing).toBlock());
+        elements.set(3, Block.toBlock(CONTEXT, context));
+        elements.set(4, Block.toBlock(CONTACT, contact));
+        return new TupleWrapper(TYPE, elements.freeze()).toBlock();
     }
     
     
@@ -212,9 +211,9 @@ public final class Restrictions implements Immutable, Blockable {
     }
     
     /**
-     * Returns whether the authorization is restricted to agents that can write (to contexts).
+     * Returns whether the authorization is restricted to agents that can write to contexts.
      * 
-     * @return whether the authorization is restricted to agents that can write (to contexts).
+     * @return whether the authorization is restricted to agents that can write to contexts.
      */
     @Pure
     public boolean isWriting() {
@@ -237,7 +236,7 @@ public final class Restrictions implements Immutable, Blockable {
      * @return the contact to which the authorization is restricted (or null).
      */
     @Pure
-    public @Nullable Person getContact() {
+    public @Nullable Contact getContact() {
         return contact;
     }
     
@@ -259,7 +258,7 @@ public final class Restrictions implements Immutable, Blockable {
     }
     
     /**
-     * Checks that the authorization is restricted to agents that can write (to contexts) and throws a {@link PacketException} if not.
+     * Checks that the authorization is restricted to agents that can write to contexts and throws a {@link PacketException} if not.
      */
     @Pure
     public void checkWriting() throws PacketException {
@@ -270,85 +269,80 @@ public final class Restrictions implements Immutable, Blockable {
     /**
      * Returns whether these restrictions cover the given context.
      * 
-     * @param connection an open connection to the database.
      * @param other the context that needs to be covered.
      * 
      * @return whether these restrictions cover the given context.
      */
     @Pure
-    public boolean cover(@Nonnull Connection connection, @Nonnull Context other) throws SQLException {
-        return context != null && context.isSupercontextOf(connection, other);
+    public boolean cover(@Nonnull Context other) throws SQLException {
+        return context != null && context.isSupercontextOf(other);
     }
     
     /**
      * Checks that these restrictions cover the given context and throws a {@link PacketException} if not.
      * 
-     * @param connection an open connection to the database.
      * @param other the context that needs to be covered.
      */
     @Pure
-    public void checkCoverage(@Nonnull Connection connection, @Nonnull Context other) throws PacketException, SQLException {
-        if (!cover(connection, other)) throw new PacketException(PacketError.AUTHORIZATION);
+    public void checkCoverage(@Nonnull Context other) throws PacketException, SQLException {
+        if (!cover(other)) throw new PacketException(PacketError.AUTHORIZATION);
     }
     
     /**
      * Returns whether these restrictions cover the given contact.
      * 
-     * @param connection an open connection to the database.
      * @param other the contact that needs to be covered.
      * 
      * @return whether these restrictions cover the given contact.
      */
     @Pure
-    public boolean cover(@Nonnull Connection connection, @Nonnull Person other) throws SQLException {
-        return context != null && !context.contains(connection, other) || contact != null && !contact.equals(other);
+    public boolean cover(@Nonnull Contact other) throws SQLException {
+        return context != null && !context.contains(other) || contact != null && !contact.equals(other);
     }
     
     /**
      * Checks that these restrictions cover the given contact and throws a {@link PacketException} if not.
      * 
-     * @param connection an open connection to the database.
      * @param other the contact that needs to be covered.
      */
     @Pure
-    public void checkCoverage(@Nonnull Connection connection, @Nonnull Person other) throws PacketException, SQLException {
-        if (!cover(connection, other)) throw new PacketException(PacketError.AUTHORIZATION);
+    public void checkCoverage(@Nonnull Contact other) throws PacketException, SQLException {
+        if (!cover(other)) throw new PacketException(PacketError.AUTHORIZATION);
     }
     
     /**
      * Returns whether these restrictions cover the given restrictions.
      * 
-     * @param connection an open connection to the database.
      * @param other the restrictions that need to be covered.
      * 
      * @return whether these restrictions cover the given restrictions.
      */
     @Pure
-    public boolean cover(@Nonnull Connection connection, @Nonnull Restrictions other) throws SQLException {
+    public boolean cover(@Nonnull Restrictions other) throws SQLException {
         if (other.client && !client) return false;
         if (other.role && !role) return false;
         if (other.writing && !writing) return false;
-        @Nullable Context context = other.context;
-        if (context != null && !cover(connection, context)) return false;
-        @Nullable Person contact = other.contact;
-        return contact == null || cover(connection, contact);
+        final @Nullable Context context = other.context;
+        if (context != null && !cover(context)) return false;
+        final @Nullable Contact contact = other.contact;
+        return contact == null || cover(contact);
     }
     
     /**
      * Checks whether these restrictions cover the given restrictions and throws a {@link PacketException} if not.
      * 
-     * @param connection an open connection to the database.
      * @param restrictions the restrictions that need to be covered.
      */
     @Pure
-    public void checkCoverage(@Nonnull Connection connection, @Nonnull Restrictions restrictions) throws PacketException, SQLException {
-        if (!cover(connection, restrictions)) throw new PacketException(PacketError.AUTHORIZATION);
+    public void checkCoverage(@Nonnull Restrictions restrictions) throws PacketException, SQLException {
+        if (!cover(restrictions)) throw new PacketException(PacketError.AUTHORIZATION);
     }
     
     
     @Pure
     @Override
     public boolean equals(@Nullable Object object) {
+        if (object == this) return true;
         if (object == null || !(object instanceof Restrictions)) return false;
         @Nonnull Restrictions other = (Restrictions) object;
         return this.client == other.client && this.role == other.role && this.writing == other.writing && Objects.equals(this.context, other.context) && Objects.equals(this.contact, other.contact);
