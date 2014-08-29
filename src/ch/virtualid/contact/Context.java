@@ -418,6 +418,15 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
     public @Nonnull Set<Contact> getContacts() throws SQLException;
     
     /**
+     * Returns whether this context contains the given contact.
+     * 
+     * @param contact the contact to check this context for.
+     * 
+     * @return whether this context contains the given contact.
+     */
+    public boolean contains(@Nonnull Contact contact) throws SQLException;
+    
+    /**
      * Adds the given contacts to this context.
      * 
      * @param contacts the contacts to be added to this context.

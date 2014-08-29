@@ -221,47 +221,60 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
     public final void setRestrictions(@Nonnull Restrictions newRestrictions) throws SQLException {
         assert !isRestricted() : "The authorization of this agent may not have been restricted.";
         
-        Host.setRestrictions(this, newRestrictions);
-        this.restrictions = newRestrictions;
-        this.restrictionsLoaded = true;
-        
-        // TODO: notify(null);
+        final @Nullable Restrictions oldRestrictions = getRestrictions();
+        if (!newRestrictions.equals(oldRestrictions)) {
+            Synchronizer.execute(new AgentRestrictionsReplace(this, oldRestrictions, newRestrictions));
+        }
     }
     
-    
     /**
-     * Returns whether this authorization covers the given authorization.
+     * Replaces the restrictions of this agent.
      * 
-     * @param authorization the authorization that needs to be covered.
-     * @return whether this authorization covers the given authorization.
+     * @param oldRestrictions the old restrictions of this agent.
+     * @param newRestrictions the new restrictions of this agent.
      */
-    public boolean covers(@Nonnull Agent authorization) throws SQLException {
-        @Nullable Restrictions thisRestrictions = getRestrictions();
-        @Nullable Restrictions otherRestrictions = authorization.getRestrictions();
-        return (otherRestrictions == null || thisRestrictions != null && thisRestrictions.cover(otherRestrictions)) && getPermissions().cover(authorization.getPermissions());
+    @OnlyForActions
+    public void replaceRestrictions(@Nullable Restrictions oldRestrictions, @Nonnull Restrictions newRestrictions) throws SQLException {
+        Agents.replaceRestrictions(this, oldRestrictions, newRestrictions);
+        restrictions = newRestrictions;
+        restrictionsLoaded = true;
+        notify(RESTRICTIONS);
     }
     
+    
     /**
-     * Checks whether this authorization covers the given authorization and throws a {@link PacketException} if not.
+     * Returns whether this agent covers the given agent.
      * 
-     * @param authorization the authorization that needs to be covered.
+     * @param agent the agent that needs to be covered.
+     * @return whether this agent covers the given agent.
      */
-    public void checkCoverage(@Nonnull Agent authorization) throws PacketException, SQLException {
-        if (!covers(authorization)) throw new PacketException(PacketError.AUTHORIZATION);
+    public boolean covers(@Nonnull Agent agent) throws SQLException {
+        final @Nullable Restrictions thisRestrictions = getRestrictions();
+        final @Nullable Restrictions otherRestrictions = agent.getRestrictions();
+        return (otherRestrictions == null || thisRestrictions != null && thisRestrictions.cover(otherRestrictions)) && getPermissions().cover(agent.getPermissions());
+    }
+    
+    /**
+     * Checks whether this agent covers the given agent and throws a {@link PacketException} if not.
+     * 
+     * @param agent the agent that needs to be covered.
+     */
+    public void checkCoverage(@Nonnull Agent agent) throws PacketException, SQLException {
+        if (!covers(agent)) throw new PacketException(PacketError.AUTHORIZATION);
     }
     
     
     /**
-     * Returns whether this authorization has been restricted.
+     * Returns whether this agent has been restricted.
      * 
-     * @return whether this authorization has been restricted.
+     * @return whether this agent has been restricted.
      */
     public final boolean isRestricted() {
         return restricted;
     }
     
     /**
-     * Sets this authorization to have been restricted.
+     * Sets this agent to have been restricted.
      */
     protected final void setRestricted() {
         restricted = true;
@@ -291,9 +304,9 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
     }
     
     /**
-     * Returns whether this authorization belongs to a client.
+     * Returns whether this agent is a client.
      * 
-     * @return whether this authorization belongs to a client.
+     * @return whether this agent is a client.
      */
     @Pure
     public abstract boolean isClient();
@@ -361,9 +374,7 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
     
     /**
      * Removes this agent from the database.
-     * Make sure to call {@link #redetermineAgents()} afterwards.
      */
-    @Override
     public final void remove() throws SQLException {
         Host.removeAgent(this);
     }

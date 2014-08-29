@@ -3,6 +3,7 @@ package ch.virtualid.concept;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.Entity;
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
@@ -34,6 +35,20 @@ public abstract class Concept extends Instance {
      */
     @Pure
     public final @Nullable Entity getEntity() {
+        return entity;
+    }
+    
+    /**
+     * Returns the entity to which this concept belongs.
+     * 
+     * @return the entity to which this concept belongs.
+     * 
+     * @require entity != null : "The entity is not null.";
+     */
+    @Pure
+    public final @Nonnull Entity getEntityNotNull() {
+        assert entity != null : "The entity is not null.";
+        
         return entity;
     }
     
