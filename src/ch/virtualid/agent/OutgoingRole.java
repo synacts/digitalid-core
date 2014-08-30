@@ -1,8 +1,8 @@
 package ch.virtualid.agent;
 
+import ch.virtualid.annotations.Pure;
 import ch.virtualid.contact.Context;
 import ch.virtualid.credential.Credential;
-import ch.virtualid.database.Database;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.exceptions.ShouldNeverHappenError;
 import ch.virtualid.identity.FailedIdentityException;
@@ -12,13 +12,13 @@ import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
-import static ch.virtualid.io.Level.ERROR;
 import ch.virtualid.packet.PacketException;
 import ch.virtualid.server.Host;
 import ch.xdf.Block;
 import ch.xdf.TupleWrapper;
 import ch.xdf.exceptions.InvalidEncodingException;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -183,24 +183,19 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
         setRestricted();
     }
     
-    @Override
-    public @Nonnull Block toBlock() {
-        try {
-            // TODO: The restrictions aren't needed at all!
-            assert getRestrictions() != null : "The restrictions is not null.";
-            
-            @Nonnull Block[] elements = new Block[2];
-            elements[0] = role.getAddress().toBlock();
-            elements[1] = context.toBlock();
-            
-            @Nonnull Block[] tuple = new Block[2];
-            tuple[0] = super.toBlock();
-            tuple[1] = new TupleWrapper(elements).toBlock();
-            return new TupleWrapper(tuple).toBlock();
-        } catch (@Nonnull SQLException exception) {
-            Database.logger.log(ERROR, "Could not load the restrictions of an outgoing role.", exception);
-            return Block.EMPTY;
-        }
+    
+    /**
+     * Returns the given column of the result set as an instance of this class.
+     * 
+     * @param entity the entity to which the outgoing role belongs.
+     * @param resultSet the result set to retrieve the data from.
+     * @param columnIndex the index of the column containing the data.
+     * 
+     * @return the given column of the result set as an instance of this class.
+     */
+    @Pure
+    public static @Nonnull OutgoingRole get(@Nonnull Entity entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+        return get(entity, resultSet.getLong(columnIndex));
     }
     
 }

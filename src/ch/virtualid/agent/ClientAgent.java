@@ -1,7 +1,7 @@
 package ch.virtualid.agent;
 
+import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Commitment;
-import ch.virtualid.database.Database;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.exceptions.ShouldNeverHappenError;
 import ch.virtualid.identity.FailedIdentityException;
@@ -9,13 +9,13 @@ import ch.virtualid.identity.NonHostIdentity;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
-import static ch.virtualid.io.Level.ERROR;
 import ch.virtualid.server.Host;
 import ch.xdf.Block;
 import ch.xdf.StringWrapper;
 import ch.xdf.TupleWrapper;
 import ch.xdf.exceptions.InvalidEncodingException;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -167,22 +167,18 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
     }
     
     
-    @Override
-    public @Nonnull Block toBlock() {
-        try {
-            @Nonnull Block[] elements = new Block[3];
-            elements[0] = commitment.toBlock();
-            elements[1] = new StringWrapper(name).toBlock();
-            elements[2] = getPreferences().toBlock();
-            
-            @Nonnull Block[] tuple = new Block[2];
-            tuple[0] = super.toBlock();
-            tuple[1] = new TupleWrapper(elements).toBlock();
-            return new TupleWrapper(tuple).toBlock();
-        } catch (@Nonnull SQLException exception) {
-            Database.logger.log(ERROR, "Could not load the preferences of a client agent.", exception);
-            return Block.EMPTY;
-        }
+    /**
+     * Returns the given column of the result set as an instance of this class.
+     * 
+     * @param entity the entity to which the client agent belongs.
+     * @param resultSet the result set to retrieve the data from.
+     * @param columnIndex the index of the column containing the data.
+     * 
+     * @return the given column of the result set as an instance of this class.
+     */
+    @Pure
+    public static @Nonnull ClientAgent get(@Nonnull Entity entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+        return get(entity, resultSet.getLong(columnIndex));
     }
     
 }

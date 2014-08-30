@@ -2,26 +2,24 @@ package ch.virtualid.agent;
 
 import ch.virtualid.annotations.OnlyForActions;
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.client.Synchronizer;
 import ch.virtualid.concept.Aspect;
 import ch.virtualid.concept.Concept;
-import ch.virtualid.database.Database;
 import ch.virtualid.entity.Entity;
-import ch.virtualid.identity.FailedIdentityException;
-import ch.virtualid.identity.NonHostIdentity;
+import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
-import static ch.virtualid.io.Level.ERROR;
 import ch.virtualid.module.both.Agents;
 import ch.virtualid.packet.PacketError;
 import ch.virtualid.packet.PacketException;
-import ch.virtualid.server.Host;
+import ch.virtualid.util.FreezableArray;
+import ch.virtualid.util.ReadonlyArray;
 import ch.xdf.Block;
 import ch.xdf.BooleanWrapper;
+import ch.xdf.Int64Wrapper;
 import ch.xdf.TupleWrapper;
 import ch.xdf.exceptions.InvalidEncodingException;
-import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -30,7 +28,7 @@ import javax.annotation.Nullable;
  * This class models an agent that acts on behalf of a virtual identity.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 0.9
+ * @version 1.6
  */
 public abstract class Agent extends Concept implements Immutable, Blockable, SQLizable {
     
@@ -58,6 +56,33 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
      * Stores the aspect of the observed agent being deleted from the database.
      */
     public static final @Nonnull Aspect DELETED = new Aspect(Agent.class, "deleted");
+    
+    
+    /**
+     * Stores the data type used to store instances of this class in the database.
+     */
+    public static final @Nonnull String FORMAT = "BIGINT";
+    
+    /**
+     * Stores the foreign key constraint used to reference instances of this class.
+     */
+    public static final @Nonnull String REFERENCE = "REFERENCES agent (entity, agent) ON DELETE CASCADE ON UPDATE CASCADE";
+    
+    
+    /**
+     * Stores the semantic type {@code client.agent@virtualid.ch}.
+     */
+    private static final @Nonnull SemanticType CLIENT = SemanticType.create("client.agent@virtualid.ch").load(BooleanWrapper.TYPE);
+    
+    /**
+     * Stores the semantic type {@code number.agent@virtualid.ch}.
+     */
+    private static final @Nonnull SemanticType NUMBER = SemanticType.create("number.agent@virtualid.ch").load(Int64Wrapper.TYPE);
+    
+    /**
+     * Stores the semantic type {@code agent@virtualid.ch}.
+     */
+    public static final @Nonnull SemanticType TYPE = SemanticType.create("agent@virtualid.ch").load(TupleWrapper.TYPE, CLIENT, NUMBER);
     
     
     /**
@@ -265,23 +290,6 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
     
     
     /**
-     * Returns whether this agent has been restricted.
-     * 
-     * @return whether this agent has been restricted.
-     */
-    public final boolean isRestricted() {
-        return restricted;
-    }
-    
-    /**
-     * Sets this agent to have been restricted.
-     */
-    protected final void setRestricted() {
-        restricted = true;
-    }
-    
-    
-    /**
      * Returns whether this agent has been removed from the database.
      * 
      * @return whether this agent has been removed from the database.
@@ -297,11 +305,43 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
     /**
      * Removes this agent from the database.
      * 
-     * @require !isRestricted() : "This agent may not have been restricted.";
+     * @require !isRestricted() : "The authorization of this agent may not have been restricted.";
      */
     public final void remove() throws SQLException {
-        // TODO
+        assert !isRestricted() : "The authorization of this agent may not have been restricted.";
+        
+        Synchronizer.execute(new AgentRemove(this));
     }
+    
+    /**
+     * Removes this agent from the database.
+     */
+    @OnlyForActions
+    public final void removeForActions() throws SQLException {
+        Agents.removeAgent(this);
+        removed = true;
+        removedLoaded = true;
+        notify(DELETED);
+    }
+    
+    
+    /**
+     * Returns whether this agent has been restricted.
+     * 
+     * @return whether this agent has been restricted.
+     */
+    @Pure
+    public final boolean isRestricted() {
+        return restricted;
+    }
+    
+    /**
+     * Sets this agent to have been restricted.
+     */
+    protected final void setRestricted() {
+        restricted = true;
+    }
+    
     
     /**
      * Returns whether this agent is a client.
@@ -310,6 +350,45 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
      */
     @Pure
     public abstract boolean isClient();
+    
+    
+    @Pure
+    @Override
+    public final @Nonnull SemanticType getType() {
+        return TYPE;
+    }
+    
+    @Pure
+    @Override
+    public final @Nonnull Block toBlock() {
+        final @Nonnull FreezableArray<Block> elements = new FreezableArray<Block>(2);
+        elements.set(0, new BooleanWrapper(CLIENT, isClient()).toBlock());
+        elements.set(1, new Int64Wrapper(NUMBER, getNumber()).toBlock());
+        return new TupleWrapper(getType(), elements.freeze()).toBlock();
+    }
+    
+    /**
+     * Returns the agent with the number given by the block.
+     * 
+     * @param entity the entity to which the agent belongs.
+     * @param block a block containing the number of the agent.
+     * 
+     * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
+     */
+    @Pure
+    public static @Nonnull Agent get(@Nonnull Entity entity, @Nonnull Block block) throws InvalidEncodingException {
+        assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
+        
+        final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(2);
+        final boolean client = new BooleanWrapper(elements.getNotNull(0)).getValue();
+        final long number = new Int64Wrapper(elements.getNotNull(1)).getValue();
+        return client ? ClientAgent.get(entity, number) : OutgoingRole.get(entity, number);
+    }
+    
+    @Override
+    public final void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+        preparedStatement.setLong(parameterIndex, getNumber());
+    }
     
     
     @Pure
@@ -331,61 +410,6 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
     @Override
     public final @Nonnull String toString() {
         return String.valueOf(number);
-    }
-    
-    @Pure
-    @Override
-    public @Nonnull Block toBlock() {
-        try {
-            // TODO: Only return the authorization number? -> Together with the actual class!
-            // -> Only among agents? Save incoming roles as (issuer, relation)?
-            @Nonnull Block[] tuple = new Block[2];
-            tuple[0] = Block.toBlock(getRestrictions());
-            tuple[1] = getPermissions().toBlock();
-            return new TupleWrapper(tuple).toBlock();
-        } catch (@Nonnull SQLException exception) {
-            Database.logger.log(ERROR, "Could not load the restrictions or permissions of an authorization.", exception);
-            return Block.EMPTY;
-        }
-    }
-    
-    
-    /**
-     * Creates a new agent with the given connection and identity from the given block.
-     * 
-     * @param connection an open connection to the database.
-     * @param identity the identity at which this agent is authorized.
-     * @param block the block containing the agent.
-     * @return the new agent with the given connection and identity from the given block.
-     */
-    public final @Nonnull Agent create(@Nonnull Connection connection, @Nonnull NonHostIdentity identity, @Nonnull Block block) throws InvalidEncodingException, FailedIdentityException {
-        @Nonnull Block[] tuple = new TupleWrapper(block).getElementsNotNull(2);
-        if (new BooleanWrapper(tuple[1]).getValue()) return new ClientAgent(connection, identity, block);
-        else return new OutgoingRole(connection, identity, block);
-    }
-    
-    
-    /**
-     * Redetermines which agents are stronger and weaker than this agent.
-     */
-    public final void redetermineAgents() throws SQLException {
-        Host.redetermineAgents(this);
-    }
-    
-    /**
-     * Removes this agent from the database.
-     */
-    public final void remove() throws SQLException {
-        Host.removeAgent(this);
-    }
-    
-    @Pure
-    @Override
-    public @Nonnull Block toBlock() {
-        @Nonnull Block[] tuple = new Block[2];
-        tuple[0] = super.toBlock();
-        tuple[1] = new BooleanWrapper(this instanceof ClientAgent).toBlock();
-        return new TupleWrapper(tuple).toBlock();
     }
     
 }

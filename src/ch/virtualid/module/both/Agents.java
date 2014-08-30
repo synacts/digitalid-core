@@ -76,6 +76,13 @@ public final class Agents extends BothModule {
     
     
     /**
+     * Redetermines which agents are stronger and weaker than this agent.
+     */
+    public void redetermineAgents() throws SQLException {
+        // TODO!
+    }
+    
+    /**
      * Adds the client with the given commitment to the given identity and returns the generated agent.
      * 
      * @param identity the identity to which the client is to be added.
