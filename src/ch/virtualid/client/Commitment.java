@@ -9,7 +9,7 @@ import ch.virtualid.identity.FailedIdentityException;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.HostIdentity;
 import ch.virtualid.identity.SemanticType;
-import ch.virtualid.interfaces.BlockableObject;
+import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.ReadonlyArray;
@@ -28,12 +28,27 @@ import javax.annotation.Nullable;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public class Commitment extends BlockableObject implements Immutable {
+public class Commitment implements Immutable, Blockable {
+    
+    /**
+     * Stores the semantic type {@code host.commitment.client@virtualid.ch}.
+     */
+    private static final @Nonnull SemanticType HOST = SemanticType.create("host.commitment.client@virtualid.ch").load(HostIdentity.IDENTIFIER);
+    
+    /**
+     * Stores the semantic type {@code time.commitment.client@virtualid.ch}.
+     */
+    private static final @Nonnull SemanticType TIME = SemanticType.create("time.commitment.client@virtualid.ch").load(Time.TYPE);
+    
+    /**
+     * Stores the semantic type {@code value.commitment.client@virtualid.ch}.
+     */
+    private static final @Nonnull SemanticType VALUE = SemanticType.create("value.commitment.client@virtualid.ch").load(Element.TYPE);
     
     /**
      * Stores the semantic type {@code commitment.client@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("commitment.client@virtualid.ch").load(TupleWrapper.TYPE, HostIdentity.IDENTIFIER, Time.TYPE, Element.TYPE);
+    public static final @Nonnull SemanticType TYPE = SemanticType.create("commitment.client@virtualid.ch").load(TupleWrapper.TYPE, HOST, TIME, VALUE);
     
     
     /**
@@ -78,7 +93,7 @@ public class Commitment extends BlockableObject implements Immutable {
      * @require block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
      */
     public Commitment(@Nonnull Block block) throws SQLException, InvalidEncodingException, FailedIdentityException {
-        super(block);
+        assert block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
         
         final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(3);
         this.host = new HostIdentifier(elements.getNotNull(0)).getIdentity();
@@ -95,11 +110,11 @@ public class Commitment extends BlockableObject implements Immutable {
     
     @Pure
     @Override
-    protected final @Nonnull Block encode() {
+    public final @Nonnull Block toBlock() {
         final @Nonnull FreezableArray<Block> elements = new FreezableArray<Block>(3);
-        elements.set(0, host.getAddress().toBlock());
-        elements.set(1, time.toBlock());
-        elements.set(2, value.toBlock());
+        elements.set(0, host.getAddress().toBlock().setType(HOST));
+        elements.set(1, time.toBlock().setType(TIME));
+        elements.set(2, value.toBlock().setType(VALUE));
         return new TupleWrapper(TYPE, elements.freeze()).toBlock();
     }
     
@@ -162,6 +177,12 @@ public class Commitment extends BlockableObject implements Immutable {
         hash = 97 * hash + time.hashCode();
         hash = 97 * hash + value.hashCode();
         return hash;
+    }
+    
+    @Pure
+    @Override
+    public @Nonnull String toString() {
+        return "Commitment [Host: " + host.getAddress() + ", Time: " + time.asDate() + "]";
     }
     
 }

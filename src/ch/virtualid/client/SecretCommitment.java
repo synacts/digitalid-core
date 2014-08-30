@@ -4,6 +4,7 @@ import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.cryptography.Exponent;
 import ch.virtualid.identity.HostIdentity;
+import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.xdf.exceptions.InvalidEncodingException;
 import java.math.BigInteger;
@@ -15,7 +16,7 @@ import javax.annotation.Nonnull;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public final class SecretCommitment extends Commitment implements Immutable {
+public final class SecretCommitment extends Commitment implements Immutable, Blockable {
     
     /**
      * Stores the secret of this commitment.
