@@ -63,7 +63,7 @@ public final class PublicKeyChain extends KeyChain<PublicKey> implements Immutab
      * 
      * @param block the block containing the key chain entries.
      * 
-     * @require block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
+     * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
     public PublicKeyChain(@Nonnull Block block) throws InvalidEncodingException {
         super(block);

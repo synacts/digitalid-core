@@ -38,7 +38,7 @@ public final class Exponent extends Number implements Immutable {
      * 
      * @param block the block that encodes the value of the new exponent.
      * 
-     * @require block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
+     * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
     public Exponent(@Nonnull Block block) throws InvalidEncodingException {
         super(block);

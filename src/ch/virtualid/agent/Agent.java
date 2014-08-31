@@ -28,7 +28,7 @@ import javax.annotation.Nullable;
  * This class models an agent that acts on behalf of a virtual identity.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 1.6
+ * @version 1.7
  */
 public abstract class Agent extends Concept implements Immutable, Blockable, SQLizable {
     
@@ -364,7 +364,7 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
         final @Nonnull FreezableArray<Block> elements = new FreezableArray<Block>(2);
         elements.set(0, new BooleanWrapper(CLIENT, isClient()).toBlock());
         elements.set(1, new Int64Wrapper(NUMBER, getNumber()).toBlock());
-        return new TupleWrapper(getType(), elements.freeze()).toBlock();
+        return new TupleWrapper(TYPE, elements.freeze()).toBlock();
     }
     
     /**

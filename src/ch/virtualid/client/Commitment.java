@@ -90,10 +90,10 @@ public class Commitment implements Immutable, Blockable {
      * 
      * @param block the block containing the commitment.
      * 
-     * @require block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
+     * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
     public Commitment(@Nonnull Block block) throws SQLException, InvalidEncodingException, FailedIdentityException {
-        assert block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
+        assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(3);
         this.host = new HostIdentifier(elements.getNotNull(0)).getIdentity();

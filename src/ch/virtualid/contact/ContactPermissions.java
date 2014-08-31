@@ -63,7 +63,7 @@ public final class ContactPermissions extends AttributeSet implements ReadonlyCo
      * 
      * @param block the block containing the contact permissions.
      * 
-     * @require block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
+     * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
     public ContactPermissions(@Nonnull Block block) throws InvalidEncodingException, FailedIdentityException, SQLException, InvalidDeclarationException {
         super(block);

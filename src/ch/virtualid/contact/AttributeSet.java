@@ -20,6 +20,9 @@ import javax.annotation.Nonnull;
 /**
  * This class models a freezable set of attribute types.
  * 
+ * @see Authentications
+ * @see ContactPermissions
+ * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */

@@ -49,7 +49,7 @@ public final class HostIdentifier extends Identifier implements Immutable {
      * 
      * @param block the block containing the host identifier.
      * 
-     * @require block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
+     * @require block.getType().isBasedOn(HostIdentity.IDENTIFIER) : "The block is based on the indicated type.";
      */
     public HostIdentifier(@Nonnull Block block) throws InvalidEncodingException {
         this(block, new StringWrapper(block).getString());
@@ -61,7 +61,7 @@ public final class HostIdentifier extends Identifier implements Immutable {
      * @param block the block containing the host identifier.
      * @param string the string of the host identifier.
      * 
-     * @require block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
+     * @require block.getType().isBasedOn(HostIdentity.IDENTIFIER) : "The block is based on the indicated type.";
      */
     HostIdentifier(@Nonnull Block block, @Nonnull String string) throws InvalidEncodingException {
         super(block, string);

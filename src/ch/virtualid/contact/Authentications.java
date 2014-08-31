@@ -82,7 +82,7 @@ public final class Authentications extends AttributeSet implements ReadonlyAuthe
      * 
      * @param block the block containing the authentications.
      * 
-     * @require block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
+     * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
     public Authentications(@Nonnull Block block) throws InvalidEncodingException, FailedIdentityException, SQLException, InvalidDeclarationException {
         super(block);

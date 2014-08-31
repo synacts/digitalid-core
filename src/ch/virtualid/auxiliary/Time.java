@@ -113,10 +113,10 @@ public final class Time implements Immutable, Blockable, Comparable<Time>, SQLiz
      * 
      * @param block the block containing the time.
      * 
-     * @require block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
+     * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
     public Time(@Nonnull Block block) throws InvalidEncodingException {
-        assert block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
+        assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         value = new Int64Wrapper(block).getValue();
     }
@@ -130,7 +130,7 @@ public final class Time implements Immutable, Blockable, Comparable<Time>, SQLiz
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        return new Int64Wrapper(getType(), value).toBlock();
+        return new Int64Wrapper(TYPE, value).toBlock();
     }
     
     

@@ -156,10 +156,10 @@ public final class Restrictions implements Immutable, Blockable {
      * @param entity the entity to which these restrictions belongs.
      * @param block the block containing the restrictions.
      * 
-     * @require block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
+     * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
     public Restrictions(@Nonnull Entity entity, @Nonnull Block block) throws InvalidEncodingException {
-        assert block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
+        assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         final @Nonnull TupleWrapper tuple = new TupleWrapper(block);
         this.client = new BooleanWrapper(tuple.getElementNotNull(0)).getValue();

@@ -75,10 +75,10 @@ public final class Group implements Immutable, Blockable {
      * 
      * @param block the block containing the group.
      * 
-     * @require block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
+     * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
     Group(@Nonnull Block block) throws InvalidEncodingException {
-        assert block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
+        assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         final @Nonnull TupleWrapper tuple = new TupleWrapper(block);
         

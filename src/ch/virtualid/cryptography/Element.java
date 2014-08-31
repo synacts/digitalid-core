@@ -49,7 +49,7 @@ public final class Element extends Number implements Immutable {
      * @param group the group of the new element.
      * @param block the block encoding the value.
      * 
-     * @require block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
+     * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
     Element(@Nonnull Group group, @Nonnull Block block) throws InvalidEncodingException {
         super(block);

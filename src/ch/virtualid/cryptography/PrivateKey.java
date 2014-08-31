@@ -143,10 +143,10 @@ public final class PrivateKey implements Immutable, Blockable {
      * 
      * @param block the block containing the private key.
      * 
-     * @require block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
+     * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
     public PrivateKey(@Nonnull Block block) throws InvalidEncodingException {
-        assert block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
+        assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(5);
         this.compositeGroup = new Group(elements.getNotNull(0));

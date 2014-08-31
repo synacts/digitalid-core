@@ -8,6 +8,8 @@ import ch.virtualid.identity.SemanticType;
 import ch.virtualid.identity.SyntacticType;
 import ch.virtualid.interfaces.Immutable;
 import ch.xdf.exceptions.InvalidEncodingException;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -67,6 +69,17 @@ public final class DataWrapper extends BlockWrapper implements Immutable {
     public @Capturable @Nonnull byte[] getData() {
         if (data != null) return data.clone();
         else return toBlock().getBytes(1);
+    }
+    
+    /**
+     * Returns the data of the wrapped block as an input stream.
+     * 
+     * @return the data of the wrapped block as an input stream.
+     */
+    @Pure
+    public @Nonnull InputStream getDataAsInputStream() {
+        if (data != null) return new ByteArrayInputStream(data);
+        else return toBlock().getInputStream(1);
     }
     
     

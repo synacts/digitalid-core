@@ -103,10 +103,10 @@ public final class AgentPermissions extends FreezableLinkedHashMap<SemanticType,
      * 
      * @param block the block containing the agent permissions.
      * 
-     * @require block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
+     * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
     public AgentPermissions(@Nonnull Block block) throws InvalidEncodingException, SQLException, FailedIdentityException, InvalidDeclarationException {
-        assert block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
+        assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         final @Nonnull ReadonlyList<Block> elements = new ListWrapper(block).getElementsNotNull();
         for (final @Nonnull Block element : elements) {

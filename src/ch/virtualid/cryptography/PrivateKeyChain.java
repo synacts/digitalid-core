@@ -62,7 +62,7 @@ public final class PrivateKeyChain extends KeyChain<PrivateKey> implements Immut
      * 
      * @param block the block containing the key chain entries.
      * 
-     * @require block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
+     * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
     public PrivateKeyChain(@Nonnull Block block) throws InvalidEncodingException {
         super(block);

@@ -50,7 +50,7 @@ public final class NonHostIdentifier extends Identifier implements Immutable {
      * 
      * @param block the block containing the non-host identifier.
      * 
-     * @require block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
+     * @require block.getType().isBasedOn(NonHostIdentity.IDENTIFIER) : "The block is based on the indicated type.";
      */
     public NonHostIdentifier(@Nonnull Block block) throws InvalidEncodingException {
         this(block, new StringWrapper(block).getString());
@@ -62,7 +62,7 @@ public final class NonHostIdentifier extends Identifier implements Immutable {
      * @param block the block containing the non-host identifier.
      * @param string the string of the non-host identifier.
      * 
-     * @require block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
+     * @require block.getType().isBasedOn(NonHostIdentity.IDENTIFIER) : "The block is based on the indicated type.";
      */
     NonHostIdentifier(@Nonnull Block block, @Nonnull String string) throws InvalidEncodingException {
         super(block, string);
