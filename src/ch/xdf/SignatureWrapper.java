@@ -462,7 +462,7 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
             if (relation != null) {
                 @Nullable OutgoingRole outgoingRole = Host.getOutgoingRole(connection, identity, relation.getIdentity().toSemanticType());
                 if (outgoingRole != null && Host.isInContext(connection, identity, credential.getIssuer().getIdentity().toPerson(), outgoingRole.getContext())) {
-                    outgoingRole.checkCoverage(credential);
+                    outgoingRole.checkCovers(credential);
                     outgoingRole.restrictTo(credential);
                     return outgoingRole;
                 }

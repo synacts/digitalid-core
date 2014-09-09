@@ -44,7 +44,7 @@ public class ContactsAdd {
             int context = new Int32Wrapper(elements[1]).getValue();
             Restrictions restrictions = host.getRestrictions(connection, vid, signature.getClient());
             restrictions.checkCoverage(context);
-            restrictions.checkWriting();
+            restrictions.checkIsWriting();
             
             host.addContact(connection, vid, contact, context);
             

@@ -45,11 +45,11 @@ public class AgentAuthorize {
             Restrictions restrictionsOfAuthorizee = host.getRestrictions(connection, vid, commitmentOfAuthorizee);
             AgentPermissions authorizationOfAuthorizee = host.getAuthorization(connection, vid, commitmentOfAuthorizee);
             
-            restrictionsOfAuthorizer.checkCoverage(restrictionsOfAuthorizee);
-            restrictionsOfAuthorizer.checkCoverage(newRestrictionsOfAuthorizee);
+            restrictionsOfAuthorizer.checkCover(restrictionsOfAuthorizee);
+            restrictionsOfAuthorizer.checkCover(newRestrictionsOfAuthorizee);
             
-            authorizationOfAuthorizer.checkDoesCover(authorizationOfAuthorizee);
-            authorizationOfAuthorizer.checkDoesCover(newAuthorizationOfAuthorizee);
+            authorizationOfAuthorizer.checkCover(authorizationOfAuthorizee);
+            authorizationOfAuthorizer.checkCover(newAuthorizationOfAuthorizee);
             
             host.authorizeClient(connection, vid, commitmentOfAuthorizee, newRestrictionsOfAuthorizee, newAuthorizationOfAuthorizee);
             

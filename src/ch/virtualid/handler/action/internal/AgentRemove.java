@@ -37,11 +37,11 @@ public class AgentRemove {
             Restrictions restrictionsOfRemover = host.getRestrictions(connection, vid, commitmentOfRemover);
             Restrictions restrictionsOfRemovee = host.getRestrictions(connection, vid, commitmentOfRemovee);
             if (restrictionsOfRemover == null) throw new PacketException(PacketException.AUTHORIZATION);
-            restrictionsOfRemover.checkCoverage(restrictionsOfRemovee);
+            restrictionsOfRemover.checkCover(restrictionsOfRemovee);
             
             AgentPermissions authorizationOfRemover = host.getAuthorization(connection, vid, commitmentOfRemover);
             AgentPermissions authorizationOfRemovee = host.getAuthorization(connection, vid, commitmentOfRemovee);
-            authorizationOfRemover.checkDoesCover(authorizationOfRemovee);
+            authorizationOfRemover.checkCover(authorizationOfRemovee);
             
             host.removeClient(connection, vid, commitmentOfRemovee);
             

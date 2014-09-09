@@ -4,6 +4,8 @@ import ch.virtualid.annotations.Pure;
 import ch.virtualid.contact.Contact;
 import ch.virtualid.contact.Context;
 import ch.virtualid.entity.Entity;
+import ch.virtualid.exceptions.InvalidDeclarationException;
+import ch.virtualid.identity.FailedIdentityException;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
@@ -158,7 +160,7 @@ public final class Restrictions implements Immutable, Blockable {
      * 
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
-    public Restrictions(@Nonnull Entity entity, @Nonnull Block block) throws InvalidEncodingException {
+    public Restrictions(@Nonnull Entity entity, @Nonnull Block block) throws InvalidEncodingException, SQLException, FailedIdentityException, InvalidDeclarationException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         final @Nonnull TupleWrapper tuple = new TupleWrapper(block);
@@ -245,7 +247,7 @@ public final class Restrictions implements Immutable, Blockable {
      * Checks that the authorization is restricted to clients and throws a {@link PacketException} if not.
      */
     @Pure
-    public void checkClient() throws PacketException {
+    public void checkIsClient() throws PacketException {
         if (!isClient()) throw new PacketException(PacketError.AUTHORIZATION);
     }
     
@@ -253,7 +255,7 @@ public final class Restrictions implements Immutable, Blockable {
      * Checks that the authorization is restricted to agents that can assume incoming roles and throws a {@link PacketException} if not.
      */
     @Pure
-    public void checkRole() throws PacketException {
+    public void checkIsRole() throws PacketException {
         if (!isRole()) throw new PacketException(PacketError.AUTHORIZATION);
     }
     
@@ -261,7 +263,7 @@ public final class Restrictions implements Immutable, Blockable {
      * Checks that the authorization is restricted to agents that can write to contexts and throws a {@link PacketException} if not.
      */
     @Pure
-    public void checkWriting() throws PacketException {
+    public void checkIsWriting() throws PacketException {
         if (!isWriting()) throw new PacketException(PacketError.AUTHORIZATION);
     }
     
@@ -284,7 +286,7 @@ public final class Restrictions implements Immutable, Blockable {
      * @param other the context that needs to be covered.
      */
     @Pure
-    public void checkCoverage(@Nonnull Context other) throws PacketException, SQLException {
+    public void checkCover(@Nonnull Context other) throws PacketException, SQLException {
         if (!cover(other)) throw new PacketException(PacketError.AUTHORIZATION);
     }
     
@@ -306,7 +308,7 @@ public final class Restrictions implements Immutable, Blockable {
      * @param other the contact that needs to be covered.
      */
     @Pure
-    public void checkCoverage(@Nonnull Contact other) throws PacketException, SQLException {
+    public void checkCover(@Nonnull Contact other) throws PacketException, SQLException {
         if (!cover(other)) throw new PacketException(PacketError.AUTHORIZATION);
     }
     
@@ -334,8 +336,21 @@ public final class Restrictions implements Immutable, Blockable {
      * @param restrictions the restrictions that need to be covered.
      */
     @Pure
-    public void checkCoverage(@Nonnull Restrictions restrictions) throws PacketException, SQLException {
+    public void checkCover(@Nonnull Restrictions restrictions) throws PacketException, SQLException {
         if (!cover(restrictions)) throw new PacketException(PacketError.AUTHORIZATION);
+    }
+    
+    
+    /**
+     * Returns these restrictions restricted by the given restrictions (except the context and contact, which are left unaffected).
+     * 
+     * @param restrictions the restrictions with which to restrict these restrictions.
+     * 
+     * @return these restrictions restricted by the given restrictions (except the context and contact, which are left unaffected).
+     */
+    @Pure
+    public @Nonnull Restrictions restrictTo(@Nonnull Restrictions restrictions) {
+        return new Restrictions(client && restrictions.client, role && restrictions.role, writing && restrictions.writing, context, contact);
     }
     
     

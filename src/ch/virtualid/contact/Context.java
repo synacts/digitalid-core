@@ -7,6 +7,7 @@ import ch.virtualid.concept.Aspect;
 import ch.virtualid.concept.Concept;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.Entity;
+import ch.virtualid.entity.Role;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
@@ -121,12 +122,12 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
     }
     
     /**
-     * Creates a new context at the given entity.
+     * Creates a new context at the given role.
      * 
-     * @param entity the entity to which the context belongs.
+     * @param role the role to which the context belongs.
      */
-    public static @Nonnull Context create(@Nonnull Entity entity) {
-        final @Nonnull Context context = get(entity, new SecureRandom().nextLong());
+    public static @Nonnull Context create(@Nonnull Role role) {
+        final @Nonnull Context context = get(role, new SecureRandom().nextLong());
         Synchronizer.execute(new ContextCreate(context));
         return context;
     }

@@ -88,7 +88,7 @@ public interface ReadonlyAgentPermissions extends ReadonlyMap<SemanticType, Bool
      * @param permissions the agent permissions that need to be covered.
      */
     @Pure
-    public void checkDoesCover(@Nonnull ReadonlyAgentPermissions permissions) throws PacketException;
+    public void checkCover(@Nonnull ReadonlyAgentPermissions permissions) throws PacketException;
     
     
     @Pure

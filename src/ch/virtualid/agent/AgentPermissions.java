@@ -213,7 +213,7 @@ public final class AgentPermissions extends FreezableLinkedHashMap<SemanticType,
     
     @Pure
     @Override
-    public void checkDoesCover(@Nonnull ReadonlyAgentPermissions permissions) throws PacketException {
+    public void checkCover(@Nonnull ReadonlyAgentPermissions permissions) throws PacketException {
         if (!cover(permissions)) throw new PacketException(PacketError.AUTHORIZATION);
     }
     

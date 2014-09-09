@@ -45,6 +45,11 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
     
     
     /**
+     * Stores the maximal length of the name.
+     */
+    public static final int NAME_LENGTH = 50;
+    
+    /**
      * Stores the size of the square icon as number of pixels horizontally and vertically.
      */
     public static final int ICON_SIZE = 256;
@@ -58,7 +63,7 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
     /**
      * Stores the name of this client agent.
      * 
-     * @invariant name.length() <= 50 : "The name has at most 50 characters.";
+     * @invariant name.length() <= NAME_LENGTH : "The name has at most the indicated amount of characters.";
      */
     private @Nullable String name;
     
@@ -74,9 +79,10 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
      * 
      * @param entity the entity to which this client agent belongs.
      * @param number the number that references this client agent.
+     * @param removed whether this client agent has been removed.
      */
-    private ClientAgent(@Nonnull Entity entity, long number) {
-        super(entity, number);
+    private ClientAgent(@Nonnull Entity entity, long number, boolean removed) {
+        super(entity, number, removed);
     }
     
     
@@ -135,10 +141,10 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
      * 
      * @param newName the new name of this client agent.
      * 
-     * @require name.length() <= 50 : "The name has at most 50 characters.";
+     * @require name.length() <= NAME_LENGTH : "The name has at most the indicated amount of characters.";
      */
     public void setName(@Nonnull String newName) throws SQLException {
-        assert newName.length() <= 50 : "The name has at most 50 characters.";
+        assert newName.length() <= NAME_LENGTH : "The new name has at most the indicated amount of characters.";
         
         final @Nonnull String oldName = getName();
         if (!newName.equals(oldName)) {
@@ -151,9 +157,15 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
      * 
      * @param oldName the old name of this client agent.
      * @param newName the new name of this client agent.
+     * 
+     * @require oldName.length() <= NAME_LENGTH : "The old name has at most the indicated amount of characters.";
+     * @require newName.length() <= NAME_LENGTH : "The new name has at most the indicated amount of characters.";
      */
     @OnlyForActions
     public void replaceName(@Nonnull String oldName, @Nonnull String newName) throws SQLException {
+        assert oldName.length() <= NAME_LENGTH : "The old name has at most the indicated amount of characters.";
+        assert newName.length() <= NAME_LENGTH : "The new name has at most the indicated amount of characters.";
+        
         Agents.replaceName(this, oldName, newName);
         name = newName;
         notify(NAME);
@@ -224,23 +236,24 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
      * 
      * @param entity the entity to which the client agent belongs.
      * @param number the number that denotes the client agent.
+     * @param removed whether the client agent has been removed.
      * 
      * @return a new or existing client agent with the given entity and number.
      */
     @Pure
-    public static @Nonnull ClientAgent get(@Nonnull Entity entity, long number) {
+    public static @Nonnull ClientAgent get(@Nonnull Entity entity, long number, boolean removed) {
         if (Database.isSingleAccess()) {
             synchronized(index) {
                 final @Nonnull Pair<Entity, Long> pair = new Pair<Entity, Long>(entity, number);
-                @Nullable ClientAgent context = index.get(pair);
-                if (context == null) {
-                    context = new ClientAgent(entity, number);
-                    index.put(pair, context);
+                @Nullable ClientAgent clientAgent = index.get(pair);
+                if (clientAgent == null) {
+                    clientAgent = new ClientAgent(entity, number, removed);
+                    index.put(pair, clientAgent);
                 }
-                return context;
+                return clientAgent;
             }
         } else {
-            return new ClientAgent(entity, number);
+            return new ClientAgent(entity, number, removed);
         }
     }
     
@@ -250,12 +263,13 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
      * @param entity the entity to which the client agent belongs.
      * @param resultSet the result set to retrieve the data from.
      * @param columnIndex the index of the column containing the data.
+     * @param removed whether the client agent has been removed.
      * 
      * @return the given column of the result set as an instance of this class.
      */
     @Pure
-    public static @Nonnull ClientAgent get(@Nonnull Entity entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
-        return get(entity, resultSet.getLong(columnIndex));
+    public static @Nonnull ClientAgent get(@Nonnull Entity entity, @Nonnull ResultSet resultSet, int columnIndex, boolean removed) throws SQLException {
+        return get(entity, resultSet.getLong(columnIndex), removed);
     }
     
 }

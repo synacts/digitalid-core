@@ -2,6 +2,7 @@ package ch.virtualid.agent;
 
 import ch.virtualid.annotations.OnlyForActions;
 import ch.virtualid.annotations.Pure;
+import ch.virtualid.client.Synchronizer;
 import ch.virtualid.concept.Aspect;
 import ch.virtualid.concept.Concept;
 import ch.virtualid.entity.Entity;
@@ -33,6 +34,18 @@ import javax.annotation.Nullable;
 public abstract class Agent extends Concept implements Immutable, Blockable, SQLizable {
     
     /**
+     * Stores the aspect of the observed agent being created in the database.
+     * This aspect is also used to notify that an agent gets unremoved again.
+     */
+    public static final @Nonnull Aspect CREATED = new Aspect(Agent.class, "created");
+    
+    /**
+     * Stores the aspect of the observed agent being deleted from the database.
+     * Instead of truly deleting the agent, it is just marked as being removed.
+     */
+    public static final @Nonnull Aspect DELETED = new Aspect(Agent.class, "deleted");
+    
+    /**
      * Stores the aspect of the permissions being changed at the observed agent.
      */
     public static final @Nonnull Aspect PERMISSIONS = new Aspect(Agent.class, "permissions changed");
@@ -40,22 +53,7 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
     /**
      * Stores the aspect of the restrictions being changed at the observed agent.
      */
-    public static final @Nonnull Aspect RESTRICTIONS = new Aspect(Agent.class, "authentications changed");
-    
-    /**
-     * Stores the aspect of the authorization being restricted at the observed agent.
-     */
-    public static final @Nonnull Aspect RESTRICTED = new Aspect(Agent.class, "authorization restricted");
-    
-    /**
-     * Stores the aspect of the observed agent being created in the database.
-     */
-    public static final @Nonnull Aspect CREATED = new Aspect(Agent.class, "created");
-    
-    /**
-     * Stores the aspect of the observed agent being deleted from the database.
-     */
-    public static final @Nonnull Aspect DELETED = new Aspect(Agent.class, "deleted");
+    public static final @Nonnull Aspect RESTRICTIONS = new Aspect(Agent.class, "restrictions changed");
     
     
     /**
@@ -70,19 +68,24 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
     
     
     /**
-     * Stores the semantic type {@code client.agent@virtualid.ch}.
-     */
-    private static final @Nonnull SemanticType CLIENT = SemanticType.create("client.agent@virtualid.ch").load(BooleanWrapper.TYPE);
-    
-    /**
      * Stores the semantic type {@code number.agent@virtualid.ch}.
      */
     private static final @Nonnull SemanticType NUMBER = SemanticType.create("number.agent@virtualid.ch").load(Int64Wrapper.TYPE);
     
     /**
+     * Stores the semantic type {@code client.agent@virtualid.ch}.
+     */
+    private static final @Nonnull SemanticType CLIENT = SemanticType.create("client.agent@virtualid.ch").load(BooleanWrapper.TYPE);
+    
+    /**
+     * Stores the semantic type {@code removed.agent@virtualid.ch}.
+     */
+    private static final @Nonnull SemanticType REMOVED = SemanticType.create("removed.agent@virtualid.ch").load(BooleanWrapper.TYPE);
+    
+    /**
      * Stores the semantic type {@code agent@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("agent@virtualid.ch").load(TupleWrapper.TYPE, CLIENT, NUMBER);
+    public static final @Nonnull SemanticType TYPE = SemanticType.create("agent@virtualid.ch").load(TupleWrapper.TYPE, NUMBER, CLIENT, REMOVED);
     
     
     /**
@@ -91,34 +94,24 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
     private final long number;
     
     /**
+     * Stores whether this agent has been removed.
+     */
+    private boolean removed;
+    
+    /**
      * Stores the permissions of this agent or null if not yet loaded.
      */
-    private @Nullable AgentPermissions permissions;
+    protected @Nullable AgentPermissions permissions;
     
     /**
-     * Stores whether the restrictions have been loaded from the database.
+     * Stores the restrictions of this agent or null if not yet loaded.
      */
-    private boolean restrictionsLoaded = false;
-    
-    /**
-     * Stores the restrictions of this agent or null if not yet loaded or set.
-     */
-    private @Nullable Restrictions restrictions;
+    protected @Nullable Restrictions restrictions;
     
     /**
      * Stores whether this agent has been restricted and can thus no longer be altered.
      */
     private boolean restricted = false;
-    
-    /**
-     * Stores whether the removed status has been loaded from the database.
-     */
-    private boolean removedLoaded = false;
-    
-    /**
-     * Stores whether this agent has been removed from the database.
-     */
-    private boolean removed = false;
     
     
     /**
@@ -126,11 +119,13 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
      * 
      * @param entity the entity to which this agent belongs.
      * @param number the number that references this agent.
+     * @param removed whether this agent has been removed.
      */
-    protected Agent(@Nonnull Entity entity, long number) {
+    protected Agent(@Nonnull Entity entity, long number, boolean removed) {
         super(entity);
         
         this.number = number;
+        this.removed = removed;
     }
     
     
@@ -142,6 +137,67 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
     @Pure
     public final long getNumber() {
         return number;
+    }
+    
+    
+    /**
+     * Returns whether this agent has been removed.
+     * 
+     * @return whether this agent has been removed.
+     */
+    @Pure
+    public final boolean isRemoved() {
+        return removed;
+    }
+    
+    /**
+     * Checks that this agent is not removed and throws a {@link PacketException} otherwise.
+     */
+    @Pure
+    public void checkNotRemoved() throws PacketException {
+        if (isRemoved()) throw new PacketException(PacketError.AUTHORIZATION);
+    }
+    
+    /**
+     * Removes this agent from the database by marking it as being removed.
+     * 
+     * @require !isRestricted() : "The authorization of this agent is not restricted.";
+     */
+    public final void remove() throws SQLException {
+        assert !isRestricted() : "The authorization of this agent is not restricted.";
+        
+        Synchronizer.execute(new AgentRemove(this));
+    }
+    
+    /**
+     * Removes this agent from the database by marking it as being removed.
+     */
+    @OnlyForActions
+    public final void removeForActions() throws SQLException {
+        Agents.removeAgent(this);
+        removed = true;
+        notify(DELETED);
+    }
+    
+    /**
+     * Unremoves this agent from the database by marking it as no longer being removed.
+     * 
+     * @require !isRestricted() : "The authorization of this agent is not restricted.";
+     */
+    public final void unremove() throws SQLException {
+        assert !isRestricted() : "The authorization of this agent is not restricted.";
+        
+        Synchronizer.execute(new AgentUnremove(this));
+    }
+    
+    /**
+     * Unremoves this agent from the database by marking it as no longer being removed.
+     */
+    @OnlyForActions
+    public final void unremoveForActions() throws SQLException {
+        Agents.unremoveAgent(this);
+        removed = false;
+        notify(CREATED);
     }
     
     
@@ -163,16 +219,15 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
      * 
      * @param permissions the permissions to be add.
      * 
-     * @require !isRestricted() : "The authorization of this agent may not have been restricted.";
+     * @require !isRestricted() : "The authorization of this agent is not restricted.";
      */
     public final void addPermissions(@Nonnull ReadonlyAgentPermissions permissions) throws SQLException {
-        assert !isRestricted() : "The authorization of this agent may not have been restricted.";
+        assert !isRestricted() : "The authorization of this agent is not restricted.";
         
         if (!permissions.isEmpty()) {
             Synchronizer.execute(new AgentPermissionsAdd(this, permissions));
         }
     }
-    
     
     /**
      * Adds the given permissions to this agent.
@@ -195,10 +250,10 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
      * 
      * @param permissions the permissions to be removed from this agent.
      * 
-     * @require !isRestricted() : "The authorization of this agent may not have been restricted.";
+     * @require !isRestricted() : "The authorization of this agent is not restricted.";
      */
     public final void removePermissions(@Nonnull ReadonlyAgentPermissions permissions) throws SQLException {
-        assert !isRestricted() : "The authorization of this agent may not have been restricted.";
+        assert !isRestricted() : "The authorization of this agent is not restricted.";
         
         if (!permissions.isEmpty()) {
             Synchronizer.execute(new AgentPermissionsRemove(this, permissions));
@@ -223,15 +278,14 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
     
     
     /**
-     * Returns the restrictions of this agent or null if not yet set.
+     * Returns the restrictions of this agent.
      * 
-     * @return the restrictions of this agent or null if not yet set.
+     * @return the restrictions of this agent.
      */
     @Pure
-    public final @Nullable Restrictions getRestrictions() throws SQLException {
-        if (!restrictionsLoaded) {
+    public final @Nonnull Restrictions getRestrictions() throws SQLException {
+        if (restrictions == null) {
             restrictions = Agents.getRestrictions(this);
-            restrictionsLoaded = true;
         }
         return restrictions;
     }
@@ -241,10 +295,10 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
      * 
      * @param newRestrictions the new restrictions of this agent.
      * 
-     * @require !isRestricted() : "The authorization of this agent may not have been restricted.";
+     * @require !isRestricted() : "The authorization of this agent is not restricted.";
      */
     public final void setRestrictions(@Nonnull Restrictions newRestrictions) throws SQLException {
-        assert !isRestricted() : "The authorization of this agent may not have been restricted.";
+        assert !isRestricted() : "The authorization of this agent is not restricted.";
         
         final @Nullable Restrictions oldRestrictions = getRestrictions();
         if (!newRestrictions.equals(oldRestrictions)) {
@@ -262,7 +316,6 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
     public void replaceRestrictions(@Nullable Restrictions oldRestrictions, @Nonnull Restrictions newRestrictions) throws SQLException {
         Agents.replaceRestrictions(this, oldRestrictions, newRestrictions);
         restrictions = newRestrictions;
-        restrictionsLoaded = true;
         notify(RESTRICTIONS);
     }
     
@@ -271,12 +324,12 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
      * Returns whether this agent covers the given agent.
      * 
      * @param agent the agent that needs to be covered.
+     * 
      * @return whether this agent covers the given agent.
      */
+    @Pure
     public boolean covers(@Nonnull Agent agent) throws SQLException {
-        final @Nullable Restrictions thisRestrictions = getRestrictions();
-        final @Nullable Restrictions otherRestrictions = agent.getRestrictions();
-        return (otherRestrictions == null || thisRestrictions != null && thisRestrictions.cover(otherRestrictions)) && getPermissions().cover(agent.getPermissions());
+        return !isRemoved() && getPermissions().cover(agent.getPermissions()) && getRestrictions().cover(agent.getRestrictions());
     }
     
     /**
@@ -284,44 +337,9 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
      * 
      * @param agent the agent that needs to be covered.
      */
-    public void checkCoverage(@Nonnull Agent agent) throws PacketException, SQLException {
+    @Pure
+    public void checkCovers(@Nonnull Agent agent) throws PacketException, SQLException {
         if (!covers(agent)) throw new PacketException(PacketError.AUTHORIZATION);
-    }
-    
-    
-    /**
-     * Returns whether this agent has been removed from the database.
-     * 
-     * @return whether this agent has been removed from the database.
-     */
-    public final boolean isRemoved() throws SQLException {
-        if (!removedLoaded) {
-            removed = Agents.isRemoved(this);
-            removedLoaded = true;
-        }
-        return removed;
-    }
-    
-    /**
-     * Removes this agent from the database.
-     * 
-     * @require !isRestricted() : "The authorization of this agent may not have been restricted.";
-     */
-    public final void remove() throws SQLException {
-        assert !isRestricted() : "The authorization of this agent may not have been restricted.";
-        
-        Synchronizer.execute(new AgentRemove(this));
-    }
-    
-    /**
-     * Removes this agent from the database.
-     */
-    @OnlyForActions
-    public final void removeForActions() throws SQLException {
-        Agents.removeAgent(this);
-        removed = true;
-        removedLoaded = true;
-        notify(DELETED);
     }
     
     
@@ -361,9 +379,10 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
     @Pure
     @Override
     public final @Nonnull Block toBlock() {
-        final @Nonnull FreezableArray<Block> elements = new FreezableArray<Block>(2);
-        elements.set(0, new BooleanWrapper(CLIENT, isClient()).toBlock());
-        elements.set(1, new Int64Wrapper(NUMBER, getNumber()).toBlock());
+        final @Nonnull FreezableArray<Block> elements = new FreezableArray<Block>(3);
+        elements.set(0, new Int64Wrapper(NUMBER, getNumber()).toBlock());
+        elements.set(1, new BooleanWrapper(CLIENT, isClient()).toBlock());
+        elements.set(2, new BooleanWrapper(REMOVED, isRemoved()).toBlock());
         return new TupleWrapper(TYPE, elements.freeze()).toBlock();
     }
     
@@ -379,10 +398,11 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
     public static @Nonnull Agent get(@Nonnull Entity entity, @Nonnull Block block) throws InvalidEncodingException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
-        final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(2);
-        final boolean client = new BooleanWrapper(elements.getNotNull(0)).getValue();
-        final long number = new Int64Wrapper(elements.getNotNull(1)).getValue();
-        return client ? ClientAgent.get(entity, number) : OutgoingRole.get(entity, number);
+        final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(3);
+        final long number = new Int64Wrapper(elements.getNotNull(0)).getValue();
+        final boolean client = new BooleanWrapper(elements.getNotNull(1)).getValue();
+        final boolean removed = new BooleanWrapper(elements.getNotNull(2)).getValue();
+        return client ? ClientAgent.get(entity, number, removed) : OutgoingRole.get(entity, number, removed);
     }
     
     @Override
