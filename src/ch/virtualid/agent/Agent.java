@@ -29,7 +29,7 @@ import javax.annotation.Nullable;
  * This class models an agent that acts on behalf of a virtual identity.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 1.7
+ * @version 1.8
  */
 public abstract class Agent extends Concept implements Immutable, Blockable, SQLizable {
     
@@ -108,11 +108,6 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
      */
     protected @Nullable Restrictions restrictions;
     
-    /**
-     * Stores whether this agent has been restricted and can thus no longer be altered.
-     */
-    private boolean restricted = false;
-    
     
     /**
      * Creates a new agent with the given entity and number.
@@ -142,6 +137,8 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
     
     /**
      * Returns whether this agent has been removed.
+     * <p>
+     * <em>Important:</em> If the agent comes from a block, this information is not to be trusted!
      * 
      * @return whether this agent has been removed.
      */
@@ -160,12 +157,8 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
     
     /**
      * Removes this agent from the database by marking it as being removed.
-     * 
-     * @require !isRestricted() : "The authorization of this agent is not restricted.";
      */
     public final void remove() throws SQLException {
-        assert !isRestricted() : "The authorization of this agent is not restricted.";
-        
         Synchronizer.execute(new AgentRemove(this));
     }
     
@@ -181,12 +174,8 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
     
     /**
      * Unremoves this agent from the database by marking it as no longer being removed.
-     * 
-     * @require !isRestricted() : "The authorization of this agent is not restricted.";
      */
     public final void unremove() throws SQLException {
-        assert !isRestricted() : "The authorization of this agent is not restricted.";
-        
         Synchronizer.execute(new AgentUnremove(this));
     }
     
@@ -218,12 +207,8 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
      * Adds the given permissions to this agent.
      * 
      * @param permissions the permissions to be add.
-     * 
-     * @require !isRestricted() : "The authorization of this agent is not restricted.";
      */
     public final void addPermissions(@Nonnull ReadonlyAgentPermissions permissions) throws SQLException {
-        assert !isRestricted() : "The authorization of this agent is not restricted.";
-        
         if (!permissions.isEmpty()) {
             Synchronizer.execute(new AgentPermissionsAdd(this, permissions));
         }
@@ -249,12 +234,8 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
      * Removes the given permissions from this agent.
      * 
      * @param permissions the permissions to be removed from this agent.
-     * 
-     * @require !isRestricted() : "The authorization of this agent is not restricted.";
      */
     public final void removePermissions(@Nonnull ReadonlyAgentPermissions permissions) throws SQLException {
-        assert !isRestricted() : "The authorization of this agent is not restricted.";
-        
         if (!permissions.isEmpty()) {
             Synchronizer.execute(new AgentPermissionsRemove(this, permissions));
         }
@@ -294,12 +275,8 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
      * Sets the restrictions of this agent.
      * 
      * @param newRestrictions the new restrictions of this agent.
-     * 
-     * @require !isRestricted() : "The authorization of this agent is not restricted.";
      */
     public final void setRestrictions(@Nonnull Restrictions newRestrictions) throws SQLException {
-        assert !isRestricted() : "The authorization of this agent is not restricted.";
-        
         final @Nullable Restrictions oldRestrictions = getRestrictions();
         if (!newRestrictions.equals(oldRestrictions)) {
             Synchronizer.execute(new AgentRestrictionsReplace(this, oldRestrictions, newRestrictions));
@@ -340,24 +317,6 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
     @Pure
     public void checkCovers(@Nonnull Agent agent) throws PacketException, SQLException {
         if (!covers(agent)) throw new PacketException(PacketError.AUTHORIZATION);
-    }
-    
-    
-    /**
-     * Returns whether this agent has been restricted.
-     * 
-     * @return whether this agent has been restricted.
-     */
-    @Pure
-    public final boolean isRestricted() {
-        return restricted;
-    }
-    
-    /**
-     * Sets this agent to have been restricted.
-     */
-    protected final void setRestricted() {
-        restricted = true;
     }
     
     

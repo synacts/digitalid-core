@@ -28,7 +28,7 @@ import org.javatuples.Pair;
  * This class models an outgoing role that acts as an agent on behalf of a virtual identity.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 0.9
+ * @version 2.0
  */
 public final class OutgoingRole extends Agent implements Immutable, Blockable, SQLizable {
     
@@ -122,11 +122,9 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
      * 
      * @param newRelation the new relation of this outgoing role.
      * 
-     * @require !isRestricted() : "The authorization of this outgoing role is not restricted.";
      * @require newRelation.isRoleType() : "The new relation is a role type.";
      */
     public void setRelation(@Nonnull SemanticType newRelation) throws SQLException {
-        assert !isRestricted() : "The authorization of this outgoing role is not restricted.";
         assert newRelation.isRoleType() : "The new relation is a role type.";
         
         final @Nonnull SemanticType oldRelation = getRelation();
@@ -172,12 +170,8 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
      * Sets the context of this outgoing role.
      * 
      * @param newContext the new context of this outgoing role.
-     * 
-     * @require !isRestricted() : "The authorization of this outgoing role is not restricted.";
      */
     public void setContext(@Nonnull Context newContext) throws SQLException {
-        assert !isRestricted() : "The authorization of this outgoing role is not restricted.";
-        
         final @Nonnull Context oldContext = getContext();
         if (!newContext.equals(oldContext)) {
             Synchronizer.execute(new OutgoingRoleContextReplace(this, oldContext, newContext));
@@ -274,10 +268,12 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
      * 
      * @param credential the credential with which to restrict this outgoing role.
      * 
+     * @require Database.isMultiAccess() : "The database is in multi-access mode.";
      * @require credential.getPermissions() != null : "The permissions of the credential are not null.";
      * @require credential.getRestrictions() != null : "The restrictions of the credential are not null.";
      */
     public void restrictTo(@Nonnull Credential credential) throws SQLException {
+        assert Database.isMultiAccess() : "The database is in multi-access mode.";
         final @Nullable ReadonlyAgentPermissions credentialPermissions = credential.getPermissions();
         assert credentialPermissions != null : "The permissions of the credential are not null.";
         final @Nullable Restrictions credentialRestrictions = credential.getRestrictions();
@@ -290,8 +286,6 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
         if (restrictions == null) getRestrictions();
         assert restrictions != null;
         restrictions = restrictions.restrictTo(credentialRestrictions);
-        
-        setRestricted();
     }
     
 }
