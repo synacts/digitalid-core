@@ -2,7 +2,6 @@ package ch.virtualid.handler;
 
 import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.agent.Restrictions;
-import ch.virtualid.concept.Entity;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.Identifier;
@@ -21,6 +20,9 @@ import javax.annotation.Nullable;
  * 
  * => Actions are asynchronously handled by the Synchronizer. Also Pusher?
  * => The signature of actions are always lodged in case of credentials.
+ * 
+ * @see InternalAction
+ * @see ExternalAction
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 0.0

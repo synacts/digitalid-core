@@ -1,6 +1,5 @@
 package ch.virtualid.handler;
 
-import ch.virtualid.concept.Entity;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.Identifier;
@@ -10,12 +9,14 @@ import ch.xdf.CredentialsSignatureWrapper;
 import ch.xdf.SignatureWrapper;
 import ch.xdf.exceptions.InvalidEncodingException;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * Description.
  * 
  * => Queries are synchronously executed in the thread of the caller.
+ * 
+ * @see InternalQuery
+ * @see ExternalQuery
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 0.0

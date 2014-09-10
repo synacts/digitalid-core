@@ -1,7 +1,6 @@
 package ch.virtualid.handler;
 
 import ch.virtualid.contact.Authentications;
-import ch.virtualid.concept.Entity;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.Identifier;

@@ -36,6 +36,9 @@ import javax.annotation.Nullable;
  * ({@link ConnecSiteink Entity}, {@link SignatureWrapper}, {@link Block}) that only throws
  * {@link InvalidEncodingException} and {@link FailedIdentityException}.
  * 
+ * @see ActionReply
+ * @see QueryReply
+ * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 0.6
  */

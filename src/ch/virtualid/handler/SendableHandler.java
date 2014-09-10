@@ -1,19 +1,18 @@
 package ch.virtualid.handler;
 
-import ch.virtualid.contact.Authentications;
 import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Synchronizer;
-import ch.virtualid.entity.Role;
-import ch.virtualid.entity.ClientEntity;
+import ch.virtualid.contact.Authentications;
 import ch.virtualid.database.Database;
-import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.Account;
+import ch.virtualid.entity.Entity;
+import ch.virtualid.entity.Role;
 import ch.virtualid.exceptions.ShouldNeverHappenError;
+import ch.virtualid.identity.FailedIdentityException;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.Identifier;
-import ch.virtualid.identity.FailedIdentityException;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.packet.FailedRequestException;
 import ch.virtualid.packet.PacketError;
@@ -43,6 +42,9 @@ import javax.annotation.Nullable;
  * ({@link Entity}, {@link Entity}, {@link SignatureWrapper}, {@link Block}, {@link HostIdentifier})
  * that only throws {@link InvalidEncodingException} and {@link FailedIdentityException}.
  * 
+ * @see Action
+ * @see Query
+ * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 0.4
  */
@@ -52,25 +54,6 @@ public abstract class SendableHandler extends Handler {
      * Stores the recipient of this sendable handler.
      */
     private final @Nonnull HostIdentifier recipient;
-    
-    /**
-     * Creates a sendable handler that decodes the given signature and block for the given entity.
-     * 
-     * @param block the element of the content.
-     * @param entity the entity to which this handler belongs.
-     * @param signature the signature of this handler (or a dummy that just contains a subject).
-     * @param recipient the recipient of this handler.
-     * 
-     * @require signature.getSubject() != null : "The subject of the signature is not null.";
-     * 
-     * @ensure getEntity() != null : "The entity of this handler is not null.";
-     * @ensure getSignature() != null : "The signature of this handler is not null.";
-     */
-    protected SendableHandler(@Nonnull Block block, @Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws InvalidEncodingException {
-        super(block, entity, signature);
-        
-        this.recipient = recipient;
-    }
     
     /**
      * Creates a sendable handler that encodes the content of a packet for the given recipient about the given subject.
@@ -87,6 +70,24 @@ public abstract class SendableHandler extends Handler {
         
         assert !(entity instanceof Account)|| canBeSentByHost() : "Handlers encoded on hosts have to be sendable by hosts.";
         assert !(entity instanceof ClientEntity) || !canOnlyBeSentByHost() : "Handlers only sendable by hosts may not occur on clients.";
+        
+        this.recipient = recipient;
+    }
+    
+    /**
+     * Creates a sendable handler that decodes the given signature and block for the given entity.
+     * 
+     * @param entity the entity to which this handler belongs.
+     * @param signature the signature of this handler (or a dummy that just contains a subject).
+     * @param recipient the recipient of this handler.
+     * 
+     * @require signature.getSubject() != null : "The subject of the signature is not null.";
+     * 
+     * @ensure getEntity() != null : "The entity of this handler is not null.";
+     * @ensure getSignature() != null : "The signature of this handler is not null.";
+     */
+    protected SendableHandler(@Nonnull Block block, @Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws InvalidEncodingException {
+        super(entity, signature);
         
         this.recipient = recipient;
     }

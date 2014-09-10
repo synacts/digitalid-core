@@ -59,17 +59,23 @@ public abstract class Module {
     }
     
     /**
+     * Initializes the database tables for the given host.
+     * 
+     * @param host the host for which to initialize the database tables.
+     */
+    public static void initialize(@Nonnull Host host) throws SQLException {
+        for (final @Nonnull Module module : hostModules) module.createTables(host);
+    }
+    
+    /**
      * Initializes the database tables for the given site.
      * 
-     * @param site the site for which to initialize the database tables.
+     * @param client the site for which to initialize the database tables.
      */
-    public static void initialize(@Nonnull Site site) throws SQLException {
-        if (site instanceof Host) {
-            for (final @Nonnull Module module : hostModules) module.createTables(site);
-        } else if (site instanceof Client) {
-            for (final @Nonnull Module module : clientModules) module.createTables(site);
-        }
+    public static void initialize(@Nonnull Client client) throws SQLException {
+        for (final @Nonnull Module module : clientModules) module.createTables(client);
     }
+    
     
     /**
      * Creates the database tables for the given site.

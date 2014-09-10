@@ -3,7 +3,6 @@ package ch.virtualid.module.both;
 import ch.virtualid.agent.Agent;
 import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.agent.ClientAgent;
-import ch.virtualid.agent.IncomingRole;
 import ch.virtualid.agent.OutgoingRole;
 import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
