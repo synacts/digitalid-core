@@ -61,6 +61,16 @@ public class FreezableHashSet<E> extends HashSet<E> implements FreezableSet<E> {
     }
     
     /**
+     * Creates a new freezable hash set with the given element.
+     * 
+     * @param element the element to add to the newly created hash set.
+     */
+    public FreezableHashSet(@Nullable E element) {
+        this();
+        add(element);
+    }
+    
+    /**
      * @see HashSet#HashSet(int)
      */
     public FreezableHashSet(int initialCapacity) {

@@ -61,6 +61,16 @@ public class FreezableLinkedHashSet<E> extends LinkedHashSet<E> implements Freez
     }
     
     /**
+     * Creates a new freezable linked hash set with the given element.
+     * 
+     * @param element the element to add to the newly created hash set.
+     */
+    public FreezableLinkedHashSet(@Nullable E element) {
+        this();
+        add(element);
+    }
+    
+    /**
      * @see LinkedHashSet#LinkedHashSet(int)
      */
     public FreezableLinkedHashSet(int initialCapacity) {
@@ -99,7 +109,7 @@ public class FreezableLinkedHashSet<E> extends LinkedHashSet<E> implements Freez
      * @require isNotFrozen() : "This object is not frozen.";
      */
     @Override
-    public boolean add(E element) {
+    public boolean add(@Nullable E element) {
         assert isNotFrozen() : "This object is not frozen.";
         
         return super.add(element);

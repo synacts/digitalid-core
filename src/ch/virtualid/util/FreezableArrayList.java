@@ -63,6 +63,16 @@ public class FreezableArrayList<E> extends ArrayList<E> implements FreezableList
     }
     
     /**
+     * Creates a new freezable array list with the given element.
+     * 
+     * @param element the element to add to the newly created list.
+     */
+    public FreezableArrayList(@Nullable E element) {
+        this();
+        add(element);
+    }
+    
+    /**
      * @see ArrayList#ArrayList(int)
      */
     public FreezableArrayList(int initialCapacity) {

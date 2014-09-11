@@ -63,6 +63,16 @@ public class FreezableLinkedList<E> extends LinkedList<E> implements FreezableLi
     }
     
     /**
+     * Creates a new freezable linked list with the given element.
+     * 
+     * @param element the element to add to the newly created list.
+     */
+    public FreezableLinkedList(@Nullable E element) {
+        this();
+        add(element);
+    }
+    
+    /**
      * @see LinkedList#LinkedList(java.util.Collection)
      */
     public FreezableLinkedList(@Nonnull Collection<? extends E> collection) {
