@@ -7,7 +7,7 @@ import ch.virtualid.entity.Role;
 import ch.virtualid.entity.ClientEntity;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.handler.InternalAction;
-import ch.virtualid.handler.SendableHandler;
+import ch.virtualid.handler.Method;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.FailedIdentityException;
 import ch.virtualid.identity.SemanticType;
@@ -67,7 +67,7 @@ public abstract class CoreServiceInternalAction extends InternalAction {
     
     
     @Override
-    public final boolean isSimilarTo(@Nonnull SendableHandler other) {
+    public final boolean isSimilarTo(@Nonnull Method other) {
         return super.isSimilarTo(other) && other instanceof CoreServiceInternalAction;
     }
     

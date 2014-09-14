@@ -83,7 +83,7 @@ public abstract class Credential implements Immutable {
     /**
      * Stores the role that is assumed by the client or null in case no role is assumed.
      */
-    private final @Nullable NonHostIdentifier role; // TODO: Why not as an identity?
+    private final @Nullable NonHostIdentifier role; // TODO: Why not as an identity? And: Shouldn't the role consist of the issuer and the relation?
     
     /**
      * Stores the attribute without the certificate for anonymous access control or null in case of identity-based authentication.

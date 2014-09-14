@@ -2,7 +2,6 @@ package ch.virtualid.packet;
 
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.identity.SemanticType;
-import ch.virtualid.interfaces.BlockableObject;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.util.FreezableLinkedList;
 import ch.virtualid.util.ReadonlyList;

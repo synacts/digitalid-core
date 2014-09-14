@@ -27,7 +27,7 @@ import javax.annotation.Nullable;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 0.0
  */
-public abstract class Action extends SendableHandler {
+public abstract class Action extends Method {
     
     /**
      * Creates an action that decodes the given signature and block for the given entity.

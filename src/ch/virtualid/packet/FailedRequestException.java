@@ -8,7 +8,7 @@ import javax.annotation.Nonnull;
  * This exception is thrown when a request could not be completed.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 1.0
+ * @version 2.0
  */
 public final class FailedRequestException extends Exception {
     
@@ -16,6 +16,17 @@ public final class FailedRequestException extends Exception {
      * Stores the logger for failed requests.
      */
     private static final @Nonnull Logger logger = new Logger("Requests.log");
+    
+    /**
+     * Creates a new failed request exception with the given problem.
+     * 
+     * @param problem a string indicating the kind of problem.
+     */
+    public FailedRequestException(@Nonnull String problem) {
+        super(problem);
+        
+        logger.log(WARNING, problem);
+    }
     
     /**
      * Creates a new failed request exception with the given problem and cause.

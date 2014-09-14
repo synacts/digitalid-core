@@ -23,6 +23,8 @@ import java.sql.Connection;
 /**
  * Description.
  * 
+ * TODO: Isn't this rather an internal or even external action?
+ * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 0.0
  */

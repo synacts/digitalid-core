@@ -27,12 +27,14 @@ public final class HostRequest extends Request {
      * @param recipient the recipient of this request.
      * @param subject the subject of this request.
      * @param signer the identifier of the signing host.
+     * 
      * @require !contents.isEmpty() : "The list of contents is not empty.";
      * @require recipient.exists() : "The recipient has to exist.";
      * @require Server.hasHost(signer.getHostIdentifier()) : "The host of the signer is running on this server.";
+     * 
      * @ensure getSize() == contents.size() : "The size of this request equals the size of the contents.";
      */
-    public HostRequest(@Nonnull List<SelfcontainedWrapper> contents, @Nonnull HostIdentifier recipient, @Nonnull Identifier subject, @Nonnull HostIdentifier signer) throws FailedEncodingException {
+    public HostRequest(@Nonnull List<SelfcontainedWrapper> contents, @Nonnull HostIdentifier recipient, @Nonnull Identifier subject, @Nonnull Identifier signer) throws FailedEncodingException {
         super(contents, recipient, getSymmetricKey(recipient, ROTATION), subject, null, signer, null, null, null, false, null);
     }
     

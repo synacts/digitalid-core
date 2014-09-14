@@ -8,7 +8,7 @@ import ch.virtualid.entity.ClientEntity;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.handler.InternalQuery;
 import ch.virtualid.handler.Reply;
-import ch.virtualid.handler.SendableHandler;
+import ch.virtualid.handler.Method;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.FailedIdentityException;
 import ch.virtualid.identity.SemanticType;
@@ -67,7 +67,7 @@ public abstract class CoreServiceInternalQuery extends InternalQuery {
     
     
     @Override
-    public boolean isSimilarTo(@Nonnull SendableHandler other) {
+    public boolean isSimilarTo(@Nonnull Method other) {
         return super.isSimilarTo(other) && other instanceof CoreServiceInternalQuery;
     }
     

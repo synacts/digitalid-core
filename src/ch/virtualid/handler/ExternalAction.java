@@ -21,7 +21,7 @@ import javax.annotation.Nullable;
  * - certificates
  * - roles
  * 
- * -> External actions are never executed on the client?
+ * -> External actions are never executed on the client? Wrong: Access requests are the exception.
  * 
  * -> Only external actions can be fed to the pusher.
  * 
@@ -73,17 +73,17 @@ public abstract class ExternalAction extends Action {
     
     
     @Override
-    public boolean isSimilarTo(@Nonnull SendableHandler other) {
+    public boolean isSimilarTo(@Nonnull Method other) {
         return super.isSimilarTo(other) && other instanceof ExternalAction;
     }
     
     @Override
-    public boolean canBeSentByHost() {
+    public boolean canBeSentByHosts() {
         return false;
     }
     
     @Override
-    public boolean canOnlyBeSentByHost() {
+    public boolean canOnlyBeSentByHosts() {
         return false;
     }
     

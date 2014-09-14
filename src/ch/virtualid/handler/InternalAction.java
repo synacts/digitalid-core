@@ -1,10 +1,11 @@
 package ch.virtualid.handler;
 
 import ch.virtualid.contact.Authentications;
-import ch.virtualid.entity.Role;
+import ch.virtualid.contact.ReadonlyAuthentications;
 import ch.virtualid.entity.Entity;
-import ch.virtualid.identity.HostIdentifier;
+import ch.virtualid.entity.Role;
 import ch.virtualid.identity.FailedIdentityException;
+import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.packet.PacketException;
 import ch.xdf.Block;
 import ch.xdf.CredentialsSignatureWrapper;
@@ -26,7 +27,7 @@ import javax.annotation.Nonnull;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 0.0
  */
-public abstract class InternalAction extends Action implements InternalHandler {
+public abstract class InternalAction extends Action implements InternalMethod {
     
     /**
      * Creates an internal action that decodes the given signature and block for the given entity.
@@ -70,17 +71,17 @@ public abstract class InternalAction extends Action implements InternalHandler {
     
     
     @Override
-    public boolean isSimilarTo(@Nonnull SendableHandler other) {
+    public boolean isSimilarTo(@Nonnull Method other) {
         return super.isSimilarTo(other) && other instanceof InternalAction;
     }
     
     @Override
-    public final boolean canBeSentByHost() {
+    public final boolean canBeSentByHosts() {
         return false;
     }
     
     @Override
-    public final boolean canOnlyBeSentByHost() {
+    public final boolean canOnlyBeSentByHosts() {
         return false;
     }
     
@@ -89,7 +90,7 @@ public abstract class InternalAction extends Action implements InternalHandler {
      * @ensure return.equals(Authentications.IDENTITY_BASED) : "Internal actions are always identity-based.";
      */
     @Override
-    public final @Nonnull Authentications getDesiredAuthentications() {
+    public final @Nonnull ReadonlyAuthentications getDesiredAuthentications() {
         return Authentications.IDENTITY_BASED;
     }
     

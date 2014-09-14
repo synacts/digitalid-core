@@ -19,7 +19,6 @@ public enum PacketError {
     IDENTIFIER(6), // The error code for an invalid identifier within the request.
     AUTHORIZATION(7), // The error code for an insufficient authorization.
     KEYROTATION(8); // The error code for a required key rotation.
-    // TODO: TRANSACTION?
     
     /**
      * Stores the byte representation of the packet error.

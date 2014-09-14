@@ -61,7 +61,7 @@ public final class SelfcontainedWrapper extends BlockWrapper implements Immutabl
      * Encodes the given element into a new block of the given type.
      * 
      * @param type the semantic type of the new block.
-     * @param element the elements to encode into a new block.
+     * @param element the element to encode into a new block.
      * 
      * @require type.isLoaded() : "The type declaration is loaded.";
      * @require type.isBasedOn(getSyntacticType()) : "The given type is based on the indicated syntactic type.";
@@ -78,7 +78,7 @@ public final class SelfcontainedWrapper extends BlockWrapper implements Immutabl
      * Encodes the given element into a new block of the given type.
      * 
      * @param type the semantic type of the new block.
-     * @param element the elements to encode into a new block.
+     * @param element the element to encode into a new block.
      * 
      * @require type.isLoaded() : "The type declaration is loaded.";
      * @require type.isBasedOn(getSyntacticType()) : "The given type is based on the indicated syntactic type.";

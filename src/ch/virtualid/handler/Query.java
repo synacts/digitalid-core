@@ -21,7 +21,7 @@ import javax.annotation.Nonnull;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 0.0
  */
-public abstract class Query extends SendableHandler {
+public abstract class Query extends Method {
     
     /**
      * Creates a query that decodes the given signature and block for the given entity.

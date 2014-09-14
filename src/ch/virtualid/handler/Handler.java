@@ -14,7 +14,7 @@ import javax.annotation.Nullable;
 /**
  * This class provides the features that all handlers share.
  * 
- * @see SendableHandler
+ * @see Method
  * @see Reply
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
@@ -86,6 +86,20 @@ public abstract class Handler extends Concept implements Immutable, Blockable {
         return signature;
     }
     
+    /**
+     * Returns the signature of this handler.
+     * 
+     * @return the signature of this handler.
+     * 
+     * @require getSignature() != null : "The signature is not null.";
+     */
+    @Pure
+    public final @Nonnull SignatureWrapper getSignatureNotNull() {
+        assert signature != null : "The signature is not null.";
+        
+        return signature;
+    }
+    
     
     /**
      * Returns the type of packets that this handler handles.
@@ -103,5 +117,21 @@ public abstract class Handler extends Concept implements Immutable, Blockable {
      */
     @Pure
     public abstract @Nonnull SemanticType getService();
+    
+    
+    /**
+     * A factory creates handlers that can handle contents of the indicated type.
+     */
+    protected static abstract class Factory {
+        
+        /**
+         * Returns the type of contents that handlers created by this factory handle.
+         * 
+         * @return the type of contents that handlers created by this factory handle.
+         */
+        @Pure
+        public abstract @Nonnull SemanticType getType();
+        
+    }
     
 }

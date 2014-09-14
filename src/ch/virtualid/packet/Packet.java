@@ -8,6 +8,7 @@ import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.Identifier;
 import ch.virtualid.identity.NonHostIdentifier;
 import ch.virtualid.identity.SemanticType;
+import ch.virtualid.interfaces.Immutable;
 import ch.xdf.Block;
 import ch.xdf.ClientSignatureWrapper;
 import ch.xdf.CompressionWrapper;
@@ -35,20 +36,23 @@ import javax.annotation.Nullable;
  * 
  * @invariant getSize() == getSignatures().size() && getSize() == getCompressions().size() && getSize() == getContents().size() : "The number of signatures, compressions and contents is the same.";
  * 
+ * @see Request
+ * @see Response
+ * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 1.0
  */
-public class Packet {
-    
-    /**
-     * Stores the semantic type {@code noreply@virtualid.ch}.
-     */
-    public static final @Nonnull SemanticType NOREPLY = mapSemanticType(NonHostIdentifier.NOREPLY);
+public class Packet implements Immutable {
     
     /**
      * Stores the semantic type {@code error.packet@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType PACKET_ERROR = mapSemanticType(NonHostIdentifier.PACKET_ERROR);
+    public static final @Nonnull SemanticType ERROR = mapSemanticType(NonHostIdentifier.PACKET_ERROR);
+    
+    /**
+     * Stores the semantic type {@code content.packet@virtualid.ch}.
+     */
+    public static final @Nonnull SemanticType CONTENT = SemanticType.create("content.packet@virtualid.ch").load(SelfcontainedWrapper.TYPE);
     
     
     /**
@@ -112,7 +116,7 @@ public class Packet {
      * 
      * @throws FailedEncodingException This exception is never thrown by this constructor but is listed nonetheless.
      */
-    public Packet(@Nonnull List<SelfcontainedWrapper> contents, @Nullable SymmetricKey symmetricKey, @Nonnull Identifier subject, @Nullable Audit audit, @Nonnull HostIdentifier signer) throws FailedEncodingException {
+    public Packet(@Nonnull List<SelfcontainedWrapper> contents, @Nullable SymmetricKey symmetricKey, @Nonnull Identifier subject, @Nullable Audit audit, @Nonnull Identifier signer) throws FailedEncodingException {
         this(contents, null, symmetricKey, subject, audit, signer, null, null, null, false, null);
     }
     
@@ -136,7 +140,7 @@ public class Packet {
      * 
      * @ensure getSize() == contents.size() : "The size of this packet equals the size of the contents.";
      */
-    protected Packet(@Nonnull List<SelfcontainedWrapper> contents, @Nullable HostIdentifier recipient, @Nullable SymmetricKey symmetricKey, @Nullable Identifier subject, @Nullable Audit audit, @Nullable HostIdentifier signer, @Nullable Commitment commitment, @Nullable List<Credential> credentials, @Nullable List<HostSignatureWrapper> certificates, boolean lodged, @Nullable BigInteger value) throws FailedEncodingException {
+    protected Packet(@Nonnull List<SelfcontainedWrapper> contents, @Nullable HostIdentifier recipient, @Nullable SymmetricKey symmetricKey, @Nullable Identifier subject, @Nullable Audit audit, @Nullable Identifier signer, @Nullable Commitment commitment, @Nullable List<Credential> credentials, @Nullable List<HostSignatureWrapper> certificates, boolean lodged, @Nullable BigInteger value) throws FailedEncodingException {
         assert !contents.isEmpty() : "The list of contents is not empty.";
         assert subject != null || recipient == null && signer == null && commitment == null && credentials == null : "The subject may only be null if the contents of a response are not signed (because the host could not decode the subject).";
         
@@ -339,6 +343,7 @@ public class Packet {
      * @throws PacketException if the responding host encountered a packet error.
      * @require index >= 0 && index < getSize() : "The index is valid.";
      */
+    // TODO: Rather getReply?
     public final @Nullable SelfcontainedWrapper getContent(int index) throws PacketException, FailedIdentityException, InvalidEncodingException {
         assert index >= 0 && index < getSize() : "The index is valid.";
         
@@ -372,6 +377,8 @@ public class Packet {
     public final int getSize() {
         return size;
     }
+    
+    // TODO: getAudit()?
     
     /**
      * Writes the packet to the given output stream.

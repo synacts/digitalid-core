@@ -25,6 +25,8 @@ import javax.annotation.Nullable;
 /**
  * This class models the commitment of a client.
  * 
+ * @see SecretCommitment
+ * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */

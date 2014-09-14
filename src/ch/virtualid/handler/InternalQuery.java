@@ -22,7 +22,7 @@ import javax.annotation.Nonnull;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 0.0
  */
-public abstract class InternalQuery extends Query implements InternalHandler {
+public abstract class InternalQuery extends Query implements InternalMethod {
     
     /**
      * Creates an internal query that decodes the given signature and block for the given entity.
@@ -63,17 +63,17 @@ public abstract class InternalQuery extends Query implements InternalHandler {
     
     
     @Override
-    public boolean isSimilarTo(@Nonnull SendableHandler other) {
+    public boolean isSimilarTo(@Nonnull Method other) {
         return super.isSimilarTo(other) && other instanceof InternalQuery;
     }
     
     @Override
-    public final boolean canBeSentByHost() {
+    public final boolean canBeSentByHosts() {
         return false;
     }
     
     @Override
-    public final boolean canOnlyBeSentByHost() {
+    public final boolean canOnlyBeSentByHosts() {
         return false;
     }
     

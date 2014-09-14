@@ -66,17 +66,17 @@ public abstract class ExternalQuery extends Query {
     
     
     @Override
-    public boolean isSimilarTo(@Nonnull SendableHandler other) {
+    public boolean isSimilarTo(@Nonnull Method other) {
         return super.isSimilarTo(other) && other instanceof ExternalQuery;
     }
     
     @Override
-    public boolean canBeSentByHost() {
+    public boolean canBeSentByHosts() {
         return false;
     }
     
     @Override
-    public boolean canOnlyBeSentByHost() {
+    public boolean canOnlyBeSentByHosts() {
         return false;
     }
     

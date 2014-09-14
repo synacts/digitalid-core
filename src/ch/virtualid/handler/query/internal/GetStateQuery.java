@@ -5,7 +5,6 @@ import ch.virtualid.agent.Restrictions;
 import ch.virtualid.handler.Handler;
 import ch.virtualid.handler.InternalQuery;
 import ch.virtualid.identity.Mapper;
-import ch.virtualid.concept.Entity;
 import ch.xdf.Block;
 import ch.xdf.Int32Wrapper;
 import ch.xdf.ListWrapper;
@@ -18,6 +17,8 @@ import javax.annotation.Nonnull;
 
 /**
  * Description.
+ * 
+ * TODO: Return the whole state (i.e. all tables of modules for both host and client) of a virtual identity.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 0.0

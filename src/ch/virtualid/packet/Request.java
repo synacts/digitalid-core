@@ -4,9 +4,9 @@ import ch.virtualid.client.Commitment;
 import ch.virtualid.credential.Credential;
 import ch.virtualid.cryptography.SymmetricKey;
 import ch.virtualid.exceptions.InvalidDeclarationException;
+import ch.virtualid.identity.FailedIdentityException;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.Identifier;
-import ch.virtualid.identity.FailedIdentityException;
 import ch.virtualid.identity.Mapper;
 import ch.virtualid.identity.NonHostIdentifier;
 import ch.virtualid.identity.SemanticType;
@@ -40,6 +40,10 @@ import org.javatuples.Pair;
  * 
  * @invariant for (SignatureWrapper signature : getSignatures()) signature.getSubject() != null : "The subjects of the signatures are never null.";
  * @invariant getEncryption().getRecipient() != null : "The recipient of the request is never null.";
+ * 
+ * @see HostRequest
+ * @see ClientRequest
+ * @see CredentialsRequest
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 0.9
@@ -99,7 +103,7 @@ public class Request extends Packet {
      * @param lodged whether the hidden content of the credentials is verifiably encrypted to achieve liability.
      * @param value the value b' or null if the credentials are not shortened.
      */
-    protected Request(@Nonnull List<SelfcontainedWrapper> contents, @Nonnull HostIdentifier recipient, @Nullable SymmetricKey symmetricKey, @Nonnull Identifier subject, @Nullable Audit audit, @Nullable HostIdentifier signer, @Nullable Commitment commitment, @Nullable List<Credential> credentials, @Nullable List<HostSignatureWrapper> certificates, boolean lodged, @Nullable BigInteger value) throws FailedEncodingException {
+    protected Request(@Nonnull List<SelfcontainedWrapper> contents, @Nonnull HostIdentifier recipient, @Nullable SymmetricKey symmetricKey, @Nonnull Identifier subject, @Nullable Audit audit, @Nullable Identifier signer, @Nullable Commitment commitment, @Nullable List<Credential> credentials, @Nullable List<HostSignatureWrapper> certificates, boolean lodged, @Nullable BigInteger value) throws FailedEncodingException {
         super(contents, recipient, symmetricKey, subject, audit, signer, commitment, credentials, certificates, lodged, value);
         
         assert invariant();

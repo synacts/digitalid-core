@@ -28,6 +28,9 @@ import javax.annotation.Nullable;
 /**
  * This class models an agent that acts on behalf of a virtual identity.
  * 
+ * @see ClientAgent
+ * @see OutgoingRole
+ * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 1.8
  */

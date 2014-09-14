@@ -68,12 +68,12 @@ public abstract class CoreServiceExternalAction extends ExternalAction {
     
     
     @Override
-    public boolean canBeSentByHost() {
+    public boolean canBeSentByHosts() {
         return true;
     }
     
     @Override
-    public boolean canOnlyBeSentByHost() {
+    public boolean canOnlyBeSentByHosts() {
         return true;
     }
     
