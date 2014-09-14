@@ -1,17 +1,13 @@
 package ch.virtualid.handler;
 
-import ch.virtualid.contact.Authentications;
+import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.Identifier;
-import ch.virtualid.packet.PacketException;
 import ch.xdf.Block;
-import ch.xdf.CredentialsSignatureWrapper;
-import ch.xdf.HostSignatureWrapper;
 import ch.xdf.SignatureWrapper;
 import ch.xdf.exceptions.InvalidEncodingException;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * Description.
@@ -72,43 +68,22 @@ public abstract class ExternalAction extends Action {
     }
     
     
+    @Pure
     @Override
     public boolean isSimilarTo(@Nonnull Method other) {
         return super.isSimilarTo(other) && other instanceof ExternalAction;
     }
     
+    @Pure
     @Override
     public boolean canBeSentByHosts() {
         return false;
     }
     
+    @Pure
     @Override
     public boolean canOnlyBeSentByHosts() {
         return false;
     }
-    
-    
-    /**
-     * @ensure !authentications.isEmpty() : "The result is not empty.";
-     */
-    @Override
-    public @Nonnull Authentications getDesiredAuthentications() {
-        return Authentications.IDENTITY_BASED;
-    }
-    
-    
-    /**
-     * Executes this handler on the host.
-     * 
-     * @throws PacketException if this handler cannot be executed on the host or the authorization is insufficient.
-     * 
-     * @return a pair of reply and audit, where both of them can be null.
-     * 
-     * @require isOnHost() : "This method should only be called on the host-side.";
-     */
-    public abstract @Nullable Reply excecuteOnHost(@Nonnull CredentialsSignatureWrapper credentialsSignature) throws PacketException;
-    
-    public abstract @Nullable Reply excecuteOnHost(@Nonnull HostSignatureWrapper hostSignature) throws PacketException;
-    
     
 }

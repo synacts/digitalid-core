@@ -1,18 +1,17 @@
 package ch.virtualid.handler;
 
-import ch.virtualid.contact.Authentications;
-import ch.virtualid.contact.ReadonlyAuthentications;
+import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.Role;
 import ch.virtualid.identity.FailedIdentityException;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.packet.PacketException;
 import ch.xdf.Block;
-import ch.xdf.CredentialsSignatureWrapper;
 import ch.xdf.SignatureWrapper;
 import ch.xdf.exceptions.InvalidEncodingException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Description.
@@ -70,16 +69,19 @@ public abstract class InternalAction extends Action implements InternalMethod {
     }
     
     
+    @Pure
     @Override
     public boolean isSimilarTo(@Nonnull Method other) {
         return super.isSimilarTo(other) && other instanceof InternalAction;
     }
     
+    @Pure
     @Override
     public final boolean canBeSentByHosts() {
         return false;
     }
     
+    @Pure
     @Override
     public final boolean canOnlyBeSentByHosts() {
         return false;
@@ -87,40 +89,41 @@ public abstract class InternalAction extends Action implements InternalMethod {
     
     
     /**
-     * @ensure return.equals(Authentications.IDENTITY_BASED) : "Internal actions are always identity-based.";
+     * Executes this method on the host.
+     * 
+     * @throws PacketException if the authorization is not sufficient.
+     * 
+     * @require getEntity() instanceof Account : "This method is called on a host.";
      */
+    public abstract void excecuteOnHost() throws PacketException, SQLException;
+    
     @Override
-    public final @Nonnull ReadonlyAuthentications getDesiredAuthentications() {
-        return Authentications.IDENTITY_BASED;
+    public @Nullable ActionReply excecute() throws PacketException, SQLException {
+        excecuteOnHost();
+        return null;
     }
     
-    
     /**
-     * Executes this handler on the client.
+     * Executes this internal action on the client.
      * 
-     * @throws SQLException if this handler cannot be executed on the client or another problem occurs.
+     * @throws SQLException if this handler cannot be executed.
      * 
-     * @require isOnClient() : "This method should only be called on the client-side.";
+     * @require getEntity() instanceof Role : "This method is called on a client.";
      */
     public abstract void executeOnClient() throws SQLException;
     
+    /**
+     * Returns the reverse of this action.
+     * 
+     * @return the reverse of this action.
+     */
+    public abstract @Nonnull InternalAction getReverse();
     
     /**
-     * Executes this handler on the host.
-     * 
-     * @throws PacketException if this handler cannot be executed on the host or the authorization is insufficient.
-     * 
-     * @return a pair of reply and audit, where both of them can be null.
-     * 
-     * @require isOnHost() : "This method should only be called on the host-side.";
+     * Reverses this internal action on the client.
      */
-    public abstract void excecuteOnHost(@Nonnull CredentialsSignatureWrapper credentialsSignature) throws PacketException;
-    
-    
     public final void reverseOnClient() throws SQLException {
         getReverse().executeOnClient();
     }
-    
-    public abstract @Nonnull InternalAction getReverse();
     
 }

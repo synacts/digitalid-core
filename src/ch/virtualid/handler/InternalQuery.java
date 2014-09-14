@@ -1,10 +1,10 @@
 package ch.virtualid.handler;
 
-import ch.virtualid.contact.Authentications;
-import ch.virtualid.entity.Role;
+import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Entity;
-import ch.virtualid.identity.HostIdentifier;
+import ch.virtualid.entity.Role;
 import ch.virtualid.identity.FailedIdentityException;
+import ch.virtualid.identity.HostIdentifier;
 import ch.xdf.Block;
 import ch.xdf.SignatureWrapper;
 import ch.xdf.exceptions.InvalidEncodingException;
@@ -12,10 +12,6 @@ import javax.annotation.Nonnull;
 
 /**
  * Description.
- * 
- * Examples:
- * - getState
- * - getAgents
  * 
  * - Internal queries have to be signed by the client directly or with credentials in a role. -> Only true for the core service.
  * 
@@ -62,28 +58,22 @@ public abstract class InternalQuery extends Query implements InternalMethod {
     }
     
     
+    @Pure
     @Override
     public boolean isSimilarTo(@Nonnull Method other) {
         return super.isSimilarTo(other) && other instanceof InternalQuery;
     }
     
+    @Pure
     @Override
     public final boolean canBeSentByHosts() {
         return false;
     }
     
+    @Pure
     @Override
     public final boolean canOnlyBeSentByHosts() {
         return false;
-    }
-    
-    
-    /**
-     * @ensure return.equals(Authentications.IDENTITY_BASED) : "Internal queries are always identity-based.";
-     */
-    @Override
-    public final @Nonnull Authentications getDesiredAuthentications() {
-        return Authentications.IDENTITY_BASED;
     }
     
 }

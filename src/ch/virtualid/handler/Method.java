@@ -50,18 +50,14 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * TODO: Rewrite the description and use the concept of remote method invocation.
- * 
- * All handlers have to extend this class, declare a public static field with the name {@code TYPE} which
- * states the semantic type of the packets that are handled and provide a constructor with the signature
- * ({@link Entity}, {@link Entity}, {@link SignatureWrapper}, {@link Block}, {@link HostIdentifier})
- * that only throws {@link InvalidEncodingException} and {@link FailedIdentityException}.
+ * This class implements a remote method invocation mechanism.
+ * All methods have to extend this class and {@link #add(ch.virtualid.handler.Method.Factory) register} themselves as handlers.
  * 
  * @see Action
  * @see Query
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 0.4
+ * @version 1.9
  */
 public abstract class Method extends Handler {
     
@@ -101,7 +97,7 @@ public abstract class Method extends Handler {
      * @ensure getEntity() != null : "The entity of this handler is not null.";
      * @ensure getSignature() != null : "The signature of this handler is not null.";
      */
-    protected Method(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws InvalidEncodingException {
+    protected Method(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) {
         super(entity, signature);
         
         this.recipient = recipient;
@@ -141,6 +137,18 @@ public abstract class Method extends Handler {
      */
     @Pure
     public abstract @Nonnull ReadonlyAgentPermissions getRequiredPermissions();
+    
+    
+    /**
+     * Executes this method on the host.
+     * 
+     * @return a reply for this method or null.
+     * 
+     * @throws PacketException if the authorization is not sufficient.
+     * 
+     * @require getEntity() instanceof Account : "This method is called on a host.";
+     */
+    public abstract @Nullable Reply excecute() throws PacketException, SQLException;
     
     
     /**
@@ -186,6 +194,7 @@ public abstract class Method extends Handler {
      * @require methods.isFrozen() : "The list of methods is frozen.";
      * @require !methods.isEmpty() : "The list of methods is not empty.";
      */
+    @Pure
     public static boolean areSimilar(@Nonnull ReadonlyList<? extends Method> methods) {
         assert methods.isFrozen() : "The list of methods is frozen.";
         assert !methods.isEmpty() : "The list of methods is not empty.";
@@ -207,6 +216,7 @@ public abstract class Method extends Handler {
      * 
      * @return the permissions required for the given methods.
      */
+    @Pure
     private static ReadonlyAgentPermissions getRequiredPermissions(@Nonnull ReadonlyList<? extends Method> methods) {
         final @Nonnull AgentPermissions permissions = new AgentPermissions();
         for (@Nonnull Method method : methods) {
@@ -274,8 +284,8 @@ public abstract class Method extends Handler {
                 } else {
                     assert entity instanceof Role;
                     final @Nonnull ReadonlyAgentPermissions permissions = getRequiredPermissions(methods);
-                    // TODO: Get the credentials and certificates from the role or throw a failed request exception if the permissions are not covered.
-                    return new CredentialsRequest(contents, recipient, subject, null, credentials, certificates, true, null).send();
+                    // TODO: Get the identity-based credential from the role or throw a failed request exception if the permissions are not covered.
+                    return new CredentialsRequest(contents, recipient, subject, null, credentials, null, true, null).send();
                 }
             } else {
                 assert reference instanceof InternalMethod;
@@ -331,7 +341,7 @@ public abstract class Method extends Handler {
          * @ensure return.getEntity() != null : "The entity of the returned method is not null.";
          * @ensure return.getSignature() != null : "The signature of the returned method is not null.";
          */
-        protected abstract Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws InvalidEncodingException, FailedIdentityException;
+        protected abstract Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws InvalidEncodingException, SQLException, FailedIdentityException, InvalidDeclarationException;
         
     }
     
@@ -368,7 +378,8 @@ public abstract class Method extends Handler {
      * @ensure return.getEntity() != null : "The entity of the returned method is not null.";
      * @ensure return.getSignature() != null : "The signature of the returned method is not null.";
      */
-    public static @Nonnull Method get(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws PacketException, InvalidEncodingException, FailedIdentityException {
+    @Pure
+    public static @Nonnull Method get(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws PacketException, InvalidEncodingException, SQLException, FailedIdentityException, InvalidDeclarationException {
         final @Nullable Method.Factory factory = factories.get(block.getType());
         if (factory == null) throw new PacketException(PacketError.REQUEST);
         else return factory.create(entity, signature, recipient, block);

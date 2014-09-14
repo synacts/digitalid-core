@@ -1,22 +1,16 @@
 package ch.virtualid.handler;
 
-import ch.virtualid.contact.Authentications;
+import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.Identifier;
-import ch.virtualid.packet.PacketException;
 import ch.xdf.Block;
-import ch.xdf.HostSignatureWrapper;
 import ch.xdf.SignatureWrapper;
 import ch.xdf.exceptions.InvalidEncodingException;
 import javax.annotation.Nonnull;
 
 /**
  * Description.
- * 
- * Examples:
- * - getAttributes
- * - getIdentity
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 0.0
@@ -65,28 +59,22 @@ public abstract class ExternalQuery extends Query {
     }
     
     
+    @Pure
     @Override
     public boolean isSimilarTo(@Nonnull Method other) {
         return super.isSimilarTo(other) && other instanceof ExternalQuery;
     }
     
+    @Pure
     @Override
     public boolean canBeSentByHosts() {
         return false;
     }
     
+    @Pure
     @Override
     public boolean canOnlyBeSentByHosts() {
         return false;
     }
-    
-    
-    @Override
-    public @Nonnull Authentications getDesiredAuthentications() {
-        return Authentications.NONE;
-    }
-    
-    
-    public abstract @Nonnull Reply excecuteOnHost(@Nonnull HostSignatureWrapper hostSignature) throws PacketException;
     
 }

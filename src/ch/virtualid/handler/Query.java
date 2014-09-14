@@ -5,9 +5,9 @@ import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.Identifier;
 import ch.virtualid.packet.PacketException;
 import ch.xdf.Block;
-import ch.xdf.CredentialsSignatureWrapper;
 import ch.xdf.SignatureWrapper;
 import ch.xdf.exceptions.InvalidEncodingException;
+import java.sql.SQLException;
 import javax.annotation.Nonnull;
 
 /**
@@ -66,15 +66,8 @@ public abstract class Query extends Method {
         super(connection, entity, subject, recipient);
     }
     
-    /**
-     * Executes this handler on the host.
-     * 
-     * @throws PacketException if this handler cannot be executed on the host or the authorization is insufficient.
-     * 
-     * @return a pair of reply and audit, where both of them can be null.
-     * 
-     * @require isOnHost() : "This method should only be called on the host-side.";
-     */
-    public abstract @Nonnull Reply excecuteOnHost(@Nonnull CredentialsSignatureWrapper credentialsSignature) throws PacketException;
+    
+    @Override
+    public abstract @Nonnull QueryReply excecute() throws PacketException, SQLException;
     
 }
