@@ -15,7 +15,7 @@ import javax.annotation.Nullable;
 /**
  * Actions affect the state of a virtual identity and are thus always {@link Audit audited}.
  * The default is to sign them identity-based. If another behavior is desired, the method
- * {@link Method#send()} needs to be overridden.
+ * {@link Method#send()} needs to be overridden. Actions are executed asynchronously.
  * 
  * @see InternalAction
  * @see ExternalAction

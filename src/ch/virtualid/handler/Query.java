@@ -4,66 +4,54 @@ import ch.virtualid.entity.Entity;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.Identifier;
 import ch.virtualid.packet.PacketException;
-import ch.xdf.Block;
 import ch.xdf.SignatureWrapper;
 import ch.xdf.exceptions.InvalidEncodingException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
- * Description.
- * 
- * => Queries are synchronously executed in the thread of the caller.
+ * Queries have to be sent by the caller and are thus executed synchronously.
  * 
  * @see InternalQuery
  * @see ExternalQuery
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 0.0
+ * @version 2.0
  */
 public abstract class Query extends Method {
     
     /**
-     * Creates a query that decodes the given signature and block for the given entity.
+     * Creates a query that encodes the content of a packet for the given recipient about the given subject.
      * 
-     * @param connection an open connection to the database.
+     * @param entity the entity to which this handler belongs.
+     * @param subject the subject of this handler.
+     * @param recipient the recipient of this method.
+     * 
+     * @require !(entity instanceof Account) || canBeSentByHosts() : "Methods encoded on hosts can be sent by hosts.";
+     * @require !(entity instanceof Role) || !canOnlyBeSentByHosts() : "Methods encoded on clients cannot only be sent by hosts.";
+     */
+    protected Query(@Nullable Entity entity, @Nonnull Identifier subject, @Nonnull HostIdentifier recipient) {
+        super(entity, subject, recipient);
+    }
+    
+    /**
+     * Creates a query that decodes a packet with the given signature for the given entity.
+     * 
      * @param entity the entity to which this handler belongs.
      * @param signature the signature of this handler (or a dummy that just contains a subject).
-     * @param block the element of the content.
-     * @param recipient the recipient of this handler.
+     * @param recipient the recipient of this method.
      * 
-     * @require !connection.isOnBoth() : "The decoding of sendable handlers is site-specific.";
-     * @require !connection.isOnClient() || entity instanceof Role : "On the client-side, the entity is a role.";
-     * @require !connection.isOnHost() || entity instanceof Identity : "On the host-side, the entity is an identity.";
      * @require signature.getSubject() != null : "The subject of the signature is not null.";
      * 
      * @ensure getEntity() != null : "The entity of this handler is not null.";
      * @ensure getSignature() != null : "The signature of this handler is not null.";
-     * @ensure getEntity() instanceof Identity : "The entity of this handler is an identity.";
-     * @ensure getConnection().isOnHost() : "The connection of this handler is on the host-side.";
+     * @ensure isOnHost() : "Queries are only decoded on hosts.";
      */
-    protected Query(@Nonnull ConnecSitection, @Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull Block block, @Nonnull HostIdentifier recipient) throws InvalidEncodingException {
-        super(connection, entity, signature, block, recipient);
+    protected Query(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws InvalidEncodingException {
+        super(entity, signature, recipient);
         
-        if (!connection.isOnHost()) throw new InvalidEncodingException("Queries may only be decoded on a host.");
-    }
-    
-    /**
-     * Creates a query that encodes the content of a packet to the given recipient about the given subject.
-     * 
-     * @param connection an open connection to the database.
-     * @param entity the entity to which this handler belongs.
-     * @param subject the subject of this handler.
-     * @param recipient the recipient of this handler.
-     * 
-     * @require !connection.isOnBoth() || entity != null : "If the connection is site-specific, the entity is not null.";
-     * @require !connection.isOnClient() || entity instanceof Role : "On the client-side, the entity is a role.";
-     * @require !connection.isOnHost() || entity instanceof Identity : "On the host-side, the entity is an identity.";
-     * @require !connection.isOnClient() || !canOnlyBeSentByHost() : "Handlers only sendable by hosts may not occur on clients.";
-     * @require !connection.isOnHost()|| canBeSentByHost() : "Handlers encoded on hosts have to be sendable by hosts.";
-     */
-    protected Query(@Nonnull Connection cSite @Nullable Entity entity, @Nonnull Identifier subject, @Nonnull HostIdentifier recipient) {
-        super(connection, entity, subject, recipient);
+        if (!isOnHost()) throw new InvalidEncodingException("Queries are only decoded on hosts.");
     }
     
     

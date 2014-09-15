@@ -3,58 +3,54 @@ package ch.virtualid.handler;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.Role;
+import ch.virtualid.exceptions.InvalidDeclarationException;
+import ch.virtualid.handler.query.internal.CoreServiceInternalQuery;
 import ch.virtualid.identity.FailedIdentityException;
 import ch.virtualid.identity.HostIdentifier;
-import ch.xdf.Block;
 import ch.xdf.SignatureWrapper;
 import ch.xdf.exceptions.InvalidEncodingException;
+import java.sql.SQLException;
 import javax.annotation.Nonnull;
 
 /**
- * Description.
+ * Internal queries can only be sent by {@link Client clients} and are always signed identity-based.
  * 
- * - Internal queries have to be signed by the client directly or with credentials in a role. -> Only true for the core service.
+ * @invariant getEntity() != null : "The entity of this internal query is not null.";
+ * @invariant getEntityNotNull().getIdentity().equals(getSubject().getIdentity()) : "The identity of the entity and the subject are the same.";
+ * 
+ * @see CoreServiceInternalQuery
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 0.0
+ * @version 2.0
  */
 public abstract class InternalQuery extends Query implements InternalMethod {
     
     /**
-     * Creates an internal query that decodes the given signature and block for the given entity.
+     * Creates an internal query that encodes the content of a packet for the given recipient.
      * 
-     * @param connection an open connection to the database.
-     * @param entity the entity to which this handler belongs.
-     * @param signature the signature of this handler (or a dummy that just contains a subject).
-     * @param block the element of the content.
-     * @param recipient the recipient of this handler.
-     * 
-     * @require !connection.isOnBoth() : "The decoding of sendable handlers is site-specific.";
-     * @require !connection.isOnClient() || entity instanceof Role : "On the client-side, the entity is a role.";
-     * @require !connection.isOnHost() || entity instanceof Identity : "On the host-side, the entity is an identity.";
-     * @require signature.getSubject() != null : "The subject of the signature is not null.";
-     * 
-     * @ensure getEntity() != null : "The entity of this handler is not null.";
-     * @ensure getSignature() != null : "The signature of this handler is not null.";
-     * @ensure getEntity() instanceof Identity : "The entity of this handler is an identity.";
-     * @ensure getConnection().isOnHost() : "The connection of this handler is on the host-side.";
-     * @ensure (!getSubject().getIdentity().equals(entity.getIdentity())) : "The identity of the entity and the subject are the same.";
+     * @param role the role to which this handler belongs.
+     * @param recipient the recipient of this method.
      */
-    protected InternalQuery(@Nonnull ConnecSitection, @Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull Block block, @Nonnull HostIdentifier recipient) throws InvalidEncodingException, FailedIdentityException {
-        super(connection, entity, signature, block, recipient);
-        
-        if (!getSubject().getIdentity().equals(entity.getIdentity())) throw new InvalidEncodingException("The identity of the entity and the subject have to be the same for internal queries.");
+    protected InternalQuery(@Nonnull Role role, @Nonnull HostIdentifier recipient) {
+        super(role, role.getIdentity().getAddress(), recipient);
     }
     
     /**
-     * Creates an internal query that encodes the content of a packet to the given recipient about the given subject.
+     * Creates an internal query that decodes a packet with the given signature for the given entity.
      * 
-     * @param connection an open connection to the database.
-     * @param role the role to which this handler belongs.
-     * @param recipient the recipient of this handler.
+     * @param entity the entity to which this handler belongs.
+     * @param signature the signature of this handler (or a dummy that just contains a subject).
+     * @param recipient the recipient of this method.
+     * 
+     * @require signature.getSubject() != null : "The subject of the signature is not null.";
+     * 
+     * @ensure getSignature() != null : "The signature of this handler is not null.";
+     * @ensure isOnHost() : "Queries are only decoded on hosts.";
      */
-    protected InternalQuery(@Nonnull ClientClientSitection, @Nonnull Role role, @Nonnull HostIdentifier recipient) {
-        super(connection, role, role.getIdentity().getAddress(), recipient);
+    protected InternalQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws InvalidEncodingException, SQLException, FailedIdentityException, InvalidDeclarationException {
+        super(entity, signature, recipient);
+        
+        if (!getEntityNotNull().getIdentity().equals(getSubject().getIdentity())) throw new InvalidEncodingException("The identity of the entity and the subject have to be the same for internal queries.");
     }
     
     
