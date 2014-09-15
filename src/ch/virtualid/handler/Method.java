@@ -146,7 +146,8 @@ public abstract class Method extends Handler {
      * 
      * @throws PacketException if the authorization is not sufficient.
      * 
-     * @require getEntity() instanceof Account : "This method is called on a host.";
+     * @require isOnHost() : "This method is called on a host.";
+     * @require getSignature != null : "The signature of this handler is not null.";
      */
     public abstract @Nullable Reply excecute() throws PacketException, SQLException;
     

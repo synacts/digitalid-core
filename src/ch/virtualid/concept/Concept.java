@@ -2,7 +2,9 @@ package ch.virtualid.concept;
 
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.database.Database;
+import ch.virtualid.entity.Account;
 import ch.virtualid.entity.Entity;
+import ch.virtualid.entity.Role;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -50,6 +52,27 @@ public abstract class Concept extends Instance {
         assert entity != null : "The entity is not null.";
         
         return entity;
+    }
+    
+    
+    /**
+     * Returns whether this concept is on a host.
+     * 
+     * @return whether this concept is on a host.
+     */
+    @Pure
+    public final boolean isOnHost() {
+        return entity instanceof Account;
+    }
+    
+    /**
+     * Returns whether this concept is on a client.
+     * 
+     * @return whether this concept is on a client.
+     */
+    @Pure
+    public final boolean isOnClient() {
+        return entity instanceof Role;
     }
     
 }

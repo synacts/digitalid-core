@@ -13,14 +13,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * 
- * Actions are always lodged and audited.
- * 
- * - Actions are logged and audited.
- * - Actions are always signed identity-based. -> Only true for internal actions?
- * 
- * => Actions are asynchronously handled by the Synchronizer. Also Pusher?
- * => The signature of actions are always lodged in case of credentials.
+ * Actions affect the state of a virtual identity and are thus always {@link Audit audited}.
+ * The default is to sign them identity-based. If another behavior is desired, the method
+ * {@link Method#send()} needs to be overridden.
  * 
  * @see InternalAction
  * @see ExternalAction
@@ -40,7 +35,7 @@ public abstract class Action extends Method {
      * @require !(entity instanceof Account) || canBeSentByHosts() : "Methods encoded on hosts can be sent by hosts.";
      * @require !(entity instanceof Role) || !canOnlyBeSentByHosts() : "Methods encoded on clients cannot only be sent by hosts.";
      */
-    protected Action(@Nonnull Entity entity, @Nonnull Identifier subject, @Nonnull HostIdentifier recipient) {
+    protected Action(@Nullable Entity entity, @Nonnull Identifier subject, @Nonnull HostIdentifier recipient) {
         super(entity, subject, recipient);
     }
     

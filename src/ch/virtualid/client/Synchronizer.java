@@ -1,5 +1,6 @@
 package ch.virtualid.client;
 
+import ch.virtualid.entity.Role;
 import ch.virtualid.handler.Action;
 import ch.virtualid.handler.InternalAction;
 import ch.virtualid.module.client.Synchronization;
@@ -23,8 +24,8 @@ public final class Synchronizer extends Thread {
     }
     
     // TODO: Also allow queries here? -> Rather no, the replies of queries are needed immediately (and are thus blocking).
-    public static void execute(@Nonnull Action action) throws SQLException {
-        assert action.isOnClient() : "The action is on the client-side.";
+    public static void execute(@Nonnull InternalAction action) throws SQLException {
+        assert action.getEntityNotNull() instanceof Role : "The action is on the client.";
         
         // TODO: Include the entity, recipient and subject in the queue! + service
         Synchronization.queue(action); // Writes the action with its entity to the database through the connection of the action without commit. -> Include the name of the client in the database table.
@@ -38,10 +39,6 @@ public final class Synchronizer extends Thread {
      * Updates are done in a regular interval until this boolean becomes false.
      */
     private boolean active = true;
-    
-    public Synchronizer() {
-        
-    }
     
     /*
     

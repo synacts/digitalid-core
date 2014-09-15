@@ -21,6 +21,8 @@ import javax.annotation.Nonnull;
  * 
  * -> Only external actions can be fed to the pusher.
  * 
+ *  on the {@link Host host} by the {@link Pusher}.
+ * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 0.0
  */

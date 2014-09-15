@@ -2,6 +2,7 @@ package ch.virtualid.handler.action.internal;
 
 import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.agent.Restrictions;
+import ch.virtualid.handler.Action;
 import ch.virtualid.handler.Handler;
 import ch.virtualid.identity.Category;
 import ch.virtualid.identity.Mapper;
@@ -22,10 +23,12 @@ import org.javatuples.Pair;
 /**
  * Description.
  * 
+ * Inherits directly from the action class because no entity can be given.
+ * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 0.0
  */
-public class AccountOpen {
+public final class AccountOpen extends Action {
     
     public AccountOpen() {
         
