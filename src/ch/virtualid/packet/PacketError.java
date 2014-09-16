@@ -1,5 +1,7 @@
 package ch.virtualid.packet;
 
+import ch.virtualid.identity.SemanticType;
+import ch.xdf.Int8Wrapper;
 import ch.xdf.exceptions.InvalidEncodingException;
 import javax.annotation.Nonnull;
 
@@ -19,6 +21,11 @@ public enum PacketError {
     IDENTIFIER(6), // The error code for an invalid identifier within the request.
     AUTHORIZATION(7), // The error code for an insufficient authorization.
     KEYROTATION(8); // The error code for a required key rotation.
+    
+    /**
+     * Stores the semantic type {@code error.packet@virtualid.ch}.
+     */
+    public static final @Nonnull SemanticType TYPE = SemanticType.create("error.packet@virtualid.ch").load(Int8Wrapper.TYPE);
     
     /**
      * Stores the byte representation of the packet error.

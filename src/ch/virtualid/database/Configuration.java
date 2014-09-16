@@ -17,6 +17,10 @@ import javax.annotation.Nullable;
 /**
  * This class is used to configure various databases.
  * 
+ * @see PostgreSQLConfiguration
+ * @see MySQLConfiguration
+ * @see SQLiteConfiguration
+ * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
@@ -147,13 +151,12 @@ public abstract class Configuration implements Immutable {
     /**
      * Executes the given insertion and returns the generated key without committing the transaction.
      * 
-     * @param connection an open connection to the database.
      * @param SQL an SQL statement that inserts an entry.
      * 
      * @return the key generated for the inserted entry.
      */
-    public final long executeInsert(@Nonnull Connection connection, @Nonnull String SQL) throws SQLException {
-        try (@Nonnull Statement statement = connection.createStatement()) {
+    public final long executeInsert(@Nonnull String SQL) throws SQLException {
+        try (@Nonnull Statement statement = Database.getConnection().createStatement()) {
             return executeInsert(statement, SQL);
         }
     }

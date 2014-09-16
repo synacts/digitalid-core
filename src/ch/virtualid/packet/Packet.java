@@ -45,14 +45,34 @@ import javax.annotation.Nullable;
 public class Packet implements Immutable {
     
     /**
-     * Stores the semantic type {@code error.packet@virtualid.ch}.
-     */
-    public static final @Nonnull SemanticType ERROR = mapSemanticType(NonHostIdentifier.PACKET_ERROR);
-    
-    /**
      * Stores the semantic type {@code content.packet@virtualid.ch}.
      */
     public static final @Nonnull SemanticType CONTENT = SemanticType.create("content.packet@virtualid.ch").load(SelfcontainedWrapper.TYPE);
+    
+    /**
+     * Stores the semantic type {@code compression.packet@virtualid.ch}.
+     */
+    public static final @Nonnull SemanticType COMPRESSION = SemanticType.create("compression.packet@virtualid.ch").load(CompressionWrapper.TYPE, CONTENT);
+    
+    /**
+     * Stores the semantic type {@code signature.packet@virtualid.ch}.
+     */
+    public static final @Nonnull SemanticType SIGNATURE = SemanticType.create("signature.packet@virtualid.ch").load(SignatureWrapper.TYPE, COMPRESSION);
+    
+    /**
+     * Stores the semantic type {@code list.signature.packet@virtualid.ch}.
+     */
+    public static final @Nonnull SemanticType SIGNATURES = SemanticType.create("list.signature.packet@virtualid.ch").load(ListWrapper.TYPE, SIGNATURE);
+    
+    /**
+     * Stores the semantic type {@code encryption.packet@virtualid.ch}.
+     */
+    public static final @Nonnull SemanticType ENCRYPTION = SemanticType.create("encryption.packet@virtualid.ch").load(EncryptionWrapper.TYPE, SIGNATURES);
+    
+    /**
+     * Stores the semantic type {@code packet@virtualid.ch}.
+     */
+    public static final @Nonnull SemanticType TYPE = SemanticType.create("packet@virtualid.ch").load(SelfcontainedWrapper.TYPE);
     
     
     /**
@@ -116,7 +136,7 @@ public class Packet implements Immutable {
      * 
      * @throws FailedEncodingException This exception is never thrown by this constructor but is listed nonetheless.
      */
-    public Packet(@Nonnull List<SelfcontainedWrapper> contents, @Nullable SymmetricKey symmetricKey, @Nonnull Identifier subject, @Nullable Audit audit, @Nonnull Identifier signer) throws FailedEncodingException {
+    public Packet(@Nonnull List<SelfcontainedWrapper> contents, @Nullable SymmetricKey symmetricKey, @Nonnull Identifier subject, @Nullable Audit audit, @Nonnull HostIdentifier signer) throws FailedEncodingException {
         this(contents, null, symmetricKey, subject, audit, signer, null, null, null, false, null);
     }
     
@@ -140,7 +160,7 @@ public class Packet implements Immutable {
      * 
      * @ensure getSize() == contents.size() : "The size of this packet equals the size of the contents.";
      */
-    protected Packet(@Nonnull List<SelfcontainedWrapper> contents, @Nullable HostIdentifier recipient, @Nullable SymmetricKey symmetricKey, @Nullable Identifier subject, @Nullable Audit audit, @Nullable Identifier signer, @Nullable Commitment commitment, @Nullable List<Credential> credentials, @Nullable List<HostSignatureWrapper> certificates, boolean lodged, @Nullable BigInteger value) throws FailedEncodingException {
+    protected Packet(@Nonnull List<SelfcontainedWrapper> contents, @Nullable HostIdentifier recipient, @Nullable SymmetricKey symmetricKey, @Nullable Identifier subject, @Nullable Audit audit, @Nullable HostIdentifier signer, @Nullable Commitment commitment, @Nullable List<Credential> credentials, @Nullable List<HostSignatureWrapper> certificates, boolean lodged, @Nullable BigInteger value) throws FailedEncodingException {
         assert !contents.isEmpty() : "The list of contents is not empty.";
         assert subject != null || recipient == null && signer == null && commitment == null && credentials == null : "The subject may only be null if the contents of a response are not signed (because the host could not decode the subject).";
         

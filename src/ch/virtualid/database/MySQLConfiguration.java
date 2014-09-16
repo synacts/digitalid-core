@@ -163,7 +163,7 @@ public final class MySQLConfiguration extends Configuration implements Immutable
     @Pure
     @Override
     public @Nonnull String BLOB() {
-        return "BLOB";
+        return "LONGBLOB";
     }
     
     @Pure

@@ -342,7 +342,7 @@ public abstract class Method extends Handler {
          * @ensure return.getEntity() != null : "The entity of the returned method is not null.";
          * @ensure return.getSignature() != null : "The signature of the returned method is not null.";
          */
-        protected abstract Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws InvalidEncodingException, SQLException, FailedIdentityException, InvalidDeclarationException;
+        protected abstract @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws InvalidEncodingException, SQLException, FailedIdentityException, InvalidDeclarationException;
         
     }
     
@@ -374,7 +374,6 @@ public abstract class Method extends Handler {
      * @throws PacketException if no handler is found for the given content type.
      * 
      * @require signature.getSubject() != null : "The subject of the signature is not null.";
-     * @require block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
      * 
      * @ensure return.getEntity() != null : "The entity of the returned method is not null.";
      * @ensure return.getSignature() != null : "The signature of the returned method is not null.";
