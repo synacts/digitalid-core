@@ -13,14 +13,15 @@ import javax.annotation.Nonnull;
  */
 public enum PacketError {
     INTERNAL(0), // The error code for an internal problem.
-    PACKET(1), // The error code for an invalid packet.
-    ENCRYPTION(2), // The error code for an invalid encryption.
-    SIGNATURE(3), // The error code for an invalid signature.
-    COMPRESSION(4), // The error code for an invalid compression.
-    REQUEST(5), // The error code for an invalid request type or invalid encoding.
-    IDENTIFIER(6), // The error code for an invalid identifier within the request.
-    AUTHORIZATION(7), // The error code for an insufficient authorization.
-    KEYROTATION(8); // The error code for a required key rotation.
+    EXTERNAL(1), // The error code for an external problem.
+    PACKET(2), // The error code for an invalid packet.
+    ENCRYPTION(3), // The error code for an invalid encryption.
+    SIGNATURE(4), // The error code for an invalid signature.
+    COMPRESSION(5), // The error code for an invalid compression.
+    REQUEST(6), // The error code for an invalid request type or invalid encoding.
+    IDENTIFIER(7), // The error code for an invalid identifier within the request.
+    AUTHORIZATION(8), // The error code for an insufficient authorization.
+    KEYROTATION(9); // The error code for a required key rotation.
     
     /**
      * Stores the semantic type {@code error.packet@virtualid.ch}.

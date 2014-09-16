@@ -1,11 +1,12 @@
 package ch.xdf;
 
-import ch.virtualid.annotations.Exposed;
-import ch.virtualid.annotations.Pure;
 import ch.virtualid.agent.Agent;
 import ch.virtualid.agent.OutgoingRole;
+import ch.virtualid.annotations.Exposed;
+import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.credential.Credential;
+import ch.virtualid.exceptions.InvalidDeclarationException;
 import ch.virtualid.identity.FailedIdentityException;
 import ch.virtualid.identity.Identifier;
 import ch.virtualid.identity.Identity;
@@ -446,29 +447,32 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
      * @require getSubject() != null : "The subject is not null.";
      */
     @Pure
-    public final @Nonnull Agent getAgent() throws PacketException, SQLException, FailedIdentityException, InvalidEncodingException {
-        @Nullable Identifier identifier = getSubject();
+    public final @Nonnull Agent getAgent() throws PacketException, SQLException {
+        final @Nullable Identifier identifier = getSubject();
         assert identifier != null : "The subject is not null";
         
         // TODO: Fix and adapt!
-        
-        @Nonnull NonHostIdentity identity = identifier.getIdentity().toNonHostIdentity();
-        if (this instanceof ClientSignatureWrapper) {
-            @Nullable Agent agent = Host.getClientAgent(connection, identity, ((ClientSignatureWrapper) this).getCommitment());
-            if (agent != null) return agent;
-        } else if (this instanceof CredentialsSignatureWrapper) {
-            @Nonnull Credential credential = ((CredentialsSignatureWrapper) this).getCredentials().get(0);
-            @Nullable NonHostIdentifier relation = credential.getRole();
-            if (relation != null) {
-                @Nullable OutgoingRole outgoingRole = Host.getOutgoingRole(connection, identity, relation.getIdentity().toSemanticType());
-                if (outgoingRole != null && Host.isInContext(connection, identity, credential.getIssuer().getIdentity().toPerson(), outgoingRole.getContext())) {
-                    outgoingRole.checkCovers(credential);
-                    outgoingRole.restrictTo(credential);
-                    return outgoingRole;
+        try {
+            @Nonnull NonHostIdentity identity = identifier.getIdentity().toNonHostIdentity();
+            if (this instanceof ClientSignatureWrapper) {
+                @Nullable Agent agent = Host.getClientAgent(identity, ((ClientSignatureWrapper) this).getCommitment());
+                if (agent != null) return agent;
+            } else if (this instanceof CredentialsSignatureWrapper) {
+                @Nonnull Credential credential = ((CredentialsSignatureWrapper) this).getCredentials().get(0);
+                @Nullable NonHostIdentifier relation = credential.getRole();
+                if (relation != null) {
+                    @Nullable OutgoingRole outgoingRole = Host.getOutgoingRole(identity, relation.getIdentity().toSemanticType());
+                    if (outgoingRole != null && Host.isInContext(identity, credential.getIssuer().getIdentity().toPerson(), outgoingRole.getContext())) {
+                        outgoingRole.checkCovers(credential);
+                        outgoingRole.restrictTo(credential);
+                        return outgoingRole;
+                    }
                 }
             }
+            throw new PacketException(PacketError.AUTHORIZATION);
+        } catch (@Nonnull FailedIdentityException | InvalidEncodingException | InvalidDeclarationException exception) {
+            throw new PacketException(PacketError.EXTERNAL, exception);
         }
-        throw new PacketException(PacketError.AUTHORIZATION);
     }
     
 }

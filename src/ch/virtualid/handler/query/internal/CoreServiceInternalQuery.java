@@ -2,15 +2,13 @@ package ch.virtualid.handler.query.internal;
 
 import ch.virtualid.agent.Agent;
 import ch.virtualid.agent.AgentPermissions;
-import ch.virtualid.concept.Entity;
-import ch.virtualid.entity.Role;
-import ch.virtualid.entity.ClientEntity;
 import ch.virtualid.entity.Entity;
+import ch.virtualid.entity.Role;
 import ch.virtualid.handler.InternalQuery;
-import ch.virtualid.handler.Reply;
 import ch.virtualid.handler.Method;
-import ch.virtualid.identity.HostIdentifier;
+import ch.virtualid.handler.Reply;
 import ch.virtualid.identity.FailedIdentityException;
+import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.SemanticType;
 import ch.xdf.Block;
 import ch.xdf.SignatureWrapper;
@@ -18,10 +16,10 @@ import ch.xdf.exceptions.InvalidEncodingException;
 import javax.annotation.Nonnull;
 
 /**
- * Description.
+ * This class models the {@link InternalQuery internal queries} of the {@link CoreService core service}.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 0.0
+ * @version 2.0
  */
 public abstract class CoreServiceInternalQuery extends InternalQuery {
     

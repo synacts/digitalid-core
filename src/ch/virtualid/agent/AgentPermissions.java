@@ -151,7 +151,7 @@ public final class AgentPermissions extends FreezableLinkedHashMap<SemanticType,
     public boolean areValid() {
         if (containsKey(GENERAL)) {
             if (get(GENERAL)) {
-                return areSingle();
+                return areEmptyOrSingle();
             } else {
                 for (final @Nonnull SemanticType semanticType : keySet()) {
                     if (!semanticType.equals(GENERAL) && !get(semanticType)) return false;
@@ -165,8 +165,8 @@ public final class AgentPermissions extends FreezableLinkedHashMap<SemanticType,
     
     @Pure
     @Override
-    public boolean areSingle() {
-        return size() == 1;
+    public boolean areEmptyOrSingle() {
+        return size() <= 1;
     }
     
     

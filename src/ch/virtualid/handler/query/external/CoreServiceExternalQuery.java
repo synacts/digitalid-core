@@ -1,6 +1,5 @@
 package ch.virtualid.handler.query.external;
 
-import ch.virtualid.concept.Entity;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.handler.ExternalQuery;
 import ch.virtualid.identity.HostIdentifier;
@@ -13,10 +12,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * Description.
+ * This class models the {@link ExternalQuery external queries} of the {@link CoreService core service}.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 0.0
+ * @version 2.0
  */
 public abstract class CoreServiceExternalQuery extends ExternalQuery {
     

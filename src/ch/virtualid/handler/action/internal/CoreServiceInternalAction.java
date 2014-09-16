@@ -2,86 +2,114 @@ package ch.virtualid.handler.action.internal;
 
 import ch.virtualid.agent.Agent;
 import ch.virtualid.agent.AgentPermissions;
-import ch.virtualid.concept.Entity;
-import ch.virtualid.entity.Role;
-import ch.virtualid.entity.ClientEntity;
+import ch.virtualid.agent.ReadonlyAgentPermissions;
+import ch.virtualid.agent.Restrictions;
+import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Entity;
+import ch.virtualid.entity.Role;
+import ch.virtualid.exceptions.InvalidDeclarationException;
 import ch.virtualid.handler.InternalAction;
-import ch.virtualid.handler.Method;
-import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.FailedIdentityException;
+import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.SemanticType;
-import ch.xdf.Block;
+import ch.virtualid.module.CoreService;
+import ch.virtualid.packet.PacketException;
 import ch.xdf.SignatureWrapper;
 import ch.xdf.exceptions.InvalidEncodingException;
+import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * Description.
+ * This class models the {@link InternalAction internal actions} of the {@link CoreService core service}.
+ * 
+ * @invariant getEntityNotNull().getIdentity().getAddress().getHostIdentifier().equals(getRecipient()) : "The host of the entity and the recipient are the same for internal actions of the core service.");
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 0.0
+ * @version 2.0
  */
 public abstract class CoreServiceInternalAction extends InternalAction {
     
     /**
-     * Creates an internal action of the core service that decodes the given signature and block for the given entity.
+     * Creates an internal action that encodes the content of a packet.
      * 
-     * @param connection an open connection to the database.
-     * @param entity the entity to which this handler belongs.
-     * @param signature the signature of this handler (or a dummy that just contains a subject).
-     * @param block the element of the content.
-     * @param recipient the recipient of this handler.
-     * 
-     * @require !connection.isOnBoth() : "The decoding of sendable handlers is site-specific.";
-     * @require !connection.isOnClient() || entity instanceof Role : "On the client-side, the entity is a role.";
-     * @require !connection.isOnHost() || entity instanceof Identity : "On the host-side, the entity is an identity.";
-     * @require signature.getSubject() != null : "The subject of the signature is not null.";
-     * 
-     * @ensure getEntity() != null : "The entity of this handler is not null.";
-     * @ensure getSignature() != null : "The signature of this handler is not null.";
-     * @ensure (!getSubject().getIdentity().equals(entity.getIdentity())) : "The identity of the entity and the subject are the same.";
+     * @param role the role to which this handler belongs.
      */
-    protected CoreServiceInternalAction(@Nonnull Entity connection, @Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull Block block, @Nonnull HostIdentifier recipient) throws InvalidEncodingException, FailedIdentityException {
-        super(connection, entity, signature, block, recipient);
+    protected CoreServiceInternalAction(@Nonnull Role role) {
+        super(role, role.getIdentity().getAddress().getHostIdentifier());
     }
     
     /**
-     * Creates an internal action of the core service that encodes the content of a packet to the given recipient about the given subject.
+     * Creates an internal action that decodes a packet with the given signature for the given entity.
      * 
-     * @param connection an open connection to the database.
-     * @param role the role to which this handler belongs.
+     * @param entity the entity to which this handler belongs.
+     * @param signature the signature of this handler (or a dummy that just contains a subject).
+     * @param recipient the recipient of this method.
      * 
-     * @ensure getEntity() != null : "The entity of this handler is not null.";
+     * @require signature.getSubject() != null : "The subject of the signature is not null.";
+     * 
+     * @ensure getSignature() != null : "The signature of this handler is not null.";
      */
-    protected CoreServiceInternalAction(@Nonnull ClientEntity connection, @Nonnull Role role) {
-        super(connection, role, role.getIdentity().getAddress().getHostIdentifier());
+    protected CoreServiceInternalAction(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws InvalidEncodingException, SQLException, FailedIdentityException, InvalidDeclarationException {
+        super(entity, signature, recipient);
+        
+        if (!getEntityNotNull().getIdentity().getAddress().getHostIdentifier().equals(getRecipient())) throw new InvalidEncodingException("The host of the entity and the recipient have to be the same for internal actions of the core service.");
     }
     
     
+    @Pure
     @Override
     public final @Nonnull SemanticType getService() {
-        return SemanticType.CORE_SERVICE;
+        return CoreService.TYPE;
     }
     
     
+    @Pure
     @Override
-    public final boolean isSimilarTo(@Nonnull Method other) {
-        return super.isSimilarTo(other) && other instanceof CoreServiceInternalAction;
-    }
-    
-    
-    @Override
-    public @Nonnull AgentPermissions getRequiredPermissions() {
+    public @Nonnull ReadonlyAgentPermissions getRequiredPermissions() {
         return AgentPermissions.NONE;
     }
     
     
-    public @Nullable Agent getRequiredAuthorization() {
+    @Pure
+    @Override
+    public @Nonnull Restrictions getRequiredRestrictions() {
+        return Restrictions.NONE;
+    }
+    
+    
+    /**
+     * Returns the agent required for this internal action of the core service.
+     * 
+     * @return the agent required for this internal action of the core service.
+     */
+    @Pure
+    public @Nullable Agent getRequiredAgent() {
         return null;
     }
     
-    public abstract void executeOnHost(@Nonnull Agent agent);
+    
+    /**
+     * Executes this internal action on both the host and client.
+     */
+    protected abstract void executeOnBoth() throws SQLException;
+    
+    @Override
+    public final void excecuteOnHost() throws PacketException, SQLException {
+        assert isOnHost() : "This method is called on a host.";
+        
+        final @Nonnull Agent agent = getSignatureNotNull().getAgent();
+
+        final @Nonnull ReadonlyAgentPermissions permissions = getRequiredPermissions();
+        if (!permissions.equals(AgentPermissions.NONE)) agent.getPermissions().checkCover(permissions);
+
+        final @Nonnull Restrictions restrictions = getRequiredRestrictions();
+        if (!restrictions.equals(Restrictions.NONE)) agent.getRestrictions().checkCover(restrictions);
+
+        final @Nullable Agent other = getRequiredAgent();
+        if (other != null) agent.checkCovers(other);
+        
+        executeOnBoth();
+    }
     
 }

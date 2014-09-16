@@ -85,10 +85,10 @@ public abstract class InternalAction extends Action implements InternalMethod {
      * 
      * @require isOnHost() : "This method is called on a host.";
      */
-    public abstract void excecuteOnHost() throws PacketException, SQLException;
+    protected abstract void excecuteOnHost() throws PacketException, SQLException;
     
     @Override
-    public @Nullable ActionReply excecute() throws PacketException, SQLException {
+    public final @Nullable ActionReply excecute() throws PacketException, SQLException {
         excecuteOnHost();
         return null;
     }

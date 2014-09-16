@@ -5,10 +5,10 @@ import ch.virtualid.identity.SemanticType;
 import javax.annotation.Nonnull;
 
 /**
- * Description.
+ * This class models the {@link QueryReply query replies} of the {@link CoreService core service}.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 0.0
+ * @version 2.0
  */
 public abstract class CoreServiceQueryReply extends QueryReply {
     

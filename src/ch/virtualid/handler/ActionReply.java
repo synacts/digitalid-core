@@ -1,5 +1,7 @@
 package ch.virtualid.handler;
 
+import ch.virtualid.agent.Agent;
+import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
@@ -22,7 +24,7 @@ import javax.annotation.Nullable;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public abstract class ActionReply extends Reply {
+public abstract class ActionReply extends Reply implements Auditable {
     
     /**
      * Creates an action reply that encodes the content of a packet.
@@ -47,22 +49,22 @@ public abstract class ActionReply extends Reply {
     }
     
     
-    /**
-     * Returns the permission that an agent needs to cover in order to see the audit of this action reply.
-     * 
-     * @return the permission that an agent needs to cover in order to see the audit of this action reply.
-     * 
-     * @ensure return.areSingle() : "The result is a single permission.";
-     */
     @Pure
-    public abstract @Nonnull ReadonlyAgentPermissions getAuditPermissions();
+    @Override
+    public @Nonnull ReadonlyAgentPermissions getAuditPermissions() {
+        return AgentPermissions.NONE;
+    }
     
-    /**
-     * Returns the restrictions that an agent needs to cover in order to see the audit of this action reply.
-     * 
-     * @return the restrictions that an agent needs to cover in order to see the audit of this action reply.
-     */
     @Pure
-    public abstract @Nonnull Restrictions getAuditRestrictions();
+    @Override
+    public @Nonnull Restrictions getAuditRestrictions() {
+        return Restrictions.NONE;
+    }
+    
+    @Pure
+    @Override
+    public @Nullable Agent getAuditAgent() {
+        return null;
+    }
     
 }

@@ -1,6 +1,5 @@
 package ch.virtualid.handler.action.external;
 
-import ch.virtualid.concept.Entity;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.handler.ExternalAction;
 import ch.virtualid.identity.HostIdentifier;
@@ -12,10 +11,10 @@ import ch.xdf.exceptions.InvalidEncodingException;
 import javax.annotation.Nonnull;
 
 /**
- * Description.
+ * This class models the {@link ExternalAction external actions} of the {@link CoreService core service}.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 0.0
+ * @version 2.0
  */
 public abstract class CoreServiceExternalAction extends ExternalAction {
     
