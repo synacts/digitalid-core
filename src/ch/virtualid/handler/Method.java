@@ -342,6 +342,7 @@ public abstract class Method extends Handler {
          * @ensure return.getEntity() != null : "The entity of the returned method is not null.";
          * @ensure return.getSignature() != null : "The signature of the returned method is not null.";
          */
+        @Pure
         protected abstract @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws InvalidEncodingException, SQLException, FailedIdentityException, InvalidDeclarationException;
         
     }

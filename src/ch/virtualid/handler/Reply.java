@@ -63,7 +63,7 @@ public abstract class Reply extends Handler implements SQLizable {
     }
     
     /**
-     * Creates a method that decodes a packet with the given signature for the given entity.
+     * Creates a reply that decodes a packet with the given signature for the given entity.
      * 
      * @param entity the entity to which this handler belongs.
      * @param signature the host signature of this handler.
@@ -82,10 +82,12 @@ public abstract class Reply extends Handler implements SQLizable {
      * 
      * @return the number that references this reply in the database.
      */
+    @Pure
     public @Nullable Long getNumber() {
         return number;
     }
     
+    @Pure
     @Override
     public @Nonnull String toString() {
         return Objects.toString(number);
@@ -111,6 +113,7 @@ public abstract class Reply extends Handler implements SQLizable {
          * 
          * @ensure return.getSignature() != null : "The signature of the returned reply is not null.";
          */
+        @Pure
         protected abstract Reply create(@Nullable Entity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws InvalidEncodingException, SQLException, FailedIdentityException, InvalidDeclarationException;
         
     }
