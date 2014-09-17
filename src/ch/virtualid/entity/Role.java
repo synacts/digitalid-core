@@ -155,6 +155,16 @@ public final class Role extends Entity implements Immutable, SQLizable, Observer
         return agent;
     }
     
+    /**
+     * Returns whether this role is native.
+     * 
+     * @return whether this role is native.
+     */
+    @Pure
+    public boolean isNative() {
+        return recipient == null;
+    }
+    
     
     @Pure
     @Override

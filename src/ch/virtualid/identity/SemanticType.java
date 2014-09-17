@@ -316,7 +316,6 @@ public final class SemanticType extends Type implements Immutable {
      * @require new FreezableArray<SemanticType>(parameters).doesNotContainNull() : "The parameters may not contain null.";
      * @require new FreezableArray<SemanticType>(parameters).doesNotContainDuplicates(): "The parameters may not contain duplicates.";
      * 
-     * @require (categories.length == 0) == (cachingPeriod == null) : "The caching period is null if and only if the categories are empty.";
      * @require syntacticBase.getNumberOfParameters() == -1 && parameters.length > 0 || syntacticBase.getNumberOfParameters() == parameters.length : "The number of required parameters has either to be variable or to match the given parameters.";
      * 
      * @ensure isLoaded() : "The type declaration has been loaded.";

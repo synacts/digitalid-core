@@ -200,6 +200,7 @@ public final class PostgreSQLConfiguration extends Configuration implements Immu
     @Override
     public void rollback(@Nonnull Connection connection, @Nullable Savepoint savepoint) throws SQLException {
         connection.rollback(savepoint);
+        connection.releaseSavepoint(savepoint);
     }
 
     

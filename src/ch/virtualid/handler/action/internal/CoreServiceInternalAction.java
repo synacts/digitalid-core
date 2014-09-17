@@ -95,20 +95,25 @@ public abstract class CoreServiceInternalAction extends InternalAction {
     protected abstract void executeOnBoth() throws SQLException;
     
     @Override
-    public final void excecuteOnHost() throws PacketException, SQLException {
+    public void excecuteOnHost() throws PacketException, SQLException {
         assert isOnHost() : "This method is called on a host.";
         
         final @Nonnull Agent agent = getSignatureNotNull().getAgent();
-
+        
         final @Nonnull ReadonlyAgentPermissions permissions = getRequiredPermissions();
         if (!permissions.equals(AgentPermissions.NONE)) agent.getPermissions().checkCover(permissions);
-
+        
         final @Nonnull Restrictions restrictions = getRequiredRestrictions();
         if (!restrictions.equals(Restrictions.NONE)) agent.getRestrictions().checkCover(restrictions);
-
+        
         final @Nullable Agent other = getRequiredAgent();
         if (other != null) agent.checkCovers(other);
         
+        executeOnBoth();
+    }
+    
+    @Override
+    public void executeOnClient() throws SQLException {
         executeOnBoth();
     }
     

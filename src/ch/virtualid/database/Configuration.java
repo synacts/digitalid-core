@@ -188,7 +188,7 @@ public abstract class Configuration implements Immutable {
     }
     
     /**
-     * Rolls back the given connection to the given savepoint.
+     * Rolls back the given connection to the given savepoint and releases the savepoint afterwards.
      * 
      * @param connection an open connection to the database.
      * @param savepoint the savepoint to roll the connection back to.

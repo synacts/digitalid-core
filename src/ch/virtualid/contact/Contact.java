@@ -167,7 +167,7 @@ public final class Contact extends Concept implements Immutable, Blockable, SQLi
     
     @Pure
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(@Nullable Object object) {
         if (object == this) return true;
         if (object == null || !(object instanceof Contact)) return false;
         final @Nonnull Contact other = (Contact) object;

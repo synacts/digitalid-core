@@ -106,11 +106,16 @@ public abstract class InternalAction extends Action implements InternalMethod {
      * Returns the reverse of this action or null if this action cannot be reversed.
      * 
      * @return the reverse of this action or null if this action cannot be reversed.
+     * 
+     * @require isOnClient() : "This method is called on a client.";
      */
+    @Pure
     public abstract @Nullable InternalAction getReverse();
     
     /**
      * Reverses this internal action on the client if this action can be reversed.
+     * 
+     * @require isOnClient() : "This method is called on a client.";
      */
     public final void reverseOnClient() throws SQLException {
         final @Nullable InternalAction reverse = getReverse();

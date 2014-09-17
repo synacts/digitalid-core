@@ -179,6 +179,8 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
     
     /**
      * Stores the name of this context.
+     * 
+     * @invariant isValid(name) : "The name is valid.";
      */
     private @Nullable String name;
     

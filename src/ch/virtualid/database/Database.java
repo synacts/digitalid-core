@@ -130,28 +130,31 @@ public final class Database implements Immutable {
      * 
      * @param configuration the configuration of the database.
      * @param singleAccess whether the database is accessed by a single process.
+     * @param testing whether the database is used for testing only without loading all classes.
      */
-    public static void initialize(@Nonnull Configuration configuration, boolean singleAccess) {
+    public static void initialize(@Nonnull Configuration configuration, boolean singleAccess, boolean testing) {
         Database.configuration = configuration;
         Database.singleAccess = singleAccess;
         mainThread.set(true);
         
-        try {
-            final @Nonnull File root = new File(Database.class.getProtectionDomain().getCodeSource().getLocation().toURI());
-            logger.log(Level.INFORMATION, "Root of classes: " + root);
-            
-            if (root.getName().endsWith(".jar")) {
-                initializeJarFile(new JarFile(root));
-            } else {
-                initializeClasses(root, "");
+        if (!testing) {
+            try {
+                final @Nonnull File root = new File(Database.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+                logger.log(Level.INFORMATION, "Root of classes: " + root);
+
+                if (root.getName().endsWith(".jar")) {
+                    initializeJarFile(new JarFile(root));
+                } else {
+                    initializeClasses(root, "");
+                }
+
+                getConnection().commit();
+            } catch (@Nonnull URISyntaxException | IOException | ClassNotFoundException | SQLException exception) {
+                throw new InitializationError("Could not load all classes.", exception);
             }
-            
-            getConnection().commit();
-        } catch (@Nonnull URISyntaxException | IOException | ClassNotFoundException | SQLException exception) {
-            throw new InitializationError("Could not load all classes.", exception);
+
+            logger.log(Level.INFORMATION, "All classes have been loaded.");
         }
-        
-        logger.log(Level.INFORMATION, "All classes have been loaded.");
     }
     
     /**
