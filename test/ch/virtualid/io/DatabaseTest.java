@@ -33,21 +33,22 @@ public final class DatabaseTest {
             statement.executeUpdate("DROP TABLE IF EXISTS test_blob");
             connection.commit();
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS test_identity (identity " + Database.getConfiguration().PRIMARY_KEY() + ", category " + Database.getConfiguration().TINYINT() + " NOT NULL, address VARCHAR(100) NOT NULL COLLATE " + Database.getConfiguration().BINARY() + ")");
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS test_identifier (identifier VARCHAR(100) NOT NULL COLLATE " + Database.getConfiguration().BINARY() + ", identity BIGINT NOT NULL, PRIMARY KEY (identifier), FOREIGN KEY (identity) REFERENCES test_identity (identity))");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS test_identifier (identifier VARCHAR(100) NOT NULL COLLATE " + Database.getConfiguration().BINARY() + ", identity BIGINT NOT NULL, value BIGINT, PRIMARY KEY (identifier), FOREIGN KEY (identity) REFERENCES test_identity (identity))");
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS test_blob (block " + Database.getConfiguration().BLOB() + " NOT NULL)");
+//            Database.getConfiguration().onInsertUpdate(statement, "test_identifier", 1, "identifier", "identity", "value");
             connection.commit();
         }
         
         // Insert an entry with an ordinary statement and retrieve the generated key.
         try (@Nonnull Statement statement = connection.createStatement()) {
             long key = Database.getConfiguration().executeInsert(statement, "INSERT INTO test_identity (category, address) VALUES (1, 'test.ch')");
-            statement.executeUpdate("INSERT INTO test_identifier (identifier, identity) VALUES ('test.ch', " + key + ")");
-            final @Nullable Savepoint savepoint = Database.getConfiguration().setSavepoint(connection);
+            statement.executeUpdate("INSERT INTO test_identifier (identifier, identity, value) VALUES ('test.ch', " + key + ", 1)");
+            final @Nullable Savepoint savepoint = Database.getConfiguration().setSavepoint();
             try {
-                statement.executeUpdate("INSERT INTO test_identifier (identifier, identity) VALUES ('test.ch', " + key + ")");
+                statement.executeUpdate("INSERT INTO test_identifier (identifier, identity, value) VALUES ('test.ch', " + key + ", 2)");
                 Assert.fail("An SQLException should have been thrown because a duplicate key was inserted.");
             } catch (SQLException exception) {
-                Database.getConfiguration().rollback(connection, savepoint);
+                Database.getConfiguration().rollback(savepoint);
             }
             connection.commit();
         }
@@ -65,6 +66,7 @@ public final class DatabaseTest {
         // Insert or ignore an existing entry into the database (which is thus ignored).
         SQL = "INSERT" + Database.getConfiguration().IGNORE() + " INTO test_identifier (identifier, identity) VALUES ('test.ch', 1)";
         try (@Nonnull Statement statement = connection.createStatement()) {
+            Database.getConfiguration().onInsertNotUpdate(statement, "test_identifier");
             Database.getConfiguration().onInsertIgnore(statement, "test_identifier", "identifier");
             connection.commit();
             statement.executeUpdate(SQL);

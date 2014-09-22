@@ -105,6 +105,12 @@ public final class SQLiteConfiguration extends Configuration implements Immutabl
     
     @Pure
     @Override
+    public @Nonnull String REPLACE() {
+        return "REPLACE";
+    }
+    
+    @Pure
+    @Override
     public @Nonnull String IGNORE() {
         return " OR IGNORE";
     }

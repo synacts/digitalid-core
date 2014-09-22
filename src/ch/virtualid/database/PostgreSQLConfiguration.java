@@ -165,6 +165,12 @@ public final class PostgreSQLConfiguration extends Configuration implements Immu
     
     @Pure
     @Override
+    public @Nonnull String REPLACE() {
+        return "INSERT";
+    }
+    
+    @Pure
+    @Override
     public @Nonnull String IGNORE() {
         return "";
     }
@@ -193,16 +199,17 @@ public final class PostgreSQLConfiguration extends Configuration implements Immu
     
     
     @Override
-    public @Nonnull Savepoint setSavepoint(@Nonnull Connection connection) throws SQLException {
-        return connection.setSavepoint();
+    public @Nonnull Savepoint setSavepoint() throws SQLException {
+        return Database.getConnection().setSavepoint();
     }
     
     @Override
-    public void rollback(@Nonnull Connection connection, @Nullable Savepoint savepoint) throws SQLException {
+    public void rollback(@Nullable Savepoint savepoint) throws SQLException {
+        final @Nonnull Connection connection = Database.getConnection();
         connection.rollback(savepoint);
         connection.releaseSavepoint(savepoint);
     }
-
+    
     
     @Override
     public void onInsertIgnore(@Nonnull Statement statement, @Nonnull String table, @Nonnull String... columns) throws SQLException {
@@ -225,6 +232,45 @@ public final class PostgreSQLConfiguration extends Configuration implements Immu
         }
         string.append(")) DO INSTEAD NOTHING");
         statement.executeUpdate(string.toString());
+    }
+    
+    @Override
+    public void onInsertNotIgnore(@Nonnull Statement statement, @Nonnull String table) throws SQLException {
+        statement.executeUpdate("DROP RULE IF EXISTS " + table + "_on_insert_ignore ON " + table);
+    }
+    
+    @Override
+    public void onInsertUpdate(@Nonnull Statement statement, @Nonnull String table, int key, @Nonnull String... columns) throws SQLException {
+        assert key > 0 : "The number of columns in the primary key is positive.";
+        assert columns.length >= key : "At least as many columns as in the primary key are provided.";
+        
+        final @Nonnull StringBuilder string = new StringBuilder("CREATE OR REPLACE RULE ").append(table).append("_on_insert_update ");
+        string.append("AS ON INSERT TO ").append(table).append(" WHERE EXISTS(SELECT 1 FROM ").append(table);
+        
+        final @Nonnull StringBuilder condition = new StringBuilder(" WHERE (");
+        for (int i = 0; i < key; i++) {
+            if (i > 0) condition.append(", ");
+            condition.append(columns[i]);
+        }
+        condition.append(") = (");
+        for (int i = 0; i < key; i++) {
+            if (i > 0) condition.append(", ");
+            condition.append("NEW.").append(columns[i]);
+        }
+        condition.append(")");
+        
+        string.append(condition).append(") DO INSTEAD UPDATE ").append(table).append(" SET ");
+        for (int i = key; i < columns.length; i++) {
+            if (i > key) string.append(", ");
+            string.append(columns[i]).append(" = NEW.").append(columns[i]);
+        }
+        string.append(condition);
+        statement.executeUpdate(string.toString());
+    }
+    
+    @Override
+    public void onInsertNotUpdate(@Nonnull Statement statement, @Nonnull String table) throws SQLException {
+        statement.executeUpdate("DROP RULE IF EXISTS " + table + "_on_insert_update ON " + table);
     }
     
 }

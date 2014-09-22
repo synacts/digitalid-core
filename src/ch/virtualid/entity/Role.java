@@ -100,7 +100,7 @@ public final class Role extends Entity implements Immutable, SQLizable, Observer
         this.issuer = issuer;
         this.relation = relation;
         this.recipient = recipient;
-        this.agent = isClient ? ClientAgent.get(this, agentNumber) : OutgoingRole.get(this, agentNumber);
+        this.agent = isClient ? ClientAgent.get(this, agentNumber, true) : OutgoingRole.get(this, agentNumber, false);
     }
     
     /**
@@ -245,7 +245,7 @@ public final class Role extends Entity implements Immutable, SQLizable, Observer
      * Returns a new or existing role with the given arguments.
      * <p>
      * <em>Important:</em> This method should not be called directly.
-     * (Use {@link #addRole(ch.virtualid.identity.NonHostIdentity, ch.virtualid.identity.SemanticType, ch.virtualid.agent.Agent)}
+     * (Use {@link #addRole(ch.virtualid.identity.NonHostIdentity, ch.virtualid.identity.SemanticType, long)}
      * or {@link Client#addRole(ch.virtualid.identity.NonHostIdentity)} instead.)
      * 
      * @param client the client that can assume the returned role.

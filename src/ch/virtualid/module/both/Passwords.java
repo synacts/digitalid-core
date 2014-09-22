@@ -35,6 +35,7 @@ public final class Passwords extends BothModule {
     protected void createTables(@Nonnull Site site) throws SQLException {
         try (@Nonnull Statement statement = Database.getConnection().createStatement()) {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "_password (entity BIGINT NOT NULL, password VARCHAR(50) NOT NULL COLLATE " + Database.getConfiguration().BINARY() + ", PRIMARY KEY (entity), FOREIGN KEY (entity) REFERENCES " + site.getReference() + ")");
+            Database.getConfiguration().onInsertUpdate(statement, site + "_password", 1, "entity", "password");
         }
     }
     
@@ -65,8 +66,7 @@ public final class Passwords extends BothModule {
     public static void set(@Nonnull Entity entity, @Nonnull String value) throws SQLException {
         assert Password.isValid(value) : "The value is valid.";
         
-        // TODO: The following line might not work on PostgreSQL!
-        final @Nonnull String SQL = "REPLACE INTO " + entity.getSite() + "_password (entity, password) VALUES (?, ?)";
+        final @Nonnull String SQL = Database.getConfiguration().REPLACE() + " INTO " + entity.getSite() + "_password (entity, password) VALUES (?, ?)";
         try (@Nonnull PreparedStatement preparedStatement = Database.getConnection().prepareStatement(SQL)) {
             preparedStatement.setLong(1, entity.getNumber());
             preparedStatement.setString(2, value);

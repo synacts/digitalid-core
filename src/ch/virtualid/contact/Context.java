@@ -456,6 +456,9 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
      */
     private static final @Nonnull Map<Pair<Entity, Long>, Context> index = new HashMap<Pair<Entity, Long>, Context>();
     
+    // TODO: Introduce the possibility to reset all contexts of a certain entity? This is needed when the module is reloaded from the host.
+    // TODO: Also add a corresponding aspect to listen to. The same has to be done for contacts and agents!
+    
     /**
      * Returns a (locally cached) context that might not (yet) exist in the database.
      * 

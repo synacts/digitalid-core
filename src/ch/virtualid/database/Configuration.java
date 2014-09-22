@@ -2,7 +2,6 @@ package ch.virtualid.database;
 
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.interfaces.Immutable;
-import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -103,6 +102,14 @@ public abstract class Configuration implements Immutable {
     public abstract @Nonnull String BLOB();
     
     /**
+     * Returns the syntax for replacing existing entries during inserts.
+     * 
+     * @return the syntax for replacing existing entries during inserts.
+     */
+    @Pure
+    public abstract @Nonnull String REPLACE();
+    
+    /**
      * Returns the syntax for ignoring database errors during updates.
      * 
      * @return the syntax for ignoring database errors during updates.
@@ -177,23 +184,20 @@ public abstract class Configuration implements Immutable {
     
     
     /**
-     * Returns a savepoint for the given connection or null if not supported or required.
+     * Returns a savepoint for the connection of the current thread or null if not supported or required.
      * 
-     * @param connection an open connection to the database.
-     * 
-     * @return a savepoint for the given connection or null if not supported or required.
+     * @return a savepoint for the connection of the current thread or null if not supported or required.
      */
-    public @Nullable Savepoint setSavepoint(@Nonnull Connection connection) throws SQLException {
+    public @Nullable Savepoint setSavepoint() throws SQLException {
         return null;
     }
     
     /**
-     * Rolls back the given connection to the given savepoint and releases the savepoint afterwards.
+     * Rolls back the connection of the current thread to the given savepoint and releases the savepoint afterwards.
      * 
-     * @param connection an open connection to the database.
      * @param savepoint the savepoint to roll the connection back to.
      */
-    public void rollback(@Nonnull Connection connection, @Nullable Savepoint savepoint) throws SQLException {}
+    public void rollback(@Nullable Savepoint savepoint) throws SQLException {}
     
     
     /**
@@ -206,5 +210,34 @@ public abstract class Configuration implements Immutable {
      * @require columns.length > 0 : "At least one column is provided.";
      */
     public void onInsertIgnore(@Nonnull Statement statement, @Nonnull String table, @Nonnull String... columns) throws SQLException {}
+    
+    /**
+     * Drops the rule to ignore duplicate insertions.
+     * 
+     * @param statement a statement to drop the rule with.
+     * @param table the table from which the rule is dropped.
+     */
+    public void onInsertNotIgnore(@Nonnull Statement statement, @Nonnull String table) throws SQLException {}
+    
+    /**
+     * Creates a rule to update duplicate insertions.
+     * 
+     * @param statement a statement to create the rule with.
+     * @param table the table to which the rule is applied.
+     * @param key the number of columns in the primary key.
+     * @param columns the columns which are inserted starting with the columns of the primary key.
+     * 
+     * @require key > 0 : "The number of columns in the primary key is positive.";
+     * @require columns.length >= key : "At least as many columns as in the primary key are provided.";
+     */
+    public void onInsertUpdate(@Nonnull Statement statement, @Nonnull String table, int key, @Nonnull String... columns) throws SQLException {}
+    
+    /**
+     * Drops the rule to update duplicate insertions.
+     * 
+     * @param statement a statement to drop the rule with.
+     * @param table the table from which the rule is dropped.
+     */
+    public void onInsertNotUpdate(@Nonnull Statement statement, @Nonnull String table) throws SQLException {}
     
 }

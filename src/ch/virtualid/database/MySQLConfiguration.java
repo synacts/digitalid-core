@@ -168,6 +168,12 @@ public final class MySQLConfiguration extends Configuration implements Immutable
     
     @Pure
     @Override
+    public @Nonnull String REPLACE() {
+        return "REPLACE";
+    }
+    
+    @Pure
+    @Override
     public @Nonnull String IGNORE() {
         return " IGNORE";
     }
