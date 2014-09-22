@@ -147,9 +147,9 @@ public abstract class Method extends Handler {
      * @throws PacketException if the authorization is not sufficient.
      * 
      * @require isOnHost() : "This method is called on a host.";
-     * @require getSignature != null : "The signature of this handler is not null.";
+     * @require getSignature() != null : "The signature of this handler is not null.";
      */
-    public abstract @Nullable Reply excecute() throws PacketException, SQLException;
+    public abstract @Nullable Reply executeOnHost() throws PacketException, SQLException;
     
     
     /**
@@ -180,7 +180,7 @@ public abstract class Method extends Handler {
      * 
      * @return the reply to this method in case of queries or, potentially, external actions.
      */
-    public @Nullable Reply send() throws FailedRequestException {
+    public @Nullable Reply send() throws FailedRequestException, SQLException, FailedIdentityException, InvalidDeclarationException, FailedEncodingException {
         return Method.send(new FreezableArrayList<Method>(this).freeze()).get(0);
     }
     

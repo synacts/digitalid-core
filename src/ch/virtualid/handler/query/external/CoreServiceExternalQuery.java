@@ -1,10 +1,12 @@
 package ch.virtualid.handler.query.external;
 
+import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.handler.ExternalQuery;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.Identifier;
 import ch.virtualid.identity.SemanticType;
+import ch.virtualid.module.CoreService;
 import ch.xdf.Block;
 import ch.xdf.SignatureWrapper;
 import ch.xdf.exceptions.InvalidEncodingException;
@@ -61,9 +63,10 @@ public abstract class CoreServiceExternalQuery extends ExternalQuery {
     }
     
     
+    @Pure
     @Override
     public final @Nonnull SemanticType getService() {
-        return SemanticType.CORE_SERVICE;
+        return CoreService.TYPE;
     }
     
     

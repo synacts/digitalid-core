@@ -1,7 +1,9 @@
 package ch.virtualid.handler.reply.action;
 
+import ch.virtualid.annotations.Pure;
 import ch.virtualid.handler.ActionReply;
 import ch.virtualid.identity.SemanticType;
+import ch.virtualid.module.CoreService;
 import javax.annotation.Nonnull;
 
 /**
@@ -17,9 +19,10 @@ public abstract class CoreServiceActionReply extends ActionReply {
     }
     
     
+    @Pure
     @Override
     public final @Nonnull SemanticType getService() {
-        return SemanticType.CORE_SERVICE;
+        return CoreService.TYPE;
     }
     
 }

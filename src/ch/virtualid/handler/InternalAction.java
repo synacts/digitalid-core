@@ -79,28 +79,20 @@ public abstract class InternalAction extends Action implements InternalMethod {
     
     
     /**
-     * Executes this method on the host.
+     * Executes this internal action on the host.
      * 
      * @throws PacketException if the authorization is not sufficient.
      * 
      * @require isOnHost() : "This method is called on a host.";
+     * @require getSignature() != null : "The signature of this handler is not null.";
      */
-    protected abstract void excecuteOnHost() throws PacketException, SQLException;
+    protected abstract void executeOnHostInternalAction() throws PacketException, SQLException;
     
     @Override
-    public final @Nullable ActionReply excecute() throws PacketException, SQLException {
-        excecuteOnHost();
+    public final @Nullable ActionReply executeOnHost() throws PacketException, SQLException {
+        executeOnHostInternalAction();
         return null;
     }
-    
-    /**
-     * Executes this internal action on the client.
-     * 
-     * @throws SQLException if this handler cannot be executed.
-     * 
-     * @require isOnClient() : "This method is called on a client.";
-     */
-    public abstract void executeOnClient() throws SQLException;
     
     /**
      * Returns the reverse of this action or null if this action cannot be reversed.

@@ -33,6 +33,16 @@ public final class SemanticType extends Type implements Immutable {
     public static final @Nonnull SemanticType IDENTIFIER = SemanticType.create("semantic.type@virtualid.ch").load(Type.IDENTIFIER);
     
     /**
+     * Stores the semantic type {@code attribute.type@virtualid.ch}.
+     */
+    public static final @Nonnull SemanticType ATTRIBUTE_IDENTIFIER = SemanticType.create("attribute.type@virtualid.ch").load(IDENTIFIER);
+    
+    /**
+     * Stores the semantic type {@code role.type@virtualid.ch}.
+     */
+    public static final @Nonnull SemanticType ROLE_IDENTIFIER = SemanticType.create("role.type@virtualid.ch").load(IDENTIFIER);
+    
+    /**
      * Stores the semantic type {@code categories.attribute.type@virtualid.ch}.
      */
     private static final @Nonnull SemanticType CATEGORIES = SemanticType.create("categories.attribute.type@virtualid.ch").load(ListWrapper.TYPE, Category.TYPE);

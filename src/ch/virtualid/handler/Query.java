@@ -56,6 +56,6 @@ public abstract class Query extends Method {
     
     
     @Override
-    public abstract @Nonnull QueryReply excecute() throws PacketException, SQLException;
+    public abstract @Nonnull QueryReply executeOnHost() throws PacketException, SQLException;
     
 }

@@ -1,11 +1,14 @@
 package ch.virtualid.handler.action.external;
 
+import ch.virtualid.agent.AgentPermissions;
+import ch.virtualid.agent.ReadonlyAgentPermissions;
+import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.handler.ExternalAction;
 import ch.virtualid.identity.HostIdentifier;
-import ch.virtualid.identity.Identifier;
+import ch.virtualid.identity.Identity;
 import ch.virtualid.identity.SemanticType;
-import ch.xdf.Block;
+import ch.virtualid.module.CoreService;
 import ch.xdf.SignatureWrapper;
 import ch.xdf.exceptions.InvalidEncodingException;
 import javax.annotation.Nonnull;
@@ -13,67 +16,67 @@ import javax.annotation.Nonnull;
 /**
  * This class models the {@link ExternalAction external actions} of the {@link CoreService core service}.
  * 
+ * @invariant getSubject().getHostIdentifier().equals(getRecipient()) : "The host of the subject and the recipient are the same for external actions of the core service.");
+ * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
 public abstract class CoreServiceExternalAction extends ExternalAction {
     
     /**
-     * Creates an external action of the core service that decodes the given signature and block for the given entity.
+     * Creates an external action that encodes the content of a packet about the given subject.
      * 
-     * @param connection an open connection to the database.
      * @param entity the entity to which this handler belongs.
-     * @param signature the signature of this handler (or a dummy that just contains a subject).
-     * @param block the element of the content.
-     * @param recipient the recipient of this handler.
+     * @param subject the subject of this handler.
      * 
-     * @require !connection.isOnBoth() : "The decoding of sendable handlers is site-specific.";
-     * @require !connection.isOnClient() || entity instanceof Role : "On the client-side, the entity is a role.";
-     * @require !connection.isOnHost() || entity instanceof Identity : "On the host-side, the entity is an identity.";
-     * @require signature.getSubject() != null : "The subject of the signature is not null.";
-     * 
-     * @ensure getEntity() != null : "The entity of this handler is not null.";
-     * @ensure getSignature() != null : "The signature of this handler is not null.";
+     * @require !(entity instanceof Account) || canBeSentByHosts() : "Methods encoded on hosts can be sent by hosts.";
+     * @require !(entity instanceof Role) || !canOnlyBeSentByHosts() : "Methods encoded on clients cannot only be sent by hosts.";
      */
-    protected CoreServiceExternalAction(@Nonnull Entity connection, @Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull Block block, @Nonnull HostIdentifier recipient) throws InvalidEncodingException {
-        super(connection, entity, signature, block, recipient);
+    protected CoreServiceExternalAction(@Nonnull Entity entity, @Nonnull Identity subject) {
+        super(entity, subject, subject.getAddress().getHostIdentifier());
     }
     
     /**
-     * Creates an external action of the core service that encodes the content of a packet to the given recipient about the given subject.
+     * Creates an external action that decodes a packet with the given signature for the given entity.
      * 
-     * @param connection an open connection to the database.
      * @param entity the entity to which this handler belongs.
-     * @param subject the subject of this handler.
-     * @param recipient the recipient of this handler.
+     * @param signature the signature of this handler (or a dummy that just contains a subject).
+     * @param recipient the recipient of this method.
      * 
-     * @require !connection.isOnBoth() : "The encoding of actions is site-specific.";
-     * @require !connection.isOnClient() || entity instanceof Role : "On the client-side, the entity is a role.";
-     * @require !connection.isOnHost() || entity instanceof Identity : "On the host-side, the entity is an identity.";
-     * @require !connection.isOnClient() || !canOnlyBeSentByHost() : "Handlers only sendable by hosts may not occur on clients.";
-     * @require !connection.isOnHost()|| canBeSentByHost() : "Handlers encoded on hosts have to be sendable by hosts.";
+     * @require signature.getSubject() != null : "The subject of the signature is not null.";
      * 
-     * @ensure getEntity() != null : "The entity of this handler is not null.";
+     * @ensure getSignature() != null : "The signature of this handler is not null.";
      */
-    protected CoreServiceExternalAction(@Nonnull Entity connection, @Nonnull Entity entity, @Nonnull Identifier subject, @Nonnull HostIdentifier recipient) {
-        super(connection, entity, subject, recipient);
+    protected CoreServiceExternalAction(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws InvalidEncodingException {
+        super(entity, signature, recipient);
+        
+        if (!getSubject().getHostIdentifier().equals(getRecipient())) throw new InvalidEncodingException("The host of the subject and the recipient have to be the same for external actions of the core service.");
     }
     
     
+    @Pure
     @Override
     public final @Nonnull SemanticType getService() {
-        return SemanticType.CORE_SERVICE;
+        return CoreService.TYPE;
     }
     
     
+    @Pure
     @Override
     public boolean canBeSentByHosts() {
         return true;
     }
     
+    @Pure
     @Override
     public boolean canOnlyBeSentByHosts() {
         return true;
+    }
+    
+    @Pure
+    @Override
+    public @Nonnull ReadonlyAgentPermissions getRequiredPermissions() {
+        return AgentPermissions.NONE;
     }
     
 }

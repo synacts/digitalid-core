@@ -2,14 +2,15 @@ package ch.virtualid.handler.query.internal;
 
 import ch.virtualid.agent.Agent;
 import ch.virtualid.agent.AgentPermissions;
+import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.Role;
 import ch.virtualid.handler.InternalQuery;
-import ch.virtualid.handler.Method;
 import ch.virtualid.handler.Reply;
 import ch.virtualid.identity.FailedIdentityException;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.SemanticType;
+import ch.virtualid.module.CoreService;
 import ch.xdf.Block;
 import ch.xdf.SignatureWrapper;
 import ch.xdf.exceptions.InvalidEncodingException;
@@ -58,15 +59,10 @@ public abstract class CoreServiceInternalQuery extends InternalQuery {
     }
     
     
+    @Pure
     @Override
     public final @Nonnull SemanticType getService() {
-        return SemanticType.CORE_SERVICE;
-    }
-    
-    
-    @Override
-    public boolean isSimilarTo(@Nonnull Method other) {
-        return super.isSimilarTo(other) && other instanceof CoreServiceInternalQuery;
+        return CoreService.TYPE;
     }
     
     

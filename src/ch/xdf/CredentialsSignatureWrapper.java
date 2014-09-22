@@ -1,6 +1,7 @@
 package ch.xdf;
 
 import ch.virtualid.agent.AgentPermissions;
+import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.client.Client;
 import ch.virtualid.credential.ClientCredential;
 import ch.virtualid.credential.Credential;
@@ -467,7 +468,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
      * 
      * @return whether the permissions of each credential covers the given permissions.
      */
-    public boolean cover(@Nonnull AgentPermissions permissions) {
+    public boolean cover(@Nonnull ReadonlyAgentPermissions permissions) {
         for (@Nonnull Credential credential : credentials) {
             @Nullable AgentPermissions _permissions = credential.getPermissions();
             if (_permissions == null || !_permissions.cover(permissions)) return false;
@@ -480,7 +481,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
      * 
      * @param permissions the permissions that need to be covered.
      */
-    public void checkCoverage(@Nonnull AgentPermissions permissions) throws PacketException {
+    public void checkCover(@Nonnull ReadonlyAgentPermissions permissions) throws PacketException {
         if (!cover(permissions)) throw new PacketException(PacketError.AUTHORIZATION);
     }
     

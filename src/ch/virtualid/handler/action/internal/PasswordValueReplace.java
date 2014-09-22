@@ -135,7 +135,7 @@ public final class PasswordValueReplace extends CoreServiceInternalAction {
     }
     
     /**
-     * Stores the audit restrictions for this internal method.
+     * Stores the audit restrictions for this action.
      */
     private static final @Nonnull Restrictions auditRestrictions = new Restrictions(true, false, false);
     

@@ -95,8 +95,9 @@ public abstract class CoreServiceInternalAction extends InternalAction {
     protected abstract void executeOnBoth() throws SQLException;
     
     @Override
-    public void excecuteOnHost() throws PacketException, SQLException {
+    public void executeOnHostInternalAction() throws PacketException, SQLException {
         assert isOnHost() : "This method is called on a host.";
+        assert getSignature() != null : "The signature of this handler is not null.";
         
         final @Nonnull Agent agent = getSignatureNotNull().getAgent();
         
@@ -114,6 +115,8 @@ public abstract class CoreServiceInternalAction extends InternalAction {
     
     @Override
     public void executeOnClient() throws SQLException {
+        assert isOnClient() : "This method is called on a client.";
+        
         executeOnBoth();
     }
     

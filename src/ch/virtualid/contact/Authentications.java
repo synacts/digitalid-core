@@ -24,14 +24,9 @@ import javax.annotation.Nonnull;
 public final class Authentications extends AttributeSet implements ReadonlyAuthentications, Blockable {
     
     /**
-     * Stores the semantic type {@code type.authentication.contact@virtualid.ch}.
-     */
-    private static final @Nonnull SemanticType ATTRIBUTE_TYPE = SemanticType.create("type.authentication.contact@virtualid.ch").load(SemanticType.IDENTIFIER);
-    
-    /**
      * Stores the semantic type {@code authentication.contact@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("authentication.contact@virtualid.ch").load(ListWrapper.TYPE, ATTRIBUTE_TYPE);
+    public static final @Nonnull SemanticType TYPE = SemanticType.create("authentication.contact@virtualid.ch").load(ListWrapper.TYPE, SemanticType.ATTRIBUTE_IDENTIFIER);
     
     
     /**
@@ -86,12 +81,6 @@ public final class Authentications extends AttributeSet implements ReadonlyAuthe
      */
     public Authentications(@Nonnull Block block) throws InvalidEncodingException, FailedIdentityException, SQLException, InvalidDeclarationException {
         super(block);
-    }
-    
-    @Pure
-    @Override
-    public @Nonnull SemanticType getAttributeType() {
-        return ATTRIBUTE_TYPE;
     }
     
     @Pure

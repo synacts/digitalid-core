@@ -1,7 +1,9 @@
 package ch.virtualid.handler.reply.query;
 
+import ch.virtualid.annotations.Pure;
 import ch.virtualid.handler.QueryReply;
 import ch.virtualid.identity.SemanticType;
+import ch.virtualid.module.CoreService;
 import javax.annotation.Nonnull;
 
 /**
@@ -17,9 +19,10 @@ public abstract class CoreServiceQueryReply extends QueryReply {
     }
     
     
+    @Pure
     @Override
     public final @Nonnull SemanticType getService() {
-        return SemanticType.CORE_SERVICE;
+        return CoreService.TYPE;
     }
     
 }

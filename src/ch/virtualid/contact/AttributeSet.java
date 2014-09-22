@@ -1,5 +1,6 @@
 package ch.virtualid.contact;
 
+import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.annotations.Capturable;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.exceptions.InvalidDeclarationException;
@@ -76,16 +77,6 @@ public abstract class AttributeSet extends FreezableLinkedHashSet<SemanticType> 
     }
     
     /**
-     * Returns the type of the list elements.
-     * 
-     * @return the type of the list elements.
-     * 
-     * @ensure return.isBasedOn(SemanticType.IDENTIFIER) : "The returned type is based on the semantic type.";
-     */
-    @Pure
-    public abstract @Nonnull SemanticType getAttributeType();
-    
-    /**
      * @ensure return.isBasedOn(ListWrapper.TYPE) : "The returned type is based on the list type.";
      */
     @Pure
@@ -97,7 +88,7 @@ public abstract class AttributeSet extends FreezableLinkedHashSet<SemanticType> 
     public final @Nonnull Block toBlock() {
         final @Nonnull FreezableList<Block> elements = new FreezableArrayList<Block>(size());
         for (final @Nonnull SemanticType type : this) {
-            elements.add(type.getAddress().toBlock().setType(getAttributeType()));
+            elements.add(type.getAddress().toBlock().setType(SemanticType.ATTRIBUTE_IDENTIFIER));
         }
         return new ListWrapper(getType(), elements.freeze()).toBlock();
     }
@@ -144,6 +135,17 @@ public abstract class AttributeSet extends FreezableLinkedHashSet<SemanticType> 
     @Pure
     @Override
     public abstract @Capturable @Nonnull AttributeSet clone();
+    
+    
+    @Pure
+    @Override
+    public final @Capturable @Nonnull AgentPermissions toAgentPermissions() {
+        final @Nonnull AgentPermissions permissions = new AgentPermissions();
+        for (@Nonnull SemanticType type : this) {
+            permissions.put(type, false);
+        }
+        return permissions;
+    }
     
     
     @Pure

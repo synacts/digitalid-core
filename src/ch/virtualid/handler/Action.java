@@ -59,7 +59,17 @@ public abstract class Action extends Method implements Auditable {
     
     
     @Override
-    public abstract @Nullable ActionReply excecute() throws PacketException, SQLException;
+    public abstract @Nullable ActionReply executeOnHost() throws PacketException, SQLException;
+    
+    
+    /**
+     * Executes this internal action on the client.
+     * 
+     * @throws SQLException if this handler cannot be executed.
+     * 
+     * @require isOnClient() : "This method is called on a client.";
+     */
+    public abstract void executeOnClient() throws SQLException;
     
     
     @Pure

@@ -1,5 +1,6 @@
 package ch.virtualid.contact;
 
+import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.annotations.Capturable;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.identity.SemanticType;
@@ -24,6 +25,14 @@ public interface ReadonlyAttributeSet extends ReadonlySet<SemanticType>, Blockab
      */
     @Pure
     public boolean areSingle();
+    
+    /**
+     * Returns this attribute set as agent as agent permissions for reading.
+     * 
+     * @return this attribute set as agent as agent permissions for reading.
+     */
+    @Pure
+    public @Capturable @Nonnull AgentPermissions toAgentPermissions();
     
     
     @Pure
