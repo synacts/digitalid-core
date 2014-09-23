@@ -191,9 +191,9 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
      */
     protected SignatureWrapper(@Nonnull Block block, boolean signed) throws InvalidEncodingException {
         super(block);
-        cache = block;
         
-        final @Nonnull Block content = new TupleWrapper(new Block(IMPLEMENTATION, block)).getElementNotNull(0);
+        this.cache = new Block(IMPLEMENTATION, block);
+        final @Nonnull Block content = new TupleWrapper(cache).getElementNotNull(0);
         final @Nonnull TupleWrapper tuple = new TupleWrapper(content);
         this.subject = tuple.isElementNull(0) ? null : new NonHostIdentifier(tuple.getElementNotNull(0));
         if (signed && subject == null) throw new InvalidEncodingException("The subject may not be null if the element is signed.");
@@ -212,6 +212,20 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
      */
     @Pure
     public final @Nullable Block getElement() {
+        return element;
+    }
+    
+    /**
+     * Returns the element of the wrapped block.
+     * 
+     * @return the element of the wrapped block.
+     * 
+     * @require getElement() != null : "The element is not null.";
+     */
+    @Pure
+    public final @Nonnull Block getElementNotNull() {
+        assert element != null : "The element is not null.";
+        
         return element;
     }
     

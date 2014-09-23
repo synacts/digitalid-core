@@ -33,15 +33,12 @@ import org.javatuples.Pair;
  */
 public final class Role extends Entity implements Immutable, SQLizable, Observer {
     
+    // TODO: Make sure to also issue the CREATED notification!
+    
     /**
      * Stores the aspect of a new role being added to the observed role.
      */
     public static final @Nonnull Aspect ADDED = new Aspect(Role.class, "added");
-    
-    /**
-     * Stores the aspect of the observed role being removed from the database.
-     */
-    public static final @Nonnull Aspect REMOVED = new Aspect(Role.class, "removed");
     
     
     /**

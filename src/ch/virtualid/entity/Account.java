@@ -18,6 +18,8 @@ import javax.annotation.Nullable;
  */
 public final class Account extends Entity implements Immutable, SQLizable {
     
+    // TODO: Also support single access to database by introducing an index!
+    
     /**
      * Stores the host of this account.
      */

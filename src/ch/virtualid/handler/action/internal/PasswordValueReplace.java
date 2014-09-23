@@ -122,6 +122,12 @@ public final class PasswordValueReplace extends CoreServiceInternalAction {
         return new TupleWrapper(TYPE, elements.freeze()).toBlock();
     }
     
+    @Pure
+    @Override
+    public @Nonnull String toString() {
+        return "Replaces the password '" + oldValue + "' with '" + newValue + "'.";
+    }
+    
     
     /**
      * Stores the required restrictions for this internal method.

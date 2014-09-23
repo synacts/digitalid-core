@@ -12,6 +12,8 @@ import ch.virtualid.identity.NonHostIdentifier;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.both.Attributes;
 import ch.xdf.Block;
+import ch.xdf.SelfcontainedWrapper;
+import ch.xdf.SignatureWrapper;
 import ch.xdf.exceptions.InvalidEncodingException;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -25,7 +27,7 @@ import org.javatuples.Pair;
  * This class models an attribute with its value and visibility.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 0.3
+ * @version 1.5
  */
 public final class Attribute extends Concept {
     
@@ -46,11 +48,19 @@ public final class Attribute extends Concept {
      */
     public static final @Nonnull Aspect VISIBILITY = new Aspect(Attribute.class, "visibility");
     
+    
+    /**
+     * Stores the semantic type {@code attribute@virtualid.ch}.
+     */
+    public static final @Nonnull SemanticType TYPE = SemanticType.create("attribute@virtualid.ch").load(SelfcontainedWrapper.TYPE);
+    
+    
     /**
      * Stores an index of attributes that are already represented by instances of this class.
      */
     private static final @Nonnull Map<Pair<Entity, SemanticType>, Attribute> index = new HashMap<Pair<Entity, SemanticType>, Attribute>();
     // TODO: Split into Map<Entity, Map<SemanticType, Attribute>> and observe the removal of roles! What about the removal of permissions?
+    // TODO: This is also needed to reset all attributes of an entity.
     
     
     /**
@@ -63,6 +73,9 @@ public final class Attribute extends Concept {
      * Stores whether the value has already been loaded from the database.
      */
     private boolean valueLoaded = false;
+    
+    // TODO: Store the certificate as well and not just the value!
+    private @Nullable SignatureWrapper certificate;
     
     /**
      * Stores the value of this attribute.
@@ -132,10 +145,13 @@ public final class Attribute extends Concept {
      * 
      * @param entity the entity of the attribute to be returned.
      * @param block the block containing the type of the attribute.
+     * 
      * @return the attribute in the given block at the given entity.
      */
     @Deprecated
     public static @Nonnull Attribute get(@Nonnull Entity entity, @Nonnull Block block) throws InvalidEncodingException, FailedIdentityException {
+        // TODO: Assert the block type.
+        
         return get(entity, new NonHostIdentifier(block).getIdentity().toSemanticType());
     }
     

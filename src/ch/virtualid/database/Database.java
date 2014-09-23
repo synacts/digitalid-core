@@ -141,18 +141,18 @@ public final class Database implements Immutable {
             try {
                 final @Nonnull File root = new File(Database.class.getProtectionDomain().getCodeSource().getLocation().toURI());
                 logger.log(Level.INFORMATION, "Root of classes: " + root);
-
+                
                 if (root.getName().endsWith(".jar")) {
                     initializeJarFile(new JarFile(root));
                 } else {
                     initializeClasses(root, "");
                 }
-
+                
                 getConnection().commit();
             } catch (@Nonnull URISyntaxException | IOException | ClassNotFoundException | SQLException exception) {
                 throw new InitializationError("Could not load all classes.", exception);
             }
-
+            
             logger.log(Level.INFORMATION, "All classes have been loaded.");
         }
     }

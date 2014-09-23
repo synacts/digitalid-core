@@ -2,6 +2,7 @@ package ch.virtualid.entity;
 
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Client;
+import ch.virtualid.concept.Aspect;
 import ch.virtualid.concept.Concept;
 import ch.virtualid.concept.Instance;
 import ch.virtualid.exceptions.ShouldNeverHappenError;
@@ -24,6 +25,17 @@ import javax.annotation.Nonnull;
  * @version 2.0
  */
 public abstract class Entity extends Instance implements Immutable, SQLizable {
+    
+    /**
+     * Stores the aspect of the observed entity being created.
+     */
+    public static final @Nonnull Aspect CREATED = new Aspect(Entity.class, "created");
+    
+    /**
+     * Stores the aspect of the observed role being removed.
+     */
+    public static final @Nonnull Aspect REMOVED = new Aspect(Entity.class, "removed");
+    
     
     /**
      * Stores the data type used to reference instances of this class.

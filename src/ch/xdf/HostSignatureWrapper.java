@@ -1,8 +1,8 @@
 package ch.xdf;
 
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.client.Client;
 import ch.virtualid.auxiliary.Time;
+import ch.virtualid.client.Client;
 import ch.virtualid.cryptography.Element;
 import ch.virtualid.cryptography.PrivateKey;
 import ch.virtualid.cryptography.PublicKey;
@@ -34,11 +34,6 @@ import javax.annotation.Nullable;
  * @version 2.0
  */
 public final class HostSignatureWrapper extends SignatureWrapper implements Immutable {
-    
-    /**
-     * Stores the semantic type {@code certificate@virtualid.ch}.
-     */
-    public static final @Nonnull SemanticType CERTIFICATE = SemanticType.create("certificate@virtualid.ch").load(SignatureWrapper.TYPE, SelfcontainedWrapper.SELFCONTAINED);
     
     /**
      * Stores the semantic type {@code host.signature@virtualid.ch}.
@@ -82,6 +77,23 @@ public final class HostSignatureWrapper extends SignatureWrapper implements Immu
         } catch (@Nonnull InvalidEncodingException exception) {
             throw new ShouldNeverHappenError("There should always be a key for the current time.", exception);
         }
+    }
+    
+    /**
+     * Encodes the element into a new block and signs it according to the arguments.
+     * 
+     * @param type the semantic type of the new block.
+     * @param element the element to encode into the new block.
+     * @param subject the identifier of the identity about which a statement is made.
+     * @param signer the identifier of the signing identity.
+     * 
+     * @require type.isLoaded() : "The type declaration is loaded.";
+     * @require type.isBasedOn(getSyntacticType()) : "The given type is based on the indicated syntactic type.";
+     * @require element == null || element.getType().isBasedOn(type.getParameters().getNotNull(0)) : "The element is either null or based on the parameter of the given type.";
+     * @require Server.hasHost(signer.getHostIdentifier()) : "The host of the signer is running on this server.";
+     */
+    public HostSignatureWrapper(@Nonnull SemanticType type, @Nullable Block element, @Nonnull Identifier subject, @Nonnull Identifier signer) {
+        this(type, element, subject, null, signer);
     }
     
     /**

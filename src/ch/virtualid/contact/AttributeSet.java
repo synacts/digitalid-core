@@ -151,12 +151,12 @@ public abstract class AttributeSet extends FreezableLinkedHashSet<SemanticType> 
     @Pure
     @Override
     public final @Nonnull String toString() {
-        final @Nonnull StringBuilder string = new StringBuilder("[");
+        final @Nonnull StringBuilder string = new StringBuilder("{");
         for (final @Nonnull SemanticType type : this) {
             if (string.length() != 1) string.append(", ");
             string.append(type.getAddress().getString());
         }
-        string.append("]");
+        string.append("}");
         return string.toString();
     }
     

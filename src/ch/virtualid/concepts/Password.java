@@ -5,6 +5,8 @@ import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Synchronizer;
 import ch.virtualid.concept.Aspect;
 import ch.virtualid.concept.Concept;
+import ch.virtualid.concept.Instance;
+import ch.virtualid.concept.Observer;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.Role;
@@ -150,6 +152,12 @@ public final class Password extends Concept {
                 if (password == null) {
                     password = new Password(entity, value);
                     index.put(entity, password);
+                    entity.observe(new Observer() {
+                        @Override
+                        public void notify(@Nonnull Aspect aspect, @Nonnull Instance instance) {
+                            synchronized(index) { index.remove(instance); }
+                        }
+                    }, Entity.REMOVED);
                 }
                 return password;
             }

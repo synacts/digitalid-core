@@ -99,6 +99,12 @@ public final class AccessRequest extends CoreServiceExternalAction {
         return attributes.toBlock().setType(TYPE);
     }
     
+    @Pure
+    @Override
+    public @Nonnull String toString() {
+        return "Requests access to " + attributes + ".";
+    }
+    
     
     /**
      * Returns the attributes of this access request.

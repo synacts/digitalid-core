@@ -70,9 +70,6 @@ public abstract class Instance {
         
         final @Nullable Set<Observer> observers = map.get(aspect);
         if (observers != null) {
-            if (aspect.getClazz().isInstance(instance)) {
-                new Object();
-            }
             for (final @Nonnull Observer observer : observers) observer.notify(aspect, instance);
         }
     }
@@ -127,9 +124,11 @@ public abstract class Instance {
      * 
      * @require aspects.length > 0 : "At least one aspect is provided.";
      * @require Database.isSingleAccess() : "The database is in single-access mode.";
+     * @require for (Aspect aspect : aspects) aspect.getClazz().isInstance(this) : "This is an instance of the aspect's class.";
      */
     public final void observe(@Nonnull Observer observer, @Nonnull Aspect... aspects) {
         assert Database.isSingleAccess() : "The database is in single-access mode.";
+        for (final @Nonnull Aspect aspect : aspects) assert aspect.getClazz().isInstance(this) : "This is an instance of the aspect's class.";
         
         if (instanceObservers == null) instanceObservers = new HashMap<Aspect, Set<Observer>>();
         observe(instanceObservers, observer, aspects);
@@ -143,9 +142,11 @@ public abstract class Instance {
      * 
      * @require aspects.length > 0 : "At least one aspect is provided.";
      * @require Database.isSingleAccess() : "The database is in single-access mode.";
+     * @require for (Aspect aspect : aspects) aspect.getClazz().isInstance(this) : "This is an instance of the aspect's class.";
      */
     public final void unobserve(@Nonnull Observer observer, @Nonnull Aspect... aspects) {
         assert Database.isSingleAccess() : "The database is in single-access mode.";
+        for (final @Nonnull Aspect aspect : aspects) assert aspect.getClazz().isInstance(this) : "This is an instance of the aspect's class.";
         
         if (instanceObservers != null) unobserve(instanceObservers, observer, aspects);
     }
