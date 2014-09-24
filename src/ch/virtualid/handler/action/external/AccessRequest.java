@@ -62,7 +62,7 @@ public final class AccessRequest extends CoreServiceExternalAction {
      * @require !(entity instanceof Role) || !canOnlyBeSentByHosts() : "Methods encoded on clients cannot only be sent by hosts.";
      * @require !attributes.isEmpty() : "The set of attributes is not empty.";
      */
-    protected AccessRequest(@Nonnull Entity entity, @Nonnull Identity subject, @Nonnull ReadonlyContactPermissions attributes) {
+    public AccessRequest(@Nonnull Entity entity, @Nonnull Identity subject, @Nonnull ReadonlyContactPermissions attributes) {
         super(entity, subject);
         
         assert !attributes.isEmpty() : "The set of attributes is not empty.";
@@ -84,7 +84,7 @@ public final class AccessRequest extends CoreServiceExternalAction {
      * 
      * @ensure getSignature() != null : "The signature of this handler is not null.";
      */
-    protected AccessRequest(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws InvalidEncodingException, FailedIdentityException, SQLException, InvalidDeclarationException {
+    private AccessRequest(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws InvalidEncodingException, FailedIdentityException, SQLException, InvalidDeclarationException {
         super(entity, signature, recipient);
         
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";

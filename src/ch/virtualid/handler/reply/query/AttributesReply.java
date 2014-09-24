@@ -1,7 +1,6 @@
 package ch.virtualid.handler.reply.query;
 
-import ch.virtualid.handler.Reply;
-import ch.virtualid.concept.Entity;
+import ch.virtualid.handler.query.external.AttributesQuery;
 import ch.xdf.Block;
 import ch.xdf.SignatureWrapper;
 import java.sql.Connection;
@@ -10,10 +9,12 @@ import javax.annotation.Nonnull;
 /**
  * Description.
  * 
+ * @see AttributesQuery
+ * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 0.0
  */
-public final class GetAttributesReply extends Reply {
+public final class AttributesReply extends CoreServiceQueryReply {
     
     /**
      * Creates a new reply with the given connection, entity, signature and block.
@@ -23,7 +24,7 @@ public final class GetAttributesReply extends Reply {
      * @param signature the signature of the packet.
      * @param block the element of the content.
      */
-    protected GetAttributesReply(@Nonnull Connection connection, @Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull Block block) {
+    protected AttributesReply(@Nonnull Connection connection, @Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull Block block) {
         super(connection, entity, signature, block);
     }
     

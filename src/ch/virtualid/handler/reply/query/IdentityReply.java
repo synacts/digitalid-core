@@ -1,7 +1,7 @@
 package ch.virtualid.handler.reply.query;
 
-import ch.virtualid.handler.Reply;
-import ch.virtualid.handler.query.external.GetIdentityQuery;
+import ch.virtualid.entity.Account;
+import ch.virtualid.handler.query.external.IdentityQuery;
 import ch.virtualid.identity.Category;
 import ch.virtualid.identity.NonHostIdentity;
 import ch.virtualid.identity.SemanticType;
@@ -15,12 +15,12 @@ import javax.annotation.Nonnull;
 /**
  * Description.
  * 
- * @see GetIdentityQuery
+ * @see IdentityQuery
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 0.1
  */
-public final class GetIdentityReply extends Reply {
+public final class IdentityReply extends CoreServiceQueryReply {
     
     /**
      * Stores the semantic type {@code successor.identity@virtualid.ch}.
@@ -43,7 +43,12 @@ public final class GetIdentityReply extends Reply {
     public static final @Nonnull SemanticType TYPE = SemanticType.create("response.identity@virtualid.ch").load(TupleWrapper.TYPE, Category.TYPE, PREDECESSORS, SUCCESSOR);
     
     // Load the recursive declaration of the predecessor type.
-    static { PREDECESSOR.load(TupleWrapper.TYPE, NonHostIdentity.IDENTIFIER, GetIdentityReply.PREDECESSORS); }
+    static { PREDECESSOR.load(TupleWrapper.TYPE, NonHostIdentity.IDENTIFIER, IdentityReply.PREDECESSORS); }
+    
+    
+    public IdentityReply(@Nonnull Account account) {
+        super(account);
+    }
     
     
     /**
@@ -54,7 +59,7 @@ public final class GetIdentityReply extends Reply {
      * @param signature the signature of the packet.
      * @param block the element of the content.
      */
-    protected GetIdentityReply(@Nonnull Connection connection, @Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull Block block) {
+    protected IdentityReply(@Nonnull Connection connection, @Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull Block block) {
         super(connection, entity, signature, block);
     }
     

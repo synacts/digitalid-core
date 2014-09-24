@@ -6,6 +6,7 @@ import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Entity;
+import ch.virtualid.handler.action.internal.AccountOpen;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.Identifier;
 import ch.virtualid.packet.PacketException;
@@ -29,6 +30,7 @@ public abstract class Action extends Method implements Auditable {
     
     /**
      * Creates an action that encodes the content of a packet for the given recipient about the given subject.
+     * The entity is only null for {@link AccountOpen} which inherits directly from this class.
      * 
      * @param entity the entity to which this handler belongs.
      * @param subject the subject of this handler.

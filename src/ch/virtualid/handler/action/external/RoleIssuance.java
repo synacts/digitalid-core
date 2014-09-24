@@ -73,7 +73,7 @@ public final class RoleIssuance extends CoreServiceExternalAction {
      * @require account.getIdentity() instanceof Person : "The account belongs to a person.";
      * @require attribute.getType().isAttributeFor(subject.getCategory()) : "The block is an attribute for the subject.";
      */
-    protected RoleIssuance(@Nonnull Account account, @Nonnull Identity subject, @Nonnull Block attribute) {
+    public RoleIssuance(@Nonnull Account account, @Nonnull Identity subject, @Nonnull Block attribute) {
         super(account, subject);
         
         assert account.getIdentity() instanceof Person : "The account belongs to a person.";
@@ -97,7 +97,7 @@ public final class RoleIssuance extends CoreServiceExternalAction {
      * 
      * @ensure getSignature() != null : "The signature of this handler is not null.";
      */
-    protected RoleIssuance(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws InvalidEncodingException, FailedIdentityException, SQLException, InvalidDeclarationException {
+    private RoleIssuance(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws InvalidEncodingException, FailedIdentityException, SQLException, InvalidDeclarationException {
         super(entity, signature, recipient);
         
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";

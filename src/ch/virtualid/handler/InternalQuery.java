@@ -39,7 +39,7 @@ public abstract class InternalQuery extends Query implements InternalMethod {
      * Creates an internal query that decodes a packet with the given signature for the given entity.
      * 
      * @param entity the entity to which this handler belongs.
-     * @param signature the signature of this handler (or a dummy that just contains a subject).
+     * @param signature the signature of this handler.
      * @param recipient the recipient of this method.
      * 
      * @require signature.getSubject() != null : "The subject of the signature is not null.";
@@ -58,18 +58,6 @@ public abstract class InternalQuery extends Query implements InternalMethod {
     @Override
     public boolean isSimilarTo(@Nonnull Method other) {
         return super.isSimilarTo(other) && other instanceof InternalQuery;
-    }
-    
-    @Pure
-    @Override
-    public final boolean canBeSentByHosts() {
-        return false;
-    }
-    
-    @Pure
-    @Override
-    public final boolean canOnlyBeSentByHosts() {
-        return false;
     }
     
 }
