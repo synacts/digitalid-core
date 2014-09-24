@@ -1,37 +1,62 @@
 package ch.virtualid.client;
 
-import ch.virtualid.entity.Role;
+import ch.virtualid.database.Database;
 import ch.virtualid.handler.Action;
 import ch.virtualid.handler.InternalAction;
+import ch.virtualid.identity.SemanticType;
+import ch.virtualid.module.BothModule;
+import ch.virtualid.module.Service;
 import ch.virtualid.module.client.Synchronization;
+import ch.virtualid.util.ReadonlyList;
 import java.sql.SQLException;
+import java.util.HashSet;
 import java.util.Queue;
+import java.util.Set;
 import javax.annotation.Nonnull;
 
 /**
  * Description.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 0.0
+ * @version 0.1
  */
 public final class Synchronizer extends Thread {
     
-    private static final Queue<Action> queue; // should be synchronized
+    private static final @Nonnull Queue<Action> queue; // should be synchronized
+    
+    /**
+     * Stores the types of the modules that are currently suspended.
+     */
+    private static final @Nonnull Set<SemanticType> suspendedModules = new HashSet<SemanticType>();
     
     static {
         // Load the queue from the database.
         // Create a thread and enter run().
     }
     
-    // TODO: Also allow queries here? -> Rather no, the replies of queries are needed immediately (and are thus blocking).
+    /**
+     * Executes the given action on the client and 
+     * 
+     * @param action
+     */
     public static void execute(@Nonnull InternalAction action) throws SQLException {
-        assert action.getEntityNotNull() instanceof Role : "The action is on the client.";
+        assert action.isOnClient() : "The internal action is on the client.";
+        
+        action.getModule(); // TODO: Make sure the module is not suspended. Otherwise, pause until it's no longer suspended.
         
         // TODO: Include the entity, recipient and subject in the queue! + service
         Synchronization.queue(action); // Writes the action with its entity to the database through the connection of the action without commit. -> Include the name of the client in the database table.
-        action.executeOnClient(); // TODO: Only in case of internal requests? -> actions?!
-        action.commit();
+        action.executeOnClient();
+        Database.getConnection().commit();
         queue.add(action);
+    }
+    
+    
+    public static void reload(@Nonnull Service service) {
+        final @Nonnull ReadonlyList<BothModule> modules = service.getModules();
+        // TODO: Suspend all modules.
+        // TODO: Do the magic.
+        // TODO: Release all modules again.
     }
     
     

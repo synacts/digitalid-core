@@ -1,12 +1,17 @@
 package ch.virtualid.module;
 
+import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Client;
 import ch.virtualid.entity.Site;
+import ch.virtualid.identity.SemanticType;
 import ch.virtualid.server.Host;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * A module manages an {@link Entity entity}'s partial state in the {@link Database database}.
@@ -31,6 +36,23 @@ public abstract class Module {
     private static final List<Module> clientModules = new LinkedList<Module>();
     
     /**
+     * Maps the modules that are used on both hosts and clients from their type.
+     */
+    private static final Map<SemanticType, BothModule> bothModules = new HashMap<SemanticType, BothModule>();
+    
+    /**
+     * Returns the both module with the given type.
+     * 
+     * @param type the type of the module to return.
+     * 
+     * @return the both module with the given type.
+     */
+    @Pure
+    public static @Nullable BothModule get(@Nonnull SemanticType type) {
+        return bothModules.get(type);
+    }
+    
+    /**
      * Adds the given both module to both the list of host and client modules.
      * 
      * @param bothModule the module to add to both the list of host and client modules.
@@ -38,6 +60,7 @@ public abstract class Module {
     protected static void add(@Nonnull BothModule bothModule) {
         hostModules.add(bothModule);
         clientModules.add(bothModule);
+        bothModules.put(bothModule.getType(), bothModule);
     }
     
     /**

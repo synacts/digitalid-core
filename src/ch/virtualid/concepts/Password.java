@@ -13,10 +13,10 @@ import ch.virtualid.entity.Role;
 import ch.virtualid.handler.action.internal.PasswordValueReplace;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.both.Passwords;
+import ch.virtualid.util.ConcurrentHashMap;
+import ch.virtualid.util.ConcurrentMap;
 import ch.xdf.StringWrapper;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -32,6 +32,11 @@ public final class Password extends Concept {
      * Stores the aspect of the value being changed at the observed password.
      */
     public static final @Nonnull Aspect VALUE = new Aspect(Password.class, "value changed");
+    
+    /**
+     * Stores the aspect of the password being reset at having reloaded the passwords module.
+     */
+    public static final @Nonnull Aspect RESET = new Aspect(Password.class, "password reset");
     
     
     /**
@@ -130,7 +135,7 @@ public final class Password extends Concept {
     /**
      * Caches passwords given their entity.
      */
-    private static final @Nonnull Map<Entity, Password> index = new HashMap<Entity, Password>();
+    private static final @Nonnull ConcurrentMap<Entity, Password> index = new ConcurrentHashMap<Entity, Password>();
     
     /**
      * Returns the (locally cached) password of the given entity.
@@ -147,22 +152,27 @@ public final class Password extends Concept {
         
         final @Nonnull String value = Passwords.get(entity);
         if (Database.isSingleAccess()) {
-            synchronized(index) {
-                @Nullable Password password = index.get(entity);
-                if (password == null) {
-                    password = new Password(entity, value);
-                    index.put(entity, password);
-                    entity.observe(new Observer() {
-                        @Override
-                        public void notify(@Nonnull Aspect aspect, @Nonnull Instance instance) {
-                            synchronized(index) { index.remove(instance); }
-                        }
-                    }, Entity.REMOVED);
-                }
-                return password;
+            @Nullable Password password = index.get(entity);
+            if (password == null) {
+                password = index.putIfAbsentReturnPresent(entity, new Password(entity, value));
+                entity.observe(new Observer() { @Override public void notify(@Nonnull Aspect aspect, @Nonnull Instance instance) { index.remove(instance); } }, Entity.REMOVED);
             }
+            return password;
         } else {
             return new Password(entity, value);
+        }
+    }
+    
+    /**
+     * Resets the password of the given entity after having reloaded the passwords module.
+     * 
+     * @param entity the entity whose password is to be reset.
+     */
+    public static void reset(@Nonnull Entity entity) throws SQLException {
+        final @Nullable Password password = index.get(entity);
+        if (password != null) {
+            password.value = Passwords.get(entity);
+            password.notify(RESET);
         }
     }
     

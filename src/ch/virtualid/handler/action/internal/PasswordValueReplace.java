@@ -10,6 +10,7 @@ import ch.virtualid.handler.Method;
 import ch.virtualid.identity.FailedIdentityException;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.SemanticType;
+import ch.virtualid.module.both.Passwords;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.ReadonlyArray;
 import ch.xdf.Block;
@@ -164,6 +165,13 @@ public final class PasswordValueReplace extends CoreServiceInternalAction {
         assert isOnClient() : "This method is called on a client.";
         
         return new PasswordValueReplace(password, newValue, oldValue);
+    }
+    
+    
+    @Pure
+    @Override
+    public @Nonnull SemanticType getModule() {
+        return Passwords.TYPE;
     }
     
     

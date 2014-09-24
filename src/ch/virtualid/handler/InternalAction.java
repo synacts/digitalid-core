@@ -8,7 +8,10 @@ import ch.virtualid.exceptions.InvalidDeclarationException;
 import ch.virtualid.handler.action.internal.CoreServiceInternalAction;
 import ch.virtualid.identity.FailedIdentityException;
 import ch.virtualid.identity.HostIdentifier;
+import ch.virtualid.identity.SemanticType;
 import ch.virtualid.packet.PacketException;
+import ch.virtualid.util.FreezableLinkedList;
+import ch.virtualid.util.ReadonlyList;
 import ch.xdf.SignatureWrapper;
 import ch.xdf.exceptions.InvalidEncodingException;
 import java.sql.SQLException;
@@ -112,6 +115,30 @@ public abstract class InternalAction extends Action implements InternalMethod {
     public final void reverseOnClient() throws SQLException {
         final @Nullable InternalAction reverse = getReverse();
         if (reverse != null) reverse.executeOnClient();
+    }
+    
+    
+    /**
+     * Returns the module on which this action operates.
+     * 
+     * @return the module on which this action operates.
+     */
+    @Pure
+    public abstract @Nonnull SemanticType getModule();
+    
+    /**
+     * Stores an empty list of semantic types.
+     */
+    private static final @Nonnull ReadonlyList<SemanticType> emptyList = new FreezableLinkedList<SemanticType>().freeze();
+    
+    /**
+     * Returns the modules that need to be reloaded and are thus suspended.
+     * 
+     * @return the modules that need to be reloaded and are thus suspended.
+     */
+    @Pure
+    public @Nonnull ReadonlyList<SemanticType> suspendModules() {
+        return emptyList;
     }
     
 }

@@ -203,6 +203,8 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
      */
     private static final @Nonnull Map<Pair<Entity, Long>, OutgoingRole> index = new HashMap<Pair<Entity, Long>, OutgoingRole>();
     
+    // TODO: Make similar changes as in the Context class.
+    
     /**
      * Returns a (locally cached) outgoing role that might not (yet) exist in the database.
      * 

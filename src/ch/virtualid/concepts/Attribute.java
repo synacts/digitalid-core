@@ -61,6 +61,7 @@ public final class Attribute extends Concept {
     private static final @Nonnull Map<Pair<Entity, SemanticType>, Attribute> index = new HashMap<Pair<Entity, SemanticType>, Attribute>();
     // TODO: Split into Map<Entity, Map<SemanticType, Attribute>> and observe the removal of roles! What about the removal of permissions?
     // TODO: This is also needed to reset all attributes of an entity.
+    // TODO: Make similar changes as in the Context class.
     
     
     /**

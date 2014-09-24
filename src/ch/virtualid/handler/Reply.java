@@ -23,12 +23,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -122,7 +121,7 @@ public abstract class Reply extends Handler implements SQLizable {
     /**
      * Maps reply types to the factory that creates handlers for that type.
      */
-    private static final @Nonnull Map<SemanticType, Reply.Factory> factories = Collections.synchronizedMap(new HashMap<SemanticType, Reply.Factory>());
+    private static final @Nonnull Map<SemanticType, Reply.Factory> factories = new ConcurrentHashMap<SemanticType, Reply.Factory>();
     
     /**
      * Adds the given reply factory.

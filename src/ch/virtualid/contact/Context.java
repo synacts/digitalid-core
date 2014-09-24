@@ -5,6 +5,8 @@ import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Synchronizer;
 import ch.virtualid.concept.Aspect;
 import ch.virtualid.concept.Concept;
+import ch.virtualid.concept.Instance;
+import ch.virtualid.concept.Observer;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.Role;
@@ -13,6 +15,8 @@ import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
 import ch.virtualid.module.both.Contexts;
+import ch.virtualid.util.ConcurrentHashMap;
+import ch.virtualid.util.ConcurrentMap;
 import ch.xdf.Block;
 import ch.xdf.Int64Wrapper;
 import ch.xdf.exceptions.InvalidEncodingException;
@@ -20,13 +24,11 @@ import java.security.SecureRandom;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import org.javatuples.Pair;
 
 /**
  * This class represents the context for contacts.
@@ -75,6 +77,11 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
      * Stores the aspect of the observed context being created in the database.
      */
     public static final @Nonnull Aspect CREATED = new Aspect(Context.class, "created");
+    
+    /**
+     * Stores the aspect of the observed context being reset after having reloaded the contexts module.
+     */
+    public static final @Nonnull Aspect RESET = new Aspect(Context.class, "reset");
     
     
     /**
@@ -174,6 +181,17 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
     @Pure
     public boolean isRoot() {
         return number == ROOT;
+    }
+    
+    
+    /**
+     * Reset this context.
+     */
+    private void reset() {
+        this.name = null;
+        this.permissions = null;
+        // TODO: Add the other fields once decalred.
+        notify(RESET);
     }
     
     
@@ -454,10 +472,7 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
     /**
      * Caches contexts given their entity and number.
      */
-    private static final @Nonnull Map<Pair<Entity, Long>, Context> index = new HashMap<Pair<Entity, Long>, Context>();
-    
-    // TODO: Introduce the possibility to reset all contexts of a certain entity? This is needed when the module is reloaded from the host.
-    // TODO: Also add a corresponding aspect to listen to. The same has to be done for contacts and agents!
+    private static final @Nonnull ConcurrentMap<Entity, ConcurrentMap<Long, Context>> index = new ConcurrentHashMap<Entity, ConcurrentMap<Long, Context>>();
     
     /**
      * Returns a (locally cached) context that might not (yet) exist in the database.
@@ -470,15 +485,14 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
     @Pure
     public static @Nonnull Context get(@Nonnull Entity entity, long number) {
         if (Database.isSingleAccess()) {
-            synchronized(index) {
-                final @Nonnull Pair<Entity, Long> pair = new Pair<Entity, Long>(entity, number);
-                @Nullable Context context = index.get(pair);
-                if (context == null) {
-                    context = new Context(entity, number);
-                    index.put(pair, context);
-                }
-                return context;
+            @Nullable ConcurrentMap<Long, Context> map = index.get(entity);
+            if (map == null) map = index.putIfAbsentReturnPresent(entity, new ConcurrentHashMap<Long, Context>());
+            @Nullable Context context = map.get(number);
+            if (context == null) {
+                context = map.putIfAbsentReturnPresent(number, new Context(entity, number));
+                entity.observe(new Observer() { @Override public void notify(@Nonnull Aspect aspect, @Nonnull Instance instance) { index.remove(instance); } }, Entity.REMOVED);
             }
+            return context;
         } else {
             return new Context(entity, number);
         }
@@ -527,6 +541,19 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
     @Override
     public void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
         preparedStatement.setLong(parameterIndex, getNumber());
+    }
+    
+    /**
+     * Resets the contexts of the given entity after having reloaded the contexts module.
+     * 
+     * @param entity the entity whose contexts are to be reset.
+     */
+    public static void reset(@Nonnull Entity entity) {
+        final @Nullable ConcurrentMap<Long, Context> map = index.get(entity);
+        if (map != null) {
+            final @Nonnull Collection<Context> contexts = map.values();
+            for (final @Nonnull Context context : contexts) context.reset();
+        }
     }
     
     

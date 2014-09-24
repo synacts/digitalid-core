@@ -7,13 +7,14 @@ import ch.virtualid.entity.Site;
 import ch.virtualid.exceptions.ShouldNeverHappenError;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.util.FreezableArray;
+import ch.virtualid.util.FreezableLinkedList;
+import ch.virtualid.util.FreezableList;
 import ch.virtualid.util.ReadonlyArray;
+import ch.virtualid.util.ReadonlyList;
 import ch.xdf.Block;
 import ch.xdf.TupleWrapper;
 import ch.xdf.exceptions.InvalidEncodingException;
 import java.sql.SQLException;
-import java.util.LinkedList;
-import java.util.List;
 import javax.annotation.Nonnull;
 
 /**
@@ -77,10 +78,20 @@ public abstract class Service extends BothModule implements Immutable {
         throw new ShouldNeverHappenError("The method 'createTables' should never be called on a service.");
     }
     
+    
     /**
      * Stores the modules that represent an entity's state in the specified order.
      */
-    private final @Nonnull List<BothModule> modules = new LinkedList<BothModule>();
+    private final @Nonnull FreezableList<BothModule> modules = new FreezableLinkedList<BothModule>();
+    
+    /**
+     * Returns the list of both modules that belong to this service.
+     * 
+     * @return the list of both modules that belong to this service.
+     */
+    public final @Nonnull ReadonlyList<BothModule> getModules() {
+        return modules;
+    }
     
     /**
      * Adds the given module to the tuple of modules.

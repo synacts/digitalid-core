@@ -3,11 +3,14 @@ package ch.virtualid.module;
 import ch.virtualid.agent.Agent;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Entity;
+import ch.virtualid.entity.Role;
+import ch.virtualid.handler.InternalQuery;
 import ch.virtualid.identity.SemanticType;
 import ch.xdf.Block;
 import ch.xdf.exceptions.InvalidEncodingException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * These modules are used on both {@link Host hosts} and {@link Client clients}.
@@ -56,5 +59,16 @@ public abstract class BothModule extends Module {
      * @param entity the entity whose entries are to be removed.
      */
     protected abstract void removeAll(@Nonnull Entity entity) throws SQLException;
+    
+    
+    /**
+     * Returns 
+     * 
+     * @param role
+     * 
+     * @return 
+     */
+    @Pure
+    public abstract @Nullable InternalQuery getInternalQuery(@Nonnull Role role);
     
 }

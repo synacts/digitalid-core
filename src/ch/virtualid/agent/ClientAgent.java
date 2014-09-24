@@ -231,6 +231,8 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
      */
     private static final @Nonnull Map<Pair<Entity, Long>, ClientAgent> index = new HashMap<Pair<Entity, Long>, ClientAgent>();
     
+    // TODO: Make similar changes as in the Context class.
+    
     /**
      * Returns a (locally cached) client agent that might not (yet) exist in the database.
      * 

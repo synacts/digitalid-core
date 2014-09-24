@@ -2,8 +2,8 @@ package ch.xdf;
 
 import ch.virtualid.annotations.Exposed;
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.client.Client;
 import ch.virtualid.auxiliary.Time;
+import ch.virtualid.client.Client;
 import ch.virtualid.cryptography.PrivateKey;
 import ch.virtualid.cryptography.PublicKey;
 import ch.virtualid.cryptography.PublicKeyChain;
@@ -21,9 +21,8 @@ import ch.xdf.exceptions.FailedEncodingException;
 import ch.xdf.exceptions.InvalidEncodingException;
 import java.math.BigInteger;
 import java.sql.SQLException;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.javatuples.Pair;
@@ -57,7 +56,7 @@ public final class EncryptionWrapper extends BlockWrapper implements Immutable {
     /**
      * Caches the encrypted key for a given pair of public key and symmetric key.
      */
-    private static final @Nonnull Map<Pair<PublicKey, SymmetricKey>, Block> encryptions = Collections.synchronizedMap(new HashMap<Pair<PublicKey, SymmetricKey>, Block>());
+    private static final @Nonnull Map<Pair<PublicKey, SymmetricKey>, Block> encryptions = new ConcurrentHashMap<Pair<PublicKey, SymmetricKey>, Block>();
     
     /**
      * Encrypts the given symmetric key for the given public key.
@@ -80,7 +79,7 @@ public final class EncryptionWrapper extends BlockWrapper implements Immutable {
     /**
      * Caches the symmetric key for a given pair of private key and encrypted key.
      */
-    private static final @Nonnull Map<Pair<PrivateKey, Block>, SymmetricKey> decryptions = Collections.synchronizedMap(new HashMap<Pair<PrivateKey, Block>, SymmetricKey>());
+    private static final @Nonnull Map<Pair<PrivateKey, Block>, SymmetricKey> decryptions = new ConcurrentHashMap<Pair<PrivateKey, Block>, SymmetricKey>();
     
     /**
      * Decrypts the given key with the given private key.

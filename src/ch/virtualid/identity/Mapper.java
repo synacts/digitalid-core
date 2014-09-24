@@ -33,14 +33,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.javatuples.Triplet;
@@ -186,12 +185,12 @@ public final class Mapper {
     /**
      * Maps numbers onto identities by caching the corresponding entries from the database.
      */
-    private static final @Nonnull Map<Long, Identity> numbers = Collections.synchronizedMap(new HashMap<Long, Identity>());
+    private static final @Nonnull Map<Long, Identity> numbers = new ConcurrentHashMap<Long, Identity>();
     
     /**
      * Maps identifiers onto identities by caching the corresponding entries from the database.
      */
-    private static final @Nonnull Map<Identifier, Identity> identifiers = Collections.synchronizedMap(new HashMap<Identifier, Identity>());
+    private static final @Nonnull Map<Identifier, Identity> identifiers = new ConcurrentHashMap<Identifier, Identity>();
     
     
     /**

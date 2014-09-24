@@ -105,6 +105,8 @@ public final class Contact extends Concept implements Immutable, Blockable, SQLi
      */
     private static final @Nonnull Map<Pair<Entity, Person>, Contact> index = new HashMap<Pair<Entity, Person>, Contact>();
     
+    // TODO: Make similar changes as in the Context class.
+    
     /**
      * Returns a (locally cached) contact of the given person.
      * 

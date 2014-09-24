@@ -42,10 +42,9 @@ import ch.xdf.SignatureWrapper;
 import ch.xdf.exceptions.FailedEncodingException;
 import ch.xdf.exceptions.InvalidEncodingException;
 import java.sql.SQLException;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -351,7 +350,7 @@ public abstract class Method extends Handler {
     /**
      * Maps method types to the factory that creates handlers for that type.
      */
-    private static final @Nonnull Map<SemanticType, Method.Factory> factories = Collections.synchronizedMap(new HashMap<SemanticType, Method.Factory>());
+    private static final @Nonnull Map<SemanticType, Method.Factory> factories = new ConcurrentHashMap<SemanticType, Method.Factory>();
     
     /**
      * Adds the given method factory.
