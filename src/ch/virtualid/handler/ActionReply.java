@@ -10,7 +10,7 @@ import ch.virtualid.entity.Entity;
 import ch.virtualid.handler.reply.action.CoreServiceActionReply;
 import ch.virtualid.module.Service;
 import ch.virtualid.packet.Audit;
-import ch.virtualid.server.Pusher;
+import ch.virtualid.pusher.Pusher;
 import ch.xdf.HostSignatureWrapper;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

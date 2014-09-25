@@ -5,6 +5,7 @@ import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
+import ch.virtualid.concept.Aspect;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.handler.action.internal.AccountOpen;
 import ch.virtualid.identity.HostIdentifier;
@@ -27,6 +28,12 @@ import javax.annotation.Nullable;
  * @version 2.0
  */
 public abstract class Action extends Method implements Auditable {
+    
+    /**
+     * Stores the aspect of the sending having failed for the observed action.
+     */
+    public static final @Nonnull Aspect FAILED = new Aspect(Action.class, "sending failed");
+    
     
     /**
      * Creates an action that encodes the content of a packet for the given recipient about the given subject.
@@ -72,6 +79,12 @@ public abstract class Action extends Method implements Auditable {
      * @require isOnClient() : "This method is called on a client.";
      */
     public abstract void executeOnClient() throws SQLException;
+    
+    /**
+     * Executes this action in case of failure
+     * (if an error occurred during pushing).
+     */
+    public abstract void executeOnFailure() throws SQLException;
     
     
     @Pure

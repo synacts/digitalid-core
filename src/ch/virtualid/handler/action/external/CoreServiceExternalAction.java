@@ -33,7 +33,7 @@ public abstract class CoreServiceExternalAction extends ExternalAction {
      * @require !(entity instanceof Role) || !canOnlyBeSentByHosts() : "Methods encoded on clients cannot only be sent by hosts.";
      */
     protected CoreServiceExternalAction(@Nonnull Entity entity, @Nonnull Identity subject) {
-        super(entity, subject, subject.getAddress().getHostIdentifier());
+        super(entity, subject.getAddress(), subject.getAddress().getHostIdentifier());
     }
     
     /**

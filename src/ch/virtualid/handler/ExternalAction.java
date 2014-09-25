@@ -1,11 +1,14 @@
 package ch.virtualid.handler;
 
+import ch.virtualid.agent.AgentPermissions;
+import ch.virtualid.agent.ReadonlyAgentPermissions;
+import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.handler.action.external.CoreServiceExternalAction;
 import ch.virtualid.identity.HostIdentifier;
-import ch.virtualid.identity.Identity;
-import ch.virtualid.server.Pusher;
+import ch.virtualid.identity.Identifier;
+import ch.virtualid.pusher.Pusher;
 import ch.xdf.SignatureWrapper;
 import javax.annotation.Nonnull;
 
@@ -33,8 +36,8 @@ public abstract class ExternalAction extends Action {
      * @require !(entity instanceof Account) || canBeSentByHosts() : "Methods encoded on hosts can be sent by hosts.";
      * @require !(entity instanceof Role) || !canOnlyBeSentByHosts() : "Methods encoded on clients cannot only be sent by hosts.";
      */
-    protected ExternalAction(@Nonnull Entity entity, @Nonnull Identity subject, @Nonnull HostIdentifier recipient) {
-        super(entity, subject.getAddress(), recipient);
+    protected ExternalAction(@Nonnull Entity entity, @Nonnull Identifier subject, @Nonnull HostIdentifier recipient) {
+        super(entity, subject, recipient);
     }
     
     /**
@@ -69,6 +72,29 @@ public abstract class ExternalAction extends Action {
     @Override
     public boolean canOnlyBeSentByHosts() {
         return false;
+    }
+    
+    
+    /**
+     * Returns the permission that an agent needs to cover in order to see the audit of this external action when the pushing failed.
+     * 
+     * @return the permission that an agent needs to cover in order to see the audit of this external action when the pushing failed.
+     * 
+     * @ensure return.areEmptyOrSingle() : "The returned permissions are empty or single.";
+     */
+    @Pure
+    public @Nonnull ReadonlyAgentPermissions getFailedAuditPermissions() {
+        return AgentPermissions.NONE;
+    }
+    
+    /**
+     * Returns the restrictions that an agent needs to cover in order to see the audit of this external action when the pushing failed.
+     * 
+     * @return the restrictions that an agent needs to cover in order to see the audit of this external action when the pushing failed.
+     */
+    @Pure
+    public @Nonnull Restrictions getFailedAuditRestrictions() {
+        return Restrictions.NONE;
     }
     
 }

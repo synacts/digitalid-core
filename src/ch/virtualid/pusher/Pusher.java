@@ -1,7 +1,6 @@
-package ch.virtualid.server;
+package ch.virtualid.pusher;
 
 import ch.virtualid.handler.ExternalAction;
-import ch.virtualid.handler.action.external.FailedPush;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 
@@ -10,7 +9,7 @@ import javax.annotation.Nonnull;
  * 
  * TODO: Only retries if the connection could not be established. Otherwise an external action is created, signed and added to the internal audit.
  * 
- * @see FailedPush
+ * @see PushFailed
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 0.0
@@ -20,5 +19,7 @@ public final class Pusher extends Thread {
     public static void send(@Nonnull ExternalAction action) throws SQLException {
         
     }
+    
+    // TODO: Make sure that failed pushs are signed and audited but not transmitted.
     
 }

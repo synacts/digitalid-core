@@ -34,7 +34,7 @@ public final class Password extends Concept {
     public static final @Nonnull Aspect VALUE = new Aspect(Password.class, "value changed");
     
     /**
-     * Stores the aspect of the password being reset at having reloaded the passwords module.
+     * Stores the aspect of the password being reset after having reloaded the passwords module.
      */
     public static final @Nonnull Aspect RESET = new Aspect(Password.class, "password reset");
     

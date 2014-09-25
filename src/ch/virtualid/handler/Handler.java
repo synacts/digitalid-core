@@ -65,6 +65,15 @@ public abstract class Handler extends Concept implements Immutable, Blockable {
         this.subject = signature.getSubjectNotNull();
     }
     
+    /**
+     * Returns a description of this handler.
+     * 
+     * @return a description of this handler.
+     */
+    @Pure
+    @Override
+    public abstract @Nonnull String toString();
+    
     
     /**
      * Returns the subject of this handler.
