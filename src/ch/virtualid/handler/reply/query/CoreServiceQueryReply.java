@@ -1,10 +1,15 @@
 package ch.virtualid.handler.reply.query;
 
 import ch.virtualid.annotations.Pure;
+import ch.virtualid.entity.Account;
+import ch.virtualid.entity.Entity;
 import ch.virtualid.handler.QueryReply;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.CoreService;
+import ch.xdf.HostSignatureWrapper;
+import ch.xdf.exceptions.InvalidEncodingException;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * This class models the {@link QueryReply query replies} of the {@link CoreService core service}.
@@ -14,8 +19,27 @@ import javax.annotation.Nonnull;
  */
 public abstract class CoreServiceQueryReply extends QueryReply {
     
-    public CoreServiceQueryReply() {
-        
+    /**
+     * Creates a query reply that encodes the content of a packet.
+     * 
+     * @param account the account to which this query reply belongs.
+     */
+    protected CoreServiceQueryReply(@Nonnull Account account) {
+        super(account);
+    }
+    
+    /**
+     * Creates a query reply that decodes a packet with the given signature for the given entity.
+     * 
+     * @param entity the entity to which this handler belongs.
+     * @param signature the host signature of this handler.
+     * @param number the number that references this reply.
+     * 
+     * @ensure getSignature() != null : "The signature of this handler is not null.";
+     * @ensure !isOnHost() : "Query replies are never decoded on hosts.";
+     */
+    protected CoreServiceQueryReply(@Nullable Entity entity, @Nonnull HostSignatureWrapper signature, long number) throws InvalidEncodingException {
+        super(entity, signature, number);
     }
     
     

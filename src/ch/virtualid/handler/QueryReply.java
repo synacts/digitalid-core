@@ -4,6 +4,7 @@ import ch.virtualid.entity.Account;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.handler.reply.query.CoreServiceQueryReply;
 import ch.xdf.HostSignatureWrapper;
+import ch.xdf.exceptions.InvalidEncodingException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -35,9 +36,12 @@ public abstract class QueryReply extends Reply {
      * @param number the number that references this reply.
      * 
      * @ensure getSignature() != null : "The signature of this handler is not null.";
+     * @ensure !isOnHost() : "Query replies are never decoded on hosts.";
      */
-    protected QueryReply(@Nullable Entity entity, @Nonnull HostSignatureWrapper signature, long number) {
+    protected QueryReply(@Nullable Entity entity, @Nonnull HostSignatureWrapper signature, long number) throws InvalidEncodingException {
         super(entity, signature, number);
+        
+        if (isOnHost()) throw new InvalidEncodingException("Query replies are never decoded on hosts.");
     }
     
 }

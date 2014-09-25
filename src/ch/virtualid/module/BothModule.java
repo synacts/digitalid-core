@@ -5,6 +5,7 @@ import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.Role;
 import ch.virtualid.handler.InternalQuery;
+import ch.virtualid.handler.QueryReply;
 import ch.virtualid.identity.SemanticType;
 import ch.xdf.Block;
 import ch.xdf.exceptions.InvalidEncodingException;
@@ -62,6 +63,10 @@ public abstract class BothModule extends Module {
     
     /**
      * Returns an internal query for reloading the data of this module.
+     * <p>
+     * <em>Important:</em> The block of the corresponding {@link QueryReply}
+     * has to be based on the semantic type of {@link #getType()} in order to
+     * it pass to {@link #addAll(ch.virtualid.entity.Entity, ch.xdf.Block)}.
      * 
      * @param role the role whose data has to be reloaded.
      * 
