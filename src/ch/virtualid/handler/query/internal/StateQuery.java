@@ -1,18 +1,17 @@
-package ch.virtualid.handler.query.external;
+package ch.virtualid.handler.query.internal;
 
-import ch.virtualid.agent.AgentPermissions;
-import ch.virtualid.agent.ReadonlyAgentPermissions;
+import ch.virtualid.agent.Agent;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Account;
 import ch.virtualid.entity.Entity;
+import ch.virtualid.entity.Role;
 import ch.virtualid.exceptions.InvalidDeclarationException;
 import ch.virtualid.handler.Method;
-import ch.virtualid.handler.reply.query.IdentityReply;
+import ch.virtualid.handler.reply.query.StateReply;
 import ch.virtualid.identity.FailedIdentityException;
 import ch.virtualid.identity.HostIdentifier;
-import ch.virtualid.identity.Identifier;
 import ch.virtualid.identity.SemanticType;
-import ch.virtualid.packet.PacketException;
+import ch.virtualid.module.CoreService;
 import ch.xdf.Block;
 import ch.xdf.EmptyWrapper;
 import ch.xdf.SignatureWrapper;
@@ -21,19 +20,17 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 
 /**
- * Retrieves the identity of the given subject.
- * 
- * @see IdentityReply
+ * Retrieves the state of the given role.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public final class IdentityQuery extends CoreServiceExternalQuery {
+public final class StateQuery extends CoreServiceInternalQuery {
     
     /**
-     * Stores the semantic type {@code query.identity@virtualid.ch}.
+     * Stores the semantic type {@code query.module@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("query.identity@virtualid.ch").load(EmptyWrapper.TYPE);
+    public static final @Nonnull SemanticType TYPE = SemanticType.create("query.module@virtualid.ch").load(EmptyWrapper.TYPE);
     
     @Pure
     @Override
@@ -43,16 +40,16 @@ public final class IdentityQuery extends CoreServiceExternalQuery {
     
     
     /**
-     * Creates an external query to retrieve the identity of the given subject.
+     * Creates an internal query to retrieve the state of the given role.
      * 
-     * @param subject the subject of this handler.
+     * @param role the role to which this handler belongs.
      */
-    public IdentityQuery(@Nonnull Identifier subject) {
-        super(null, subject);
+    public StateQuery(@Nonnull Role role) {
+        super(role);
     }
     
     /**
-     * Creates an external query that decodes the given block.
+     * Creates an internal query that decodes the given block.
      * 
      * @param entity the entity to which this handler belongs.
      * @param signature the signature of this handler.
@@ -62,11 +59,10 @@ public final class IdentityQuery extends CoreServiceExternalQuery {
      * @require signature.getSubject() != null : "The subject of the signature is not null.";
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      * 
-     * @ensure getEntity() != null : "The entity of this handler is not null.";
      * @ensure getSignature() != null : "The signature of this handler is not null.";
      * @ensure isOnHost() : "Queries are only decoded on hosts.";
      */
-    private IdentityQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws InvalidEncodingException {
+    private StateQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws InvalidEncodingException, SQLException, FailedIdentityException, InvalidDeclarationException {
         super(entity, signature, recipient);
         
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
@@ -81,23 +77,14 @@ public final class IdentityQuery extends CoreServiceExternalQuery {
     @Pure
     @Override
     public @Nonnull String toString() {
-        return "Retrieves the identity.";
-    }
-    
-    
-    @Pure
-    @Override
-    public @Nonnull ReadonlyAgentPermissions getRequiredPermissions() {
-        return AgentPermissions.NONE;
+        return "Retrieves the state.";
     }
     
     
     @Override
-    public @Nonnull IdentityReply executeOnHost() throws PacketException, SQLException {
-        assert isOnHost() : "This method is called on a host.";
-        assert getSignature() != null : "The signature of this handler is not null.";
-        
-        return new IdentityReply((Account) getEntityNotNull());
+    protected @Nonnull StateReply executeOnHost(@Nonnull Agent agent) throws SQLException {
+        final @Nonnull Account account = (Account) getEntityNotNull();
+        return new StateReply(account, CoreService.SERVICE.getAll(account, agent));
     }
     
     
@@ -117,7 +104,7 @@ public final class IdentityQuery extends CoreServiceExternalQuery {
         @Pure
         @Override
         protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws InvalidEncodingException, SQLException, FailedIdentityException, InvalidDeclarationException {
-            return new IdentityQuery(entity, signature, recipient, block);
+            return new StateQuery(entity, signature, recipient, block);
         }
         
     }

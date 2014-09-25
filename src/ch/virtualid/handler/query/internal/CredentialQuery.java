@@ -28,9 +28,9 @@ import java.sql.Connection;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 0.0
  */
-public class GetCredentialQuery {
+public final class CredentialQuery extends CoreServiceInternalQuery {
     
-    public GetCredentialQuery() {
+    public CredentialQuery() {
         
     }
     

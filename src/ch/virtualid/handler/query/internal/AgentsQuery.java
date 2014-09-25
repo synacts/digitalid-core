@@ -1,6 +1,5 @@
 package ch.virtualid.handler.query.internal;
 
-import ch.virtualid.handler.InternalQuery;
 import ch.virtualid.concept.Entity;
 import ch.xdf.Block;
 import ch.xdf.SignatureWrapper;
@@ -13,7 +12,7 @@ import javax.annotation.Nonnull;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 0.0
  */
-public final class GetAgentsQuery extends InternalQuery {
+public final class AgentsQuery extends CoreServiceInternalQuery {
     
     /**
      * Creates a new query with the given connection, entity, signature and block.
@@ -23,7 +22,7 @@ public final class GetAgentsQuery extends InternalQuery {
      * @param signature the signature of the packet.
      * @param block the element of the content.
      */
-    protected GetAgentsQuery(@Nonnull Connection connection, @Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull Block block) {
+    protected AgentsQuery(@Nonnull Connection connection, @Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull Block block) {
         super(connection, entity, signature, block);
     }
     

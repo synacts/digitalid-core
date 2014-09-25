@@ -1,6 +1,8 @@
 package ch.virtualid.module;
 
 import ch.virtualid.annotations.Pure;
+import ch.virtualid.entity.Role;
+import ch.virtualid.handler.query.internal.StateQuery;
 import ch.virtualid.identity.Identity;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.both.Agents;
@@ -50,10 +52,18 @@ public final class CoreService extends Service {
         addToTuple(new Certificates());
     }
     
+    
     @Pure
     @Override
     public @Nonnull SemanticType getType() {
         return FORMAT;
+    }
+    
+    
+    @Pure
+    @Override
+    public @Nonnull StateQuery getInternalQuery(@Nonnull Role role) {
+        return new StateQuery(role);
     }
     
 }

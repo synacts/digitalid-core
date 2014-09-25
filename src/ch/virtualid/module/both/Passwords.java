@@ -5,7 +5,9 @@ import ch.virtualid.annotations.Pure;
 import ch.virtualid.concepts.Password;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.Entity;
+import ch.virtualid.entity.Role;
 import ch.virtualid.entity.Site;
+import ch.virtualid.handler.InternalQuery;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.BothModule;
 import ch.virtualid.module.Module;
@@ -132,6 +134,12 @@ public final class Passwords extends BothModule {
         try (@Nonnull Statement statement = Database.getConnection().createStatement()) {
             statement.executeUpdate("DELETE FROM " + entity.getSite() + "_password WHERE entity = " + entity);
         }
+    }
+    
+    @Pure
+    @Override
+    public @Nullable InternalQuery getInternalQuery(@Nonnull Role role) {
+        return null;
     }
     
 }

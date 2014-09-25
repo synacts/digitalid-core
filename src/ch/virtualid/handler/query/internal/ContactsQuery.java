@@ -6,9 +6,9 @@ package ch.virtualid.handler.query.internal;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 0.0
  */
-public class GetContactsQuery {
+public final class ContactsQuery extends CoreServiceInternalQuery {
     
-    public GetContactsQuery() {
+    public ContactsQuery() {
         
     }
     

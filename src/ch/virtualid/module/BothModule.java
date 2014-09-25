@@ -60,13 +60,12 @@ public abstract class BothModule extends Module {
      */
     protected abstract void removeAll(@Nonnull Entity entity) throws SQLException;
     
-    
     /**
-     * Returns 
+     * Returns an internal query for reloading the data of this module.
      * 
-     * @param role
+     * @param role the role whose data has to be reloaded.
      * 
-     * @return 
+     * @return an internal query for reloading the data of this module.
      */
     @Pure
     public abstract @Nullable InternalQuery getInternalQuery(@Nonnull Role role);

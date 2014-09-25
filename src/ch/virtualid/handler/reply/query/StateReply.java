@@ -1,6 +1,5 @@
 package ch.virtualid.handler.reply.query;
 
-import ch.virtualid.handler.Reply;
 import ch.virtualid.concept.Entity;
 import ch.xdf.Block;
 import ch.xdf.SignatureWrapper;
@@ -13,7 +12,7 @@ import javax.annotation.Nonnull;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 0.0
  */
-public final class GetStateReply extends Reply {
+public final class StateReply extends CoreServiceQueryReply {
     
     /**
      * Creates a new reply with the given connection, entity, signature and block.
@@ -23,7 +22,7 @@ public final class GetStateReply extends Reply {
      * @param signature the signature of the packet.
      * @param block the element of the content.
      */
-    protected GetStateReply(@Nonnull Connection connection, @Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull Block block) {
+    protected StateReply(@Nonnull Connection connection, @Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull Block block) {
         super(connection, entity, signature, block);
     }
     

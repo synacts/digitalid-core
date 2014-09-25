@@ -1,6 +1,5 @@
 package ch.virtualid.handler.reply.query;
 
-import ch.virtualid.handler.Reply;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.concept.Entity;
 import ch.xdf.Block;
@@ -14,7 +13,7 @@ import javax.annotation.Nonnull;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 0.0
  */
-public final class GetAgentsReply extends Reply {
+public final class AgentsReply extends CoreServiceQueryReply {
     
     /**
      * Stores the type of the packets that this handler handles.
@@ -29,7 +28,7 @@ public final class GetAgentsReply extends Reply {
      * @param signature the signature of the packet.
      * @param block the element of the content.
      */
-    protected GetAgentsReply(@Nonnull Connection connection, @Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull Block block) {
+    protected AgentsReply(@Nonnull Connection connection, @Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull Block block) {
         super(connection, entity, signature, block);
     }
     
