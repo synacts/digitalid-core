@@ -385,4 +385,30 @@ public abstract class Method extends Handler {
         else return factory.create(entity, signature, recipient, block);
     }
     
+    /**
+     * Returns this method as an {@link Action}.
+     * 
+     * @return this method as an {@link Action}.
+     * 
+     * @throws InvalidEncodingException if this method is not an instance of {@link Action}.
+     */
+    @Pure
+    public final @Nonnull Action toAction() throws InvalidEncodingException {
+        if (this instanceof Action) return (Action) this;
+        throw new InvalidEncodingException("The method with the type " + getType().getAddress() + " is not an action.");
+    }
+    
+    /**
+     * Returns this method as a {@link Query}.
+     * 
+     * @return this method as a {@link Query}.
+     * 
+     * @throws InvalidEncodingException if this method is not an instance of {@link Query}.
+     */
+    @Pure
+    public final @Nonnull Query toQuery() throws InvalidEncodingException {
+        if (this instanceof Query) return (Query) this;
+        throw new InvalidEncodingException("The method with the type " + getType().getAddress() + " is not a query.");
+    }
+    
 }

@@ -3,6 +3,7 @@ package ch.virtualid.handler.action.external;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
+import ch.virtualid.contact.Contact;
 import ch.virtualid.contact.ContactPermissions;
 import ch.virtualid.contact.ReadonlyContactPermissions;
 import ch.virtualid.entity.Entity;
@@ -11,7 +12,7 @@ import ch.virtualid.handler.ActionReply;
 import ch.virtualid.handler.Method;
 import ch.virtualid.identity.FailedIdentityException;
 import ch.virtualid.identity.HostIdentifier;
-import ch.virtualid.identity.Identity;
+import ch.virtualid.identity.Person;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.packet.PacketError;
 import ch.virtualid.packet.PacketException;
@@ -62,13 +63,14 @@ public final class AccessRequest extends CoreServiceExternalAction {
      * @require !(entity instanceof Role) || !canOnlyBeSentByHosts() : "Methods encoded on clients cannot only be sent by hosts.";
      * @require !attributes.isEmpty() : "The set of attributes is not empty.";
      */
-    public AccessRequest(@Nonnull Entity entity, @Nonnull Identity subject, @Nonnull ReadonlyContactPermissions attributes) {
+    public AccessRequest(@Nonnull Entity entity, @Nonnull Person subject, @Nonnull ReadonlyContactPermissions attributes) {
         super(entity, subject);
         
         assert !attributes.isEmpty() : "The set of attributes is not empty.";
         
         this.attributes = attributes;
         this.requiredPermissions = attributes.toAgentPermissions().freeze();
+        this.faildedAuditRestrictions = new Restrictions(false, false, true, Contact.get(entity, subject));
     }
     
     /**
@@ -91,6 +93,7 @@ public final class AccessRequest extends CoreServiceExternalAction {
         
         this.attributes = new ContactPermissions(block).freeze();
         this.requiredPermissions = attributes.toAgentPermissions().freeze();
+        this.faildedAuditRestrictions = new Restrictions(false, false, true, Contact.get(entity, signature.getSubjectNotNull().getIdentity().toPerson()));
     }
     
     @Pure
@@ -167,6 +170,18 @@ public final class AccessRequest extends CoreServiceExternalAction {
     @Override
     public @Nonnull Restrictions getAuditRestrictions() {
         return auditRestrictions;
+    }
+    
+    
+    /**
+     * Stores the failed audit restrictions for this action.
+     */
+    private final @Nonnull Restrictions faildedAuditRestrictions;
+    
+    @Pure
+    @Override
+    public @Nonnull Restrictions getFailedAuditRestrictions() {
+        return faildedAuditRestrictions;
     }
     
     

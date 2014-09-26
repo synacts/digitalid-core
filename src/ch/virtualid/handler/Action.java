@@ -72,7 +72,7 @@ public abstract class Action extends Method implements Auditable {
     
     
     /**
-     * Executes this internal action on the client.
+     * Executes this action on the client.
      * 
      * @throws SQLException if this handler cannot be executed.
      * 
@@ -82,9 +82,11 @@ public abstract class Action extends Method implements Auditable {
     
     /**
      * Executes this action in case of failure
-     * (if an error occurred during pushing).
+     * (if an error occurred during pushing or synching).
      */
-    public abstract void executeOnFailure() throws SQLException;
+    public void executeOnFailure() throws SQLException {
+        notify(FAILED);
+    }
     
     
     @Pure

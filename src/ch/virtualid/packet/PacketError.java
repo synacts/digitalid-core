@@ -19,9 +19,10 @@ public enum PacketError {
     SIGNATURE(4), // The error code for an invalid signature.
     COMPRESSION(5), // The error code for an invalid compression.
     REQUEST(6), // The error code for an invalid request type or invalid encoding.
-    IDENTIFIER(7), // The error code for an invalid identifier within the request.
-    AUTHORIZATION(8), // The error code for an insufficient authorization.
-    KEYROTATION(9); // The error code for a required key rotation.
+    RESPONSE(7), // The error code for an invalid response type or invalid encoding.
+    IDENTIFIER(8), // The error code for an invalid identifier within the request.
+    AUTHORIZATION(9), // The error code for an insufficient authorization.
+    KEYROTATION(10); // The error code for a required key rotation.
     
     /**
      * Stores the semantic type {@code error.packet@virtualid.ch}.

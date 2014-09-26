@@ -69,7 +69,7 @@ public final class PushFailed extends ExternalAction {
     /**
      * Stores the semantic type {@code failed.push@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("failed.push@virtualid.ch").load(TupleWrapper.TYPE, SUBJECT, RECIPIENT, ACTION);
+    public static final @Nonnull SemanticType TYPE = SemanticType.create("failed.push@virtualid.ch").load(TupleWrapper.TYPE, NUMBER, SUBJECT, RECIPIENT, ACTION);
     
     @Pure
     @Override
@@ -189,7 +189,7 @@ public final class PushFailed extends ExternalAction {
     public void executeOnClient() throws SQLException {
         assert isOnClient() : "This method is called on a client.";
         
-        // TODO: Add this failed push to some list where the user can see it.
+        // TODO: Add this failed push to some list where the user can see it (see the Errors module).
         action.executeOnFailure();
     }
     
@@ -203,6 +203,12 @@ public final class PushFailed extends ExternalAction {
     @Override
     public @Nonnull ReadonlyAgentPermissions getRequiredPermissions() {
         return AgentPermissions.NONE;
+    }
+    
+    @Pure
+    @Override
+    public boolean isSimilarTo(@Nonnull Method other) {
+        return false;
     }
     
     @Override

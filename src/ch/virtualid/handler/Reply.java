@@ -149,7 +149,7 @@ public abstract class Reply extends Handler implements SQLizable {
     @Pure
     private static @Nonnull Reply get(@Nullable Entity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws PacketException, InvalidEncodingException, SQLException, FailedIdentityException, InvalidDeclarationException {
         final @Nullable Reply.Factory factory = factories.get(block.getType());
-        if (factory == null) throw new PacketException(PacketError.REQUEST);
+        if (factory == null) throw new PacketException(PacketError.RESPONSE);
         else return factory.create(entity, signature, number, block);
     }
     
@@ -169,6 +169,32 @@ public abstract class Reply extends Handler implements SQLizable {
     @Pure
     public static @Nonnull Reply get(@Nullable Entity entity, @Nonnull HostSignatureWrapper signature, @Nonnull Block block) throws PacketException, InvalidEncodingException, SQLException, FailedIdentityException, InvalidDeclarationException {
         return get(entity, signature, store(signature), block);
+    }
+    
+    /**
+     * Returns this reply as an {@link ActionReply}.
+     * 
+     * @return this reply as an {@link ActionReply}.
+     * 
+     * @throws PacketException if this reply is not an instance of {@link ActionReply}.
+     */
+    @Pure
+    public final @Nonnull ActionReply toActionReply() throws PacketException {
+        if (this instanceof ActionReply) return (ActionReply) this;
+        throw new PacketException(PacketError.RESPONSE);
+    }
+    
+    /**
+     * Returns this reply as a {@link QueryReply}.
+     * 
+     * @return this reply as a {@link QueryReply}.
+     * 
+     * @throws PacketException if this reply is not an instance of {@link QueryReply}.
+     */
+    @Pure
+    public final @Nonnull QueryReply toQueryReply() throws PacketException {
+        if (this instanceof QueryReply) return (QueryReply) this;
+        throw new PacketException(PacketError.RESPONSE);
     }
     
     

@@ -14,8 +14,8 @@ import javax.annotation.Nonnull;
 
 /**
  * External actions can be sent by both {@link Host hosts} and {@link Client clients}.
- * <p>
- * <em>Important:</em> Do not send external actions directly but always pass them to the {@link Pusher#send(ch.virtualid.handler.ExternalAction) Pusher}!
+ * Depending on whether the reply is needed immediately, external actions can be either sent 
+ * directly or passed to the {@link Pusher#send(ch.virtualid.handler.ExternalAction) Pusher}!
  * 
  * @invariant getEntity() != null : "The entity of this external action is not null.";
  * 

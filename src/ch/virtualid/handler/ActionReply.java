@@ -10,14 +10,19 @@ import ch.virtualid.entity.Entity;
 import ch.virtualid.handler.reply.action.CoreServiceActionReply;
 import ch.virtualid.module.Service;
 import ch.virtualid.packet.Audit;
+import ch.virtualid.packet.PacketException;
 import ch.virtualid.pusher.Pusher;
 import ch.xdf.HostSignatureWrapper;
+import ch.xdf.exceptions.InvalidEncodingException;
+import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
  * This class models a {@link Reply reply} to an {@link ExternalAction external action}.
  * Action replies are added to the {@link Audit audit} by the {@link Pusher pusher} on {@link Service services}.
+ * 
+ * @invariant getEntity() != null : "The entity of this action reply is not null.");
  * 
  * @see CoreServiceActionReply
  * 
@@ -44,9 +49,45 @@ public abstract class ActionReply extends Reply implements Auditable {
      * 
      * @ensure getSignature() != null : "The signature of this handler is not null.";
      */
-    protected ActionReply(@Nullable Entity entity, @Nonnull HostSignatureWrapper signature, long number) {
+    protected ActionReply(@Nullable Entity entity, @Nonnull HostSignatureWrapper signature, long number) throws InvalidEncodingException {
         super(entity, signature, number);
+        
+        if (getEntity() == null) throw new InvalidEncodingException("The entity of an action reply may not be null.");
     }
+    
+    
+    /**
+     * Returns the class of the external action whose reply class this is.
+     * 
+     * @return the class of the external action whose reply class this is.
+     */
+    @Pure
+    public abstract @Nonnull Class<? extends ExternalAction> getActionClass();
+    
+    
+    /**
+     * Executes this action reply by the pusher.
+     * 
+     * @param action the external action that was sent.
+     * 
+     * @throws PacketException if the authorization is not sufficient.
+     * 
+     * @require getSignature() != null : "The signature of this handler is not null.";
+     * @require getActionClass().isInstance(action) : "The given action is an instance of the indicated class.";
+     * @require getSubject().equals(action.getSubject()) : "The subjects of the reply and the action are the same.";
+     * @require getEntityNotNull().equals(action.getEntityNotNull()) : "The entities of the reply and the action are the same.";
+     * @require ((HostSignatureWrapper) getSignatureNotNull()).getSigner().equals(action.getRecipient()) : "The reply is signed by the action's recipient.";
+     */
+    public abstract void executeByPusher(@Nonnull ExternalAction action) throws PacketException, SQLException;
+    
+    /**
+     * Executes this action reply by the synchronizer.
+     * 
+     * @throws SQLException if this handler cannot be executed.
+     * 
+     * @require isOnClient() : "This method is called on a client.";
+     */
+    public abstract void executeBySynchronizer() throws SQLException;
     
     
     @Pure
