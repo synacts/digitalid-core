@@ -182,7 +182,7 @@ public final class Restrictions implements Immutable, Blockable {
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        @Nonnull FreezableArray<Block> elements = new FreezableArray<Block>(5);
+        final @Nonnull FreezableArray<Block> elements = new FreezableArray<Block>(5);
         elements.set(0, new BooleanWrapper(CLIENT, client).toBlock());
         elements.set(1, new BooleanWrapper(ROLE, role).toBlock());
         elements.set(2, new BooleanWrapper(WRITING, writing).toBlock());
