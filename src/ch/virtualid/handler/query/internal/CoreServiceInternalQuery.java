@@ -96,7 +96,7 @@ public abstract class CoreServiceInternalQuery extends InternalQuery {
         assert isOnHost() : "This method is called on a host.";
         assert getSignature() != null : "The signature of this handler is not null.";
         
-        final @Nonnull Agent agent = getSignatureNotNull().getAgent();
+        final @Nonnull Agent agent = getSignatureNotNull().getAgentCheckedAndRestricted(getEntityNotNull());
         
         final @Nonnull ReadonlyAgentPermissions permissions = getRequiredPermissions();
         if (!permissions.equals(AgentPermissions.NONE)) agent.getPermissions().checkCover(permissions);

@@ -1,9 +1,6 @@
 package ch.virtualid.handler.query.internal;
 
-import ch.virtualid.concept.Entity;
-import ch.xdf.Block;
-import ch.xdf.SignatureWrapper;
-import java.sql.Connection;
+import ch.virtualid.entity.Role;
 import javax.annotation.Nonnull;
 
 /**
@@ -15,15 +12,12 @@ import javax.annotation.Nonnull;
 public final class AgentsQuery extends CoreServiceInternalQuery {
     
     /**
-     * Creates a new query with the given connection, entity, signature and block.
+     * Creates an internal query to retrieve the agents of the given role.
      * 
-     * @param connection an open connection to the database.
-     * @param entity the entity to which this handler belongs.
-     * @param signature the signature of the packet.
-     * @param block the element of the content.
+     * @param role the role to which this handler belongs.
      */
-    protected AgentsQuery(@Nonnull Connection connection, @Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull Block block) {
-        super(connection, entity, signature, block);
+    public AgentsQuery(@Nonnull Role role) {
+        super(role);
     }
     
 }

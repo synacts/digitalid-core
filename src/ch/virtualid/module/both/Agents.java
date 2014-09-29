@@ -10,7 +10,9 @@ import ch.virtualid.client.Commitment;
 import ch.virtualid.contact.Context;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.Entity;
+import ch.virtualid.entity.Role;
 import ch.virtualid.entity.Site;
+import ch.virtualid.handler.query.internal.AgentsQuery;
 import ch.virtualid.identity.Category;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.HostIdentity;
@@ -41,18 +43,6 @@ import javax.annotation.Nullable;
  * @version 0.0
  */
 public final class Agents extends BothModule {
-    
-    /**
-     * Stores the semantic type {@code agents.module@virtualid.ch}.
-     */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("agents.module@virtualid.ch").load(TupleWrapper.TYPE, );
-    
-    @Pure
-    @Override
-    public @Nonnull SemanticType getType() {
-        return TYPE;
-    }
-    
     
     static { Module.add(new Agents()); }
     
@@ -110,19 +100,20 @@ public final class Agents extends BothModule {
     /**
      * Returns the client with the given commitment at the given identity or null if no such client is found.
      * 
-     * @param identity the identity whose client is to be returned.
+     * @param entity the identity whose client is to be returned.
      * @param commitment the commitment of the client which is to be returned.
+     * 
      * @return the client with the given commitment at the given identity or null if no such client is found.
      */
-    public static @Nullable ClientAgent getClientAgent(@Nonnull NonHostIdentity identity, @Nonnull Commitment commitment) throws SQLException {
+    public static @Nullable ClientAgent getClientAgent(@Nonnull Entity entity, @Nonnull Commitment commitment) throws SQLException {
         @Nonnull String sql = "SELECT authorization.authorizationID, client.name FROM authorization JOIN client ON authorization.authorizationID = client.authorizationID WHERE authorization.identity = ? AND NOT authorization.removed AND client.host = ? AND client.time = ? AND client.commitment = ?";
-        try (@Nonnull PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            preparedStatement.setLong(1, identity.getNumber());
+        try (@Nonnull PreparedStatement preparedStatement = Database.getConnection().prepareStatement(sql)) {
+            preparedStatement.setLong(1, entity.getNumber());
             preparedStatement.setLong(2, commitment.getHost().getNumber());
             preparedStatement.setLong(3, commitment.getTime());
             preparedStatement.setBytes(4, commitment.getValue().toByteArray());
             try (@Nonnull ResultSet resultSet = preparedStatement.executeQuery()) {
-                if (resultSet.next()) return new ClientAgent(connection, identity, resultSet.getLong(1), commitment, resultSet.getString(2));
+                if (resultSet.next()) return new ClientAgent(entity, resultSet.getLong(1), commitment, resultSet.getString(2));
                 else return null;
             }
         }
@@ -153,20 +144,24 @@ public final class Agents extends BothModule {
     /**
      * Returns the outgoing role with the given relation at the given identity or null if no such role is found.
      * 
-     * @param identity the identity whose outgoing role is to be returned.
+     * @param entity the identity whose outgoing role is to be returned.
      * @param relation the relation between the issuing and the receiving identity.
+     * 
      * @return the outgoing role with the given relation at the given identity or null if no such role is found.
+     * 
      * @require relation.isRoleType() : "The relation is a role type.";
      */
-    public static @Nullable OutgoingRole getOutgoingRole(@Nonnull NonHostIdentity identity, @Nonnull SemanticType relation) throws SQLException {
+    public static @Nullable OutgoingRole getOutgoingRole(@Nonnull Entity entity, @Nonnull SemanticType relation, boolean restrictable) throws SQLException {
         assert relation.isRoleType() : "The relation is a role type.";
         
-        @Nonnull String sql = "SELECT authorization.authorizationID, outgoing_role.context FROM authorization JOIN outgoing_role ON authorization.authorizationID = outgoing_role.authorizationID WHERE authorization.identity = " + identity + " AND NOT authorization.removed AND outgoing_role.relation = " + relation;
+        // TODO: Create the OutgoingRole according to the restrictable parameter.
+        
+        @Nonnull String sql = "SELECT authorization.authorizationID, outgoing_role.context FROM authorization JOIN outgoing_role ON authorization.authorizationID = outgoing_role.authorizationID WHERE authorization.identity = " + entity + " AND NOT authorization.removed AND outgoing_role.relation = " + relation;
         try (@Nonnull Statement statement = connection.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(sql)) {
             if (resultSet.next()) {
-                return new OutgoingRole(connection, resultSet.getLong(1), identity, relation, new Context(resultSet.getLong(2)));
+                return new OutgoingRole(connection, resultSet.getLong(1), entity, relation, new Context(resultSet.getLong(2)));
             } else {
-                if (relation.hasBeenMerged()) return getOutgoingRole(connection, identity, relation);
+                if (relation.hasBeenMerged()) return getOutgoingRole(connection, entity, relation);
                 else return null;
             }
         } catch (@Nonnull InvalidEncodingException exception) {
@@ -520,37 +515,36 @@ public final class Agents extends BothModule {
     
     
     /**
-     * Returns the state of the given entity restricted by the authorization of the given agent.
-     * 
-     * @param entity the entity whose state is to be returned.
-     * @param agent the agent whose authorization restricts the returned state.
-     * 
-     * @return the state of the given entity restricted by the authorization of the given agent.
+     * Stores the semantic type {@code agents.module@virtualid.ch}.
      */
+    public static final @Nonnull SemanticType TYPE = SemanticType.create("agents.module@virtualid.ch").load(TupleWrapper.TYPE, );
+    
+    @Pure
     @Override
-    protected @Nonnull Block getAll(@Nonnull Entity entity, @Nonnull Agent agent) throws SQLException {
-        return Block.EMPTY;
+    public @Nonnull SemanticType getType() {
+        return TYPE;
     }
     
-    /**
-     * Adds the state in the given block to the given entity.
-     * 
-     * @param entity the entity to which the state is to be added.
-     * @param block the block containing the state to be added.
-     */
+    @Pure
+    @Override
+    protected @Nonnull Block getAll(@Nonnull Entity entity, @Nonnull Agent agent) throws SQLException {
+        return Block.EMPTY; // TODO
+    }
+    
     @Override
     protected void addAll(@Nonnull Entity entity, @Nonnull Block block) throws SQLException {
         
     }
     
-    /**
-     * Removes all the entries of the given entity in this module.
-     * 
-     * @param entity the entity whose entries are to be removed.
-     */
     @Override
     protected void removeAll(@Nonnull Entity entity) throws SQLException {
         
+    }
+    
+    @Pure
+    @Override
+    public @Nonnull AgentsQuery getInternalQuery(@Nonnull Role role) {
+        return new AgentsQuery(role);
     }
     
 }

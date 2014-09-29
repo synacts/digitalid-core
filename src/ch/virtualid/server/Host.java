@@ -151,7 +151,7 @@ public final class Host extends Site {
      * @param identity the identity to check.
      * @return whether this host hosts the given identity.
      */
-    public boolean hosted(@Nonnull Identity identity) {
+    public boolean hosts(@Nonnull Identity identity) {
         return identity.getAddress().getHostIdentifier().equals(identifier);
     }
     

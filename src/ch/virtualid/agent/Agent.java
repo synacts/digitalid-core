@@ -364,7 +364,7 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
         final long number = new Int64Wrapper(elements.getNotNull(0)).getValue();
         final boolean client = new BooleanWrapper(elements.getNotNull(1)).getValue();
         final boolean removed = new BooleanWrapper(elements.getNotNull(2)).getValue();
-        return client ? ClientAgent.get(entity, number, removed) : OutgoingRole.get(entity, number, removed);
+        return client ? ClientAgent.get(entity, number, removed) : OutgoingRole.get(entity, number, removed, false);
     }
     
     @Override

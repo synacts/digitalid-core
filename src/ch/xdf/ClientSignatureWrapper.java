@@ -1,5 +1,6 @@
 package ch.xdf;
 
+import ch.virtualid.agent.ClientAgent;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Client;
 import ch.virtualid.client.Commitment;
@@ -8,16 +9,21 @@ import ch.virtualid.cryptography.Element;
 import ch.virtualid.cryptography.Exponent;
 import ch.virtualid.cryptography.Parameters;
 import ch.virtualid.cryptography.PublicKey;
+import ch.virtualid.entity.Entity;
 import ch.virtualid.identity.FailedIdentityException;
 import ch.virtualid.identity.Identifier;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
+import ch.virtualid.module.both.Agents;
 import ch.virtualid.packet.Audit;
+import ch.virtualid.packet.PacketError;
+import ch.virtualid.packet.PacketException;
 import ch.virtualid.server.Server;
 import ch.xdf.exceptions.InvalidEncodingException;
 import ch.xdf.exceptions.InvalidSignatureException;
 import java.math.BigInteger;
+import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -146,6 +152,22 @@ public final class ClientSignatureWrapper extends SignatureWrapper implements Im
         @Nonnull Exponent s = r.subtract(u.multiply(h));
         subelements[2] = s.toBlock();
         elements[2] = new TupleWrapper(subelements).toBlock();
+    }
+    
+    
+    @Pure
+    @Override
+    public @Nullable ClientAgent getAgent(@Nonnull Entity entity) throws SQLException {
+        return Agents.getClientAgent(entity, getCommitment());
+    }
+    
+    @Pure
+    @Override
+    public @Nonnull ClientAgent getAgentCheckedAndRestricted(@Nonnull Entity entity) throws PacketException, SQLException {
+        final @Nullable ClientAgent agent = Agents.getClientAgent(entity, getCommitment());
+        if (agent == null) throw new PacketException(PacketError.AUTHORIZATION);
+        agent.checkNotRemoved();
+        return agent;
     }
     
 }

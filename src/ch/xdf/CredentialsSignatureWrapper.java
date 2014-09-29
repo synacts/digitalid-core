@@ -1,8 +1,11 @@
 package ch.xdf;
 
 import ch.virtualid.agent.AgentPermissions;
+import ch.virtualid.agent.OutgoingRole;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
+import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Client;
+import ch.virtualid.contact.Contact;
 import ch.virtualid.credential.ClientCredential;
 import ch.virtualid.credential.Credential;
 import ch.virtualid.credential.HostCredential;
@@ -10,6 +13,7 @@ import ch.virtualid.cryptography.Element;
 import ch.virtualid.cryptography.Exponent;
 import ch.virtualid.cryptography.Parameters;
 import ch.virtualid.cryptography.PublicKey;
+import ch.virtualid.entity.Entity;
 import ch.virtualid.identity.FailedIdentityException;
 import ch.virtualid.identity.Identifier;
 import ch.virtualid.identity.NonHostIdentifier;
@@ -17,6 +21,7 @@ import ch.virtualid.identity.Person;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
+import ch.virtualid.module.both.Agents;
 import ch.virtualid.packet.Audit;
 import ch.virtualid.packet.PacketError;
 import ch.virtualid.packet.PacketException;
@@ -26,6 +31,7 @@ import ch.xdf.exceptions.InvalidEncodingException;
 import ch.xdf.exceptions.InvalidSignatureException;
 import java.math.BigInteger;
 import java.security.SecureRandom;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -282,7 +288,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
      * 
      * @return the credentials with which the element is signed.
      */
-    public @Nonnull List<Credential> getCredentials() {
+    public @Nonnull ReadonlyList<Credential> getCredentials() {
         return credentials;
     }
     
@@ -291,7 +297,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
      * 
      * @return the certificates that are appended to an identity-based authentication.
      */
-    public @Nullable List<HostSignatureWrapper> getCertificates() {
+    public @Nullable ReadonlyList<HostSignatureWrapper> getCertificates() {
         return certificates;
     }
     
@@ -562,8 +568,8 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
                 subblocks[1] = new TupleWrapper(wis).toBlock();
                 subblocks[2] = new TupleWrapper(wbs).toBlock();
             } else {
-                subblocks[1] = Block.EMPTY;
-                subblocks[2] = Block.EMPTY;
+                subblocks[1] = null;
+                subblocks[2] = null;
             }
             
             ts.add(i, new TupleWrapper(subblocks).toBlock());
@@ -654,8 +660,8 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
                 subelements[1] = publicKey.getVerifiableEncryption(ris[i], rrwis[i]);
                 subelements[2] = publicKey.getVerifiableEncryption(rbs[i], rrwbs[i]);
             } else {
-                subelements[1] = Block.EMPTY;
-                subelements[2] = Block.EMPTY;
+                subelements[1] = null;
+                subelements[2] = null;
             }
             
             ts.add(i, new TupleWrapper(subelements).toBlock());
@@ -688,10 +694,10 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
             Restrictions restrictions = mainCredential.getRestrictions();
             assert restrictions != null : "If the restrictions are disclosed, they are not null (see the condition above).";
             subelements[2] = restrictions.toBlock();
-            subelements[3] = Block.EMPTY;
+            subelements[3] = null;
         } else {
             assert rv != null : "If v is not disclosed, rv is not null (see the code above).";
-            subelements[2] = Block.EMPTY;
+            subelements[2] = null;
             subelements[3] = rv.subtract(t.multiply(v)).toBlock();
         }
         
@@ -702,17 +708,17 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
             if (value == null || mainCredential.getRole() != null) {
                 blocks[1] = randomizedCredentials[i].getRandomizedPermissions().toBlock();
             } else {
-                blocks[1] = Block.EMPTY;
+                blocks[1] = null;
             }
             blocks[2] = randomizedCredentials[i].getC().toBlock();
             blocks[3] = res[i].subtract(t.multiply(randomizedCredentials[i].getE())).toBlock();
             blocks[4] = rbs[i].subtract(t.multiply(randomizedCredentials[i].getB())).toBlock();
             if (randomizedCredentials[i].isOneTime()) {
                 blocks[5] = randomizedCredentials[i].getI().toBlock();
-                blocks[6] = Block.EMPTY;
-                blocks[7] = Block.EMPTY;
+                blocks[6] = null;
+                blocks[7] = null;
             } else {
-                blocks[5] = Block.EMPTY;
+                blocks[5] = null;
                 blocks[6] = ris[i].subtract(t.multiply(randomizedCredentials[i].getI())).toBlock();
                 
                 if (lodged) {
@@ -720,7 +726,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
                     @Nonnull Block swb = rrwbs[i].subtract(t.multiply(rwbs[i])).toBlock();
                     blocks[7] = new TupleWrapper(new Block[]{wis[i], swi, wbs[i], swb}).toBlock();
                 } else {
-                    blocks[7] = Block.EMPTY;
+                    blocks[7] = null;
                 }
             }
             list.add(i, new TupleWrapper(blocks).toBlock());
@@ -730,8 +736,8 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
         subelements[5] = new ListWrapper(certificates, true).toBlock();
         
         if (value == null) {
-            subelements[6] = Block.EMPTY;
-            subelements[7] = Block.EMPTY;
+            subelements[6] = null;
+            subelements[7] = null;
         } else {
             assert f != null && rb != null : "If the credential is shortened, f and rb are not null (see the code above).";
             subelements[6] = f.toBlock();
@@ -739,6 +745,32 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
         }
         
         elements[3] = new TupleWrapper(subelements).toBlock();
+    }
+    
+    
+    @Pure
+    @Override
+    public @Nullable OutgoingRole getAgent(@Nonnull Entity entity) throws SQLException {
+        final @Nonnull Credential credential = getCredentials().getNotNull(0);
+        final @Nullable SemanticType relation = credential.getRole();
+        return relation == null ? null : Agents.getOutgoingRole(entity, relation, false);
+    }
+    
+    @Pure
+    @Override
+    public @Nonnull OutgoingRole getAgentCheckedAndRestricted(@Nonnull Entity entity) throws PacketException, SQLException {
+        final @Nonnull Credential credential = getCredentials().getNotNull(0);
+        final @Nullable SemanticType relation = credential.getRole();
+        if (relation != null) {
+            final @Nullable OutgoingRole outgoingRole = Agents.getOutgoingRole(entity, relation, true);
+            if (outgoingRole != null && outgoingRole.getContext().contains(Contact.get(entity, credential.getIssuer()))) {
+                outgoingRole.checkCovers(credential);
+                outgoingRole.restrictTo(credential);
+                outgoingRole.checkNotRemoved();
+                return outgoingRole;
+            }
+        }
+        throw new PacketException(PacketError.AUTHORIZATION);
     }
     
 }

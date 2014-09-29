@@ -1,17 +1,14 @@
 package ch.xdf;
 
 import ch.virtualid.agent.Agent;
-import ch.virtualid.agent.OutgoingRole;
 import ch.virtualid.annotations.Exposed;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
-import ch.virtualid.credential.Credential;
-import ch.virtualid.exceptions.InvalidDeclarationException;
+import ch.virtualid.entity.Entity;
 import ch.virtualid.identity.FailedIdentityException;
 import ch.virtualid.identity.Identifier;
 import ch.virtualid.identity.Identity;
 import ch.virtualid.identity.NonHostIdentifier;
-import ch.virtualid.identity.NonHostIdentity;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.identity.SyntacticType;
 import ch.virtualid.interfaces.Blockable;
@@ -19,13 +16,13 @@ import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.packet.Audit;
 import ch.virtualid.packet.PacketError;
 import ch.virtualid.packet.PacketException;
-import ch.virtualid.server.Host;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.ReadonlyArray;
 import ch.xdf.exceptions.InvalidEncodingException;
 import ch.xdf.exceptions.InvalidSignatureException;
 import java.math.BigInteger;
 import java.sql.SQLException;
+import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -219,13 +216,10 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
      * Returns the element of the wrapped block.
      * 
      * @return the element of the wrapped block.
-     * 
-     * @require getElement() != null : "The element is not null.";
      */
     @Pure
-    public final @Nonnull Block getElementNotNull() {
-        assert element != null : "The element is not null.";
-        
+    public final @Nonnull Block getElementNotNull() throws InvalidEncodingException {
+        if (element == null) throw new InvalidEncodingException("The signed element is null.");
         return element;
     }
     
@@ -322,7 +316,7 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
     @Pure
     @SuppressWarnings("null")
     public boolean isSignedLike(@Nonnull SignatureWrapper signature) {
-        return getClass().equals(signature.getClass()) && (subject == null && signature.subject == null || subject != null && subject.equals(signature.subject));
+        return getClass().equals(signature.getClass()) && Objects.equals(subject, signature.subject);
     }
     
     /**
@@ -452,41 +446,29 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
     
     
     /**
-     * Returns the agent that signed the wrapped element.
+     * Returns the agent that signed the wrapped element or null if no such agent is found.
      * 
-     * @return the agent that signed the wrapped element.
+     * @param entity the entity whose agent is to be returned.
      * 
-     * @throws PacketException if the agent's authorization is not sufficient.
-     * 
-     * @require getSubject() != null : "The subject is not null.";
+     * @return the agent that signed the wrapped element or null if no such agent is found.
      */
     @Pure
-    public final @Nonnull Agent getAgent() throws PacketException, SQLException {
-        final @Nullable Identifier identifier = getSubject();
-        assert identifier != null : "The subject is not null";
-        
-        // TODO: Fix and adapt!
-        try {
-            @Nonnull NonHostIdentity identity = identifier.getIdentity().toNonHostIdentity();
-            if (this instanceof ClientSignatureWrapper) {
-                @Nullable Agent agent = Host.getClientAgent(identity, ((ClientSignatureWrapper) this).getCommitment());
-                if (agent != null) return agent;
-            } else if (this instanceof CredentialsSignatureWrapper) {
-                @Nonnull Credential credential = ((CredentialsSignatureWrapper) this).getCredentials().get(0);
-                @Nullable NonHostIdentifier relation = credential.getRole();
-                if (relation != null) {
-                    @Nullable OutgoingRole outgoingRole = Host.getOutgoingRole(identity, relation.getIdentity().toSemanticType());
-                    if (outgoingRole != null && Host.isInContext(identity, credential.getIssuer().getIdentity().toPerson(), outgoingRole.getContext())) {
-                        outgoingRole.checkCovers(credential);
-                        outgoingRole.restrictTo(credential);
-                        return outgoingRole;
-                    }
-                }
-            }
-            throw new PacketException(PacketError.AUTHORIZATION);
-        } catch (@Nonnull FailedIdentityException | InvalidEncodingException | InvalidDeclarationException exception) {
-            throw new PacketException(PacketError.EXTERNAL, exception);
-        }
+    public @Nullable Agent getAgent(@Nonnull Entity entity) throws SQLException {
+        return null;
+    }
+    
+    /**
+     * Returns the restricted agent that signed the wrapped element.
+     * 
+     * @param entity the entity whose agent is to be returned.
+     * 
+     * @return the restricted agent that signed the wrapped element.
+     * 
+     * @throws PacketException if no such agent is found or the check failed.
+     */
+    @Pure
+    public @Nonnull Agent getAgentCheckedAndRestricted(@Nonnull Entity entity) throws PacketException, SQLException {
+        throw new PacketException(PacketError.AUTHORIZATION);
     }
     
 }

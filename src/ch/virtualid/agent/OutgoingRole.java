@@ -55,6 +55,10 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
      */
     private @Nullable Context context;
     
+    /**
+     * Stores whether this outgoing role can be restricted.
+     */
+    private final boolean restrictable;
     
     /**
      * Creates a new outgoing role with the given entity and number.
@@ -62,9 +66,12 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
      * @param entity the entity to which this outgoing role belongs.
      * @param number the number that references this outgoing role.
      * @param removed whether this outgoing role has been removed.
+     * @param restrictable whether the outgoing role can be restricted.
      */
-    private OutgoingRole(@Nonnull Entity entity, long number, boolean removed) {
+    private OutgoingRole(@Nonnull Entity entity, long number, boolean removed, boolean restrictable) {
         super(entity, number, removed);
+        
+        this.restrictable = restrictable;
     }
     
     /**
@@ -211,23 +218,24 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
      * @param entity the entity to which the outgoing role belongs.
      * @param number the number that denotes the outgoing role.
      * @param removed whether the outgoing role has been removed.
+     * @param restrictable whether the outgoing role can be restricted.
      * 
      * @return a new or existing outgoing role with the given entity and number.
      */
     @Pure
-    public static @Nonnull OutgoingRole get(@Nonnull Entity entity, long number, boolean removed) {
-        if (Database.isSingleAccess()) {
+    public static @Nonnull OutgoingRole get(@Nonnull Entity entity, long number, boolean removed, boolean restrictable) {
+        if (!restrictable && Database.isSingleAccess()) {
             synchronized(index) {
                 final @Nonnull Pair<Entity, Long> pair = new Pair<Entity, Long>(entity, number);
                 @Nullable OutgoingRole outgoingRole = index.get(pair);
                 if (outgoingRole == null) {
-                    outgoingRole = new OutgoingRole(entity, number, removed);
+                    outgoingRole = new OutgoingRole(entity, number, removed, restrictable);
                     index.put(pair, outgoingRole);
                 }
                 return outgoingRole;
             }
         } else {
-            return new OutgoingRole(entity, number, removed);
+            return new OutgoingRole(entity, number, removed, restrictable);
         }
     }
     
@@ -238,12 +246,13 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
      * @param resultSet the result set to retrieve the data from.
      * @param columnIndex the index of the column containing the data.
      * @param removed whether the outgoing role has been removed.
+     * @param restrictable whether the outgoing role can be restricted.
      * 
      * @return the given column of the result set as an instance of this class.
      */
     @Pure
-    public static @Nonnull OutgoingRole get(@Nonnull Entity entity, @Nonnull ResultSet resultSet, int columnIndex, boolean removed) throws SQLException {
-        return get(entity, resultSet.getLong(columnIndex), removed);
+    public static @Nonnull OutgoingRole get(@Nonnull Entity entity, @Nonnull ResultSet resultSet, int columnIndex, boolean removed, boolean restrictable) throws SQLException {
+        return get(entity, resultSet.getLong(columnIndex), removed, restrictable);
     }
     
     
@@ -266,16 +275,25 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
     }
     
     /**
+     * Returns whether this outgoing role can be restricted.
+     * 
+     * @return whether this outgoing role can be restricted.
+     */
+    public boolean isRestrictable() {
+        return restrictable;
+    }
+    
+    /**
      * Restricts this outgoing role to the permissions and restrictions of the given credential.
      * 
      * @param credential the credential with which to restrict this outgoing role.
      * 
-     * @require Database.isMultiAccess() : "The database is in multi-access mode.";
+     * @require isRestrictable() : "This outgoing role can be restricted.";
      * @require credential.getPermissions() != null : "The permissions of the credential are not null.";
      * @require credential.getRestrictions() != null : "The restrictions of the credential are not null.";
      */
     public void restrictTo(@Nonnull Credential credential) throws SQLException {
-        assert Database.isMultiAccess() : "The database is in multi-access mode.";
+        assert isRestrictable() : "This outgoing role can be restricted.";
         final @Nullable ReadonlyAgentPermissions credentialPermissions = credential.getPermissions();
         assert credentialPermissions != null : "The permissions of the credential are not null.";
         final @Nullable Restrictions credentialRestrictions = credential.getRestrictions();

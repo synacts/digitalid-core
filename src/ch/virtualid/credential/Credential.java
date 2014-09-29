@@ -9,6 +9,7 @@ import ch.virtualid.cryptography.PublicKey;
 import ch.virtualid.exceptions.InvalidDeclarationException;
 import ch.virtualid.identity.FailedIdentityException;
 import ch.virtualid.identity.NonHostIdentifier;
+import ch.virtualid.identity.Person;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.identity.SyntacticType;
 import ch.virtualid.interfaces.Immutable;
@@ -68,7 +69,7 @@ public abstract class Credential implements Immutable {
     /**
      * Stores the identifier of the non-host identity that issued the credential.
      */
-    private final @Nonnull NonHostIdentifier issuer; // TODO: Why not as an identity?
+    private final @Nonnull NonHostIdentifier issuer; // TODO: Why not as an identity? -> Person
     
     /**
      * Stores the issuance time rounded down to the last half-hour and is always positive.
@@ -83,7 +84,7 @@ public abstract class Credential implements Immutable {
     /**
      * Stores the role that is assumed by the client or null in case no role is assumed.
      */
-    private final @Nullable NonHostIdentifier role; // TODO: Why not as an identity? And: Shouldn't the role consist of the issuer and the relation?
+    private final @Nullable NonHostIdentifier role; // TODO: Why not as an identity? And: Shouldn't the role consist of the issuer and the relation? I guess this is the relation. -> SemanticType
     
     /**
      * Stores the attribute without the certificate for anonymous access control or null in case of identity-based authentication.
@@ -205,7 +206,7 @@ public abstract class Credential implements Immutable {
      * 
      * @return the identifier of the identity that issued the credential.
      */
-    public final @Nonnull NonHostIdentifier getIssuer() {
+    public final @Nonnull Person getIssuer() {
         return issuer;
     }
     
@@ -243,7 +244,7 @@ public abstract class Credential implements Immutable {
      * 
      * @return the role that is assumed by the client or null in case no role is assumed.
      */
-    public final @Nullable NonHostIdentifier getRole() {
+    public final @Nullable SemanticType getRole() {
         return role;
     }
     
