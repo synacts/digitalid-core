@@ -48,7 +48,7 @@ public interface ReadonlyCollection<E> extends ReadonlyIterable<E> {
      * @see Collection#toArray(T[])
      */
     @Pure
-    public <T> @Capturable @Nonnull T[] toArray(T[] array);
+    public @Capturable @Nonnull <T> T[] toArray(T[] array);
     
     /**
      * @see Collection#containsAll(java.util.Collection) 

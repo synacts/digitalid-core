@@ -101,7 +101,7 @@ class BackedFreezableCollection<E> implements FreezableCollection<E> {
     
     @Pure
     @Override
-    public <T> @Capturable @Nonnull T[] toArray(@Nonnull T[] array) {
+    public @Capturable @Nonnull <T> T[] toArray(@Nonnull T[] array) {
         return collection.toArray(array);
     }
     
