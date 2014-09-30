@@ -131,7 +131,7 @@ public final class PushReturned extends ExternalAction {
         final @Nonnull CompressionWrapper _compression = new CompressionWrapper(_signature.getElementNotNull());
         final @Nonnull SelfcontainedWrapper _content = new SelfcontainedWrapper(_compression.getElementNotNull());
         try {
-            this.reply = (ActionReply) Reply.get(entity, (HostSignatureWrapper) _signature, _content.getElementNotNull());
+            this.reply = (ActionReply) Reply.get(entity, (HostSignatureWrapper) _signature, _content.getElement());
         } catch (@Nonnull PacketException | ClassCastException exception) {
             throw new InvalidEncodingException("Could not decode the reply to an external action.", exception);
         }

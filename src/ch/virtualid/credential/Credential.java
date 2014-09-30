@@ -483,7 +483,7 @@ public abstract class Credential implements Immutable {
         if (isAttributeBased()) {
             string.append(", Attribute: (");
             try {
-                final @Nonnull Block element = new SelfcontainedWrapper(attribute).getElementNotNull();
+                final @Nonnull Block element = new SelfcontainedWrapper(attribute).getElement();
                 string.append(element.getType().getAddress().getString());
                 if (element.getType().isBasedOn(StringWrapper.TYPE)) {
                     string.append(": ").append(new StringWrapper(element).getString());

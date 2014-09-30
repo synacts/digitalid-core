@@ -19,7 +19,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * Wraps a block with the syntactic type {@code selfcontained@xdf.ch} for encoding and decoding.
@@ -55,7 +54,7 @@ public final class SelfcontainedWrapper extends BlockWrapper implements Immutabl
     /**
      * Stores the element of this wrapper.
      */
-    private final @Nullable Block element;
+    private final @Nonnull Block element;
     
     /**
      * Encodes the given element into a new block of the given type.
@@ -66,11 +65,11 @@ public final class SelfcontainedWrapper extends BlockWrapper implements Immutabl
      * @require type.isLoaded() : "The type declaration is loaded.";
      * @require type.isBasedOn(getSyntacticType()) : "The given type is based on the indicated syntactic type.";
      */
-    public SelfcontainedWrapper(@Nonnull SemanticType type, @Nullable Block element) {
+    public SelfcontainedWrapper(@Nonnull SemanticType type, @Nonnull Block element) {
         super(type);
         
-        final @Nonnull ReadonlyArray<Block> elements = new FreezableArray<Block>((element == null ? null : element.getType().getAddress().toBlock().setType(SemanticType.IDENTIFIER)), element).freeze();
-        this.tuple = new TupleWrapper(IMPLEMENTATION, elements).toBlock();
+        final @Nonnull FreezableArray<Block> elements = new FreezableArray<Block>(element.getType().getAddress().toBlock().setType(SemanticType.IDENTIFIER), element);
+        this.tuple = new TupleWrapper(IMPLEMENTATION, elements.freeze()).toBlock();
         this.element = element;
     }
     
@@ -83,8 +82,8 @@ public final class SelfcontainedWrapper extends BlockWrapper implements Immutabl
      * @require type.isLoaded() : "The type declaration is loaded.";
      * @require type.isBasedOn(getSyntacticType()) : "The given type is based on the indicated syntactic type.";
      */
-    public SelfcontainedWrapper(@Nonnull SemanticType type, @Nullable Blockable element) {
-        this(type, Block.toBlock(element));
+    public SelfcontainedWrapper(@Nonnull SemanticType type, @Nonnull Blockable element) {
+        this(type, element.toBlock());
     }
     
     /**
@@ -98,10 +97,10 @@ public final class SelfcontainedWrapper extends BlockWrapper implements Immutabl
         super(block);
         
         this.tuple = new Block(IMPLEMENTATION, block);
-        final @Nonnull TupleWrapper tuple = new TupleWrapper(this.tuple);
-        final @Nonnull NonHostIdentifier identifier = new NonHostIdentifier(tuple.getElementNotNull(0));
-        this.element = tuple.getElement(1);
-        if (element != null) element.setType(identifier.getIdentity().toSemanticType());
+        final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(tuple).getElementsNotNull(2);
+        final @Nonnull NonHostIdentifier identifier = new NonHostIdentifier(elements.getNotNull(0));
+        this.element = elements.getNotNull(1);
+        element.setType(identifier.getIdentity().toSemanticType());
     }
     
     /**
@@ -122,20 +121,7 @@ public final class SelfcontainedWrapper extends BlockWrapper implements Immutabl
      * @return the element of the wrapped block.
      */
     @Pure
-    public @Nullable Block getElement() {
-        return element;
-    }
-    
-    /**
-     * Returns the element of the wrapped block.
-     * 
-     * @return the element of the wrapped block.
-     * 
-     * @throws InvalidEncodingException if the element is null.
-     */
-    @Pure
-    public @Nonnull Block getElementNotNull() throws InvalidEncodingException {
-        if (element == null) throw new InvalidEncodingException("The selfcontained element is null.");
+    public @Nonnull Block getElement() {
         return element;
     }
     

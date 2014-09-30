@@ -107,7 +107,7 @@ public final class RoleIssuance extends CoreServiceExternalAction {
         this.certificate = (HostSignatureWrapper) certificate;
         if (!(this.certificate.getSigner() instanceof NonHostIdentifier)) throw new InvalidEncodingException("The certificate has to be signed by a non-host.");
         
-        this.attribute = new SelfcontainedWrapper(certificate.getElementNotNull()).getElementNotNull();
+        this.attribute = new SelfcontainedWrapper(certificate.getElementNotNull()).getElement();
         if (!attribute.getType().isAttributeFor(getSubject().getIdentity().getCategory())) throw new InvalidEncodingException("The block is an attribute for the subject.");
         
         this.auditPermissions = new AgentPermissions(attribute.getType(), false).freeze();

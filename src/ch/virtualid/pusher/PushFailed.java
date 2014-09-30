@@ -128,7 +128,7 @@ public final class PushFailed extends ExternalAction {
         
         final @Nonnull Identifier _subject = Identifier.create(elements.getNotNull(1));
         final @Nonnull HostIdentifier _recipient = new HostIdentifier(elements.getNotNull(2));
-        final @Nonnull Block _block = new SelfcontainedWrapper(elements.getNotNull(3)).getElementNotNull();
+        final @Nonnull Block _block = new SelfcontainedWrapper(elements.getNotNull(3)).getElement();
         try {
             this.action = (ExternalAction) Method.get(entity, new SignatureWrapper(Packet.SIGNATURE, (Block) null, _subject), _recipient, _block);
         } catch (@Nonnull PacketException | ClassCastException exception) {
