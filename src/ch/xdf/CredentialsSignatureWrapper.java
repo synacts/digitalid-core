@@ -752,17 +752,15 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
     @Override
     public @Nullable OutgoingRole getAgent(@Nonnull Entity entity) throws SQLException {
         final @Nonnull Credential credential = getCredentials().getNotNull(0);
-        final @Nullable SemanticType relation = credential.getRole();
-        return relation == null ? null : Agents.getOutgoingRole(entity, relation, false);
+        return credential.isRoleBased() ? Agents.getOutgoingRole(entity, credential.getRoleNotNull(), false) : null;
     }
     
     @Pure
     @Override
     public @Nonnull OutgoingRole getAgentCheckedAndRestricted(@Nonnull Entity entity) throws PacketException, SQLException {
         final @Nonnull Credential credential = getCredentials().getNotNull(0);
-        final @Nullable SemanticType relation = credential.getRole();
-        if (relation != null) {
-            final @Nullable OutgoingRole outgoingRole = Agents.getOutgoingRole(entity, relation, true);
+        if (credential.isRoleBased()) {
+            final @Nullable OutgoingRole outgoingRole = Agents.getOutgoingRole(entity, credential.getRoleNotNull(), true);
             if (outgoingRole != null && outgoingRole.getContext().contains(Contact.get(entity, credential.getIssuer()))) {
                 outgoingRole.checkCovers(credential);
                 outgoingRole.restrictTo(credential);

@@ -289,23 +289,19 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
      * @param credential the credential with which to restrict this outgoing role.
      * 
      * @require isRestrictable() : "This outgoing role can be restricted.";
-     * @require credential.getPermissions() != null : "The permissions of the credential are not null.";
-     * @require credential.getRestrictions() != null : "The restrictions of the credential are not null.";
+     * @require credential.isRoleBased() : "The credential is role-based.";
      */
     public void restrictTo(@Nonnull Credential credential) throws SQLException {
         assert isRestrictable() : "This outgoing role can be restricted.";
-        final @Nullable ReadonlyAgentPermissions credentialPermissions = credential.getPermissions();
-        assert credentialPermissions != null : "The permissions of the credential are not null.";
-        final @Nullable Restrictions credentialRestrictions = credential.getRestrictions();
-        assert credentialRestrictions != null : "The restrictions of the credential are not null.";
+        assert credential.isRoleBased() : "The credential is role-based.";
         
         if (permissions == null) getPermissions();
         assert permissions != null;
-        permissions.restrictTo(credentialPermissions);
+        permissions.restrictTo(credential.getPermissionsNotNull());
         
         if (restrictions == null) getRestrictions();
         assert restrictions != null;
-        restrictions = restrictions.restrictTo(credentialRestrictions);
+        restrictions = restrictions.restrictTo(credential.getRestrictionsNotNull());
     }
     
 }

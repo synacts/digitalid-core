@@ -238,6 +238,16 @@ public final class Time implements Immutable, Blockable, Comparable<Time>, SQLiz
         return this.value >= 0;
     }
     
+    /**
+     * Returns whether this time is positive.
+     * 
+     * @return whether this time is positive.
+     */
+    @Pure
+    public boolean isPositive() {
+        return this.value > 0;
+    }
+    
     
     /**
      * Returns whether this time is equal to the given time.

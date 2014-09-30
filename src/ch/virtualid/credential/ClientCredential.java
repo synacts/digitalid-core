@@ -2,12 +2,16 @@ package ch.virtualid.credential;
 
 import ch.virtualid.agent.RandomizedAgentPermissions;
 import ch.virtualid.agent.Restrictions;
+import ch.virtualid.auxiliary.Time;
 import ch.virtualid.cryptography.Element;
 import ch.virtualid.cryptography.Exponent;
 import ch.virtualid.cryptography.Parameters;
 import ch.virtualid.cryptography.PublicKey;
 import ch.virtualid.exceptions.ShouldNeverHappenError;
-import ch.virtualid.identity.NonHostIdentifier;
+import ch.virtualid.identity.NonHostIdentity;
+import ch.virtualid.identity.Person;
+import ch.virtualid.identity.SemanticType;
+import ch.virtualid.interfaces.Immutable;
 import ch.xdf.Block;
 import ch.xdf.exceptions.InvalidSignatureException;
 import java.math.BigInteger;
@@ -16,12 +20,12 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * This class models client credentials (i.e. credentials on the client-side).
+ * This class models credentials on the client-side.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 1.0
+ * @version 2.0
  */
-public final class ClientCredential extends Credential {
+public final class ClientCredential extends Credential implements Immutable {
     
     /**
      * Stores the certifying base of this credential.
@@ -57,7 +61,7 @@ public final class ClientCredential extends Credential {
      * Creates a new identity-based credential with the given public key, issuer, issuance, permissions, role, restrictions and arguments for clients.
      * 
      * @param publicKey the public key of the host that issued the credential.
-     * @param issuer the identifier of the identity that issued the credential.
+     * @param issuer the person that issued the credential.
      * @param issuance the issuance time rounded down to the last half-hour.
      * @param randomizedPermissions the client's randomized permissions.
      * @param role the role that is assumed by the client or null in case no role is assumed.
@@ -70,11 +74,12 @@ public final class ClientCredential extends Credential {
      * @param i the serial number of this credential.
      * @param v the hash of restrictions.
      * 
-     * @require issuance > 0l && issuance % Credential.ROUNDING == 0 : "The issuance time is always positive and a multiple of the rounding interval.";
-     * @require randomizedPermissions.getPermissions() != null : "The permissions may never be null for client credentials.";
-     * @require restrictions.toBlock().getHash().equals(v.getValue()) : "The restrictions either have to equal v when hashed.";
+     * @require issuance.isPositive() && issuance.isMultipleOf(Time.HALF_HOUR) : "The issuance time is positive and a multiple of half an hour.";
+     * @require randomizedPermissions.areShown() : "The randomized permissions are shown for client credentials.";
+     * @require role == null || role.isRoleType() : "The role is either null or a role type.";
+     * @require restrictions == null || restrictions.toBlock().getHash().equals(v.getValue()) : "If the restrictions are not null, their hash has to equal v.";
      */
-    public ClientCredential(@Nonnull PublicKey publicKey, @Nonnull NonHostIdentifier issuer, long issuance, @Nonnull RandomizedAgentPermissions randomizedPermissions, @Nullable NonHostIdentifier role, @Nonnull Restrictions restrictions, @Nonnull Element c, @Nonnull Exponent e, @Nonnull Exponent b, @Nonnull Exponent u, @Nonnull Exponent i, @Nonnull Exponent v) throws InvalidSignatureException {
+    public ClientCredential(@Nonnull PublicKey publicKey, @Nonnull Person issuer, @Nonnull Time issuance, @Nonnull RandomizedAgentPermissions randomizedPermissions, @Nullable SemanticType role, @Nonnull Restrictions restrictions, @Nonnull Element c, @Nonnull Exponent e, @Nonnull Exponent b, @Nonnull Exponent u, @Nonnull Exponent i, @Nonnull Exponent v) throws InvalidSignatureException {
         this(publicKey, issuer, issuance, randomizedPermissions, role, null, restrictions, c, e, b, u, i, v, false);
     }
     
@@ -82,7 +87,7 @@ public final class ClientCredential extends Credential {
      * Creates a new attribute-based credential with the given public key, issuer, issuance, permissions, attribute and arguments for clients.
      * 
      * @param publicKey the public key of the host that issued the credential.
-     * @param issuer the identifier of the identity that issued the credential.
+     * @param issuer the non-host identity that issued the credential.
      * @param issuance the issuance time rounded down to the last half-hour.
      * @param randomizedPermissions the client's randomized permissions.
      * @param attribute the attribute without the certificate for anonymous access control.
@@ -96,10 +101,11 @@ public final class ClientCredential extends Credential {
      * 
      * @param oneTime whether the credential can be used only once.
      * 
-     * @require issuance > 0l && issuance % Credential.ROUNDING == 0 : "The issuance time is always positive and a multiple of the rounding interval.";
-     * @require randomizedPermissions.getPermissions() != null : "The permissions may never be null for client credential.";
+     * @require issuance.isPositive() && issuance.isMultipleOf(Time.HALF_HOUR) : "The issuance time is positive and a multiple of half an hour.";
+     * @require randomizedPermissions.areShown() : "The randomized permissions are shown for client credentials.";
+     * @require attribute.getType().isBasedOn(Attribute.TYPE) : "The attribute is based on the attribute type.";
      */
-    public ClientCredential(@Nonnull PublicKey publicKey, @Nonnull NonHostIdentifier issuer, long issuance, @Nonnull RandomizedAgentPermissions randomizedPermissions, @Nonnull Block attribute, @Nonnull Element c, @Nonnull Exponent e, @Nonnull Exponent b, @Nonnull Exponent u, @Nonnull Exponent i, @Nonnull Exponent v, boolean oneTime) throws InvalidSignatureException {
+    public ClientCredential(@Nonnull PublicKey publicKey, @Nonnull NonHostIdentity issuer, @Nonnull Time issuance, @Nonnull RandomizedAgentPermissions randomizedPermissions, @Nonnull Block attribute, @Nonnull Element c, @Nonnull Exponent e, @Nonnull Exponent b, @Nonnull Exponent u, @Nonnull Exponent i, @Nonnull Exponent v, boolean oneTime) throws InvalidSignatureException {
         this(publicKey, issuer, issuance, randomizedPermissions, null, attribute, null, c, e, b, u, i, v, oneTime);
     }
     
@@ -107,7 +113,7 @@ public final class ClientCredential extends Credential {
      * Creates a new credential with the given given public key, issuer, issuance, permissions, role, attribute, restrictions and arguments for clients.
      * 
      * @param publicKey the public key of the host that issued the credential.
-     * @param issuer the identifier of the identity that issued the credential.
+     * @param issuer the non-host identity that issued the credential.
      * @param issuance the issuance time rounded down to the last half-hour.
      * @param randomizedPermissions the client's randomized permissions.
      * @param role the role that is assumed by the client or null in case no role is assumed.
@@ -123,17 +129,20 @@ public final class ClientCredential extends Credential {
      * 
      * @param oneTime whether the credential can be used only once.
      * 
-     * @require issuance > 0l && issuance % Credential.ROUNDING == 0 : "The issuance time is always positive and a multiple of the rounding interval.";
-     * @require randomizedPermissions.getPermissions() != null : "The permissions may never be null for client credentials.";
-     * @require (attribute == null) != (restrictions == null) : "Either the attribute or the restrictions is not null (but not both).";
-     * @require attribute == null || role == null && restrictions == null : "If the attribute is not null, both the role and the restrictions have to be null.";
-     * @require role == null || restrictions != null : "If a role is given, the restrictions is not null.";
-     * @require restrictions == null || restrictions.toBlock().getHash().equals(v.getValue()) && !oneTime : "If the restrictions are not null, they have to equal v when hashed and the one time flag is false.";
+     * @require issuance.isPositive() && issuance.isMultipleOf(Time.HALF_HOUR) : "The issuance time is positive and a multiple of half an hour.";
+     * @require randomizedPermissions.areShown() : "The randomized permissions are shown for client credentials.";
+     * @require role == null || role.isRoleType() : "The role is either null or a role type.";
+     * @require role == null || restrictions != null : "If a role is given, the restrictions are not null.";
+     * @require (attribute == null) != (restrictions == null) : "Either the attribute or the restrictions are null (but not both).";
+     * @require attribute == null || attribute.getType().isBasedOn(Attribute.TYPE) : "The attribute is either null or based on the attribute type.";
+     * @require restrictions == null || restrictions.toBlock().getHash().equals(v.getValue()) : "If the restrictions are not null, their hash has to equal v.";
+     * @require !oneTime || attribute != null : "If the credential can be used only once, the attribute may not be null.";
      */
-    private ClientCredential(@Nonnull PublicKey publicKey, @Nonnull NonHostIdentifier issuer, long issuance, @Nonnull RandomizedAgentPermissions randomizedPermissions, @Nullable NonHostIdentifier role, @Nullable Block attribute, @Nullable Restrictions restrictions, @Nonnull Element c, @Nonnull Exponent e, @Nonnull Exponent b, @Nonnull Exponent u, @Nonnull Exponent i, @Nonnull Exponent v, boolean oneTime) throws InvalidSignatureException {
+    private ClientCredential(@Nonnull PublicKey publicKey, @Nonnull NonHostIdentity issuer, @Nonnull Time issuance, @Nonnull RandomizedAgentPermissions randomizedPermissions, @Nullable SemanticType role, @Nullable Block attribute, @Nullable Restrictions restrictions, @Nonnull Element c, @Nonnull Exponent e, @Nonnull Exponent b, @Nonnull Exponent u, @Nonnull Exponent i, @Nonnull Exponent v, boolean oneTime) throws InvalidSignatureException {
         super(publicKey, issuer, issuance, randomizedPermissions, role, attribute, restrictions, i);
         
-        assert restrictions == null || restrictions.toBlock().getHash().equals(v.getValue()) && !oneTime : "If the restrictions are not null, they have to equal v when hashed and the one time flag is false.";
+        assert restrictions == null || restrictions.toBlock().getHash().equals(v.getValue()) : "If the restrictions are not null, their hash has to equal v.";
+        assert !oneTime || attribute != null : "If the credential can be used only once, the attribute may not be null.";
         
         this.c = c;
         this.e = e;
@@ -143,7 +152,7 @@ public final class ClientCredential extends Credential {
         
         this.oneTime = oneTime;
         
-        if (!publicKey.getAo().pow(getO()).equals(c.pow(e).multiply(publicKey.getAb().pow(b)).multiply(publicKey.getAu().pow(u)).multiply(publicKey.getAi().pow(i)).multiply(publicKey.getAv().pow(v)))) throw new InvalidSignatureException("The credential issued by " + issuer + " is invalid.");
+        if (!publicKey.getAo().pow(getO()).equals(c.pow(e).multiply(publicKey.getAb().pow(b)).multiply(publicKey.getAu().pow(u)).multiply(publicKey.getAi().pow(i)).multiply(publicKey.getAv().pow(v)))) throw new InvalidSignatureException("The credential issued by " + issuer.getAddress() + " is invalid.");
     }
     
     /**
@@ -198,15 +207,15 @@ public final class ClientCredential extends Credential {
      */
     @Override
     public @Nonnull Exponent getI() {
-        @Nullable Exponent i = super.getI();
+        final @Nullable Exponent i = super.getI();
         assert i != null : "The value i is always known in client credentials (see the constructor above).";
         return i;
     }
     
     /**
-     * Returns whether the credential can be used only once (i.e. 'i' is to be disclosed).
+     * Returns whether this credential can be used only once (i.e. 'i' is shown).
      * 
-     * @return whether the credential can be used only once (i.e. 'i' is to be disclosed).
+     * @return whether this credential can be used only once (i.e. 'i' is shown).
      */
     public boolean isOneTime() {
         return oneTime;
@@ -219,9 +228,9 @@ public final class ClientCredential extends Credential {
      */
     public @Nonnull ClientCredential getRandomizedCredential() {
         try {
-            @Nonnull Exponent r = new Exponent(new BigInteger(Parameters.BLINDING_EXPONENT - Parameters.CREDENTIAL_EXPONENT, new SecureRandom()));
+            final @Nonnull Exponent r = new Exponent(new BigInteger(Parameters.BLINDING_EXPONENT - Parameters.CREDENTIAL_EXPONENT, new SecureRandom()));
             return new ClientCredential(getPublicKey(), getIssuer(), getIssuance(), getRandomizedPermissions(), getRole(), getAttribute(), getRestrictions(), c.multiply(getPublicKey().getAb().pow(r)), e, b.subtract(e.multiply(r)), u, getI(), v, oneTime);
-        } catch (InvalidSignatureException exception) {
+        } catch (@Nonnull InvalidSignatureException exception) {
             throw new ShouldNeverHappenError("The randomization of a client credential should yield another valid client credential.", exception);
         }
     }

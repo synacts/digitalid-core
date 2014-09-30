@@ -1,6 +1,7 @@
 package ch.virtualid.client;
 
 import ch.virtualid.database.Database;
+import ch.virtualid.entity.Role;
 import ch.virtualid.exceptions.InitializationError;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.HostIdentity;
@@ -170,6 +171,30 @@ public final class Cache {
             preparedStatement.executeUpdate();
             connection.commit();
         }
+    }
+    
+    
+    /**
+     * Returns the unwrapped attribute of the given subject with the given type.
+     * 
+     * @param role the role that queries the attribute or null for anonymous requests.
+     * @param subject the identity whose attribute is to be returned.
+     * @param type the type of the attribute which is to be returned
+     * 
+     * @return the unwrapped attribute of the given subject with the given type.
+     * 
+     * @require type.isAttributeType() : "The given type is an attribute type.";
+     * 
+     * @ensure return.getType().equals(type) : "The returned block has the given type.";
+     */
+    public static @Nonnull Block getAttributeNotNullUnwrapped(@Nullable Role role, @Nonnull Identity subject, @Nonnull SemanticType type) {
+        assert type.isAttributeType() : "The given type is an attribute type.";
+        
+        throw new UnsupportedOperationException(); // TODO
+    }
+    
+    public static @Nonnull Block getAttributeNotNullUnwrapped(@Nonnull Identity subject, @Nonnull SemanticType type) {
+        return getAttributeNotNullUnwrapped(null, subject, type);
     }
     
 }

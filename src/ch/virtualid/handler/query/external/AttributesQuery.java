@@ -21,7 +21,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * Retrieves the given attributes from the given subject.
+ * Queries the given attributes from the given subject.
  * 
  * @see AttributesReply
  * 

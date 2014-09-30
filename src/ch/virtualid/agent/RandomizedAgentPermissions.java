@@ -12,7 +12,6 @@ import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.ReadonlyArray;
 import ch.xdf.Block;
 import ch.xdf.HashWrapper;
-import ch.xdf.Int64Wrapper;
 import ch.xdf.TupleWrapper;
 import ch.xdf.exceptions.InvalidEncodingException;
 import java.math.BigInteger;
@@ -23,7 +22,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * This class models the randomized {@link AgentPermissions permissions} of {@link IncomingRole incoming roles}.
+ * This class models the randomized {@link AgentPermissions permissions} of {@link OutgoingRole outgoing roles}.
+ * 
+ * @invariant (salt == null) == (permissions == null) : "The salt and the permissions are either both null or both non-null.";
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
@@ -43,7 +44,12 @@ public final class RandomizedAgentPermissions implements Immutable, Blockable {
     /**
      * Stores the semantic type {@code randomized.permission.agent@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("randomized.permission.agent@virtualid.ch").load(Int64Wrapper.TYPE);
+    public static final @Nonnull SemanticType TYPE = SemanticType.create("randomized.permission.agent@virtualid.ch").load(TupleWrapper.TYPE, SALT, PERMISSIONS);
+    
+    /**
+     * Stores the semantic type {@code hash.randomized.permission.agent@virtualid.ch}.
+     */
+    public static final @Nonnull SemanticType HASH = SemanticType.create("hash.randomized.permission.agent@virtualid.ch").load(HashWrapper.TYPE);
     
     
     /**
@@ -91,6 +97,9 @@ public final class RandomizedAgentPermissions implements Immutable, Blockable {
     
     /**
      * Creates new randomized permissions from the given block.
+     * <p>
+     * <em>Important:</em> Please note that {@link #toBlock()}
+     * returns an invalid block if the permissions are hidden.
      * 
      * @param block the block containing the randomized permissions.
      * 
@@ -100,9 +109,9 @@ public final class RandomizedAgentPermissions implements Immutable, Blockable {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         this.hash = block.getHash();
-        final @Nonnull ReadonlyArray<Block> tuple = new TupleWrapper(block).getElementsNotNull(2);
-        this.salt = new HashWrapper(tuple.getNotNull(0)).getValue();
-        this.permissions = new AgentPermissions(tuple.getNotNull(1)).freeze();
+        final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(2);
+        this.salt = new HashWrapper(elements.getNotNull(0)).getValue();
+        this.permissions = new AgentPermissions(elements.getNotNull(1)).freeze();
     }
     
     @Pure
@@ -114,10 +123,10 @@ public final class RandomizedAgentPermissions implements Immutable, Blockable {
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        final @Nonnull FreezableArray<Block> array = new FreezableArray<Block>(2);
-        array.set(0, new HashWrapper(SALT, salt).toBlock());
-        array.set(1, Block.toBlock(PERMISSIONS, permissions));
-        return new TupleWrapper(TYPE, array.freeze()).toBlock();
+        final @Nonnull FreezableArray<Block> elements = new FreezableArray<Block>(2);
+        elements.set(0, salt == null ? null : new HashWrapper(SALT, salt).toBlock());
+        elements.set(1, Block.toBlock(PERMISSIONS, permissions));
+        return new TupleWrapper(TYPE, elements.freeze()).toBlock();
     }
     
     
@@ -141,6 +150,42 @@ public final class RandomizedAgentPermissions implements Immutable, Blockable {
     @Pure
     public @Nullable ReadonlyAgentPermissions getPermissions() {
         return permissions;
+    }
+    
+    /**
+     * Returns the actual permissions.
+     * 
+     * @return the actual permissions.
+     * 
+     * @require areShown() : "The permissions are exposed.";
+     * 
+     * @ensure permissions.isFrozen() : "The permissions are frozen.";
+     */
+    @Pure
+    public @Nonnull ReadonlyAgentPermissions getPermissionsNotNull() {
+        assert permissions != null : "The permissions are exposed.";
+        
+        return permissions;
+    }
+    
+    /**
+     * Returns whether the permissions are shown.
+     * 
+     * @return whether the permissions are shown.
+     */
+    @Pure
+    public boolean areShown() {
+        return permissions != null;
+    }
+    
+    /**
+     * Returns whether the permissions are hidden.
+     * 
+     * @return whether the permissions are hidden.
+     */
+    @Pure
+    public boolean areHidden() {
+        return permissions == null;
     }
     
     

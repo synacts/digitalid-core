@@ -155,7 +155,7 @@ public final class Restrictions implements Immutable, Blockable {
     /**
      * Creates new restrictions from the given block.
      * 
-     * @param entity the entity to which these restrictions belongs.
+     * @param entity the entity to which the restrictions belongs.
      * @param block the block containing the restrictions.
      * 
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";

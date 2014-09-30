@@ -1,5 +1,6 @@
 package ch.virtualid.handler.reply.query;
 
+import ch.virtualid.entity.Entity;
 import ch.virtualid.handler.query.external.AttributesQuery;
 import ch.xdf.Block;
 import ch.xdf.SignatureWrapper;
@@ -7,7 +8,7 @@ import java.sql.Connection;
 import javax.annotation.Nonnull;
 
 /**
- * Description.
+ * Replies the queried attributes of the given subject that are accessible by the requester.
  * 
  * @see AttributesQuery
  * 
