@@ -138,7 +138,7 @@ public final class HostSignatureWrapper extends SignatureWrapper implements Immu
      * @param hostSignature the signature to be decoded.
      * 
      * @require block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
-     * @require hostSignature.getType().isBasedOn(IMPLEMENTATION) : "The signature is based on the implementation type.";
+     * @require hostSignature.getType().isBasedOn(SIGNATURE) : "The signature is based on the implementation type.";
      */
     HostSignatureWrapper(@Nonnull Block block, @Nonnull Block hostSignature) throws SQLException, InvalidEncodingException, FailedIdentityException {
         super(block, true);
@@ -171,10 +171,10 @@ public final class HostSignatureWrapper extends SignatureWrapper implements Immu
     public void verify() throws InvalidEncodingException, InvalidSignatureException {
         if (new Time().subtract(getTimeNotNull()).isGreaterThan(Time.TROPICAL_YEAR.multiply(2))) throw new InvalidSignatureException("The host signature is out of date.");
         
-        final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(getCache()).getElements(4);
-        final @Nonnull BigInteger hash = elements.getNotNull(0).getHash();
+        final @Nonnull TupleWrapper tuple = new TupleWrapper(getCache());
+        final @Nonnull BigInteger hash = tuple.getElementNotNull(0).getHash();
         
-        final @Nonnull ReadonlyArray<Block> subelements = new TupleWrapper(elements.getNotNull(1)).getElementsNotNull(2);
+        final @Nonnull ReadonlyArray<Block> subelements = new TupleWrapper(tuple.getElementNotNull(1)).getElementsNotNull(2);
         if (!publicKey.getCompositeGroup().getElement(subelements.getNotNull(1)).pow(publicKey.getE()).getValue().equals(hash)) throw new InvalidSignatureException("The host signature is not valid.");
     }
     

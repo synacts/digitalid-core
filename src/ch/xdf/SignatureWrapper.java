@@ -5,6 +5,7 @@ import ch.virtualid.annotations.Exposed;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.entity.Entity;
+import ch.virtualid.exceptions.InvalidDeclarationException;
 import ch.virtualid.identity.FailedIdentityException;
 import ch.virtualid.identity.Identifier;
 import ch.virtualid.identity.Identity;
@@ -14,6 +15,7 @@ import ch.virtualid.identity.SyntacticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.packet.Audit;
+import ch.virtualid.packet.FailedRequestException;
 import ch.virtualid.packet.PacketError;
 import ch.virtualid.packet.PacketException;
 import ch.virtualid.util.FreezableArray;
@@ -38,7 +40,7 @@ import javax.annotation.Nullable;
  * @see CredentialsSignatureWrapper
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 1.8
+ * @version 2.0
  */
 public class SignatureWrapper extends BlockWrapper implements Immutable {
     
@@ -71,7 +73,7 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
     /**
      * Stores the time of the signature generation or null if the element is not signed.
      * 
-     * @invariant time == null || time.isNonNegative() : "The time is either null or non-negative.";
+     * @invariant time == null || time.isPositive() : "The time is either null or positive.";
      */
     private final @Nullable Time time;
     
@@ -149,7 +151,7 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
      * @require block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
      */
     @Pure
-    public static @Nonnull SignatureWrapper decode(@Nonnull Block block) throws SQLException, InvalidEncodingException, InvalidSignatureException, FailedIdentityException {
+    public static @Nonnull SignatureWrapper decode(@Nonnull Block block) throws SQLException, InvalidEncodingException, InvalidSignatureException, FailedIdentityException, FailedRequestException, InvalidDeclarationException {
         final @Nonnull SignatureWrapper signatureWrapper = decodeUnverified(block);
         signatureWrapper.verify();
         return signatureWrapper;
@@ -165,8 +167,8 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
      * @require block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
      */
     @Pure
-    public static @Nonnull SignatureWrapper decodeUnverified(@Nonnull Block block) throws SQLException, InvalidEncodingException, FailedIdentityException {
-        final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(block).getElements(4);
+    public static @Nonnull SignatureWrapper decodeUnverified(@Nonnull Block block) throws SQLException, InvalidEncodingException, FailedIdentityException, FailedRequestException, InvalidDeclarationException {
+        final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(new Block(IMPLEMENTATION, block)).getElements(4);
         final @Nullable Block hostSignature = elements.get(1);
         final @Nullable Block clientSignature = elements.get(2);
         final @Nullable Block credentialsSignature = elements.get(3);
@@ -196,7 +198,7 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
         if (signed && subject == null) throw new InvalidEncodingException("The subject may not be null if the element is signed.");
         this.time = tuple.isElementNull(1) ? null : new Time(tuple.getElementNotNull(1));
         if (signed && time == null) throw new InvalidEncodingException("The signature time may not be null if the element is signed.");
-        if (time != null && time.isNegative()) throw new InvalidEncodingException("The signature time may not be negative.");
+        if (time != null && !time.isPositive()) throw new InvalidEncodingException("The signature time has to be positive.");
         this.element = tuple.getElementNotNull(2);
         this.audit = tuple.isElementNull(3) ? null : new Audit(tuple.getElementNotNull(3));
     }
@@ -255,7 +257,7 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
      * 
      * @return the time of the signature generation or null if the element is not signed.
      * 
-     * @ensure time == null || time.isNonNegative() : "The time is either null or non-negative.";
+     * @ensure time == null || time.isPositive() : "The time is either null or positive.";
      */
     @Pure
     public final @Nullable Time getTime() {
@@ -269,7 +271,7 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
      * 
      * @require isSigned() : "This signature is signed.";
      * 
-     * @ensure time.isNonNegative() : "The time is non-negative.";
+     * @ensure time.isPositive() : "The time is positive.";
      */
     @Pure
     public final @Nonnull Time getTimeNotNull() {
@@ -286,7 +288,7 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
      * 
      * @require isSigned() : "This signature is signed.";
      * 
-     * @ensure return.isNonNegative() && return.isMultipleOf(Time.HALF_HOUR) : "The returned time is non-negative and a multiple of half an hour.";
+     * @ensure return.isPositive() && return.isMultipleOf(Time.HALF_HOUR) : "The returned time is positive and a multiple of half an hour.";
      */
     @Pure
     public final @Nonnull Time getSignatureTimeRoundedDown() {

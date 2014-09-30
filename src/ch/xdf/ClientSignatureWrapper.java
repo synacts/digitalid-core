@@ -2,14 +2,14 @@ package ch.xdf;
 
 import ch.virtualid.agent.ClientAgent;
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.client.Client;
+import ch.virtualid.auxiliary.Time;
 import ch.virtualid.client.Commitment;
 import ch.virtualid.client.SecretCommitment;
 import ch.virtualid.cryptography.Element;
 import ch.virtualid.cryptography.Exponent;
 import ch.virtualid.cryptography.Parameters;
-import ch.virtualid.cryptography.PublicKey;
 import ch.virtualid.entity.Entity;
+import ch.virtualid.exceptions.InvalidDeclarationException;
 import ch.virtualid.identity.FailedIdentityException;
 import ch.virtualid.identity.Identifier;
 import ch.virtualid.identity.SemanticType;
@@ -17,9 +17,11 @@ import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.module.both.Agents;
 import ch.virtualid.packet.Audit;
+import ch.virtualid.packet.FailedRequestException;
 import ch.virtualid.packet.PacketError;
 import ch.virtualid.packet.PacketException;
-import ch.virtualid.server.Server;
+import ch.virtualid.util.FreezableArray;
+import ch.virtualid.util.ReadonlyArray;
 import ch.xdf.exceptions.InvalidEncodingException;
 import ch.xdf.exceptions.InvalidSignatureException;
 import java.math.BigInteger;
@@ -33,7 +35,7 @@ import javax.annotation.Nullable;
  * Format: {@code (commitment, t, s)}
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 0.9
+ * @version 2.0
  */
 public final class ClientSignatureWrapper extends SignatureWrapper implements Immutable {
     
@@ -93,28 +95,30 @@ public final class ClientSignatureWrapper extends SignatureWrapper implements Im
      * 
      * @param block the block to be wrapped.
      * @param clientSignature the signature to be decoded.
+     * 
+     * @require block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
+     * @require clientSignature.getType().isBasedOn(SIGNATURE) : "The signature is based on the implementation type.";
      */
-    ClientSignatureWrapper(@Nonnull Block block, @Nonnull Block clientSignature) throws InvalidEncodingException, FailedIdentityException {
+    ClientSignatureWrapper(@Nonnull Block block, @Nonnull Block clientSignature) throws InvalidEncodingException, FailedIdentityException, SQLException, FailedRequestException, InvalidDeclarationException {
         super(block, true);
         
-        @Nullable Identifier subject = getSubject();
-        assert subject != null : "The subject of signed statements is never null.";
-        publicKey = new PublicKey(Client.getAttributeNotNullUnwrapped(subject.getHostIdentifier().getIdentity(), SemanticType.HOST_PUBLIC_KEY));
+        assert clientSignature.getType().isBasedOn(SIGNATURE) : "The signature is based on the implementation type.";
         
-        @Nonnull Block[] elements = new TupleWrapper(clientSignature).getElementsNotNull(3);
-        commitment = new Commitment(elements[0]);
+        final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(clientSignature).getElementsNotNull(3);
+        this.commitment = new Commitment(elements.getNotNull(0));
     }
     
     
     /**
-     * Returns the commitment containing either the client secret or the actual value.
+     * Returns the commitment of this client signature.
      * 
-     * @return the commitment containing either the client secret or the actual value.
+     * @return the commitment of this client signature.
      */
     @Pure
     public @Nonnull Commitment getCommitment() {
         return commitment;
     }
+    
     
     @Pure
     @Override
@@ -125,33 +129,31 @@ public final class ClientSignatureWrapper extends SignatureWrapper implements Im
     @Pure
     @Override
     public void verify() throws InvalidEncodingException, InvalidSignatureException {
-        if (System.currentTimeMillis() - getTime() > Server.YEAR) throw new InvalidSignatureException("The client signature is out of date.");
+        if (new Time().subtract(getTimeNotNull()).isGreaterThan(Time.TROPICAL_YEAR)) throw new InvalidSignatureException("The client signature is out of date.");
         
-        @Nonnull Block[] elements = new TupleWrapper(getCache()).getElementsNotNull(4);
-        @Nonnull BigInteger hash = elements[0].getHash();
+        final @Nonnull TupleWrapper tuple = new TupleWrapper(getCache());
+        final @Nonnull BigInteger hash = tuple.getElementNotNull(0).getHash();
         
-        @Nonnull Block[] subelements = new TupleWrapper(elements[2]).getElementsNotNull(3);
-        @Nonnull BigInteger t = new IntegerWrapper(subelements[1]).getValue();
-        @Nonnull BigInteger s = new IntegerWrapper(subelements[2]).getValue();
-        @Nonnull BigInteger h = t.xor(hash);
-        @Nonnull Element f = publicKey.getCompositeGroup().getElement(commitment.getValue());
-        @Nonnull BigInteger value = publicKey.getAu().pow(s).multiply(f.pow(h)).getValue();
-        if (!t.equals(new IntegerWrapper(value).toBlock().getHash()) || s.bitLength() > Parameters.RANDOM_EXPONENT) throw new InvalidSignatureException("The client signature is not valid.");
+        final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(tuple.getElementNotNull(2)).getElementsNotNull(3);
+        final @Nonnull BigInteger t = new HashWrapper(elements.getNotNull(1)).getValue();
+        final @Nonnull Exponent s = new Exponent(elements.getNotNull(2));
+        final @Nonnull BigInteger h = t.xor(hash);
+        final @Nonnull Element value = commitment.getPublicKey().getAu().pow(s).multiply(commitment.getValue().pow(h));
+        if (!t.equals(value.toBlock().getHash()) || s.getBitLength() > Parameters.RANDOM_EXPONENT) throw new InvalidSignatureException("The client signature is invalid.");
     }
     
     @Override
-    protected void sign(@Nonnull Block[] elements, @Nonnull BigInteger hash) {
-        @Nonnull Block[] subelements = new Block[3];
-        @Nonnull Exponent u = new Exponent(commitment.getValue());
-        @Nonnull Element f = publicKey.getAu().pow(u);
-        subelements[0] = f.toBlock();
-        @Nonnull Exponent r = publicKey.getCompositeGroup().getRandomExponent(Parameters.RANDOM_EXPONENT);
-        @Nonnull BigInteger t = new IntegerWrapper(publicKey.getAu().pow(r).getValue()).toBlock().getHash();
-        subelements[1] = new IntegerWrapper(t).toBlock();
-        @Nonnull Exponent h = new Exponent(t.xor(hash));
-        @Nonnull Exponent s = r.subtract(u.multiply(h));
-        subelements[2] = s.toBlock();
-        elements[2] = new TupleWrapper(subelements).toBlock();
+    protected void sign(@Nonnull FreezableArray<Block> elements, @Nonnull BigInteger hash) {
+        final @Nonnull FreezableArray<Block> subelements = new FreezableArray<Block>(3);
+        final @Nonnull SecretCommitment commitment = (SecretCommitment) this.commitment;
+        subelements.set(0, commitment.toBlock());
+        final @Nonnull Exponent r = commitment.getPublicKey().getCompositeGroup().getRandomExponent(Parameters.RANDOM_EXPONENT);
+        final @Nonnull BigInteger t = commitment.getPublicKey().getAu().pow(r).toBlock().getHash();
+        subelements.set(1, new HashWrapper(HASH, t).toBlock());
+        final @Nonnull Exponent h = new Exponent(t.xor(hash));
+        final @Nonnull Exponent s = r.subtract(commitment.getSecret().multiply(h));
+        subelements.set(2, s.toBlock());
+        elements.set(2, new TupleWrapper(SIGNATURE, subelements.freeze()).toBlock());
     }
     
     

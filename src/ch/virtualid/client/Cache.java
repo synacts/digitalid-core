@@ -3,6 +3,7 @@ package ch.virtualid.client;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.Role;
 import ch.virtualid.exceptions.InitializationError;
+import ch.virtualid.exceptions.InvalidDeclarationException;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.HostIdentity;
 import ch.virtualid.identity.Identity;
@@ -10,10 +11,12 @@ import ch.virtualid.identity.Mapper;
 import ch.virtualid.identity.NonHostIdentifier;
 import ch.virtualid.identity.Person;
 import ch.virtualid.identity.SemanticType;
+import ch.virtualid.packet.FailedRequestException;
 import ch.virtualid.server.Host;
 import ch.xdf.Block;
 import ch.xdf.SelfcontainedWrapper;
 import ch.xdf.SignatureWrapper;
+import ch.xdf.exceptions.InvalidEncodingException;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -187,13 +190,13 @@ public final class Cache {
      * 
      * @ensure return.getType().equals(type) : "The returned block has the given type.";
      */
-    public static @Nonnull Block getAttributeNotNullUnwrapped(@Nullable Role role, @Nonnull Identity subject, @Nonnull SemanticType type) {
+    public static @Nonnull Block getAttributeNotNullUnwrapped(@Nullable Role role, @Nonnull Identity subject, @Nonnull SemanticType type) throws SQLException, FailedRequestException, InvalidEncodingException, InvalidDeclarationException {
         assert type.isAttributeType() : "The given type is an attribute type.";
         
         throw new UnsupportedOperationException(); // TODO
     }
     
-    public static @Nonnull Block getAttributeNotNullUnwrapped(@Nonnull Identity subject, @Nonnull SemanticType type) {
+    public static @Nonnull Block getAttributeNotNullUnwrapped(@Nonnull Identity subject, @Nonnull SemanticType type) throws SQLException, FailedRequestException, InvalidEncodingException, InvalidDeclarationException {
         return getAttributeNotNullUnwrapped(null, subject, type);
     }
     
