@@ -3,11 +3,12 @@ package ch.xdf;
 import ch.virtualid.annotations.Exposed;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
-import ch.virtualid.client.Client;
+import ch.virtualid.client.Cache;
 import ch.virtualid.cryptography.PrivateKey;
 import ch.virtualid.cryptography.PublicKey;
 import ch.virtualid.cryptography.PublicKeyChain;
 import ch.virtualid.cryptography.SymmetricKey;
+import ch.virtualid.exceptions.InvalidDeclarationException;
 import ch.virtualid.identity.FailedIdentityException;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.HostIdentity;
@@ -15,6 +16,7 @@ import ch.virtualid.identity.SemanticType;
 import ch.virtualid.identity.SyntacticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
+import ch.virtualid.packet.FailedRequestException;
 import ch.virtualid.server.Server;
 import ch.virtualid.util.FreezableArray;
 import ch.xdf.exceptions.FailedEncodingException;
@@ -140,7 +142,7 @@ public final class EncryptionWrapper extends BlockWrapper implements Immutable {
      * @require type.isBasedOn(getSyntacticType()) : "The given type is based on the indicated syntactic type.";
      * @require element == null || element.getType().isBasedOn(type.getParameters().getNotNull(0)) : "The element is either null or based on the parameter of the given type.";
      */
-    public EncryptionWrapper(@Nonnull SemanticType type, @Nullable Block element, @Nullable HostIdentifier recipient, @Nullable SymmetricKey symmetricKey) throws SQLException, FailedEncodingException {
+    public EncryptionWrapper(@Nonnull SemanticType type, @Nullable Block element, @Nullable HostIdentifier recipient, @Nullable SymmetricKey symmetricKey) throws FailedEncodingException {
         super(type);
         
         assert element == null || element.getType().isBasedOn(type.getParameters().getNotNull(0)) : "The element is either null or based on the parameter of the given type.";
@@ -154,8 +156,8 @@ public final class EncryptionWrapper extends BlockWrapper implements Immutable {
             this.publicKey = null;
         } else {
             try {
-                this.publicKey = new PublicKeyChain(Client.getAttributeNotNullUnwrapped(recipient.getIdentity(), PublicKeyChain.TYPE)).getKey(time);
-            } catch (@Nonnull FailedIdentityException | InvalidEncodingException exception) {
+                this.publicKey = new PublicKeyChain(Cache.getAttributeNotNullUnwrapped(recipient.getIdentity(), PublicKeyChain.TYPE)).getKey(time);
+            } catch (@Nonnull SQLException | FailedRequestException | FailedIdentityException | InvalidDeclarationException | InvalidEncodingException exception) {
                 throw new FailedEncodingException("Could not encrypt the given element.", exception);
             }
         }
@@ -173,7 +175,7 @@ public final class EncryptionWrapper extends BlockWrapper implements Immutable {
      * @require type.isBasedOn(getSyntacticType()) : "The given type is based on the indicated syntactic type.";
      * @require element == null || element.getType().isBasedOn(type.getParameters().getNotNull(0)) : "The element is either null or based on the parameter of the given type.";
      */
-    public EncryptionWrapper(@Nonnull SemanticType type, @Nullable Blockable element, @Nullable HostIdentifier recipient, @Nullable SymmetricKey symmetricKey) throws SQLException, FailedEncodingException {
+    public EncryptionWrapper(@Nonnull SemanticType type, @Nullable Blockable element, @Nullable HostIdentifier recipient, @Nullable SymmetricKey symmetricKey) throws FailedEncodingException {
         this(type, Block.toBlock(element), recipient, symmetricKey);
     }
     
@@ -311,18 +313,13 @@ public final class EncryptionWrapper extends BlockWrapper implements Immutable {
             elements.set(0, time.toBlock());
             elements.set(1, Block.toBlock(recipient));
             
-            if (element == null) {
-                elements.set(2, null);
-                elements.set(3, null);
-            } else {
+            if (element != null) {
                 if (recipient == null) {
                     // Encrypt for clients.
                     elements.set(2, isEncrypted() ? null : new IntegerWrapper(KEY, BigInteger.ZERO).toBlock());
                 } else {
                     // Encrypt for hosts.
-                    if (symmetricKey == null) {
-                        elements.set(2, null);
-                    } else {
+                    if (symmetricKey != null) {
                         assert publicKey != null : "The public key is not null because this method is only called for encoding a block.";
                         elements.set(2, encrypt(publicKey, symmetricKey));
                     }

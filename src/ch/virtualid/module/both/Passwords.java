@@ -117,7 +117,6 @@ public final class Passwords extends BothModule {
     protected @Nonnull Block getAll(@Nonnull Entity entity, @Nonnull Agent agent) throws SQLException {
         final @Nonnull FreezableArray<Block> elements = new FreezableArray<Block>(1);
         if (agent.isClient()) elements.set(0, new StringWrapper(Password.TYPE, get(entity)).toBlock());
-        else elements.set(0, null);
         return new TupleWrapper(TYPE, elements.freeze()).toBlock();
     }
     

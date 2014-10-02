@@ -3,12 +3,15 @@ package ch.virtualid.packet;
 import ch.virtualid.client.Commitment;
 import ch.virtualid.credential.Credential;
 import ch.virtualid.cryptography.SymmetricKey;
+import ch.virtualid.entity.Account;
 import ch.virtualid.identity.FailedIdentityException;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.Identifier;
 import ch.virtualid.identity.NonHostIdentifier;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Immutable;
+import ch.virtualid.server.Host;
+import ch.virtualid.server.Server;
 import ch.xdf.Block;
 import ch.xdf.ClientSignatureWrapper;
 import ch.xdf.CompressionWrapper;
@@ -175,7 +178,7 @@ public class Packet implements Immutable {
             @Nullable Audit _audit = (i == size - 1 ? audit : null);
             @Nonnull SignatureWrapper signature;
             if (signer != null && (_audit != null || !content.getIdentifier().equals(NonHostIdentifier.NOREPLY) && !content.getIdentifier().equals(NonHostIdentifier.PACKET_ERROR))) {
-                signature = new HostSignatureWrapper(compression, subject, _audit, signer); // TODO: Only require the signer to be of type 'Identifier'?
+                signature = new HostSignatureWrapper(compression, subject, _audit, signer);
             } else if (commitment != null) {
                 signature = new ClientSignatureWrapper(compression, subject, _audit, commitment);
             } else if (credentials != null) {
@@ -200,7 +203,6 @@ public class Packet implements Immutable {
      * @ensure for (@Nonnull SignatureWrapper signature : getSignatures()) signature.isSignedLike(reference) : "All signatures that are signed are signed alike.";
      * @ensure getEncryption().getRecipient() != null : "The recipient of the request is not null.";
      */
-    @SuppressWarnings({"ThrowableInstanceNotThrown", "ThrowableInstanceNeverThrown"})
     public Packet(@Nonnull SelfcontainedWrapper wrapper) throws PacketException {
         this(wrapper, null, true, false);
         if (encryption.getRecipient() == null) throw new PacketException(PacketError.ENCRYPTION, new InvalidEncodingException("The recipient of a request is not null."));
@@ -220,7 +222,16 @@ public class Packet implements Immutable {
      */
     protected Packet(@Nonnull SelfcontainedWrapper wrapper, @Nullable SymmetricKey symmetricKey, boolean verification, boolean response) throws PacketException {
         this.wrapper = wrapper;
-        try { encryption = new EncryptionWrapper(wrapper.getElement(), symmetricKey); } catch (InvalidEncodingException exception) { throw new PacketException(PacketError.ENCRYPTION, exception); }
+        try { this.encryption = new EncryptionWrapper(wrapper.getElement(), symmetricKey); } catch (InvalidEncodingException exception) { throw new PacketException(PacketError.ENCRYPTION, exception); }
+        
+        final @Nullable HostIdentifier recipient = encryption.getRecipient();
+        final @Nullable Account account;
+        if (recipient != null) {
+            final @Nonnull Host host = Server.getHost(recipient);
+            account = new Account(host, host.getIdentity());
+        } else {
+            account = null;
+        }
         
         @Nonnull List<Block> elements;
         try { elements = new ListWrapper(encryption.getElement()).getElements(); } catch (InvalidEncodingException exception) { throw new PacketException(PacketError.SIGNATURE, exception); }
@@ -236,7 +247,7 @@ public class Packet implements Immutable {
             @Nonnull CompressionWrapper compression;
             @Nonnull SelfcontainedWrapper content;
             
-            try { signature = verification ? SignatureWrapper.decode(encryption.getElement()) : SignatureWrapper.decodeUnverified(encryption.getElement()); } catch (InvalidEncodingException | InvalidSignatureException | FailedIdentityExceptionexception) { throw new PacketException(PacketError.SIGNATURE, exception); }
+            try { signature = verification ? SignatureWrapper.decode(encryption.getElement(), account) : SignatureWrapper.decodeUnverified(encryption.getElement(), account); } catch (InvalidEncodingException | InvalidSignatureException | FailedIdentityException exception) { throw new PacketException(PacketError.SIGNATURE, exception); }
             if (signature.getSubject() == null) throw new PacketException(PacketError.SIGNATURE, new InvalidEncodingException("The subject of a signature is not null.")); // This exception is also thrown (intentionally) on the requester if the responding host could not decode the subject.
             try { compression = new CompressionWrapper(signature.getElement()); } catch (InvalidEncodingException exception) { throw new PacketException(PacketError.COMPRESSION, exception); }
             try { content = new SelfcontainedWrapper(compression.getElement()); } catch (InvalidEncodingException exception) { throw new PacketException(PacketError.REQUEST, exception); }
@@ -248,7 +259,7 @@ public class Packet implements Immutable {
             } else if (response) try {
                 @Nonnull SemanticType type = content.getIdentifier().getIdentity().toSemanticType();
                 if (!type.equals(SemanticType.PACKET_ERROR) && !type.equals(SemanticType.NOREPLY)) throw new PacketException(PacketError.SIGNATURE, new InvalidEncodingException("The response from the host " + encryption.getRecipient() + " was not signed."));
-            } catch (InvalidEncodingException | FailedIdentityExceptionexception) { throw new PacketException(PacketError.SIGNATURE, exception); }
+            } catch (InvalidEncodingException | FailedIdentityException exception) { throw new PacketException(PacketError.SIGNATURE, exception); }
             
             signatures.set(i, signature);
             compressions.set(i, compression);

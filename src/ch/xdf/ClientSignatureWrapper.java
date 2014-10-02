@@ -58,6 +58,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper implements Im
     /**
      * Encodes the element into a new block and signs it with the given commitment.
      * 
+     * @param type the semantic type of the new block.
      * @param element the element to encode into the new block.
      * @param subject the identifier of the identity about which a statement is made.
      * @param audit the audit or null if no audit shall be appended.
@@ -76,6 +77,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper implements Im
     /**
      * Encodes the element into a new block and signs it according to the argument.
      * 
+     * @param type the semantic type of the new block.
      * @param element the element to encode into the new block.
      * @param subject the identifier of the identity about which a statement is made.
      * @param audit the audit or null if no audit shall be appended.
@@ -99,7 +101,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper implements Im
      * @require block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
      * @require clientSignature.getType().isBasedOn(SIGNATURE) : "The signature is based on the implementation type.";
      */
-    ClientSignatureWrapper(@Nonnull Block block, @Nonnull Block clientSignature) throws InvalidEncodingException, FailedIdentityException, SQLException, FailedRequestException, InvalidDeclarationException {
+    ClientSignatureWrapper(@Nonnull Block block, @Nonnull Block clientSignature) throws InvalidEncodingException, SQLException, FailedIdentityException, FailedRequestException, InvalidDeclarationException {
         super(block, true);
         
         assert clientSignature.getType().isBasedOn(SIGNATURE) : "The signature is based on the implementation type.";

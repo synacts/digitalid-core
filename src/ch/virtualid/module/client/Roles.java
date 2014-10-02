@@ -32,6 +32,7 @@ public final class Roles extends ClientModule {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS role (role " + Database.getConfiguration().PRIMARY_KEY() + ", issuer BIGINT NOT NULL, relation BIGINT, recipient BIGINT, FOREIGN KEY (issuer) REFERENCES map_identity (identity), FOREIGN KEY (relation) REFERENCES map_identity (identity), FOREIGN KEY (recipient) REFERENCES map_identity (identity))");
             // TODO: Add the corresponding authorization ID? -> Yes, but now agent (ID).
             // -> the recipient should be another role, or not? -> I think so.
+            // Maybe make an index on the issuer (and recipient)?
         }
         
         Mapper.addReference("role", "issuer");

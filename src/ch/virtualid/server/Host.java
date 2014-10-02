@@ -1,5 +1,7 @@
 package ch.virtualid.server;
 
+import ch.virtualid.annotations.Pure;
+import ch.virtualid.client.Client;
 import ch.virtualid.cryptography.KeyPair;
 import ch.virtualid.cryptography.PrivateKey;
 import ch.virtualid.cryptography.PrivateKeyChain;
@@ -36,6 +38,7 @@ import javax.annotation.Nonnull;
  */
 public final class Host extends Site {
     
+    @Pure
     @Override
     public @Nonnull String getReference() {
         return "REFERENCES map_identity (identity)";
@@ -50,17 +53,22 @@ public final class Host extends Site {
     /**
      * Stores the identity of this host.
      */
-    private final @Nonnull HostIdentity self;
+    private final @Nonnull HostIdentity identity;
     
     /**
-     * Stores the private key of this host.
+     * Stores the private key chain of this host.
      */
-    private final @Nonnull PrivateKey privateKey;
+    private final @Nonnull PrivateKeyChain privateKeyChain;
     
     /**
-     * Stores the public key of this host.
+     * Stores the public key chain of this host.
      */
-    private final @Nonnull PublicKey publicKey;
+    private final @Nonnull PublicKeyChain publicKeyChain;
+    
+    /**
+     * Stores the client associated with this host.
+     */
+    private final @Nonnull Client client;
     
     /**
      * Creates a new host with the given identifier by either reading the cryptographic keys from the file system or creating them.
@@ -69,7 +77,7 @@ public final class Host extends Site {
      */
     public Host(@Nonnull HostIdentifier identifier) throws SQLException, IOException, InvalidEncodingException, FailedEncodingException {
         this.identifier = identifier;
-        this.self = Mapper.mapHostIdentity(identifier);
+        this.identity = Mapper.mapHostIdentity(identifier);
         
         @Nonnull String path = Directory.HOSTS.getPath() + Directory.SEPARATOR + identifier.getString();
         @Nonnull File privateFile = new File(path + ".private.xdf");
@@ -93,7 +101,7 @@ public final class Host extends Site {
         }
         
         try (@Nonnull Connection connection = Database.getConnection()) {
-            if (getAttributeValue(connection, self, SemanticType.HOST_PUBLIC_KEY, true) == null) {
+            if (getAttributeValue(connection, identity, SemanticType.HOST_PUBLIC_KEY, true) == null) {
                 Blockable attribute;
                 if (Server.hasHost(HostIdentifier.VIRTUALID)) {
                     // If the new host is running on the same server as virtualid.ch, certify its public key immediately.
@@ -101,7 +109,7 @@ public final class Host extends Site {
                 } else {
                     attribute = new SignatureWrapper(publicKeyWrapper, null);
                 }
-                setAttributeValue(connection, self, SemanticType.HOST_PUBLIC_KEY, true, attribute.toBlock());
+                setAttributeValue(connection, identity, SemanticType.HOST_PUBLIC_KEY, true, attribute.toBlock());
             }
             connection.commit();
         }
@@ -114,6 +122,7 @@ public final class Host extends Site {
      * 
      * @return the identifier of this host.
      */
+    @Pure
     public @Nonnull HostIdentifier getIdentifier() {
         return identifier;
     }
@@ -123,34 +132,50 @@ public final class Host extends Site {
      * 
      * @return the identity of this host.
      */
+    @Pure
     public @Nonnull HostIdentity getIdentity() {
-        return self;
+        return identity;
     }
     
     /**
-     * Returns the private key of this host.
+     * Returns the private key chain of this host.
      * 
-     * @return the private key of this host.
+     * @return the private key chain of this host.
      */
+    @Pure
     public @Nonnull PrivateKeyChain getPrivateKeyChain() {
-        return privateKey;
+        return privateKeyChain;
     }
     
     /**
-     * Returns the public key of this host.
+     * Returns the public key chain of this host.
      * 
-     * @return the public key of this host.
+     * @return the public key chain of this host.
      */
+    @Pure
     public @Nonnull PublicKeyChain getPublicKeyChain() {
-        return publicKey;
+        return publicKeyChain;
     }
+    
+    /**
+     * Returns the client associated with this host.
+     * 
+     * @return the client associated with this host.
+     */
+    @Pure
+    public @Nonnull Client getClient() {
+        return client;
+    }
+    
     
     /**
      * Returns whether this host hosts the given identity.
      * 
      * @param identity the identity to check.
+     * 
      * @return whether this host hosts the given identity.
      */
+    @Pure
     public boolean hosts(@Nonnull Identity identity) {
         return identity.getAddress().getHostIdentifier().equals(identifier);
     }

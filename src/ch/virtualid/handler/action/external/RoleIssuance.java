@@ -14,6 +14,7 @@ import ch.virtualid.identity.Identity;
 import ch.virtualid.identity.NonHostIdentifier;
 import ch.virtualid.identity.Person;
 import ch.virtualid.identity.SemanticType;
+import ch.virtualid.packet.FailedRequestException;
 import ch.virtualid.packet.PacketError;
 import ch.virtualid.packet.PacketException;
 import ch.xdf.Block;
@@ -97,12 +98,12 @@ public final class RoleIssuance extends CoreServiceExternalAction {
      * 
      * @ensure getSignature() != null : "The signature of this handler is not null.";
      */
-    private RoleIssuance(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws InvalidEncodingException, FailedIdentityException, SQLException, InvalidDeclarationException {
+    private RoleIssuance(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws InvalidEncodingException, FailedIdentityException, SQLException, InvalidDeclarationException, FailedRequestException {
         super(entity, signature, recipient);
         
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
-        final @Nonnull SignatureWrapper certificate = SignatureWrapper.decodeUnverified(block);
+        final @Nonnull SignatureWrapper certificate = SignatureWrapper.decodeUnverified(block, null);
         if (!(certificate instanceof HostSignatureWrapper)) throw new InvalidEncodingException("The block has to be signed by a host.");
         this.certificate = (HostSignatureWrapper) certificate;
         if (!(this.certificate.getSigner() instanceof NonHostIdentifier)) throw new InvalidEncodingException("The certificate has to be signed by a non-host.");
@@ -190,7 +191,7 @@ public final class RoleIssuance extends CoreServiceExternalAction {
         
         @Pure
         @Override
-        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws InvalidEncodingException, SQLException, FailedIdentityException, InvalidDeclarationException {
+        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws InvalidEncodingException, SQLException, FailedIdentityException, InvalidDeclarationException, FailedRequestException {
             return new RoleIssuance(entity, signature, recipient, block);
         }
         

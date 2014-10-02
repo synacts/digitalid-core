@@ -68,6 +68,7 @@ public class Request extends Packet {
      * 
      * @param content the content of this request.
      * @param subject the subject of this request.
+     * 
      * @ensure getSize() == 1 : "The size of this request is 1.";
      */
     public Request(@Nonnull SelfcontainedWrapper content, @Nonnull HostIdentifier subject) throws FailedEncodingException {
@@ -80,8 +81,9 @@ public class Request extends Packet {
      * @param contents the contents of this request.
      * @param recipient the recipient of this request.
      * @param subject the subject of this request.
+     * 
      * @require !contents.isEmpty() : "The list of contents is not empty.";
-     * @require recipient.exists() : "The recipient has to exist.";
+     * 
      * @ensure getSize() == contents.size() : "The size of this request equals the size of the contents.";
      */
     public Request(@Nonnull List<SelfcontainedWrapper> contents, @Nonnull HostIdentifier recipient, @Nonnull Identifier subject) throws FailedEncodingException {

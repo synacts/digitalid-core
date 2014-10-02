@@ -205,6 +205,22 @@ public final class TupleWrapper extends BlockWrapper implements Immutable {
     }
     
     /**
+     * Returns whether the element at the given index is not null.
+     * 
+     * @param index the index of the element to be checked.
+     * 
+     * @return whether the element at the given index is not null.
+     * 
+     * @throws InvalidEncodingException if the number of elements is less than or equal to the given index.
+     * 
+     * @require index >= 0 : "The index is non-negative.";
+     */
+    @Pure
+    public boolean isElementNotNull(int index) throws InvalidEncodingException {
+        return !isElementNull(index);
+    }
+    
+    /**
      * Returns the element at the given index.
      * 
      * @param index the index of the element to be returned.

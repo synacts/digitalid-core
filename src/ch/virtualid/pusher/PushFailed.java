@@ -83,6 +83,8 @@ public final class PushFailed extends ExternalAction {
      */
     private final @Nonnull long number;
     
+    // TODO: Maybe include a string that explains the problem?
+    
     /**
      * Stores the action that could not be pushed.
      */

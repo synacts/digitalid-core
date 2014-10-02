@@ -10,13 +10,14 @@ import ch.virtualid.concepts.Attribute;
 import ch.virtualid.cryptography.Exponent;
 import ch.virtualid.cryptography.PublicKey;
 import ch.virtualid.cryptography.PublicKeyChain;
-import ch.virtualid.entity.Entity;
 import ch.virtualid.exceptions.InvalidDeclarationException;
 import ch.virtualid.identity.FailedIdentityException;
 import ch.virtualid.identity.NonHostIdentifier;
 import ch.virtualid.identity.NonHostIdentity;
+import ch.virtualid.identity.Person;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Immutable;
+import ch.virtualid.packet.FailedRequestException;
 import ch.virtualid.util.FreezableArray;
 import ch.xdf.Block;
 import ch.xdf.HashWrapper;
@@ -124,6 +125,8 @@ public abstract class Credential implements Immutable {
     
     /**
      * Stores the non-host identity that issued this credential.
+     * 
+     * @invariant !isIdentityBased() || issuer instanceof Person : "If this credential is identity-based, then the issuer is a person.";
      */
     private final @Nonnull NonHostIdentity issuer;
     
@@ -194,6 +197,7 @@ public abstract class Credential implements Immutable {
      * @require randomizedPermissions.areShown() : "The randomized permissions are shown for client credentials.";
      * @require role == null || role.isRoleType() : "The role is either null or a role type.";
      * @require role == null || restrictions != null : "If a role is given, the restrictions are not null.";
+     * @require attribute != null || issuer instanceof Person : "If the attribute is null, the issuer is a person.";
      * @require (attribute == null) != (restrictions == null) : "Either the attribute or the restrictions are null (but not both).";
      * @require attribute == null || attribute.getType().isBasedOn(Attribute.TYPE) : "The attribute is either null or based on the attribute type.";
      */
@@ -202,6 +206,7 @@ public abstract class Credential implements Immutable {
         assert randomizedPermissions.areShown() : "The randomized permissions are shown for client credentials.";
         assert role == null || role.isRoleType() : "The role is either null or a role type.";
         assert role == null || restrictions != null : "If a role is given, the restrictions are not null.";
+        assert attribute != null || issuer instanceof Person : "If the attribute is null, the issuer is a person.";
         assert (attribute == null) != (restrictions == null) : "Either the attribute or the restrictions are null (but not both).";
         assert attribute == null || attribute.getType().isBasedOn(Attribute.TYPE) : "The attribute is either null or based on the attribute type.";
         
@@ -226,18 +231,16 @@ public abstract class Credential implements Immutable {
      * @param entity the entity to which the credential belongs.
      * @param exposed the block containing the exposed arguments of the credential.
      * @param randomizedPermissions the block containing the client's randomized permissions.
-     * @param restrictions the block containing the client's restrictions.
+     * @param restrictions the client's restrictions or null if they are not shown.
      * @param i the block containing the credential's serial number.
      * 
      * @require exposed.getType().isBasedOn(Credential.EXPOSED) : "The exposed block is based on the indicated type.";
      * @require randomizedPermissions == null || randomizedPermissions.getType().isBasedOn(RandomizedAgentPermissions.TYPE) : "The randomized permissions are either null or based on the indicated type.";
-     * @require restrictions == null || restrictions.getType().isBasedOn(Restrictions.TYPE) : "The restrictions are either null or based on the indicated type.";
      * @require i == null || i.getType().isBasedOn(Exponent.TYPE) : "The serial number is either null or based on the indicated type.";
      */
-    Credential(@Nonnull Entity entity, @Nonnull Block exposed, @Nullable Block randomizedPermissions, @Nullable Block restrictions, @Nullable Block i) throws InvalidEncodingException, FailedIdentityException, SQLException, InvalidDeclarationException {
+    Credential(@Nonnull Block exposed, @Nullable Block randomizedPermissions, @Nullable Restrictions restrictions, @Nullable Block i) throws InvalidEncodingException, FailedIdentityException, SQLException, InvalidDeclarationException, FailedRequestException {
         assert exposed.getType().isBasedOn(Credential.EXPOSED) : "The exposed block is based on the indicated type.";
         assert randomizedPermissions == null || randomizedPermissions.getType().isBasedOn(RandomizedAgentPermissions.TYPE) : "The randomized permissions are either null or based on the indicated type.";
-        assert restrictions == null || restrictions.getType().isBasedOn(Restrictions.TYPE) : "The restrictions are either null or based on the indicated type.";
         assert i == null || i.getType().isBasedOn(Exponent.TYPE) : "The serial number is either null or based on the indicated type.";
         
         final @Nonnull TupleWrapper tuple = new TupleWrapper(exposed);
@@ -256,7 +259,8 @@ public abstract class Credential implements Immutable {
         if (role != null && !role.isRoleType()) throw new InvalidEncodingException("The role has to be either null or a role type");
         this.attribute = tuple.getElement(4);
         if (role != null && attribute != null) throw new InvalidEncodingException("The role and the attribute may not both be not null.");
-        this.restrictions = restrictions != null ? new Restrictions(entity, restrictions) : null;
+        this.restrictions = restrictions;
+        if (attribute == null && !(issuer instanceof Person)) throw new InvalidEncodingException("If the attribute is null, the issuer has to be a person.");
         if (attribute != null && restrictions != null) throw new InvalidEncodingException("The attribute and the restrictions may not both be not null.");
         if (role != null && getPermissions() == null) throw new InvalidEncodingException("If a role is given, the permissions may not be null.");
         if (role != null && restrictions == null) throw new InvalidEncodingException("If a role is given, the restrictions may not be null.");
@@ -285,6 +289,8 @@ public abstract class Credential implements Immutable {
      * Returns the non-host identity that issued this credential.
      * 
      * @return the non-host identity that issued this credential.
+     * 
+     * @ensure !isIdentityBased() || issuer instanceof Person : "If this credential is identity-based, then the issuer is a person.";
      */
     @Pure
     public final @Nonnull NonHostIdentity getIssuer() {
@@ -317,6 +323,8 @@ public abstract class Credential implements Immutable {
      * Returns the permissions of the client or null if they are not shown.
      * 
      * @return the permissions of the client or null if they are not shown.
+     * 
+     * @ensure permissions.isFrozen() : "The permissions are frozen.";
      */
     @Pure
     public final @Nullable ReadonlyAgentPermissions getPermissions() {
@@ -343,6 +351,8 @@ public abstract class Credential implements Immutable {
      * Returns the role that is assumed by the client or null in case no role is assumed.
      * 
      * @return the role that is assumed by the client or null in case no role is assumed.
+     * 
+     * @ensure role == null || role.isRoleType() : "The role is either null or a role type.";
      */
     @Pure
     public final @Nullable SemanticType getRole() {
@@ -367,9 +377,27 @@ public abstract class Credential implements Immutable {
      * Returns the attribute without the certificate for anonymous access control or null in case of identity-based authentication.
      * 
      * @return the attribute without the certificate for anonymous access control or null in case of identity-based authentication.
+     * 
+     * @ensure attribute == null || attribute.getType().isBasedOn(Attribute.TYPE) : "The attribute is either null or based on the attribute type.";
      */
     @Pure
     public final @Nullable Block getAttribute() {
+        return attribute;
+    }
+    
+    /**
+     * Returns the attribute without the certificate for anonymous access control.
+     * 
+     * @return the attribute without the certificate for anonymous access control.
+     * 
+     * @require isAttributeBased() : "This credential is attribute-based.";
+     * 
+     * @ensure attribute.getType().isBasedOn(Attribute.TYPE) : "The attribute is based on the attribute type.";
+     */
+    @Pure
+    public final @Nonnull Block getAttributeNotNull() {
+        assert attribute != null : "This credential is attribute-based.";
+        
         return attribute;
     }
     

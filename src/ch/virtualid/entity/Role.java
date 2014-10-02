@@ -11,12 +11,14 @@ import ch.virtualid.concept.Instance;
 import ch.virtualid.concept.Observer;
 import ch.virtualid.database.Database;
 import ch.virtualid.identity.NonHostIdentity;
+import ch.virtualid.identity.Person;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
 import ch.virtualid.module.client.Roles;
 import ch.virtualid.util.FreezableList;
 import ch.virtualid.util.ReadonlyList;
+import ch.xdf.exceptions.InvalidEncodingException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -27,6 +29,8 @@ import org.javatuples.Pair;
 
 /**
  * This class models a role on the client-side.
+ * 
+ * @see Roles
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
@@ -97,7 +101,7 @@ public final class Role extends Entity implements Immutable, SQLizable, Observer
         this.issuer = issuer;
         this.relation = relation;
         this.recipient = recipient;
-        this.agent = isClient ? ClientAgent.get(this, agentNumber, true) : OutgoingRole.get(this, agentNumber, false);
+        this.agent = isClient ? ClientAgent.get(this, agentNumber, true) : OutgoingRole.get(this, agentNumber, false, false);
     }
     
     /**
@@ -314,6 +318,21 @@ public final class Role extends Entity implements Immutable, SQLizable, Observer
         } else {
             return Roles.load(client, number);
         }
+    }
+    
+    /**
+     * Returns the role that the given client has for the given person.
+     * 
+     * @param client the client for whom a role is to be returned.
+     * @param person the person that issued the role to be returned.
+     * 
+     * @return the role that the given client has for the given person.
+     * 
+     * @throws InvalidEncodingException if no such role can be found.
+     */
+    @Pure
+    public static @Nonnull Role get(@Nonnull Client client, @Nonnull Person person) throws SQLException, InvalidEncodingException {
+        throw new UnsupportedOperationException("Cannot yet return a role for the given person."); // TODO
     }
     
     

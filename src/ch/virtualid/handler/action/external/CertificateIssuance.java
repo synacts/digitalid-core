@@ -12,9 +12,9 @@ import ch.virtualid.handler.Method;
 import ch.virtualid.identity.FailedIdentityException;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.Identity;
-import ch.virtualid.identity.NonHostIdentifier;
 import ch.virtualid.identity.Person;
 import ch.virtualid.identity.SemanticType;
+import ch.virtualid.packet.FailedRequestException;
 import ch.virtualid.packet.PacketError;
 import ch.virtualid.packet.PacketException;
 import ch.xdf.Block;
@@ -57,7 +57,7 @@ public final class CertificateIssuance extends CoreServiceExternalAction {
     /**
      * Stores the certificate that is issued.
      * 
-     * @invariant certificate.getSigner() instanceof NonHostIdentifier : "The certificate is signed by a non-host.";
+     * @invariant certificate.isCertificate() : "The certificate is indeed a certificate.";
      */
     private final @Nonnull HostSignatureWrapper certificate;
     
@@ -95,15 +95,15 @@ public final class CertificateIssuance extends CoreServiceExternalAction {
      * 
      * @ensure getSignature() != null : "The signature of this handler is not null.";
      */
-    private CertificateIssuance(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws InvalidEncodingException, FailedIdentityException, SQLException, InvalidDeclarationException {
+    private CertificateIssuance(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws InvalidEncodingException, FailedIdentityException, SQLException, InvalidDeclarationException, FailedRequestException {
         super(entity, signature, recipient);
         
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
-        final @Nonnull SignatureWrapper certificate = SignatureWrapper.decodeUnverified(block);
+        final @Nonnull SignatureWrapper certificate = SignatureWrapper.decodeUnverified(block, entity);
         if (!(certificate instanceof HostSignatureWrapper)) throw new InvalidEncodingException("The block has to be signed by a host.");
         this.certificate = (HostSignatureWrapper) certificate;
-        if (!(this.certificate.getSigner() instanceof NonHostIdentifier)) throw new InvalidEncodingException("The certificate has to be signed by a non-host.");
+        if (!this.certificate.isCertificate()) throw new InvalidEncodingException("The certificate has to be indeed a certificate.");
         
         this.attribute = new SelfcontainedWrapper(certificate.getElementNotNull()).getElement();
         if (!attribute.getType().isAttributeFor(getSubject().getIdentity().getCategory())) throw new InvalidEncodingException("The block is an attribute for the subject.");
@@ -140,12 +140,12 @@ public final class CertificateIssuance extends CoreServiceExternalAction {
         if (!(signature instanceof HostSignatureWrapper)) throw new PacketException(PacketError.AUTHORIZATION);
         
         try {
-            certificate.verify();
-        } catch (@Nonnull InvalidEncodingException | InvalidSignatureException exception) {
+            certificate.verifyAsCertificate();
+        } catch (@Nonnull InvalidEncodingException | InvalidSignatureException | FailedRequestException | InvalidDeclarationException exception) {
             throw new PacketException(PacketError.REQUEST, exception);
         }
         
-        // TODO: Check other things like whether the signer has the necessary delegation.
+        // TODO: Check other things like whether the signer is the one in the certificate.
         
         executeOnBoth();
         return null;
@@ -188,7 +188,7 @@ public final class CertificateIssuance extends CoreServiceExternalAction {
         
         @Pure
         @Override
-        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws InvalidEncodingException, SQLException, FailedIdentityException, InvalidDeclarationException {
+        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws InvalidEncodingException, SQLException, FailedIdentityException, InvalidDeclarationException, FailedRequestException {
             return new CertificateIssuance(entity, signature, recipient, block);
         }
         

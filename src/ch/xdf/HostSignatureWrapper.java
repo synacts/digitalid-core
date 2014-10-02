@@ -2,19 +2,24 @@ package ch.xdf;
 
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
-import ch.virtualid.client.Client;
+import ch.virtualid.client.Cache;
+import ch.virtualid.concepts.Certificate;
 import ch.virtualid.cryptography.Element;
 import ch.virtualid.cryptography.PrivateKey;
 import ch.virtualid.cryptography.PublicKey;
 import ch.virtualid.cryptography.PublicKeyChain;
+import ch.virtualid.exceptions.InvalidDeclarationException;
 import ch.virtualid.exceptions.ShouldNeverHappenError;
 import ch.virtualid.identity.FailedIdentityException;
+import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.Identifier;
 import ch.virtualid.identity.Identity;
+import ch.virtualid.identity.NonHostIdentifier;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.packet.Audit;
+import ch.virtualid.packet.FailedRequestException;
 import ch.virtualid.server.Server;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.ReadonlyArray;
@@ -65,11 +70,13 @@ public final class HostSignatureWrapper extends SignatureWrapper implements Immu
      * @require type.isBasedOn(getSyntacticType()) : "The given type is based on the indicated syntactic type.";
      * @require element == null || element.getType().isBasedOn(type.getParameters().getNotNull(0)) : "The element is either null or based on the parameter of the given type.";
      * @require Server.hasHost(signer.getHostIdentifier()) : "The host of the signer is running on this server.";
+     * @require !type.isBasedOn(Certificate.TYPE) || element != null && signer instanceof NonHostIdentifier : "If the signature is a certificate, the element is not null and the signer is a non-host.";
      */
     public HostSignatureWrapper(@Nonnull SemanticType type, @Nullable Block element, @Nonnull Identifier subject, @Nullable Audit audit, @Nonnull Identifier signer) {
         super(type, element, subject, audit);
         
         assert Server.hasHost(signer.getHostIdentifier()) : "The host of the signer is running on this server.";
+        assert !type.isBasedOn(Certificate.TYPE) || element != null && signer instanceof NonHostIdentifier : "If the signature is a certificate, the element is not null and the signer is a non-host.";
         
         this.signer = signer;
         try {
@@ -91,6 +98,7 @@ public final class HostSignatureWrapper extends SignatureWrapper implements Immu
      * @require type.isBasedOn(getSyntacticType()) : "The given type is based on the indicated syntactic type.";
      * @require element == null || element.getType().isBasedOn(type.getParameters().getNotNull(0)) : "The element is either null or based on the parameter of the given type.";
      * @require Server.hasHost(signer.getHostIdentifier()) : "The host of the signer is running on this server.";
+     * @require !type.isBasedOn(Certificate.TYPE) || element != null && signer instanceof NonHostIdentifier : "If the signature is a certificate, the element is not null and the signer is a non-host.";
      */
     public HostSignatureWrapper(@Nonnull SemanticType type, @Nullable Block element, @Nonnull Identifier subject, @Nonnull Identifier signer) {
         this(type, element, subject, null, signer);
@@ -109,6 +117,7 @@ public final class HostSignatureWrapper extends SignatureWrapper implements Immu
      * @require type.isBasedOn(getSyntacticType()) : "The given type is based on the indicated syntactic type.";
      * @require element == null || element.getType().isBasedOn(type.getParameters().getNotNull(0)) : "The element is either null or based on the parameter of the given type.";
      * @require Server.hasHost(signer.getHostIdentifier()) : "The host of the signer is running on this server.";
+     * @require !type.isBasedOn(Certificate.TYPE) || element != null && signer instanceof NonHostIdentifier : "If the signature is a certificate, the element is not null and the signer is a non-host.";
      */
     public HostSignatureWrapper(@Nonnull SemanticType type, @Nullable Blockable element, @Nonnull Identifier subject, @Nullable Audit audit, @Nonnull Identifier signer) {
         this(type, Block.toBlock(element), subject, audit, signer);
@@ -126,6 +135,7 @@ public final class HostSignatureWrapper extends SignatureWrapper implements Immu
      * @require type.isBasedOn(getSyntacticType()) : "The given type is based on the indicated syntactic type.";
      * @require element == null || element.getType().isBasedOn(type.getParameters().getNotNull(0)) : "The element is either null or based on the parameter of the given type.";
      * @require Server.hasHost(signer.getHostIdentifier()) : "The host of the signer is running on this server.";
+     * @require !type.isBasedOn(Certificate.TYPE) || element != null && signer instanceof NonHostIdentifier : "If the signature is a certificate, the element is not null and the signer is a non-host.";
      */
     public HostSignatureWrapper(@Nonnull SemanticType type, @Nullable Blockable element, @Nonnull Identifier subject, @Nonnull Identifier signer) {
         this(type, element, subject, null, signer);
@@ -140,13 +150,18 @@ public final class HostSignatureWrapper extends SignatureWrapper implements Immu
      * @require block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
      * @require hostSignature.getType().isBasedOn(SIGNATURE) : "The signature is based on the implementation type.";
      */
-    HostSignatureWrapper(@Nonnull Block block, @Nonnull Block hostSignature) throws SQLException, InvalidEncodingException, FailedIdentityException {
+    HostSignatureWrapper(@Nonnull Block block, @Nonnull Block hostSignature) throws InvalidEncodingException, SQLException, FailedIdentityException, FailedRequestException, InvalidDeclarationException {
         super(block, true);
         
         assert hostSignature.getType().isBasedOn(SIGNATURE) : "The signature is based on the implementation type.";
         
         this.signer = Identifier.create(new TupleWrapper(hostSignature).getElementNotNull(0));
-        this.publicKey = new PublicKeyChain(Client.getAttributeNotNullUnwrapped(signer.getHostIdentifier().getIdentity(), PublicKeyChain.TYPE)).getKey(getTimeNotNull());
+        this.publicKey = new PublicKeyChain(Cache.getAttributeNotNullUnwrapped(signer.getHostIdentifier().getIdentity(), PublicKeyChain.TYPE)).getKey(getTimeNotNull());
+        
+        if (getType().isBasedOn(Certificate.TYPE)) {
+            if (getElement() == null) throw new InvalidEncodingException("If this signature is a certificate, the element may not be null.");
+            if (getSigner() instanceof HostIdentifier) throw new InvalidEncodingException("If this signature is a certificate, the signer may not be a host.");
+        }
     }
     
     /**
@@ -158,6 +173,19 @@ public final class HostSignatureWrapper extends SignatureWrapper implements Immu
     public @Nonnull Identifier getSigner() {
         return signer;
     }
+    
+    /**
+     * Returns whether this host signature is a certificate.
+     * 
+     * @return whether this host signature is a certificate.
+     * 
+     * @ensure !return || getElement() != null && getSigner() instanceof NonHostIdentifier : "If this is a certificate, the element is not null and the signer is a non-host.";
+     */
+    @Pure
+    public boolean isCertificate() {
+        return getType().isBasedOn(Certificate.TYPE);
+    }
+    
     
     @Pure
     @Override
@@ -191,6 +219,20 @@ public final class HostSignatureWrapper extends SignatureWrapper implements Immu
             throw new ShouldNeverHappenError("There should always be a key for the current time.", exception);
         }
         elements.set(1, new TupleWrapper(SIGNATURE, subelements.freeze()).toBlock());
+    }
+    
+    
+    /**
+     * Verifies the signature as a certificate and throws an exception if it is not valid.
+     * 
+     * @require isCertificate() : "This signature is a certificate.";
+     */
+    @Pure
+    public void verifyAsCertificate() throws InvalidSignatureException, InvalidEncodingException, SQLException, FailedRequestException, InvalidDeclarationException {
+        assert isCertificate() : "This signature is a certificate.";
+        
+        verify();
+        // TODO: Check that the signer has the corresponding delegation for the given attribute and value.
     }
     
 }

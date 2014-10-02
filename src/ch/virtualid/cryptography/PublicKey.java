@@ -137,12 +137,12 @@ public final class PublicKey implements Immutable, Blockable {
     /**
      * Stores the semantic type {@code w1.verifiable.encryption@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType W1 = SemanticType.create("w1.verifiable.encryption@virtualid.ch").load(Element.TYPE);
+    public static final @Nonnull SemanticType W1 = SemanticType.create("w1.verifiable.encryption@virtualid.ch").load(Element.TYPE);
     
     /**
      * Stores the semantic type {@code w2.verifiable.encryption@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType W2 = SemanticType.create("w2.verifiable.encryption@virtualid.ch").load(Element.TYPE);
+    public static final @Nonnull SemanticType W2 = SemanticType.create("w2.verifiable.encryption@virtualid.ch").load(Element.TYPE);
     
     /**
      * Stores the semantic type {@code verifiable.encryption@virtualid.ch}.

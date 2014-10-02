@@ -145,14 +145,15 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
      * Wraps and decodes the given block with verifying the signature.
      * 
      * @param block the block to be wrapped and decoded.
+     * @param entity the entity that decodes the signature.
      * 
      * @return the signature wrapper of the appropriate subclass.
      * 
      * @require block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
      */
     @Pure
-    public static @Nonnull SignatureWrapper decode(@Nonnull Block block) throws SQLException, InvalidEncodingException, InvalidSignatureException, FailedIdentityException, FailedRequestException, InvalidDeclarationException {
-        final @Nonnull SignatureWrapper signatureWrapper = decodeUnverified(block);
+    public static @Nonnull SignatureWrapper decode(@Nonnull Block block, @Nullable Entity entity) throws SQLException, InvalidEncodingException, InvalidSignatureException, FailedIdentityException, FailedRequestException, InvalidDeclarationException {
+        final @Nonnull SignatureWrapper signatureWrapper = decodeUnverified(block, entity);
         signatureWrapper.verify();
         return signatureWrapper;
     }
@@ -161,13 +162,14 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
      * Wraps and decodes the given block without verifying the signature.
      * 
      * @param block the block to be wrapped and decoded.
+     * @param entity the entity that decodes the signature.
      * 
      * @return the signature wrapper of the appropriate subclass.
      * 
      * @require block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
      */
     @Pure
-    public static @Nonnull SignatureWrapper decodeUnverified(@Nonnull Block block) throws SQLException, InvalidEncodingException, FailedIdentityException, FailedRequestException, InvalidDeclarationException {
+    public static @Nonnull SignatureWrapper decodeUnverified(@Nonnull Block block, @Nullable Entity entity) throws SQLException, InvalidEncodingException, FailedIdentityException, FailedRequestException, InvalidDeclarationException {
         final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(new Block(IMPLEMENTATION, block)).getElements(4);
         final @Nullable Block hostSignature = elements.get(1);
         final @Nullable Block clientSignature = elements.get(2);
@@ -175,7 +177,7 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
         
         if (hostSignature != null && clientSignature == null && credentialsSignature == null) return new HostSignatureWrapper(block, hostSignature);
         if (hostSignature == null && clientSignature != null && credentialsSignature == null) return new ClientSignatureWrapper(block, clientSignature);
-        if (hostSignature == null && clientSignature == null && credentialsSignature != null) return new CredentialsSignatureWrapper(block, credentialsSignature);
+        if (hostSignature == null && clientSignature == null && credentialsSignature != null) return new CredentialsSignatureWrapper(block, credentialsSignature, entity);
         if (hostSignature == null && clientSignature == null && credentialsSignature == null) return new SignatureWrapper(block, false);
         throw new InvalidEncodingException("The element may only be signed by either a host, a client, with credentials or not at all.");
     }
@@ -208,6 +210,8 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
      * Returns the element of the wrapped block.
      * 
      * @return the element of the wrapped block.
+     * 
+     * @ensure element == null || element.getType().isBasedOn(getType().getParameters().getNotNull(0)) : "The element is either null or based on the parameter of the block's type.";
      */
     @Pure
     public final @Nullable Block getElement() {
@@ -218,6 +222,8 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
      * Returns the element of the wrapped block.
      * 
      * @return the element of the wrapped block.
+     * 
+     * @ensure element.getType().isBasedOn(getType().getParameters().getNotNull(0)) : "The element is based on the parameter of the block's type.";
      */
     @Pure
     public final @Nonnull Block getElementNotNull() throws InvalidEncodingException {
@@ -316,7 +322,6 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
      * @return whether this signature is signed like the given signature.
      */
     @Pure
-    @SuppressWarnings("null")
     public boolean isSignedLike(@Nonnull SignatureWrapper signature) {
         return getClass().equals(signature.getClass()) && Objects.equals(subject, signature.subject);
     }
@@ -336,7 +341,7 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
      * Verifies the signature and throws an exception if it is not valid.
      */
     @Pure
-    public void verify() throws InvalidSignatureException, InvalidEncodingException {}
+    public void verify() throws InvalidSignatureException, InvalidEncodingException, SQLException, FailedRequestException, InvalidDeclarationException {}
     
     /**
      * Signs the element. (This method should be overridden in subclasses.)
@@ -373,9 +378,6 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
             final @Nonnull FreezableArray<Block> elements = new FreezableArray<Block>(4);
             final @Nonnull Block block = new TupleWrapper(CONTENT, subelements.freeze()).toBlock();
             elements.set(0, block);
-            elements.set(1, null);
-            elements.set(2, null);
-            elements.set(3, null);
             
             sign(elements, block.getHash());
             cache = new TupleWrapper(IMPLEMENTATION, elements.freeze()).toBlock();

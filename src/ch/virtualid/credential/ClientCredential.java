@@ -133,6 +133,7 @@ public final class ClientCredential extends Credential implements Immutable {
      * @require randomizedPermissions.areShown() : "The randomized permissions are shown for client credentials.";
      * @require role == null || role.isRoleType() : "The role is either null or a role type.";
      * @require role == null || restrictions != null : "If a role is given, the restrictions are not null.";
+     * @require attribute != null || issuer instanceof Person : "If the attribute is null, the issuer is a person.";
      * @require (attribute == null) != (restrictions == null) : "Either the attribute or the restrictions are null (but not both).";
      * @require attribute == null || attribute.getType().isBasedOn(Attribute.TYPE) : "The attribute is either null or based on the attribute type.";
      * @require restrictions == null || restrictions.toBlock().getHash().equals(v.getValue()) : "If the restrictions are not null, their hash has to equal v.";
