@@ -2,13 +2,14 @@ package ch.virtualid.identity;
 
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.database.Database;
-import ch.virtualid.exceptions.InvalidDeclarationException;
+import ch.virtualid.exceptions.external.IdentityNotFoundException;
+import ch.virtualid.exceptions.external.InvalidDeclarationException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
 import ch.xdf.Block;
 import ch.xdf.StringWrapper;
-import ch.xdf.exceptions.InvalidEncodingException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -30,7 +31,7 @@ public abstract class Identifier implements Immutable, Blockable, SQLizable {
     /**
      * The pattern that valid identifiers have to match.
      */
-    private static final Pattern pattern = Pattern.compile("(?:(?:[a-z0-9]+(?:[._-][a-z0-9]+)*)?@)?[a-z0-9]+(?:[.-][a-z0-9]+)*\\.(?:[a-z][a-z]+)");
+    private static final Pattern pattern = Pattern.compile("(?:(?:[a-z0-9]+(?:[._-][a-z0-9]+)*)?@)?[a-z0-9]+(?:[.-][-]*[a-z0-9]+)*\\.(?:[a-z][a-z]+)");
     
     /**
      * Returns whether the given string is a valid identifier.
@@ -41,7 +42,7 @@ public abstract class Identifier implements Immutable, Blockable, SQLizable {
      */
     @Pure
     public static boolean isValid(@Nonnull String string) {
-        return string.length() <= 100 && pattern.matcher(string).matches();
+        return string.length() <= 100 && pattern.matcher(string).matches() && string.length() - string.indexOf("@") <= 40;
     }
     
     /**
@@ -169,7 +170,7 @@ public abstract class Identifier implements Immutable, Blockable, SQLizable {
      * @ensure !(result instanceof Type) || ((Type) result).isLoaded() : "If the result is a type, its declaration is loaded.";
      */
     @Pure
-    public abstract @Nonnull Identity getIdentity() throws SQLException, FailedIdentityException, InvalidDeclarationException;
+    public abstract @Nonnull Identity getIdentity() throws SQLException, IdentityNotFoundException, InvalidDeclarationException;
     
     /**
      * Returns whether an identity with this identifier exists.
@@ -182,7 +183,7 @@ public abstract class Identifier implements Immutable, Blockable, SQLizable {
         try {
             Mapper.getIdentity(this);
             return true;
-        } catch (@Nonnull FailedIdentityException exception) {
+        } catch (@Nonnull IdentityNotFoundException exception) {
             return false;
         }
     }

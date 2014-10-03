@@ -18,7 +18,7 @@ import ch.virtualid.interfaces.SQLizable;
 import ch.virtualid.module.client.Roles;
 import ch.virtualid.util.FreezableList;
 import ch.virtualid.util.ReadonlyList;
-import ch.xdf.exceptions.InvalidEncodingException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;

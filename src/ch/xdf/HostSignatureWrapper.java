@@ -3,30 +3,36 @@ package ch.xdf;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.client.Cache;
+import static ch.virtualid.client.Client.getAttribute;
 import ch.virtualid.concepts.Certificate;
 import ch.virtualid.cryptography.Element;
 import ch.virtualid.cryptography.PrivateKey;
 import ch.virtualid.cryptography.PublicKey;
 import ch.virtualid.cryptography.PublicKeyChain;
-import ch.virtualid.exceptions.InvalidDeclarationException;
-import ch.virtualid.exceptions.ShouldNeverHappenError;
-import ch.virtualid.identity.FailedIdentityException;
+import ch.virtualid.errors.ShouldNeverHappenError;
+import ch.virtualid.exceptions.external.ExternalException;
+import ch.virtualid.exceptions.external.IdentityNotFoundException;
+import ch.virtualid.exceptions.external.InvalidDeclarationException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.exceptions.external.InvalidSignatureException;
+import ch.virtualid.exceptions.packet.PacketException;
+import ch.virtualid.expression.Expression;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.Identifier;
 import ch.virtualid.identity.Identity;
+import ch.virtualid.identity.Mapper;
 import ch.virtualid.identity.NonHostIdentifier;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.packet.Audit;
-import ch.virtualid.packet.FailedRequestException;
 import ch.virtualid.server.Server;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.ReadonlyArray;
-import ch.xdf.exceptions.InvalidEncodingException;
-import ch.xdf.exceptions.InvalidSignatureException;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.sql.SQLException;
+import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -150,7 +156,7 @@ public final class HostSignatureWrapper extends SignatureWrapper implements Immu
      * @require block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
      * @require hostSignature.getType().isBasedOn(SIGNATURE) : "The signature is based on the implementation type.";
      */
-    HostSignatureWrapper(@Nonnull Block block, @Nonnull Block hostSignature) throws InvalidEncodingException, SQLException, FailedIdentityException, FailedRequestException, InvalidDeclarationException {
+    HostSignatureWrapper(@Nonnull Block block, @Nonnull Block hostSignature) throws InvalidEncodingException, SQLException, IdentityNotFoundException, FailedRequestException, InvalidDeclarationException {
         super(block, true);
         
         assert hostSignature.getType().isBasedOn(SIGNATURE) : "The signature is based on the implementation type.";
@@ -223,16 +229,75 @@ public final class HostSignatureWrapper extends SignatureWrapper implements Immu
     
     
     /**
+     * Stores the semantic type {@code outgoing.list.delegation@virtualid.ch}.
+     */
+    public static final @Nonnull SemanticType OUTGOING_DELEGATIONS = SemanticType.create("outgoing.list.delegation@virtualid.ch");
+    
+    /**
+     * Stores the semantic type {@code incoming.list.delegation@virtualid.ch}.
+     */
+    public static final @Nonnull SemanticType INCOMING_DELEGATIONS = SemanticType.create("incoming.list.delegation@virtualid.ch");
+    
+    /**
      * Verifies the signature as a certificate and throws an exception if it is not valid.
      * 
      * @require isCertificate() : "This signature is a certificate.";
      */
     @Pure
-    public void verifyAsCertificate() throws InvalidSignatureException, InvalidEncodingException, SQLException, FailedRequestException, InvalidDeclarationException {
+    public void verifyAsCertificate() throws SQLException, IOException, PacketException, ExternalException {
         assert isCertificate() : "This signature is a certificate.";
         
         verify();
         // TODO: Check that the signer has the corresponding delegation for the given attribute and value.
+    }
+    
+    /**
+     * Determines whether the given VID is authorized to certify the given element.
+     * 
+     * @param identifier the identifier of the certifying VID.
+     * @param value the certified value as a selfcontained block.
+     * @return {@code true} if the given VID is authorized to certify the given element, {@code false} otherwise.
+     * @require identifier != null : "The identifier is not null.";
+     * @require value != null : "The value is not null.";
+     */
+    @Deprecated
+    private static boolean isAuthorized(String identifier, Block value) throws Exception {
+        assert identifier != null : "The identifier is not null.";
+        assert value != null : "The value is not null.";
+        
+        long vid = Mapper.getVid(identifier);
+        long type = Mapper.getVid(new SelfcontainedWrapper(value).getIdentifier());
+        
+        if (vid == type) return true;
+        
+        // Load the certification delegations of the VID and recurse for each delegation that matches the type and the value.
+        long time = System.currentTimeMillis() + getCachingPeriod(Vid.INCOMING_DELEGATIONS) - getCachingPeriod(type);
+        Block attribute = getAttribute(vid, Vid.INCOMING_DELEGATIONS, time);
+        if (attribute == null) return false;
+        
+        List<Block> incoming_delegations = new ListWrapper(new SelfcontainedWrapper(new SignatureWrapper(attribute, false).getElement()).getElement()).getElements();
+        for (Block incoming_delegation : incoming_delegations) {
+            Block[] elements = new TupleWrapper(incoming_delegation).getElementsNotNull(3);
+            if (Mapper.getVid(new StringWrapper(elements[0]).getString()) == type) {
+                String restriction = new StringWrapper(elements[2]).getString();
+                Expression expression = Expression.parse(restriction);
+                if (expression.matches(value)) {
+                    // Check that the delegating VID references the current VID with the same type and expression.
+                    identifier = new StringWrapper(elements[1]).getString();
+                    attribute = getAttribute(Mapper.getVid(identifier), Vid.OUTGOING_DELEGATIONS, time);
+                    if (attribute == null) continue;
+                    List<Block> outgoing_delegations = new ListWrapper(new SelfcontainedWrapper(new SignatureWrapper(attribute, false).getElement()).getElement()).getElements();
+                    for (Block outgoing_delegation : outgoing_delegations) {
+                        elements = new TupleWrapper(outgoing_delegation).getElementsNotNull(3);
+                        if (Mapper.getVid(new StringWrapper(elements[0]).getString()) == type && Mapper.getVid(new StringWrapper(elements[1]).getString()) == vid && new StringWrapper(elements[2]).getString().equalsIgnoreCase(restriction)) {
+                            if (isAuthorized(identifier, value)) return true;
+                        }
+                    }
+                }
+            }
+        }
+        
+        return false;
     }
     
 }

@@ -9,21 +9,21 @@ import ch.virtualid.cryptography.Element;
 import ch.virtualid.cryptography.Exponent;
 import ch.virtualid.cryptography.Parameters;
 import ch.virtualid.entity.Entity;
-import ch.virtualid.exceptions.InvalidDeclarationException;
-import ch.virtualid.identity.FailedIdentityException;
+import ch.virtualid.exceptions.external.InvalidDeclarationException;
+import ch.virtualid.exceptions.external.IdentityNotFoundException;
 import ch.virtualid.identity.Identifier;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.module.both.Agents;
 import ch.virtualid.packet.Audit;
-import ch.virtualid.packet.FailedRequestException;
-import ch.virtualid.packet.PacketError;
-import ch.virtualid.packet.PacketException;
+import ch.virtualid.exceptions.external.FailedRequestException;
+import ch.virtualid.exceptions.packet.PacketError;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.ReadonlyArray;
-import ch.xdf.exceptions.InvalidEncodingException;
-import ch.xdf.exceptions.InvalidSignatureException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.exceptions.external.InvalidSignatureException;
 import java.math.BigInteger;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
@@ -101,7 +101,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper implements Im
      * @require block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
      * @require clientSignature.getType().isBasedOn(SIGNATURE) : "The signature is based on the implementation type.";
      */
-    ClientSignatureWrapper(@Nonnull Block block, @Nonnull Block clientSignature) throws InvalidEncodingException, SQLException, FailedIdentityException, FailedRequestException, InvalidDeclarationException {
+    ClientSignatureWrapper(@Nonnull Block block, @Nonnull Block clientSignature) throws InvalidEncodingException, SQLException, IdentityNotFoundException, FailedRequestException, InvalidDeclarationException {
         super(block, true);
         
         assert clientSignature.getType().isBasedOn(SIGNATURE) : "The signature is based on the implementation type.";

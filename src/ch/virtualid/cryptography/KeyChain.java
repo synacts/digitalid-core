@@ -15,7 +15,7 @@ import ch.virtualid.util.ReadonlyList;
 import ch.xdf.Block;
 import ch.xdf.ListWrapper;
 import ch.xdf.TupleWrapper;
-import ch.xdf.exceptions.InvalidEncodingException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import javax.annotation.Nonnull;
 import org.javatuples.Pair;
 

@@ -2,13 +2,13 @@ package ch.virtualid.cryptography;
 
 import ch.virtualid.annotations.Capturable;
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.exceptions.ShouldNeverHappenError;
+import ch.virtualid.errors.ShouldNeverHappenError;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.xdf.Block;
 import ch.xdf.IntegerWrapper;
-import ch.xdf.exceptions.InvalidEncodingException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import java.math.BigInteger;
 import java.security.InvalidKeyException;
 import java.security.Key;

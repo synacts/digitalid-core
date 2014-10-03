@@ -3,12 +3,12 @@ package ch.virtualid.handler;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.Role;
-import ch.virtualid.exceptions.InvalidDeclarationException;
+import ch.virtualid.exceptions.external.InvalidDeclarationException;
 import ch.virtualid.handler.query.internal.CoreServiceInternalQuery;
-import ch.virtualid.identity.FailedIdentityException;
+import ch.virtualid.exceptions.external.IdentityNotFoundException;
 import ch.virtualid.identity.HostIdentifier;
 import ch.xdf.SignatureWrapper;
-import ch.xdf.exceptions.InvalidEncodingException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 
@@ -47,7 +47,7 @@ public abstract class InternalQuery extends Query implements InternalMethod {
      * @ensure getSignature() != null : "The signature of this handler is not null.";
      * @ensure isOnHost() : "Queries are only decoded on hosts.";
      */
-    protected InternalQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws InvalidEncodingException, SQLException, FailedIdentityException, InvalidDeclarationException {
+    protected InternalQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws InvalidEncodingException, SQLException, IdentityNotFoundException, InvalidDeclarationException {
         super(entity, signature, recipient);
         
         if (!getEntityNotNull().getIdentity().equals(getSubject().getIdentity())) throw new InvalidEncodingException("The identity of the entity and the subject have to be the same for internal queries.");

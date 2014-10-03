@@ -30,7 +30,7 @@ public abstract class Site extends Instance {
      * @param prefix the prefix of the site-specific database tables.
      */
     protected Site(@Nonnull String prefix) throws SQLException {
-        this.prefix = prefix;
+        this.prefix = prefix + "_";
         
         Module.initialize(this);
     }

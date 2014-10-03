@@ -1,6 +1,7 @@
 package ch.virtualid.identity;
 
-import ch.virtualid.exceptions.InvalidDeclarationException;
+import ch.virtualid.exceptions.external.IdentityNotFoundException;
+import ch.virtualid.exceptions.external.InvalidDeclarationException;
 import ch.virtualid.interfaces.Immutable;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
@@ -68,7 +69,7 @@ public abstract class Type extends NonHostIdentity implements Immutable {
      * 
      * @ensure isLoaded() : "The type declaration is loaded.";
      */
-    public final void ensureLoaded() throws SQLException, InvalidDeclarationException, FailedIdentityException {
+    public final void ensureLoaded() throws SQLException, InvalidDeclarationException, IdentityNotFoundException {
         if (!loaded) load();
     }
     
@@ -79,6 +80,6 @@ public abstract class Type extends NonHostIdentity implements Immutable {
      * 
      * @ensure isLoaded() : "The type declaration has been loaded.";
      */
-    abstract void load() throws SQLException, InvalidDeclarationException, FailedIdentityException;
+    abstract void load() throws SQLException, InvalidDeclarationException, IdentityNotFoundException;
     
 }

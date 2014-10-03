@@ -7,7 +7,7 @@ import ch.virtualid.identity.Identifier;
 import ch.virtualid.util.ReadonlyList;
 import ch.xdf.HostSignatureWrapper;
 import ch.xdf.SelfcontainedWrapper;
-import ch.xdf.exceptions.FailedEncodingException;
+import ch.virtualid.exceptions.external.FailedEncodingException;
 import java.math.BigInteger;
 import java.util.List;
 import javax.annotation.Nonnull;

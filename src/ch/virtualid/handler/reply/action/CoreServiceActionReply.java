@@ -7,7 +7,7 @@ import ch.virtualid.handler.ActionReply;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.CoreService;
 import ch.xdf.HostSignatureWrapper;
-import ch.xdf.exceptions.InvalidEncodingException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 

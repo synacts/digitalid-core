@@ -2,14 +2,15 @@ package ch.virtualid.cryptography;
 
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.identity.Category;
 import ch.virtualid.identity.SemanticType;
+import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.util.ReadonlyList;
 import ch.xdf.Block;
 import ch.xdf.ListWrapper;
 import ch.xdf.TupleWrapper;
-import ch.xdf.exceptions.InvalidEncodingException;
 import javax.annotation.Nonnull;
 import org.javatuples.Pair;
 
@@ -19,7 +20,7 @@ import org.javatuples.Pair;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public final class PublicKeyChain extends KeyChain<PublicKey> implements Immutable {
+public final class PublicKeyChain extends KeyChain<PublicKey> implements Immutable, Blockable {
     
     /**
      * Stores the semantic type {@code item.public.key.chain.host@virtualid.ch}.

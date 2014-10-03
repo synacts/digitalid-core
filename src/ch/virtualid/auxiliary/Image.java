@@ -2,14 +2,14 @@ package ch.virtualid.auxiliary;
 
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.database.Database;
-import ch.virtualid.exceptions.ShouldNeverHappenError;
+import ch.virtualid.errors.ShouldNeverHappenError;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
 import ch.xdf.Block;
 import ch.xdf.DataWrapper;
-import ch.xdf.exceptions.InvalidEncodingException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

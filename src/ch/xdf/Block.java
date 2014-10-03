@@ -8,12 +8,12 @@ import ch.virtualid.annotations.NonExposedRecipient;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.cryptography.SymmetricKey;
 import ch.virtualid.database.Database;
-import ch.virtualid.exceptions.ShouldNeverHappenError;
+import ch.virtualid.errors.ShouldNeverHappenError;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
-import ch.xdf.exceptions.InvalidEncodingException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -248,6 +248,24 @@ public final class Block implements Immutable, SQLizable {
         assert type.isBasedOn(getType()) : "The type can only be downcast.";
         
         this.type = type;
+        return this;
+    }
+    
+    /**
+     * Checks that the type of this block is based on the given type.
+     * 
+     * @param type the type to set for this block.
+     * 
+     * @return this block.
+     * 
+     * @throws InvalidEncodingException if this is not the case.
+     * 
+     * @require type.isLoaded() : "The type declaration is loaded.";
+     */
+    public @Nonnull Block checkType(@Nonnull SemanticType type) throws InvalidEncodingException {
+        assert type.isLoaded() : "The type declaration is loaded.";
+        
+        if (!this.type.isBasedOn(type)) throw new InvalidEncodingException("The type of this block (" + this.type.getAddress() + ") is not based on the given type (" + type.getAddress() + ").");
         return this;
     }
     

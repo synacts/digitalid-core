@@ -1,13 +1,13 @@
 package ch.virtualid.auxiliary;
 
 import ch.virtualid.annotations.Pure;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
 import ch.xdf.Block;
 import ch.xdf.Int64Wrapper;
-import ch.xdf.exceptions.InvalidEncodingException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -88,6 +88,17 @@ public final class Time implements Immutable, Blockable, Comparable<Time>, SQLiz
     
     
     /**
+     * Stores the earliest possible time.
+     */
+    public static final @Nonnull Time MIN = new Time(0l);
+    
+    /**
+     * Stores the latest possible time.
+     */
+    public static final @Nonnull Time MAX = new Time(Long.MAX_VALUE);
+    
+    
+    /**
      * Stores the time in milliseconds.
      */
     private final long value;
@@ -118,7 +129,7 @@ public final class Time implements Immutable, Blockable, Comparable<Time>, SQLiz
     public Time(@Nonnull Block block) throws InvalidEncodingException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
-        value = new Int64Wrapper(block).getValue();
+        this.value = new Int64Wrapper(block).getValue();
     }
     
     @Pure

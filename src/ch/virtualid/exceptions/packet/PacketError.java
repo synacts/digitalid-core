@@ -1,15 +1,14 @@
-package ch.virtualid.packet;
+package ch.virtualid.exceptions.packet;
 
-import ch.virtualid.identity.SemanticType;
-import ch.xdf.Int8Wrapper;
-import ch.xdf.exceptions.InvalidEncodingException;
+import ch.virtualid.annotations.Pure;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import javax.annotation.Nonnull;
 
 /**
  * This class enumerates the various packet errors.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 1.0
+ * @version 2.0
  */
 public enum PacketError {
     INTERNAL(0), // The error code for an internal problem.
@@ -25,9 +24,22 @@ public enum PacketError {
     KEYROTATION(10); // The error code for a required key rotation.
     
     /**
-     * Stores the semantic type {@code error.packet@virtualid.ch}.
+     * Returns the packet error encoded by the given value or throws an {@link InvalidEncodingException}.
+     * 
+     * @param value the value encoding the packet error.
+     * 
+     * @return the packet error encoded by the given value.
+     * 
+     * @throws InvalidEncodingException if the given value does not encode a packet error.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("error.packet@virtualid.ch").load(Int8Wrapper.TYPE);
+    @Pure
+    public static @Nonnull PacketError get(byte value) throws InvalidEncodingException {
+        for (final @Nonnull PacketError packetError : values()) {
+            if (packetError.value == value) return packetError;
+        }
+        throw new InvalidEncodingException("The value '" + value + "' does not encode a packet error.");
+    }
+    
     
     /**
      * Stores the byte representation of the packet error.
@@ -39,7 +51,7 @@ public enum PacketError {
      * 
      * @param value the value encoding the packet error.
      */
-    PacketError(int value) {
+    private PacketError(int value) {
         this.value = (byte) value;
     }
     
@@ -48,35 +60,18 @@ public enum PacketError {
      * 
      * @return the byte representation of this packet error.
      */
+    @Pure
     public byte getValue() {
         return value;
     }
     
-    /**
-     * Returns a string representation of this packet error.
-     * 
-     * @return a string representation of this packet error.
-     */
+    @Pure
     @Override
     public @Nonnull String toString() {
-        @Nonnull String name = name().toLowerCase();
+        final @Nonnull String name = name().toLowerCase();
         @Nonnull String article = "a";
         if ("aeiou".indexOf(name.charAt(0)) != -1) article = "an";
         return article + " " + name + " error";
-    }
-    
-    /**
-     * Returns the packet error encoded by the given value or throws an {@link InvalidEncodingException}.
-     * 
-     * @param value the value encoding the packet error.
-     * @return the packet error encoded by the given value.
-     * @throws InvalidEncodingException if the given value does not encode a packet error.
-     */
-    public static @Nonnull PacketError get(byte value) throws InvalidEncodingException {
-        for (@Nonnull PacketError packetError : values()) {
-            if (packetError.value == value) return packetError;
-        }
-        throw new InvalidEncodingException("The value '" + value + "' does not encode a packet error.");
     }
     
 }

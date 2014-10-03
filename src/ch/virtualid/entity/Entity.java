@@ -5,7 +5,7 @@ import ch.virtualid.client.Client;
 import ch.virtualid.concept.Aspect;
 import ch.virtualid.concept.Concept;
 import ch.virtualid.concept.Instance;
-import ch.virtualid.exceptions.ShouldNeverHappenError;
+import ch.virtualid.errors.ShouldNeverHappenError;
 import ch.virtualid.identity.Identity;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;

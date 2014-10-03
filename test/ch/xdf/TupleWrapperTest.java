@@ -1,6 +1,6 @@
 package ch.xdf;
 
-import ch.xdf.exceptions.InvalidEncodingException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import static org.junit.Assert.assertArrayEquals;
 import org.junit.Test;
 

@@ -3,14 +3,14 @@ package ch.virtualid.handler.reply.query;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Account;
 import ch.virtualid.entity.Entity;
-import ch.virtualid.exceptions.InvalidDeclarationException;
+import ch.virtualid.exceptions.external.InvalidDeclarationException;
 import ch.virtualid.handler.Reply;
-import ch.virtualid.identity.FailedIdentityException;
+import ch.virtualid.exceptions.external.IdentityNotFoundException;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.CoreService;
 import ch.xdf.Block;
 import ch.xdf.HostSignatureWrapper;
-import ch.xdf.exceptions.InvalidEncodingException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -104,7 +104,7 @@ public final class StateReply extends CoreServiceQueryReply {
         
         @Pure
         @Override
-        protected @Nonnull Reply create(@Nullable Entity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws InvalidEncodingException, SQLException, FailedIdentityException, InvalidDeclarationException {
+        protected @Nonnull Reply create(@Nullable Entity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws InvalidEncodingException, SQLException, IdentityNotFoundException, InvalidDeclarationException {
             return new StateReply(entity, signature, number, block);
         }
         

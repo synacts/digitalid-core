@@ -2,7 +2,7 @@ package ch.virtualid.io;
 
 import ch.virtualid.database.Database;
 import ch.virtualid.database.PostgreSQLConfiguration;
-import ch.xdf.exceptions.InvalidEncodingException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;

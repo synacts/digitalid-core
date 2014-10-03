@@ -14,8 +14,8 @@ import ch.virtualid.contact.ReadonlyAuthentications;
 import ch.virtualid.entity.Account;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.Role;
-import ch.virtualid.exceptions.InvalidDeclarationException;
-import ch.virtualid.identity.FailedIdentityException;
+import ch.virtualid.exceptions.external.InvalidDeclarationException;
+import ch.virtualid.exceptions.external.IdentityNotFoundException;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.Identifier;
 import ch.virtualid.identity.Identity;
@@ -25,11 +25,11 @@ import ch.virtualid.module.CoreService;
 import ch.virtualid.packet.Audit;
 import ch.virtualid.packet.ClientRequest;
 import ch.virtualid.packet.CredentialsRequest;
-import ch.virtualid.packet.FailedRequestException;
+import ch.virtualid.exceptions.external.FailedRequestException;
 import ch.virtualid.packet.HostRequest;
 import ch.virtualid.packet.Packet;
-import ch.virtualid.packet.PacketError;
-import ch.virtualid.packet.PacketException;
+import ch.virtualid.exceptions.packet.PacketError;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.packet.Request;
 import ch.virtualid.packet.Response;
 import ch.virtualid.util.FreezableArrayList;
@@ -39,8 +39,8 @@ import ch.virtualid.util.ReadonlyList;
 import ch.xdf.Block;
 import ch.xdf.SelfcontainedWrapper;
 import ch.xdf.SignatureWrapper;
-import ch.xdf.exceptions.FailedEncodingException;
-import ch.xdf.exceptions.InvalidEncodingException;
+import ch.virtualid.exceptions.external.FailedEncodingException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.Objects;
@@ -179,7 +179,7 @@ public abstract class Method extends Handler {
      * 
      * @return the reply to this method in case of queries or, potentially, external actions.
      */
-    public @Nullable Reply send() throws FailedRequestException, SQLException, FailedIdentityException, InvalidDeclarationException, FailedEncodingException {
+    public @Nullable Reply send() throws FailedRequestException, SQLException, IdentityNotFoundException, InvalidDeclarationException, FailedEncodingException {
         return Method.send(new FreezableArrayList<Method>(this).freeze()).get(0);
     }
     
@@ -238,7 +238,7 @@ public abstract class Method extends Handler {
      * @require !methods.isEmpty() : "The list of methods is not empty.";
      * @require areSimilar(methods) : "All methods are similar and not null.";
      */
-    public static @Nonnull Response send(@Nonnull ReadonlyList<? extends Method> methods) throws FailedRequestException, SQLException, FailedIdentityException, InvalidDeclarationException, FailedEncodingException {
+    public static @Nonnull Response send(@Nonnull ReadonlyList<? extends Method> methods) throws FailedRequestException, SQLException, IdentityNotFoundException, InvalidDeclarationException, FailedEncodingException {
         assert methods.isFrozen() : "The list of methods is frozen.";
         assert !methods.isEmpty() : "The list of handlers is not empty.";
         assert areSimilar(methods) : "All methods are similar and not null.";
@@ -342,7 +342,7 @@ public abstract class Method extends Handler {
          * @ensure return.getSignature() != null : "The signature of the returned method is not null.";
          */
         @Pure
-        protected abstract @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws InvalidEncodingException, SQLException, FailedIdentityException, InvalidDeclarationException, FailedRequestException;
+        protected abstract @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws InvalidEncodingException, SQLException, IdentityNotFoundException, InvalidDeclarationException, FailedRequestException;
         
     }
     
@@ -379,7 +379,7 @@ public abstract class Method extends Handler {
      * @ensure return.getSignature() != null : "The signature of the returned method is not null.";
      */
     @Pure
-    public static @Nonnull Method get(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws PacketException, InvalidEncodingException, SQLException, FailedIdentityException, InvalidDeclarationException {
+    public static @Nonnull Method get(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws PacketException, InvalidEncodingException, SQLException, IdentityNotFoundException, InvalidDeclarationException {
         final @Nullable Method.Factory factory = factories.get(block.getType());
         if (factory == null) throw new PacketException(PacketError.REQUEST);
         else return factory.create(entity, signature, recipient, block);

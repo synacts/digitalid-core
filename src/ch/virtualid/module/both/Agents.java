@@ -25,7 +25,7 @@ import ch.virtualid.module.BothModule;
 import ch.virtualid.module.Module;
 import ch.xdf.Block;
 import ch.xdf.TupleWrapper;
-import ch.xdf.exceptions.InvalidEncodingException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import java.math.BigInteger;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

@@ -1,7 +1,7 @@
 package ch.virtualid.client;
 
 import ch.virtualid.contact.Context;
-import ch.xdf.exceptions.InvalidEncodingException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import java.util.LinkedList;
 import java.util.List;
 import javax.annotation.Nonnull;

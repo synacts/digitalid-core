@@ -3,7 +3,7 @@ package ch.virtualid.expression;
 import ch.virtualid.credential.Credential;
 import ch.virtualid.server.Host;
 import ch.xdf.Block;
-import ch.xdf.exceptions.InvalidEncodingException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import java.sql.Connection;
 import java.sql.SQLException;
 

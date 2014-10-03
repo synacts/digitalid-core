@@ -3,15 +3,15 @@ package ch.virtualid.contact;
 import ch.virtualid.annotations.Capturable;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
-import ch.virtualid.exceptions.InvalidDeclarationException;
+import ch.virtualid.exceptions.external.InvalidDeclarationException;
 import ch.virtualid.identity.Category;
-import ch.virtualid.identity.FailedIdentityException;
+import ch.virtualid.exceptions.external.IdentityNotFoundException;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.xdf.Block;
 import ch.xdf.BooleanWrapper;
 import ch.xdf.ListWrapper;
-import ch.xdf.exceptions.InvalidEncodingException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 
@@ -79,7 +79,7 @@ public final class Authentications extends AttributeSet implements ReadonlyAuthe
      * 
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
-    public Authentications(@Nonnull Block block) throws InvalidEncodingException, FailedIdentityException, SQLException, InvalidDeclarationException {
+    public Authentications(@Nonnull Block block) throws InvalidEncodingException, IdentityNotFoundException, SQLException, InvalidDeclarationException {
         super(block);
     }
     

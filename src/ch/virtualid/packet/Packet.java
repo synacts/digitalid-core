@@ -1,17 +1,22 @@
 package ch.virtualid.packet;
 
+import ch.virtualid.exceptions.packet.PacketException;
+import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.client.Commitment;
 import ch.virtualid.credential.Credential;
 import ch.virtualid.cryptography.SymmetricKey;
 import ch.virtualid.entity.Account;
-import ch.virtualid.identity.FailedIdentityException;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.Identifier;
+import ch.virtualid.exceptions.external.IdentityNotFoundException;
 import ch.virtualid.identity.NonHostIdentifier;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.server.Host;
 import ch.virtualid.server.Server;
+import ch.virtualid.util.FreezableArrayList;
+import ch.virtualid.util.FreezableList;
+import ch.virtualid.util.ReadonlyList;
 import ch.xdf.Block;
 import ch.xdf.ClientSignatureWrapper;
 import ch.xdf.CompressionWrapper;
@@ -22,9 +27,9 @@ import ch.xdf.Int8Wrapper;
 import ch.xdf.ListWrapper;
 import ch.xdf.SelfcontainedWrapper;
 import ch.xdf.SignatureWrapper;
-import ch.xdf.exceptions.FailedEncodingException;
-import ch.xdf.exceptions.InvalidEncodingException;
-import ch.xdf.exceptions.InvalidSignatureException;
+import ch.virtualid.exceptions.external.FailedEncodingException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.exceptions.external.InvalidSignatureException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigInteger;
@@ -43,7 +48,7 @@ import javax.annotation.Nullable;
  * @see Response
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 1.0
+ * @version 2.0
  */
 public class Packet implements Immutable {
     
@@ -75,7 +80,7 @@ public class Packet implements Immutable {
     /**
      * Stores the semantic type {@code packet@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("packet@virtualid.ch").load(SelfcontainedWrapper.TYPE);
+    public static final @Nonnull SemanticType TYPE = SemanticType.create("packet@virtualid.ch").load(SelfcontainedWrapper.SELFCONTAINED);
     
     
     /**
@@ -90,18 +95,24 @@ public class Packet implements Immutable {
     
     /**
      * Stores the wrappers of the signatures.
+     * 
+     * @invariant signatures.isFrozen() : "The signatures are frozen.";
      */
-    private final @Nonnull List<SignatureWrapper> signatures;
+    private final @Nonnull ReadonlyList<SignatureWrapper> signatures;
     
     /**
      * Stores the wrappers of the compressions.
+     * 
+     * @invariant compressions.isFrozen() : "The compressions are frozen.";
      */
-    private final @Nonnull List<CompressionWrapper> compressions;
+    private final @Nonnull ReadonlyList<CompressionWrapper> compressions;
     
     /**
      * Stores the wrappers of the contents.
+     * 
+     * @invariant contents.isFrozen() : "The contents are frozen.";
      */
-    private final @Nonnull List<SelfcontainedWrapper> contents;
+    private final @Nonnull ReadonlyList<SelfcontainedWrapper> contents;
     
     /**
      * Stores the number of signatures, compressions and contents.
@@ -132,6 +143,7 @@ public class Packet implements Immutable {
      * @param audit the audit since the last audit or null if no audit is appended.
      * @param signer the identifier of the signing host.
      * 
+     * @require contents.isFrozen() : "The list of contents is frozen.";
      * @require !contents.isEmpty() : "The list of contents is not empty.";
      * @require Server.hasHost(signer.getHostIdentifier()) : "The host of the signer is running on this server.";
      * 
@@ -139,7 +151,7 @@ public class Packet implements Immutable {
      * 
      * @throws FailedEncodingException This exception is never thrown by this constructor but is listed nonetheless.
      */
-    public Packet(@Nonnull List<SelfcontainedWrapper> contents, @Nullable SymmetricKey symmetricKey, @Nonnull Identifier subject, @Nullable Audit audit, @Nonnull HostIdentifier signer) throws FailedEncodingException {
+    public Packet(@Nonnull ReadonlyList<SelfcontainedWrapper> contents, @Nullable SymmetricKey symmetricKey, @Nonnull Identifier subject, @Nullable Audit audit, @Nonnull HostIdentifier signer) throws FailedEncodingException {
         this(contents, null, symmetricKey, subject, audit, signer, null, null, null, false, null);
     }
     
@@ -149,8 +161,8 @@ public class Packet implements Immutable {
      * @param contents a list of selfcontained wrappers whose blocks are to be packed (either as a request or a response).
      * @param recipient the identifier of the host for which the content is encrypted or null if the recipient is not known.
      * @param symmetricKey the symmetric key used for encryption or null if the content is not encrypted.
-     * @param subject the identifier of the identity about which a statement is made (either in a request or a response).
-     * @param audit the audit since the last audit or null in case of external requests or responses.
+     * @param subject the identifier of the identity about which a statement is made (in a method or a reply).
+     * @param audit the audit since the last audit or null in case of external methods or replies.
      * @param signer the identifier of the signing host or null if the element is not signed by a host.
      * @param commitment the commitment containing the client secret or null if the element is not signed by a client.
      * @param credentials the credentials with which the content is signed or null if the content is not signed with credentials.
@@ -158,22 +170,26 @@ public class Packet implements Immutable {
      * @param lodged whether the hidden content of the credentials is verifiably encrypted to achieve liability.
      * @param value the value b' or null if the credentials are not shortened.
      * 
+     * @require contents.isFrozen() : "The list of contents is frozen.";
      * @require !contents.isEmpty() : "The list of contents is not empty.";
      * @require subject != null || recipient == null && signer == null && commitment == null && credentials == null : "The subject may only be null if the contents of a response are not signed (because the host could not decode the subject).";
+     * @require ... : "This list of preconditions is not complete but the public constructors make sure that all requirements for packing the given contents are met.";
      * 
-     * @ensure getSize() == contents.size() : "The size of this packet equals the size of the contents.";
+     * @ensure getSize() == contents.size() : "The size of this packet equals the size of the given list of contents.";
      */
-    protected Packet(@Nonnull List<SelfcontainedWrapper> contents, @Nullable HostIdentifier recipient, @Nullable SymmetricKey symmetricKey, @Nullable Identifier subject, @Nullable Audit audit, @Nullable HostIdentifier signer, @Nullable Commitment commitment, @Nullable List<Credential> credentials, @Nullable List<HostSignatureWrapper> certificates, boolean lodged, @Nullable BigInteger value) throws FailedEncodingException {
+    protected Packet(@Nonnull ReadonlyList<SelfcontainedWrapper> contents, @Nullable HostIdentifier recipient, @Nullable SymmetricKey symmetricKey, @Nullable Identifier subject, @Nullable Audit audit, @Nullable HostIdentifier signer, @Nullable Commitment commitment, @Nullable ReadonlyList<Credential> credentials, @Nullable ReadonlyList<HostSignatureWrapper> certificates, boolean lodged, @Nullable BigInteger value) throws FailedEncodingException {
+        assert contents.isFrozen() : "The list of contents is frozen.";
         assert !contents.isEmpty() : "The list of contents is not empty.";
         assert subject != null || recipient == null && signer == null && commitment == null && credentials == null : "The subject may only be null if the contents of a response are not signed (because the host could not decode the subject).";
         
         this.contents = contents;
-        size = contents.size();
-        compressions = new ArrayList<CompressionWrapper>(size);
-        signatures = new ArrayList<SignatureWrapper>(size);
+        this.size = contents.size();
+        final @Nonnull FreezableList<CompressionWrapper> compressions = new FreezableArrayList<CompressionWrapper>(size);
+        final @Nonnull FreezableList<SignatureWrapper> signatures = new FreezableArrayList<SignatureWrapper>(size);
         
         for (int i = 0; i < size; i++) {
-            @Nonnull SelfcontainedWrapper content = contents.get(i);
+            final @Nullable SelfcontainedWrapper content = contents.get(i);
+            
             @Nonnull CompressionWrapper compression = new CompressionWrapper(content, CompressionWrapper.ZLIB);
             @Nullable Audit _audit = (i == size - 1 ? audit : null);
             @Nonnull SignatureWrapper signature;
@@ -190,9 +206,12 @@ public class Packet implements Immutable {
             signatures.set(i, signature);
         }
         
-        encryption = new EncryptionWrapper(new ListWrapper(signatures, true), recipient, symmetricKey);
-        wrapper = new SelfcontainedWrapper(NonHostIdentifier.PACKET_ENCRYPTION, encryption);
+        this.compressions = compressions.freeze();
+        this.signatures =  signatures.freeze();
+        this.encryption = new EncryptionWrapper(new ListWrapper(signatures, true), recipient, symmetricKey);
+        this.wrapper = new SelfcontainedWrapper(NonHostIdentifier.PACKET_ENCRYPTION, encryption);
     }
+    
     
     /**
      * Unpacks the given request on the host-side.
@@ -247,7 +266,7 @@ public class Packet implements Immutable {
             @Nonnull CompressionWrapper compression;
             @Nonnull SelfcontainedWrapper content;
             
-            try { signature = verification ? SignatureWrapper.decode(encryption.getElement(), account) : SignatureWrapper.decodeUnverified(encryption.getElement(), account); } catch (InvalidEncodingException | InvalidSignatureException | FailedIdentityException exception) { throw new PacketException(PacketError.SIGNATURE, exception); }
+            try { signature = verification ? SignatureWrapper.decode(encryption.getElement(), account) : SignatureWrapper.decodeUnverified(encryption.getElement(), account); } catch (InvalidEncodingException | InvalidSignatureException | IdentityNotFoundExceptionexception) { throw new PacketException(PacketError.SIGNATURE, exception); }
             if (signature.getSubject() == null) throw new PacketException(PacketError.SIGNATURE, new InvalidEncodingException("The subject of a signature is not null.")); // This exception is also thrown (intentionally) on the requester if the responding host could not decode the subject.
             try { compression = new CompressionWrapper(signature.getElement()); } catch (InvalidEncodingException exception) { throw new PacketException(PacketError.COMPRESSION, exception); }
             try { content = new SelfcontainedWrapper(compression.getElement()); } catch (InvalidEncodingException exception) { throw new PacketException(PacketError.REQUEST, exception); }
@@ -259,7 +278,7 @@ public class Packet implements Immutable {
             } else if (response) try {
                 @Nonnull SemanticType type = content.getIdentifier().getIdentity().toSemanticType();
                 if (!type.equals(SemanticType.PACKET_ERROR) && !type.equals(SemanticType.NOREPLY)) throw new PacketException(PacketError.SIGNATURE, new InvalidEncodingException("The response from the host " + encryption.getRecipient() + " was not signed."));
-            } catch (InvalidEncodingException | FailedIdentityException exception) { throw new PacketException(PacketError.SIGNATURE, exception); }
+            } catch (InvalidEncodingException | IdentityNotFoundExceptionexception) { throw new PacketException(PacketError.SIGNATURE, exception); }
             
             signatures.set(i, signature);
             compressions.set(i, compression);
@@ -375,7 +394,7 @@ public class Packet implements Immutable {
      * @require index >= 0 && index < getSize() : "The index is valid.";
      */
     // TODO: Rather getReply?
-    public final @Nullable SelfcontainedWrapper getContent(int index) throws PacketException, FailedIdentityException, InvalidEncodingException {
+    public final @Nullable SelfcontainedWrapper getContent(int index) throws PacketException, IdentityNotFoundException, InvalidEncodingException {
         assert index >= 0 && index < getSize() : "The index is valid.";
         
         @Nonnull SelfcontainedWrapper content = contents.get(index);

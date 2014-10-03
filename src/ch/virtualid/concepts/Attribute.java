@@ -1,20 +1,21 @@
 package ch.virtualid.concepts;
 
+import ch.virtualid.annotations.OnlyForActions;
 import ch.virtualid.client.Synchronizer;
 import ch.virtualid.concept.Aspect;
 import ch.virtualid.concept.Concept;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.Entity;
+import ch.virtualid.exceptions.external.IdentityNotFoundException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.expression.PassiveExpression;
 import ch.virtualid.handler.action.internal.AttributeValueReplace;
-import ch.virtualid.identity.FailedIdentityException;
 import ch.virtualid.identity.NonHostIdentifier;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.both.Attributes;
 import ch.xdf.Block;
 import ch.xdf.SelfcontainedWrapper;
 import ch.xdf.SignatureWrapper;
-import ch.xdf.exceptions.InvalidEncodingException;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -66,6 +67,8 @@ public final class Attribute extends Concept {
     
     /**
      * Stores the type of this attribute.
+     * 
+     * @invariant type.isAttributeType() : "The type is an attribute type.";
      */
     private final @Nonnull SemanticType type;
     
@@ -149,8 +152,7 @@ public final class Attribute extends Concept {
      * 
      * @return the attribute in the given block at the given entity.
      */
-    @Deprecated
-    public static @Nonnull Attribute get(@Nonnull Entity entity, @Nonnull Block block) throws InvalidEncodingException, FailedIdentityException {
+    public static @Nonnull Attribute get(@Nonnull Entity entity, @Nonnull Block block) throws InvalidEncodingException, IdentityNotFoundException {
         // TODO: Assert the block type.
         
         return get(entity, new NonHostIdentifier(block).getIdentity().toSemanticType());
@@ -199,7 +201,8 @@ public final class Attribute extends Concept {
         }
     }
     
-    public void replaceValue(@Nonnull Block oldValue, @Nonnull Block newValue) throws SQLException {
+    @OnlyForActions
+    public void replaceValue(@Nullable Block oldValue, @Nullable Block newValue) throws SQLException {
         assert oldValue != newValue : "";
         
         if (oldValue == null) Attributes.addValue(this, true, newValue);

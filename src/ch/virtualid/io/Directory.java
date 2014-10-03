@@ -1,6 +1,6 @@
 package ch.virtualid.io;
 
-import ch.virtualid.exceptions.InitializationError;
+import ch.virtualid.errors.InitializationError;
 import java.io.File;
 import javax.annotation.Nonnull;
 

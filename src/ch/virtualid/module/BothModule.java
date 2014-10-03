@@ -8,7 +8,7 @@ import ch.virtualid.handler.InternalQuery;
 import ch.virtualid.handler.QueryReply;
 import ch.virtualid.identity.SemanticType;
 import ch.xdf.Block;
-import ch.xdf.exceptions.InvalidEncodingException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

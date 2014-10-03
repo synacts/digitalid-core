@@ -2,8 +2,8 @@ package ch.xdf;
 
 import ch.virtualid.annotations.Exposed;
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.exceptions.InvalidDeclarationException;
-import ch.virtualid.identity.FailedIdentityException;
+import ch.virtualid.exceptions.external.InvalidDeclarationException;
+import ch.virtualid.exceptions.external.IdentityNotFoundException;
 import ch.virtualid.identity.NonHostIdentifier;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.identity.SyntacticType;
@@ -11,9 +11,9 @@ import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.ReadonlyArray;
-import ch.xdf.exceptions.InvalidEncodingException;
-import ch.xdf.exceptions.UnexpectedEndOfFileException;
-import ch.xdf.exceptions.UnsupportedBlockLengthException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.xdf.exceptions.io.UnexpectedEndOfFileException;
+import ch.xdf.exceptions.io.UnsupportedBlockLengthException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -93,7 +93,7 @@ public final class SelfcontainedWrapper extends BlockWrapper implements Immutabl
      * 
      * @require block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
      */
-    public SelfcontainedWrapper(@Nonnull Block block) throws InvalidEncodingException, FailedIdentityException, InvalidDeclarationException, SQLException {
+    public SelfcontainedWrapper(@Nonnull Block block) throws InvalidEncodingException, IdentityNotFoundException, InvalidDeclarationException, SQLException {
         super(block);
         
         this.tuple = new Block(IMPLEMENTATION, block);
@@ -109,9 +109,9 @@ public final class SelfcontainedWrapper extends BlockWrapper implements Immutabl
      * @param inputStream the input stream to read from.
      * @param close whether the input stream shall be closed.
      * 
-     * @require block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
+     * @ensure getType().equals(SELFCONTAINED) : "The type of the new wrapper is selfcontained.";
      */
-    public SelfcontainedWrapper(@Nonnull InputStream inputStream, boolean close) throws IOException, InvalidEncodingException, FailedIdentityException, InvalidDeclarationException, SQLException {
+    public SelfcontainedWrapper(@Nonnull InputStream inputStream, boolean close) throws IOException, InvalidEncodingException, IdentityNotFoundException, InvalidDeclarationException, SQLException {
         this(read(inputStream, close));
     }
     
@@ -167,7 +167,7 @@ public final class SelfcontainedWrapper extends BlockWrapper implements Immutabl
      * 
      * @return the selfcontained block read from the input stream.
      * 
-     * @ensure return.getType().isBasedOn(SELFCONTAINED) : "The returned block is selfcontained.";
+     * @ensure return.getType().equals(SELFCONTAINED) : "The returned block is selfcontained.";
      */
     private static @Nonnull Block read(@Nonnull InputStream inputStream, boolean close) throws InvalidEncodingException, IOException {
         try {

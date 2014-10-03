@@ -2,7 +2,8 @@ package ch.virtualid.server;
 
 import ch.virtualid.client.Client;
 import ch.virtualid.database.Database;
-import ch.virtualid.exceptions.InitializationError;
+import ch.virtualid.errors.InitializationError;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.HostIdentity;
 import ch.virtualid.identity.Identifier;
@@ -11,8 +12,6 @@ import ch.virtualid.io.Console;
 import ch.virtualid.io.Directory;
 import ch.virtualid.io.Option;
 import ch.virtualid.module.CoreService;
-import ch.xdf.exceptions.FailedEncodingException;
-import ch.xdf.exceptions.InvalidEncodingException;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -42,7 +41,7 @@ public final class Server {
     /**
      * The version of the Virtual ID server implementation.
      */
-    public static final @Nonnull String VERSION = "0.7 (18 December 2013)";
+    public static final @Nonnull String VERSION = "0.8 (3 October 2014)";
     
     /**
      * The authors of the Virtual ID server implementation.

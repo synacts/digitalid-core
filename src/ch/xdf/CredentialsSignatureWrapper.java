@@ -23,8 +23,8 @@ import ch.virtualid.cryptography.PublicKeyChain;
 import ch.virtualid.entity.Account;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.Role;
-import ch.virtualid.exceptions.InvalidDeclarationException;
-import ch.virtualid.identity.FailedIdentityException;
+import ch.virtualid.exceptions.external.InvalidDeclarationException;
+import ch.virtualid.exceptions.external.IdentityNotFoundException;
 import ch.virtualid.identity.Identifier;
 import ch.virtualid.identity.Person;
 import ch.virtualid.identity.SemanticType;
@@ -32,18 +32,18 @@ import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.module.both.Agents;
 import ch.virtualid.packet.Audit;
-import ch.virtualid.packet.FailedRequestException;
-import ch.virtualid.packet.PacketError;
-import ch.virtualid.packet.PacketException;
+import ch.virtualid.exceptions.external.FailedRequestException;
+import ch.virtualid.exceptions.packet.PacketError;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.server.Host;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.FreezableArrayList;
 import ch.virtualid.util.FreezableList;
 import ch.virtualid.util.ReadonlyArray;
 import ch.virtualid.util.ReadonlyList;
-import ch.xdf.exceptions.FailedEncodingException;
-import ch.xdf.exceptions.InvalidEncodingException;
-import ch.xdf.exceptions.InvalidSignatureException;
+import ch.virtualid.exceptions.external.FailedEncodingException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.exceptions.external.InvalidSignatureException;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.sql.SQLException;
@@ -237,7 +237,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
         } else {
             try {
                 this.publicKey = new PublicKeyChain(Cache.getAttributeNotNullUnwrapped(subject.getHostIdentifier().getIdentity(), PublicKeyChain.TYPE)).getKey(getTimeNotNull());
-            } catch (@Nonnull SQLException | FailedRequestException | FailedIdentityException | InvalidDeclarationException | InvalidEncodingException exception) {
+            } catch (@Nonnull SQLException | FailedRequestException | IdentityNotFoundException | InvalidDeclarationException | InvalidEncodingException exception) {
                 throw new FailedEncodingException("Could not sign the given element with credentials because the public key of the subject's host could not be retrieved.", exception);
             }
         }
@@ -280,7 +280,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
      * @require credentialsSignature.getType().isBasedOn(SIGNATURE) : "The signature is based on the implementation type.";
      */
     @SuppressWarnings("AssignmentToMethodParameter")
-    CredentialsSignatureWrapper(final @Nonnull Block block, final @Nonnull Block credentialsSignature, @Nullable Entity entity) throws InvalidEncodingException, SQLException, FailedIdentityException, FailedRequestException, InvalidDeclarationException {
+    CredentialsSignatureWrapper(final @Nonnull Block block, final @Nonnull Block credentialsSignature, @Nullable Entity entity) throws InvalidEncodingException, SQLException, IdentityNotFoundException, FailedRequestException, InvalidDeclarationException {
         super(block, true);
         
         assert credentialsSignature.getType().isBasedOn(SIGNATURE) : "The signature is based on the implementation type.";
@@ -576,7 +576,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
      * @ensure return.getType().equals(type) : "The returned block has the given type.";
      */
     @Pure
-    public @Nullable Block getAttribute(@Nonnull SemanticType type) throws FailedIdentityException, InvalidEncodingException, InvalidDeclarationException, SQLException {
+    public @Nullable Block getAttribute(@Nonnull SemanticType type) throws IdentityNotFoundException, InvalidEncodingException, InvalidDeclarationException, SQLException {
         assert type.isAttributeType() : "The given type is an attribute type.";
         
         if (isAttributeBased()) {

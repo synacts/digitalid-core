@@ -1,5 +1,6 @@
 package ch.virtualid.identity;
 
+import ch.virtualid.exceptions.external.IdentityNotFoundException;
 import ch.virtualid.interfaces.Immutable;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
@@ -66,7 +67,7 @@ public abstract class Person extends NonHostIdentity implements Immutable {
                     // TODO: The following line is wrong (always returns false) and the whole method should be improved!
                     return this.number != identity.number;
                 }
-            } catch (@Nonnull FailedIdentityException exception) { return false; }
+            } catch (@Nonnull IdentityNotFoundException exception) { return false; }
         } else {
             return false;
         }

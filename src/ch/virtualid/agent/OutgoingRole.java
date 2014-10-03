@@ -14,7 +14,7 @@ import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
 import ch.virtualid.module.both.Agents;
-import ch.virtualid.packet.PacketException;
+import ch.virtualid.exceptions.packet.PacketException;
 import java.security.SecureRandom;
 import java.sql.ResultSet;
 import java.sql.SQLException;

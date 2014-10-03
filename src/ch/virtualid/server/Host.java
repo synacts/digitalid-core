@@ -1,40 +1,38 @@
 package ch.virtualid.server;
 
 import ch.virtualid.annotations.Pure;
+import ch.virtualid.auxiliary.Time;
 import ch.virtualid.client.Client;
+import ch.virtualid.concepts.Attribute;
+import ch.virtualid.concepts.Certificate;
 import ch.virtualid.cryptography.KeyPair;
-import ch.virtualid.cryptography.PrivateKey;
 import ch.virtualid.cryptography.PrivateKeyChain;
-import ch.virtualid.cryptography.PublicKey;
 import ch.virtualid.cryptography.PublicKeyChain;
-import ch.virtualid.database.Database;
+import ch.virtualid.entity.Account;
 import ch.virtualid.entity.Site;
+import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.HostIdentity;
 import ch.virtualid.identity.Identity;
 import ch.virtualid.identity.Mapper;
-import ch.virtualid.identity.NonHostIdentifier;
-import ch.virtualid.identity.SemanticType;
-import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.io.Directory;
 import ch.xdf.HostSignatureWrapper;
 import ch.xdf.SelfcontainedWrapper;
 import ch.xdf.SignatureWrapper;
-import ch.xdf.exceptions.FailedEncodingException;
-import ch.xdf.exceptions.InvalidEncodingException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 
 /**
- * A host is run by a {@link Server} and handles the database queries that are related to the hosting of virtual identities.
+ * A host stores a {@link KeyPair} and is run by a {@link Server}.
+ * 
+ * TODO: Make sure that the host keys get rotated!
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 0.6
+ * @version 2.0
  */
 public final class Host extends Site {
     
@@ -58,12 +56,12 @@ public final class Host extends Site {
     /**
      * Stores the private key chain of this host.
      */
-    private final @Nonnull PrivateKeyChain privateKeyChain;
+    private @Nonnull PrivateKeyChain privateKeyChain;
     
     /**
      * Stores the public key chain of this host.
      */
-    private final @Nonnull PublicKeyChain publicKeyChain;
+    private @Nonnull PublicKeyChain publicKeyChain;
     
     /**
      * Stores the client associated with this host.
@@ -75,45 +73,48 @@ public final class Host extends Site {
      * 
      * @param identifier the identifier of the new host.
      */
-    public Host(@Nonnull HostIdentifier identifier) throws SQLException, IOException, InvalidEncodingException, FailedEncodingException {
+    public Host(@Nonnull HostIdentifier identifier) throws SQLException, IOException, ExternalException {
+        super((Character.isDigit(identifier.getString().charAt(0)) ? "_" : "") + identifier.getString().replace(".", "_").replace("-", "$"));
+        
         this.identifier = identifier;
         this.identity = Mapper.mapHostIdentity(identifier);
         
-        @Nonnull String path = Directory.HOSTS.getPath() + Directory.SEPARATOR + identifier.getString();
-        @Nonnull File privateFile = new File(path + ".private.xdf");
-        @Nonnull File publicFile = new File(path + ".public.xdf");
+        final @Nonnull String path = Directory.HOSTS.getPath() + Directory.SEPARATOR + identifier.getString();
+        final @Nonnull File privateKeyFile = new File(path + ".private.xdf");
+        final @Nonnull File publicKeyFile = new File(path + ".public.xdf");
         
-        if (privateFile.exists() && publicFile.exists()) {
-            privateKey = new PrivateKey(SelfcontainedWrapper.readAndClose(new FileInputStream(privateFile)).getElement());
-            publicKey = new PublicKey(SelfcontainedWrapper.readAndClose(new FileInputStream(publicFile)).getElement());
+        if (privateKeyFile.exists() && publicKeyFile.exists()) {
+            this.privateKeyChain = new PrivateKeyChain(new SelfcontainedWrapper(new FileInputStream(privateKeyFile), true).getElement().checkType(PrivateKeyChain.TYPE));
+            this.publicKeyChain = new PublicKeyChain(new SelfcontainedWrapper(new FileInputStream(publicKeyFile), true).getElement().checkType(PublicKeyChain.TYPE));
         } else {
-            @Nonnull KeyPair keyPair = new KeyPair();
-            privateKey = keyPair.getPrivateKey();
-            publicKey = keyPair.getPublicKey();
+            final @Nonnull KeyPair keyPair = new KeyPair();
+            final @Nonnull Time time = new Time();
+            this.privateKeyChain = new PrivateKeyChain(time, keyPair.getPrivateKey());
+            this.publicKeyChain = new PublicKeyChain(time, keyPair.getPublicKey());
         }
         
-        SelfcontainedWrapper privateKeyWrapper = new SelfcontainedWrapper(NonHostIdentifier.HOST_PRIVATE_KEY, privateKey);
-        SelfcontainedWrapper publicKeyWrapper = new SelfcontainedWrapper(NonHostIdentifier.HOST_PUBLIC_KEY, publicKey);
+        final @Nonnull SelfcontainedWrapper privateKeyWrapper = new SelfcontainedWrapper(SelfcontainedWrapper.SELFCONTAINED, privateKeyChain);
+        final @Nonnull SelfcontainedWrapper publicKeyWrapper = new SelfcontainedWrapper(SelfcontainedWrapper.SELFCONTAINED, publicKeyChain);
         
-        if (!privateFile.exists() || !publicFile.exists()) {
-            privateKeyWrapper.writeAndClose(new FileOutputStream(privateFile));
-            publicKeyWrapper.writeAndClose(new FileOutputStream(publicFile));
+        if (!privateKeyFile.exists() || !publicKeyFile.exists()) {
+            privateKeyWrapper.write(new FileOutputStream(privateKeyFile), true);
+            publicKeyWrapper.write(new FileOutputStream(publicKeyFile), true);
         }
         
-        try (@Nonnull Connection connection = Database.getConnection()) {
-            if (getAttributeValue(connection, identity, SemanticType.HOST_PUBLIC_KEY, true) == null) {
-                Blockable attribute;
-                if (Server.hasHost(HostIdentifier.VIRTUALID)) {
-                    // If the new host is running on the same server as virtualid.ch, certify its public key immediately.
-                    attribute = new HostSignatureWrapper(publicKeyWrapper, identifier, HostIdentifier.VIRTUALID);
-                } else {
-                    attribute = new SignatureWrapper(publicKeyWrapper, null);
-                }
-                setAttributeValue(connection, identity, SemanticType.HOST_PUBLIC_KEY, true, attribute.toBlock());
+        final @Nonnull Account account = new Account(this, identity);
+        final @Nonnull Attribute attribute = Attribute.get(account, PublicKeyChain.TYPE);
+        if (attribute.getValue() == null) {
+            final @Nonnull SignatureWrapper certificate;
+            if (Server.hasHost(HostIdentifier.VIRTUALID)) {
+                // If the new host is running on the same server as virtualid.ch, certify its public key immediately.
+                certificate = new HostSignatureWrapper(Certificate.TYPE, publicKeyWrapper, identifier, HostIdentifier.VIRTUALID);
+            } else {
+                certificate = new SignatureWrapper(Certificate.TYPE, publicKeyWrapper, null);
             }
-            connection.commit();
+            attribute.replaceValue(null, certificate.toBlock());
         }
         
+        this.client = new Client((Character.isDigit(identifier.getString().charAt(0)) ? "_" : "") + identifier.getString().replace(".", "_").replace("-", "$"));
         Server.addHost(this);
     }
     

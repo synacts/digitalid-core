@@ -1,6 +1,6 @@
 package ch.virtualid.server;
 
-import ch.virtualid.exceptions.InitializationError;
+import ch.virtualid.errors.InitializationError;
 import static ch.virtualid.io.Level.INFORMATION;
 import static ch.virtualid.io.Level.WARNING;
 import ch.virtualid.io.Logger;

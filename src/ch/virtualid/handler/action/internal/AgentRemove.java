@@ -3,7 +3,7 @@ package ch.virtualid.handler.action.internal;
 import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.agent.Restrictions;
 import ch.virtualid.handler.Handler;
-import ch.virtualid.packet.PacketException;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.xdf.Block;
 import ch.xdf.IntegerWrapper;
 import ch.xdf.SignatureWrapper;

@@ -1,7 +1,8 @@
 package ch.virtualid.io;
 
-import ch.virtualid.exceptions.ShouldNeverHappenError;
+import ch.virtualid.errors.ShouldNeverHappenError;
 import static ch.virtualid.io.Level.INFORMATION;
+import ch.virtualid.server.Server;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -15,6 +16,8 @@ import javax.annotation.Nonnull;
  * The logger logs messages with the current time.
  * <p>
  * <em>Warning:</em> Logging from different processes to the same file may fail!
+ * 
+ * @see Level
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
@@ -87,31 +90,35 @@ public final class Logger {
      */
     public synchronized void log(@Nonnull Level level, @Nonnull String message) {
         if (level.getValue() >= LEVEL.getValue()) {
-            out.println(formatter.get().format(new Date()) + " " + level + ": " + message);
+            out.println(formatter.get().format(new Date()) + " " + level + " in version " + Server.VERSION + ": " + message);
             out.flush();
         }
     }
     
     /**
-     * Logs the given message and exception with the current time.
+     * Logs the given throwable with the current time.
      * 
      * @param level the log level of the message.
-     * @param message the message to log.
-     * @param exception the exception to log.
+     * @param throwable the throwable to log.
      */
-    public void log(@Nonnull Level level, @Nonnull String message, @Nonnull Exception exception) {
-        log(level, message + " [" + getMessage(exception) + "]");
+    public void log(@Nonnull Level level, @Nonnull Throwable throwable) {
+        log(level, getMessage(throwable));
     }
     
     /**
-     * Returns recursively the message of the exception and its cause.
+     * Returns recursively the message of the throwable and its cause.
      * 
-     * @param exception the exception whose message is to be returned.
+     * @param throwable the throwable whose message is to be returned.
      * 
-     * @return recursively the message of the exception and its cause.
+     * @return recursively the message of the throwable and its cause.
      */
-    private @Nonnull String getMessage(@Nonnull Throwable exception) {
-        return exception.getClass().getSimpleName() + ": " + exception.getMessage() + (exception.getCause() != null ? " [" + getMessage(exception.getCause()) + "]" : "");
+    public static @Nonnull String getMessage(@Nonnull Throwable throwable) {
+        final @Nonnull StringBuilder message = new StringBuilder(throwable.getClass().getSimpleName());
+        final @Nonnull StackTraceElement[] stackTrace = throwable.getStackTrace();
+        if (stackTrace.length > 0) message.append(" thrown by ").append(stackTrace[0]);
+        message.append(": ").append(throwable.getMessage());
+        if (throwable.getCause() != null) message.append(" [").append(getMessage(throwable.getCause())).append("]");
+        return message.toString();
     }
     
 }

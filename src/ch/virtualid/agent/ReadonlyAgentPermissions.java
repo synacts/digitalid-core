@@ -4,7 +4,7 @@ import ch.virtualid.annotations.Capturable;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
-import ch.virtualid.packet.PacketException;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.util.ReadonlyMap;
 import javax.annotation.Nonnull;
 

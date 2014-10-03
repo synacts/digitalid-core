@@ -1,6 +1,6 @@
 package ch.xdf;
 
-import ch.xdf.exceptions.InvalidEncodingException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;

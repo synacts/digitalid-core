@@ -1,10 +1,11 @@
 package ch.virtualid.identity;
 
+import ch.virtualid.exceptions.external.IdentityNotFoundException;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.database.Database;
-import ch.virtualid.exceptions.InitializationError;
-import ch.virtualid.exceptions.InvalidDeclarationException;
-import ch.virtualid.exceptions.ShouldNeverHappenError;
+import ch.virtualid.errors.InitializationError;
+import ch.virtualid.exceptions.external.InvalidDeclarationException;
+import ch.virtualid.errors.ShouldNeverHappenError;
 import ch.virtualid.handler.Reply;
 import static ch.virtualid.identity.Category.ARTIFICIAL_PERSON;
 import static ch.virtualid.identity.Category.EMAIL_PERSON;
@@ -15,8 +16,8 @@ import static ch.virtualid.identity.Category.SYNTACTIC_TYPE;
 import static ch.virtualid.io.Level.INFORMATION;
 import static ch.virtualid.io.Level.WARNING;
 import ch.virtualid.io.Logger;
-import ch.virtualid.packet.FailedRequestException;
-import ch.virtualid.packet.PacketException;
+import ch.virtualid.exceptions.external.FailedRequestException;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.packet.Request;
 import ch.virtualid.packet.Response;
 import ch.virtualid.server.Host;
@@ -24,9 +25,9 @@ import ch.xdf.Block;
 import ch.xdf.ListWrapper;
 import ch.xdf.SelfcontainedWrapper;
 import ch.xdf.TupleWrapper;
-import ch.xdf.exceptions.FailedEncodingException;
-import ch.xdf.exceptions.InvalidEncodingException;
-import ch.xdf.exceptions.InvalidSignatureException;
+import ch.virtualid.exceptions.external.FailedEncodingException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.exceptions.external.InvalidSignatureException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -232,7 +233,7 @@ public final class Mapper {
         if (identity == null) identity = loadIdentity(number);
         try {
             if (identity instanceof Type) ((Type) identity).ensureLoaded();
-        } catch (@Nonnull InvalidDeclarationException | FailedIdentityException exception) {
+        } catch (@Nonnull InvalidDeclarationException | IdentityNotFoundException exception) {
             throw new ShouldNeverHappenError("The type declaration and the referenced identities should already be cached.", exception);
         }
         return identity;
@@ -377,7 +378,7 @@ public final class Mapper {
      * 
      * @ensure identifier instanceof HostIdentifier == (identity instanceof HostIdentity) : "The identifier denotes a host if and only if a host identity is returned.";
      */
-    static @Nonnull Identity getIdentity(@Nonnull Identifier identifier) throws SQLException, FailedIdentityException {
+    static @Nonnull Identity getIdentity(@Nonnull Identifier identifier) throws SQLException, IdentityNotFoundException {
         if (isMapped(identifier)) {
             return identifiers.get(identifier);
         } else {
@@ -392,9 +393,9 @@ public final class Mapper {
      * 
      * @return the newly established identity of the given identifier.
      * 
-     * @throws FailedIdentityException if no identity with the given identifier could be found.
+     * @throws IdentityNotFoundException if no identity with the given identifier could be found.
      */
-    private static @Nonnull Identity establishIdentity(@Nonnull Identifier identifier) throws SQLException, FailedIdentityException {
+    private static @Nonnull Identity establishIdentity(@Nonnull Identifier identifier) throws SQLException, IdentityNotFoundException {
         try {
             // TODO: Make an identity request and verify predecessors only if already mapped.
             @Nonnull SelfcontainedWrapper content = new SelfcontainedWrapper(NonHostIdentifier.IDENTITY_REQUEST, Block.EMPTY);
@@ -442,7 +443,7 @@ public final class Mapper {
                                 if (oldCategory != category) throw new InvalidDeclarationException("The claimed predecessor " + predecessor + " of " + nonHostIdentifier + " is of a different category.");
                             }
                             if (!nonHostIdentifier.equals(getSuccessorReloaded(predecessor))) throw new InvalidDeclarationException("The claimed predecessor " + predecessor + " of " + nonHostIdentifier + " does not link back.");
-                        } catch (@Nonnull FailedIdentityException exception) {
+                        } catch (@Nonnull IdentityNotFoundException exception) {
                             iterator.remove();
                         }
                     }
@@ -507,17 +508,17 @@ public final class Mapper {
                             statement.executeUpdate("REPLACE INTO map_unreachable (identifier, time) VALUES (" + nonHostIdentifier + ", " + (System.currentTimeMillis() + 60000) + ")");
                             connection.commit();
                         }
-                        throw new FailedIdentityException(nonHostIdentifier, exception);
+                        throw new IdentityNotFoundException(nonHostIdentifier, exception);
                     }
                 }
             }
             
             logger.log(INFORMATION, "The identity of " + identifier + " was succesfully established.");
             return identity;
-        } catch (@Nonnull FailedEncodingException | FailedRequestException | InvalidEncodingException | InvalidSignatureException | PacketException | InvalidDeclarationException | FailedIdentityException exception) {
+        } catch (@Nonnull FailedEncodingException | FailedRequestException | InvalidEncodingException | InvalidSignatureException | PacketException | InvalidDeclarationException | IdentityNotFoundExceptionexception) {
             logger.log(WARNING, "The identity of " + identifier + " could not be established.", exception);
-            if (exception instanceof FailedIdentityException) throw (FailedIdentityException) exception;
-            else throw new FailedIdentityException(identifier, exception);
+            if (exception instanceof IdentityNotFoundException) throw (IdentityNotFoundException) exception;
+            else throw new IdentityNotFoundException(identifier, exception);
         }
     }
     
@@ -588,7 +589,7 @@ public final class Mapper {
      * @param identifier the identifier of interest.
      * @return the successor of the given identifier as stored in the database or retrieved by a new request.
      */
-    public static @Nullable NonHostIdentifier getSuccessorReloaded(@Nonnull NonHostIdentifier identifier) throws SQLException, FailedIdentityException, InvalidEncodingException, FailedRequestException, PacketException {
+    public static @Nullable NonHostIdentifier getSuccessorReloaded(@Nonnull NonHostIdentifier identifier) throws SQLException, IdentityNotFoundException, InvalidEncodingException, FailedRequestException, PacketException {
         @Nullable NonHostIdentifier successor = getSuccessor(identifier);
         if (successor == null) {
             if (getIdentity(identifier).getCategory() == EMAIL_PERSON) {

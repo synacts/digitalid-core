@@ -1,7 +1,7 @@
 package ch.virtualid.database;
 
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.exceptions.InitializationError;
+import ch.virtualid.errors.InitializationError;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.io.Level;
 import ch.virtualid.io.Logger;
@@ -19,6 +19,9 @@ import javax.annotation.Nullable;
 
 /**
  * This class provides connections to the database.
+ * <p>
+ * <em>Important:</em> The table names without the prefix may consist of at most 22 characters!
+ * Moreover, if a host is run with SQLite as database, its identifier may not contain a hyphen.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0

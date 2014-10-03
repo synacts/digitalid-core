@@ -1,6 +1,6 @@
 package ch.virtualid.io;
 
-import ch.virtualid.exceptions.ShouldNeverHappenError;
+import ch.virtualid.errors.ShouldNeverHappenError;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;

@@ -1,18 +1,28 @@
 package ch.virtualid.client;
 
+import ch.virtualid.agent.RandomizedAgentPermissions;
+import ch.virtualid.credential.Credential;
 import ch.virtualid.database.Database;
 import ch.virtualid.handler.Action;
 import ch.virtualid.handler.InternalAction;
+import ch.virtualid.identity.Identity;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.BothModule;
 import ch.virtualid.module.Service;
 import ch.virtualid.module.client.Synchronization;
 import ch.virtualid.util.ReadonlyList;
+import ch.xdf.Block;
+import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Description.
@@ -111,5 +121,45 @@ public final class Synchronizer extends Thread {
 //                } catch (InterruptedException exception) {
 //                    console.write("The synchronizer could not be stopped properly!");
 //                }
+    
+    // TODO: Just copied from the old implementation!
+    
+    /**
+     * Returns the time of the last request to the given VID.
+     * 
+     * @param vid the VID of interest.
+     * @return the time of the last request to the given VID.
+     * @require isNative(vid) : "This client is accredited at the given VID.";
+     */
+    public synchronized long getTimeOfLastRequest(long vid) {
+        assert isNative(vid) : "This client is accredited at the given VID.";
+        
+        return natives.get(vid);
+    }
+    
+    /**
+     * Sets the time of the last request to the given VID.
+     * 
+     * @param identity the VID of the last request.
+     * @param time the time of the last request.
+     * @require Mapper.isVid(vid) : "The first number has to denote a VID.";
+     * @require time > 0 : "The time value is positive.";
+     */
+    synchronized void setTimeOfLastRequest(@Nonnull Identity identity, long time) throws SQLException {
+        assert time > 0 : "The time value is positive.";
+        
+        if (!isNative(identity)) credentials.put(identity, new HashMap<Long, Map<RandomizedAgentPermissions, Credential>>());
+        
+        try (@Nonnull Connection connection = Database.getConnection(); @Nonnull Statement statement = connection.createStatement()) {
+            statement.executeUpdate("REPLACE INTO " + getName() + "_natives (vid, time) VALUES (" + identity + ", " + time + ")");
+            connection.commit();
+        }
+        
+        natives.put(identity, time);
+    }
+    
+    private void audit(long auditTime, @Nullable List<Block> auditTrail) {
+        // TODO
+    }
     
 }

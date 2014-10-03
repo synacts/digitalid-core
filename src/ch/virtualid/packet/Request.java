@@ -1,16 +1,18 @@
 package ch.virtualid.packet;
 
+import ch.virtualid.exceptions.packet.PacketException;
+import ch.virtualid.exceptions.external.FailedRequestException;
 import ch.virtualid.client.Commitment;
 import ch.virtualid.credential.Credential;
 import ch.virtualid.cryptography.SymmetricKey;
-import ch.virtualid.exceptions.InvalidDeclarationException;
-import ch.virtualid.identity.FailedIdentityException;
+import ch.virtualid.exceptions.external.InvalidDeclarationException;
+import ch.virtualid.exceptions.external.IdentityNotFoundException;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.Identifier;
 import ch.virtualid.identity.Mapper;
 import ch.virtualid.identity.NonHostIdentifier;
 import ch.virtualid.identity.SemanticType;
-import static ch.virtualid.packet.PacketError.KEYROTATION;
+import static ch.virtualid.exceptions.packet.PacketError.KEYROTATION;
 import ch.virtualid.server.Server;
 import ch.xdf.Block;
 import ch.xdf.ClientSignatureWrapper;
@@ -19,9 +21,9 @@ import ch.xdf.HostSignatureWrapper;
 import ch.xdf.SelfcontainedWrapper;
 import ch.xdf.SignatureWrapper;
 import ch.xdf.TupleWrapper;
-import ch.xdf.exceptions.FailedEncodingException;
-import ch.xdf.exceptions.InvalidEncodingException;
-import ch.xdf.exceptions.InvalidSignatureException;
+import ch.virtualid.exceptions.external.FailedEncodingException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.exceptions.external.InvalidSignatureException;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.net.Socket;
@@ -223,7 +225,7 @@ public class Request extends Packet {
             
             if (response.getSize() != getSize()) throw new InvalidEncodingException("The response contains fewer (or more) contents than the request.");
             
-        } catch (@Nonnull FailedIdentityException exception) {
+        } catch (@Nonnull IdentityNotFoundException exception) {
             throw new FailedRequestException("Could not find the identity " + exception.getIdentifier() + ".", exception);
         } catch (@Nonnull InvalidEncodingException exception) {
             throw new FailedRequestException("Could not decode the response from the host " + recipient + ".", exception);

@@ -6,7 +6,7 @@ import ch.virtualid.cryptography.Parameters;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.identity.SyntacticType;
 import ch.virtualid.interfaces.Immutable;
-import ch.xdf.exceptions.InvalidEncodingException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import java.math.BigInteger;
 import javax.annotation.Nonnull;
 

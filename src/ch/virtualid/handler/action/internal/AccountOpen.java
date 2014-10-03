@@ -2,20 +2,26 @@ package ch.virtualid.handler.action.internal;
 
 import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.agent.Restrictions;
+import ch.virtualid.client.Client;
+import ch.virtualid.cryptography.SymmetricKey;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Action;
 import ch.virtualid.handler.Handler;
 import ch.virtualid.identity.Category;
+import ch.virtualid.identity.Identifier;
 import ch.virtualid.identity.Mapper;
+import ch.virtualid.identity.NonHostIdentifier;
 import ch.virtualid.identity.NonHostIdentity;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.packet.Audit;
-import ch.virtualid.packet.PacketException;
+import ch.virtualid.packet.Packet;
 import ch.xdf.Block;
 import ch.xdf.Int8Wrapper;
+import ch.xdf.SelfcontainedWrapper;
 import ch.xdf.SignatureWrapper;
 import ch.xdf.StringWrapper;
 import ch.xdf.TupleWrapper;
-import ch.xdf.exceptions.InvalidEncodingException;
 import java.sql.Connection;
 import javax.annotation.Nonnull;
 import org.javatuples.Pair;
@@ -32,6 +38,34 @@ public final class AccountOpen extends Action {
     
     public AccountOpen() {
         
+    }
+    
+    /**
+     * Opens a new account with the given identifier and category.
+     * 
+     * @param client the client to be authorized at the newly created VID.
+     * @param identifier the identifier of the new account.
+     * @param name the name of the client.
+     * @param category the category of the new account.
+     * @require client != null : "The client is not null.";
+     * @require identifier != null : "The identifier is not null.";
+     * @require Identifier.isValid(identifier) : "The identifier is valid.";
+     * @require !Identifier.isHost(identifier) : "The identifier may not denote a host.";
+     * @require name != null : "The name is not null.";
+     * @require Category.isValid(category) : "The category is valid.";
+     */
+    public static void openAccount(Client client, String identifier, String name, byte category) throws Exception {
+        assert client != null : "The client is not null.";
+        assert identifier != null : "The identifier is not null.";
+        assert Identifier.isValid(identifier) : "The identifier is valid.";
+        assert !Identifier.isHost(identifier) : "The identifier may not denote a host.";
+        assert name != null : "The name is not null.";
+        assert Category.isValid(category) : "The category is valid.";
+        
+        Block[] elements = new Block[] {new Int8Wrapper(category).toBlock(), new StringWrapper(name).toBlock()};
+        SelfcontainedWrapper content = new SelfcontainedWrapper("request.open.account@virtualid.ch", new TupleWrapper(elements).toBlock());
+        Packet response = new Packet(content, NonHostIdentifier.getHost(identifier), new SymmetricKey(), identifier, 0, client.getSecret()).send();
+        client.setTimeOfLastRequest(Mapper.getVid(identifier), response.getSignatures().getTime());
     }
     
     /**

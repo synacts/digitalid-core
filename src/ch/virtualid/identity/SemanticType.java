@@ -1,17 +1,18 @@
 package ch.virtualid.identity;
 
+import ch.virtualid.exceptions.external.IdentityNotFoundException;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.contact.Context;
 import ch.virtualid.database.Database;
-import ch.virtualid.exceptions.InvalidDeclarationException;
+import ch.virtualid.exceptions.external.InvalidDeclarationException;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.FreezableLinkedList;
 import ch.virtualid.util.ReadonlyList;
 import ch.xdf.DataWrapper;
 import ch.xdf.ListWrapper;
-import ch.xdf.exceptions.InvalidEncodingException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -152,7 +153,7 @@ public final class SemanticType extends Type implements Immutable {
     }
     
     @Override
-    void load() throws SQLException, InvalidDeclarationException, FailedIdentityException {
+    void load() throws SQLException, InvalidDeclarationException, IdentityNotFoundException {
         assert !isLoaded() : "The type declaration may not yet have been loaded.";
         
         todo;

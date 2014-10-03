@@ -1,8 +1,9 @@
-package ch.virtualid.identity;
+package ch.virtualid.exceptions.external;
 
+import ch.virtualid.annotations.Pure;
+import ch.virtualid.identity.Identifier;
 import ch.virtualid.interfaces.Immutable;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * This exception is thrown when an identity cannot be found.
@@ -10,7 +11,7 @@ import javax.annotation.Nullable;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public final class FailedIdentityException extends Exception implements Immutable {
+public final class IdentityNotFoundException extends ExternalException implements Immutable {
     
     /**
      * Stores the identifier that could not be resolved.
@@ -22,18 +23,9 @@ public final class FailedIdentityException extends Exception implements Immutabl
      * 
      * @param identifier the identifier that could not be resolved.
      */
-    public FailedIdentityException(@Nonnull Identifier identifier) {
-        this(identifier, null);
-    }
-    
-    /**
-     * Creates a new identity not found exception with the given identifier and cause.
-     * 
-     * @param identifier the identifier that could not be resolved.
-     * @param cause a reference to the cause of the problem.
-     */
-    public FailedIdentityException(@Nonnull Identifier identifier, @Nullable Exception cause) {
-        super("The identity of " + identifier + " could not be established.", cause);
+    public IdentityNotFoundException(@Nonnull Identifier identifier) {
+        super("The identity of " + identifier + " could not be found.");
+        
         this.identifier = identifier;
     }
     
@@ -42,6 +34,7 @@ public final class FailedIdentityException extends Exception implements Immutabl
      * 
      * @return the identifier that could not be resolved.
      */
+    @Pure
     public @Nonnull Identifier getIdentifier() {
         return identifier;
     }

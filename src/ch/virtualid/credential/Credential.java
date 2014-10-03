@@ -10,21 +10,21 @@ import ch.virtualid.concepts.Attribute;
 import ch.virtualid.cryptography.Exponent;
 import ch.virtualid.cryptography.PublicKey;
 import ch.virtualid.cryptography.PublicKeyChain;
-import ch.virtualid.exceptions.InvalidDeclarationException;
-import ch.virtualid.identity.FailedIdentityException;
+import ch.virtualid.exceptions.external.InvalidDeclarationException;
+import ch.virtualid.exceptions.external.IdentityNotFoundException;
 import ch.virtualid.identity.NonHostIdentifier;
 import ch.virtualid.identity.NonHostIdentity;
 import ch.virtualid.identity.Person;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Immutable;
-import ch.virtualid.packet.FailedRequestException;
+import ch.virtualid.exceptions.external.FailedRequestException;
 import ch.virtualid.util.FreezableArray;
 import ch.xdf.Block;
 import ch.xdf.HashWrapper;
 import ch.xdf.SelfcontainedWrapper;
 import ch.xdf.StringWrapper;
 import ch.xdf.TupleWrapper;
-import ch.xdf.exceptions.InvalidEncodingException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import java.math.BigInteger;
 import java.sql.SQLException;
 import java.util.Objects;
@@ -238,7 +238,7 @@ public abstract class Credential implements Immutable {
      * @require randomizedPermissions == null || randomizedPermissions.getType().isBasedOn(RandomizedAgentPermissions.TYPE) : "The randomized permissions are either null or based on the indicated type.";
      * @require i == null || i.getType().isBasedOn(Exponent.TYPE) : "The serial number is either null or based on the indicated type.";
      */
-    Credential(@Nonnull Block exposed, @Nullable Block randomizedPermissions, @Nullable Restrictions restrictions, @Nullable Block i) throws InvalidEncodingException, FailedIdentityException, SQLException, InvalidDeclarationException, FailedRequestException {
+    Credential(@Nonnull Block exposed, @Nullable Block randomizedPermissions, @Nullable Restrictions restrictions, @Nullable Block i) throws InvalidEncodingException, IdentityNotFoundException, SQLException, InvalidDeclarationException, FailedRequestException {
         assert exposed.getType().isBasedOn(Credential.EXPOSED) : "The exposed block is based on the indicated type.";
         assert randomizedPermissions == null || randomizedPermissions.getType().isBasedOn(RandomizedAgentPermissions.TYPE) : "The randomized permissions are either null or based on the indicated type.";
         assert i == null || i.getType().isBasedOn(Exponent.TYPE) : "The serial number is either null or based on the indicated type.";
@@ -518,7 +518,7 @@ public abstract class Credential implements Immutable {
                 }
             } catch (@Nonnull InvalidEncodingException exception) {
                 string.append("InvalidEncodingException");
-            } catch (@Nonnull FailedIdentityException exception) {
+            } catch (@Nonnull IdentityNotFoundException exception) {
                 string.append("FailedIdentityException");
             } catch (@Nonnull InvalidDeclarationException exception) {
                 string.append("InvalidDeclarationException");

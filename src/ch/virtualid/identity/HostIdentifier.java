@@ -1,11 +1,12 @@
 package ch.virtualid.identity;
 
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.exceptions.ShouldNeverHappenError;
+import ch.virtualid.errors.ShouldNeverHappenError;
+import ch.virtualid.exceptions.external.IdentityNotFoundException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.interfaces.Immutable;
 import ch.xdf.Block;
 import ch.xdf.StringWrapper;
-import ch.xdf.exceptions.InvalidEncodingException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
@@ -17,6 +18,12 @@ import javax.annotation.Nonnull;
  * @version 2.0
  */
 public final class HostIdentifier extends Identifier implements Immutable {
+    
+    /**
+     * Stores the host identifier {@code virtualid.ch}.
+     */
+    public final static @Nonnull HostIdentifier VIRTUALID = new HostIdentifier("virtualid.ch");
+    
     
     /**
      * Verifies that the given string is a valid host identifier and throws an {@link InvalidEncodingException} otherwise.
@@ -84,7 +91,7 @@ public final class HostIdentifier extends Identifier implements Immutable {
     
     @Pure
     @Override
-    public @Nonnull HostIdentity getIdentity() throws SQLException, FailedIdentityException {
+    public @Nonnull HostIdentity getIdentity() throws SQLException, IdentityNotFoundException {
         final @Nonnull Identity identity = Mapper.getIdentity(this);
         if (identity instanceof HostIdentity) return (HostIdentity) identity;
         throw new ShouldNeverHappenError("Could not cast the identity of " + this + " to a host identity.");

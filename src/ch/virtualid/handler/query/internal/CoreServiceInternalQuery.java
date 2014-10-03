@@ -7,16 +7,16 @@ import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.Role;
-import ch.virtualid.exceptions.InvalidDeclarationException;
+import ch.virtualid.exceptions.external.InvalidDeclarationException;
 import ch.virtualid.handler.InternalQuery;
 import ch.virtualid.handler.QueryReply;
-import ch.virtualid.identity.FailedIdentityException;
+import ch.virtualid.exceptions.external.IdentityNotFoundException;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.CoreService;
-import ch.virtualid.packet.PacketException;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.xdf.SignatureWrapper;
-import ch.xdf.exceptions.InvalidEncodingException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 
@@ -51,7 +51,7 @@ public abstract class CoreServiceInternalQuery extends InternalQuery {
      * @ensure getSignature() != null : "The signature of this handler is not null.";
      * @ensure isOnHost() : "Queries are only decoded on hosts.";
      */
-    protected CoreServiceInternalQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws InvalidEncodingException, SQLException, FailedIdentityException, InvalidDeclarationException {
+    protected CoreServiceInternalQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws InvalidEncodingException, SQLException, IdentityNotFoundException, InvalidDeclarationException {
         super(entity, signature, recipient);
         
         if (!getEntityNotNull().getIdentity().getAddress().getHostIdentifier().equals(getRecipient())) throw new InvalidEncodingException("The host of the entity and the recipient have to be the same for internal queries of the core service.");

@@ -1,5 +1,6 @@
 package ch.virtualid.packet;
 
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.cryptography.SymmetricKey;
 import ch.xdf.SelfcontainedWrapper;
 import javax.annotation.Nonnull;

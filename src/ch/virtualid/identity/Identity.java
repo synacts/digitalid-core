@@ -1,10 +1,11 @@
 package ch.virtualid.identity;
 
+import ch.virtualid.exceptions.external.IdentityNotFoundException;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
 import ch.xdf.StringWrapper;
-import ch.xdf.exceptions.InvalidEncodingException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -83,7 +84,7 @@ public abstract class Identity implements Immutable, SQLizable {
      * 
      * @return whether this identity has been merged.
      */
-    public abstract boolean hasBeenMerged() throws SQLException, FailedIdentityException;
+    public abstract boolean hasBeenMerged() throws SQLException, IdentityNotFoundException;
     
     
     /**

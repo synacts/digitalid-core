@@ -1,4 +1,4 @@
-package ch.xdf.exceptions;
+package ch.xdf.exceptions.io;
 
 import java.io.IOException;
 

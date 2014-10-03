@@ -1,9 +1,12 @@
 package ch.virtualid.io;
 
+import ch.virtualid.annotations.Pure;
 import javax.annotation.Nonnull;
 
 /**
  * This class enumerates the various level of log messages.
+ * 
+ * @see Logger
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
@@ -15,7 +18,7 @@ public enum Level {
     OFF(3);
     
     /**
-     * Stores the byte representation of the level.
+     * Stores the byte representation of this level.
      */
     private final byte value;
     
@@ -24,7 +27,7 @@ public enum Level {
      * 
      * @param value the value encoding the level.
      */
-    Level(int value) {
+    private Level(int value) {
         this.value = (byte) value;
     }
     
@@ -33,15 +36,12 @@ public enum Level {
      * 
      * @return the byte representation of this level.
      */
+    @Pure
     public byte getValue() {
         return value;
     }
     
-    /**
-     * Returns a string representation of this level.
-     * 
-     * @return a string representation of this level.
-     */
+    @Pure
     @Override
     public @Nonnull String toString() {
         final @Nonnull String string = this.name().toLowerCase();

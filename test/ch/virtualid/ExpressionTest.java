@@ -1,7 +1,7 @@
 package ch.virtualid;
 
 import ch.virtualid.expression.Expression;
-import ch.xdf.exceptions.InvalidEncodingException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.xdf.Block;
 import ch.xdf.SelfcontainedWrapper;
 import ch.xdf.StringWrapper;

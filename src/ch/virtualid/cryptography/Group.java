@@ -8,7 +8,7 @@ import ch.virtualid.util.FreezableArray;
 import ch.xdf.Block;
 import ch.xdf.IntegerWrapper;
 import ch.xdf.TupleWrapper;
-import ch.xdf.exceptions.InvalidEncodingException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.Random;
