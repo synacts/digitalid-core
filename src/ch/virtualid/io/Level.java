@@ -44,7 +44,7 @@ public enum Level {
     @Pure
     @Override
     public @Nonnull String toString() {
-        final @Nonnull String string = this.name().toLowerCase();
+        final @Nonnull String string = name().toLowerCase();
         return string.substring(0, 1).toUpperCase() + string.substring(1);
     }
     

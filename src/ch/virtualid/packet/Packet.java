@@ -1,14 +1,17 @@
 package ch.virtualid.packet;
 
-import ch.virtualid.exceptions.packet.PacketException;
-import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.client.Commitment;
 import ch.virtualid.credential.Credential;
 import ch.virtualid.cryptography.SymmetricKey;
 import ch.virtualid.entity.Account;
+import ch.virtualid.exceptions.external.FailedEncodingException;
+import ch.virtualid.exceptions.external.IdentityNotFoundException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.exceptions.external.InvalidSignatureException;
+import ch.virtualid.exceptions.packet.PacketError;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.Identifier;
-import ch.virtualid.exceptions.external.IdentityNotFoundException;
 import ch.virtualid.identity.NonHostIdentifier;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Immutable;
@@ -23,13 +26,9 @@ import ch.xdf.CompressionWrapper;
 import ch.xdf.CredentialsSignatureWrapper;
 import ch.xdf.EncryptionWrapper;
 import ch.xdf.HostSignatureWrapper;
-import ch.xdf.Int8Wrapper;
 import ch.xdf.ListWrapper;
 import ch.xdf.SelfcontainedWrapper;
 import ch.xdf.SignatureWrapper;
-import ch.virtualid.exceptions.external.FailedEncodingException;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
-import ch.virtualid.exceptions.external.InvalidSignatureException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigInteger;
@@ -399,7 +398,7 @@ public class Packet implements Immutable {
         
         @Nonnull SelfcontainedWrapper content = contents.get(index);
         @Nonnull SemanticType type = content.getIdentifier().getIdentity().toSemanticType();
-        if (type.equals(SemanticType.PACKET_ERROR)) throw new PacketException(PacketError.get(new Int8Wrapper(content.getElement()).getValue()));
+        if (type.equals(PacketException.TYPE)) throw PacketException.create(content.getElement());
         if (type.equals(SemanticType.NOREPLY)) return null;
         return content;
     }

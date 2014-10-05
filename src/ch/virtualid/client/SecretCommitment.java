@@ -3,13 +3,13 @@ package ch.virtualid.client;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.cryptography.Exponent;
-import ch.virtualid.exceptions.external.InvalidDeclarationException;
+import ch.virtualid.exceptions.external.ExternalException;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identity.HostIdentity;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
-import ch.virtualid.exceptions.external.FailedRequestException;
 import ch.xdf.ClientSignatureWrapper;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
@@ -37,7 +37,7 @@ public final class SecretCommitment extends Commitment implements Immutable, Blo
      * @param value the value of this commitment.
      * @param secret the secret of this commitment.
      */
-    public SecretCommitment(@Nonnull HostIdentity host, @Nonnull Time time, @Nonnull BigInteger value, @Nonnull Exponent secret) throws SQLException, FailedRequestException, InvalidEncodingException, InvalidDeclarationException {
+    public SecretCommitment(@Nonnull HostIdentity host, @Nonnull Time time, @Nonnull BigInteger value, @Nonnull Exponent secret) throws SQLException, IOException, PacketException, ExternalException {
         super(host, time, value);
         
         this.secret = secret;

@@ -14,8 +14,12 @@ import ch.virtualid.contact.ReadonlyAuthentications;
 import ch.virtualid.entity.Account;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.Role;
-import ch.virtualid.exceptions.external.InvalidDeclarationException;
-import ch.virtualid.exceptions.external.IdentityNotFoundException;
+import ch.virtualid.exceptions.external.ExternalException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.exceptions.packet.PacketError;
+import static ch.virtualid.exceptions.packet.PacketError.AUTHORIZATION;
+import static ch.virtualid.exceptions.packet.PacketError.SENDER;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.Identifier;
 import ch.virtualid.identity.Identity;
@@ -25,11 +29,8 @@ import ch.virtualid.module.CoreService;
 import ch.virtualid.packet.Audit;
 import ch.virtualid.packet.ClientRequest;
 import ch.virtualid.packet.CredentialsRequest;
-import ch.virtualid.exceptions.external.FailedRequestException;
 import ch.virtualid.packet.HostRequest;
 import ch.virtualid.packet.Packet;
-import ch.virtualid.exceptions.packet.PacketError;
-import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.packet.Request;
 import ch.virtualid.packet.Response;
 import ch.virtualid.util.FreezableArrayList;
@@ -39,8 +40,7 @@ import ch.virtualid.util.ReadonlyList;
 import ch.xdf.Block;
 import ch.xdf.SelfcontainedWrapper;
 import ch.xdf.SignatureWrapper;
-import ch.virtualid.exceptions.external.FailedEncodingException;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.Objects;
@@ -179,7 +179,7 @@ public abstract class Method extends Handler {
      * 
      * @return the reply to this method in case of queries or, potentially, external actions.
      */
-    public @Nullable Reply send() throws FailedRequestException, SQLException, IdentityNotFoundException, InvalidDeclarationException, FailedEncodingException {
+    public @Nullable Reply send() throws SQLException, IOException, PacketException, ExternalException {
         return Method.send(new FreezableArrayList<Method>(this).freeze()).get(0);
     }
     
@@ -238,7 +238,7 @@ public abstract class Method extends Handler {
      * @require !methods.isEmpty() : "The list of methods is not empty.";
      * @require areSimilar(methods) : "All methods are similar and not null.";
      */
-    public static @Nonnull Response send(@Nonnull ReadonlyList<? extends Method> methods) throws FailedRequestException, SQLException, IdentityNotFoundException, InvalidDeclarationException, FailedEncodingException {
+    public static @Nonnull Response send(@Nonnull ReadonlyList<? extends Method> methods) throws SQLException, IOException, PacketException, ExternalException {
         assert methods.isFrozen() : "The list of methods is frozen.";
         assert !methods.isEmpty() : "The list of handlers is not empty.";
         assert areSimilar(methods) : "All methods are similar and not null.";
@@ -250,8 +250,8 @@ public abstract class Method extends Handler {
         final @Nonnull SemanticType service = reference.getService();
         final @Nonnull HostIdentifier recipient = reference.getRecipient();
         
-        if (entity instanceof Account && !reference.canBeSentByHosts()) throw new FailedRequestException("These methods cannot be sent by hosts.");
-        if (entity instanceof Role && reference.canOnlyBeSentByHosts()) throw new FailedRequestException("These methods cannot be sent by clients.");
+        if (entity instanceof Account && !reference.canBeSentByHosts()) throw new PacketException(SENDER, "These methods cannot be sent by hosts.");
+        if (entity instanceof Role && reference.canOnlyBeSentByHosts()) throw new PacketException(SENDER, "These methods cannot be sent by clients.");
         
         final @Nonnull FreezableList<SelfcontainedWrapper> contents = new FreezableArrayList<SelfcontainedWrapper>(methods.size());
         for (final @Nonnull Method method : methods) {
@@ -272,11 +272,11 @@ public abstract class Method extends Handler {
             } else {
                 assert entity != null && entity instanceof Role;
                 final @Nonnull ReadonlyAgentPermissions permissions = getRequiredPermissions(methods);
-                // TODO: Get the credentials and certificates from the role or throw a failed request exception if the permissions are not covered.
+                // TODO: Get the credentials and certificates from the role or throw a packet exception if the permissions are not covered.
                 return new CredentialsRequest(contents, recipient, subject, null, credentials, certificates, false, null).send();
             }
         } else {
-            if (entity == null) throw new FailedRequestException("The entity may only be null in case of external queries.");
+            if (entity == null) throw new PacketException(SENDER, "The entity may only be null in case of external queries.");
             
             if (reference instanceof ExternalAction) {
                 if (entity instanceof Account) {
@@ -284,18 +284,18 @@ public abstract class Method extends Handler {
                 } else {
                     assert entity instanceof Role;
                     final @Nonnull ReadonlyAgentPermissions permissions = getRequiredPermissions(methods);
-                    // TODO: Get the identity-based credential from the role or throw a failed request exception if the permissions are not covered.
+                    // TODO: Get the identity-based credential from the role or throw a packet exception if the permissions are not covered.
                     return new CredentialsRequest(contents, recipient, subject, null, credentials, null, true, null).send();
                 }
             } else {
                 assert reference instanceof InternalMethod;
-                if (!(entity instanceof Role)) throw new FailedRequestException("The entity has to be a role in case of internal methods.");
+                if (!(entity instanceof Role)) throw new PacketException(SENDER, "The entity has to be a role in case of internal methods.");
                 final @Nonnull Role role = (Role) entity;
                 final @Nonnull Agent agent = role.getAgent();
                 
                 final @Nonnull Restrictions restrictions = agent.getRestrictions();
                 for (@Nonnull Method method : methods) {
-                    if (!restrictions.cover(((InternalMethod) method).getRequiredRestrictions())) throw new FailedRequestException("The restrictions of the role do not cover the required restrictions.");
+                    if (!restrictions.cover(((InternalMethod) method).getRequiredRestrictions())) throw new PacketException(AUTHORIZATION, "The restrictions of the role do not cover the required restrictions.");
                 }
                 
                 final @Nonnull ReadonlyAgentPermissions permissions = getRequiredPermissions(methods);
@@ -304,15 +304,15 @@ public abstract class Method extends Handler {
                 
                 if (service.equals(CoreService.TYPE)) {
                     if (agent instanceof ClientAgent) {
-                        if (!agent.getPermissions().cover(permissions)) throw new FailedRequestException("The permissions of the role do not cover the required permissions.");
+                        if (!agent.getPermissions().cover(permissions)) throw new PacketException(AUTHORIZATION, "The permissions of the role do not cover the required permissions.");
                         return new ClientRequest(contents, subject, audit, ((ClientAgent) agent).getCommitment()).send();
                     } else {
                         assert agent instanceof OutgoingRole;
-                        // TODO: Retrieve the internal credentials from the role or throw a failed request exception if the permissions are not covered.
+                        // TODO: Retrieve the internal credentials from the role or throw a packet exception if the permissions are not covered.
                         return new CredentialsRequest(contents, recipient, subject, audit, credentials, null, lodged, null).send();
                     }
                 } else {
-                    // TODO: Retrieve the external credentials from the role or throw a failed request exception if the permissions are not covered.
+                    // TODO: Retrieve the external credentials from the role or throw a packet exception if the permissions are not covered.
                     return new CredentialsRequest(contents, recipient, subject, audit, credentials, null, lodged, null).send();
                 }
             }
@@ -342,7 +342,7 @@ public abstract class Method extends Handler {
          * @ensure return.getSignature() != null : "The signature of the returned method is not null.";
          */
         @Pure
-        protected abstract @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws InvalidEncodingException, SQLException, IdentityNotFoundException, InvalidDeclarationException, FailedRequestException;
+        protected abstract @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException;
         
     }
     
@@ -379,9 +379,9 @@ public abstract class Method extends Handler {
      * @ensure return.getSignature() != null : "The signature of the returned method is not null.";
      */
     @Pure
-    public static @Nonnull Method get(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws PacketException, InvalidEncodingException, SQLException, IdentityNotFoundException, InvalidDeclarationException {
+    public static @Nonnull Method get(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         final @Nullable Method.Factory factory = factories.get(block.getType());
-        if (factory == null) throw new PacketException(PacketError.REQUEST);
+        if (factory == null) throw new PacketException(PacketError.REQUEST, "No method of the type " + block.getType() + " could be found.");
         else return factory.create(entity, signature, recipient, block);
     }
     

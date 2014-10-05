@@ -6,23 +6,21 @@ import ch.virtualid.annotations.Pure;
 import ch.virtualid.concepts.Certificate;
 import ch.virtualid.entity.Account;
 import ch.virtualid.entity.Entity;
-import ch.virtualid.exceptions.external.InvalidDeclarationException;
+import ch.virtualid.exceptions.external.ExternalException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.exceptions.packet.PacketError;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.ActionReply;
 import ch.virtualid.handler.Method;
-import ch.virtualid.exceptions.external.IdentityNotFoundException;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.Identity;
 import ch.virtualid.identity.Person;
 import ch.virtualid.identity.SemanticType;
-import ch.virtualid.exceptions.external.FailedRequestException;
-import ch.virtualid.exceptions.packet.PacketError;
-import ch.virtualid.exceptions.packet.PacketException;
 import ch.xdf.Block;
 import ch.xdf.HostSignatureWrapper;
 import ch.xdf.SelfcontainedWrapper;
 import ch.xdf.SignatureWrapper;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
-import ch.virtualid.exceptions.external.InvalidSignatureException;
+import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -95,7 +93,7 @@ public final class CertificateIssuance extends CoreServiceExternalAction {
      * 
      * @ensure getSignature() != null : "The signature of this handler is not null.";
      */
-    private CertificateIssuance(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws InvalidEncodingException, IdentityNotFoundException, SQLException, InvalidDeclarationException, FailedRequestException {
+    private CertificateIssuance(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
@@ -141,8 +139,8 @@ public final class CertificateIssuance extends CoreServiceExternalAction {
         
         try {
             certificate.verifyAsCertificate();
-        } catch (@Nonnull InvalidEncodingException | InvalidSignatureException | FailedRequestException | InvalidDeclarationException exception) {
-            throw new PacketException(PacketError.REQUEST, exception);
+        } catch (@Nonnull IOException | PacketException | ExternalException exception) { // TODO: What to do with the packet exception?
+            throw new PacketException(PacketError.REQUEST, "", exception);
         }
         
         // TODO: Check other things like whether the signer is the one in the certificate.
@@ -188,7 +186,7 @@ public final class CertificateIssuance extends CoreServiceExternalAction {
         
         @Pure
         @Override
-        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws InvalidEncodingException, SQLException, IdentityNotFoundException, InvalidDeclarationException, FailedRequestException {
+        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
             return new CertificateIssuance(entity, signature, recipient, block);
         }
         
