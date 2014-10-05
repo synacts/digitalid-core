@@ -1,18 +1,19 @@
 package ch.virtualid.identity;
 
-import ch.virtualid.exceptions.external.IdentityNotFoundException;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.contact.Context;
 import ch.virtualid.database.Database;
+import ch.virtualid.exceptions.external.IdentityNotFoundException;
 import ch.virtualid.exceptions.external.InvalidDeclarationException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.util.FreezableArray;
+import ch.virtualid.util.FreezableArrayList;
 import ch.virtualid.util.FreezableLinkedList;
 import ch.virtualid.util.ReadonlyList;
 import ch.xdf.DataWrapper;
 import ch.xdf.ListWrapper;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -72,6 +73,12 @@ public final class SemanticType extends Type implements Immutable {
      * Stores the semantic type {@code unknown@virtualid.ch}.
      */
     public static final @Nonnull SemanticType UNKNOWN = SemanticType.create("unknown@virtualid.ch").load(DataWrapper.TYPE);
+    
+    
+    /**
+     * Stores an empty list of categories that can be shared among semantic types.
+     */
+    private static final @Nonnull ReadonlyList<Category> NO_CATEGORIES = new FreezableArrayList<Category>(0).freeze();
     
     
     /**
@@ -332,7 +339,7 @@ public final class SemanticType extends Type implements Immutable {
      * @ensure isLoaded() : "The type declaration has been loaded.";
      */
     public @Nonnull SemanticType load(@Nonnull SyntacticType syntacticBase, @Nonnull SemanticType... parameters) {
-        return load(new Category[0], null, syntacticBase, parameters);
+        return load(NO_CATEGORIES, null, syntacticBase, new FreezableArray<SemanticType>(parameters).toFreezableList().freeze());
     }
     
     /**
@@ -423,7 +430,7 @@ public final class SemanticType extends Type implements Immutable {
      * @ensure isLoaded() : "The type declaration has been loaded.";
      */
     public @Nonnull SemanticType load(@Nonnull SemanticType semanticBase) {
-        return load(new Category[0], null, semanticBase);
+        return load(NO_CATEGORIES, null, semanticBase);
     }
     
     

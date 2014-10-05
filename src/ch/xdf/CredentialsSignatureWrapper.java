@@ -19,12 +19,16 @@ import ch.virtualid.cryptography.PublicKey;
 import static ch.virtualid.cryptography.PublicKey.VERIFIABLE_ENCRYPTION;
 import static ch.virtualid.cryptography.PublicKey.W1;
 import static ch.virtualid.cryptography.PublicKey.W2;
-import ch.virtualid.cryptography.PublicKeyChain;
 import ch.virtualid.entity.Account;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.Role;
-import ch.virtualid.exceptions.external.InvalidDeclarationException;
+import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.IdentityNotFoundException;
+import ch.virtualid.exceptions.external.InvalidDeclarationException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.exceptions.external.InvalidSignatureException;
+import ch.virtualid.exceptions.packet.PacketError;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identity.Identifier;
 import ch.virtualid.identity.Person;
 import ch.virtualid.identity.SemanticType;
@@ -32,18 +36,13 @@ import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.module.both.Agents;
 import ch.virtualid.packet.Audit;
-import ch.virtualid.exceptions.external.FailedRequestException;
-import ch.virtualid.exceptions.packet.PacketError;
-import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.server.Host;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.FreezableArrayList;
 import ch.virtualid.util.FreezableList;
 import ch.virtualid.util.ReadonlyArray;
 import ch.virtualid.util.ReadonlyList;
-import ch.virtualid.exceptions.external.FailedEncodingException;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
-import ch.virtualid.exceptions.external.InvalidSignatureException;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.sql.SQLException;
@@ -219,7 +218,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
      * @require certificates == null || certificates.isFrozen() : "The certificates are either null or frozen.";
      * @require certificatesAreValid(certificates, credentials) : "The certificates are valid (given the given credentials).";
      */
-    public CredentialsSignatureWrapper(@Nonnull SemanticType type, @Nullable Block element, @Nonnull Identifier subject, @Nullable Audit audit, @Nonnull ReadonlyList<Credential> credentials, @Nullable ReadonlyList<HostSignatureWrapper> certificates, boolean lodged, @Nullable BigInteger value) throws FailedEncodingException {
+    public CredentialsSignatureWrapper(@Nonnull SemanticType type, @Nullable Block element, @Nonnull Identifier subject, @Nullable Audit audit, @Nonnull ReadonlyList<Credential> credentials, @Nullable ReadonlyList<HostSignatureWrapper> certificates, boolean lodged, @Nullable BigInteger value) throws SQLException, IOException, PacketException, ExternalException {
         super(type, element, subject, audit);
         
         assert credentials.isFrozen() : "The credentials are frozen.";
@@ -231,16 +230,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
         this.certificates = certificates;
         this.lodged = lodged;
         this.value = value;
-        
-        if (value == null) {
-            this.publicKey = null;
-        } else {
-            try {
-                this.publicKey = new PublicKeyChain(Cache.getAttributeNotNullUnwrapped(subject.getHostIdentifier().getIdentity(), PublicKeyChain.TYPE)).getKey(getTimeNotNull());
-            } catch (@Nonnull SQLException | FailedRequestException | IdentityNotFoundException | InvalidDeclarationException | InvalidEncodingException exception) {
-                throw new FailedEncodingException("Could not sign the given element with credentials because the public key of the subject's host could not be retrieved.", exception);
-            }
-        }
+        this.publicKey = value == null ? null : Cache.getPublicKey(subject.getHostIdentifier().getIdentity(), getTimeNotNull());
     }
     
     /**
@@ -264,7 +254,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
      * @require certificates == null || certificates.isFrozen() : "The certificates are either null or frozen.";
      * @require certificatesAreValid(certificates, credentials) : "The certificates are valid (given the given credentials).";
      */
-    public CredentialsSignatureWrapper(@Nonnull SemanticType type, @Nullable Blockable element, @Nonnull Identifier subject, @Nullable Audit audit, @Nonnull ReadonlyList<Credential> credentials, @Nullable ReadonlyList<HostSignatureWrapper> certificates, boolean lodged, @Nullable BigInteger value) throws FailedEncodingException {
+    public CredentialsSignatureWrapper(@Nonnull SemanticType type, @Nullable Blockable element, @Nonnull Identifier subject, @Nullable Audit audit, @Nonnull ReadonlyList<Credential> credentials, @Nullable ReadonlyList<HostSignatureWrapper> certificates, boolean lodged, @Nullable BigInteger value) throws SQLException, IOException, PacketException, ExternalException {
         this(type, Block.toBlock(element), subject, audit, credentials, certificates, lodged, value);
     }
     
@@ -280,7 +270,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
      * @require credentialsSignature.getType().isBasedOn(SIGNATURE) : "The signature is based on the implementation type.";
      */
     @SuppressWarnings("AssignmentToMethodParameter")
-    CredentialsSignatureWrapper(final @Nonnull Block block, final @Nonnull Block credentialsSignature, @Nullable Entity entity) throws InvalidEncodingException, SQLException, IdentityNotFoundException, FailedRequestException, InvalidDeclarationException {
+    CredentialsSignatureWrapper(final @Nonnull Block block, final @Nonnull Block credentialsSignature, @Nullable Entity entity) throws SQLException, IOException, PacketException, ExternalException {
         super(block, true);
         
         assert credentialsSignature.getType().isBasedOn(SIGNATURE) : "The signature is based on the implementation type.";
@@ -339,13 +329,8 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
         if (!certificatesAreValid(certificates, credentials)) throw new InvalidEncodingException("The certificates do not match the credentials of the signature.");
         
         // Value and public key
-        if (tuple.isElementNull(6)) {
-            this.value = null;
-            this.publicKey = null;
-        } else {
-            this.value = new IntegerWrapper(tuple.getElementNotNull(6)).getValue();
-            this.publicKey = new PublicKeyChain(Cache.getAttributeNotNullUnwrapped(getSubjectNotNull().getHostIdentifier().getIdentity(), PublicKeyChain.TYPE)).getKey(getTimeNotNull());
-        }
+        this.value = tuple.isElementNull(6) ? null : new IntegerWrapper(tuple.getElementNotNull(6)).getValue();
+        this.publicKey = tuple.isElementNull(6) ? null : Cache.getPublicKey(getSubjectNotNull().getHostIdentifier().getIdentity(), getTimeNotNull());
     }
     
     
@@ -698,7 +683,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
     
     @Pure
     @Override
-    public void verify() throws InvalidEncodingException, InvalidSignatureException, SQLException, FailedRequestException, InvalidDeclarationException {
+    public void verify() throws SQLException, IOException, PacketException, ExternalException {
         if (new Time().subtract(getTimeNotNull()).isGreaterThan(Time.TROPICAL_YEAR)) throw new InvalidSignatureException("The credentials signature is out of date.");
         
         final @Nonnull TupleWrapper tuple = new TupleWrapper(getCache());

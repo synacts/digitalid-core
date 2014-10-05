@@ -5,8 +5,10 @@ import ch.virtualid.annotations.Exposed;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.entity.Entity;
-import ch.virtualid.exceptions.external.InvalidDeclarationException;
-import ch.virtualid.exceptions.external.IdentityNotFoundException;
+import ch.virtualid.exceptions.external.ExternalException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.exceptions.packet.PacketError;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identity.Identifier;
 import ch.virtualid.identity.Identity;
 import ch.virtualid.identity.NonHostIdentifier;
@@ -15,13 +17,9 @@ import ch.virtualid.identity.SyntacticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.packet.Audit;
-import ch.virtualid.exceptions.external.FailedRequestException;
-import ch.virtualid.exceptions.packet.PacketError;
-import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.ReadonlyArray;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
-import ch.virtualid.exceptions.external.InvalidSignatureException;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.sql.SQLException;
 import java.util.Objects;
@@ -152,7 +150,7 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
      * @require block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
      */
     @Pure
-    public static @Nonnull SignatureWrapper decode(@Nonnull Block block, @Nullable Entity entity) throws SQLException, InvalidEncodingException, InvalidSignatureException, IdentityNotFoundException, FailedRequestException, InvalidDeclarationException {
+    public static @Nonnull SignatureWrapper decode(@Nonnull Block block, @Nullable Entity entity) throws SQLException, IOException, PacketException, ExternalException {
         final @Nonnull SignatureWrapper signatureWrapper = decodeUnverified(block, entity);
         signatureWrapper.verify();
         return signatureWrapper;
@@ -169,7 +167,7 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
      * @require block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
      */
     @Pure
-    public static @Nonnull SignatureWrapper decodeUnverified(@Nonnull Block block, @Nullable Entity entity) throws SQLException, InvalidEncodingException, IdentityNotFoundException, FailedRequestException, InvalidDeclarationException {
+    public static @Nonnull SignatureWrapper decodeUnverified(@Nonnull Block block, @Nullable Entity entity) throws SQLException, IOException, PacketException, ExternalException {
         final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(new Block(IMPLEMENTATION, block)).getElements(4);
         final @Nullable Block hostSignature = elements.get(1);
         final @Nullable Block clientSignature = elements.get(2);
@@ -341,7 +339,7 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
      * Verifies the signature and throws an exception if it is not valid.
      */
     @Pure
-    public void verify() throws InvalidSignatureException, InvalidEncodingException, SQLException, FailedRequestException, InvalidDeclarationException {}
+    public void verify() throws SQLException, IOException, PacketException, ExternalException {}
     
     /**
      * Signs the element. (This method should be overridden in subclasses.)

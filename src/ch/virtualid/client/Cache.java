@@ -27,7 +27,6 @@ import ch.virtualid.packet.Packet;
 import ch.virtualid.server.Host;
 import ch.xdf.Block;
 import ch.xdf.HostSignatureWrapper;
-import ch.xdf.IntvarWrapper;
 import ch.xdf.ListWrapper;
 import ch.xdf.SelfcontainedWrapper;
 import ch.xdf.SignatureWrapper;
@@ -187,42 +186,35 @@ public final class Cache {
     
     
     /**
-     * Retrieves the attributes of the given types from the given VID as the given client and requester.
-     * 
-     * @param client the client retrieving the types or null if the request is issued by a host.
-     * @param requester the VID which requests the attributes or zero to indicate an unsigned request.
-     * @param requestee the VID which attributes are to be retrieved.
-     * @param types the types which are to be retrieved (each value needs to denote an attribute type).
-     * @param time the time at which the attributes need to be fresh in order to be fetched from the cache.
-     * @return the available attributes as an array of equal length as the {@code types} and also having the same indexes.
-     * @require requester == 0 || Mapper.isVid(requester) && Category.isPerson(requester) : "The requester is zero or denote a person.";
-     * @require Mapper.isVid(requestee) : "The requestee has to denote a VID.";
-     * @require types != null : "The type array is not null.";
-     * @require time >= 0 : "The time value is non-negative.";
-     * @ensure result != null : "The result is never null.";
-     */
-    
-    /**
      * Returns the attributes of the given identity with the given types.
+     * The attributes are returned in the same order as given by the types.
+     * If an attribute is not available, the value null is returned instead.
+     * If an attribute is certified, the certificate is verified and stripped
+     * from the attribute in case the signature or the delegation is invalid.
      * 
      * @param identity the identity whose attributes are to be returned.
-     * @param role the role with which to query the attributes or null for anonymous requests.
-     * @param time 
-     * @param types the type of the attribute which is to be returned
+     * @param role the role that queries the attributes or null for hosts.
+     * @param time the time at which the cached attributes have to be fresh.
+     * @param types the types of the attributes which are to be returned.
      * 
-     * @return the unwrapped attribute of the given subject with the given type.
+     * @return the attributes of the given identity with the given types.
      * 
-     * @require type.isAttributeType() : "The given type is an attribute type.";
+     * @require time.isNonNegative() : "The given time is non-negative.";
+     * @require types.length > 0 : "At least one type is given.";
+     * @require for (SemanticType type : types) type != null && type.isAttributeFor(identity.getCategory()) : "Each type is not null and can be used as an attribute for the category of the given identity.";
      * 
-     * @ensure return.getType().equals(type) : "The returned block has the given type.";
+     * @ensure return.length == types.length : "The returned attributes are as many as the given types.";
+     * @ensure for (SignatureWrapper attribute : return) return.getType().equals(Certificate.TYPE) : "Each returned attribute has the indicated type.";
+     * @ensure for (i = 0; i < return.length; i++) new SelfcontainedWrapper(return[i].getElementNotNull()).getElement().getType().equals(types[i])) : "Each returned attribute matches the corresponding type.";
      */
     @Pure
     public static @Nonnull SignatureWrapper[] getAttributes(@Nonnull Identity identity, @Nullable Role role, @Nonnull Time time, @Nonnull SemanticType... types) throws SQLException, IOException, PacketException, ExternalException {
         assert time.isNonNegative() : "The given time is non-negative.";
-        for (final @Nullable SemanticType type : types) assert type != null && type.isAttributeType() : "Each type is not null and an attribute type.";
+        assert types.length > 0 : "At least one type is given.";
+        for (final @Nullable SemanticType type : types) assert type != null && type.isAttributeFor(identity.getCategory()) : "Each type is not null and can be used as an attribute for the category of the given identity.";
         
         // TODO (long-term): Verify the new public key of virtualid.ch with the stale one and remove the following line.
-        if (requestee == Vid.VIRTUALID) time = 0;
+        if (identity.equals(HostIdentity.VIRTUALID)) time = Time.MIN;
         
         boolean verification = true;
         Block[] attributes = new Block[types.length];
@@ -298,41 +290,75 @@ public final class Cache {
         return attributes;
     }
     
+    /**
+     * Returns the attributes of the given identity with the given types.
+     * The attributes are returned in the same order as given by the types.
+     * If an attribute is not available, the value null is returned instead.
+     * If an attribute is certified, the certificate is verified and stripped
+     * from the attribute in case the signature or the delegation is invalid.
+     * 
+     * @param identity the identity whose attributes are to be returned.
+     * @param role the role that queries the attributes or null for hosts.
+     * @param types the types of the attributes which are to be returned.
+     * 
+     * @return the attributes of the given identity with the given types.
+     * 
+     * @require types.length > 0 : "At least one type is given.";
+     * @require for (SemanticType type : types) type != null && type.isAttributeFor(identity.getCategory()) : "Each type is not null and can be used as an attribute for the category of the given identity.";
+     * 
+     * @ensure return.length == types.length : "The returned attributes are as many as the given types.";
+     * @ensure for (SignatureWrapper attribute : return) return.getType().equals(Certificate.TYPE) : "Each returned attribute has the indicated type.";
+     * @ensure for (i = 0; i < return.length; i++) new SelfcontainedWrapper(return[i].getElementNotNull()).getElement().getType().equals(types[i])) : "Each returned attribute matches the corresponding type.";
+     */
     @Pure
     public static @Nonnull SignatureWrapper[] getAttributes(@Nonnull Identity identity, @Nullable Role role, @Nonnull SemanticType... types) throws SQLException, IOException, PacketException, ExternalException {
         return getAttributes(identity, role, new Time(), types);
     }
     
     /**
+     * Returns the attribute of the given identity with the given type.
+     * If the attribute is not available, a {@link AttributeNotFoundException} is thrown instead.
+     * If the attribute is certified, the certificate is verified and stripped
+     * from the attribute in case the signature or the delegation is invalid.
      * 
+     * @param identity the identity whose attribute is to be returned.
+     * @param role the role that queries the attribute or null for hosts.
+     * @param type the type of the attribute which is to be returned.
      * 
-     * @param identity
-     * @param role
-     * @param type
+     * @return the attribute of the given identity with the given type.
      * 
-     * @return
+     * @require type.isAttributeFor(identity.getCategory()) : "The type can be used as an attribute for the category of the given identity.";
      * 
-     * @require type.isAttributeType() : "The type is an attribute type.";
+     * @ensure return.getType().equals(Certificate.TYPE) : "The returned attribute has the indicated type.";
+     * @ensure new SelfcontainedWrapper(return.getElementNotNull()).getElement().getType().equals(type)) : "The returned attribute matches the given type.";
      */
     @Pure
     public static @Nonnull SignatureWrapper getAttribute(@Nonnull Identity identity, @Nullable Role role, @Nonnull SemanticType type) throws SQLException, IOException, PacketException, ExternalException {
-        final @Nonnull SignatureWrapper[] attributes = getAttributes(identity, role, new SemanticType[] {type});
+        final @Nonnull SignatureWrapper[] attributes = getAttributes(identity, role, type);
         if (attributes[0] == null) throw new AttributeNotFoundException(identity, type);
         else return attributes[0];
     }
     
     /**
+     * Returns the attribute value of the given identity with the given type.
+     * If the attribute is not available, a {@link AttributeNotFoundException} is thrown.
+     * If the attribute should be certified but is not, a {@link CertificateNotFoundException} is thrown.
      * 
+     * @param identity the identity whose attribute value is to be returned.
+     * @param role the role that queries the attribute value or null for hosts.
+     * @param type the type of the attribute value which is to be returned.
+     * @param certified whether the attribute value should be certified.
      * 
-     * @param identity
-     * @param role
-     * @param type
-     * @param certified
+     * @return the attribute value of the given identity with the given type.
      * 
-     * @return
+     * @require type.isAttributeFor(identity.getCategory()) : "The type can be used as an attribute for the category of the given identity.";
+     * 
+     * @ensure return.getType().equals(type) : "The returned block has the given type.";
      */
     @Pure
     public static @Nonnull Block getAttributeValue(@Nonnull Identity identity, @Nullable Role role, @Nonnull SemanticType type, boolean certified) throws SQLException, IOException, PacketException, ExternalException {
+        assert type.isAttributeFor(identity.getCategory()) : "The type can be used as an attribute for the category of the given identity.";
+        
         final @Nonnull SignatureWrapper attribute = getAttribute(identity, role, type);
         if (certified && !(attribute instanceof HostSignatureWrapper)) throw new CertificateNotFoundException(identity, type);
         final @Nonnull Block block = new SelfcontainedWrapper(attribute.getElementNotNull()).getElement();
@@ -341,34 +367,16 @@ public final class Cache {
     }
     
     /**
+     * Returns the public of the given identity at the given time.
      * 
+     * @param identity the identity of the host whose public key is to be returned.
+     * @param time the time at which the public key has to be active in the key chain.
      * 
-     * @param identity
-     * @param time
-     * 
-     * @return
+     * @return the public of the given identity at the given time.
      */
     @Pure
     public static @Nonnull PublicKey getPublicKey(@Nonnull HostIdentity identity, @Nonnull Time time) throws SQLException, IOException, PacketException, ExternalException {
         return new PublicKeyChain(getAttributeValue(identity, null, PublicKeyChain.TYPE, true)).getKey(time);
-    }
-    
-    /**
-     * Returns the caching period of the given semantic type.
-     * 
-     * @param semanticType the semantic type of interest.
-     * @return the caching period of the given semantic type.
-     * @require Mapper.isVid(semanticType) && Category.isSemanticType(semanticType) : "The number has to denote a semantic type.";
-     */
-    public static long getCachingPeriod(long semanticType) throws Exception {
-        assert Mapper.isVid(semanticType) && Category.isSemanticType(semanticType) : "The number has to denote a semantic type.";
-        
-        // The first two semantic types need a special treatment in order to prevent infinite loops, the second two for performance reasons.
-        if (semanticType == Vid.HOST_PUBLIC_KEY || semanticType == Vid.ATTRIBUTE_TYPE_CACHING || semanticType == Vid.INCOMING_DELEGATIONS || semanticType == Vid.OUTGOING_DELEGATIONS) {
-            return YEAR;
-        } else {
-            return new IntvarWrapper(getAttributeNotNullUnwrapped(semanticType, Vid.ATTRIBUTE_TYPE_CACHING)).getValue() * 1000;
-        }
     }
     
 }

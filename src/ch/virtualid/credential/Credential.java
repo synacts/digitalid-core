@@ -9,22 +9,23 @@ import ch.virtualid.client.Cache;
 import ch.virtualid.concepts.Attribute;
 import ch.virtualid.cryptography.Exponent;
 import ch.virtualid.cryptography.PublicKey;
-import ch.virtualid.cryptography.PublicKeyChain;
-import ch.virtualid.exceptions.external.InvalidDeclarationException;
+import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.IdentityNotFoundException;
+import ch.virtualid.exceptions.external.InvalidDeclarationException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identity.NonHostIdentifier;
 import ch.virtualid.identity.NonHostIdentity;
 import ch.virtualid.identity.Person;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Immutable;
-import ch.virtualid.exceptions.external.FailedRequestException;
 import ch.virtualid.util.FreezableArray;
 import ch.xdf.Block;
 import ch.xdf.HashWrapper;
 import ch.xdf.SelfcontainedWrapper;
 import ch.xdf.StringWrapper;
 import ch.xdf.TupleWrapper;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.sql.SQLException;
 import java.util.Objects;
@@ -238,16 +239,16 @@ public abstract class Credential implements Immutable {
      * @require randomizedPermissions == null || randomizedPermissions.getType().isBasedOn(RandomizedAgentPermissions.TYPE) : "The randomized permissions are either null or based on the indicated type.";
      * @require i == null || i.getType().isBasedOn(Exponent.TYPE) : "The serial number is either null or based on the indicated type.";
      */
-    Credential(@Nonnull Block exposed, @Nullable Block randomizedPermissions, @Nullable Restrictions restrictions, @Nullable Block i) throws InvalidEncodingException, IdentityNotFoundException, SQLException, InvalidDeclarationException, FailedRequestException {
+    Credential(@Nonnull Block exposed, @Nullable Block randomizedPermissions, @Nullable Restrictions restrictions, @Nullable Block i) throws SQLException, IOException, PacketException, ExternalException {
         assert exposed.getType().isBasedOn(Credential.EXPOSED) : "The exposed block is based on the indicated type.";
         assert randomizedPermissions == null || randomizedPermissions.getType().isBasedOn(RandomizedAgentPermissions.TYPE) : "The randomized permissions are either null or based on the indicated type.";
         assert i == null || i.getType().isBasedOn(Exponent.TYPE) : "The serial number is either null or based on the indicated type.";
         
         final @Nonnull TupleWrapper tuple = new TupleWrapper(exposed);
         this.issuer = new NonHostIdentifier(tuple.getElementNotNull(0)).getIdentity().toNonHostIdentity();
-        this.publicKey = new PublicKey(Cache.getAttributeNotNullUnwrapped(issuer.getAddress().getHostIdentifier().getIdentity(), PublicKeyChain.TYPE));
         this.issuance = new Time(tuple.getElementNotNull(1));
         if (!issuance.isPositive() || !issuance.isMultipleOf(Time.HALF_HOUR)) throw new InvalidEncodingException("The issuance time has to be positive and a multiple of half an hour.");
+        this.publicKey = Cache.getPublicKey(issuer.getAddress().getHostIdentifier().getIdentity(), issuance);
         final @Nonnull BigInteger hash = new HashWrapper(tuple.getElementNotNull(2)).getValue();
         if (randomizedPermissions != null) {
             this.randomizedPermissions = new RandomizedAgentPermissions(randomizedPermissions);

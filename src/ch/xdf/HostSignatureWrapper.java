@@ -3,25 +3,24 @@ package ch.xdf;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.client.Cache;
-import static ch.virtualid.client.Client.getAttribute;
 import ch.virtualid.concepts.Certificate;
 import ch.virtualid.cryptography.Element;
 import ch.virtualid.cryptography.PrivateKey;
 import ch.virtualid.cryptography.PublicKey;
-import ch.virtualid.cryptography.PublicKeyChain;
 import ch.virtualid.errors.ShouldNeverHappenError;
 import ch.virtualid.exceptions.external.ExternalException;
-import ch.virtualid.exceptions.external.IdentityNotFoundException;
-import ch.virtualid.exceptions.external.InvalidDeclarationException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.external.InvalidSignatureException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.expression.Expression;
+import ch.virtualid.expression.PassiveExpression;
+import ch.virtualid.identity.Category;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.Identifier;
 import ch.virtualid.identity.Identity;
 import ch.virtualid.identity.Mapper;
 import ch.virtualid.identity.NonHostIdentifier;
+import ch.virtualid.identity.NonHostIdentity;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
@@ -156,13 +155,13 @@ public final class HostSignatureWrapper extends SignatureWrapper implements Immu
      * @require block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
      * @require hostSignature.getType().isBasedOn(SIGNATURE) : "The signature is based on the implementation type.";
      */
-    HostSignatureWrapper(@Nonnull Block block, @Nonnull Block hostSignature) throws InvalidEncodingException, SQLException, IdentityNotFoundException, FailedRequestException, InvalidDeclarationException {
+    HostSignatureWrapper(@Nonnull Block block, @Nonnull Block hostSignature) throws SQLException, IOException, PacketException, ExternalException {
         super(block, true);
         
         assert hostSignature.getType().isBasedOn(SIGNATURE) : "The signature is based on the implementation type.";
         
         this.signer = Identifier.create(new TupleWrapper(hostSignature).getElementNotNull(0));
-        this.publicKey = new PublicKeyChain(Cache.getAttributeNotNullUnwrapped(signer.getHostIdentifier().getIdentity(), PublicKeyChain.TYPE)).getKey(getTimeNotNull());
+        this.publicKey = Cache.getPublicKey(signer.getHostIdentifier().getIdentity(), getTimeNotNull());
         
         if (getType().isBasedOn(Certificate.TYPE)) {
             if (getElement() == null) throw new InvalidEncodingException("If this signature is a certificate, the element may not be null.");
@@ -229,14 +228,24 @@ public final class HostSignatureWrapper extends SignatureWrapper implements Immu
     
     
     /**
+     * Stores the semantic type {@code delegation@virtualid.ch}.
+     */
+    public static final @Nonnull SemanticType DELEGATION = SemanticType.create("delegation@virtualid.ch").load(NonHostIdentity.IDENTIFIER, PassiveExpression.TYPE);
+    
+    /**
+     * Stores the semantic type {@code list.delegation@virtualid.ch}.
+     */
+    public static final @Nonnull SemanticType DELEGATIONS = SemanticType.create("list.delegation@virtualid.ch").load(ListWrapper.TYPE, DELEGATION);
+    
+    /**
      * Stores the semantic type {@code outgoing.list.delegation@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType OUTGOING_DELEGATIONS = SemanticType.create("outgoing.list.delegation@virtualid.ch");
+    public static final @Nonnull SemanticType OUTGOING_DELEGATIONS = SemanticType.create("outgoing.list.delegation@virtualid.ch").load(new Category[] {Category.SEMANTIC_TYPE, Category.NATURAL_PERSON, Category.ARTIFICIAL_PERSON}, Time.TROPICAL_YEAR, DELEGATIONS);
     
     /**
      * Stores the semantic type {@code incoming.list.delegation@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType INCOMING_DELEGATIONS = SemanticType.create("incoming.list.delegation@virtualid.ch");
+    public static final @Nonnull SemanticType INCOMING_DELEGATIONS = SemanticType.create("incoming.list.delegation@virtualid.ch").load(new Category[] {Category.NATURAL_PERSON, Category.ARTIFICIAL_PERSON}, Time.TROPICAL_YEAR, DELEGATIONS);
     
     /**
      * Verifies the signature as a certificate and throws an exception if it is not valid.
