@@ -1,18 +1,20 @@
 package ch.virtualid.packet;
 
-import ch.virtualid.exceptions.packet.PacketException;
-import ch.virtualid.exceptions.external.FailedRequestException;
 import ch.virtualid.client.Commitment;
 import ch.virtualid.credential.Credential;
 import ch.virtualid.cryptography.SymmetricKey;
-import ch.virtualid.exceptions.external.InvalidDeclarationException;
+import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.IdentityNotFoundException;
+import ch.virtualid.exceptions.external.InvalidDeclarationException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.exceptions.external.InvalidSignatureException;
+import static ch.virtualid.exceptions.packet.PacketError.KEYROTATION;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.Identifier;
 import ch.virtualid.identity.Mapper;
 import ch.virtualid.identity.NonHostIdentifier;
 import ch.virtualid.identity.SemanticType;
-import static ch.virtualid.exceptions.packet.PacketError.KEYROTATION;
 import ch.virtualid.server.Server;
 import ch.xdf.Block;
 import ch.xdf.ClientSignatureWrapper;
@@ -21,13 +23,9 @@ import ch.xdf.HostSignatureWrapper;
 import ch.xdf.SelfcontainedWrapper;
 import ch.xdf.SignatureWrapper;
 import ch.xdf.TupleWrapper;
-import ch.virtualid.exceptions.external.FailedEncodingException;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
-import ch.virtualid.exceptions.external.InvalidSignatureException;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -119,7 +117,7 @@ public class Request extends Packet {
      * 
      * @return the response to this request.
      */
-    public @Nonnull Response send() throws FailedRequestException, PacketException {
+    public @Nonnull Response send() throws SQLException, IOException, PacketException, ExternalException {
         return send(true);
     }
     
@@ -135,7 +133,7 @@ public class Request extends Packet {
      * 
      * @ensure response.getSize() == getSize() : "The response has the same number of signed contents (otherwise a {@link FailedRequestException} is thrown).";
      */
-    public @Nonnull Response send(boolean verification) throws FailedRequestException, PacketException {
+    public @Nonnull Response send(boolean verification) throws SQLException, IOException, PacketException, ExternalException {
         @Nullable HostIdentifier recipient = getEncryption().getRecipient();
         assert recipient != null : "The recipient of the request is never null (see class invariant).";
         
@@ -143,13 +141,7 @@ public class Request extends Packet {
         @Nonnull Response response;
         try (Socket socket = new Socket(recipient.getString(), Server.PORT)) {
             write(socket.getOutputStream());
-            response = new Response(SelfcontainedWrapper.read(socket.getInputStream()), getEncryption().getSymmetricKey(), verification);
-        } catch (@Nonnull PacketException | InvalidEncodingException exception) {
-            throw new FailedRequestException("Could not unpack the invalid response from the host " + recipient + ".", exception);
-        } catch (@Nonnull UnknownHostException exception) {
-            throw new FailedRequestException("Could not find the host " + recipient + ".", exception);
-        } catch (@Nonnull IOException exception) {
-            throw new FailedRequestException("Could not connect to the host " + recipient + ".", exception);
+            response = new Response(new SelfcontainedWrapper(socket.getInputStream(), false), getEncryption().getSymmetricKey(), verification);
         }
         
         try {

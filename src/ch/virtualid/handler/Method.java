@@ -18,7 +18,7 @@ import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketError;
 import static ch.virtualid.exceptions.packet.PacketError.AUTHORIZATION;
-import static ch.virtualid.exceptions.packet.PacketError.SENDER;
+import static ch.virtualid.exceptions.packet.PacketError.INTERNAL;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.Identifier;
@@ -250,8 +250,8 @@ public abstract class Method extends Handler {
         final @Nonnull SemanticType service = reference.getService();
         final @Nonnull HostIdentifier recipient = reference.getRecipient();
         
-        if (entity instanceof Account && !reference.canBeSentByHosts()) throw new PacketException(SENDER, "These methods cannot be sent by hosts.");
-        if (entity instanceof Role && reference.canOnlyBeSentByHosts()) throw new PacketException(SENDER, "These methods cannot be sent by clients.");
+        if (entity instanceof Account && !reference.canBeSentByHosts()) throw new PacketException(INTERNAL, "These methods cannot be sent by hosts.");
+        if (entity instanceof Role && reference.canOnlyBeSentByHosts()) throw new PacketException(INTERNAL, "These methods cannot be sent by clients.");
         
         final @Nonnull FreezableList<SelfcontainedWrapper> contents = new FreezableArrayList<SelfcontainedWrapper>(methods.size());
         for (final @Nonnull Method method : methods) {

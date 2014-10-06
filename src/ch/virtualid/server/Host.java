@@ -139,6 +139,16 @@ public final class Host extends Site {
     }
     
     /**
+     * Returns the account of this host.
+     * 
+     * @return the account of this host.
+     */
+    @Pure
+    public @Nonnull Account getAccount() {
+        return new Account(this, identity);
+    }
+    
+    /**
      * Returns the private key chain of this host.
      * 
      * @return the private key chain of this host.

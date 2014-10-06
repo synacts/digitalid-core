@@ -45,13 +45,18 @@ public final class PacketException extends Exception implements Blockable {
     private final @Nonnull PacketError error;
     
     /**
+     * Stores whether this exception was thrown remotely.
+     */
+    private final boolean remote;
+    
+    /**
      * Creates a new packet exception with the given error and message.
      * 
      * @param error the code indicating the kind of error.
      * @param message a string explaining the exception.
      */
     public PacketException(@Nonnull PacketError error, @Nonnull String message) {
-        this(error, message, null);
+        this(error, message, null, false);
     }
     
     /**
@@ -59,12 +64,14 @@ public final class PacketException extends Exception implements Blockable {
      * 
      * @param error the code indicating the kind of error.
      * @param message a string explaining the exception.
-     * @param cause the cause of this packet exception.
+     * @param cause the cause of the packet exception.
+     * @param remote whether it was thrown remotely.
      */
-    public PacketException(@Nonnull PacketError error, @Nonnull String message, @Nullable Throwable cause) {
+    public PacketException(@Nonnull PacketError error, @Nonnull String message, @Nullable Throwable cause, boolean remote) {
         super("(" + error + ") " + message, cause);
         
         this.error = error;
+        this.remote = remote;
         logger.log(WARNING, this);
     }
     
@@ -83,7 +90,7 @@ public final class PacketException extends Exception implements Blockable {
         final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(2);
         final @Nonnull PacketError error = PacketError.get(elements.getNotNull(0));
         final @Nonnull String message = new StringWrapper(elements.getNotNull(1)).getString();
-        return new PacketException(error, "A host responded with a packet error. [" + message + "]");
+        return new PacketException(error, "A host responded with a packet error. [" + message + "]", null, true);
     }
     
     @Pure
@@ -111,6 +118,17 @@ public final class PacketException extends Exception implements Blockable {
     public @Nonnull PacketError getError() {
         return error;
     }
+    
+    /**
+     * Returns whether this exception was thrown remotely.
+     * 
+     * @return whether this exception was thrown remotely.
+     */
+    @Pure
+    public boolean isRemote() {
+        return remote;
+    }
+    
     
     @Pure
     @Override

@@ -21,12 +21,11 @@ public enum PacketError implements Blockable {
     ENCRYPTION(3), // The error code for an invalid encryption.
     SIGNATURE(4), // The error code for an invalid signature.
     COMPRESSION(5), // The error code for an invalid compression.
-    REQUEST(6), // The error code for an invalid request type or invalid encoding.
-    RESPONSE(7), // The error code for an invalid response type or invalid encoding.
-    IDENTIFIER(8), // The error code for an invalid identifier within the request.
+    REQUEST(6), // The error code for an invalid request type.
+    RESPONSE(7), // The error code for an invalid response type.
+    IDENTIFIER(8), // The error code for an invalid identifier as subject.
     AUTHORIZATION(9), // The error code for an insufficient authorization.
-    KEYROTATION(10), // The error code for a required key rotation.
-    SENDER(11); // The error code for a problem at the sender.
+    KEYROTATION(10); // The error code for a required key rotation.
     
     
     /**

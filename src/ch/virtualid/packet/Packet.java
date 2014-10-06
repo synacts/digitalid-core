@@ -1,21 +1,21 @@
 package ch.virtualid.packet;
 
-import ch.virtualid.client.Commitment;
+import ch.virtualid.annotations.Pure;
+import ch.virtualid.client.SecretCommitment;
 import ch.virtualid.credential.Credential;
 import ch.virtualid.cryptography.SymmetricKey;
 import ch.virtualid.entity.Account;
-import ch.virtualid.exceptions.external.FailedEncodingException;
+import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.IdentityNotFoundException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.external.InvalidSignatureException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
+import ch.virtualid.handler.Handler;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.Identifier;
-import ch.virtualid.identity.NonHostIdentifier;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Immutable;
-import ch.virtualid.server.Host;
 import ch.virtualid.server.Server;
 import ch.virtualid.util.FreezableArrayList;
 import ch.virtualid.util.FreezableList;
@@ -32,8 +32,8 @@ import ch.xdf.SignatureWrapper;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigInteger;
+import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -41,7 +41,7 @@ import javax.annotation.Nullable;
 /**
  * A packet compresses, signs and encrypts requests and responses.
  * 
- * @invariant getSize() == getSignatures().size() && getSize() == getCompressions().size() && getSize() == getContents().size() : "The number of signatures, compressions and contents is the same.";
+ * @invariant getSize() == handlers.size() && getSize() == exceptions.size() : "The number of handlers and exceptions are the same.";
  * 
  * @see Request
  * @see Response
@@ -83,84 +83,80 @@ public class Packet implements Immutable {
     
     
     /**
-     * Stores the wrapper of the packet.
+     * Stores the wrapper of this packet.
      */
     private final @Nonnull SelfcontainedWrapper wrapper;
     
     /**
-     * Stores the wrapper of the encryption.
+     * Stores the encryption of this packet.
      */
     private final @Nonnull EncryptionWrapper encryption;
     
     /**
-     * Stores the wrappers of the signatures.
-     * 
-     * @invariant signatures.isFrozen() : "The signatures are frozen.";
+     * Stores the audit of this packet.
      */
-    private final @Nonnull ReadonlyList<SignatureWrapper> signatures;
+    private final @Nullable Audit audit;
     
     /**
-     * Stores the wrappers of the compressions.
-     * 
-     * @invariant compressions.isFrozen() : "The compressions are frozen.";
-     */
-    private final @Nonnull ReadonlyList<CompressionWrapper> compressions;
-    
-    /**
-     * Stores the wrappers of the contents.
-     * 
-     * @invariant contents.isFrozen() : "The contents are frozen.";
-     */
-    private final @Nonnull ReadonlyList<SelfcontainedWrapper> contents;
-    
-    /**
-     * Stores the number of signatures, compressions and contents.
+     * Stores the number of handlers and exceptions.
      */
     private final int size;
     
+    /**
+     * Stores the handlers of this packet.
+     * 
+     * @invariant handlers.isFrozen() : "The handlers are frozen.";
+     */
+    private final @Nonnull ReadonlyList<? extends Handler> handlers;
     
     /**
-     * Packs the given content as a response without signing (only for packet errors).
+     * Stores the exceptions of this packet.
      * 
-     * @param content a selfcontained wrapper whose block is to be packed as a response.
+     * @invariant exceptions.isFrozen() : "The exceptions are frozen.";
+     */
+    private final @Nonnull ReadonlyList<PacketException> exceptions;
+    
+    /**
+     * Packs the given packet exception as a response without signing.
+     * 
+     * @param exception the packet exception that is to be packed as an unsigned response.
      * @param symmetricKey the symmetric key used for encryption or null if the response is not encrypted.
      * 
-     * @ensure getSize() == 1 : "The size of this packet is 1.";
-     * 
-     * @throws FailedEncodingException This exception is never thrown by this constructor but is listed nonetheless.
+     * @ensure getSize() == 1 : "The size of this packet is one.";
      */
-    public Packet(@Nonnull SelfcontainedWrapper content, @Nullable SymmetricKey symmetricKey) throws FailedEncodingException {
-        this(Arrays.asList(content), null, symmetricKey, null, null, null, null, null, null, false, null);
+    public Packet(@Nonnull PacketException exception, @Nullable SymmetricKey symmetricKey) throws SQLException, IOException, PacketException, ExternalException {
+        this(new FreezableArrayList<Handler>(1).freeze(), new FreezableArrayList<PacketException>(exception).freeze(), null, symmetricKey, null, null, null, null, null, null, false, null);
     }
     
     /**
      * Packs the given contents with the given arguments as a response signed by the given host.
      * 
-     * @param contents a list of selfcontained wrappers whose blocks are to be packed as a response.
+     * @param handlers a list of selfcontained wrappers whose blocks are to be packed as a response.
      * @param symmetricKey the symmetric key used for encryption or null if the response is not encrypted.
      * @param subject the identifier of the identity about which a statement is made.
      * @param audit the audit since the last audit or null if no audit is appended.
      * @param signer the identifier of the signing host.
      * 
-     * @require contents.isFrozen() : "The list of contents is frozen.";
-     * @require !contents.isEmpty() : "The list of contents is not empty.";
+     * @require handlers.isFrozen() : "The list of handlers is frozen.";
+     * @require exceptions.isFrozen() : "The list of exceptions is frozen.";
+     * @require handlers.isNotEmpty() : "The list of handlers is not empty.";
+     * @require handlers.size() == exceptions.size() : "The number of handlers and exceptions are the same.";
      * @require Server.hasHost(signer.getHostIdentifier()) : "The host of the signer is running on this server.";
      * 
-     * @ensure getSize() == contents.size() : "The size of this packet equals the size of the contents.";
-     * 
-     * @throws FailedEncodingException This exception is never thrown by this constructor but is listed nonetheless.
+     * @ensure getSize() == handlers.size() : "The size of this packet equals the size of the handlers.";
      */
-    public Packet(@Nonnull ReadonlyList<SelfcontainedWrapper> contents, @Nullable SymmetricKey symmetricKey, @Nonnull Identifier subject, @Nullable Audit audit, @Nonnull HostIdentifier signer) throws FailedEncodingException {
-        this(contents, null, symmetricKey, subject, audit, signer, null, null, null, false, null);
+    public Packet(@Nonnull ReadonlyList<? extends Handler> handlers, @Nonnull ReadonlyList<PacketException> exceptions, @Nullable SymmetricKey symmetricKey, @Nonnull Identifier subject, @Nullable Audit audit, @Nonnull HostIdentifier signer) throws SQLException, IOException, PacketException, ExternalException {
+        this(handlers, exceptions, null, symmetricKey, subject, audit, signer, null, null, null, false, null);
     }
     
     /**
-     * Packs the given contents with the given arguments for encrypting and signing.
+     * Packs the given handlers with the given arguments for encrypting and signing.
      * 
-     * @param contents a list of selfcontained wrappers whose blocks are to be packed (either as a request or a response).
+     * @param handlers the handlers that are to be packed as either a request or a response, where they can also be null.
+     * @param exceptions the packet exceptions that are sent instead of the handlers at positions where they are not null.
      * @param recipient the identifier of the host for which the content is encrypted or null if the recipient is not known.
      * @param symmetricKey the symmetric key used for encryption or null if the content is not encrypted.
-     * @param subject the identifier of the identity about which a statement is made (in a method or a reply).
+     * @param subject the identifier of the identity about which a statement is made in a method or a reply.
      * @param audit the audit since the last audit or null in case of external methods or replies.
      * @param signer the identifier of the signing host or null if the element is not signed by a host.
      * @param commitment the commitment containing the client secret or null if the element is not signed by a client.
@@ -169,46 +165,51 @@ public class Packet implements Immutable {
      * @param lodged whether the hidden content of the credentials is verifiably encrypted to achieve liability.
      * @param value the value b' or null if the credentials are not shortened.
      * 
-     * @require contents.isFrozen() : "The list of contents is frozen.";
-     * @require !contents.isEmpty() : "The list of contents is not empty.";
+     * @require handlers.isFrozen() : "The list of handlers is frozen.";
+     * @require exceptions.isFrozen() : "The list of exceptions is frozen.";
+     * @require handlers.isNotEmpty() : "The list of handlers is not empty.";
+     * @require handlers.size() == exceptions.size() : "The number of handlers and exceptions are the same.";
      * @require subject != null || recipient == null && signer == null && commitment == null && credentials == null : "The subject may only be null if the contents of a response are not signed (because the host could not decode the subject).";
-     * @require ... : "This list of preconditions is not complete but the public constructors make sure that all requirements for packing the given contents are met.";
-     * 
-     * @ensure getSize() == contents.size() : "The size of this packet equals the size of the given list of contents.";
+     * @require ... : "This list of preconditions is not complete but the public constructors make sure that all requirements for packing the given handlers are met.";
      */
-    protected Packet(@Nonnull ReadonlyList<SelfcontainedWrapper> contents, @Nullable HostIdentifier recipient, @Nullable SymmetricKey symmetricKey, @Nullable Identifier subject, @Nullable Audit audit, @Nullable HostIdentifier signer, @Nullable Commitment commitment, @Nullable ReadonlyList<Credential> credentials, @Nullable ReadonlyList<HostSignatureWrapper> certificates, boolean lodged, @Nullable BigInteger value) throws FailedEncodingException {
-        assert contents.isFrozen() : "The list of contents is frozen.";
-        assert !contents.isEmpty() : "The list of contents is not empty.";
+    @SuppressWarnings("AssignmentToMethodParameter")
+    protected Packet(@Nonnull ReadonlyList<? extends Handler> handlers, @Nonnull ReadonlyList<PacketException> exceptions, @Nullable HostIdentifier recipient, @Nullable SymmetricKey symmetricKey, @Nullable Identifier subject, @Nullable Audit audit, @Nullable HostIdentifier signer, @Nullable SecretCommitment commitment, @Nullable ReadonlyList<Credential> credentials, @Nullable ReadonlyList<HostSignatureWrapper> certificates, boolean lodged, @Nullable BigInteger value) throws SQLException, IOException, PacketException, ExternalException {
+        assert handlers.isFrozen() : "The list of handlers is frozen.";
+        assert exceptions.isFrozen() : "The list of exceptions is frozen.";
+        assert handlers.isNotEmpty() : "The list of handlers is not empty.";
+        assert handlers.size() == exceptions.size() : "The number of handlers and exceptions are the same.";
         assert subject != null || recipient == null && signer == null && commitment == null && credentials == null : "The subject may only be null if the contents of a response are not signed (because the host could not decode the subject).";
         
-        this.contents = contents;
-        this.size = contents.size();
-        final @Nonnull FreezableList<CompressionWrapper> compressions = new FreezableArrayList<CompressionWrapper>(size);
-        final @Nonnull FreezableList<SignatureWrapper> signatures = new FreezableArrayList<SignatureWrapper>(size);
+        this.audit = audit;
+        this.size = handlers.size();
+        this.handlers = handlers;
+        this.exceptions = exceptions;
         
+        final @Nonnull FreezableList<Block> signatures = new FreezableArrayList<Block>(handlers.size());
         for (int i = 0; i < size; i++) {
-            final @Nullable SelfcontainedWrapper content = contents.get(i);
-            
-            @Nonnull CompressionWrapper compression = new CompressionWrapper(content, CompressionWrapper.ZLIB);
-            @Nullable Audit _audit = (i == size - 1 ? audit : null);
-            @Nonnull SignatureWrapper signature;
-            if (signer != null && (_audit != null || !content.getIdentifier().equals(NonHostIdentifier.NOREPLY) && !content.getIdentifier().equals(NonHostIdentifier.PACKET_ERROR))) {
-                signature = new HostSignatureWrapper(compression, subject, _audit, signer);
-            } else if (commitment != null) {
-                signature = new ClientSignatureWrapper(compression, subject, _audit, commitment);
-            } else if (credentials != null) {
-                signature = new CredentialsSignatureWrapper(compression, subject, _audit, credentials, certificates, lodged, value);
+            @Nullable Block block = null;
+            if (exceptions.isNotNull(i)) block = exceptions.getNotNull(i).toBlock();
+            else if (handlers.isNotNull(i)) block = handlers.getNotNull(i).toBlock();
+            final @Nullable SelfcontainedWrapper content = block == null ? null : new SelfcontainedWrapper(CONTENT, block);
+            final @Nullable CompressionWrapper compression = content == null ? null : new CompressionWrapper(COMPRESSION, content, CompressionWrapper.ZLIB);
+            if (compression != null || audit != null) {
+                if (signer != null && exceptions.isNull(i)) {
+                    signatures.set(i, new HostSignatureWrapper(SIGNATURE, compression, subject, audit, signer).toBlock());
+                } else if (commitment != null) {
+                    signatures.set(i, new ClientSignatureWrapper(SIGNATURE, compression, subject, audit, commitment).toBlock());
+                } else if (credentials != null) {
+                    signatures.set(i, new CredentialsSignatureWrapper(SIGNATURE, compression, subject, audit, credentials, certificates, lodged, value).toBlock());
+                } else {
+                    signatures.set(i, new SignatureWrapper(SIGNATURE, compression, subject).toBlock());
+                }
+                audit = null;
             } else {
-                signature = new SignatureWrapper(compression, subject);
+                signatures.set(i, null);
             }
-            compressions.set(i, compression);
-            signatures.set(i, signature);
         }
         
-        this.compressions = compressions.freeze();
-        this.signatures =  signatures.freeze();
-        this.encryption = new EncryptionWrapper(new ListWrapper(signatures, true), recipient, symmetricKey);
-        this.wrapper = new SelfcontainedWrapper(NonHostIdentifier.PACKET_ENCRYPTION, encryption);
+        this.encryption = new EncryptionWrapper(ENCRYPTION, new ListWrapper(SIGNATURES, signatures.freeze()), recipient, symmetricKey);
+        this.wrapper = new SelfcontainedWrapper(TYPE, encryption);
     }
     
     
@@ -242,14 +243,10 @@ public class Packet implements Immutable {
         this.wrapper = wrapper;
         try { this.encryption = new EncryptionWrapper(wrapper.getElement(), symmetricKey); } catch (InvalidEncodingException exception) { throw new PacketException(PacketError.ENCRYPTION, exception); }
         
+        // TODO: If this constructor is called from the Response class, then set the remote flag of the packet exceptions!
+        
         final @Nullable HostIdentifier recipient = encryption.getRecipient();
-        final @Nullable Account account;
-        if (recipient != null) {
-            final @Nonnull Host host = Server.getHost(recipient);
-            account = new Account(host, host.getIdentity());
-        } else {
-            account = null;
-        }
+        final @Nullable Account account = recipient == null ? null : Server.getHost(recipient).getAccount();
         
         @Nonnull List<Block> elements;
         try { elements = new ListWrapper(encryption.getElement()).getElements(); } catch (InvalidEncodingException exception) { throw new PacketException(PacketError.SIGNATURE, exception); }
@@ -257,7 +254,7 @@ public class Packet implements Immutable {
         if (size == 0) throw new PacketException(PacketError.PACKET, new InvalidEncodingException("The encryption of a packet must contain at least one signature."));
         signatures = new ArrayList<SignatureWrapper>(size);
         compressions = new ArrayList<CompressionWrapper>(size);
-        contents = new ArrayList<SelfcontainedWrapper>(size);
+        handlers = new ArrayList<SelfcontainedWrapper>(size);
         
         @Nullable SignatureWrapper reference = null;
         for (int i = 0; i < size; i++) {
@@ -281,7 +278,7 @@ public class Packet implements Immutable {
             
             signatures.set(i, signature);
             compressions.set(i, compression);
-            contents.set(i, content);
+            handlers.set(i, content);
         }
     }
     
@@ -304,130 +301,45 @@ public class Packet implements Immutable {
         return encryption;
     }
     
-    
     /**
-     * Returns the signatures of this packet.
+     * Returns the audit of this packet.
      * 
-     * @return the signatures of this packet.
+     * @return the audit of this packet.
      */
-    public final @Nonnull List<SignatureWrapper> getSignatures() {
-        return signatures;
+    @Pure
+    public final @Nullable Audit getAudit() {
+        return audit;
     }
     
     /**
-     * Returns the signature at the given position in this packet.
+     * Returns the number of handlers and exceptions.
      * 
-     * @param index the index of the signature to be returned.
-     * @return the signature at the given position in this packet.
-     * @require index >= 0 && index < getSize() : "The index is valid.";
-     */
-    public final @Nonnull SignatureWrapper getSignature(int index) {
-        assert index >= 0 && index < getSize() : "The index is valid.";
-        
-        return signatures.get(index);
-    }
-    
-    /**
-     * Returns the first and only signature in this packet.
+     * @return the number of handlers and exceptions.
      * 
-     * @return the first and only signature in this packet.
-     * @require getSize() == 1 : "There is only one signature.";
+     * @ensure return > 0 : "The size is always positive.";
      */
-    public final @Nonnull SignatureWrapper getSignature() {
-        assert getSize() == 1 : "There is only one signature.";
-        
-        return signatures.get(0);
-    }
-    
-    
-    /**
-     * Returns the compressions of this packet.
-     * 
-     * @return the compressions of this packet.
-     */
-    public final @Nonnull List<CompressionWrapper> getCompressions() {
-        return compressions;
-    }
-    
-    /**
-     * Returns the compression at the given position in this packet.
-     * 
-     * @param index the index of the compression to be returned.
-     * @return the compression at the given position in this packet.
-     * @require index >= 0 && index < getSize() : "The index is valid.";
-     */
-    public final @Nonnull CompressionWrapper getCompression(int index) {
-        assert index >= 0 && index < getSize() : "The index is valid.";
-        
-        return compressions.get(index);
-    }
-    
-    /**
-     * Returns the first and only compression in this packet.
-     * 
-     * @return the first and only compression in this packet.
-     * @require getSize() == 1 : "There is only one compression.";
-     */
-    public final @Nonnull CompressionWrapper getCompression() {
-        assert getSize() == 1 : "There is only one compression.";
-        
-        return compressions.get(0);
-    }
-    
-    
-    /**
-     * Returns the contents of this packet.
-     * 
-     * @return the contents of this packet.
-     */
-    public final @Nonnull List<SelfcontainedWrapper> getContents() {
-        return contents;
-    }
-    
-    /**
-     * Returns the content at the given position in this packet or null if there was no reply.
-     * 
-     * @param index the index of the content to be returned.
-     * @return the content at the given position in this packet or null if there was no reply.
-     * @throws PacketException if the responding host encountered a packet error.
-     * @require index >= 0 && index < getSize() : "The index is valid.";
-     */
-    // TODO: Rather getReply?
-    public final @Nullable SelfcontainedWrapper getContent(int index) throws PacketException, IdentityNotFoundException, InvalidEncodingException {
-        assert index >= 0 && index < getSize() : "The index is valid.";
-        
-        @Nonnull SelfcontainedWrapper content = contents.get(index);
-        @Nonnull SemanticType type = content.getIdentifier().getIdentity().toSemanticType();
-        if (type.equals(PacketException.TYPE)) throw PacketException.create(content.getElement());
-        if (type.equals(SemanticType.NOREPLY)) return null;
-        return content;
-    }
-    
-    /**
-     * Returns the first and only content in this packet without checking anything.
-     * (The checks on the first content are performed when the response is retrieved.)
-     * 
-     * @return the first and only content in this packet without checking anything.
-     * @require getSize() == 1 : "There is only one content.";
-     */
-    public final @Nonnull SelfcontainedWrapper getContent() {
-        assert getSize() == 1 : "There is only one content.";
-        
-        return contents.get(0);
-    }
-    
-    
-    /**
-     * Returns the number of signatures, compressions and contents.
-     * 
-     * @return the number of signatures, compressions and contents.
-     * @ensure getSize() > 0 : "The size is always > 0.";
-     */
+    @Pure
     public final int getSize() {
         return size;
     }
     
-    // TODO: getAudit()?
+    /**
+     * Returns the handler at the given position in this packet or null if there was no reply.
+     * 
+     * @param index the index of the handler which is to be returned.
+     * 
+     * @return the handler at the given position in this packet or null if there was no reply.
+     * 
+     * @throws PacketException if the responding host encountered a packet error.
+     * 
+     * @require index >= 0 && index < getSize() : "The index is valid.";
+     */
+    public final @Nullable Handler getHandler(int index) throws PacketException, IdentityNotFoundException, InvalidEncodingException {
+        assert index >= 0 && index < getSize() : "The index is valid.";
+        
+        if (exceptions.isNotNull(index)) throw exceptions.getNotNull(index);
+        else return handlers.get(index);
+    }
     
     /**
      * Writes the packet to the given output stream.
@@ -435,7 +347,7 @@ public class Packet implements Immutable {
      * @param outputStream the output stream to write to.
      */
     public final void write(@Nonnull OutputStream outputStream) throws IOException {
-        wrapper.write(outputStream);
+        wrapper.write(outputStream, false);
     }
     
 }

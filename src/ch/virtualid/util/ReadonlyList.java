@@ -28,6 +28,30 @@ public interface ReadonlyList<E> extends ReadonlyCollection<E> {
     public @Nullable E get(int index);
     
     /**
+     * Returns whether the element at the given index is null.
+     * 
+     * @param index the index of the element to be checked.
+     * 
+     * @return whether the element at the given index is null.
+     * 
+     * @require index >= 0 && index < size() : "The index is valid.";
+     */
+    @Pure
+    public boolean isNull(int index);
+    
+    /**
+     * Returns whether the element at the given index is not null.
+     * 
+     * @param index the index of the element to be checked.
+     * 
+     * @return whether the element at the given index is not null.
+     * 
+     * @require index >= 0 && index < size() : "The index is valid.";
+     */
+    @Pure
+    public boolean isNotNull(int index);
+    
+    /**
      * Returns the element at the given index.
      * 
      * @param index the index of the element to be returned.
