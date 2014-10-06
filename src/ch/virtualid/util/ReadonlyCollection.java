@@ -33,6 +33,14 @@ public interface ReadonlyCollection<E> extends ReadonlyIterable<E> {
     public boolean isEmpty();
     
     /**
+     * Returns whether this collection is not empty.
+     * 
+     * @return whether this collection is not empty.
+     */
+    @Pure
+    public boolean isNotEmpty();
+    
+    /**
      * @see Collection#contains(java.lang.Object)
      */
     @Pure

@@ -82,6 +82,13 @@ public class FreezableLinkedList<E> extends LinkedList<E> implements FreezableLi
     
     @Pure
     @Override
+    public boolean isNotEmpty() {
+        return !super.isEmpty();
+    }
+    
+    
+    @Pure
+    @Override
     public @Nonnull E getNotNull(int index) {
         @Nullable E element = get(index);
         assert element != null : "The element at the given index is not null.";

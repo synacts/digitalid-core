@@ -94,6 +94,12 @@ public class FreezableLinkedHashSet<E> extends LinkedHashSet<E> implements Freez
     
     @Pure
     @Override
+    public boolean isNotEmpty() {
+        return !super.isEmpty();
+    }
+    
+    @Pure
+    @Override
     public @Nonnull FreezableIterator<E> iterator() {
         return new FreezableIterableIterator<E>(this, super.iterator());
     }

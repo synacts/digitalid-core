@@ -94,6 +94,12 @@ public class FreezableHashSet<E> extends HashSet<E> implements FreezableSet<E> {
     
     @Pure
     @Override
+    public boolean isNotEmpty() {
+        return !super.isEmpty();
+    }
+    
+    @Pure
+    @Override
     public @Nonnull FreezableIterator<E> iterator() {
         return new FreezableIterableIterator<E>(this, super.iterator());
     }

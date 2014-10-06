@@ -89,6 +89,13 @@ public class FreezableArrayList<E> extends ArrayList<E> implements FreezableList
     
     @Pure
     @Override
+    public boolean isNotEmpty() {
+        return !super.isEmpty();
+    }
+    
+    
+    @Pure
+    @Override
     public @Nonnull E getNotNull(int index) {
         @Nullable E element = get(index);
         assert element != null : "The element at the given index is not null.";

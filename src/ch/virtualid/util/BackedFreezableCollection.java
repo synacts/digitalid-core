@@ -89,6 +89,12 @@ class BackedFreezableCollection<E> implements FreezableCollection<E> {
     
     @Pure
     @Override
+    public boolean isNotEmpty() {
+        return !collection.isEmpty();
+    }
+    
+    @Pure
+    @Override
     public boolean contains(@Nullable Object object) {
         return collection.contains(object);
     }
