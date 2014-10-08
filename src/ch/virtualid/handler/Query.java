@@ -3,11 +3,11 @@ package ch.virtualid.handler;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.Role;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.Identifier;
-import ch.virtualid.exceptions.packet.PacketException;
 import ch.xdf.SignatureWrapper;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -66,6 +66,10 @@ public abstract class Query extends Method {
         return false;
     }
     
+    
+    @Pure
+    @Override
+    public abstract @Nonnull Class<? extends QueryReply> getReplyClass();
     
     @Override
     public abstract @Nonnull QueryReply executeOnHost() throws PacketException, SQLException;

@@ -6,19 +6,19 @@ import ch.virtualid.database.Database;
 import ch.virtualid.entity.Account;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.errors.InitializationError;
-import ch.virtualid.exceptions.external.InvalidDeclarationException;
 import ch.virtualid.exceptions.external.IdentityNotFoundException;
+import ch.virtualid.exceptions.external.InvalidDeclarationException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.exceptions.packet.PacketError;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.SQLizable;
 import ch.virtualid.packet.Packet;
-import ch.virtualid.exceptions.packet.PacketError;
-import ch.virtualid.exceptions.packet.PacketException;
 import ch.xdf.Block;
 import ch.xdf.CompressionWrapper;
 import ch.xdf.HostSignatureWrapper;
 import ch.xdf.SelfcontainedWrapper;
 import ch.xdf.SignatureWrapper;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -149,7 +149,7 @@ public abstract class Reply extends Handler implements SQLizable {
     @Pure
     private static @Nonnull Reply get(@Nullable Entity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws PacketException, InvalidEncodingException, SQLException, IdentityNotFoundException, InvalidDeclarationException {
         final @Nullable Reply.Factory factory = factories.get(block.getType());
-        if (factory == null) throw new PacketException(PacketError.RESPONSE);
+        if (factory == null) throw new PacketException(PacketError.REPLY, "No reply could be found for the type " + block.getType().getAddress() + ".", null, true);
         else return factory.create(entity, signature, number, block);
     }
     
@@ -181,7 +181,7 @@ public abstract class Reply extends Handler implements SQLizable {
     @Pure
     public final @Nonnull ActionReply toActionReply() throws PacketException {
         if (this instanceof ActionReply) return (ActionReply) this;
-        throw new PacketException(PacketError.RESPONSE);
+        throw new PacketException(PacketError.REPLY, "An action reply was expected but a query reply was found.", null, true);
     }
     
     /**
@@ -194,7 +194,7 @@ public abstract class Reply extends Handler implements SQLizable {
     @Pure
     public final @Nonnull QueryReply toQueryReply() throws PacketException {
         if (this instanceof QueryReply) return (QueryReply) this;
-        throw new PacketException(PacketError.RESPONSE);
+        throw new PacketException(PacketError.REPLY, "A query reply was expected but an action reply was found.", null, true);
     }
     
     

@@ -1,21 +1,31 @@
 package ch.virtualid.packet;
 
-import ch.virtualid.client.Commitment;
+import ch.virtualid.annotations.Pure;
+import ch.virtualid.annotations.RawRecipient;
+import ch.virtualid.client.SecretCommitment;
+import ch.virtualid.contact.AttributeSet;
 import ch.virtualid.credential.Credential;
+import ch.virtualid.cryptography.PublicKeyChain;
 import ch.virtualid.cryptography.SymmetricKey;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.IdentityNotFoundException;
 import ch.virtualid.exceptions.external.InvalidDeclarationException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.external.InvalidSignatureException;
+import ch.virtualid.exceptions.packet.PacketError;
 import static ch.virtualid.exceptions.packet.PacketError.KEYROTATION;
 import ch.virtualid.exceptions.packet.PacketException;
+import ch.virtualid.handler.Method;
+import ch.virtualid.handler.query.external.AttributesQuery;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.Identifier;
 import ch.virtualid.identity.Mapper;
 import ch.virtualid.identity.NonHostIdentifier;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.server.Server;
+import ch.virtualid.util.FreezableArrayList;
+import ch.virtualid.util.FreezableList;
+import ch.virtualid.util.ReadonlyList;
 import ch.xdf.Block;
 import ch.xdf.ClientSignatureWrapper;
 import ch.xdf.CredentialsSignatureWrapper;
@@ -24,10 +34,10 @@ import ch.xdf.SelfcontainedWrapper;
 import ch.xdf.SignatureWrapper;
 import ch.xdf.TupleWrapper;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigInteger;
 import java.net.Socket;
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import javax.annotation.Nonnull;
@@ -38,62 +48,57 @@ import org.javatuples.Pair;
  * This class compresses, signs and encrypts requests.
  * The subject of a request is given as identifier and not as an identity in order to be able to retrieve identity information as well as creating new accounts.
  * 
- * @invariant for (SignatureWrapper signature : getSignatures()) signature.getSubject() != null : "The subjects of the signatures are never null.";
- * @invariant getEncryption().getRecipient() != null : "The recipient of the request is never null.";
+ * @invariant getSize() == methods.size() : "The number of elements equals the number of methods.";
+ * @invariant getEncryption().getRecipient() != null : "The recipient of the request is not null.";
  * 
  * @see HostRequest
  * @see ClientRequest
  * @see CredentialsRequest
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 0.9
+ * @version 1.4
  */
 public class Request extends Packet {
     
     /**
-     * Asserts that the class invariant still holds.
+     * Stores the methods of this request.
+     * 
+     * @invariant methods.isFrozen() : "The methods are frozen.";
+     * @invariant methods.isNotEmpty() : "The methods are not empty.";
+     * @invariant methods.doesNotContainNull() : "The methods do not contain null.";
      */
-    private boolean invariant() {
-        for (@Nonnull SignatureWrapper signature : getSignatures()) {
-            assert signature.getSubject() != null : "The subjects of the signatures are never null.";
-        }
-        assert getEncryption().getRecipient() != null : "The recipient of the request is never null.";
-        return true;
-    }
-    
+    private @Nonnull FreezableList<Method> methods;
     
     /**
-     * Packs the given content with the given arguments without encrypting or signing.
-     * This constructor is only to be used to retrieve the public key of hosts.
+     * Creates a new request with a query for the public key chain of the given host that is neither encrypted nor signed.
      * 
-     * @param content the content of this request.
-     * @param subject the subject of this request.
+     * @param identifier the identifier of the host whose public key chain is to be retrieved.
      * 
      * @ensure getSize() == 1 : "The size of this request is 1.";
      */
-    public Request(@Nonnull SelfcontainedWrapper content, @Nonnull HostIdentifier subject) throws FailedEncodingException {
-        this(Arrays.asList(content), subject, null, subject, null, null, null, null, null, false, null);
+    public Request(@Nonnull HostIdentifier identifier) throws SQLException, IOException, PacketException, ExternalException {
+        this((FreezableList<Method>) new FreezableArrayList<Method>(new AttributesQuery(null, identifier, new AttributeSet(PublicKeyChain.TYPE).freeze())).freeze(), identifier, null, identifier, null, null, null, null, null, false, null);
     }
     
     /**
-     * Packs the given contents with the given arguments with encrypting but without signing.
+     * Packs the given methods with the given arguments with encrypting but without signing.
      * 
-     * @param contents the contents of this request.
+     * @param methods the methods of this request.
      * @param recipient the recipient of this request.
      * @param subject the subject of this request.
      * 
-     * @require !contents.isEmpty() : "The list of contents is not empty.";
-     * 
-     * @ensure getSize() == contents.size() : "The size of this request equals the size of the contents.";
+     * @require methods.isFrozen() : "The methods are frozen.";
+     * @require methods.isNotEmpty() : "The methods are not empty.";
+     * @require methods.doesNotContainNull() : "The methods do not contain null.";
      */
-    public Request(@Nonnull List<SelfcontainedWrapper> contents, @Nonnull HostIdentifier recipient, @Nonnull Identifier subject) throws FailedEncodingException {
-        this(contents, recipient, new SymmetricKey(), subject, null, null, null, null, null, false, null);
+    public Request(@Nonnull FreezableList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull Identifier subject) throws SQLException, IOException, PacketException, ExternalException {
+        this(methods, recipient, new SymmetricKey(), subject, null, null, null, null, null, false, null);
     }
     
     /**
      * Packs the given content with the given arguments for encrypting and signing.
      * 
-     * @param contents a list of selfcontained wrappers whose blocks are to be packed as a request.
+     * @param methods a list of methods whose blocks are to be packed as a request.
      * @param recipient the identifier of the host for which the content is to be encrypted.
      * @param symmetricKey the symmetric key used for encryption or null if the content is not encrypted.
      * @param subject the identifier of the identity about which a statement is made.
@@ -104,11 +109,80 @@ public class Request extends Packet {
      * @param certificates the certificates that are appended to an identity-based authentication or null.
      * @param lodged whether the hidden content of the credentials is verifiably encrypted to achieve liability.
      * @param value the value b' or null if the credentials are not shortened.
+     * 
+     * @require ... : "This list of preconditions is not complete but the public constructors make sure that all requirements for packing the given handlers are met.";
      */
-    protected Request(@Nonnull List<SelfcontainedWrapper> contents, @Nonnull HostIdentifier recipient, @Nullable SymmetricKey symmetricKey, @Nonnull Identifier subject, @Nullable Audit audit, @Nullable Identifier signer, @Nullable Commitment commitment, @Nullable List<Credential> credentials, @Nullable List<HostSignatureWrapper> certificates, boolean lodged, @Nullable BigInteger value) throws FailedEncodingException {
-        super(contents, recipient, symmetricKey, subject, audit, signer, commitment, credentials, certificates, lodged, value);
+    Request(@Nonnull FreezableList<Method> methods, @Nonnull HostIdentifier recipient, @Nullable SymmetricKey symmetricKey, @Nonnull Identifier subject, @Nullable Audit audit, @Nullable HostIdentifier signer, @Nullable SecretCommitment commitment, @Nullable ReadonlyList<Credential> credentials, @Nullable ReadonlyList<HostSignatureWrapper> certificates, boolean lodged, @Nullable BigInteger value) throws SQLException, IOException, PacketException, ExternalException {
+        super(methods, methods.size(), recipient, symmetricKey, subject, audit, signer, commitment, credentials, certificates, lodged, value);
         
-        assert invariant();
+        assert getEncryption().getRecipient() != null : "The recipient of the request is not null.";
+    }
+    
+    
+    /**
+     * Reads and unpacks the request from the given input stream on hosts.
+     * 
+     * @param inputStream the input stream to read the request from.
+     */
+    public Request(@Nonnull InputStream inputStream) throws SQLException, IOException, PacketException, ExternalException {
+        super(inputStream, null, true);
+        
+        if (getEncryption().getRecipient() == null) throw new PacketException(PacketError.ENCRYPTION, "The recipient of a request may not be null.");
+    }
+    
+    
+    @Override
+    @RawRecipient
+    @SuppressWarnings("unchecked")
+    void setLists(@Nonnull Object object) {
+        this.methods = (FreezableList<Method>) object;
+    }
+    
+    @Pure
+    @Override
+    @RawRecipient
+    @Nonnull Block getBlock(int index) {
+        return methods.get(index).toBlock();
+    }
+    
+    @Override
+    @RawRecipient
+    void initialize(int size) {
+        this.methods = new FreezableArrayList<Method>(size);
+    }
+    
+    @Override
+    @RawRecipient
+    void freeze() {
+        methods.freeze();
+    }
+    
+    
+    /**
+     * Returns the method at the given position in this request.
+     * 
+     * @param index the index of the method which is to be returned.
+     * 
+     * @return the method at the given position in this request.
+     * 
+     * @require index >= 0 && index < getSize() : "The index is valid.";
+     */
+    @Pure
+    public final @Nonnull Method getMethod(int index) {
+        return methods.get(index);
+    }
+    
+    /**
+     * Sets the method at the given position during the packet constructor.
+     * 
+     * @param index the index of the method which is to be set.
+     * @param method the method which is to set at the index.
+     * 
+     * @require index >= 0 && index < getSize() : "The index is valid.";
+     */
+    @RawRecipient
+    final void setMethod(int index, @Nonnull Method method) {
+        methods.set(index, method);
     }
     
     
@@ -268,6 +342,7 @@ public class Request extends Packet {
      * 
      * @param recipient the recipient for which a symmetric key is to be returned.
      * @param rotation determines how often the cached symmetric keys are rotated.
+     * 
      * @return a new or cached symmetric key for the given recipient.
      */
     protected static @Nonnull SymmetricKey getSymmetricKey(@Nonnull HostIdentifier recipient, long rotation) {

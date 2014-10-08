@@ -4,16 +4,16 @@ import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Synchronizer;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.Role;
-import ch.virtualid.exceptions.external.InvalidDeclarationException;
-import ch.virtualid.handler.action.internal.CoreServiceInternalAction;
 import ch.virtualid.exceptions.external.IdentityNotFoundException;
+import ch.virtualid.exceptions.external.InvalidDeclarationException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.exceptions.packet.PacketException;
+import ch.virtualid.handler.action.internal.CoreServiceInternalAction;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.SemanticType;
-import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.util.FreezableLinkedList;
 import ch.virtualid.util.ReadonlyList;
 import ch.xdf.SignatureWrapper;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -90,6 +90,12 @@ public abstract class InternalAction extends Action implements InternalMethod {
      * @require getSignature() != null : "The signature of this handler is not null.";
      */
     protected abstract void executeOnHostInternalAction() throws PacketException, SQLException;
+    
+    @Pure
+    @Override
+    public final @Nullable Class<? extends ActionReply> getReplyClass() {
+        return null;
+    }
     
     @Override
     public final @Nullable ActionReply executeOnHost() throws PacketException, SQLException {

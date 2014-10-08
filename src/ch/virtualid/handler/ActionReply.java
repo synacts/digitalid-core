@@ -7,13 +7,13 @@ import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Account;
 import ch.virtualid.entity.Entity;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.reply.action.CoreServiceActionReply;
 import ch.virtualid.module.Service;
 import ch.virtualid.packet.Audit;
-import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.pusher.Pusher;
 import ch.xdf.HostSignatureWrapper;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -62,6 +62,7 @@ public abstract class ActionReply extends Reply implements Auditable {
      * @return the class of the external action whose reply class this is.
      */
     @Pure
+    @Deprecated // TODO: Was probably replaced with the getReplyClass() in the method.
     public abstract @Nonnull Class<? extends ExternalAction> getActionClass();
     
     

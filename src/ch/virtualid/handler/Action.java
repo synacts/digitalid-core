@@ -7,10 +7,10 @@ import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.concept.Aspect;
 import ch.virtualid.entity.Entity;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.action.internal.AccountOpen;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.Identifier;
-import ch.virtualid.exceptions.packet.PacketException;
 import ch.xdf.SignatureWrapper;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
@@ -66,6 +66,10 @@ public abstract class Action extends Method implements Auditable {
         super(entity, signature, recipient);
     }
     
+    
+    @Pure
+    @Override
+    public abstract @Nullable Class<? extends ActionReply> getReplyClass();
     
     @Override
     public abstract @Nullable ActionReply executeOnHost() throws PacketException, SQLException;

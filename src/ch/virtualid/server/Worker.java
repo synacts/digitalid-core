@@ -80,7 +80,7 @@ public final class Worker implements Runnable {
                 long vid = mapped ? Mapper.getVid(identifier) : 0l;
                 
                 SelfcontainedWrapper content = request.getContents();
-                if (!Mapper.exists(content.getIdentifier())) throw new PacketException(PacketError.REQUEST);
+                if (!Mapper.exists(content.getIdentifier())) throw new PacketException(PacketError.METHOD);
                 type = " " + content.getIdentifier();
                 long requestType = Mapper.getVid(content.getIdentifier());
                 Handler handler = Handler.get(requestType);
@@ -109,7 +109,7 @@ public final class Worker implements Runnable {
                 if (!Identifier.isHost(identifier) && !request.getEncryption().isEncrypted()) throw new PacketException(PacketError.ENCRYPTION);
                 
                 // Hosts accept only attribute and category requests for themselves.
-                if (Identifier.isHost(identifier) && requestType != Vid.ATTRIBUTE_GET_REQUEST && requestType != Vid.CATEGORY_GET_REQUEST) throw new PacketException(PacketError.REQUEST);
+                if (Identifier.isHost(identifier) && requestType != Vid.ATTRIBUTE_GET_REQUEST && requestType != Vid.CATEGORY_GET_REQUEST) throw new PacketException(PacketError.METHOD);
                 
                 // If there was an internal problem like a database inconsistency, try to execute the request a second time.
                 for (int attempt = 0; true; attempt++) {
@@ -121,7 +121,7 @@ public final class Worker implements Runnable {
                         connection.commit();
                         break;
                     } catch (InvalidEncodingException exception) {
-                        throw new PacketException(PacketError.REQUEST, exception);
+                        throw new PacketException(PacketError.METHOD, exception);
                     } catch (PacketException exception) {
                         throw exception;
                     } catch (SQLException exception) { // TODO: Throw a different packet error.

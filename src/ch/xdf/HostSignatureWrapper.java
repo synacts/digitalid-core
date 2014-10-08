@@ -12,13 +12,11 @@ import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.external.InvalidSignatureException;
 import ch.virtualid.exceptions.packet.PacketException;
-import ch.virtualid.expression.Expression;
 import ch.virtualid.expression.PassiveExpression;
 import ch.virtualid.identity.Category;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.Identifier;
 import ch.virtualid.identity.Identity;
-import ch.virtualid.identity.Mapper;
 import ch.virtualid.identity.NonHostIdentifier;
 import ch.virtualid.identity.NonHostIdentity;
 import ch.virtualid.identity.SemanticType;
@@ -31,7 +29,6 @@ import ch.virtualid.util.ReadonlyArray;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.sql.SQLException;
-import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -269,44 +266,44 @@ public final class HostSignatureWrapper extends SignatureWrapper implements Immu
      * @require identifier != null : "The identifier is not null.";
      * @require value != null : "The value is not null.";
      */
-    @Deprecated
-    private static boolean isAuthorized(String identifier, Block value) throws Exception {
-        assert identifier != null : "The identifier is not null.";
-        assert value != null : "The value is not null.";
-        
-        long vid = Mapper.getVid(identifier);
-        long type = Mapper.getVid(new SelfcontainedWrapper(value).getIdentifier());
-        
-        if (vid == type) return true;
-        
-        // Load the certification delegations of the VID and recurse for each delegation that matches the type and the value.
-        long time = System.currentTimeMillis() + getCachingPeriod(Vid.INCOMING_DELEGATIONS) - getCachingPeriod(type);
-        Block attribute = getAttribute(vid, Vid.INCOMING_DELEGATIONS, time);
-        if (attribute == null) return false;
-        
-        List<Block> incoming_delegations = new ListWrapper(new SelfcontainedWrapper(new SignatureWrapper(attribute, false).getElement()).getElement()).getElements();
-        for (Block incoming_delegation : incoming_delegations) {
-            Block[] elements = new TupleWrapper(incoming_delegation).getElementsNotNull(3);
-            if (Mapper.getVid(new StringWrapper(elements[0]).getString()) == type) {
-                String restriction = new StringWrapper(elements[2]).getString();
-                Expression expression = Expression.parse(restriction);
-                if (expression.matches(value)) {
-                    // Check that the delegating VID references the current VID with the same type and expression.
-                    identifier = new StringWrapper(elements[1]).getString();
-                    attribute = getAttribute(Mapper.getVid(identifier), Vid.OUTGOING_DELEGATIONS, time);
-                    if (attribute == null) continue;
-                    List<Block> outgoing_delegations = new ListWrapper(new SelfcontainedWrapper(new SignatureWrapper(attribute, false).getElement()).getElement()).getElements();
-                    for (Block outgoing_delegation : outgoing_delegations) {
-                        elements = new TupleWrapper(outgoing_delegation).getElementsNotNull(3);
-                        if (Mapper.getVid(new StringWrapper(elements[0]).getString()) == type && Mapper.getVid(new StringWrapper(elements[1]).getString()) == vid && new StringWrapper(elements[2]).getString().equalsIgnoreCase(restriction)) {
-                            if (isAuthorized(identifier, value)) return true;
-                        }
-                    }
-                }
-            }
-        }
-        
-        return false;
-    }
+//    @Deprecated
+//    private static boolean isAuthorized(String identifier, Block value) throws Exception {
+//        assert identifier != null : "The identifier is not null.";
+//        assert value != null : "The value is not null.";
+//        
+//        long vid = Mapper.getVid(identifier);
+//        long type = Mapper.getVid(new SelfcontainedWrapper(value).getIdentifier());
+//        
+//        if (vid == type) return true;
+//        
+//        // Load the certification delegations of the VID and recurse for each delegation that matches the type and the value.
+//        long time = System.currentTimeMillis() + getCachingPeriod(Vid.INCOMING_DELEGATIONS) - getCachingPeriod(type);
+//        Block attribute = getAttribute(vid, Vid.INCOMING_DELEGATIONS, time);
+//        if (attribute == null) return false;
+//        
+//        List<Block> incoming_delegations = new ListWrapper(new SelfcontainedWrapper(new SignatureWrapper(attribute, false).getElement()).getElement()).getElements();
+//        for (Block incoming_delegation : incoming_delegations) {
+//            Block[] elements = new TupleWrapper(incoming_delegation).getElementsNotNull(3);
+//            if (Mapper.getVid(new StringWrapper(elements[0]).getString()) == type) {
+//                String restriction = new StringWrapper(elements[2]).getString();
+//                Expression expression = Expression.parse(restriction);
+//                if (expression.matches(value)) {
+//                    // Check that the delegating VID references the current VID with the same type and expression.
+//                    identifier = new StringWrapper(elements[1]).getString();
+//                    attribute = getAttribute(Mapper.getVid(identifier), Vid.OUTGOING_DELEGATIONS, time);
+//                    if (attribute == null) continue;
+//                    List<Block> outgoing_delegations = new ListWrapper(new SelfcontainedWrapper(new SignatureWrapper(attribute, false).getElement()).getElement()).getElements();
+//                    for (Block outgoing_delegation : outgoing_delegations) {
+//                        elements = new TupleWrapper(outgoing_delegation).getElementsNotNull(3);
+//                        if (Mapper.getVid(new StringWrapper(elements[0]).getString()) == type && Mapper.getVid(new StringWrapper(elements[1]).getString()) == vid && new StringWrapper(elements[2]).getString().equalsIgnoreCase(restriction)) {
+//                            if (isAuthorized(identifier, value)) return true;
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//        
+//        return false;
+//    }
     
 }

@@ -2,9 +2,9 @@ package ch.virtualid.agent;
 
 import ch.virtualid.annotations.Capturable;
 import ch.virtualid.annotations.Pure;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
-import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.util.ReadonlyMap;
 import javax.annotation.Nonnull;
 
@@ -42,6 +42,8 @@ public interface ReadonlyAgentPermissions extends ReadonlyMap<SemanticType, Bool
      * @param type the semantic type to check.
      * 
      * @return whether an agent with these agent permissions can read the given type.
+     * 
+     * @require type.isAttributeType() : "The type is an attribute type.";
      */
     @Pure
     public boolean canRead(@Nonnull SemanticType type);
@@ -50,6 +52,8 @@ public interface ReadonlyAgentPermissions extends ReadonlyMap<SemanticType, Bool
      * Checks that an agent with these agent permissions can read the given type and throws a {@link PacketException} if not.
      * 
      * @param type the semantic type to check.
+     * 
+     * @require type.isAttributeType() : "The type is an attribute type.";
      */
     @Pure
     public void checkCanRead(@Nonnull SemanticType type) throws PacketException;
@@ -60,6 +64,8 @@ public interface ReadonlyAgentPermissions extends ReadonlyMap<SemanticType, Bool
      * @param type the semantic type to check.
      * 
      * @return whether an agent with agent these permissions can write the given type.
+     * 
+     * @require type.isAttributeType() : "The type is an attribute type.";
      */
     @Pure
     public boolean canWrite(@Nonnull SemanticType type);
@@ -68,6 +74,8 @@ public interface ReadonlyAgentPermissions extends ReadonlyMap<SemanticType, Bool
      * Checks that an agent with these agent permissions can write the given type and throws a {@link PacketException} if not.
      * 
      * @param type the semantic type to check.
+     * 
+     * @require type.isAttributeType() : "The type is an attribute type.";
      */
     @Pure
     public void checkCanWrite(@Nonnull SemanticType type) throws PacketException;

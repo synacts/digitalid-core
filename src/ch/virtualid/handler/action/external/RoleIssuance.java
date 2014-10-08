@@ -145,7 +145,7 @@ public final class RoleIssuance extends CoreServiceExternalAction {
         try {
             certificate.verify();
         } catch (@Nonnull InvalidEncodingException | InvalidSignatureException exception) {
-            throw new PacketException(PacketError.REQUEST, exception);
+            throw new PacketException(PacketError.METHOD, exception);
         }
         
         // TODO: Check other things like whether the signer has the necessary delegation.

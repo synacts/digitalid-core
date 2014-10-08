@@ -2,8 +2,9 @@ package ch.xdf;
 
 import ch.virtualid.annotations.Exposed;
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.exceptions.external.InvalidDeclarationException;
-import ch.virtualid.exceptions.external.IdentityNotFoundException;
+import ch.virtualid.exceptions.external.ExternalException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identity.NonHostIdentifier;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.identity.SyntacticType;
@@ -11,7 +12,6 @@ import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.ReadonlyArray;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.xdf.exceptions.io.UnexpectedEndOfFileException;
 import ch.xdf.exceptions.io.UnsupportedBlockLengthException;
 import java.io.IOException;
@@ -93,7 +93,7 @@ public final class SelfcontainedWrapper extends BlockWrapper implements Immutabl
      * 
      * @require block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
      */
-    public SelfcontainedWrapper(@Nonnull Block block) throws InvalidEncodingException, IdentityNotFoundException, InvalidDeclarationException, SQLException {
+    public SelfcontainedWrapper(@Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(block);
         
         this.tuple = new Block(IMPLEMENTATION, block);
@@ -111,7 +111,7 @@ public final class SelfcontainedWrapper extends BlockWrapper implements Immutabl
      * 
      * @ensure getType().equals(SELFCONTAINED) : "The type of the new wrapper is selfcontained.";
      */
-    public SelfcontainedWrapper(@Nonnull InputStream inputStream, boolean close) throws IOException, InvalidEncodingException, IdentityNotFoundException, InvalidDeclarationException, SQLException {
+    public SelfcontainedWrapper(@Nonnull InputStream inputStream, boolean close) throws SQLException, IOException, PacketException, ExternalException {
         this(read(inputStream, close));
     }
     

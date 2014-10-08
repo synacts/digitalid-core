@@ -2,13 +2,12 @@ package ch.virtualid.contact;
 
 import ch.virtualid.annotations.Capturable;
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.exceptions.external.InvalidDeclarationException;
-import ch.virtualid.exceptions.external.IdentityNotFoundException;
+import ch.virtualid.exceptions.external.ExternalException;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.xdf.Block;
-import ch.xdf.ListWrapper;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
+import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 
@@ -23,7 +22,7 @@ public final class ContactPermissions extends AttributeSet implements ReadonlyCo
     /**
      * Stores the semantic type {@code permission.contact@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("permission.contact@virtualid.ch").load(ListWrapper.TYPE, SemanticType.ATTRIBUTE_IDENTIFIER);
+    public static final @Nonnull SemanticType TYPE = SemanticType.create("permission.contact@virtualid.ch").load(AttributeSet.TYPE);
     
     
     /**
@@ -60,7 +59,7 @@ public final class ContactPermissions extends AttributeSet implements ReadonlyCo
      * 
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
-    public ContactPermissions(@Nonnull Block block) throws InvalidEncodingException, IdentityNotFoundException, SQLException, InvalidDeclarationException {
+    public ContactPermissions(@Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(block);
     }
     

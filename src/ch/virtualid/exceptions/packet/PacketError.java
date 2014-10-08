@@ -19,13 +19,15 @@ public enum PacketError implements Blockable {
     EXTERNAL(1), // The error code for an external problem.
     PACKET(2), // The error code for an invalid packet.
     ENCRYPTION(3), // The error code for an invalid encryption.
-    SIGNATURE(4), // The error code for an invalid signature.
-    COMPRESSION(5), // The error code for an invalid compression.
-    REQUEST(6), // The error code for an invalid request type.
-    RESPONSE(7), // The error code for an invalid response type.
-    IDENTIFIER(8), // The error code for an invalid identifier as subject.
-    AUTHORIZATION(9), // The error code for an insufficient authorization.
-    KEYROTATION(10); // The error code for a required key rotation.
+    ELEMENTS(4), // The error code for invalid elements.
+    SIGNATURE(5), // The error code for an invalid signature.
+    COMPRESSION(6), // The error code for an invalid compression.
+    CONTENT(7), // The error code for an invalid content.
+    METHOD(8), // The error code for an invalid method type.
+    REPLY(9), // The error code for an invalid reply type.
+    IDENTIFIER(10), // The error code for an invalid identifier as subject.
+    AUTHORIZATION(11), // The error code for an insufficient authorization.
+    KEYROTATION(12); // The error code for a required key rotation.
     
     
     /**

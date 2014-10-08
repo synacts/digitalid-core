@@ -23,8 +23,6 @@ import ch.virtualid.entity.Account;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.Role;
 import ch.virtualid.exceptions.external.ExternalException;
-import ch.virtualid.exceptions.external.IdentityNotFoundException;
-import ch.virtualid.exceptions.external.InvalidDeclarationException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.external.InvalidSignatureException;
 import ch.virtualid.exceptions.packet.PacketError;
@@ -545,7 +543,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
      */
     @Pure
     public void checkIssuer(@Nonnull Person issuer) throws PacketException {
-        if (!isIdentityBased() || isRoleBased() || !issuer.equals(getIssuer())) throw new PacketException(PacketError.AUTHORIZATION);
+        if (!isIdentityBased() || isRoleBased() || !issuer.equals(getIssuer())) throw new PacketException(PacketError.AUTHORIZATION, "The credential was not issued by " + issuer.getAddress() + ".");
     }
     
     
@@ -556,13 +554,13 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
      * 
      * @return the attribute with the given type from the credentials and certificates or null if no such attribute can be found.
      * 
-     * @require type.isAttributeType() : "The given type is an attribute type.";
+     * @require type.isAttributeType() : "The type is an attribute type.";
      * 
      * @ensure return.getType().equals(type) : "The returned block has the given type.";
      */
     @Pure
-    public @Nullable Block getAttribute(@Nonnull SemanticType type) throws IdentityNotFoundException, InvalidEncodingException, InvalidDeclarationException, SQLException {
-        assert type.isAttributeType() : "The given type is an attribute type.";
+    public @Nullable Block getAttribute(@Nonnull SemanticType type) throws SQLException, IOException, PacketException, ExternalException {
+        assert type.isAttributeType() : "The type is an attribute type.";
         
         if (isAttributeBased()) {
             for (final @Nonnull Credential credential : credentials) {
@@ -588,9 +586,13 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
      * @param type the semantic type to check.
      * 
      * @return whether each credential allows to read the given type.
+     * 
+     * @require type.isAttributeType() : "The type is an attribute type.";
      */
     @Pure
     public boolean canRead(@Nonnull SemanticType type) {
+        assert type.isAttributeType() : "The type is an attribute type.";
+        
         for (final @Nonnull Credential credential : credentials) {
             final @Nullable ReadonlyAgentPermissions permissions = credential.getPermissions();
             if (permissions == null || !permissions.canRead(type)) return false;
@@ -602,10 +604,12 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
      * Checks whether each credential allows to read the given type and throws a {@link PacketException} if not.
      * 
      * @param type the semantic type to check.
+     * 
+     * @require type.isAttributeType() : "The type is an attribute type.";
      */
     @Pure
     public void checkRead(@Nonnull SemanticType type) throws PacketException {
-        if (!canRead(type)) throw new PacketException(PacketError.AUTHORIZATION);
+        if (!canRead(type)) throw new PacketException(PacketError.AUTHORIZATION, "Not all credentials can read " + type.getAddress() + ".");
     }
     
     /**
@@ -614,9 +618,13 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
      * @param type the semantic type to check.
      * 
      * @return whether each credential allows to write the given type.
+     * 
+     * @require type.isAttributeType() : "The type is an attribute type.";
      */
     @Pure
     public boolean canWrite(@Nonnull SemanticType type) {
+        assert type.isAttributeType() : "The type is an attribute type.";
+        
         for (final @Nonnull Credential credential : credentials) {
             final @Nullable ReadonlyAgentPermissions permissions = credential.getPermissions();
             if (permissions == null || !permissions.canWrite(type)) return false;
@@ -628,10 +636,12 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
      * Checks whether each credential allows to write the given type and throws a {@link PacketException} if not.
      * 
      * @param type the semantic type to check.
+     * 
+     * @require type.isAttributeType() : "The type is an attribute type.";
      */
     @Pure
     public void checkWrite(@Nonnull SemanticType type) throws PacketException {
-        if (!canWrite(type)) throw new PacketException(PacketError.AUTHORIZATION);
+        if (!canWrite(type)) throw new PacketException(PacketError.AUTHORIZATION, "Not all credentials can write " + type.getAddress() + ".");
     }
     
     /**
@@ -657,7 +667,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
      */
     @Pure
     public void checkCover(@Nonnull ReadonlyAgentPermissions permissions) throws PacketException {
-        if (!cover(permissions)) throw new PacketException(PacketError.AUTHORIZATION);
+        if (!cover(permissions)) throw new PacketException(PacketError.AUTHORIZATION, "Not all credentials cover " + permissions + ".");
     }
     
     
@@ -920,7 +930,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
     
     @Pure
     @Override
-    public @Nonnull OutgoingRole getAgentCheckedAndRestricted(@Nonnull Entity entity) throws PacketException, SQLException {
+    public @Nonnull OutgoingRole getAgentCheckedAndRestricted(@Nonnull Entity entity) throws SQLException, PacketException {
         final @Nonnull Credential credential = getCredentials().getNotNull(0);
         if (credential.isRoleBased()) {
             final @Nullable OutgoingRole outgoingRole = Agents.getOutgoingRole(entity, credential.getRoleNotNull(), true);
@@ -931,7 +941,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
                 return outgoingRole;
             }
         }
-        throw new PacketException(PacketError.AUTHORIZATION);
+        throw new PacketException(PacketError.AUTHORIZATION, "The credential does not belong to an authorized role.");
     }
     
 }

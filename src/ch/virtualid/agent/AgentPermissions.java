@@ -3,14 +3,15 @@ package ch.virtualid.agent;
 import ch.virtualid.annotations.Capturable;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
-import ch.virtualid.exceptions.external.InvalidDeclarationException;
-import ch.virtualid.identity.Category;
 import ch.virtualid.exceptions.external.IdentityNotFoundException;
+import ch.virtualid.exceptions.external.InvalidDeclarationException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.exceptions.packet.PacketError;
+import ch.virtualid.exceptions.packet.PacketException;
+import ch.virtualid.identity.Category;
 import ch.virtualid.identity.NonHostIdentifier;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
-import ch.virtualid.exceptions.packet.PacketError;
-import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.FreezableLinkedHashMap;
 import ch.virtualid.util.FreezableLinkedList;
@@ -21,7 +22,6 @@ import ch.xdf.Block;
 import ch.xdf.BooleanWrapper;
 import ch.xdf.ListWrapper;
 import ch.xdf.TupleWrapper;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -173,25 +173,29 @@ public final class AgentPermissions extends FreezableLinkedHashMap<SemanticType,
     @Pure
     @Override
     public boolean canRead(@Nonnull SemanticType type) {
+        assert type.isAttributeType() : "The type is an attribute type.";
+        
         return containsKey(type) || containsKey(GENERAL);
     }
     
     @Pure
     @Override
     public void checkCanRead(@Nonnull SemanticType type) throws PacketException {
-        if (!canRead(type)) throw new PacketException(PacketError.AUTHORIZATION);
+        if (!canRead(type)) throw new PacketException(PacketError.AUTHORIZATION, "These agent permissions cannot read " + type.getAddress() + ".");
     }
     
     @Pure
     @Override
     public boolean canWrite(@Nonnull SemanticType type) {
+        assert type.isAttributeType() : "The type is an attribute type.";
+        
         return containsKey(type) && get(type) || containsKey(GENERAL) && get(GENERAL);
     }
     
     @Pure
     @Override
     public void checkCanWrite(@Nonnull SemanticType type) throws PacketException {
-        if (!canWrite(type)) throw new PacketException(PacketError.AUTHORIZATION);
+        if (!canWrite(type)) throw new PacketException(PacketError.AUTHORIZATION, "These agent permissions cannot write " + type.getAddress() + ".");
     }
     
     @Pure
@@ -214,7 +218,7 @@ public final class AgentPermissions extends FreezableLinkedHashMap<SemanticType,
     @Pure
     @Override
     public void checkCover(@Nonnull ReadonlyAgentPermissions permissions) throws PacketException {
-        if (!cover(permissions)) throw new PacketException(PacketError.AUTHORIZATION);
+        if (!cover(permissions)) throw new PacketException(PacketError.AUTHORIZATION, "These agent permissions do not cover " + permissions + ".");
     }
     
     

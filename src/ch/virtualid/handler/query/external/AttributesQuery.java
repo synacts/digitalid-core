@@ -2,20 +2,21 @@ package ch.virtualid.handler.query.external;
 
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.annotations.Pure;
+import ch.virtualid.contact.ReadonlyAttributeSet;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.Role;
+import ch.virtualid.exceptions.external.IdentityNotFoundException;
 import ch.virtualid.exceptions.external.InvalidDeclarationException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Method;
 import ch.virtualid.handler.reply.query.AttributesReply;
-import ch.virtualid.exceptions.external.IdentityNotFoundException;
 import ch.virtualid.identity.HostIdentifier;
-import ch.virtualid.identity.Identity;
+import ch.virtualid.identity.Identifier;
 import ch.virtualid.identity.SemanticType;
-import ch.virtualid.exceptions.packet.PacketException;
 import ch.xdf.Block;
 import ch.xdf.ListWrapper;
 import ch.xdf.SignatureWrapper;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -42,16 +43,18 @@ public final class AttributesQuery extends CoreServiceExternalQuery {
     }
     
     
+    private @Nonnull ReadonlyAttributeSet attributes;
+    
     /**
      * Creates an external query to retrieve the given attributes from the given subject.
      * 
      * @param role the role to which this handler belongs.
      * @param subject the subject of this handler.
      */
-    public AttributesQuery(@Nullable Role role, @Nonnull Identity subject) {
-        super(role, subject.getAddress());
+    public AttributesQuery(@Nullable Role role, @Nonnull Identifier subject, @Nonnull ReadonlyAttributeSet attributes) {
+        super(role, subject);
         
-        // TODO: Include the list of attributes.
+        this.attributes = attributes;
     }
     
     /**

@@ -3,7 +3,6 @@ package ch.virtualid.packet;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.Identifier;
 import ch.xdf.SelfcontainedWrapper;
-import ch.virtualid.exceptions.external.FailedEncodingException;
 import java.util.List;
 import javax.annotation.Nonnull;
 

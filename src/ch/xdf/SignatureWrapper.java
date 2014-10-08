@@ -417,7 +417,7 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
     @Pure
     public final @Nonnull HostSignatureWrapper toHostSignatureWrapper() throws PacketException {
         if (this instanceof HostSignatureWrapper) return (HostSignatureWrapper) this;
-        throw new PacketException(PacketError.SIGNATURE);
+        throw new PacketException(PacketError.SIGNATURE, "The element was not signed by a host.");
     }
     
     /**
@@ -430,7 +430,7 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
     @Pure
     public final @Nonnull ClientSignatureWrapper toClientSignatureWrapper() throws PacketException {
         if (this instanceof ClientSignatureWrapper) return (ClientSignatureWrapper) this;
-        throw new PacketException(PacketError.SIGNATURE);
+        throw new PacketException(PacketError.SIGNATURE, "The element was not signed by a client.");
     }
     
     /**
@@ -443,7 +443,7 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
     @Pure
     public final @Nonnull CredentialsSignatureWrapper toCredentialsSignatureWrapper() throws PacketException {
         if (this instanceof CredentialsSignatureWrapper) return (CredentialsSignatureWrapper) this;
-        throw new PacketException(PacketError.SIGNATURE);
+        throw new PacketException(PacketError.SIGNATURE, "The element was not signed with credentials.");
     }
     
     
@@ -469,8 +469,8 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
      * @throws PacketException if no such agent is found or the check failed.
      */
     @Pure
-    public @Nonnull Agent getAgentCheckedAndRestricted(@Nonnull Entity entity) throws PacketException, SQLException {
-        throw new PacketException(PacketError.AUTHORIZATION);
+    public @Nonnull Agent getAgentCheckedAndRestricted(@Nonnull Entity entity) throws SQLException, PacketException {
+        throw new PacketException(PacketError.AUTHORIZATION, "The element was not signed by an authorized agent.");
     }
     
 }

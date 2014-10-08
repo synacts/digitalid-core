@@ -139,6 +139,14 @@ public abstract class Method extends Handler {
     
     
     /**
+     * Returns the class that handles the reply of this method or null if the method never gives a reply.
+     * 
+     * @return the class that handles the reply of this method or null if the method never gives a reply.
+     */
+    @Pure
+    public abstract @Nullable Class<? extends Reply> getReplyClass();
+    
+    /**
      * Executes this method on the host.
      * 
      * @return a reply for this method or null.
@@ -147,6 +155,8 @@ public abstract class Method extends Handler {
      * 
      * @require isOnHost() : "This method is called on a host.";
      * @require getSignature() != null : "The signature of this handler is not null.";
+     * 
+     * @ensure return == null || getReplyClass() != null && getReplyClass().isInstance(return) : "If a reply is returned, it is an instance of the indicated class.";
      */
     public abstract @Nullable Reply executeOnHost() throws PacketException, SQLException;
     
@@ -180,7 +190,7 @@ public abstract class Method extends Handler {
      * @return the reply to this method in case of queries or, potentially, external actions.
      */
     public @Nullable Reply send() throws SQLException, IOException, PacketException, ExternalException {
-        return Method.send(new FreezableArrayList<Method>(this).freeze()).get(0);
+        return (Reply) Method.send(new FreezableArrayList<Method>(this).freeze()).getHandler(0);
     }
     
     
@@ -276,7 +286,7 @@ public abstract class Method extends Handler {
                 return new CredentialsRequest(contents, recipient, subject, null, credentials, certificates, false, null).send();
             }
         } else {
-            if (entity == null) throw new PacketException(SENDER, "The entity may only be null in case of external queries.");
+            if (entity == null) throw new PacketException(INTERNAL, "The entity may only be null in case of external queries.");
             
             if (reference instanceof ExternalAction) {
                 if (entity instanceof Account) {
@@ -289,7 +299,7 @@ public abstract class Method extends Handler {
                 }
             } else {
                 assert reference instanceof InternalMethod;
-                if (!(entity instanceof Role)) throw new PacketException(SENDER, "The entity has to be a role in case of internal methods.");
+                if (!(entity instanceof Role)) throw new PacketException(INTERNAL, "The entity has to be a role in case of internal methods.");
                 final @Nonnull Role role = (Role) entity;
                 final @Nonnull Agent agent = role.getAgent();
                 
@@ -381,7 +391,7 @@ public abstract class Method extends Handler {
     @Pure
     public static @Nonnull Method get(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         final @Nullable Method.Factory factory = factories.get(block.getType());
-        if (factory == null) throw new PacketException(PacketError.REQUEST, "No method of the type " + block.getType() + " could be found.");
+        if (factory == null) throw new PacketException(PacketError.METHOD, "No method could be found for the type " + block.getType().getAddress() + ".");
         else return factory.create(entity, signature, recipient, block);
     }
     

@@ -3,8 +3,8 @@ package ch.virtualid.contact;
 import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.annotations.Capturable;
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.exceptions.external.InvalidDeclarationException;
-import ch.virtualid.exceptions.external.IdentityNotFoundException;
+import ch.virtualid.exceptions.external.ExternalException;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identity.NonHostIdentifier;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
@@ -14,7 +14,7 @@ import ch.virtualid.util.FreezableList;
 import ch.virtualid.util.ReadonlyList;
 import ch.xdf.Block;
 import ch.xdf.ListWrapper;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
+import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 
@@ -27,12 +27,18 @@ import javax.annotation.Nonnull;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public abstract class AttributeSet extends FreezableLinkedHashSet<SemanticType> implements ReadonlyAttributeSet, Blockable {
+public class AttributeSet extends FreezableLinkedHashSet<SemanticType> implements ReadonlyAttributeSet, Blockable {
+    
+    /**
+     * Stores the semantic type {@code list.attribute.type@virtualid.ch}.
+     */
+    public static final @Nonnull SemanticType TYPE = SemanticType.create("list.attribute.type@virtualid.ch").load(ListWrapper.TYPE, SemanticType.ATTRIBUTE_IDENTIFIER);
+    
     
     /**
      * Creates an empty set of attribute types.
      */
-    protected AttributeSet() {}
+    public AttributeSet() {}
     
     /**
      * Creates a new attribute set with the given attribute type.
@@ -43,7 +49,7 @@ public abstract class AttributeSet extends FreezableLinkedHashSet<SemanticType> 
      * 
      * @ensure areSingle() : "The new attribute set contains a single element.";
      */
-    protected AttributeSet(@Nonnull SemanticType type) {
+    public AttributeSet(@Nonnull SemanticType type) {
         assert type.isAttributeType() : "The type is an attribute type.";
         
         add(type);
@@ -54,7 +60,7 @@ public abstract class AttributeSet extends FreezableLinkedHashSet<SemanticType> 
      * 
      * @param attributeSet the attribute set to add to the new attribute set.
      */
-    protected AttributeSet(@Nonnull ReadonlyAttributeSet attributeSet) {
+    public AttributeSet(@Nonnull ReadonlyAttributeSet attributeSet) {
         addAll(attributeSet);
     }
     
@@ -65,7 +71,7 @@ public abstract class AttributeSet extends FreezableLinkedHashSet<SemanticType> 
      * 
      * @require block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
      */
-    protected AttributeSet(@Nonnull Block block) throws InvalidEncodingException, IdentityNotFoundException, SQLException, InvalidDeclarationException {
+    public AttributeSet(@Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         assert block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
         
         final @Nonnull ReadonlyList<Block> elements = new ListWrapper(block).getElementsNotNull();
@@ -77,11 +83,13 @@ public abstract class AttributeSet extends FreezableLinkedHashSet<SemanticType> 
     }
     
     /**
-     * @ensure return.isBasedOn(ListWrapper.TYPE) : "The returned type is based on the list type.";
+     * @ensure return.isBasedOn(TYPE) : "The returned type is based on the indicated type.";
      */
     @Pure
     @Override
-    public abstract @Nonnull SemanticType getType();
+    public @Nonnull SemanticType getType() {
+        return TYPE;
+    }
     
     @Pure
     @Override
@@ -134,14 +142,16 @@ public abstract class AttributeSet extends FreezableLinkedHashSet<SemanticType> 
     
     @Pure
     @Override
-    public abstract @Capturable @Nonnull AttributeSet clone();
+    public @Capturable @Nonnull AttributeSet clone() {
+        return new AttributeSet(this);
+    }
     
     
     @Pure
     @Override
     public final @Capturable @Nonnull AgentPermissions toAgentPermissions() {
         final @Nonnull AgentPermissions permissions = new AgentPermissions();
-        for (@Nonnull SemanticType type : this) {
+        for (final @Nonnull SemanticType type : this) {
             permissions.put(type, false);
         }
         return permissions;

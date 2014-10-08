@@ -184,7 +184,7 @@ public final class PushFailed extends ExternalAction {
     
     @Override
     public @Nullable ActionReply executeOnHost() throws PacketException {
-        throw new PacketException(PacketError.REQUEST);
+        throw new PacketException(PacketError.METHOD);
     }
     
     @Override

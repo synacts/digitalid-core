@@ -140,7 +140,7 @@ public final class CertificateIssuance extends CoreServiceExternalAction {
         try {
             certificate.verifyAsCertificate();
         } catch (@Nonnull IOException | PacketException | ExternalException exception) { // TODO: What to do with the packet exception?
-            throw new PacketException(PacketError.REQUEST, "", exception);
+            throw new PacketException(PacketError.METHOD, "", exception);
         }
         
         // TODO: Check other things like whether the signer is the one in the certificate.
