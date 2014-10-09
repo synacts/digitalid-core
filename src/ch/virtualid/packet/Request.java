@@ -12,7 +12,6 @@ import ch.virtualid.exceptions.external.IdentityNotFoundException;
 import ch.virtualid.exceptions.external.InvalidDeclarationException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.external.InvalidSignatureException;
-import ch.virtualid.exceptions.packet.PacketError;
 import static ch.virtualid.exceptions.packet.PacketError.KEYROTATION;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Method;
@@ -96,7 +95,7 @@ public class Request extends Packet {
     }
     
     /**
-     * Packs the given content with the given arguments for encrypting and signing.
+     * Packs the given methods with the given arguments for encrypting and signing.
      * 
      * @param methods a list of methods whose blocks are to be packed as a request.
      * @param recipient the identifier of the host for which the content is to be encrypted.
@@ -127,7 +126,7 @@ public class Request extends Packet {
     public Request(@Nonnull InputStream inputStream) throws SQLException, IOException, PacketException, ExternalException {
         super(inputStream, null, true);
         
-        if (getEncryption().getRecipient() == null) throw new PacketException(PacketError.ENCRYPTION, "The recipient of a request may not be null.");
+        assert getEncryption().getRecipient() != null : "The recipient of the request is not null.";
     }
     
     
@@ -187,6 +186,19 @@ public class Request extends Packet {
     
     
     /**
+     * Returns the recipient of this request.
+     * 
+     * @return the recipient of this request.
+     */
+    @Pure
+    public final @Nonnull HostIdentifier getRecipient() {
+        final @Nullable HostIdentifier recipient = getEncryption().getRecipient();
+        assert recipient != null : "See the class invariant.";
+        return recipient;
+    }
+    
+    
+    /**
      * Sends this request and returns the response with verifying the signature.
      * 
      * @return the response to this request.
@@ -198,24 +210,23 @@ public class Request extends Packet {
     /**
      * Sends this request and returns the response, optionally verifying the signature.
      * 
-     * @param verification determines whether the signature of the response is verified.
+     * @param verified determines whether the signature of the response is verified (if not, it needs to be checked by the caller).
      * 
      * @return the response to this request.
      * 
      * @throws FailedRequestException if the request could not be sent or the response could not be decoded.
      * @throws PacketException if the sending and the receiving of the packet went smooth but the recipient responded with a packet error.
      * 
-     * @ensure response.getSize() == getSize() : "The response has the same number of signed contents (otherwise a {@link FailedRequestException} is thrown).";
+     * @ensure response.getSize() == getSize() : "The response has the same number of signed contents (otherwise a {@link PacketException} is thrown).";
      */
-    public @Nonnull Response send(boolean verification) throws SQLException, IOException, PacketException, ExternalException {
-        @Nullable HostIdentifier recipient = getEncryption().getRecipient();
-        assert recipient != null : "The recipient of the request is never null (see class invariant).";
+    public @Nonnull Response send(boolean verified) throws SQLException, IOException, PacketException, ExternalException {
+        final @Nonnull HostIdentifier recipient = getRecipient();
         
         // Send the request and retrieve the response.
         @Nonnull Response response;
-        try (Socket socket = new Socket(recipient.getString(), Server.PORT)) {
+        try (Socket socket = new Socket("vid." + recipient.getString(), Server.PORT)) {
             write(socket.getOutputStream());
-            response = new Response(new SelfcontainedWrapper(socket.getInputStream(), false), getEncryption().getSymmetricKey(), verification);
+            response = new Response(new SelfcontainedWrapper(socket.getInputStream(), false), getEncryption().getSymmetricKey(), verified);
         }
         
         try {
@@ -275,17 +286,17 @@ public class Request extends Packet {
                 // Resend the request to the subject's successor or with the rotated key.
                 @Nonnull SignatureWrapper signature = getSignature(getSize() - 1);
                 if (signature instanceof HostSignatureWrapper) {
-                    return new HostRequest(getContents(), recipient, subject, (HostIdentifier) ((HostSignatureWrapper) signature).getSigner()).send(verification);
+                    return new HostRequest(getContents(), recipient, subject, (HostIdentifier) ((HostSignatureWrapper) signature).getSigner()).send(verified);
                 } else if (signature instanceof ClientSignatureWrapper) {
                     if (!subject.equals(requestSubject)) {
                         // TODO: Recommit to the (potentially) new host with the same client secret.
                     }
-                    return new ClientRequest(getContents(), subject, signature.getAudit(), ((ClientSignatureWrapper) signature).getCommitment()).send(verification);
+                    return new ClientRequest(getContents(), subject, signature.getAudit(), ((ClientSignatureWrapper) signature).getCommitment()).send(verified);
                 } else if (signature instanceof CredentialsSignatureWrapper) {
                     @Nonnull CredentialsSignatureWrapper credentialsSignature = (CredentialsSignatureWrapper) signature;
-                    return new CredentialsRequest(getContents(), recipient, subject, signature.getAudit(), credentialsSignature.getCredentials(), credentialsSignature.getCertificates(), credentialsSignature.isLodged(), credentialsSignature.getValue()).send(verification);
+                    return new CredentialsRequest(getContents(), recipient, subject, signature.getAudit(), credentialsSignature.getCredentials(), credentialsSignature.getCertificates(), credentialsSignature.isLodged(), credentialsSignature.getValue()).send(verified);
                 } else {
-                    return new Request(getContents(), recipient, subject).send(verification);
+                    return new Request(getContents(), recipient, subject).send(verified);
                 }
             }
             

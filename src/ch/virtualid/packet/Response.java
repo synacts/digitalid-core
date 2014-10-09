@@ -6,7 +6,6 @@ import ch.virtualid.cryptography.SymmetricKey;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Reply;
-import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.Identifier;
 import ch.virtualid.util.FreezableArrayList;
 import ch.virtualid.util.FreezableList;
@@ -24,7 +23,7 @@ import org.javatuples.Pair;
  * @invariant getSize() == replies.size() && getSize() == exceptions.size() : "The number of elements equals the number of replies and the number of exceptions.";
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 1.8
+ * @version 2.0
  */
 public final class Response extends Packet {
     
@@ -45,42 +44,35 @@ public final class Response extends Packet {
     private @Nonnull FreezableList<PacketException> exceptions;
     
     /**
-     * Stores the request that caused this response.
-     */
-    private final @Nonnull Request request;
-    
-    /**
      * Packs the given packet exception as a response without signing.
      * 
      * @param exception the packet exception that is to be packed as an unsigned response.
      * @param symmetricKey the symmetric key used for encryption or null if the response is not encrypted.
      * 
-     * @ensure getSize() == 1 : "The size of this packet is one.";
+     * @ensure getSize() == 1 : "The size of this response is one.";
      */
     public Response(@Nonnull PacketException exception, @Nullable SymmetricKey symmetricKey) throws SQLException, IOException, PacketException, ExternalException {
-        this(new FreezableArrayList<Reply>(1).freeze(), new FreezableArrayList<PacketException>(exception).freeze(), null, symmetricKey, null, null, null, null, null, null, false, null);
+        super(new Pair<FreezableList<Reply>, FreezableList<PacketException>>((FreezableList<Reply>) new FreezableArrayList<Reply>(1).freeze(), (FreezableList<PacketException>) new FreezableArrayList<PacketException>(exception).freeze()), 1, null, symmetricKey, null, null, null, null, null, null, false, null);
     }
     
     /**
-     * Packs the given contents with the given arguments as a response signed by the given host.
+     * Packs the given replies and exceptions with the given arguments as a response to the given request.
      * 
-     * @param replies a list of selfcontained wrappers whose blocks are to be packed as a response.
-     * @param exceptions 
-     * @param symmetricKey the symmetric key used for encryption or null if the response is not encrypted.
+     * @param request the corresponding request.
+     * @param replies the replies to the methods of the corresponding request.
+     * @param exceptions the exceptions to the methods of the corresponding request.
      * @param subject the identifier of the identity about which a statement is made.
      * @param audit the audit since the last audit or null if no audit is appended.
-     * @param signer the identifier of the signing host.
      * 
      * @require replies.isFrozen() : "The list of replies is frozen.";
      * @require replies.isNotEmpty() : "The list of replies is not empty.";
      * @require exceptions.isFrozen() : "The list of exceptions is frozen.";
      * @require replies.size() == exceptions.size() : "The number of replies and exceptions are the same.";
-     * @require Server.hasHost(signer.getHostIdentifier()) : "The host of the signer is running on this server.";
      * 
-     * @ensure getSize() == handlers.size() : "The size of this packet equals the size of the handlers.";
+     * @ensure getSize() == request.getSize() : "The size of this response equals the size of the request.";
      */
-    public Response(@Nonnull FreezableList<Reply> replies, @Nonnull FreezableList<PacketException> exceptions, @Nullable SymmetricKey symmetricKey, @Nonnull Identifier subject, @Nullable Audit audit, @Nonnull HostIdentifier signer) throws SQLException, IOException, PacketException, ExternalException {
-        super(new Pair<FreezableList<Reply>, FreezableList<PacketException>>(replies, exceptions), replies.size(), null, symmetricKey, subject, audit, signer, null, null, null, false, null);
+    public Response(@Nonnull Request request, @Nonnull FreezableList<Reply> replies, @Nonnull FreezableList<PacketException> exceptions, @Nonnull Identifier subject, @Nullable Audit audit) throws SQLException, IOException, PacketException, ExternalException {
+        super(new Pair<FreezableList<Reply>, FreezableList<PacketException>>(replies, exceptions), replies.size(), null, request.getEncryption().getSymmetricKey(), subject, audit, request.getRecipient(), null, null, null, false, null);
         
         assert replies.isFrozen() : "The list of replies is frozen.";
         assert replies.isNotEmpty() : "The list of replies is not empty.";
@@ -92,14 +84,14 @@ public final class Response extends Packet {
     /**
      * Reads and unpacks the response from the given input stream.
      * 
-     * @param inputStream the input stream to read the response from.
      * @param request the corresponding request.
-     * @param verification determines whether the signature is verified (if not, it needs to be checked explicitly).
+     * @param inputStream the input stream to read the response from.
+     * @param verified determines whether the signature is verified (if not, it needs to be checked by the caller).
+     * 
+     * @ensure getSize() == request.getSize() : "The size of this response equals the size of the given request.";
      */
-    public Response(@Nonnull InputStream inputStream, @Nonnull Request request, boolean verification) throws SQLException, IOException, PacketException, ExternalException {
-        super(inputStream, request, verification);
-        
-        this.request = request;
+    public Response(@Nonnull Request request, @Nonnull InputStream inputStream, boolean verified) throws SQLException, IOException, PacketException, ExternalException {
+        super(inputStream, request, verified);
     }
     
     

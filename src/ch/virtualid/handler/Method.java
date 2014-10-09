@@ -30,7 +30,6 @@ import ch.virtualid.packet.Audit;
 import ch.virtualid.packet.ClientRequest;
 import ch.virtualid.packet.CredentialsRequest;
 import ch.virtualid.packet.HostRequest;
-import ch.virtualid.packet.Packet;
 import ch.virtualid.packet.Request;
 import ch.virtualid.packet.Response;
 import ch.virtualid.util.FreezableArrayList;

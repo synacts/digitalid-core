@@ -13,7 +13,6 @@ import static ch.virtualid.io.Level.ERROR;
 import static ch.virtualid.io.Level.INFORMATION;
 import static ch.virtualid.io.Level.WARNING;
 import ch.virtualid.io.Logger;
-import ch.virtualid.packet.Packet;
 import ch.xdf.Block;
 import ch.xdf.Int8Wrapper;
 import ch.xdf.SelfcontainedWrapper;
@@ -28,7 +27,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * The worker class is responsible for handling incoming requests asynchronously.
+ * The worker is responsible for handling incoming requests asynchronously.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 0.6

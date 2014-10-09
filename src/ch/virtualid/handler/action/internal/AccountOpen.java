@@ -15,7 +15,6 @@ import ch.virtualid.identity.NonHostIdentifier;
 import ch.virtualid.identity.NonHostIdentity;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.packet.Audit;
-import ch.virtualid.packet.Packet;
 import ch.xdf.Block;
 import ch.xdf.Int8Wrapper;
 import ch.xdf.SelfcontainedWrapper;
@@ -35,6 +34,12 @@ import org.javatuples.Pair;
  * @version 0.0
  */
 public final class AccountOpen extends Action {
+    
+    /**
+     * Stores the semantic type {@code open.account@virtualid.ch}.
+     */
+    public static final @Nonnull SemanticType TYPE = SemanticType.create("open.account@virtualid.ch").load(todo);
+    
     
     public AccountOpen() {
         

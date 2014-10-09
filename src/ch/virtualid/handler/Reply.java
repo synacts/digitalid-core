@@ -6,6 +6,7 @@ import ch.virtualid.database.Database;
 import ch.virtualid.entity.Account;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.errors.InitializationError;
+import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.IdentityNotFoundException;
 import ch.virtualid.exceptions.external.InvalidDeclarationException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
@@ -19,6 +20,7 @@ import ch.xdf.CompressionWrapper;
 import ch.xdf.HostSignatureWrapper;
 import ch.xdf.SelfcontainedWrapper;
 import ch.xdf.SignatureWrapper;
+import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -113,7 +115,7 @@ public abstract class Reply extends Handler implements SQLizable {
          * @ensure return.getSignature() != null : "The signature of the returned reply is not null.";
          */
         @Pure
-        protected abstract Reply create(@Nullable Entity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws InvalidEncodingException, SQLException, IdentityNotFoundException, InvalidDeclarationException;
+        protected abstract Reply create(@Nullable Entity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException;
         
     }
     
@@ -147,7 +149,7 @@ public abstract class Reply extends Handler implements SQLizable {
      * @ensure return.getSignature() != null : "The signature of the returned reply is not null.";
      */
     @Pure
-    private static @Nonnull Reply get(@Nullable Entity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws PacketException, InvalidEncodingException, SQLException, IdentityNotFoundException, InvalidDeclarationException {
+    private static @Nonnull Reply get(@Nullable Entity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         final @Nullable Reply.Factory factory = factories.get(block.getType());
         if (factory == null) throw new PacketException(PacketError.REPLY, "No reply could be found for the type " + block.getType().getAddress() + ".", null, true);
         else return factory.create(entity, signature, number, block);
@@ -167,7 +169,7 @@ public abstract class Reply extends Handler implements SQLizable {
      * @ensure return.getSignature() != null : "The signature of the returned reply is not null.";
      */
     @Pure
-    public static @Nonnull Reply get(@Nullable Entity entity, @Nonnull HostSignatureWrapper signature, @Nonnull Block block) throws PacketException, InvalidEncodingException, SQLException, IdentityNotFoundException, InvalidDeclarationException {
+    public static @Nonnull Reply get(@Nullable Entity entity, @Nonnull HostSignatureWrapper signature, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         return get(entity, signature, store(signature), block);
     }
     
