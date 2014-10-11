@@ -168,6 +168,12 @@ public final class MySQLConfiguration extends Configuration implements Immutable
     
     @Pure
     @Override
+    public @Nonnull String HASH() {
+        return "BINARY(33)";
+    }
+    
+    @Pure
+    @Override
     public @Nonnull String REPLACE() {
         return "REPLACE";
     }

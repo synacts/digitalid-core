@@ -98,7 +98,7 @@ public final class PasswordValueReplace extends CoreServiceInternalAction {
      * @param recipient the recipient of this method.
      * @param block the content which is to be decoded.
      * 
-     * @require signature.getSubject() != null : "The subject of the signature is not null.";
+     * @require signature.hasSubject() : "The signature has a subject.";
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      * 
      * @ensure getSignature() != null : "The signature of this handler is not null.";

@@ -27,7 +27,8 @@ public enum PacketError implements Blockable {
     REPLY(9), // The error code for an invalid reply type.
     IDENTIFIER(10), // The error code for an invalid identifier as subject.
     AUTHORIZATION(11), // The error code for an insufficient authorization.
-    KEYROTATION(12); // The error code for a required key rotation.
+    KEYROTATION(12), // The error code for a required key rotation.
+    REPLAY(13); // The error code for a replayed packet.
     
     
     /**

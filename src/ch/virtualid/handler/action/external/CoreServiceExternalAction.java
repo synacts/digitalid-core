@@ -43,7 +43,7 @@ public abstract class CoreServiceExternalAction extends ExternalAction {
      * @param signature the signature of this handler (or a dummy that just contains a subject).
      * @param recipient the recipient of this method.
      * 
-     * @require signature.getSubject() != null : "The subject of the signature is not null.";
+     * @require signature.hasSubject() : "The signature has a subject.";
      * 
      * @ensure getSignature() != null : "The signature of this handler is not null.";
      */

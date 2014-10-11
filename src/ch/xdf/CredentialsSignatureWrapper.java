@@ -23,6 +23,7 @@ import ch.virtualid.entity.Account;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.Role;
 import ch.virtualid.exceptions.external.ExternalException;
+import ch.virtualid.exceptions.external.InactiveSignatureException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.external.InvalidSignatureException;
 import ch.virtualid.exceptions.packet.PacketError;
@@ -269,7 +270,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
      */
     @SuppressWarnings("AssignmentToMethodParameter")
     CredentialsSignatureWrapper(final @Nonnull Block block, final @Nonnull Block credentialsSignature, @Nullable Entity entity) throws SQLException, IOException, PacketException, ExternalException {
-        super(block, true);
+        super(block);
         
         assert credentialsSignature.getType().isBasedOn(SIGNATURE) : "The signature is based on the implementation type.";
         
@@ -386,7 +387,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
      * - {@code credential.isIdentityBased} - the only credential is identity-based.<br>
      * - {@code (forall certificate : certificates) != null} - none of the certificates is null.<br>
      * - {@code (forall certificate : certificates).isCertificate()} - each certificate is indeed a certificate.<br>
-     * - {@code credential.getIssuer().equals((forall certificate : certificates).getSubject())} - the subject of each certificate matches the issuer of the credential.
+     * - {@code credential.getIssuer().equals((forall certificate : certificates).getSubjectNotNull())} - the subject of each certificate matches the issuer of the credential.
      * 
      * @param certificates the certificates that are appended to the signature.
      * @param credentials the credentials with which the element is signed.
@@ -404,7 +405,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
             if (credential.isAttributeBased()) return false;
             final @Nonnull Identifier issuer = credential.getIssuer().getAddress();
             for (final @Nullable HostSignatureWrapper certificate : certificates) {
-                if (certificate == null || !issuer.equals(certificate.getSubject()) || !certificate.isCertificate()) return false;
+                if (certificate == null || !issuer.equals(certificate.getSubjectNotNull()) || !certificate.isCertificate()) return false;
             }
         }
         return true;
@@ -468,6 +469,16 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
             if (!this.credentials.getNotNull(i).isSimilarTo(other.credentials.getNotNull(i))) return false;
         }
         return Objects.equals(this.certificates, other.certificates) && this.lodged == other.lodged && Objects.equals(this.value, other.value);
+    }
+    
+    @Pure
+    @Override
+    public void checkRecency() throws InactiveSignatureException {
+        super.checkRecency();
+        final @Nonnull Time time = Time.HOUR.ago();
+        for (final @Nonnull Credential credential : credentials) {
+            if (credential.getIssuance().isLessThan(time)) throw new InactiveSignatureException("One of the credentials is older than an hour.");
+        }
     }
     
     
@@ -694,7 +705,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
     @Pure
     @Override
     public void verify() throws SQLException, IOException, PacketException, ExternalException {
-        if (new Time().subtract(getTimeNotNull()).isGreaterThan(Time.TROPICAL_YEAR)) throw new InvalidSignatureException("The credentials signature is out of date.");
+        if (getTimeNotNull().isLessThan(Time.TROPICAL_YEAR.ago())) throw new InvalidSignatureException("The credentials signature is out of date.");
         
         final @Nonnull TupleWrapper tuple = new TupleWrapper(getCache());
         final @Nonnull BigInteger hash = tuple.getElementNotNull(0).getHash();
@@ -797,7 +808,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
         
         final @Nonnull SecureRandom random = new SecureRandom();
         final @Nonnull Exponent ru = new Exponent(new BigInteger(Parameters.RANDOM_EXPONENT, random));
-        final @Nullable Exponent rv = mainCredential.getRestrictions() != null && (mainCredential.getIssuer().getAddress().equals(getSubject()) || mainCredential.isRoleBased()) ? null : new Exponent(new BigInteger(Parameters.RANDOM_EXPONENT, random));
+        final @Nullable Exponent rv = mainCredential.getRestrictions() != null && (mainCredential.getIssuer().getAddress().equals(getSubjectNotNull()) || mainCredential.isRoleBased()) ? null : new Exponent(new BigInteger(Parameters.RANDOM_EXPONENT, random));
         
         final int size = credentials.size();
         final @Nonnull ClientCredential[] randomizedCredentials = new ClientCredential[size];

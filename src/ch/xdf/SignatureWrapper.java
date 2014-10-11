@@ -6,6 +6,7 @@ import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.exceptions.external.ExternalException;
+import ch.virtualid.exceptions.external.InactiveSignatureException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
@@ -31,7 +32,7 @@ import javax.annotation.Nullable;
  * <p>
  * Format: {@code block = ((identifier, time, element, audit), hostSignature, clientSignature, credentialsSignature)}
  * 
- * @invariant !isSigned() || getSubject() != null : "If the signature is signed, the subject is not null.";
+ * @invariant !isSigned() || hasSubject() : "If this signature is signed, it has a subject.";
  * 
  * @see HostSignatureWrapper
  * @see ClientSignatureWrapper
@@ -69,7 +70,7 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
     private final @Nullable Identifier subject;
     
     /**
-     * Stores the time of the signature generation or null if the element is not signed.
+     * Stores the time of the signature generation or null if this signature has no subject.
      * 
      * @invariant time == null || time.isPositive() : "The time is either null or positive.";
      */
@@ -117,9 +118,11 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
     public SignatureWrapper(@Nonnull SemanticType type, @Nullable Block element, @Nullable Identifier subject) {
         super(type);
         
+        assert element == null || element.getType().isBasedOn(type.getParameters().getNotNull(0)) : "The element is either null or based on the parameter of the given type.";
+        
         this.element = element;
         this.subject = subject;
-        this.time = null;
+        this.time = subject == null ? null : new Time();
         this.audit = null;
     }
     
@@ -176,33 +179,42 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
         if (hostSignature != null && clientSignature == null && credentialsSignature == null) return new HostSignatureWrapper(block, hostSignature);
         if (hostSignature == null && clientSignature != null && credentialsSignature == null) return new ClientSignatureWrapper(block, clientSignature);
         if (hostSignature == null && clientSignature == null && credentialsSignature != null) return new CredentialsSignatureWrapper(block, credentialsSignature, entity);
-        if (hostSignature == null && clientSignature == null && credentialsSignature == null) return new SignatureWrapper(block, false);
+        if (hostSignature == null && clientSignature == null && credentialsSignature == null) return new SignatureWrapper(block);
         throw new InvalidEncodingException("The element may only be signed by either a host, a client, with credentials or not at all.");
     }
     
     /**
-     * Wraps and decodes the given block. (Only to be called by subclasses!)
+     * Wraps and decodes the given block.
      * 
      * @param block the block to be wrapped and decoded.
-     * @param signed whether the block was signed.
      * 
      * @require block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
      */
-    protected SignatureWrapper(@Nonnull Block block, boolean signed) throws InvalidEncodingException {
+    SignatureWrapper(@Nonnull Block block) throws InvalidEncodingException {
         super(block);
         
         this.cache = new Block(IMPLEMENTATION, block);
         final @Nonnull Block content = new TupleWrapper(cache).getElementNotNull(0);
         final @Nonnull TupleWrapper tuple = new TupleWrapper(content);
         this.subject = tuple.isElementNull(0) ? null : new NonHostIdentifier(tuple.getElementNotNull(0));
-        if (signed && subject == null) throw new InvalidEncodingException("The subject may not be null if the element is signed.");
+        if (isSigned() && subject == null) throw new InvalidEncodingException("The subject may not be null if the element is signed.");
         this.time = tuple.isElementNull(1) ? null : new Time(tuple.getElementNotNull(1));
-        if (signed && time == null) throw new InvalidEncodingException("The signature time may not be null if the element is signed.");
+        if (hasSubject() && time == null) throw new InvalidEncodingException("The signature time may not be null if this signature has a subject.");
         if (time != null && !time.isPositive()) throw new InvalidEncodingException("The signature time has to be positive.");
         this.element = tuple.getElementNotNull(2);
         this.audit = tuple.isElementNull(3) ? null : new Audit(tuple.getElementNotNull(3));
     }
     
+    
+    /**
+     * Returns whether the element is signed.
+     * 
+     * @return whether the element is signed.
+     */
+    @Pure
+    public final boolean isSigned() {
+        return this instanceof HostSignatureWrapper || this instanceof ClientSignatureWrapper || this instanceof CredentialsSignatureWrapper;
+    }
     
     /**
      * Returns the element of the wrapped block.
@@ -230,11 +242,11 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
     }
     
     /**
-     * Returns the identifier of the identity about which a statement is made or null in case of unsigned attributes.
+     * Returns the identifier of the identity about which a statement is made or possibly null in case of unsigned attributes.
      * 
-     * @return the identifier of the identity about which a statement is made or null in case of unsigned attributes.
+     * @return the identifier of the identity about which a statement is made or possibly null in case of unsigned attributes.
      * 
-     * @ensure !isSigned() || getSubject() != null : "If this signature is signed, the subject is not null.";
+     * @ensure !isSigned() || return != null : "If this signature is signed, the return is not null.";
      */
     @Pure
     public final @Nullable Identifier getSubject() {
@@ -242,24 +254,33 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
     }
     
     /**
+     * Returns whether this signature has a subject.
+     * 
+     * @return whether this signature has a subject.
+     */
+    @Pure
+    public final boolean hasSubject() {
+        return subject != null;
+    }
+    
+    /**
      * Returns the identifier of the identity about which a statement is made.
      * 
      * @return the identifier of the identity about which a statement is made.
      * 
-     * @require isSigned() : "This signature is signed.";
+     * @require hasSubject() : "This signature has a subject.";
      */
     @Pure
     public final @Nonnull Identifier getSubjectNotNull() {
-        assert isSigned() : "This signature is signed.";
+        assert subject != null : "This signature has a subject.";
         
-        assert subject != null : "This then follows from the class invariant.";
         return subject;
     }
     
     /**
-     * Returns the time of the signature generation or null if the element is not signed.
+     * Returns the time of the signature generation or null if this signature has no subject.
      * 
-     * @return the time of the signature generation or null if the element is not signed.
+     * @return the time of the signature generation or null if this signature has no subject.
      * 
      * @ensure time == null || time.isPositive() : "The time is either null or positive.";
      */
@@ -273,44 +294,28 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
      * 
      * @return the time of the signature generation.
      * 
-     * @require isSigned() : "This signature is signed.";
+     * @require hasSubject(): "This signature has a subject.";
      * 
      * @ensure time.isPositive() : "The time is positive.";
      */
     @Pure
     public final @Nonnull Time getTimeNotNull() {
-        assert isSigned() : "This signature is signed.";
+        assert hasSubject(): "This signature has a subject.";
         
-        assert time != null : "This then follows from the method implementation.";
+        assert time != null : "This then follows from the constructor implementations.";
         return time;
     }
     
     /**
-     * Returns the time of the signature generation rounded down to the last half hour.
+     * Returns the audit or null if no audit is or shall be appended.
      * 
-     * @return the time of the signature generation rounded down to the last half hour.
-     * 
-     * @require isSigned() : "This signature is signed.";
-     * 
-     * @ensure return.isPositive() && return.isMultipleOf(Time.HALF_HOUR) : "The returned time is positive and a multiple of half an hour.";
+     * @return the audit or null if no audit is or shall be appended.
      */
     @Pure
-    public final @Nonnull Time getSignatureTimeRoundedDown() {
-        assert isSigned() : "This signature is signed.";
-        
-        assert time != null : "This then follows from the method implementation.";
-        return time.roundDown(Time.HALF_HOUR);
+    public final @Nullable Audit getAudit() {
+        return audit;
     }
     
-    /**
-     * Returns whether the element is signed.
-     * 
-     * @return whether the element is signed.
-     */
-    @Pure
-    public final boolean isSigned() {
-        return time != null;
-    }
     
     /**
      * Returns whether this signature is signed like the given signature.
@@ -325,13 +330,11 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
     }
     
     /**
-     * Returns the audit or null if no audit is or shall be appended.
-     * 
-     * @return the audit or null if no audit is or shall be appended.
+     * Checks this signature for recency (it may be signed at most half an hour ago).
      */
     @Pure
-    public final @Nullable Audit getAudit() {
-        return audit;
+    public void checkRecency() throws InactiveSignatureException {
+        if (time != null && time.isLessThan(Time.HALF_HOUR.ago())) throw new InactiveSignatureException("The signature was signed more than half an hour ago.");
     }
     
     

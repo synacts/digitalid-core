@@ -8,12 +8,11 @@ import ch.virtualid.entity.Entity;
 import ch.virtualid.errors.InitializationError;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.IdentityNotFoundException;
-import ch.virtualid.exceptions.external.InvalidDeclarationException;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.SQLizable;
+import ch.virtualid.io.Level;
 import ch.virtualid.packet.Packet;
 import ch.xdf.Block;
 import ch.xdf.CompressionWrapper;
@@ -227,11 +226,13 @@ public abstract class Reply extends Handler implements SQLizable {
             @Override
             public void run() {
                 try (@Nonnull Statement statement = Database.getConnection().createStatement()) {
-                    statement.executeUpdate("DELETE FROM reply WHERE time < " + new Time().subtract(Time.TROPICAL_YEAR.multiply(2)));
+                    statement.executeUpdate("DELETE FROM reply WHERE time < " + Time.TWO_YEARS.ago());
                     Database.getConnection().commit();
-                } catch (@Nonnull SQLException exception) {}
+                } catch (@Nonnull SQLException exception) {
+                    Database.LOGGER.log(Level.WARNING, exception);
+                }
             }
-        }, 20000, 2592000);
+        }, Time.HOUR.getValue(), Time.MONTH.getValue());
     }
     
     /**
@@ -245,14 +246,14 @@ public abstract class Reply extends Handler implements SQLizable {
      * @return the given column of the result set as an instance of this class.
      */
     @Pure
-    public static @Nullable Reply get(@Nullable Entity entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException, InvalidEncodingException, IdentityNotFoundException, PacketException, InvalidDeclarationException {
+    public static @Nullable Reply get(@Nullable Entity entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException, IOException, PacketException, ExternalException {
         final long number = resultSet.getLong(columnIndex);
         if (resultSet.wasNull()) return null;
         try (@Nonnull Statement statement = Database.getConnection().createStatement(); @Nonnull ResultSet rs = statement.executeQuery("SELECT signature FROM reply WHERE reply = " + number)) {
             if (rs.next()) {
                 final @Nonnull Block block = Block.get(Packet.SIGNATURE, rs, 1);
-                final @Nonnull SignatureWrapper signature = SignatureWrapper.decodeUnverified(block);
-                final @Nonnull CompressionWrapper compression = new CompressionWrapper(signature.getElement());
+                final @Nonnull SignatureWrapper signature = SignatureWrapper.decodeUnverified(block, entity);
+                final @Nonnull CompressionWrapper compression = new CompressionWrapper(signature.getElementNotNull());
                 final @Nonnull SelfcontainedWrapper content = new SelfcontainedWrapper(compression.getElementNotNull());
                 return get(entity, signature.toHostSignatureWrapper(), number, content.getElement());
             } else {

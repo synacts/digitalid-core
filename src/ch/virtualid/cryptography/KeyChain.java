@@ -2,6 +2,7 @@ package ch.virtualid.cryptography;
 
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
@@ -15,7 +16,6 @@ import ch.virtualid.util.ReadonlyList;
 import ch.xdf.Block;
 import ch.xdf.ListWrapper;
 import ch.xdf.TupleWrapper;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
 import javax.annotation.Nonnull;
 import org.javatuples.Pair;
 
@@ -168,7 +168,7 @@ abstract class KeyChain<Key extends Blockable> implements Immutable, Blockable {
         final @Nonnull Pair<Time, Key> pair = new Pair<Time, Key>(time, key);
         copy.add(0, pair);
         
-        final @Nonnull Time cutoff = new Time().subtract(Time.TROPICAL_YEAR.multiply(2));
+        final @Nonnull Time cutoff = Time.TWO_YEARS.ago();
         final @Nonnull FreezableIterator<Pair<Time, Key>> iterator = copy.iterator();
         while (iterator.hasNext()) {
             if (iterator.next().getValue0().isLessThan(cutoff)) {

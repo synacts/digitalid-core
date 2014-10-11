@@ -17,6 +17,9 @@ import javax.annotation.Nullable;
  * @see IdentityNotFoundException
  * @see SomethingNotFoundException
  * 
+ * @see InactiveSignatureException
+ * @see ReplayDetectedException
+ * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */

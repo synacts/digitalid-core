@@ -1,11 +1,15 @@
 package ch.virtualid.identity;
 
-import ch.virtualid.exceptions.external.IdentityNotFoundException;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.database.Database;
 import ch.virtualid.errors.InitializationError;
-import ch.virtualid.exceptions.external.InvalidDeclarationException;
 import ch.virtualid.errors.ShouldNeverHappenError;
+import ch.virtualid.exceptions.external.ExternalException;
+import ch.virtualid.exceptions.external.IdentityNotFoundException;
+import ch.virtualid.exceptions.external.InvalidDeclarationException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.exceptions.external.InvalidSignatureException;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Reply;
 import static ch.virtualid.identity.Category.ARTIFICIAL_PERSON;
 import static ch.virtualid.identity.Category.EMAIL_PERSON;
@@ -16,8 +20,6 @@ import static ch.virtualid.identity.Category.SYNTACTIC_TYPE;
 import static ch.virtualid.io.Level.INFORMATION;
 import static ch.virtualid.io.Level.WARNING;
 import ch.virtualid.io.Logger;
-import ch.virtualid.exceptions.external.FailedRequestException;
-import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.packet.Request;
 import ch.virtualid.packet.Response;
 import ch.virtualid.server.Host;
@@ -25,9 +27,7 @@ import ch.xdf.Block;
 import ch.xdf.ListWrapper;
 import ch.xdf.SelfcontainedWrapper;
 import ch.xdf.TupleWrapper;
-import ch.virtualid.exceptions.external.FailedEncodingException;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
-import ch.virtualid.exceptions.external.InvalidSignatureException;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -44,8 +44,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.javatuples.Triplet;
-
-import todo;
 
 /**
  * The mapper maps between identifiers and identities.
@@ -378,7 +376,7 @@ public final class Mapper {
      * 
      * @ensure identifier instanceof HostIdentifier == (identity instanceof HostIdentity) : "The identifier denotes a host if and only if a host identity is returned.";
      */
-    static @Nonnull Identity getIdentity(@Nonnull Identifier identifier) throws SQLException, IdentityNotFoundException {
+    static @Nonnull Identity getIdentity(@Nonnull Identifier identifier) throws SQLException, IOException, PacketException, ExternalException {
         if (isMapped(identifier)) {
             return identifiers.get(identifier);
         } else {
@@ -395,7 +393,7 @@ public final class Mapper {
      * 
      * @throws IdentityNotFoundException if no identity with the given identifier could be found.
      */
-    private static @Nonnull Identity establishIdentity(@Nonnull Identifier identifier) throws SQLException, IdentityNotFoundException {
+    private static @Nonnull Identity establishIdentity(@Nonnull Identifier identifier) throws SQLException, IOException, PacketException, ExternalException {
         try {
             // TODO: Make an identity request and verify predecessors only if already mapped.
             @Nonnull SelfcontainedWrapper content = new SelfcontainedWrapper(NonHostIdentifier.IDENTITY_REQUEST, Block.EMPTY);

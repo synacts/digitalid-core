@@ -41,7 +41,7 @@ public abstract class Query extends Method {
      * @param signature the signature of this handler.
      * @param recipient the recipient of this method.
      * 
-     * @require signature.getSubject() != null : "The subject of the signature is not null.";
+     * @require signature.hasSubject() : "The signature has a subject.";
      * 
      * @ensure getEntity() != null : "The entity of this handler is not null.";
      * @ensure getSignature() != null : "The signature of this handler is not null.";

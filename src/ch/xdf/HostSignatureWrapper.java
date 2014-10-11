@@ -153,7 +153,7 @@ public final class HostSignatureWrapper extends SignatureWrapper implements Immu
      * @require hostSignature.getType().isBasedOn(SIGNATURE) : "The signature is based on the implementation type.";
      */
     HostSignatureWrapper(@Nonnull Block block, @Nonnull Block hostSignature) throws SQLException, IOException, PacketException, ExternalException {
-        super(block, true);
+        super(block);
         
         assert hostSignature.getType().isBasedOn(SIGNATURE) : "The signature is based on the implementation type.";
         
@@ -199,7 +199,7 @@ public final class HostSignatureWrapper extends SignatureWrapper implements Immu
     @Pure
     @Override
     public void verify() throws InvalidEncodingException, InvalidSignatureException {
-        if (new Time().subtract(getTimeNotNull()).isGreaterThan(Time.TROPICAL_YEAR.multiply(2))) throw new InvalidSignatureException("The host signature is out of date.");
+        if (getTimeNotNull().isLessThan(Time.TWO_YEARS.ago())) throw new InvalidSignatureException("The host signature is out of date.");
         
         final @Nonnull TupleWrapper tuple = new TupleWrapper(getCache());
         final @Nonnull BigInteger hash = tuple.getElementNotNull(0).getHash();

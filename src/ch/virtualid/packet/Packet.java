@@ -2,20 +2,25 @@ package ch.virtualid.packet;
 
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.annotations.RawRecipient;
+import ch.virtualid.auxiliary.Time;
 import ch.virtualid.client.SecretCommitment;
 import ch.virtualid.credential.Credential;
 import ch.virtualid.cryptography.SymmetricKey;
 import ch.virtualid.entity.Account;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.exceptions.external.ExternalException;
+import ch.virtualid.exceptions.external.InactiveSignatureException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.external.InvalidSignatureException;
+import ch.virtualid.exceptions.external.ReplayDetectedException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Method;
 import ch.virtualid.handler.Reply;
 import ch.virtualid.handler.action.internal.AccountOpen;
+import ch.virtualid.handler.query.external.AttributesQuery;
 import ch.virtualid.handler.query.external.IdentityQuery;
+import ch.virtualid.handler.reply.query.AttributesReply;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.Identifier;
 import ch.virtualid.identity.SemanticType;
@@ -50,7 +55,7 @@ import javax.annotation.Nullable;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-abstract class Packet implements Immutable {
+public abstract class Packet implements Immutable {
     
     /**
      * Stores the semantic type {@code content.packet@virtualid.ch}.
@@ -127,7 +132,7 @@ abstract class Packet implements Immutable {
      * @require ... : "This list of preconditions is not complete but the public constructors make sure that all requirements for packing the given handlers are met.";
      */
     @SuppressWarnings("AssignmentToMethodParameter")
-    Packet(@Nonnull Object object, int size, @Nullable HostIdentifier recipient, @Nullable SymmetricKey symmetricKey, @Nullable Identifier subject, @Nullable Audit audit, @Nullable HostIdentifier signer, @Nullable SecretCommitment commitment, @Nullable ReadonlyList<Credential> credentials, @Nullable ReadonlyList<HostSignatureWrapper> certificates, boolean lodged, @Nullable BigInteger value) throws SQLException, IOException, PacketException, ExternalException {
+    Packet(@Nonnull Object object, int size, @Nullable HostIdentifier recipient, @Nullable SymmetricKey symmetricKey, @Nullable Identifier subject, @Nullable Audit audit, @Nullable Identifier signer, @Nullable SecretCommitment commitment, @Nullable ReadonlyList<Credential> credentials, @Nullable ReadonlyList<HostSignatureWrapper> certificates, boolean lodged, @Nullable BigInteger value) throws SQLException, IOException, PacketException, ExternalException {
         assert subject != null || recipient == null && signer == null && commitment == null && credentials == null : "The subject may only be null if the contents of a response are not signed (because the host could not decode the subject).";
         
         setLists(object);
@@ -169,13 +174,15 @@ abstract class Packet implements Immutable {
      * @require (request == null) == (this instanceof Request) : "If the request is null, this packet is itself a request.";
      * @require (request != null) == (this instanceof Response) : "If the request is not null, this packet is a response.";
      */
-    Packet(@Nonnull InputStream inputStream, @Nullable Request request, boolean verified) throws SQLException, IOException, PacketException, ExternalException {
+    Packet(@Nonnull InputStream inputStream, @Nullable Request request, boolean verified) throws SQLException, IOException, PacketException, InvalidEncodingException, ExternalException {
         assert (request == null) == (this instanceof Request) : "If the request is null, this packet is itself a request.";
         assert (request != null) == (this instanceof Response) : "If the request is not null, this packet is a response.";
         
         final boolean response = (this instanceof Response);
         try { this.wrapper = new SelfcontainedWrapper(inputStream, false); } catch (InvalidEncodingException exception) { throw new PacketException(PacketError.PACKET, "The packet could not be decoded.", exception, response); }
         try { this.encryption = new EncryptionWrapper(wrapper.getElement().checkType(ENCRYPTION), response ? request.getEncryption().getSymmetricKey() : null); } catch (InvalidEncodingException exception) { throw new PacketException(PacketError.ENCRYPTION, "The encryption could not be decoded.", exception, response); }
+        if (encryption.getTime().isLessThan(Time.HALF_HOUR.ago())) throw new PacketException(PacketError.ENCRYPTION, "The encryption is older than half an hour.", null, response);
+        try { Replay.check(this); } catch (ReplayDetectedException exception) { throw new PacketException(PacketError.REPLAY, "The packet has been replayed.", exception, response); }
         
         final @Nullable HostIdentifier recipient = encryption.getRecipient();
         if (!response && recipient == null) throw new PacketException(PacketError.ENCRYPTION, "The recipient of a request may not be null.", null, response);
@@ -186,6 +193,7 @@ abstract class Packet implements Immutable {
         
         this.size = elements.size();
         if (size == 0) throw new PacketException(PacketError.ELEMENTS, "The encryption of a packet must contain at least one element.", null, response);
+        if (response && size > request.getSize()) throw new PacketException(PacketError.ELEMENTS, "The response contains more elements than the request.", null, response);
         
         initialize(size);
         
@@ -195,7 +203,7 @@ abstract class Packet implements Immutable {
             if (elements.isNotNull(i)) {
                 final @Nonnull SignatureWrapper signature;
                 try { signature = verified ? SignatureWrapper.decode(elements.getNotNull(i), account) : SignatureWrapper.decodeUnverified(elements.getNotNull(i), account); } catch (InvalidEncodingException | InvalidSignatureException exception) { throw new PacketException(PacketError.SIGNATURE, "A signature is invalid.", exception, response); }
-                if (signature.getSubject() == null) throw new PacketException(PacketError.SIGNATURE, "The subject of a signature in a packet may not be null.", null, response); // This exception is also thrown (intentionally) on the requester if the responding host could not decode the subject.
+                if (!signature.hasSubject()) throw new PacketException(PacketError.SIGNATURE, "Each signature in a packet must have a subject.", null, response); // This exception is also thrown (intentionally) on the requester if the responding host could not decode the subject.
                 if (signature.getAudit() != null) audit = signature.getAudit();
                 
                 final @Nonnull CompressionWrapper compression;
@@ -206,11 +214,11 @@ abstract class Packet implements Immutable {
                 
                 final @Nonnull Block block = content.getElement();
                 final @Nonnull SemanticType type = block.getType();
-                if (signature.isSigned()) {
-                    if (reference == null) reference = signature;
-                    else if (!signature.isSignedLike(reference)) throw new PacketException(PacketError.SIGNATURE, "All the (signed) signatures of a packet have to be signed alike.", null, response);
-                    
-                    if (response) {
+                if (response) {
+                    if (signature.isSigned()) {
+                        if (reference == null) reference = signature;
+                        else if (!signature.isSignedLike(reference)) throw new PacketException(PacketError.SIGNATURE, "All the signed signatures of a response have to be signed alike.", null, response);
+                        
                         if (signature instanceof HostSignatureWrapper) {
                             if (type.equals(PacketException.TYPE)) {
                                 ((Response) this).setException(i, PacketException.create(block));
@@ -224,18 +232,19 @@ abstract class Packet implements Immutable {
                             }
                         } else throw new PacketException(PacketError.SIGNATURE, "A reply from the host " + encryption.getRecipient() + " was not signed by a host.", null, response);
                     } else {
-                        final @Nonnull Entity entity;
-                        assert recipient != null && account != null : "In case of requests, both the recipient and the account are set (see the code above).";
-                        if (type.equals(IdentityQuery.TYPE) || type.equals(AccountOpen.TYPE)) entity = account;
-                        else entity = new Account(account.getHost(), signature.getSubjectNotNull().getIdentity());
-                        final @Nonnull Method method = Method.get(entity, signature, recipient, block);
-                        ((Request) this).setMethod(i, method);
-                    }
-                } else {
-                    if (response) {
                         if (type.equals(PacketException.TYPE)) ((Response) this).setException(i, PacketException.create(block));
                         else throw new PacketException(PacketError.SIGNATURE, "A reply from the host " + encryption.getRecipient() + " was not signed.", null, response);
                     }
+                } else {
+                    if (reference == null) reference = signature;
+                    else if (!signature.isSignedLike(reference)) throw new PacketException(PacketError.SIGNATURE, "All the signatures of a request have to be signed alike.", null, response);
+                    
+                    final @Nonnull Entity entity;
+                    assert recipient != null && account != null : "In case of requests, both the recipient and the account are set (see the code above).";
+                    if (type.equals(IdentityQuery.TYPE) || type.equals(AccountOpen.TYPE)) entity = account;
+                    else entity = new Account(account.getHost(), signature.getSubjectNotNull().getIdentity());
+                    final @Nonnull Method method = Method.get(entity, signature, recipient, block);
+                    ((Request) this).setMethod(i, method);
                 }
             } else {
                 if (response) {
@@ -247,18 +256,31 @@ abstract class Packet implements Immutable {
             }
         }
         
+        if (response && size < request.getSize()) {
+            // If the first element was an error, it is thrown by retrieving the reply.
+            ((Response) this).getReply(0);
+            throw new PacketException(PacketError.ELEMENTS, "The response contains fewer elements than the request.", null, response);
+        }
+        
+        if (!encryption.isEncrypted()) {
+            if (size > 1) throw new PacketException(PacketError.ELEMENTS, "If the packet is not encrypted, only one element may be provided.", null, response);
+            
+            if (response) {
+                // If the only element encodes a packet error, it is thrown intentionally here.
+                final @Nullable Reply reply = ((Response) this).getReply(0);
+                if (!(reply instanceof AttributesReply && reply.getSubject() instanceof HostIdentifier)) throw new PacketException(PacketError.ENCRYPTION, "The response should be encrypted but is not.", null, response);
+            } else {
+                final @Nonnull Method method = ((Request) this).getMethod(0);
+                if (!(method instanceof AttributesQuery && method.getSubject() instanceof HostIdentifier)) throw new PacketException(PacketError.ENCRYPTION, "The request should be encrypted but is not.", null, response);
+            }
+        }
+        
+        try { checkRecency(); } catch (InactiveSignatureException exception) { throw new PacketException(PacketError.SIGNATURE, "One the signatures is no longer active.", exception, response); }
+        
         this.audit = audit;
         freeze();
     }
     
-    
-    /**
-     * Returns the hash of this packet.
-     */
-    @Pure
-    public final @Nonnull BigInteger getHash() {
-        return wrapper.toBlock().getHash();
-    }
     
     /**
      * Returns the encryption of this packet.
@@ -302,6 +324,13 @@ abstract class Packet implements Immutable {
     public final void write(@Nonnull OutputStream outputStream) throws IOException {
         wrapper.write(outputStream, false);
     }
+    
+    
+    /**
+     * Checks the signatures of this packet for recency.
+     */
+    @Pure
+    abstract void checkRecency() throws InactiveSignatureException;
     
     
     /**

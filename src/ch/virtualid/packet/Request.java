@@ -2,6 +2,7 @@ package ch.virtualid.packet;
 
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.annotations.RawRecipient;
+import ch.virtualid.auxiliary.Time;
 import ch.virtualid.client.SecretCommitment;
 import ch.virtualid.contact.AttributeSet;
 import ch.virtualid.credential.Credential;
@@ -9,6 +10,7 @@ import ch.virtualid.cryptography.PublicKeyChain;
 import ch.virtualid.cryptography.SymmetricKey;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.IdentityNotFoundException;
+import ch.virtualid.exceptions.external.InactiveSignatureException;
 import ch.virtualid.exceptions.external.InvalidDeclarationException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.external.InvalidSignatureException;
@@ -22,6 +24,8 @@ import ch.virtualid.identity.Mapper;
 import ch.virtualid.identity.NonHostIdentifier;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.server.Server;
+import ch.virtualid.util.ConcurrentHashMap;
+import ch.virtualid.util.ConcurrentMap;
 import ch.virtualid.util.FreezableArrayList;
 import ch.virtualid.util.FreezableList;
 import ch.virtualid.util.ReadonlyList;
@@ -37,7 +41,6 @@ import java.io.InputStream;
 import java.math.BigInteger;
 import java.net.Socket;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -111,7 +114,7 @@ public class Request extends Packet {
      * 
      * @require ... : "This list of preconditions is not complete but the public constructors make sure that all requirements for packing the given handlers are met.";
      */
-    Request(@Nonnull FreezableList<Method> methods, @Nonnull HostIdentifier recipient, @Nullable SymmetricKey symmetricKey, @Nonnull Identifier subject, @Nullable Audit audit, @Nullable HostIdentifier signer, @Nullable SecretCommitment commitment, @Nullable ReadonlyList<Credential> credentials, @Nullable ReadonlyList<HostSignatureWrapper> certificates, boolean lodged, @Nullable BigInteger value) throws SQLException, IOException, PacketException, ExternalException {
+    Request(@Nonnull FreezableList<Method> methods, @Nonnull HostIdentifier recipient, @Nullable SymmetricKey symmetricKey, @Nonnull Identifier subject, @Nullable Audit audit, @Nullable Identifier signer, @Nullable SecretCommitment commitment, @Nullable ReadonlyList<Credential> credentials, @Nullable ReadonlyList<HostSignatureWrapper> certificates, boolean lodged, @Nullable BigInteger value) throws SQLException, IOException, PacketException, ExternalException {
         super(methods, methods.size(), recipient, symmetricKey, subject, audit, signer, commitment, credentials, certificates, lodged, value);
         
         assert getEncryption().getRecipient() != null : "The recipient of the request is not null.";
@@ -130,29 +133,38 @@ public class Request extends Packet {
     }
     
     
+    @Pure
+    @Override
+    void checkRecency() throws InactiveSignatureException {
+        for (final @Nonnull Method method : methods) {
+            method.getSignatureNotNull().checkRecency();
+        }
+    }
+    
+    
     @Override
     @RawRecipient
     @SuppressWarnings("unchecked")
-    void setLists(@Nonnull Object object) {
+    final void setLists(@Nonnull Object object) {
         this.methods = (FreezableList<Method>) object;
     }
     
     @Pure
     @Override
     @RawRecipient
-    @Nonnull Block getBlock(int index) {
+    final @Nonnull Block getBlock(int index) {
         return methods.get(index).toBlock();
     }
     
     @Override
     @RawRecipient
-    void initialize(int size) {
+    final void initialize(int size) {
         this.methods = new FreezableArrayList<Method>(size);
     }
     
     @Override
     @RawRecipient
-    void freeze() {
+    final void freeze() {
         methods.freeze();
     }
     
@@ -203,7 +215,7 @@ public class Request extends Packet {
      * 
      * @return the response to this request.
      */
-    public @Nonnull Response send() throws SQLException, IOException, PacketException, ExternalException {
+    public final @Nonnull Response send() throws SQLException, IOException, PacketException, ExternalException {
         return send(true);
     }
     
@@ -214,19 +226,18 @@ public class Request extends Packet {
      * 
      * @return the response to this request.
      * 
-     * @throws FailedRequestException if the request could not be sent or the response could not be decoded.
-     * @throws PacketException if the sending and the receiving of the packet went smooth but the recipient responded with a packet error.
+     * @throws PacketException if the recipient responded with a packet error.
      * 
-     * @ensure response.getSize() == getSize() : "The response has the same number of signed contents (otherwise a {@link PacketException} is thrown).";
+     * @ensure response.getSize() == getSize() : "The response has the same number of elements (otherwise a {@link PacketException} is thrown).";
      */
-    public @Nonnull Response send(boolean verified) throws SQLException, IOException, PacketException, ExternalException {
+    public final @Nonnull Response send(boolean verified) throws SQLException, IOException, PacketException, ExternalException {
         final @Nonnull HostIdentifier recipient = getRecipient();
         
         // Send the request and retrieve the response.
         @Nonnull Response response;
-        try (Socket socket = new Socket("vid." + recipient.getString(), Server.PORT)) {
-            write(socket.getOutputStream());
-            response = new Response(new SelfcontainedWrapper(socket.getInputStream(), false), getEncryption().getSymmetricKey(), verified);
+        try (@Nonnull Socket socket = new Socket("vid." + recipient.getString(), Server.PORT)) {
+            this.write(socket.getOutputStream());
+            response = new Response(this, socket.getInputStream(), verified);
         }
         
         try {
@@ -321,28 +332,29 @@ public class Request extends Packet {
     
     
     /**
-     * Stores a cached symmetric key for every recipient of host and client requests.
+     * Stores a cached symmetric key for every recipient.
      */
-    private static final @Nonnull HashMap<HostIdentifier, Pair<Long, SymmetricKey>> symmetricKeys = new HashMap<HostIdentifier, Pair<Long, SymmetricKey>>();
+    private static final @Nonnull ConcurrentMap<HostIdentifier, Pair<Time, SymmetricKey>> symmetricKeys = new ConcurrentHashMap<HostIdentifier, Pair<Time, SymmetricKey>>();
     
     /**
-     * Stores whether the symmetric keys are cached for host and client requests.
+     * Stores whether the symmetric keys are cached.
      */
     private static boolean cachingKeys = true;
     
     /**
-     * Returns whether the symmetric keys are cached for host and client requests.
+     * Returns whether the symmetric keys are cached.
      * 
-     * @return whether the symmetric keys are cached for host and client requests.
+     * @return whether the symmetric keys are cached.
      */
+    @Pure
     public static boolean isCachingKeys() {
         return cachingKeys;
     }
     
     /**
-     * Sets whether the symmetric keys are cached for host and client requests.
+     * Sets whether the symmetric keys are cached.
      * 
-     * @param cachingKeys whether the symmetric keys are cached for host and client requests.
+     * @param cachingKeys whether the symmetric keys are cached.
      */
     public static void setCachingKeys(boolean cachingKeys) {
         Request.cachingKeys = cachingKeys;
@@ -356,12 +368,13 @@ public class Request extends Packet {
      * 
      * @return a new or cached symmetric key for the given recipient.
      */
-    protected static @Nonnull SymmetricKey getSymmetricKey(@Nonnull HostIdentifier recipient, long rotation) {
+    @Pure
+    protected static @Nonnull SymmetricKey getSymmetricKey(@Nonnull HostIdentifier recipient, @Nonnull Time rotation) {
         if (cachingKeys) {
-            @Nullable Pair<Long, SymmetricKey> value = symmetricKeys.get(recipient);
-            long currentTime = System.currentTimeMillis();
-            if (value == null || value.getValue0() < currentTime - rotation) {
-                value = new Pair<Long, SymmetricKey>(currentTime, new SymmetricKey());
+            final @Nonnull Time time = new Time();
+            @Nullable Pair<Time, SymmetricKey> value = symmetricKeys.get(recipient);
+            if (value == null || value.getValue0().isLessThan(time.subtract(rotation))) {
+                value = new Pair<Time, SymmetricKey>(time, new SymmetricKey());
                 symmetricKeys.put(recipient, value);
             }
             return value.getValue1();

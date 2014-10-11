@@ -2,14 +2,16 @@ package ch.virtualid.identity;
 
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.database.Database;
+import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.IdentityNotFoundException;
-import ch.virtualid.exceptions.external.InvalidDeclarationException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
 import ch.xdf.Block;
 import ch.xdf.StringWrapper;
+import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -170,7 +172,7 @@ public abstract class Identifier implements Immutable, Blockable, SQLizable {
      * @ensure !(result instanceof Type) || ((Type) result).isLoaded() : "If the result is a type, its declaration is loaded.";
      */
     @Pure
-    public abstract @Nonnull Identity getIdentity() throws SQLException, IdentityNotFoundException, InvalidDeclarationException;
+    public abstract @Nonnull Identity getIdentity() throws SQLException, IOException, PacketException, ExternalException;
     
     /**
      * Returns whether an identity with this identifier exists.

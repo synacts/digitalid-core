@@ -37,6 +37,11 @@ public final class Time implements Immutable, Blockable, Comparable<Time>, SQLiz
     public static final @Nonnull Time DECADE = new Time(315569251900l);
     
     /**
+     * Stores the time of two years (2 tropical years).
+     */
+    public static final @Nonnull Time TWO_YEARS = new Time(63113850380l);
+    
+    /**
      * Stores the time of a tropical year (default).
      */
     public static final @Nonnull Time TROPICAL_YEAR = new Time(31556925190l);
@@ -75,6 +80,11 @@ public final class Time implements Immutable, Blockable, Comparable<Time>, SQLiz
      * Stores the time of a half-hour (30 minutes).
      */
     public static final @Nonnull Time HALF_HOUR = new Time(1800000l);
+    
+    /**
+     * Stores the time of a quarter-hour (15 minutes).
+     */
+    public static final @Nonnull Time QUARTER_HOUR = new Time(900000l);
     
     /**
      * Stores the time of a minute (60 seconds).
@@ -153,6 +163,17 @@ public final class Time implements Immutable, Blockable, Comparable<Time>, SQLiz
     @Pure
     public long getValue() {
         return value;
+    }
+    
+    
+    /**
+     * Returns the time this interval ago now.
+     * 
+     * @return the time this interval ago now.
+     */
+    @Pure
+    public @Nonnull Time ago() {
+        return new Time(System.currentTimeMillis() - value);
     }
     
     

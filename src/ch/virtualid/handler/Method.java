@@ -33,11 +33,9 @@ import ch.virtualid.packet.HostRequest;
 import ch.virtualid.packet.Request;
 import ch.virtualid.packet.Response;
 import ch.virtualid.util.FreezableArrayList;
-import ch.virtualid.util.FreezableList;
 import ch.virtualid.util.ReadonlyIterator;
 import ch.virtualid.util.ReadonlyList;
 import ch.xdf.Block;
-import ch.xdf.SelfcontainedWrapper;
 import ch.xdf.SignatureWrapper;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -90,7 +88,7 @@ public abstract class Method extends Handler {
      * @param signature the signature of this handler (or a dummy that just contains a subject).
      * @param recipient the recipient of this method.
      * 
-     * @require signature.getSubject() != null : "The subject of the signature is not null.";
+     * @require signature.hasSubject() : "The signature has a subject.";
      * 
      * @ensure getEntity() != null : "The entity of this handler is not null.";
      * @ensure getSignature() != null : "The signature of this handler is not null.";
@@ -189,7 +187,7 @@ public abstract class Method extends Handler {
      * @return the reply to this method in case of queries or, potentially, external actions.
      */
     public @Nullable Reply send() throws SQLException, IOException, PacketException, ExternalException {
-        return (Reply) Method.send(new FreezableArrayList<Method>(this).freeze()).getHandler(0);
+        return Method.send(new FreezableArrayList<Method>(this).freeze()).getReply(0);
     }
     
     
@@ -262,12 +260,6 @@ public abstract class Method extends Handler {
         if (entity instanceof Account && !reference.canBeSentByHosts()) throw new PacketException(INTERNAL, "These methods cannot be sent by hosts.");
         if (entity instanceof Role && reference.canOnlyBeSentByHosts()) throw new PacketException(INTERNAL, "These methods cannot be sent by clients.");
         
-        final @Nonnull FreezableList<SelfcontainedWrapper> contents = new FreezableArrayList<SelfcontainedWrapper>(methods.size());
-        for (final @Nonnull Method method : methods) {
-            contents.add(new SelfcontainedWrapper(Packet.CONTENT, method.toBlock()));
-        }
-        contents.freeze();
-        
         if (reference instanceof ExternalQuery) {
             final @Nonnull ReadonlyAuthentications authentications;
             if (entity != null && entity instanceof Role && identity instanceof Person) {
@@ -277,24 +269,24 @@ public abstract class Method extends Handler {
             }
             
             if (authentications.isEmpty()) {
-                return new Request(contents, recipient, subject).send();
+                return new Request(methods, recipient, subject).send();
             } else {
                 assert entity != null && entity instanceof Role;
                 final @Nonnull ReadonlyAgentPermissions permissions = getRequiredPermissions(methods);
                 // TODO: Get the credentials and certificates from the role or throw a packet exception if the permissions are not covered.
-                return new CredentialsRequest(contents, recipient, subject, null, credentials, certificates, false, null).send();
+                return new CredentialsRequest(methods, recipient, subject, null, credentials, certificates, false, null).send();
             }
         } else {
             if (entity == null) throw new PacketException(INTERNAL, "The entity may only be null in case of external queries.");
             
             if (reference instanceof ExternalAction) {
                 if (entity instanceof Account) {
-                    return new HostRequest(contents, recipient, subject, ((Account) entity).getIdentity().getAddress()).send();
+                    return new HostRequest(methods, recipient, subject, ((Account) entity).getIdentity().getAddress()).send();
                 } else {
                     assert entity instanceof Role;
                     final @Nonnull ReadonlyAgentPermissions permissions = getRequiredPermissions(methods);
                     // TODO: Get the identity-based credential from the role or throw a packet exception if the permissions are not covered.
-                    return new CredentialsRequest(contents, recipient, subject, null, credentials, null, true, null).send();
+                    return new CredentialsRequest(methods, recipient, subject, null, credentials, null, true, null).send();
                 }
             } else {
                 assert reference instanceof InternalMethod;
@@ -314,15 +306,15 @@ public abstract class Method extends Handler {
                 if (service.equals(CoreService.TYPE)) {
                     if (agent instanceof ClientAgent) {
                         if (!agent.getPermissions().cover(permissions)) throw new PacketException(AUTHORIZATION, "The permissions of the role do not cover the required permissions.");
-                        return new ClientRequest(contents, subject, audit, ((ClientAgent) agent).getCommitment()).send();
+                        return new ClientRequest(methods, subject, audit, ((ClientAgent) agent).getCommitment()).send();
                     } else {
                         assert agent instanceof OutgoingRole;
                         // TODO: Retrieve the internal credentials from the role or throw a packet exception if the permissions are not covered.
-                        return new CredentialsRequest(contents, recipient, subject, audit, credentials, null, lodged, null).send();
+                        return new CredentialsRequest(methods, recipient, subject, audit, credentials, null, lodged, null).send();
                     }
                 } else {
                     // TODO: Retrieve the external credentials from the role or throw a packet exception if the permissions are not covered.
-                    return new CredentialsRequest(contents, recipient, subject, audit, credentials, null, lodged, null).send();
+                    return new CredentialsRequest(methods, recipient, subject, audit, credentials, null, lodged, null).send();
                 }
             }
         }
@@ -344,7 +336,7 @@ public abstract class Method extends Handler {
          * 
          * @return a new method that decodes the given block.
          * 
-         * @require signature.getSubject() != null : "The subject of the signature is not null.";
+         * @require signature.hasSubject() : "The signature has a subject.";
          * @require block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
          * 
          * @ensure return.getEntity() != null : "The entity of the returned method is not null.";
@@ -382,7 +374,7 @@ public abstract class Method extends Handler {
      * 
      * @throws PacketException if no handler is found for the given content type.
      * 
-     * @require signature.getSubject() != null : "The subject of the signature is not null.";
+     * @require signature.hasSubject() : "The signature has a subject.";
      * 
      * @ensure return.getEntity() != null : "The entity of the returned method is not null.";
      * @ensure return.getSignature() != null : "The signature of the returned method is not null.";

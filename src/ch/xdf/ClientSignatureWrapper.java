@@ -101,7 +101,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper implements Im
      * @require clientSignature.getType().isBasedOn(SIGNATURE) : "The signature is based on the implementation type.";
      */
     ClientSignatureWrapper(@Nonnull Block block, @Nonnull Block clientSignature) throws SQLException, IOException, PacketException, ExternalException {
-        super(block, true);
+        super(block);
         
         assert clientSignature.getType().isBasedOn(SIGNATURE) : "The signature is based on the implementation type.";
         
@@ -130,7 +130,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper implements Im
     @Pure
     @Override
     public void verify() throws InvalidEncodingException, InvalidSignatureException {
-        if (new Time().subtract(getTimeNotNull()).isGreaterThan(Time.TROPICAL_YEAR)) throw new InvalidSignatureException("The client signature is out of date.");
+        if (getTimeNotNull().isLessThan(Time.TROPICAL_YEAR.ago())) throw new InvalidSignatureException("The client signature is out of date.");
         
         final @Nonnull TupleWrapper tuple = new TupleWrapper(getCache());
         final @Nonnull BigInteger hash = tuple.getElementNotNull(0).getHash();

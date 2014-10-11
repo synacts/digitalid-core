@@ -3,12 +3,13 @@ package ch.virtualid.handler;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.Role;
-import ch.virtualid.exceptions.external.InvalidDeclarationException;
+import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.handler.query.internal.CoreServiceInternalQuery;
-import ch.virtualid.exceptions.external.IdentityNotFoundException;
 import ch.virtualid.identity.HostIdentifier;
 import ch.xdf.SignatureWrapper;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
+import static ch.virtualid.exceptions.packet.PacketError.IDENTIFIER;
+import ch.virtualid.exceptions.packet.PacketException;
+import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 
@@ -42,15 +43,15 @@ public abstract class InternalQuery extends Query implements InternalMethod {
      * @param signature the signature of this handler.
      * @param recipient the recipient of this method.
      * 
-     * @require signature.getSubject() != null : "The subject of the signature is not null.";
+     * @require signature.hasSubject() : "The signature has a subject.";
      * 
      * @ensure getSignature() != null : "The signature of this handler is not null.";
      * @ensure isOnHost() : "Queries are only decoded on hosts.";
      */
-    protected InternalQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws InvalidEncodingException, SQLException, IdentityNotFoundException, InvalidDeclarationException {
+    protected InternalQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
-        if (!getEntityNotNull().getIdentity().equals(getSubject().getIdentity())) throw new InvalidEncodingException("The identity of the entity and the subject have to be the same for internal queries.");
+        if (!getEntityNotNull().getIdentity().equals(getSubject().getIdentity())) throw new PacketException(IDENTIFIER, "The identity of the entity and the subject have to be the same for internal queries.");
     }
     
     

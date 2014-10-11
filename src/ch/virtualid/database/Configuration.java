@@ -102,6 +102,14 @@ public abstract class Configuration implements Immutable {
     public abstract @Nonnull String BLOB();
     
     /**
+     * Returns the syntax for defining a hash.
+     * 
+     * @return the syntax for defining a hash.
+     */
+    @Pure
+    public abstract @Nonnull String HASH();
+    
+    /**
      * Returns the syntax for replacing existing entries during inserts.
      * 
      * @return the syntax for replacing existing entries during inserts.

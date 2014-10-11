@@ -17,6 +17,8 @@ import javax.annotation.Nullable;
 /**
  * This exception indicates an error in the encoding or content of a packet.
  * 
+ * @see PacketError
+ * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
@@ -84,6 +86,7 @@ public final class PacketException extends Exception implements Blockable {
      * 
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
+    @Pure
     public static PacketException create(@Nonnull Block block) throws InvalidEncodingException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         

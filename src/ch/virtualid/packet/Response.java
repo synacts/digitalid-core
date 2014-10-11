@@ -4,6 +4,7 @@ import ch.virtualid.annotations.Pure;
 import ch.virtualid.annotations.RawRecipient;
 import ch.virtualid.cryptography.SymmetricKey;
 import ch.virtualid.exceptions.external.ExternalException;
+import ch.virtualid.exceptions.external.InactiveSignatureException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Reply;
 import ch.virtualid.identity.Identifier;
@@ -92,6 +93,15 @@ public final class Response extends Packet {
      */
     public Response(@Nonnull Request request, @Nonnull InputStream inputStream, boolean verified) throws SQLException, IOException, PacketException, ExternalException {
         super(inputStream, request, verified);
+    }
+    
+    
+    @Pure
+    @Override
+    void checkRecency() throws InactiveSignatureException {
+        for (final @Nullable Reply reply : replies) {
+            if (reply != null) reply.getSignatureNotNull().checkRecency();
+        }
     }
     
     

@@ -7,15 +7,15 @@ import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.Role;
-import ch.virtualid.exceptions.external.InvalidDeclarationException;
+import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.handler.InternalAction;
-import ch.virtualid.exceptions.external.IdentityNotFoundException;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.CoreService;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.xdf.SignatureWrapper;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
+import static ch.virtualid.exceptions.packet.PacketError.IDENTIFIER;
+import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -46,14 +46,14 @@ public abstract class CoreServiceInternalAction extends InternalAction {
      * @param signature the signature of this handler (or a dummy that just contains a subject).
      * @param recipient the recipient of this method.
      * 
-     * @require signature.getSubject() != null : "The subject of the signature is not null.";
+     * @require signature.hasSubject() : "The signature has a subject.";
      * 
      * @ensure getSignature() != null : "The signature of this handler is not null.";
      */
-    protected CoreServiceInternalAction(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws InvalidEncodingException, SQLException, IdentityNotFoundException, InvalidDeclarationException {
+    protected CoreServiceInternalAction(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
-        if (!getEntityNotNull().getIdentity().getAddress().getHostIdentifier().equals(getRecipient())) throw new InvalidEncodingException("The host of the entity and the recipient have to be the same for internal actions of the core service.");
+        if (!getEntityNotNull().getIdentity().getAddress().getHostIdentifier().equals(getRecipient())) throw new PacketException(IDENTIFIER, "The host of the entity and the recipient have to be the same for internal actions of the core service.");
     }
     
     

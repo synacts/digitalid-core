@@ -31,7 +31,7 @@ public final class Database implements Immutable {
     /**
      * Stores the logger of the database.
      */
-    private static final @Nonnull Logger logger = new Logger("Database.log");
+    public static final @Nonnull Logger LOGGER = new Logger("Database.log");
     
     
     /**
@@ -143,7 +143,7 @@ public final class Database implements Immutable {
         if (!testing) {
             try {
                 final @Nonnull File root = new File(Database.class.getProtectionDomain().getCodeSource().getLocation().toURI());
-                logger.log(Level.INFORMATION, "Root of classes: " + root);
+                LOGGER.log(Level.INFORMATION, "Root of classes: " + root);
                 
                 if (root.getName().endsWith(".jar")) {
                     initializeJarFile(new JarFile(root));
@@ -156,7 +156,7 @@ public final class Database implements Immutable {
                 throw new InitializationError("Could not load all classes.", exception);
             }
             
-            logger.log(Level.INFORMATION, "All classes have been loaded.");
+            LOGGER.log(Level.INFORMATION, "All classes have been loaded.");
         }
     }
     
@@ -202,7 +202,7 @@ public final class Database implements Immutable {
         final @Nullable Connection connection = Database.connection.get();
         if (connection == null) {
             Database.connection.remove();
-            logger.log(Level.WARNING, "Could not connect to the database.");
+            LOGGER.log(Level.WARNING, "Could not connect to the database.");
             throw new SQLException("Could not connect to the database.");
         }
         return connection;

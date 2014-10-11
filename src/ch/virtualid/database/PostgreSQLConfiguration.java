@@ -165,6 +165,12 @@ public final class PostgreSQLConfiguration extends Configuration implements Immu
     
     @Pure
     @Override
+    public @Nonnull String HASH() {
+        return "BYTEA";
+    }
+    
+    @Pure
+    @Override
     public @Nonnull String REPLACE() {
         return "INSERT";
     }
