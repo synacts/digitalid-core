@@ -116,7 +116,7 @@ public final class PushReturned extends ExternalAction {
      * @require signature.hasSubject() : "The signature has a subject.";
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      * 
-     * @ensure getSignature() != null : "The signature of this handler is not null.";
+     * @ensure hasSignature() : "This handler has a signature.";
      */
     private PushReturned(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws InvalidEncodingException, IdentityNotFoundException, SQLException, InvalidDeclarationException {
         super(entity, signature, recipient);

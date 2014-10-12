@@ -10,6 +10,7 @@ import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.CoreService;
 import ch.xdf.SignatureWrapper;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.handler.reply.query.CoreServiceQueryReply;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -42,8 +43,8 @@ public abstract class CoreServiceExternalQuery extends ExternalQuery {
      * 
      * @require signature.hasSubject() : "The signature has a subject.";
      * 
-     * @ensure getEntity() != null : "The entity of this handler is not null.";
-     * @ensure getSignature() != null : "The signature of this handler is not null.";
+     * @ensure hasEntity() : "This method has an entity.";
+     * @ensure hasSignature() : "This handler has a signature.";
      * @ensure isOnHost() : "Queries are only decoded on hosts.";
      */
     protected CoreServiceExternalQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws InvalidEncodingException {
@@ -58,5 +59,10 @@ public abstract class CoreServiceExternalQuery extends ExternalQuery {
     public final @Nonnull SemanticType getService() {
         return CoreService.TYPE;
     }
+    
+    
+    @Pure
+    @Override
+    public abstract @Nonnull Class<? extends CoreServiceQueryReply> getReplyClass();
     
 }

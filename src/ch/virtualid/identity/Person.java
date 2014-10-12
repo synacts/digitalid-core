@@ -1,12 +1,12 @@
 package ch.virtualid.identity;
 
-import ch.virtualid.exceptions.external.IdentityNotFoundException;
+import ch.virtualid.exceptions.external.ExternalException;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.interfaces.Immutable;
+import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import todo;
 
 /**
  * This class models the person virtual identities.
@@ -67,7 +67,7 @@ public abstract class Person extends NonHostIdentity implements Immutable {
                     // TODO: The following line is wrong (always returns false) and the whole method should be improved!
                     return this.number != identity.number;
                 }
-            } catch (@Nonnull IdentityNotFoundException exception) { return false; }
+            } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) { return false; }
         } else {
             return false;
         }

@@ -35,7 +35,7 @@ public abstract class QueryReply extends Reply {
      * @param signature the host signature of this handler.
      * @param number the number that references this reply.
      * 
-     * @ensure getSignature() != null : "The signature of this handler is not null.";
+     * @ensure hasSignature() : "This handler has a signature.";
      * @ensure !isOnHost() : "Query replies are never decoded on hosts.";
      */
     protected QueryReply(@Nullable Entity entity, @Nonnull HostSignatureWrapper signature, long number) throws InvalidEncodingException {

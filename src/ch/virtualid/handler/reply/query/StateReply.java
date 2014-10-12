@@ -3,20 +3,20 @@ package ch.virtualid.handler.reply.query;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Account;
 import ch.virtualid.entity.Entity;
-import ch.virtualid.exceptions.external.InvalidDeclarationException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.handler.Reply;
-import ch.virtualid.exceptions.external.IdentityNotFoundException;
+import ch.virtualid.handler.query.internal.StateQuery;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.CoreService;
 import ch.xdf.Block;
 import ch.xdf.HostSignatureWrapper;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
-import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * Delivers the state of the given entity.
+ * Replies the state of the given entity.
+ * 
+ * @see StateQuery
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
@@ -43,9 +43,10 @@ public final class StateReply extends CoreServiceQueryReply {
     private final @Nonnull Block block;
     
     /**
-     * Creates a query reply to deliver the state of the given account.
+     * Creates a query reply for the state of the given account.
      * 
      * @param account the account to which this query reply belongs.
+     * @param block the block that represents the state of the account.
      * 
      * @require block.getType().equals(CoreService.FORMAT) : "The block has the indicated type.";
      */
@@ -65,7 +66,7 @@ public final class StateReply extends CoreServiceQueryReply {
      * @param number the number that references this reply.
      * @param block the content which is to be decoded.
      * 
-     * @ensure getSignature() != null : "The signature of this handler is not null.";
+     * @ensure hasSignature() : "This handler has a signature.";
      * @ensure !isOnHost() : "Query replies are never decoded on hosts.";
      */
     private StateReply(@Nullable Entity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws InvalidEncodingException {
@@ -85,7 +86,7 @@ public final class StateReply extends CoreServiceQueryReply {
     @Pure
     @Override
     public @Nonnull String toString() {
-        return "Delivers the state.";
+        return "Replies the state.";
     }
     
     
@@ -104,7 +105,7 @@ public final class StateReply extends CoreServiceQueryReply {
         
         @Pure
         @Override
-        protected @Nonnull Reply create(@Nullable Entity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws InvalidEncodingException, SQLException, IdentityNotFoundException, InvalidDeclarationException {
+        protected @Nonnull Reply create(@Nullable Entity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws InvalidEncodingException {
             return new StateReply(entity, signature, number, block);
         }
         

@@ -60,7 +60,7 @@ public final class Attributes extends BothModule {
      * @return the value (a block of type {@code attribute@virtualid.ch}) of the given attribute or null if no such value is available.
      */
     public static @Nullable Block getValue(@Nonnull Attribute attribute, boolean published) throws SQLException {
-        @Nonnull String query = "SELECT value FROM attribute_value WHERE entity = " + attribute.getEntity() + " AND type = " + attribute.getType() + " AND published = " + published;
+        @Nonnull String query = "SELECT value FROM attribute_value WHERE entity = " + attribute.getEntityNotNull() + " AND type = " + attribute.getType() + " AND published = " + published;
         try (@Nonnull Statement statement = attribute.getConnection().createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(query)) {
             if (resultSet.next()) return new Block(resultSet.getBytes(1));
             else return null;

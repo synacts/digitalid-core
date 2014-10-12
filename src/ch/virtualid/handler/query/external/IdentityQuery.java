@@ -3,25 +3,22 @@ package ch.virtualid.handler.query.external;
 import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.entity.Account;
 import ch.virtualid.entity.Entity;
-import ch.virtualid.exceptions.external.InvalidDeclarationException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Method;
 import ch.virtualid.handler.reply.query.IdentityReply;
-import ch.virtualid.exceptions.external.IdentityNotFoundException;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.Identifier;
 import ch.virtualid.identity.SemanticType;
-import ch.virtualid.exceptions.packet.PacketException;
 import ch.xdf.Block;
 import ch.xdf.EmptyWrapper;
 import ch.xdf.SignatureWrapper;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 
 /**
- * Retrieves the identity of the given subject.
+ * Queries the identity of the given subject.
  * 
  * @see IdentityReply
  * 
@@ -62,8 +59,8 @@ public final class IdentityQuery extends CoreServiceExternalQuery {
      * @require signature.hasSubject() : "The signature has a subject.";
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      * 
-     * @ensure getEntity() != null : "The entity of this handler is not null.";
-     * @ensure getSignature() != null : "The signature of this handler is not null.";
+     * @ensure hasEntity() : "This method has an entity.";
+     * @ensure hasSignature() : "This handler has a signature.";
      * @ensure isOnHost() : "Queries are only decoded on hosts.";
      */
     private IdentityQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws InvalidEncodingException {
@@ -81,7 +78,7 @@ public final class IdentityQuery extends CoreServiceExternalQuery {
     @Pure
     @Override
     public @Nonnull String toString() {
-        return "Retrieves the identity.";
+        return "Queries the identity.";
     }
     
     
@@ -92,12 +89,18 @@ public final class IdentityQuery extends CoreServiceExternalQuery {
     }
     
     
+    @Pure
+    @Override
+    public @Nonnull Class<IdentityReply> getReplyClass() {
+        return IdentityReply.class;
+    }
+    
     @Override
     public @Nonnull IdentityReply executeOnHost() throws PacketException, SQLException {
         assert isOnHost() : "This method is called on a host.";
-        assert getSignature() != null : "The signature of this handler is not null.";
+        assert hasSignature() : "This handler has a signature.";
         
-        return new IdentityReply((Account) getEntityNotNull());
+        return new IdentityReply(getSubject());
     }
     
     
@@ -116,7 +119,7 @@ public final class IdentityQuery extends CoreServiceExternalQuery {
         
         @Pure
         @Override
-        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws InvalidEncodingException, SQLException, IdentityNotFoundException, InvalidDeclarationException {
+        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws InvalidEncodingException {
             return new IdentityQuery(entity, signature, recipient, block);
         }
         

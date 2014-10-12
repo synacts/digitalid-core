@@ -91,7 +91,7 @@ public final class CertificateIssuance extends CoreServiceExternalAction {
      * @require signature.hasSubject() : "The signature has a subject.";
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      * 
-     * @ensure getSignature() != null : "The signature of this handler is not null.";
+     * @ensure hasSignature() : "This handler has a signature.";
      */
     private CertificateIssuance(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
@@ -132,7 +132,7 @@ public final class CertificateIssuance extends CoreServiceExternalAction {
     @Override
     public @Nullable ActionReply executeOnHost() throws PacketException, SQLException {
         assert isOnHost() : "This method is called on a host.";
-        assert getSignature() != null : "The signature of this handler is not null.";
+        assert hasSignature() : "This handler has a signature.";
         
         final @Nonnull SignatureWrapper signature = getSignatureNotNull();
         if (!(signature instanceof HostSignatureWrapper)) throw new PacketException(PacketError.AUTHORIZATION);

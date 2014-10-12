@@ -36,7 +36,7 @@ import javax.annotation.Nullable;
  * This class represents replies to {@link Method methods} and {@link #store(ch.xdf.HostSignatureWrapper) stores} them in the {@link Database database}.
  * All replies have to extend this class and {@link #add(ch.virtualid.handler.Reply.Factory) register} themselves as handlers.
  * 
- * @invariant getSignature() == null || getSignature() instanceof HostSignatureWrapper : "The signature is either null or signed by a host.";
+ * @invariant !hasSignature() || getSignature() instanceof HostSignatureWrapper : "If this reply has a signature, it is signed by a host.";
  * 
  * @see ActionReply
  * @see QueryReply
@@ -69,7 +69,7 @@ public abstract class Reply extends Handler implements SQLizable {
      * @param signature the host signature of this handler.
      * @param number the number that references this reply.
      * 
-     * @ensure getSignature() != null : "The signature of this handler is not null.";
+     * @ensure hasSignature() : "This handler has a signature.";
      */
     protected Reply(@Nullable Entity entity, @Nonnull HostSignatureWrapper signature, long number) {
         super(entity, signature);
@@ -81,9 +81,14 @@ public abstract class Reply extends Handler implements SQLizable {
      * Returns the number that references this reply in the database.
      * 
      * @return the number that references this reply in the database.
+     * 
+     * @require hasSignature() : "This reply has a signature.";
      */
     @Pure
-    public @Nullable Long getNumber() {
+    public @Nonnull Long getNumber() {
+        assert hasSignature() : "This reply has a signature.";
+        
+        assert number != null : "This follows from the constructor.";
         return number;
     }
     
@@ -111,7 +116,7 @@ public abstract class Reply extends Handler implements SQLizable {
          * 
          * @require block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
          * 
-         * @ensure return.getSignature() != null : "The signature of the returned reply is not null.";
+         * @ensure return.hasSignature() : "The returned reply has a signature.";
          */
         @Pure
         protected abstract Reply create(@Nullable Entity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException;
@@ -145,7 +150,7 @@ public abstract class Reply extends Handler implements SQLizable {
      * 
      * @throws PacketException if no handler is found for the given content type.
      * 
-     * @ensure return.getSignature() != null : "The signature of the returned reply is not null.";
+     * @ensure return.hasSignature() : "The returned reply has a signature.";
      */
     @Pure
     private static @Nonnull Reply get(@Nullable Entity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
@@ -165,7 +170,7 @@ public abstract class Reply extends Handler implements SQLizable {
      * 
      * @throws PacketException if no handler is found for the given content type.
      * 
-     * @ensure return.getSignature() != null : "The signature of the returned reply is not null.";
+     * @ensure return.hasSignature() : "The returned reply has a signature.";
      */
     @Pure
     public static @Nonnull Reply get(@Nullable Entity entity, @Nonnull HostSignatureWrapper signature, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {

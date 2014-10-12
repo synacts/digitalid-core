@@ -181,7 +181,7 @@ public abstract class Identifier implements Immutable, Blockable, SQLizable {
      * @return whether an identity with this identifier exists.
      */
     @Pure
-    public final boolean exists() throws SQLException {
+    public final boolean exists() throws SQLException, IOException, PacketException, ExternalException {
         try {
             Mapper.getIdentity(this);
             return true;

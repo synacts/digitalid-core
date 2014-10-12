@@ -48,7 +48,7 @@ public abstract class CoreServiceInternalAction extends InternalAction {
      * 
      * @require signature.hasSubject() : "The signature has a subject.";
      * 
-     * @ensure getSignature() != null : "The signature of this handler is not null.";
+     * @ensure hasSignature() : "This handler has a signature.";
      */
     protected CoreServiceInternalAction(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
@@ -97,7 +97,7 @@ public abstract class CoreServiceInternalAction extends InternalAction {
     @Override
     public void executeOnHostInternalAction() throws PacketException, SQLException {
         assert isOnHost() : "This method is called on a host.";
-        assert getSignature() != null : "The signature of this handler is not null.";
+        assert hasSignature() : "This handler has a signature.";
         
         final @Nonnull Agent agent = getSignatureNotNull().getAgentCheckedAndRestricted(getEntityNotNull());
         

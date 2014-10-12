@@ -11,7 +11,9 @@ import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.CoreService;
 import ch.xdf.SignatureWrapper;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.handler.reply.action.CoreServiceActionReply;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * This class models the {@link ExternalAction external actions} of the {@link CoreService core service}.
@@ -45,7 +47,7 @@ public abstract class CoreServiceExternalAction extends ExternalAction {
      * 
      * @require signature.hasSubject() : "The signature has a subject.";
      * 
-     * @ensure getSignature() != null : "The signature of this handler is not null.";
+     * @ensure hasSignature() : "This handler has a signature.";
      */
     protected CoreServiceExternalAction(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws InvalidEncodingException {
         super(entity, signature, recipient);
@@ -78,5 +80,10 @@ public abstract class CoreServiceExternalAction extends ExternalAction {
     public @Nonnull ReadonlyAgentPermissions getRequiredPermissions() {
         return AgentPermissions.NONE;
     }
+    
+    
+    @Pure
+    @Override
+    public abstract @Nullable Class<? extends CoreServiceActionReply> getReplyClass();
     
 }

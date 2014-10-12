@@ -41,8 +41,8 @@ public abstract class ExternalQuery extends Query {
      * 
      * @require signature.hasSubject() : "The signature has a subject.";
      * 
-     * @ensure getEntity() != null : "The entity of this handler is not null.";
-     * @ensure getSignature() != null : "The signature of this handler is not null.";
+     * @ensure hasEntity() : "This method has an entity.";
+     * @ensure hasSignature() : "This handler has a signature.";
      * @ensure isOnHost() : "Queries are only decoded on hosts.";
      */
     protected ExternalQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws InvalidEncodingException {

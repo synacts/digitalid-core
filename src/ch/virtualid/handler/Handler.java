@@ -56,7 +56,7 @@ public abstract class Handler extends Concept implements Immutable, Blockable {
      * 
      * @require signature.hasSubject() : "The signature has a subject.";
      * 
-     * @ensure getSignature() != null : "The signature of this handler is not null.";
+     * @ensure hasSignature() : "This handler has a signature.";
      */
     protected Handler(@Nullable Entity entity, @Nonnull SignatureWrapper signature) {
         super(entity);
@@ -96,15 +96,25 @@ public abstract class Handler extends Concept implements Immutable, Blockable {
     }
     
     /**
+     * Returns whether this handler has a signature.
+     * 
+     * @return whether this handler has a signature.
+     */
+    @Pure
+    public final boolean hasSignature() {
+        return signature != null;
+    }
+    
+    /**
      * Returns the signature of this handler.
      * 
      * @return the signature of this handler.
      * 
-     * @require getSignature() != null : "The signature is not null.";
+     * @require hasSignature() : "This handler has a signature.";
      */
     @Pure
     public final @Nonnull SignatureWrapper getSignatureNotNull() {
-        assert signature != null : "The signature is not null.";
+        assert signature != null : "This handler has a signature.";
         
         return signature;
     }

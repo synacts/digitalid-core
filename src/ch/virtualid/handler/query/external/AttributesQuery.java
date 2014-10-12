@@ -68,8 +68,8 @@ public final class AttributesQuery extends CoreServiceExternalQuery {
      * @require signature.hasSubject() : "The signature has a subject.";
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      * 
-     * @ensure getEntity() != null : "The entity of this handler is not null.";
-     * @ensure getSignature() != null : "The signature of this handler is not null.";
+     * @ensure hasEntity() : "This method has an entity.";
+     * @ensure hasSignature() : "This handler has a signature.";
      * @ensure isOnHost() : "Queries are only decoded on hosts.";
      */
     private AttributesQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws InvalidEncodingException {
@@ -108,7 +108,7 @@ public final class AttributesQuery extends CoreServiceExternalQuery {
     @Override
     public @Nonnull AttributesReply executeOnHost() throws PacketException, SQLException {
         assert isOnHost() : "This method is called on a host.";
-        assert getSignature() != null : "The signature of this handler is not null.";
+        assert hasSignature() : "This handler has a signature.";
         
         /*
         AgentPermissions authorization = null;

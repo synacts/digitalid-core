@@ -2,6 +2,7 @@ package ch.virtualid.handler.action.internal;
 
 import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.agent.Restrictions;
+import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Client;
 import ch.virtualid.cryptography.SymmetricKey;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
@@ -14,6 +15,7 @@ import ch.virtualid.identity.Mapper;
 import ch.virtualid.identity.NonHostIdentifier;
 import ch.virtualid.identity.NonHostIdentity;
 import ch.virtualid.identity.SemanticType;
+import ch.virtualid.module.CoreService;
 import ch.virtualid.packet.Audit;
 import ch.xdf.Block;
 import ch.xdf.Int8Wrapper;
@@ -44,6 +46,13 @@ public final class AccountOpen extends Action {
     public AccountOpen() {
         
     }
+    
+    @Pure
+    @Override
+    public @Nonnull SemanticType getService() {
+        return CoreService.TYPE;
+    }
+    
     
     /**
      * Opens a new account with the given identifier and category.

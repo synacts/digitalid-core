@@ -17,7 +17,7 @@ import javax.annotation.Nonnull;
  * Depending on whether the reply is needed immediately, external actions can be either sent 
  * directly or passed to the {@link Pusher#send(ch.virtualid.handler.ExternalAction) Pusher}!
  * 
- * @invariant getEntity() != null : "The entity of this external action is not null.";
+ * @invariant hasEntity() : "This external action has an entity.";
  * 
  * @see CoreServiceExternalAction
  * 
@@ -49,7 +49,7 @@ public abstract class ExternalAction extends Action {
      * 
      * @require signature.hasSubject() : "The signature has a subject.";
      * 
-     * @ensure getSignature() != null : "The signature of this handler is not null.";
+     * @ensure hasSignature() : "This handler has a signature.";
      */
     protected ExternalAction(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) {
         super(entity, signature, recipient);

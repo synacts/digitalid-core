@@ -90,8 +90,8 @@ public abstract class Method extends Handler {
      * 
      * @require signature.hasSubject() : "The signature has a subject.";
      * 
-     * @ensure getEntity() != null : "The entity of this handler is not null.";
-     * @ensure getSignature() != null : "The signature of this handler is not null.";
+     * @ensure hasEntity() : "This method has an entity.";
+     * @ensure hasSignature() : "This handler has a signature.";
      */
     protected Method(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) {
         super(entity, signature);
@@ -151,7 +151,7 @@ public abstract class Method extends Handler {
      * @throws PacketException if the authorization is not sufficient.
      * 
      * @require isOnHost() : "This method is called on a host.";
-     * @require getSignature() != null : "The signature of this handler is not null.";
+     * @require hasSignature() : "This handler has a signature.";
      * 
      * @ensure return == null || getReplyClass() != null && getReplyClass().isInstance(return) : "If a reply is returned, it is an instance of the indicated class.";
      */
@@ -339,8 +339,8 @@ public abstract class Method extends Handler {
          * @require signature.hasSubject() : "The signature has a subject.";
          * @require block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
          * 
-         * @ensure return.getEntity() != null : "The entity of the returned method is not null.";
-         * @ensure return.getSignature() != null : "The signature of the returned method is not null.";
+         * @ensure return.hasEntity() : "The returned method has an entity.";
+         * @ensure return.hasSignature() : "The returned method has a signature.";
          */
         @Pure
         protected abstract @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException;
@@ -376,8 +376,8 @@ public abstract class Method extends Handler {
      * 
      * @require signature.hasSubject() : "The signature has a subject.";
      * 
-     * @ensure return.getEntity() != null : "The entity of the returned method is not null.";
-     * @ensure return.getSignature() != null : "The signature of the returned method is not null.";
+     * @ensure return.hasEntity() : "The returned method has an entity.";
+     * @ensure return.hasSignature() : "The returned method has a signature.";
      */
     @Pure
     public static @Nonnull Method get(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {

@@ -24,7 +24,7 @@ import javax.annotation.Nullable;
  * <p>
  * <em>Important:</em> Do not execute internal actions directly but always pass them to the {@link Synchronizer#execute(ch.virtualid.handler.InternalAction) Synchronizer}!
  * 
- * @invariant getEntity() != null : "The entity of this internal action is not null.";
+ * @invariant hasEntity() : "This internal action has an entity.";
  * @invariant getEntityNotNull().getIdentity().equals(getSubject().getIdentity()) : "The identity of the entity and the subject are the same.";
  * 
  * @see CoreServiceInternalAction
@@ -53,7 +53,7 @@ public abstract class InternalAction extends Action implements InternalMethod {
      * 
      * @require signature.hasSubject() : "The signature has a subject.";
      * 
-     * @ensure getSignature() != null : "The signature of this handler is not null.";
+     * @ensure hasSignature() : "This handler has a signature.";
      */
     protected InternalAction(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
@@ -87,7 +87,7 @@ public abstract class InternalAction extends Action implements InternalMethod {
      * @throws PacketException if the authorization is not sufficient.
      * 
      * @require isOnHost() : "This method is called on a host.";
-     * @require getSignature() != null : "The signature of this handler is not null.";
+     * @require hasSignature() : "This handler has a signature.";
      */
     protected abstract void executeOnHostInternalAction() throws PacketException, SQLException;
     

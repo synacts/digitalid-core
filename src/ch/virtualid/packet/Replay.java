@@ -62,6 +62,7 @@ public final class Replay {
             preparedStatement.executeUpdate();
         } catch (@Nonnull SQLException exception) {
             Database.getConfiguration().rollback(savepoint);
+            throw new ReplayDetectedException(packet);
         }
     }
     

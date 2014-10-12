@@ -41,15 +41,25 @@ public abstract class Concept extends Instance {
     }
     
     /**
+     * Returns whether this concept has an entity.
+     * 
+     * @return whether this concept has an entity.
+     */
+    @Pure
+    public final boolean hasEntity() {
+        return entity != null;
+    }
+    
+    /**
      * Returns the entity to which this concept belongs.
      * 
      * @return the entity to which this concept belongs.
      * 
-     * @require entity != null : "The entity is not null.";
+     * @require hasEntity() : "This concept has an entity.";
      */
     @Pure
     public final @Nonnull Entity getEntityNotNull() {
-        assert entity != null : "The entity is not null.";
+        assert entity != null : "This concept has an entity.";
         
         return entity;
     }

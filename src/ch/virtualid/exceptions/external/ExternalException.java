@@ -20,6 +20,8 @@ import javax.annotation.Nullable;
  * @see InactiveSignatureException
  * @see ReplayDetectedException
  * 
+ * @see WrongReplyException
+ * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */

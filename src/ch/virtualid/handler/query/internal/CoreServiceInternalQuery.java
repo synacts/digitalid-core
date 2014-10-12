@@ -16,6 +16,7 @@ import ch.virtualid.module.CoreService;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.xdf.SignatureWrapper;
 import static ch.virtualid.exceptions.packet.PacketError.IDENTIFIER;
+import ch.virtualid.handler.reply.query.CoreServiceQueryReply;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
@@ -48,7 +49,7 @@ public abstract class CoreServiceInternalQuery extends InternalQuery {
      * 
      * @require signature.hasSubject() : "The signature has a subject.";
      * 
-     * @ensure getSignature() != null : "The signature of this handler is not null.";
+     * @ensure hasSignature() : "This handler has a signature.";
      * @ensure isOnHost() : "Queries are only decoded on hosts.";
      */
     protected CoreServiceInternalQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws SQLException, IOException, PacketException, ExternalException {
@@ -79,6 +80,10 @@ public abstract class CoreServiceInternalQuery extends InternalQuery {
     }
     
     
+    @Pure
+    @Override
+    public abstract @Nonnull Class<? extends CoreServiceQueryReply> getReplyClass();
+    
     /**
      * Executes this internal query on the host.
      * 
@@ -87,14 +92,14 @@ public abstract class CoreServiceInternalQuery extends InternalQuery {
      * @return the reply to this internal query.
      * 
      * @require isOnHost() : "This method is called on a host.";
-     * @require getSignature() != null : "The signature of this handler is not null.";
+     * @require hasSignature() : "This handler has a signature.";
      */
     protected abstract @Nonnull QueryReply executeOnHost(@Nonnull Agent agent) throws SQLException;
     
     @Override
     public @Nonnull QueryReply executeOnHost() throws PacketException, SQLException {
         assert isOnHost() : "This method is called on a host.";
-        assert getSignature() != null : "The signature of this handler is not null.";
+        assert hasSignature() : "This handler has a signature.";
         
         final @Nonnull Agent agent = getSignatureNotNull().getAgentCheckedAndRestricted(getEntityNotNull());
         

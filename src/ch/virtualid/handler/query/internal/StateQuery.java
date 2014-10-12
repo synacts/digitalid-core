@@ -5,22 +5,24 @@ import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Account;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.Role;
-import ch.virtualid.exceptions.external.InvalidDeclarationException;
+import ch.virtualid.exceptions.external.ExternalException;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Method;
 import ch.virtualid.handler.reply.query.StateReply;
-import ch.virtualid.exceptions.external.IdentityNotFoundException;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.CoreService;
 import ch.xdf.Block;
 import ch.xdf.EmptyWrapper;
 import ch.xdf.SignatureWrapper;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
+import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 
 /**
- * Retrieves the state of the given role.
+ * Queries the state of the given role.
+ * 
+ * @see StateReply
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
@@ -40,7 +42,7 @@ public final class StateQuery extends CoreServiceInternalQuery {
     
     
     /**
-     * Creates an internal query to retrieve the state of the given role.
+     * Creates an internal query for the state of the given role.
      * 
      * @param role the role to which this handler belongs.
      */
@@ -59,10 +61,10 @@ public final class StateQuery extends CoreServiceInternalQuery {
      * @require signature.hasSubject() : "The signature has a subject.";
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      * 
-     * @ensure getSignature() != null : "The signature of this handler is not null.";
+     * @ensure hasSignature() : "This handler has a signature.";
      * @ensure isOnHost() : "Queries are only decoded on hosts.";
      */
-    private StateQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws InvalidEncodingException, SQLException, IdentityNotFoundException, InvalidDeclarationException {
+    private StateQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
@@ -77,9 +79,15 @@ public final class StateQuery extends CoreServiceInternalQuery {
     @Pure
     @Override
     public @Nonnull String toString() {
-        return "Retrieves the state.";
+        return "Queries the state.";
     }
     
+    
+    @Pure
+    @Override
+    public @Nonnull Class<StateReply> getReplyClass() {
+        return StateReply.class;
+    }
     
     @Override
     protected @Nonnull StateReply executeOnHost(@Nonnull Agent agent) throws SQLException {
@@ -103,7 +111,7 @@ public final class StateQuery extends CoreServiceInternalQuery {
         
         @Pure
         @Override
-        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws InvalidEncodingException, SQLException, IdentityNotFoundException, InvalidDeclarationException {
+        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
             return new StateQuery(entity, signature, recipient, block);
         }
         

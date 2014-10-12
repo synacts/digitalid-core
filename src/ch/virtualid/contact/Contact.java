@@ -4,8 +4,9 @@ import ch.virtualid.annotations.Pure;
 import ch.virtualid.concept.Concept;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.Entity;
-import ch.virtualid.exceptions.external.InvalidDeclarationException;
 import ch.virtualid.exceptions.external.IdentityNotFoundException;
+import ch.virtualid.exceptions.external.InvalidDeclarationException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.identity.Identity;
 import ch.virtualid.identity.NonHostIdentifier;
 import ch.virtualid.identity.Person;
@@ -14,19 +15,19 @@ import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
 import ch.xdf.Block;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.javatuples.Pair;
 
 /**
  * Contacts have certain {@link Permissions permissions} and {@link Authentications authentications}.
+ * 
+ * @invariant hasEntity() : "This contact has an entity.";
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 1.6
@@ -180,8 +181,8 @@ public final class Contact extends Concept implements Immutable, Blockable, SQLi
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 89 * hash + Objects.hashCode(this.getPerson());
-        hash = 89 * hash + Objects.hashCode(this.getEntity());
+        hash = 89 * hash + getPerson().hashCode();
+        hash = 89 * hash + getEntityNotNull().hashCode();
         return hash;
     }
     

@@ -1,13 +1,14 @@
 package ch.virtualid.identity;
 
-import ch.virtualid.exceptions.external.IdentityNotFoundException;
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.exceptions.external.InvalidDeclarationException;
 import ch.virtualid.errors.ShouldNeverHappenError;
+import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.interfaces.Immutable;
 import ch.xdf.Block;
 import ch.xdf.StringWrapper;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.exceptions.packet.PacketException;
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
@@ -86,7 +87,7 @@ public final class NonHostIdentifier extends Identifier implements Immutable {
     
     @Pure
     @Override
-    public @Nonnull NonHostIdentity getIdentity() throws SQLException, IdentityNotFoundException, InvalidDeclarationException {
+    public @Nonnull NonHostIdentity getIdentity() throws SQLException, IOException, PacketException, ExternalException {
         final @Nonnull Identity identity = Mapper.getIdentity(this);
         if (identity instanceof Type) ((Type) identity).ensureLoaded();
         if (identity instanceof NonHostIdentity) return (NonHostIdentity) identity;

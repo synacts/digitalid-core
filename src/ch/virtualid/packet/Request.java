@@ -9,20 +9,21 @@ import ch.virtualid.credential.Credential;
 import ch.virtualid.cryptography.PublicKeyChain;
 import ch.virtualid.cryptography.SymmetricKey;
 import ch.virtualid.exceptions.external.ExternalException;
-import ch.virtualid.exceptions.external.IdentityNotFoundException;
 import ch.virtualid.exceptions.external.InactiveSignatureException;
 import ch.virtualid.exceptions.external.InvalidDeclarationException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
-import ch.virtualid.exceptions.external.InvalidSignatureException;
+import ch.virtualid.exceptions.external.WrongReplyException;
 import static ch.virtualid.exceptions.packet.PacketError.KEYROTATION;
+import static ch.virtualid.exceptions.packet.PacketError.REPLY;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Method;
+import ch.virtualid.handler.Reply;
 import ch.virtualid.handler.query.external.AttributesQuery;
+import ch.virtualid.handler.reply.query.IdentityReply;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.Identifier;
 import ch.virtualid.identity.Mapper;
 import ch.virtualid.identity.NonHostIdentifier;
-import ch.virtualid.identity.SemanticType;
 import ch.virtualid.server.Server;
 import ch.virtualid.util.ConcurrentHashMap;
 import ch.virtualid.util.ConcurrentMap;
@@ -33,7 +34,6 @@ import ch.xdf.Block;
 import ch.xdf.ClientSignatureWrapper;
 import ch.xdf.CredentialsSignatureWrapper;
 import ch.xdf.HostSignatureWrapper;
-import ch.xdf.SelfcontainedWrapper;
 import ch.xdf.SignatureWrapper;
 import ch.xdf.TupleWrapper;
 import java.io.IOException;
@@ -41,7 +41,6 @@ import java.io.InputStream;
 import java.math.BigInteger;
 import java.net.Socket;
 import java.sql.SQLException;
-import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.javatuples.Pair;
@@ -231,69 +230,39 @@ public class Request extends Packet {
      * @ensure response.getSize() == getSize() : "The response has the same number of elements (otherwise a {@link PacketException} is thrown).";
      */
     public final @Nonnull Response send(boolean verified) throws SQLException, IOException, PacketException, ExternalException {
-        final @Nonnull HostIdentifier recipient = getRecipient();
-        
-        // Send the request and retrieve the response.
-        @Nonnull Response response;
-        try (@Nonnull Socket socket = new Socket("vid." + recipient.getString(), Server.PORT)) {
+        try (@Nonnull Socket socket = new Socket("vid." + getRecipient().getString(), Server.PORT)) {
             this.write(socket.getOutputStream());
-            response = new Response(this, socket.getInputStream(), verified);
-        }
-        
-        try {
-            // Verify that the response was signed by the right host.
-            @Nonnull List<SignatureWrapper> responseSignatures = response.getSignatures();
-            for (@Nonnull SignatureWrapper responseSignature : responseSignatures) {
-                if (responseSignature.isSigned()) {
-                    assert responseSignature instanceof HostSignatureWrapper : "Responses can only be signed by hosts (see the postcondition of the response constructor).";
-                    @Nonnull Identifier signer = ((HostSignatureWrapper) responseSignature).getSigner();
-                    if (!signer.equals(recipient)) throw new InvalidSignatureException("The response from the host " + recipient + " was signed by " + signer + ".");
-                    break; // Only one signature needs to be verified since all signatures are signed alike.
-                }
-            }
-            
-            // Verify that the response was about the right subject.
-            @Nullable Identifier requestSubject = getSignature(0).getSubject();
-            @Nullable Identifier responseSubject = response.getSignature(0).getSubject();
-            assert requestSubject != null && responseSubject != null : "Neither the request nor the response subject may be null (see the invariant of the packet class).";
-            if (!responseSubject.equals(requestSubject)) throw new InvalidSignatureException("The subject of the request was " + requestSubject + ", the response from " + recipient + " was about " + responseSubject + " though.");
-            @Nonnull Identifier subject = requestSubject;
-            
+            return new Response(this, socket.getInputStream(), verified);
+        } catch (@Nonnull PacketException exception) {
             boolean resend = false;
-            @Nullable SelfcontainedWrapper content = null;
             
-            try {
-                // The following statement throws a PacketException if the responding host encountered a (general) packet error.
-                content = response.getContent(0);
-            } catch (@Nonnull PacketException exception) {
-                if (exception.getError() == KEYROTATION) {
-                    // TODO: Rotate the key of the client.
-                    resend = true;
-                } else {
-                    throw exception;
-                }
-            }
-            
-            if (content != null) {
-                // Check whether the subject has been relocated as indicated by an unexpected identity response.
-                @Nonnull SemanticType requestType = getContents().get(0).getIdentifier().getIdentity().toSemanticType();
-                @Nonnull SemanticType responseType = content.getIdentifier().getIdentity().toSemanticType();
-                if (!requestType.equals(SemanticType.IDENTITY_REQUEST) && responseType.equals(SemanticType.IDENTITY_RESPONSE)) {
-                    @Nonnull Block element = content.getElement();
-                    // TODO: Rewrite with the corresponding handler.
-                    @Nonnull Block[] elements = new TupleWrapper(element).getElementsNotNull(3);
-                    if (elements[2].isEmpty()) throw new InvalidEncodingException("The successor of the unexpected identity response to a request for " + subject + " is not null.");
-                    @Nonnull NonHostIdentifier successor = new NonHostIdentifier(elements[2]);
-                    if (!(subject instanceof NonHostIdentifier)) throw new InvalidEncodingException("An unexpected identity response may only be returned for non-host identities and not for " + subject + ".");
-                    Mapper.setSuccessor((NonHostIdentifier) subject, successor); // TODO: Also pass the reference to the stored response.
-                    if (!successor.getIdentity().equals(subject.getIdentity())) throw new InvalidDeclarationException("The indicated successor " + successor + " is not an identifier of the identity denoted by " + subject + ".");
-                    subject = successor;
-                    recipient = subject.getHostIdentifier();
-                    resend = true;
+            if (exception.getError() == KEYROTATION && this instanceof ClientRequest) {
+                // TODO: Rotate the key of the client.
+                resend = true;
+            } else if (exception.getError() == REPLY) {
+                final @Nullable Throwable cause = exception.getCause();
+                if (cause instanceof WrongReplyException) {
+                    final @Nonnull Reply reply = ((WrongReplyException) cause).getReply();
+                    if (reply instanceof IdentityReply) {
+                        @Nonnull Block element = content.getElement();
+                        // TODO: Rewrite with the corresponding handler.
+                        @Nonnull Block[] elements = new TupleWrapper(element).getElementsNotNull(3);
+                        if (elements[2].isEmpty()) throw new InvalidEncodingException("The successor of the unexpected identity response to a request for " + subject + " is not null.");
+                        @Nonnull NonHostIdentifier successor = new NonHostIdentifier(elements[2]);
+                        if (!(subject instanceof NonHostIdentifier)) throw new InvalidEncodingException("An unexpected identity response may only be returned for non-host identities and not for " + subject + ".");
+                        Mapper.setSuccessor((NonHostIdentifier) subject, successor); // TODO: Also pass the reference to the stored response.
+                        if (!successor.getIdentity().equals(subject.getIdentity())) throw new InvalidDeclarationException("The indicated successor " + successor + " is not an identifier of the identity denoted by " + subject + ".");
+                        subject = successor;
+                        recipient = subject.getHostIdentifier();
+                        
+                        resend = true;
+                    }
                 }
             }
             
             if (resend) {
+                // TODO: Resend this request.
+                
                 // Resend the request to the subject's successor or with the rotated key.
                 @Nonnull SignatureWrapper signature = getSignature(getSize() - 1);
                 if (signature instanceof HostSignatureWrapper) {
@@ -309,25 +278,12 @@ public class Request extends Packet {
                 } else {
                     return new Request(getContents(), recipient, subject).send(verified);
                 }
+                
+                
+            } else {
+                throw exception;
             }
-            
-            if (response.getSize() != getSize()) throw new InvalidEncodingException("The response contains fewer (or more) contents than the request.");
-            
-        } catch (@Nonnull IdentityNotFoundException exception) {
-            throw new FailedRequestException("Could not find the identity " + exception.getIdentifier() + ".", exception);
-        } catch (@Nonnull InvalidEncodingException exception) {
-            throw new FailedRequestException("Could not decode the response from the host " + recipient + ".", exception);
-        } catch (@Nonnull InvalidSignatureException exception) {
-            throw new FailedRequestException("The signature of the response was missing or invalid.", exception);
-        } catch (@Nonnull SQLException exception) {
-            throw new FailedRequestException("The successor could not be written to the database.", exception);
-        } catch (@Nonnull InvalidDeclarationException exception) {
-            throw new FailedRequestException("The declaration of the successor is invalid.", exception);
-        } catch (@Nonnull FailedEncodingException exception) {
-            throw new FailedRequestException("The request could not be re-encoded for the successor or with the rotated key.", exception);
         }
-        
-        return response;
     }
     
     

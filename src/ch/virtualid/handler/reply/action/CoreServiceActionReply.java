@@ -35,7 +35,7 @@ public abstract class CoreServiceActionReply extends ActionReply {
      * @param signature the host signature of this handler.
      * @param number the number that references this reply.
      * 
-     * @ensure getSignature() != null : "The signature of this handler is not null.";
+     * @ensure hasSignature() : "This handler has a signature.";
      */
     protected CoreServiceActionReply(@Nullable Entity entity, @Nonnull HostSignatureWrapper signature, long number) throws InvalidEncodingException {
         super(entity, signature, number);

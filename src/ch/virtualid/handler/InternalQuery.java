@@ -4,11 +4,11 @@ import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.Role;
 import ch.virtualid.exceptions.external.ExternalException;
+import static ch.virtualid.exceptions.packet.PacketError.IDENTIFIER;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.query.internal.CoreServiceInternalQuery;
 import ch.virtualid.identity.HostIdentifier;
 import ch.xdf.SignatureWrapper;
-import static ch.virtualid.exceptions.packet.PacketError.IDENTIFIER;
-import ch.virtualid.exceptions.packet.PacketException;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
@@ -16,7 +16,7 @@ import javax.annotation.Nonnull;
 /**
  * Internal queries can only be sent by {@link Client clients} and are always signed identity-based.
  * 
- * @invariant getEntity() != null : "The entity of this internal query is not null.";
+ * @invariant hasEntity() : "This internal query has an entity.";
  * @invariant getEntityNotNull().getIdentity().equals(getSubject().getIdentity()) : "The identity of the entity and the subject are the same.";
  * 
  * @see CoreServiceInternalQuery
@@ -45,7 +45,7 @@ public abstract class InternalQuery extends Query implements InternalMethod {
      * 
      * @require signature.hasSubject() : "The signature has a subject.";
      * 
-     * @ensure getSignature() != null : "The signature of this handler is not null.";
+     * @ensure hasSignature() : "This handler has a signature.";
      * @ensure isOnHost() : "Queries are only decoded on hosts.";
      */
     protected InternalQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws SQLException, IOException, PacketException, ExternalException {

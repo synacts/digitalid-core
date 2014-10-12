@@ -22,7 +22,7 @@ import javax.annotation.Nullable;
  * This class models a {@link Reply reply} to an {@link ExternalAction external action}.
  * Action replies are added to the {@link Audit audit} by the {@link Pusher pusher} on {@link Service services}.
  * 
- * @invariant getEntity() != null : "The entity of this action reply is not null.");
+ * @invariant hasEntity() : "This action reply has an entity.");
  * 
  * @see CoreServiceActionReply
  * 
@@ -47,12 +47,12 @@ public abstract class ActionReply extends Reply implements Auditable {
      * @param signature the host signature of this handler.
      * @param number the number that references this reply.
      * 
-     * @ensure getSignature() != null : "The signature of this handler is not null.";
+     * @ensure hasSignature() : "This handler has a signature.";
      */
     protected ActionReply(@Nullable Entity entity, @Nonnull HostSignatureWrapper signature, long number) throws InvalidEncodingException {
         super(entity, signature, number);
         
-        if (getEntity() == null) throw new InvalidEncodingException("The entity of an action reply may not be null.");
+        if (!hasEntity()) throw new InvalidEncodingException("An action reply must have an entity.");
     }
     
     
@@ -73,7 +73,7 @@ public abstract class ActionReply extends Reply implements Auditable {
      * 
      * @throws PacketException if the authorization is not sufficient.
      * 
-     * @require getSignature() != null : "The signature of this handler is not null.";
+     * @require hasSignature() : "This handler has a signature.";
      * @require getActionClass().isInstance(action) : "The given action is an instance of the indicated class.";
      * @require getSubject().equals(action.getSubject()) : "The subjects of the reply and the action are the same.";
      * @require getEntityNotNull().equals(action.getEntityNotNull()) : "The entities of the reply and the action are the same.";
