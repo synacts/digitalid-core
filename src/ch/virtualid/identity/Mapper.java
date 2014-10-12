@@ -23,6 +23,9 @@ import ch.virtualid.io.Logger;
 import ch.virtualid.packet.Request;
 import ch.virtualid.packet.Response;
 import ch.virtualid.server.Host;
+import ch.virtualid.util.FreezableLinkedList;
+import ch.virtualid.util.FreezableList;
+import ch.virtualid.util.ReadonlyList;
 import ch.xdf.Block;
 import ch.xdf.ListWrapper;
 import ch.xdf.SelfcontainedWrapper;
@@ -526,18 +529,19 @@ public final class Mapper {
      * Please note that the returned predecessors are only claimed and not yet verified.
      * 
      * @param identifier the identifier of interest.
+     * 
      * @return the predecessors of the given identifier as stored in the database.
      */
-    public static @Nonnull List<NonHostIdentifier> getPredecessors(@Nonnull NonHostIdentifier identifier) throws SQLException {
-        List<NonHostIdentifier> predecessors = new LinkedList<NonHostIdentifier>();
+    public static @Nonnull ReadonlyList<NonHostIdentifier> getPredecessors(@Nonnull NonHostIdentifier identifier) throws SQLException {
+        FreezableList<NonHostIdentifier> predecessors = new FreezableLinkedList<NonHostIdentifier>();
         @Nonnull String query = "SELECT predecessor FROM map_predecessors WHERE identifier = " + identifier;
         try (@Nonnull Connection connection = Database.getConnection(); @Nonnull Statement statement = connection.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(query)) {
             while (resultSet.next()) {
-                predecessors.add(new NonHostIdentifier(resultSet.getString(1), false));
+                predecessors.add(new NonHostIdentifier(resultSet.getString(1)));
             }
             connection.commit();
         }
-        return predecessors;
+        return predecessors.freeze();
     }
     
     /**
@@ -631,9 +635,10 @@ public final class Mapper {
      * @param identifier the identifier of interest.
      * @return the list of predecessors of (and including) the given identifier as stored in the database.
      */
+    @Deprecated // TODO: Probably better solved by the Predecessor class.
     private static @Nonnull Set<NonHostIdentifier> getSetOfPredecessors(@Nonnull NonHostIdentifier identifier) throws SQLException {
-        @Nonnull List<NonHostIdentifier> predecessors = getPredecessors(identifier);
-        @Nonnull Set<NonHostIdentifier> set = predecessors.isEmpty() ? new HashSet<NonHostIdentifier>() : getSetOfPredecessors(predecessors.get(0));
+        @Nonnull ReadonlyList<NonHostIdentifier> predecessors = getPredecessors(identifier);
+        @Nonnull Set<NonHostIdentifier> set = predecessors.isEmpty() ? new HashSet<NonHostIdentifier>() : getSetOfPredecessors(predecessors.getNotNull(0));
         @Nonnull Iterator<NonHostIdentifier> iterator = predecessors.iterator();
         if (iterator.hasNext()) iterator.next();
         while (iterator.hasNext()) set.addAll(getSetOfPredecessors(iterator.next()));
