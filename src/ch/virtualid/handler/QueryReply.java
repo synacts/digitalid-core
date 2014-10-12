@@ -2,9 +2,10 @@ package ch.virtualid.handler;
 
 import ch.virtualid.entity.Account;
 import ch.virtualid.entity.Entity;
-import ch.virtualid.handler.reply.query.CoreServiceQueryReply;
-import ch.xdf.HostSignatureWrapper;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.handler.reply.query.CoreServiceQueryReply;
+import ch.virtualid.identity.Identifier;
+import ch.xdf.HostSignatureWrapper;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -25,7 +26,17 @@ public abstract class QueryReply extends Reply {
      * @param account the account to which this query reply belongs.
      */
     protected QueryReply(@Nonnull Account account) {
-        super(account);
+        super(account, account.getIdentity().getAddress());
+    }
+    
+    /**
+     * Creates a query reply that encodes the content of a packet.
+     * This constructor is only needed for {@link IdentityReply}.
+     * 
+     * @param subject the subject of this handler.
+     */
+    protected QueryReply(@Nonnull Identifier subject) {
+        super(null, subject);
     }
     
     /**

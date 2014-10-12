@@ -37,7 +37,7 @@ public abstract class ActionReply extends Reply implements Auditable {
      * @param account the account to which this action reply belongs.
      */
     protected ActionReply(@Nonnull Account account) {
-        super(account);
+        super(account, account.getIdentity().getAddress());
     }
     
     /**

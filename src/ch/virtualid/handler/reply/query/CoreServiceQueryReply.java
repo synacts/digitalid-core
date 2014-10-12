@@ -3,11 +3,12 @@ package ch.virtualid.handler.reply.query;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Account;
 import ch.virtualid.entity.Entity;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.handler.QueryReply;
+import ch.virtualid.identity.Identifier;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.CoreService;
 import ch.xdf.HostSignatureWrapper;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -26,6 +27,16 @@ public abstract class CoreServiceQueryReply extends QueryReply {
      */
     protected CoreServiceQueryReply(@Nonnull Account account) {
         super(account);
+    }
+    
+    /**
+     * Creates a query reply that encodes the content of a packet.
+     * This constructor is only needed for {@link IdentityReply}.
+     * 
+     * @param subject the subject of this handler.
+     */
+    protected CoreServiceQueryReply(@Nonnull Identifier subject) {
+        super(subject);
     }
     
     /**

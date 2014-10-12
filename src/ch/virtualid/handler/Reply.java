@@ -10,6 +10,7 @@ import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.IdentityNotFoundException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
+import ch.virtualid.identity.Identifier;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.SQLizable;
 import ch.virtualid.io.Level;
@@ -55,9 +56,10 @@ public abstract class Reply extends Handler implements SQLizable {
      * Creates a reply that encodes the content of a packet.
      * 
      * @param account the account to which this reply belongs.
+     * @param subject the subject of this handler.
      */
-    protected Reply(@Nonnull Account account) {
-        super(account, account.getIdentity().getAddress());
+    protected Reply(@Nullable Account account, @Nonnull Identifier subject) {
+        super(account, subject);
         
         this.number = null;
     }

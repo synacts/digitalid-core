@@ -5,11 +5,13 @@ import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Method;
 import ch.virtualid.handler.reply.query.IdentityReply;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.Identifier;
+import ch.virtualid.identity.NonHostIdentifier;
 import ch.virtualid.identity.SemanticType;
 import ch.xdf.Block;
 import ch.xdf.EmptyWrapper;
@@ -100,7 +102,9 @@ public final class IdentityQuery extends CoreServiceExternalQuery {
         assert isOnHost() : "This method is called on a host.";
         assert hasSignature() : "This handler has a signature.";
         
-        return new IdentityReply(getSubject());
+        final @Nonnull Identifier subject = getSubject();
+        if (!(subject instanceof NonHostIdentifier)) throw new PacketException(PacketError.IDENTIFIER, "The identity may only be queried of non-host identities.");
+        return new IdentityReply((NonHostIdentifier) subject);
     }
     
     

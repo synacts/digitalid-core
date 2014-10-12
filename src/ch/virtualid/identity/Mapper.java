@@ -388,6 +388,22 @@ public final class Mapper {
     }
     
     /**
+     * Returns the mapped identity of the given identifier.
+     * 
+     * @param identifier the identifier whose identity is to be returned.
+     * 
+     * @return the mapped identity of the given identifier.
+     * 
+     * @require isMapped(identifier) : "The identifier is mapped.";
+     */
+    @Pure
+    public static @Nonnull Identity getMappedIdentity(@Nonnull Identifier identifier) throws SQLException {
+        assert isMapped(identifier) : "The identifier is mapped.";
+        
+        return identifiers.get(identifier);
+    }
+    
+    /**
      * Establishes the identity of the given identifier by checking its existence and requesting its category, predecessors and successor.
      * 
      * @param identifier the identifier whose identity is to be established.
