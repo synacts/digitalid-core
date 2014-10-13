@@ -199,12 +199,12 @@ public abstract class Method extends Handler {
      * @return whether the given methods are similar to each other and not null.
      * 
      * @require methods.isFrozen() : "The list of methods is frozen.";
-     * @require !methods.isEmpty() : "The list of methods is not empty.";
+     * @require methods.isNotEmpty() : "The list of methods is not empty.";
      */
     @Pure
     public static boolean areSimilar(@Nonnull ReadonlyList<? extends Method> methods) {
         assert methods.isFrozen() : "The list of methods is frozen.";
-        assert !methods.isEmpty() : "The list of methods is not empty.";
+        assert methods.isNotEmpty() : "The list of methods is not empty.";
         
         final @Nonnull ReadonlyIterator<? extends Method> iterator = methods.iterator();
         final @Nullable Method reference = iterator.next();

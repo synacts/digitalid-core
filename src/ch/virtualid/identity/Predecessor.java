@@ -10,6 +10,7 @@ import ch.xdf.Block;
 import ch.xdf.TupleWrapper;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * This class models a predecessor of an identifier.
@@ -101,6 +102,26 @@ public final class Predecessor implements Immutable, Blockable {
      */
     public @Nonnull Predecessors getPredecessors() {
         return predecessors;
+    }
+    
+    
+    @Pure
+    @Override
+    public boolean equals(@Nullable Object object) {
+        if (object == this) return true;
+        if (object == null || !(object instanceof Predecessor)) return false;
+        final @Nonnull Predecessor other = (Predecessor) object;
+        
+        return this.identifier.equals(other.identifier) && this.predecessors.equals(other.predecessors);
+    }
+    
+    @Pure
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 89 * hash + identifier.hashCode();
+        hash = 89 * hash + predecessors.hashCode();
+        return hash;
     }
     
 }

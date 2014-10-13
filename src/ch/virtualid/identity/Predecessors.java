@@ -11,12 +11,14 @@ import ch.xdf.Block;
 import ch.xdf.ListWrapper;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * This class models a list of {@link Predecessor predecessors}.
  * 
  * @invariant isFrozen() : "This list of predecessors is frozen.";
  * @invariant doesNotContainNull() : "This list of predecessors does not contain null.";
+ * @invariant doesNotContainDuplicates() : "This list of predecessors does not contain duplicates.";
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
@@ -84,6 +86,33 @@ public final class Predecessors extends FreezableArrayList<Predecessor> implemen
             string.append(predecessor);
         }
         return string.append("]").toString();
+    }
+    
+    @Pure
+    @Override
+    public boolean equals(@Nullable Object object) {
+        if (object == this) return true;
+        if (object == null || !(object instanceof Predecessors)) return false;
+        final @Nonnull Predecessors other = (Predecessors) object;
+        
+        if (this.size() != other.size()) return false;
+        for (final @Nonnull Predecessor thisPredecessor : this) {
+            boolean found = false;
+            for (final @Nonnull Predecessor otherPredecessor : other) {
+                if (thisPredecessor.equals(otherPredecessor)) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) return false;
+        }
+        return true;
+    }
+    
+    @Pure
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
     
 }

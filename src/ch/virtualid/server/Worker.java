@@ -1,6 +1,6 @@
 package ch.virtualid.server;
 
-import ch.virtualid.cryptography.SymmetricKey;
+import ch.virtualid.auxiliary.Time;
 import ch.virtualid.database.Database;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketError;
@@ -13,12 +13,13 @@ import static ch.virtualid.io.Level.ERROR;
 import static ch.virtualid.io.Level.INFORMATION;
 import static ch.virtualid.io.Level.WARNING;
 import ch.virtualid.io.Logger;
+import ch.virtualid.packet.Request;
+import ch.virtualid.packet.Response;
 import ch.xdf.Block;
 import ch.xdf.Int8Wrapper;
 import ch.xdf.SelfcontainedWrapper;
 import ch.xdf.SignatureWrapper;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.Socket;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -59,18 +60,16 @@ public final class Worker implements Runnable {
     @Override
     public void run() {
         try {
-            long start = System.currentTimeMillis();
+            final @Nonnull Time start = new Time();
             String type = "";
             String identifier = "";
             String error = "";
             
-            @Nullable SymmetricKey symmetricKey = null;
+            @Nullable Request request = null;
             
-            Packet response;
+            Response response;
             try {
-                @Nonnull Packet request;
-                try { request = new Packet(SelfcontainedWrapper.read(socket.getInputStream())); } catch (InvalidEncodingException exception) { throw new PacketException(PacketError.PACKET, exception); }
-                symmetricKey = request.getEncryption().getSymmetricKey();
+                request = new Request(socket.getInputStream());
                 
                 Host host = Server.getHost(request.getEncryption().getRecipient());
                 SignatureWrapper signature = request.getSignatures();
@@ -134,25 +133,23 @@ public final class Worker implements Runnable {
                 response = new Packet(Arrays.asList(content), symmetricKey, identifier, null, host.getIdentifier());
             } catch (@Nonnull PacketException exception) {
                 @Nonnull SelfcontainedWrapper content = new SelfcontainedWrapper(NonHostIdentifier.PACKET_ERROR, new Int8Wrapper(exception.getError().getValue()));
-                response = new Packet(content, symmetricKey);
+                response = new Response(request, exception);
                 error = " with " + exception.getError();
             }
             
             // The database transaction is intentionally committed before returning the response so that slow or malicious clients cannot block the database.
-            OutputStream outputStream = socket.getOutputStream();
-            response.write(outputStream);
+            response.write(socket.getOutputStream());
             
-            long end = System.currentTimeMillis();
-            identifier = (identifier.isEmpty() ? "" : " to " + identifier);
-            logger.log(INFORMATION, "Request" + type + identifier + " from '" + socket.getInetAddress().toString() + "' handled in " + (end - start) + " ms" + error + ".");
-            
-        } catch (@Nonnull IOException | FailedEncodingException exception) {
-            logger.log(WARNING, "The worker could not send a response.", exception);
+            final @Nonnull Time end = new Time();
+            identifier = identifier.isEmpty() ? "" : " to " + identifier;
+            logger.log(INFORMATION, "Request" + type + identifier + " from '" + socket.getInetAddress().toString() + "' handled in " + end.subtract(start) + error + ".");
+        } catch (@Nonnull IOException exception) {
+            logger.log(WARNING, exception);
         } finally {
             try {
                 if (!socket.isClosed()) socket.close();
-            } catch (IOException exception) {
-                logger.log(WARNING, "The worker could not close the socket.", exception);
+            } catch (@Nonnull IOException exception) {
+                logger.log(WARNING, exception);
             }
         }
         

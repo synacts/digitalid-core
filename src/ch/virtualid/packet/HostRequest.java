@@ -20,6 +20,11 @@ import javax.annotation.Nonnull;
 public final class HostRequest extends Request {
     
     /**
+     * Stores the identifier of the signing host.
+     */
+    private final @Nonnull Identifier signer;
+    
+    /**
      * Packs the given methods with the given arguments signed by the given host.
      * 
      * @param methods the methods of this request.
@@ -29,11 +34,18 @@ public final class HostRequest extends Request {
      * 
      * @require methods.isFrozen() : "The methods are frozen.";
      * @require methods.isNotEmpty() : "The methods are not empty.";
-     * @require methods.doesNotContainNull() : "The methods do not contain null.";
+     * @require Method.areSimilar(methods) : "All methods are similar and not null.";
      * @require Server.hasHost(signer.getHostIdentifier()) : "The host of the signer is running on this server.";
      */
     public HostRequest(@Nonnull FreezableList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull Identifier subject, @Nonnull Identifier signer) throws SQLException, IOException, PacketException, ExternalException {
         super(methods, recipient, getSymmetricKey(recipient, Time.TROPICAL_YEAR), subject, null, signer, null, null, null, false, null);
+        
+        this.signer = signer;
+    }
+    
+    @Override
+    @Nonnull Response resend(@Nonnull FreezableList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull Identifier subject, boolean verified) throws SQLException, IOException, PacketException, ExternalException {
+        return new HostRequest(methods, recipient, subject, signer).send(verified);
     }
     
 }

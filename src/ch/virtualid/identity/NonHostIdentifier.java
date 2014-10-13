@@ -1,7 +1,6 @@
 package ch.virtualid.identity;
 
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.errors.ShouldNeverHappenError;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.interfaces.Immutable;
 import ch.xdf.Block;
@@ -88,10 +87,9 @@ public final class NonHostIdentifier extends Identifier implements Immutable {
     @Pure
     @Override
     public @Nonnull NonHostIdentity getIdentity() throws SQLException, IOException, PacketException, ExternalException {
-        final @Nonnull Identity identity = Mapper.getIdentity(this);
+        final @Nonnull NonHostIdentity identity = Mapper.getIdentity(this);
         if (identity instanceof Type) ((Type) identity).ensureLoaded();
-        if (identity instanceof NonHostIdentity) return (NonHostIdentity) identity;
-        throw new ShouldNeverHappenError("Could not cast the identity of " + this + " to a non-host identity.");
+        return identity;
     }
     
     

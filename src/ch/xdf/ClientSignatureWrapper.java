@@ -8,6 +8,7 @@ import ch.virtualid.client.SecretCommitment;
 import ch.virtualid.cryptography.Element;
 import ch.virtualid.cryptography.Exponent;
 import ch.virtualid.cryptography.Parameters;
+import ch.virtualid.cryptography.PublicKey;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
@@ -161,13 +162,14 @@ public final class ClientSignatureWrapper extends SignatureWrapper implements Im
     @Pure
     @Override
     public @Nullable ClientAgent getAgent(@Nonnull Entity entity) throws SQLException {
-        return Agents.getClientAgent(entity, getCommitment());
+        return Agents.getClientAgent(entity, commitment);
     }
     
     @Pure
     @Override
-    public @Nonnull ClientAgent getAgentCheckedAndRestricted(@Nonnull Entity entity) throws PacketException, SQLException {
-        final @Nullable ClientAgent agent = Agents.getClientAgent(entity, getCommitment());
+    public @Nonnull ClientAgent getAgentCheckedAndRestricted(@Nonnull Entity entity, @Nullable PublicKey publicKey) throws PacketException, SQLException {
+        if (publicKey != null && !commitment.getPublicKey().equals(publicKey)) throw new PacketException(PacketError.KEYROTATION, "The client has to recommit its secret.");
+        final @Nullable ClientAgent agent = Agents.getClientAgent(entity, commitment);
         if (agent == null) throw new PacketException(PacketError.AUTHORIZATION, "The element was not signed by an authorized client.");
         agent.checkNotRemoved();
         return agent;

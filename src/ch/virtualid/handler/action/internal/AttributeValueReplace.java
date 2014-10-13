@@ -6,7 +6,7 @@ package ch.virtualid.handler.action.internal;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 0.0
  */
-public class AttributeValueReplace {
+public final class AttributeValueReplace extends CoreServiceInternalAction {
     
     public AttributeValueReplace() {
         

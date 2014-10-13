@@ -5,21 +5,24 @@ import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
+import ch.virtualid.client.Cache;
+import ch.virtualid.cryptography.PublicKey;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.Role;
 import ch.virtualid.exceptions.external.ExternalException;
+import static ch.virtualid.exceptions.packet.PacketError.IDENTIFIER;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.InternalQuery;
 import ch.virtualid.handler.QueryReply;
+import ch.virtualid.handler.reply.query.CoreServiceQueryReply;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.CoreService;
-import ch.virtualid.exceptions.packet.PacketException;
 import ch.xdf.SignatureWrapper;
-import static ch.virtualid.exceptions.packet.PacketError.IDENTIFIER;
-import ch.virtualid.handler.reply.query.CoreServiceQueryReply;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * This class models the {@link InternalQuery internal queries} of the {@link CoreService core service}.
@@ -32,12 +35,19 @@ import javax.annotation.Nonnull;
 public abstract class CoreServiceInternalQuery extends InternalQuery {
     
     /**
+     * Stores the active public key of the recipient.
+     */
+    private final @Nullable PublicKey publicKey;
+    
+    /**
      * Creates an internal query that encodes the content of a packet.
      * 
      * @param role the role to which this handler belongs.
      */
     protected CoreServiceInternalQuery(@Nonnull Role role) {
         super(role, role.getIdentity().getAddress().getHostIdentifier());
+        
+        this.publicKey = null;
     }
     
     /**
@@ -56,6 +66,8 @@ public abstract class CoreServiceInternalQuery extends InternalQuery {
         super(entity, signature, recipient);
         
         if (!getEntityNotNull().getIdentity().getAddress().getHostIdentifier().equals(getRecipient())) throw new PacketException(IDENTIFIER, "The host of the entity and the recipient have to be the same for internal queries of the core service.");
+        
+        this.publicKey = Cache.getPublicKey(getRecipient().getIdentity(), signature.getTimeNotNull());
     }
     
     
@@ -101,7 +113,7 @@ public abstract class CoreServiceInternalQuery extends InternalQuery {
         assert isOnHost() : "This method is called on a host.";
         assert hasSignature() : "This handler has a signature.";
         
-        final @Nonnull Agent agent = getSignatureNotNull().getAgentCheckedAndRestricted(getEntityNotNull());
+        final @Nonnull Agent agent = getSignatureNotNull().getAgentCheckedAndRestricted(getEntityNotNull(), publicKey);
         
         final @Nonnull ReadonlyAgentPermissions permissions = getRequiredPermissions();
         if (!permissions.equals(AgentPermissions.NONE)) agent.getPermissions().checkCover(permissions);

@@ -24,6 +24,7 @@ import ch.virtualid.handler.query.external.IdentityQuery;
 import ch.virtualid.handler.reply.query.AttributesReply;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.Identifier;
+import ch.virtualid.identity.Identity;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.server.Server;
@@ -181,7 +182,6 @@ public abstract class Packet implements Immutable {
         
         final boolean isResponse = (this instanceof Response);
         final @Nullable Response response = isResponse ? (Response) this : null;
-        final @Nullable Identifier subject = isResponse ? request.getMethod(0).getSubject() : null;
         try { this.wrapper = new SelfcontainedWrapper(inputStream, false); } catch (InvalidEncodingException exception) { throw new PacketException(PacketError.PACKET, "The packet could not be decoded.", exception, isResponse); }
         try { this.encryption = new EncryptionWrapper(wrapper.getElement().checkType(ENCRYPTION), isResponse ? request.getEncryption().getSymmetricKey() : null); } catch (InvalidEncodingException exception) { throw new PacketException(PacketError.ENCRYPTION, "The encryption could not be decoded.", exception, isResponse); }
         if (encryption.getTime().isLessThan(Time.HALF_HOUR.ago())) throw new PacketException(PacketError.ENCRYPTION, "The encryption is older than half an hour.", null, isResponse);
@@ -218,7 +218,7 @@ public abstract class Packet implements Immutable {
                 final @Nonnull Block block = content.getElement();
                 final @Nonnull SemanticType type = block.getType();
                 if (response != null) {
-                    if (!signature.getSubjectNotNull().equals(subject)) throw new PacketException(PacketError.IDENTIFIER, "The subject of the request was " + subject + ", the response from " + request.getRecipient() + " was about " + signature.getSubjectNotNull() + " though.", null, isResponse);
+                    if (!signature.getSubjectNotNull().equals(request.getSubject())) throw new PacketException(PacketError.IDENTIFIER, "The subject of the request was " + request.getSubject() + ", the response from " + request.getRecipient() + " was about " + signature.getSubjectNotNull() + " though.", null, isResponse);
                     
                     if (signature.isSigned()) {
                         if (reference == null) reference = signature;
@@ -249,8 +249,13 @@ public abstract class Packet implements Immutable {
                     
                     final @Nonnull Entity entity;
                     assert recipient != null && account != null : "In case of requests, both the recipient and the account are set (see the code above).";
-                    if (type.equals(IdentityQuery.TYPE) || type.equals(AccountOpen.TYPE)) entity = account;
-                    else entity = new Account(account.getHost(), signature.getSubjectNotNull().getIdentity());
+                    if (type.equals(IdentityQuery.TYPE) || type.equals(AccountOpen.TYPE)) {
+                        entity = account;
+                    } else {
+                        final @Nonnull Identity identity = signature.getSubjectNotNull().getIdentity();
+                        if (!identity.getAddress().equals(signature.getSubjectNotNull())) throw new PacketException(PacketError.RELOCATION, "The subject " + signature.getSubjectNotNull() + " has been relocated to " + identity.getAddress() + ".", null, isResponse);
+                        entity = new Account(account.getHost(), identity);
+                    }
                     final @Nonnull Method method = Method.get(entity, signature, recipient, block);
                     ((Request) this).setMethod(i, method);
                 }

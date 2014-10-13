@@ -2,7 +2,6 @@ package ch.virtualid.packet;
 
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.annotations.RawRecipient;
-import ch.virtualid.cryptography.SymmetricKey;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InactiveSignatureException;
 import ch.virtualid.exceptions.packet.PacketException;
@@ -47,13 +46,13 @@ public final class Response extends Packet {
     /**
      * Packs the given packet exception as a response without signing.
      * 
+     * @param request the corresponding request or null if not yet decoded.
      * @param exception the packet exception that is to be packed as an unsigned response.
-     * @param symmetricKey the symmetric key used for encryption or null if the response is not encrypted.
      * 
      * @ensure getSize() == 1 : "The size of this response is one.";
      */
-    public Response(@Nonnull PacketException exception, @Nullable SymmetricKey symmetricKey) throws SQLException, IOException, PacketException, ExternalException {
-        super(new Pair<FreezableList<Reply>, FreezableList<PacketException>>((FreezableList<Reply>) new FreezableArrayList<Reply>(1).freeze(), (FreezableList<PacketException>) new FreezableArrayList<PacketException>(exception).freeze()), 1, null, symmetricKey, null, null, null, null, null, null, false, null);
+    public Response(@Nullable Request request, @Nonnull PacketException exception) throws SQLException, IOException, PacketException, ExternalException {
+        super(new Pair<FreezableList<Reply>, FreezableList<PacketException>>((FreezableList<Reply>) new FreezableArrayList<Reply>(1).freeze(), (FreezableList<PacketException>) new FreezableArrayList<PacketException>(exception).freeze()), 1, null, request == null ? null : request.getEncryption().getSymmetricKey(), null, null, null, null, null, null, false, null);
     }
     
     /**

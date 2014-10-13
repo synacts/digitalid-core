@@ -3,12 +3,12 @@ package ch.virtualid.identity;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.database.Database;
 import ch.virtualid.errors.ShouldNeverHappenError;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
 import ch.xdf.Block;
 import ch.xdf.Int8Wrapper;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -21,11 +21,35 @@ import javax.annotation.Nonnull;
  * @version 2.0
  */
 public enum Category implements Blockable, Immutable, SQLizable {
+    
+    /**
+     * The category for a host.
+     */
     HOST(0),
+    
+    /**
+     * The category for a syntactic type.
+     */
     SYNTACTIC_TYPE(1),
+    
+    /**
+     * The category for a semantic type.
+     */
     SEMANTIC_TYPE(2),
+    
+    /**
+     * The category for a natural person.
+     */
     NATURAL_PERSON(3),
+    
+    /**
+     * The category for an artificial person.
+     */
     ARTIFICIAL_PERSON(4),
+    
+    /**
+     * The category for an email person.
+     */
     EMAIL_PERSON(5);
     
     

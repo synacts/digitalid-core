@@ -15,20 +15,91 @@ import javax.annotation.Nonnull;
  * @version 2.0
  */
 public enum PacketError implements Blockable {
-    INTERNAL(0), // The error code for an internal problem.
-    EXTERNAL(1), // The error code for an external problem.
-    PACKET(2), // The error code for an invalid packet.
-    ENCRYPTION(3), // The error code for an invalid encryption.
-    ELEMENTS(4), // The error code for invalid elements.
-    SIGNATURE(5), // The error code for an invalid signature.
-    COMPRESSION(6), // The error code for an invalid compression.
-    CONTENT(7), // The error code for an invalid content.
-    METHOD(8), // The error code for an invalid method type.
-    REPLY(9), // The error code for an invalid reply type.
-    IDENTIFIER(10), // The error code for an invalid identifier as subject.
-    AUTHORIZATION(11), // The error code for an insufficient authorization.
-    KEYROTATION(12), // The error code for a required key rotation.
-    REPLAY(13); // The error code for a replayed packet.
+    
+    /**
+     * The error code for an internal problem.
+     */
+    INTERNAL(0),
+    
+    /**
+     * The error code for an external problem.
+     */
+    EXTERNAL(1),
+    
+    /**
+     * The error code for an invalid packet.
+     */
+    PACKET(2),
+    
+    /**
+     * The error code for an invalid encryption.
+     */
+    ENCRYPTION(3),
+    
+    /**
+     * The error code for invalid elements.
+     */
+    ELEMENTS(4),
+    
+    /**
+     * The error code for an invalid signature.
+     */
+    SIGNATURE(5),
+    
+    /**
+     * The error code for an invalid compression.
+     */
+    COMPRESSION(6),
+    
+    /**
+     * The error code for an invalid content.
+     */
+    CONTENT(7),
+    
+    /**
+     * The error code for an invalid method type.
+     */
+    METHOD(8),
+    
+    /**
+     * The error code for an invalid reply type.
+     */
+    REPLY(9),
+    
+    /**
+     * The error code for an invalid identifier as subject.
+     */
+    IDENTIFIER(10),
+    
+    /**
+     * The error code for an insufficient authorization.
+     */
+    AUTHORIZATION(11),
+    
+    /**
+     * The error code for a required key rotation.
+     */
+    KEYROTATION(12),
+    
+    /**
+     * The error code for a relocated identity.
+     */
+    RELOCATION(13),
+    
+    /**
+     * The error code for an outdated action.
+     */
+    OUTDATED(14),
+    
+    /**
+     * The error code for an invalid service.
+     */
+    SERVICE(14),
+    
+    /**
+     * The error code for a replayed packet.
+     */
+    REPLAY(15);
     
     
     /**

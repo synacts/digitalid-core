@@ -12,9 +12,25 @@ import javax.annotation.Nonnull;
  * @version 2.0
  */
 public enum Level {
+    
+    /**
+     * The level for information.
+     */
     INFORMATION(0),
+    
+    /**
+     * The level for warnings.
+     */
     WARNING(1),
+    
+    /**
+     * The level for errors.
+     */
     ERROR(2),
+    
+    /**
+     * The level for off.
+     */
     OFF(3);
     
     /**

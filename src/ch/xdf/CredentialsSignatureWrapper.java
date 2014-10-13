@@ -941,7 +941,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
     
     @Pure
     @Override
-    public @Nonnull OutgoingRole getAgentCheckedAndRestricted(@Nonnull Entity entity) throws SQLException, PacketException {
+    public @Nonnull OutgoingRole getAgentCheckedAndRestricted(@Nonnull Entity entity, @Nullable PublicKey publicKey) throws SQLException, PacketException {
         final @Nonnull Credential credential = getCredentials().getNotNull(0);
         if (credential.isRoleBased()) {
             final @Nullable OutgoingRole outgoingRole = Agents.getOutgoingRole(entity, credential.getRoleNotNull(), true);

@@ -3,27 +3,26 @@ package ch.virtualid.packet;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.annotations.RawRecipient;
 import ch.virtualid.auxiliary.Time;
+import ch.virtualid.client.Cache;
 import ch.virtualid.client.SecretCommitment;
 import ch.virtualid.contact.AttributeSet;
 import ch.virtualid.credential.Credential;
 import ch.virtualid.cryptography.PublicKeyChain;
 import ch.virtualid.cryptography.SymmetricKey;
+import ch.virtualid.entity.Role;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InactiveSignatureException;
-import ch.virtualid.exceptions.external.InvalidDeclarationException;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
-import ch.virtualid.exceptions.external.WrongReplyException;
 import static ch.virtualid.exceptions.packet.PacketError.KEYROTATION;
-import static ch.virtualid.exceptions.packet.PacketError.REPLY;
+import static ch.virtualid.exceptions.packet.PacketError.RELOCATION;
+import static ch.virtualid.exceptions.packet.PacketError.SERVICE;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Method;
-import ch.virtualid.handler.Reply;
 import ch.virtualid.handler.query.external.AttributesQuery;
-import ch.virtualid.handler.reply.query.IdentityReply;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.Identifier;
 import ch.virtualid.identity.Mapper;
 import ch.virtualid.identity.NonHostIdentifier;
+import ch.virtualid.module.CoreService;
 import ch.virtualid.server.Server;
 import ch.virtualid.util.ConcurrentHashMap;
 import ch.virtualid.util.ConcurrentMap;
@@ -31,11 +30,7 @@ import ch.virtualid.util.FreezableArrayList;
 import ch.virtualid.util.FreezableList;
 import ch.virtualid.util.ReadonlyList;
 import ch.xdf.Block;
-import ch.xdf.ClientSignatureWrapper;
-import ch.xdf.CredentialsSignatureWrapper;
 import ch.xdf.HostSignatureWrapper;
-import ch.xdf.SignatureWrapper;
-import ch.xdf.TupleWrapper;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
@@ -50,14 +45,13 @@ import org.javatuples.Pair;
  * The subject of a request is given as identifier and not as an identity in order to be able to retrieve identity information as well as creating new accounts.
  * 
  * @invariant getSize() == methods.size() : "The number of elements equals the number of methods.";
- * @invariant getEncryption().getRecipient() != null : "The recipient of the request is not null.";
  * 
  * @see HostRequest
  * @see ClientRequest
  * @see CredentialsRequest
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 1.4
+ * @version 2.0
  */
 public class Request extends Packet {
     
@@ -66,9 +60,19 @@ public class Request extends Packet {
      * 
      * @invariant methods.isFrozen() : "The methods are frozen.";
      * @invariant methods.isNotEmpty() : "The methods are not empty.";
-     * @invariant methods.doesNotContainNull() : "The methods do not contain null.";
+     * @require Method.areSimilar(methods) : "All methods are similar and not null.";
      */
     private @Nonnull FreezableList<Method> methods;
+    
+    /**
+     * Stores the recipient of this request.
+     */
+    private final @Nonnull HostIdentifier recipient;
+    
+    /**
+     * Stores the subject of this request.
+     */
+    private final @Nonnull Identifier subject;
     
     /**
      * Creates a new request with a query for the public key chain of the given host that is neither encrypted nor signed.
@@ -90,7 +94,7 @@ public class Request extends Packet {
      * 
      * @require methods.isFrozen() : "The methods are frozen.";
      * @require methods.isNotEmpty() : "The methods are not empty.";
-     * @require methods.doesNotContainNull() : "The methods do not contain null.";
+     * @require Method.areSimilar(methods) : "All methods are similar and not null.";
      */
     public Request(@Nonnull FreezableList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull Identifier subject) throws SQLException, IOException, PacketException, ExternalException {
         this(methods, recipient, new SymmetricKey(), subject, null, null, null, null, null, false, null);
@@ -116,7 +120,8 @@ public class Request extends Packet {
     Request(@Nonnull FreezableList<Method> methods, @Nonnull HostIdentifier recipient, @Nullable SymmetricKey symmetricKey, @Nonnull Identifier subject, @Nullable Audit audit, @Nullable Identifier signer, @Nullable SecretCommitment commitment, @Nullable ReadonlyList<Credential> credentials, @Nullable ReadonlyList<HostSignatureWrapper> certificates, boolean lodged, @Nullable BigInteger value) throws SQLException, IOException, PacketException, ExternalException {
         super(methods, methods.size(), recipient, symmetricKey, subject, audit, signer, commitment, credentials, certificates, lodged, value);
         
-        assert getEncryption().getRecipient() != null : "The recipient of the request is not null.";
+        this.recipient = recipient;
+        this.subject = subject;
     }
     
     
@@ -128,7 +133,10 @@ public class Request extends Packet {
     public Request(@Nonnull InputStream inputStream) throws SQLException, IOException, PacketException, ExternalException {
         super(inputStream, null, true);
         
-        assert getEncryption().getRecipient() != null : "The recipient of the request is not null.";
+        final @Nullable HostIdentifier recipient = getEncryption().getRecipient();
+        assert recipient != null : "The recipient of the request is not null.";
+        this.recipient = recipient;
+        this.subject = getMethod(0).getSubject();
     }
     
     
@@ -179,7 +187,7 @@ public class Request extends Packet {
      */
     @Pure
     public final @Nonnull Method getMethod(int index) {
-        return methods.get(index);
+        return methods.getNotNull(index);
     }
     
     /**
@@ -203,16 +211,42 @@ public class Request extends Packet {
      */
     @Pure
     public final @Nonnull HostIdentifier getRecipient() {
-        final @Nullable HostIdentifier recipient = getEncryption().getRecipient();
-        assert recipient != null : "See the class invariant.";
         return recipient;
     }
     
+    /**
+     * Returns the subject of this request.
+     * 
+     * @return the subject of this request.
+     */
+    @Pure
+    public final @Nonnull Identifier getSubject() {
+        return subject;
+    }
+    
+    
+    /**
+     * Resends this request and returns the response, optionally verifying the signature.
+     * 
+     * @param methods the methods of this request.
+     * @param recipient the recipient of this request.
+     * @param subject the subject of this request.
+     * @param verified determines whether the signature of the response is verified (if not, it needs to be checked by the caller).
+     * 
+     * @return the response to the resent request.
+     */
+    @Nonnull Response resend(@Nonnull FreezableList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull Identifier subject, boolean verified) throws SQLException, IOException, PacketException, ExternalException {
+        return new Request(methods, recipient, subject).send(verified);
+    }
     
     /**
      * Sends this request and returns the response with verifying the signature.
      * 
      * @return the response to this request.
+     * 
+     * @throws PacketException if the recipient responded with a packet error.
+     * 
+     * @ensure response.getSize() == getSize() : "The response has the same number of elements (otherwise a {@link PacketException} is thrown).";
      */
     public final @Nonnull Response send() throws SQLException, IOException, PacketException, ExternalException {
         return send(true);
@@ -234,52 +268,15 @@ public class Request extends Packet {
             this.write(socket.getOutputStream());
             return new Response(this, socket.getInputStream(), verified);
         } catch (@Nonnull PacketException exception) {
-            boolean resend = false;
-            
             if (exception.getError() == KEYROTATION && this instanceof ClientRequest) {
-                // TODO: Rotate the key of the client.
-                resend = true;
-            } else if (exception.getError() == REPLY) {
-                final @Nullable Throwable cause = exception.getCause();
-                if (cause instanceof WrongReplyException) {
-                    final @Nonnull Reply reply = ((WrongReplyException) cause).getReply();
-                    if (reply instanceof IdentityReply) {
-                        @Nonnull Block element = content.getElement();
-                        // TODO: Rewrite with the corresponding handler.
-                        @Nonnull Block[] elements = new TupleWrapper(element).getElementsNotNull(3);
-                        if (elements[2].isEmpty()) throw new InvalidEncodingException("The successor of the unexpected identity response to a request for " + subject + " is not null.");
-                        @Nonnull NonHostIdentifier successor = new NonHostIdentifier(elements[2]);
-                        if (!(subject instanceof NonHostIdentifier)) throw new InvalidEncodingException("An unexpected identity response may only be returned for non-host identities and not for " + subject + ".");
-                        Mapper.setSuccessor((NonHostIdentifier) subject, successor); // TODO: Also pass the reference to the stored response.
-                        if (!successor.getIdentity().equals(subject.getIdentity())) throw new InvalidDeclarationException("The indicated successor " + successor + " is not an identifier of the identity denoted by " + subject + ".");
-                        subject = successor;
-                        recipient = subject.getHostIdentifier();
-                        
-                        resend = true;
-                    }
-                }
-            }
-            
-            if (resend) {
-                // TODO: Resend this request.
-                
-                // Resend the request to the subject's successor or with the rotated key.
-                @Nonnull SignatureWrapper signature = getSignature(getSize() - 1);
-                if (signature instanceof HostSignatureWrapper) {
-                    return new HostRequest(getContents(), recipient, subject, (HostIdentifier) ((HostSignatureWrapper) signature).getSigner()).send(verified);
-                } else if (signature instanceof ClientSignatureWrapper) {
-                    if (!subject.equals(requestSubject)) {
-                        // TODO: Recommit to the (potentially) new host with the same client secret.
-                    }
-                    return new ClientRequest(getContents(), subject, signature.getAudit(), ((ClientSignatureWrapper) signature).getCommitment()).send(verified);
-                } else if (signature instanceof CredentialsSignatureWrapper) {
-                    @Nonnull CredentialsSignatureWrapper credentialsSignature = (CredentialsSignatureWrapper) signature;
-                    return new CredentialsRequest(getContents(), recipient, subject, signature.getAudit(), credentialsSignature.getCredentials(), credentialsSignature.getCertificates(), credentialsSignature.isLodged(), credentialsSignature.getValue()).send(verified);
-                } else {
-                    return new Request(getContents(), recipient, subject).send(verified);
-                }
-                
-                
+                return ((ClientRequest) this).recommit(methods, verified);
+            } else if (exception.getError() == RELOCATION && subject instanceof NonHostIdentifier) {
+                final @Nonnull NonHostIdentifier address = Mapper.relocate((NonHostIdentifier) subject);
+                final @Nonnull HostIdentifier recipient = getMethod(0).getService().equals(CoreService.TYPE) ? address.getHostIdentifier() : getRecipient();
+                return resend(methods, recipient, address, verified);
+            } else if (exception.getError() == SERVICE && !getMethod(0).isOnHost()) {
+                final @Nonnull HostIdentifier recipient = new HostIdentifier(Cache.getAttributeValue(subject.getIdentity(), (Role) getMethod(0).getEntity(), getMethod(0).getService(), false));
+                return resend(methods, recipient, subject, verified);
             } else {
                 throw exception;
             }

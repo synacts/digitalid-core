@@ -120,6 +120,37 @@ public final class IdentityReply extends CoreServiceQueryReply {
     
     
     /**
+     * Returns the category of the subject.
+     * 
+     * @return the category of the subject.
+     */
+    @Pure
+    public @Nonnull Category getCategory() {
+        return category;
+    }
+    
+    /**
+     * Returns the predecessors of the subject.
+     * 
+     * @return the predecessors of the subject.
+     */
+    @Pure
+    public @Nonnull Predecessors getPredecessors() {
+        return predecessors;
+    }
+    
+    /**
+     * Returns the successor of the subject.
+     * 
+     * @return the successor of the subject.
+     */
+    @Pure
+    public @Nullable NonHostIdentifier getSuccessor() {
+        return successor;
+    }
+    
+    
+    /**
      * The factory class for the surrounding method.
      */
     protected static final class Factory extends Reply.Factory {

@@ -145,7 +145,7 @@ public final class Cache {
      * @return a block of type {@code attribute@virtualid.ch} or null if no such or only a stale attribute is available.
      * @require time >= 0 : "The time value is non-negative.";
      */
-    public static @Nullable Block getAttribute(@Nullable Person requester, @Nonnull Identity requestee, @Nonnull SemanticType type, long time) throws SQLException {
+    private static @Nullable Block getAttribute(@Nullable Person requester, @Nonnull Identity requestee, @Nonnull SemanticType type, long time) throws SQLException {
         assert time >= 0 : "The time value is non-negative.";
         
         // TODO: Use a role instead of a person for the requester.
@@ -169,7 +169,7 @@ public final class Cache {
      * @param attribute a block of type {@code attribute@virtualid.ch}.
      * @require time >= 0 : "The time value is non-negative.";
      */
-    public static void setAttribute(@Nullable Person requester, @Nonnull Identity requestee, @Nonnull SemanticType type, long time, @Nonnull Block attribute) throws SQLException {
+    private static void setAttribute(@Nullable Person requester, @Nonnull Identity requestee, @Nonnull SemanticType type, long time, @Nonnull Block attribute) throws SQLException {
         assert time >= 0 : "The time value is non-negative.";
         
         @Nonnull String statement = "REPLACE INTO cache_attribute (requester, requestee, type, time, value) VALUES (?, ?, ?, ?, ?)";
@@ -367,16 +367,28 @@ public final class Cache {
     }
     
     /**
-     * Returns the public of the given identity at the given time.
+     * Returns the public key chain of the given identity.
+     * 
+     * @param identity the identity of the host whose public key chain is to be returned.
+     * 
+     * @return the public of key chain the given identity.
+     */
+    @Pure
+    public static @Nonnull PublicKeyChain getPublicKeyChain(@Nonnull HostIdentity identity) throws SQLException, IOException, PacketException, ExternalException {
+        return new PublicKeyChain(getAttributeValue(identity, null, PublicKeyChain.TYPE, true));
+    }
+    
+    /**
+     * Returns the public key of the given identity at the given time.
      * 
      * @param identity the identity of the host whose public key is to be returned.
      * @param time the time at which the public key has to be active in the key chain.
      * 
-     * @return the public of the given identity at the given time.
+     * @return the public key of the given identity at the given time.
      */
     @Pure
     public static @Nonnull PublicKey getPublicKey(@Nonnull HostIdentity identity, @Nonnull Time time) throws SQLException, IOException, PacketException, ExternalException {
-        return new PublicKeyChain(getAttributeValue(identity, null, PublicKeyChain.TYPE, true)).getKey(time);
+        return getPublicKeyChain(identity).getKey(time);
     }
     
 }

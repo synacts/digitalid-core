@@ -9,6 +9,7 @@ import ch.virtualid.exceptions.external.IdentityNotFoundException;
 import ch.virtualid.exceptions.external.InvalidDeclarationException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.external.InvalidSignatureException;
+import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Reply;
 import static ch.virtualid.identity.Category.ARTIFICIAL_PERSON;
@@ -371,17 +372,16 @@ public final class Mapper {
     
     
     /**
-     * Returns the identity of the given identifier (by establishing the identity if necessary).
+     * Returns the identity of the given non-host identifier.
+     * The non-host identity is also established if required.
      * 
-     * @param identifier the identifier of interest.
+     * @param identifier the non-host identifier of interest.
      * 
-     * @return the identity of the given identifier.
-     * 
-     * @ensure identifier instanceof HostIdentifier == (identity instanceof HostIdentity) : "The identifier denotes a host if and only if a host identity is returned.";
+     * @return the identity of the given non-host identifier.
      */
-    static @Nonnull Identity getIdentity(@Nonnull Identifier identifier) throws SQLException, IOException, PacketException, ExternalException {
+    static @Nonnull NonHostIdentity getIdentity(@Nonnull NonHostIdentifier identifier) throws SQLException, IOException, PacketException, ExternalException {
         if (isMapped(identifier)) {
-            return identifiers.get(identifier);
+            return identifiers.get(identifier).toNonHostIdentity();
         } else {
             return establishIdentity(identifier);
         }
@@ -404,6 +404,32 @@ public final class Mapper {
     }
     
     /**
+     * Relocates the identity with the given identifier.
+     * 
+     * @param identifier the identifier of the identity that has been relocated.
+     * 
+     * @return the new address of the identity with the given identifier.
+     * 
+     * @throws PacketException if the identity with the given identifier has not been relocated.
+     */
+    public static @Nonnull NonHostIdentifier relocate(@Nonnull NonHostIdentifier identifier) throws PacketException {
+        // TODO: Write a real implementation.
+        
+//        if (reply instanceof IdentityReply) {
+//            final @Nonnull Identifier subject = reply.getSubject();
+//            final @Nullable NonHostIdentifier successor = ((IdentityReply) reply).getSuccessor();
+//            if (successor == null) throw new InvalidEncodingException("The successor of the unexpected identity reply to a query for " + subject + " may not be null.");
+//            if (!(subject instanceof NonHostIdentifier)) throw new InvalidEncodingException("An unexpected identity reply may only be returned for non-host identities and not for " + subject + ".");
+//            Mapper.setSuccessor((NonHostIdentifier) subject, successor, reply);
+//            if (!successor.getIdentity().equals(subject.getIdentity())) throw new InvalidDeclarationException("The indicated successor " + successor + " is not an identifier of the identity denoted by " + subject + ".", subject, reply);
+//            subject = successor;
+//            recipient = subject.getHostIdentifier();
+//        }
+        
+        throw new PacketException(PacketError.EXTERNAL, "The identity with the identifier " + identifier + " has not been relocated.");
+    }
+    
+    /**
      * Establishes the identity of the given identifier by checking its existence and requesting its category, predecessors and successor.
      * 
      * @param identifier the identifier whose identity is to be established.
@@ -412,7 +438,7 @@ public final class Mapper {
      * 
      * @throws IdentityNotFoundException if no identity with the given identifier could be found.
      */
-    private static @Nonnull Identity establishIdentity(@Nonnull Identifier identifier) throws SQLException, IOException, PacketException, ExternalException {
+    private static @Nonnull NonHostIdentity establishIdentity(@Nonnull NonHostIdentifier identifier) throws SQLException, IOException, PacketException, ExternalException {
         try {
             // TODO: Make an identity request and verify predecessors only if already mapped.
             @Nonnull SelfcontainedWrapper content = new SelfcontainedWrapper(NonHostIdentifier.IDENTITY_REQUEST, Block.EMPTY);
@@ -636,7 +662,8 @@ public final class Mapper {
      * @param identifier the identifier whose successor is to be set.
      * @param successor the successor to be set for the given identifier.
      */
-    public static void setSuccessor(@Nonnull NonHostIdentifier identifier, @Nonnull NonHostIdentifier successor) throws SQLException, InvalidDeclarationException {
+    public static void setSuccessor(@Nonnull NonHostIdentifier identifier, @Nonnull NonHostIdentifier successor, @Nonnull Reply reply) throws SQLException, InvalidDeclarationException {
+        // TODO: Also store the reference to the reply in the database.
         if (getListOfSuccessors(successor).contains(identifier)) throw new InvalidDeclarationException("" + successor + " cannot be set as the successor of " + identifier + " as the latter is already a successor of the former.");
         try (@Nonnull Connection connection = Database.getConnection(); @Nonnull Statement statement = connection.createStatement()) {
             statement.executeUpdate("INSERT " + Database.IGNORE + " INTO map_successor (identifier, successor) VALUES (" + identifier + ", " + successor + ")");

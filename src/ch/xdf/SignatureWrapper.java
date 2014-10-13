@@ -4,6 +4,7 @@ import ch.virtualid.agent.Agent;
 import ch.virtualid.annotations.Exposed;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
+import ch.virtualid.cryptography.PublicKey;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InactiveSignatureException;
@@ -466,13 +467,14 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
      * Returns the restricted agent that signed the wrapped element.
      * 
      * @param entity the entity whose agent is to be returned.
+     * @param publicKey the active public key of the recipient.
      * 
      * @return the restricted agent that signed the wrapped element.
      * 
      * @throws PacketException if no such agent is found or the check failed.
      */
     @Pure
-    public @Nonnull Agent getAgentCheckedAndRestricted(@Nonnull Entity entity) throws SQLException, PacketException {
+    public @Nonnull Agent getAgentCheckedAndRestricted(@Nonnull Entity entity, @Nullable PublicKey publicKey) throws SQLException, PacketException {
         throw new PacketException(PacketError.AUTHORIZATION, "The element was not signed by an authorized agent.");
     }
     
