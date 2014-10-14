@@ -3,8 +3,6 @@ package ch.virtualid.packet;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.annotations.RawRecipient;
 import ch.virtualid.auxiliary.Time;
-import ch.virtualid.client.SecretCommitment;
-import ch.virtualid.credential.Credential;
 import ch.virtualid.cryptography.SymmetricKey;
 import ch.virtualid.entity.Account;
 import ch.virtualid.entity.Entity;
@@ -32,9 +30,7 @@ import ch.virtualid.util.FreezableArrayList;
 import ch.virtualid.util.FreezableList;
 import ch.virtualid.util.ReadonlyList;
 import ch.xdf.Block;
-import ch.xdf.ClientSignatureWrapper;
 import ch.xdf.CompressionWrapper;
-import ch.xdf.CredentialsSignatureWrapper;
 import ch.xdf.EncryptionWrapper;
 import ch.xdf.HostSignatureWrapper;
 import ch.xdf.ListWrapper;
@@ -43,7 +39,6 @@ import ch.xdf.SignatureWrapper;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.math.BigInteger;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -117,16 +112,18 @@ public abstract class Packet implements Immutable {
     /**
      * Packs the handlers in the given object with the given arguments for encrypting and signing.
      * 
-     * @param object an object that contains the handlers and is passed back with {@link #setLists(java.lang.Object)}.
+     * @param list an object that contains the handlers and is passed back with {@link #setList(java.lang.Object)}.
      * @param size the number of handlers in the given object, which has to be positive (that means greater than zero).
+     * @param field an object that contains the signing parameter and is passed back with {@link #setField(java.lang.Object)}.
      * @param recipient the identifier of the host for which the content is encrypted or null if the recipient is not known.
      * @param symmetricKey the symmetric key used for encryption or null if the content is not encrypted.
      * @param subject the identifier of the identity about which a statement is made in a method or a reply.
      * @param audit the audit with the time of the last retrieval or null in case of external requests.
      */
     @SuppressWarnings("AssignmentToMethodParameter")
-    Packet(@Nonnull Object object, int size, @Nullable HostIdentifier recipient, @Nullable SymmetricKey symmetricKey, @Nullable Identifier subject, @Nullable Audit audit, @Nullable Identifier signer, @Nullable SecretCommitment commitment, @Nullable ReadonlyList<Credential> credentials, @Nullable ReadonlyList<HostSignatureWrapper> certificates, boolean lodged, @Nullable BigInteger value) throws SQLException, IOException, PacketException, ExternalException {
-        setLists(object);
+    Packet(@Nonnull Object list, int size, @Nullable Object field, @Nullable HostIdentifier recipient, @Nullable SymmetricKey symmetricKey, @Nullable Identifier subject, @Nullable Audit audit) throws SQLException, IOException, PacketException, ExternalException {
+        setList(list);
+        setField(field);
         this.size = size;
         this.audit = audit;
         
@@ -136,15 +133,9 @@ public abstract class Packet implements Immutable {
             final @Nullable SelfcontainedWrapper content = block == null ? null : new SelfcontainedWrapper(CONTENT, block);
             final @Nullable CompressionWrapper compression = content == null ? null : new CompressionWrapper(COMPRESSION, content, CompressionWrapper.ZLIB);
             if (compression != null || audit != null) {
-                if (signer != null && (audit != null || block != null && !block.getType().equals(PacketException.TYPE))) {
-                    signatures.set(i, new HostSignatureWrapper(SIGNATURE, compression, subject, audit, signer).toBlock());
-                } else if (commitment != null) {
-                    signatures.set(i, new ClientSignatureWrapper(SIGNATURE, compression, subject, audit, commitment).toBlock());
-                } else if (credentials != null) {
-                    signatures.set(i, new CredentialsSignatureWrapper(SIGNATURE, compression, subject, audit, credentials, certificates, lodged, value).toBlock());
-                } else {
-                    signatures.set(i, new SignatureWrapper(SIGNATURE, compression, subject).toBlock());
-                }
+                if (subject == null || audit == null && block != null && block.getType().equals(PacketException.TYPE))
+                    signatures.set(i, new SignatureWrapper(Packet.SIGNATURE, compression, subject).toBlock());
+                else signatures.set(i, getSignature(compression, subject, audit).toBlock());
                 audit = null;
             } else {
                 signatures.set(i, null);
@@ -195,7 +186,6 @@ public abstract class Packet implements Immutable {
             if (elements.isNotNull(i)) {
                 final @Nonnull SignatureWrapper signature;
                 try { signature = verified ? SignatureWrapper.decode(elements.getNotNull(i), account) : SignatureWrapper.decodeUnverified(elements.getNotNull(i), account); } catch (InvalidEncodingException | InvalidSignatureException exception) { throw new PacketException(PacketError.SIGNATURE, "A signature is invalid.", exception, isResponse); }
-                if (!signature.hasSubject()) throw new PacketException(PacketError.SIGNATURE, "Each signature in a packet must have a subject.", null, isResponse); // This exception is also thrown (intentionally) on the requester if the responding host could not decode the subject.
                 if (signature.getAudit() != null) audit = signature.getAudit();
                 
                 final @Nonnull CompressionWrapper compression;
@@ -207,7 +197,7 @@ public abstract class Packet implements Immutable {
                 final @Nonnull Block block = content.getElement();
                 final @Nonnull SemanticType type = block.getType();
                 if (response != null) {
-                    if (!signature.getSubjectNotNull().equals(request.getSubject())) throw new PacketException(PacketError.IDENTIFIER, "The subject of the request was " + request.getSubject() + ", the response from " + request.getRecipient() + " was about " + signature.getSubjectNotNull() + " though.", null, isResponse);
+                    if (signature.hasSubject() && !signature.getSubjectNotNull().equals(request.getSubject())) throw new PacketException(PacketError.IDENTIFIER, "The subject of the request was " + request.getSubject() + ", the response from " + request.getRecipient() + " was about " + signature.getSubjectNotNull() + " though.", null, isResponse);
                     
                     if (signature.isSigned()) {
                         if (reference == null) reference = signature;
@@ -233,6 +223,8 @@ public abstract class Packet implements Immutable {
                         else throw new PacketException(PacketError.SIGNATURE, "A reply from the host " + request.getRecipient() + " was not signed.", null, isResponse);
                     }
                 } else {
+                    if (!signature.hasSubject()) throw new PacketException(PacketError.SIGNATURE, "Each signature in a request must have a subject.", null, isResponse);
+                    
                     if (reference == null) reference = signature;
                     else if (!signature.isSignedLike(reference)) throw new PacketException(PacketError.SIGNATURE, "All the signatures of a request have to be signed alike.", null, isResponse);
                     
@@ -334,12 +326,20 @@ public abstract class Packet implements Immutable {
     
     
     /**
-     * Sets the list(s) of the request or response.
+     * Sets the list of the request or response.
      * 
-     * @param lists the object containing the list(s).
+     * @param list the object containing the list.
      */
     @RawRecipient
-    abstract void setLists(@Nonnull Object lists);
+    abstract void setList(@Nonnull Object list);
+    
+    /**
+     * Sets the field of the request or response.
+     * 
+     * @param field the object containing the field.
+     */
+    @RawRecipient
+    abstract void setField(@Nullable Object field);
     
     /**
      * Returns the handler or exception at the given position as a block.
@@ -355,17 +355,19 @@ public abstract class Packet implements Immutable {
     abstract @Nullable Block getBlock(int index);
     
     /**
-     * Returns the handler or exception at the given position as a block.
+     * Returns the signature of the given compression and audit.
      * 
-     * @param index the index of the block which is to be returned.
+     * @param compression the compression of the element to be signed.
+     * @param subject the subject about which the returned signature is.
+     * @param audit the audit which is to be included in the signature.
      * 
-     * @return the handler or exception at the given position as a block.
+     * @return the signature of the given compression and audit.
      * 
-     * @require index >= 0 && index < getSize() : "The index is valid.";
+     * @require compression != null || audit != null : "The compression or the audit is not null.";
      */
     @Pure
     @RawRecipient
-    abstract @Nonnull SignatureWrapper getSignature(@Nullable CompressionWrapper compression);
+    abstract @Nonnull SignatureWrapper getSignature(@Nullable CompressionWrapper compression, @Nonnull Identifier subject, @Nullable Audit audit) throws SQLException, IOException, PacketException, ExternalException;
     
     
     /**

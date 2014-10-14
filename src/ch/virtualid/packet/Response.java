@@ -6,10 +6,14 @@ import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InactiveSignatureException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Reply;
+import ch.virtualid.identity.HostIdentifier;
+import ch.virtualid.identity.Identifier;
 import ch.virtualid.util.FreezableArrayList;
 import ch.virtualid.util.FreezableList;
 import ch.virtualid.util.ReadonlyList;
 import ch.xdf.Block;
+import ch.xdf.CompressionWrapper;
+import ch.xdf.HostSignatureWrapper;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
@@ -44,6 +48,11 @@ public final class Response extends Packet {
     private @Nonnull FreezableList<PacketException> exceptions;
     
     /**
+     * Stores the signer of this response.
+     */
+    private @Nullable HostIdentifier signer;
+    
+    /**
      * Packs the given packet exception as a response without signing.
      * 
      * @param request the corresponding request or null if not yet decoded.
@@ -52,7 +61,7 @@ public final class Response extends Packet {
      * @ensure getSize() == 1 : "The size of this response is one.";
      */
     public Response(@Nullable Request request, @Nonnull PacketException exception) throws SQLException, IOException, PacketException, ExternalException {
-        super(new Pair<ReadonlyList<Reply>, ReadonlyList<PacketException>>(new FreezableArrayList<Reply>(1).freeze(), new FreezableArrayList<PacketException>(exception).freeze()), 1, null, request == null ? null : request.getEncryption().getSymmetricKey(), null, null, null, null, null, null, false, null);
+        super(new Pair<ReadonlyList<Reply>, ReadonlyList<PacketException>>(new FreezableArrayList<Reply>(1).freeze(), new FreezableArrayList<PacketException>(exception).freeze()), 1, null, null, request == null ? null : request.getEncryption().getSymmetricKey(), null, null);
     }
     
     /**
@@ -71,7 +80,7 @@ public final class Response extends Packet {
      * @ensure getSize() == request.getSize() : "The size of this response equals the size of the request.";
      */
     public Response(@Nonnull Request request, @Nonnull ReadonlyList<Reply> replies, @Nonnull ReadonlyList<PacketException> exceptions, @Nullable Audit audit) throws SQLException, IOException, PacketException, ExternalException {
-        super(new Pair<ReadonlyList<Reply>, ReadonlyList<PacketException>>(replies, exceptions), replies.size(), null, request.getEncryption().getSymmetricKey(), request.getSubject(), audit, request.getRecipient(), null, null, null, false, null);
+        super(new Pair<ReadonlyList<Reply>, ReadonlyList<PacketException>>(replies, exceptions), replies.size(), request.getRecipient(), null, request.getEncryption().getSymmetricKey(), request.getSubject(), audit);
         
         assert replies.isFrozen() : "The list of replies is frozen.";
         assert replies.isNotEmpty() : "The list of replies is not empty.";
@@ -106,10 +115,16 @@ public final class Response extends Packet {
     @Override
     @RawRecipient
     @SuppressWarnings("unchecked")
-    void setLists(@Nonnull Object object) {
+    void setList(@Nonnull Object object) {
         final @Nonnull Pair<ReadonlyList<Reply>, ReadonlyList<PacketException>> pair = (Pair<ReadonlyList<Reply>, ReadonlyList<PacketException>>) object;
         this.replies = (FreezableList<Reply>) pair.getValue0();
         this.exceptions = (FreezableList<PacketException>) pair.getValue1();
+    }
+    
+    @Override
+    @RawRecipient
+    void setField(@Nullable Object field) {
+        this.signer = (HostIdentifier) field;
     }
     
     @Pure
@@ -120,6 +135,15 @@ public final class Response extends Packet {
         if (replies.isNotNull(index)) return replies.getNotNull(index).toBlock();
         return null;
     }
+    
+    @Pure
+    @Override
+    @RawRecipient
+    @Nonnull HostSignatureWrapper getSignature(@Nullable CompressionWrapper compression, @Nonnull Identifier subject, @Nullable Audit audit) {
+        assert signer != null : "This method is only called if the element is not an exception.";
+        return new HostSignatureWrapper(Packet.SIGNATURE, compression, subject, audit, signer);
+    }
+    
     
     @Override
     @RawRecipient

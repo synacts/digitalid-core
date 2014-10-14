@@ -5,8 +5,10 @@ import ch.virtualid.database.Database;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
+import ch.virtualid.handler.Action;
 import ch.virtualid.handler.Method;
 import ch.virtualid.handler.Reply;
+import ch.virtualid.identity.Identifier;
 import ch.virtualid.identity.SemanticType;
 import static ch.virtualid.io.Level.INFORMATION;
 import static ch.virtualid.io.Level.WARNING;
@@ -26,7 +28,7 @@ import javax.annotation.Nullable;
  * The worker is responsible for handling incoming requests asynchronously.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 1.6
+ * @version 1.8
  */
 public final class Worker implements Runnable {
     
@@ -56,59 +58,64 @@ public final class Worker implements Runnable {
     public void run() {
         try {
             final @Nonnull Time start = new Time();
-            String type = "";
-            String identifier = "";
-            String error = "";
+            @Nullable Identifier subject = null;
+            @Nullable PacketError error = null;
             
+            @Nullable Request request = null;
             @Nonnull Response response;
             try {
                 try {
-                    final @Nonnull Request request = new Request(socket.getInputStream());
-                    final @Nonnull SemanticType service = request.getMethod(0).getService();
+                    request = new Request(socket.getInputStream());
+                    final @Nonnull SemanticType service = request.getService();
+                    
                     final int size = request.getSize();
                     final @Nonnull FreezableList<Reply> replies = new FreezableArrayList<Reply>(size);
                     final @Nonnull FreezableList<PacketException> exceptions = new FreezableArrayList<PacketException>(size);
+                    
                     Database.getConnection().commit();
                     for (int i = 0; i < size; i++) {
                         try {
                             final @Nonnull Method method = request.getMethod(i);
                             replies.set(i, method.executeOnHost());
-                            // TODO: Audit the executed method if it is an action.
+                            if (method instanceof Action) {
+                                // TODO: Audit the executed method if it is an action.
+                            }
                             Database.getConnection().commit();
                         } catch (@Nonnull SQLException exception) {
-                            exceptions.set(i, new PacketException(PacketError.INTERNAL, "An SQLException occurred.", exception, false));
+                            exceptions.set(i, new PacketException(PacketError.INTERNAL, "An SQLException occurred.", exception));
                             Database.getConnection().rollback();
                         } catch (@Nonnull PacketException exception) {
                             exceptions.set(i, exception);
                             Database.getConnection().rollback();
                         }
                     }
+                    
                     final @Nullable Audit audit;
                     if (request.getAudit() != null) {
-                        audit = null; // TODO: Retrieve the audit of the given service.
+                        audit = new Audit(start); // TODO: Retrieve the audit of the given service.
                     } else {
                         audit = null;
                     }
+                    
                     response = new Response(request, replies.freeze(), exceptions.freeze(), audit);
                 } catch (@Nonnull SQLException exception) {
                     Database.getConnection().rollback();
-                    throw new PacketException(PacketError.INTERNAL, "An SQLException occurred.", exception, false);
+                    throw new PacketException(PacketError.INTERNAL, "An SQLException occurred.", exception);
                 } catch (@Nonnull IOException exception) {
-                    throw new PacketException(PacketError.EXTERNAL, "An IOException occurred.", exception, false);
+                    throw new PacketException(PacketError.EXTERNAL, "An IOException occurred.", exception);
                 } catch (@Nonnull ExternalException exception) {
-                    throw new PacketException(PacketError.EXTERNAL, "An ExternalException occurred.", exception, false);
+                    throw new PacketException(PacketError.EXTERNAL, "An ExternalException occurred.", exception);
                 }
             } catch (@Nonnull PacketException exception) {
-                response = new Response(null, exception);
-                error = " with " + exception.getError();
+                response = new Response(request, exception);
+                error = exception.getError();
             }
             
             // The database transaction is intentionally committed before returning the response so that slow or malicious clients cannot block the database.
             response.write(socket.getOutputStream());
             
             final @Nonnull Time end = new Time();
-            identifier = identifier.isEmpty() ? "" : " to " + identifier;
-            logger.log(INFORMATION, "Request" + type + identifier + " from '" + socket.getInetAddress().toString() + "' handled in " + end.subtract(start) + error + ".");
+            logger.log(INFORMATION, "Request from '" + socket.getInetAddress() + "' handled in " + end.subtract(start).getValue() + " ms" + (subject != null ? " about " + subject : "") + (error != null ? " with error " + error : "") + ".");
         } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
             logger.log(WARNING, exception);
         } finally {

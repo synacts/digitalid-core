@@ -4,9 +4,7 @@ import ch.virtualid.annotations.Pure;
 import ch.virtualid.annotations.RawRecipient;
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.client.Cache;
-import ch.virtualid.client.SecretCommitment;
 import ch.virtualid.contact.AttributeSet;
-import ch.virtualid.credential.Credential;
 import ch.virtualid.cryptography.PublicKeyChain;
 import ch.virtualid.cryptography.SymmetricKey;
 import ch.virtualid.entity.Role;
@@ -22,6 +20,7 @@ import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.Identifier;
 import ch.virtualid.identity.Mapper;
 import ch.virtualid.identity.NonHostIdentifier;
+import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.CoreService;
 import ch.virtualid.server.Server;
 import ch.virtualid.util.ConcurrentHashMap;
@@ -30,10 +29,10 @@ import ch.virtualid.util.FreezableArrayList;
 import ch.virtualid.util.FreezableList;
 import ch.virtualid.util.ReadonlyList;
 import ch.xdf.Block;
-import ch.xdf.HostSignatureWrapper;
+import ch.xdf.CompressionWrapper;
+import ch.xdf.SignatureWrapper;
 import java.io.IOException;
 import java.io.InputStream;
-import java.math.BigInteger;
 import java.net.Socket;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
@@ -60,7 +59,7 @@ public class Request extends Packet {
      * 
      * @invariant methods.isFrozen() : "The methods are frozen.";
      * @invariant methods.isNotEmpty() : "The methods are not empty.";
-     * @require Method.areSimilar(methods) : "All methods are similar and not null.";
+     * @invariant Method.areSimilar(methods) : "All methods are similar and not null.";
      */
     private @Nonnull FreezableList<Method> methods;
     
@@ -82,7 +81,7 @@ public class Request extends Packet {
      * @ensure getSize() == 1 : "The size of this request is 1.";
      */
     public Request(@Nonnull HostIdentifier identifier) throws SQLException, IOException, PacketException, ExternalException {
-        this((FreezableList<Method>) new FreezableArrayList<Method>(new AttributesQuery(null, identifier, new AttributeSet(PublicKeyChain.TYPE).freeze())).freeze(), identifier, null, identifier, null, null, null, null, null, false, null);
+        this(new FreezableArrayList<Method>(new AttributesQuery(null, identifier, new AttributeSet(PublicKeyChain.TYPE).freeze())).freeze(), identifier, null, identifier, null, null);
     }
     
     /**
@@ -96,8 +95,8 @@ public class Request extends Packet {
      * @require methods.isNotEmpty() : "The methods are not empty.";
      * @require Method.areSimilar(methods) : "All methods are similar and not null.";
      */
-    public Request(@Nonnull FreezableList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull Identifier subject) throws SQLException, IOException, PacketException, ExternalException {
-        this(methods, recipient, new SymmetricKey(), subject, null, null, null, null, null, false, null);
+    public Request(@Nonnull ReadonlyList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull Identifier subject) throws SQLException, IOException, PacketException, ExternalException {
+        this(methods, recipient, new SymmetricKey(), subject, null, null);
     }
     
     /**
@@ -108,17 +107,10 @@ public class Request extends Packet {
      * @param symmetricKey the symmetric key used for encryption or null if the content is not encrypted.
      * @param subject the identifier of the identity about which a statement is made.
      * @param audit the audit with the time of the last retrieval or null in case of external requests.
-     * @param signer the identifier of the signing host or null if the element is not signed by a host.
-     * @param commitment the commitment containing the client secret or null if the element is not signed by a client.
-     * @param credentials the credentials with which the content is signed or null if the content is not signed with credentials.
-     * @param certificates the certificates that are appended to an identity-based authentication or null.
-     * @param lodged whether the hidden content of the credentials is verifiably encrypted to achieve liability.
-     * @param value the value b' or null if the credentials are not shortened.
-     * 
-     * @require ... : "This list of preconditions is not complete but the public constructors make sure that all requirements for packing the given handlers are met.";
+     * @param field an object that contains the signing parameter and is passed back with {@link #setField(java.lang.Object)}.
      */
-    Request(@Nonnull FreezableList<Method> methods, @Nonnull HostIdentifier recipient, @Nullable SymmetricKey symmetricKey, @Nonnull Identifier subject, @Nullable Audit audit, @Nullable Identifier signer, @Nullable SecretCommitment commitment, @Nullable ReadonlyList<Credential> credentials, @Nullable ReadonlyList<HostSignatureWrapper> certificates, boolean lodged, @Nullable BigInteger value) throws SQLException, IOException, PacketException, ExternalException {
-        super(methods, methods.size(), recipient, symmetricKey, subject, audit, signer, commitment, credentials, certificates, lodged, value);
+    Request(@Nonnull ReadonlyList<Method> methods, @Nonnull HostIdentifier recipient, @Nullable SymmetricKey symmetricKey, @Nonnull Identifier subject, @Nullable Audit audit, @Nullable Object field) throws SQLException, IOException, PacketException, ExternalException {
+        super(methods, methods.size(), field, recipient, symmetricKey, subject, audit);
         
         this.recipient = recipient;
         this.subject = subject;
@@ -152,9 +144,13 @@ public class Request extends Packet {
     @Override
     @RawRecipient
     @SuppressWarnings("unchecked")
-    final void setLists(@Nonnull Object object) {
+    final void setList(@Nonnull Object object) {
         this.methods = (FreezableList<Method>) object;
     }
+    
+    @Override
+    @RawRecipient
+    void setField(@Nullable Object field) {}
     
     @Pure
     @Override
@@ -162,6 +158,14 @@ public class Request extends Packet {
     final @Nonnull Block getBlock(int index) {
         return methods.get(index).toBlock();
     }
+    
+    @Pure
+    @Override
+    @RawRecipient
+    @Nonnull SignatureWrapper getSignature(@Nullable CompressionWrapper compression, @Nonnull Identifier subject, @Nullable Audit audit) throws SQLException, IOException, PacketException, ExternalException {
+        return new SignatureWrapper(Packet.SIGNATURE, compression, subject);
+    }
+    
     
     @Override
     @RawRecipient
@@ -222,6 +226,16 @@ public class Request extends Packet {
     @Pure
     public final @Nonnull Identifier getSubject() {
         return subject;
+    }
+    
+    /**
+     * Returns the service of this request.
+     * 
+     * @return the service of this request.
+     */
+    @Pure
+    public final @Nonnull SemanticType getService() {
+        return getMethod(0).getService();
     }
     
     

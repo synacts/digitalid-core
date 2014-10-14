@@ -1,5 +1,7 @@
 package ch.virtualid.packet;
 
+import ch.virtualid.annotations.Pure;
+import ch.virtualid.annotations.RawRecipient;
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
@@ -7,9 +9,13 @@ import ch.virtualid.handler.Method;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.Identifier;
 import ch.virtualid.util.FreezableList;
+import ch.virtualid.util.ReadonlyList;
+import ch.xdf.CompressionWrapper;
+import ch.xdf.HostSignatureWrapper;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * This class compresses, signs and encrypts requests by hosts.
@@ -22,7 +28,7 @@ public final class HostRequest extends Request {
     /**
      * Stores the identifier of the signing host.
      */
-    private final @Nonnull Identifier signer;
+    private @Nonnull Identifier signer;
     
     /**
      * Packs the given methods with the given arguments signed by the given host.
@@ -37,11 +43,25 @@ public final class HostRequest extends Request {
      * @require Method.areSimilar(methods) : "All methods are similar and not null.";
      * @require Server.hasHost(signer.getHostIdentifier()) : "The host of the signer is running on this server.";
      */
-    public HostRequest(@Nonnull FreezableList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull Identifier subject, @Nonnull Identifier signer) throws SQLException, IOException, PacketException, ExternalException {
-        super(methods, recipient, getSymmetricKey(recipient, Time.TROPICAL_YEAR), subject, null, signer, null, null, null, false, null);
-        
-        this.signer = signer;
+    public HostRequest(@Nonnull ReadonlyList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull Identifier subject, @Nonnull Identifier signer) throws SQLException, IOException, PacketException, ExternalException {
+        super(methods, recipient, getSymmetricKey(recipient, Time.TROPICAL_YEAR), subject, null, signer);
     }
+    
+    
+    @Override
+    @RawRecipient
+    void setField(@Nullable Object field) {
+        assert field != null : "See the constructor above.";
+        this.signer = (Identifier) field;
+    }
+    
+    @Pure
+    @Override
+    @RawRecipient
+    @Nonnull HostSignatureWrapper getSignature(@Nullable CompressionWrapper compression, @Nonnull Identifier subject, @Nullable Audit audit) {
+        return new HostSignatureWrapper(Packet.SIGNATURE, compression, subject, audit, signer);
+    }
+    
     
     @Override
     @Nonnull Response resend(@Nonnull FreezableList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull Identifier subject, boolean verified) throws SQLException, IOException, PacketException, ExternalException {

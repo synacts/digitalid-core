@@ -58,7 +58,18 @@ public final class PacketException extends Exception implements Blockable {
      * @param message a string explaining the exception.
      */
     public PacketException(@Nonnull PacketError error, @Nonnull String message) {
-        this(error, message, null, false);
+        this(error, message, null);
+    }
+    
+    /**
+     * Creates a new packet exception with the given error, message and cause.
+     * 
+     * @param error the code indicating the kind of error.
+     * @param message a string explaining the exception.
+     * @param cause the cause of the packet exception.
+     */
+    public PacketException(@Nonnull PacketError error, @Nonnull String message, @Nullable Throwable cause) {
+        this(error, message, cause, false);
     }
     
     /**
