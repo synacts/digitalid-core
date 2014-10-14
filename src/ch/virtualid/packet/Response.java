@@ -6,9 +6,9 @@ import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InactiveSignatureException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Reply;
-import ch.virtualid.identity.Identifier;
 import ch.virtualid.util.FreezableArrayList;
 import ch.virtualid.util.FreezableList;
+import ch.virtualid.util.ReadonlyList;
 import ch.xdf.Block;
 import java.io.IOException;
 import java.io.InputStream;
@@ -52,7 +52,7 @@ public final class Response extends Packet {
      * @ensure getSize() == 1 : "The size of this response is one.";
      */
     public Response(@Nullable Request request, @Nonnull PacketException exception) throws SQLException, IOException, PacketException, ExternalException {
-        super(new Pair<FreezableList<Reply>, FreezableList<PacketException>>((FreezableList<Reply>) new FreezableArrayList<Reply>(1).freeze(), (FreezableList<PacketException>) new FreezableArrayList<PacketException>(exception).freeze()), 1, null, request == null ? null : request.getEncryption().getSymmetricKey(), null, null, null, null, null, null, false, null);
+        super(new Pair<ReadonlyList<Reply>, ReadonlyList<PacketException>>(new FreezableArrayList<Reply>(1).freeze(), new FreezableArrayList<PacketException>(exception).freeze()), 1, null, request == null ? null : request.getEncryption().getSymmetricKey(), null, null, null, null, null, null, false, null);
     }
     
     /**
@@ -61,7 +61,6 @@ public final class Response extends Packet {
      * @param request the corresponding request.
      * @param replies the replies to the methods of the corresponding request.
      * @param exceptions the exceptions to the methods of the corresponding request.
-     * @param subject the identifier of the identity about which a statement is made.
      * @param audit the audit since the last audit or null if no audit is appended.
      * 
      * @require replies.isFrozen() : "The list of replies is frozen.";
@@ -71,8 +70,8 @@ public final class Response extends Packet {
      * 
      * @ensure getSize() == request.getSize() : "The size of this response equals the size of the request.";
      */
-    public Response(@Nonnull Request request, @Nonnull FreezableList<Reply> replies, @Nonnull FreezableList<PacketException> exceptions, @Nonnull Identifier subject, @Nullable Audit audit) throws SQLException, IOException, PacketException, ExternalException {
-        super(new Pair<FreezableList<Reply>, FreezableList<PacketException>>(replies, exceptions), replies.size(), null, request.getEncryption().getSymmetricKey(), subject, audit, request.getRecipient(), null, null, null, false, null);
+    public Response(@Nonnull Request request, @Nonnull ReadonlyList<Reply> replies, @Nonnull ReadonlyList<PacketException> exceptions, @Nullable Audit audit) throws SQLException, IOException, PacketException, ExternalException {
+        super(new Pair<ReadonlyList<Reply>, ReadonlyList<PacketException>>(replies, exceptions), replies.size(), null, request.getEncryption().getSymmetricKey(), request.getSubject(), audit, request.getRecipient(), null, null, null, false, null);
         
         assert replies.isFrozen() : "The list of replies is frozen.";
         assert replies.isNotEmpty() : "The list of replies is not empty.";
@@ -108,9 +107,9 @@ public final class Response extends Packet {
     @RawRecipient
     @SuppressWarnings("unchecked")
     void setLists(@Nonnull Object object) {
-        final @Nonnull Pair<FreezableList<Reply>, FreezableList<PacketException>> pair = (Pair<FreezableList<Reply>, FreezableList<PacketException>>) object;
-        this.replies = pair.getValue0();
-        this.exceptions = pair.getValue1();
+        final @Nonnull Pair<ReadonlyList<Reply>, ReadonlyList<PacketException>> pair = (Pair<ReadonlyList<Reply>, ReadonlyList<PacketException>>) object;
+        this.replies = (FreezableList<Reply>) pair.getValue0();
+        this.exceptions = (FreezableList<PacketException>) pair.getValue1();
     }
     
     @Pure

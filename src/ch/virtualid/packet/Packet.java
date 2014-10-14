@@ -123,20 +123,9 @@ public abstract class Packet implements Immutable {
      * @param symmetricKey the symmetric key used for encryption or null if the content is not encrypted.
      * @param subject the identifier of the identity about which a statement is made in a method or a reply.
      * @param audit the audit with the time of the last retrieval or null in case of external requests.
-     * @param signer the identifier of the signing host or null if the element is not signed by a host.
-     * @param commitment the commitment containing the client secret or null if the element is not signed by a client.
-     * @param credentials the credentials with which the content is signed or null if the content is not signed with credentials.
-     * @param certificates the certificates that are appended to an identity-based authentication or null.
-     * @param lodged whether the hidden content of the credentials is verifiably encrypted to achieve liability.
-     * @param value the value b' or null if the credentials are not shortened.
-     * 
-     * @require subject != null || recipient == null && signer == null && commitment == null && credentials == null : "The subject may only be null if the contents of a response are not signed (because the host could not decode the subject).";
-     * @require ... : "This list of preconditions is not complete but the public constructors make sure that all requirements for packing the given handlers are met.";
      */
     @SuppressWarnings("AssignmentToMethodParameter")
     Packet(@Nonnull Object object, int size, @Nullable HostIdentifier recipient, @Nullable SymmetricKey symmetricKey, @Nullable Identifier subject, @Nullable Audit audit, @Nullable Identifier signer, @Nullable SecretCommitment commitment, @Nullable ReadonlyList<Credential> credentials, @Nullable ReadonlyList<HostSignatureWrapper> certificates, boolean lodged, @Nullable BigInteger value) throws SQLException, IOException, PacketException, ExternalException {
-        assert subject != null || recipient == null && signer == null && commitment == null && credentials == null : "The subject may only be null if the contents of a response are not signed (because the host could not decode the subject).";
-        
         setLists(object);
         this.size = size;
         this.audit = audit;
@@ -347,10 +336,10 @@ public abstract class Packet implements Immutable {
     /**
      * Sets the list(s) of the request or response.
      * 
-     * @param object the object containing the list(s).
+     * @param lists the object containing the list(s).
      */
     @RawRecipient
-    abstract void setLists(@Nonnull Object object);
+    abstract void setLists(@Nonnull Object lists);
     
     /**
      * Returns the handler or exception at the given position as a block.
@@ -364,6 +353,20 @@ public abstract class Packet implements Immutable {
     @Pure
     @RawRecipient
     abstract @Nullable Block getBlock(int index);
+    
+    /**
+     * Returns the handler or exception at the given position as a block.
+     * 
+     * @param index the index of the block which is to be returned.
+     * 
+     * @return the handler or exception at the given position as a block.
+     * 
+     * @require index >= 0 && index < getSize() : "The index is valid.";
+     */
+    @Pure
+    @RawRecipient
+    abstract @Nonnull SignatureWrapper getSignature(@Nullable CompressionWrapper compression);
+    
     
     /**
      * Initializes the required lists with the given size.

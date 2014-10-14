@@ -2,28 +2,23 @@ package ch.virtualid.server;
 
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.database.Database;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
-import ch.virtualid.handler.Handler;
-import ch.virtualid.identity.Identifier;
-import ch.virtualid.identity.Mapper;
-import ch.virtualid.identity.NonHostIdentifier;
-import static ch.virtualid.io.Level.ERROR;
+import ch.virtualid.handler.Method;
+import ch.virtualid.handler.Reply;
+import ch.virtualid.identity.SemanticType;
 import static ch.virtualid.io.Level.INFORMATION;
 import static ch.virtualid.io.Level.WARNING;
 import ch.virtualid.io.Logger;
+import ch.virtualid.packet.Audit;
 import ch.virtualid.packet.Request;
 import ch.virtualid.packet.Response;
-import ch.xdf.Block;
-import ch.xdf.Int8Wrapper;
-import ch.xdf.SelfcontainedWrapper;
-import ch.xdf.SignatureWrapper;
+import ch.virtualid.util.FreezableArrayList;
+import ch.virtualid.util.FreezableList;
 import java.io.IOException;
 import java.net.Socket;
-import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Arrays;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -31,7 +26,7 @@ import javax.annotation.Nullable;
  * The worker is responsible for handling incoming requests asynchronously.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 0.6
+ * @version 1.6
  */
 public final class Worker implements Runnable {
     
@@ -65,75 +60,46 @@ public final class Worker implements Runnable {
             String identifier = "";
             String error = "";
             
-            @Nullable Request request = null;
-            
-            Response response;
+            @Nonnull Response response;
             try {
-                request = new Request(socket.getInputStream());
-                
-                Host host = Server.getHost(request.getEncryption().getRecipient());
-                SignatureWrapper signature = request.getSignatures();
-                identifier = signature.getIdentifier();
-                boolean mapped = Mapper.isMapped(identifier);
-                long vid = mapped ? Mapper.getVid(identifier) : 0l;
-                
-                SelfcontainedWrapper content = request.getContents();
-                if (!Mapper.exists(content.getIdentifier())) throw new PacketException(PacketError.METHOD);
-                type = " " + content.getIdentifier();
-                long requestType = Mapper.getVid(content.getIdentifier());
-                Handler handler = Handler.get(requestType);
-                Block element = content.getElement();
-                
-                // TODO: Only in case of the core service!        
-                @Nullable Identifier subject = signature.getSubject();
-                assert subject != null : "See the class invariant.";
-                if (!subject.getHostIdentifier().equals(encryption.getRecipient())) throw new PacketException(PacketError.SIGNATURE, new InvalidEncodingException("..."));
-                
-                // TODO: Time constraints and replay detection?
-                
-                // Internal requests have to be signed by a client.
-                if (handler.isInternal() && signature.getClient() == null) throw new PacketException(PacketError.SIGNATURE);
-                
-                // If signed by a client, the identifier in the request islong to the given host.
-                if (signature.getClient() != null && !NonHostIdentifier.getHost(identifier).equalsIgnoreCase(host.getIdentifier())) throw new PacketException(PacketError.IDENTIFIER);
-                
-                // If the identifier is not mapped, the request is to open a new account and the other way round.
-                if (mapped == (requestType == Vid.ACCOUNT_OPEN_REQUEST)) throw new PacketException(PacketError.IDENTIFIER);
-                
-                // The identifier is the address of the VID, otherwise the request is treated as a category retrieval indicating the predecessors and the successor.
-                if (mapped && !Mapper.isAddress(identifier)) requestType = Vid.CATEGORY_GET_REQUEST;
-                
-                // Requests to non-host VIDs have to be encrypted.
-                if (!Identifier.isHost(identifier) && !request.getEncryption().isEncrypted()) throw new PacketException(PacketError.ENCRYPTION);
-                
-                // Hosts accept only attribute and category requests for themselves.
-                if (Identifier.isHost(identifier) && requestType != Vid.ATTRIBUTE_GET_REQUEST && requestType != Vid.CATEGORY_GET_REQUEST) throw new PacketException(PacketError.METHOD);
-                
-                // If there was an internal problem like a database inconsistency, try to execute the request a second time.
-                for (int attempt = 0; true; attempt++) {
-                    try (@Nonnull Connection connection = Database.getConnection()) {
-                        content = new SelfcontainedWrapper(Mapper.getIdentifier(handler.getResponseType()), handler.handle(connection, host, vid, element, signature));
-                        
-                        // TODO: Auditing.
-                        
-                        connection.commit();
-                        break;
-                    } catch (InvalidEncodingException exception) {
-                        throw new PacketException(PacketError.METHOD, exception);
-                    } catch (PacketException exception) {
-                        throw exception;
-                    } catch (SQLException exception) { // TODO: Throw a different packet error.
-                        logger.log(ERROR, "An internal error occurred.", exception);
-                        if (attempt > 0) throw new PacketException(PacketError.INTERNAL, exception);
+                try {
+                    final @Nonnull Request request = new Request(socket.getInputStream());
+                    final @Nonnull SemanticType service = request.getMethod(0).getService();
+                    final int size = request.getSize();
+                    final @Nonnull FreezableList<Reply> replies = new FreezableArrayList<Reply>(size);
+                    final @Nonnull FreezableList<PacketException> exceptions = new FreezableArrayList<PacketException>(size);
+                    Database.getConnection().commit();
+                    for (int i = 0; i < size; i++) {
+                        try {
+                            final @Nonnull Method method = request.getMethod(i);
+                            replies.set(i, method.executeOnHost());
+                            // TODO: Audit the executed method if it is an action.
+                            Database.getConnection().commit();
+                        } catch (@Nonnull SQLException exception) {
+                            exceptions.set(i, new PacketException(PacketError.INTERNAL, "An SQLException occurred.", exception, false));
+                            Database.getConnection().rollback();
+                        } catch (@Nonnull PacketException exception) {
+                            exceptions.set(i, exception);
+                            Database.getConnection().rollback();
+                        }
                     }
+                    final @Nullable Audit audit;
+                    if (request.getAudit() != null) {
+                        audit = null; // TODO: Retrieve the audit of the given service.
+                    } else {
+                        audit = null;
+                    }
+                    response = new Response(request, replies.freeze(), exceptions.freeze(), audit);
+                } catch (@Nonnull SQLException exception) {
+                    Database.getConnection().rollback();
+                    throw new PacketException(PacketError.INTERNAL, "An SQLException occurred.", exception, false);
+                } catch (@Nonnull IOException exception) {
+                    throw new PacketException(PacketError.EXTERNAL, "An IOException occurred.", exception, false);
+                } catch (@Nonnull ExternalException exception) {
+                    throw new PacketException(PacketError.EXTERNAL, "An ExternalException occurred.", exception, false);
                 }
-                
-                // TODO: Depending on how the request was signed, append audit trail.
-                
-                response = new Packet(Arrays.asList(content), symmetricKey, identifier, null, host.getIdentifier());
             } catch (@Nonnull PacketException exception) {
-                @Nonnull SelfcontainedWrapper content = new SelfcontainedWrapper(NonHostIdentifier.PACKET_ERROR, new Int8Wrapper(exception.getError().getValue()));
-                response = new Response(request, exception);
+                response = new Response(null, exception);
                 error = " with " + exception.getError();
             }
             
@@ -143,7 +109,7 @@ public final class Worker implements Runnable {
             final @Nonnull Time end = new Time();
             identifier = identifier.isEmpty() ? "" : " to " + identifier;
             logger.log(INFORMATION, "Request" + type + identifier + " from '" + socket.getInetAddress().toString() + "' handled in " + end.subtract(start) + error + ".");
-        } catch (@Nonnull IOException exception) {
+        } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
             logger.log(WARNING, exception);
         } finally {
             try {
