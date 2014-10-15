@@ -1,7 +1,6 @@
 package ch.virtualid.database;
 
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.client.Client;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.io.Console;
 import ch.virtualid.io.Directory;
@@ -63,12 +62,12 @@ public final class MySQLConfiguration extends Configuration implements Immutable
      * 
      * @param name the name of the database configuration file (without the suffix).
      * 
-     * @require Client.isValid(name) : "The name is valid for clients.";
+     * @require Database.isValid(name) : "The name is valid for a database.";
      */
     public MySQLConfiguration(@Nonnull String name) throws SQLException, IOException {
         super(new Driver());
         
-        assert Client.isValid(name) : "The name is valid for clients.";
+        assert Database.isValid(name) : "The name is valid for a database.";
         
         final @Nonnull File file = new File(Directory.DATA.getPath() + Directory.SEPARATOR + name + ".conf");
         if (file.exists()) {
@@ -104,7 +103,7 @@ public final class MySQLConfiguration extends Configuration implements Immutable
         properties.setProperty("user", user);
         properties.setProperty("password", password);
         
-        try (Connection connection = DriverManager.getConnection("jdbc:mysql://" + server + ":" + port, properties); Statement statement = connection.createStatement()) {
+        try (@Nonnull Connection connection = DriverManager.getConnection("jdbc:mysql://" + server + ":" + port, properties); @Nonnull Statement statement = connection.createStatement()) {
             statement.executeUpdate("CREATE DATABASE IF NOT EXISTS " + database);
         }
     }
@@ -114,6 +113,15 @@ public final class MySQLConfiguration extends Configuration implements Immutable
      */
     public MySQLConfiguration() throws SQLException, IOException {
         this("MySQL");
+    }
+    
+    /**
+     * Returns whether a MySQL configuration exists.
+     * 
+     * @return whether a MySQL configuration exists.
+     */
+    public static boolean exists() {
+        return new File(Directory.DATA.getPath() + Directory.SEPARATOR + "MySQL.conf").exists();
     }
     
     

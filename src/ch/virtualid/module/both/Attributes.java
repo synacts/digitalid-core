@@ -36,7 +36,7 @@ public final class Attributes extends BothModule {
     
     @Pure
     @Override
-    public @Nonnull SemanticType getType() {
+    public @Nonnull SemanticType getFormat() {
         return TYPE;
     }
     

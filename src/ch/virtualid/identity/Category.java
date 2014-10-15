@@ -7,6 +7,8 @@ import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
+import ch.virtualid.util.FreezableArrayList;
+import ch.virtualid.util.ReadonlyList;
 import ch.xdf.Block;
 import ch.xdf.Int8Wrapper;
 import java.sql.PreparedStatement;
@@ -51,6 +53,13 @@ public enum Category implements Blockable, Immutable, SQLizable {
      * The category for an email person.
      */
     EMAIL_PERSON(5);
+    
+    
+    /**
+     * Stores an empty list of categories that can be shared among semantic types.
+     * (This declaration may not be in the semantic type class as the initialization would be too late.)
+     */
+    public static final @Nonnull ReadonlyList<Category> NONE = new FreezableArrayList<Category>(0).freeze();
     
     
     /**

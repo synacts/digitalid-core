@@ -1,17 +1,20 @@
 package ch.virtualid.io;
 
 import ch.virtualid.errors.ShouldNeverHappenError;
+import ch.virtualid.exceptions.io.EscapeOptionException;
+import ch.virtualid.util.FreezableLinkedList;
+import ch.virtualid.util.FreezableList;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.math.BigInteger;
-import java.util.LinkedList;
-import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
  * This class helps to read from standard input and write to standard output.
+ * 
+ * @see Option
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
@@ -234,7 +237,7 @@ public final class Console {
     /**
      * Stores the available options for the user.
      */
-    private static final @Nonnull List<Option> options = new LinkedList<Option>();
+    private static final @Nonnull FreezableList<Option> options = new FreezableLinkedList<Option>();
     
     /**
      * Adds the given option to the list of options.
@@ -254,15 +257,14 @@ public final class Console {
             write();
             write("You have the following options:");
             int i = 0;
-            for (@Nonnull Option option : options) {
+            for (final @Nonnull Option option : options) {
                 write("- " + (i++) + ": " + option.getDescription());
             }
             write();
-            flush();
             final int input = readInt("Execute the option: ");
             write();
             if (input >= 0 && input < options.size()) {
-                options.get(input).execute();
+                try { options.get(input).execute(); } catch (@Nonnull EscapeOptionException exception) {}
             } else {
                 write("Please choose one of the given options!");
             }

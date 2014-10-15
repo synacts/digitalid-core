@@ -96,24 +96,6 @@ public interface ReadonlyList<E> extends ReadonlyCollection<E> {
     
     
     /**
-     * Returns whether this list does not contain an element which is null.
-     * If it does not, {@link #get(int)} is guaranteed to return not null for every valid index.
-     * 
-     * @return {@code true} if this list does not contain null, {@code false} otherwise.
-     */
-    @Pure
-    public boolean doesNotContainNull();
-    
-    /**
-     * Returns whether this list does not contain duplicates (including null values).
-     * 
-     * @return {@code true} if this list does not contain duplicates, {@code false} otherwise.
-     */
-    @Pure
-    public boolean doesNotContainDuplicates();
-    
-    
-    /**
      * Returns whether the elements in this list are ascending (excluding null values).
      * 
      * @return {@code true} if the elements in this list are ascending, {@code false} otherwise.

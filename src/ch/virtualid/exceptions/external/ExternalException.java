@@ -2,7 +2,7 @@ package ch.virtualid.exceptions.external;
 
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.interfaces.Immutable;
-import static ch.virtualid.io.Level.WARNING;
+import ch.virtualid.io.Level;
 import ch.virtualid.io.Logger;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -60,7 +60,7 @@ public abstract class ExternalException extends Exception implements Immutable {
     protected ExternalException(@Nullable String message, @Nullable Throwable cause) {
         super(message == null ? "An external exception occurred." : message, cause);
         
-        logger.log(WARNING, this);
+        logger.log(Level.WARNING, this);
     }
     
     @Pure

@@ -1,11 +1,6 @@
 package ch.virtualid.cryptography;
 
 import ch.virtualid.annotations.Pure;
-import static ch.virtualid.cryptography.PublicKey.TI;
-import static ch.virtualid.cryptography.PublicKey.TO;
-import static ch.virtualid.cryptography.PublicKey.TU;
-import static ch.virtualid.cryptography.PublicKey.TUPLE;
-import static ch.virtualid.cryptography.PublicKey.TV;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.util.FreezableArray;
 import ch.xdf.Block;
@@ -82,8 +77,8 @@ public final class KeyPair implements Immutable {
         final @Nonnull Exponent ro = compositeGroup.getRandomExponent();
         final @Nonnull Element to = ab.pow(ro);
         
-        final @Nonnull FreezableArray<Block> elements = new FreezableArray<Block>(tu.toBlock().setType(TU), ti.toBlock().setType(TI), tv.toBlock().setType(TV), to.toBlock().setType(TO));
-        final @Nonnull Exponent t = new Exponent(new TupleWrapper(TUPLE, elements).toBlock().getHash());
+        final @Nonnull FreezableArray<Block> elements = new FreezableArray<Block>(tu.toBlock().setType(PublicKey.TU), ti.toBlock().setType(PublicKey.TI), tv.toBlock().setType(PublicKey.TV), to.toBlock().setType(PublicKey.TO));
+        final @Nonnull Exponent t = new Exponent(new TupleWrapper(PublicKey.TUPLE, elements).toBlock().getHash());
         
         final @Nonnull Exponent su = ru.subtract(t.multiply(eu));
         final @Nonnull Exponent si = ri.subtract(t.multiply(ei));

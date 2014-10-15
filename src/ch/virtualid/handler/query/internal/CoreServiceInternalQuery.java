@@ -10,7 +10,7 @@ import ch.virtualid.cryptography.PublicKey;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.Role;
 import ch.virtualid.exceptions.external.ExternalException;
-import static ch.virtualid.exceptions.packet.PacketError.IDENTIFIER;
+import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.InternalQuery;
 import ch.virtualid.handler.QueryReply;
@@ -65,7 +65,7 @@ public abstract class CoreServiceInternalQuery extends InternalQuery {
     protected CoreServiceInternalQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
-        if (!getEntityNotNull().getIdentity().getAddress().getHostIdentifier().equals(getRecipient())) throw new PacketException(IDENTIFIER, "The host of the entity and the recipient have to be the same for internal queries of the core service.");
+        if (!getEntityNotNull().getIdentity().getAddress().getHostIdentifier().equals(getRecipient())) throw new PacketException(PacketError.IDENTIFIER, "The host of the entity and the recipient have to be the same for internal queries of the core service.");
         
         this.publicKey = Cache.getPublicKey(getRecipient().getIdentity(), signature.getTimeNotNull());
     }

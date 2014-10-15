@@ -1,9 +1,9 @@
 package ch.virtualid.database;
 
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.client.Client;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.io.Directory;
+import java.io.File;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -35,12 +35,12 @@ public final class SQLiteConfiguration extends Configuration implements Immutabl
      * 
      * @param name the name of the database file (without the suffix).
      * 
-     * @require Client.isValid(name) : "The name is valid for clients.";
+     * @require Database.isValid(name) : "The name is valid for a database.";
      */
     public SQLiteConfiguration(@Nonnull String name) throws SQLException {
         super(new JDBC());
         
-        assert Client.isValid(name) : "The name is valid for clients.";
+        assert Database.isValid(name) : "The name is valid for a database.";
         
         this.name = name;
         new SQLiteConfig().setSharedCache(true);
@@ -51,6 +51,15 @@ public final class SQLiteConfiguration extends Configuration implements Immutabl
      */
     public SQLiteConfiguration() throws SQLException {
         this("SQLite");
+    }
+    
+    /**
+     * Returns whether a SQLite database exists.
+     * 
+     * @return whether a SQLite database exists.
+     */
+    public static boolean exists() {
+        return new File(Directory.DATA.getPath() + Directory.SEPARATOR + "SQLite.db").exists();
     }
     
     

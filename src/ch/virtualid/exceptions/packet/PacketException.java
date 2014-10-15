@@ -4,7 +4,7 @@ import ch.virtualid.annotations.Pure;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
-import static ch.virtualid.io.Level.WARNING;
+import ch.virtualid.io.Level;
 import ch.virtualid.io.Logger;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.ReadonlyArray;
@@ -85,7 +85,7 @@ public final class PacketException extends Exception implements Blockable {
         
         this.error = error;
         this.remote = remote;
-        logger.log(WARNING, this);
+        logger.log(Level.WARNING, this);
     }
     
     /**

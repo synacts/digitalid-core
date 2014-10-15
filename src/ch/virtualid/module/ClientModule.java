@@ -6,4 +6,4 @@ package ch.virtualid.module;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public abstract class ClientModule extends Module {}
+public interface ClientModule extends Module {}

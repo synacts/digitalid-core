@@ -240,12 +240,6 @@ public class FreezableArrayList<E> extends ArrayList<E> implements FreezableList
         return new BackedFreezableList<E>(this, super.subList(fromIndex, toIndex));
     }
     
-    @Pure
-    @Override
-    public boolean containsAll(@Nonnull ReadonlyCollection<?> collection) {
-        return containsAll((Collection<?>) collection);
-    }
-    
     
     @Pure
     @Override

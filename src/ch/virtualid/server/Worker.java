@@ -10,8 +10,7 @@ import ch.virtualid.handler.Method;
 import ch.virtualid.handler.Reply;
 import ch.virtualid.identity.Identifier;
 import ch.virtualid.identity.SemanticType;
-import static ch.virtualid.io.Level.INFORMATION;
-import static ch.virtualid.io.Level.WARNING;
+import ch.virtualid.io.Level;
 import ch.virtualid.io.Logger;
 import ch.virtualid.packet.Audit;
 import ch.virtualid.packet.Request;
@@ -107,7 +106,7 @@ public final class Worker implements Runnable {
                     throw new PacketException(PacketError.EXTERNAL, "An ExternalException occurred.", exception);
                 }
             } catch (@Nonnull PacketException exception) {
-                response = new Response(request, exception);
+                response = new Response(request, exception.isRemote() ? new PacketException(PacketError.EXTERNAL, "An external error occurred.", exception) : exception);
                 error = exception.getError();
             }
             
@@ -115,14 +114,14 @@ public final class Worker implements Runnable {
             response.write(socket.getOutputStream());
             
             final @Nonnull Time end = new Time();
-            logger.log(INFORMATION, "Request from '" + socket.getInetAddress() + "' handled in " + end.subtract(start).getValue() + " ms" + (subject != null ? " about " + subject : "") + (error != null ? " with error " + error : "") + ".");
+            logger.log(Level.INFORMATION, "Request from '" + socket.getInetAddress() + "' handled in " + end.subtract(start).getValue() + " ms" + (subject != null ? " about " + subject : "") + (error != null ? " with error " + error : "") + ".");
         } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
-            logger.log(WARNING, exception);
+            logger.log(Level.WARNING, exception);
         } finally {
             try {
                 if (!socket.isClosed()) socket.close();
             } catch (@Nonnull IOException exception) {
-                logger.log(WARNING, exception);
+                logger.log(Level.WARNING, exception);
             }
         }
         

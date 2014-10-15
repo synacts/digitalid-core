@@ -1,7 +1,6 @@
 package ch.virtualid.io;
 
 import ch.virtualid.errors.ShouldNeverHappenError;
-import static ch.virtualid.io.Level.INFORMATION;
 import ch.virtualid.server.Server;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -27,7 +26,7 @@ public final class Logger {
     /**
      * Stores the level above which messages are logged.
      */
-    public static final @Nonnull Level LEVEL = INFORMATION;
+    public static final @Nonnull Level LEVEL = Level.INFORMATION;
     
     
     /**

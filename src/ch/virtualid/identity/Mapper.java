@@ -12,14 +12,7 @@ import ch.virtualid.exceptions.external.InvalidSignatureException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Reply;
-import static ch.virtualid.identity.Category.ARTIFICIAL_PERSON;
-import static ch.virtualid.identity.Category.EMAIL_PERSON;
-import static ch.virtualid.identity.Category.HOST;
-import static ch.virtualid.identity.Category.NATURAL_PERSON;
-import static ch.virtualid.identity.Category.SEMANTIC_TYPE;
-import static ch.virtualid.identity.Category.SYNTACTIC_TYPE;
-import static ch.virtualid.io.Level.INFORMATION;
-import static ch.virtualid.io.Level.WARNING;
+import ch.virtualid.io.Level;
 import ch.virtualid.io.Logger;
 import ch.virtualid.packet.Request;
 import ch.virtualid.packet.Response;
@@ -77,7 +70,7 @@ public final class Mapper {
      * <p>
      * Additionally, it might be a good idea to establish an index on the referencing column.
      */
-    public static final @Nonnull String REFERENCE = "REFERENCES map_identity (identity) ON DELETE RESCTRICT ON UPDATE RESCTRICT";
+    public static final @Nonnull String REFERENCE = new String("REFERENCES map_identity (identity) ON DELETE RESTRICT ON UPDATE RESTRICT");
     
     
     /**
@@ -143,11 +136,11 @@ public final class Mapper {
         assert Database.isMainThread(): "This method block is called in the main thread.";
         
         try (@Nonnull Statement statement = Database.getConnection().createStatement()) {
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS map_identity (identity " + Database.getConfiguration().PRIMARY_KEY() + ", category " + Category.FORMAT + " NOT NULL, address " + Identifier.FORMAT + " NOT NULL, reply " + Reply.FORMAT + ", FOREIGN KEY (reply) " + Reply.REFERENCE + ")");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS map_identity (identity " + Database.getConfiguration().PRIMARY_KEY() + ", category " + Database.getConfiguration().TINYINT() + " NOT NULL, address " + Identifier.FORMAT + " NOT NULL, reply " + Reply.FORMAT + ", FOREIGN KEY (reply) " + Reply.REFERENCE + ")");
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS map_identifier (identifier " + Identifier.FORMAT + " NOT NULL, identity " + Mapper.FORMAT + " NOT NULL, PRIMARY KEY (identifier), FOREIGN KEY (identity) " + Mapper.REFERENCE + ")");
             
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS map_predecessors (identifier " + Identifier.FORMAT + " NOT NULL, predecessor LONGBLOB NOT NULL, reply BIGINT, PRIMARY KEY (identifier, predecessor), FOREIGN KEY (reply) REFERENCES reply (reply))");
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS map_successor (identifier " + Identifier.FORMAT + " NOT NULL, successor LONGBLOB NOT NULL, reply BIGINT, PRIMARY KEY (identifier), FOREIGN KEY (reply) REFERENCES reply (reply))");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS map_predecessors (identifier " + Identifier.FORMAT + " NOT NULL, predecessor " + Database.getConfiguration().BLOB() + " NOT NULL, reply BIGINT, PRIMARY KEY (identifier), FOREIGN KEY (reply) REFERENCES reply (reply))");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS map_successor (identifier " + Identifier.FORMAT + " NOT NULL, successor " + Identifier.FORMAT + " NOT NULL, reply BIGINT, PRIMARY KEY (identifier), FOREIGN KEY (reply) REFERENCES reply (reply))");
         } catch (@Nonnull SQLException exception) {
             throw new InitializationError("The database tables of the mapper could not be created.", exception);
         }
@@ -250,7 +243,7 @@ public final class Mapper {
      * @return whether the identity was successfully loaded.
      */
     private static boolean loadIdentity(@Nonnull Identifier identifier) throws SQLException {
-        final @Nonnull String query = "SELECT map_identity.category, map_identity.identity, map_identity.identifier FROM map_identifier INNER JOIN map_identity ON map_identifier.identity = map_identity.identity WHERE map_identifier.identifier = " + identifier;
+        final @Nonnull String query = "SELECT map_identity.category, map_identity.identity, map_identity.address FROM map_identifier INNER JOIN map_identity ON map_identifier.identity = map_identity.identity WHERE map_identifier.identifier = " + identifier;
         try (@Nonnull Statement statement = Database.getConnection().createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(query)) {
             if (resultSet.next()) {
                 final @Nonnull Category category = Category.get(resultSet.getByte(1));
@@ -293,7 +286,7 @@ public final class Mapper {
      * @ensure return.getCategory().equals(category) : "The category of the returned identity equals the given category.";
      */
     private static @Nonnull Identity mapIdentity(@Nonnull Identifier identifier, @Nonnull Category category, @Nullable Reply reply) throws SQLException, InvalidEncodingException {
-        assert identifier instanceof HostIdentifier == (category == HOST) : "The identifier denotes a host if and only if the given category is 'HOST'.";
+        assert identifier instanceof HostIdentifier == (category == Category.HOST) : "The identifier denotes a host if and only if the given category is 'HOST'.";
         
         if (isMapped(identifier)) {
             @Nonnull Identity identity =  identifiers.get(identifier);
@@ -301,9 +294,9 @@ public final class Mapper {
             return identity;
         } else {
             try (@Nonnull Statement statement = Database.getConnection().createStatement()) {
-                final long key = Database.getConfiguration().executeInsert(statement, "INSERT INTO map_identity (category, identifier, reply) VALUES (" + category + ", " + identifier + ", " + reply + ")");
+                final long key = Database.getConfiguration().executeInsert(statement, "INSERT INTO map_identity (category, address, reply) VALUES (" + category + ", " + identifier + ", " + reply + ")");
                 statement.executeUpdate("INSERT INTO map_identifier (identifier, identity) VALUES (" + identifier + ", " + key + ")");
-                logger.log(INFORMATION, "The identity with the identifier " + identifier + " was succesfully mapped.");
+                logger.log(Level.INFORMATION, "The identity with the identifier " + identifier + " was succesfully mapped.");
                 // The identity is not added to the map since the transaction might be rollbacked later on.
                 return createIdentity(category, key, identifier);
             }
@@ -320,7 +313,7 @@ public final class Mapper {
      */
     public static @Nonnull HostIdentity mapHostIdentity(@Nonnull HostIdentifier identifier) throws SQLException {
         try {
-            return mapIdentity(identifier, HOST, null).toHostIdentity();
+            return mapIdentity(identifier, Category.HOST, null).toHostIdentity();
         } catch (@Nonnull InvalidEncodingException exception) {
             throw new ShouldNeverHappenError("The host with the identifier " + identifier + " could not be mapped.", exception);
         }
@@ -339,7 +332,7 @@ public final class Mapper {
         assert Database.isMainThread(): "This method may only be called in the main thread.";
         
         try {
-            final @Nonnull SyntacticType type = mapIdentity(identifier, SYNTACTIC_TYPE, null).toSyntacticType();
+            final @Nonnull SyntacticType type = mapIdentity(identifier, Category.SYNTACTIC_TYPE, null).toSyntacticType();
             numbers.put(type.getNumber(), type);
             identifiers.put(identifier, type);
             return type;
@@ -361,7 +354,7 @@ public final class Mapper {
         assert Database.isMainThread(): "This method may only be called in the main thread.";
         
         try {
-            final @Nonnull SemanticType type = mapIdentity(identifier, SEMANTIC_TYPE, null).toSemanticType();
+            final @Nonnull SemanticType type = mapIdentity(identifier, Category.SEMANTIC_TYPE, null).toSemanticType();
             numbers.put(type.getNumber(), type);
             identifiers.put(identifier, type);
             return type;
@@ -636,7 +629,7 @@ public final class Mapper {
     public static @Nullable NonHostIdentifier getSuccessorReloaded(@Nonnull NonHostIdentifier identifier) throws SQLException, IdentityNotFoundException, InvalidEncodingException, FailedRequestException, PacketException {
         @Nullable NonHostIdentifier successor = getSuccessor(identifier);
         if (successor == null) {
-            if (getIdentity(identifier).getCategory() == EMAIL_PERSON) {
+            if (getIdentity(identifier).getCategory() == Category.EMAIL_PERSON) {
                 // TODO: Load the verified successor from 'virtualid.ch' or return null otherwise.
                 throw new UnsupportedOperationException("The verification of email addresses is not supported yet.");
             } else {

@@ -521,7 +521,7 @@ public final class Agents extends BothModule {
     
     @Pure
     @Override
-    public @Nonnull SemanticType getType() {
+    public @Nonnull SemanticType getFormat() {
         return TYPE;
     }
     

@@ -35,7 +35,7 @@ public final class CoreService extends Service {
     /**
      * Stores the single instance of this service.
      */
-    public static final @Nonnull Service SERVICE = new CoreService();
+    public static final @Nonnull CoreService SERVICE = new CoreService();
     
     
     /**
@@ -55,7 +55,7 @@ public final class CoreService extends Service {
     
     @Pure
     @Override
-    public @Nonnull SemanticType getType() {
+    public @Nonnull SemanticType getStateFormat() {
         return FORMAT;
     }
     

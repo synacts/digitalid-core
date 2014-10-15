@@ -17,8 +17,6 @@ import ch.virtualid.entity.Role;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketError;
-import static ch.virtualid.exceptions.packet.PacketError.AUTHORIZATION;
-import static ch.virtualid.exceptions.packet.PacketError.INTERNAL;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.Identifier;
@@ -245,7 +243,7 @@ public abstract class Method extends Handler {
      * @require !methods.isEmpty() : "The list of methods is not empty.";
      * @require areSimilar(methods) : "All methods are similar and not null.";
      */
-    public static @Nonnull Response send(@Nonnull ReadonlyList<? extends Method> methods) throws SQLException, IOException, PacketException, ExternalException {
+    public static @Nonnull Response send(@Nonnull ReadonlyList<Method> methods) throws SQLException, IOException, PacketException, ExternalException {
         assert methods.isFrozen() : "The list of methods is frozen.";
         assert !methods.isEmpty() : "The list of handlers is not empty.";
         assert areSimilar(methods) : "All methods are similar and not null.";
@@ -257,8 +255,8 @@ public abstract class Method extends Handler {
         final @Nonnull SemanticType service = reference.getService();
         final @Nonnull HostIdentifier recipient = reference.getRecipient();
         
-        if (entity instanceof Account && !reference.canBeSentByHosts()) throw new PacketException(INTERNAL, "These methods cannot be sent by hosts.");
-        if (entity instanceof Role && reference.canOnlyBeSentByHosts()) throw new PacketException(INTERNAL, "These methods cannot be sent by clients.");
+        if (entity instanceof Account && !reference.canBeSentByHosts()) throw new PacketException(PacketError.INTERNAL, "These methods cannot be sent by hosts.");
+        if (entity instanceof Role && reference.canOnlyBeSentByHosts()) throw new PacketException(PacketError.INTERNAL, "These methods cannot be sent by clients.");
         
         if (reference instanceof ExternalQuery) {
             final @Nonnull ReadonlyAuthentications authentications;
@@ -277,7 +275,7 @@ public abstract class Method extends Handler {
                 return new CredentialsRequest(methods, recipient, subject, null, credentials, certificates, false, null).send();
             }
         } else {
-            if (entity == null) throw new PacketException(INTERNAL, "The entity may only be null in case of external queries.");
+            if (entity == null) throw new PacketException(PacketError.INTERNAL, "The entity may only be null in case of external queries.");
             
             if (reference instanceof ExternalAction) {
                 if (entity instanceof Account) {
@@ -290,13 +288,13 @@ public abstract class Method extends Handler {
                 }
             } else {
                 assert reference instanceof InternalMethod;
-                if (!(entity instanceof Role)) throw new PacketException(INTERNAL, "The entity has to be a role in case of internal methods.");
+                if (!(entity instanceof Role)) throw new PacketException(PacketError.INTERNAL, "The entity has to be a role in case of internal methods.");
                 final @Nonnull Role role = (Role) entity;
                 final @Nonnull Agent agent = role.getAgent();
                 
                 final @Nonnull Restrictions restrictions = agent.getRestrictions();
                 for (@Nonnull Method method : methods) {
-                    if (!restrictions.cover(((InternalMethod) method).getRequiredRestrictions())) throw new PacketException(AUTHORIZATION, "The restrictions of the role do not cover the required restrictions.");
+                    if (!restrictions.cover(((InternalMethod) method).getRequiredRestrictions())) throw new PacketException(PacketError.AUTHORIZATION, "The restrictions of the role do not cover the required restrictions.");
                 }
                 
                 final @Nonnull ReadonlyAgentPermissions permissions = getRequiredPermissions(methods);
@@ -305,7 +303,7 @@ public abstract class Method extends Handler {
                 
                 if (service.equals(CoreService.TYPE)) {
                     if (agent instanceof ClientAgent) {
-                        if (!agent.getPermissions().cover(permissions)) throw new PacketException(AUTHORIZATION, "The permissions of the role do not cover the required permissions.");
+                        if (!agent.getPermissions().cover(permissions)) throw new PacketException(PacketError.AUTHORIZATION, "The permissions of the role do not cover the required permissions.");
                         return new ClientRequest(methods, subject, audit, ((ClientAgent) agent).getCommitment()).send();
                     } else {
                         assert agent instanceof OutgoingRole;

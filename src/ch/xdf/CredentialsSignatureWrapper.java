@@ -16,9 +16,6 @@ import ch.virtualid.cryptography.Element;
 import ch.virtualid.cryptography.Exponent;
 import ch.virtualid.cryptography.Parameters;
 import ch.virtualid.cryptography.PublicKey;
-import static ch.virtualid.cryptography.PublicKey.VERIFIABLE_ENCRYPTION;
-import static ch.virtualid.cryptography.PublicKey.W1;
-import static ch.virtualid.cryptography.PublicKey.W2;
 import ch.virtualid.entity.Account;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.Role;
@@ -124,7 +121,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
     /**
      * Stores the semantic type {@code wi.encryption.credential.credentials.signature@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType WI = SemanticType.create("wi.encryption.credential.credentials.signature@virtualid.ch").load(VERIFIABLE_ENCRYPTION);
+    private static final @Nonnull SemanticType WI = SemanticType.create("wi.encryption.credential.credentials.signature@virtualid.ch").load(PublicKey.VERIFIABLE_ENCRYPTION);
     
     /**
      * Stores the semantic type {@code swi.encryption.credential.credentials.signature@virtualid.ch}.
@@ -134,7 +131,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
     /**
      * Stores the semantic type {@code wb.encryption.credential.credentials.signature@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType WB = SemanticType.create("wb.encryption.credential.credentials.signature@virtualid.ch").load(VERIFIABLE_ENCRYPTION);
+    private static final @Nonnull SemanticType WB = SemanticType.create("wb.encryption.credential.credentials.signature@virtualid.ch").load(PublicKey.VERIFIABLE_ENCRYPTION);
     
     /**
      * Stores the semantic type {@code swb.encryption.credential.credentials.signature@virtualid.ch}.
@@ -685,12 +682,12 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
     /**
      * Stores the semantic type {@code twi.array.credential.credentials.signature@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType TWI = SemanticType.create("twi.array.credential.credentials.signature@virtualid.ch").load(VERIFIABLE_ENCRYPTION);
+    private static final @Nonnull SemanticType TWI = SemanticType.create("twi.array.credential.credentials.signature@virtualid.ch").load(PublicKey.VERIFIABLE_ENCRYPTION);
     
     /**
      * Stores the semantic type {@code twb.array.credential.credentials.signature@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType TWB = SemanticType.create("twb.array.credential.credentials.signature@virtualid.ch").load(VERIFIABLE_ENCRYPTION);
+    private static final @Nonnull SemanticType TWB = SemanticType.create("twb.array.credential.credentials.signature@virtualid.ch").load(PublicKey.VERIFIABLE_ENCRYPTION);
     
     /**
      * Stores the semantic type {@code array.credential.credentials.signature@virtualid.ch}.
@@ -769,11 +766,11 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
                 final @Nonnull Exponent swb = new Exponent(encryptions.getNotNull(3));
                 if (swb.getBitLength() > Parameters.RANDOM_BLINDING_EXPONENT) throw new InvalidSignatureException("The credentials signature is invalid: The value swb is too big.");
                 
-                wis.set(0, publicKey.getY().pow(swi).multiply(publicKey.getZPlus1().pow(si)).multiply(publicKey.getSquareGroup().getElement(wis.getNotNull(0)).pow(t)).toBlock().setType(W1));
-                wis.set(1, publicKey.getG().pow(swi).multiply(publicKey.getSquareGroup().getElement(wis.getNotNull(1)).pow(t)).toBlock().setType(W2));
+                wis.set(0, publicKey.getY().pow(swi).multiply(publicKey.getZPlus1().pow(si)).multiply(publicKey.getSquareGroup().getElement(wis.getNotNull(0)).pow(t)).toBlock().setType(PublicKey.W1));
+                wis.set(1, publicKey.getG().pow(swi).multiply(publicKey.getSquareGroup().getElement(wis.getNotNull(1)).pow(t)).toBlock().setType(PublicKey.W2));
                 
-                wbs.set(0, publicKey.getY().pow(swb).multiply(publicKey.getZPlus1().pow(sb)).multiply(publicKey.getSquareGroup().getElement(wbs.getNotNull(0)).pow(t)).toBlock().setType(W1));
-                wbs.set(1, publicKey.getG().pow(swb).multiply(publicKey.getSquareGroup().getElement(wbs.getNotNull(1)).pow(t)).toBlock().setType(W2));
+                wbs.set(0, publicKey.getY().pow(swb).multiply(publicKey.getZPlus1().pow(sb)).multiply(publicKey.getSquareGroup().getElement(wbs.getNotNull(0)).pow(t)).toBlock().setType(PublicKey.W1));
+                wbs.set(1, publicKey.getG().pow(swb).multiply(publicKey.getSquareGroup().getElement(wbs.getNotNull(1)).pow(t)).toBlock().setType(PublicKey.W2));
                 
                 array.set(1, new TupleWrapper(TWI, wis.freeze()).toBlock());
                 array.set(2, new TupleWrapper(TWB, wbs.freeze()).toBlock());

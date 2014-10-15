@@ -1,9 +1,10 @@
 package ch.virtualid.io;
 
+import ch.virtualid.exceptions.io.EscapeOptionException;
 import javax.annotation.Nonnull;
 
 /**
- * Every option in the console has to extend this class.
+ * Every option in the {@link Console console} has to extend this class.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
@@ -29,13 +30,13 @@ public abstract class Option {
      * 
      * @return the description of this option.
      */
-    public @Nonnull String getDescription() {
+    public final @Nonnull String getDescription() {
         return description;
     }
     
     /**
-     * Executes the option.
+     * Executes this option.
      */
-    public abstract void execute();
+    public abstract void execute() throws EscapeOptionException;
     
 }

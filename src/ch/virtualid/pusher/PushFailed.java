@@ -6,22 +6,21 @@ import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Account;
 import ch.virtualid.entity.Entity;
-import ch.virtualid.exceptions.external.InvalidDeclarationException;
 import ch.virtualid.errors.ShouldNeverHappenError;
+import ch.virtualid.exceptions.external.ExternalException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.exceptions.packet.PacketError;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.ActionReply;
 import ch.virtualid.handler.ExternalAction;
 import ch.virtualid.handler.Method;
 import ch.virtualid.handler.Reply;
-import ch.virtualid.exceptions.external.IdentityNotFoundException;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.Identifier;
 import ch.virtualid.identity.Identity;
 import ch.virtualid.identity.NonHostIdentity;
 import ch.virtualid.identity.SemanticType;
-import ch.virtualid.exceptions.external.FailedRequestException;
 import ch.virtualid.packet.Packet;
-import ch.virtualid.exceptions.packet.PacketError;
-import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.ReadonlyArray;
 import ch.xdf.Block;
@@ -29,8 +28,7 @@ import ch.xdf.Int64Wrapper;
 import ch.xdf.SelfcontainedWrapper;
 import ch.xdf.SignatureWrapper;
 import ch.xdf.TupleWrapper;
-import ch.virtualid.exceptions.external.FailedEncodingException;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
+import java.io.IOException;
 import java.security.SecureRandom;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
@@ -120,7 +118,7 @@ public final class PushFailed extends ExternalAction {
      * 
      * @ensure hasSignature() : "This handler has a signature.";
      */
-    private PushFailed(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws InvalidEncodingException, IdentityNotFoundException, SQLException, InvalidDeclarationException {
+    private PushFailed(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
@@ -182,9 +180,15 @@ public final class PushFailed extends ExternalAction {
     }
     
     
+    @Pure
+    @Override
+    public @Nullable Class<ActionReply> getReplyClass() {
+        return null;
+    }
+    
     @Override
     public @Nullable ActionReply executeOnHost() throws PacketException {
-        throw new PacketException(PacketError.METHOD);
+        throw new PacketException(PacketError.METHOD, "Failed push actions cannot be executed on a host.");
     }
     
     @Override
@@ -214,8 +218,8 @@ public final class PushFailed extends ExternalAction {
     }
     
     @Override
-    public @Nullable Reply send() throws FailedRequestException, SQLException, IdentityNotFoundException, InvalidDeclarationException, FailedEncodingException {
-        throw new FailedEncodingException("Failed push actions cannot be sent.");
+    public @Nullable Reply send() throws PacketException {
+        throw new PacketException(PacketError.INTERNAL, "Failed push actions cannot be sent.");
     }
     
     
@@ -247,7 +251,7 @@ public final class PushFailed extends ExternalAction {
         
         @Pure
         @Override
-        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws InvalidEncodingException, SQLException, IdentityNotFoundException, InvalidDeclarationException {
+        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
             return new PushFailed(entity, signature, recipient, block);
         }
         

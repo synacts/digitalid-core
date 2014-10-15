@@ -43,7 +43,7 @@ public final class Contexts extends BothModule {
     
     @Pure
     @Override
-    public @Nonnull SemanticType getType() {
+    public @Nonnull SemanticType getFormat() {
         return TYPE;
     }
     

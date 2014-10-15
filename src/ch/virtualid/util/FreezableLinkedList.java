@@ -405,17 +405,11 @@ public class FreezableLinkedList<E> extends LinkedList<E> implements FreezableLi
         return new BackedFreezableList<E>(this, super.subList(fromIndex, toIndex));
     }
     
-    @Pure
-    @Override
-    public boolean containsAll(@Nonnull ReadonlyCollection<?> collection) {
-        return containsAll((Collection<?>) collection);
-    }
-    
     
     @Pure
     @Override
     public boolean doesNotContainNull() {
-        for (@Nullable E element : this) {
+        for (final @Nullable E element : this) {
             if (element == null) return false;
         }
         return true;
@@ -425,7 +419,7 @@ public class FreezableLinkedList<E> extends LinkedList<E> implements FreezableLi
     @Override
     public boolean doesNotContainDuplicates() {
         final @Nonnull HashSet<E> set = new HashSet<E>(size());
-        for (@Nullable E element : this) {
+        for (final @Nullable E element : this) {
             if (set.contains(element)) return false;
             else set.add(element);
         }

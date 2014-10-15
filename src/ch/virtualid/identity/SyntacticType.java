@@ -7,8 +7,6 @@ import ch.virtualid.interfaces.Immutable;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 
-import todo;
-
 /**
  * This class models the syntactic type virtual identities.
  * 

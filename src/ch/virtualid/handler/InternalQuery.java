@@ -4,7 +4,7 @@ import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.Role;
 import ch.virtualid.exceptions.external.ExternalException;
-import static ch.virtualid.exceptions.packet.PacketError.IDENTIFIER;
+import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.query.internal.CoreServiceInternalQuery;
 import ch.virtualid.identity.HostIdentifier;
@@ -51,7 +51,7 @@ public abstract class InternalQuery extends Query implements InternalMethod {
     protected InternalQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
-        if (!getEntityNotNull().getIdentity().equals(getSubject().getIdentity())) throw new PacketException(IDENTIFIER, "The identity of the entity and the subject have to be the same for internal queries.");
+        if (!getEntityNotNull().getIdentity().equals(getSubject().getIdentity())) throw new PacketException(PacketError.IDENTIFIER, "The identity of the entity and the subject have to be the same for internal queries.");
     }
     
     

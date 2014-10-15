@@ -14,6 +14,7 @@ import java.sql.SQLException;
 import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -32,6 +33,23 @@ public final class Database implements Immutable {
      * Stores the logger of the database.
      */
     public static final @Nonnull Logger LOGGER = new Logger("Database.log");
+    
+    
+    /**
+     * The pattern that valid database names have to match.
+     */
+    private static final @Nonnull Pattern pattern = Pattern.compile("[a-z0-9_]+", Pattern.CASE_INSENSITIVE);
+    
+    /**
+     * Returns whether the given name is valid for a database.
+     * 
+     * @param name the database name to check for validity.
+     * 
+     * @return whether the given name is valid for a database.
+     */
+    public static boolean isValid(@Nonnull String name) {
+        return name.length() <= 40 && pattern.matcher(name).matches();
+    }
     
     
     /**

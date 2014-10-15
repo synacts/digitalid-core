@@ -104,10 +104,20 @@ public class FreezableLinkedHashSet<E> extends LinkedHashSet<E> implements Freez
         return new FreezableIterableIterator<E>(this, super.iterator());
     }
     
+    
     @Pure
     @Override
-    public boolean containsAll(@Nonnull ReadonlyCollection<?> collection) {
-        return containsAll((Collection<?>) collection);
+    public boolean doesNotContainNull() {
+        for (final @Nullable E element : this) {
+            if (element == null) return false;
+        }
+        return true;
+    }
+    
+    @Pure
+    @Override
+    public boolean doesNotContainDuplicates() {
+        return true;
     }
     
     

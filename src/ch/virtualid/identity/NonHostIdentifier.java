@@ -2,11 +2,12 @@ package ch.virtualid.identity;
 
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.exceptions.external.ExternalException;
+import ch.virtualid.exceptions.external.IdentityNotFoundException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.interfaces.Immutable;
 import ch.xdf.Block;
 import ch.xdf.StringWrapper;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
-import ch.virtualid.exceptions.packet.PacketException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -90,6 +91,22 @@ public final class NonHostIdentifier extends Identifier implements Immutable {
         final @Nonnull NonHostIdentity identity = Mapper.getIdentity(this);
         if (identity instanceof Type) ((Type) identity).ensureLoaded();
         return identity;
+    }
+    
+    /**
+     * Returns whether an identity with this identifier exists.
+     * Please note that a negative answer can also be caused by network problems (in case the identifier is not yet mapped).
+     * 
+     * @return whether an identity with this identifier exists.
+     */
+    @Pure
+    public boolean exists() throws SQLException, IOException, PacketException, ExternalException {
+        try {
+            Mapper.getIdentity(this);
+            return true;
+        } catch (@Nonnull IdentityNotFoundException exception) {
+            return false;
+        }
     }
     
     

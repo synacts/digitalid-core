@@ -10,9 +10,7 @@ import ch.virtualid.cryptography.SymmetricKey;
 import ch.virtualid.entity.Role;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InactiveSignatureException;
-import static ch.virtualid.exceptions.packet.PacketError.KEYROTATION;
-import static ch.virtualid.exceptions.packet.PacketError.RELOCATION;
-import static ch.virtualid.exceptions.packet.PacketError.SERVICE;
+import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Method;
 import ch.virtualid.handler.query.external.AttributesQuery;
@@ -282,13 +280,13 @@ public class Request extends Packet {
             this.write(socket.getOutputStream());
             return new Response(this, socket.getInputStream(), verified);
         } catch (@Nonnull PacketException exception) {
-            if (exception.getError() == KEYROTATION && this instanceof ClientRequest) {
+            if (exception.getError() == PacketError.KEYROTATION && this instanceof ClientRequest) {
                 return ((ClientRequest) this).recommit(methods, verified);
-            } else if (exception.getError() == RELOCATION && subject instanceof NonHostIdentifier) {
+            } else if (exception.getError() == PacketError.RELOCATION && subject instanceof NonHostIdentifier) {
                 final @Nonnull NonHostIdentifier address = Mapper.relocate((NonHostIdentifier) subject);
                 final @Nonnull HostIdentifier recipient = getMethod(0).getService().equals(CoreService.TYPE) ? address.getHostIdentifier() : getRecipient();
                 return resend(methods, recipient, address, verified);
-            } else if (exception.getError() == SERVICE && !getMethod(0).isOnHost()) {
+            } else if (exception.getError() == PacketError.SERVICE && !getMethod(0).isOnHost()) {
                 final @Nonnull HostIdentifier recipient = new HostIdentifier(Cache.getAttributeValue(subject.getIdentity(), (Role) getMethod(0).getEntity(), getMethod(0).getService(), false));
                 return resend(methods, recipient, subject, verified);
             } else {

@@ -214,7 +214,7 @@ public abstract class Reply extends Handler implements SQLizable {
     /**
      * Stores the foreign key constraint used to reference replies.
      */
-    public static final @Nonnull String REFERENCE = "REFERENCES reply (reply) ON DELETE SET NULL ON UPDATE CASCADE";
+    public static final @Nonnull String REFERENCE = new String("REFERENCES reply (reply) ON DELETE SET NULL ON UPDATE CASCADE");
     
     
     /**
@@ -239,7 +239,7 @@ public abstract class Reply extends Handler implements SQLizable {
                     Database.LOGGER.log(Level.WARNING, exception);
                 }
             }
-        }, Time.HOUR.getValue(), Time.MONTH.getValue());
+        }, 3600000l, 2592000000l); // Time.HOUR.getValue(), Time.MONTH.getValue()
     }
     
     /**

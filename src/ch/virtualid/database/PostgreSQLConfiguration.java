@@ -1,7 +1,6 @@
 package ch.virtualid.database;
 
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.client.Client;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.io.Console;
 import ch.virtualid.io.Directory;
@@ -64,12 +63,12 @@ public final class PostgreSQLConfiguration extends Configuration implements Immu
      * 
      * @param name the name of the database configuration file (without the suffix).
      * 
-     * @require Client.isValid(name) : "The name is valid for clients.";
+     * @require Database.isValid(name) : "The name is valid for a database.";
      */
     public PostgreSQLConfiguration(@Nonnull String name) throws SQLException, IOException {
         super(new Driver());
         
-        assert Client.isValid(name) : "The name is valid for clients.";
+        assert Database.isValid(name) : "The name is valid for a database.";
         
         final @Nonnull File file = new File(Directory.DATA.getPath() + Directory.SEPARATOR + name + ".conf");
         if (file.exists()) {
@@ -111,6 +110,15 @@ public final class PostgreSQLConfiguration extends Configuration implements Immu
      */
     public PostgreSQLConfiguration() throws SQLException, IOException {
         this("PostgreSQL");
+    }
+    
+    /**
+     * Returns whether a PostgreSQL configuration exists.
+     * 
+     * @return whether a PostgreSQL configuration exists.
+     */
+    public static boolean exists() {
+        return new File(Directory.DATA.getPath() + Directory.SEPARATOR + "PostgreSQL.conf").exists();
     }
     
     

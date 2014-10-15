@@ -7,6 +7,7 @@ import ch.virtualid.database.Database;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.Role;
 import ch.virtualid.entity.Site;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.handler.InternalQuery;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.BothModule;
@@ -15,7 +16,6 @@ import ch.virtualid.util.FreezableArray;
 import ch.xdf.Block;
 import ch.xdf.StringWrapper;
 import ch.xdf.TupleWrapper;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -29,12 +29,12 @@ import javax.annotation.Nullable;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public final class Passwords extends BothModule {
+public final class Passwords implements BothModule {
     
     static { Module.add(new Passwords()); }
     
     @Override
-    protected void createTables(@Nonnull Site site) throws SQLException {
+    public void createTables(@Nonnull Site site) throws SQLException {
         try (@Nonnull Statement statement = Database.getConnection().createStatement()) {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "_password (entity BIGINT NOT NULL, password VARCHAR(50) NOT NULL COLLATE " + Database.getConfiguration().BINARY() + ", PRIMARY KEY (entity), FOREIGN KEY (entity) REFERENCES " + site.getReference() + ")");
             Database.getConfiguration().onInsertUpdate(statement, site + "_password", 1, "entity", "password");
@@ -108,28 +108,28 @@ public final class Passwords extends BothModule {
     
     @Pure
     @Override
-    public @Nonnull SemanticType getType() {
+    public @Nonnull SemanticType getStateFormat() {
         return TYPE;
     }
     
     @Pure
     @Override
-    protected @Nonnull Block getAll(@Nonnull Entity entity, @Nonnull Agent agent) throws SQLException {
+    public @Nonnull Block getState(@Nonnull Entity entity, @Nonnull Agent agent) throws SQLException {
         final @Nonnull FreezableArray<Block> elements = new FreezableArray<Block>(1);
         if (agent.isClient()) elements.set(0, new StringWrapper(Password.TYPE, get(entity)).toBlock());
         return new TupleWrapper(TYPE, elements.freeze()).toBlock();
     }
     
     @Override
-    protected void addAll(@Nonnull Entity entity, @Nonnull Block block) throws SQLException, InvalidEncodingException {
-        assert block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
+    public void addState(@Nonnull Entity entity, @Nonnull Block block) throws SQLException, InvalidEncodingException {
+        assert block.getType().isBasedOn(getStateFormat()) : "The block is based on the indicated type.";
         
         final @Nullable Block element = new TupleWrapper(block).getElement(0);
         if (element != null) set(entity, new StringWrapper(element).getString());
     }
     
     @Override
-    protected void removeAll(@Nonnull Entity entity) throws SQLException {
+    public void removeState(@Nonnull Entity entity) throws SQLException {
         try (@Nonnull Statement statement = Database.getConnection().createStatement()) {
             statement.executeUpdate("DELETE FROM " + entity.getSite() + "_password WHERE entity = " + entity);
         }

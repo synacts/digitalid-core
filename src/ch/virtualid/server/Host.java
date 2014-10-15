@@ -11,6 +11,7 @@ import ch.virtualid.cryptography.PublicKeyChain;
 import ch.virtualid.entity.Account;
 import ch.virtualid.entity.Site;
 import ch.virtualid.exceptions.external.ExternalException;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.HostIdentity;
 import ch.virtualid.identity.Identity;
@@ -43,6 +44,15 @@ public final class Host extends Site {
     }
     
     
+    /*
+    TODO: Support:
+    services
+    provider
+    tokens
+    members
+    open/close
+    */
+    
     /**
      * Stores the identifier of this host.
      */
@@ -73,7 +83,7 @@ public final class Host extends Site {
      * 
      * @param identifier the identifier of the new host.
      */
-    public Host(@Nonnull HostIdentifier identifier) throws SQLException, IOException, ExternalException {
+    public Host(@Nonnull HostIdentifier identifier) throws SQLException, IOException, PacketException, ExternalException {
         super((Character.isDigit(identifier.getString().charAt(0)) ? "_" : "") + identifier.getString().replace(".", "_").replace("-", "$"));
         
         this.identifier = identifier;

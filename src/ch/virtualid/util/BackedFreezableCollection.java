@@ -5,6 +5,7 @@ import ch.virtualid.annotations.Pure;
 import ch.virtualid.interfaces.Freezable;
 import ch.virtualid.interfaces.Immutable;
 import java.util.Collection;
+import java.util.HashSet;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -119,14 +120,29 @@ class BackedFreezableCollection<E> implements FreezableCollection<E> {
     
     @Pure
     @Override
-    public boolean containsAll(@Nonnull ReadonlyCollection<?> collection) {
-        return collection.containsAll((Collection<?>) collection);
+    public @Nonnull FreezableIterator<E> iterator() {
+        return new FreezableIterableIterator<E>(this, collection.iterator());
+    }
+    
+    
+    @Pure
+    @Override
+    public boolean doesNotContainNull() {
+        for (final @Nullable E element : this) {
+            if (element == null) return false;
+        }
+        return true;
     }
     
     @Pure
     @Override
-    public @Nonnull FreezableIterator<E> iterator() {
-        return new FreezableIterableIterator<E>(this, collection.iterator());
+    public boolean doesNotContainDuplicates() {
+        final @Nonnull HashSet<E> set = new HashSet<E>(size());
+        for (final @Nullable E element : this) {
+            if (set.contains(element)) return false;
+            else set.add(element);
+        }
+        return true;
     }
     
     

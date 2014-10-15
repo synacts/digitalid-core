@@ -1,47 +1,39 @@
 package ch.virtualid.server;
 
-import ch.virtualid.client.Client;
+import ch.virtualid.client.Cache;
+import ch.virtualid.database.Configuration;
 import ch.virtualid.database.Database;
+import ch.virtualid.database.MySQLConfiguration;
+import ch.virtualid.database.PostgreSQLConfiguration;
+import ch.virtualid.database.SQLiteConfiguration;
 import ch.virtualid.errors.InitializationError;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.exceptions.external.ExternalException;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.HostIdentity;
-import ch.virtualid.identity.Identifier;
-import ch.virtualid.identity.SemanticType;
 import ch.virtualid.io.Console;
 import ch.virtualid.io.Directory;
-import ch.virtualid.io.Option;
-import ch.virtualid.module.CoreService;
+import ch.virtualid.util.FreezableLinkedHashMap;
+import ch.virtualid.util.FreezableMap;
+import ch.virtualid.util.ReadonlyCollection;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.sql.SQLException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.jar.Attributes;
 import java.util.jar.JarFile;
-import java.util.jar.Manifest;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * The server runs the configured hosts.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 0.9
+ * @version 2.0
  */
 public final class Server {
     
     /**
      * The version of the Virtual ID server implementation.
      */
-    public static final @Nonnull String VERSION = "0.8 (3 October 2014)";
+    public static final @Nonnull String VERSION = "0.8 (15 October 2014)";
     
     /**
      * The authors of the Virtual ID server implementation.
@@ -55,19 +47,20 @@ public final class Server {
     
     
     /**
-     * Reference to the thread that listens on the socket.
+     * References the thread that listens on the socket.
      */
     private static final @Nonnull Listener listener = new Listener();
     
     /**
      * Maps the identifiers of the hosts that are running on this server to their instances.
      */
-    private static final @Nonnull Map<HostIdentifier, Host> hosts = new HashMap<HostIdentifier, Host>();
+    private static final @Nonnull FreezableMap<HostIdentifier, Host> hosts = new FreezableLinkedHashMap<HostIdentifier, Host>();
     
     /**
      * Returns whether the host with the given identifier is running on this server.
      * 
-     * @param hostIdentifier the identifier of the host of interest.
+     * @param hostIdentifier the identifier of the host which is to be checked.
+     * 
      * @return whether the host with the given identifier is running on this server.
      */
     public static boolean hasHost(@Nonnull HostIdentifier hostIdentifier) {
@@ -77,8 +70,10 @@ public final class Server {
     /**
      * Returns the host with the given identifier that is running on this server.
      * 
-     * @param hostIdentifier the identifier of the host of interest.
+     * @param hostIdentifier the identifier of the host which is to be returned.
+     * 
      * @return the host with the given identifier that is running on this server.
+     * 
      * @require hasHost(identifier) : "The host is running on this server.";
      */
     public static @Nonnull Host getHost(@Nonnull HostIdentifier hostIdentifier) {
@@ -91,30 +86,33 @@ public final class Server {
      * Returns the hosts that are running on this server.
      * 
      * @return the hosts that are running on this server.
+     * 
+     * @ensure return.doesNotContainNull() : "The returned collection does not contain null.";
      */
-    public static @Nonnull Collection<Host> getHosts() {
+    public static @Nonnull ReadonlyCollection<Host> getHosts() {
         return hosts.values();
     }
     
     /**
-     * Adds the given host to the map of running hosts.
+     * Adds the given host to the list of running hosts.
      * 
      * @param host the host to add.
      */
-    static void addHost(@Nonnull Host host) {
+    public static void addHost(@Nonnull Host host) {
         hosts.put(host.getIdentifier(), host);
     }
     
     /**
-     * Loads all hosts with a configuration in the hosts directory.
+     * Loads all hosts with a configuration but without a tables file in the hosts directory.
      */
     private static void loadHosts() {
-        @Nonnull File[] files = Directory.HOSTS.listFiles();
-        for (@Nonnull File file : files) {
+        final @Nonnull File[] files = Directory.HOSTS.listFiles();
+        for (final @Nonnull File file : files) {
             if (!file.isDirectory() && file.getName().endsWith(".private.xdf")) {
                 try {
-                    new Host(new HostIdentifier(file.getName().substring(0, file.getName().length() - 12)));
-                } catch (@Nonnull InvalidEncodingException | SQLException | IOException | FailedEncodingException exception) {
+                    final @Nonnull HostIdentifier identifier = new HostIdentifier(file.getName().substring(0, file.getName().length() - 12));
+                    if (!new File(Directory.HOSTS.getPath() + Directory.SEPARATOR + identifier.getString() + ".tables.xdf").exists()) new Host(identifier);
+                } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
                     throw new InitializationError("Could not load the host configured in the file '" + file.getName() + "'.", exception);
                 }
             }
@@ -123,45 +121,19 @@ public final class Server {
     
     
     /**
-     * A list of the installed services (including the version numbers).
-     */
-    private static final @Nonnull List<String> services = new LinkedList<String>();
-    
-    /**
      * Loads all services with their code in the services directory.
      */
-    private static void loadServices() {
-        services.clear();
-        @Nonnull File[] files = Directory.SERVICES.listFiles();
-        for (@Nonnull File file : files) {
+    public static void loadServices() {
+        final @Nonnull File[] files = Directory.SERVICES.listFiles();
+        for (final @Nonnull File file : files) {
             if (file.isFile() && file.getName().endsWith(".jar")) {
                 try {
-                    @Nonnull JarFile jarFile = new JarFile(file);
-                    @Nullable Manifest manifest = jarFile.getManifest();
-                    if (manifest == null) throw new IOException("Could not find the manifest of '" + file.getName() + "'.");
-                    @Nonnull Attributes attributes = manifest.getMainAttributes();
-                    @Nonnull URLClassLoader classLoader = new URLClassLoader(new URL[] {file.toURI().toURL()});
-                    @Nullable String mainClass = attributes.getValue("Main-Class");
-                    // TODO: mainClass can be null!
-                    @Nonnull Class<?> service = classLoader.loadClass(mainClass);
-                    @Nonnull Method method = service.getDeclaredMethod("initialize");
-                    // TODO: Call default constructor instead!
-                    method.invoke(null);
-                } catch (@Nonnull IOException | ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException exception) {
-                    // TODO: Fail more gracefully (e.g. by returning a list of services that could not be loaded)!
+                    Database.initializeJarFile(new JarFile(file));
+                } catch (@Nonnull IOException | ClassNotFoundException exception) {
                     throw new InitializationError("Could not load the service in the file '" + file.getName() + "'.", exception);
                 }
             }
         }
-    }
-    
-    /**
-     * Adds the given service to the list of installed services.
-     * 
-     * @param service the service to be added.
-     */
-    public static void addService(@Nonnull String service) {
-        services.add(service);
     }
     
     
@@ -171,22 +143,24 @@ public final class Server {
      * @param arguments the identifiers of hosts to be created when starting up.
      */
     public static void start(@Nonnull String[] arguments) {
-        CoreService.initialize();
-        
         loadHosts();
         loadServices();
         
-        for (@Nonnull String argument : arguments) {
+        for (final @Nonnull String argument : arguments) {
             try {
                 new Host(new HostIdentifier(argument));
-            } catch (@Nonnull InvalidEncodingException | SQLException | IOException | FailedEncodingException exception) {
+            } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
                 throw new InitializationError("Could not create the host '" + argument + "'.", exception);
             }
         }
         
         listener.start();
         
-        try { Client.getAttributeNotNull(HostIdentity.VIRTUALID, SemanticType.HOST_PUBLIC_KEY); } catch (@Nonnull InvalidEncodingException exception) { throw new InitializationError("Could not retrieve the public key of 'virtualid.ch'.", exception); }
+        try {
+            Cache.getPublicKeyChain(HostIdentity.VIRTUALID);
+        } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
+            throw new InitializationError("Could not retrieve the public key chain of 'virtualid.ch'.", exception);
+        }
     }
     
     /**
@@ -195,18 +169,34 @@ public final class Server {
      * @param arguments the command line arguments indicating the hosts to be created when starting up.
      */
     public static void main(@Nonnull String[] arguments) {
-        Database.initializeForMySQL();
-        
+        final @Nonnull Configuration configuration;
+        try {
+            if (MySQLConfiguration.exists()) configuration = new MySQLConfiguration();
+            else if (PostgreSQLConfiguration.exists()) configuration = new PostgreSQLConfiguration();
+            else if (SQLiteConfiguration.exists()) configuration = new SQLiteConfiguration();
+            else {
+                Console.write();
+                Console.write("Please select one of the following databases:");
+                Console.write("- 1: MySQL");
+                Console.write("- 2: PostgreSQL");
+                Console.write("- 3: SQLite");
+                Console.write();
+                final int input = Console.readInt("Choice: ");
+                if (input == 1) configuration = new MySQLConfiguration();
+                else if (input == 2) configuration = new PostgreSQLConfiguration();
+                else if (input == 3) configuration = new SQLiteConfiguration();
+                else {
+                    Console.write(Integer.toString(input) + " was not a valid option.");
+                    Console.write();
+                    return;
+                }
+            }
+        } catch (@Nonnull SQLException | IOException exception) {
+            throw new InitializationError("Could not load the database configuration.", exception);
+        }
+        Database.initialize(configuration, false, false);
         start(arguments);
-        
-        Console.write();
-        Console.addOption(new ShowVersion());
-        Console.addOption(new ExitServer());
-        Console.addOption(new ShowHosts());
-        Console.addOption(new CreateHost());
-        Console.addOption(new ShowServices());
-        Console.addOption(new ReloadServices());
-        Console.start();
+        Options.start();
     }
     
     /**
@@ -215,116 +205,6 @@ public final class Server {
     public static void shutDown() {
         listener.shutDown();
         System.exit(0);
-    }
-    
-    
-    /**
-     * This option exits the server.
-     */
-    private static final class ExitServer extends Option {
-        
-        ExitServer() { super("Exit the server."); }
-        
-        @Override
-        public void execute() {
-            if (Console.readBoolean("Are you sure you want to shut down the server? Yes/No: ")) {
-                Console.write("The server is shutting down...");
-                Console.write();
-                shutDown();
-            }
-        }
-        
-    }
-    
-    /**
-     * This option shows the version and the authors.
-     */
-    private static final class ShowVersion extends Option {
-        
-        ShowVersion() { super("Show the version."); }
-        
-        @Override
-        public void execute() {
-            Console.write("Version: " + VERSION);
-            Console.write("Authors: " + AUTHORS);
-        }
-        
-    }
-    
-    /**
-     * This option shows the hosts.
-     */
-    private static final class ShowHosts extends Option {
-        
-        ShowHosts() { super("Show the hosts."); }
-        
-        @Override
-        public void execute() {
-            Console.write("The following hosts are running on this server:");
-            for (@Nonnull Host host : hosts.values()) {
-                Console.write("- " + host.getIdentifier());
-            }
-            if (hosts.values().isEmpty()) Console.write("(None)");
-        }
-        
-    }
-    
-    /**
-     * This option adds a new host.
-     */
-    private static final class CreateHost extends Option {
-        
-        CreateHost() { super("Create a host."); }
-        
-        @Override
-        public void execute() {
-            if (Console.readBoolean("Are you sure you want to add a new host? Yes/No: ")) {
-                @Nonnull String string = Console.readString("Please enter the identifier of the new host: ");
-                while (!Identifier.isValid(string) || !Identifier.isHost(string)) {
-                    string = Console.readString("Bad input! Please enter a valid host identifier: ");
-                }
-                @Nonnull HostIdentifier identifier = new HostIdentifier(string, false);
-                try {
-                    new Host(identifier);
-                } catch (@Nonnull SQLException | IOException | InvalidEncodingException | FailedEncodingException exception) {
-                    Console.write("Could not create the host " + identifier + " (" + exception + ").");
-                }
-            }
-        }
-        
-    }
-    
-    /**
-     * This option shows the installed services.
-     */
-    private static final class ShowServices extends Option {
-        
-        ShowServices() { super("Show the services."); }
-        
-        @Override
-        public void execute() {
-            Console.write("The following services are installed on this server:");
-            for (@Nonnull String service : services) {
-                Console.write("- " + service);
-            }
-            if (services.isEmpty()) Console.write("(None)");
-        }
-        
-    }
-    
-    /**
-     * This option reloads the available services.
-     */
-    private static final class ReloadServices extends Option {
-        
-        ReloadServices() { super("Reload the services."); }
-        
-        @Override
-        public void execute() {
-            Console.write("The services are reloaded.");
-            loadServices();
-        }
-        
     }
     
 }

@@ -64,11 +64,22 @@ public interface ReadonlyCollection<E> extends ReadonlyIterable<E> {
     @Pure
     public boolean containsAll(Collection<?> collection);
     
+    
     /**
-     * @see Collection#containsAll(java.util.Collection) 
+     * Returns whether this collection does not contain an element which is null.
+     * 
+     * @return {@code true} if this collection does not contain null, {@code false} otherwise.
      */
     @Pure
-    public boolean containsAll(ReadonlyCollection<?> collection);
+    public boolean doesNotContainNull();
+    
+    /**
+     * Returns whether this collection does not contain duplicates (including null values).
+     * 
+     * @return {@code true} if this collection does not contain duplicates, {@code false} otherwise.
+     */
+    @Pure
+    public boolean doesNotContainDuplicates();
     
     
     @Pure

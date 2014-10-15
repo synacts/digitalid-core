@@ -2,7 +2,7 @@ package ch.virtualid.errors;
 
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.interfaces.Immutable;
-import static ch.virtualid.io.Level.ERROR;
+import ch.virtualid.io.Level;
 import ch.virtualid.io.Logger;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -51,7 +51,7 @@ public abstract class FatalError extends Error implements Immutable {
     protected FatalError(@Nullable String message, @Nullable Throwable cause) {
         super(message == null ? "A fatal error occurred." : message, cause);
         
-        logger.log(ERROR, this);
+        logger.log(Level.ERROR, this);
     }
     
     @Pure

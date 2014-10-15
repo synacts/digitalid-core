@@ -3,7 +3,6 @@ package ch.virtualid.identity;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.database.Database;
 import ch.virtualid.exceptions.external.ExternalException;
-import ch.virtualid.exceptions.external.IdentityNotFoundException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.interfaces.Blockable;
@@ -173,22 +172,6 @@ public abstract class Identifier implements Immutable, Blockable, SQLizable {
      */
     @Pure
     public abstract @Nonnull Identity getIdentity() throws SQLException, IOException, PacketException, ExternalException;
-    
-    /**
-     * Returns whether an identity with this identifier exists.
-     * Please note that a negative answer can also be caused by network problems (in case the identifier is not yet mapped).
-     * 
-     * @return whether an identity with this identifier exists.
-     */
-    @Pure
-    public final boolean exists() throws SQLException, IOException, PacketException, ExternalException {
-        try {
-            Mapper.getIdentity(this);
-            return true;
-        } catch (@Nonnull IdentityNotFoundException exception) {
-            return false;
-        }
-    }
     
     
     /**

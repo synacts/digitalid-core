@@ -10,6 +10,7 @@ import ch.virtualid.database.SQLiteConfiguration;
 import ch.virtualid.entity.Role;
 import ch.virtualid.entity.Site;
 import ch.virtualid.exceptions.external.ExternalException;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identity.NonHostIdentity;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.io.Directory;
@@ -93,7 +94,7 @@ public final class Client extends Site implements Observer {
      * 
      * @require Client.isValid(name) : "The name is valid.";
      */
-    public Client(@Nonnull String name) throws SQLException, IOException, ExternalException {
+    public Client(@Nonnull String name) throws SQLException, IOException, PacketException, ExternalException {
         super(name);
         
         assert Client.isValid(name) : "The name is valid.";

@@ -5,7 +5,7 @@ import ch.virtualid.annotations.RawRecipient;
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.client.SecretCommitment;
 import ch.virtualid.exceptions.external.ExternalException;
-import static ch.virtualid.exceptions.packet.PacketError.INTERNAL;
+import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Method;
 import ch.virtualid.identity.HostIdentifier;
@@ -66,7 +66,7 @@ public final class ClientRequest extends Request {
     
     @Override
     @Nonnull Response resend(@Nonnull FreezableList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull Identifier subject, boolean verified) throws SQLException, IOException, PacketException, ExternalException {
-        if (!subject.getHostIdentifier().equals(recipient)) throw new PacketException(INTERNAL, "The host of the subject " + subject + " does not match the recipient " + recipient + ".");
+        if (!subject.getHostIdentifier().equals(recipient)) throw new PacketException(PacketError.INTERNAL, "The host of the subject " + subject + " does not match the recipient " + recipient + ".");
         return new ClientRequest(methods, subject, getAudit(), commitment).send(verified);
     }
     
