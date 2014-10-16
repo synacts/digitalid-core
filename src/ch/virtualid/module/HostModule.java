@@ -1,10 +1,12 @@
 package ch.virtualid.module;
 
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.exceptions.external.ExternalException;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.server.Host;
 import ch.xdf.Block;
+import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 
@@ -35,7 +37,8 @@ public interface HostModule extends Module {
      * 
      * @ensure return.getType().equals(getModuleFormat()) : "The returned block has the format of this module.";
      */
-    public abstract @Nonnull Block exportModule(@Nonnull Host host) throws SQLException;
+    @Pure
+    public @Nonnull Block exportModule(@Nonnull Host host) throws SQLException;
     
     /**
      * Imports this module for the given host from the given block.
@@ -45,6 +48,6 @@ public interface HostModule extends Module {
      * 
      * @require block.getType().isBasedOn(getModuleFormat()) : "The block is based on the format of this module.";
      */
-    public abstract void importModule(@Nonnull Host host, @Nonnull Block block) throws SQLException, InvalidEncodingException;
+    public void importModule(@Nonnull Host host, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException;
     
 }

@@ -4,22 +4,19 @@ import ch.virtualid.database.Database;
 import ch.virtualid.entity.Site;
 import ch.virtualid.module.ClientModule;
 import ch.virtualid.module.CoreService;
-import ch.virtualid.pusher.PushFailed;
 import java.sql.SQLException;
 import java.sql.Statement;
 import javax.annotation.Nonnull;
 
 /**
- * Errors are stored here.
- * 
- * @see PushFailed
+ * Description.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 0.0
  */
-public final class Errors implements ClientModule {
+public final class AccreditationRequests implements ClientModule {
     
-    static { CoreService.SERVICE.add(new Errors()); }
+    static { CoreService.SERVICE.add(new AccreditationRequests()); }
     
     @Override
     public void createTables(@Nonnull Site site) throws SQLException {
@@ -34,6 +31,5 @@ public final class Errors implements ClientModule {
             // TODO: Delete the tables of this module.
         }
     }
-    
     
 }

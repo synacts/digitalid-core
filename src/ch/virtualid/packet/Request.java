@@ -18,8 +18,8 @@ import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.Identifier;
 import ch.virtualid.identity.Mapper;
 import ch.virtualid.identity.NonHostIdentifier;
-import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.CoreService;
+import ch.virtualid.module.Service;
 import ch.virtualid.server.Server;
 import ch.virtualid.util.ConcurrentHashMap;
 import ch.virtualid.util.ConcurrentMap;
@@ -232,7 +232,7 @@ public class Request extends Packet {
      * @return the service of this request.
      */
     @Pure
-    public final @Nonnull SemanticType getService() {
+    public final @Nonnull Service getService() {
         return getMethod(0).getService();
     }
     
@@ -287,7 +287,7 @@ public class Request extends Packet {
                 final @Nonnull HostIdentifier recipient = getMethod(0).getService().equals(CoreService.TYPE) ? address.getHostIdentifier() : getRecipient();
                 return resend(methods, recipient, address, verified);
             } else if (exception.getError() == PacketError.SERVICE && !getMethod(0).isOnHost()) {
-                final @Nonnull HostIdentifier recipient = new HostIdentifier(Cache.getAttributeValue(subject.getIdentity(), (Role) getMethod(0).getEntity(), getMethod(0).getService(), false));
+                final @Nonnull HostIdentifier recipient = new HostIdentifier(Cache.getAttributeValue(subject.getIdentity(), (Role) getMethod(0).getEntity(), getMethod(0).getService().getType(), false));
                 return resend(methods, recipient, subject, verified);
             } else {
                 throw exception;

@@ -3,12 +3,17 @@ package ch.virtualid.module.client;
 import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.agent.RandomizedAgentPermissions;
 import ch.virtualid.credential.Credential;
+import ch.virtualid.database.Database;
+import ch.virtualid.entity.Site;
 import ch.virtualid.identity.Category;
 import ch.virtualid.identity.Mapper;
 import ch.virtualid.module.ClientModule;
+import ch.virtualid.module.CoreService;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
+import javax.annotation.Nonnull;
 
 /**
  * Description.
@@ -16,7 +21,24 @@ import java.util.Map;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 0.0
  */
-public final class Credentials extends ClientModule {
+public final class ClientCredentials implements ClientModule {
+    
+    static { CoreService.SERVICE.add(new ClientCredentials()); }
+    
+    @Override
+    public void createTables(@Nonnull Site site) throws SQLException {
+        try (final @Nonnull Statement statement = Database.getConnection().createStatement()) {
+            // TODO: Create the tables of this module.
+        }
+    }
+    
+    @Override
+    public void deleteTables(@Nonnull Site site) throws SQLException {
+        try (final @Nonnull Statement statement = Database.getConnection().createStatement()) {
+            // TODO: Delete the tables of this module.
+        }
+    }
+    
     
     // TODO: This class name already exists as a host module!
     

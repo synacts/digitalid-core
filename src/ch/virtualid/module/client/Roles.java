@@ -9,7 +9,7 @@ import ch.virtualid.identity.Mapper;
 import ch.virtualid.identity.NonHostIdentity;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.ClientModule;
-import ch.virtualid.module.Module;
+import ch.virtualid.module.CoreService;
 import ch.virtualid.util.FreezableList;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -22,9 +22,26 @@ import javax.annotation.Nullable;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 0.2
  */
-public final class Roles extends ClientModule {
+public final class Roles implements ClientModule {
     
-    static { Module.add(new Roles()); }
+    static { CoreService.SERVICE.add(new Roles()); }
+    
+    @Override
+    public void createTables(@Nonnull Site site) throws SQLException {
+        try (final @Nonnull Statement statement = Database.getConnection().createStatement()) {
+            // TODO: Create the tables of this module.
+        }
+    }
+    
+    @Override
+    public void deleteTables(@Nonnull Site site) throws SQLException {
+        try (final @Nonnull Statement statement = Database.getConnection().createStatement()) {
+            // TODO: Delete the tables of this module.
+        }
+    }
+    
+    
+    static { CoreService.SERVICE.add(new Roles()); }
     
     @Override
     protected void createTables(@Nonnull Site site) throws SQLException {

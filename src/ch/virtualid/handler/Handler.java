@@ -7,6 +7,7 @@ import ch.virtualid.identity.Identifier;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
+import ch.virtualid.module.Service;
 import ch.xdf.SignatureWrapper;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -135,7 +136,7 @@ public abstract class Handler extends Concept implements Immutable, Blockable {
      * @return the service that this handler implements.
      */
     @Pure
-    public abstract @Nonnull SemanticType getService();
+    public abstract @Nonnull Service getService();
     
     
     /**

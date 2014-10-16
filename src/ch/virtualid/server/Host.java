@@ -17,6 +17,7 @@ import ch.virtualid.identity.HostIdentity;
 import ch.virtualid.identity.Identity;
 import ch.virtualid.identity.Mapper;
 import ch.virtualid.io.Directory;
+import ch.virtualid.module.Service;
 import ch.xdf.HostSignatureWrapper;
 import ch.xdf.SelfcontainedWrapper;
 import ch.xdf.SignatureWrapper;
@@ -199,6 +200,12 @@ public final class Host extends Site {
     @Pure
     public boolean hosts(@Nonnull Identity identity) {
         return identity.getAddress().getHostIdentifier().equals(identifier);
+    }
+    
+    
+    @Pure
+    public boolean supports(final @Nonnull Service service) {
+        return true; // TODO!
     }
     
 }

@@ -26,7 +26,7 @@ public final class StateReply extends CoreServiceQueryReply {
     /**
      * Stores the semantic type {@code reply.module@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("reply.module@virtualid.ch").load(CoreService.FORMAT);
+    public static final @Nonnull SemanticType TYPE = SemanticType.create("reply.module@virtualid.ch").load(CoreService.STATE);
     
     @Pure
     @Override
@@ -53,7 +53,7 @@ public final class StateReply extends CoreServiceQueryReply {
     public StateReply(@Nonnull Account account, @Nonnull Block block) {
         super(account);
         
-        assert block.getType().equals(CoreService.FORMAT) : "The block has the indicated type.";
+        assert block.getType().equals(CoreService.STATE) : "The block has the indicated type.";
         
         this.block = block.setType(TYPE);
     }

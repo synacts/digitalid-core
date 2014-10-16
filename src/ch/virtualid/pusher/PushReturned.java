@@ -7,18 +7,19 @@ import ch.virtualid.annotations.Pure;
 import ch.virtualid.concept.Aspect;
 import ch.virtualid.entity.Account;
 import ch.virtualid.entity.Entity;
-import ch.virtualid.exceptions.external.InvalidDeclarationException;
 import ch.virtualid.errors.ShouldNeverHappenError;
+import ch.virtualid.exceptions.external.ExternalException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.exceptions.packet.PacketError;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.ActionReply;
 import ch.virtualid.handler.ExternalAction;
 import ch.virtualid.handler.Method;
 import ch.virtualid.handler.Reply;
-import ch.virtualid.exceptions.external.IdentityNotFoundException;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.SemanticType;
+import ch.virtualid.module.Service;
 import ch.virtualid.packet.Packet;
-import ch.virtualid.exceptions.packet.PacketError;
-import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.server.Host;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.ReadonlyArray;
@@ -29,8 +30,7 @@ import ch.xdf.HostSignatureWrapper;
 import ch.xdf.SelfcontainedWrapper;
 import ch.xdf.SignatureWrapper;
 import ch.xdf.TupleWrapper;
-import ch.virtualid.exceptions.external.FailedEncodingException;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
+import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -118,7 +118,7 @@ public final class PushReturned extends ExternalAction {
      * 
      * @ensure hasSignature() : "This handler has a signature.";
      */
-    private PushReturned(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws InvalidEncodingException, IdentityNotFoundException, SQLException, InvalidDeclarationException {
+    private PushReturned(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
@@ -126,7 +126,7 @@ public final class PushReturned extends ExternalAction {
         final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(2);
         this.valid = new BooleanWrapper(elements.getNotNull(0)).getValue();
         
-        final @Nonnull SignatureWrapper _signature = SignatureWrapper.decodeUnverified(elements.getNotNull(1));
+        final @Nonnull SignatureWrapper _signature = SignatureWrapper.decodeUnverified(elements.getNotNull(1), null);
         if (!(_signature instanceof HostSignatureWrapper)) throw new InvalidEncodingException("Replies have to be signed by a host.");
         final @Nonnull CompressionWrapper _compression = new CompressionWrapper(_signature.getElementNotNull());
         final @Nonnull SelfcontainedWrapper _content = new SelfcontainedWrapper(_compression.getElementNotNull());
@@ -174,14 +174,20 @@ public final class PushReturned extends ExternalAction {
     
     @Pure
     @Override
-    public @Nonnull SemanticType getService() {
+    public @Nonnull Service getService() {
         return reply.getService();
     }
     
     
+    @Pure
+    @Override
+    public @Nullable Class<ActionReply> getReplyClass() {
+        return null;
+    }
+    
     @Override
     public @Nullable ActionReply executeOnHost() throws PacketException {
-        throw new PacketException(PacketError.METHOD);
+        throw new PacketException(PacketError.METHOD, "Returned push replies cannot be executed on a host.");
     }
     
     @Override
@@ -211,8 +217,8 @@ public final class PushReturned extends ExternalAction {
     }
     
     @Override
-    public @Nullable Reply send() throws FailedEncodingException {
-        throw new FailedEncodingException("Returned push replies cannot be sent.");
+    public @Nullable Reply send() throws PacketException {
+        throw new PacketException(PacketError.INTERNAL, "Returned push replies cannot be sent.");
     }
     
     
@@ -244,7 +250,7 @@ public final class PushReturned extends ExternalAction {
         
         @Pure
         @Override
-        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws InvalidEncodingException, SQLException, IdentityNotFoundException, InvalidDeclarationException {
+        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
             return new PushReturned(entity, signature, recipient, block);
         }
         

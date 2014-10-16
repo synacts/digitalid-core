@@ -23,4 +23,11 @@ public interface Module {
      */
     public void createTables(@Nonnull Site site) throws SQLException;
     
+    /**
+     * Deletes the database tables for the given site.
+     * 
+     * @param site the site for which to delete the database tables.
+     */
+    public void deleteTables(@Nonnull Site site) throws SQLException;
+    
 }

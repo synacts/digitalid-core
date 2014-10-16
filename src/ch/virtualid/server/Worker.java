@@ -9,9 +9,9 @@ import ch.virtualid.handler.Action;
 import ch.virtualid.handler.Method;
 import ch.virtualid.handler.Reply;
 import ch.virtualid.identity.Identifier;
-import ch.virtualid.identity.SemanticType;
 import ch.virtualid.io.Level;
 import ch.virtualid.io.Logger;
+import ch.virtualid.module.Service;
 import ch.virtualid.packet.Audit;
 import ch.virtualid.packet.Request;
 import ch.virtualid.packet.Response;
@@ -65,7 +65,7 @@ public final class Worker implements Runnable {
             try {
                 try {
                     request = new Request(socket.getInputStream());
-                    final @Nonnull SemanticType service = request.getService();
+                    final @Nonnull Service service = request.getService();
                     
                     final int size = request.getSize();
                     final @Nonnull FreezableList<Reply> replies = new FreezableArrayList<Reply>(size);

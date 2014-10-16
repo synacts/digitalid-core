@@ -12,7 +12,6 @@ import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.external.InvalidSignatureException;
 import ch.virtualid.exceptions.packet.PacketException;
-import ch.virtualid.expression.PassiveExpression;
 import ch.virtualid.identity.Category;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.Identifier;
@@ -227,7 +226,7 @@ public final class HostSignatureWrapper extends SignatureWrapper implements Immu
     /**
      * Stores the semantic type {@code delegation@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType DELEGATION = SemanticType.create("delegation@virtualid.ch").load(NonHostIdentity.IDENTIFIER, PassiveExpression.TYPE);
+    public static final @Nonnull SemanticType DELEGATION = SemanticType.create("delegation@virtualid.ch").load(NonHostIdentity.IDENTIFIER); // TODO: , PassiveExpression.TYPE);
     
     /**
      * Stores the semantic type {@code list.delegation@virtualid.ch}.

@@ -19,14 +19,16 @@ import java.sql.Statement;
 import javax.annotation.Nonnull;
 
 /**
- * This class provides database access to the tokens of the core service.
+ * This class provides database access to the credentials of the core service.
+ * 
+ * A log for issued credentials is needed on the host-side.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 0.0
  */
-public final class Tokens implements HostModule {
+public final class HostCredentials implements HostModule {
     
-    static { CoreService.SERVICE.add(new Tokens()); }
+    static { CoreService.SERVICE.add(new HostCredentials()); }
     
     @Override
     public void createTables(@Nonnull Site site) throws SQLException {
@@ -79,6 +81,14 @@ public final class Tokens implements HostModule {
         }
     }
     
-//            statement.executeUpdate("CREATE TABLE IF NOT EXISTS public (host BIGINT NOT NULL, public BOOLEAN NOT NULL, PRIMARY KEY (host), FOREIGN KEY (host) REFERENCES map_identity (identity))");
-//            statement.executeUpdate("CREATE TABLE IF NOT EXISTS token (host BIGINT NOT NULL, token CHAR(19) BIGINT NOT NULL, PRIMARY KEY (host, token), FOREIGN KEY (host) REFERENCES map_identity (identity))");
+    
+    static { CoreService.SERVICE.add(new HostCredentials()); }
+    
+    @Override
+    protected void createTables(@Nonnull Site site) throws SQLException {
+        try (@Nonnull Statement statement = Database.getConnection().createStatement()) {
+            
+        }
+    }
+    
 }

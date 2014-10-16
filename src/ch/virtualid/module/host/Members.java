@@ -19,14 +19,14 @@ import java.sql.Statement;
 import javax.annotation.Nonnull;
 
 /**
- * This class provides database access to the tokens of the core service.
+ * Description.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 0.0
  */
-public final class Tokens implements HostModule {
+public final class Members implements HostModule {
     
-    static { CoreService.SERVICE.add(new Tokens()); }
+    static { CoreService.SERVICE.add(new Members()); }
     
     @Override
     public void createTables(@Nonnull Site site) throws SQLException {
@@ -79,6 +79,4 @@ public final class Tokens implements HostModule {
         }
     }
     
-//            statement.executeUpdate("CREATE TABLE IF NOT EXISTS public (host BIGINT NOT NULL, public BOOLEAN NOT NULL, PRIMARY KEY (host), FOREIGN KEY (host) REFERENCES map_identity (identity))");
-//            statement.executeUpdate("CREATE TABLE IF NOT EXISTS token (host BIGINT NOT NULL, token CHAR(19) BIGINT NOT NULL, PRIMARY KEY (host, token), FOREIGN KEY (host) REFERENCES map_identity (identity))");
 }

@@ -5,25 +5,28 @@ import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Client;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.Site;
-import ch.virtualid.errors.ShouldNeverHappenError;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.exceptions.external.ExternalException;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.server.Host;
-import ch.virtualid.util.FreezableArray;
-import ch.virtualid.util.FreezableHashMap;
+import ch.virtualid.util.FreezableArrayList;
+import ch.virtualid.util.FreezableLinkedHashMap;
 import ch.virtualid.util.FreezableLinkedList;
 import ch.virtualid.util.FreezableList;
 import ch.virtualid.util.FreezableMap;
-import ch.virtualid.util.ReadonlyArray;
 import ch.virtualid.util.ReadonlyList;
 import ch.xdf.Block;
-import ch.xdf.TupleWrapper;
+import ch.xdf.ListWrapper;
+import ch.xdf.SelfcontainedWrapper;
+import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
  * Every service has to extend this class.
+ * 
+ * @see CoreService
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
@@ -94,94 +97,49 @@ public abstract class Service implements BothModule {
     }
     
     
-    @Override
-    protected final void createTables(@Nonnull Site site) throws SQLException {
-        throw new ShouldNeverHappenError("The method 'createTables' should never be called on a service.");
-    }
-    
-    
     /**
-     * Stores the modules that represent an entity's state in the specified order.
-     */
-    private final @Nonnull FreezableList<BothModule> modules = new FreezableLinkedList<BothModule>();
-    
-    /**
-     * Returns the list of both modules that belong to this service.
+     * Returns the type of this service.
      * 
-     * @return the list of both modules that belong to this service.
-     */
-    public final @Nonnull ReadonlyList<BothModule> getModules() {
-        return modules;
-    }
-    
-    /**
-     * Adds the given module to the tuple of modules.
-     * 
-     * @param module the module to add to the tuple of modules.
-     */
-    protected final void addToTuple(@Nonnull BothModule module) {
-        modules.add(module);
-    }
-    
-    @Pure
-    @Override
-    public final @Nonnull Block getState(@Nonnull Entity entity, @Nonnull Agent agent) throws SQLException {
-        final int size = modules.size();
-        final @Nonnull FreezableArray<Block> blocks = new FreezableArray<Block>(size);
-        for (int i = 0; i < size; i++) blocks.set(i, modules.get(i).getState(entity, agent));
-        return new TupleWrapper(getStateFormat(), blocks.freeze()).toBlock();
-    }
-    
-    @Override
-    public final void addState(@Nonnull Entity entity, @Nonnull Block block) throws SQLException, InvalidEncodingException {
-        assert block.getType().isBasedOn(getStateFormat()) : "The block is based on the indicated type.";
-        
-        final int size = modules.size();
-        final @Nonnull ReadonlyArray<Block> blocks = new TupleWrapper(block).getElementsNotNull(size);
-        for (int i = 0; i < size; i++) modules.get(i).addState(entity, blocks.getNotNull(i));
-    }
-    
-    @Override
-    public final void removeState(@Nonnull Entity entity) throws SQLException {
-      for (final @Nonnull BothModule module : modules) module.removeState(entity);
-    }
-    
-    
-    
-    /**
-     * Stores all the modules that are used on hosts.
-     */
-    private static final FreezableList<Module> hostModules = new FreezableLinkedList<Module>();
-    
-    /**
-     * Stores all the modules that are used on clients.
-     */
-    private static final FreezableList<Module> clientModules = new FreezableLinkedList<Module>();
-    
-    /**
-     * Maps the modules that are used on both hosts and clients from their type.
-     */
-    private static final FreezableMap<SemanticType, BothModule> bothModules = new FreezableHashMap<SemanticType, BothModule>();
-    
-    /**
-     * Returns the both module with the given type.
-     * 
-     * @param type the type of the module to return.
-     * 
-     * @return the both module with the given type.
+     * @return the type of this service.
      */
     @Pure
-    public static @Nullable BothModule get(@Nonnull SemanticType type) {
+    public abstract @Nonnull SemanticType getType();
+    
+    
+    /**
+     * Maps the modules that are used on hosts from their module format.
+     */
+    private final FreezableMap<SemanticType, HostModule> hostModules = new FreezableLinkedHashMap<SemanticType, HostModule>();
+    
+    /**
+     * Stores the modules of this service that are used on clients.
+     */
+    private final FreezableList<Module> clientModules = new FreezableLinkedList<Module>();
+    
+    /**
+     * Maps the modules that are used on both hosts and clients from their state format.
+     */
+    private final FreezableMap<SemanticType, BothModule> bothModules = new FreezableLinkedHashMap<SemanticType, BothModule>();
+    
+    /**
+     * Returns the both module with the given state format.
+     * 
+     * @param type the state format of the module to return.
+     * 
+     * @return the both module with the given state format.
+     */
+    @Pure
+    public final @Nullable BothModule get(@Nonnull SemanticType type) {
         return bothModules.get(type);
     }
     
     /**
-     * Adds the given both module to both the list of host and client modules.
+     * Adds the given both module to the list of host, client and both modules.
      * 
-     * @param bothModule the module to add to both the list of host and client modules.
+     * @param bothModule the module to add to the list of host, client and both modules.
      */
-    protected static void add(@Nonnull BothModule bothModule) {
-        hostModules.add(bothModule);
+    public final void add(@Nonnull BothModule bothModule) {
+        hostModules.put(bothModule.getModuleFormat(), bothModule);
         clientModules.add(bothModule);
         bothModules.put(bothModule.getStateFormat(), bothModule);
     }
@@ -191,8 +149,8 @@ public abstract class Service implements BothModule {
      * 
      * @param hostModule the module to add to the list of host modules.
      */
-    protected static void add(@Nonnull HostModule hostModule) {
-        hostModules.add(hostModule);
+    public final void add(@Nonnull HostModule hostModule) {
+        hostModules.put(hostModule.getModuleFormat(), hostModule);
     }
     
     /**
@@ -200,24 +158,122 @@ public abstract class Service implements BothModule {
      * 
      * @param clientModule the module to add to the list of client modules.
      */
-    protected static void add(@Nonnull ClientModule clientModule) {
+    public final void add(@Nonnull ClientModule clientModule) {
         clientModules.add(clientModule);
     }
     
     
-    /**
-     * Initializes the database tables for the given site.
-     * 
-     * @param site the site for which to initialize the database tables.
-     */
-    public static void initialize(@Nonnull Site site) throws SQLException {
+    @Override
+    public final void createTables(@Nonnull Site site) throws SQLException {
         if (site instanceof Host) {
-            for (final @Nonnull Module module : hostModules) module.createTables(site);
+            for (final @Nonnull Module module : hostModules.values()) module.createTables(site);
         } else if (site instanceof Client) {
             for (final @Nonnull Module module : clientModules) module.createTables(site);
         }
     }
     
+    @Override
+    public final void deleteTables(@Nonnull Site site) throws SQLException {
+        if (site instanceof Host) {
+            for (final @Nonnull Module module : hostModules.values()) module.deleteTables(site);
+        } else if (site instanceof Client) {
+            for (final @Nonnull Module module : clientModules) module.deleteTables(site);
+        }
+    }
     
+    
+    /**
+     * Stores the semantic type {@code module.service@virtualid.ch}.
+     */
+    private static final @Nonnull SemanticType MODULE = SemanticType.create("module.service@virtualid.ch").load(SelfcontainedWrapper.TYPE);
+    
+    /**
+     * Stores the semantic type {@code list.module.service@virtualid.ch}.
+     */
+    public static final @Nonnull SemanticType MODULES = SemanticType.create("list.module.service@virtualid.ch").load(ListWrapper.TYPE, MODULE);
+    
+    /**
+     * @ensure return.isBasedOn(MODULES) : "The returned type is based on the modules format.";
+     */
+    @Pure
+    @Override
+    public abstract @Nonnull SemanticType getModuleFormat();
+    
+    @Override
+    public final @Nonnull Block exportModule(@Nonnull Host host) throws SQLException {
+        final @Nonnull FreezableList<Block> elements = new FreezableArrayList<Block>(hostModules.size());
+        for (final @Nonnull HostModule hostModule : hostModules.values()) {
+            elements.add(new SelfcontainedWrapper(MODULE, hostModule.exportModule(host)).toBlock());
+        }
+        return new ListWrapper(getModuleFormat(), elements.freeze()).toBlock();
+    }
+    
+    @Override
+    public final void importModule(@Nonnull Host host, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
+        assert block.getType().isBasedOn(getModuleFormat()) : "The block is based on the format of this module.";
+        
+        final @Nonnull ReadonlyList<Block> elements = new ListWrapper(block).getElementsNotNull();
+        for (final @Nonnull Block element : elements) {
+            final @Nonnull Block module = new SelfcontainedWrapper(element).toBlock();
+            hostModules.get(module.getType()).importModule(host, module);
+        }
+    }
+    
+    
+    /**
+     * Stores the semantic type {@code state.service@virtualid.ch}.
+     */
+    private static final @Nonnull SemanticType STATE = SemanticType.create("state.service@virtualid.ch").load(SelfcontainedWrapper.TYPE);
+    
+    /**
+     * Stores the semantic type {@code list.state.service@virtualid.ch}.
+     */
+    public static final @Nonnull SemanticType STATES = SemanticType.create("list.state.service@virtualid.ch").load(ListWrapper.TYPE, STATE);
+    
+    /**
+     * @ensure return.isBasedOn(STATES) : "The returned type is based on the states format.";
+     */
+    @Pure
+    @Override
+    public abstract @Nonnull SemanticType getStateFormat();
+    
+    @Pure
+    @Override
+    public final @Nonnull Block getState(@Nonnull Entity entity, @Nonnull Agent agent) throws SQLException {
+        final @Nonnull FreezableList<Block> elements = new FreezableArrayList<Block>(bothModules.size());
+        for (final @Nonnull BothModule bothModule : bothModules.values()) {
+            elements.add(new SelfcontainedWrapper(STATE, bothModule.getState(entity, agent)).toBlock());
+        }
+        return new ListWrapper(getStateFormat(), elements.freeze()).toBlock();
+    }
+    
+    @Override
+    public final void addState(@Nonnull Entity entity, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException  {
+        assert block.getType().isBasedOn(getStateFormat()) : "The block is based on the indicated type.";
+        
+        final @Nonnull ReadonlyList<Block> elements = new ListWrapper(block).getElementsNotNull();
+        for (final @Nonnull Block element : elements) {
+            final @Nonnull Block state = new SelfcontainedWrapper(element).toBlock();
+            bothModules.get(state.getType()).addState(entity, state);
+        }
+    }
+    
+    @Override
+    public final void removeState(@Nonnull Entity entity) throws SQLException {
+      for (final @Nonnull BothModule bothModule : bothModules.values()) bothModule.removeState(entity);
+    }
+    
+    
+    @Pure
+    @Override
+    public final boolean equals(@Nullable Object object) {
+        return object == this;
+    }
+    
+    @Pure
+    @Override
+    public final int hashCode() {
+        return getType().hashCode();
+    }
     
 }

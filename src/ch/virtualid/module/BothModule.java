@@ -4,11 +4,13 @@ import ch.virtualid.agent.Agent;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.Role;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.exceptions.external.ExternalException;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.InternalQuery;
 import ch.virtualid.handler.QueryReply;
 import ch.virtualid.identity.SemanticType;
 import ch.xdf.Block;
+import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -52,7 +54,7 @@ public interface BothModule extends HostModule, ClientModule {
      * 
      * @require block.getType().isBasedOn(getStateFormat()) : "The block is based on the indicated type.";
      */
-    public void addState(@Nonnull Entity entity, @Nonnull Block block) throws SQLException, InvalidEncodingException;
+    public void addState(@Nonnull Entity entity, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException;
     
     /**
      * Removes all the entries of the given entity in this module.

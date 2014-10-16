@@ -20,6 +20,7 @@ import ch.virtualid.identity.Identifier;
 import ch.virtualid.identity.Identity;
 import ch.virtualid.identity.NonHostIdentity;
 import ch.virtualid.identity.SemanticType;
+import ch.virtualid.module.Service;
 import ch.virtualid.packet.Packet;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.ReadonlyArray;
@@ -175,7 +176,7 @@ public final class PushFailed extends ExternalAction {
     
     @Pure
     @Override
-    public @Nonnull SemanticType getService() {
+    public @Nonnull Service getService() {
         return action.getService();
     }
     
