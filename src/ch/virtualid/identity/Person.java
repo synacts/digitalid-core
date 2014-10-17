@@ -63,7 +63,7 @@ public abstract class Person extends NonHostIdentity implements Immutable {
                     // The number and address might need to be updated 'manually' (because this is an 'inofficial' identity obtained through calling Identity.create(...) directly).
                     final @Nonnull Identity identity = address.getIdentity();
                     assert identity instanceof Person : "The relocated identity should still be a person.";
-                    update(identity.number, ((Person) identity).getNonHostAddress());
+//                    update(identity.number, ((Person) identity).getNonHostAddress());
                     // TODO: The following line is wrong (always returns false) and the whole method should be improved!
                     return this.number != identity.number;
                 }

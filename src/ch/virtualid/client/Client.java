@@ -4,6 +4,7 @@ import ch.virtualid.annotations.Pure;
 import ch.virtualid.concept.Aspect;
 import ch.virtualid.concept.Instance;
 import ch.virtualid.concept.Observer;
+import ch.virtualid.cryptography.Exponent;
 import ch.virtualid.cryptography.Parameters;
 import ch.virtualid.database.Database;
 import ch.virtualid.database.SQLiteConfiguration;
@@ -17,7 +18,6 @@ import ch.virtualid.io.Directory;
 import ch.virtualid.module.client.Roles;
 import ch.virtualid.util.FreezableList;
 import ch.virtualid.util.ReadonlyList;
-import ch.xdf.IntegerWrapper;
 import ch.xdf.SelfcontainedWrapper;
 import java.io.File;
 import java.io.FileInputStream;
@@ -50,7 +50,7 @@ public final class Client extends Site implements Observer {
     /**
      * Stores the semantic type {@code secret.client@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType SECRET = SemanticType.create("secret.client@virtualid.ch").load(IntegerWrapper.TYPE);
+    public static final @Nonnull SemanticType SECRET = SemanticType.create("secret.client@virtualid.ch").load(Exponent.TYPE);
     
     
     /**
@@ -85,7 +85,7 @@ public final class Client extends Site implements Observer {
     /**
      * Stores the secret of this client.
      */
-    private final @Nonnull BigInteger secret;
+    private final @Nonnull Exponent secret;
     
     /**
      * Creates a new client with the given name.
@@ -103,11 +103,11 @@ public final class Client extends Site implements Observer {
         
         final @Nonnull File file = new File(Directory.CLIENTS.getPath() +  Directory.SEPARATOR + name + ".client.xdf");
         if (file.exists()) {
-            this.secret = new IntegerWrapper(new SelfcontainedWrapper(new FileInputStream(file), true).getElement().checkType(SECRET)).getValue();
+            this.secret = new Exponent(new SelfcontainedWrapper(new FileInputStream(file), true).getElement().checkType(SECRET));
         } else {
             final @Nonnull Random random = new SecureRandom();
-            this.secret = new BigInteger(Parameters.HASH, random);
-            new SelfcontainedWrapper(SelfcontainedWrapper.SELFCONTAINED, new IntegerWrapper(SECRET, secret)).write(new FileOutputStream(file), true);
+            this.secret = new Exponent(new BigInteger(Parameters.HASH, random));
+            new SelfcontainedWrapper(SelfcontainedWrapper.SELFCONTAINED, secret.toBlock().setType(SECRET)).write(new FileOutputStream(file), true);
         }
     }
     
@@ -127,7 +127,7 @@ public final class Client extends Site implements Observer {
      * @return the secret of this client.
      */
     @Pure
-    public @Nonnull BigInteger getSecret() {
+    public @Nonnull Exponent getSecret() {
         return secret;
     }
     

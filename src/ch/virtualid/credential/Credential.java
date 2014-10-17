@@ -10,8 +10,6 @@ import ch.virtualid.concepts.Attribute;
 import ch.virtualid.cryptography.Exponent;
 import ch.virtualid.cryptography.PublicKey;
 import ch.virtualid.exceptions.external.ExternalException;
-import ch.virtualid.exceptions.external.IdentityNotFoundException;
-import ch.virtualid.exceptions.external.InvalidDeclarationException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identity.NonHostIdentifier;
@@ -248,7 +246,7 @@ public abstract class Credential implements Immutable {
         this.issuer = new NonHostIdentifier(tuple.getElementNotNull(0)).getIdentity().toNonHostIdentity();
         this.issuance = new Time(tuple.getElementNotNull(1));
         if (!issuance.isPositive() || !issuance.isMultipleOf(Time.HALF_HOUR)) throw new InvalidEncodingException("The issuance time has to be positive and a multiple of half an hour.");
-        this.publicKey = Cache.getPublicKey(issuer.getAddress().getHostIdentifier().getIdentity(), issuance);
+        this.publicKey = Cache.getPublicKey(issuer.getAddress().getHostIdentifier(), issuance);
         final @Nonnull BigInteger hash = new HashWrapper(tuple.getElementNotNull(2)).getValue();
         if (randomizedPermissions != null) {
             this.randomizedPermissions = new RandomizedAgentPermissions(randomizedPermissions);
@@ -517,14 +515,14 @@ public abstract class Credential implements Immutable {
                 if (element.getType().isBasedOn(StringWrapper.TYPE)) {
                     string.append(": ").append(new StringWrapper(element).getString());
                 }
-            } catch (@Nonnull InvalidEncodingException exception) {
-                string.append("InvalidEncodingException");
-            } catch (@Nonnull IdentityNotFoundException exception) {
-                string.append("FailedIdentityException");
-            } catch (@Nonnull InvalidDeclarationException exception) {
-                string.append("InvalidDeclarationException");
             } catch (@Nonnull SQLException exception) {
                 string.append("SQLException");
+            } catch (@Nonnull IOException exception) {
+                string.append("IOException");
+            } catch (@Nonnull PacketException exception) {
+                string.append("PacketException");
+            } catch (@Nonnull ExternalException exception) {
+                string.append("ExternalException");
             }
             string.append(")");
         } else {

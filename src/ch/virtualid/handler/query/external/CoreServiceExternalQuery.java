@@ -3,14 +3,14 @@ package ch.virtualid.handler.query.external;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.Role;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.handler.ExternalQuery;
+import ch.virtualid.handler.reply.query.CoreServiceQueryReply;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.Identifier;
-import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.CoreService;
+import ch.virtualid.module.Service;
 import ch.xdf.SignatureWrapper;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
-import ch.virtualid.handler.reply.query.CoreServiceQueryReply;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -56,8 +56,8 @@ public abstract class CoreServiceExternalQuery extends ExternalQuery {
     
     @Pure
     @Override
-    public final @Nonnull SemanticType getService() {
-        return CoreService.TYPE;
+    public final @Nonnull Service getService() {
+        return CoreService.SERVICE;
     }
     
     

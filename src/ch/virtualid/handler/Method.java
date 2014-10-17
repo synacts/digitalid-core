@@ -7,10 +7,11 @@ import ch.virtualid.agent.OutgoingRole;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.client.Synchronizer;
+import ch.virtualid.auxiliary.Time;
 import ch.virtualid.contact.Authentications;
 import ch.virtualid.contact.Contact;
 import ch.virtualid.contact.ReadonlyAuthentications;
+import ch.virtualid.credential.Credential;
 import ch.virtualid.entity.Account;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.Role;
@@ -24,6 +25,7 @@ import ch.virtualid.identity.Identity;
 import ch.virtualid.identity.Person;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.CoreService;
+import ch.virtualid.module.Service;
 import ch.virtualid.packet.Audit;
 import ch.virtualid.packet.ClientRequest;
 import ch.virtualid.packet.CredentialsRequest;
@@ -34,6 +36,7 @@ import ch.virtualid.util.FreezableArrayList;
 import ch.virtualid.util.ReadonlyIterator;
 import ch.virtualid.util.ReadonlyList;
 import ch.xdf.Block;
+import ch.xdf.HostSignatureWrapper;
 import ch.xdf.SignatureWrapper;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -252,11 +255,15 @@ public abstract class Method extends Handler {
         final @Nullable Entity entity = reference.getEntity();
         final @Nonnull Identifier subject = reference.getSubject();
         final @Nonnull Identity identity = subject.getIdentity();
-        final @Nonnull SemanticType service = reference.getService();
+        final @Nonnull Service service = reference.getService();
         final @Nonnull HostIdentifier recipient = reference.getRecipient();
         
         if (entity instanceof Account && !reference.canBeSentByHosts()) throw new PacketException(PacketError.INTERNAL, "These methods cannot be sent by hosts.");
         if (entity instanceof Role && reference.canOnlyBeSentByHosts()) throw new PacketException(PacketError.INTERNAL, "These methods cannot be sent by clients.");
+        
+        // TODO: Delete the following two lines and implement a real lookup!
+        final @Nullable ReadonlyList<Credential> credentials = null;
+        final @Nullable ReadonlyList<HostSignatureWrapper> certificates = null;
         
         if (reference instanceof ExternalQuery) {
             final @Nonnull ReadonlyAuthentications authentications;
@@ -298,13 +305,13 @@ public abstract class Method extends Handler {
                 }
                 
                 final @Nonnull ReadonlyAgentPermissions permissions = getRequiredPermissions(methods);
-                final @Nonnull Audit audit = Synchronizer.getAudit(service);
+                final @Nonnull Audit audit = new Audit(Time.MIN); // Synchronizer.getAudit(service);
                 final boolean lodged = reference instanceof InternalAction;
                 
-                if (service.equals(CoreService.TYPE)) {
+                if (service.equals(CoreService.SERVICE)) {
                     if (agent instanceof ClientAgent) {
                         if (!agent.getPermissions().cover(permissions)) throw new PacketException(PacketError.AUTHORIZATION, "The permissions of the role do not cover the required permissions.");
-                        return new ClientRequest(methods, subject, audit, ((ClientAgent) agent).getCommitment()).send();
+                        return new ClientRequest(methods, subject, audit, ((ClientAgent) agent).getCommitment().addSecret(role.getClient().getSecret())).send();
                     } else {
                         assert agent instanceof OutgoingRole;
                         // TODO: Retrieve the internal credentials from the role or throw a packet exception if the permissions are not covered.

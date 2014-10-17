@@ -16,8 +16,8 @@ import ch.virtualid.handler.InternalQuery;
 import ch.virtualid.handler.QueryReply;
 import ch.virtualid.handler.reply.query.CoreServiceQueryReply;
 import ch.virtualid.identity.HostIdentifier;
-import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.CoreService;
+import ch.virtualid.module.Service;
 import ch.xdf.SignatureWrapper;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -67,14 +67,14 @@ public abstract class CoreServiceInternalQuery extends InternalQuery {
         
         if (!getEntityNotNull().getIdentity().getAddress().getHostIdentifier().equals(getRecipient())) throw new PacketException(PacketError.IDENTIFIER, "The host of the entity and the recipient have to be the same for internal queries of the core service.");
         
-        this.publicKey = Cache.getPublicKey(getRecipient().getIdentity(), signature.getTimeNotNull());
+        this.publicKey = Cache.getPublicKey(getRecipient(), signature.getTimeNotNull());
     }
     
     
     @Pure
     @Override
-    public final @Nonnull SemanticType getService() {
-        return CoreService.TYPE;
+    public final @Nonnull Service getService() {
+        return CoreService.SERVICE;
     }
     
     

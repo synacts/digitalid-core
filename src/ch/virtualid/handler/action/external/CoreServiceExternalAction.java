@@ -4,14 +4,14 @@ import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Entity;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.handler.ExternalAction;
+import ch.virtualid.handler.reply.action.CoreServiceActionReply;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.Identity;
-import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.CoreService;
+import ch.virtualid.module.Service;
 import ch.xdf.SignatureWrapper;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
-import ch.virtualid.handler.reply.action.CoreServiceActionReply;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -58,8 +58,8 @@ public abstract class CoreServiceExternalAction extends ExternalAction {
     
     @Pure
     @Override
-    public final @Nonnull SemanticType getService() {
-        return CoreService.TYPE;
+    public final @Nonnull Service getService() {
+        return CoreService.SERVICE;
     }
     
     

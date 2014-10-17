@@ -284,7 +284,7 @@ public class Request extends Packet {
                 return ((ClientRequest) this).recommit(methods, verified);
             } else if (exception.getError() == PacketError.RELOCATION && subject instanceof NonHostIdentifier) {
                 final @Nonnull NonHostIdentifier address = Mapper.relocate((NonHostIdentifier) subject);
-                final @Nonnull HostIdentifier recipient = getMethod(0).getService().equals(CoreService.TYPE) ? address.getHostIdentifier() : getRecipient();
+                final @Nonnull HostIdentifier recipient = getMethod(0).getService().equals(CoreService.SERVICE) ? address.getHostIdentifier() : getRecipient();
                 return resend(methods, recipient, address, verified);
             } else if (exception.getError() == PacketError.SERVICE && !getMethod(0).isOnHost()) {
                 final @Nonnull HostIdentifier recipient = new HostIdentifier(Cache.getAttributeValue(subject.getIdentity(), (Role) getMethod(0).getEntity(), getMethod(0).getService().getType(), false));

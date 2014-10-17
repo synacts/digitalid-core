@@ -149,7 +149,7 @@ public final class EncryptionWrapper extends BlockWrapper implements Immutable {
         this.element = element;
         this.recipient = recipient;
         this.symmetricKey = symmetricKey;
-        this.publicKey = (recipient == null || symmetricKey == null) ? null : Cache.getPublicKey(recipient.getIdentity(), time);
+        this.publicKey = (recipient == null || symmetricKey == null) ? null : Cache.getPublicKey(recipient, time);
     }
     
     /**

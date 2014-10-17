@@ -8,22 +8,15 @@ import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.IdentityNotFoundException;
 import ch.virtualid.exceptions.external.InvalidDeclarationException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
-import ch.virtualid.exceptions.external.InvalidSignatureException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Reply;
 import ch.virtualid.io.Level;
 import ch.virtualid.io.Logger;
-import ch.virtualid.packet.Request;
-import ch.virtualid.packet.Response;
 import ch.virtualid.server.Host;
 import ch.virtualid.util.FreezableLinkedList;
 import ch.virtualid.util.FreezableList;
 import ch.virtualid.util.ReadonlyList;
-import ch.xdf.Block;
-import ch.xdf.ListWrapper;
-import ch.xdf.SelfcontainedWrapper;
-import ch.xdf.TupleWrapper;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -365,16 +358,16 @@ public final class Mapper {
     
     
     /**
-     * Returns the identity of the given non-host identifier.
-     * The non-host identity is also established if required.
+     * Returns the identity of the given identifier.
+     * The identity is also established if required.
      * 
-     * @param identifier the non-host identifier of interest.
+     * @param identifier the identifier of interest.
      * 
-     * @return the identity of the given non-host identifier.
+     * @return the identity of the given identifier.
      */
-    static @Nonnull NonHostIdentity getIdentity(@Nonnull NonHostIdentifier identifier) throws SQLException, IOException, PacketException, ExternalException {
+    static @Nonnull Identity getIdentity(@Nonnull Identifier identifier) throws SQLException, IOException, PacketException, ExternalException {
         if (isMapped(identifier)) {
-            return identifiers.get(identifier).toNonHostIdentity();
+            return identifiers.get(identifier);
         } else {
             return establishIdentity(identifier);
         }
@@ -431,131 +424,135 @@ public final class Mapper {
      * 
      * @throws IdentityNotFoundException if no identity with the given identifier could be found.
      */
-    private static @Nonnull NonHostIdentity establishIdentity(@Nonnull NonHostIdentifier identifier) throws SQLException, IOException, PacketException, ExternalException {
-        try {
-            // TODO: Make an identity request and verify predecessors only if already mapped.
-            @Nonnull SelfcontainedWrapper content = new SelfcontainedWrapper(NonHostIdentifier.IDENTITY_REQUEST, Block.EMPTY);
-            @Nullable Identity identity = null;
-            
-            if (identifier instanceof HostIdentifier) {
-                @Nonnull Response response = new Request(content, (HostIdentifier) identifier, identifier).send(false);
-                @Nonnull Block[] elements = new TupleWrapper(response.getContent().getElement()).getElementsNotNull(3);
-                @Nonnull Category category = Category.get(elements[0]);
-                if (category != HOST) throw new InvalidDeclarationException("The request to get the category of " + identifier + " returned the invalid value '" + category + "'.");
-                identity = mapHostIdentity((HostIdentifier) identifier);
-                response.getSignature().verify();
-            } else {
-                @Nonnull NonHostIdentifier nonHostIdentifier = (NonHostIdentifier) identifier;
-                try {
-                    @Nonnull Response response = new Request(content, nonHostIdentifier).send();
-                    @Nonnull Block[] elements = new TupleWrapper(response.getContents().getElement()).getElementsNotNull(3);
-                    @Nonnull Category category = Category.get(elements[0]);
-                    if (category == HOST) throw new InvalidDeclarationException("The request to get the category of " + nonHostIdentifier + " returned the invalid value '" + category + "'.");
-                    
-                    // Store all the predecessors of the given identifier into the database.
-                    @Nonnull List<NonHostIdentifier> predecessors = new ListWrapper(elements[1]).getElements(NonHostIdentifier.class);
-                    setPredecessors(nonHostIdentifier, predecessors);
-                    
-                    // Store the successor of the given identifier into the database if available.
-                    if (elements[2].isNotEmpty()) {
-                        @Nonnull NonHostIdentifier successor = new NonHostIdentifier(elements[2]);
-                        setSuccessor(nonHostIdentifier, successor);
-                        if (isMapped(successor)) {
-                            identity = getIdentity(successor);
-                            if (identity.getCategory() != category) throw new InvalidDeclarationException("The claimed successor " + successor + " of " + nonHostIdentifier + " is of a different category.");
-                            if (!getPredecessors(successor).contains(nonHostIdentifier)) throw new InvalidDeclarationException("The claimed successor " + successor + " of " + nonHostIdentifier + " does not link back.");
-                        }
-                    }
-                    
-                    // Verify the cagetory and successor of all predecessors and remove identities that cannot be retrieved from the list of predecessors.
-                    @Nonnull Iterator<NonHostIdentifier> iterator = predecessors.iterator();
-                    while (iterator.hasNext()) {
-                        try {
-                            @Nonnull NonHostIdentifier predecessor = iterator.next();
-                            @Nonnull Category oldCategory = getIdentity(predecessor).getCategory();
-                            if (oldCategory == EMAIL_PERSON) {
-                                if (category != NATURAL_PERSON && category != ARTIFICIAL_PERSON) throw new InvalidDeclarationException("The email address " + predecessor + " can only be claimed by a natural or artificial person and thus not by " + nonHostIdentifier + ".");
-                            } else {
-                                if (oldCategory != category) throw new InvalidDeclarationException("The claimed predecessor " + predecessor + " of " + nonHostIdentifier + " is of a different category.");
-                            }
-                            if (!nonHostIdentifier.equals(getSuccessorReloaded(predecessor))) throw new InvalidDeclarationException("The claimed predecessor " + predecessor + " of " + nonHostIdentifier + " does not link back.");
-                        } catch (@Nonnull IdentityNotFoundException exception) {
-                            iterator.remove();
-                        }
-                    }
-                    
-                    if (identity == null) {
-                        // Relocate the existing identity in case there is only one predecessor.
-                        if (predecessors.size() == 1) {
-                            identity = getIdentity(predecessors.get(0));
-                            try (@Nonnull Connection connection = Database.getConnection(); @Nonnull Statement statement = connection.createStatement()) {
-                                statement.executeUpdate("INSERT INTO map_identifier (identifier, identity) VALUES (" + nonHostIdentifier + ", " + identity + ")");
-                                statement.executeUpdate("UPDATE map_identity SET identifier = " + nonHostIdentifier + " WHERE identity = " + identity);
-                                connection.commit();
-                            }
-                            identifiers.put(nonHostIdentifier, identity);
-                            
-                        // Create a new identity and merge existing predecessors into this new identity.
-                        } else {
-                            identity = mapIdentity(nonHostIdentifier, category);
-                        }
-                    }
-                    
-                    // Merge existing predecessors into this new identity if necessary.
-                    if (predecessors.size() > 0) {
-                        if (predecessors.size() > 1 && !(identity instanceof Person)) throw new InvalidDeclarationException("Only person identities may have more than one predecessor: " + nonHostIdentifier + " is a " + category.name() + ".");
-                        long newNumber = identity.getNumber();
-                        for (@Nonnull NonHostIdentifier predecessor : predecessors) {
-                            long oldNumber = getIdentity(predecessor).getNumber();
-                            updateIdentities(oldNumber, newNumber, nonHostIdentifier);
-                            if (oldNumber != newNumber) {
-                                try (@Nonnull Connection connection = Database.getConnection(); @Nonnull Statement statement = connection.createStatement()) {
-                                    statement.executeUpdate("UPDATE map_identifier SET identity = " + newNumber + " WHERE identity = " + oldNumber);
-                                    statement.executeUpdate("DELETE FROM map_identity WHERE identity = " + oldNumber);
-                                    updateReferences(statement, oldNumber, newNumber);
-                                    connection.commit();
-                                }
-                                logger.log(INFORMATION, "The identity with the identifier " + predecessor + " was succesfully merged into " + nonHostIdentifier + ".");
-                            } else {
-                                logger.log(INFORMATION, "The identity with the identifier " + predecessor + " was succesfully relocated to " + nonHostIdentifier + ".");
-                            }
-                        }
-                    }
-                } catch (@Nonnull FailedRequestException exception) {
-                    // Determine whether the given identifier denotes an email address and remember the identifier as unreachable otherwise.
-                    if (EmailPerson.providerExists(nonHostIdentifier)) {
-                        @Nullable NonHostIdentifier successor = getSuccessorReloaded(nonHostIdentifier);
-                        if (successor != null && isMapped(successor)) {
-                            identity = getIdentity(successor);
-                            if (identity.getCategory() != NATURAL_PERSON && identity.getCategory() != ARTIFICIAL_PERSON) throw new InvalidDeclarationException("The claimed successor " + successor + " of the email address " + nonHostIdentifier + " is a natural or an artificial person.");
-                            if (!getPredecessors(successor).contains(nonHostIdentifier)) throw new InvalidDeclarationException("The claimed successor " + successor + " of " + nonHostIdentifier + " does not link back.");
-                            try (@Nonnull Connection connection = Database.getConnection(); @Nonnull Statement statement = connection.createStatement()) {
-                                statement.executeUpdate("INSERT INTO map_identifier (identifier, identity) VALUES (" + nonHostIdentifier + ", " + identity + ")");
-                                connection.commit();
-                            }
-                            identifiers.put(nonHostIdentifier, identity);
-                            logger.log(INFORMATION, "The email address " + nonHostIdentifier + " was succesfully attributed to " + successor + ".");
-                        } else {
-                            identity = mapIdentity(nonHostIdentifier, EMAIL_PERSON, null);
-                        }
-                    } else {
-                        // TODO: map_unreachable no longer exists!
-                        try (@Nonnull Connection connection = Database.getConnection(); @Nonnull Statement statement = connection.createStatement()) {
-                            statement.executeUpdate("REPLACE INTO map_unreachable (identifier, time) VALUES (" + nonHostIdentifier + ", " + (System.currentTimeMillis() + 60000) + ")");
-                            connection.commit();
-                        }
-                        throw new IdentityNotFoundException(nonHostIdentifier, exception);
-                    }
-                }
-            }
-            
-            logger.log(INFORMATION, "The identity of " + identifier + " was succesfully established.");
-            return identity;
-        } catch (@Nonnull FailedEncodingException | FailedRequestException | InvalidEncodingException | InvalidSignatureException | PacketException | InvalidDeclarationException | IdentityNotFoundExceptionexception) {
-            logger.log(WARNING, "The identity of " + identifier + " could not be established.", exception);
-            if (exception instanceof IdentityNotFoundException) throw (IdentityNotFoundException) exception;
-            else throw new IdentityNotFoundException(identifier, exception);
-        }
+    private static @Nonnull Identity establishIdentity(@Nonnull Identifier identifier) throws SQLException, IOException, PacketException, ExternalException {
+        throw new IdentityNotFoundException(identifier);
+        
+        // TODO: In case of a host identifier, query the public key with a new method in the cache class.
+        
+//        try {
+//            // TODO: Make an identity request and verify predecessors only if already mapped.
+//            @Nonnull SelfcontainedWrapper content = new SelfcontainedWrapper(NonHostIdentifier.IDENTITY_REQUEST, Block.EMPTY);
+//            @Nullable Identity identity = null;
+//            
+//            if (identifier instanceof HostIdentifier) {
+//                @Nonnull Response response = new Request(content, (HostIdentifier) identifier, identifier).send(false);
+//                @Nonnull Block[] elements = new TupleWrapper(response.getContent().getElement()).getElementsNotNull(3);
+//                @Nonnull Category category = Category.get(elements[0]);
+//                if (category != HOST) throw new InvalidDeclarationException("The request to get the category of " + identifier + " returned the invalid value '" + category + "'.");
+//                identity = mapHostIdentity((HostIdentifier) identifier);
+//                response.getSignature().verify();
+//            } else {
+//                @Nonnull NonHostIdentifier nonHostIdentifier = (NonHostIdentifier) identifier;
+//                try {
+//                    @Nonnull Response response = new Request(content, nonHostIdentifier).send();
+//                    @Nonnull Block[] elements = new TupleWrapper(response.getContents().getElement()).getElementsNotNull(3);
+//                    @Nonnull Category category = Category.get(elements[0]);
+//                    if (category == HOST) throw new InvalidDeclarationException("The request to get the category of " + nonHostIdentifier + " returned the invalid value '" + category + "'.");
+//                    
+//                    // Store all the predecessors of the given identifier into the database.
+//                    @Nonnull List<NonHostIdentifier> predecessors = new ListWrapper(elements[1]).getElements(NonHostIdentifier.class);
+//                    setPredecessors(nonHostIdentifier, predecessors);
+//                    
+//                    // Store the successor of the given identifier into the database if available.
+//                    if (elements[2].isNotEmpty()) {
+//                        @Nonnull NonHostIdentifier successor = new NonHostIdentifier(elements[2]);
+//                        setSuccessor(nonHostIdentifier, successor);
+//                        if (isMapped(successor)) {
+//                            identity = getIdentity(successor);
+//                            if (identity.getCategory() != category) throw new InvalidDeclarationException("The claimed successor " + successor + " of " + nonHostIdentifier + " is of a different category.");
+//                            if (!getPredecessors(successor).contains(nonHostIdentifier)) throw new InvalidDeclarationException("The claimed successor " + successor + " of " + nonHostIdentifier + " does not link back.");
+//                        }
+//                    }
+//                    
+//                    // Verify the cagetory and successor of all predecessors and remove identities that cannot be retrieved from the list of predecessors.
+//                    @Nonnull Iterator<NonHostIdentifier> iterator = predecessors.iterator();
+//                    while (iterator.hasNext()) {
+//                        try {
+//                            @Nonnull NonHostIdentifier predecessor = iterator.next();
+//                            @Nonnull Category oldCategory = getIdentity(predecessor).getCategory();
+//                            if (oldCategory == EMAIL_PERSON) {
+//                                if (category != NATURAL_PERSON && category != ARTIFICIAL_PERSON) throw new InvalidDeclarationException("The email address " + predecessor + " can only be claimed by a natural or artificial person and thus not by " + nonHostIdentifier + ".");
+//                            } else {
+//                                if (oldCategory != category) throw new InvalidDeclarationException("The claimed predecessor " + predecessor + " of " + nonHostIdentifier + " is of a different category.");
+//                            }
+//                            if (!nonHostIdentifier.equals(getSuccessorReloaded(predecessor))) throw new InvalidDeclarationException("The claimed predecessor " + predecessor + " of " + nonHostIdentifier + " does not link back.");
+//                        } catch (@Nonnull IdentityNotFoundException exception) {
+//                            iterator.remove();
+//                        }
+//                    }
+//                    
+//                    if (identity == null) {
+//                        // Relocate the existing identity in case there is only one predecessor.
+//                        if (predecessors.size() == 1) {
+//                            identity = getIdentity(predecessors.get(0));
+//                            try (@Nonnull Connection connection = Database.getConnection(); @Nonnull Statement statement = connection.createStatement()) {
+//                                statement.executeUpdate("INSERT INTO map_identifier (identifier, identity) VALUES (" + nonHostIdentifier + ", " + identity + ")");
+//                                statement.executeUpdate("UPDATE map_identity SET identifier = " + nonHostIdentifier + " WHERE identity = " + identity);
+//                                connection.commit();
+//                            }
+//                            identifiers.put(nonHostIdentifier, identity);
+//                            
+//                        // Create a new identity and merge existing predecessors into this new identity.
+//                        } else {
+//                            identity = mapIdentity(nonHostIdentifier, category);
+//                        }
+//                    }
+//                    
+//                    // Merge existing predecessors into this new identity if necessary.
+//                    if (predecessors.size() > 0) {
+//                        if (predecessors.size() > 1 && !(identity instanceof Person)) throw new InvalidDeclarationException("Only person identities may have more than one predecessor: " + nonHostIdentifier + " is a " + category.name() + ".");
+//                        long newNumber = identity.getNumber();
+//                        for (@Nonnull NonHostIdentifier predecessor : predecessors) {
+//                            long oldNumber = getIdentity(predecessor).getNumber();
+//                            updateIdentities(oldNumber, newNumber, nonHostIdentifier);
+//                            if (oldNumber != newNumber) {
+//                                try (@Nonnull Connection connection = Database.getConnection(); @Nonnull Statement statement = connection.createStatement()) {
+//                                    statement.executeUpdate("UPDATE map_identifier SET identity = " + newNumber + " WHERE identity = " + oldNumber);
+//                                    statement.executeUpdate("DELETE FROM map_identity WHERE identity = " + oldNumber);
+//                                    updateReferences(statement, oldNumber, newNumber);
+//                                    connection.commit();
+//                                }
+//                                logger.log(INFORMATION, "The identity with the identifier " + predecessor + " was succesfully merged into " + nonHostIdentifier + ".");
+//                            } else {
+//                                logger.log(INFORMATION, "The identity with the identifier " + predecessor + " was succesfully relocated to " + nonHostIdentifier + ".");
+//                            }
+//                        }
+//                    }
+//                } catch (@Nonnull FailedRequestException exception) {
+//                    // Determine whether the given identifier denotes an email address and remember the identifier as unreachable otherwise.
+//                    if (EmailPerson.providerExists(nonHostIdentifier)) {
+//                        @Nullable NonHostIdentifier successor = getSuccessorReloaded(nonHostIdentifier);
+//                        if (successor != null && isMapped(successor)) {
+//                            identity = getIdentity(successor);
+//                            if (identity.getCategory() != NATURAL_PERSON && identity.getCategory() != ARTIFICIAL_PERSON) throw new InvalidDeclarationException("The claimed successor " + successor + " of the email address " + nonHostIdentifier + " is a natural or an artificial person.");
+//                            if (!getPredecessors(successor).contains(nonHostIdentifier)) throw new InvalidDeclarationException("The claimed successor " + successor + " of " + nonHostIdentifier + " does not link back.");
+//                            try (@Nonnull Connection connection = Database.getConnection(); @Nonnull Statement statement = connection.createStatement()) {
+//                                statement.executeUpdate("INSERT INTO map_identifier (identifier, identity) VALUES (" + nonHostIdentifier + ", " + identity + ")");
+//                                connection.commit();
+//                            }
+//                            identifiers.put(nonHostIdentifier, identity);
+//                            logger.log(INFORMATION, "The email address " + nonHostIdentifier + " was succesfully attributed to " + successor + ".");
+//                        } else {
+//                            identity = mapIdentity(nonHostIdentifier, EMAIL_PERSON, null);
+//                        }
+//                    } else {
+//                        // TODO: map_unreachable no longer exists!
+//                        try (@Nonnull Connection connection = Database.getConnection(); @Nonnull Statement statement = connection.createStatement()) {
+//                            statement.executeUpdate("REPLACE INTO map_unreachable (identifier, time) VALUES (" + nonHostIdentifier + ", " + (System.currentTimeMillis() + 60000) + ")");
+//                            connection.commit();
+//                        }
+//                        throw new IdentityNotFoundException(nonHostIdentifier, exception);
+//                    }
+//                }
+//            }
+//            
+//            logger.log(INFORMATION, "The identity of " + identifier + " was succesfully established.");
+//            return identity;
+//        } catch (@Nonnull FailedEncodingException | FailedRequestException | InvalidEncodingException | InvalidSignatureException | PacketException | InvalidDeclarationException | IdentityNotFoundExceptionexception) {
+//            logger.log(WARNING, "The identity of " + identifier + " could not be established.", exception);
+//            if (exception instanceof IdentityNotFoundException) throw (IdentityNotFoundException) exception;
+//            else throw new IdentityNotFoundException(identifier, exception);
+//        }
     }
     
     
@@ -587,11 +584,11 @@ public final class Mapper {
      */
     public static void setPredecessors(@Nonnull NonHostIdentifier identifier, @Nonnull List<NonHostIdentifier> predecessors) throws SQLException, InvalidDeclarationException {
         if (!predecessors.isEmpty()) {
-            @Nonnull String statement = "INSERT " + Database.IGNORE + " INTO map_predecessors (identifier, predecessor) VALUES (?, ?)";
+            @Nonnull String statement = "INSERT" + Database.getConfiguration().IGNORE() + " INTO map_predecessors (identifier, predecessor) VALUES (?, ?)";
             try (@Nonnull Connection connection = Database.getConnection(); @Nonnull PreparedStatement preparedStatement = connection.prepareStatement(statement)) {
                 preparedStatement.setString(1, identifier.getString());
                 for (@Nonnull NonHostIdentifier predecessor : predecessors) {
-                    if (getSetOfPredecessors(predecessor).contains(identifier)) throw new InvalidDeclarationException("" + predecessor + " cannot be set as a predecessor of " + identifier + " as the latter is already a predecessor of the former.");
+                    if (getSetOfPredecessors(predecessor).contains(identifier)) throw new InvalidDeclarationException("" + predecessor + " cannot be set as a predecessor of " + identifier + " as the latter is already a predecessor of the former.", identifier, null); // TODO: The reply shouldn't be null!
                     preparedStatement.setString(2, predecessor.getString());
                     preparedStatement.addBatch();
                 }
@@ -612,7 +609,7 @@ public final class Mapper {
         @Nonnull String query = "SELECT successor FROM map_successor WHERE identifier = " + identifier;
         try (@Nonnull Connection connection = Database.getConnection(); @Nonnull Statement statement = connection.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(query)) {
             if (resultSet.next()) {
-                return new NonHostIdentifier(resultSet.getString(1), false);
+                return new NonHostIdentifier(resultSet.getString(1));
             }
             connection.commit();
         }
@@ -626,17 +623,17 @@ public final class Mapper {
      * @param identifier the identifier of interest.
      * @return the successor of the given identifier as stored in the database or retrieved by a new request.
      */
-    public static @Nullable NonHostIdentifier getSuccessorReloaded(@Nonnull NonHostIdentifier identifier) throws SQLException, IdentityNotFoundException, InvalidEncodingException, FailedRequestException, PacketException {
+    public static @Nullable NonHostIdentifier getSuccessorReloaded(@Nonnull NonHostIdentifier identifier) throws SQLException, IOException, PacketException, ExternalException  {
         @Nullable NonHostIdentifier successor = getSuccessor(identifier);
         if (successor == null) {
             if (getIdentity(identifier).getCategory() == Category.EMAIL_PERSON) {
                 // TODO: Load the verified successor from 'virtualid.ch' or return null otherwise.
                 throw new UnsupportedOperationException("The verification of email addresses is not supported yet.");
             } else {
-                @Nonnull SelfcontainedWrapper content = new SelfcontainedWrapper(NonHostIdentifier.IDENTITY_REQUEST, Block.EMPTY);
-                @Nonnull Response response = new Request(content, identifier).send();
-                @Nonnull Block[] elements = new TupleWrapper(response.getContents().getElement()).getElementsNotNull(3);
-                if (elements[2].isNotEmpty()) successor = new NonHostIdentifier(elements[2]);
+//                @Nonnull SelfcontainedWrapper content = new SelfcontainedWrapper(NonHostIdentifier.IDENTITY_REQUEST, Block.EMPTY);
+//                @Nonnull Response response = new Request(content, identifier).send();
+//                @Nonnull Block[] elements = new TupleWrapper(response.getContents().getElement()).getElementsNotNull(3);
+//                if (elements[2].isNotEmpty()) successor = new NonHostIdentifier(elements[2]);
             }
             
             if (successor != null) {
@@ -657,9 +654,9 @@ public final class Mapper {
      */
     public static void setSuccessor(@Nonnull NonHostIdentifier identifier, @Nonnull NonHostIdentifier successor, @Nonnull Reply reply) throws SQLException, InvalidDeclarationException {
         // TODO: Also store the reference to the reply in the database.
-        if (getListOfSuccessors(successor).contains(identifier)) throw new InvalidDeclarationException("" + successor + " cannot be set as the successor of " + identifier + " as the latter is already a successor of the former.");
+        if (getListOfSuccessors(successor).contains(identifier)) throw new InvalidDeclarationException("" + successor + " cannot be set as the successor of " + identifier + " as the latter is already a successor of the former.", identifier, reply);
         try (@Nonnull Connection connection = Database.getConnection(); @Nonnull Statement statement = connection.createStatement()) {
-            statement.executeUpdate("INSERT " + Database.IGNORE + " INTO map_successor (identifier, successor) VALUES (" + identifier + ", " + successor + ")");
+            statement.executeUpdate("INSERT" + Database.getConfiguration().IGNORE() + " INTO map_successor (identifier, successor) VALUES (" + identifier + ", " + successor + ")");
             connection.commit();
         }
     }

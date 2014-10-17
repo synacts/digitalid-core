@@ -20,6 +20,7 @@ import ch.virtualid.handler.action.internal.AccountOpen;
 import ch.virtualid.handler.query.external.AttributesQuery;
 import ch.virtualid.handler.query.external.IdentityQuery;
 import ch.virtualid.handler.reply.query.AttributesReply;
+import ch.virtualid.identity.Category;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.Identifier;
 import ch.virtualid.identity.Identity;
@@ -224,6 +225,7 @@ public abstract class Packet implements Immutable {
                     }
                 } else {
                     if (!signature.hasSubject()) throw new PacketException(PacketError.SIGNATURE, "Each signature in a request must have a subject.", null, isResponse);
+                    if (signature.getSubjectNotNull() instanceof HostIdentifier && !type.equals(AttributesQuery.TYPE)) throw new PacketException(PacketError.METHOD, "A host can only be the subject of an attributes query and not " + type.getAddress() + ".", null, isResponse);
                     
                     if (reference == null) reference = signature;
                     else if (!signature.isSignedLike(reference)) throw new PacketException(PacketError.SIGNATURE, "All the signatures of a request have to be signed alike.", null, isResponse);
@@ -234,6 +236,7 @@ public abstract class Packet implements Immutable {
                         entity = account;
                     } else {
                         final @Nonnull Identity identity = signature.getSubjectNotNull().getIdentity();
+                        if (identity.getCategory() == Category.EMAIL_PERSON) throw new PacketException(PacketError.IDENTIFIER, "The subject " + signature.getSubjectNotNull() + " is an email person and thus cannot receive requests.", null, isResponse);
                         if (!identity.getAddress().equals(signature.getSubjectNotNull())) throw new PacketException(PacketError.RELOCATION, "The subject " + signature.getSubjectNotNull() + " has been relocated to " + identity.getAddress() + ".", null, isResponse);
                         entity = new Account(account.getHost(), identity);
                     }

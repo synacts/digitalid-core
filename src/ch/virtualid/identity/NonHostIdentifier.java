@@ -88,7 +88,7 @@ public final class NonHostIdentifier extends Identifier implements Immutable {
     @Pure
     @Override
     public @Nonnull NonHostIdentity getIdentity() throws SQLException, IOException, PacketException, ExternalException {
-        final @Nonnull NonHostIdentity identity = Mapper.getIdentity(this);
+        final @Nonnull NonHostIdentity identity = Mapper.getIdentity(this).toNonHostIdentity();
         if (identity instanceof Type) ((Type) identity).ensureLoaded();
         return identity;
     }

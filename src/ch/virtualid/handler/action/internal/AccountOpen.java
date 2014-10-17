@@ -16,6 +16,7 @@ import ch.virtualid.identity.NonHostIdentifier;
 import ch.virtualid.identity.NonHostIdentity;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.CoreService;
+import ch.virtualid.module.Service;
 import ch.virtualid.packet.Audit;
 import ch.xdf.Block;
 import ch.xdf.Int8Wrapper;
@@ -49,8 +50,8 @@ public final class AccountOpen extends Action {
     
     @Pure
     @Override
-    public @Nonnull SemanticType getService() {
-        return CoreService.TYPE;
+    public @Nonnull Service getService() {
+        return CoreService.SERVICE;
     }
     
     

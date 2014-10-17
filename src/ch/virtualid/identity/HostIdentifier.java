@@ -1,10 +1,13 @@
 package ch.virtualid.identity;
 
 import ch.virtualid.annotations.Pure;
+import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.interfaces.Immutable;
 import ch.xdf.Block;
 import ch.xdf.StringWrapper;
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
@@ -89,8 +92,8 @@ public final class HostIdentifier extends Identifier implements Immutable {
     
     @Pure
     @Override
-    public @Nonnull HostIdentity getIdentity() throws SQLException {
-        return Mapper.mapHostIdentity(this);
+    public @Nonnull HostIdentity getIdentity() throws SQLException, IOException, PacketException, ExternalException {
+        return Mapper.getIdentity(this).toHostIdentity();
     }
     
     

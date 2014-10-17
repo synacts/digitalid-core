@@ -2,20 +2,17 @@ package ch.virtualid.client;
 
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
+import ch.virtualid.cryptography.Element;
 import ch.virtualid.cryptography.Exponent;
-import ch.virtualid.exceptions.external.ExternalException;
-import ch.virtualid.exceptions.packet.PacketException;
+import ch.virtualid.cryptography.PublicKey;
 import ch.virtualid.identity.HostIdentity;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.xdf.ClientSignatureWrapper;
-import java.io.IOException;
-import java.math.BigInteger;
-import java.sql.SQLException;
 import javax.annotation.Nonnull;
 
 /**
- * This class extends the commitment of a client with its secret.
+ * This class extends the {@link Commitment commitment} of a {@link Client client} with its {@link Client#getSecret() secret}.
  * 
  * @see ClientSignatureWrapper
  * 
@@ -30,15 +27,16 @@ public final class SecretCommitment extends Commitment implements Immutable, Blo
     private final @Nonnull Exponent secret;
     
     /**
-     * Creates a new commitment with the given host, time, value and secret.
+     * Creates a new commitment with the given host, time, value, public key and secret.
      * 
      * @param host the host at which this commitment was made.
      * @param time the time at which this commitment was made.
      * @param value the value of this commitment.
+     * @param publicKey the public key of this commitment.
      * @param secret the secret of this commitment.
      */
-    public SecretCommitment(@Nonnull HostIdentity host, @Nonnull Time time, @Nonnull BigInteger value, @Nonnull Exponent secret) throws SQLException, IOException, PacketException, ExternalException {
-        super(host, time, value);
+    SecretCommitment(@Nonnull HostIdentity host, @Nonnull Time time, @Nonnull Element value, @Nonnull PublicKey publicKey, @Nonnull Exponent secret) {
+        super(host, time, value, publicKey);
         
         this.secret = secret;
     }

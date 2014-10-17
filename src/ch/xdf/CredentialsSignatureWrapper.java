@@ -226,7 +226,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
         this.certificates = certificates;
         this.lodged = lodged;
         this.value = value;
-        this.publicKey = value == null ? null : Cache.getPublicKey(subject.getHostIdentifier().getIdentity(), getTimeNotNull());
+        this.publicKey = value == null ? null : Cache.getPublicKey(subject.getHostIdentifier(), getTimeNotNull());
     }
     
     /**
@@ -326,7 +326,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
         
         // Value and public key
         this.value = tuple.isElementNull(6) ? null : new IntegerWrapper(tuple.getElementNotNull(6)).getValue();
-        this.publicKey = tuple.isElementNull(6) ? null : Cache.getPublicKey(getSubjectNotNull().getHostIdentifier().getIdentity(), getTimeNotNull());
+        this.publicKey = tuple.isElementNull(6) ? null : Cache.getPublicKey(getSubjectNotNull().getHostIdentifier(), getTimeNotNull());
     }
     
     

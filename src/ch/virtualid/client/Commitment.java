@@ -3,8 +3,10 @@ package ch.virtualid.client;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.cryptography.Element;
+import ch.virtualid.cryptography.Exponent;
 import ch.virtualid.cryptography.PublicKey;
 import ch.virtualid.exceptions.external.ExternalException;
+import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.HostIdentity;
@@ -83,8 +85,23 @@ public class Commitment implements Immutable, Blockable {
     public Commitment(@Nonnull HostIdentity host, @Nonnull Time time, @Nonnull BigInteger value) throws SQLException, IOException, PacketException, ExternalException {
         this.host = host;
         this.time = time;
-        this.publicKey = Cache.getPublicKey(host, time);
+        this.publicKey = Cache.getPublicKeyChain(host).getKey(time);
         this.value = publicKey.getCompositeGroup().getElement(value);
+    }
+    
+    /**
+     * Creates a new commitment with the given host, time, value and public key.
+     * 
+     * @param host the host at which this commitment was made.
+     * @param time the time at which this commitment was made.
+     * @param value the value of this commitment.
+     * @param publicKey the public key of this commitment.
+     */
+    Commitment(@Nonnull HostIdentity host, @Nonnull Time time, @Nonnull Element value, @Nonnull PublicKey publicKey) {
+        this.host = host;
+        this.time = time;
+        this.value = value;
+        this.publicKey = publicKey;
     }
     
     /**
@@ -100,7 +117,7 @@ public class Commitment implements Immutable, Blockable {
         final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(3);
         this.host = new HostIdentifier(elements.getNotNull(0)).getIdentity();
         this.time = new Time(elements.getNotNull(1));
-        this.publicKey = Cache.getPublicKey(host, time);
+        this.publicKey = Cache.getPublicKeyChain(host).getKey(time);
         this.value = publicKey.getCompositeGroup().getElement(new IntegerWrapper(elements.getNotNull(2)).getValue());
     }
     
@@ -159,6 +176,20 @@ public class Commitment implements Immutable, Blockable {
     @Pure
     public final @Nonnull PublicKey getPublicKey() {
         return publicKey;
+    }
+    
+    
+    /**
+     * Adds the given secret to this commitment.
+     * 
+     * @param secret the secret to be added.
+     * 
+     * @return the new secret commitment.
+     */
+    @Pure
+    public final @Nonnull SecretCommitment addSecret(@Nonnull Exponent secret) throws PacketException {
+        if (!publicKey.getAu().pow(secret).equals(value)) throw new PacketException(PacketError.INTERNAL, "The client secret does not match the commitment.");
+        return new SecretCommitment(host, time, value, publicKey, secret);
     }
     
     

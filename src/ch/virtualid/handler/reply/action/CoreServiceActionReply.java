@@ -3,11 +3,11 @@ package ch.virtualid.handler.reply.action;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Account;
 import ch.virtualid.entity.Entity;
-import ch.virtualid.handler.ActionReply;
-import ch.virtualid.identity.SemanticType;
-import ch.virtualid.module.CoreService;
-import ch.xdf.HostSignatureWrapper;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.handler.ActionReply;
+import ch.virtualid.module.CoreService;
+import ch.virtualid.module.Service;
+import ch.xdf.HostSignatureWrapper;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -44,8 +44,8 @@ public abstract class CoreServiceActionReply extends ActionReply {
     
     @Pure
     @Override
-    public final @Nonnull SemanticType getService() {
-        return CoreService.TYPE;
+    public final @Nonnull Service getService() {
+        return CoreService.SERVICE;
     }
     
 }

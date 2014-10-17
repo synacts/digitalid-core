@@ -157,7 +157,7 @@ public final class HostSignatureWrapper extends SignatureWrapper implements Immu
         assert hostSignature.getType().isBasedOn(SIGNATURE) : "The signature is based on the implementation type.";
         
         this.signer = Identifier.create(new TupleWrapper(hostSignature).getElementNotNull(0));
-        this.publicKey = Cache.getPublicKey(signer.getHostIdentifier().getIdentity(), getTimeNotNull());
+        this.publicKey = Cache.getPublicKey(signer.getHostIdentifier(), getTimeNotNull());
         
         if (getType().isBasedOn(Certificate.TYPE)) {
             if (getElement() == null) throw new InvalidEncodingException("If this signature is a certificate, the element may not be null.");

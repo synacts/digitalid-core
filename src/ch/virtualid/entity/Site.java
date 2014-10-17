@@ -3,7 +3,7 @@ package ch.virtualid.entity;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Client;
 import ch.virtualid.concept.Instance;
-import ch.virtualid.module.Module;
+import ch.virtualid.module.CoreService;
 import ch.virtualid.server.Host;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
@@ -32,7 +32,7 @@ public abstract class Site extends Instance {
     protected Site(@Nonnull String prefix) throws SQLException {
         this.prefix = prefix + "_";
         
-        Module.initialize(this);
+        CoreService.SERVICE.createTables(this);
     }
     
     /**
