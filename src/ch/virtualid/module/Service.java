@@ -248,7 +248,7 @@ public abstract class Service implements BothModule {
     }
     
     @Override
-    public final void addState(@Nonnull Entity entity, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException  {
+    public final void addState(@Nonnull Entity entity, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         assert block.getType().isBasedOn(getStateFormat()) : "The block is based on the indicated type.";
         
         final @Nonnull ReadonlyList<Block> elements = new ListWrapper(block).getElementsNotNull();

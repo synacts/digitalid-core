@@ -5,9 +5,9 @@ import ch.virtualid.annotations.Pure;
 import ch.virtualid.concepts.Password;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.Role;
-import ch.virtualid.exceptions.external.InvalidDeclarationException;
+import ch.virtualid.exceptions.external.ExternalException;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Method;
-import ch.virtualid.exceptions.external.IdentityNotFoundException;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.both.Passwords;
@@ -17,7 +17,7 @@ import ch.xdf.Block;
 import ch.xdf.SignatureWrapper;
 import ch.xdf.StringWrapper;
 import ch.xdf.TupleWrapper;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
+import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 
@@ -103,7 +103,7 @@ public final class PasswordValueReplace extends CoreServiceInternalAction {
      * 
      * @ensure hasSignature() : "This handler has a signature.";
      */
-    private PasswordValueReplace(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws InvalidEncodingException, SQLException, IdentityNotFoundException, InvalidDeclarationException {
+    private PasswordValueReplace(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
@@ -171,7 +171,7 @@ public final class PasswordValueReplace extends CoreServiceInternalAction {
     @Pure
     @Override
     public @Nonnull SemanticType getModule() {
-        return Passwords.TYPE;
+        return Passwords.MODULE;
     }
     
     
@@ -190,7 +190,7 @@ public final class PasswordValueReplace extends CoreServiceInternalAction {
         
         @Pure
         @Override
-        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws InvalidEncodingException, SQLException, IdentityNotFoundException, InvalidDeclarationException {
+        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException  {
             return new PasswordValueReplace(entity, signature, recipient, block);
         }
         

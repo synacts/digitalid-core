@@ -1,16 +1,13 @@
 package ch.virtualid.expression;
 
-import ch.virtualid.identity.Category;
-import ch.virtualid.identity.Mapper;
 import ch.virtualid.credential.Credential;
-import ch.virtualid.identity.Identifier;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.server.Host;
 import ch.xdf.Block;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -114,7 +111,7 @@ public abstract class Expression {
      * @param credentials the credentials to check.
      */
     public final void checkMatching(Credential[] credentials) throws PacketException, InvalidEncodingException, SQLException, Exception {
-        if (!matches(credentials)) throw new PacketException(PacketException.AUTHORIZATION);
+        if (!matches(credentials)) throw new PacketException(PacketError.AUTHORIZATION, "TODO");
     }
     
     /**
@@ -143,41 +140,41 @@ public abstract class Expression {
     public static Expression parse(String string, Connection connection, Host host, long vid) throws InvalidEncodingException, SQLException, Exception {
         assert string != null : "The string is not null.";
         
-        string = string.trim();
-        if (string.isEmpty()) return new EmptyExpression();
-        
-        int index = lastIndexOf(string, Arrays.asList('+', '-'));
-        if (index == -1) index = lastIndexOf(string, Arrays.asList('*'));
-        if (index != -1) return new BinaryExpression(connection, host, vid, string.substring(0, index), string.substring(index + 1, string.length()), string.charAt(index));
-        
-        if (string.charAt(0) == '(' && string.charAt(string.length() - 1) == ')') return parse(string.substring(1, string.length() - 1), connection, host, vid);
-        
-        // The string is now either a context, a contact or a restriction.
-        
-        String[] symbols = new String[]{"=", "≠", "<", ">", "≤", "≥", "/", "!/", "|", "!|", "\\", "!\\"};
-        for (String symbol : symbols) {
-            index = string.indexOf(symbol);
-            if (index != -1) {
-                String identifier = string.substring(0, index).trim();
-                if (!Identifier.isValid(identifier)) throw new InvalidEncodingException("The string '" + string + "' does not start with a valid identifier.");
-                long type = Mapper.getVid(identifier);
-                if (!Category.isSemanticType(type)) throw new InvalidEncodingException("The identifier '" + identifier + "' does not denote a semantic type.");
-                String substring = string.substring(index + symbol.length(), string.length()).trim();
-                if (substring.startsWith("\"") && substring.endsWith("\"") || substring.matches("\\d+")) return new RestrictionExpression(type, substring, symbol);
-                else throw new InvalidEncodingException("The string '" + substring + "' is neither a quoted string nor a number.");
-            }
-        }
-        
-        if (string.equals("everybody")) return new RestrictionExpression(0, null, null);
-        
-        if (Identifier.isValid(string)) {
-            long contact = Mapper.getVid(string);
-            if (Category.isPerson(contact)) return new ContactExpression(contact);
-            if (Category.isSemanticType(contact)) return new RestrictionExpression(contact, null, null);
-            throw new InvalidEncodingException("The string '" + string + "' is a valid identifier but neither a person nor a semantic type.");
-        }
-        
-        if (string.matches("\\d+")) return new ContextExpression(connection, host, vid, Integer.parseInt(string));
+//        string = string.trim();
+//        if (string.isEmpty()) return new EmptyExpression();
+//        
+//        int index = lastIndexOf(string, Arrays.asList('+', '-'));
+//        if (index == -1) index = lastIndexOf(string, Arrays.asList('*'));
+//        if (index != -1) return new BinaryExpression(connection, host, vid, string.substring(0, index), string.substring(index + 1, string.length()), string.charAt(index));
+//        
+//        if (string.charAt(0) == '(' && string.charAt(string.length() - 1) == ')') return parse(string.substring(1, string.length() - 1), connection, host, vid);
+//        
+//        // The string is now either a context, a contact or a restriction.
+//        
+//        String[] symbols = new String[]{"=", "≠", "<", ">", "≤", "≥", "/", "!/", "|", "!|", "\\", "!\\"};
+//        for (String symbol : symbols) {
+//            index = string.indexOf(symbol);
+//            if (index != -1) {
+//                String identifier = string.substring(0, index).trim();
+//                if (!Identifier.isValid(identifier)) throw new InvalidEncodingException("The string '" + string + "' does not start with a valid identifier.");
+//                long type = Mapper.getVid(identifier);
+//                if (!Category.isSemanticType(type)) throw new InvalidEncodingException("The identifier '" + identifier + "' does not denote a semantic type.");
+//                String substring = string.substring(index + symbol.length(), string.length()).trim();
+//                if (substring.startsWith("\"") && substring.endsWith("\"") || substring.matches("\\d+")) return new RestrictionExpression(type, substring, symbol);
+//                else throw new InvalidEncodingException("The string '" + substring + "' is neither a quoted string nor a number.");
+//            }
+//        }
+//        
+//        if (string.equals("everybody")) return new RestrictionExpression(0, null, null);
+//        
+//        if (Identifier.isValid(string)) {
+//            long contact = Mapper.getVid(string);
+//            if (Category.isPerson(contact)) return new ContactExpression(contact);
+//            if (Category.isSemanticType(contact)) return new RestrictionExpression(contact, null, null);
+//            throw new InvalidEncodingException("The string '" + string + "' is a valid identifier but neither a person nor a semantic type.");
+//        }
+//        
+//        if (string.matches("\\d+")) return new ContextExpression(connection, host, vid, Integer.parseInt(string));
         
         throw new InvalidEncodingException("The string '" + string + "' could not be parsed.");
     }

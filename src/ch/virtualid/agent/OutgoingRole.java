@@ -2,19 +2,17 @@ package ch.virtualid.agent;
 
 import ch.virtualid.annotations.OnlyForActions;
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.client.Synchronizer;
 import ch.virtualid.concept.Aspect;
 import ch.virtualid.contact.Context;
 import ch.virtualid.credential.Credential;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.Role;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
-import ch.virtualid.module.both.Agents;
-import ch.virtualid.exceptions.packet.PacketException;
 import java.security.SecureRandom;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -86,8 +84,8 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
     public static @Nonnull OutgoingRole create(@Nonnull Role role, @Nonnull SemanticType relation, @Nonnull Context context) {
         assert relation.isRoleType() : "The relation is a role type.";
         
-        final @Nonnull OutgoingRole outgoingRole = get(role, new SecureRandom().nextLong(), false);
-        Synchronizer.execute(new OutgoingRoleCreate(outgoingRole, relation, context));
+        final @Nonnull OutgoingRole outgoingRole = get(role, new SecureRandom().nextLong(), false, false);
+//        Synchronizer.execute(new OutgoingRoleCreate(outgoingRole, relation, context));
         return outgoingRole;
     }
     
@@ -104,7 +102,7 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
     public static void createForActions(@Nonnull OutgoingRole outgoingRole, @Nonnull SemanticType relation, @Nonnull Context context) {
         assert relation.isRoleType() : "The relation is a role type.";
         
-        Agents.create(outgoingRole, relation, context);
+//        Agents.create(outgoingRole, relation, context);
         outgoingRole.notify(Agent.CREATED);
     }
     
@@ -117,9 +115,10 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
      * @ensure relation.isRoleType() : "The relation is a role type.";
      */
     @Pure
-    public @Nonnull SemanticType getRelation() {
+    public @Nonnull SemanticType getRelation() throws SQLException {
         if (relation == null) {
-            relation = Agents.getRelation(this);
+            throw new SQLException();
+//            relation = Agents.getRelation(this);
         }
         return relation;
     }
@@ -136,7 +135,7 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
         
         final @Nonnull SemanticType oldRelation = getRelation();
         if (!newRelation.equals(oldRelation)) {
-            Synchronizer.execute(new OutgoingRoleRelationReplace(this, oldRelation, newRelation));
+//            Synchronizer.execute(new OutgoingRoleRelationReplace(this, oldRelation, newRelation));
         }
     }
     
@@ -154,7 +153,7 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
         assert oldRelation.isRoleType() : "The old relation is a role type.";
         assert newRelation.isRoleType() : "The new relation is a role type.";
         
-        Agents.replaceRelation(this, oldRelation, newRelation);
+//        Agents.replaceRelation(this, oldRelation, newRelation);
         relation = newRelation;
         notify(RELATION);
     }
@@ -166,9 +165,10 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
      * @return the context to which this outgoing role is assigned.
      */
     @Pure
-    public @Nonnull Context getContext() {
+    public @Nonnull Context getContext() throws SQLException {
         if (context == null) {
-            context = Agents.getContext(this);
+            throw new SQLException();
+//            context = Agents.getContext(this);
         }
         return context;
     }
@@ -181,7 +181,7 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
     public void setContext(@Nonnull Context newContext) throws SQLException {
         final @Nonnull Context oldContext = getContext();
         if (!newContext.equals(oldContext)) {
-            Synchronizer.execute(new OutgoingRoleContextReplace(this, oldContext, newContext));
+//            Synchronizer.execute(new OutgoingRoleContextReplace(this, oldContext, newContext));
         }
     }
     
@@ -193,7 +193,7 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
      */
     @OnlyForActions
     public void replaceContext(@Nonnull Context oldContext, @Nonnull Context newContext) throws SQLException {
-        Agents.replaceContext(this, oldContext, newContext);
+//        Agents.replaceContext(this, oldContext, newContext);
         context = newContext;
         notify(CONTEXT);
     }

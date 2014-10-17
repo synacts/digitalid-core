@@ -7,20 +7,20 @@ import ch.virtualid.contact.Contact;
 import ch.virtualid.contact.ContactPermissions;
 import ch.virtualid.contact.ReadonlyContactPermissions;
 import ch.virtualid.entity.Entity;
-import ch.virtualid.exceptions.external.InvalidDeclarationException;
+import ch.virtualid.exceptions.external.ExternalException;
+import ch.virtualid.exceptions.packet.PacketError;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.ActionReply;
 import ch.virtualid.handler.Method;
-import ch.virtualid.exceptions.external.IdentityNotFoundException;
+import ch.virtualid.handler.reply.action.CoreServiceActionReply;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.Person;
 import ch.virtualid.identity.SemanticType;
-import ch.virtualid.exceptions.packet.PacketError;
-import ch.virtualid.exceptions.packet.PacketException;
 import ch.xdf.Block;
 import ch.xdf.CredentialsSignatureWrapper;
 import ch.xdf.HostSignatureWrapper;
 import ch.xdf.SignatureWrapper;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
+import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -86,7 +86,7 @@ public final class AccessRequest extends CoreServiceExternalAction {
      * 
      * @ensure hasSignature() : "This handler has a signature.";
      */
-    private AccessRequest(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws InvalidEncodingException, IdentityNotFoundException, SQLException, InvalidDeclarationException {
+    private AccessRequest(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
@@ -139,6 +139,12 @@ public final class AccessRequest extends CoreServiceExternalAction {
     }
     
     
+    @Pure
+    @Override
+    public @Nullable Class<CoreServiceActionReply> getReplyClass() {
+        return null;
+    }
+    
     @Override
     public @Nullable ActionReply executeOnHost() throws PacketException, SQLException {
         assert isOnHost() : "This method is called on a host.";
@@ -148,7 +154,7 @@ public final class AccessRequest extends CoreServiceExternalAction {
         if (signature instanceof CredentialsSignatureWrapper) {
             ((CredentialsSignatureWrapper) signature).checkCover(getRequiredPermissions());
         } else if (!(signature instanceof HostSignatureWrapper)) {
-            throw new PacketException(PacketError.AUTHORIZATION);
+            throw new PacketException(PacketError.AUTHORIZATION, "TODO");
         }
         return null;
     }
@@ -200,7 +206,7 @@ public final class AccessRequest extends CoreServiceExternalAction {
         
         @Pure
         @Override
-        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws InvalidEncodingException, SQLException, IdentityNotFoundException, InvalidDeclarationException {
+        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
             return new AccessRequest(entity, signature, recipient, block);
         }
         

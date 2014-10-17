@@ -1,10 +1,9 @@
 package ch.virtualid.handler.reply.query;
 
-import ch.virtualid.entity.Entity;
-import ch.virtualid.handler.query.external.AttributesQuery;
+import ch.virtualid.entity.Account;
+import ch.virtualid.identity.SemanticType;
 import ch.xdf.Block;
 import ch.xdf.SignatureWrapper;
-import java.sql.Connection;
 import javax.annotation.Nonnull;
 
 /**
@@ -25,8 +24,18 @@ public final class AttributesReply extends CoreServiceQueryReply {
      * @param signature the signature of the packet.
      * @param block the element of the content.
      */
-    protected AttributesReply(@Nonnull Connection connection, @Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull Block block) {
-        super(connection, entity, signature, block);
+    protected AttributesReply(@Nonnull Account account, @Nonnull SignatureWrapper signature, @Nonnull Block block) {
+        super(account);
+    }
+
+    @Override
+    public SemanticType getType() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Block toBlock() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
 }

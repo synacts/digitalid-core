@@ -1,8 +1,6 @@
 package ch.virtualid.expression;
 
 import ch.virtualid.credential.Credential;
-import ch.virtualid.identity.Category;
-import ch.virtualid.identity.Mapper;
 import ch.xdf.Block;
 import java.sql.SQLException;
 
@@ -31,7 +29,7 @@ final class ContactExpression extends Expression {
     ContactExpression(long contact) throws SQLException {
         super(null, null, 0);
 
-        assert Mapper.isVid(contact) && Category.isPerson(contact) : "The second number has to denote a person.";
+//        assert Mapper.isVid(contact) && Category.isPerson(contact) : "The second number has to denote a person.";
 
         this.contact = contact;
     }
@@ -71,7 +69,7 @@ final class ContactExpression extends Expression {
         if (credentials == null) return false;
 
         for (Credential credential : credentials) {
-            if (credential.getAttribute() == null && Mapper.getVid(credential.getIdentifier()) == contact) return true;
+//            if (credential.getAttribute() == null && Mapper.getVid(credential.getIdentifier()) == contact) return true;
         }
 
         return false;
@@ -84,6 +82,7 @@ final class ContactExpression extends Expression {
      */
     @Override
     public String toString() {
-        try { return Mapper.getIdentifier(contact); } catch (SQLException exception) { return "ERROR"; }
+        return "TODO";
+//        try { return Mapper.getIdentifier(contact); } catch (SQLException exception) { return "ERROR"; }
     }
 }

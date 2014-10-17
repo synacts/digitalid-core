@@ -11,6 +11,7 @@ import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Method;
 import ch.virtualid.handler.reply.query.AttributesReply;
+import ch.virtualid.handler.reply.query.CoreServiceQueryReply;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.Identifier;
 import ch.virtualid.identity.SemanticType;
@@ -55,6 +56,7 @@ public final class AttributesQuery extends CoreServiceExternalQuery {
         super(role, subject);
         
         this.attributes = attributes;
+        throw new UnsupportedOperationException();
     }
     
     /**
@@ -78,6 +80,7 @@ public final class AttributesQuery extends CoreServiceExternalQuery {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         // TODO: Decode the given block.
+        throw new InvalidEncodingException("TODO");
     }
     
     @Pure
@@ -150,7 +153,13 @@ public final class AttributesQuery extends CoreServiceExternalQuery {
         return new ListWrapper(declarations).toBlock();
         */
         
-        return new AttributesReply();
+        throw new SQLException();
+//        return new AttributesReply();
+    }
+    
+    @Override
+    public Class<? extends CoreServiceQueryReply> getReplyClass() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     

@@ -623,7 +623,7 @@ public final class Mapper {
      * @param identifier the identifier of interest.
      * @return the successor of the given identifier as stored in the database or retrieved by a new request.
      */
-    public static @Nullable NonHostIdentifier getSuccessorReloaded(@Nonnull NonHostIdentifier identifier) throws SQLException, IOException, PacketException, ExternalException  {
+    public static @Nullable NonHostIdentifier getSuccessorReloaded(@Nonnull NonHostIdentifier identifier) throws SQLException, IOException, PacketException, ExternalException {
         @Nullable NonHostIdentifier successor = getSuccessor(identifier);
         if (successor == null) {
             if (getIdentity(identifier).getCategory() == Category.EMAIL_PERSON) {

@@ -2,7 +2,6 @@ package ch.virtualid.contact;
 
 import ch.virtualid.annotations.OnlyForActions;
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.client.Synchronizer;
 import ch.virtualid.concept.Aspect;
 import ch.virtualid.concept.Concept;
 import ch.virtualid.concept.Instance;
@@ -10,16 +9,15 @@ import ch.virtualid.concept.Observer;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.Role;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
-import ch.virtualid.module.both.Contexts;
 import ch.virtualid.util.ConcurrentHashMap;
 import ch.virtualid.util.ConcurrentMap;
 import ch.xdf.Block;
 import ch.xdf.Int64Wrapper;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
 import java.security.SecureRandom;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -135,7 +133,7 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
      */
     public static @Nonnull Context create(@Nonnull Role role) {
         final @Nonnull Context context = get(role, new SecureRandom().nextLong());
-        Synchronizer.execute(new ContextCreate(context));
+//        Synchronizer.execute(new ContextCreate(context));
         return context;
     }
     
@@ -146,7 +144,7 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
      */
     @OnlyForActions
     public static void createForActions(@Nonnull Context context) {
-        Contexts.create(context);
+//        Contexts.create(context);
         context.notify(CREATED);
     }
     
@@ -225,7 +223,8 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
     @Pure
     public @Nonnull String getName() throws SQLException {
         if (name == null) {
-            name = Contexts.getName(this);
+            throw new SQLException();
+//            name = Contexts.getName(this);
         }
         return name;
     }
@@ -242,7 +241,7 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
         
         final @Nonnull String oldName = getName();
         if (!newName.equals(oldName)) {
-            Synchronizer.execute(new ContextNameReplace(this, oldName, newName));
+//            Synchronizer.execute(new ContextNameReplace(this, oldName, newName));
         }
     }
     
@@ -260,7 +259,7 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
         assert isValid(oldName) : "The old name is valid.";
         assert isValid(newName) : "The new name is valid.";
         
-        Contexts.replaceName(this, oldName, newName);
+//        Contexts.replaceName(this, oldName, newName);
         name = newName;
         notify(NAME);
     }
@@ -279,7 +278,8 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
     @Pure
     public @Nonnull ReadonlyContactPermissions getPermissions() throws SQLException {
         if (permissions == null) {
-            permissions = Contexts.getPermissions(this);
+            throw new SQLException();
+//            permissions = Contexts.getPermissions(this);
         }
         return permissions;
     }
@@ -291,7 +291,7 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
      */
     public void addPermissions(@Nonnull ReadonlyContactPermissions permissions) throws SQLException {
         if (!permissions.isEmpty()) {
-            Synchronizer.execute(new ContextPermissionsAdd(this, permissions));
+//            Synchronizer.execute(new ContextPermissionsAdd(this, permissions));
         }
     }
     
@@ -306,7 +306,7 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
     public void addPermissionsForActions(@Nonnull ReadonlyContactPermissions newPermissions) throws SQLException {
         assert !newPermissions.isEmpty() : "The new permissions are not empty.";
         
-        Contexts.addPermissions(this, newPermissions);
+//        Contexts.addPermissions(this, newPermissions);
         if (permissions != null) permissions.addAll(newPermissions);
         notify(PERMISSIONS);
     }
@@ -318,7 +318,7 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
      */
     public void removePermissions(@Nonnull ReadonlyContactPermissions permissions) throws SQLException {
         if (!permissions.isEmpty()) {
-            Synchronizer.execute(new ContextPermissionsRemove(this, permissions));
+//            Synchronizer.execute(new ContextPermissionsRemove(this, permissions));
         }
     }
     
@@ -333,7 +333,7 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
     public void removePermissionsForActions(@Nonnull ReadonlyContactPermissions oldPermissions) throws SQLException {
         assert !oldPermissions.isEmpty() : "The old permissions are not empty.";
         
-        Contexts.removePermissions(this, oldPermissions);
+//        Contexts.removePermissions(this, oldPermissions);
         if (permissions != null) permissions.removeAll(permissions);
         notify(PERMISSIONS);
     }
@@ -345,7 +345,7 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
      * @return the authentications of this context.
      */
     public @Nonnull ReadonlyAuthentications getAuthentications() throws SQLException {
-        
+        throw new SQLException();
     }
     
     /**
@@ -372,7 +372,9 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
      * 
      * @return a list of the subcontexts in the specified sequence.
      */
-    public @Nonnull List<Context> getSubcontexts() throws SQLException;
+    public @Nonnull List<Context> getSubcontexts() throws SQLException {
+        throw new SQLException();
+    }
     
     /**
      * Adds the given subcontexts to this context at the given position.
@@ -381,7 +383,9 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
      * @param position the position the add the given subcontexts.
      * @require (Context subcontext : subcontexts).getIdentity().equals(getIdentity()) : "The identity of all contexts have to be the same.";
      */
-    public void addSubcontexts(@Nonnull List<Context> subcontexts, byte position) throws SQLException;
+    public void addSubcontexts(@Nonnull List<Context> subcontexts, byte position) throws SQLException {
+        throw new SQLException();
+    }
     
     /**
      * Removes the given subcontexts from this context.
@@ -389,7 +393,9 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
      * @param subcontexts the subcontexts to be removed from this context.
      * @require (Context subcontext : subcontexts).getIdentity().equals(getIdentity()) : "The identity of all contexts have to be the same.";
      */
-    public void removeSubcontexts(@Nonnull List<Context> subcontexts) throws SQLException;
+    public void removeSubcontexts(@Nonnull List<Context> subcontexts) throws SQLException {
+        throw new SQLException();
+    }
     
     /**
      * Returns whether this context is a supercontext of the given context.
@@ -399,14 +405,18 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
      * @return whether this context is a supercontext of the given context.
      * @require context.getIdentity().equals(getIdentity()) : "The identity of the given context is the same.";
      */
-    public boolean isSupercontextOf(@Nonnull Context context) throws SQLException;
+    public boolean isSupercontextOf(@Nonnull Context context) throws SQLException {
+        throw new SQLException();
+    }
     
     /**
      * Returns a set with all subcontexts of this context (including this context).
      * 
      * @return a set with all subcontexts of this context (including this context).
      */
-    public @Nonnull Set<Context> getAllSubcontexts() throws SQLException;
+    public @Nonnull Set<Context> getAllSubcontexts() throws SQLException {
+        throw new SQLException();
+    }
     
     
     /**
@@ -414,7 +424,9 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
      * 
      * @return a set with the subcontexts of this context.
      */
-    public @Nonnull Set<Context> getSupercontexts() throws SQLException;
+    public @Nonnull Set<Context> getSupercontexts() throws SQLException {
+        throw new SQLException();
+    }
     
     /**
      * Returns whether this context is a subcontext of the given context.
@@ -425,7 +437,7 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
      * @require context.getIdentity().equals(getIdentity()) : "The identity of the given context is the same.";
      */
     public final boolean isSubcontextOf(@Nonnull Context context) throws SQLException {
-        assert context.getIdentity().equals(getIdentity()) : "The identity of the given context is the same.";
+//        assert context.getIdentity().equals(getIdentity()) : "The identity of the given context is the same.";
         
         return context.isSupercontextOf(this);
     }
@@ -436,7 +448,7 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
      * 
      * @return a set with the contacts of this context.
      */
-    public @Nonnull Set<Contact> getContacts() throws SQLException;
+//    public @Nonnull Set<Contact> getContacts() throws SQLException;
     
     /**
      * Returns whether this context contains the given contact.
@@ -445,28 +457,30 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
      * 
      * @return whether this context contains the given contact.
      */
-    public boolean contains(@Nonnull Contact contact) throws SQLException;
+    public boolean contains(@Nonnull Contact contact) throws SQLException {
+        throw new SQLException();
+    }
     
     /**
      * Adds the given contacts to this context.
      * 
      * @param contacts the contacts to be added to this context.
      */
-    public void addContacts(@Nonnull Set<Contact> contacts) throws SQLException;
+//    public void addContacts(@Nonnull Set<Contact> contacts) throws SQLException;
     
     /**
      * Removes the given contacts from this context.
      * 
      * @param contacts the contacts to be removed from this context.
      */
-    public void removeContacts(@Nonnull Set<Contact> contacts) throws SQLException;
+//    public void removeContacts(@Nonnull Set<Contact> contacts) throws SQLException;
     
     /**
      * Returns a set with all the contacts of this context (i.e. the contacts from subcontexts are included as well).
      * 
      * @return a set with all the contacts of this context (i.e. the contacts from subcontexts are included as well).
      */
-    public @Nonnull Set<Contact> getAllContacts() throws SQLException;
+//    public @Nonnull Set<Contact> getAllContacts() throws SQLException;
     
     
     /**

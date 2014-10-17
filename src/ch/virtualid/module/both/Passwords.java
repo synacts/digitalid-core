@@ -62,7 +62,7 @@ public final class Passwords implements BothModule {
     /**
      * Stores the semantic type {@code passwords.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType MODULE = SemanticType.create("passwords.module@virtualid.ch").load(ListWrapper.TYPE, MODULE_ENTRY);
+    public static final @Nonnull SemanticType MODULE = SemanticType.create("passwords.module@virtualid.ch").load(ListWrapper.TYPE, MODULE_ENTRY);
     
     @Pure
     @Override

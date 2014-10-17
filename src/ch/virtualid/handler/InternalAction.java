@@ -130,7 +130,7 @@ public abstract class InternalAction extends Action implements InternalMethod {
      * @return the module on which this action operates.
      */
     @Pure
-    public abstract @Nonnull SemanticType getModule();
+    public abstract @Nonnull SemanticType getModule(); // TODO: Maybe change the return type to Class<? extends BothModule>?
     
     /**
      * Stores an empty list of semantic types.

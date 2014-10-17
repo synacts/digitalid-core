@@ -2,24 +2,22 @@ package ch.virtualid.agent;
 
 import ch.virtualid.annotations.OnlyForActions;
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.client.Synchronizer;
 import ch.virtualid.concept.Aspect;
 import ch.virtualid.concept.Concept;
 import ch.virtualid.entity.Entity;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.exceptions.packet.PacketError;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
-import ch.virtualid.module.both.Agents;
-import ch.virtualid.exceptions.packet.PacketError;
-import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.ReadonlyArray;
 import ch.xdf.Block;
 import ch.xdf.BooleanWrapper;
 import ch.xdf.Int64Wrapper;
 import ch.xdf.TupleWrapper;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
@@ -155,14 +153,14 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
      */
     @Pure
     public void checkNotRemoved() throws PacketException {
-        if (isRemoved()) throw new PacketException(PacketError.AUTHORIZATION);
+        if (isRemoved()) throw new PacketException(PacketError.AUTHORIZATION, "The agent has been removed.");
     }
     
     /**
      * Removes this agent from the database by marking it as being removed.
      */
     public final void remove() throws SQLException {
-        Synchronizer.execute(new AgentRemove(this));
+//        Synchronizer.execute(new AgentRemove(this));
     }
     
     /**
@@ -170,7 +168,7 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
      */
     @OnlyForActions
     public final void removeForActions() throws SQLException {
-        Agents.removeAgent(this);
+//        Agents.removeAgent(this);
         removed = true;
         notify(DELETED);
     }
@@ -179,7 +177,7 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
      * Unremoves this agent from the database by marking it as no longer being removed.
      */
     public final void unremove() throws SQLException {
-        Synchronizer.execute(new AgentUnremove(this));
+//        Synchronizer.execute(new AgentUnremove(this));
     }
     
     /**
@@ -187,7 +185,7 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
      */
     @OnlyForActions
     public final void unremoveForActions() throws SQLException {
-        Agents.unremoveAgent(this);
+//        Agents.unremoveAgent(this);
         removed = false;
         notify(CREATED);
     }
@@ -201,7 +199,8 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
     @Pure
     public final @Nonnull ReadonlyAgentPermissions getPermissions() throws SQLException {
         if (permissions == null) {
-            permissions = Agents.getPermissions(this);
+            throw new SQLException();
+//            permissions = Agents.getPermissions(this);
         }
         return permissions;
     }
@@ -213,7 +212,7 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
      */
     public final void addPermissions(@Nonnull ReadonlyAgentPermissions permissions) throws SQLException {
         if (!permissions.isEmpty()) {
-            Synchronizer.execute(new AgentPermissionsAdd(this, permissions));
+//            Synchronizer.execute(new AgentPermissionsAdd(this, permissions));
         }
     }
     
@@ -228,8 +227,8 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
     public final void addPermissionsForActions(@Nonnull ReadonlyAgentPermissions newPermissions) throws SQLException {
         assert !newPermissions.isEmpty() : "The new permissions are not empty.";
         
-        Agents.addPermissions(this, newPermissions);
-        if (permissions != null) permissions.addAll(newPermissions);
+//        Agents.addPermissions(this, newPermissions);
+//        if (permissions != null) permissions.addAll(newPermissions);
         notify(PERMISSIONS);
     }
     
@@ -240,7 +239,7 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
      */
     public final void removePermissions(@Nonnull ReadonlyAgentPermissions permissions) throws SQLException {
         if (!permissions.isEmpty()) {
-            Synchronizer.execute(new AgentPermissionsRemove(this, permissions));
+//            Synchronizer.execute(new AgentPermissionsRemove(this, permissions));
         }
     }
     
@@ -255,7 +254,7 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
     public final void removePermissionsForActions(@Nonnull ReadonlyAgentPermissions oldPermissions) throws SQLException {
         assert !oldPermissions.isEmpty() : "The old permissions are not empty.";
         
-        Agents.removePermissions(this, oldPermissions);
+//        Agents.removePermissions(this, oldPermissions);
         if (permissions != null) permissions.removeAll(permissions);
         notify(PERMISSIONS);
     }
@@ -269,7 +268,8 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
     @Pure
     public final @Nonnull Restrictions getRestrictions() throws SQLException {
         if (restrictions == null) {
-            restrictions = Agents.getRestrictions(this);
+            throw new SQLException();
+//            restrictions = Agents.getRestrictions(this);
         }
         return restrictions;
     }
@@ -282,7 +282,7 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
     public final void setRestrictions(@Nonnull Restrictions newRestrictions) throws SQLException {
         final @Nullable Restrictions oldRestrictions = getRestrictions();
         if (!newRestrictions.equals(oldRestrictions)) {
-            Synchronizer.execute(new AgentRestrictionsReplace(this, oldRestrictions, newRestrictions));
+//            Synchronizer.execute(new AgentRestrictionsReplace(this, oldRestrictions, newRestrictions));
         }
     }
     
@@ -294,7 +294,7 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
      */
     @OnlyForActions
     public void replaceRestrictions(@Nullable Restrictions oldRestrictions, @Nonnull Restrictions newRestrictions) throws SQLException {
-        Agents.replaceRestrictions(this, oldRestrictions, newRestrictions);
+//        Agents.replaceRestrictions(this, oldRestrictions, newRestrictions);
         restrictions = newRestrictions;
         notify(RESTRICTIONS);
     }
@@ -319,7 +319,7 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
      */
     @Pure
     public void checkCovers(@Nonnull Agent agent) throws PacketException, SQLException {
-        if (!covers(agent)) throw new PacketException(PacketError.AUTHORIZATION);
+        if (!covers(agent)) throw new PacketException(PacketError.AUTHORIZATION, "This agent does not cover the other agent.");
     }
     
     

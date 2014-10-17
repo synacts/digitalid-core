@@ -1,6 +1,7 @@
 package ch.virtualid.concepts;
 
 import ch.virtualid.concept.Concept;
+import ch.virtualid.entity.Entity;
 import ch.virtualid.identity.SemanticType;
 import ch.xdf.ListWrapper;
 import ch.xdf.SignatureWrapper;
@@ -25,8 +26,8 @@ public final class Certificate extends Concept {
     public static final @Nonnull SemanticType LIST = SemanticType.create("list.certificate@virtualid.ch").load(ListWrapper.TYPE, TYPE);
     
     
-    public Certificate() {
-        
+    public Certificate(@Nonnull Entity entity) {
+        super(entity);
     }
     
 }

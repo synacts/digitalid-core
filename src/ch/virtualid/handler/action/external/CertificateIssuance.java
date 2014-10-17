@@ -12,6 +12,7 @@ import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.ActionReply;
 import ch.virtualid.handler.Method;
+import ch.virtualid.handler.reply.action.CoreServiceActionReply;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.Identity;
 import ch.virtualid.identity.Person;
@@ -122,6 +123,12 @@ public final class CertificateIssuance extends CoreServiceExternalAction {
     }
     
     
+    @Pure
+    @Override
+    public @Nullable Class<CoreServiceActionReply> getReplyClass() {
+        return null;
+    }
+    
     /**
      * Executes this action on both hosts and clients.
      */
@@ -135,12 +142,12 @@ public final class CertificateIssuance extends CoreServiceExternalAction {
         assert hasSignature() : "This handler has a signature.";
         
         final @Nonnull SignatureWrapper signature = getSignatureNotNull();
-        if (!(signature instanceof HostSignatureWrapper)) throw new PacketException(PacketError.AUTHORIZATION);
+        if (!(signature instanceof HostSignatureWrapper)) throw new PacketException(PacketError.AUTHORIZATION, "TODO");
         
         try {
             certificate.verifyAsCertificate();
         } catch (@Nonnull IOException | PacketException | ExternalException exception) { // TODO: What to do with the packet exception?
-            throw new PacketException(PacketError.METHOD, "", exception);
+            throw new PacketException(PacketError.METHOD, "TODO", exception);
         }
         
         // TODO: Check other things like whether the signer is the one in the certificate.

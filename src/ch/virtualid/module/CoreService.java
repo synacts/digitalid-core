@@ -55,7 +55,7 @@ public final class CoreService extends Service {
     /**
      * Stores the semantic type {@code state@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType STATE = SemanticType.create("state@virtualid.ch").load(Service.STATES);
+    public static final @Nonnull SemanticType STATE = SemanticType.create("state@virtualid.ch").load(Service.STATES);
     
     @Pure
     @Override

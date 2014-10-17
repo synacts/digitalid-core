@@ -4,9 +4,9 @@ import ch.virtualid.annotations.Pure;
 import ch.virtualid.concept.Concept;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.Entity;
-import ch.virtualid.exceptions.external.IdentityNotFoundException;
-import ch.virtualid.exceptions.external.InvalidDeclarationException;
+import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identity.Identity;
 import ch.virtualid.identity.NonHostIdentifier;
 import ch.virtualid.identity.Person;
@@ -15,6 +15,7 @@ import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
 import ch.xdf.Block;
+import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -142,7 +143,7 @@ public final class Contact extends Concept implements Immutable, Blockable, SQLi
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
     @Pure
-    public static @Nonnull Contact get(@Nonnull Entity entity, @Nonnull Block block) throws InvalidEncodingException, SQLException, IdentityNotFoundException, InvalidDeclarationException {
+    public static @Nonnull Contact get(@Nonnull Entity entity, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         return get(entity, new NonHostIdentifier(block).getIdentity().toPerson());

@@ -5,25 +5,25 @@ import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Account;
 import ch.virtualid.entity.Entity;
-import ch.virtualid.exceptions.external.InvalidDeclarationException;
+import ch.virtualid.exceptions.external.ExternalException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.exceptions.external.InvalidSignatureException;
+import ch.virtualid.exceptions.packet.PacketError;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.ActionReply;
 import ch.virtualid.handler.Method;
-import ch.virtualid.exceptions.external.IdentityNotFoundException;
+import ch.virtualid.handler.reply.action.CoreServiceActionReply;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.Identity;
 import ch.virtualid.identity.NonHostIdentifier;
 import ch.virtualid.identity.Person;
 import ch.virtualid.identity.SemanticType;
-import ch.virtualid.exceptions.external.FailedRequestException;
-import ch.virtualid.exceptions.packet.PacketError;
-import ch.virtualid.exceptions.packet.PacketException;
 import ch.xdf.Block;
 import ch.xdf.HostSignatureWrapper;
 import ch.xdf.SelfcontainedWrapper;
 import ch.xdf.SignatureWrapper;
 import ch.xdf.TupleWrapper;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
-import ch.virtualid.exceptions.external.InvalidSignatureException;
+import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -98,7 +98,7 @@ public final class RoleIssuance extends CoreServiceExternalAction {
      * 
      * @ensure hasSignature() : "This handler has a signature.";
      */
-    private RoleIssuance(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws InvalidEncodingException, IdentityNotFoundException, SQLException, InvalidDeclarationException, FailedRequestException {
+    private RoleIssuance(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
@@ -127,6 +127,12 @@ public final class RoleIssuance extends CoreServiceExternalAction {
     }
     
     
+    @Pure
+    @Override
+    public @Nullable Class<CoreServiceActionReply> getReplyClass() {
+        return null;
+    }
+    
     /**
      * Executes this action on both hosts and clients.
      */
@@ -140,12 +146,12 @@ public final class RoleIssuance extends CoreServiceExternalAction {
         assert hasSignature() : "This handler has a signature.";
         
         final @Nonnull SignatureWrapper signature = getSignatureNotNull();
-        if (!(signature instanceof HostSignatureWrapper)) throw new PacketException(PacketError.AUTHORIZATION);
+        if (!(signature instanceof HostSignatureWrapper)) throw new PacketException(PacketError.AUTHORIZATION, "TODO");
         
         try {
             certificate.verify();
         } catch (@Nonnull InvalidEncodingException | InvalidSignatureException exception) {
-            throw new PacketException(PacketError.METHOD, exception);
+            throw new PacketException(PacketError.METHOD, "TODO", exception);
         }
         
         // TODO: Check other things like whether the signer has the necessary delegation.
@@ -191,7 +197,7 @@ public final class RoleIssuance extends CoreServiceExternalAction {
         
         @Pure
         @Override
-        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws InvalidEncodingException, SQLException, IdentityNotFoundException, InvalidDeclarationException, FailedRequestException {
+        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
             return new RoleIssuance(entity, signature, recipient, block);
         }
         

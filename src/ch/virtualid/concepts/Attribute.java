@@ -1,21 +1,19 @@
 package ch.virtualid.concepts;
 
 import ch.virtualid.annotations.OnlyForActions;
-import ch.virtualid.client.Synchronizer;
 import ch.virtualid.concept.Aspect;
 import ch.virtualid.concept.Concept;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.Entity;
-import ch.virtualid.exceptions.external.IdentityNotFoundException;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.exceptions.external.ExternalException;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.expression.PassiveExpression;
-import ch.virtualid.handler.action.internal.AttributeValueReplace;
 import ch.virtualid.identity.NonHostIdentifier;
 import ch.virtualid.identity.SemanticType;
-import ch.virtualid.module.both.Attributes;
 import ch.xdf.Block;
 import ch.xdf.SelfcontainedWrapper;
 import ch.xdf.SignatureWrapper;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -152,7 +150,7 @@ public final class Attribute extends Concept {
      * 
      * @return the attribute in the given block at the given entity.
      */
-    public static @Nonnull Attribute get(@Nonnull Entity entity, @Nonnull Block block) throws InvalidEncodingException, IdentityNotFoundException {
+    public static @Nonnull Attribute get(@Nonnull Entity entity, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         // TODO: Assert the block type.
         
         return get(entity, new NonHostIdentifier(block).getIdentity().toSemanticType());
@@ -164,8 +162,9 @@ public final class Attribute extends Concept {
      * @param entity the entity whose attributes are to be returned.
      * @return all the attributes of the given entity.
      */
-    public static @Nonnull Set<Attribute> getAll(@Nonnull Entity entity) {
-        return Attributes.getAll(entity);
+    public static @Nonnull Set<Attribute> getAll(@Nonnull Entity entity) throws SQLException {
+        throw new SQLException();
+//        return Attributes.getAll(entity);
     }
     
     
@@ -186,7 +185,7 @@ public final class Attribute extends Concept {
      */
     public @Nullable Block getValue() throws SQLException {
         if (!valueLoaded) {
-            value = Attributes.getValue(this, true);
+//            value = Attributes.getValue(this, true);
             valueLoaded = true;
         }
         return value;
@@ -197,7 +196,7 @@ public final class Attribute extends Concept {
         
         // The old and the new value is not identical (and particularly not both null).
         if (this.value != value) { // TODO: Rather a precondition? -> No, rather a real equals().
-            Synchronizer.execute(new AttributeValueReplace(this, true, getValue(), value));
+//            Synchronizer.execute(new AttributeValueReplace(this, true, getValue(), value));
         }
     }
     
@@ -205,9 +204,9 @@ public final class Attribute extends Concept {
     public void replaceValue(@Nullable Block oldValue, @Nullable Block newValue) throws SQLException {
         assert oldValue != newValue : "";
         
-        if (oldValue == null) Attributes.addValue(this, true, newValue);
-        else if (newValue == null) Attributes.removeValue(this, true, oldValue);
-        else Attributes.replaceValue(this, true, oldValue, newValue);
+//        if (oldValue == null) Attributes.addValue(this, true, newValue);
+//        else if (newValue == null) Attributes.removeValue(this, true, oldValue);
+//        else Attributes.replaceValue(this, true, oldValue, newValue);
         
         value = newValue;
         valueLoaded = true;
@@ -223,7 +222,7 @@ public final class Attribute extends Concept {
      */
     public @Nullable Block getUnpublishedValue() {
         if (!unpublishedLoaded) {
-            unpublished = Attributes.getValue(this);
+//            unpublished = Attributes.getValue(this);
             unpublishedLoaded = true;
         }
         return unpublished;
@@ -237,7 +236,7 @@ public final class Attribute extends Concept {
      */
     public @Nullable PassiveExpression getVisibility() {
         if (!visibilityLoaded) {
-            visibility = Attributes.getValue(this);
+//            visibility = Attributes.getValue(this);
             visibilityLoaded = true;
         }
         return visibility;

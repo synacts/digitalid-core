@@ -1,12 +1,10 @@
 package ch.virtualid.expression;
 
 import ch.virtualid.credential.Credential;
-import ch.virtualid.identity.Mapper;
 import ch.virtualid.server.Host;
 import ch.xdf.Block;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.List;
 
 /**
  * This class models context expressions.
@@ -37,7 +35,7 @@ final class ContextExpression extends Expression {
 
         assert connection != null : "The connection is not null.";
         assert host != null : "The host is not null.";
-        assert Mapper.isVid(vid) : "The first number has to denote a VID.";
+//        assert Mapper.isVid(vid) : "The first number has to denote a VID.";
 
         this.context = context;
     }
@@ -76,10 +74,10 @@ final class ContextExpression extends Expression {
     public boolean matches(Credential[] credentials) throws SQLException, Exception {
         if (credentials == null) return false;
 
-        List<Long> contacts = getHost().getContacts(getConnection(), getVid(), context);
+//        List<Long> contacts = getHost().getContacts(getConnection(), getVid(), context);
 
         for (Credential credential : credentials) {
-            if (credential.getAttribute() == null && contacts.contains(Mapper.getVid(credential.getIdentifier()))) return true;
+//            if (credential.getAttribute() == null && contacts.contains(Mapper.getVid(credential.getIdentifier()))) return true;
         }
 
         return false;

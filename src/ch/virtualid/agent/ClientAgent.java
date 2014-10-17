@@ -4,14 +4,12 @@ import ch.virtualid.annotations.OnlyForActions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Image;
 import ch.virtualid.client.Commitment;
-import ch.virtualid.client.Synchronizer;
 import ch.virtualid.concept.Aspect;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
-import ch.virtualid.module.both.Agents;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -93,7 +91,8 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
      */
     public @Nonnull Commitment getCommitment() throws SQLException {
         if (commitment == null) {
-            commitment = Agents.getCommitment(this);
+            throw new SQLException();
+//            commitment = Agents.getCommitment(this);
         }
         return commitment;
     }
@@ -106,7 +105,7 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
     public void setCommitment(@Nonnull Commitment newCommitment) throws SQLException {
         final @Nonnull Commitment oldCommitment = getCommitment();
         if (!newCommitment.equals(oldCommitment)) {
-            Synchronizer.execute(new ClientAgentCommitmentReplace(this, oldCommitment, newCommitment));
+//            Synchronizer.execute(new ClientAgentCommitmentReplace(this, oldCommitment, newCommitment));
         }
     }
     
@@ -118,7 +117,7 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
      */
     @OnlyForActions
     public void replaceCommitment(@Nonnull Commitment oldCommitment, @Nonnull Commitment newCommitment) throws SQLException {
-        Agents.replaceCommitment(this, oldCommitment, newCommitment);
+//        Agents.replaceCommitment(this, oldCommitment, newCommitment);
         commitment = newCommitment;
         notify(COMMITMENT);
     }
@@ -131,7 +130,8 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
      */
     public @Nonnull String getName() throws SQLException {
         if (name == null) {
-            name = Agents.getName(this);
+            throw new SQLException();
+//            name = Agents.getName(this);
         }
         return name;
     }
@@ -148,7 +148,7 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
         
         final @Nonnull String oldName = getName();
         if (!newName.equals(oldName)) {
-            Synchronizer.execute(new ClientAgentNameReplace(this, oldName, newName));
+//            Synchronizer.execute(new ClientAgentNameReplace(this, oldName, newName));
         }
     }
     
@@ -166,7 +166,7 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
         assert oldName.length() <= NAME_LENGTH : "The old name has at most the indicated amount of characters.";
         assert newName.length() <= NAME_LENGTH : "The new name has at most the indicated amount of characters.";
         
-        Agents.replaceName(this, oldName, newName);
+//        Agents.replaceName(this, oldName, newName);
         name = newName;
         notify(NAME);
     }
@@ -179,7 +179,8 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
      */
     public @Nonnull Image getIcon() throws SQLException {
         if (icon == null) {
-            icon = Agents.getIcon(this);
+            throw new SQLException();
+//            icon = Agents.getIcon(this);
         }
         return icon;
     }
@@ -196,7 +197,7 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
         
         final @Nonnull Image oldIcon = getIcon();
         if (!newIcon.equals(oldIcon)) {
-            Synchronizer.execute(new ClientAgentIconReplace(this, oldIcon, newIcon));
+//            Synchronizer.execute(new ClientAgentIconReplace(this, oldIcon, newIcon));
         }
     }
     
@@ -214,7 +215,7 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
         assert oldIcon.isSquare(ICON_SIZE) : "The old icon has the specified size.";
         assert newIcon.isSquare(ICON_SIZE) : "The new icon has the specified size.";
         
-        Agents.replaceIcon(this, oldIcon, newIcon);
+//        Agents.replaceIcon(this, oldIcon, newIcon);
         icon = newIcon;
         notify(ICON);
     }

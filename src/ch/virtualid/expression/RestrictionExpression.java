@@ -1,12 +1,10 @@
 package ch.virtualid.expression;
 
 import ch.virtualid.credential.Credential;
-import ch.virtualid.identity.Category;
-import ch.virtualid.identity.Mapper;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.xdf.Block;
 import ch.xdf.SelfcontainedWrapper;
 import ch.xdf.StringWrapper;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
@@ -53,7 +51,7 @@ final class RestrictionExpression extends Expression {
     RestrictionExpression(long type, String string, String symbol) throws SQLException {
         super(null, null, 0);
 
-        assert type == 0 || Mapper.isVid(type) && Category.isSemanticType(type) : "The second number is zero or denote a semantic type.";
+//        assert type == 0 || Mapper.isVid(type) && Category.isSemanticType(type) : "The second number is zero or denote a semantic type.";
         assert (string == null) == (symbol == null) : "Either both string and symbol are null or none of them.";
         assert string == null || string.startsWith("\"") && string.endsWith("\"") || string.matches("\\d+") : "If not null, the string either is a string or a number.";
         assert symbol == null || symbols.contains(symbol) : "If not null, the symbol is valid.";
@@ -128,7 +126,7 @@ final class RestrictionExpression extends Expression {
         assert type != 0 : "The type is not zero.";
 
         SelfcontainedWrapper selfcontainedWrapper = new SelfcontainedWrapper(attribute);
-        long type = Mapper.getVid(selfcontainedWrapper.getIdentifier());
+//        long type = Mapper.getVid(selfcontainedWrapper.getIdentifier());
 
         return this.type == type && match(selfcontainedWrapper.getElement());
     }
@@ -147,7 +145,7 @@ final class RestrictionExpression extends Expression {
         if (credentials == null) return false;
 
         for (Credential credential : credentials) {
-            if (credential.getAttribute() != null && Mapper.getVid(credential.getIdentifier()) == type) return matches(credential.getAttribute());
+//            if (credential.getAttribute() != null && Mapper.getVid(credential.getIdentifier()) == type) return matches(credential.getAttribute());
         }
 
         return false;
@@ -160,6 +158,7 @@ final class RestrictionExpression extends Expression {
      */
     @Override
     public String toString() {
-        try { return (type == 0 ? "everybody" : Mapper.getIdentifier(type)) + (symbol == null ? "" : symbol) + (string == null ? "" : string); } catch (SQLException exception) { return "ERROR" + symbol + string; }
+        return "TODO";
+//        try { return (type == 0 ? "everybody" : Mapper.getIdentifier(type)) + (symbol == null ? "" : symbol) + (string == null ? "" : string); } catch (SQLException exception) { return "ERROR" + symbol + string; }
     }
 }

@@ -4,18 +4,18 @@ import ch.virtualid.annotations.Pure;
 import ch.virtualid.contact.Contact;
 import ch.virtualid.contact.Context;
 import ch.virtualid.entity.Entity;
-import ch.virtualid.exceptions.external.InvalidDeclarationException;
-import ch.virtualid.exceptions.external.IdentityNotFoundException;
+import ch.virtualid.exceptions.external.ExternalException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.exceptions.packet.PacketError;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
-import ch.virtualid.exceptions.packet.PacketError;
-import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.util.FreezableArray;
 import ch.xdf.Block;
 import ch.xdf.BooleanWrapper;
 import ch.xdf.TupleWrapper;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Objects;
 import javax.annotation.Nonnull;
@@ -160,7 +160,7 @@ public final class Restrictions implements Immutable, Blockable {
      * 
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
-    public Restrictions(@Nonnull Entity entity, @Nonnull Block block) throws InvalidEncodingException, SQLException, IdentityNotFoundException, InvalidDeclarationException {
+    public Restrictions(@Nonnull Entity entity, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         final @Nonnull TupleWrapper tuple = new TupleWrapper(block);
@@ -248,7 +248,7 @@ public final class Restrictions implements Immutable, Blockable {
      */
     @Pure
     public void checkIsClient() throws PacketException {
-        if (!isClient()) throw new PacketException(PacketError.AUTHORIZATION);
+        if (!isClient()) throw new PacketException(PacketError.AUTHORIZATION, "The action is restricted to clients.");
     }
     
     /**
@@ -256,7 +256,7 @@ public final class Restrictions implements Immutable, Blockable {
      */
     @Pure
     public void checkIsRole() throws PacketException {
-        if (!isRole()) throw new PacketException(PacketError.AUTHORIZATION);
+        if (!isRole()) throw new PacketException(PacketError.AUTHORIZATION, "The action is restricted to agents that can assume incoming roles.");
     }
     
     /**
@@ -264,7 +264,7 @@ public final class Restrictions implements Immutable, Blockable {
      */
     @Pure
     public void checkIsWriting() throws PacketException {
-        if (!isWriting()) throw new PacketException(PacketError.AUTHORIZATION);
+        if (!isWriting()) throw new PacketException(PacketError.AUTHORIZATION, "The action is restricted to agents that can write to contexts.");
     }
     
     
@@ -287,7 +287,7 @@ public final class Restrictions implements Immutable, Blockable {
      */
     @Pure
     public void checkCover(@Nonnull Context other) throws PacketException, SQLException {
-        if (!cover(other)) throw new PacketException(PacketError.AUTHORIZATION);
+        if (!cover(other)) throw new PacketException(PacketError.AUTHORIZATION, "The restrictions of the agent do not cover the necessary context.");
     }
     
     /**
@@ -309,7 +309,7 @@ public final class Restrictions implements Immutable, Blockable {
      */
     @Pure
     public void checkCover(@Nonnull Contact other) throws PacketException, SQLException {
-        if (!cover(other)) throw new PacketException(PacketError.AUTHORIZATION);
+        if (!cover(other)) throw new PacketException(PacketError.AUTHORIZATION, "The restrictions of the agent do not cover the necessary contact.");
     }
     
     /**
@@ -337,7 +337,7 @@ public final class Restrictions implements Immutable, Blockable {
      */
     @Pure
     public void checkCover(@Nonnull Restrictions restrictions) throws PacketException, SQLException {
-        if (!cover(restrictions)) throw new PacketException(PacketError.AUTHORIZATION);
+        if (!cover(restrictions)) throw new PacketException(PacketError.AUTHORIZATION, "The restrictions of the agent do not cover the necessary restrictions.");
     }
     
     
