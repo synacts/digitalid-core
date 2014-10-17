@@ -5,7 +5,6 @@ import ch.virtualid.client.Client;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.Role;
 import ch.virtualid.entity.Site;
-import ch.virtualid.identity.Mapper;
 import ch.virtualid.identity.NonHostIdentity;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.ClientModule;
@@ -17,7 +16,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * This class provides database access to the roles of the core service.
+ * This class provides database access to the {@link Role roles} of the core service.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 0.2
@@ -29,8 +28,14 @@ public final class Roles implements ClientModule {
     @Override
     public void createTables(@Nonnull Site site) throws SQLException {
         try (final @Nonnull Statement statement = Database.getConnection().createStatement()) {
-            // TODO: Create the tables of this module.
+//            statement.executeUpdate("CREATE TABLE IF NOT EXISTS role (role " + Database.getConfiguration().PRIMARY_KEY() + ", issuer BIGINT NOT NULL, relation BIGINT, recipient BIGINT, FOREIGN KEY (issuer) REFERENCES map_identity (identity), FOREIGN KEY (relation) REFERENCES map_identity (identity), FOREIGN KEY (recipient) REFERENCES map_identity (identity))");
+            // TODO: Add the corresponding authorization ID? -> Yes, but now agent (ID).
+            // -> the recipient should be another role, or not? -> I think so.
+            // Maybe make an index on the issuer (and recipient)?
         }
+        
+//        Mapper.addReference("role", "issuer");
+//        Mapper.addReference("role", "recipient");
     }
     
     @Override
@@ -40,21 +45,6 @@ public final class Roles implements ClientModule {
         }
     }
     
-    
-    static { CoreService.SERVICE.add(new Roles()); }
-    
-    @Override
-    protected void createTables(@Nonnull Site site) throws SQLException {
-        try (@Nonnull Statement statement = Database.getConnection().createStatement()) {
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS role (role " + Database.getConfiguration().PRIMARY_KEY() + ", issuer BIGINT NOT NULL, relation BIGINT, recipient BIGINT, FOREIGN KEY (issuer) REFERENCES map_identity (identity), FOREIGN KEY (relation) REFERENCES map_identity (identity), FOREIGN KEY (recipient) REFERENCES map_identity (identity))");
-            // TODO: Add the corresponding authorization ID? -> Yes, but now agent (ID).
-            // -> the recipient should be another role, or not? -> I think so.
-            // Maybe make an index on the issuer (and recipient)?
-        }
-        
-        Mapper.addReference("role", "issuer");
-        Mapper.addReference("role", "recipient");
-    }
     
     /**
      * Checks whether the given role is already mapped and returns the existing or newly mapped number.

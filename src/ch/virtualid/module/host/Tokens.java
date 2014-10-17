@@ -31,7 +31,8 @@ public final class Tokens implements HostModule {
     @Override
     public void createTables(@Nonnull Site site) throws SQLException {
         try (final @Nonnull Statement statement = Database.getConnection().createStatement()) {
-            // TODO: Create the tables of this module.
+//            statement.executeUpdate("CREATE TABLE IF NOT EXISTS public (host BIGINT NOT NULL, public BOOLEAN NOT NULL, PRIMARY KEY (host), FOREIGN KEY (host) REFERENCES map_identity (identity))");
+//            statement.executeUpdate("CREATE TABLE IF NOT EXISTS token (host BIGINT NOT NULL, token CHAR(19) BIGINT NOT NULL, PRIMARY KEY (host, token), FOREIGN KEY (host) REFERENCES map_identity (identity))");
         }
     }
     
@@ -44,14 +45,14 @@ public final class Tokens implements HostModule {
     
     
     /**
-     * Stores the semantic type {@code entry.pushing.module@virtualid.ch}.
+     * Stores the semantic type {@code entry.tokens.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType ENTRY = SemanticType.create("entry.pushing.module@virtualid.ch").load(TupleWrapper.TYPE);
+    private static final @Nonnull SemanticType ENTRY = SemanticType.create("entry.tokens.module@virtualid.ch").load(TupleWrapper.TYPE);
     
     /**
-     * Stores the semantic type {@code pushing.module@virtualid.ch}.
+     * Stores the semantic type {@code tokens.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType MODULE = SemanticType.create("pushing.module@virtualid.ch").load(ListWrapper.TYPE, ENTRY);
+    private static final @Nonnull SemanticType MODULE = SemanticType.create("tokens.module@virtualid.ch").load(ListWrapper.TYPE, ENTRY);
     
     @Pure
     @Override
@@ -79,6 +80,4 @@ public final class Tokens implements HostModule {
         }
     }
     
-//            statement.executeUpdate("CREATE TABLE IF NOT EXISTS public (host BIGINT NOT NULL, public BOOLEAN NOT NULL, PRIMARY KEY (host), FOREIGN KEY (host) REFERENCES map_identity (identity))");
-//            statement.executeUpdate("CREATE TABLE IF NOT EXISTS token (host BIGINT NOT NULL, token CHAR(19) BIGINT NOT NULL, PRIMARY KEY (host, token), FOREIGN KEY (host) REFERENCES map_identity (identity))");
 }

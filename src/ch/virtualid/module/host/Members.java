@@ -19,7 +19,8 @@ import java.sql.Statement;
 import javax.annotation.Nonnull;
 
 /**
- * Description.
+ * This class provides database access to the members of the core service.
+ * The members of a host can create as many new identities as they want.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 0.0
@@ -44,14 +45,14 @@ public final class Members implements HostModule {
     
     
     /**
-     * Stores the semantic type {@code entry.pushing.module@virtualid.ch}.
+     * Stores the semantic type {@code entry.members.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType ENTRY = SemanticType.create("entry.pushing.module@virtualid.ch").load(TupleWrapper.TYPE);
+    private static final @Nonnull SemanticType ENTRY = SemanticType.create("entry.members.module@virtualid.ch").load(TupleWrapper.TYPE);
     
     /**
-     * Stores the semantic type {@code pushing.module@virtualid.ch}.
+     * Stores the semantic type {@code members.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType MODULE = SemanticType.create("pushing.module@virtualid.ch").load(ListWrapper.TYPE, ENTRY);
+    private static final @Nonnull SemanticType MODULE = SemanticType.create("members.module@virtualid.ch").load(ListWrapper.TYPE, ENTRY);
     
     @Pure
     @Override

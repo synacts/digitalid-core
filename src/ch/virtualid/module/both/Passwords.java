@@ -29,10 +29,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * This class provides database access to the passwords of the core service.
+ * This class provides database access to the {@link Password passwords} of the core service.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.7
  */
 public final class Passwords implements BothModule {
     
@@ -41,7 +41,8 @@ public final class Passwords implements BothModule {
     @Override
     public void createTables(@Nonnull Site site) throws SQLException {
         try (final @Nonnull Statement statement = Database.getConnection().createStatement()) {
-            // TODO: Create the tables of this module.
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "_password (entity BIGINT NOT NULL, password VARCHAR(50) NOT NULL COLLATE " + Database.getConfiguration().BINARY() + ", PRIMARY KEY (entity), FOREIGN KEY (entity) REFERENCES " + site.getReference() + ")");
+            Database.getConfiguration().onInsertUpdate(statement, site + "_password", 1, "entity", "password");
         }
     }
     
@@ -54,14 +55,14 @@ public final class Passwords implements BothModule {
     
     
     /**
-     * Stores the semantic type {@code entry.pushing.module@virtualid.ch}.
+     * Stores the semantic type {@code entry.passwords.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType MODULE_ENTRY = SemanticType.create("entry.pushing.module@virtualid.ch").load(TupleWrapper.TYPE);
+    private static final @Nonnull SemanticType MODULE_ENTRY = SemanticType.create("entry.passwords.module@virtualid.ch").load(TupleWrapper.TYPE);
     
     /**
-     * Stores the semantic type {@code pushing.module@virtualid.ch}.
+     * Stores the semantic type {@code passwords.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType MODULE = SemanticType.create("pushing.module@virtualid.ch").load(ListWrapper.TYPE, MODULE_ENTRY);
+    private static final @Nonnull SemanticType MODULE = SemanticType.create("passwords.module@virtualid.ch").load(ListWrapper.TYPE, MODULE_ENTRY);
     
     @Pure
     @Override
@@ -91,14 +92,9 @@ public final class Passwords implements BothModule {
     
     
     /**
-     * Stores the semantic type {@code entry.pushing.state@virtualid.ch}.
+     * Stores the semantic type {@code passwords.state@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType STATE_ENTRY = SemanticType.create("entry.pushing.state@virtualid.ch").load(TupleWrapper.TYPE);
-    
-    /**
-     * Stores the semantic type {@code pushing.state@virtualid.ch}.
-     */
-    private static final @Nonnull SemanticType STATE = SemanticType.create("pushing.state@virtualid.ch").load(ListWrapper.TYPE, STATE_ENTRY);
+    private static final @Nonnull SemanticType STATE = SemanticType.create("passwords.state@virtualid.ch").load(TupleWrapper.TYPE, Password.TYPE);
     
     @Pure
     @Override
@@ -109,45 +105,30 @@ public final class Passwords implements BothModule {
     @Pure
     @Override
     public @Nonnull Block getState(@Nonnull Entity entity, @Nonnull Agent agent) throws SQLException {
-        final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
-        try (final @Nonnull Statement statement = Database.getConnection().createStatement()) {
-            // TODO: Retrieve the entries of the given entity from the database table(s).
-        }
-        return new ListWrapper(STATE, entries.freeze()).toBlock();
+        final @Nonnull FreezableArray<Block> elements = new FreezableArray<Block>(1);
+        if (agent.isClient()) elements.set(0, new StringWrapper(Password.TYPE, get(entity)).toBlock());
+        return new TupleWrapper(STATE, elements.freeze()).toBlock();
     }
     
     @Override
     public void addState(@Nonnull Entity entity, @Nonnull Block block) throws SQLException, InvalidEncodingException {
         assert block.getType().isBasedOn(getStateFormat()) : "The block is based on the indicated type.";
         
-        final @Nonnull ReadonlyList<Block> entries = new ListWrapper(block).getElementsNotNull();
-        for (final @Nonnull Block entry : entries) {
-            // TODO: Add the entries of the given entity to the database table(s).
-        }
+        final @Nullable Block element = new TupleWrapper(block).getElement(0);
+        if (element != null) set(entity, new StringWrapper(element).getString());
     }
     
     @Override
     public void removeState(@Nonnull Entity entity) throws SQLException {
-        try (final @Nonnull Statement statement = Database.getConnection().createStatement()) {
-            // TODO: Remove the entries of the given entity from the database table(s).
+        try (@Nonnull Statement statement = Database.getConnection().createStatement()) {
+            statement.executeUpdate("DELETE FROM " + entity.getSite() + "_password WHERE entity = " + entity);
         }
     }
     
     @Pure
     @Override
     public @Nullable InternalQuery getInternalQuery(@Nonnull Role role) {
-        return null; // TODO: Return the internal query for reloading the data of this module.
-    }
-    
-    
-    static { CoreService.SERVICE.add(new Passwords()); }
-    
-    @Override
-    public void createTables(@Nonnull Site site) throws SQLException {
-        try (@Nonnull Statement statement = Database.getConnection().createStatement()) {
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "_password (entity BIGINT NOT NULL, password VARCHAR(50) NOT NULL COLLATE " + Database.getConfiguration().BINARY() + ", PRIMARY KEY (entity), FOREIGN KEY (entity) REFERENCES " + site.getReference() + ")");
-            Database.getConfiguration().onInsertUpdate(statement, site + "_password", 1, "entity", "password");
-        }
+        return null;
     }
     
     
@@ -207,47 +188,6 @@ public final class Passwords implements BothModule {
             preparedStatement.setString(3, oldValue);
             if (preparedStatement.executeUpdate() == 0) throw new SQLException("The password of " + entity.getIdentity().getAddress() + " could not be replaced.");
         }
-    }
-    
-    
-    /**
-     * Stores the semantic type {@code passwords.module@virtualid.ch}.
-     */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("passwords.module@virtualid.ch").load(TupleWrapper.TYPE, Password.TYPE);
-    
-    @Pure
-    @Override
-    public @Nonnull SemanticType getStateFormat() {
-        return TYPE;
-    }
-    
-    @Pure
-    @Override
-    public @Nonnull Block getState(@Nonnull Entity entity, @Nonnull Agent agent) throws SQLException {
-        final @Nonnull FreezableArray<Block> elements = new FreezableArray<Block>(1);
-        if (agent.isClient()) elements.set(0, new StringWrapper(Password.TYPE, get(entity)).toBlock());
-        return new TupleWrapper(TYPE, elements.freeze()).toBlock();
-    }
-    
-    @Override
-    public void addState(@Nonnull Entity entity, @Nonnull Block block) throws SQLException, InvalidEncodingException {
-        assert block.getType().isBasedOn(getStateFormat()) : "The block is based on the indicated type.";
-        
-        final @Nullable Block element = new TupleWrapper(block).getElement(0);
-        if (element != null) set(entity, new StringWrapper(element).getString());
-    }
-    
-    @Override
-    public void removeState(@Nonnull Entity entity) throws SQLException {
-        try (@Nonnull Statement statement = Database.getConnection().createStatement()) {
-            statement.executeUpdate("DELETE FROM " + entity.getSite() + "_password WHERE entity = " + entity);
-        }
-    }
-    
-    @Pure
-    @Override
-    public @Nullable InternalQuery getInternalQuery(@Nonnull Role role) {
-        return null;
     }
     
 }

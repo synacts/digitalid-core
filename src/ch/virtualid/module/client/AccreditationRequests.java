@@ -1,5 +1,6 @@
 package ch.virtualid.module.client;
 
+import ch.virtualid.agent.ClientAgent;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.Site;
 import ch.virtualid.module.ClientModule;
@@ -9,7 +10,9 @@ import java.sql.Statement;
 import javax.annotation.Nonnull;
 
 /**
- * Description.
+ * This class provides database access to the accreditation requests of the core service.
+ * 
+ * @see ClientAgent
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 0.0

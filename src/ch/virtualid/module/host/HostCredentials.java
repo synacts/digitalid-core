@@ -1,6 +1,7 @@
 package ch.virtualid.module.host;
 
 import ch.virtualid.annotations.Pure;
+import ch.virtualid.credential.Credential;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.Site;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
@@ -19,9 +20,7 @@ import java.sql.Statement;
 import javax.annotation.Nonnull;
 
 /**
- * This class provides database access to the credentials of the core service.
- * 
- * A log for issued credentials is needed on the host-side.
+ * This class provides database access to the {@link Credential credentials} issued by a {@link Host host}.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 0.0
@@ -46,14 +45,14 @@ public final class HostCredentials implements HostModule {
     
     
     /**
-     * Stores the semantic type {@code entry.pushing.module@virtualid.ch}.
+     * Stores the semantic type {@code entry.host.credentials.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType ENTRY = SemanticType.create("entry.pushing.module@virtualid.ch").load(TupleWrapper.TYPE);
+    private static final @Nonnull SemanticType ENTRY = SemanticType.create("entry.host.credentials.module@virtualid.ch").load(TupleWrapper.TYPE);
     
     /**
-     * Stores the semantic type {@code pushing.module@virtualid.ch}.
+     * Stores the semantic type {@code host.credentials.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType MODULE = SemanticType.create("pushing.module@virtualid.ch").load(ListWrapper.TYPE, ENTRY);
+    private static final @Nonnull SemanticType MODULE = SemanticType.create("host.credentials.module@virtualid.ch").load(ListWrapper.TYPE, ENTRY);
     
     @Pure
     @Override
@@ -78,16 +77,6 @@ public final class HostCredentials implements HostModule {
         final @Nonnull ReadonlyList<Block> entries = new ListWrapper(block).getElementsNotNull();
         for (final @Nonnull Block entry : entries) {
             // TODO: Add all entries to the database table(s).
-        }
-    }
-    
-    
-    static { CoreService.SERVICE.add(new HostCredentials()); }
-    
-    @Override
-    protected void createTables(@Nonnull Site site) throws SQLException {
-        try (@Nonnull Statement statement = Database.getConnection().createStatement()) {
-            
         }
     }
     
