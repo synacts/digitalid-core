@@ -9,7 +9,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * This interface provides readonly access to {@List lists} and should <em>never</em> be cast away (unless external code requires it).
+ * This interface provides readonly access to {@link List lists} and should <em>never</em> be cast away (unless external code requires it).
  * <p>
  * <em>Important:</em> Only use freezable or immutable types for the elements!
  * (The type is not restricted to {@link Freezable} or {@link Immutable} so that library types can also be used.)

@@ -4,6 +4,7 @@ import ch.virtualid.entity.Account;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.handler.reply.query.CoreServiceQueryReply;
+import ch.virtualid.handler.reply.query.IdentityReply;
 import ch.virtualid.identity.Identifier;
 import ch.xdf.HostSignatureWrapper;
 import javax.annotation.Nonnull;

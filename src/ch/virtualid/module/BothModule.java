@@ -2,6 +2,7 @@ package ch.virtualid.module;
 
 import ch.virtualid.agent.Agent;
 import ch.virtualid.annotations.Pure;
+import ch.virtualid.client.Client;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.Role;
 import ch.virtualid.exceptions.external.ExternalException;
@@ -9,6 +10,7 @@ import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.InternalQuery;
 import ch.virtualid.handler.QueryReply;
 import ch.virtualid.identity.SemanticType;
+import ch.virtualid.server.Host;
 import ch.xdf.Block;
 import java.io.IOException;
 import java.sql.SQLException;

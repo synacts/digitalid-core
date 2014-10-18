@@ -1,6 +1,7 @@
 package ch.virtualid.handler;
 
 import ch.virtualid.annotations.Pure;
+import ch.virtualid.client.Client;
 import ch.virtualid.client.Synchronizer;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.Role;

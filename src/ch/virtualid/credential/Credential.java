@@ -227,7 +227,6 @@ public abstract class Credential implements Immutable {
     /**
      * Creates a new credential from the given blocks for hosts.
      * 
-     * @param entity the entity to which the credential belongs.
      * @param exposed the block containing the exposed arguments of the credential.
      * @param randomizedPermissions the block containing the client's randomized permissions.
      * @param restrictions the client's restrictions or null if they are not shown.

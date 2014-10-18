@@ -20,10 +20,8 @@ final class ContactExpression extends Expression {
     /**
      * Creates a new contact expression with the given contact.
      * 
-     * @param connection a connection to the database.
-     * @param host the host of the VID.
-     * @param vid the VID of the contexts.
      * @param contact the contact to use.
+     * 
      * @require Mapper.isVid(contact) && Category.isSemanticType(contact) : "The second number has to denote a person.";
      */
     ContactExpression(long contact) throws SQLException {

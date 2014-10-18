@@ -7,6 +7,7 @@ import ch.virtualid.interfaces.Immutable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 

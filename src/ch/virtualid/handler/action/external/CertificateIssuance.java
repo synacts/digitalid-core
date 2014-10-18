@@ -65,7 +65,7 @@ public final class CertificateIssuance extends CoreServiceExternalAction {
      * 
      * @param account the account to which this handler belongs.
      * @param subject the subject of this external action.
-     * @param certificate the certificate to issue.
+     * @param attribute the attribute to certify.
      * 
      * @require account.getIdentity() instanceof Person : "The account belongs to a person.";
      * @require attribute.getType().isAttributeFor(subject.getCategory()) : "The block is an attribute for the subject.";

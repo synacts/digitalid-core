@@ -26,7 +26,7 @@ import javax.annotation.Nullable;
 import org.javatuples.Pair;
 
 /**
- * Contacts have certain {@link Permissions permissions} and {@link Authentications authentications}.
+ * Contacts have certain {@link ContactPermissions permissions} and {@link Authentications authentications}.
  * 
  * @invariant hasEntity() : "This contact has an entity.";
  * 

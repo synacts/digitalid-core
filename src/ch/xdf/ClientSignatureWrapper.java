@@ -81,7 +81,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper implements Im
      * @param element the element to encode into the new block.
      * @param subject the identifier of the identity about which a statement is made.
      * @param audit the audit or null if no audit shall be appended.
-     * @param client the commitment containing the client secret.
+     * @param commitment the commitment containing the client secret.
      * 
      * @require type.isLoaded() : "The type declaration is loaded.";
      * @require type.isBasedOn(getSyntacticType()) : "The given type is based on the indicated syntactic type.";
@@ -93,7 +93,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper implements Im
     
     /**
      * Wraps the given block and decodes the given signature.
-     * (Only to be called by {@link SignatureWrapper#decodeUnverified(ch.xdf.Block)}.)
+     * (Only to be called by {@link SignatureWrapper#decodeUnverified(ch.xdf.Block, ch.virtualid.entity.Entity)}.)
      * 
      * @param block the block to be wrapped.
      * @param clientSignature the signature to be decoded.

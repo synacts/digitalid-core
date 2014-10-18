@@ -27,7 +27,7 @@ public final class Replay {
      * Initializes the replay checker by creating the corresponding database tables if necessary.
      */
     static {
-        assert Database.isMainThread(): "This method block is called in the main thread.";
+        assert Database.isMainThread() : "This method block is called in the main thread.";
         
         try (@Nonnull Statement statement = Database.getConnection().createStatement()) {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS replay (hash " + Database.getConfiguration().HASH() + " NOT NULL PRIMARY KEY, time " + Time.FORMAT + " NOT NULL)");

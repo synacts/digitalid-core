@@ -221,7 +221,7 @@ public abstract class Reply extends Handler implements SQLizable {
      * Initializes the reply logger by creating the corresponding database tables if necessary.
      */
     static {
-        assert Database.isMainThread(): "This method block is called in the main thread.";
+        assert Database.isMainThread() : "This method block is called in the main thread.";
         
         try (@Nonnull Statement statement = Database.getConnection().createStatement()) {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS reply (reply " + Database.getConfiguration().PRIMARY_KEY() + ", time " + Time.FORMAT + " NOT NULL, signature " + Database.getConfiguration().BLOB() + " NOT NULL)");

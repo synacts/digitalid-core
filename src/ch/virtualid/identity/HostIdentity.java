@@ -28,10 +28,10 @@ public final class HostIdentity extends Identity implements Immutable {
      * 
      * @param identifier the identifier of the new host identity.
      * 
-     * @require Database.isMainThread(): "This method may only be called in the main thread.";
+     * @require Database.isMainThread() : "This method may only be called in the main thread.";
      */
     private static @Nonnull HostIdentity create(@Nonnull HostIdentifier identifier) {
-        assert Database.isMainThread(): "This method may only be called in the main thread.";
+        assert Database.isMainThread() : "This method may only be called in the main thread.";
         
         try {
             return Mapper.mapHostIdentity(identifier);

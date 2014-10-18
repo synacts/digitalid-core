@@ -11,6 +11,7 @@ import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.action.internal.AccountOpen;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.Identifier;
+import ch.virtualid.packet.Audit;
 import ch.xdf.SignatureWrapper;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;

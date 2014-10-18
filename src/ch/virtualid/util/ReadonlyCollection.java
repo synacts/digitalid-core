@@ -53,7 +53,7 @@ public interface ReadonlyCollection<E> extends ReadonlyIterable<E> {
     public @Capturable @Nonnull Object[] toArray();
     
     /**
-     * @see Collection#toArray(T[])
+     * @see Collection#toArray(Object[])
      */
     @Pure
     public @Capturable @Nonnull <T> T[] toArray(T[] array);

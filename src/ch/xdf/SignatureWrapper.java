@@ -295,13 +295,13 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
      * 
      * @return the time of the signature generation.
      * 
-     * @require hasSubject(): "This signature has a subject.";
+     * @require hasSubject() : "This signature has a subject.";
      * 
      * @ensure time.isPositive() : "The time is positive.";
      */
     @Pure
     public final @Nonnull Time getTimeNotNull() {
-        assert hasSubject(): "This signature has a subject.";
+        assert hasSubject() : "This signature has a subject.";
         
         assert time != null : "This then follows from the constructor implementations.";
         return time;

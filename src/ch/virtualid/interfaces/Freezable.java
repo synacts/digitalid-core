@@ -5,7 +5,7 @@ import javax.annotation.Nonnull;
 /**
  * Classes that implement this interface allow their objects to transition from a mutable into an {@link Immutable immutable} state.
  * 
- * @see FrozenObject
+ * @see FreezableObject
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 1.0

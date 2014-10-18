@@ -4,6 +4,7 @@ import ch.virtualid.agent.Agent;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
+import ch.virtualid.packet.Audit;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 

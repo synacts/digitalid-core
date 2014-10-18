@@ -4,6 +4,7 @@ import ch.virtualid.annotations.Capturable;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.interfaces.Freezable;
 import ch.virtualid.interfaces.Immutable;
+import java.util.Iterator;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 

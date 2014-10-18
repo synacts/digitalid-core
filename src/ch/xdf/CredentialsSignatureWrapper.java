@@ -256,7 +256,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
     
     /**
      * Wraps the given block and decodes the given signature for hosts.
-     * (Only to be called by {@link SignatureWrapper#decodeUnverified(ch.xdf.Block)}.)
+     * (Only to be called by {@link SignatureWrapper#decodeUnverified(ch.xdf.Block, ch.virtualid.entity.Entity)}.)
      * 
      * @param block the block to be wrapped.
      * @param credentialsSignature the signature to be decoded.
@@ -539,7 +539,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
     @Pure
     public @Nonnull Person getIssuer() {
         assert isIdentityBased() : "The authentication is identity-based.";
-        assert !isRoleBased(): "The authentication is not role-based.";
+        assert !isRoleBased() : "The authentication is not role-based.";
         
         return (Person) credentials.getNotNull(0).getIssuer();
     }
@@ -547,7 +547,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
     /**
      * Checks whether the first and only credential was issued by the given person and throws a {@link PacketException} if not.
      * 
-     * @param person the person to check.
+     * @param issuer the issuer to check.
      */
     @Pure
     public void checkIssuer(@Nonnull Person issuer) throws PacketException {

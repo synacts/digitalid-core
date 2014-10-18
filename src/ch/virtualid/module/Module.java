@@ -1,5 +1,7 @@
 package ch.virtualid.module;
 
+import ch.virtualid.database.Database;
+import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.Site;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;

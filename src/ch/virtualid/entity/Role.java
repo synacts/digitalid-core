@@ -10,6 +10,7 @@ import ch.virtualid.concept.Aspect;
 import ch.virtualid.concept.Instance;
 import ch.virtualid.concept.Observer;
 import ch.virtualid.database.Database;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.identity.NonHostIdentity;
 import ch.virtualid.identity.Person;
 import ch.virtualid.identity.SemanticType;
@@ -18,7 +19,6 @@ import ch.virtualid.interfaces.SQLizable;
 import ch.virtualid.module.client.Roles;
 import ch.virtualid.util.FreezableList;
 import ch.virtualid.util.ReadonlyList;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -81,7 +81,7 @@ public final class Role extends Entity implements Immutable, SQLizable, Observer
      * Creates a new role for the given client with the given number, issuer, relation, recipient and agent.
      * <p>
      * <em>Important:</em> This constructor should only be called from this class and the roles module.
-     * For all other purposes, please use {@link #add(ch.virtualid.client.Client, ch.virtualid.identity.NonHostIdentity, ch.virtualid.identity.SemanticType, ch.virtualid.entity.Role, ch.virtualid.agent.Agent)} or {@link #get(ch.virtualid.client.Client, java.sql.ResultSet, int)}.
+     * For all other purposes, please use {@link #add(ch.virtualid.client.Client, ch.virtualid.identity.NonHostIdentity, ch.virtualid.identity.SemanticType, ch.virtualid.entity.Role, boolean, long)} or {@link #get(ch.virtualid.client.Client, java.sql.ResultSet, int)}.
      * 
      * @param client the client that can assume the new role.
      * @param number the number that references the new role.
@@ -209,7 +209,6 @@ public final class Role extends Entity implements Immutable, SQLizable, Observer
      * 
      * @param issuer the issuer of the role to add.
      * @param relation the relation of the role to add.
-     * @param isClient whether the agent number denotes a client.
      * @param agentNumber the agent number of the role to add.
      */
     @OnlyForActions

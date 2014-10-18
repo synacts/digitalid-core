@@ -15,6 +15,7 @@ import java.util.regex.Pattern;
 public abstract class Taglet implements com.sun.tools.doclets.Taglet {
     
     static void register(Map<String, Taglet> map, Taglet taglet) {
+        System.out.println("Registering: " + taglet.getName());
         String name = taglet.getName();
         Object other = map.get(name);
         if (other != null) map.remove(name);

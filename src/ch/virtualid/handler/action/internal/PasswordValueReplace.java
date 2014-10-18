@@ -73,7 +73,9 @@ public final class PasswordValueReplace extends CoreServiceInternalAction {
     /**
      * Creates an internal action to replace the value of the given password.
      * 
-     * @param role the role to which this handler belongs.
+     * @param password the password whose value is to be replaced.
+     * @param oldValue the old value of the password.
+     * @param newValue the new value of the password.
      * 
      * @require Password.isOnClient() : "The password is on a client.";
      * @require Password.isValid(oldValue) : "The old value is valid.";

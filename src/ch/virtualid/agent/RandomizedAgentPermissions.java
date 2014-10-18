@@ -3,8 +3,8 @@ package ch.virtualid.agent;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Commitment;
 import ch.virtualid.cryptography.Parameters;
-import ch.virtualid.exceptions.external.InvalidDeclarationException;
-import ch.virtualid.exceptions.external.IdentityNotFoundException;
+import ch.virtualid.exceptions.external.ExternalException;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
@@ -13,7 +13,7 @@ import ch.virtualid.util.ReadonlyArray;
 import ch.xdf.Block;
 import ch.xdf.HashWrapper;
 import ch.xdf.TupleWrapper;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.sql.SQLException;
@@ -105,7 +105,7 @@ public final class RandomizedAgentPermissions implements Immutable, Blockable {
      * 
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
-    public RandomizedAgentPermissions(@Nonnull Block block) throws InvalidEncodingException, IdentityNotFoundException, SQLException, InvalidDeclarationException {
+    public RandomizedAgentPermissions(@Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         this.hash = block.getHash();

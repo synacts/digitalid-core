@@ -4,11 +4,13 @@ import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
+import ch.virtualid.client.Client;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.handler.action.external.CoreServiceExternalAction;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.Identifier;
 import ch.virtualid.pusher.Pusher;
+import ch.virtualid.server.Host;
 import ch.xdf.SignatureWrapper;
 import javax.annotation.Nonnull;
 

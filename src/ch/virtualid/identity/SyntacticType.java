@@ -46,7 +46,7 @@ public final class SyntacticType extends Type implements Immutable {
      * 
      * @param identifier the identifier of the new syntactic type.
      * 
-     * @require Database.isMainThread(): "This method may only be called in the main thread.";
+     * @require Database.isMainThread() : "This method may only be called in the main thread.";
      * @require Identifier.isValid(identifier) : "The string is a valid identifier.";
      * @require !Identifier.isHost(identifier) : "The string may not denote a host identifier.";
      * 
@@ -72,7 +72,7 @@ public final class SyntacticType extends Type implements Immutable {
      * @param numberOfParameters the number of generic parameters.
      * 
      * @require !isLoaded() : "The type declaration may not yet have been loaded.";
-     * @require Database.isMainThread(): "This method may only be called in the main thread.";
+     * @require Database.isMainThread() : "This method may only be called in the main thread.";
      * 
      * @require numberOfParameters >= -1 : "The number of parameters is at least -1.";
      * 
@@ -80,7 +80,7 @@ public final class SyntacticType extends Type implements Immutable {
      */
     public @Nonnull SyntacticType load(int numberOfParameters) {
         assert !isLoaded() : "The type declaration may not yet have been loaded.";
-        assert Database.isMainThread(): "This method may only be called in the main thread.";
+        assert Database.isMainThread() : "This method may only be called in the main thread.";
         
         assert numberOfParameters >= -1 : "The number of parameters is at least -1.";
         

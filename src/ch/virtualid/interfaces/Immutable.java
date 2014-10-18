@@ -1,5 +1,7 @@
 package ch.virtualid.interfaces;
 
+import ch.virtualid.identity.Person;
+
 /**
  * Classes that implement this interface guarantee that their objects are immutable.
  * Since this interface does not specify any methods, it is for indication purposes only.

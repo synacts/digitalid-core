@@ -6,6 +6,7 @@ import ch.virtualid.interfaces.Freezable;
 import ch.virtualid.interfaces.Immutable;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 

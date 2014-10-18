@@ -132,7 +132,7 @@ public final class SemanticType extends Type implements Immutable {
      * 
      * @param identifier the identifier of the new semantic type.
      * 
-     * @require Database.isMainThread(): "This method may only be called in the main thread.";
+     * @require Database.isMainThread() : "This method may only be called in the main thread.";
      * @require Identifier.isValid(identifier) : "The string is a valid identifier.";
      * @require !Identifier.isHost(identifier) : "The string may not denote a host identifier.";
      * 
@@ -237,17 +237,17 @@ public final class SemanticType extends Type implements Immutable {
      * @param parameters the generic parameters of the syntactic type.
      * 
      * @require !isLoaded() : "The type declaration may not yet have been loaded.";
-     * @require Database.isMainThread(): "This method may only be called in the main thread.";
+     * @require Database.isMainThread() : "This method may only be called in the main thread.";
      * 
      * @require categories.isFrozen() : "The categories have to be frozen.";
      * @require categories.doesNotContainNull() : "The categories may not contain null.";
-     * @require categories.doesNotContainDuplicates(): "The categories may not contain duplicates.";
+     * @require categories.doesNotContainDuplicates() : "The categories may not contain duplicates.";
      * 
      * @require cachingPeriod == null || cachingPeriod.isNonNegative() : "The caching period is null or non-negative.";
      * 
      * @require parameters.isFrozen() : "The parameters have to be frozen.";
      * @require parameters.doesNotContainNull() : "The parameters may not contain null.";
-     * @require parameters.doesNotContainDuplicates(): "The parameters may not contain duplicates.";
+     * @require parameters.doesNotContainDuplicates() : "The parameters may not contain duplicates.";
      * 
      * @require categories.isEmpty() == (cachingPeriod == null) : "The caching period is null if and only if the categories are empty.";
      * @require syntacticBase.getNumberOfParameters() == -1 && parameters.size() > 0 || syntacticBase.getNumberOfParameters() == parameters.size() : "The number of required parameters has either to be variable or to match the given parameters.";
@@ -256,17 +256,17 @@ public final class SemanticType extends Type implements Immutable {
      */
     public @Nonnull SemanticType load(@Nonnull ReadonlyList<Category> categories, @Nullable Time cachingPeriod, @Nonnull SyntacticType syntacticBase, @Nonnull ReadonlyList<SemanticType> parameters) {
         assert !isLoaded() : "The type declaration may not yet have been loaded.";
-        assert Database.isMainThread(): "This method may only be called in the main thread.";
+        assert Database.isMainThread() : "This method may only be called in the main thread.";
         
         assert categories.isFrozen() : "The categories have to be frozen.";
         assert categories.doesNotContainNull() : "The categories may not contain null.";
-        assert categories.doesNotContainDuplicates(): "The categories may not contain duplicates.";
+        assert categories.doesNotContainDuplicates() : "The categories may not contain duplicates.";
         
         assert cachingPeriod == null || cachingPeriod.isNonNegative() : "The caching period is null or non-negative.";
         
         assert parameters.isFrozen() : "The parameters have to be frozen.";
         assert parameters.doesNotContainNull() : "The parameters may not contain null.";
-        assert parameters.doesNotContainDuplicates(): "The parameters may not contain duplicates.";
+        assert parameters.doesNotContainDuplicates() : "The parameters may not contain duplicates.";
         
         assert categories.isEmpty() == (cachingPeriod == null) : "The caching period is null if and only if the categories are empty.";
         assert syntacticBase.getNumberOfParameters() == -1 && parameters.size() > 0 || syntacticBase.getNumberOfParameters() == parameters.size() : "The number of required parameters has either to be variable or to match the given parameters.";
@@ -289,18 +289,16 @@ public final class SemanticType extends Type implements Immutable {
      * @param syntacticBase the syntactic type on which this semantic type is based.
      * @param parameters the generic parameters of the syntactic type.
      * 
-     * @require Database.isMainThread(): "This method may only be called in the main thread.";
-     * 
-     * @require Identifier.isValid(identifier) : "The string is a valid identifier.";
-     * @require !Identifier.isHost(identifier) : "The string may not denote a host identifier.";
+     * @require !isLoaded() : "The type declaration may not yet have been loaded.";
+     * @require Database.isMainThread() : "This method may only be called in the main thread.";
      * 
      * @require new FreezableArray<Category>(categories).doesNotContainNull() : "The categories may not contain null.";
-     * @require new FreezableArray<Category>(categories).doesNotContainDuplicates(): "The categories may not contain duplicates.";
+     * @require new FreezableArray<Category>(categories).doesNotContainDuplicates() : "The categories may not contain duplicates.";
      * 
      * @require cachingPeriod == null || cachingPeriod.isNonNegative() : "The caching period is null or non-negative.";
      * 
      * @require new FreezableArray<SemanticType>(parameters).doesNotContainNull() : "The parameters may not contain null.";
-     * @require new FreezableArray<SemanticType>(parameters).doesNotContainDuplicates(): "The parameters may not contain duplicates.";
+     * @require new FreezableArray<SemanticType>(parameters).doesNotContainDuplicates() : "The parameters may not contain duplicates.";
      * 
      * @require (categories.length == 0) == (cachingPeriod == null) : "The caching period is null if and only if the categories are empty.";
      * @require syntacticBase.getNumberOfParameters() == -1 && parameters.length > 0 || syntacticBase.getNumberOfParameters() == parameters.length : "The number of required parameters has either to be variable or to match the given parameters.";
@@ -317,13 +315,11 @@ public final class SemanticType extends Type implements Immutable {
      * @param syntacticBase the syntactic type on which this semantic type is based.
      * @param parameters the generic parameters of the syntactic type.
      * 
-     * @require Database.isMainThread(): "This method may only be called in the main thread.";
-     * 
-     * @require Identifier.isValid(identifier) : "The string is a valid identifier.";
-     * @require !Identifier.isHost(identifier) : "The string may not denote a host identifier.";
+     * @require !isLoaded() : "The type declaration may not yet have been loaded.";
+     * @require Database.isMainThread() : "This method may only be called in the main thread.";
      * 
      * @require new FreezableArray<SemanticType>(parameters).doesNotContainNull() : "The parameters may not contain null.";
-     * @require new FreezableArray<SemanticType>(parameters).doesNotContainDuplicates(): "The parameters may not contain duplicates.";
+     * @require new FreezableArray<SemanticType>(parameters).doesNotContainDuplicates() : "The parameters may not contain duplicates.";
      * 
      * @require syntacticBase.getNumberOfParameters() == -1 && parameters.length > 0 || syntacticBase.getNumberOfParameters() == parameters.length : "The number of required parameters has either to be variable or to match the given parameters.";
      * 
@@ -341,11 +337,11 @@ public final class SemanticType extends Type implements Immutable {
      * @param semanticBase the semantic type on which this semantic type is based.
      * 
      * @require !isLoaded() : "The type declaration may not yet have been loaded.";
-     * @require Database.isMainThread(): "This method may only be called in the main thread.";
+     * @require Database.isMainThread() : "This method may only be called in the main thread.";
      * 
      * @require categories.isFrozen() : "The categories have to be frozen.";
      * @require categories.doesNotContainNull() : "The categories may not contain null.";
-     * @require categories.doesNotContainDuplicates(): "The categories may not contain duplicates.";
+     * @require categories.doesNotContainDuplicates() : "The categories may not contain duplicates.";
      * 
      * @require cachingPeriod == null || cachingPeriod.isNonNegative() : "The caching period is null or non-negative.";
      * 
@@ -357,11 +353,11 @@ public final class SemanticType extends Type implements Immutable {
      */
     public @Nonnull SemanticType load(@Nonnull ReadonlyList<Category> categories, @Nullable Time cachingPeriod, @Nonnull SemanticType semanticBase) {
         assert !isLoaded() : "The type declaration may not yet have been loaded.";
-        assert Database.isMainThread(): "This method may only be called in the main thread.";
+        assert Database.isMainThread() : "This method may only be called in the main thread.";
         
         assert categories.isFrozen() : "The categories have to be frozen.";
         assert categories.doesNotContainNull() : "The categories may not contain null.";
-        assert categories.doesNotContainDuplicates(): "The categories may not contain duplicates.";
+        assert categories.doesNotContainDuplicates() : "The categories may not contain duplicates.";
         
         assert cachingPeriod == null || cachingPeriod.isNonNegative() : "The caching period is null or non-negative.";
         
@@ -386,13 +382,11 @@ public final class SemanticType extends Type implements Immutable {
      * @param cachingPeriod the caching period of this semantic type when used as an attribute.
      * @param semanticBase the semantic type on which this semantic type is based.
      * 
-     * @require Database.isMainThread(): "This method may only be called in the main thread.";
-     * 
-     * @require Identifier.isValid(identifier) : "The string is a valid identifier.";
-     * @require !Identifier.isHost(identifier) : "The string may not denote a host identifier.";
+     * @require !isLoaded() : "The type declaration may not yet have been loaded.";
+     * @require Database.isMainThread() : "This method may only be called in the main thread.";
      * 
      * @require new FreezableArray<Category>(categories).doesNotContainNull() : "The categories may not contain null.";
-     * @require new FreezableArray<Category>(categories).doesNotContainDuplicates(): "The categories may not contain duplicates.";
+     * @require new FreezableArray<Category>(categories).doesNotContainDuplicates() : "The categories may not contain duplicates.";
      * 
      * @require cachingPeriod == null || cachingPeriod.isNonNegative() : "The caching period is null or non-negative.";
      * 
@@ -411,10 +405,8 @@ public final class SemanticType extends Type implements Immutable {
      * 
      * @param semanticBase the semantic type on which this semantic type is based.
      * 
-     * @require Database.isMainThread(): "This method may only be called in the main thread.";
-     * 
-     * @require Identifier.isValid(identifier) : "The string is a valid identifier.";
-     * @require !Identifier.isHost(identifier) : "The string may not denote a host identifier.";
+     * @require !isLoaded() : "The type declaration may not yet have been loaded.";
+     * @require Database.isMainThread() : "This method may only be called in the main thread.";
      * 
      * @require semanticBase.isLoaded() : "The semantic base is already loaded.";
      * 

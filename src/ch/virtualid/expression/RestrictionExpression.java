@@ -72,9 +72,10 @@ final class RestrictionExpression extends Expression {
     }
 
     /**
+     * TODO!
      * 
+     * @return whether it matches.
      * 
-     * @return 
      * @require value != null : "The value is not null.";
      */
     private boolean match(Block value) throws InvalidEncodingException {

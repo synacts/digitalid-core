@@ -1,10 +1,10 @@
 /**
- * This package provides classes to support multi-argument custom block tags in the Javadoc generated for this project.
+ * Provides classes to support multi-argument custom block tags in the Javadoc generated for this project.
  * If the referenced classes cannot be found, you need to add the <a href="http://www.oracle.com/technetwork/java/javase/documentation/index-137483.html#com.sun.javadoc">{@code tools.jar}</a> library included in the Java 2 SDK.
  * <p>
  * The options for the Javadoc Generator are (please note that you need to adapt the paths)
  * <p>
- * {@code -quiet -linksource -taglet ch.virtualid.taglet.Author -taglet ch.virtualid.taglet.Require -taglet ch.virtualid.taglet.Ensure -taglet ch.virtualid.taglet.Invariant -tagletpath "/VirtualID/build/classes" -link "http://docs.oracle.com/javase/7/docs/api/" -overview "/VirtualID/src/overview.html" -doctitle "Virtual ID Reference Implementation"}
+ * {@code -quiet -linksource -taglet ch.virtualid.taglets.Author -taglet ch.virtualid.taglets.Require -taglet ch.virtualid.taglets.Ensure -taglet ch.virtualid.taglets.Invariant -tagletpath "/VirtualID/build/classes" -link "http://docs.oracle.com/javase/7/docs/api/" -overview "/VirtualID/src/overview.html" -doctitle "Virtual ID Reference Implementation"}
  * <p>
  * or, if the custom taglets are not working,
  * <p>

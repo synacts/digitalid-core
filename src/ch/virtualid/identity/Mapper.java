@@ -126,7 +126,7 @@ public final class Mapper {
     
     
     static {
-        assert Database.isMainThread(): "This method block is called in the main thread.";
+        assert Database.isMainThread() : "This method block is called in the main thread.";
         
         try (@Nonnull Statement statement = Database.getConnection().createStatement()) {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS map_identity (identity " + Database.getConfiguration().PRIMARY_KEY() + ", category " + Database.getConfiguration().TINYINT() + " NOT NULL, address " + Identifier.FORMAT + " NOT NULL, reply " + Reply.FORMAT + ", FOREIGN KEY (reply) " + Reply.REFERENCE + ")");
@@ -319,10 +319,10 @@ public final class Mapper {
      * 
      * @return the syntactic type of the mapped identifier.
      * 
-     * @require Database.isMainThread(): "This method may only be called in the main thread.";
+     * @require Database.isMainThread() : "This method may only be called in the main thread.";
      */
     static @Nonnull SyntacticType mapSyntacticType(@Nonnull NonHostIdentifier identifier) {
-        assert Database.isMainThread(): "This method may only be called in the main thread.";
+        assert Database.isMainThread() : "This method may only be called in the main thread.";
         
         try {
             final @Nonnull SyntacticType type = mapIdentity(identifier, Category.SYNTACTIC_TYPE, null).toSyntacticType();
@@ -341,10 +341,10 @@ public final class Mapper {
      * 
      * @return the semantic type of the mapped identifier.
      * 
-     * @require Database.isMainThread(): "This method may only be called in the main thread.";
+     * @require Database.isMainThread() : "This method may only be called in the main thread.";
      */
     static @Nonnull SemanticType mapSemanticType(@Nonnull NonHostIdentifier identifier) {
-        assert Database.isMainThread(): "This method may only be called in the main thread.";
+        assert Database.isMainThread() : "This method may only be called in the main thread.";
         
         try {
             final @Nonnull SemanticType type = mapIdentity(identifier, Category.SEMANTIC_TYPE, null).toSemanticType();

@@ -155,7 +155,7 @@ public final class Block implements Immutable, SQLizable {
      * @param block the block containing the byte array.
      * 
      * @require type.isLoaded() : "The type declaration is loaded.";
-     * @require !block.isEncoding(): "The given block is not in the process of being encoded.";
+     * @require !block.isEncoding() : "The given block is not in the process of being encoded.";
      * 
      * @ensure isEncoded() : "This block is encoded.";
      */
@@ -172,7 +172,7 @@ public final class Block implements Immutable, SQLizable {
      * @param length the length of this block.
      * 
      * @require type.isLoaded() : "The type declaration is loaded.";
-     * @require block.isEncoded(): "The given block is encoded.";
+     * @require block.isEncoded() : "The given block is encoded.";
      * @require offset >= 0 : "The offset is not negative.";
      * @require length > 0 : "The length is positive.";
      * 
@@ -180,7 +180,7 @@ public final class Block implements Immutable, SQLizable {
      */
     public Block(@Nonnull SemanticType type, @Nonnull Block block, int offset, int length) throws InvalidEncodingException {
         assert type.isLoaded() : "The type declaration is loaded.";
-        assert block.isEncoded(): "The given block is encoded.";
+        assert block.isEncoded() : "The given block is encoded.";
         assert offset >= 0 : "The offset is not negative.";
         assert length > 0 : "The length is positive.";
         
@@ -221,7 +221,7 @@ public final class Block implements Immutable, SQLizable {
      * Returns the semantic type of this block.
      * <p>
      * <em>Important:</em> Do not rely on the identity of the type, but rather use
-     * {@link SemanticType#isBasedOn(ch.virtualid.identity.SemanticType) for comparisons.
+     * {@link SemanticType#isBasedOn(ch.virtualid.identity.SemanticType)} for comparisons.
      * 
      * @return the semantic type of this block.
      * 

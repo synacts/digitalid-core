@@ -1,13 +1,15 @@
 package ch.virtualid.handler;
 
 import ch.virtualid.annotations.Pure;
+import ch.virtualid.client.Client;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.Role;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.handler.query.external.CoreServiceExternalQuery;
 import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.Identifier;
+import ch.virtualid.server.Host;
 import ch.xdf.SignatureWrapper;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
