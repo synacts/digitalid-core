@@ -58,7 +58,7 @@ public final class Contacts implements BothModule {
     /**
      * Stores the semantic type {@code entry.contacts.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType MODULE_ENTRY = SemanticType.create("entry.contacts.module@virtualid.ch").load(TupleWrapper.TYPE);
+    private static final @Nonnull SemanticType MODULE_ENTRY = SemanticType.create("entry.contacts.module@virtualid.ch").load(TupleWrapper.TYPE, ch.virtualid.identity.SemanticType.UNKNOWN);
     
     /**
      * Stores the semantic type {@code contacts.module@virtualid.ch}.
@@ -95,7 +95,7 @@ public final class Contacts implements BothModule {
     /**
      * Stores the semantic type {@code entry.contacts.state@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType STATE_ENTRY = SemanticType.create("entry.contacts.state@virtualid.ch").load(TupleWrapper.TYPE);
+    private static final @Nonnull SemanticType STATE_ENTRY = SemanticType.create("entry.contacts.state@virtualid.ch").load(TupleWrapper.TYPE, ch.virtualid.identity.SemanticType.UNKNOWN);
     
     /**
      * Stores the semantic type {@code contacts.state@virtualid.ch}.

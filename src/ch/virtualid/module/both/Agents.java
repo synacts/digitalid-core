@@ -64,7 +64,7 @@ public final class Agents implements BothModule {
     /**
      * Stores the semantic type {@code entry.agents.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType MODULE_ENTRY = SemanticType.create("entry.agents.module@virtualid.ch").load(TupleWrapper.TYPE);
+    private static final @Nonnull SemanticType MODULE_ENTRY = SemanticType.create("entry.agents.module@virtualid.ch").load(TupleWrapper.TYPE, ch.virtualid.identity.SemanticType.UNKNOWN);
     
     /**
      * Stores the semantic type {@code agents.module@virtualid.ch}.
@@ -101,7 +101,7 @@ public final class Agents implements BothModule {
     /**
      * Stores the semantic type {@code entry.agents.state@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType STATE_ENTRY = SemanticType.create("entry.agents.state@virtualid.ch").load(TupleWrapper.TYPE);
+    private static final @Nonnull SemanticType STATE_ENTRY = SemanticType.create("entry.agents.state@virtualid.ch").load(TupleWrapper.TYPE, ch.virtualid.identity.SemanticType.UNKNOWN);
     
     /**
      * Stores the semantic type {@code agents.state@virtualid.ch}.

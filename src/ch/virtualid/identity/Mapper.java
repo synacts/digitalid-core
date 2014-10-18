@@ -241,7 +241,7 @@ public final class Mapper {
             if (resultSet.next()) {
                 final @Nonnull Category category = Category.get(resultSet.getByte(1));
                 final long number = resultSet.getLong(2);
-                final @Nonnull NonHostIdentifier address = NonHostIdentifier.get(resultSet, 3);
+                final @Nonnull Identifier address = Identifier.get(resultSet, 3);
                 final @Nonnull Identity identity = createIdentity(category, number, address);
                 
                 numbers.put(number, identity);

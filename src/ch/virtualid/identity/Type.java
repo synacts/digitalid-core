@@ -20,7 +20,7 @@ public abstract class Type extends NonHostIdentity implements Immutable {
     /**
      * Stores the semantic type {@code type@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType IDENTIFIER = SemanticType.create("type@virtualid.ch").load(NonHostIdentity.IDENTIFIER);
+    public static final @Nonnull SemanticType IDENTIFIER = SyntacticType.TYPE_IDENTIFIER;
     
     
     /**

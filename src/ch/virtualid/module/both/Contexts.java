@@ -58,7 +58,7 @@ public final class Contexts implements BothModule {
     /**
      * Stores the semantic type {@code entry.contexts.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType MODULE_ENTRY = SemanticType.create("entry.contexts.module@virtualid.ch").load(TupleWrapper.TYPE);
+    private static final @Nonnull SemanticType MODULE_ENTRY = SemanticType.create("entry.contexts.module@virtualid.ch").load(TupleWrapper.TYPE, ch.virtualid.identity.SemanticType.UNKNOWN);
     
     /**
      * Stores the semantic type {@code contexts.module@virtualid.ch}.
@@ -95,7 +95,7 @@ public final class Contexts implements BothModule {
     /**
      * Stores the semantic type {@code entry.contexts.state@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType STATE_ENTRY = SemanticType.create("entry.contexts.state@virtualid.ch").load(TupleWrapper.TYPE);
+    private static final @Nonnull SemanticType STATE_ENTRY = SemanticType.create("entry.contexts.state@virtualid.ch").load(TupleWrapper.TYPE, ch.virtualid.identity.SemanticType.UNKNOWN);
     
     /**
      * Stores the semantic type {@code contexts.state@virtualid.ch}.

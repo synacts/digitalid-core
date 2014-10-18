@@ -47,7 +47,7 @@ public final class Members implements HostModule {
     /**
      * Stores the semantic type {@code entry.members.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType ENTRY = SemanticType.create("entry.members.module@virtualid.ch").load(TupleWrapper.TYPE);
+    private static final @Nonnull SemanticType ENTRY = SemanticType.create("entry.members.module@virtualid.ch").load(TupleWrapper.TYPE, ch.virtualid.identity.SemanticType.UNKNOWN);
     
     /**
      * Stores the semantic type {@code members.module@virtualid.ch}.

@@ -31,7 +31,7 @@ public final class CoreService extends Service {
     /**
      * Stores the semantic type {@code @virtualid.ch}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("@virtualid.ch").load(Identity.IDENTIFIER);
+    public static final @Nonnull SemanticType TYPE = Identity.IDENTIFIER;
     
     @Pure
     @Override

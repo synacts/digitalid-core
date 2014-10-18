@@ -7,6 +7,7 @@ import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.ReadonlyArray;
 import ch.xdf.Block;
+import ch.xdf.ListWrapper;
 import ch.xdf.TupleWrapper;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
@@ -25,8 +26,13 @@ public final class Predecessor implements Immutable, Blockable {
      */
     public static final @Nonnull SemanticType TYPE = SemanticType.create("predecessor.identity@virtualid.ch");
     
+    /**
+     * Stores the semantic type {@code list.predecessor.identity@virtualid.ch}.
+     */
+    static final @Nonnull SemanticType PREDECESSORS = SemanticType.create("list.predecessor.identity@virtualid.ch").load(ListWrapper.TYPE, TYPE);
+    
     // Load the recursive declaration of the predecessor type.
-    static { TYPE.load(TupleWrapper.TYPE, NonHostIdentity.IDENTIFIER, Predecessors.TYPE); }
+    static { TYPE.load(TupleWrapper.TYPE, NonHostIdentity.IDENTIFIER, PREDECESSORS); }
     
     
     /**

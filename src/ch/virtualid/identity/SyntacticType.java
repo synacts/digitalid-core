@@ -4,6 +4,7 @@ import ch.virtualid.annotations.Pure;
 import ch.virtualid.database.Database;
 import ch.virtualid.exceptions.external.InvalidDeclarationException;
 import ch.virtualid.interfaces.Immutable;
+import ch.xdf.StringWrapper;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 
@@ -16,9 +17,27 @@ import javax.annotation.Nonnull;
 public final class SyntacticType extends Type implements Immutable {
     
     /**
+     * Stores the semantic type {@code @virtualid.ch}.
+     * (This hack was necessary to get the initialization working.)
+     */
+    static final @Nonnull SemanticType IDENTITY_IDENTIFIER = SemanticType.create("@virtualid.ch").load(StringWrapper.TYPE);
+    
+    /**
+     * Stores the semantic type {@code nonhost@virtualid.ch}.
+     * (This hack was necessary to get the initialization working.)
+     */
+    static final @Nonnull SemanticType NONHOST_IDENTIFIER = SemanticType.create("nonhost@virtualid.ch").load(IDENTITY_IDENTIFIER);
+    
+    /**
+     * Stores the semantic type {@code type@virtualid.ch}.
+     * (This hack was necessary to get the initialization working.)
+     */
+    static final @Nonnull SemanticType TYPE_IDENTIFIER = SemanticType.create("type@virtualid.ch").load(NONHOST_IDENTIFIER);
+    
+    /**
      * Stores the semantic type {@code syntactic.type@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType IDENTIFIER = SemanticType.create("syntactic.type@virtualid.ch").load(Type.IDENTIFIER);
+    public static final @Nonnull SemanticType IDENTIFIER = SemanticType.create("syntactic.type@virtualid.ch").load(TYPE_IDENTIFIER);
     
     
     /**

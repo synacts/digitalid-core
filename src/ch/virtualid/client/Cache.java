@@ -22,7 +22,6 @@ import ch.xdf.HostSignatureWrapper;
 import ch.xdf.SelfcontainedWrapper;
 import ch.xdf.SignatureWrapper;
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import javax.annotation.Nonnull;
@@ -40,7 +39,7 @@ public final class Cache {
      * Initializes the cache by creating the corresponding database tables if necessary.
      */
     static {
-        try (@Nonnull Connection connection = Database.getConnection(); @Nonnull Statement statement = connection.createStatement()) {
+        try (@Nonnull Statement statement = Database.getConnection().createStatement()) {
 //            // TODO: Leave requester as an idenitity reference, as the role tables are not global but per client.
 //            statement.executeUpdate("CREATE TABLE IF NOT EXISTS cache_attribute (requester BIGINT NOT NULL, requestee BIGINT NOT NULL, type BIGINT NOT NULL, time BIGINT NOT NULL, value LONGBLOB NOT NULL, PRIMARY KEY (requester, requestee, type), FOREIGN KEY (requester) REFERENCES map_identity (identity), FOREIGN KEY (requestee) REFERENCES map_identity (identity), FOREIGN KEY (type) REFERENCES map_identity (identity))");
 //            connection.commit();

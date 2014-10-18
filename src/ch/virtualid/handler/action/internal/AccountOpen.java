@@ -29,7 +29,7 @@ public final class AccountOpen extends Action {
     /**
      * Stores the semantic type {@code open.account@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("open.account@virtualid.ch").load(TupleWrapper.TYPE); //TODO
+    public static final @Nonnull SemanticType TYPE = SemanticType.create("open.account@virtualid.ch").load(TupleWrapper.TYPE, ch.virtualid.identity.SemanticType.UNKNOWN); //TODO
     
     
     public AccountOpen(@Nonnull Entity entity, @Nonnull Identifier subject, @Nonnull HostIdentifier recipient) {

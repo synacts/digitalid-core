@@ -2,9 +2,11 @@ package ch.virtualid.database;
 
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.errors.InitializationError;
+import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.io.Level;
 import ch.virtualid.io.Logger;
+import ch.xdf.SignatureWrapper;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -121,7 +123,7 @@ public final class Database implements Immutable {
                 initializeClasses(file, prefix + fileName + ".");
             } else if (fileName.endsWith(".class")) {
                 final @Nonnull String className = prefix + fileName.substring(0, fileName.length() - 6);
-                System.out.println("Initialize class: " + className);
+                LOGGER.log(Level.INFORMATION, "Initialize class: " + className);
                 Class.forName(className);
             }
         }
@@ -138,7 +140,7 @@ public final class Database implements Immutable {
             final @Nonnull String entryName = entries.nextElement().getName();
             if (entryName.endsWith(".class")) {
                 final @Nonnull String className = entryName.substring(0, entryName.length() - 6).replace("/", ".");
-                System.out.println("Initialize class: " + className);
+                LOGGER.log(Level.INFORMATION, "Initialize class: " + className);
                 Class.forName(className);
             }
         }
@@ -160,6 +162,12 @@ public final class Database implements Immutable {
         
         if (!testing) {
             try {
+                // Ensure that the semantic type is loaded before the syntactic type.
+                Class.forName(SemanticType.class.getName());
+                
+                // Ensure that the signature wrapper is loaded before its subclasses.
+                Class.forName(SignatureWrapper.class.getName());
+                
                 final @Nonnull File root = new File(Database.class.getProtectionDomain().getCodeSource().getLocation().toURI());
                 LOGGER.log(Level.INFORMATION, "Root of classes: " + root);
                 

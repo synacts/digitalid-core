@@ -53,7 +53,7 @@ public final class Attributes implements BothModule {
     /**
      * Stores the semantic type {@code entry.attributes.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType MODULE_ENTRY = SemanticType.create("entry.attributes.module@virtualid.ch").load(TupleWrapper.TYPE);
+    private static final @Nonnull SemanticType MODULE_ENTRY = SemanticType.create("entry.attributes.module@virtualid.ch").load(TupleWrapper.TYPE, ch.virtualid.identity.SemanticType.UNKNOWN);
     
     /**
      * Stores the semantic type {@code attributes.module@virtualid.ch}.
@@ -90,7 +90,7 @@ public final class Attributes implements BothModule {
     /**
      * Stores the semantic type {@code entry.attributes.state@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType STATE_ENTRY = SemanticType.create("entry.attributes.state@virtualid.ch").load(TupleWrapper.TYPE);
+    private static final @Nonnull SemanticType STATE_ENTRY = SemanticType.create("entry.attributes.state@virtualid.ch").load(TupleWrapper.TYPE, ch.virtualid.identity.SemanticType.UNKNOWN);
     
     /**
      * Stores the semantic type {@code attributes.state@virtualid.ch}.

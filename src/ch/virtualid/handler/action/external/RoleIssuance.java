@@ -41,7 +41,7 @@ public final class RoleIssuance extends CoreServiceExternalAction {
     /**
      * Stores the semantic type {@code issuance.role@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("issuance.role@virtualid.ch").load(TupleWrapper.TYPE); // TODO
+    public static final @Nonnull SemanticType TYPE = SemanticType.create("issuance.role@virtualid.ch").load(TupleWrapper.TYPE, ch.virtualid.identity.SemanticType.UNKNOWN); // TODO
     
     @Pure
     @Override

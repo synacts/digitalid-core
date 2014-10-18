@@ -27,8 +27,9 @@ public final class Predecessors extends FreezableArrayList<Predecessor> implemen
     
     /**
      * Stores the semantic type {@code list.predecessor.identity@virtualid.ch}.
+     * (This hack was necessary to get the initialization working.)
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("list.predecessor.identity@virtualid.ch").load(ListWrapper.TYPE, Predecessor.TYPE);
+    public static final @Nonnull SemanticType TYPE = Predecessor.PREDECESSORS;
     
     
     /**

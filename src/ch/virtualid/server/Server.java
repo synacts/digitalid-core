@@ -1,6 +1,5 @@
 package ch.virtualid.server;
 
-import ch.virtualid.client.Cache;
 import ch.virtualid.database.Configuration;
 import ch.virtualid.database.Database;
 import ch.virtualid.database.MySQLConfiguration;
@@ -10,7 +9,6 @@ import ch.virtualid.errors.InitializationError;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identity.HostIdentifier;
-import ch.virtualid.identity.HostIdentity;
 import ch.virtualid.io.Console;
 import ch.virtualid.io.Directory;
 import ch.virtualid.util.FreezableLinkedHashMap;
@@ -33,7 +31,7 @@ public final class Server {
     /**
      * The version of the Virtual ID server implementation.
      */
-    public static final @Nonnull String VERSION = "0.8 (15 October 2014)";
+    public static final @Nonnull String VERSION = "0.8 (18 October 2014)";
     
     /**
      * The authors of the Virtual ID server implementation.
@@ -156,11 +154,12 @@ public final class Server {
         
         listener.start();
         
-        try {
-            Cache.getPublicKeyChain(HostIdentity.VIRTUALID);
-        } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
-            throw new InitializationError("Could not retrieve the public key chain of 'virtualid.ch'.", exception);
-        }
+        // TODO: Uncomment the following lines:
+//        try {
+//            Cache.getPublicKeyChain(HostIdentity.VIRTUALID);
+//        } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
+//            throw new InitializationError("Could not retrieve the public key chain of 'virtualid.ch'.", exception);
+//        }
     }
     
     /**

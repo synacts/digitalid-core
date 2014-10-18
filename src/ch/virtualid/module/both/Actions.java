@@ -64,7 +64,7 @@ public final class Actions implements BothModule {
     /**
      * Stores the semantic type {@code entry.actions.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType MODULE_ENTRY = SemanticType.create("entry.actions.module@virtualid.ch").load(TupleWrapper.TYPE);
+    private static final @Nonnull SemanticType MODULE_ENTRY = SemanticType.create("entry.actions.module@virtualid.ch").load(TupleWrapper.TYPE, ch.virtualid.identity.SemanticType.UNKNOWN);
     
     /**
      * Stores the semantic type {@code actions.module@virtualid.ch}.
@@ -101,7 +101,7 @@ public final class Actions implements BothModule {
     /**
      * Stores the semantic type {@code entry.actions.state@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType STATE_ENTRY = SemanticType.create("entry.actions.state@virtualid.ch").load(TupleWrapper.TYPE);
+    private static final @Nonnull SemanticType STATE_ENTRY = SemanticType.create("entry.actions.state@virtualid.ch").load(TupleWrapper.TYPE, ch.virtualid.identity.SemanticType.UNKNOWN);
     
     /**
      * Stores the semantic type {@code actions.state@virtualid.ch}.

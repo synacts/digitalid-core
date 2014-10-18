@@ -47,7 +47,7 @@ public final class HostCredentials implements HostModule {
     /**
      * Stores the semantic type {@code entry.host.credentials.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType ENTRY = SemanticType.create("entry.host.credentials.module@virtualid.ch").load(TupleWrapper.TYPE);
+    private static final @Nonnull SemanticType ENTRY = SemanticType.create("entry.host.credentials.module@virtualid.ch").load(TupleWrapper.TYPE, ch.virtualid.identity.SemanticType.UNKNOWN);
     
     /**
      * Stores the semantic type {@code host.credentials.module@virtualid.ch}.

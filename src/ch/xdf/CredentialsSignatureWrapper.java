@@ -147,7 +147,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
     /**
      * Stores the semantic type {@code credential.credentials.signature@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType CREDENTIAL = SemanticType.create("credential.credentials.signature@virtualid.ch").load(ListWrapper.TYPE, Credential.EXPOSED, RandomizedAgentPermissions.TYPE, C, SE, SB, I, SI, ENCRYPTION);
+    private static final @Nonnull SemanticType CREDENTIAL = SemanticType.create("credential.credentials.signature@virtualid.ch").load(TupleWrapper.TYPE, Credential.EXPOSED, RandomizedAgentPermissions.TYPE, C, SE, SB, I, SI, ENCRYPTION);
     
     /**
      * Stores the semantic type {@code list.credential.credentials.signature@virtualid.ch}.
@@ -692,7 +692,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
     /**
      * Stores the semantic type {@code array.credential.credentials.signature@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType ARRAY = SemanticType.create("array.credential.credentials.signature@virtualid.ch").load(ListWrapper.TYPE, Element.TYPE, TWI, TWB);
+    private static final @Nonnull SemanticType ARRAY = SemanticType.create("array.credential.credentials.signature@virtualid.ch").load(TupleWrapper.TYPE, Element.TYPE, TWI, TWB);
     
     /**
      * Stores the semantic type {@code list.array.credential.credentials.signature@virtualid.ch}.

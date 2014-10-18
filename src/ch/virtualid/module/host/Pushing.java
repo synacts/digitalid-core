@@ -48,7 +48,7 @@ public final class Pushing implements HostModule {
     /**
      * Stores the semantic type {@code entry.pushing.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType ENTRY = SemanticType.create("entry.pushing.module@virtualid.ch").load(TupleWrapper.TYPE);
+    private static final @Nonnull SemanticType ENTRY = SemanticType.create("entry.pushing.module@virtualid.ch").load(TupleWrapper.TYPE, ch.virtualid.identity.SemanticType.UNKNOWN);
     
     /**
      * Stores the semantic type {@code pushing.module@virtualid.ch}.

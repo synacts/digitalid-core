@@ -256,14 +256,14 @@ public final class Console {
             write("---------------------------------------------------------");
             write();
             write("You have the following options:");
-            int i = 0;
-            for (final @Nonnull Option option : options) {
-                write("- " + (i++) + ": " + option.getDescription());
+            final int size = options.size();
+            for (int i = 0; i < size; i++) {
+                write("- " + (size >= 10 && i < 10 ? " " : "") + i + ": " + options.get(i).getDescription());
             }
             write();
             final int input = readInt("Execute the option: ");
             write();
-            if (input >= 0 && input < options.size()) {
+            if (input >= 0 && input < size) {
                 try { options.get(input).execute(); } catch (@Nonnull EscapeOptionException exception) {}
             } else {
                 write("Please choose one of the given options!");

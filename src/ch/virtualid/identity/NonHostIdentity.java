@@ -1,8 +1,8 @@
 package ch.virtualid.identity;
 
 import ch.virtualid.errors.ShouldNeverHappenError;
-import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.interfaces.Immutable;
 import javax.annotation.Nonnull;
 
 /**
@@ -19,7 +19,7 @@ public abstract class NonHostIdentity extends Identity implements Immutable {
     /**
      * Stores the semantic type {@code nonhost@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType IDENTIFIER = SemanticType.create("nonhost@virtualid.ch").load(Identity.IDENTIFIER);
+    public static final @Nonnull SemanticType IDENTIFIER = SyntacticType.NONHOST_IDENTIFIER;
     
     
     /**

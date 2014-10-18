@@ -47,7 +47,7 @@ public final class Tokens implements HostModule {
     /**
      * Stores the semantic type {@code entry.tokens.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType ENTRY = SemanticType.create("entry.tokens.module@virtualid.ch").load(TupleWrapper.TYPE);
+    private static final @Nonnull SemanticType ENTRY = SemanticType.create("entry.tokens.module@virtualid.ch").load(TupleWrapper.TYPE, ch.virtualid.identity.SemanticType.UNKNOWN);
     
     /**
      * Stores the semantic type {@code tokens.module@virtualid.ch}.

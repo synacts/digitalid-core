@@ -5,7 +5,6 @@ import ch.virtualid.exceptions.external.IdentityNotFoundException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
-import ch.xdf.StringWrapper;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -29,7 +28,7 @@ public abstract class Identity implements Immutable, SQLizable {
     /**
      * Stores the semantic type {@code @virtualid.ch}.
      */
-    public static final @Nonnull SemanticType IDENTIFIER = SemanticType.create("@virtualid.ch").load(StringWrapper.TYPE);
+    public static final @Nonnull SemanticType IDENTIFIER = SyntacticType.IDENTITY_IDENTIFIER;
     
     
     /**
