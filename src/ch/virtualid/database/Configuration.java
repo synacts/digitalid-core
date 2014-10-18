@@ -16,8 +16,8 @@ import javax.annotation.Nullable;
 /**
  * This class is used to configure various databases.
  * 
- * @see PostgreSQLConfiguration
  * @see MySQLConfiguration
+ * @see PostgreSQLConfiguration
  * @see SQLiteConfiguration
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
@@ -51,6 +51,11 @@ public abstract class Configuration implements Immutable {
      */
     @Pure
     protected abstract @Nonnull Properties getProperties();
+    
+    /**
+     * Drops the configured database.
+     */
+    public abstract void dropDatabase() throws SQLException;
     
     
     /**

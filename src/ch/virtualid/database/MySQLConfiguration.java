@@ -108,6 +108,13 @@ public final class MySQLConfiguration extends Configuration implements Immutable
         }
     }
     
+    @Override
+    public void dropDatabase() throws SQLException {
+        try (@Nonnull Statement statement = Database.getConnection().createStatement()) {
+            statement.executeUpdate("DROP DATABASE IF EXISTS " + database);
+        }
+    }
+    
     /**
      * Creates a new MySQL configuration by reading the properties from the default file or from the user's input.
      */

@@ -46,6 +46,11 @@ public final class SQLiteConfiguration extends Configuration implements Immutabl
         new SQLiteConfig().setSharedCache(true);
     }
     
+    @Override
+    public void dropDatabase() {
+        new File(Directory.DATA.getPath() + Directory.SEPARATOR + name + ".db").delete();
+    }
+    
     /**
      * Creates a new SQLite configuration for the database with the given name.
      */

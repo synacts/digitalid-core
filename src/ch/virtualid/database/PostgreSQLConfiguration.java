@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Savepoint;
@@ -103,6 +104,19 @@ public final class PostgreSQLConfiguration extends Configuration implements Immu
         properties.clear();
         properties.setProperty("user", user);
         properties.setProperty("password", password);
+        
+        try (@Nonnull Connection connection = DriverManager.getConnection("jdbc:postgresql://" + server + ":" + port + "/", properties); @Nonnull Statement statement = connection.createStatement()) {
+            final @Nonnull ResultSet resultSet = statement.executeQuery("SELECT EXISTS (SELECT * FROM pg_catalog.pg_database WHERE datname = '" + database + "')");
+            if (resultSet.next() && !resultSet.getBoolean(1)) statement.executeUpdate("CREATE DATABASE " + database);
+        }
+    }
+    
+    @Override
+    public void dropDatabase() throws SQLException {
+        Database.getConnection().close();
+        try (@Nonnull Connection connection = DriverManager.getConnection("jdbc:postgresql://" + server + ":" + port + "/", properties); @Nonnull Statement statement = connection.createStatement()) {
+            statement.executeUpdate("DROP DATABASE IF EXISTS " + database);
+        }
     }
     
     /**

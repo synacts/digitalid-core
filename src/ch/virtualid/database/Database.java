@@ -26,6 +26,8 @@ import javax.annotation.Nullable;
  * <em>Important:</em> The table names without the prefix may consist of at most 22 characters!
  * Moreover, if a host is run with SQLite as database, its identifier may not contain a hyphen.
  * 
+ * @see Configuration
+ * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
@@ -159,6 +161,7 @@ public final class Database implements Immutable {
         Database.configuration = configuration;
         Database.singleAccess = singleAccess;
         mainThread.set(true);
+        connection.remove();
         
         if (!testing) {
             try {

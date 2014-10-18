@@ -1,21 +1,24 @@
 package ch.virtualid.server;
 
-import ch.virtualid.identity.Category;
-import ch.virtualid.database.Database;
-import ch.virtualid.io.Directory;
-import ch.virtualid.identity.Mapper;
-import ch.virtualid.identity.Vid;
-import ch.virtualid.client.Client;
-import ch.virtualid.credential.Credential.RandomizedAuthorization;
 import ch.virtualid.agent.AgentPermissions;
-import ch.virtualid.client.Request;
 import ch.virtualid.agent.Restrictions;
+import ch.virtualid.client.Client;
+import ch.virtualid.database.Database;
+import ch.virtualid.identity.Category;
+import ch.virtualid.identity.Mapper;
 import ch.virtualid.identity.SemanticType;
-import ch.xdf.*;
+import ch.virtualid.io.Directory;
+import ch.xdf.Block;
+import ch.xdf.IntegerWrapper;
+import ch.xdf.SelfcontainedWrapper;
+import ch.xdf.SignatureWrapper;
+import ch.xdf.StringWrapper;
+import ch.xdf.TupleWrapper;
 import java.io.File;
 import java.math.BigInteger;
 import java.util.List;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 /**
