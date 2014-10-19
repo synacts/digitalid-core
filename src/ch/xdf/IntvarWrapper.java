@@ -2,10 +2,10 @@ package ch.xdf;
 
 import ch.virtualid.annotations.Exposed;
 import ch.virtualid.annotations.Pure;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.identity.SyntacticType;
 import ch.virtualid.interfaces.Immutable;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
 import javax.annotation.Nonnull;
 
 /**
@@ -101,6 +101,8 @@ public final class IntvarWrapper extends BlockWrapper implements Immutable {
     @Pure
     @Override
     protected void encode(@Exposed @Nonnull Block block) {
+        assert block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
+        
         encode(block, 0, block.getLength(), value);
     }
     
@@ -240,7 +242,6 @@ public final class IntvarWrapper extends BlockWrapper implements Immutable {
      * @param value the value to be encoded as an intvar.
      * 
      * @require block.isEncoding() : "The given block is in the process of being encoded.";
-     * @require block.getType().isBasedOn(TYPE) : "The block is based on an intvar.";
      * @require offset >= 0 : "The offset is not negative.";
      * @require offset + length <= block.getLength() : "The indicated section may not exceed the given block.";
      * @require length == determineLength(value) : "The length of the indicated section in the block has to match the length of the encoded value.";
@@ -250,7 +251,6 @@ public final class IntvarWrapper extends BlockWrapper implements Immutable {
     @SuppressWarnings("AssignmentToMethodParameter")
     public static void encode(final @Exposed @Nonnull Block block, final int offset, final int length, long value) {
         assert block.isEncoding() : "The given block is in the process of being encoded.";
-        assert block.getType().isBasedOn(TYPE) : "The block is based on an intvar.";
         assert offset >= 0 : "The offset is not negative.";
         assert offset + length <= block.getLength() : "The indicated section may not exceed the given block.";
         assert length == determineLength(value) : "The length of the indicated section in the block has to match the length of the encoded value.";

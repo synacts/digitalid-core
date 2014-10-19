@@ -17,7 +17,7 @@ public final class CompressionWrapperTest {
      */
     @Test
     public void testWrapping() throws InvalidEncodingException {
-        Block[] blocks = new Block[] {new StringWrapper("").toBlock(), new StringWrapper("This is a short string.").toBlock(), new StringWrapper("This is a longer string in order to test different string lengths.").toBlock()};
+        Block[] blocks = new Block[] {new StringWrapper("").toBlock(), new StringWrapper("This is a short string.").toBlock(), new StringWrapper("This is a longer string in order to test different block lengths.").toBlock()};
         byte[] algorithms = new byte[] {CompressionWrapper.NONE, CompressionWrapper.ZLIB};
         for (Block block : blocks) {
             for (byte algorithm : algorithms) {
