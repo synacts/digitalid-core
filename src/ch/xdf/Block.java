@@ -337,7 +337,7 @@ public final class Block implements Immutable, SQLizable {
      * 
      * @require !isEncoding() : "This method is not called during encoding.";
      * @require offset >= 0 : "The offset is non-negative.";
-     * @require length > 0 : "The length is positive.";
+     * @require length >= 0 : "The length is non-negative.";
      * @require offset + length <= getLength() : "The offset and length are within this block.";
      * 
      * @ensure isEncoded() : "The block is encoded.";
@@ -347,7 +347,7 @@ public final class Block implements Immutable, SQLizable {
     public @Capturable @Nonnull byte[] getBytes(int offset, int length) {
         assert !isEncoding() : "This method is not called during encoding.";
         assert offset >= 0 : "The offset is non-negative.";
-        assert length > 0 : "The length is positive.";
+        assert length >= 0 : "The length is non-negative.";
         assert offset + length <= getLength() : "The offset and length are within this block.";
         
         ensureEncoded();
@@ -401,7 +401,7 @@ public final class Block implements Immutable, SQLizable {
      * @require index >= 0 : "The index is not negative.";
      * @require index + length <= getLength() : "The given values may not exceed this block.";
      * @require offset >= 0 : "The offset is not negative.";
-     * @require length > 0 : "The length is positive.";
+     * @require length >= 0 : "The length is non-negative.";
      * @require offset + length <= values.length : "The indicated section may not exceed the given byte array.";
      */
     @ExposedRecipient
@@ -410,7 +410,7 @@ public final class Block implements Immutable, SQLizable {
         assert index >= 0 : "The index is not negative.";
         assert index + length <= getLength() : "The given values may not exceed this block.";
         assert offset >= 0 : "The offset is not negative.";
-        assert length > 0 : "The length is positive.";
+        assert length >= 0 : "The length is non-negative.";
         assert offset + length <= values.length : "The indicated section may not exceed the given byte array.";
         
         System.arraycopy(values, offset, bytes, this.offset + index, length);

@@ -1,25 +1,26 @@
 package ch.xdf;
 
+import ch.virtualid.DatabaseSetup;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
-import static org.junit.Assert.assertEquals;
+import ch.virtualid.identity.SemanticType;
+import javax.annotation.Nonnull;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
  * Unit testing of the class {@link IntvarWrapper}.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 0.9
+ * @version 1.0
  */
-public final class IntvarWrapperTest {
-
-    /**
-     * Tests the encoding and decoding of values.
-     */
+public final class IntvarWrapperTest extends DatabaseSetup {
+    
     @Test
     public void testWrapping() throws InvalidEncodingException {
+        final @Nonnull SemanticType TYPE = SemanticType.create("intvar@syntacts.com").load(IntvarWrapper.TYPE);
         long value = 0;
         while (Long.numberOfLeadingZeros(value) >= 2) {
-            assertEquals(value, new IntvarWrapper(new IntvarWrapper(value).toBlock()).getValue());
+            Assert.assertEquals(value, new IntvarWrapper(new IntvarWrapper(TYPE, value).toBlock()).getValue());
             value = (value + 1) * 3;
         }
     }

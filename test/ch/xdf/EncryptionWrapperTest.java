@@ -1,8 +1,9 @@
 package ch.xdf;
 
+import ch.virtualid.ServerSetup;
 import ch.virtualid.cryptography.SymmetricKey;
-import ch.virtualid.server.Host;
-import ch.virtualid.server.Server;
+import ch.virtualid.identity.SemanticType;
+import javax.annotation.Nonnull;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
@@ -12,16 +13,12 @@ import org.junit.Test;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 0.9
  */
-public final class EncryptionWrapperTest {
+public final class EncryptionWrapperTest extends ServerSetup {
 
-    /**
-     * Tests the encoding and decoding of values.
-     */
     @Test
     public void testWrapping() throws Exception {
-        Server.start(new String[0]);
-        String identifier = "test.virtualid.ch";
-        Host host = new Host(identifier);
+        final @Nonnull SemanticType TYPE = SemanticType.create("boolean@syntacts.com").load(BooleanWrapper.TYPE);
+        
         Block[] blocks = new Block[] {Block.EMPTY, new StringWrapper("String").toBlock()};
         for (Block block : blocks) {
             SymmetricKey[] symmetricKeys = new SymmetricKey[] {null, new SymmetricKey()};

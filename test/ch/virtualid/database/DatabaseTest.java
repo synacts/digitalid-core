@@ -203,7 +203,7 @@ public class DatabaseTest {
                 block.set(preparedStatement, 1);
                 preparedStatement.executeUpdate();
             }
-
+            
             try (@Nonnull PreparedStatement preparedStatement = Database.getConnection().prepareStatement("SELECT block FROM test_block")) {
                 final @Nonnull ResultSet resultSet = preparedStatement.executeQuery();
                 Assert.assertTrue(resultSet.next());

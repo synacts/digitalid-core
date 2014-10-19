@@ -1,12 +1,12 @@
 package ch.xdf;
 
-import ch.virtualid.client.Client;
+import ch.virtualid.ServerSetup;
 import ch.virtualid.credential.Credential;
-import ch.virtualid.server.Host;
-import ch.virtualid.server.Server;
+import ch.virtualid.identity.SemanticType;
 import java.math.BigInteger;
 import java.util.List;
-import static org.junit.Assert.*;
+import javax.annotation.Nonnull;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -15,17 +15,15 @@ import org.junit.Test;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 0.9
  */
-public final class SignatureWrapperTest {
+public final class SignatureWrapperTest extends ServerSetup {
 
     /**
      * Tests the encoding and decoding of values.
      */
     @Test
     public void testWrapping() throws Exception {
-        Server.start(new String[0]);
-        String identifier = "test.virtualid.ch";
-        Host host = new Host(identifier);
-        Client client = new Client("Tester");
+        final @Nonnull SemanticType TYPE = SemanticType.create("boolean@syntacts.com").load(BooleanWrapper.TYPE);
+        
         Block[] blocks = new Block[] {Block.EMPTY, new StringWrapper("String").toBlock()};
         for (Block block : blocks) {
             testSignature(block, identifier, 0, null, null, null, null, false); // Unsigned.
@@ -40,13 +38,13 @@ public final class SignatureWrapperTest {
      */
     private void testSignature(Block element, String identifier, long auditTime, List<Block> auditTrail, String host, BigInteger client, Credential[] credentials, boolean lodged) throws Exception {
         SignatureWrapper signatureWrapper = new SignatureWrapper(new SignatureWrapper(element, identifier, auditTime, auditTrail, host, client, credentials, lodged).getBlock(), true);
-        assertEquals(element, signatureWrapper.getElement());
-        assertEquals(identifier, signatureWrapper.getIdentifier());
-        assertEquals(auditTime, signatureWrapper.getAuditTime());
-        assertEquals(auditTrail, signatureWrapper.getAuditTrail());
-        assertEquals(host, signatureWrapper.getSigner());
-        assertArrayEquals(credentials, signatureWrapper.getCredentials());
-        assertEquals(lodged, signatureWrapper.isLodged());
+        Assert.assertEquals(element, signatureWrapper.getElement());
+        Assert.assertEquals(identifier, signatureWrapper.getIdentifier());
+        Assert.assertEquals(auditTime, signatureWrapper.getAuditTime());
+        Assert.assertEquals(auditTrail, signatureWrapper.getAuditTrail());
+        Assert.assertEquals(host, signatureWrapper.getSigner());
+        Assert.assertArrayEquals(credentials, signatureWrapper.getCredentials());
+        Assert.assertEquals(lodged, signatureWrapper.isLodged());
     }
     
 }
