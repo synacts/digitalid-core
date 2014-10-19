@@ -47,6 +47,7 @@ public final class EmailPerson extends Person {
      * @return whether the provider of the given email address exists.
      */
     @Pure
+    @Deprecated
     public static boolean providerExists(@Nonnull NonHostIdentifier identifier) {
         try {
             final @Nonnull InitialDirContext context = new InitialDirContext();

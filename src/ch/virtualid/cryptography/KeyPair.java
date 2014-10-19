@@ -78,7 +78,7 @@ public final class KeyPair implements Immutable {
         final @Nonnull Element to = ab.pow(ro);
         
         final @Nonnull FreezableArray<Block> elements = new FreezableArray<Block>(tu.toBlock().setType(PublicKey.TU), ti.toBlock().setType(PublicKey.TI), tv.toBlock().setType(PublicKey.TV), to.toBlock().setType(PublicKey.TO));
-        final @Nonnull Exponent t = new Exponent(new TupleWrapper(PublicKey.TUPLE, elements).toBlock().getHash());
+        final @Nonnull Exponent t = new Exponent(new TupleWrapper(PublicKey.TUPLE, elements.freeze()).toBlock().getHash());
         
         final @Nonnull Exponent su = ru.subtract(t.multiply(eu));
         final @Nonnull Exponent si = ri.subtract(t.multiply(ei));
@@ -121,7 +121,7 @@ public final class KeyPair implements Immutable {
         while (true) {
             final @Nonnull BigInteger prime = BigInteger.probablePrime(length - 1, random);
             final @Nonnull BigInteger value = prime.shiftLeft(1).add(BigInteger.ONE);
-            if (value.isProbablePrime(100)) return value;
+            if (value.isProbablePrime(64)) return value;
         }
     }
     

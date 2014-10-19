@@ -1,6 +1,6 @@
 package ch.xdf;
 
-import ch.virtualid.ServerSetup;
+import ch.virtualid.setup.ServerSetup;
 import ch.virtualid.cryptography.SymmetricKey;
 import ch.virtualid.identity.SemanticType;
 import javax.annotation.Nonnull;

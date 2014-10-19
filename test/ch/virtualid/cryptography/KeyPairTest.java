@@ -1,38 +1,42 @@
 package ch.virtualid.cryptography;
 
+import ch.virtualid.auxiliary.Time;
+import ch.virtualid.setup.DatabaseSetup;
 import javax.annotation.Nonnull;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 /**
- * Tests the key pair generation of Virtual ID.
+ * Unit testing of the class {@link KeyPair}.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 0.8
+ * @version 1.0
  */
-public final class KeyPairTest {
+public final class KeyPairTest extends DatabaseSetup {
     
-    /**
-     * Tests the generation of cryptographic key pairs.
-     */
     @Test
     public void testKeyPair() {
-        @Nonnull KeyPair keyPair = new KeyPair();
-        @Nonnull PrivateKey privateKey = keyPair.getPrivateKey();
-        @Nonnull PublicKey publicKey = keyPair.getPublicKey();
+        @Nonnull Time time = new Time();
+        final @Nonnull KeyPair keyPair = new KeyPair();
+        final @Nonnull PrivateKey privateKey = keyPair.getPrivateKey();
+        final @Nonnull PublicKey publicKey = keyPair.getPublicKey();
+        System.out.println("\nKey Pair Generation: " + time.ago().getValue() + " ms\n");
         
         assertTrue(publicKey.verifySubgroupProof());
         
-        @Nonnull Group compositeGroup = publicKey.getCompositeGroup();
-        for (int i = 0; i < 20; i++) {
-            @Nonnull Element m = compositeGroup.getRandomElement();
-            @Nonnull Element c = m.pow(publicKey.getE());
-            long start = System.currentTimeMillis();
+        for (int i = 0; i < 10; i++) {
+            final @Nonnull Element m = publicKey.getCompositeGroup().getRandomElement();
+            time = new Time();
+            final @Nonnull Element c = m.pow(publicKey.getE());
+            System.out.println("Encryption (only algorithm): " + time.ago().getValue() + " ms");
+            time = new Time();
             assertEquals(c.pow(privateKey.getD()), m);
-            System.out.println("" + (System.currentTimeMillis() - start) + " ms");
-            start = System.currentTimeMillis();
+            System.out.println("Decryption (slow algorithm): " + time.ago().getValue() + " ms");
+            time = new Time();
             assertEquals(privateKey.powD(c), m);
-            System.out.println("-> " + (System.currentTimeMillis() - start) + " ms");
+            System.out.println("Decryption (fast algorithm): " + time.ago().getValue() + " ms\n");
         }
     }
+    
 }

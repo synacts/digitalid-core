@@ -1,6 +1,6 @@
 package ch.xdf;
 
-import ch.virtualid.DatabaseSetup;
+import ch.virtualid.setup.DatabaseSetup;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.identity.SemanticType;
 import javax.annotation.Nonnull;

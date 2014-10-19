@@ -1,6 +1,6 @@
 package ch.xdf;
 
-import ch.virtualid.DatabaseSetup;
+import ch.virtualid.setup.DatabaseSetup;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identity.SemanticType;

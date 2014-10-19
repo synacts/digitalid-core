@@ -2,6 +2,7 @@ package ch.xdf;
 
 import ch.virtualid.annotations.Exposed;
 import ch.virtualid.annotations.Pure;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.identity.SyntacticType;
 import ch.virtualid.interfaces.Blockable;
@@ -9,7 +10,6 @@ import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.ReadonlyArray;
 import ch.virtualid.util.ReadonlyList;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -63,13 +63,13 @@ public final class TupleWrapper extends BlockWrapper implements Immutable {
      * @require type.isLoaded() : "The type declaration is loaded.";
      * @require type.isBasedOn(getSyntacticType()) : "The given type is based on the indicated syntactic type.";
      * @require basedOnParameters(type, elements) : "Each element is either null or based on the corresponding parameter of the given type.";
-     * @require elements.isFrozen() : "The elements have to be frozen.";
+     * @require elements.isFrozen() : "The elements are frozen.";
      */
     public TupleWrapper(@Nonnull SemanticType type, @Nonnull ReadonlyArray<Block> elements) {
         super(type);
         
         assert basedOnParameters(type, elements) : "Each element is either null or based on the corresponding parameter of the given type.";
-        assert elements.isFrozen() : "The elements have to be frozen.";
+        assert elements.isFrozen() : "The elements are frozen.";
         
         this.elements = elements;
     }

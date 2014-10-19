@@ -1,4 +1,4 @@
-package ch.virtualid;
+package ch.virtualid.setup;
 
 import ch.virtualid.server.Server;
 import org.junit.AfterClass;
@@ -13,12 +13,12 @@ import org.junit.BeforeClass;
 public class ServerSetup extends DatabaseSetup {
     
     @BeforeClass
-    public static void startUpServer() {
+    public static void setUpServer() {
         Server.start(new String[] {"syntacts.com"});
     }
     
     @AfterClass
-    public static void shutDownServer() {
+    public static void breakDownServer() {
         Server.shutDown();
     }
     

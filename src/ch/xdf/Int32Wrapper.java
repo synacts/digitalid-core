@@ -2,10 +2,10 @@ package ch.xdf;
 
 import ch.virtualid.annotations.Exposed;
 import ch.virtualid.annotations.Pure;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.identity.SyntacticType;
 import ch.virtualid.interfaces.Immutable;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
 import javax.annotation.Nonnull;
 
 /**
@@ -61,7 +61,7 @@ public final class Int32Wrapper extends BlockWrapper implements Immutable {
         
         int value = 0;
         for (int i = 0; i < LENGTH; i++) {
-            value = (short) ((value << 8) | (block.getByte(i) & 0xff));
+            value = (value << 8) | (block.getByte(i) & 0xff);
         }
         this.value = value;
     }

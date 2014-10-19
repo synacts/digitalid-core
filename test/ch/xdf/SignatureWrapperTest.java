@@ -1,6 +1,6 @@
 package ch.xdf;
 
-import ch.virtualid.ServerSetup;
+import ch.virtualid.setup.ServerSetup;
 import ch.virtualid.credential.Credential;
 import ch.virtualid.identity.SemanticType;
 import java.math.BigInteger;

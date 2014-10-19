@@ -1,4 +1,4 @@
-package ch.virtualid;
+package ch.virtualid.setup;
 
 import ch.virtualid.database.Database;
 import ch.virtualid.database.MySQLConfiguration;
@@ -19,7 +19,7 @@ import org.junit.BeforeClass;
 public class DatabaseSetup {
     
     @BeforeClass
-    public static void configureDatabase() throws SQLException, IOException, ClassNotFoundException {
+    public static void setupDatabase() throws SQLException, IOException, ClassNotFoundException {
         final int configuration = 0;
         switch (configuration) {
             case 0: Database.initialize(new MySQLConfiguration(), false, true); break;
@@ -31,7 +31,7 @@ public class DatabaseSetup {
     }
     
     @AfterClass
-    public static void dropDatabase() throws SQLException {
+    public static void breakDownDatabase() throws SQLException {
         Database.getConfiguration().dropDatabase();
     }
     
