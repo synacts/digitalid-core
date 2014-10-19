@@ -1,8 +1,11 @@
 package ch.virtualid.setup;
 
+import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.server.Server;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Test;
 
 /**
  * Sets up the {@link Server} for testing.
@@ -14,12 +17,17 @@ public class ServerSetup extends DatabaseSetup {
     
     @BeforeClass
     public static void setUpServer() {
-        Server.start(new String[] {"syntacts.com"});
+        Server.start("syntacts.com");
     }
     
     @AfterClass
     public static void breakDownServer() {
-        Server.shutDown();
+        Server.stop();
+    }
+    
+    @Test
+    public final void testServerSetup() {
+        Assert.assertTrue(Server.hasHost(new HostIdentifier("syntacts.com")));
     }
     
 }

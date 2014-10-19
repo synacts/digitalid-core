@@ -77,7 +77,7 @@ public final class Host extends Site {
     /**
      * Stores the client associated with this host.
      */
-    private final @Nonnull Client client;
+    private /* final */ @Nonnull Client client;
     
     /**
      * Creates a new host with the given identifier by either reading the cryptographic keys from the file system or creating them.
@@ -105,7 +105,7 @@ public final class Host extends Site {
         }
         
         final @Nonnull SelfcontainedWrapper privateKeyWrapper = new SelfcontainedWrapper(SelfcontainedWrapper.SELFCONTAINED, privateKeyChain);
-        final @Nonnull SelfcontainedWrapper publicKeyWrapper = new SelfcontainedWrapper(SelfcontainedWrapper.SELFCONTAINED, publicKeyChain);
+        final @Nonnull SelfcontainedWrapper publicKeyWrapper = new SelfcontainedWrapper(Attribute.TYPE, publicKeyChain);
         
         if (!privateKeyFile.exists() || !publicKeyFile.exists()) {
             privateKeyWrapper.write(new FileOutputStream(privateKeyFile), true);
@@ -125,7 +125,8 @@ public final class Host extends Site {
             attribute.replaceValue(null, certificate.toBlock());
         }
         
-        this.client = new Client((Character.isDigit(identifier.getString().charAt(0)) ? "_" : "") + identifier.getString().replace(".", "_").replace("-", "$"));
+        // TODO: The client may not have exactly the same name, otherwise the database tables collide!
+//        this.client = new Client((Character.isDigit(identifier.getString().charAt(0)) ? "_" : "") + identifier.getString().replace(".", "_").replace("-", "$"));
         Server.addHost(this);
     }
     

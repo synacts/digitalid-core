@@ -1,6 +1,7 @@
 package ch.virtualid.cryptography;
 
 import ch.virtualid.annotations.Pure;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
@@ -9,7 +10,6 @@ import ch.virtualid.util.ReadonlyArray;
 import ch.xdf.Block;
 import ch.xdf.IntegerWrapper;
 import ch.xdf.TupleWrapper;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
 import java.math.BigInteger;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -55,7 +55,7 @@ public final class PrivateKey implements Immutable, Blockable {
     /**
      * Stores the semantic type {@code private.key.host@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("private.key.host@virtualid.ch").load(TupleWrapper.TYPE, COMPOSITE_GROUP, P, Q, SQUARE_GROUP, X);
+    public static final @Nonnull SemanticType TYPE = SemanticType.create("private.key.host@virtualid.ch").load(TupleWrapper.TYPE, COMPOSITE_GROUP, P, Q, D, SQUARE_GROUP, X);
     
     
     /**
@@ -177,7 +177,7 @@ public final class PrivateKey implements Immutable, Blockable {
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        final @Nonnull FreezableArray<Block> elements = new FreezableArray<Block>(5);
+        final @Nonnull FreezableArray<Block> elements = new FreezableArray<Block>(6);
         elements.set(0, compositeGroup.toBlock().setType(COMPOSITE_GROUP));
         elements.set(1, new IntegerWrapper(P, p).toBlock());
         elements.set(2, new IntegerWrapper(Q, q).toBlock());

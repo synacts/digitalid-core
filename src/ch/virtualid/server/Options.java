@@ -89,7 +89,8 @@ final class Options {
         
         @Override
         public void execute() {
-            if (Console.readBoolean("Are you sure you want to shut down the server? Yes/No: ")) {
+            // TODO: Remove the true on the following line!
+            if (true || Console.readBoolean("Are you sure you want to shut down the server? Yes/No: ")) {
                 Console.write("The server is shutting down...");
                 Console.write();
                 Server.shutDown();
@@ -124,7 +125,7 @@ final class Options {
         public void execute() {
             Console.write("The following hosts are running on this server:");
             for (final @Nonnull Host host : Server.getHosts()) {
-                Console.write("- " + host.getIdentifier());
+                Console.write("- " + host.getIdentifier().getString());
             }
             if (Server.getHosts().isEmpty()) Console.write("(None)");
         }

@@ -6,9 +6,14 @@ import ch.virtualid.database.PostgreSQLConfiguration;
 import ch.virtualid.database.SQLiteConfiguration;
 import ch.virtualid.identity.SemanticType;
 import java.io.IOException;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import javax.annotation.Nonnull;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Test;
 
 /**
  * Sets up the {@link Database} for testing.
@@ -33,6 +38,14 @@ public class DatabaseSetup {
     @AfterClass
     public static void breakDownDatabase() throws SQLException {
         Database.getConfiguration().dropDatabase();
+    }
+    
+    @Test
+    public final void testDatabaseSetup() throws SQLException {
+        try (@Nonnull Statement statement = Database.getConnection().createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery("SELECT 1")) {
+            Assert.assertTrue(resultSet.next());
+            Assert.assertEquals(1, resultSet.getInt(1));
+        }
     }
     
 }

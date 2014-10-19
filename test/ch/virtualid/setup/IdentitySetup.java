@@ -6,6 +6,7 @@ import ch.virtualid.identity.Person;
 import javax.annotation.Nonnull;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Test;
 
 /**
  * Sets up an {@link Identity} for testing.
@@ -26,5 +27,10 @@ public class IdentitySetup extends ServerSetup {
     
     @AfterClass
     public static void breakDownIdentity() {}
+    
+    @Test
+    public final void testIdentitySetup() {
+        // TODO
+    }
     
 }

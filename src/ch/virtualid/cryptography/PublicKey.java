@@ -1,6 +1,7 @@
 package ch.virtualid.cryptography;
 
 import ch.virtualid.annotations.Pure;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
@@ -8,7 +9,6 @@ import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.ReadonlyArray;
 import ch.xdf.Block;
 import ch.xdf.TupleWrapper;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -343,22 +343,22 @@ public final class PublicKey implements Immutable, Blockable {
     @Override
     public @Nonnull Block toBlock() {
         final @Nonnull FreezableArray<Block> elements = new FreezableArray<Block>(16);
-        elements.set(0, compositeGroup.toBlock());
-        elements.set(1, e.toBlock());
-        elements.set(2, ab.toBlock());
-        elements.set(3, au.toBlock());
-        elements.set(4, ai.toBlock());
-        elements.set(5, av.toBlock());
-        elements.set(6, ao.toBlock());
-        elements.set(7, t.toBlock());
-        elements.set(8, su.toBlock());
-        elements.set(9, si.toBlock());
-        elements.set(10, sv.toBlock());
-        elements.set(11, so.toBlock());
-        elements.set(12, squareGroup.toBlock());
-        elements.set(13, g.toBlock());
-        elements.set(14, y.toBlock());
-        elements.set(15, zPlus1.toBlock());
+        elements.set(0, compositeGroup.toBlock().setType(COMPOSITE_GROUP));
+        elements.set(1, e.toBlock().setType(E));
+        elements.set(2, ab.toBlock().setType(AB));
+        elements.set(3, au.toBlock().setType(AU));
+        elements.set(4, ai.toBlock().setType(AI));
+        elements.set(5, av.toBlock().setType(AV));
+        elements.set(6, ao.toBlock().setType(AO));
+        elements.set(7, t.toBlock().setType(T));
+        elements.set(8, su.toBlock().setType(SU));
+        elements.set(9, si.toBlock().setType(SI));
+        elements.set(10, sv.toBlock().setType(SV));
+        elements.set(11, so.toBlock().setType(SO));
+        elements.set(12, squareGroup.toBlock().setType(SQUARE_GROUP));
+        elements.set(13, g.toBlock().setType(G));
+        elements.set(14, y.toBlock().setType(Y));
+        elements.set(15, zPlus1.toBlock().setType(Z));
         return new TupleWrapper(TYPE, elements.freeze()).toBlock();
     }
     

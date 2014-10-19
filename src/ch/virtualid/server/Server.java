@@ -140,9 +140,9 @@ public final class Server {
      * 
      * @param arguments the identifiers of hosts to be created when starting up.
      */
-    public static void start(@Nonnull String[] arguments) {
-        loadHosts();
+    public static void start(@Nonnull String... arguments) {
         loadServices();
+        loadHosts();
         
         for (final @Nonnull String argument : arguments) {
             try {
@@ -160,6 +160,22 @@ public final class Server {
 //        } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
 //            throw new InitializationError("Could not retrieve the public key chain of 'virtualid.ch'.", exception);
 //        }
+    }
+    
+    /**
+     * Stops the server without shutting down (which is important for testing purposes).
+     */
+    public static void stop() {
+        listener.shutDown();
+        hosts.clear();
+    }
+    
+    /**
+     * Shuts down the server after having handled all pending requests.
+     */
+    public static void shutDown() {
+        listener.shutDown();
+        System.exit(0);
     }
     
     /**
@@ -196,14 +212,6 @@ public final class Server {
         Database.initialize(configuration, false, false);
         start(arguments);
         Options.start();
-    }
-    
-    /**
-     * Shuts down the server after having handled all pending requests.
-     */
-    public static void shutDown() {
-        listener.shutDown();
-        System.exit(0);
     }
     
 }
