@@ -41,8 +41,8 @@ public final class Passwords implements BothModule {
     @Override
     public void createTables(@Nonnull Site site) throws SQLException {
         try (final @Nonnull Statement statement = Database.getConnection().createStatement()) {
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "_password (entity BIGINT NOT NULL, password VARCHAR(50) NOT NULL COLLATE " + Database.getConfiguration().BINARY() + ", PRIMARY KEY (entity), FOREIGN KEY (entity) REFERENCES " + site.getReference() + ")");
-            Database.getConfiguration().onInsertUpdate(statement, site + "_password", 1, "entity", "password");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "password (entity BIGINT NOT NULL, password VARCHAR(50) NOT NULL COLLATE " + Database.getConfiguration().BINARY() + ", PRIMARY KEY (entity), FOREIGN KEY (entity) " + site.getReference() + ")");
+            Database.getConfiguration().onInsertUpdate(statement, site + "password", 1, "entity", "password");
         }
     }
     
@@ -121,7 +121,7 @@ public final class Passwords implements BothModule {
     @Override
     public void removeState(@Nonnull Entity entity) throws SQLException {
         try (@Nonnull Statement statement = Database.getConnection().createStatement()) {
-            statement.executeUpdate("DELETE FROM " + entity.getSite() + "_password WHERE entity = " + entity);
+            statement.executeUpdate("DELETE FROM " + entity.getSite() + "password WHERE entity = " + entity);
         }
     }
     
@@ -140,7 +140,7 @@ public final class Passwords implements BothModule {
      * @return the password of the given entity.
      */
     public static @Nonnull String get(@Nonnull Entity entity) throws SQLException {
-        final @Nonnull String SQL = "SELECT password FROM " + entity.getSite() + "_password WHERE entity = " + entity;
+        final @Nonnull String SQL = "SELECT password FROM " + entity.getSite() + "password WHERE entity = " + entity;
         try (@Nonnull Statement statement = Database.getConnection().createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
             if (resultSet.next()) return resultSet.getString(1);
             else throw new SQLException(entity.getIdentity().getAddress().toString() + " has no password.");
@@ -158,7 +158,7 @@ public final class Passwords implements BothModule {
     public static void set(@Nonnull Entity entity, @Nonnull String value) throws SQLException {
         assert Password.isValid(value) : "The value is valid.";
         
-        final @Nonnull String SQL = Database.getConfiguration().REPLACE() + " INTO " + entity.getSite() + "_password (entity, password) VALUES (?, ?)";
+        final @Nonnull String SQL = Database.getConfiguration().REPLACE() + " INTO " + entity.getSite() + "password (entity, password) VALUES (?, ?)";
         try (@Nonnull PreparedStatement preparedStatement = Database.getConnection().prepareStatement(SQL)) {
             preparedStatement.setLong(1, entity.getNumber());
             preparedStatement.setString(2, value);
@@ -181,7 +181,7 @@ public final class Passwords implements BothModule {
         assert Password.isValid(newValue) : "The new value is valid.";
         
         final @Nonnull Entity entity = password.getEntityNotNull();
-        final @Nonnull String SQL = "UPDATE " + entity.getSite() + "_password SET password = ? WHERE entity = ? AND password = ?";
+        final @Nonnull String SQL = "UPDATE " + entity.getSite() + "password SET password = ? WHERE entity = ? AND password = ?";
         try (@Nonnull PreparedStatement preparedStatement = Database.getConnection().prepareStatement(SQL)) {
             preparedStatement.setString(1, newValue);
             preparedStatement.setLong(2, entity.getNumber());

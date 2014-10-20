@@ -17,6 +17,7 @@ import ch.virtualid.identity.HostIdentity;
 import ch.virtualid.identity.Identity;
 import ch.virtualid.identity.Mapper;
 import ch.virtualid.io.Directory;
+import ch.virtualid.module.CoreService;
 import ch.virtualid.module.Service;
 import ch.xdf.HostSignatureWrapper;
 import ch.xdf.SelfcontainedWrapper;
@@ -41,7 +42,7 @@ public final class Host extends Site {
     @Pure
     @Override
     public @Nonnull String getReference() {
-        return "REFERENCES map_identity (identity)";
+        return Mapper.REFERENCE;
     }
     
     
@@ -77,7 +78,7 @@ public final class Host extends Site {
     /**
      * Stores the client associated with this host.
      */
-    private /* final */ @Nonnull Client client;
+    private final @Nonnull Client client;
     
     /**
      * Creates a new host with the given identifier by either reading the cryptographic keys from the file system or creating them.
@@ -85,7 +86,7 @@ public final class Host extends Site {
      * @param identifier the identifier of the new host.
      */
     public Host(@Nonnull HostIdentifier identifier) throws SQLException, IOException, PacketException, ExternalException {
-        super((Character.isDigit(identifier.getString().charAt(0)) ? "_" : "") + identifier.getString().replace(".", "_").replace("-", "$"));
+        super(identifier.asHostName());
         
         this.identifier = identifier;
         this.identity = Mapper.mapHostIdentity(identifier);
@@ -125,8 +126,11 @@ public final class Host extends Site {
             attribute.replaceValue(null, certificate.toBlock());
         }
         
-        // TODO: The client may not have exactly the same name, otherwise the database tables collide!
-//        this.client = new Client((Character.isDigit(identifier.getString().charAt(0)) ? "_" : "") + identifier.getString().replace(".", "_").replace("-", "$"));
+        // TODO: Load which services this host runs and initialize them afterwards.
+        CoreService.SERVICE.createTables(this);
+        
+        this.client = new Client("_" + identifier.asHostName());
+        
         Server.addHost(this);
     }
     

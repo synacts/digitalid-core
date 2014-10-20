@@ -4,7 +4,6 @@ import ch.virtualid.annotations.Capturable;
 import ch.virtualid.client.Client;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.Role;
-import ch.virtualid.entity.Site;
 import ch.virtualid.identity.NonHostIdentity;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.ClientModule;
@@ -17,18 +16,18 @@ import javax.annotation.Nullable;
 
 /**
  * This class provides database access to the {@link Role roles} of the core service.
+ * This class does not inherit from {@link ClientModule} and register itself at the
+ * {@link CoreService} as its table needs be created in advance by a {@link Client}.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 0.2
  */
-public final class Roles implements ClientModule {
+public final class Roles {
     
-    static { CoreService.SERVICE.add(new Roles()); }
-    
-    @Override
-    public void createTables(@Nonnull Site site) throws SQLException {
+    public static void createTable(@Nonnull Client client) throws SQLException {
         try (final @Nonnull Statement statement = Database.getConnection().createStatement()) {
-//            statement.executeUpdate("CREATE TABLE IF NOT EXISTS role (role " + Database.getConfiguration().PRIMARY_KEY() + ", issuer BIGINT NOT NULL, relation BIGINT, recipient BIGINT, FOREIGN KEY (issuer) REFERENCES map_identity (identity), FOREIGN KEY (relation) REFERENCES map_identity (identity), FOREIGN KEY (recipient) REFERENCES map_identity (identity))");
+            // TODO: Use the reference field of the mapper class!
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + client + "role (role " + Database.getConfiguration().PRIMARY_KEY() + ", issuer BIGINT NOT NULL, relation BIGINT, recipient BIGINT, FOREIGN KEY (issuer) REFERENCES general_identity (identity), FOREIGN KEY (relation) REFERENCES general_identity (identity), FOREIGN KEY (recipient) REFERENCES general_identity (identity))");
             // TODO: Add the corresponding authorization ID? -> Yes, but now agent (ID).
             // -> the recipient should be another role, or not? -> I think so.
             // Maybe make an index on the issuer (and recipient)?
@@ -38,8 +37,7 @@ public final class Roles implements ClientModule {
 //        Mapper.addReference("role", "recipient");
     }
     
-    @Override
-    public void deleteTables(@Nonnull Site site) throws SQLException {
+    public static void deleteTable(@Nonnull Client client) throws SQLException {
         try (final @Nonnull Statement statement = Database.getConnection().createStatement()) {
             // TODO: Delete the tables of this module.
         }

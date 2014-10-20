@@ -1,6 +1,8 @@
 package ch.virtualid.identity;
 
 import ch.virtualid.annotations.Pure;
+import ch.virtualid.database.Database;
+import ch.virtualid.entity.Site;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketException;
@@ -108,6 +110,20 @@ public final class HostIdentifier extends Identifier implements Immutable {
     @Pure
     public static @Nonnull HostIdentifier get(@Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
         return new HostIdentifier(resultSet.getString(columnIndex));
+    }
+    
+    
+    /**
+     * Returns this host identifier as a host name which can be used as a {@link Site#toString() prefix} in {@link Database database} tables.
+     * 
+     * @return this host identifier as a host name which can be used as a {@link Site#toString() prefix} in {@link Database database} tables.
+     * 
+     * @ensure return.length() <= 39 : "The returned string has at most 39 characters.";
+     */
+    @Pure
+    public @Nonnull String asHostName() {
+        final @Nonnull String string = getString();
+        return (Character.isDigit(string.charAt(0)) ? "_" : "") + string.replace(".", "_").replace("-", "$");
     }
     
 }

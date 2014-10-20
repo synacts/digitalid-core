@@ -15,6 +15,7 @@ import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identity.NonHostIdentity;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.io.Directory;
+import ch.virtualid.module.CoreService;
 import ch.virtualid.module.client.Roles;
 import ch.virtualid.util.FreezableList;
 import ch.virtualid.util.ReadonlyList;
@@ -39,7 +40,7 @@ import javax.annotation.Nullable;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public final class Client extends Site implements Observer {
+public class Client extends Site implements Observer {
     
     /**
      * Stores the aspect of a new role being added to the observed client.
@@ -72,7 +73,7 @@ public final class Client extends Site implements Observer {
     
     @Pure
     @Override
-    public @Nonnull String getReference() {
+    public final @Nonnull String getReference() {
         return "REFERENCES " + this + "role (role) ON DELETE CASCADE";
     }
     
@@ -109,6 +110,10 @@ public final class Client extends Site implements Observer {
             this.secret = new Exponent(new BigInteger(Parameters.HASH, random));
             new SelfcontainedWrapper(SelfcontainedWrapper.SELFCONTAINED, secret.toBlock().setType(SECRET)).write(new FileOutputStream(file), true);
         }
+        
+        // The role table needs to be created in advance.
+        Roles.createTable(this);
+        CoreService.SERVICE.createTables(this);
     }
     
     /**

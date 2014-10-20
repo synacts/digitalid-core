@@ -30,7 +30,7 @@ public final class Replay {
         assert Database.isMainThread() : "This method block is called in the main thread.";
         
         try (@Nonnull Statement statement = Database.getConnection().createStatement()) {
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS replay (hash " + Database.getConfiguration().HASH() + " NOT NULL PRIMARY KEY, time " + Time.FORMAT + " NOT NULL)");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS general_replay (hash " + Database.getConfiguration().HASH() + " NOT NULL PRIMARY KEY, time " + Time.FORMAT + " NOT NULL)");
         } catch (@Nonnull SQLException exception) {
             throw new InitializationError("The database table of the replay checker could not be created.", exception);
         }
@@ -39,7 +39,7 @@ public final class Replay {
             @Override
             public void run() {
                 try (@Nonnull Statement statement = Database.getConnection().createStatement()) {
-                    statement.executeUpdate("DELETE FROM replay WHERE time < " + Time.HALF_HOUR.add(Time.MINUTE).ago());
+                    statement.executeUpdate("DELETE FROM general_replay WHERE time < " + Time.HALF_HOUR.add(Time.MINUTE).ago());
                     Database.getConnection().commit();
                 } catch (@Nonnull SQLException exception) {
                     Database.LOGGER.log(Level.WARNING, exception);
@@ -54,7 +54,7 @@ public final class Replay {
      * @param packet the packet to check for a replay attack.
      */
     public static void check(@Nonnull Packet packet) throws SQLException, ReplayDetectedException, InvalidEncodingException {
-        final @Nonnull String SQL = "INSERT INTO replay (hash, time) VALUES (?, ?)";
+        final @Nonnull String SQL = "INSERT INTO general_replay (hash, time) VALUES (?, ?)";
         final @Nullable Savepoint savepoint = Database.getConfiguration().setSavepoint();
         try (@Nonnull PreparedStatement preparedStatement = Database.getConnection().prepareStatement(SQL)) {
             preparedStatement.setBytes(1, packet.getEncryption().getElementNotNull().getHash().toByteArray());

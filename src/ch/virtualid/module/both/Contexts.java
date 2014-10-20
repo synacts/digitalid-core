@@ -37,11 +37,11 @@ public final class Contexts implements BothModule {
     @Override
     public void createTables(@Nonnull Site site) throws SQLException {
 //        try (final @Nonnull Statement statement = Database.getConnection().createStatement()) {
-//            statement.executeUpdate("CREATE TABLE IF NOT EXISTS context_name (identity BIGINT NOT NULL, context BIGINT NOT NULL, name VARCHAR(50) NOT NULL COLLATE " + Database.UTF16_BIN + ", PRIMARY KEY (identity, context), FOREIGN KEY (identity) REFERENCES map_identity (identity))");
-//            statement.executeUpdate("CREATE TABLE IF NOT EXISTS context_permission (identity BIGINT NOT NULL, context BIGINT NOT NULL, type BIGINT NOT NULL, PRIMARY KEY (identity, context, type), FOREIGN KEY (identity) REFERENCES map_identity (identity), FOREIGN KEY (type) REFERENCES map_identity (identity))");
-//            statement.executeUpdate("CREATE TABLE IF NOT EXISTS context_authentication (identity BIGINT NOT NULL, context BIGINT NOT NULL, type BIGINT NOT NULL, PRIMARY KEY (identity, context, type), FOREIGN KEY (identity) REFERENCES map_identity (identity), FOREIGN KEY (type) REFERENCES map_identity (identity))");
-//            statement.executeUpdate("CREATE TABLE IF NOT EXISTS context_subcontext (identity BIGINT NOT NULL, context BIGINT NOT NULL, subcontext BIGINT NOT NULL, sequence " + Database.getConfiguration().TINYINT() + ", PRIMARY KEY (identity, context, subcontext), FOREIGN KEY (identity) REFERENCES map_identity (identity))");
-//            statement.executeUpdate("CREATE TABLE IF NOT EXISTS context_contact (identity BIGINT NOT NULL, context BIGINT NOT NULL, contact BIGINT NOT NULL, PRIMARY KEY (identity, context, contact), FOREIGN KEY (identity) REFERENCES map_identity (identity), FOREIGN KEY (contact) REFERENCES map_identity (identity))");
+//            statement.executeUpdate("CREATE TABLE IF NOT EXISTS context_name (identity BIGINT NOT NULL, context BIGINT NOT NULL, name VARCHAR(50) NOT NULL COLLATE " + Database.UTF16_BIN + ", PRIMARY KEY (identity, context), FOREIGN KEY (identity) REFERENCES general_identity (identity))");
+//            statement.executeUpdate("CREATE TABLE IF NOT EXISTS context_permission (identity BIGINT NOT NULL, context BIGINT NOT NULL, type BIGINT NOT NULL, PRIMARY KEY (identity, context, type), FOREIGN KEY (identity) REFERENCES general_identity (identity), FOREIGN KEY (type) REFERENCES general_identity (identity))");
+//            statement.executeUpdate("CREATE TABLE IF NOT EXISTS context_authentication (identity BIGINT NOT NULL, context BIGINT NOT NULL, type BIGINT NOT NULL, PRIMARY KEY (identity, context, type), FOREIGN KEY (identity) REFERENCES general_identity (identity), FOREIGN KEY (type) REFERENCES general_identity (identity))");
+//            statement.executeUpdate("CREATE TABLE IF NOT EXISTS context_subcontext (identity BIGINT NOT NULL, context BIGINT NOT NULL, subcontext BIGINT NOT NULL, sequence " + Database.getConfiguration().TINYINT() + ", PRIMARY KEY (identity, context, subcontext), FOREIGN KEY (identity) REFERENCES general_identity (identity))");
+//            statement.executeUpdate("CREATE TABLE IF NOT EXISTS context_contact (identity BIGINT NOT NULL, context BIGINT NOT NULL, contact BIGINT NOT NULL, PRIMARY KEY (identity, context, contact), FOREIGN KEY (identity) REFERENCES general_identity (identity), FOREIGN KEY (contact) REFERENCES general_identity (identity))");
 //        }
 //        
 //        Mapper.addReference("context_contact", "contact");
@@ -247,7 +247,7 @@ public final class Contexts implements BothModule {
 //     * @return the types from the given table with the given condition of the given identity.
 //     */
 //    private static @Nonnull Set<SemanticType> getTypes(@Nonnull NonHostIdentity identity, @Nonnull String table, @Nonnull String condition) throws SQLException {
-//        @Nonnull String query = "SELECT map_identity.identity, map_identity.category, map_identity.address FROM " + table + " JOIN map_identity ON " + table + ".type = map_identity.identity WHERE " + table + ".identity = " + identity + " AND " + table + "." + condition;
+//        @Nonnull String query = "SELECT general_identity.identity, general_identity.category, general_identity.address FROM " + table + " JOIN general_identity ON " + table + ".type = general_identity.identity WHERE " + table + ".identity = " + identity + " AND " + table + "." + condition;
 //        try (@Nonnull Statement statement = connection.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(query)) {
 //            @Nonnull Set<SemanticType> types = new LinkedHashSet<SemanticType>();
 //            while (resultSet.next()) {
@@ -449,7 +449,7 @@ public final class Contexts implements BothModule {
 //    static @Nonnull Set<Person> getContacts(@Nonnull NonHostIdentity identity, @Nonnull Context context, boolean recursive) throws SQLException {
 //        assert contextExists(connection, identity, context) : "The given context has to exist.";
 //        
-//        @Nonnull String query = "SELECT DISTINCT map_identity.identity, map_identity.category, map_identity.address FROM context_contact JOIN map_identity ON context_contact.contact = map_identity.identity WHERE context_contact.identity = " + identity + " AND context_contact.context" + (recursive ? " & " + context.getMask() : "") + " = " + context;
+//        @Nonnull String query = "SELECT DISTINCT general_identity.identity, general_identity.category, general_identity.address FROM context_contact JOIN general_identity ON context_contact.contact = general_identity.identity WHERE context_contact.identity = " + identity + " AND context_contact.context" + (recursive ? " & " + context.getMask() : "") + " = " + context;
 //        try (@Nonnull Statement statement = connection.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(query)) {
 //            @Nonnull Set<Person> contacts = new LinkedHashSet<Person>();
 //            while (resultSet.next()) {

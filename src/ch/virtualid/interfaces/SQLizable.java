@@ -23,7 +23,7 @@ public interface SQLizable {
     /**
      * Stores the foreign key constraint used to reference instances of this class.
      */
-    // public static final @Nonnull String REFERENCE = "REFERENCES map_identity (identity) ON DELETE RESCTRICT ON UPDATE RESCTRICT";
+    // public static final @Nonnull String REFERENCE = new String("REFERENCES general_identity (identity) ON DELETE RESCTRICT ON UPDATE RESCTRICT");
     
     /**
      * Returns the given column of the result set as an instance of this class.

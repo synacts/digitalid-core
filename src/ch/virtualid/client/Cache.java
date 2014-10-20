@@ -41,11 +41,11 @@ public final class Cache {
     static {
         try (@Nonnull Statement statement = Database.getConnection().createStatement()) {
 //            // TODO: Leave requester as an idenitity reference, as the role tables are not global but per client.
-//            statement.executeUpdate("CREATE TABLE IF NOT EXISTS cache_attribute (requester BIGINT NOT NULL, requestee BIGINT NOT NULL, type BIGINT NOT NULL, time BIGINT NOT NULL, value LONGBLOB NOT NULL, PRIMARY KEY (requester, requestee, type), FOREIGN KEY (requester) REFERENCES map_identity (identity), FOREIGN KEY (requestee) REFERENCES map_identity (identity), FOREIGN KEY (type) REFERENCES map_identity (identity))");
+//            statement.executeUpdate("CREATE TABLE IF NOT EXISTS cache_attribute (requester BIGINT NOT NULL, requestee BIGINT NOT NULL, type BIGINT NOT NULL, time BIGINT NOT NULL, value LONGBLOB NOT NULL, PRIMARY KEY (requester, requestee, type), FOREIGN KEY (requester) REFERENCES general_identity (identity), FOREIGN KEY (requestee) REFERENCES general_identity (identity), FOREIGN KEY (type) REFERENCES general_identity (identity))");
 //            connection.commit();
 //            
 //            // TODO: Load the public key of 'virtualid.ch'.
-//            try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT identity FROM map_identifier WHERE identifier = 'virtualid.ch'")) {
+//            try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT identity FROM general_identifier WHERE identifier = 'virtualid.ch'")) {
 //                if (!resultSet.next()) {
 //                    resultSet.close();
 //                    connection.commit();

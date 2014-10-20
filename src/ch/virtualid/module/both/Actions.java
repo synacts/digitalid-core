@@ -37,7 +37,7 @@ public final class Actions implements BothModule {
     @Override
     public void createTables(@Nonnull Site site) throws SQLException {
         try (final @Nonnull Statement statement = Database.getConnection().createStatement()) {
-//            statement.executeUpdate("CREATE TABLE IF NOT EXISTS action (identity BIGINT NOT NULL, time BIGINT NOT NULL, client BOOLEAN, role BOOLEAN, context BIGINT, contact BIGINT, type BIGINT, writing BOOLEAN, authorizationID BIGINT, request LONGBLOB NOT NULL, PRIMARY KEY (identity, time), INDEX(time), FOREIGN KEY (identity) REFERENCES map_identity (identity), FOREIGN KEY (authorizationID) REFERENCES authorization (authorizationID), FOREIGN KEY (contact) REFERENCES map_identity (identity), FOREIGN KEY (type) REFERENCES map_identity (identity))");
+//            statement.executeUpdate("CREATE TABLE IF NOT EXISTS action (identity BIGINT NOT NULL, time BIGINT NOT NULL, client BOOLEAN, role BOOLEAN, context BIGINT, contact BIGINT, type BIGINT, writing BOOLEAN, authorizationID BIGINT, request LONGBLOB NOT NULL, PRIMARY KEY (identity, time), INDEX(time), FOREIGN KEY (identity) REFERENCES general_identity (identity), FOREIGN KEY (authorizationID) REFERENCES authorization (authorizationID), FOREIGN KEY (contact) REFERENCES general_identity (identity), FOREIGN KEY (type) REFERENCES general_identity (identity))");
         }
         
 //        Mapper.addReference("action", "identity");

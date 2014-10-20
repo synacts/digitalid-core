@@ -37,8 +37,8 @@ public final class Attributes implements BothModule {
     @Override
     public void createTables(@Nonnull Site site) throws SQLException {
         try (final @Nonnull Statement statement = Database.getConnection().createStatement()) {
-//            statement.executeUpdate("CREATE TABLE IF NOT EXISTS attribute_value (entity BIGINT NOT NULL, type BIGINT NOT NULL, published BOOLEAN NOT NULL, value LONGBLOB NOT NULL, PRIMARY KEY (entity, type, published), FOREIGN KEY (entity) REFERENCES " + connection.getReference() + ", FOREIGN KEY (type) REFERENCES map_identity (identity))");
-//            statement.executeUpdate("CREATE TABLE IF NOT EXISTS attribute_visibility (entity BIGINT NOT NULL, type BIGINT NOT NULL, visibility TEXT NOT NULL COLLATE " + Database.UTF16_BIN + ", PRIMARY KEY (entity, type), FOREIGN KEY (entity) REFERENCES " + connection.getReference() + ", FOREIGN KEY (type) REFERENCES map_identity (identity))");
+//            statement.executeUpdate("CREATE TABLE IF NOT EXISTS attribute_value (entity BIGINT NOT NULL, type BIGINT NOT NULL, published BOOLEAN NOT NULL, value LONGBLOB NOT NULL, PRIMARY KEY (entity, type, published), FOREIGN KEY (entity) REFERENCES " + connection.getReference() + ", FOREIGN KEY (type) REFERENCES general_identity (identity))");
+//            statement.executeUpdate("CREATE TABLE IF NOT EXISTS attribute_visibility (entity BIGINT NOT NULL, type BIGINT NOT NULL, visibility TEXT NOT NULL COLLATE " + Database.UTF16_BIN + ", PRIMARY KEY (entity, type), FOREIGN KEY (entity) REFERENCES " + connection.getReference() + ", FOREIGN KEY (type) REFERENCES general_identity (identity))");
         }
     }
     

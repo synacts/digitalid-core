@@ -214,7 +214,7 @@ public abstract class Reply extends Handler implements SQLizable {
     /**
      * Stores the foreign key constraint used to reference replies.
      */
-    public static final @Nonnull String REFERENCE = new String("REFERENCES reply (reply) ON DELETE SET NULL ON UPDATE CASCADE");
+    public static final @Nonnull String REFERENCE = new String("REFERENCES general_reply (reply) ON DELETE SET NULL ON UPDATE CASCADE");
     
     
     /**
@@ -224,7 +224,7 @@ public abstract class Reply extends Handler implements SQLizable {
         assert Database.isMainThread() : "This method block is called in the main thread.";
         
         try (@Nonnull Statement statement = Database.getConnection().createStatement()) {
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS reply (reply " + Database.getConfiguration().PRIMARY_KEY() + ", time " + Time.FORMAT + " NOT NULL, signature " + Database.getConfiguration().BLOB() + " NOT NULL)");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS general_reply (reply " + Database.getConfiguration().PRIMARY_KEY() + ", time " + Time.FORMAT + " NOT NULL, signature " + Database.getConfiguration().BLOB() + " NOT NULL)");
         } catch (@Nonnull SQLException exception) {
             throw new InitializationError("The database table of the reply logger could not be created.", exception);
         }
@@ -233,7 +233,7 @@ public abstract class Reply extends Handler implements SQLizable {
             @Override
             public void run() {
                 try (@Nonnull Statement statement = Database.getConnection().createStatement()) {
-                    statement.executeUpdate("DELETE FROM reply WHERE time < " + Time.TWO_YEARS.ago());
+                    statement.executeUpdate("DELETE FROM general_reply WHERE time < " + Time.TWO_YEARS.ago());
                     Database.getConnection().commit();
                 } catch (@Nonnull SQLException exception) {
                     Database.LOGGER.log(Level.WARNING, exception);
@@ -256,7 +256,7 @@ public abstract class Reply extends Handler implements SQLizable {
     public static @Nullable Reply get(@Nullable Entity entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException, IOException, PacketException, ExternalException {
         final long number = resultSet.getLong(columnIndex);
         if (resultSet.wasNull()) return null;
-        try (@Nonnull Statement statement = Database.getConnection().createStatement(); @Nonnull ResultSet rs = statement.executeQuery("SELECT signature FROM reply WHERE reply = " + number)) {
+        try (@Nonnull Statement statement = Database.getConnection().createStatement(); @Nonnull ResultSet rs = statement.executeQuery("SELECT signature FROM general_reply WHERE reply = " + number)) {
             if (rs.next()) {
                 final @Nonnull Block block = Block.get(Packet.SIGNATURE, rs, 1);
                 final @Nonnull SignatureWrapper signature = SignatureWrapper.decodeUnverified(block, entity);
@@ -283,7 +283,7 @@ public abstract class Reply extends Handler implements SQLizable {
      * @return the key generated for the stored signature.
      */
     private static long store(@Nonnull HostSignatureWrapper signature) throws IdentityNotFoundException, SQLException {
-        final @Nonnull String SQL = "INSERT INTO reply (time, signature) VALUES (?, ?)";
+        final @Nonnull String SQL = "INSERT INTO general_reply (time, signature) VALUES (?, ?)";
         try (@Nonnull PreparedStatement preparedStatement = Database.getConnection().prepareStatement(SQL, Statement.RETURN_GENERATED_KEYS)) {
             signature.getTimeNotNull().set(preparedStatement, 1);
             signature.toBlock().set(preparedStatement, 2);

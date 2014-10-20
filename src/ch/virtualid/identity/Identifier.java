@@ -43,7 +43,7 @@ public abstract class Identifier implements Immutable, Blockable, SQLizable {
      */
     @Pure
     public static boolean isValid(@Nonnull String string) {
-        return string.length() <= 100 && pattern.matcher(string).matches() && string.length() - string.indexOf("@") <= 40;
+        return string.length() <= 100 && pattern.matcher(string).matches() && string.length() - string.indexOf("@") <= 38;
     }
     
     /**

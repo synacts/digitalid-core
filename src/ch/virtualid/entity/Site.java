@@ -3,7 +3,6 @@ package ch.virtualid.entity;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Client;
 import ch.virtualid.concept.Instance;
-import ch.virtualid.module.CoreService;
 import ch.virtualid.server.Host;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
@@ -21,6 +20,8 @@ public abstract class Site extends Instance {
     
     /**
      * Stores the prefix of the site-specific database tables.
+     * 
+     * @invariant prefix.length() <= 41 : "The prefix has at most 41 characters.";
      */
     private final @Nonnull String prefix;
     
@@ -28,13 +29,28 @@ public abstract class Site extends Instance {
      * Creates a new site with the given prefix.
      * 
      * @param prefix the prefix of the site-specific database tables.
+     * 
+     * @require prefix.length() <= 40 : "The prefix has at most 40 characters.";
      */
     protected Site(@Nonnull String prefix) throws SQLException {
-        this.prefix = prefix + "_";
+        assert prefix.length() <= 40 : "The prefix has at most 40 characters.";
         
-        CoreService.SERVICE.createTables(this);
+        this.prefix = prefix + "_";
     }
     
+    /**
+     * Returns the prefix of the site-specific database tables.
+     * 
+     * @return the prefix of the site-specific database tables.
+     * 
+     * @invariant return.length() <= 41 : "The prefix has at most 41 characters.";
+     */
+    @Pure
+    @Override
+    public final @Nonnull String toString() {
+        return prefix;
+    }
+        
     /**
      * Returns the foreign key referenced by the entity column.
      * 
@@ -43,15 +59,4 @@ public abstract class Site extends Instance {
     @Pure
     public abstract @Nonnull String getReference();
     
-    /**
-     * Returns the prefix of the site-specific database tables.
-     * 
-     * @return the prefix of the site-specific database tables.
-     */
-    @Pure
-    @Override
-    public final @Nonnull String toString() {
-        return prefix;
-    }
-        
 }
