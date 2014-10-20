@@ -67,7 +67,7 @@ public class Client extends Site implements Observer {
      * @return whether the given name is valid for clients.
      */
     public static boolean isValid(@Nonnull String name) {
-        return name.length() <= 40 && pattern.matcher(name).matches() && !(Database.getConfiguration() instanceof SQLiteConfiguration && name.contains("$"));
+        return name.length() <= 40 && pattern.matcher(name).matches() && !name.equals("general") && !(Database.getConfiguration() instanceof SQLiteConfiguration && name.contains("$"));
     }
     
     

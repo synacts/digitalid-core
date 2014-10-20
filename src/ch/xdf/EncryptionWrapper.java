@@ -4,6 +4,7 @@ import ch.virtualid.annotations.Exposed;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.client.Cache;
+import ch.virtualid.cryptography.Element;
 import ch.virtualid.cryptography.PrivateKey;
 import ch.virtualid.cryptography.PublicKey;
 import ch.virtualid.cryptography.SymmetricKey;
@@ -45,7 +46,7 @@ public final class EncryptionWrapper extends BlockWrapper implements Immutable {
     /**
      * Stores the semantic type {@code key.encryption@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType KEY = SemanticType.create("key.encryption@virtualid.ch").load(IntegerWrapper.TYPE);
+    private static final @Nonnull SemanticType KEY = SemanticType.create("key.encryption@virtualid.ch").load(Element.TYPE);
     
     /**
      * Stores the semantic type {@code encryption@virtualid.ch}.
@@ -70,7 +71,7 @@ public final class EncryptionWrapper extends BlockWrapper implements Immutable {
         final @Nonnull Pair<PublicKey, SymmetricKey> pair = new Pair<PublicKey, SymmetricKey>(publicKey, symmetricKey);
         @Nullable Block key = encryptions.get(pair);
         if (key == null) {
-            key = publicKey.getCompositeGroup().getElement(symmetricKey.getValue()).pow(publicKey.getE()).toBlock();
+            key = publicKey.getCompositeGroup().getElement(symmetricKey.getValue()).pow(publicKey.getE()).toBlock().setType(KEY);
             encryptions.put(pair, key);
         }
         return key;
@@ -189,30 +190,27 @@ public final class EncryptionWrapper extends BlockWrapper implements Immutable {
             if (!Server.hasHost(recipient)) throw new InvalidEncodingException(recipient + " does not run on this server.");
         }
         
-        final @Nullable Block element = tuple.getElement(3);
-        if (element == null) {
-            this.symmetricKey = null;
-            this.element = null;
-        } else {
-            final @Nullable Block key = tuple.getElement(2);
-            if (recipient == null) {
-                // Encrypted for clients.
-                if (key == null) {
-                    if (symmetricKey == null) throw new InvalidEncodingException("A symmetric key is needed in order to decrypt the response.");
-                    this.symmetricKey = symmetricKey;
-                } else {
-                    this.symmetricKey = null;
-                }
+        final @Nullable Block key = tuple.getElement(2);
+        if (recipient == null) {
+            // Encrypted for clients.
+            if (key == null) {
+                if (symmetricKey == null) throw new InvalidEncodingException("A symmetric key is needed in order to decrypt the response.");
+                this.symmetricKey = symmetricKey;
             } else {
-                // Encrypted for hosts.
-                if (key != null) {
-                    final @Nonnull PrivateKey privateKey = Server.getHost(recipient).getPrivateKeyChain().getKey(time);
-                    this.symmetricKey = decrypt(privateKey, key);
-                } else {
-                    this.symmetricKey = null;
-                }
+                this.symmetricKey = null;
             }
-            
+        } else {
+            // Encrypted for hosts.
+            if (key != null) {
+                final @Nonnull PrivateKey privateKey = Server.getHost(recipient).getPrivateKeyChain().getKey(time);
+                this.symmetricKey = decrypt(privateKey, key);
+            } else {
+                this.symmetricKey = null;
+            }
+        }
+        
+        final @Nullable Block element = tuple.getElement(3);
+        if (element != null) {
             final @Nonnull SemanticType parameter = block.getType().getParameters().getNotNull(0);
             final @Nullable SymmetricKey sk = this.symmetricKey;
             if (sk != null) {
@@ -220,6 +218,8 @@ public final class EncryptionWrapper extends BlockWrapper implements Immutable {
             } else {
                 this.element = element.setType(parameter);
             }
+        } else {
+            this.element = null;
         }
         
         this.publicKey = null;
@@ -313,17 +313,18 @@ public final class EncryptionWrapper extends BlockWrapper implements Immutable {
             elements.set(0, time.toBlock());
             elements.set(1, Block.toBlock(recipient));
             
-            if (element != null) {
-                if (recipient == null) {
-                    // Encrypt for clients.
-                    elements.set(2, isEncrypted() ? null : new IntegerWrapper(KEY, BigInteger.ZERO).toBlock());
-                } else {
-                    // Encrypt for hosts.
-                    if (symmetricKey != null) {
-                        assert publicKey != null : "The public key is not null because this method is only called for encoding a block.";
-                        elements.set(2, encrypt(publicKey, symmetricKey));
-                    }
+            if (recipient == null) {
+                // Encrypt by hosts for clients.
+                elements.set(2, isEncrypted() ? null : new IntegerWrapper(KEY, BigInteger.ZERO).toBlock());
+            } else {
+                // Encrypt for hosts.
+                if (symmetricKey != null) {
+                    assert publicKey != null : "The public key is not null because this method is only called for encoding a block.";
+                    elements.set(2, encrypt(publicKey, symmetricKey));
                 }
+            }
+            
+            if (element != null) {
                 elements.set(3, symmetricKey == null ? element : element.encrypt(SemanticType.UNKNOWN, symmetricKey));
             }
             

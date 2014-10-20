@@ -17,6 +17,7 @@ import ch.virtualid.identity.HostIdentifier;
 import ch.virtualid.identity.HostIdentity;
 import ch.virtualid.identity.Identity;
 import ch.virtualid.identity.SemanticType;
+import ch.virtualid.server.Server;
 import ch.xdf.Block;
 import ch.xdf.HostSignatureWrapper;
 import ch.xdf.SelfcontainedWrapper;
@@ -51,7 +52,7 @@ public final class Cache {
 //                    connection.commit();
 //                    
 //                    // Unless it is the root server, the server should have been delivered with the public key of 'virtualid.ch'.
-//                    @Nullable InputStream inputStream = Mapper.class.getResourceAsStream("resources/virtualid.ch.public.xdf");
+//                    @Nullable InputStream inputStream = Mapper.class.getResourceAsStream("resources/virtualid.ch.public.xdf"); // getClass().getResource("/ch/virtualid/resources/virtualid.ch.public.xdf")
 //                    @Nonnull SelfcontainedWrapper publicKeyWrapper;
 //                    if (inputStream != null) {
 //                        publicKeyWrapper = SelfcontainedWrapper.readAndClose(inputStream);
@@ -371,7 +372,8 @@ public final class Cache {
      */
     @Pure
     public static @Nonnull PublicKey getPublicKey(@Nonnull HostIdentifier identifier, @Nonnull Time time) throws SQLException, IOException, PacketException, ExternalException {
-        return getPublicKeyChain(identifier.getIdentity()).getKey(time);
+//        return getPublicKeyChain(identifier.getIdentity()).getKey(time);
+        return Server.getHost(new HostIdentifier("syntacts.com")).getPublicKeyChain().getKey(time); // TODO: This is only a temporary testing hack!
     }
     
 }

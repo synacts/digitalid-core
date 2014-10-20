@@ -15,6 +15,8 @@ import org.junit.Test;
  */
 public class ServerSetup extends DatabaseSetup {
     
+    protected final HostIdentifier recipient = new HostIdentifier("syntacts.com");
+    
     @BeforeClass
     public static void setUpServer() {
         Server.start("syntacts.com");
@@ -27,7 +29,7 @@ public class ServerSetup extends DatabaseSetup {
     
     @Test
     public final void testServerSetup() {
-        Assert.assertTrue(Server.hasHost(new HostIdentifier("syntacts.com")));
+        Assert.assertTrue(Server.hasHost(recipient));
     }
     
 }

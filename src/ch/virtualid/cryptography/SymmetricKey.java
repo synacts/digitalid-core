@@ -2,24 +2,32 @@ package ch.virtualid.cryptography;
 
 import ch.virtualid.annotations.Capturable;
 import ch.virtualid.annotations.Pure;
+import ch.virtualid.errors.InitializationError;
 import ch.virtualid.errors.ShouldNeverHappenError;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
+import ch.virtualid.io.Directory;
 import ch.xdf.Block;
 import ch.xdf.IntegerWrapper;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
+import java.lang.reflect.Field;
 import java.math.BigInteger;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
+import java.security.Permission;
+import java.security.PermissionCollection;
 import java.security.SecureRandom;
+import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 /**
@@ -35,6 +43,52 @@ public final class SymmetricKey implements Immutable, Blockable {
      */
     public static final @Nonnull SemanticType TYPE = SemanticType.create("symmetric.key@virtualid.ch").load(IntegerWrapper.TYPE);
     
+    
+    static {
+        try {
+            final int length = Cipher.getMaxAllowedKeyLength("AES");
+            if (length < Parameters.ENCRYPTION_KEY) {
+                if (System.getProperty("java.runtime.name").equals("Java(TM) SE Runtime Environment")) {
+                    /*
+                     * Do the following, but with reflection to bypass access checks (taken from http://stackoverflow.com/a/22492582):
+                     *
+                     * JceSecurity.isRestricted = false;
+                     * JceSecurity.defaultPolicy.perms.clear();
+                     * JceSecurity.defaultPolicy.add(CryptoAllPermission.INSTANCE);
+                     */
+                    try {
+                        final @Nonnull Class<?> jceSecurity = Class.forName("javax.crypto.JceSecurity");
+                        final @Nonnull Class<?> cryptoPermissions = Class.forName("javax.crypto.CryptoPermissions");
+                        final @Nonnull Class<?> cryptoAllPermission = Class.forName("javax.crypto.CryptoAllPermission");
+                        
+                        final @Nonnull Field isRestrictedField = jceSecurity.getDeclaredField("isRestricted");
+                        isRestrictedField.setAccessible(true);
+                        isRestrictedField.set(null, false);
+                        
+                        final @Nonnull Field defaultPolicyField = jceSecurity.getDeclaredField("defaultPolicy");
+                        defaultPolicyField.setAccessible(true);
+                        final @Nonnull PermissionCollection defaultPolicy = (PermissionCollection) defaultPolicyField.get(null);
+                        
+                        final @Nonnull Field permsField = cryptoPermissions.getDeclaredField("perms");
+                        permsField.setAccessible(true);
+                        ((Map<?, ?>) permsField.get(defaultPolicy)).clear();
+                        
+                        final @Nonnull Field instanceField = cryptoAllPermission.getDeclaredField("INSTANCE");
+                        instanceField.setAccessible(true);
+                        defaultPolicy.add((Permission) instanceField.get(null));
+                    } catch (@Nonnull ClassNotFoundException | NoSuchFieldException | IllegalArgumentException | SecurityException | IllegalAccessException exception) {
+                        throw new InitializationError("Your system allows only a maximal key length of " + length + " bits for symmetric encryption but a length of " + Parameters.ENCRYPTION_KEY + " bits is required for security reasons."
+                                + "Please install the Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files from http://www.oracle.com/technetwork/java/javase/downloads/jce-7-download-432124.html for Java 7."
+                                + "(All you have to do is to download the files and replace with them 'local_policy.jar' and 'US_export_policy.jar' in '" + System.getProperty("java.home") + Directory.SEPARATOR + "lib" + Directory.SEPARATOR + "security" + Directory.SEPARATOR + "'.)", exception);
+                    }
+                }
+            }
+        } catch (@Nonnull NoSuchAlgorithmException exception) {
+            throw new InitializationError("Your system does not support the Advanced Encryption Standard (AES). Unfortunately, you are not able to use Virtual ID for now.", exception);
+        }
+    }
+    
+    
     /**
      * Stores the length of symmetric keys in bytes.
      */
@@ -44,6 +98,11 @@ public final class SymmetricKey implements Immutable, Blockable {
      * Stores the mode of the encryption cipher.
      */
     private static final @Nonnull String mode = "AES/CBC/PKCS5Padding";
+    
+    /**
+     * Stores an empty initialization vector.
+     */
+    private static final @Nonnull IvParameterSpec iv = new IvParameterSpec(new byte[16]);
     
     
     /**
@@ -84,13 +143,9 @@ public final class SymmetricKey implements Immutable, Blockable {
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
     public SymmetricKey(@Nonnull Block block) throws InvalidEncodingException {
-        assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
+        this(new IntegerWrapper(block).getValue());
         
-        value = new IntegerWrapper(block).getValue();
-        final @Nonnull byte[] bytes = value.toByteArray();
-        final @Nonnull byte[] key = new byte[LENGTH];
-        System.arraycopy(bytes, Math.max(bytes.length - LENGTH, 0), key, Math.max(LENGTH - bytes.length, 0), Math.min(LENGTH, bytes.length));
-        this.key = new SecretKeySpec(key, "AES");
+        assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
     }
     
     @Pure
@@ -140,9 +195,9 @@ public final class SymmetricKey implements Immutable, Blockable {
         
         try {
             final @Nonnull Cipher cipher = Cipher.getInstance(mode);
-            cipher.init(Cipher.ENCRYPT_MODE, key);
+            cipher.init(Cipher.ENCRYPT_MODE, key, iv);
             return cipher.doFinal(bytes, offset, length);
-        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException exception) {
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException | InvalidAlgorithmParameterException exception) {
             throw new ShouldNeverHappenError("Could not encrypt the given bytes.", exception);
         }
     }
@@ -170,9 +225,9 @@ public final class SymmetricKey implements Immutable, Blockable {
         
         try {
             final @Nonnull Cipher cipher = Cipher.getInstance(mode);
-            cipher.init(Cipher.DECRYPT_MODE, key);
+            cipher.init(Cipher.DECRYPT_MODE, key, iv);
             return cipher.doFinal(bytes, offset, length);
-        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException exception) {
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException | InvalidAlgorithmParameterException exception) {
             throw new InvalidEncodingException("Could not decrypt the given bytes.", exception);
         }
     }
