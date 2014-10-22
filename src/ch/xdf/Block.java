@@ -6,6 +6,7 @@ import ch.virtualid.annotations.Exposed;
 import ch.virtualid.annotations.ExposedRecipient;
 import ch.virtualid.annotations.NonExposedRecipient;
 import ch.virtualid.annotations.Pure;
+import ch.virtualid.cryptography.InitializationVector;
 import ch.virtualid.cryptography.SymmetricKey;
 import ch.virtualid.database.Database;
 import ch.virtualid.errors.ShouldNeverHappenError;
@@ -687,6 +688,7 @@ public final class Block implements Immutable, SQLizable {
      * 
      * @param type the semantic type of the encrypted block.
      * @param symmetricKey the symmetric key used for the encryption.
+     * @param initializationVector the initialization vector for the encryption.
      * 
      * @return a new block containing the encryption of this block.
      * 
@@ -694,12 +696,12 @@ public final class Block implements Immutable, SQLizable {
      */
     @Pure
     @NonExposedRecipient
-    @Nonnull Block encrypt(@Nonnull SemanticType type, @Nonnull SymmetricKey symmetricKey) {
+    @Nonnull Block encrypt(@Nonnull SemanticType type, @Nonnull SymmetricKey symmetricKey, @Nonnull InitializationVector initializationVector) {
         assert !isEncoding() : "This method is not called during encoding.";
         
         ensureEncoded();
         assert bytes != null : "The byte array is allocated.";
-        return new Block(type, symmetricKey.encrypt(bytes, offset, length));
+        return new Block(type, symmetricKey.encrypt(initializationVector, bytes, offset, length));
     }
     
     /**
@@ -707,6 +709,7 @@ public final class Block implements Immutable, SQLizable {
      * 
      * @param type the semantic type of the decrypted block.
      * @param symmetricKey the symmetric key used for the decryption.
+     * @param initializationVector the initialization vector for the decryption.
      * 
      * @return a new block containing the decryption of this block.
      * 
@@ -714,12 +717,12 @@ public final class Block implements Immutable, SQLizable {
      */
     @Pure
     @NonExposedRecipient
-    @Nonnull Block decrypt(@Nonnull SemanticType type, @Nonnull SymmetricKey symmetricKey) throws InvalidEncodingException {
+    @Nonnull Block decrypt(@Nonnull SemanticType type, @Nonnull SymmetricKey symmetricKey, @Nonnull InitializationVector initializationVector) throws InvalidEncodingException {
         assert !isEncoding() : "This method is not called during encoding.";
         
         ensureEncoded();
         assert bytes != null : "The byte array is allocated.";
-        return new Block(type, symmetricKey.decrypt(bytes, offset, length));
+        return new Block(type, symmetricKey.decrypt(initializationVector, bytes, offset, length));
     }
     
     

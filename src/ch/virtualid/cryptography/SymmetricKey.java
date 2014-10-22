@@ -27,7 +27,6 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 /**
@@ -98,11 +97,6 @@ public final class SymmetricKey implements Immutable, Blockable {
      * Stores the mode of the encryption cipher.
      */
     private static final @Nonnull String mode = "AES/CBC/PKCS5Padding";
-    
-    /**
-     * Stores an empty initialization vector.
-     */
-    private static final @Nonnull IvParameterSpec iv = new IvParameterSpec(new byte[16]);
     
     
     /**
@@ -175,6 +169,7 @@ public final class SymmetricKey implements Immutable, Blockable {
     /**
      * Encrypts the indicated section in the given byte array with this symmetric key.
      * 
+     * @param initializationVector the initialization vector for the encryption.
      * @param bytes the byte array of which a section is to be encrypted.
      * @param offset the offset of the section in the given byte array.
      * @param length the length of the section in the given byte array.
@@ -188,14 +183,14 @@ public final class SymmetricKey implements Immutable, Blockable {
      * @ensure return.length > 0 : "The returned byte array is not empty.";
      */
     @Pure
-    public @Capturable @Nonnull byte[] encrypt(@Nonnull byte[] bytes, int offset, int length) {
+    public @Capturable @Nonnull byte[] encrypt(@Nonnull InitializationVector initializationVector, @Nonnull byte[] bytes, int offset, int length) {
         assert offset >= 0 : "The offset is not negative.";
         assert length > 0 : "The length is positive.";
         assert offset + length <= bytes.length : "The indicated section may not exceed the given byte array.";
         
         try {
             final @Nonnull Cipher cipher = Cipher.getInstance(mode);
-            cipher.init(Cipher.ENCRYPT_MODE, key, iv);
+            cipher.init(Cipher.ENCRYPT_MODE, key, initializationVector);
             return cipher.doFinal(bytes, offset, length);
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException | InvalidAlgorithmParameterException exception) {
             throw new ShouldNeverHappenError("Could not encrypt the given bytes.", exception);
@@ -205,6 +200,7 @@ public final class SymmetricKey implements Immutable, Blockable {
     /**
      * Decrypts the indicated section in the given byte array with this symmetric key.
      * 
+     * @param initializationVector the initialization vector for the decryption.
      * @param bytes the byte array of which a section is to be decrypted.
      * @param offset the offset of the section in the given byte array.
      * @param length the length of the section in the given byte array.
@@ -218,14 +214,14 @@ public final class SymmetricKey implements Immutable, Blockable {
      * @ensure return.length > 0 : "The returned byte array is not empty.";
      */
     @Pure
-    public @Capturable @Nonnull byte[] decrypt(@Nonnull byte[] bytes, int offset, int length) throws InvalidEncodingException {
+    public @Capturable @Nonnull byte[] decrypt(@Nonnull InitializationVector initializationVector, @Nonnull byte[] bytes, int offset, int length) throws InvalidEncodingException {
         assert offset >= 0 : "The offset is not negative.";
         assert length > 0 : "The length is positive.";
         assert offset + length <= bytes.length : "The indicated section may not exceed the given byte array.";
         
         try {
             final @Nonnull Cipher cipher = Cipher.getInstance(mode);
-            cipher.init(Cipher.DECRYPT_MODE, key, iv);
+            cipher.init(Cipher.DECRYPT_MODE, key, initializationVector);
             return cipher.doFinal(bytes, offset, length);
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException | InvalidAlgorithmParameterException exception) {
             throw new InvalidEncodingException("Could not decrypt the given bytes.", exception);

@@ -5,6 +5,7 @@ import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.client.Cache;
 import ch.virtualid.cryptography.Element;
+import ch.virtualid.cryptography.InitializationVector;
 import ch.virtualid.cryptography.PrivateKey;
 import ch.virtualid.cryptography.PublicKey;
 import ch.virtualid.cryptography.SymmetricKey;
@@ -51,7 +52,7 @@ public final class EncryptionWrapper extends BlockWrapper implements Immutable {
     /**
      * Stores the semantic type {@code encryption@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType IMPLEMENTATION = SemanticType.create("encryption@virtualid.ch").load(TupleWrapper.TYPE, Time.TYPE, HostIdentity.IDENTIFIER, KEY, SemanticType.UNKNOWN);
+    private static final @Nonnull SemanticType IMPLEMENTATION = SemanticType.create("encryption@virtualid.ch").load(TupleWrapper.TYPE, Time.TYPE, HostIdentity.IDENTIFIER, KEY, InitializationVector.TYPE, SemanticType.UNKNOWN);
     
     
     /**
@@ -130,6 +131,11 @@ public final class EncryptionWrapper extends BlockWrapper implements Immutable {
     private final @Nullable PublicKey publicKey;
     
     /**
+     * Stores the initialization vector that is used for the encryption of the element or null if no encryption is used.
+     */
+    private final @Nullable InitializationVector initializationVector;
+    
+    /**
      * Encodes the given element into a new block of the given type.
      * 
      * @param type the semantic type of the new block.
@@ -151,6 +157,7 @@ public final class EncryptionWrapper extends BlockWrapper implements Immutable {
         this.recipient = recipient;
         this.symmetricKey = symmetricKey;
         this.publicKey = (recipient == null || symmetricKey == null) ? null : Cache.getPublicKey(recipient, time);
+        this.initializationVector = (element == null || symmetricKey == null) ? null : new InitializationVector();
     }
     
     /**
@@ -191,6 +198,7 @@ public final class EncryptionWrapper extends BlockWrapper implements Immutable {
         }
         
         final @Nullable Block key = tuple.getElement(2);
+        this.initializationVector = tuple.isElementNull(3) ? null : new InitializationVector(tuple.getElementNotNull(3));
         if (recipient == null) {
             // Encrypted for clients.
             if (key == null) {
@@ -209,12 +217,14 @@ public final class EncryptionWrapper extends BlockWrapper implements Immutable {
             }
         }
         
-        final @Nullable Block element = tuple.getElement(3);
+        final @Nullable Block element = tuple.getElement(4);
         if (element != null) {
             final @Nonnull SemanticType parameter = block.getType().getParameters().getNotNull(0);
             final @Nullable SymmetricKey sk = this.symmetricKey;
+            final @Nullable InitializationVector iv = this.initializationVector;
             if (sk != null) {
-                this.element = element.decrypt(parameter, sk);
+                if (iv == null) throw new InvalidEncodingException("The initialization vector may not be null for decryption.");
+                this.element = element.decrypt(parameter, sk, iv);
             } else {
                 this.element = element.setType(parameter);
             }
@@ -309,7 +319,7 @@ public final class EncryptionWrapper extends BlockWrapper implements Immutable {
     @Pure
     private @Nonnull Block getCache() {
         if (cache == null) {
-            @Nonnull FreezableArray<Block> elements = new FreezableArray<Block>(4);
+            @Nonnull FreezableArray<Block> elements = new FreezableArray<Block>(5);
             elements.set(0, time.toBlock());
             elements.set(1, Block.toBlock(recipient));
             
@@ -324,8 +334,10 @@ public final class EncryptionWrapper extends BlockWrapper implements Immutable {
                 }
             }
             
+            elements.set(3, Block.toBlock(initializationVector));
+            
             if (element != null) {
-                elements.set(3, symmetricKey == null ? element : element.encrypt(SemanticType.UNKNOWN, symmetricKey));
+                elements.set(4, symmetricKey == null || initializationVector == null ? element : element.encrypt(SemanticType.UNKNOWN, symmetricKey, initializationVector));
             }
             
             cache = new TupleWrapper(IMPLEMENTATION, elements.freeze()).toBlock();
