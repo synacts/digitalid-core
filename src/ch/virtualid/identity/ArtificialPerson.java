@@ -1,6 +1,7 @@
 package ch.virtualid.identity;
 
 import ch.virtualid.annotations.Pure;
+import ch.virtualid.identifier.NonHostIdentifier;
 import ch.virtualid.interfaces.Immutable;
 import javax.annotation.Nonnull;
 
@@ -10,7 +11,7 @@ import javax.annotation.Nonnull;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public final class ArtificialPerson extends Person implements Immutable {
+public final class ArtificialPerson extends InternalPerson implements Immutable {
     
     /**
      * Stores the semantic type {@code artificial.person@virtualid.ch}.

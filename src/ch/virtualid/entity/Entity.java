@@ -6,7 +6,7 @@ import ch.virtualid.concept.Aspect;
 import ch.virtualid.concept.Concept;
 import ch.virtualid.concept.Instance;
 import ch.virtualid.errors.ShouldNeverHappenError;
-import ch.virtualid.identity.Identity;
+import ch.virtualid.identity.IdentityClass;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
 import ch.virtualid.server.Host;
@@ -16,7 +16,7 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 
 /**
- * An entity captures the {@link Site site} and the {@link Identity identity} of a {@link Concept concept}.
+ * An entity captures the {@link Site site} and the {@link IdentityClass identity} of a {@link Concept concept}.
  * 
  * @see Account
  * @see Role
@@ -57,7 +57,7 @@ public abstract class Entity extends Instance implements Immutable, SQLizable {
      * @return the identity of this entity.
      */
     @Pure
-    public abstract @Nonnull Identity getIdentity();
+    public abstract @Nonnull IdentityClass getIdentity();
     
     /**
      * Returns the number that references this entity in the database.

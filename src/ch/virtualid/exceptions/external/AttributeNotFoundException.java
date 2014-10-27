@@ -1,6 +1,6 @@
 package ch.virtualid.exceptions.external;
 
-import ch.virtualid.identity.Identity;
+import ch.virtualid.identity.IdentityClass;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Immutable;
 import javax.annotation.Nonnull;
@@ -21,7 +21,7 @@ public final class AttributeNotFoundException extends SomethingNotFoundException
      * 
      * @require type.isAttributeType() : "The type is an attribute type.";
      */
-    public AttributeNotFoundException(@Nonnull Identity identity, @Nonnull SemanticType type) {
+    public AttributeNotFoundException(@Nonnull IdentityClass identity, @Nonnull SemanticType type) {
         super("attribute", identity, type);
     }
     

@@ -5,6 +5,7 @@ import ch.virtualid.database.Database;
 import ch.virtualid.errors.InitializationError;
 import ch.virtualid.errors.ShouldNeverHappenError;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.interfaces.Immutable;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
@@ -15,12 +16,12 @@ import javax.annotation.Nonnull;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public final class HostIdentity extends Identity implements Immutable {
+public final class HostIdentity extends IdentityClass implements InternalIdentity, Immutable {
     
     /**
      * Stores the semantic type {@code host@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType IDENTIFIER = SemanticType.create("host@virtualid.ch").load(Identity.IDENTIFIER);
+    public static final @Nonnull SemanticType IDENTIFIER = SemanticType.create("host@virtualid.ch").load(IdentityClass.IDENTIFIER);
     
     
     /**

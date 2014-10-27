@@ -3,7 +3,7 @@ package ch.virtualid.module;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Role;
 import ch.virtualid.handler.query.internal.StateQuery;
-import ch.virtualid.identity.Identity;
+import ch.virtualid.identity.IdentityClass;
 import ch.virtualid.identity.SemanticType;
 import javax.annotation.Nonnull;
 
@@ -31,7 +31,7 @@ public final class CoreService extends Service {
     /**
      * Stores the semantic type {@code @virtualid.ch}.
      */
-    public static final @Nonnull SemanticType TYPE = Identity.IDENTIFIER;
+    public static final @Nonnull SemanticType TYPE = IdentityClass.IDENTIFIER;
     
     @Pure
     @Override

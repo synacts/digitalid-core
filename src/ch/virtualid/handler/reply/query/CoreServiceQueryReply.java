@@ -5,7 +5,7 @@ import ch.virtualid.entity.Account;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.handler.QueryReply;
-import ch.virtualid.identity.Identifier;
+import ch.virtualid.identifier.Identifier;
 import ch.virtualid.module.CoreService;
 import ch.virtualid.module.Service;
 import ch.xdf.HostSignatureWrapper;

@@ -3,6 +3,7 @@ package ch.virtualid.identity;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.database.Database;
 import ch.virtualid.exceptions.external.InvalidDeclarationException;
+import ch.virtualid.identifier.NonHostIdentifier;
 import ch.virtualid.interfaces.Immutable;
 import ch.xdf.StringWrapper;
 import java.sql.SQLException;

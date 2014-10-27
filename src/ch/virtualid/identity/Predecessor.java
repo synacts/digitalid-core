@@ -1,5 +1,6 @@
 package ch.virtualid.identity;
 
+import ch.virtualid.identifier.NonHostIdentifier;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.interfaces.Blockable;

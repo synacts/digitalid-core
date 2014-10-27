@@ -12,7 +12,7 @@ import ch.virtualid.cryptography.PublicKey;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketException;
-import ch.virtualid.identity.NonHostIdentifier;
+import ch.virtualid.identifier.NonHostIdentifier;
 import ch.virtualid.identity.NonHostIdentity;
 import ch.virtualid.identity.Person;
 import ch.virtualid.identity.SemanticType;

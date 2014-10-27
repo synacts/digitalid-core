@@ -8,7 +8,7 @@ import ch.virtualid.cryptography.PublicKey;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
-import ch.virtualid.identity.HostIdentifier;
+import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identity.HostIdentity;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;

@@ -1,6 +1,6 @@
 package ch.virtualid.setup;
 
-import ch.virtualid.identity.HostIdentifier;
+import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.server.Server;
 import org.junit.AfterClass;
 import org.junit.Assert;

@@ -225,7 +225,7 @@ public final class Database implements Immutable {
      * @require isInitialized() : "The database is initialized.";
      */
     @Pure
-    public static @Nonnull Connection getConnection() throws SQLException {
+    public static @Nonnull Connection getConnection() throws SQLException { // TODO: Make this method private and include the used methods in this class.
         assert isInitialized() : "The database is initialized.";
         
         final @Nullable Connection connection = Database.connection.get();

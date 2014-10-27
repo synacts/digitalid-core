@@ -2,7 +2,7 @@ package ch.virtualid.exceptions.external;
 
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.handler.Reply;
-import ch.virtualid.identity.Identifier;
+import ch.virtualid.identifier.Identifier;
 import ch.virtualid.interfaces.Immutable;
 import javax.annotation.Nonnull;
 

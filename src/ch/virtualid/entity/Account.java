@@ -1,7 +1,7 @@
 package ch.virtualid.entity;
 
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.identity.Identity;
+import ch.virtualid.identity.IdentityClass;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
 import ch.virtualid.server.Host;
@@ -28,7 +28,7 @@ public final class Account extends Entity implements Immutable, SQLizable {
     /**
      * Stores the identity of this account.
      */
-    private final @Nonnull Identity identity;
+    private final @Nonnull IdentityClass identity;
     
     /**
      * Creates a new account with the given client and role.
@@ -36,7 +36,7 @@ public final class Account extends Entity implements Immutable, SQLizable {
      * @param host the host of this account.
      * @param identity the identity of this account.
      */
-    public Account(@Nonnull Host host, @Nonnull Identity identity) {
+    public Account(@Nonnull Host host, @Nonnull IdentityClass identity) {
         this.host = host;
         this.identity = identity;
     }
@@ -61,7 +61,7 @@ public final class Account extends Entity implements Immutable, SQLizable {
     
     @Pure
     @Override
-    public @Nonnull Identity getIdentity() {
+    public @Nonnull IdentityClass getIdentity() {
         return identity;
     }
     
@@ -83,7 +83,7 @@ public final class Account extends Entity implements Immutable, SQLizable {
      */
     @Pure
     public static @Nonnull Account get(@Nonnull Host host, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
-        return new Account(host, Identity.get(resultSet, columnIndex));
+        return new Account(host, IdentityClass.get(resultSet, columnIndex));
     }
     
     

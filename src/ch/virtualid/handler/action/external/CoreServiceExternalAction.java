@@ -7,8 +7,8 @@ import ch.virtualid.entity.Entity;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.handler.ExternalAction;
 import ch.virtualid.handler.reply.action.CoreServiceActionReply;
-import ch.virtualid.identity.HostIdentifier;
-import ch.virtualid.identity.Identity;
+import ch.virtualid.identifier.HostIdentifier;
+import ch.virtualid.identity.IdentityClass;
 import ch.virtualid.module.CoreService;
 import ch.virtualid.module.Service;
 import ch.xdf.SignatureWrapper;
@@ -34,7 +34,7 @@ public abstract class CoreServiceExternalAction extends ExternalAction {
      * @require !(entity instanceof Account) || canBeSentByHosts() : "Methods encoded on hosts can be sent by hosts.";
      * @require !(entity instanceof Role) || !canOnlyBeSentByHosts() : "Methods encoded on clients cannot only be sent by hosts.";
      */
-    protected CoreServiceExternalAction(@Nonnull Entity entity, @Nonnull Identity subject) {
+    protected CoreServiceExternalAction(@Nonnull Entity entity, @Nonnull IdentityClass subject) {
         super(entity, subject.getAddress(), subject.getAddress().getHostIdentifier());
     }
     

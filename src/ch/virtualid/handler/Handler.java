@@ -3,7 +3,7 @@ package ch.virtualid.handler;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.concept.Concept;
 import ch.virtualid.entity.Entity;
-import ch.virtualid.identity.Identifier;
+import ch.virtualid.identifier.Identifier;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;

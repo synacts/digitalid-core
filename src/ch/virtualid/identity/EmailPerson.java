@@ -1,6 +1,8 @@
 package ch.virtualid.identity;
 
 import ch.virtualid.annotations.Pure;
+import ch.virtualid.identifier.NonHostIdentifier;
+import ch.virtualid.interfaces.Immutable;
 import javax.annotation.Nonnull;
 import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
@@ -8,12 +10,11 @@ import javax.naming.directory.InitialDirContext;
 
 /**
  * This class models the email person virtual identities.
- * This category exists only to support classic email addresses.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public final class EmailPerson extends Person {
+public final class EmailPerson extends ExternalPerson implements Immutable {
     
     /**
      * Stores the semantic type {@code email.person@virtualid.ch}.
@@ -35,7 +36,7 @@ public final class EmailPerson extends Person {
     @Pure
     @Override
     public @Nonnull Category getCategory() {
-        return Category.EMAIL_PERSON;
+        return Category.EXTERNAL_PERSON;
     }
     
     

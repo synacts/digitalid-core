@@ -52,7 +52,12 @@ public enum Category implements Blockable, Immutable, SQLizable {
     /**
      * The category for an email person.
      */
-    EMAIL_PERSON(5);
+    EMAIL_PERSON(5),
+    
+    /**
+     * The category for a mobile person.
+     */
+    MOBILE_PERSON(5);
     
     
     /**
@@ -63,58 +68,62 @@ public enum Category implements Blockable, Immutable, SQLizable {
     
     
     /**
+     * Returns whether the given value is a valid category.
+     *
+     * @param value the value to check.
+     * 
+     * @return whether the given value is a valid category.
+     */
+    @Pure
+    public static boolean isValid(byte value) {
+        return value >= 0 && value <= 6;
+    }
+    
+    /**
+     * Returns the category encoded by the given value.
+     * 
+     * @param value the value encoding the category.
+     * 
+     * @return the category encoded by the given value.
+     * 
+     * @require isValid(value) : "The value is a valid category.";
+     */
+    @Pure
+    public static @Nonnull Category get(byte value) {
+        assert isValid(value) : "The value is a valid category.";
+        
+        for (final @Nonnull Category category : values()) {
+            if (category.value == value) return category;
+        }
+        
+        throw new ShouldNeverHappenError("The value '" + value + "' does not encode a category.");
+    }
+    
+    
+    /**
      * Stores the semantic type {@code category@virtualid.ch}.
      */
     public static final @Nonnull SemanticType TYPE = SemanticType.create("category@virtualid.ch").load(Int8Wrapper.TYPE);
     
-    
     /**
-     * Stores the byte representation of the category.
-     */
-    private final byte value;
-    
-    /**
-     * Creates a new category with the given value.
+     * Returns the category encoded by the given block or throws an {@link InvalidEncodingException}.
      * 
-     * @param value the value encoding the category.
-     */
-    Category(int value) {
-        this.value = (byte) value;
-    }
-    
-    
-    /**
-     * Returns the byte representation of this category.
+     * @param block the block encoding the category.
      * 
-     * @return the byte representation of this category.
-     */
-    public byte getValue() {
-        return value;
-    }
-    
-    /**
-     * Returns whether this category denotes a type.
+     * @return the category encoded by the given block.
      * 
-     * @return whether this category denotes a type.
-     */
-    public boolean isType() {
-        return this == SYNTACTIC_TYPE || this == SEMANTIC_TYPE;
-    }
-    
-    /**
-     * Returns whether this category denotes a person.
+     * @throws InvalidEncodingException if the given block does not encode a category.
      * 
-     * @return whether this category denotes a person.
+     * @require block.getType().isBasedOn(TYPE) : "The block is based on the category type.";
      */
-    public boolean isPerson() {
-        return this == NATURAL_PERSON || this == ARTIFICIAL_PERSON || this == EMAIL_PERSON;
+    @Pure
+    public static @Nonnull Category get(@Nonnull Block block) throws InvalidEncodingException {
+        assert block.getType().isBasedOn(TYPE) : "The block is based on the category type.";
+        
+        final byte value = new Int8Wrapper(block).getValue();
+        if (!isValid(value)) throw new InvalidEncodingException("The value '" + value + "' does not encode a category.");
+        return get(value);
     }
-    
-    @Override
-    public @Nonnull String toString() {
-        return String.valueOf(value);
-    }
-    
     
     @Pure
     @Override
@@ -130,41 +139,72 @@ public enum Category implements Blockable, Immutable, SQLizable {
     
     
     /**
-     * Returns the category encoded by the given value.
+     * Stores the byte representation of this category.
+     * 
+     * @invariant isValid(value) : "The value is a valid category.";
+     */
+    private final byte value;
+    
+    /**
+     * Creates a new category with the given value.
      * 
      * @param value the value encoding the category.
-     * 
-     * @return the category encoded by the given value.
-     * 
-     * @require value >= 0 && value <= 5 : "The value is between 0 and 5 (both inclusive).";
      */
-    public static @Nonnull Category get(byte value) {
-        assert value >= 0 && value <= 5 : "The value is between 0 and 5 (both inclusive).";
-        
-        for (@Nonnull Category category : values()) {
-            if (category.value == value) return category;
-        }
-        
-        throw new ShouldNeverHappenError("The value '" + value + "' does not encode a category.");
+    private Category(int value) {
+        this.value = (byte) value;
     }
     
     /**
-     * Returns the category encoded by the given block or throws an {@link InvalidEncodingException}.
+     * Returns the byte representation of this category.
      * 
-     * @param block the block encoding the category.
+     * @return the byte representation of this category.
      * 
-     * @return the category encoded by the given block.
-     * 
-     * @throws InvalidEncodingException if the given block does not encode a category.
-     * 
-     * @require block.getType().isBasedOn(TYPE) : "The block is based on the category type.";
+     * @ensure isValid(value) : "The value is a valid category.";
      */
-    public static @Nonnull Category get(@Nonnull Block block) throws InvalidEncodingException {
-        assert block.getType().isBasedOn(TYPE) : "The block is based on the category type.";
-        
-        final byte value = new Int8Wrapper(block).getValue();
-        if (value < 0 || value > 5) throw new InvalidEncodingException("The value '" + value + "' does not encode a category.");
-        return get(value);
+    @Pure
+    public byte getValue() {
+        return value;
+    }
+    
+    
+    /**
+     * Returns whether this category denotes a type.
+     * 
+     * @return whether this category denotes a type.
+     */
+    @Pure
+    public boolean isType() {
+        return this == SYNTACTIC_TYPE || this == SEMANTIC_TYPE;
+    }
+    
+    /**
+     * Returns whether this category denotes an internal person.
+     * 
+     * @return whether this category denotes an internal person.
+     */
+    @Pure
+    public boolean isInternalPerson() {
+        return this == NATURAL_PERSON || this == ARTIFICIAL_PERSON;
+    }
+    
+    /**
+     * Returns whether this category denotes an external person.
+     * 
+     * @return whether this category denotes an external person.
+     */
+    @Pure
+    public boolean isExternalPerson() {
+        return this == EMAIL_PERSON || this == MOBILE_PERSON;
+    }
+    
+    /**
+     * Returns whether this category denotes a person.
+     * 
+     * @return whether this category denotes a person.
+     */
+    @Pure
+    public boolean isPerson() {
+        return isInternalPerson() || isExternalPerson();
     }
     
     
@@ -183,12 +223,20 @@ public enum Category implements Blockable, Immutable, SQLizable {
      */
     @Pure
     public static @Nonnull Category get(@Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
-        return get(resultSet.getByte(columnIndex));
+        final @Nonnull byte value = resultSet.getByte(columnIndex);
+        if (!isValid(value)) throw new SQLException("'" + value + "' is not a valid category.");
+        return get(value);
     }
     
     @Override
     public void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
         preparedStatement.setByte(parameterIndex, value);
+    }
+    
+    @Pure
+    @Override
+    public @Nonnull String toString() {
+        return String.valueOf(value);
     }
     
 }

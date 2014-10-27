@@ -1,7 +1,7 @@
 package ch.virtualid.exceptions.external;
 
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.identity.Identity;
+import ch.virtualid.identity.IdentityClass;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Immutable;
 import javax.annotation.Nonnull;
@@ -20,7 +20,7 @@ public abstract class SomethingNotFoundException extends ExternalException imple
     /**
      * Stores the identity whose something could not be found.
      */
-    private final @Nonnull Identity identity;
+    private final @Nonnull IdentityClass identity;
     
     /**
      * Stores the type of the something that could not be found.
@@ -38,7 +38,7 @@ public abstract class SomethingNotFoundException extends ExternalException imple
      * 
      * @require type.isAttributeType() : "The type is an attribute type.";
      */
-    protected SomethingNotFoundException(@Nonnull String something, @Nonnull Identity identity, @Nonnull SemanticType type) {
+    protected SomethingNotFoundException(@Nonnull String something, @Nonnull IdentityClass identity, @Nonnull SemanticType type) {
         super("The " + something + " " + type.getAddress() + " of " + identity.getAddress() + " could not be found.");
         
         assert type.isAttributeType() : "The type is an attribute type.";
@@ -53,7 +53,7 @@ public abstract class SomethingNotFoundException extends ExternalException imple
      * @return the identity whose something could not be found.
      */
     @Pure
-    public final @Nonnull Identity getIdentity() {
+    public final @Nonnull IdentityClass getIdentity() {
         return identity;
     }
     

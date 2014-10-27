@@ -20,6 +20,8 @@ import javax.annotation.Nullable;
  * @see PostgreSQLConfiguration
  * @see SQLiteConfiguration
  * 
+ * @see Database
+ * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */

@@ -2,6 +2,7 @@ package ch.virtualid.identity;
 
 import ch.virtualid.exceptions.external.IdentityNotFoundException;
 import ch.virtualid.exceptions.external.InvalidDeclarationException;
+import ch.virtualid.identifier.NonHostIdentifier;
 import ch.virtualid.interfaces.Immutable;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
@@ -15,7 +16,7 @@ import javax.annotation.Nonnull;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public abstract class Type extends NonHostIdentity implements Immutable {
+public abstract class Type extends NonHostIdentity implements Immutable, InternalNonHostIdentity {
     
     /**
      * Stores the semantic type {@code type@virtualid.ch}.

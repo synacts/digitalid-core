@@ -8,7 +8,7 @@ import ch.virtualid.entity.Role;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Method;
-import ch.virtualid.identity.HostIdentifier;
+import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.both.Passwords;
 import ch.virtualid.util.FreezableArray;

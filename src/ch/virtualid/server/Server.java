@@ -8,7 +8,7 @@ import ch.virtualid.database.SQLiteConfiguration;
 import ch.virtualid.errors.InitializationError;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
-import ch.virtualid.identity.HostIdentifier;
+import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.io.Console;
 import ch.virtualid.io.Directory;
 import ch.virtualid.util.FreezableLinkedHashMap;

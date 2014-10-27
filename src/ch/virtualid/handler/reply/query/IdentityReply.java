@@ -11,7 +11,7 @@ import ch.virtualid.handler.Reply;
 import ch.virtualid.handler.query.external.IdentityQuery;
 import ch.virtualid.identity.Category;
 import ch.virtualid.identity.Mapper;
-import ch.virtualid.identity.NonHostIdentifier;
+import ch.virtualid.identifier.NonHostIdentifier;
 import ch.virtualid.identity.NonHostIdentity;
 import ch.virtualid.identity.Predecessor;
 import ch.virtualid.identity.Predecessors;

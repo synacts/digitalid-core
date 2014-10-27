@@ -81,7 +81,7 @@ public final class PacketException extends Exception implements Blockable {
      * @param remote whether it was thrown remotely.
      */
     public PacketException(@Nonnull PacketError error, @Nonnull String message, @Nullable Throwable cause, boolean remote) {
-        super("(" + error + ") " + message, cause);
+        super("(" + error.getName() + ") " + message, cause);
         
         this.error = error;
         this.remote = remote;

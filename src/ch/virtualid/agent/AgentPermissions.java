@@ -8,7 +8,7 @@ import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identity.Category;
-import ch.virtualid.identity.NonHostIdentifier;
+import ch.virtualid.identifier.NonHostIdentifier;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.util.FreezableArray;

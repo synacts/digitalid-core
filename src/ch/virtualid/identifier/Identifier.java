@@ -1,10 +1,12 @@
-package ch.virtualid.identity;
+package ch.virtualid.identifier;
 
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.database.Database;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketException;
+import ch.virtualid.identity.Identity;
+import ch.virtualid.identity.IdentityClass;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
@@ -14,15 +16,14 @@ import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * This class represents identifiers and provides useful auxiliary functions.
+ * This class represents identifiers.
  * 
- * @see HostIdentifier
- * @see NonHostIdentifier
+ * @see InternalIdentifier
+ * @see ExternalIdentifier
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
@@ -30,9 +31,16 @@ import javax.annotation.Nullable;
 public abstract class Identifier implements Immutable, Blockable, SQLizable {
     
     /**
-     * The pattern that valid identifiers have to match.
+     * Returns whether the given string conforms to the criteria of this class.
+     *
+     * @param string the string to check.
+     * 
+     * @return whether the given string conforms to the criteria of this class.
      */
-    private static final Pattern pattern = Pattern.compile("(?:(?:[a-z0-9]+(?:[._-][a-z0-9]+)*)?@)?[a-z0-9]+(?:[.-][-]*[a-z0-9]+)*\\.(?:[a-z][a-z]+)");
+    @Pure
+    static boolean isConforming(@Nonnull String string) {
+        return string.length() < 64;
+    }
     
     /**
      * Returns whether the given string is a valid identifier.
@@ -43,20 +51,7 @@ public abstract class Identifier implements Immutable, Blockable, SQLizable {
      */
     @Pure
     public static boolean isValid(@Nonnull String string) {
-        return string.length() <= 100 && pattern.matcher(string).matches() && string.length() - string.indexOf("@") <= 38;
-    }
-    
-    /**
-     * Returns whether the given string could denote a host identifier.
-     * Only checks whether the string contains an '@' without verifying its validity.
-     *
-     * @param string the string to check.
-     * 
-     * @return whether the given string could denote a host identifier.
-     */
-    @Pure
-    public static boolean isHost(@Nonnull String string) {
-        return !string.contains("@");
+        return string.contains(":") ? ExternalIdentifier.isValid(string) : InternalIdentifier.isValid(string);
     }
     
     /**
@@ -66,17 +61,13 @@ public abstract class Identifier implements Immutable, Blockable, SQLizable {
      * 
      * @return a new identifier with the given string.
      * 
-     * @require Identifier.isValid(string) : "The string is a valid identifier.";
+     * @require isValid(string) : "The string is a valid identifier.";
      */
     @Pure
     public static @Nonnull Identifier create(@Nonnull String string) {
-        assert Identifier.isValid(string) : "The string is a valid identifier.";
+        assert isValid(string) : "The string is a valid identifier.";
         
-        if (Identifier.isHost(string)) {
-            return new HostIdentifier(string);
-        } else {
-            return new NonHostIdentifier(string);
-        }
+        return string.contains(":") ? ExternalIdentifier.create(string) : InternalIdentifier.create(string);
     }
     
     /**
@@ -90,14 +81,11 @@ public abstract class Identifier implements Immutable, Blockable, SQLizable {
      */
     @Pure
     public static @Nonnull Identifier create(@Nonnull Block block) throws InvalidEncodingException {
-        assert block.getType().isBasedOn(Identity.IDENTIFIER) : "The block is based on the identifier type.";
+        assert block.getType().isBasedOn(IdentityClass.IDENTIFIER) : "The block is based on the identifier type.";
         
         final @Nonnull String string = new StringWrapper(block).getString();
-        if (Identifier.isHost(string)) {
-            return new HostIdentifier(new Block(HostIdentity.IDENTIFIER, block), string);
-        } else {
-            return new NonHostIdentifier(new Block(NonHostIdentity.IDENTIFIER, block), string);
-        }
+        if (!isValid(string)) throw new InvalidEncodingException("'" + string + "' is not a valid identifier.");
+        return create(string);
     }
     
     
@@ -113,27 +101,12 @@ public abstract class Identifier implements Immutable, Blockable, SQLizable {
      * 
      * @param string the string of the identifier.
      * 
-     * @require Identifier.isValid(string) : "The string is a valid identifier.";
+     * @require isValid(string) : "The string is a valid identifier.";
      */
-    protected Identifier(@Nonnull String string) {
-        assert Identifier.isValid(string) : "The string is a valid identifier.";
+    Identifier(@Nonnull String string) {
+        assert isValid(string) : "The string is a valid identifier.";
         
         this.string = string;
-    }
-    
-    /**
-     * Creates an identifier with the given block and string.
-     * 
-     * @param block the block of the identifier.
-     * @param string the string of the identifier.
-     * 
-     * @require block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
-     */
-    protected Identifier(@Nonnull Block block, @Nonnull String string) throws InvalidEncodingException {
-        assert block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
-        
-        this.string = string;
-        if (!Identifier.isValid(string)) throw new InvalidEncodingException("" + this + " is not a valid identifier.");
     }
     
     @Pure
@@ -155,13 +128,6 @@ public abstract class Identifier implements Immutable, Blockable, SQLizable {
         return string;
     }
     
-    /**
-     * Returns the host part of this identifier.
-     * 
-     * @return the host part of this identifier.
-     */
-    @Pure
-    public abstract @Nonnull HostIdentifier getHostIdentifier();
     
     /**
      * Returns the identity of this identifier.
@@ -173,6 +139,19 @@ public abstract class Identifier implements Immutable, Blockable, SQLizable {
     @Pure
     public abstract @Nonnull Identity getIdentity() throws SQLException, IOException, PacketException, ExternalException;
     
+    
+    /**
+     * Returns this identifier as an {@link InternalIdentifier}.
+     * 
+     * @return this identifier as an {@link InternalIdentifier}.
+     * 
+     * @throws InvalidEncodingException if this identifier is not an instance of {@link InternalIdentifier}.
+     */
+    @Pure
+    public @Nonnull InternalIdentifier toInternalIdentifier() throws InvalidEncodingException {
+        if (this instanceof InternalIdentifier) return (InternalIdentifier) this;
+        throw new InvalidEncodingException("" + this + " is a " + this.getClass().getSimpleName() + " and cannot be cast to InternalIdentifier.");
+    }
     
     /**
      * Returns this identifier as a {@link HostIdentifier}.
@@ -202,6 +181,46 @@ public abstract class Identifier implements Immutable, Blockable, SQLizable {
     
     
     /**
+     * Returns this identifier as an {@link ExternalIdentifier}.
+     * 
+     * @return this identifier as an {@link ExternalIdentifier}.
+     * 
+     * @throws InvalidEncodingException if this identifier is not an instance of {@link ExternalIdentifier}.
+     */
+    @Pure
+    public @Nonnull ExternalIdentifier toExternalIdentifier() throws InvalidEncodingException {
+        if (this instanceof ExternalIdentifier) return (ExternalIdentifier) this;
+        throw new InvalidEncodingException("" + this + " is a " + this.getClass().getSimpleName() + " and cannot be cast to ExternalIdentifier.");
+    }
+    
+    /**
+     * Returns this identifier as an {@link EmailIdentifier}.
+     * 
+     * @return this identifier as an {@link EmailIdentifier}.
+     * 
+     * @throws InvalidEncodingException if this identifier is not an instance of {@link EmailIdentifier}.
+     */
+    @Pure
+    public @Nonnull EmailIdentifier toEmailIdentifier() throws InvalidEncodingException {
+        if (this instanceof EmailIdentifier) return (EmailIdentifier) this;
+        throw new InvalidEncodingException("" + this + " is a " + this.getClass().getSimpleName() + " and cannot be cast to EmailIdentifier.");
+    }
+    
+    /**
+     * Returns this identifier as a {@link MobileIdentifier}.
+     * 
+     * @return this identifier as a {@link MobileIdentifier}.
+     * 
+     * @throws InvalidEncodingException if this identifier is not an instance of {@link MobileIdentifier}.
+     */
+    @Pure
+    public @Nonnull MobileIdentifier toMobileIdentifier() throws InvalidEncodingException {
+        if (this instanceof MobileIdentifier) return (MobileIdentifier) this;
+        throw new InvalidEncodingException("" + this + " is a " + this.getClass().getSimpleName() + " and cannot be cast to MobileIdentifier.");
+    }
+    
+    
+    /**
      * Stores the data type used to store instances of this class in the database.
      */
     public static final @Nonnull String FORMAT = "VARCHAR(100) COLLATE " + Database.getConfiguration().BINARY();
@@ -216,7 +235,9 @@ public abstract class Identifier implements Immutable, Blockable, SQLizable {
      */
     @Pure
     public static @Nonnull Identifier get(@Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
-        return create(resultSet.getString(columnIndex));
+        final @Nonnull String string = resultSet.getString(columnIndex);
+        if (!isValid(string)) throw new SQLException("'" + string + "' is not a valid identifier.");
+        return create(string);
     }
     
     @Override
@@ -230,7 +251,7 @@ public abstract class Identifier implements Immutable, Blockable, SQLizable {
     public final boolean equals(@Nullable Object object) {
         if (object == this) return true;
         if (object == null || !(object instanceof Identifier)) return false;
-        @Nonnull Identifier other = (Identifier) object;
+        final @Nonnull Identifier other = (Identifier) object;
         return string.equals(other.string);
     }
     

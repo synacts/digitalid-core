@@ -13,7 +13,7 @@ import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.InternalAction;
-import ch.virtualid.identity.HostIdentifier;
+import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.module.CoreService;
 import ch.virtualid.module.Service;
 import ch.xdf.SignatureWrapper;

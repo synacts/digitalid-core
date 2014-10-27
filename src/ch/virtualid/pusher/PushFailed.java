@@ -15,9 +15,9 @@ import ch.virtualid.handler.ActionReply;
 import ch.virtualid.handler.ExternalAction;
 import ch.virtualid.handler.Method;
 import ch.virtualid.handler.Reply;
-import ch.virtualid.identity.HostIdentifier;
-import ch.virtualid.identity.Identifier;
-import ch.virtualid.identity.Identity;
+import ch.virtualid.identifier.HostIdentifier;
+import ch.virtualid.identifier.Identifier;
+import ch.virtualid.identity.IdentityClass;
 import ch.virtualid.identity.NonHostIdentity;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.Service;
@@ -53,7 +53,7 @@ public final class PushFailed extends ExternalAction {
     /**
      * Stores the semantic type {@code subject.failed.push@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType SUBJECT = SemanticType.create("subject.failed.push@virtualid.ch").load(Identity.IDENTIFIER);
+    private static final @Nonnull SemanticType SUBJECT = SemanticType.create("subject.failed.push@virtualid.ch").load(IdentityClass.IDENTIFIER);
     
     /**
      * Stores the semantic type {@code recipient.failed.push@virtualid.ch}.

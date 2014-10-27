@@ -15,7 +15,7 @@ import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.InternalQuery;
 import ch.virtualid.handler.QueryReply;
 import ch.virtualid.handler.reply.query.CoreServiceQueryReply;
-import ch.virtualid.identity.HostIdentifier;
+import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.module.CoreService;
 import ch.virtualid.module.Service;
 import ch.xdf.SignatureWrapper;

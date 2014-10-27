@@ -1,5 +1,6 @@
 package ch.virtualid.identity;
 
+import ch.virtualid.identifier.NonHostIdentifier;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.interfaces.Immutable;
@@ -61,7 +62,7 @@ public abstract class Person extends NonHostIdentity implements Immutable {
                     return true;
                 } else {
                     // The number and address might need to be updated 'manually' (because this is an 'inofficial' identity obtained through calling Identity.create(...) directly).
-                    final @Nonnull Identity identity = address.getIdentity();
+                    final @Nonnull IdentityClass identity = address.getIdentity();
                     assert identity instanceof Person : "The relocated identity should still be a person.";
 //                    update(identity.number, ((Person) identity).getNonHostAddress());
                     // TODO: The following line is wrong (always returns false) and the whole method should be improved!

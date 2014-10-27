@@ -11,9 +11,9 @@ import ch.virtualid.exceptions.external.InactiveSignatureException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
-import ch.virtualid.identity.Identifier;
-import ch.virtualid.identity.Identity;
-import ch.virtualid.identity.NonHostIdentifier;
+import ch.virtualid.identifier.Identifier;
+import ch.virtualid.identity.IdentityClass;
+import ch.virtualid.identifier.NonHostIdentifier;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.identity.SyntacticType;
 import ch.virtualid.interfaces.Blockable;
@@ -52,7 +52,7 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
     /**
      * Stores the semantic type {@code content.signature@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType CONTENT = SemanticType.create("content.signature@virtualid.ch").load(TupleWrapper.TYPE, Identity.IDENTIFIER, Time.TYPE, SemanticType.UNKNOWN, Audit.TYPE);
+    private static final @Nonnull SemanticType CONTENT = SemanticType.create("content.signature@virtualid.ch").load(TupleWrapper.TYPE, IdentityClass.IDENTIFIER, Time.TYPE, SemanticType.UNKNOWN, Audit.TYPE);
     
     /**
      * Stores the semantic type {@code signature@virtualid.ch}.

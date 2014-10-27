@@ -7,8 +7,8 @@ import ch.virtualid.entity.Entity;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketException;
-import ch.virtualid.identity.Identity;
-import ch.virtualid.identity.NonHostIdentifier;
+import ch.virtualid.identity.IdentityClass;
+import ch.virtualid.identifier.NonHostIdentifier;
 import ch.virtualid.identity.Person;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
@@ -160,7 +160,7 @@ public final class Contact extends Concept implements Immutable, Blockable, SQLi
      */
     @Pure
     public static @Nonnull Contact get(@Nonnull Entity entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException, InvalidEncodingException {
-        return get(entity, Identity.get(resultSet, columnIndex).toPerson());
+        return get(entity, IdentityClass.get(resultSet, columnIndex).toPerson());
     }
     
     @Override

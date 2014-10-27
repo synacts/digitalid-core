@@ -13,7 +13,7 @@ import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.ActionReply;
 import ch.virtualid.handler.Method;
 import ch.virtualid.handler.reply.action.CoreServiceActionReply;
-import ch.virtualid.identity.HostIdentifier;
+import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identity.Person;
 import ch.virtualid.identity.SemanticType;
 import ch.xdf.Block;

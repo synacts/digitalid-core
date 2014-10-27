@@ -21,9 +21,9 @@ import ch.virtualid.handler.query.external.AttributesQuery;
 import ch.virtualid.handler.query.external.IdentityQuery;
 import ch.virtualid.handler.reply.query.AttributesReply;
 import ch.virtualid.identity.Category;
-import ch.virtualid.identity.HostIdentifier;
-import ch.virtualid.identity.Identifier;
-import ch.virtualid.identity.Identity;
+import ch.virtualid.identifier.HostIdentifier;
+import ch.virtualid.identifier.Identifier;
+import ch.virtualid.identity.IdentityClass;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.server.Server;
@@ -235,8 +235,8 @@ public abstract class Packet implements Immutable {
                     if (type.equals(IdentityQuery.TYPE) || type.equals(AccountOpen.TYPE)) {
                         entity = account;
                     } else {
-                        final @Nonnull Identity identity = signature.getSubjectNotNull().getIdentity();
-                        if (identity.getCategory() == Category.EMAIL_PERSON) throw new PacketException(PacketError.IDENTIFIER, "The subject " + signature.getSubjectNotNull() + " is an email person and thus cannot receive requests.", null, isResponse);
+                        final @Nonnull IdentityClass identity = signature.getSubjectNotNull().getIdentity();
+                        if (identity.getCategory() == Category.EXTERNAL_PERSON) throw new PacketException(PacketError.IDENTIFIER, "The subject " + signature.getSubjectNotNull() + " is an email person and thus cannot receive requests.", null, isResponse);
                         if (!identity.getAddress().equals(signature.getSubjectNotNull())) throw new PacketException(PacketError.RELOCATION, "The subject " + signature.getSubjectNotNull() + " has been relocated to " + identity.getAddress() + ".", null, isResponse);
                         entity = new Account(account.getHost(), identity);
                     }

@@ -11,6 +11,11 @@ import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Reply;
+import ch.virtualid.identifier.ExternalIdentifier;
+import ch.virtualid.identifier.HostIdentifier;
+import ch.virtualid.identifier.Identifier;
+import ch.virtualid.identifier.InternalIdentifier;
+import ch.virtualid.identifier.NonHostIdentifier;
 import ch.virtualid.io.Level;
 import ch.virtualid.io.Logger;
 import ch.virtualid.server.Host;
@@ -166,6 +171,7 @@ public final class Mapper {
             case NATURAL_PERSON: return new NaturalPerson(number, identifier);
             case ARTIFICIAL_PERSON: return new ArtificialPerson(number, identifier);
             case EMAIL_PERSON: return new EmailPerson(number, identifier);
+            case MOBILE_PERSON: return new MobilePerson(number, identifier);
             default: throw new ShouldNeverHappenError("The category '" + category.name() + "' is not supported.");
         }
     }
@@ -194,7 +200,7 @@ public final class Mapper {
         try (@Nonnull Statement statement = Database.getConnection().createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(query)) {
             if (resultSet.next()) {
                 final @Nonnull Category category = Category.get(resultSet.getByte(1));
-                final @Nonnull NonHostIdentifier address = NonHostIdentifier.get(resultSet, 2);
+                final @Nonnull Identifier address = Identifier.get(resultSet, 2);
                 final @Nonnull Identity identity = createIdentity(category, number, address);
                 
                 numbers.put(number, identity);
@@ -356,6 +362,18 @@ public final class Mapper {
         }
     }
     
+    /**
+     * Maps the given external identifier to an external identity.
+     * This method should only be called by {@link EmailPerson} and {@link MobilePerson}.
+     * 
+     * @param identifier the identifier of the external identifier to map.
+     * 
+     * @return the external identity of the mapped identifier.
+     */
+    public static @Nonnull ExternalIdentity mapExternalIdentity(@Nonnull ExternalIdentifier identifier) throws SQLException, InvalidEncodingException {
+        return mapIdentity(identifier, identifier.getCategory(), null).toExternalIdentity();
+    }
+    
     
     /**
      * Returns the identity of the given identifier.
@@ -365,7 +383,7 @@ public final class Mapper {
      * 
      * @return the identity of the given identifier.
      */
-    static @Nonnull Identity getIdentity(@Nonnull Identifier identifier) throws SQLException, IOException, PacketException, ExternalException {
+    public static @Nonnull Identity getIdentity(@Nonnull InternalIdentifier identifier) throws SQLException, IOException, PacketException, ExternalException {
         if (isMapped(identifier)) {
             return identifiers.get(identifier);
         } else {
@@ -424,7 +442,7 @@ public final class Mapper {
      * 
      * @throws IdentityNotFoundException if no identity with the given identifier could be found.
      */
-    private static @Nonnull Identity establishIdentity(@Nonnull Identifier identifier) throws SQLException, IOException, PacketException, ExternalException {
+    private static @Nonnull InternalIdentity establishIdentity(@Nonnull InternalIdentifier identifier) throws SQLException, IOException, PacketException, ExternalException {
         throw new IdentityNotFoundException(identifier);
         
         // TODO: In case of a host identifier, query the public key with a new method in the cache class.

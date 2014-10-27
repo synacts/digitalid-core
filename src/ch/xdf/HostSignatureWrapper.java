@@ -13,10 +13,10 @@ import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.external.InvalidSignatureException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identity.Category;
-import ch.virtualid.identity.HostIdentifier;
-import ch.virtualid.identity.Identifier;
-import ch.virtualid.identity.Identity;
-import ch.virtualid.identity.NonHostIdentifier;
+import ch.virtualid.identifier.HostIdentifier;
+import ch.virtualid.identifier.Identifier;
+import ch.virtualid.identity.IdentityClass;
+import ch.virtualid.identifier.NonHostIdentifier;
 import ch.virtualid.identity.NonHostIdentity;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
@@ -44,7 +44,7 @@ public final class HostSignatureWrapper extends SignatureWrapper implements Immu
     /**
      * Stores the semantic type {@code host.signature@virtualid.ch}.
      */
-    static final @Nonnull SemanticType SIGNATURE = SemanticType.create("host.signature@virtualid.ch").load(TupleWrapper.TYPE, Identity.IDENTIFIER, Element.TYPE);
+    static final @Nonnull SemanticType SIGNATURE = SemanticType.create("host.signature@virtualid.ch").load(TupleWrapper.TYPE, IdentityClass.IDENTIFIER, Element.TYPE);
     
     
     /**

@@ -10,7 +10,7 @@ import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.IdentityNotFoundException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
-import ch.virtualid.identity.Identifier;
+import ch.virtualid.identifier.Identifier;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.SQLizable;
 import ch.virtualid.io.Level;

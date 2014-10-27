@@ -8,7 +8,7 @@ import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Action;
 import ch.virtualid.handler.Method;
 import ch.virtualid.handler.Reply;
-import ch.virtualid.identity.Identifier;
+import ch.virtualid.identifier.Identifier;
 import ch.virtualid.io.Level;
 import ch.virtualid.io.Logger;
 import ch.virtualid.module.Service;

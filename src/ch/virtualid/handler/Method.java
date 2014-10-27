@@ -19,9 +19,9 @@ import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
-import ch.virtualid.identity.HostIdentifier;
-import ch.virtualid.identity.Identifier;
-import ch.virtualid.identity.Identity;
+import ch.virtualid.identifier.HostIdentifier;
+import ch.virtualid.identifier.Identifier;
+import ch.virtualid.identity.IdentityClass;
 import ch.virtualid.identity.Person;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.CoreService;
@@ -254,7 +254,7 @@ public abstract class Method extends Handler {
         final @Nonnull Method reference = methods.getNotNull(0);
         final @Nullable Entity entity = reference.getEntity();
         final @Nonnull Identifier subject = reference.getSubject();
-        final @Nonnull Identity identity = subject.getIdentity();
+        final @Nonnull IdentityClass identity = subject.getIdentity();
         final @Nonnull Service service = reference.getService();
         final @Nonnull HostIdentifier recipient = reference.getRecipient();
         
