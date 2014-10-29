@@ -21,7 +21,7 @@ public abstract class FatalError extends Error implements Immutable {
     /**
      * Stores the logger for fatal errors.
      */
-    private static final @Nonnull Logger logger = new Logger("Errors.log");
+    private static final @Nonnull Logger LOGGER = new Logger("Errors.log");
     
     
     /**
@@ -51,7 +51,7 @@ public abstract class FatalError extends Error implements Immutable {
     protected FatalError(@Nullable String message, @Nullable Throwable cause) {
         super(message == null ? "A fatal error occurred." : message, cause);
         
-        logger.log(Level.ERROR, this);
+        LOGGER.log(Level.ERROR, this);
     }
     
     @Pure

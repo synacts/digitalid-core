@@ -1,8 +1,8 @@
 package ch.virtualid.identity;
 
-import ch.virtualid.identifier.NonHostIdentifier;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.identifier.Identifier;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.util.FreezableArrayList;
@@ -38,9 +38,9 @@ public final class Predecessors extends FreezableArrayList<Predecessor> implemen
      * 
      * @param identifier the identifier whose predecessors are to be loaded.
      */
-    public Predecessors(@Nonnull NonHostIdentifier identifier) throws SQLException {
-        final @Nonnull ReadonlyList<NonHostIdentifier> predecessors = Mapper.getPredecessors(identifier);
-        for (final @Nonnull NonHostIdentifier predecessor : predecessors) {
+    public Predecessors(@Nonnull Identifier identifier) throws SQLException {
+        final @Nonnull ReadonlyList<Identifier> predecessors = new FreezableArrayList<>(); // TODO: Mapper.getPredecessors(identifier);
+        for (final @Nonnull Identifier predecessor : predecessors) {
             add(new Predecessor(predecessor));
         }
         freeze();

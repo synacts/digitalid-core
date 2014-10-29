@@ -15,6 +15,6 @@ public interface InternalNonHostIdentity extends InternalIdentity, Immutable {
     
     @Pure
     @Override
-    public @Nonnull NonHostIdentifier getAddress();
+    public @Nonnull NonHostIdentifier getInternalAddress();
     
 }

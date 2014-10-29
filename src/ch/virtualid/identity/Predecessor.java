@@ -1,8 +1,8 @@
 package ch.virtualid.identity;
 
-import ch.virtualid.identifier.NonHostIdentifier;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.identifier.Identifier;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.util.FreezableArray;
@@ -39,7 +39,7 @@ public final class Predecessor implements Immutable, Blockable {
     /**
      * Stores the identifier of this predecessor.
      */
-    private final @Nonnull NonHostIdentifier identifier;
+    private final @Nonnull Identifier identifier;
     
     /**
      * Stores the predecessors of this predecessor.
@@ -51,7 +51,7 @@ public final class Predecessor implements Immutable, Blockable {
      * 
      * @param identifier the identifier of this predecessor.
      */
-    public Predecessor(@Nonnull NonHostIdentifier identifier) throws SQLException {
+    public Predecessor(@Nonnull Identifier identifier) throws SQLException {
         this.identifier = identifier;
         this.predecessors = new Predecessors(identifier);
     }
@@ -67,7 +67,7 @@ public final class Predecessor implements Immutable, Blockable {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(2);
-        this.identifier = new NonHostIdentifier(elements.getNotNull(0));
+        this.identifier = Identifier.create(elements.getNotNull(0));
         this.predecessors = new Predecessors(elements.getNotNull(1));
     }
     
@@ -98,7 +98,7 @@ public final class Predecessor implements Immutable, Blockable {
      * 
      * @return the identifier of this predecessor.
      */
-    public @Nonnull NonHostIdentifier getIdentifier() {
+    public @Nonnull Identifier getIdentifier() {
         return identifier;
     }
     

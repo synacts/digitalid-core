@@ -1,14 +1,16 @@
 package ch.virtualid.identity;
 
-import ch.virtualid.exceptions.external.IdentityNotFoundException;
-import ch.virtualid.exceptions.external.InvalidDeclarationException;
+import ch.virtualid.annotations.Pure;
+import ch.virtualid.exceptions.external.ExternalException;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identifier.NonHostIdentifier;
 import ch.virtualid.interfaces.Immutable;
+import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 
 /**
- * This class models the type virtual identities.
+ * This class models a type.
  * 
  * @see SyntacticType
  * @see SemanticType
@@ -16,7 +18,7 @@ import javax.annotation.Nonnull;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public abstract class Type extends NonHostIdentity implements Immutable, InternalNonHostIdentity {
+public abstract class Type extends NonHostIdentity implements InternalNonHostIdentity, Immutable {
     
     /**
      * Stores the semantic type {@code type@virtualid.ch}.
@@ -47,6 +49,14 @@ public abstract class Type extends NonHostIdentity implements Immutable, Interna
     }
     
     
+    @Pure
+    @Override
+    public final @Nonnull NonHostIdentifier getInternalAddress() {
+        assert address instanceof NonHostIdentifier : "The address is a non-host identifier.";
+        return (NonHostIdentifier) address;
+    }
+    
+    
     /**
      * Returns whether the type declaration has already been loaded.
      * 
@@ -61,17 +71,8 @@ public abstract class Type extends NonHostIdentity implements Immutable, Interna
      * 
      * @ensure isLoaded() : "The type declaration is loaded.";
      */
-    protected final void setLoaded() {
+    final void setLoaded() {
         loaded = true;
-    }
-    
-    /**
-     * Ensures that the type declaration is loaded.
-     * 
-     * @ensure isLoaded() : "The type declaration is loaded.";
-     */
-    public final void ensureLoaded() throws SQLException, InvalidDeclarationException, IdentityNotFoundException {
-        if (!loaded) load();
     }
     
     /**
@@ -81,6 +82,15 @@ public abstract class Type extends NonHostIdentity implements Immutable, Interna
      * 
      * @ensure isLoaded() : "The type declaration has been loaded.";
      */
-    abstract void load() throws SQLException, InvalidDeclarationException, IdentityNotFoundException;
+    abstract void load() throws SQLException, IOException, PacketException, ExternalException;
+    
+    /**
+     * Ensures that the type declaration is loaded.
+     * 
+     * @ensure isLoaded() : "The type declaration is loaded.";
+     */
+    public final void ensureLoaded() throws SQLException, IOException, PacketException, ExternalException {
+        if (!loaded) load();
+    }
     
 }

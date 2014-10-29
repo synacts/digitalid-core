@@ -3,15 +3,13 @@ package ch.virtualid.identity;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.database.Database;
 import ch.virtualid.errors.InitializationError;
-import ch.virtualid.errors.ShouldNeverHappenError;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.interfaces.Immutable;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 
 /**
- * This class models the host virtual identities.
+ * This class models a host identity.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
@@ -58,21 +56,6 @@ public final class HostIdentity extends IdentityClass implements InternalIdentit
     }
     
     
-    /**
-     * Returns the address of this host identity.
-     * 
-     * @return the address of this host identity.
-     */
-    @Pure
-    public @Nonnull HostIdentifier getHostAddress() {
-        try {
-            return getAddress().toHostIdentifier();
-        } catch (InvalidEncodingException exception) {
-            throw new ShouldNeverHappenError("Could not cast the identifier " + getAddress() + " to a host identifier.", exception);
-        }
-    }
-    
-    
     @Pure
     @Override
     public @Nonnull Category getCategory() {
@@ -83,6 +66,14 @@ public final class HostIdentity extends IdentityClass implements InternalIdentit
     @Override
     public boolean hasBeenMerged() {
         return false;
+    }
+    
+    
+    @Pure
+    @Override
+    public @Nonnull HostIdentifier getInternalAddress() {
+        assert address instanceof HostIdentifier : "The address is a host identifier.";
+        return (HostIdentifier) address;
     }
     
 }

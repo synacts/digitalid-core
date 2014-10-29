@@ -10,6 +10,9 @@ import ch.virtualid.interfaces.Immutable;
 import java.sql.SQLException;
 import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
+import javax.naming.NamingException;
+import javax.naming.directory.Attributes;
+import javax.naming.directory.InitialDirContext;
 
 /**
  * This class represents email identifiers.
@@ -69,6 +72,33 @@ public final class EmailIdentifier extends ExternalIdentifier implements Immutab
     @Override
     public @Nonnull Category getCategory() {
         return Category.EMAIL_PERSON;
+    }
+    
+    
+    /**
+     * Returns the host of this email address.
+     * 
+     * @return the host of this email address.
+     */
+    @Pure
+    public @Nonnull String getHost() {
+        return getString().substring(getString().indexOf("@") + 1);
+    }
+    
+    /**
+     * Returns whether the provider of this email address exists.
+     * 
+     * @return whether the provider of this email address exists.
+     */
+    @Pure
+    public boolean providerExists() {
+        try {
+            final @Nonnull InitialDirContext context = new InitialDirContext();
+            final @Nonnull Attributes attributes = context.getAttributes("dns:/" + getHost(), new String[] {"MX"});
+            return attributes.get("MX") != null;
+        } catch (@Nonnull NamingException exception) {
+            return false;
+        }
     }
     
 }

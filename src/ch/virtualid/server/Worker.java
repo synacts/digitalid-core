@@ -34,7 +34,7 @@ public final class Worker implements Runnable {
     /**
      * Stores the logger of the worker.
      */
-    private static final @Nonnull Logger logger = new Logger("Worker.log");
+    private static final @Nonnull Logger LOGGER = new Logger("Worker.log");
     
     /**
      * Stores the socket which this worker is connected to.
@@ -114,14 +114,14 @@ public final class Worker implements Runnable {
             response.write(socket.getOutputStream());
             
             final @Nonnull Time end = new Time();
-            logger.log(Level.INFORMATION, "Request from '" + socket.getInetAddress() + "' handled in " + end.subtract(start).getValue() + " ms" + (subject != null ? " about " + subject : "") + (error != null ? " with error " + error : "") + ".");
+            LOGGER.log(Level.INFORMATION, "Request from '" + socket.getInetAddress() + "' handled in " + end.subtract(start).getValue() + " ms" + (subject != null ? " about " + subject : "") + (error != null ? " with error " + error : "") + ".");
         } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
-            logger.log(Level.WARNING, exception);
+            LOGGER.log(Level.WARNING, exception);
         } finally {
             try {
                 if (!socket.isClosed()) socket.close();
             } catch (@Nonnull IOException exception) {
-                logger.log(Level.WARNING, exception);
+                LOGGER.log(Level.WARNING, exception);
             }
         }
         

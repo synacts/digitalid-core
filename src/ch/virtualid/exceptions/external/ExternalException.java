@@ -30,7 +30,7 @@ public abstract class ExternalException extends Exception implements Immutable {
     /**
      * Stores the logger for external exceptions.
      */
-    private static final @Nonnull Logger logger = new Logger("Exceptions.log");
+    private static final @Nonnull Logger LOGGER = new Logger("Exceptions.log");
     
     
     /**
@@ -60,7 +60,7 @@ public abstract class ExternalException extends Exception implements Immutable {
     protected ExternalException(@Nullable String message, @Nullable Throwable cause) {
         super(message == null ? "An external exception occurred." : message, cause);
         
-        logger.log(Level.WARNING, this);
+        LOGGER.log(Level.WARNING, this);
     }
     
     @Pure

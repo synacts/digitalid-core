@@ -23,7 +23,7 @@ public final class Listener extends Thread {
     /**
      * Stores the logger of the listener.
      */
-    private static final @Nonnull Logger logger = new Logger("Listener.log");
+    private static final @Nonnull Logger LOGGER = new Logger("Listener.log");
     
     /**
      * The server socket is bound to Virtual ID's {@link Server#PORT port}.
@@ -56,9 +56,9 @@ public final class Listener extends Thread {
                 final @Nonnull Socket socket = serverSocket.accept();
                 socket.setSoTimeout(10000);
                 threadPoolExecutor.execute(new Worker(socket));
-                logger.log(Level.INFORMATION, "Connection accepted from " + socket.getInetAddress());
+                LOGGER.log(Level.INFORMATION, "Connection accepted from " + socket.getInetAddress());
             } catch (@Nonnull IOException exception) {
-                logger.log(Level.WARNING, exception);
+                LOGGER.log(Level.WARNING, exception);
             }
         }
     }
@@ -70,7 +70,7 @@ public final class Listener extends Thread {
         try {
             serverSocket.close();
         } catch (@Nonnull IOException exception) {
-            logger.log(Level.WARNING, exception);
+            LOGGER.log(Level.WARNING, exception);
         }
         threadPoolExecutor.shutdown();
     }

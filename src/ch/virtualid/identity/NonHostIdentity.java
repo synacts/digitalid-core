@@ -1,13 +1,11 @@
 package ch.virtualid.identity;
 
-import ch.virtualid.identifier.NonHostIdentifier;
-import ch.virtualid.errors.ShouldNeverHappenError;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.identifier.Identifier;
 import ch.virtualid.interfaces.Immutable;
 import javax.annotation.Nonnull;
 
 /**
- * This class models the non-host virtual identities.
+ * This class models a non-host identity.
  * 
  * @see Type
  * @see Person
@@ -29,32 +27,8 @@ public abstract class NonHostIdentity extends IdentityClass implements Immutable
      * @param number the number that represents this identity.
      * @param address the current address of this identity.
      */
-    NonHostIdentity(long number, @Nonnull NonHostIdentifier address) {
+    NonHostIdentity(long number, @Nonnull Identifier address) {
         super(number, address);
-    }
-    
-    
-    /**
-     * Returns the address of this non-host identity.
-     * 
-     * @return the address of this non-host identity.
-     */
-    public @Nonnull NonHostIdentifier getNonHostAddress() {
-        try {
-            return getAddress().toNonHostIdentifier();
-        } catch (InvalidEncodingException exception) {
-            throw new ShouldNeverHappenError("Could not cast the identifier " + getAddress() + " to a non-host identifier.", exception);
-        }
-    }
-    
-    
-    /**
-     * Sets the address of this non-host identity.
-     * 
-     * @param address the new address of this identity.
-     */
-    final void setAddress(@Nonnull NonHostIdentifier address) {
-        this.address = address;
     }
     
 }

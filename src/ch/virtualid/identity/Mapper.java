@@ -11,10 +11,12 @@ import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Reply;
+import ch.virtualid.identifier.EmailIdentifier;
 import ch.virtualid.identifier.ExternalIdentifier;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identifier.Identifier;
 import ch.virtualid.identifier.InternalIdentifier;
+import ch.virtualid.identifier.MobileIdentifier;
 import ch.virtualid.identifier.NonHostIdentifier;
 import ch.virtualid.io.Level;
 import ch.virtualid.io.Logger;
@@ -74,7 +76,7 @@ public final class Mapper {
     /**
      * Stores the logger of the identity mapper.
      */
-    private static final @Nonnull Logger logger = new Logger("Mapper.log");
+    private static final @Nonnull Logger LOGGER = new Logger("Mapper.log");
     
     
     /**
@@ -170,8 +172,8 @@ public final class Mapper {
             case SEMANTIC_TYPE: return new SemanticType(number, identifier);
             case NATURAL_PERSON: return new NaturalPerson(number, identifier);
             case ARTIFICIAL_PERSON: return new ArtificialPerson(number, identifier);
-            case EMAIL_PERSON: return new EmailPerson(number, identifier);
-            case MOBILE_PERSON: return new MobilePerson(number, identifier);
+            case EMAIL_PERSON: return new EmailPerson(number, (EmailIdentifier) address);
+            case MOBILE_PERSON: return new MobilePerson(number, (MobileIdentifier) address);
             default: throw new ShouldNeverHappenError("The category '" + category.name() + "' is not supported.");
         }
     }
@@ -222,12 +224,12 @@ public final class Mapper {
      * 
      * @ensure !(result instanceof Type) || ((Type) result).isLoaded() : "If the result is a type, its declaration is loaded.";
      */
-    public static @Nonnull Identity getIdentity(long number) throws SQLException {
+    static @Nonnull Identity getIdentity(long number) throws SQLException {
         @Nullable Identity identity = numbers.get(number);
         if (identity == null) identity = loadIdentity(number);
         try {
             if (identity instanceof Type) ((Type) identity).ensureLoaded();
-        } catch (@Nonnull InvalidDeclarationException | IdentityNotFoundException exception) {
+        } catch (@Nonnull IOException | PacketException | ExternalException  exception) {
             throw new ShouldNeverHappenError("The type declaration and the referenced identities should already be cached.", exception);
         }
         return identity;
@@ -245,7 +247,7 @@ public final class Mapper {
         final @Nonnull String query = "SELECT general_identity.category, general_identity.identity, general_identity.address FROM general_identifier INNER JOIN general_identity ON general_identifier.identity = general_identity.identity WHERE general_identifier.identifier = " + identifier;
         try (@Nonnull Statement statement = Database.getConnection().createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(query)) {
             if (resultSet.next()) {
-                final @Nonnull Category category = Category.get(resultSet.getByte(1));
+                final @Nonnull Category category = Category.get(resultSet, 1);
                 final long number = resultSet.getLong(2);
                 final @Nonnull Identifier address = Identifier.get(resultSet, 3);
                 final @Nonnull Identity identity = createIdentity(category, number, address);
@@ -295,7 +297,7 @@ public final class Mapper {
             try (@Nonnull Statement statement = Database.getConnection().createStatement()) {
                 final long key = Database.getConfiguration().executeInsert(statement, "INSERT INTO general_identity (category, address, reply) VALUES (" + category + ", " + identifier + ", " + reply + ")");
                 statement.executeUpdate("INSERT INTO general_identifier (identifier, identity) VALUES (" + identifier + ", " + key + ")");
-                logger.log(Level.INFORMATION, "The identity with the identifier " + identifier + " was succesfully mapped.");
+                LOGGER.log(Level.INFORMATION, "The identity with the identifier " + identifier + " was succesfully mapped.");
                 // The identity is not added to the map since the transaction might be rollbacked later on.
                 return createIdentity(category, key, identifier);
             }
@@ -444,6 +446,8 @@ public final class Mapper {
      */
     private static @Nonnull InternalIdentity establishIdentity(@Nonnull InternalIdentifier identifier) throws SQLException, IOException, PacketException, ExternalException {
         throw new IdentityNotFoundException(identifier);
+        
+        // TODO: Make sure that the merging also works if the successor is just loaded from the database. Or are existing identities intensionally left untouched?
         
         // TODO: In case of a host identifier, query the public key with a new method in the cache class.
         

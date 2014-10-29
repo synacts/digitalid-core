@@ -6,15 +6,19 @@ import ch.virtualid.interfaces.Immutable;
 import javax.annotation.Nonnull;
 
 /**
- * This interface models an internal virtual identity.
+ * This interface models an internal identity.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
 public interface InternalIdentity extends Identity, Immutable {
     
+    /**
+     * Returns the address of this internal identity.
+     * 
+     * @return the address of this internal identity.
+     */
     @Pure
-    @Override
-    public @Nonnull InternalIdentifier getAddress();
+    public @Nonnull InternalIdentifier getInternalAddress();
     
 }

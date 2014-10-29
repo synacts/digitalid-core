@@ -2,15 +2,17 @@ package ch.virtualid.identity;
 
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.database.Database;
-import ch.virtualid.exceptions.external.InvalidDeclarationException;
+import ch.virtualid.exceptions.external.ExternalException;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identifier.NonHostIdentifier;
 import ch.virtualid.interfaces.Immutable;
 import ch.xdf.StringWrapper;
+import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 
 /**
- * This class models the syntactic type virtual identities.
+ * This class models a syntactic type.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 1.9
@@ -78,7 +80,7 @@ public final class SyntacticType extends Type implements Immutable {
     
     
     @Override
-    void load() throws SQLException, InvalidDeclarationException {
+    void load() throws SQLException, IOException, PacketException, ExternalException {
         assert !isLoaded() : "The type declaration may not yet have been loaded.";
         
         // TODO: Make the lookup for the number of generic parameters.

@@ -1,25 +1,26 @@
 package ch.virtualid.identity;
 
-import ch.virtualid.identifier.NonHostIdentifier;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.contact.Context;
 import ch.virtualid.database.Database;
-import ch.virtualid.exceptions.external.IdentityNotFoundException;
-import ch.virtualid.exceptions.external.InvalidDeclarationException;
+import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.exceptions.packet.PacketException;
+import ch.virtualid.identifier.NonHostIdentifier;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.FreezableLinkedList;
 import ch.virtualid.util.ReadonlyList;
 import ch.xdf.DataWrapper;
 import ch.xdf.ListWrapper;
+import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * This class models the semantic type virtual identities.
+ * This class models a semantic type.
  * 
  * @invariant !isLoaded() || isAttributeType() == (getCachingPeriod() != null) : "If (and only if) this semantic type can be used as an attribute, the caching period is not null.";
  * @invariant !isLoaded() || getSyntacticBase().getNumberOfParameters() == -1 && parameters.size() > 0 || getSyntacticBase().getNumberOfParameters() == getParameters().size() : "The number of required parameters is either variable or matches the given parameters.";
@@ -154,7 +155,7 @@ public final class SemanticType extends Type implements Immutable {
     }
     
     @Override
-    void load() throws SQLException, InvalidDeclarationException, IdentityNotFoundException {
+    void load() throws SQLException, IOException, PacketException, ExternalException {
         assert !isLoaded() : "The type declaration may not yet have been loaded.";
         
         /*

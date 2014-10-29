@@ -12,7 +12,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * This class models the concept of a virtual identity, which can change identifiers and hosts.
+ * This class models a virtual identity, which can change identifiers and hosts.
  * Note that instances of this class are not necessarily unique (e.g. after identities have been merged).
  * 
  * @see HostIdentity
@@ -29,13 +29,13 @@ public abstract class IdentityClass implements Identity, Immutable, SQLizable {
      * Stores the internal number that represents and indexes this identity.
      * The number remains the same after relocation but changes after merging.
      */
-    protected volatile long number;
+    volatile long number;
     
     /**
      * Stores the presumable address of this identity.
      * The address is updated when the identity is relocated or merged.
      */
-    protected @Nonnull Identifier address;
+    @Nonnull Identifier address;
     
     /**
      * Creates a new identity with the given number and address.

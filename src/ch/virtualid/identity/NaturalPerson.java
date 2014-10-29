@@ -6,7 +6,7 @@ import ch.virtualid.interfaces.Immutable;
 import javax.annotation.Nonnull;
 
 /**
- * This class models the natural person virtual identities.
+ * This class models a natural person.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
@@ -16,7 +16,7 @@ public final class NaturalPerson extends InternalPerson implements Immutable {
     /**
      * Stores the semantic type {@code natural.person@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType IDENTIFIER = SemanticType.create("natural.person@virtualid.ch").load(Person.IDENTIFIER);
+    public static final @Nonnull SemanticType IDENTIFIER = SemanticType.create("natural.person@virtualid.ch").load(InternalPerson.IDENTIFIER);
     
     
     /**

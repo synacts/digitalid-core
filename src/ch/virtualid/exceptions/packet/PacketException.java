@@ -38,7 +38,7 @@ public final class PacketException extends Exception implements Blockable {
     /**
      * Stores the logger for packet exceptions.
      */
-    private static final @Nonnull Logger logger = new Logger("Packets.log");
+    private static final @Nonnull Logger LOGGER = new Logger("Packets.log");
     
     
     /**
@@ -85,7 +85,7 @@ public final class PacketException extends Exception implements Blockable {
         
         this.error = error;
         this.remote = remote;
-        logger.log(Level.WARNING, this);
+        LOGGER.log(Level.WARNING, this);
     }
     
     /**
