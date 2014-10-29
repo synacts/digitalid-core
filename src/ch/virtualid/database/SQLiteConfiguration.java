@@ -156,7 +156,7 @@ public final class SQLiteConfiguration extends Configuration implements Immutabl
     
     
     @Override
-    public long executeInsert(@Nonnull Statement statement, @Nonnull String SQL) throws SQLException {
+    long executeInsert(@Nonnull Statement statement, @Nonnull String SQL) throws SQLException {
         statement.executeUpdate(SQL);
         try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT last_insert_rowid()")) {
             if (resultSet.next()) return resultSet.getLong(1);

@@ -223,7 +223,7 @@ public abstract class Reply extends Handler implements SQLizable {
     static {
         assert Database.isMainThread() : "This method block is called in the main thread.";
         
-        try (@Nonnull Statement statement = Database.getConnection().createStatement()) {
+        try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS general_reply (reply " + Database.getConfiguration().PRIMARY_KEY() + ", time " + Time.FORMAT + " NOT NULL, signature " + Database.getConfiguration().BLOB() + " NOT NULL)");
         } catch (@Nonnull SQLException exception) {
             throw new InitializationError("The database table of the reply logger could not be created.", exception);
@@ -232,9 +232,9 @@ public abstract class Reply extends Handler implements SQLizable {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                try (@Nonnull Statement statement = Database.getConnection().createStatement()) {
+                try (@Nonnull Statement statement = Database.createStatement()) {
                     statement.executeUpdate("DELETE FROM general_reply WHERE time < " + Time.TWO_YEARS.ago());
-                    Database.getConnection().commit();
+                    Database.commit();
                 } catch (@Nonnull SQLException exception) {
                     Database.LOGGER.log(Level.WARNING, exception);
                 }
@@ -256,7 +256,7 @@ public abstract class Reply extends Handler implements SQLizable {
     public static @Nullable Reply get(@Nullable Entity entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException, IOException, PacketException, ExternalException {
         final long number = resultSet.getLong(columnIndex);
         if (resultSet.wasNull()) return null;
-        try (@Nonnull Statement statement = Database.getConnection().createStatement(); @Nonnull ResultSet rs = statement.executeQuery("SELECT signature FROM general_reply WHERE reply = " + number)) {
+        try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet rs = statement.executeQuery("SELECT signature FROM general_reply WHERE reply = " + number)) {
             if (rs.next()) {
                 final @Nonnull Block block = Block.get(Packet.SIGNATURE, rs, 1);
                 final @Nonnull SignatureWrapper signature = SignatureWrapper.decodeUnverified(block, entity);
@@ -284,11 +284,11 @@ public abstract class Reply extends Handler implements SQLizable {
      */
     private static long store(@Nonnull HostSignatureWrapper signature) throws IdentityNotFoundException, SQLException {
         final @Nonnull String SQL = "INSERT INTO general_reply (time, signature) VALUES (?, ?)";
-        try (@Nonnull PreparedStatement preparedStatement = Database.getConnection().prepareStatement(SQL, Statement.RETURN_GENERATED_KEYS)) {
+        try (@Nonnull PreparedStatement preparedStatement = Database.prepareInsertStatement(SQL)) {
             signature.getTimeNotNull().set(preparedStatement, 1);
             signature.toBlock().set(preparedStatement, 2);
             preparedStatement.executeUpdate();
-            return Database.getConfiguration().getGeneratedKey(preparedStatement);
+            return Database.getGeneratedKey(preparedStatement);
         }
     }
     

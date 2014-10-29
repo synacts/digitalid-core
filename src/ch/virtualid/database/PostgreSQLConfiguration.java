@@ -113,7 +113,7 @@ public final class PostgreSQLConfiguration extends Configuration implements Immu
     
     @Override
     public void dropDatabase() throws SQLException {
-        Database.getConnection().close();
+        Database.close();
         try (@Nonnull Connection connection = DriverManager.getConnection("jdbc:postgresql://" + server + ":" + port + "/", properties); @Nonnull Statement statement = connection.createStatement()) {
             statement.executeUpdate("DROP DATABASE IF EXISTS " + database);
         }
@@ -217,23 +217,12 @@ public final class PostgreSQLConfiguration extends Configuration implements Immu
     
     
     @Override
-    public long executeInsert(@Nonnull Statement statement, @Nonnull String SQL) throws SQLException {
-        statement.executeUpdate(SQL, Statement.RETURN_GENERATED_KEYS);
-        try (@Nonnull ResultSet resultSet = statement.getGeneratedKeys()) {
-            if (resultSet.next()) return resultSet.getLong(1);
-            else throw new SQLException("The given SQL statement did not generate a key.");
-        }
-    }
-    
-    
-    @Override
-    public @Nonnull Savepoint setSavepoint() throws SQLException {
-        return Database.getConnection().setSavepoint();
+    public @Nonnull Savepoint setSavepoint(@Nonnull Connection connection) throws SQLException {
+        return connection.setSavepoint();
     }
     
     @Override
-    public void rollback(@Nullable Savepoint savepoint) throws SQLException {
-        final @Nonnull Connection connection = Database.getConnection();
+    public void rollback(@Nonnull Connection connection, @Nullable Savepoint savepoint) throws SQLException {
         connection.rollback(savepoint);
         connection.releaseSavepoint(savepoint);
     }
@@ -266,6 +255,7 @@ public final class PostgreSQLConfiguration extends Configuration implements Immu
     public void onInsertNotIgnore(@Nonnull Statement statement, @Nonnull String table) throws SQLException {
         statement.executeUpdate("DROP RULE IF EXISTS " + table + "_on_insert_ignore ON " + table);
     }
+    
     
     @Override
     public void onInsertUpdate(@Nonnull Statement statement, @Nonnull String table, int key, @Nonnull String... columns) throws SQLException {

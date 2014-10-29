@@ -6,13 +6,19 @@ import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.io.Level;
 import ch.virtualid.io.Logger;
+import ch.virtualid.server.Server;
+import ch.virtualid.server.Worker;
 import ch.xdf.SignatureWrapper;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Savepoint;
+import java.sql.Statement;
 import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -63,6 +69,9 @@ public final class Database implements Immutable {
     
     /**
      * Returns the configuration of the database.
+     * <p>
+     * <em>Important:</em> Do not store the configuration
+     * permanently because it may change during testing!
      * 
      * @return the configuration of the database.
      * 
@@ -104,6 +113,26 @@ public final class Database implements Immutable {
     @Pure
     public static boolean isMultiAccess() {
         return !singleAccess;
+    }
+    
+    
+    /**
+     * Stores whether the current thread is the main thread used for initializations.
+     */
+    private static final @Nonnull ThreadLocal<Boolean> mainThread = new ThreadLocal<Boolean>() {
+        @Override protected @Nonnull Boolean initialValue() {
+            return false;
+        }
+    };
+    
+    /**
+     * Returns whether the current thread is the main thread used for initializations.
+     * 
+     * @return whether the current thread is the main thread used for initializations.
+     */
+    @Pure
+    public static boolean isMainThread() {
+        return mainThread.get();
     }
     
     
@@ -225,7 +254,7 @@ public final class Database implements Immutable {
      * @require isInitialized() : "The database is initialized.";
      */
     @Pure
-    public static @Nonnull Connection getConnection() throws SQLException { // TODO: Make this method private and include the used methods in this class.
+    private static @Nonnull Connection getConnection() throws SQLException {
         assert isInitialized() : "The database is initialized.";
         
         final @Nullable Connection connection = Database.connection.get();
@@ -239,22 +268,180 @@ public final class Database implements Immutable {
     
     
     /**
-     * Stores whether the current thread is the main thread used for initializations.
+     * Commits all changes of the current thread since the last commit or rollback.
+     * (On the {@link Server}, this method should only be called by the {@link Worker}.)
+     * 
+     * @require isInitialized() : "The database is initialized.";
      */
-    private static final @Nonnull ThreadLocal<Boolean> mainThread = new ThreadLocal<Boolean>() {
-        @Override protected @Nonnull Boolean initialValue() {
-            return false;
-        }
-    };
+    public static void commit() throws SQLException {
+        getConnection().commit();
+    }
     
     /**
-     * Returns whether the current thread is the main thread used for initializations.
+     * Rolls back all changes of the current thread since the last commit or rollback.
+     * (On the {@link Server}, this method should only be called by the {@link Worker}.)
      * 
-     * @return whether the current thread is the main thread used for initializations.
+     * @require isInitialized() : "The database is initialized.";
      */
-    @Pure
-    public static boolean isMainThread() {
-        return mainThread.get();
+    public static void rollback() throws SQLException {
+        getConnection().rollback();
+    }
+    
+    /**
+     * Closes the connection of the current thread.
+     * 
+     * @require isInitialized() : "The database is initialized.";
+     */
+    static void close() throws SQLException {
+        getConnection().close();
+    }
+    
+    
+    /**
+     * Returns a savepoint for the connection of the current thread or null if not supported or required.
+     * 
+     * @return a savepoint for the connection of the current thread or null if not supported or required.
+     * 
+     * @require isInitialized() : "The database is initialized.";
+     */
+    public static @Nullable Savepoint setSavepoint() throws SQLException {
+        return getConfiguration().setSavepoint(getConnection());
+    }
+    
+    /**
+     * Rolls back the connection of the current thread to the given savepoint and releases the savepoint afterwards.
+     * 
+     * @param savepoint the savepoint to roll the connection back to or null if not supported or required.
+     * 
+     * @require isInitialized() : "The database is initialized.";
+     */
+    public static void rollback(@Nullable Savepoint savepoint) throws SQLException {
+        getConfiguration().rollback(getConnection(), savepoint);
+    }
+    
+    
+    /**
+     * Creates a new statement on the connection of the current thread.
+     * 
+     * @return a new statement on the connection of the current thread.
+     * 
+     * @require isInitialized() : "The database is initialized.";
+     */
+    public static @Nonnull Statement createStatement() throws SQLException {
+        return getConnection().createStatement();
+    }
+    
+    /**
+     * Prepares the statement on the connection of the current thread.
+     * 
+     * @param SQL the statement which is to be prepared for later use.
+     * 
+     * @return a new statement on the connection of the current thread.
+     * 
+     * @require isInitialized() : "The database is initialized.";
+     */
+    public static @Nonnull PreparedStatement prepareStatement(@Nonnull String SQL) throws SQLException {
+        return getConnection().prepareStatement(SQL);
+    }
+    
+    
+    /**
+     * Executes the given insertion and returns the generated key.
+     * 
+     * @param statement a statement to execute the insertion.
+     * @param SQL an SQL statement that inserts an entry.
+     * 
+     * @return the key generated for the inserted entry.
+     * 
+     * @require isInitialized() : "The database is initialized.";
+     */
+    public static long executeInsert(@Nonnull Statement statement, @Nonnull String SQL) throws SQLException {
+        return getConfiguration().executeInsert(statement, SQL);
+    }
+    
+    /**
+     * Returns a prepared statement that can be used to insert values and retrieve their key.
+     * 
+     * @param SQL the insert statement which is to be prepared for returning the generated keys.
+     * 
+     * @return a prepared statement that can be used to insert values and retrieve their key.
+     * 
+     * @require isInitialized() : "The database is initialized.";
+     */
+    public static @Nonnull PreparedStatement prepareInsertStatement(@Nonnull String SQL) throws SQLException {
+        return getConnection().prepareStatement(SQL, Statement.RETURN_GENERATED_KEYS);
+    }
+    
+    /**
+     * Returns the key generated by the given prepared statement.
+     * 
+     * @param preparedStatement an executed prepared statement that has generated a key.
+     * 
+     * @return the key generated by the given prepared statement.
+     * 
+     * @require isInitialized() : "The database is initialized.";
+     */
+    public static long getGeneratedKey(@Nonnull PreparedStatement preparedStatement) throws SQLException {
+        try (@Nonnull ResultSet resultSet = preparedStatement.getGeneratedKeys()) {
+            if (resultSet.next()) return resultSet.getLong(1);
+            else throw new SQLException("The given SQL statement did not generate a key.");
+        }
+    }
+    
+    
+    /**
+     * Creates a rule to ignore duplicate insertions.
+     * 
+     * @param statement a statement to create the rule with.
+     * @param table the table to which the rule is applied.
+     * @param columns the columns of the primary key.
+     * 
+     * @require isInitialized() : "The database is initialized.";
+     * @require columns.length > 0 : "At least one column is provided.";
+     */
+    public static void onInsertIgnore(@Nonnull Statement statement, @Nonnull String table, @Nonnull String... columns) throws SQLException {
+        getConfiguration().onInsertIgnore(statement, table, columns);
+    }
+    
+    /**
+     * Drops the rule to ignore duplicate insertions.
+     * 
+     * @param statement a statement to drop the rule with.
+     * @param table the table from which the rule is dropped.
+     * 
+     * @require isInitialized() : "The database is initialized.";
+     */
+    public static void onInsertNotIgnore(@Nonnull Statement statement, @Nonnull String table) throws SQLException {
+        getConfiguration().onInsertNotIgnore(statement, table);
+    }
+    
+    
+    /**
+     * Creates a rule to update duplicate insertions.
+     * 
+     * @param statement a statement to create the rule with.
+     * @param table the table to which the rule is applied.
+     * @param key the number of columns in the primary key.
+     * @param columns the columns which are inserted starting with the columns of the primary key.
+     * 
+     * @require isInitialized() : "The database is initialized.";
+     * @require key > 0 : "The number of columns in the primary key is positive.";
+     * @require columns.length >= key : "At least as many columns as in the primary key are provided.";
+     */
+    public static void onInsertUpdate(@Nonnull Statement statement, @Nonnull String table, int key, @Nonnull String... columns) throws SQLException {
+        getConfiguration().onInsertUpdate(statement, table, key, columns);
+    }
+    
+    /**
+     * Drops the rule to update duplicate insertions.
+     * 
+     * @param statement a statement to drop the rule with.
+     * @param table the table from which the rule is dropped.
+     * 
+     * @require isInitialized() : "The database is initialized.";
+     */
+    public static void onInsertNotUpdate(@Nonnull Statement statement, @Nonnull String table) throws SQLException {
+        getConfiguration().onInsertNotUpdate(statement, table);
     }
     
 }

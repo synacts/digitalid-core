@@ -31,14 +31,14 @@ public final class HostCredentials implements HostModule {
     
     @Override
     public void createTables(@Nonnull Site site) throws SQLException {
-        try (final @Nonnull Statement statement = Database.getConnection().createStatement()) {
+        try (final @Nonnull Statement statement = Database.createStatement()) {
             // TODO: Create the tables of this module.
         }
     }
     
     @Override
     public void deleteTables(@Nonnull Site site) throws SQLException {
-        try (final @Nonnull Statement statement = Database.getConnection().createStatement()) {
+        try (final @Nonnull Statement statement = Database.createStatement()) {
             // TODO: Delete the tables of this module.
         }
     }
@@ -64,7 +64,7 @@ public final class HostCredentials implements HostModule {
     @Override
     public @Nonnull Block exportModule(@Nonnull Host host) throws SQLException {
         final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
-        try (final @Nonnull Statement statement = Database.getConnection().createStatement()) {
+        try (final @Nonnull Statement statement = Database.createStatement()) {
             // TODO: Retrieve all the entries from the database table(s).
         }
         return new ListWrapper(MODULE, entries.freeze()).toBlock();

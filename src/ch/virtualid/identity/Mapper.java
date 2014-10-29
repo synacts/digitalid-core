@@ -25,7 +25,6 @@ import ch.virtualid.util.FreezableLinkedList;
 import ch.virtualid.util.FreezableList;
 import ch.virtualid.util.ReadonlyList;
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -135,7 +134,7 @@ public final class Mapper {
     static {
         assert Database.isMainThread() : "This method block is called in the main thread.";
         
-        try (@Nonnull Statement statement = Database.getConnection().createStatement()) {
+        try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS general_identity (identity " + Database.getConfiguration().PRIMARY_KEY() + ", category " + Database.getConfiguration().TINYINT() + " NOT NULL, address " + Identifier.FORMAT + " NOT NULL, reply " + Reply.FORMAT + ", FOREIGN KEY (reply) " + Reply.REFERENCE + ")");
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS general_identifier (identifier " + Identifier.FORMAT + " NOT NULL, identity " + Mapper.FORMAT + " NOT NULL, PRIMARY KEY (identifier), FOREIGN KEY (identity) " + Mapper.REFERENCE + ")");
             
@@ -199,7 +198,7 @@ public final class Mapper {
      */
     private static @Nonnull Identity loadIdentity(long number) throws SQLException {
         final @Nonnull String query = "SELECT category, address FROM general_identity WHERE identity = " + number;
-        try (@Nonnull Statement statement = Database.getConnection().createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(query)) {
+        try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(query)) {
             if (resultSet.next()) {
                 final @Nonnull Category category = Category.get(resultSet.getByte(1));
                 final @Nonnull Identifier address = Identifier.get(resultSet, 2);
@@ -245,7 +244,7 @@ public final class Mapper {
      */
     private static boolean loadIdentity(@Nonnull Identifier identifier) throws SQLException {
         final @Nonnull String query = "SELECT general_identity.category, general_identity.identity, general_identity.address FROM general_identifier INNER JOIN general_identity ON general_identifier.identity = general_identity.identity WHERE general_identifier.identifier = " + identifier;
-        try (@Nonnull Statement statement = Database.getConnection().createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(query)) {
+        try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(query)) {
             if (resultSet.next()) {
                 final @Nonnull Category category = Category.get(resultSet, 1);
                 final long number = resultSet.getLong(2);
@@ -294,8 +293,8 @@ public final class Mapper {
             if (!identity.getCategory().equals(category)) throw new InvalidEncodingException("The identifier " + identifier + " should have been mapped with the category " + category + " but has already been mapped with the category " + identity.getCategory() + ".");
             return identity;
         } else {
-            try (@Nonnull Statement statement = Database.getConnection().createStatement()) {
-                final long key = Database.getConfiguration().executeInsert(statement, "INSERT INTO general_identity (category, address, reply) VALUES (" + category + ", " + identifier + ", " + reply + ")");
+            try (@Nonnull Statement statement = Database.createStatement()) {
+                final long key = Database.executeInsert(statement, "INSERT INTO general_identity (category, address, reply) VALUES (" + category + ", " + identifier + ", " + reply + ")");
                 statement.executeUpdate("INSERT INTO general_identifier (identifier, identity) VALUES (" + identifier + ", " + key + ")");
                 LOGGER.log(Level.INFORMATION, "The identity with the identifier " + identifier + " was succesfully mapped.");
                 // The identity is not added to the map since the transaction might be rollbacked later on.
@@ -507,10 +506,10 @@ public final class Mapper {
 //                        // Relocate the existing identity in case there is only one predecessor.
 //                        if (predecessors.size() == 1) {
 //                            identity = getIdentity(predecessors.get(0));
-//                            try (@Nonnull Connection connection = Database.getConnection(); @Nonnull Statement statement = connection.createStatement()) {
+//                            try (@Nonnull Statement statement = Database.createStatement()) {
 //                                statement.executeUpdate("INSERT INTO general_identifier (identifier, identity) VALUES (" + nonHostIdentifier + ", " + identity + ")");
 //                                statement.executeUpdate("UPDATE general_identity SET identifier = " + nonHostIdentifier + " WHERE identity = " + identity);
-//                                connection.commit();
+//                                Database.commit();
 //                            }
 //                            identifiers.put(nonHostIdentifier, identity);
 //                            
@@ -528,11 +527,11 @@ public final class Mapper {
 //                            long oldNumber = getIdentity(predecessor).getNumber();
 //                            updateIdentities(oldNumber, newNumber, nonHostIdentifier);
 //                            if (oldNumber != newNumber) {
-//                                try (@Nonnull Connection connection = Database.getConnection(); @Nonnull Statement statement = connection.createStatement()) {
+//                                try (@Nonnull Statement statement = Database.createStatement()) {
 //                                    statement.executeUpdate("UPDATE general_identifier SET identity = " + newNumber + " WHERE identity = " + oldNumber);
 //                                    statement.executeUpdate("DELETE FROM general_identity WHERE identity = " + oldNumber);
 //                                    updateReferences(statement, oldNumber, newNumber);
-//                                    connection.commit();
+//                                    Database.commit();
 //                                }
 //                                logger.log(INFORMATION, "The identity with the identifier " + predecessor + " was succesfully merged into " + nonHostIdentifier + ".");
 //                            } else {
@@ -548,9 +547,9 @@ public final class Mapper {
 //                            identity = getIdentity(successor);
 //                            if (identity.getCategory() != NATURAL_PERSON && identity.getCategory() != ARTIFICIAL_PERSON) throw new InvalidDeclarationException("The claimed successor " + successor + " of the email address " + nonHostIdentifier + " is a natural or an artificial person.");
 //                            if (!getPredecessors(successor).contains(nonHostIdentifier)) throw new InvalidDeclarationException("The claimed successor " + successor + " of " + nonHostIdentifier + " does not link back.");
-//                            try (@Nonnull Connection connection = Database.getConnection(); @Nonnull Statement statement = connection.createStatement()) {
+//                            try (@Nonnull Statement statement = Database.createStatement()) {
 //                                statement.executeUpdate("INSERT INTO general_identifier (identifier, identity) VALUES (" + nonHostIdentifier + ", " + identity + ")");
-//                                connection.commit();
+//                                Database.commit();
 //                            }
 //                            identifiers.put(nonHostIdentifier, identity);
 //                            logger.log(INFORMATION, "The email address " + nonHostIdentifier + " was succesfully attributed to " + successor + ".");
@@ -559,9 +558,9 @@ public final class Mapper {
 //                        }
 //                    } else {
 //                        // TODO: general_unreachable no longer exists!
-//                        try (@Nonnull Connection connection = Database.getConnection(); @Nonnull Statement statement = connection.createStatement()) {
+//                        try (@Nonnull Statement statement = Database.createStatement()) {
 //                            statement.executeUpdate("REPLACE INTO general_unreachable (identifier, time) VALUES (" + nonHostIdentifier + ", " + (System.currentTimeMillis() + 60000) + ")");
-//                            connection.commit();
+//                            Database.commit();
 //                        }
 //                        throw new IdentityNotFoundException(nonHostIdentifier, exception);
 //                    }
@@ -589,11 +588,11 @@ public final class Mapper {
     public static @Nonnull ReadonlyList<NonHostIdentifier> getPredecessors(@Nonnull NonHostIdentifier identifier) throws SQLException {
         FreezableList<NonHostIdentifier> predecessors = new FreezableLinkedList<NonHostIdentifier>();
         @Nonnull String query = "SELECT predecessor FROM general_predecessors WHERE identifier = " + identifier;
-        try (@Nonnull Connection connection = Database.getConnection(); @Nonnull Statement statement = connection.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(query)) {
+        try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(query)) {
             while (resultSet.next()) {
                 predecessors.add(new NonHostIdentifier(resultSet.getString(1)));
             }
-            connection.commit();
+            Database.commit(); // TODO: The connection should most likely not be committed here!
         }
         return predecessors.freeze();
     }
@@ -607,7 +606,7 @@ public final class Mapper {
     public static void setPredecessors(@Nonnull NonHostIdentifier identifier, @Nonnull List<NonHostIdentifier> predecessors) throws SQLException, InvalidDeclarationException {
         if (!predecessors.isEmpty()) {
             @Nonnull String statement = "INSERT" + Database.getConfiguration().IGNORE() + " INTO general_predecessors (identifier, predecessor) VALUES (?, ?)";
-            try (@Nonnull Connection connection = Database.getConnection(); @Nonnull PreparedStatement preparedStatement = connection.prepareStatement(statement)) {
+            try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(statement)) {
                 preparedStatement.setString(1, identifier.getString());
                 for (@Nonnull NonHostIdentifier predecessor : predecessors) {
                     if (getSetOfPredecessors(predecessor).contains(identifier)) throw new InvalidDeclarationException("" + predecessor + " cannot be set as a predecessor of " + identifier + " as the latter is already a predecessor of the former.", identifier, null); // TODO: The reply shouldn't be null!
@@ -615,7 +614,7 @@ public final class Mapper {
                     preparedStatement.addBatch();
                 }
                 preparedStatement.executeBatch();
-                connection.commit();
+                Database.commit();
             }
         }
     }
@@ -629,11 +628,11 @@ public final class Mapper {
      */
     public static @Nullable NonHostIdentifier getSuccessor(@Nonnull Identifier identifier) throws SQLException {
         @Nonnull String query = "SELECT successor FROM general_successor WHERE identifier = " + identifier;
-        try (@Nonnull Connection connection = Database.getConnection(); @Nonnull Statement statement = connection.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(query)) {
+        try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(query)) {
             if (resultSet.next()) {
                 return new NonHostIdentifier(resultSet.getString(1));
             }
-            connection.commit();
+            Database.commit();
         }
         return null;
     }
@@ -659,9 +658,9 @@ public final class Mapper {
             }
             
             if (successor != null) {
-                try (@Nonnull Connection connection = Database.getConnection(); @Nonnull Statement statement = connection.createStatement()) {
+                try (@Nonnull Statement statement = Database.createStatement()) {
                     statement.executeUpdate("INSERT INTO general_successor (identifier, successor) VALUES (" + identifier + ", " + successor + ")");
-                    connection.commit();
+                    Database.commit();
                 }
             }
         }
@@ -677,9 +676,9 @@ public final class Mapper {
     public static void setSuccessor(@Nonnull NonHostIdentifier identifier, @Nonnull NonHostIdentifier successor, @Nonnull Reply reply) throws SQLException, InvalidDeclarationException {
         // TODO: Also store the reference to the reply in the database.
         if (getListOfSuccessors(successor).contains(identifier)) throw new InvalidDeclarationException("" + successor + " cannot be set as the successor of " + identifier + " as the latter is already a successor of the former.", identifier, reply);
-        try (@Nonnull Connection connection = Database.getConnection(); @Nonnull Statement statement = connection.createStatement()) {
+        try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("INSERT" + Database.getConfiguration().IGNORE() + " INTO general_successor (identifier, successor) VALUES (" + identifier + ", " + successor + ")");
-            connection.commit();
+            Database.commit();
         }
     }
     

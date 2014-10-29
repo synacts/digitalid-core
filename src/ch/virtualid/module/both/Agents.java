@@ -38,7 +38,7 @@ public final class Agents implements BothModule {
     
     @Override
     public void createTables(@Nonnull Site site) throws SQLException {
-//        try (final @Nonnull Statement statement = Database.getConnection().createStatement()) {
+//        try (final @Nonnull Statement statement = Database.createStatement()) {
 //            statement.executeUpdate("CREATE TABLE IF NOT EXISTS authorization (authorizationID " + Database.PRIMARY_KEY + ", identity BIGINT NOT NULL, removed BOOLEAN NOT NULL DEFAULT FALSE, FOREIGN KEY (identity) REFERENCES general_identity (identity))");
 //            statement.executeUpdate("CREATE TABLE IF NOT EXISTS authorization_restrictions (authorizationID BIGINT NOT NULL, client BOOLEAN NOT NULL, context BIGINT NOT NULL, writing BOOLEAN NOT NULL, history BIGINT NOT NULL, role BOOLEAN NOT NULL, PRIMARY KEY (authorizationID), FOREIGN KEY (authorizationID) REFERENCES authorization (authorizationID) ON DELETE CASCADE)");
 //            statement.executeUpdate("CREATE TABLE IF NOT EXISTS authorization_permission (authorizationID BIGINT NOT NULL, preference BOOLEAN NOT NULL, type BIGINT NOT NULL, writing BOOLEAN NOT NULL, PRIMARY KEY (authorizationID, preference, type), FOREIGN KEY (authorizationID) REFERENCES authorization (authorizationID) ON DELETE CASCADE, FOREIGN KEY (type) REFERENCES general_identity (identity))");
@@ -55,7 +55,7 @@ public final class Agents implements BothModule {
     
     @Override
     public void deleteTables(@Nonnull Site site) throws SQLException {
-        try (final @Nonnull Statement statement = Database.getConnection().createStatement()) {
+        try (final @Nonnull Statement statement = Database.createStatement()) {
             // TODO: Delete the tables of this module.
         }
     }
@@ -81,7 +81,7 @@ public final class Agents implements BothModule {
     @Override
     public @Nonnull Block exportModule(@Nonnull Host host) throws SQLException {
         final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
-        try (final @Nonnull Statement statement = Database.getConnection().createStatement()) {
+        try (final @Nonnull Statement statement = Database.createStatement()) {
             // TODO: Retrieve all the entries from the database table(s).
         }
         return new ListWrapper(MODULE, entries.freeze()).toBlock();
@@ -118,7 +118,7 @@ public final class Agents implements BothModule {
     @Override
     public @Nonnull Block getState(@Nonnull Entity entity, @Nonnull Agent agent) throws SQLException {
         final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
-        try (final @Nonnull Statement statement = Database.getConnection().createStatement()) {
+        try (final @Nonnull Statement statement = Database.createStatement()) {
             // TODO: Retrieve the entries of the given entity from the database table(s).
         }
         return new ListWrapper(STATE, entries.freeze()).toBlock();
@@ -136,7 +136,7 @@ public final class Agents implements BothModule {
     
     @Override
     public void removeState(@Nonnull Entity entity) throws SQLException {
-        try (final @Nonnull Statement statement = Database.getConnection().createStatement()) {
+        try (final @Nonnull Statement statement = Database.createStatement()) {
             // TODO: Remove the entries of the given entity from the database table(s).
         }
     }
@@ -191,7 +191,7 @@ public final class Agents implements BothModule {
 //     */
     public static @Nullable ClientAgent getClientAgent(@Nonnull Entity entity, @Nonnull Commitment commitment) throws SQLException {
 //        @Nonnull String sql = "SELECT authorization.authorizationID, client.name FROM authorization JOIN client ON authorization.authorizationID = client.authorizationID WHERE authorization.identity = ? AND NOT authorization.removed AND client.host = ? AND client.time = ? AND client.commitment = ?";
-//        try (@Nonnull PreparedStatement preparedStatement = Database.getConnection().prepareStatement(sql)) {
+//        try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(sql)) {
 //            preparedStatement.setLong(1, entity.getNumber());
 //            preparedStatement.setLong(2, commitment.getHost().getNumber());
 //            preparedStatement.setLong(3, commitment.getTime());

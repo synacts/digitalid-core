@@ -41,7 +41,7 @@ public final class Synchronizer extends Thread {
         // TODO: Include the entity, recipient and subject in the queue! + service
 //        Synchronization.queue(action); // Writes the action with its entity to the database through the connection of the action without commit. -> Include the name of the client in the database table.
 //        action.executeOnClient();
-//        Database.getConnection().commit();
+//        Database.commit();
 //        queue.add(action);
     }
     
@@ -134,9 +134,9 @@ public final class Synchronizer extends Thread {
 //        
 //        if (!isNative(identity)) credentials.put(identity, new HashMap<Long, Map<RandomizedAgentPermissions, Credential>>());
 //        
-//        try (@Nonnull Connection connection = Database.getConnection(); @Nonnull Statement statement = connection.createStatement()) {
+//        try (@Nonnull Statement statement = Database.createStatement()) {
 //            statement.executeUpdate("REPLACE INTO " + getName() + "_natives (vid, time) VALUES (" + identity + ", " + time + ")");
-//            connection.commit();
+//            Database.commit();
 //        }
 //        
 //        natives.put(identity, time);

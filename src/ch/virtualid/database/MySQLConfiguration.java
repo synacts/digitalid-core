@@ -13,7 +13,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
@@ -110,7 +109,7 @@ public final class MySQLConfiguration extends Configuration implements Immutable
     
     @Override
     public void dropDatabase() throws SQLException {
-        try (@Nonnull Statement statement = Database.getConnection().createStatement()) {
+        try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("DROP DATABASE IF EXISTS " + database);
         }
     }
@@ -209,16 +208,6 @@ public final class MySQLConfiguration extends Configuration implements Immutable
     @Override
     public @Nonnull String CURRENT_TIME() {
         return "UNIX_TIMESTAMP(SYSDATE()) * 1000 + MICROSECOND(SYSDATE(3)) DIV 1000";
-    }
-    
-    
-    @Override
-    public long executeInsert(@Nonnull Statement statement, @Nonnull String SQL) throws SQLException {
-        statement.executeUpdate(SQL, Statement.RETURN_GENERATED_KEYS);
-        try (@Nonnull ResultSet resultSet = statement.getGeneratedKeys()) {
-            if (resultSet.next()) return resultSet.getLong(1);
-            else throw new SQLException("The given SQL statement did not generate a key.");
-        }
     }
     
 }

@@ -41,7 +41,7 @@ public final class Cache {
      * Initializes the cache by creating the corresponding database tables if necessary.
      */
     static {
-        try (@Nonnull Statement statement = Database.getConnection().createStatement()) {
+        try (@Nonnull Statement statement = Database.createStatement()) {
 //            // TODO: Leave requester as an idenitity reference, as the role tables are not global but per client.
 //            statement.executeUpdate("CREATE TABLE IF NOT EXISTS cache_attribute (requester BIGINT NOT NULL, requestee BIGINT NOT NULL, type BIGINT NOT NULL, time BIGINT NOT NULL, value LONGBLOB NOT NULL, PRIMARY KEY (requester, requestee, type), FOREIGN KEY (requester) REFERENCES general_identity (identity), FOREIGN KEY (requestee) REFERENCES general_identity (identity), FOREIGN KEY (type) REFERENCES general_identity (identity))");
 //            connection.commit();
@@ -136,9 +136,9 @@ public final class Cache {
 //        
 //        @Nullable Block result = null;
 //        @Nonnull String query = "SELECT value FROM cache_attribute WHERE (requester = " + (requester == null ? 1 : requester) + " OR requester = 1) AND requestee = " + requestee + "  AND type = " + type + " AND time >= " + time;
-//        try (@Nonnull Connection connection = Database.getConnection(); @Nonnull Statement statement = connection.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(query)) {
+//        try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(query)) {
 //            if (resultSet.next()) result = new Block(resultSet.getBytes(1));
-//            connection.commit();
+//            Database.commit();
 //        }
 //        return result;
 //    }
@@ -157,14 +157,14 @@ public final class Cache {
 //        assert time >= 0 : "The time value is non-negative.";
 //        
 //        @Nonnull String statement = "REPLACE INTO cache_attribute (requester, requestee, type, time, value) VALUES (?, ?, ?, ?, ?)";
-//        try (@Nonnull Connection connection = Database.getConnection(); @Nonnull PreparedStatement preparedStatement = connection.prepareStatement(statement)) {
+//        try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(statement)) {
 //            preparedStatement.setLong(1, (requester == null ? 1 : requester.getNumber()));
 //            preparedStatement.setLong(2, requestee.getNumber());
 //            preparedStatement.setLong(3, type.getNumber());
 //            preparedStatement.setLong(4, time);
 //            Database.setBlock(preparedStatement, 5, attribute);
 //            preparedStatement.executeUpdate();
-//            connection.commit();
+//            Database.commit();
 //        }
 //    }
     

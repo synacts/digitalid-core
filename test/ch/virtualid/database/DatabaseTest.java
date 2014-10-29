@@ -33,24 +33,24 @@ public class DatabaseTest {
     }
     
     protected static void createTables() throws SQLException {
-        try (@Nonnull Statement statement = Database.getConnection().createStatement()) {
+        try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS test_identity (identity " + Database.getConfiguration().PRIMARY_KEY() + ", category " + Database.getConfiguration().TINYINT() + " NOT NULL, address VARCHAR(100) NOT NULL COLLATE " + Database.getConfiguration().BINARY() + ")");
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS test_identifier (identifier VARCHAR(100) NOT NULL COLLATE " + Database.getConfiguration().BINARY() + ", identity BIGINT NOT NULL, value BIGINT, PRIMARY KEY (identifier), FOREIGN KEY (identity) REFERENCES test_identity (identity))");
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS test_block (block " + Database.getConfiguration().BLOB() + " NOT NULL)");
-            Database.getConnection().commit();
+            Database.commit();
         }
     }
     
     @After
     public void commit() throws SQLException {
-        if (isSubclass()) Database.getConnection().commit();
+        if (isSubclass()) Database.commit();
     }
     
     @Test
     public void _01_testKeyInsertWithStatement() throws SQLException {
         if (isSubclass()) {
-            try (@Nonnull Statement statement = Database.getConnection().createStatement()) {
-                Assert.assertEquals(1L, Database.getConfiguration().executeInsert(statement, "INSERT INTO test_identity (category, address) VALUES (1, 'a@syntacts.com')"));
+            try (@Nonnull Statement statement = Database.createStatement()) {
+                Assert.assertEquals(1L, Database.executeInsert(statement, "INSERT INTO test_identity (category, address) VALUES (1, 'a@syntacts.com')"));
             }
         }
     }
@@ -59,11 +59,11 @@ public class DatabaseTest {
     public void _02_testKeyInsertWithPreparedStatement() throws SQLException {
         if (isSubclass()) {
             final @Nonnull String SQL = "INSERT INTO test_identity (category, address) VALUES (?, ?)";
-            try (@Nonnull PreparedStatement preparedStatement = Database.getConnection().prepareStatement(SQL, Statement.RETURN_GENERATED_KEYS)) {
+            try (@Nonnull PreparedStatement preparedStatement = Database.prepareInsertStatement(SQL)) {
                 preparedStatement.setByte(1, (byte) 2);
                 preparedStatement.setString(2, "b@syntacts.com");
                 preparedStatement.executeUpdate();
-                Assert.assertEquals(2L, Database.getConfiguration().getGeneratedKey(preparedStatement));
+                Assert.assertEquals(2L, Database.getGeneratedKey(preparedStatement));
             }
         }
     }
@@ -71,7 +71,7 @@ public class DatabaseTest {
     @Test
     public void _03_testInsertWithForeignKeyConstraint() throws SQLException {
         if (isSubclass()) {
-            try (@Nonnull Statement statement = Database.getConnection().createStatement()) {
+            try (@Nonnull Statement statement = Database.createStatement()) {
                 statement.executeUpdate("INSERT INTO test_identifier (identifier, identity, value) VALUES ('a@syntacts.com', 1, 3)");
             }
         }
@@ -80,15 +80,15 @@ public class DatabaseTest {
     @Test
     public void _04_testLocalRollbackWithSavepoint() throws SQLException {
         if (isSubclass()) {
-            try (@Nonnull Statement statement = Database.getConnection().createStatement()) {
+            try (@Nonnull Statement statement = Database.createStatement()) {
                 statement.executeUpdate("INSERT INTO test_identifier (identifier, identity, value) VALUES ('b@syntacts.com', 2, 4)");
                 
-                final @Nullable Savepoint savepoint = Database.getConfiguration().setSavepoint();
+                final @Nullable Savepoint savepoint = Database.setSavepoint();
                 try {
                     statement.executeUpdate("INSERT INTO test_identifier (identifier, identity, value) VALUES ('a@syntacts.com', 1, 5)");
                     Assert.fail("An SQLException should have been thrown because a duplicate key was inserted.");
                 } catch (SQLException exception) {
-                    Database.getConfiguration().rollback(savepoint);
+                    Database.rollback(savepoint);
                 }
                 
                 final @Nonnull ResultSet resultSet = statement.executeQuery("SELECT identity FROM test_identifier WHERE identifier = 'b@syntacts.com'");
@@ -102,7 +102,7 @@ public class DatabaseTest {
     public void _05_testOnInsertIgnore() throws SQLException {
         if (isSubclass()) {
             final @Nonnull String SQL = "INSERT" + Database.getConfiguration().IGNORE() + " INTO test_identifier (identifier, identity, value) VALUES ('a@syntacts.com', 1, 6)";
-            try (@Nonnull Statement statement = Database.getConnection().createStatement()) {
+            try (@Nonnull Statement statement = Database.createStatement()) {
                 Database.getConfiguration().onInsertIgnore(statement, "test_identifier", "identifier");
                 statement.executeUpdate(SQL);
                 Database.getConfiguration().onInsertNotIgnore(statement, "test_identifier");
@@ -118,7 +118,7 @@ public class DatabaseTest {
     public void _06_testOnInsertUpdate() throws SQLException {
         if (isSubclass()) {
             final @Nonnull String SQL = Database.getConfiguration().REPLACE() + " INTO test_identifier (identifier, identity, value) VALUES ('a@syntacts.com', 1, 7)";
-            try (@Nonnull Statement statement = Database.getConnection().createStatement()) {
+            try (@Nonnull Statement statement = Database.createStatement()) {
                 Database.getConfiguration().onInsertUpdate(statement, "test_identifier", 1, "identifier", "identity", "value");
                 statement.executeUpdate(SQL);
                 Database.getConfiguration().onInsertNotUpdate(statement, "test_identifier");
@@ -134,7 +134,7 @@ public class DatabaseTest {
     public void _07_testSimpleJoin() throws SQLException {
         if (isSubclass()) {
             final @Nonnull String SQL = "SELECT test_identity.category FROM test_identifier JOIN test_identity ON test_identifier.identity = test_identity.identity WHERE identifier = 'a@syntacts.com'";
-            try (@Nonnull Statement statement = Database.getConnection().createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
+            try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
                 Assert.assertTrue(resultSet.next());
                 Assert.assertEquals(1L, resultSet.getLong(1));
             }
@@ -145,7 +145,7 @@ public class DatabaseTest {
     public void _08_testParallelQueries() throws SQLException {
         if (isSubclass()) {
             final @Nonnull String SQL = "SELECT identity FROM test_identity WHERE address = ";
-            try (@Nonnull Statement statement1 = Database.getConnection().createStatement(); @Nonnull Statement statement2 = Database.getConnection().createStatement()) {
+            try (@Nonnull Statement statement1 = Database.createStatement(); @Nonnull Statement statement2 = Database.createStatement()) {
                 try (@Nonnull ResultSet resultSet1 = statement1.executeQuery(SQL + "'a@syntacts.com'"); @Nonnull ResultSet resultSet2 = statement2.executeQuery(SQL + "'b@syntacts.com'")) {
                     Assert.assertTrue(resultSet1.next());
                     Assert.assertEquals(1L, resultSet1.getLong(1));
@@ -159,7 +159,7 @@ public class DatabaseTest {
     @Test
     public void _09_testParallelUpdates() throws SQLException {
         if (isSubclass()) {
-            try (@Nonnull Statement statement1 = Database.getConnection().createStatement(); @Nonnull Statement statement2 = Database.getConnection().createStatement()){
+            try (@Nonnull Statement statement1 = Database.createStatement(); @Nonnull Statement statement2 = Database.createStatement()){
                 statement1.executeUpdate("UPDATE test_identity SET category = 3 WHERE address = 'a@syntacts.com'");
                 final @Nonnull ResultSet resultSet1 = statement1.executeQuery("SELECT category FROM test_identity WHERE address = 'a@syntacts.com'");
                 
@@ -179,7 +179,7 @@ public class DatabaseTest {
     public void _10_testCurrentTime() throws SQLException {
         if (isSubclass()) {
             final long before = System.currentTimeMillis();
-            try (@Nonnull Statement statement = Database.getConnection().createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery("SELECT " + Database.getConfiguration().CURRENT_TIME())) {
+            try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery("SELECT " + Database.getConfiguration().CURRENT_TIME())) {
                 Assert.assertTrue(resultSet.next());
                 final long time = resultSet.getLong(1);
                 final long after = System.currentTimeMillis();
@@ -198,13 +198,13 @@ public class DatabaseTest {
             final @Nonnull String string1 = "Hello";
             final @Nonnull String string2 = "World";
             
-            try (@Nonnull PreparedStatement preparedStatement = Database.getConnection().prepareStatement("INSERT INTO test_block (block) VALUES (?)")) {
+            try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement("INSERT INTO test_block (block) VALUES (?)")) {
                 final @Nonnull Block block = new TupleWrapper(TUPLE, new StringWrapper(STRING1, string1), new StringWrapper(STRING2, string2)).toBlock();
                 block.set(preparedStatement, 1);
                 preparedStatement.executeUpdate();
             }
             
-            try (@Nonnull PreparedStatement preparedStatement = Database.getConnection().prepareStatement("SELECT block FROM test_block")) {
+            try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement("SELECT block FROM test_block")) {
                 final @Nonnull ResultSet resultSet = preparedStatement.executeQuery();
                 Assert.assertTrue(resultSet.next());
                 final @Nonnull Block block = Block.get(TUPLE, resultSet, 1);

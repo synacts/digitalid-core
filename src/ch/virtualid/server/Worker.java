@@ -71,7 +71,7 @@ public final class Worker implements Runnable {
                     final @Nonnull FreezableList<Reply> replies = new FreezableArrayList<Reply>(size);
                     final @Nonnull FreezableList<PacketException> exceptions = new FreezableArrayList<PacketException>(size);
                     
-                    Database.getConnection().commit();
+                    Database.commit();
                     for (int i = 0; i < size; i++) {
                         try {
                             final @Nonnull Method method = request.getMethod(i);
@@ -79,13 +79,13 @@ public final class Worker implements Runnable {
                             if (method instanceof Action) {
                                 // TODO: Audit the executed method if it is an action.
                             }
-                            Database.getConnection().commit();
+                            Database.commit();
                         } catch (@Nonnull SQLException exception) {
                             exceptions.set(i, new PacketException(PacketError.INTERNAL, "An SQLException occurred.", exception));
-                            Database.getConnection().rollback();
+                            Database.rollback();
                         } catch (@Nonnull PacketException exception) {
                             exceptions.set(i, exception);
-                            Database.getConnection().rollback();
+                            Database.rollback();
                         }
                     }
                     
@@ -98,7 +98,7 @@ public final class Worker implements Runnable {
                     
                     response = new Response(request, replies.freeze(), exceptions.freeze(), audit);
                 } catch (@Nonnull SQLException exception) {
-                    Database.getConnection().rollback();
+                    Database.rollback();
                     throw new PacketException(PacketError.INTERNAL, "An SQLException occurred.", exception);
                 } catch (@Nonnull IOException exception) {
                     throw new PacketException(PacketError.EXTERNAL, "An IOException occurred.", exception);

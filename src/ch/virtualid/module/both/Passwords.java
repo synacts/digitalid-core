@@ -40,15 +40,15 @@ public final class Passwords implements BothModule {
     
     @Override
     public void createTables(@Nonnull Site site) throws SQLException {
-        try (final @Nonnull Statement statement = Database.getConnection().createStatement()) {
+        try (final @Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "password (entity BIGINT NOT NULL, password VARCHAR(50) NOT NULL COLLATE " + Database.getConfiguration().BINARY() + ", PRIMARY KEY (entity), FOREIGN KEY (entity) " + site.getReference() + ")");
-            Database.getConfiguration().onInsertUpdate(statement, site + "password", 1, "entity", "password");
+            Database.onInsertUpdate(statement, site + "password", 1, "entity", "password");
         }
     }
     
     @Override
     public void deleteTables(@Nonnull Site site) throws SQLException {
-        try (final @Nonnull Statement statement = Database.getConnection().createStatement()) {
+        try (final @Nonnull Statement statement = Database.createStatement()) {
             // TODO: Delete the tables of this module.
         }
     }
@@ -74,7 +74,7 @@ public final class Passwords implements BothModule {
     @Override
     public @Nonnull Block exportModule(@Nonnull Host host) throws SQLException {
         final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
-        try (final @Nonnull Statement statement = Database.getConnection().createStatement()) {
+        try (final @Nonnull Statement statement = Database.createStatement()) {
             // TODO: Retrieve all the entries from the database table(s).
         }
         return new ListWrapper(MODULE, entries.freeze()).toBlock();
@@ -120,7 +120,7 @@ public final class Passwords implements BothModule {
     
     @Override
     public void removeState(@Nonnull Entity entity) throws SQLException {
-        try (@Nonnull Statement statement = Database.getConnection().createStatement()) {
+        try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("DELETE FROM " + entity.getSite() + "password WHERE entity = " + entity);
         }
     }
@@ -141,7 +141,7 @@ public final class Passwords implements BothModule {
      */
     public static @Nonnull String get(@Nonnull Entity entity) throws SQLException {
         final @Nonnull String SQL = "SELECT password FROM " + entity.getSite() + "password WHERE entity = " + entity;
-        try (@Nonnull Statement statement = Database.getConnection().createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
+        try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
             if (resultSet.next()) return resultSet.getString(1);
             else throw new SQLException(entity.getIdentity().getAddress().toString() + " has no password.");
         }
@@ -159,7 +159,7 @@ public final class Passwords implements BothModule {
         assert Password.isValid(value) : "The value is valid.";
         
         final @Nonnull String SQL = Database.getConfiguration().REPLACE() + " INTO " + entity.getSite() + "password (entity, password) VALUES (?, ?)";
-        try (@Nonnull PreparedStatement preparedStatement = Database.getConnection().prepareStatement(SQL)) {
+        try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
             preparedStatement.setLong(1, entity.getNumber());
             preparedStatement.setString(2, value);
             preparedStatement.executeUpdate();
@@ -182,7 +182,7 @@ public final class Passwords implements BothModule {
         
         final @Nonnull Entity entity = password.getEntityNotNull();
         final @Nonnull String SQL = "UPDATE " + entity.getSite() + "password SET password = ? WHERE entity = ? AND password = ?";
-        try (@Nonnull PreparedStatement preparedStatement = Database.getConnection().prepareStatement(SQL)) {
+        try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
             preparedStatement.setString(1, newValue);
             preparedStatement.setLong(2, entity.getNumber());
             preparedStatement.setString(3, oldValue);

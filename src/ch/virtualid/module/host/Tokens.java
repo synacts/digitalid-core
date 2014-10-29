@@ -30,7 +30,7 @@ public final class Tokens implements HostModule {
     
     @Override
     public void createTables(@Nonnull Site site) throws SQLException {
-        try (final @Nonnull Statement statement = Database.getConnection().createStatement()) {
+        try (final @Nonnull Statement statement = Database.createStatement()) {
 //            statement.executeUpdate("CREATE TABLE IF NOT EXISTS public (host BIGINT NOT NULL, public BOOLEAN NOT NULL, PRIMARY KEY (host), FOREIGN KEY (host) REFERENCES general_identity (identity))");
 //            statement.executeUpdate("CREATE TABLE IF NOT EXISTS token (host BIGINT NOT NULL, token CHAR(19) BIGINT NOT NULL, PRIMARY KEY (host, token), FOREIGN KEY (host) REFERENCES general_identity (identity))");
         }
@@ -38,7 +38,7 @@ public final class Tokens implements HostModule {
     
     @Override
     public void deleteTables(@Nonnull Site site) throws SQLException {
-        try (final @Nonnull Statement statement = Database.getConnection().createStatement()) {
+        try (final @Nonnull Statement statement = Database.createStatement()) {
             // TODO: Delete the tables of this module.
         }
     }
@@ -64,7 +64,7 @@ public final class Tokens implements HostModule {
     @Override
     public @Nonnull Block exportModule(@Nonnull Host host) throws SQLException {
         final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
-        try (final @Nonnull Statement statement = Database.getConnection().createStatement()) {
+        try (final @Nonnull Statement statement = Database.createStatement()) {
             // TODO: Retrieve all the entries from the database table(s).
         }
         return new ListWrapper(MODULE, entries.freeze()).toBlock();

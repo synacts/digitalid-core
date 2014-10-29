@@ -25,7 +25,7 @@ import javax.annotation.Nullable;
 public final class Roles {
     
     public static void createTable(@Nonnull Client client) throws SQLException {
-        try (final @Nonnull Statement statement = Database.getConnection().createStatement()) {
+        try (final @Nonnull Statement statement = Database.createStatement()) {
             // TODO: Use the reference field of the mapper class!
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + client + "role (role " + Database.getConfiguration().PRIMARY_KEY() + ", issuer BIGINT NOT NULL, relation BIGINT, recipient BIGINT, FOREIGN KEY (issuer) REFERENCES general_identity (identity), FOREIGN KEY (relation) REFERENCES general_identity (identity), FOREIGN KEY (recipient) REFERENCES general_identity (identity))");
             // TODO: Add the corresponding authorization ID? -> Yes, but now agent (ID).
@@ -38,7 +38,7 @@ public final class Roles {
     }
     
     public static void deleteTable(@Nonnull Client client) throws SQLException {
-        try (final @Nonnull Statement statement = Database.getConnection().createStatement()) {
+        try (final @Nonnull Statement statement = Database.createStatement()) {
             // TODO: Delete the tables of this module.
         }
     }

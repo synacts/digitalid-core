@@ -29,7 +29,7 @@ public final class Replay {
     static {
         assert Database.isMainThread() : "This method block is called in the main thread.";
         
-        try (@Nonnull Statement statement = Database.getConnection().createStatement()) {
+        try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS general_replay (hash " + Database.getConfiguration().HASH() + " NOT NULL PRIMARY KEY, time " + Time.FORMAT + " NOT NULL)");
         } catch (@Nonnull SQLException exception) {
             throw new InitializationError("The database table of the replay checker could not be created.", exception);
@@ -38,9 +38,9 @@ public final class Replay {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                try (@Nonnull Statement statement = Database.getConnection().createStatement()) {
+                try (@Nonnull Statement statement = Database.createStatement()) {
                     statement.executeUpdate("DELETE FROM general_replay WHERE time < " + Time.HALF_HOUR.add(Time.MINUTE).ago());
-                    Database.getConnection().commit();
+                    Database.commit();
                 } catch (@Nonnull SQLException exception) {
                     Database.LOGGER.log(Level.WARNING, exception);
                 }
@@ -55,13 +55,13 @@ public final class Replay {
      */
     public static void check(@Nonnull Packet packet) throws SQLException, ReplayDetectedException, InvalidEncodingException {
         final @Nonnull String SQL = "INSERT INTO general_replay (hash, time) VALUES (?, ?)";
-        final @Nullable Savepoint savepoint = Database.getConfiguration().setSavepoint();
-        try (@Nonnull PreparedStatement preparedStatement = Database.getConnection().prepareStatement(SQL)) {
+        final @Nullable Savepoint savepoint = Database.setSavepoint();
+        try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
             preparedStatement.setBytes(1, packet.getEncryption().getElementNotNull().getHash().toByteArray());
             packet.getEncryption().getTime().set(preparedStatement, 2);
             preparedStatement.executeUpdate();
         } catch (@Nonnull SQLException exception) {
-            Database.getConfiguration().rollback(savepoint);
+            Database.rollback(savepoint);
             throw new ReplayDetectedException(packet);
         }
     }
