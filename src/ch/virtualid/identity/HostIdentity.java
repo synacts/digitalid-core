@@ -46,15 +46,27 @@ public final class HostIdentity extends IdentityClass implements InternalIdentit
     
     
     /**
-     * Creates a new identity with the given number and address.
+     * Stores the address of this host identity.
+     */
+    private final @Nonnull HostIdentifier address;
+    
+    /**
+     * Creates a new host identity with the given number and address.
      * 
      * @param number the number that represents this identity.
-     * @param address the current address of this identity.
+     * @param address the address of the new host identity.
      */
     HostIdentity(long number, @Nonnull HostIdentifier address) {
-        super(number, address);
+        super(number);
+        
+        this.address = address;
     }
     
+    @Pure
+    @Override
+    public @Nonnull HostIdentifier getAddress() {
+        return address;
+    }
     
     @Pure
     @Override
@@ -66,14 +78,6 @@ public final class HostIdentity extends IdentityClass implements InternalIdentit
     @Override
     public boolean hasBeenMerged() {
         return false;
-    }
-    
-    
-    @Pure
-    @Override
-    public @Nonnull HostIdentifier getInternalAddress() {
-        assert address instanceof HostIdentifier : "The address is a host identifier.";
-        return (HostIdentifier) address;
     }
     
 }

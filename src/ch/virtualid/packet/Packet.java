@@ -20,10 +20,10 @@ import ch.virtualid.handler.action.internal.AccountOpen;
 import ch.virtualid.handler.query.external.AttributesQuery;
 import ch.virtualid.handler.query.external.IdentityQuery;
 import ch.virtualid.handler.reply.query.AttributesReply;
-import ch.virtualid.identity.Category;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identifier.Identifier;
-import ch.virtualid.identity.IdentityClass;
+import ch.virtualid.identifier.InternalIdentifier;
+import ch.virtualid.identity.InternalIdentity;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.server.Server;
@@ -122,7 +122,7 @@ public abstract class Packet implements Immutable {
      * @param audit the audit with the time of the last retrieval or null in case of external requests.
      */
     @SuppressWarnings("AssignmentToMethodParameter")
-    Packet(@Nonnull Object list, int size, @Nullable Object field, @Nullable HostIdentifier recipient, @Nullable SymmetricKey symmetricKey, @Nullable Identifier subject, @Nullable Audit audit) throws SQLException, IOException, PacketException, ExternalException {
+    Packet(@Nonnull Object list, int size, @Nullable Object field, @Nullable HostIdentifier recipient, @Nullable SymmetricKey symmetricKey, @Nullable InternalIdentifier subject, @Nullable Audit audit) throws SQLException, IOException, PacketException, ExternalException {
         setList(list);
         setField(field);
         this.size = size;
@@ -235,8 +235,7 @@ public abstract class Packet implements Immutable {
                     if (type.equals(IdentityQuery.TYPE) || type.equals(AccountOpen.TYPE)) {
                         entity = account;
                     } else {
-                        final @Nonnull IdentityClass identity = signature.getSubjectNotNull().getIdentity();
-                        if (identity.getCategory() == Category.EXTERNAL_PERSON) throw new PacketException(PacketError.IDENTIFIER, "The subject " + signature.getSubjectNotNull() + " is an email person and thus cannot receive requests.", null, isResponse);
+                        final @Nonnull InternalIdentity identity = signature.getSubjectNotNull().getIdentity();
                         if (!identity.getAddress().equals(signature.getSubjectNotNull())) throw new PacketException(PacketError.RELOCATION, "The subject " + signature.getSubjectNotNull() + " has been relocated to " + identity.getAddress() + ".", null, isResponse);
                         entity = new Account(account.getHost(), identity);
                     }
@@ -371,7 +370,7 @@ public abstract class Packet implements Immutable {
      */
     @Pure
     @RawRecipient
-    abstract @Nonnull SignatureWrapper getSignature(@Nullable CompressionWrapper compression, @Nonnull Identifier subject, @Nullable Audit audit) throws SQLException, IOException, PacketException, ExternalException;
+    abstract @Nonnull SignatureWrapper getSignature(@Nullable CompressionWrapper compression, @Nonnull InternalIdentifier subject, @Nullable Audit audit) throws SQLException, IOException, PacketException, ExternalException;
     
     
     /**

@@ -11,7 +11,7 @@ import ch.virtualid.concept.Instance;
 import ch.virtualid.concept.Observer;
 import ch.virtualid.database.Database;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
-import ch.virtualid.identity.NonHostIdentity;
+import ch.virtualid.identity.InternalNonHostIdentity;
 import ch.virtualid.identity.Person;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Immutable;
@@ -58,7 +58,7 @@ public final class Role extends Entity implements Immutable, SQLizable, Observer
     /**
      * Stores the issuer of this role.
      */
-    private final @Nonnull NonHostIdentity issuer;
+    private final @Nonnull InternalNonHostIdentity issuer;
     
     /**
      * Stores the relation of this role.
@@ -81,7 +81,7 @@ public final class Role extends Entity implements Immutable, SQLizable, Observer
      * Creates a new role for the given client with the given number, issuer, relation, recipient and agent.
      * <p>
      * <em>Important:</em> This constructor should only be called from this class and the roles module.
-     * For all other purposes, please use {@link #add(ch.virtualid.client.Client, ch.virtualid.identity.NonHostIdentity, ch.virtualid.identity.SemanticType, ch.virtualid.entity.Role, boolean, long)} or {@link #get(ch.virtualid.client.Client, java.sql.ResultSet, int)}.
+     * For all other purposes, please use {@link #add(ch.virtualid.client.Client, ch.virtualid.identity.InternalNonHostIdentity, ch.virtualid.identity.SemanticType, ch.virtualid.entity.Role, boolean, long)} or {@link #get(ch.virtualid.client.Client, java.sql.ResultSet, int)}.
      * 
      * @param client the client that can assume the new role.
      * @param number the number that references the new role.
@@ -93,7 +93,7 @@ public final class Role extends Entity implements Immutable, SQLizable, Observer
      * 
      * @require relation == null || relation.isRoleType() : "The relation is either null or a role type.";
      */
-    public Role(@Nonnull Client client, long number, @Nonnull NonHostIdentity issuer, @Nullable SemanticType relation, @Nullable Role recipient, boolean isClient, long agentNumber) {
+    public Role(@Nonnull Client client, long number, @Nonnull InternalNonHostIdentity issuer, @Nullable SemanticType relation, @Nullable Role recipient, boolean isClient, long agentNumber) {
         assert relation == null || relation.isRoleType() : "The relation is either null or a role type.";
         
         this.client = client;
@@ -120,7 +120,7 @@ public final class Role extends Entity implements Immutable, SQLizable, Observer
      * @return the issuer of this role.
      */
     @Pure
-    public @Nonnull NonHostIdentity getIssuer() {
+    public @Nonnull InternalNonHostIdentity getIssuer() {
         return issuer;
     }
     
@@ -175,7 +175,7 @@ public final class Role extends Entity implements Immutable, SQLizable, Observer
     
     @Pure
     @Override
-    public @Nonnull NonHostIdentity getIdentity() {
+    public @Nonnull InternalNonHostIdentity getIdentity() {
         return issuer;
     }
     
@@ -212,7 +212,7 @@ public final class Role extends Entity implements Immutable, SQLizable, Observer
      * @param agentNumber the agent number of the role to add.
      */
     @OnlyForActions
-    public void addRole(@Nonnull NonHostIdentity issuer, @Nonnull SemanticType relation, long agentNumber) throws SQLException {
+    public void addRole(@Nonnull InternalNonHostIdentity issuer, @Nonnull SemanticType relation, long agentNumber) throws SQLException {
         final @Nonnull Role role = add(client, issuer, relation, this, false, agentNumber);
         role.observe(this, REMOVED);
         
@@ -245,8 +245,8 @@ public final class Role extends Entity implements Immutable, SQLizable, Observer
      * Returns a new or existing role with the given arguments.
      * <p>
      * <em>Important:</em> This method should not be called directly.
-     * (Use {@link #addRole(ch.virtualid.identity.NonHostIdentity, ch.virtualid.identity.SemanticType, long)}
-     * or {@link Client#addRole(ch.virtualid.identity.NonHostIdentity)} instead.)
+     * (Use {@link #addRole(ch.virtualid.identity.InternalNonHostIdentity, ch.virtualid.identity.SemanticType, long)}
+     * or {@link Client#addRole(ch.virtualid.identity.InternalNonHostIdentity)} instead.)
      * 
      * @param client the client that can assume the returned role.
      * @param issuer the issuer of the returned role.
@@ -259,7 +259,7 @@ public final class Role extends Entity implements Immutable, SQLizable, Observer
      * 
      * @require relation == null || relation.isRoleType() : "The relation is either null or a role type.";
      */
-    public static @Nonnull Role add(@Nonnull Client client, @Nonnull NonHostIdentity issuer, @Nullable SemanticType relation, @Nullable Role recipient, boolean isClient, long agentNumber) throws SQLException {
+    public static @Nonnull Role add(@Nonnull Client client, @Nonnull InternalNonHostIdentity issuer, @Nullable SemanticType relation, @Nullable Role recipient, boolean isClient, long agentNumber) throws SQLException {
         assert relation == null || relation.isRoleType() : "The relation is either null or a role type.";
         
         final long number = Roles.map(client, issuer, relation, recipient, agentNumber);

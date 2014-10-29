@@ -1,8 +1,9 @@
 package ch.virtualid.identity;
 
-import ch.virtualid.identifier.ExternalIdentifier;
+import ch.virtualid.annotations.Pure;
 import ch.virtualid.interfaces.Immutable;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * This class models an external person.
@@ -22,13 +23,32 @@ public abstract class ExternalPerson extends Person implements ExternalIdentity,
     
     
     /**
-     * Creates a new identity with the given number and address.
+     * Stores the successor of this external person or null if there is none.
+     */
+    private @Nullable InternalPerson successor = null;
+    
+    /**
+     * Creates a new external person with the given number.
      * 
      * @param number the number that represents this identity.
-     * @param address the current address of this identity.
      */
-    ExternalPerson(long number, @Nonnull ExternalIdentifier address) {
-        super(number, address);
+    ExternalPerson(long number) {
+        super(number);
+    }
+    
+    @Pure
+    @Override
+    public final @Nullable InternalPerson getSuccessor() {
+        return successor;
+    }
+    
+    /**
+     * Sets the successor of this external person.
+     * 
+     * @param successor the new successor of this person.
+     */
+    final void setSuccessor(@Nonnull InternalPerson successor) {
+        this.successor = successor;
     }
     
 }

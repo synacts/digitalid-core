@@ -4,7 +4,7 @@ import ch.virtualid.annotations.Capturable;
 import ch.virtualid.client.Client;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.Role;
-import ch.virtualid.identity.NonHostIdentity;
+import ch.virtualid.identity.InternalNonHostIdentity;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.ClientModule;
 import ch.virtualid.module.CoreService;
@@ -57,7 +57,7 @@ public final class Roles {
      * 
      * @require relation == null || relation.isRoleType() : "The relation is either null or a role type.";
      */
-    public static long map(@Nonnull Client client, @Nonnull NonHostIdentity issuer, @Nullable SemanticType relation, @Nullable Role recipient, long agentNumber) throws SQLException {
+    public static long map(@Nonnull Client client, @Nonnull InternalNonHostIdentity issuer, @Nullable SemanticType relation, @Nullable Role recipient, long agentNumber) throws SQLException {
         assert relation == null || relation.isRoleType() : "The relation is either null or a role type.";
         
         throw new UnsupportedOperationException("Not supported yet.");

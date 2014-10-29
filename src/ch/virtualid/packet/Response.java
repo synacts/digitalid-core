@@ -7,7 +7,7 @@ import ch.virtualid.exceptions.external.InactiveSignatureException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Reply;
 import ch.virtualid.identifier.HostIdentifier;
-import ch.virtualid.identifier.Identifier;
+import ch.virtualid.identifier.InternalIdentifier;
 import ch.virtualid.util.FreezableArrayList;
 import ch.virtualid.util.FreezableList;
 import ch.virtualid.util.ReadonlyList;
@@ -139,7 +139,7 @@ public final class Response extends Packet {
     @Pure
     @Override
     @RawRecipient
-    @Nonnull HostSignatureWrapper getSignature(@Nullable CompressionWrapper compression, @Nonnull Identifier subject, @Nullable Audit audit) {
+    @Nonnull HostSignatureWrapper getSignature(@Nullable CompressionWrapper compression, @Nonnull InternalIdentifier subject, @Nullable Audit audit) {
         assert signer != null : "This method is only called if the element is not an exception.";
         return new HostSignatureWrapper(Packet.SIGNATURE, compression, subject, audit, signer);
     }

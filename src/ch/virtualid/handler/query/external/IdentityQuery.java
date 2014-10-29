@@ -46,7 +46,7 @@ public final class IdentityQuery extends CoreServiceExternalQuery {
      * 
      * @param subject the subject of this handler.
      */
-    public IdentityQuery(@Nonnull Identifier subject) {
+    public IdentityQuery(@Nonnull NonHostIdentifier subject) {
         super(null, subject);
     }
     

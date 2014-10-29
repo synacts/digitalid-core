@@ -6,7 +6,7 @@ import ch.virtualid.entity.Role;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identifier.HostIdentifier;
-import ch.virtualid.identifier.Identifier;
+import ch.virtualid.identifier.InternalIdentifier;
 import ch.xdf.SignatureWrapper;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
@@ -30,7 +30,7 @@ public abstract class Query extends Method {
      * @param subject the subject of this handler.
      * @param recipient the recipient of this method.
      */
-    protected Query(@Nullable Role role, @Nonnull Identifier subject, @Nonnull HostIdentifier recipient) {
+    protected Query(@Nullable Role role, @Nonnull InternalIdentifier subject, @Nonnull HostIdentifier recipient) {
         super(role, subject, recipient);
     }
     

@@ -6,8 +6,7 @@ import ch.virtualid.entity.Entity;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Action;
 import ch.virtualid.handler.ActionReply;
-import ch.virtualid.identifier.HostIdentifier;
-import ch.virtualid.identifier.Identifier;
+import ch.virtualid.identifier.NonHostIdentifier;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.CoreService;
 import ch.virtualid.module.Service;
@@ -32,8 +31,8 @@ public final class AccountOpen extends Action {
     public static final @Nonnull SemanticType TYPE = SemanticType.create("open.account@virtualid.ch").load(TupleWrapper.TYPE, ch.virtualid.identity.SemanticType.UNKNOWN); //TODO
     
     
-    public AccountOpen(@Nonnull Entity entity, @Nonnull Identifier subject, @Nonnull HostIdentifier recipient) {
-        super(entity, subject, recipient);
+    public AccountOpen(@Nonnull Entity entity, @Nonnull NonHostIdentifier subject) {
+        super(entity, subject, subject.getHostIdentifier());
     }
     
     @Pure

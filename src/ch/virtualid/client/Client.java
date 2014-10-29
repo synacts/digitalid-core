@@ -12,7 +12,7 @@ import ch.virtualid.entity.Role;
 import ch.virtualid.entity.Site;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
-import ch.virtualid.identity.NonHostIdentity;
+import ch.virtualid.identity.InternalNonHostIdentity;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.io.Directory;
 import ch.virtualid.module.CoreService;
@@ -158,7 +158,7 @@ public class Client extends Site implements Observer {
      * 
      * @param issuer the issuer of the role to add.
      */
-    public void addRole(@Nonnull NonHostIdentity issuer) throws SQLException {
+    public void addRole(@Nonnull InternalNonHostIdentity issuer) throws SQLException {
         final @Nonnull Role role = Role.add(this, issuer, null, null, true, new SecureRandom().nextLong());
         role.observe(this, Role.REMOVED);
         

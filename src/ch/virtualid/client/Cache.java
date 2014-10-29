@@ -16,6 +16,7 @@ import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identity.HostIdentity;
 import ch.virtualid.identity.IdentityClass;
+import ch.virtualid.identity.InternalIdentity;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.server.Server;
 import ch.xdf.Block;
@@ -191,7 +192,7 @@ public final class Cache {
      * @ensure for (i = 0; i < return.length; i++) new SelfcontainedWrapper(return[i].getElementNotNull()).getElement().getType().equals(types[i])) : "Each returned attribute matches the corresponding type.";
      */
     @Pure
-    public static @Nonnull SignatureWrapper[] getAttributes(@Nonnull IdentityClass identity, @Nullable Role role, @Nonnull Time time, @Nonnull SemanticType... types) throws SQLException, IOException, PacketException, ExternalException {
+    public static @Nonnull SignatureWrapper[] getAttributes(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull Time time, @Nonnull SemanticType... types) throws SQLException, IOException, PacketException, ExternalException {
         assert time.isNonNegative() : "The given time is non-negative.";
         assert types.length > 0 : "At least one type is given.";
         for (final @Nullable SemanticType type : types) assert type != null && type.isAttributeFor(identity.getCategory()) : "Each type is not null and can be used as an attribute for the category of the given identity.";
@@ -295,7 +296,7 @@ public final class Cache {
      * @ensure for (i = 0; i < return.length; i++) new SelfcontainedWrapper(return[i].getElementNotNull()).getElement().getType().equals(types[i])) : "Each returned attribute matches the corresponding type.";
      */
     @Pure
-    public static @Nonnull SignatureWrapper[] getAttributes(@Nonnull IdentityClass identity, @Nullable Role role, @Nonnull SemanticType... types) throws SQLException, IOException, PacketException, ExternalException {
+    public static @Nonnull SignatureWrapper[] getAttributes(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull SemanticType... types) throws SQLException, IOException, PacketException, ExternalException {
         return getAttributes(identity, role, new Time(), types);
     }
     
@@ -317,7 +318,7 @@ public final class Cache {
      * @ensure new SelfcontainedWrapper(return.getElementNotNull()).getElement().getType().equals(type)) : "The returned attribute matches the given type.";
      */
     @Pure
-    public static @Nonnull SignatureWrapper getAttribute(@Nonnull IdentityClass identity, @Nullable Role role, @Nonnull SemanticType type) throws SQLException, IOException, PacketException, ExternalException {
+    public static @Nonnull SignatureWrapper getAttribute(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull SemanticType type) throws SQLException, IOException, PacketException, ExternalException {
         final @Nonnull SignatureWrapper[] attributes = getAttributes(identity, role, type);
         if (attributes[0] == null) throw new AttributeNotFoundException(identity, type);
         else return attributes[0];
@@ -340,7 +341,7 @@ public final class Cache {
      * @ensure return.getType().equals(type) : "The returned block has the given type.";
      */
     @Pure
-    public static @Nonnull Block getAttributeValue(@Nonnull IdentityClass identity, @Nullable Role role, @Nonnull SemanticType type, boolean certified) throws SQLException, IOException, PacketException, ExternalException {
+    public static @Nonnull Block getAttributeValue(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull SemanticType type, boolean certified) throws SQLException, IOException, PacketException, ExternalException {
         assert type.isAttributeFor(identity.getCategory()) : "The type can be used as an attribute for the category of the given identity.";
         
         final @Nonnull SignatureWrapper attribute = getAttribute(identity, role, type);

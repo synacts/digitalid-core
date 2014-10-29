@@ -27,33 +27,48 @@ public abstract class Type extends NonHostIdentity implements InternalNonHostIde
     
     
     /**
+     * Stores the presumable address of this type.
+     * The address is updated when the type is relocated.
+     */
+    private @Nonnull NonHostIdentifier address;
+    
+    /**
      * Stores whether the type declaration has already been loaded.
      * (Lazy loading is necessary for recursive type declarations.)
      */
     private boolean loaded = false;
     
     /**
-     * Creates a new identity with the given number and address.
+     * Creates a new type with the given number and address.
      * 
      * @param number the number that represents this identity.
-     * @param address the current address of this identity.
+     * @param address the current address of this type.
      */
     Type(long number, @Nonnull NonHostIdentifier address) {
-        super(number, address);
+        super(number);
+        
+        this.address = address;
     }
-    
-    
-    @Override
-    public final boolean hasBeenMerged() {
-        return false;
-    }
-    
     
     @Pure
     @Override
-    public final @Nonnull NonHostIdentifier getInternalAddress() {
-        assert address instanceof NonHostIdentifier : "The address is a non-host identifier.";
-        return (NonHostIdentifier) address;
+    public final @Nonnull NonHostIdentifier getAddress() {
+        return address;
+    }
+    
+    /**
+     * Sets the address of this type.
+     * 
+     * @param address the new address of this type.
+     */
+    final void setAddress(@Nonnull NonHostIdentifier address) {
+        this.address = address;
+    }
+    
+    @Pure
+    @Override
+    public final boolean hasBeenMerged() {
+        return false;
     }
     
     

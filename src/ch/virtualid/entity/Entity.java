@@ -6,7 +6,9 @@ import ch.virtualid.concept.Aspect;
 import ch.virtualid.concept.Concept;
 import ch.virtualid.concept.Instance;
 import ch.virtualid.errors.ShouldNeverHappenError;
-import ch.virtualid.identity.IdentityClass;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.identity.Identity;
+import ch.virtualid.identity.InternalIdentity;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
 import ch.virtualid.server.Host;
@@ -16,7 +18,7 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 
 /**
- * An entity captures the {@link Site site} and the {@link IdentityClass identity} of a {@link Concept concept}.
+ * An entity captures the {@link Site site} and the {@link Identity identity} of a {@link Concept concept}.
  * 
  * @see Account
  * @see Role
@@ -57,7 +59,7 @@ public abstract class Entity extends Instance implements Immutable, SQLizable {
      * @return the identity of this entity.
      */
     @Pure
-    public abstract @Nonnull IdentityClass getIdentity();
+    public abstract @Nonnull InternalIdentity getIdentity();
     
     /**
      * Returns the number that references this entity in the database.
@@ -78,7 +80,7 @@ public abstract class Entity extends Instance implements Immutable, SQLizable {
      * @return the given column of the result set as an instance of this class.
      */
     @Pure
-    public static @Nonnull Entity get(@Nonnull Site site, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+    public static @Nonnull Entity get(@Nonnull Site site, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException, InvalidEncodingException {
         if (site instanceof Host) {
             return Account.get((Host) site, resultSet, columnIndex);
         } else if (site instanceof Client) {

@@ -9,9 +9,10 @@ import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Reply;
 import ch.virtualid.handler.query.external.IdentityQuery;
+import ch.virtualid.identifier.Identifier;
+import ch.virtualid.identifier.NonHostIdentifier;
 import ch.virtualid.identity.Category;
 import ch.virtualid.identity.Mapper;
-import ch.virtualid.identifier.NonHostIdentifier;
 import ch.virtualid.identity.NonHostIdentity;
 import ch.virtualid.identity.Predecessor;
 import ch.virtualid.identity.Predecessors;
@@ -99,7 +100,7 @@ public final class IdentityReply extends CoreServiceQueryReply {
         final @Nonnull TupleWrapper tuple = new TupleWrapper(block);
         this.category = Category.get(tuple.getElementNotNull(0));
         this.predecessors = new Predecessors(tuple.getElementNotNull(1));
-        this.successor = tuple.isElementNull(2) ? null : new NonHostIdentifier(tuple.getElementNotNull(2));
+        this.successor = tuple.isElementNull(2) ? null : Identifier.create(tuple.getElementNotNull(2)).toNonHostIdentifier();
     }
     
     @Pure

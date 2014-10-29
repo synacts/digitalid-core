@@ -41,7 +41,6 @@ public interface Identity extends Immutable, SQLizable {
     @Pure
     public @Nonnull Identifier getAddress();
     
-    
     /**
      * Returns the category of this identity.
      * 

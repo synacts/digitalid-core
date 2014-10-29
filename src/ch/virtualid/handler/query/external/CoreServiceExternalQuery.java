@@ -7,7 +7,7 @@ import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.handler.ExternalQuery;
 import ch.virtualid.handler.reply.query.CoreServiceQueryReply;
 import ch.virtualid.identifier.HostIdentifier;
-import ch.virtualid.identifier.Identifier;
+import ch.virtualid.identifier.InternalIdentifier;
 import ch.virtualid.module.CoreService;
 import ch.virtualid.module.Service;
 import ch.xdf.SignatureWrapper;
@@ -30,7 +30,7 @@ public abstract class CoreServiceExternalQuery extends ExternalQuery {
      * @param role the role to which this handler belongs.
      * @param subject the subject of this handler.
      */
-    protected CoreServiceExternalQuery(@Nullable Role role, @Nonnull Identifier subject) {
+    protected CoreServiceExternalQuery(@Nullable Role role, @Nonnull InternalIdentifier subject) {
         super(role, subject, subject.getHostIdentifier());
     }
     

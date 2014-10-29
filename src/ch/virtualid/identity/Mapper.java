@@ -627,7 +627,7 @@ public final class Mapper {
      * @param identifier the identifier of interest.
      * @return the successor of the given identifier as stored in the database.
      */
-    public static @Nullable NonHostIdentifier getSuccessor(@Nonnull NonHostIdentifier identifier) throws SQLException {
+    public static @Nullable NonHostIdentifier getSuccessor(@Nonnull Identifier identifier) throws SQLException {
         @Nonnull String query = "SELECT successor FROM general_successor WHERE identifier = " + identifier;
         try (@Nonnull Connection connection = Database.getConnection(); @Nonnull Statement statement = connection.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(query)) {
             if (resultSet.next()) {

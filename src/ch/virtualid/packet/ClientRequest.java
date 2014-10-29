@@ -9,7 +9,7 @@ import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Method;
 import ch.virtualid.identifier.HostIdentifier;
-import ch.virtualid.identifier.Identifier;
+import ch.virtualid.identifier.InternalIdentifier;
 import ch.virtualid.util.FreezableList;
 import ch.virtualid.util.ReadonlyList;
 import ch.xdf.ClientSignatureWrapper;
@@ -44,7 +44,7 @@ public final class ClientRequest extends Request {
      * @require methods.isNotEmpty() : "The methods are not empty.";
      * @require Method.areSimilar(methods) : "All methods are similar and not null.";
      */
-    public ClientRequest(@Nonnull ReadonlyList<Method> methods, @Nonnull Identifier subject, @Nonnull Audit audit, @Nonnull SecretCommitment commitment) throws SQLException, IOException, PacketException, ExternalException {
+    public ClientRequest(@Nonnull ReadonlyList<Method> methods, @Nonnull InternalIdentifier subject, @Nonnull Audit audit, @Nonnull SecretCommitment commitment) throws SQLException, IOException, PacketException, ExternalException {
         super(methods, subject.getHostIdentifier(), getSymmetricKey(subject.getHostIdentifier(), Time.HOUR), subject, audit, commitment);
     }
     
@@ -59,13 +59,13 @@ public final class ClientRequest extends Request {
     @Pure
     @Override
     @RawRecipient
-    @Nonnull ClientSignatureWrapper getSignature(@Nullable CompressionWrapper compression, @Nonnull Identifier subject, @Nullable Audit audit) {
+    @Nonnull ClientSignatureWrapper getSignature(@Nullable CompressionWrapper compression, @Nonnull InternalIdentifier subject, @Nullable Audit audit) {
         return new ClientSignatureWrapper(Packet.SIGNATURE, compression, subject, audit, commitment);
     }
     
     
     @Override
-    @Nonnull Response resend(@Nonnull FreezableList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull Identifier subject, boolean verified) throws SQLException, IOException, PacketException, ExternalException {
+    @Nonnull Response resend(@Nonnull FreezableList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject, boolean verified) throws SQLException, IOException, PacketException, ExternalException {
         if (!subject.getHostIdentifier().equals(recipient)) throw new PacketException(PacketError.INTERNAL, "The host of the subject " + subject + " does not match the recipient " + recipient + ".");
         return new ClientRequest(methods, subject, getAudit(), commitment).send(verified);
     }

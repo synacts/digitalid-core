@@ -26,6 +26,8 @@ import ch.virtualid.exceptions.external.InvalidSignatureException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identifier.Identifier;
+import ch.virtualid.identifier.InternalIdentifier;
+import ch.virtualid.identity.InternalPerson;
 import ch.virtualid.identity.Person;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
@@ -214,7 +216,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
      * @require certificates == null || certificates.isFrozen() : "The certificates are either null or frozen.";
      * @require certificatesAreValid(certificates, credentials) : "The certificates are valid (given the given credentials).";
      */
-    public CredentialsSignatureWrapper(@Nonnull SemanticType type, @Nullable Block element, @Nonnull Identifier subject, @Nullable Audit audit, @Nonnull ReadonlyList<Credential> credentials, @Nullable ReadonlyList<HostSignatureWrapper> certificates, boolean lodged, @Nullable BigInteger value) throws SQLException, IOException, PacketException, ExternalException {
+    public CredentialsSignatureWrapper(@Nonnull SemanticType type, @Nullable Block element, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull ReadonlyList<Credential> credentials, @Nullable ReadonlyList<HostSignatureWrapper> certificates, boolean lodged, @Nullable BigInteger value) throws SQLException, IOException, PacketException, ExternalException {
         super(type, element, subject, audit);
         
         assert credentials.isFrozen() : "The credentials are frozen.";
@@ -250,7 +252,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
      * @require certificates == null || certificates.isFrozen() : "The certificates are either null or frozen.";
      * @require certificatesAreValid(certificates, credentials) : "The certificates are valid (given the given credentials).";
      */
-    public CredentialsSignatureWrapper(@Nonnull SemanticType type, @Nullable Blockable element, @Nonnull Identifier subject, @Nullable Audit audit, @Nonnull ReadonlyList<Credential> credentials, @Nullable ReadonlyList<HostSignatureWrapper> certificates, boolean lodged, @Nullable BigInteger value) throws SQLException, IOException, PacketException, ExternalException {
+    public CredentialsSignatureWrapper(@Nonnull SemanticType type, @Nullable Blockable element, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull ReadonlyList<Credential> credentials, @Nullable ReadonlyList<HostSignatureWrapper> certificates, boolean lodged, @Nullable BigInteger value) throws SQLException, IOException, PacketException, ExternalException {
         this(type, Block.toBlock(element), subject, audit, credentials, certificates, lodged, value);
     }
     
@@ -280,8 +282,8 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
             if (entity == null) throw new InvalidEncodingException("The restrictions of a credentials signature cannot be decoded without an entity.");
             if (entity instanceof Account) {
                 final @Nonnull Host host = ((Account) entity).getHost();
-                final @Nonnull Identifier subject = getSubjectNotNull();
-                final @Nonnull Person person = subject.getIdentity().toPerson();
+                final @Nonnull InternalIdentifier subject = getSubjectNotNull();
+                final @Nonnull InternalPerson person = subject.getIdentity().toInternalPerson();
                 // If the subject is hosted on the given host, the entity is recreated for that subject.
                 if (host.getIdentifier().equals(subject.getHostIdentifier())) {
                     entity = new Account(host, person);

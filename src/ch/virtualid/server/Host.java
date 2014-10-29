@@ -14,7 +14,7 @@ import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identity.HostIdentity;
-import ch.virtualid.identity.IdentityClass;
+import ch.virtualid.identity.InternalIdentity;
 import ch.virtualid.identity.Mapper;
 import ch.virtualid.io.Directory;
 import ch.virtualid.module.CoreService;
@@ -203,7 +203,7 @@ public final class Host extends Site {
      * @return whether this host hosts the given identity.
      */
     @Pure
-    public boolean hosts(@Nonnull IdentityClass identity) {
+    public boolean hosts(@Nonnull InternalIdentity identity) {
         return identity.getAddress().getHostIdentifier().equals(identifier);
     }
     

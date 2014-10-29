@@ -13,6 +13,7 @@ import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identifier.HostIdentifier;
+import ch.virtualid.identifier.Identifier;
 import ch.virtualid.identity.HostIdentity;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.identity.SyntacticType;
@@ -193,7 +194,7 @@ public final class EncryptionWrapper extends BlockWrapper implements Immutable {
         if (tuple.isElementNull(1)) {
             this.recipient = null;
         } else {
-            this.recipient = new HostIdentifier(tuple.getElementNotNull(1));
+            this.recipient = Identifier.create(tuple.getElementNotNull(1)).toHostIdentifier();
             if (!Server.hasHost(recipient)) throw new InvalidEncodingException(recipient + " does not run on this server.");
         }
         

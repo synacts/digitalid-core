@@ -3,7 +3,7 @@ package ch.virtualid.handler;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.concept.Concept;
 import ch.virtualid.entity.Entity;
-import ch.virtualid.identifier.Identifier;
+import ch.virtualid.identifier.InternalIdentifier;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
@@ -29,7 +29,7 @@ public abstract class Handler extends Concept implements Immutable, Blockable {
      * The subject is stored as an identifier because for certain handlers
      * the corresponding identity is not known to (or does not yet) exist.
      */
-    private final @Nonnull Identifier subject;
+    private final @Nonnull InternalIdentifier subject;
     
     /**
      * Stores the signature of this handler.
@@ -42,7 +42,7 @@ public abstract class Handler extends Concept implements Immutable, Blockable {
      * @param entity the entity to which this handler belongs or null if it is impersonal.
      * @param subject the subject of this handler.
      */
-    protected Handler(@Nullable Entity entity, @Nonnull Identifier subject) {
+    protected Handler(@Nullable Entity entity, @Nonnull InternalIdentifier subject) {
         super(entity);
         
         this.signature = null;
@@ -82,7 +82,7 @@ public abstract class Handler extends Concept implements Immutable, Blockable {
      * @return the subject of this handler.
      */
     @Pure
-    public final @Nonnull Identifier getSubject() {
+    public final @Nonnull InternalIdentifier getSubject() {
         return subject;
     }
     

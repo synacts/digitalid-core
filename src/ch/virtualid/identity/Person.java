@@ -2,7 +2,6 @@ package ch.virtualid.identity;
 
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
-import ch.virtualid.identifier.Identifier;
 import ch.virtualid.identifier.NonHostIdentifier;
 import ch.virtualid.interfaces.Immutable;
 import java.io.IOException;
@@ -30,32 +29,32 @@ public abstract class Person extends NonHostIdentity implements Immutable {
     
     
     /**
-     * Creates a new identity with the given number and address.
+     * Creates a new person with the given internal number.
      * 
      * @param number the number that represents this identity.
-     * @param address the current address of this identity.
      */
-    Person(long number, @Nonnull Identifier address) {
-        super(number, address);
+    Person(long number) {
+        super(number);
     }
     
     
     @Override
     public final boolean hasBeenMerged() throws SQLException, IOException, PacketException, ExternalException  {
-        final @Nullable NonHostIdentifier successor = Mapper.getSuccessor((NonHostIdentifier) address);
+        final @Nullable NonHostIdentifier successor = Mapper.getSuccessor(getAddress());
         if (successor != null) {
-            final long number = this.number;
+            final long number = getNumber();
             successor.getIdentity();
-            if (number != this.number) {
+            if (number != getNumber()) {
                 // The number and address got updated 'automatically' (because this is the 'official' identity obtained through the mapper).
                 return true;
             } else {
                 // The number and address might need to be updated 'manually' (because this is an 'inofficial' identity obtained through calling Identity.create(...) directly).
-                final @Nonnull Identity identity = address.getIdentity();
+                final @Nonnull Identity identity = getAddress().getIdentity();
                 assert identity instanceof Person : "The relocated identity should still be a person.";
+                // TODO: In case of external persons, only update the number and leave the address as is? Probably yes, but set the successor accordingly.
 //                update(identity.number, ((Person) identity).getNonHostAddress());
                 // TODO: The following line is wrong (always returns false) and the whole method should be improved!
-                return this.number != identity.getNumber();
+                return getNumber() != identity.getNumber();
             }
         } else {
             return false;

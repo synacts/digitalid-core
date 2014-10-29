@@ -23,21 +23,36 @@ public abstract class InternalPerson extends Person implements InternalNonHostId
     
     
     /**
-     * Creates a new identity with the given number and address.
+     * Stores the presumable address of this internal person.
+     * The address is updated when the person is relocated or merged.
+     */
+    private @Nonnull NonHostIdentifier address;
+    
+    /**
+     * Creates a new internal person with the given number and address.
      * 
      * @param number the number that represents this identity.
-     * @param address the current address of this identity.
+     * @param address the current address of this internal person.
      */
     InternalPerson(long number, @Nonnull NonHostIdentifier address) {
-        super(number, address);
+        super(number);
+        
+        this.address = address;
     }
-    
     
     @Pure
     @Override
-    public final @Nonnull NonHostIdentifier getInternalAddress() {
-        assert address instanceof NonHostIdentifier : "The address is a non-host identifier.";
-        return (NonHostIdentifier) address;
+    public final @Nonnull NonHostIdentifier getAddress() {
+        return address;
+    }
+    
+    /**
+     * Sets the address of this internal person.
+     * 
+     * @param address the new address of this person.
+     */
+    final void setAddress(@Nonnull NonHostIdentifier address) {
+        this.address = address;
     }
     
 }

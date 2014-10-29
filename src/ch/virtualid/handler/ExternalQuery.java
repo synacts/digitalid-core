@@ -7,7 +7,7 @@ import ch.virtualid.entity.Role;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.handler.query.external.CoreServiceExternalQuery;
 import ch.virtualid.identifier.HostIdentifier;
-import ch.virtualid.identifier.Identifier;
+import ch.virtualid.identifier.InternalIdentifier;
 import ch.virtualid.server.Host;
 import ch.xdf.SignatureWrapper;
 import javax.annotation.Nonnull;
@@ -30,7 +30,7 @@ public abstract class ExternalQuery extends Query {
      * @param subject the subject of this handler.
      * @param recipient the recipient of this method.
      */
-    protected ExternalQuery(@Nullable Role role, @Nonnull Identifier subject, @Nonnull HostIdentifier recipient) {
+    protected ExternalQuery(@Nullable Role role, @Nonnull InternalIdentifier subject, @Nonnull HostIdentifier recipient) {
         super(role, subject, recipient);
     }
     

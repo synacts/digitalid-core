@@ -12,8 +12,8 @@ import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identifier.Identifier;
+import ch.virtualid.identifier.InternalIdentifier;
 import ch.virtualid.identity.IdentityClass;
-import ch.virtualid.identifier.NonHostIdentifier;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.identity.SyntacticType;
 import ch.virtualid.interfaces.Blockable;
@@ -68,7 +68,7 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
     /**
      * Stores the identifier of the identity about which a statement is made and may only be null in case of unsigned attributes.
      */
-    private final @Nullable Identifier subject;
+    private final @Nullable InternalIdentifier subject;
     
     /**
      * Stores the time of the signature generation or null if this signature has no subject.
@@ -94,7 +94,7 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
      * @require type.isBasedOn(getSyntacticType()) : "The given type is based on the indicated syntactic type.";
      * @require element == null || element.getType().isBasedOn(type.getParameters().getNotNull(0)) : "The element is either null or based on the parameter of the given type.";
      */
-    protected SignatureWrapper(@Nonnull SemanticType type, @Nullable Block element, @Nonnull Identifier subject, @Nullable Audit audit) {
+    protected SignatureWrapper(@Nonnull SemanticType type, @Nullable Block element, @Nonnull InternalIdentifier subject, @Nullable Audit audit) {
         super(type);
         
         assert element == null || element.getType().isBasedOn(type.getParameters().getNotNull(0)) : "The element is either null or based on the parameter of the given type.";
@@ -116,7 +116,7 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
      * @require type.isBasedOn(getSyntacticType()) : "The given type is based on the indicated syntactic type.";
      * @require element == null || element.getType().isBasedOn(type.getParameters().getNotNull(0)) : "The element is either null or based on the parameter of the given type.";
      */
-    public SignatureWrapper(@Nonnull SemanticType type, @Nullable Block element, @Nullable Identifier subject) {
+    public SignatureWrapper(@Nonnull SemanticType type, @Nullable Block element, @Nullable InternalIdentifier subject) {
         super(type);
         
         assert element == null || element.getType().isBasedOn(type.getParameters().getNotNull(0)) : "The element is either null or based on the parameter of the given type.";
@@ -138,7 +138,7 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
      * @require type.isBasedOn(getSyntacticType()) : "The given type is based on the indicated syntactic type.";
      * @require element == null || element.getType().isBasedOn(type.getParameters().getNotNull(0)) : "The element is either null or based on the parameter of the given type.";
      */
-    public SignatureWrapper(@Nonnull SemanticType type, @Nullable Blockable element, @Nullable Identifier subject) {
+    public SignatureWrapper(@Nonnull SemanticType type, @Nullable Blockable element, @Nullable InternalIdentifier subject) {
         this(type, Block.toBlock(element), subject);
     }
     
@@ -197,7 +197,7 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
         this.cache = new Block(IMPLEMENTATION, block);
         final @Nonnull Block content = new TupleWrapper(cache).getElementNotNull(0);
         final @Nonnull TupleWrapper tuple = new TupleWrapper(content);
-        this.subject = tuple.isElementNull(0) ? null : new NonHostIdentifier(tuple.getElementNotNull(0));
+        this.subject = tuple.isElementNull(0) ? null : Identifier.create(tuple.getElementNotNull(0)).toInternalIdentifier();
         if (isSigned() && subject == null) throw new InvalidEncodingException("The subject may not be null if the element is signed.");
         this.time = tuple.isElementNull(1) ? null : new Time(tuple.getElementNotNull(1));
         if (hasSubject() && time == null) throw new InvalidEncodingException("The signature time may not be null if this signature has a subject.");
@@ -250,7 +250,7 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
      * @ensure !isSigned() || return != null : "If this signature is signed, the return is not null.";
      */
     @Pure
-    public final @Nullable Identifier getSubject() {
+    public final @Nullable InternalIdentifier getSubject() {
         return subject;
     }
     
@@ -272,7 +272,7 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
      * @require hasSubject() : "This signature has a subject.";
      */
     @Pure
-    public final @Nonnull Identifier getSubjectNotNull() {
+    public final @Nonnull InternalIdentifier getSubjectNotNull() {
         assert subject != null : "This signature has a subject.";
         
         return subject;

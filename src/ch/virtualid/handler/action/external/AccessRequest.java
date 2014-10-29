@@ -14,7 +14,7 @@ import ch.virtualid.handler.ActionReply;
 import ch.virtualid.handler.Method;
 import ch.virtualid.handler.reply.action.CoreServiceActionReply;
 import ch.virtualid.identifier.HostIdentifier;
-import ch.virtualid.identity.Person;
+import ch.virtualid.identity.InternalPerson;
 import ch.virtualid.identity.SemanticType;
 import ch.xdf.Block;
 import ch.xdf.CredentialsSignatureWrapper;
@@ -63,7 +63,7 @@ public final class AccessRequest extends CoreServiceExternalAction {
      * @require !(entity instanceof Role) || !canOnlyBeSentByHosts() : "Methods encoded on clients cannot only be sent by hosts.";
      * @require !attributes.isEmpty() : "The set of attributes is not empty.";
      */
-    public AccessRequest(@Nonnull Entity entity, @Nonnull Person subject, @Nonnull ReadonlyContactPermissions attributes) {
+    public AccessRequest(@Nonnull Entity entity, @Nonnull InternalPerson subject, @Nonnull ReadonlyContactPermissions attributes) {
         super(entity, subject);
         
         assert !attributes.isEmpty() : "The set of attributes is not empty.";

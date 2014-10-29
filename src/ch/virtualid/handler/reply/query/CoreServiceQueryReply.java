@@ -5,7 +5,7 @@ import ch.virtualid.entity.Account;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.handler.QueryReply;
-import ch.virtualid.identifier.Identifier;
+import ch.virtualid.identifier.InternalIdentifier;
 import ch.virtualid.module.CoreService;
 import ch.virtualid.module.Service;
 import ch.xdf.HostSignatureWrapper;
@@ -35,7 +35,7 @@ public abstract class CoreServiceQueryReply extends QueryReply {
      * 
      * @param subject the subject of this handler.
      */
-    protected CoreServiceQueryReply(@Nonnull Identifier subject) {
+    protected CoreServiceQueryReply(@Nonnull InternalIdentifier subject) {
         super(subject);
     }
     

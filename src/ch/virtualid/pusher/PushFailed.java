@@ -17,6 +17,7 @@ import ch.virtualid.handler.Method;
 import ch.virtualid.handler.Reply;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identifier.Identifier;
+import ch.virtualid.identifier.InternalIdentifier;
 import ch.virtualid.identity.IdentityClass;
 import ch.virtualid.identity.NonHostIdentity;
 import ch.virtualid.identity.SemanticType;
@@ -127,8 +128,8 @@ public final class PushFailed extends ExternalAction {
         final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(4);
         this.number = new Int64Wrapper(elements.getNotNull(0)).getValue();
         
-        final @Nonnull Identifier _subject = Identifier.create(elements.getNotNull(1));
-        final @Nonnull HostIdentifier _recipient = new HostIdentifier(elements.getNotNull(2));
+        final @Nonnull InternalIdentifier _subject = Identifier.create(elements.getNotNull(1)).toInternalIdentifier();
+        final @Nonnull HostIdentifier _recipient = Identifier.create(elements.getNotNull(2)).toHostIdentifier();
         final @Nonnull Block _block = new SelfcontainedWrapper(elements.getNotNull(3)).getElement();
         try {
             this.action = (ExternalAction) Method.get(entity, new SignatureWrapper(Packet.SIGNATURE, (Block) null, _subject), _recipient, _block);

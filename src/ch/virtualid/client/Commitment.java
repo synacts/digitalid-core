@@ -8,7 +8,7 @@ import ch.virtualid.cryptography.PublicKey;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
-import ch.virtualid.identifier.HostIdentifier;
+import ch.virtualid.identifier.Identifier;
 import ch.virtualid.identity.HostIdentity;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
@@ -115,7 +115,7 @@ public class Commitment implements Immutable, Blockable {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(3);
-        this.host = new HostIdentifier(elements.getNotNull(0)).getIdentity();
+        this.host = Identifier.create(elements.getNotNull(0)).getIdentity().toHostIdentity();
         this.time = new Time(elements.getNotNull(1));
         this.publicKey = Cache.getPublicKeyChain(host).getKey(time);
         this.value = publicKey.getCompositeGroup().getElement(new IntegerWrapper(elements.getNotNull(2)).getValue());

@@ -1,6 +1,5 @@
 package ch.virtualid.identity;
 
-import ch.virtualid.identifier.Identifier;
 import ch.virtualid.interfaces.Immutable;
 import javax.annotation.Nonnull;
 
@@ -22,13 +21,12 @@ public abstract class NonHostIdentity extends IdentityClass implements Immutable
     
     
     /**
-     * Creates a new identity with the given number and address.
+     * Creates a new non-host identity with the given number.
      * 
      * @param number the number that represents this identity.
-     * @param address the current address of this identity.
      */
-    NonHostIdentity(long number, @Nonnull Identifier address) {
-        super(number, address);
+    NonHostIdentity(long number) {
+        super(number);
     }
     
 }

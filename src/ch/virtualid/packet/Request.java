@@ -16,8 +16,9 @@ import ch.virtualid.handler.Method;
 import ch.virtualid.handler.query.external.AttributesQuery;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identifier.Identifier;
-import ch.virtualid.identity.Mapper;
+import ch.virtualid.identifier.InternalIdentifier;
 import ch.virtualid.identifier.NonHostIdentifier;
+import ch.virtualid.identity.Mapper;
 import ch.virtualid.module.CoreService;
 import ch.virtualid.module.Service;
 import ch.virtualid.server.Server;
@@ -69,7 +70,7 @@ public class Request extends Packet {
     /**
      * Stores the subject of this request.
      */
-    private final @Nonnull Identifier subject;
+    private final @Nonnull InternalIdentifier subject;
     
     /**
      * Creates a new request with a query for the public key chain of the given host that is neither encrypted nor signed.
@@ -93,7 +94,7 @@ public class Request extends Packet {
      * @require methods.isNotEmpty() : "The methods are not empty.";
      * @require Method.areSimilar(methods) : "All methods are similar and not null.";
      */
-    public Request(@Nonnull ReadonlyList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull Identifier subject) throws SQLException, IOException, PacketException, ExternalException {
+    public Request(@Nonnull ReadonlyList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject) throws SQLException, IOException, PacketException, ExternalException {
         this(methods, recipient, new SymmetricKey(), subject, null, null);
     }
     
@@ -107,7 +108,7 @@ public class Request extends Packet {
      * @param audit the audit with the time of the last retrieval or null in case of external requests.
      * @param field an object that contains the signing parameter and is passed back with {@link #setField(java.lang.Object)}.
      */
-    Request(@Nonnull ReadonlyList<Method> methods, @Nonnull HostIdentifier recipient, @Nullable SymmetricKey symmetricKey, @Nonnull Identifier subject, @Nullable Audit audit, @Nullable Object field) throws SQLException, IOException, PacketException, ExternalException {
+    Request(@Nonnull ReadonlyList<Method> methods, @Nonnull HostIdentifier recipient, @Nullable SymmetricKey symmetricKey, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nullable Object field) throws SQLException, IOException, PacketException, ExternalException {
         super(methods, methods.size(), field, recipient, symmetricKey, subject, audit);
         
         this.recipient = recipient;
@@ -160,7 +161,7 @@ public class Request extends Packet {
     @Pure
     @Override
     @RawRecipient
-    @Nonnull SignatureWrapper getSignature(@Nullable CompressionWrapper compression, @Nonnull Identifier subject, @Nullable Audit audit) throws SQLException, IOException, PacketException, ExternalException {
+    @Nonnull SignatureWrapper getSignature(@Nullable CompressionWrapper compression, @Nonnull InternalIdentifier subject, @Nullable Audit audit) throws SQLException, IOException, PacketException, ExternalException {
         return new SignatureWrapper(Packet.SIGNATURE, compression, subject);
     }
     
@@ -222,7 +223,7 @@ public class Request extends Packet {
      * @return the subject of this request.
      */
     @Pure
-    public final @Nonnull Identifier getSubject() {
+    public final @Nonnull InternalIdentifier getSubject() {
         return subject;
     }
     
@@ -247,7 +248,7 @@ public class Request extends Packet {
      * 
      * @return the response to the resent request.
      */
-    @Nonnull Response resend(@Nonnull FreezableList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull Identifier subject, boolean verified) throws SQLException, IOException, PacketException, ExternalException {
+    @Nonnull Response resend(@Nonnull FreezableList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject, boolean verified) throws SQLException, IOException, PacketException, ExternalException {
         return new Request(methods, recipient, subject).send(verified);
     }
     
@@ -287,7 +288,7 @@ public class Request extends Packet {
                 final @Nonnull HostIdentifier recipient = getMethod(0).getService().equals(CoreService.SERVICE) ? address.getHostIdentifier() : getRecipient();
                 return resend(methods, recipient, address, verified);
             } else if (exception.getError() == PacketError.SERVICE && !getMethod(0).isOnHost()) {
-                final @Nonnull HostIdentifier recipient = new HostIdentifier(Cache.getAttributeValue(subject.getIdentity(), (Role) getMethod(0).getEntity(), getMethod(0).getService().getType(), false));
+                final @Nonnull HostIdentifier recipient = Identifier.create(Cache.getAttributeValue(subject.getIdentity(), (Role) getMethod(0).getEntity(), getMethod(0).getService().getType(), false)).toHostIdentifier();
                 return resend(methods, recipient, subject, verified);
             } else {
                 throw exception;

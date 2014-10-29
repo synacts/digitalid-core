@@ -4,6 +4,7 @@ import ch.virtualid.annotations.Pure;
 import ch.virtualid.identifier.ExternalIdentifier;
 import ch.virtualid.interfaces.Immutable;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * This interface models an external identity.
@@ -13,12 +14,16 @@ import javax.annotation.Nonnull;
  */
 public interface ExternalIdentity extends Identity, Immutable {
     
+    @Pure
+    @Override
+    public @Nonnull ExternalIdentifier getAddress();
+    
     /**
-     * Returns the address of this external identity.
+     * Returns the successor of this external identity or null if there is none.
      * 
-     * @return the address of this external identity.
+     * @return the successor of this external identity or null if there is none.
      */
     @Pure
-    public @Nonnull ExternalIdentifier getExternalAddress();
+    public @Nullable InternalIdentity getSuccessor();
     
 }

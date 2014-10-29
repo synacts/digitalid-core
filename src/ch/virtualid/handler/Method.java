@@ -20,8 +20,8 @@ import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identifier.HostIdentifier;
-import ch.virtualid.identifier.Identifier;
-import ch.virtualid.identity.IdentityClass;
+import ch.virtualid.identifier.InternalIdentifier;
+import ch.virtualid.identity.Identity;
 import ch.virtualid.identity.Person;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.CoreService;
@@ -73,7 +73,7 @@ public abstract class Method extends Handler {
      * @require !(entity instanceof Account) || canBeSentByHosts() : "Methods encoded on hosts can be sent by hosts.";
      * @require !(entity instanceof Role) || !canOnlyBeSentByHosts() : "Methods encoded on clients cannot only be sent by hosts.";
      */
-    protected Method(@Nullable Entity entity, @Nonnull Identifier subject, @Nonnull HostIdentifier recipient) {
+    protected Method(@Nullable Entity entity, @Nonnull InternalIdentifier subject, @Nonnull HostIdentifier recipient) {
         super(entity, subject);
         
         assert !(entity instanceof Account) || canBeSentByHosts() : "Methods encoded on hosts can be sent by hosts.";
@@ -253,8 +253,8 @@ public abstract class Method extends Handler {
         
         final @Nonnull Method reference = methods.getNotNull(0);
         final @Nullable Entity entity = reference.getEntity();
-        final @Nonnull Identifier subject = reference.getSubject();
-        final @Nonnull IdentityClass identity = subject.getIdentity();
+        final @Nonnull InternalIdentifier subject = reference.getSubject();
+        final @Nonnull Identity identity = subject.getIdentity();
         final @Nonnull Service service = reference.getService();
         final @Nonnull HostIdentifier recipient = reference.getRecipient();
         

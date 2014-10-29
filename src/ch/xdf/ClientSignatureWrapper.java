@@ -15,7 +15,7 @@ import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.external.InvalidSignatureException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
-import ch.virtualid.identifier.Identifier;
+import ch.virtualid.identifier.InternalIdentifier;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
@@ -68,7 +68,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper implements Im
      * @require type.isBasedOn(getSyntacticType()) : "The given type is based on the indicated syntactic type.";
      * @require element == null || element.getType().isBasedOn(type.getParameters().getNotNull(0)) : "The element is either null or based on the parameter of the given type.";
      */
-    public ClientSignatureWrapper(@Nonnull SemanticType type, @Nullable Block element, @Nonnull Identifier subject, @Nullable Audit audit, @Nonnull SecretCommitment commitment) {
+    public ClientSignatureWrapper(@Nonnull SemanticType type, @Nullable Block element, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull SecretCommitment commitment) {
         super(type, element, subject, audit);
         
         this.commitment = commitment;
@@ -87,7 +87,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper implements Im
      * @require type.isBasedOn(getSyntacticType()) : "The given type is based on the indicated syntactic type.";
      * @require element == null || element.getType().isBasedOn(type.getParameters().getNotNull(0)) : "The element is either null or based on the parameter of the given type.";
      */
-    public ClientSignatureWrapper(@Nonnull SemanticType type, @Nullable Blockable element, @Nonnull Identifier subject, @Nullable Audit audit, @Nonnull SecretCommitment commitment) {
+    public ClientSignatureWrapper(@Nonnull SemanticType type, @Nullable Blockable element, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull SecretCommitment commitment) {
         this(type, Block.toBlock(element), subject, audit, commitment);
     }
     

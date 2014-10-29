@@ -8,7 +8,7 @@ import ch.virtualid.client.Client;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.handler.action.external.CoreServiceExternalAction;
 import ch.virtualid.identifier.HostIdentifier;
-import ch.virtualid.identifier.Identifier;
+import ch.virtualid.identifier.InternalIdentifier;
 import ch.virtualid.pusher.Pusher;
 import ch.virtualid.server.Host;
 import ch.xdf.SignatureWrapper;
@@ -38,7 +38,7 @@ public abstract class ExternalAction extends Action {
      * @require !(entity instanceof Account) || canBeSentByHosts() : "Methods encoded on hosts can be sent by hosts.";
      * @require !(entity instanceof Role) || !canOnlyBeSentByHosts() : "Methods encoded on clients cannot only be sent by hosts.";
      */
-    protected ExternalAction(@Nonnull Entity entity, @Nonnull Identifier subject, @Nonnull HostIdentifier recipient) {
+    protected ExternalAction(@Nonnull Entity entity, @Nonnull InternalIdentifier subject, @Nonnull HostIdentifier recipient) {
         super(entity, subject, recipient);
     }
     

@@ -13,12 +13,8 @@ import javax.annotation.Nonnull;
  */
 public interface InternalIdentity extends Identity, Immutable {
     
-    /**
-     * Returns the address of this internal identity.
-     * 
-     * @return the address of this internal identity.
-     */
     @Pure
-    public @Nonnull InternalIdentifier getInternalAddress();
+    @Override
+    public @Nonnull InternalIdentifier getAddress();
     
 }

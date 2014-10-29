@@ -4,7 +4,6 @@ import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.io.EscapeOptionException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identifier.HostIdentifier;
-import ch.virtualid.identifier.Identifier;
 import ch.virtualid.io.Console;
 import ch.virtualid.io.Option;
 import ch.virtualid.module.Service;
@@ -143,7 +142,7 @@ final class Options {
         public void execute() {
             if (Console.readBoolean("Are you sure you want to add a new host? Yes/No: ")) {
                 @Nonnull String string = Console.readString("Please enter the identifier of the new host: ");
-                while (!Identifier.isValid(string) || !Identifier.isHost(string)) {
+                while (!HostIdentifier.isValid(string)) {
                     string = Console.readString("Bad input! Please enter a valid host identifier: ");
                 }
                 final @Nonnull HostIdentifier identifier = new HostIdentifier(string);

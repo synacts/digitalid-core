@@ -10,7 +10,7 @@ import ch.virtualid.entity.Entity;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.action.internal.AccountOpen;
 import ch.virtualid.identifier.HostIdentifier;
-import ch.virtualid.identifier.Identifier;
+import ch.virtualid.identifier.InternalIdentifier;
 import ch.virtualid.packet.Audit;
 import ch.xdf.SignatureWrapper;
 import java.sql.SQLException;
@@ -47,7 +47,7 @@ public abstract class Action extends Method implements Auditable {
      * @require !(entity instanceof Account) || canBeSentByHosts() : "Methods encoded on hosts can be sent by hosts.";
      * @require !(entity instanceof Role) || !canOnlyBeSentByHosts() : "Methods encoded on clients cannot only be sent by hosts.";
      */
-    protected Action(@Nullable Entity entity, @Nonnull Identifier subject, @Nonnull HostIdentifier recipient) {
+    protected Action(@Nullable Entity entity, @Nonnull InternalIdentifier subject, @Nonnull HostIdentifier recipient) {
         super(entity, subject, recipient);
     }
     

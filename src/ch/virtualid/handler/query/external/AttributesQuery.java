@@ -13,7 +13,7 @@ import ch.virtualid.handler.Method;
 import ch.virtualid.handler.reply.query.AttributesReply;
 import ch.virtualid.handler.reply.query.CoreServiceQueryReply;
 import ch.virtualid.identifier.HostIdentifier;
-import ch.virtualid.identifier.Identifier;
+import ch.virtualid.identifier.InternalIdentifier;
 import ch.virtualid.identity.SemanticType;
 import ch.xdf.Block;
 import ch.xdf.ListWrapper;
@@ -52,7 +52,7 @@ public final class AttributesQuery extends CoreServiceExternalQuery {
      * @param role the role to which this handler belongs.
      * @param subject the subject of this handler.
      */
-    public AttributesQuery(@Nullable Role role, @Nonnull Identifier subject, @Nonnull ReadonlyAttributeSet attributes) {
+    public AttributesQuery(@Nullable Role role, @Nonnull InternalIdentifier subject, @Nonnull ReadonlyAttributeSet attributes) {
         super(role, subject);
         
         this.attributes = attributes;

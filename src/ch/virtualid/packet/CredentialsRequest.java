@@ -8,7 +8,7 @@ import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Method;
 import ch.virtualid.identifier.HostIdentifier;
-import ch.virtualid.identifier.Identifier;
+import ch.virtualid.identifier.InternalIdentifier;
 import ch.virtualid.util.FreezableList;
 import ch.virtualid.util.ReadonlyList;
 import ch.xdf.CompressionWrapper;
@@ -76,7 +76,7 @@ public final class CredentialsRequest extends Request {
      * @require certificates == null || certificates.isFrozen() : "The certificates are either null or frozen.";
      * @require CredentialsSignatureWrapper.certificatesAreValid(certificates, credentials) : "The certificates are valid (given the given credentials).";
      */
-    public CredentialsRequest(@Nonnull ReadonlyList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull Identifier subject, @Nullable Audit audit, @Nonnull ReadonlyList<Credential> credentials, @Nullable ReadonlyList<HostSignatureWrapper> certificates, boolean lodged, @Nullable BigInteger value) throws SQLException, IOException, PacketException, ExternalException {
+    public CredentialsRequest(@Nonnull ReadonlyList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull ReadonlyList<Credential> credentials, @Nullable ReadonlyList<HostSignatureWrapper> certificates, boolean lodged, @Nullable BigInteger value) throws SQLException, IOException, PacketException, ExternalException {
         super(methods, recipient, new SymmetricKey(), subject, audit, new Quartet<ReadonlyList<Credential>, ReadonlyList<HostSignatureWrapper>, Boolean, BigInteger>(credentials, certificates, lodged, value));
     }
     
@@ -96,13 +96,13 @@ public final class CredentialsRequest extends Request {
     @Pure
     @Override
     @RawRecipient
-    @Nonnull CredentialsSignatureWrapper getSignature(@Nullable CompressionWrapper compression, @Nonnull Identifier subject, @Nullable Audit audit) throws SQLException, IOException, PacketException, ExternalException {
+    @Nonnull CredentialsSignatureWrapper getSignature(@Nullable CompressionWrapper compression, @Nonnull InternalIdentifier subject, @Nullable Audit audit) throws SQLException, IOException, PacketException, ExternalException {
         return new CredentialsSignatureWrapper(Packet.SIGNATURE, compression, subject, audit, credentials, certificates, lodged, value);
     }
     
     
     @Override
-    @Nonnull Response resend(@Nonnull FreezableList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull Identifier subject, boolean verified) throws SQLException, IOException, PacketException, ExternalException {
+    @Nonnull Response resend(@Nonnull FreezableList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject, boolean verified) throws SQLException, IOException, PacketException, ExternalException {
         return new CredentialsRequest(methods, recipient, subject, getAudit(), credentials, certificates, lodged, value).send(verified);
     }
     

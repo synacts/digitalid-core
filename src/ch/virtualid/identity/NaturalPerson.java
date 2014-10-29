@@ -20,7 +20,7 @@ public final class NaturalPerson extends InternalPerson implements Immutable {
     
     
     /**
-     * Creates a new identity with the given number and address.
+     * Creates a new natural person with the given number and address.
      * 
      * @param number the number that represents this identity.
      * @param address the current address of this identity.
@@ -28,7 +28,6 @@ public final class NaturalPerson extends InternalPerson implements Immutable {
     NaturalPerson(long number, @Nonnull NonHostIdentifier address) {
         super(number, address);
     }
-    
     
     @Pure
     @Override

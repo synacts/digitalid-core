@@ -20,28 +20,32 @@ public final class MobilePerson extends ExternalPerson implements Immutable {
     
     
     /**
-     * Creates a new identity with the given number and address.
+     * Stores the address of this mobile person.
+     */
+    @Nonnull MobileIdentifier address;
+    
+    /**
+     * Creates a new mobile person with the given number and address.
      * 
      * @param number the number that represents this identity.
-     * @param address the current address of this identity.
+     * @param address the address of this mobile person.
      */
     MobilePerson(long number, @Nonnull MobileIdentifier address) {
-        super(number, address);
+        super(number);
+        
+        this.address = address;
     }
     
+    @Pure
+    @Override
+    public @Nonnull MobileIdentifier getAddress() {
+        return address;
+    }
     
     @Pure
     @Override
     public @Nonnull Category getCategory() {
         return Category.MOBILE_PERSON;
-    }
-    
-    
-    @Pure
-    @Override
-    public @Nonnull MobileIdentifier getExternalAddress() {
-        assert address instanceof MobileIdentifier : "The address is a mobile identifier.";
-        return (MobileIdentifier) address;
     }
     
 }

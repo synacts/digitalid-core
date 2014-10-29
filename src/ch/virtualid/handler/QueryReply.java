@@ -5,7 +5,7 @@ import ch.virtualid.entity.Entity;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.handler.reply.query.CoreServiceQueryReply;
 import ch.virtualid.handler.reply.query.IdentityReply;
-import ch.virtualid.identifier.Identifier;
+import ch.virtualid.identifier.InternalIdentifier;
 import ch.xdf.HostSignatureWrapper;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -36,7 +36,7 @@ public abstract class QueryReply extends Reply {
      * 
      * @param subject the subject of this handler.
      */
-    protected QueryReply(@Nonnull Identifier subject) {
+    protected QueryReply(@Nonnull InternalIdentifier subject) {
         super(null, subject);
     }
     

@@ -14,7 +14,7 @@ import ch.virtualid.handler.ActionReply;
 import ch.virtualid.handler.Method;
 import ch.virtualid.handler.reply.action.CoreServiceActionReply;
 import ch.virtualid.identifier.HostIdentifier;
-import ch.virtualid.identity.IdentityClass;
+import ch.virtualid.identity.InternalIdentity;
 import ch.virtualid.identity.Person;
 import ch.virtualid.identity.SemanticType;
 import ch.xdf.Block;
@@ -70,7 +70,7 @@ public final class CertificateIssuance extends CoreServiceExternalAction {
      * @require account.getIdentity() instanceof Person : "The account belongs to a person.";
      * @require attribute.getType().isAttributeFor(subject.getCategory()) : "The block is an attribute for the subject.";
      */
-    public CertificateIssuance(@Nonnull Account account, @Nonnull IdentityClass subject, @Nonnull Block attribute) {
+    public CertificateIssuance(@Nonnull Account account, @Nonnull InternalIdentity subject, @Nonnull Block attribute) {
         super(account, subject);
         
         assert account.getIdentity() instanceof Person : "The account belongs to a person.";

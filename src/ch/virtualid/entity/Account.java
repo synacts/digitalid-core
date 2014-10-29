@@ -1,7 +1,9 @@
 package ch.virtualid.entity;
 
 import ch.virtualid.annotations.Pure;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.identity.IdentityClass;
+import ch.virtualid.identity.InternalIdentity;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
 import ch.virtualid.server.Host;
@@ -28,7 +30,7 @@ public final class Account extends Entity implements Immutable, SQLizable {
     /**
      * Stores the identity of this account.
      */
-    private final @Nonnull IdentityClass identity;
+    private final @Nonnull InternalIdentity identity;
     
     /**
      * Creates a new account with the given client and role.
@@ -36,7 +38,7 @@ public final class Account extends Entity implements Immutable, SQLizable {
      * @param host the host of this account.
      * @param identity the identity of this account.
      */
-    public Account(@Nonnull Host host, @Nonnull IdentityClass identity) {
+    public Account(@Nonnull Host host, @Nonnull InternalIdentity identity) {
         this.host = host;
         this.identity = identity;
     }
@@ -61,7 +63,7 @@ public final class Account extends Entity implements Immutable, SQLizable {
     
     @Pure
     @Override
-    public @Nonnull IdentityClass getIdentity() {
+    public @Nonnull InternalIdentity getIdentity() {
         return identity;
     }
     
@@ -82,8 +84,8 @@ public final class Account extends Entity implements Immutable, SQLizable {
      * @return the given column of the result set as an instance of this class.
      */
     @Pure
-    public static @Nonnull Account get(@Nonnull Host host, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
-        return new Account(host, IdentityClass.get(resultSet, columnIndex));
+    public static @Nonnull Account get(@Nonnull Host host, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException, InvalidEncodingException {
+        return new Account(host, IdentityClass.get(resultSet, columnIndex).toInternalIdentity());
     }
     
     

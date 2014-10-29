@@ -2,7 +2,6 @@ package ch.virtualid.identity;
 
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
-import ch.virtualid.identifier.Identifier;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
 import java.sql.PreparedStatement;
@@ -29,23 +28,15 @@ public abstract class IdentityClass implements Identity, Immutable, SQLizable {
      * Stores the internal number that represents and indexes this identity.
      * The number remains the same after relocation but changes after merging.
      */
-    volatile long number;
+    private volatile long number;
     
     /**
-     * Stores the presumable address of this identity.
-     * The address is updated when the identity is relocated or merged.
-     */
-    @Nonnull Identifier address;
-    
-    /**
-     * Creates a new identity with the given number and address.
+     * Creates a new identity with the given internal number.
      * 
      * @param number the number that represents this identity.
-     * @param address the current address of this identity.
      */
-    IdentityClass(long number, @Nonnull Identifier address) {
+    IdentityClass(long number) {
         this.number = number;
-        this.address = address;
     }
     
     @Pure
@@ -54,10 +45,13 @@ public abstract class IdentityClass implements Identity, Immutable, SQLizable {
         return number;
     }
     
-    @Pure
-    @Override
-    public final @Nonnull Identifier getAddress() {
-        return address;
+    /**
+     * Sets the number that represents this identity.
+     * 
+     * @param number the new number of this identity.
+     */
+    final void setNumber(long number) {
+        this.number = number;
     }
     
     
@@ -110,14 +104,14 @@ public abstract class IdentityClass implements Identity, Immutable, SQLizable {
     @Override
     public final @Nonnull InternalIdentity toInternalIdentity() throws InvalidEncodingException {
         if (this instanceof InternalIdentity) return (InternalIdentity) this;
-        throw new InvalidEncodingException("" + address + " is a " + this.getClass().getSimpleName() + " and cannot be cast to InternalIdentity.");
+        throw new InvalidEncodingException("" + getAddress() + " is a " + this.getClass().getSimpleName() + " and cannot be cast to InternalIdentity.");
     }
     
     @Pure
     @Override
     public final @Nonnull ExternalIdentity toExternalIdentity() throws InvalidEncodingException {
         if (this instanceof ExternalIdentity) return (ExternalIdentity) this;
-        throw new InvalidEncodingException("" + address + " is a " + this.getClass().getSimpleName() + " and cannot be cast to ExternalIdentity.");
+        throw new InvalidEncodingException("" + getAddress() + " is a " + this.getClass().getSimpleName() + " and cannot be cast to ExternalIdentity.");
     }
     
     
@@ -125,42 +119,42 @@ public abstract class IdentityClass implements Identity, Immutable, SQLizable {
     @Override
     public final @Nonnull HostIdentity toHostIdentity() throws InvalidEncodingException {
         if (this instanceof HostIdentity) return (HostIdentity) this;
-        throw new InvalidEncodingException("" + address + " is a " + this.getClass().getSimpleName() + " and cannot be cast to HostIdentity.");
+        throw new InvalidEncodingException("" + getAddress() + " is a " + this.getClass().getSimpleName() + " and cannot be cast to HostIdentity.");
     }
     
     @Pure
     @Override
     public final @Nonnull NonHostIdentity toNonHostIdentity() throws InvalidEncodingException {
         if (this instanceof NonHostIdentity) return (NonHostIdentity) this;
-        throw new InvalidEncodingException("" + address + " is a " + this.getClass().getSimpleName() + " and cannot be cast to NonHostIdentity.");
+        throw new InvalidEncodingException("" + getAddress() + " is a " + this.getClass().getSimpleName() + " and cannot be cast to NonHostIdentity.");
     }
     
     @Pure
     @Override
     public final @Nonnull InternalNonHostIdentity toInternalNonHostIdentity() throws InvalidEncodingException {
         if (this instanceof InternalNonHostIdentity) return (InternalNonHostIdentity) this;
-        throw new InvalidEncodingException("" + address + " is a " + this.getClass().getSimpleName() + " and cannot be cast to InternalNonHostIdentity.");
+        throw new InvalidEncodingException("" + getAddress() + " is a " + this.getClass().getSimpleName() + " and cannot be cast to InternalNonHostIdentity.");
     }
     
     @Pure
     @Override
     public final @Nonnull Type toType() throws InvalidEncodingException {
         if (this instanceof Type) return (Type) this;
-        throw new InvalidEncodingException("" + address + " is a " + this.getClass().getSimpleName() + " and cannot be cast to Type.");
+        throw new InvalidEncodingException("" + getAddress() + " is a " + this.getClass().getSimpleName() + " and cannot be cast to Type.");
     }
     
     @Pure
     @Override
     public final @Nonnull SyntacticType toSyntacticType() throws InvalidEncodingException {
         if (this instanceof SyntacticType) return (SyntacticType) this;
-        throw new InvalidEncodingException("" + address + " is a " + this.getClass().getSimpleName() + " and cannot be cast to SyntacticType.");
+        throw new InvalidEncodingException("" + getAddress() + " is a " + this.getClass().getSimpleName() + " and cannot be cast to SyntacticType.");
     }
     
     @Pure
     @Override
     public final @Nonnull SemanticType toSemanticType() throws InvalidEncodingException {
         if (this instanceof SemanticType) return (SemanticType) this;
-        throw new InvalidEncodingException("" + address + " is a " + this.getClass().getSimpleName() + " and cannot be cast to SemanticType.");
+        throw new InvalidEncodingException("" + getAddress() + " is a " + this.getClass().getSimpleName() + " and cannot be cast to SemanticType.");
     }
     
     
@@ -168,49 +162,49 @@ public abstract class IdentityClass implements Identity, Immutable, SQLizable {
     @Override
     public final @Nonnull Person toPerson() throws InvalidEncodingException {
         if (this instanceof Person) return (Person) this;
-        throw new InvalidEncodingException("" + address + " is a " + this.getClass().getSimpleName() + " and cannot be cast to Person.");
+        throw new InvalidEncodingException("" + getAddress() + " is a " + this.getClass().getSimpleName() + " and cannot be cast to Person.");
     }
     
     @Pure
     @Override
     public final @Nonnull InternalPerson toInternalPerson() throws InvalidEncodingException {
         if (this instanceof InternalPerson) return (InternalPerson) this;
-        throw new InvalidEncodingException("" + address + " is a " + this.getClass().getSimpleName() + " and cannot be cast to InternalPerson.");
+        throw new InvalidEncodingException("" + getAddress() + " is a " + this.getClass().getSimpleName() + " and cannot be cast to InternalPerson.");
     }
     
     @Pure
     @Override
     public final @Nonnull NaturalPerson toNaturalPerson() throws InvalidEncodingException {
         if (this instanceof NaturalPerson) return (NaturalPerson) this;
-        throw new InvalidEncodingException("" + address + " is a " + this.getClass().getSimpleName() + " and cannot be cast to NaturalPerson.");
+        throw new InvalidEncodingException("" + getAddress() + " is a " + this.getClass().getSimpleName() + " and cannot be cast to NaturalPerson.");
     }
     
     @Pure
     @Override
     public final @Nonnull ArtificialPerson toArtificialPerson() throws InvalidEncodingException {
         if (this instanceof ArtificialPerson) return (ArtificialPerson) this;
-        throw new InvalidEncodingException("" + address + " is a " + this.getClass().getSimpleName() + " and cannot be cast to ArtificialPerson.");
+        throw new InvalidEncodingException("" + getAddress() + " is a " + this.getClass().getSimpleName() + " and cannot be cast to ArtificialPerson.");
     }
     
     @Pure
     @Override
     public final @Nonnull ExternalPerson toExternalPerson() throws InvalidEncodingException {
         if (this instanceof ExternalPerson) return (ExternalPerson) this;
-        throw new InvalidEncodingException("" + address + " is a " + this.getClass().getSimpleName() + " and cannot be cast to ExternalPerson.");
+        throw new InvalidEncodingException("" + getAddress() + " is a " + this.getClass().getSimpleName() + " and cannot be cast to ExternalPerson.");
     }
     
     @Pure
     @Override
     public final @Nonnull EmailPerson toEmailPerson() throws InvalidEncodingException {
         if (this instanceof EmailPerson) return (EmailPerson) this;
-        throw new InvalidEncodingException("" + address + " is a " + this.getClass().getSimpleName() + " and cannot be cast to EmailPerson.");
+        throw new InvalidEncodingException("" + getAddress() + " is a " + this.getClass().getSimpleName() + " and cannot be cast to EmailPerson.");
     }
     
     @Pure
     @Override
     public final @Nonnull MobilePerson toMobilePerson() throws InvalidEncodingException {
         if (this instanceof MobilePerson) return (MobilePerson) this;
-        throw new InvalidEncodingException("" + address + " is a " + this.getClass().getSimpleName() + " and cannot be cast to MobilePerson.");
+        throw new InvalidEncodingException("" + getAddress() + " is a " + this.getClass().getSimpleName() + " and cannot be cast to MobilePerson.");
     }
     
 }

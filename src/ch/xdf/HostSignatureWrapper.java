@@ -12,11 +12,12 @@ import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.external.InvalidSignatureException;
 import ch.virtualid.exceptions.packet.PacketException;
-import ch.virtualid.identity.Category;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identifier.Identifier;
-import ch.virtualid.identity.IdentityClass;
+import ch.virtualid.identifier.InternalIdentifier;
 import ch.virtualid.identifier.NonHostIdentifier;
+import ch.virtualid.identity.Category;
+import ch.virtualid.identity.IdentityClass;
 import ch.virtualid.identity.NonHostIdentity;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
@@ -48,10 +49,10 @@ public final class HostSignatureWrapper extends SignatureWrapper implements Immu
     
     
     /**
-     * Stores the identifier of the identity that is signing as a host.
+     * Stores the identifier of the internal identity that is signing as a host.
      * (Certificates and external actions require that not only host identifiers are allowed here.)
      */
-    private final @Nonnull Identifier signer;
+    private final @Nonnull InternalIdentifier signer;
     
     /**
      * Stores the public key that is used for verifying the host signature.
@@ -73,7 +74,7 @@ public final class HostSignatureWrapper extends SignatureWrapper implements Immu
      * @require Server.hasHost(signer.getHostIdentifier()) : "The host of the signer is running on this server.";
      * @require !type.isBasedOn(Certificate.TYPE) || element != null && signer instanceof NonHostIdentifier : "If the signature is a certificate, the element is not null and the signer is a non-host.";
      */
-    public HostSignatureWrapper(@Nonnull SemanticType type, @Nullable Block element, @Nonnull Identifier subject, @Nullable Audit audit, @Nonnull Identifier signer) {
+    public HostSignatureWrapper(@Nonnull SemanticType type, @Nullable Block element, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull InternalIdentifier signer) {
         super(type, element, subject, audit);
         
         assert Server.hasHost(signer.getHostIdentifier()) : "The host of the signer is running on this server.";
@@ -101,7 +102,7 @@ public final class HostSignatureWrapper extends SignatureWrapper implements Immu
      * @require Server.hasHost(signer.getHostIdentifier()) : "The host of the signer is running on this server.";
      * @require !type.isBasedOn(Certificate.TYPE) || element != null && signer instanceof NonHostIdentifier : "If the signature is a certificate, the element is not null and the signer is a non-host.";
      */
-    public HostSignatureWrapper(@Nonnull SemanticType type, @Nullable Block element, @Nonnull Identifier subject, @Nonnull Identifier signer) {
+    public HostSignatureWrapper(@Nonnull SemanticType type, @Nullable Block element, @Nonnull InternalIdentifier subject, @Nonnull InternalIdentifier signer) {
         this(type, element, subject, null, signer);
     }
     
@@ -120,7 +121,7 @@ public final class HostSignatureWrapper extends SignatureWrapper implements Immu
      * @require Server.hasHost(signer.getHostIdentifier()) : "The host of the signer is running on this server.";
      * @require !type.isBasedOn(Certificate.TYPE) || element != null && signer instanceof NonHostIdentifier : "If the signature is a certificate, the element is not null and the signer is a non-host.";
      */
-    public HostSignatureWrapper(@Nonnull SemanticType type, @Nullable Blockable element, @Nonnull Identifier subject, @Nullable Audit audit, @Nonnull Identifier signer) {
+    public HostSignatureWrapper(@Nonnull SemanticType type, @Nullable Blockable element, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull InternalIdentifier signer) {
         this(type, Block.toBlock(element), subject, audit, signer);
     }
     
@@ -138,7 +139,7 @@ public final class HostSignatureWrapper extends SignatureWrapper implements Immu
      * @require Server.hasHost(signer.getHostIdentifier()) : "The host of the signer is running on this server.";
      * @require !type.isBasedOn(Certificate.TYPE) || element != null && signer instanceof NonHostIdentifier : "If the signature is a certificate, the element is not null and the signer is a non-host.";
      */
-    public HostSignatureWrapper(@Nonnull SemanticType type, @Nullable Blockable element, @Nonnull Identifier subject, @Nonnull Identifier signer) {
+    public HostSignatureWrapper(@Nonnull SemanticType type, @Nullable Blockable element, @Nonnull InternalIdentifier subject, @Nonnull InternalIdentifier signer) {
         this(type, element, subject, null, signer);
     }
     
@@ -150,13 +151,15 @@ public final class HostSignatureWrapper extends SignatureWrapper implements Immu
      * 
      * @require block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
      * @require hostSignature.getType().isBasedOn(SIGNATURE) : "The signature is based on the implementation type.";
+     * 
+     * @ensure getType().isBasedOn(Certificate.TYPE) || getElement() != null && getSigner() instanceof NonHostIdentifier : "If this is a certificate, the element is not null and the signer is a non-host.";
      */
     HostSignatureWrapper(@Nonnull Block block, @Nonnull Block hostSignature) throws SQLException, IOException, PacketException, ExternalException {
         super(block);
         
         assert hostSignature.getType().isBasedOn(SIGNATURE) : "The signature is based on the implementation type.";
         
-        this.signer = Identifier.create(new TupleWrapper(hostSignature).getElementNotNull(0));
+        this.signer = Identifier.create(new TupleWrapper(hostSignature).getElementNotNull(0)).toInternalIdentifier();
         this.publicKey = Cache.getPublicKey(signer.getHostIdentifier(), getTimeNotNull());
         
         if (getType().isBasedOn(Certificate.TYPE)) {

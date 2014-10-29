@@ -7,7 +7,7 @@ import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Method;
 import ch.virtualid.identifier.HostIdentifier;
-import ch.virtualid.identifier.Identifier;
+import ch.virtualid.identifier.InternalIdentifier;
 import ch.virtualid.util.FreezableList;
 import ch.virtualid.util.ReadonlyList;
 import ch.xdf.CompressionWrapper;
@@ -28,7 +28,7 @@ public final class HostRequest extends Request {
     /**
      * Stores the identifier of the signing host.
      */
-    private @Nonnull Identifier signer;
+    private @Nonnull InternalIdentifier signer;
     
     /**
      * Packs the given methods with the given arguments signed by the given host.
@@ -43,7 +43,7 @@ public final class HostRequest extends Request {
      * @require Method.areSimilar(methods) : "All methods are similar and not null.";
      * @require Server.hasHost(signer.getHostIdentifier()) : "The host of the signer is running on this server.";
      */
-    public HostRequest(@Nonnull ReadonlyList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull Identifier subject, @Nonnull Identifier signer) throws SQLException, IOException, PacketException, ExternalException {
+    public HostRequest(@Nonnull ReadonlyList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject, @Nonnull InternalIdentifier signer) throws SQLException, IOException, PacketException, ExternalException {
         super(methods, recipient, getSymmetricKey(recipient, Time.TROPICAL_YEAR), subject, null, signer);
     }
     
@@ -52,19 +52,19 @@ public final class HostRequest extends Request {
     @RawRecipient
     void setField(@Nullable Object field) {
         assert field != null : "See the constructor above.";
-        this.signer = (Identifier) field;
+        this.signer = (InternalIdentifier) field;
     }
     
     @Pure
     @Override
     @RawRecipient
-    @Nonnull HostSignatureWrapper getSignature(@Nullable CompressionWrapper compression, @Nonnull Identifier subject, @Nullable Audit audit) {
+    @Nonnull HostSignatureWrapper getSignature(@Nullable CompressionWrapper compression, @Nonnull InternalIdentifier subject, @Nullable Audit audit) {
         return new HostSignatureWrapper(Packet.SIGNATURE, compression, subject, audit, signer);
     }
     
     
     @Override
-    @Nonnull Response resend(@Nonnull FreezableList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull Identifier subject, boolean verified) throws SQLException, IOException, PacketException, ExternalException {
+    @Nonnull Response resend(@Nonnull FreezableList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject, boolean verified) throws SQLException, IOException, PacketException, ExternalException {
         return new HostRequest(methods, recipient, subject, signer).send(verified);
     }
     

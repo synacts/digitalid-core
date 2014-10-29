@@ -12,7 +12,8 @@ import ch.virtualid.cryptography.PublicKey;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketException;
-import ch.virtualid.identifier.NonHostIdentifier;
+import ch.virtualid.identifier.Identifier;
+import ch.virtualid.identity.InternalNonHostIdentity;
 import ch.virtualid.identity.NonHostIdentity;
 import ch.virtualid.identity.Person;
 import ch.virtualid.identity.SemanticType;
@@ -74,7 +75,7 @@ public abstract class Credential implements Immutable {
     /**
      * Returns the block containing the exposed arguments of a credential.
      * 
-     * @param issuer the non-host identity that issues the credential.
+     * @param issuer the internal non-host identity that issues the credential.
      * @param issuance the issuance time rounded down to the last half-hour.
      * @param randomizedPermissions the client's randomized permissions or its hash.
      * @param role the role that is assumed by the client or null in case no role is assumed.
@@ -89,7 +90,7 @@ public abstract class Credential implements Immutable {
      * @ensure return.getType().equals(EXPOSED) : "The returned block has the indicated type.";
      */
     @Pure
-    public static @Nonnull Block getExposed(@Nonnull NonHostIdentity issuer, @Nonnull Time issuance, @Nonnull RandomizedAgentPermissions randomizedPermissions, @Nullable SemanticType role, @Nullable Block attribute) {
+    public static @Nonnull Block getExposed(@Nonnull InternalNonHostIdentity issuer, @Nonnull Time issuance, @Nonnull RandomizedAgentPermissions randomizedPermissions, @Nullable SemanticType role, @Nullable Block attribute) {
         assert issuance.isPositive() && issuance.isMultipleOf(Time.HALF_HOUR) : "The issuance time is positive and a multiple of half an hour.";
         assert role == null || role.isRoleType() : "The role is either null or a role type.";
         assert attribute == null || attribute.getType().isBasedOn(Attribute.TYPE) : "The attribute is either null or based on the attribute type.";
@@ -123,11 +124,11 @@ public abstract class Credential implements Immutable {
     private final @Nonnull PublicKey publicKey;
     
     /**
-     * Stores the non-host identity that issued this credential.
+     * Stores the internal non-host identity that issued this credential.
      * 
      * @invariant !isIdentityBased() || issuer instanceof Person : "If this credential is identity-based, then the issuer is a person.";
      */
-    private final @Nonnull NonHostIdentity issuer;
+    private final @Nonnull InternalNonHostIdentity issuer;
     
     /**
      * Stores the issuance time rounded down to the last half-hour.
@@ -184,7 +185,7 @@ public abstract class Credential implements Immutable {
      * Creates a new credential with the given public key, issuer, issuance time, permissions, attribute, restrictions and argument for clients.
      * 
      * @param publicKey the public key of the host that issued the credential.
-     * @param issuer the non-host identity that issued the credential.
+     * @param issuer the internal non-host identity that issued the credential.
      * @param issuance the issuance time rounded down to the last half-hour.
      * @param randomizedPermissions the client's randomized permissions or its hash.
      * @param role the role that is assumed by the client or null in case no role is assumed.
@@ -200,7 +201,7 @@ public abstract class Credential implements Immutable {
      * @require (attribute == null) != (restrictions == null) : "Either the attribute or the restrictions are null (but not both).";
      * @require attribute == null || attribute.getType().isBasedOn(Attribute.TYPE) : "The attribute is either null or based on the attribute type.";
      */
-    Credential(@Nonnull PublicKey publicKey, @Nonnull NonHostIdentity issuer, @Nonnull Time issuance, @Nonnull RandomizedAgentPermissions randomizedPermissions, @Nullable SemanticType role, @Nullable Block attribute, @Nullable Restrictions restrictions, @Nonnull Exponent i) {
+    Credential(@Nonnull PublicKey publicKey, @Nonnull InternalNonHostIdentity issuer, @Nonnull Time issuance, @Nonnull RandomizedAgentPermissions randomizedPermissions, @Nullable SemanticType role, @Nullable Block attribute, @Nullable Restrictions restrictions, @Nonnull Exponent i) {
         assert issuance.isPositive() && issuance.isMultipleOf(Time.HALF_HOUR) : "The issuance time is positive and a multiple of half an hour.";
         assert randomizedPermissions.areShown() : "The randomized permissions are shown for client credentials.";
         assert role == null || role.isRoleType() : "The role is either null or a role type.";
@@ -242,7 +243,7 @@ public abstract class Credential implements Immutable {
         assert i == null || i.getType().isBasedOn(Exponent.TYPE) : "The serial number is either null or based on the indicated type.";
         
         final @Nonnull TupleWrapper tuple = new TupleWrapper(exposed);
-        this.issuer = new NonHostIdentifier(tuple.getElementNotNull(0)).getIdentity().toNonHostIdentity();
+        this.issuer = Identifier.create(tuple.getElementNotNull(0)).getIdentity().toInternalNonHostIdentity();
         this.issuance = new Time(tuple.getElementNotNull(1));
         if (!issuance.isPositive() || !issuance.isMultipleOf(Time.HALF_HOUR)) throw new InvalidEncodingException("The issuance time has to be positive and a multiple of half an hour.");
         this.publicKey = Cache.getPublicKey(issuer.getAddress().getHostIdentifier(), issuance);
@@ -253,7 +254,7 @@ public abstract class Credential implements Immutable {
         } else {
             this.randomizedPermissions = new RandomizedAgentPermissions(hash);
         }
-        this.role = tuple.isElementNull(3) ? null : new NonHostIdentifier(tuple.getElementNotNull(3)).getIdentity().toSemanticType();
+        this.role = tuple.isElementNull(3) ? null : Identifier.create(tuple.getElementNotNull(3)).getIdentity().toSemanticType();
         if (role != null && !role.isRoleType()) throw new InvalidEncodingException("The role has to be either null or a role type");
         this.attribute = tuple.getElement(4);
         if (role != null && attribute != null) throw new InvalidEncodingException("The role and the attribute may not both be not null.");
@@ -284,14 +285,14 @@ public abstract class Credential implements Immutable {
     }
     
     /**
-     * Returns the non-host identity that issued this credential.
+     * Returns the internal non-host identity that issued this credential.
      * 
-     * @return the non-host identity that issued this credential.
+     * @return the internal non-host identity that issued this credential.
      * 
      * @ensure !isIdentityBased() || issuer instanceof Person : "If this credential is identity-based, then the issuer is a person.";
      */
     @Pure
-    public final @Nonnull NonHostIdentity getIssuer() {
+    public final @Nonnull InternalNonHostIdentity getIssuer() {
         return issuer;
     }
     
