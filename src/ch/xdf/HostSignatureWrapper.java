@@ -17,7 +17,7 @@ import ch.virtualid.identifier.Identifier;
 import ch.virtualid.identifier.InternalIdentifier;
 import ch.virtualid.identifier.NonHostIdentifier;
 import ch.virtualid.identity.Category;
-import ch.virtualid.identity.IdentityClass;
+import ch.virtualid.identity.InternalIdentity;
 import ch.virtualid.identity.NonHostIdentity;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
@@ -43,9 +43,19 @@ import javax.annotation.Nullable;
 public final class HostSignatureWrapper extends SignatureWrapper implements Immutable {
     
     /**
+     * Stores the semantic type {@code signer.host.signature@virtualid.ch}.
+     */
+    private static final @Nonnull SemanticType SIGNER = SemanticType.create("signer.host.signature@virtualid.ch").load(InternalIdentity.IDENTIFIER);
+    
+    /**
+     * Stores the semantic type {@code value.host.signature@virtualid.ch}.
+     */
+    static final @Nonnull SemanticType VALUE = SemanticType.create("value.host.signature@virtualid.ch").load(Element.TYPE);
+    
+    /**
      * Stores the semantic type {@code host.signature@virtualid.ch}.
      */
-    static final @Nonnull SemanticType SIGNATURE = SemanticType.create("host.signature@virtualid.ch").load(TupleWrapper.TYPE, IdentityClass.IDENTIFIER, Element.TYPE);
+    static final @Nonnull SemanticType SIGNATURE = SemanticType.create("host.signature@virtualid.ch").load(TupleWrapper.TYPE, SIGNER, VALUE);
     
     
     /**
@@ -215,10 +225,10 @@ public final class HostSignatureWrapper extends SignatureWrapper implements Immu
         assert elements.isNotFrozen() : "The elements are not frozen.";
         
         final @Nonnull FreezableArray<Block> subelements = new FreezableArray<Block>(2);
-        subelements.set(0, signer.toBlock());
+        subelements.set(0, signer.toBlock().setType(SIGNER));
         try {
             final @Nonnull PrivateKey privateKey = Server.getHost(signer.getHostIdentifier()).getPrivateKeyChain().getKey(getTimeNotNull());
-            subelements.set(1, privateKey.powD(hash).toBlock());
+            subelements.set(1, privateKey.powD(hash).toBlock().setType(VALUE));
         } catch (@Nonnull InvalidEncodingException exception) {
             throw new ShouldNeverHappenError("There should always be a key for the current time.", exception);
         }

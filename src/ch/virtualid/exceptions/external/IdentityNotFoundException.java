@@ -2,12 +2,12 @@ package ch.virtualid.exceptions.external;
 
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.identifier.Identifier;
-import ch.virtualid.identity.IdentityClass;
+import ch.virtualid.identity.Identity;
 import ch.virtualid.interfaces.Immutable;
 import javax.annotation.Nonnull;
 
 /**
- * This exception is thrown when an {@link IdentityClass identity} cannot be found.
+ * This exception is thrown when an {@link Identity identity} cannot be found.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0

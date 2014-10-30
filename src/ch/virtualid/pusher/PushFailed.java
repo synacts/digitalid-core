@@ -18,14 +18,13 @@ import ch.virtualid.handler.Reply;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identifier.Identifier;
 import ch.virtualid.identifier.InternalIdentifier;
-import ch.virtualid.identity.IdentityClass;
-import ch.virtualid.identity.NonHostIdentity;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.Service;
 import ch.virtualid.packet.Packet;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.ReadonlyArray;
 import ch.xdf.Block;
+import ch.xdf.EncryptionWrapper;
 import ch.xdf.Int64Wrapper;
 import ch.xdf.SelfcontainedWrapper;
 import ch.xdf.SignatureWrapper;
@@ -54,12 +53,12 @@ public final class PushFailed extends ExternalAction {
     /**
      * Stores the semantic type {@code subject.failed.push@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType SUBJECT = SemanticType.create("subject.failed.push@virtualid.ch").load(IdentityClass.IDENTIFIER);
+    private static final @Nonnull SemanticType SUBJECT = SemanticType.create("subject.failed.push@virtualid.ch").load(SignatureWrapper.SUBJECT);
     
     /**
      * Stores the semantic type {@code recipient.failed.push@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType RECIPIENT = SemanticType.create("recipient.failed.push@virtualid.ch").load(NonHostIdentity.IDENTIFIER);
+    private static final @Nonnull SemanticType RECIPIENT = SemanticType.create("recipient.failed.push@virtualid.ch").load(EncryptionWrapper.RECIPIENT);
     
     /**
      * Stores the semantic type {@code action.failed.push@virtualid.ch}.

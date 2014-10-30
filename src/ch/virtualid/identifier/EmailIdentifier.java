@@ -5,7 +5,6 @@ import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.identity.Category;
 import ch.virtualid.identity.EmailPerson;
 import ch.virtualid.identity.Mapper;
-import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Immutable;
 import java.sql.SQLException;
 import java.util.regex.Pattern;
@@ -51,13 +50,6 @@ public final class EmailIdentifier extends ExternalIdentifier implements Immutab
         super(string);
         
         assert isValid(string) : "The string is a valid email identifier.";
-    }
-    
-    
-    @Pure
-    @Override
-    public @Nonnull SemanticType getType() {
-        return EmailPerson.IDENTIFIER;
     }
     
     

@@ -13,7 +13,7 @@ import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identifier.Identifier;
 import ch.virtualid.identifier.InternalIdentifier;
-import ch.virtualid.identity.IdentityClass;
+import ch.virtualid.identity.InternalIdentity;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.identity.SyntacticType;
 import ch.virtualid.interfaces.Blockable;
@@ -50,9 +50,14 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
     public static final @Nonnull SyntacticType TYPE = SyntacticType.create("signature@xdf.ch").load(1);
     
     /**
+     * Stores the semantic type {@code subject.content.signature@virtualid.ch}.
+     */
+    public static final @Nonnull SemanticType SUBJECT = SemanticType.create("subject.content.signature@virtualid.ch").load(InternalIdentity.IDENTIFIER);
+    
+    /**
      * Stores the semantic type {@code content.signature@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType CONTENT = SemanticType.create("content.signature@virtualid.ch").load(TupleWrapper.TYPE, IdentityClass.IDENTIFIER, Time.TYPE, SemanticType.UNKNOWN, Audit.TYPE);
+    private static final @Nonnull SemanticType CONTENT = SemanticType.create("content.signature@virtualid.ch").load(TupleWrapper.TYPE, SUBJECT, Time.TYPE, SemanticType.UNKNOWN, Audit.TYPE);
     
     /**
      * Stores the semantic type {@code signature@virtualid.ch}.
@@ -372,7 +377,7 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
     protected final @Nonnull Block getCache() {
         if (cache == null) {
             final @Nonnull FreezableArray<Block> subelements = new FreezableArray<Block>(4);
-            subelements.set(0, Block.toBlock(subject));
+            subelements.set(0, Block.toBlock(SUBJECT, subject));
             subelements.set(1, Block.toBlock(time));
             subelements.set(2, element);
             subelements.set(3, Block.toBlock(audit));

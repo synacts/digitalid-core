@@ -5,7 +5,6 @@ import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.identity.Category;
 import ch.virtualid.identity.Mapper;
 import ch.virtualid.identity.MobilePerson;
-import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Immutable;
 import java.sql.SQLException;
 import java.util.regex.Pattern;
@@ -48,13 +47,6 @@ public final class MobileIdentifier extends ExternalIdentifier implements Immuta
         super(string);
         
         assert isValid(string) : "The string is a valid mobile identifier.";
-    }
-    
-    
-    @Pure
-    @Override
-    public @Nonnull SemanticType getType() {
-        return MobilePerson.IDENTIFIER;
     }
     
     

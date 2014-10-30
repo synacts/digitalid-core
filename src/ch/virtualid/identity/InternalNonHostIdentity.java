@@ -13,6 +13,12 @@ import javax.annotation.Nonnull;
  */
 public interface InternalNonHostIdentity extends InternalIdentity, Immutable {
     
+    /**
+     * Stores the semantic type {@code nonhost.internal@virtualid.ch}.
+     */
+    public static final @Nonnull SemanticType IDENTIFIER = SemanticType.create("nonhost.internal@virtualid.ch").load(InternalIdentity.IDENTIFIER);
+    
+    
     @Pure
     @Override
     public @Nonnull NonHostIdentifier getAddress();

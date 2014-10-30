@@ -1,7 +1,7 @@
 package ch.virtualid.setup;
 
 import ch.virtualid.client.Client;
-import ch.virtualid.identity.IdentityClass;
+import ch.virtualid.identity.Identity;
 import ch.virtualid.identity.Person;
 import javax.annotation.Nonnull;
 import org.junit.AfterClass;
@@ -9,7 +9,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
- * Sets up an {@link IdentityClass} for testing.
+ * Sets up an {@link Identity} for testing.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 1.0

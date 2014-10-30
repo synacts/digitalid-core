@@ -46,6 +46,11 @@ public final class EncryptionWrapper extends BlockWrapper implements Immutable {
     public static final @Nonnull SyntacticType TYPE = SyntacticType.create("encryption@xdf.ch").load(1);
     
     /**
+     * Stores the semantic type {@code recipient.encryption@virtualid.ch}.
+     */
+    public static final @Nonnull SemanticType RECIPIENT = SemanticType.create("recipient.encryption@virtualid.ch").load(HostIdentity.IDENTIFIER);
+    
+    /**
      * Stores the semantic type {@code key.encryption@virtualid.ch}.
      */
     private static final @Nonnull SemanticType KEY = SemanticType.create("key.encryption@virtualid.ch").load(Element.TYPE);
@@ -53,7 +58,7 @@ public final class EncryptionWrapper extends BlockWrapper implements Immutable {
     /**
      * Stores the semantic type {@code encryption@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType IMPLEMENTATION = SemanticType.create("encryption@virtualid.ch").load(TupleWrapper.TYPE, Time.TYPE, HostIdentity.IDENTIFIER, KEY, InitializationVector.TYPE, SemanticType.UNKNOWN);
+    private static final @Nonnull SemanticType IMPLEMENTATION = SemanticType.create("encryption@virtualid.ch").load(TupleWrapper.TYPE, Time.TYPE, RECIPIENT, KEY, InitializationVector.TYPE, SemanticType.UNKNOWN);
     
     
     /**
@@ -322,7 +327,7 @@ public final class EncryptionWrapper extends BlockWrapper implements Immutable {
         if (cache == null) {
             @Nonnull FreezableArray<Block> elements = new FreezableArray<Block>(5);
             elements.set(0, time.toBlock());
-            elements.set(1, Block.toBlock(recipient));
+            elements.set(1, Block.toBlock(RECIPIENT, recipient));
             
             if (recipient == null) {
                 // Encrypt by hosts for clients.

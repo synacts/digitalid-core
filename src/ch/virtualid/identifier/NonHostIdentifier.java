@@ -5,8 +5,6 @@ import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identity.InternalNonHostIdentity;
 import ch.virtualid.identity.Mapper;
-import ch.virtualid.identity.NonHostIdentity;
-import ch.virtualid.identity.SemanticType;
 import ch.virtualid.identity.Type;
 import ch.virtualid.interfaces.Immutable;
 import java.io.IOException;
@@ -45,13 +43,6 @@ public final class NonHostIdentifier extends InternalIdentifier implements Immut
         super(string);
         
         assert isValid(string) : "The string is a valid non-host identifier.";
-    }
-    
-    
-    @Pure
-    @Override
-    public @Nonnull SemanticType getType() {
-        return NonHostIdentity.IDENTIFIER;
     }
     
     

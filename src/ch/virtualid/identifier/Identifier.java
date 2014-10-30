@@ -6,7 +6,7 @@ import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identity.Identity;
-import ch.virtualid.identity.IdentityClass;
+import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
@@ -81,7 +81,7 @@ public abstract class Identifier implements Immutable, Blockable, SQLizable {
      */
     @Pure
     public static @Nonnull Identifier create(@Nonnull Block block) throws InvalidEncodingException {
-        assert block.getType().isBasedOn(IdentityClass.IDENTIFIER) : "The block is based on the identifier type.";
+        assert block.getType().isBasedOn(Identity.IDENTIFIER) : "The block is based on the identifier type.";
         
         final @Nonnull String string = new StringWrapper(block).getString();
         if (!isValid(string)) throw new InvalidEncodingException("'" + string + "' is not a valid identifier.");
@@ -111,8 +111,14 @@ public abstract class Identifier implements Immutable, Blockable, SQLizable {
     
     @Pure
     @Override
+    public final @Nonnull SemanticType getType() {
+        return Identity.IDENTIFIER;
+    }
+    
+    @Pure
+    @Override
     public final @Nonnull Block toBlock() {
-        return new StringWrapper(getType(), string).toBlock();
+        return new StringWrapper(Identity.IDENTIFIER, string).toBlock();
     }
     
     

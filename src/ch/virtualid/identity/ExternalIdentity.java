@@ -14,6 +14,12 @@ import javax.annotation.Nullable;
  */
 public interface ExternalIdentity extends Identity, Immutable {
     
+    /**
+     * Stores the semantic type {@code external@virtualid.ch}.
+     */
+    public static final @Nonnull SemanticType IDENTIFIER = SemanticType.create("external@virtualid.ch").load(Identity.IDENTIFIER);
+    
+    
     @Pure
     @Override
     public @Nonnull ExternalIdentifier getAddress();

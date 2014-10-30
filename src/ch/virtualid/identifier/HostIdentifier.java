@@ -7,7 +7,6 @@ import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identity.HostIdentity;
 import ch.virtualid.identity.Mapper;
-import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Immutable;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -51,13 +50,6 @@ public final class HostIdentifier extends InternalIdentifier implements Immutabl
         super(string);
         
         assert isValid(string) : "The string is a valid host identifier.";
-    }
-    
-    
-    @Pure
-    @Override
-    public @Nonnull SemanticType getType() {
-        return HostIdentity.IDENTIFIER;
     }
     
     

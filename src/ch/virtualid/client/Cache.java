@@ -15,7 +15,7 @@ import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identity.HostIdentity;
-import ch.virtualid.identity.IdentityClass;
+import ch.virtualid.identity.Identity;
 import ch.virtualid.identity.InternalIdentity;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.server.Server;
@@ -30,7 +30,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * The cache caches the {@link Attribute attributes} of {@link IdentityClass identities} for the attribute-specific {@link SemanticType#getCachingPeriod() caching period}.
+ * The cache caches the {@link Attribute attributes} of {@link Identity identities} for the attribute-specific {@link SemanticType#getCachingPeriod() caching period}.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 1.2

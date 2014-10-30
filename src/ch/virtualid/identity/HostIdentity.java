@@ -19,7 +19,7 @@ public final class HostIdentity extends IdentityClass implements InternalIdentit
     /**
      * Stores the semantic type {@code host@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType IDENTIFIER = SemanticType.create("host@virtualid.ch").load(IdentityClass.IDENTIFIER);
+    public static final @Nonnull SemanticType IDENTIFIER = SemanticType.create("host@virtualid.ch").load(Identity.IDENTIFIER);
     
     
     /**
