@@ -161,6 +161,20 @@ public final class Response extends Packet {
     
     
     /**
+     * Checks whether the reply at the given position in this response is a packet exception.
+     * 
+     * @param index the index of the reply which is to be checked.
+     * 
+     * @throws PacketException if the responding host encountered a packet error.
+     * 
+     * @require index >= 0 && index < getSize() : "The index is valid.";
+     */
+    @Pure
+    public void checkReply(int index) throws PacketException {
+        if (exceptions.isNotNull(index)) throw exceptions.getNotNull(index);
+    }
+    
+    /**
      * Returns the reply at the given position in this response or null if there was none.
      * 
      * @param index the index of the reply which is to be returned.
@@ -173,8 +187,28 @@ public final class Response extends Packet {
      */
     @Pure
     public @Nullable Reply getReply(int index) throws PacketException {
-        if (exceptions.isNotNull(index)) throw exceptions.getNotNull(index);
-        else return replies.get(index);
+        checkReply(index);
+        return replies.get(index);
+    }
+    
+    /**
+     * Returns the reply at the given position in this response.
+     * 
+     * @param index the index of the reply which is to be returned.
+     * 
+     * @return the reply at the given position in this response.
+     * 
+     * @throws PacketException if the responding host encountered a packet error.
+     * 
+     * @require index >= 0 && index < getSize() : "The index is valid.";
+     * @require getReply(index) != null : "The reply at the given position is not null.";
+     */
+    @Pure
+    @SuppressWarnings("unchecked")
+    public @Nonnull <T extends Reply> T getReplyNotNull(int index) throws PacketException {
+        final @Nullable Reply reply = getReply(index);
+        assert reply != null : "The reply is not null.";
+        return (T) reply;
     }
     
     /**

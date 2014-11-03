@@ -37,6 +37,8 @@ import javax.annotation.Nullable;
  * <p>
  * Format: {@code (identifier, value)}
  * 
+ * @invariant !isCertificate() || getElement() != null && getSigner() instanceof NonHostIdentifier : "If this is a certificate, the element is not null and the signer is a non-host.";
+ * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
@@ -188,18 +190,6 @@ public final class HostSignatureWrapper extends SignatureWrapper implements Immu
         return signer;
     }
     
-    /**
-     * Returns whether this host signature is a certificate.
-     * 
-     * @return whether this host signature is a certificate.
-     * 
-     * @ensure !return || getElement() != null && getSigner() instanceof NonHostIdentifier : "If this is a certificate, the element is not null and the signer is a non-host.";
-     */
-    @Pure
-    public boolean isCertificate() {
-        return getType().isBasedOn(Certificate.TYPE);
-    }
-    
     
     @Pure
     @Override
@@ -221,14 +211,15 @@ public final class HostSignatureWrapper extends SignatureWrapper implements Immu
     }
     
     @Override
-    protected void sign(@Nonnull FreezableArray<Block> elements, @Nonnull BigInteger hash) {
+    protected void sign(@Nonnull FreezableArray<Block> elements) {
         assert elements.isNotFrozen() : "The elements are not frozen.";
+        assert elements.isNotNull(0) : "The first element is not null.";
         
         final @Nonnull FreezableArray<Block> subelements = new FreezableArray<Block>(2);
         subelements.set(0, signer.toBlock().setType(SIGNER));
         try {
             final @Nonnull PrivateKey privateKey = Server.getHost(signer.getHostIdentifier()).getPrivateKeyChain().getKey(getTimeNotNull());
-            subelements.set(1, privateKey.powD(hash).toBlock().setType(VALUE));
+            subelements.set(1, privateKey.powD(elements.getNotNull(0).getHash()).toBlock().setType(VALUE));
         } catch (@Nonnull InvalidEncodingException exception) {
             throw new ShouldNeverHappenError("There should always be a key for the current time.", exception);
         }
@@ -256,12 +247,8 @@ public final class HostSignatureWrapper extends SignatureWrapper implements Immu
      */
     public static final @Nonnull SemanticType INCOMING_DELEGATIONS = SemanticType.create("incoming.list.delegation@virtualid.ch").load(new Category[] {Category.NATURAL_PERSON, Category.ARTIFICIAL_PERSON}, Time.TROPICAL_YEAR, DELEGATIONS);
     
-    /**
-     * Verifies the signature as a certificate and throws an exception if it is not valid.
-     * 
-     * @require isCertificate() : "This signature is a certificate.";
-     */
     @Pure
+    @Override
     public void verifyAsCertificate() throws SQLException, IOException, PacketException, ExternalException {
         assert isCertificate() : "This signature is a certificate.";
         

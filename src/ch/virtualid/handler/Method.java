@@ -131,6 +131,8 @@ public abstract class Method extends Handler {
      * Returns the permissions required for this method.
      * 
      * @return the permissions required for this method.
+     * 
+     * @ensure return.isFrozen() : "The returned permissions are frozen.";
      */
     @Pure
     public abstract @Nonnull ReadonlyAgentPermissions getRequiredPermissions();
@@ -189,6 +191,20 @@ public abstract class Method extends Handler {
      */
     public @Nullable Reply send() throws SQLException, IOException, PacketException, ExternalException {
         return Method.send(new FreezableArrayList<Method>(this).freeze()).getReply(0);
+    }
+    
+    /**
+     * Sends the block encoded by this method to the stored recipient.
+     * 
+     * @return the reply to this method, which may not be null.
+     * 
+     * @see #getReplyClass()
+     */
+    @SuppressWarnings("unchecked")
+    public final @Nonnull <T extends Reply> T sendNotNull() throws SQLException, IOException, PacketException, ExternalException {
+        final @Nullable Reply reply = send();
+        assert reply != null;
+        return (T) reply;
     }
     
     

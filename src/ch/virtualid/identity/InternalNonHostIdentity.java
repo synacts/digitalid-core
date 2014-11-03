@@ -8,6 +8,9 @@ import javax.annotation.Nonnull;
 /**
  * This interface models an internal non-host identity.
  * 
+ * @see Type
+ * @see InternalPerson
+ * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */

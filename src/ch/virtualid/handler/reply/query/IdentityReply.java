@@ -2,8 +2,7 @@ package ch.virtualid.handler.reply.query;
 
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Entity;
-import ch.virtualid.exceptions.external.IdentityNotFoundException;
-import ch.virtualid.exceptions.external.InvalidDeclarationException;
+import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
@@ -14,13 +13,14 @@ import ch.virtualid.identifier.NonHostIdentifier;
 import ch.virtualid.identity.Category;
 import ch.virtualid.identity.Mapper;
 import ch.virtualid.identity.NonHostIdentity;
-import ch.virtualid.identity.Predecessor;
 import ch.virtualid.identity.Predecessors;
 import ch.virtualid.identity.SemanticType;
+import ch.virtualid.identity.Successor;
 import ch.virtualid.util.FreezableArray;
 import ch.xdf.Block;
 import ch.xdf.HostSignatureWrapper;
 import ch.xdf.TupleWrapper;
+import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -41,9 +41,9 @@ public final class IdentityReply extends CoreServiceQueryReply {
     public static final @Nonnull SemanticType SUCCESSOR = SemanticType.create("successor.identity@virtualid.ch").load(NonHostIdentity.IDENTIFIER);
     
     /**
-     * Stores the semantic type {@code response.identity@virtualid.ch}.
+     * Stores the semantic type {@code reply.identity@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("response.identity@virtualid.ch").load(TupleWrapper.TYPE, Category.TYPE, Predecessors.TYPE, SUCCESSOR);
+    public static final @Nonnull SemanticType TYPE = SemanticType.create("reply.identity@virtualid.ch").load(TupleWrapper.TYPE, Category.TYPE, Predecessors.TYPE, SUCCESSOR);
     
     @Pure
     @Override
@@ -59,6 +59,8 @@ public final class IdentityReply extends CoreServiceQueryReply {
     
     /**
      * Stores the predecessors of the subject.
+     * 
+     * @invariant predecessors.isFrozen() : "The predecessors are frozen.";
      */
     private final @Nonnull Predecessors predecessors;
     
@@ -77,8 +79,8 @@ public final class IdentityReply extends CoreServiceQueryReply {
         
         if (!Mapper.isMapped(subject)) throw new PacketException(PacketError.IDENTIFIER, "The identity with the identifier " + subject + " does not exist on this host.");
         this.category = Mapper.getMappedIdentity(subject).getCategory();
-        this.predecessors = new Predecessor(subject).getPredecessors();
-        this.successor = Mapper.getSuccessor(subject);
+        this.predecessors = Predecessors.get(subject);
+        this.successor = Successor.get(subject);
     }
     
     /**
@@ -134,6 +136,8 @@ public final class IdentityReply extends CoreServiceQueryReply {
      * Returns the predecessors of the subject.
      * 
      * @return the predecessors of the subject.
+     * 
+     * @ensure return.isFrozen() : "The predecessors are frozen.";
      */
     @Pure
     public @Nonnull Predecessors getPredecessors() {
@@ -166,7 +170,7 @@ public final class IdentityReply extends CoreServiceQueryReply {
         
         @Pure
         @Override
-        protected @Nonnull Reply create(@Nullable Entity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws InvalidEncodingException, SQLException, IdentityNotFoundException, InvalidDeclarationException {
+        protected @Nonnull Reply create(@Nullable Entity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
             return new IdentityReply(entity, signature, number, block);
         }
         

@@ -1,6 +1,7 @@
 package ch.virtualid.identifier;
 
 import ch.virtualid.annotations.Pure;
+import ch.virtualid.exceptions.external.IdentityNotFoundException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.identity.Category;
 import ch.virtualid.identity.EmailPerson;
@@ -55,7 +56,8 @@ public final class EmailIdentifier extends ExternalIdentifier implements Immutab
     
     @Pure
     @Override
-    public @Nonnull EmailPerson getIdentity() throws SQLException, InvalidEncodingException {
+    public @Nonnull EmailPerson getIdentity() throws SQLException, InvalidEncodingException, IdentityNotFoundException {
+        if (!providerExists()) throw new IdentityNotFoundException(this);
         return Mapper.mapExternalIdentity(this).toEmailPerson();
     }
     

@@ -10,7 +10,7 @@ import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Method;
 import ch.virtualid.handler.reply.query.IdentityReply;
 import ch.virtualid.identifier.HostIdentifier;
-import ch.virtualid.identifier.Identifier;
+import ch.virtualid.identifier.InternalIdentifier;
 import ch.virtualid.identifier.NonHostIdentifier;
 import ch.virtualid.identity.SemanticType;
 import ch.xdf.Block;
@@ -42,7 +42,7 @@ public final class IdentityQuery extends CoreServiceExternalQuery {
     
     
     /**
-     * Creates an external query to retrieve the identity of the given subject.
+     * Creates an identity query to retrieve the identity of the given subject.
      * 
      * @param subject the subject of this handler.
      */
@@ -51,7 +51,7 @@ public final class IdentityQuery extends CoreServiceExternalQuery {
     }
     
     /**
-     * Creates an external query that decodes the given block.
+     * Creates an identity query that decodes the given block.
      * 
      * @param entity the entity to which this handler belongs.
      * @param signature the signature of this handler.
@@ -102,7 +102,7 @@ public final class IdentityQuery extends CoreServiceExternalQuery {
         assert isOnHost() : "This method is called on a host.";
         assert hasSignature() : "This handler has a signature.";
         
-        final @Nonnull Identifier subject = getSubject();
+        final @Nonnull InternalIdentifier subject = getSubject();
         if (!(subject instanceof NonHostIdentifier)) throw new PacketException(PacketError.IDENTIFIER, "The identity may only be queried of non-host identities.");
         return new IdentityReply((NonHostIdentifier) subject);
     }

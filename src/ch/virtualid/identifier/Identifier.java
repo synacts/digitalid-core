@@ -229,7 +229,7 @@ public abstract class Identifier implements Immutable, Blockable, SQLizable {
     /**
      * Stores the data type used to store instances of this class in the database.
      */
-    public static final @Nonnull String FORMAT = "VARCHAR(100) COLLATE " + Database.getConfiguration().BINARY();
+    public static final @Nonnull String FORMAT = "VARCHAR(63) COLLATE " + Database.getConfiguration().BINARY();
     
     /**
      * Returns the given column of the result set as an instance of this class.

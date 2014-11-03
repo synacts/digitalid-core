@@ -207,6 +207,26 @@ public enum Category implements Blockable, Immutable, SQLizable {
         return isInternalPerson() || isExternalPerson();
     }
     
+    /**
+     * Returns whether this category denotes an internal non-host identity.
+     * 
+     * @return whether this category denotes an internal non-host identity.
+     */
+    @Pure
+    public boolean isInternalNonHostIdentity() {
+        return isType()|| isInternalPerson();
+    }
+    
+    /**
+     * Returns whether this category denotes an internal identity.
+     * 
+     * @return whether this category denotes an internal identity.
+     */
+    @Pure
+    public boolean isInternalIdentity() {
+        return this == HOST || isInternalNonHostIdentity();
+    }
+    
     
     /**
      * Stores the data type used to store instances of this class in the database.

@@ -40,7 +40,7 @@ public abstract class Person extends NonHostIdentity implements Immutable {
     
     @Override
     public final boolean hasBeenMerged() throws SQLException, IOException, PacketException, ExternalException  {
-        final @Nullable NonHostIdentifier successor = Mapper.getSuccessor(getAddress());
+        final @Nullable NonHostIdentifier successor = Successor.get(getAddress());
         if (successor != null) {
             final long number = getNumber();
             successor.getIdentity();

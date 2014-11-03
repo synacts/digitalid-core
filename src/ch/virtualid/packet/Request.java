@@ -18,7 +18,7 @@ import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identifier.Identifier;
 import ch.virtualid.identifier.InternalIdentifier;
 import ch.virtualid.identifier.NonHostIdentifier;
-import ch.virtualid.identity.Mapper;
+import ch.virtualid.identity.Successor;
 import ch.virtualid.module.CoreService;
 import ch.virtualid.module.Service;
 import ch.virtualid.server.Server;
@@ -284,7 +284,7 @@ public class Request extends Packet {
             if (exception.getError() == PacketError.KEYROTATION && this instanceof ClientRequest) {
                 return ((ClientRequest) this).recommit(methods, verified);
             } else if (exception.getError() == PacketError.RELOCATION && subject instanceof NonHostIdentifier) {
-                final @Nonnull NonHostIdentifier address = Mapper.relocate((NonHostIdentifier) subject);
+                final @Nonnull NonHostIdentifier address = Successor.getReloaded(subject, true);
                 final @Nonnull HostIdentifier recipient = getMethod(0).getService().equals(CoreService.SERVICE) ? address.getHostIdentifier() : getRecipient();
                 return resend(methods, recipient, address, verified);
             } else if (exception.getError() == PacketError.SERVICE && !getMethod(0).isOnHost()) {

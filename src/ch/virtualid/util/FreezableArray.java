@@ -80,6 +80,18 @@ public class FreezableArray<E> extends FreezableObject implements ReadonlyArray<
     
     @Pure
     @Override
+    public boolean isNull(int index) {
+        return get(index) == null;
+    }
+    
+    @Pure
+    @Override
+    public boolean isNotNull(int index) {
+        return get(index) != null;
+    }
+    
+    @Pure
+    @Override
     public @Nonnull E getNotNull(int index) {
         @Nullable E element = get(index);
         assert element != null : "The element at the given index is not null.";

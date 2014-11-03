@@ -145,17 +145,29 @@ public final class ClientSignatureWrapper extends SignatureWrapper implements Im
     }
     
     @Override
-    protected void sign(@Nonnull FreezableArray<Block> elements, @Nonnull BigInteger hash) {
+    protected void sign(@Nonnull FreezableArray<Block> elements) {
+        assert elements.isNotFrozen() : "The elements are not frozen.";
+        assert elements.isNotNull(0) : "The first element is not null.";
+        
         final @Nonnull FreezableArray<Block> subelements = new FreezableArray<Block>(3);
         final @Nonnull SecretCommitment commitment = (SecretCommitment) this.commitment;
         subelements.set(0, commitment.toBlock());
         final @Nonnull Exponent r = commitment.getPublicKey().getCompositeGroup().getRandomExponent(Parameters.RANDOM_EXPONENT);
         final @Nonnull BigInteger t = commitment.getPublicKey().getAu().pow(r).toBlock().getHash();
         subelements.set(1, new HashWrapper(HASH, t).toBlock());
-        final @Nonnull Exponent h = new Exponent(t.xor(hash));
+        final @Nonnull Exponent h = new Exponent(t.xor(elements.getNotNull(0).getHash()));
         final @Nonnull Exponent s = r.subtract(commitment.getSecret().multiply(h));
         subelements.set(2, s.toBlock());
         elements.set(2, new TupleWrapper(SIGNATURE, subelements.freeze()).toBlock());
+    }
+    
+    
+    @Pure
+    @Override
+    public void verifyAsCertificate() throws InvalidEncodingException {
+        assert isCertificate() : "This signature is a certificate.";
+        
+        throw new InvalidEncodingException("A certificate cannot be signed by a client.");
     }
     
     

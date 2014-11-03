@@ -13,11 +13,16 @@ import ch.virtualid.exceptions.external.CertificateNotFoundException;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketException;
+import ch.virtualid.handler.reply.query.AttributesReply;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identity.HostIdentity;
 import ch.virtualid.identity.Identity;
 import ch.virtualid.identity.InternalIdentity;
+import ch.virtualid.identity.Mapper;
+import static ch.virtualid.identity.Mapper.isMapped;
 import ch.virtualid.identity.SemanticType;
+import ch.virtualid.packet.Request;
+import ch.virtualid.packet.Response;
 import ch.virtualid.server.Server;
 import ch.xdf.Block;
 import ch.xdf.HostSignatureWrapper;
@@ -375,6 +380,26 @@ public final class Cache {
     public static @Nonnull PublicKey getPublicKey(@Nonnull HostIdentifier identifier, @Nonnull Time time) throws SQLException, IOException, PacketException, ExternalException {
 //        return getPublicKeyChain(identifier.getIdentity()).getKey(time);
         return Server.getHost(new HostIdentifier("syntacts.com")).getPublicKeyChain().getKey(time); // TODO: This is only a temporary testing hack!
+    }
+    
+    
+    /**
+     * 
+     * 
+     * @param identifier
+     * 
+     * @return
+     * 
+     * @require !isMapped(identifier) : "The identifier is not mapped.";
+     */
+    public static @Nonnull HostIdentity establishHostIdentity(@Nonnull HostIdentifier identifier) throws SQLException, IOException, PacketException, ExternalException {
+        assert !isMapped(identifier) : "The identifier is not mapped.";
+        
+        final @Nonnull Response response = new Request(identifier).send(false);
+        final @Nonnull AttributesReply reply = response.getReplyNotNull(0);
+        final @Nonnull HostIdentity identity = Mapper.mapHostIdentity(identifier);
+        // TODO: Store the returned public key chain in the cache.
+        return identity;
     }
     
 }

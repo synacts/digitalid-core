@@ -98,6 +98,8 @@ public abstract class ExternalIdentifier extends Identifier implements Immutable
      * Returns the category of this external identifier.
      * 
      * @return the category of this external identifier.
+     * 
+     * @ensure return.isExternalPerson() : "The returned category denotes an external person.";
      */
     @Pure
     public abstract @Nonnull Category getCategory();

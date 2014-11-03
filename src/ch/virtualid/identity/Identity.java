@@ -14,6 +14,10 @@ import javax.annotation.Nonnull;
 /**
  * This interface models a virtual identity.
  * 
+ * @see IdentityClass
+ * @see InternalIdentity
+ * @see ExternalIdentity
+ * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */

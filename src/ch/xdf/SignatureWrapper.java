@@ -4,6 +4,7 @@ import ch.virtualid.agent.Agent;
 import ch.virtualid.annotations.Exposed;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
+import ch.virtualid.concepts.Certificate;
 import ch.virtualid.cryptography.PublicKey;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.exceptions.external.ExternalException;
@@ -22,7 +23,6 @@ import ch.virtualid.packet.Audit;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.ReadonlyArray;
 import java.io.IOException;
-import java.math.BigInteger;
 import java.sql.SQLException;
 import java.util.Objects;
 import javax.annotation.Nonnull;
@@ -357,8 +357,9 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
      * @param hash the hash of the element with index 0, which is to be signed.
      * 
      * @require elements.isNotFrozen() : "The elements are not frozen.";
+     * @require elements.isNotNull(0) : "The first element is not null.";
      */
-    protected void sign(@Nonnull FreezableArray<Block> elements, @Nonnull BigInteger hash) {}
+    protected void sign(@Nonnull FreezableArray<Block> elements) {}
     
     
     /**
@@ -386,7 +387,7 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
             final @Nonnull Block block = new TupleWrapper(CONTENT, subelements.freeze()).toBlock();
             elements.set(0, block);
             
-            sign(elements, block.getHash());
+            sign(elements);
             cache = new TupleWrapper(IMPLEMENTATION, elements.freeze()).toBlock();
         }
         return cache;
@@ -395,7 +396,7 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
     
     @Pure
     @Override
-    public @Nonnull SyntacticType getSyntacticType() {
+    public final @Nonnull SyntacticType getSyntacticType() {
         return TYPE;
     }
     
@@ -407,7 +408,7 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
     
     @Pure
     @Override
-    protected void encode(@Exposed @Nonnull Block block) {
+    protected final void encode(@Exposed @Nonnull Block block) {
         assert block.isEncoding() : "The given block is in the process of being encoded.";
         assert block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
         assert block.getLength() == determineLength() : "The block's length has to match the determined length.";
@@ -453,6 +454,27 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
     public final @Nonnull CredentialsSignatureWrapper toCredentialsSignatureWrapper() throws PacketException {
         if (this instanceof CredentialsSignatureWrapper) return (CredentialsSignatureWrapper) this;
         throw new PacketException(PacketError.SIGNATURE, "The element was not signed with credentials.");
+    }
+    
+    
+    /**
+     * Returns whether this signature is a certificate.
+     * 
+     * @return whether this signature is a certificate.
+     */
+    @Pure
+    public final boolean isCertificate() {
+        return getType().isBasedOn(Certificate.TYPE);
+    }
+    
+    /**
+     * Verifies this signature as a certificate and throws an exception if it is not valid.
+     * 
+     * @require isCertificate() : "This signature is a certificate.";
+     */
+    @Pure
+    public void verifyAsCertificate() throws SQLException, IOException, PacketException, ExternalException {
+        assert isCertificate() : "This signature is a certificate.";
     }
     
     

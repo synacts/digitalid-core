@@ -9,6 +9,8 @@ import javax.annotation.Nullable;
 /**
  * This interface models an external identity.
  * 
+ * @see ExternalPerson
+ * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */

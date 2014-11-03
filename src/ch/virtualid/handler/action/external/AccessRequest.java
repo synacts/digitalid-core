@@ -8,6 +8,7 @@ import ch.virtualid.contact.ContactPermissions;
 import ch.virtualid.contact.ReadonlyContactPermissions;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.exceptions.external.ExternalException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.ActionReply;
@@ -26,7 +27,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * Requests access to the given attributes of the given subject.
+ * Requests the given permissions of the given subject.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 1.9
@@ -46,30 +47,34 @@ public final class AccessRequest extends CoreServiceExternalAction {
     
     
     /**
-     * Stores the attributes of this access request.
+     * Stores the permissions of this access request.
      * 
-     * @invariant !attributes.isEmpty() : "The set of attributes is not empty.";
+     * @invariant permissions.isFrozen() : "The permissions are frozen.";
+     * @invariant permissions.isNotEmpty() : "The permissions are not empty.";
      */
-    private final @Nonnull ReadonlyContactPermissions attributes;
+    private final @Nonnull ReadonlyContactPermissions permissions;
     
     /**
-     * Creates an external action to request access to the given attributes of the given subject.
+     * Creates an external action to request the given permissions of the given subject.
      * 
      * @param entity the entity to which this handler belongs.
      * @param subject the subject of this handler.
-     * @param attributes the set of attributes.
+     * @param permissions the requested permissions.
      * 
      * @require !(entity instanceof Account) || canBeSentByHosts() : "Methods encoded on hosts can be sent by hosts.";
      * @require !(entity instanceof Role) || !canOnlyBeSentByHosts() : "Methods encoded on clients cannot only be sent by hosts.";
-     * @require !attributes.isEmpty() : "The set of attributes is not empty.";
+     * 
+     * @require permissions.isFrozen() : "The permissions are frozen.";
+     * @require !permissions.isEmpty() : "The permissions are not empty.";
      */
-    public AccessRequest(@Nonnull Entity entity, @Nonnull InternalPerson subject, @Nonnull ReadonlyContactPermissions attributes) {
+    public AccessRequest(@Nonnull Entity entity, @Nonnull InternalPerson subject, @Nonnull ReadonlyContactPermissions permissions) {
         super(entity, subject);
         
-        assert !attributes.isEmpty() : "The set of attributes is not empty.";
+        assert permissions.isFrozen() : "The permissions are frozen.";
+        assert permissions.isNotEmpty() : "The permissions are not empty.";
         
-        this.attributes = attributes;
-        this.requiredPermissions = attributes.toAgentPermissions().freeze();
+        this.permissions = permissions;
+        this.requiredPermissions = permissions.toAgentPermissions().freeze();
         this.faildedAuditRestrictions = new Restrictions(false, false, true, Contact.get(entity, subject));
     }
     
@@ -91,33 +96,35 @@ public final class AccessRequest extends CoreServiceExternalAction {
         
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
-        this.attributes = new ContactPermissions(block).freeze();
-        this.requiredPermissions = attributes.toAgentPermissions().freeze();
+        this.permissions = new ContactPermissions(block).freeze();
+        if (permissions.isEmpty()) throw new InvalidEncodingException("The permissions may not be empty.");
+        this.requiredPermissions = permissions.toAgentPermissions().freeze();
         this.faildedAuditRestrictions = new Restrictions(false, false, true, Contact.get(entity, signature.getSubjectNotNull().getIdentity().toPerson()));
     }
     
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        return attributes.toBlock().setType(TYPE);
+        return permissions.toBlock().setType(TYPE);
     }
     
     @Pure
     @Override
     public @Nonnull String toString() {
-        return "Requests access to " + attributes + ".";
+        return "Requests access to " + permissions + ".";
     }
     
     
     /**
-     * Returns the attributes of this access request.
+     * Returns the permissions of this access request.
      * 
-     * @return the attributes of this access request.
+     * @return the permissions of this access request.
      * 
-     * @ensure !return.isEmpty() : "The set of attributes is not empty.";
+     * @ensure return.isFrozen() : "The permissions are frozen.";
+     * @ensure return.isNotEmpty() : "The permissions are not empty.";
      */
-    public @Nonnull ReadonlyContactPermissions getAttributes() {
-        return attributes;
+    public @Nonnull ReadonlyContactPermissions getPermissions() {
+        return permissions;
     }
     
     
@@ -129,6 +136,8 @@ public final class AccessRequest extends CoreServiceExternalAction {
     
     /**
      * Stores the required permissions for this method.
+     * 
+     * @invariant requiredPermissions.isFrozen() : "The required permissions are frozen.";
      */
     private final @Nonnull ReadonlyAgentPermissions requiredPermissions;
     

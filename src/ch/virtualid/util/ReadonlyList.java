@@ -59,7 +59,7 @@ public interface ReadonlyList<E> extends ReadonlyCollection<E> {
      * @return the element at the given index.
      * 
      * @require index >= 0 && index < size() : "The index is valid.";
-     * @require get(index) != null : "The element at the given index is not null.";
+     * @require isNotNull(index) : "The element at the given index is not null.";
      */
     @Pure
     public @Nonnull E getNotNull(int index);

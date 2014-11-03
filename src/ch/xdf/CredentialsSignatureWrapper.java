@@ -799,7 +799,10 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
     }
     
     @Override
-    protected void sign(@Nonnull FreezableArray<Block> elements, @Nonnull BigInteger hash) {
+    protected void sign(@Nonnull FreezableArray<Block> elements) {
+        assert elements.isNotFrozen() : "The elements are not frozen.";
+        assert elements.isNotNull(0) : "The first element is not null.";
+        
         assert credentials.get(0) instanceof ClientCredential : "The first credential is a client credential (like all others).";
         final @Nonnull ClientCredential mainCredential = (ClientCredential) credentials.getNotNull(0);
         final @Nonnull Exponent u = mainCredential.getU();
@@ -877,7 +880,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
             if (rv != null) f = f.multiply(publicKey.getAv().pow(v));
         }
         
-        final @Nonnull Exponent t = new Exponent(hash.xor(new ListWrapper(ARRAYS, ts.freeze()).toBlock().getHash()).xor(tf));
+        final @Nonnull Exponent t = new Exponent(elements.getNotNull(0).getHash().xor(new ListWrapper(ARRAYS, ts.freeze()).toBlock().getHash()).xor(tf));
         
         final @Nonnull FreezableArray<Block> signature = new FreezableArray<Block>(8);
         signature.set(0, t.toBlock().setType(T));
@@ -928,6 +931,15 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
         }
         
         elements.set(3, new TupleWrapper(SIGNATURE, signature.freeze()).toBlock());
+    }
+    
+    
+    @Pure
+    @Override
+    public void verifyAsCertificate() throws InvalidEncodingException {
+        assert isCertificate() : "This signature is a certificate.";
+        
+        throw new InvalidEncodingException("A certificate cannot be signed with credentials.");
     }
     
     

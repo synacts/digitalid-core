@@ -43,17 +43,24 @@ public final class Predecessor implements Immutable, Blockable {
     
     /**
      * Stores the predecessors of this predecessor.
+     * 
+     * @invariant predecessors.isFrozen() : "The predecessors are frozen.";
      */
     private final @Nonnull Predecessors predecessors;
     
     /**
-     * Creates a new predecessor with the given identifier.
+     * Creates a new predecessor with the given identifier and predecessors.
      * 
      * @param identifier the identifier of this predecessor.
+     * @param predecessors the predecessors of this predecessor.
+     * 
+     * @require predecessors.isFrozen() : "The predecessors are frozen.";
      */
-    public Predecessor(@Nonnull Identifier identifier) throws SQLException {
+    public Predecessor(@Nonnull Identifier identifier, @Nonnull Predecessors predecessors) throws SQLException {
+        assert predecessors.isFrozen() : "The predecessors are frozen.";
+        
         this.identifier = identifier;
-        this.predecessors = new Predecessors(identifier);
+        this.predecessors = predecessors;
     }
     
     /**
@@ -106,6 +113,8 @@ public final class Predecessor implements Immutable, Blockable {
      * Returns the predecessors of this predecessor.
      * 
      * @return the predecessors of this predecessor.
+     * 
+     * @ensure return.isFrozen() : "The predecessors are frozen.";
      */
     public @Nonnull Predecessors getPredecessors() {
         return predecessors;
