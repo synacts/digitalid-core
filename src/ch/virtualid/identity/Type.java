@@ -33,12 +33,6 @@ public abstract class Type extends NonHostIdentityClass implements InternalNonHo
     private @Nonnull InternalNonHostIdentifier address;
     
     /**
-     * Stores whether the type declaration has already been loaded.
-     * (Lazy loading is necessary for recursive type declarations.)
-     */
-    private boolean loaded = false;
-    
-    /**
      * Creates a new type with the given number and address.
      * 
      * @param number the number that represents this identity.
@@ -72,6 +66,12 @@ public abstract class Type extends NonHostIdentityClass implements InternalNonHo
         throw exception;
     }
     
+    
+    /**
+     * Stores whether the type declaration has already been loaded.
+     * (Lazy loading is necessary for recursive type declarations.)
+     */
+    private boolean loaded = false;
     
     /**
      * Returns whether the type declaration has already been loaded.

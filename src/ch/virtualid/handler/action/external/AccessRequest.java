@@ -203,15 +203,9 @@ public final class AccessRequest extends CoreServiceExternalAction {
     /**
      * The factory class for the surrounding method.
      */
-    protected static final class Factory extends Method.Factory {
+    private static final class Factory extends Method.Factory {
         
-        static { Method.add(new Factory()); }
-        
-        @Pure
-        @Override
-        public @Nonnull SemanticType getType() {
-            return TYPE;
-        }
+        static { Method.add(TYPE, new Factory()); }
         
         @Pure
         @Override

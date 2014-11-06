@@ -343,9 +343,9 @@ public abstract class Method extends Handler {
     
     
     /**
-     * Each method needs to {@link #add(ch.virtualid.handler.Method.Factory) register} a factory that inherits from this class.
+     * Each method needs to {@link #add(ch.virtualid.identity.SemanticType, ch.virtualid.handler.Method.Factory) register} a factory that inherits from this class.
      */
-    protected static abstract class Factory extends Handler.Factory {
+    protected static abstract class Factory {
         
         /**
          * Creates a method that handles contents of the indicated type.
@@ -372,15 +372,16 @@ public abstract class Method extends Handler {
     /**
      * Maps method types to the factory that creates handlers for that type.
      */
-    private static final @Nonnull Map<SemanticType, Method.Factory> factories = new ConcurrentHashMap<SemanticType, Method.Factory>();
+    private static final @Nonnull Map<SemanticType, Factory> factories = new ConcurrentHashMap<SemanticType, Factory>();
     
     /**
-     * Adds the given method factory.
+     * Adds the given factory that creates handlers for the given type.
      * 
+     * @param type the type to handle.
      * @param factory the factory to add.
      */
-    protected static void add(@Nonnull Method.Factory factory) {
-        factories.put(factory.getType(), factory);
+    protected static void add(@Nonnull SemanticType type, @Nonnull Factory factory) {
+        factories.put(type, factory);
     }
     
     /**

@@ -93,15 +93,9 @@ public final class StateReply extends CoreServiceQueryReply {
     /**
      * The factory class for the surrounding method.
      */
-    protected static final class Factory extends Reply.Factory {
+    private static final class Factory extends Reply.Factory {
         
-        static { Reply.add(new Factory()); }
-        
-        @Pure
-        @Override
-        public @Nonnull SemanticType getType() {
-            return TYPE;
-        }
+        static { Reply.add(TYPE, new Factory()); }
         
         @Pure
         @Override

@@ -281,58 +281,62 @@ public final class Cache {
     }
     
     /**
-     * Returns the attributes of the given identity with the given types.
-     * The attributes are returned in the same order as given by the types.
-     * If an attribute is not available, the value null is returned instead.
-     * If an attribute is certified, the certificate is verified and stripped
-     * from the attribute in case the signature or the delegation is invalid.
-     * 
-     * @param identity the identity whose attributes are to be returned.
-     * @param role the role that queries the attributes or null for hosts.
-     * @param types the types of the attributes which are to be returned.
-     * 
-     * @return the attributes of the given identity with the given types.
-     * 
-     * @require types.length > 0 : "At least one type is given.";
-     * @require for (SemanticType type : types) type != null && type.isAttributeFor(identity.getCategory()) : "Each type is not null and can be used as an attribute for the category of the given identity.";
-     * 
-     * @ensure return.length == types.length : "The returned attributes are as many as the given types.";
-     * @ensure for (SignatureWrapper attribute : return) return.getType().equals(Certificate.TYPE) : "Each returned attribute has the indicated type.";
-     * @ensure for (i = 0; i < return.length; i++) new SelfcontainedWrapper(return[i].getElementNotNull()).getElement().getType().equals(types[i])) : "Each returned attribute matches the corresponding type.";
-     */
-    @Pure
-    public static @Nonnull SignatureWrapper[] getAttributes(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull SemanticType... types) throws SQLException, IOException, PacketException, ExternalException {
-        return getAttributes(identity, role, new Time(), types);
-    }
-    
-    /**
      * Returns the attribute of the given identity with the given type.
-     * If the attribute is not available, a {@link AttributeNotFoundException} is thrown instead.
      * If the attribute is certified, the certificate is verified and stripped
      * from the attribute in case the signature or the delegation is invalid.
      * 
      * @param identity the identity whose attribute is to be returned.
      * @param role the role that queries the attribute or null for hosts.
+     * @param time the time at which the cached attribute has to be fresh.
      * @param type the type of the attribute which is to be returned.
      * 
      * @return the attribute of the given identity with the given type.
      * 
+     * @throws AttributeNotFoundException if the attribute is not available.
+     * 
+     * @require time.isNonNegative() : "The given time is non-negative.";
      * @require type.isAttributeFor(identity.getCategory()) : "The type can be used as an attribute for the category of the given identity.";
      * 
      * @ensure return.getType().equals(Certificate.TYPE) : "The returned attribute has the indicated type.";
      * @ensure new SelfcontainedWrapper(return.getElementNotNull()).getElement().getType().equals(type)) : "The returned attribute matches the given type.";
      */
     @Pure
-    public static @Nonnull SignatureWrapper getAttribute(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull SemanticType type) throws SQLException, IOException, PacketException, ExternalException {
-        final @Nonnull SignatureWrapper[] attributes = getAttributes(identity, role, type);
+    public static @Nonnull SignatureWrapper getAttribute(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull Time time, @Nonnull SemanticType type) throws SQLException, IOException, PacketException, ExternalException {
+        final @Nonnull SignatureWrapper[] attributes = getAttributes(identity, role, time, type);
         if (attributes[0] == null) throw new AttributeNotFoundException(identity, type);
         else return attributes[0];
     }
     
     /**
      * Returns the attribute value of the given identity with the given type.
-     * If the attribute is not available, a {@link AttributeNotFoundException} is thrown.
-     * If the attribute should be certified but is not, a {@link CertificateNotFoundException} is thrown.
+     * 
+     * @param identity the identity whose attribute value is to be returned.
+     * @param role the role that queries the attribute value or null for hosts.
+     * @param time the time at which the cached attribute has to be fresh.
+     * @param type the type of the attribute value which is to be returned.
+     * @param certified whether the attribute value should be certified.
+     * 
+     * @return the attribute value of the given identity with the given type.
+     * 
+     * @throws AttributeNotFoundException if the attribute is not available.
+     * @throws CertificateNotFoundException if the attribute should be certified but is not.
+     * 
+     * @require time.isNonNegative() : "The given time is non-negative.";
+     * @require type.isAttributeFor(identity.getCategory()) : "The type can be used as an attribute for the category of the given identity.";
+     * 
+     * @ensure return.getType().equals(type) : "The returned block has the given type.";
+     */
+    @Pure
+    public static @Nonnull Block getAttributeValue(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull Time time, @Nonnull SemanticType type, boolean certified) throws SQLException, IOException, PacketException, ExternalException {
+        final @Nonnull SignatureWrapper attribute = getAttribute(identity, role, time, type);
+        if (certified && !(attribute instanceof HostSignatureWrapper)) throw new CertificateNotFoundException(identity, type);
+        final @Nonnull Block block = new SelfcontainedWrapper(attribute.getElementNotNull()).getElement();
+        if (!block.getType().equals(type)) throw new InvalidEncodingException("The returned attribute does not match the queried type.");
+        return block;
+    }
+    
+    /**
+     * Returns the fresh attribute value of the given identity with the given type.
      * 
      * @param identity the identity whose attribute value is to be returned.
      * @param role the role that queries the attribute value or null for hosts.
@@ -341,19 +345,58 @@ public final class Cache {
      * 
      * @return the attribute value of the given identity with the given type.
      * 
+     * @throws AttributeNotFoundException if the attribute is not available.
+     * @throws CertificateNotFoundException if the attribute should be certified but is not.
+     * 
      * @require type.isAttributeFor(identity.getCategory()) : "The type can be used as an attribute for the category of the given identity.";
      * 
      * @ensure return.getType().equals(type) : "The returned block has the given type.";
      */
     @Pure
-    public static @Nonnull Block getAttributeValue(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull SemanticType type, boolean certified) throws SQLException, IOException, PacketException, ExternalException {
-        assert type.isAttributeFor(identity.getCategory()) : "The type can be used as an attribute for the category of the given identity.";
-        
-        final @Nonnull SignatureWrapper attribute = getAttribute(identity, role, type);
-        if (certified && !(attribute instanceof HostSignatureWrapper)) throw new CertificateNotFoundException(identity, type);
-        final @Nonnull Block block = new SelfcontainedWrapper(attribute.getElementNotNull()).getElement();
-        if (!block.getType().equals(type)) throw new InvalidEncodingException("The returned attribute does not match the queried type.");
-        return block;
+    public static @Nonnull Block getFreshAttributeValue(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull SemanticType type, boolean certified) throws SQLException, IOException, PacketException, ExternalException {
+        return getAttributeValue(identity, role, new Time(), type, certified);
+    }
+    
+    /**
+     * Returns the reloaded attribute value of the given identity with the given type.
+     * 
+     * @param identity the identity whose attribute value is to be returned.
+     * @param role the role that queries the attribute value or null for hosts.
+     * @param type the type of the attribute value which is to be returned.
+     * @param certified whether the attribute value should be certified.
+     * 
+     * @return the attribute value of the given identity with the given type.
+     * 
+     * @throws AttributeNotFoundException if the attribute is not available.
+     * @throws CertificateNotFoundException if the attribute should be certified but is not.
+     * 
+     * @require type.isAttributeFor(identity.getCategory()) : "The type can be used as an attribute for the category of the given identity.";
+     * 
+     * @ensure return.getType().equals(type) : "The returned block has the given type.";
+     */
+    @Pure
+    public static @Nonnull Block getReloadedAttributeValue(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull SemanticType type, boolean certified) throws SQLException, IOException, PacketException, ExternalException {
+        return getAttributeValue(identity, role, Time.MAX, type, certified);
+    }
+    
+    /**
+     * Returns the stale attribute value of the given identity with the given type.
+     * 
+     * @param identity the identity whose attribute value is to be returned.
+     * @param role the role that queries the attribute value or null for hosts.
+     * @param type the type of the attribute value which is to be returned.
+     * 
+     * @return the attribute value of the given identity with the given type.
+     * 
+     * @throws AttributeNotFoundException if the attribute is not available.
+     * 
+     * @require type.isAttributeFor(identity.getCategory()) : "The type can be used as an attribute for the category of the given identity.";
+     * 
+     * @ensure return.getType().equals(type) : "The returned block has the given type.";
+     */
+    @Pure
+    public static @Nonnull Block getStaleAttributeValue(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull SemanticType type) throws SQLException, IOException, PacketException, ExternalException {
+        return getAttributeValue(identity, role, Time.MIN, type, false);
     }
     
     /**
@@ -365,7 +408,7 @@ public final class Cache {
      */
     @Pure
     public static @Nonnull PublicKeyChain getPublicKeyChain(@Nonnull HostIdentity identity) throws SQLException, IOException, PacketException, ExternalException {
-        return new PublicKeyChain(getAttributeValue(identity, null, PublicKeyChain.TYPE, true));
+        return new PublicKeyChain(getFreshAttributeValue(identity, null, PublicKeyChain.TYPE, true));
     }
     
     /**

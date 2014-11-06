@@ -2,16 +2,21 @@ package ch.virtualid.identity;
 
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
+import ch.virtualid.client.Cache;
 import ch.virtualid.contact.Context;
 import ch.virtualid.database.Database;
+import ch.virtualid.exceptions.external.AttributeNotFoundException;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketException;
+import ch.virtualid.identifier.IdentifierClass;
 import ch.virtualid.identifier.InternalNonHostIdentifier;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.util.FreezableArray;
-import ch.virtualid.util.FreezableLinkedList;
+import ch.virtualid.util.FreezableArrayList;
+import ch.virtualid.util.FreezableList;
 import ch.virtualid.util.ReadonlyList;
+import ch.xdf.Block;
 import ch.xdf.DataWrapper;
 import ch.xdf.ListWrapper;
 import java.io.IOException;
@@ -23,10 +28,10 @@ import javax.annotation.Nullable;
  * This class models a semantic type.
  * 
  * @invariant !isLoaded() || isAttributeType() == (getCachingPeriod() != null) : "If (and only if) this semantic type can be used as an attribute, the caching period is not null.";
- * @invariant !isLoaded() || getSyntacticBase().getNumberOfParameters() == -1 && parameters.size() > 0 || getSyntacticBase().getNumberOfParameters() == getParameters().size() : "The number of required parameters is either variable or matches the given parameters.";
+ * @invariant !isLoaded() || getSyntacticBase().getNumberOfParameters() == -1 && getParameters().size() > 0 || getSyntacticBase().getNumberOfParameters() == getParameters().size() : "The number of required parameters is either variable or matches the given parameters.";
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 1.8
+ * @version 2.0
  */
 public final class SemanticType extends Type implements Immutable {
     
@@ -45,30 +50,32 @@ public final class SemanticType extends Type implements Immutable {
      */
     public static final @Nonnull SemanticType ROLE_IDENTIFIER = SemanticType.create("role.type@virtualid.ch").load(SemanticType.IDENTIFIER);
     
+    
     /**
      * Stores the semantic type {@code categories.attribute.type@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType CATEGORIES = SemanticType.create("categories.attribute.type@virtualid.ch").load(ListWrapper.TYPE, Category.TYPE);
+    public static final @Nonnull SemanticType CATEGORIES = SemanticType.create("categories.attribute.type@virtualid.ch").load(new Category[] {Category.SEMANTIC_TYPE}, Time.TROPICAL_YEAR, ListWrapper.TYPE, Category.TYPE);
     
     /**
      * Stores the semantic type {@code caching.attribute.type@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType CACHING = SemanticType.create("caching.attribute.type@virtualid.ch").load(Time.TYPE);
+    public static final @Nonnull SemanticType CACHING = SemanticType.create("caching.attribute.type@virtualid.ch").load(new Category[] {Category.SEMANTIC_TYPE}, Time.TROPICAL_YEAR, Time.TYPE);
     
     /**
      * Stores the semantic type {@code syntactic.base.semantic.type@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType SYNTACTIC_BASE = SemanticType.create("syntactic.base.semantic.type@virtualid.ch").load(SyntacticType.IDENTIFIER);
+    public static final @Nonnull SemanticType SYNTACTIC_BASE = SemanticType.create("syntactic.base.semantic.type@virtualid.ch").load(new Category[] {Category.SEMANTIC_TYPE}, Time.TROPICAL_YEAR, SyntacticType.IDENTIFIER);
     
     /**
      * Stores the semantic type {@code parameters.semantic.type@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType PARAMETERS = SemanticType.create("parameters.semantic.type@virtualid.ch").load(ListWrapper.TYPE, SyntacticType.IDENTIFIER);
+    public static final @Nonnull SemanticType PARAMETERS = SemanticType.create("parameters.semantic.type@virtualid.ch").load(new Category[] {Category.SEMANTIC_TYPE}, Time.TROPICAL_YEAR, ListWrapper.TYPE, SemanticType.IDENTIFIER);
     
     /**
      * Stores the semantic type {@code semantic.base.semantic.type@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType SEMANTIC_BASE = SemanticType.create("semantic.base.semantic.type@virtualid.ch").load(SemanticType.IDENTIFIER);
+    public static final @Nonnull SemanticType SEMANTIC_BASE = SemanticType.create("semantic.base.semantic.type@virtualid.ch").load(new Category[] {Category.SEMANTIC_TYPE}, Time.TROPICAL_YEAR, SemanticType.IDENTIFIER);
+    
     
     /**
      * Stores the semantic type {@code unknown@virtualid.ch}.
@@ -89,7 +96,7 @@ public final class SemanticType extends Type implements Immutable {
     /**
      * Stores the caching period of this semantic type when used as an attribute.
      * 
-     * @invariant cachingPeriod == null || cachingPeriod.isNonNegative() : "The caching period is null or non-negative.";
+     * @invariant cachingPeriod == null || cachingPeriod.isNonNegative() && cachingPeriod.isLessThanOrEqualTo(Time.TROPICAL_YEAR) : "The caching period is null or non-negative and less than a year.";
      */
     private @Nullable Time cachingPeriod;
     
@@ -135,8 +142,7 @@ public final class SemanticType extends Type implements Immutable {
      * @param identifier the identifier of the new semantic type.
      * 
      * @require Database.isMainThread() : "This method may only be called in the main thread.";
-     * @require Identifier.isValid(identifier) : "The string is a valid identifier.";
-     * @require !Identifier.isHost(identifier) : "The string may not denote a host identifier.";
+     * @require InternalNonHostIdentifier.isValid(identifier) : "The string is a valid internal non-host identifier.";
      * 
      * @ensure !isLoaded() : "The type declaration has not yet been loaded.";
      */
@@ -145,89 +151,44 @@ public final class SemanticType extends Type implements Immutable {
     }
     
     
-    /**
-     * Returns whether the type declaration has already been loaded.
-     * 
-     * @return whether the type declaration has already been loaded.
-     */
-    private boolean isLoading() {
-        return !isLoaded() && categories != null;
-    }
-    
     @Override
     void load() throws SQLException, IOException, PacketException, ExternalException {
         assert !isLoaded() : "The type declaration may not yet have been loaded.";
         
-        /*
+        if (categories != null) throw new InvalidEncodingException("The semantic base may not be circular.");
         
-        // TODO: Make a single lookup for all desired attributes of this semantic type.
+        Cache.getAttributes(this, null, Time.MIN, CATEGORIES, CACHING, SYNTACTIC_BASE, PARAMETERS, SEMANTIC_BASE);
         
-        // If a semantic base is loaded, make sure that it !isLoading() and throw an InvalidDeclarationException otherwise.
+        final @Nonnull ReadonlyList<Block> elements = new ListWrapper(Cache.getStaleAttributeValue(this, null, CATEGORIES)).getElementsNotNull();
+        final @Nonnull FreezableList<Category> categories = new FreezableArrayList<Category>(elements.size());
+        for (final @Nonnull Block element : elements) categories.add(Category.get(element));
+        if (categories.doesNotContainDuplicates()) throw new InvalidEncodingException("The list of categories may not contain duplicates.");
+        this.categories = categories.freeze();
         
-        // TODO: Tolerate stale attributes from the cache! (Might not be necessary, as types are usually only checked in assertions.)
-        
-        // Return InvalidEncodingExceptions as InvalidDeclarationException.
-        
-        // categories
-        final @Nullable Block value = Client.getAttributeUnwrapped(this, SemanticType.ATTRIBUTE_TYPE_CATEGORIES);
-        if (value != null) {
-            final @Nonnull List<Block> elements = new ListWrapper(value).getElements();
-            for (final @Nonnull Block element : elements) {
-                if (Category.get(element) == category) return true;
-            }
+        try {
+            this.cachingPeriod = new Time(Cache.getStaleAttributeValue(this, null, CACHING));
+            if (cachingPeriod.isNegative() || cachingPeriod.isGreaterThan(Time.TROPICAL_YEAR)) throw new InvalidEncodingException("The caching period must be null or non-negative and less than a year.");
+        } catch (@Nonnull AttributeNotFoundException exception) {
+            this.cachingPeriod = null;
         }
+        if (categories.isNotEmpty() == (cachingPeriod == null)) throw new InvalidEncodingException("If (and only if) this semantic type can be used as an attribute, the caching period may not be null.");
         
-        // syntacticBase
-        final @Nullable Block syntacticBase = Client.getAttributeUnwrapped(this, SEMANTIC_TYPE_SYNTACTIC_BASE);
-        if (syntacticBase != null) {
-            final @Nullable Block syntacticBase = Client.getAttributeUnwrapped(this, SEMANTIC_TYPE_SYNTACTIC_BASE);
-            
-            new NonHostIdentifier(syntacticBase).getIdentity()
-            
-        } else {
-            syntacticBase = Client.getAttributeUnwrapped(this, SEMANTIC_TYPE_SEMANTIC_BASE);
-            if (syntacticBase == null) {
-                throw new InvalidDeclarationException(getAddress() + " does neither specify a base nor an inheritance.");
-            } else {
-                return new NonHostIdentifier(syntacticBase).getIdentity().toSemanticType().isBasedOn(syntacticType);
-            }
-        } else {
-            return new NonHostIdentifier(syntacticBase).getIdentity().equals(syntacticType);
+        try {
+            this.semanticBase = IdentifierClass.create(Cache.getStaleAttributeValue(this, null, SEMANTIC_BASE)).getIdentity().toSemanticType();
+            this.syntacticBase = semanticBase.syntacticBase;
+            this.parameters = semanticBase.parameters;
+            setLoaded();
+        } catch (@Nonnull AttributeNotFoundException exception) {
+            this.syntacticBase = IdentifierClass.create(Cache.getStaleAttributeValue(this, null, SYNTACTIC_BASE)).getIdentity().toSyntacticType();
+            final @Nonnull ReadonlyList<Block> list = new ListWrapper(Cache.getStaleAttributeValue(this, null, PARAMETERS)).getElementsNotNull();
+            final @Nonnull FreezableList<SemanticType> parameters = new FreezableArrayList<SemanticType>(list.size());
+            for (final @Nonnull Block element : elements) parameters.add(Mapper.getIdentity(IdentifierClass.create(element)).toSemanticType());
+            if (parameters.doesNotContainDuplicates()) throw new InvalidEncodingException("The list of parameters may not contain duplicates.");
+            if (!(syntacticBase.getNumberOfParameters() == -1 && parameters.size() > 0 || syntacticBase.getNumberOfParameters() == parameters.size())) throw new InvalidEncodingException("The number of required parameters must either be variable or match the given parameters.");
+            this.parameters = parameters.freeze();
+            setLoaded();
+            for (final @Nonnull SemanticType parameter : parameters) parameter.ensureLoaded();
         }
-        
-        // parameters
-        @Nullable Block value = Client.getAttributeUnwrapped(this, SEMANTIC_TYPE_PARAMETERS);
-        if (value == null) {
-            value = Client.getAttributeUnwrapped(this, SEMANTIC_TYPE_SEMANTIC_BASE);
-            if (value == null) {
-                throw new InvalidDeclarationException(getAddress() + " does neither specify a base nor an inheritance.");
-            } else {
-                return new NonHostIdentifier(value).getIdentity().toSemanticType().getParameters();
-            }
-        } else {
-            @Nonnull List<Block> elements = new ListWrapper(value).getElements();
-            @Nonnull SemanticType[] parameters = new SemanticType[elements.size()];
-            for (int i = 0; i < elements.size(); i++) {
-                parameters[i] = new NonHostIdentifier(elements.get(i)).getIdentity().toSemanticType();
-            }
-            return parameters;
-        }
-        
-        // semanticBase
-        @Nullable Block value = Client.getAttributeUnwrapped(this, SEMANTIC_TYPE_SEMANTIC_BASE);
-        if (value == null) return false;
-        @Nonnull SemanticType superType = new NonHostIdentifier(value).getIdentity().toSemanticType();
-        if (this.equals(superType)) return true;
-        else return superType.isBasedOn(semanticType);
-        
-        */
-        
-        this.categories = new FreezableLinkedList<Category>().freeze();
-        this.cachingPeriod = null;
-        this.syntacticBase = DataWrapper.TYPE;
-        this.parameters = new FreezableLinkedList<SemanticType>().freeze();
-        this.semanticBase = null;
-        setLoaded();
     }
     
     /**
@@ -238,6 +199,8 @@ public final class SemanticType extends Type implements Immutable {
      * @param syntacticBase the syntactic type on which this semantic type is based.
      * @param parameters the generic parameters of the syntactic type.
      * 
+     * @return this semantic type.
+     * 
      * @require !isLoaded() : "The type declaration may not yet have been loaded.";
      * @require Database.isMainThread() : "This method may only be called in the main thread.";
      * 
@@ -245,7 +208,7 @@ public final class SemanticType extends Type implements Immutable {
      * @require categories.doesNotContainNull() : "The categories may not contain null.";
      * @require categories.doesNotContainDuplicates() : "The categories may not contain duplicates.";
      * 
-     * @require cachingPeriod == null || cachingPeriod.isNonNegative() : "The caching period is null or non-negative.";
+     * @require cachingPeriod == null || cachingPeriod.isNonNegative() && cachingPeriod.isLessThanOrEqualTo(Time.TROPICAL_YEAR) : "The caching period is null or non-negative and less than a year.";
      * 
      * @require parameters.isFrozen() : "The parameters have to be frozen.";
      * @require parameters.doesNotContainNull() : "The parameters may not contain null.";
@@ -264,7 +227,7 @@ public final class SemanticType extends Type implements Immutable {
         assert categories.doesNotContainNull() : "The categories may not contain null.";
         assert categories.doesNotContainDuplicates() : "The categories may not contain duplicates.";
         
-        assert cachingPeriod == null || cachingPeriod.isNonNegative() : "The caching period is null or non-negative.";
+        assert cachingPeriod == null || cachingPeriod.isNonNegative() && cachingPeriod.isLessThanOrEqualTo(Time.TROPICAL_YEAR) : "The caching period is null or non-negative and less than a year.";
         
         assert parameters.isFrozen() : "The parameters have to be frozen.";
         assert parameters.doesNotContainNull() : "The parameters may not contain null.";
@@ -291,13 +254,15 @@ public final class SemanticType extends Type implements Immutable {
      * @param syntacticBase the syntactic type on which this semantic type is based.
      * @param parameters the generic parameters of the syntactic type.
      * 
+     * @return this semantic type.
+     * 
      * @require !isLoaded() : "The type declaration may not yet have been loaded.";
      * @require Database.isMainThread() : "This method may only be called in the main thread.";
      * 
      * @require new FreezableArray<Category>(categories).doesNotContainNull() : "The categories may not contain null.";
      * @require new FreezableArray<Category>(categories).doesNotContainDuplicates() : "The categories may not contain duplicates.";
      * 
-     * @require cachingPeriod == null || cachingPeriod.isNonNegative() : "The caching period is null or non-negative.";
+     * @require cachingPeriod == null || cachingPeriod.isNonNegative() && cachingPeriod.isLessThanOrEqualTo(Time.TROPICAL_YEAR) : "The caching period is null or non-negative and less than a year.";
      * 
      * @require new FreezableArray<SemanticType>(parameters).doesNotContainNull() : "The parameters may not contain null.";
      * @require new FreezableArray<SemanticType>(parameters).doesNotContainDuplicates() : "The parameters may not contain duplicates.";
@@ -316,6 +281,8 @@ public final class SemanticType extends Type implements Immutable {
      * 
      * @param syntacticBase the syntactic type on which this semantic type is based.
      * @param parameters the generic parameters of the syntactic type.
+     * 
+     * @return this semantic type.
      * 
      * @require !isLoaded() : "The type declaration may not yet have been loaded.";
      * @require Database.isMainThread() : "This method may only be called in the main thread.";
@@ -338,6 +305,8 @@ public final class SemanticType extends Type implements Immutable {
      * @param cachingPeriod the caching period of this semantic type when used as an attribute.
      * @param semanticBase the semantic type on which this semantic type is based.
      * 
+     * @return this semantic type.
+     * 
      * @require !isLoaded() : "The type declaration may not yet have been loaded.";
      * @require Database.isMainThread() : "This method may only be called in the main thread.";
      * 
@@ -345,7 +314,7 @@ public final class SemanticType extends Type implements Immutable {
      * @require categories.doesNotContainNull() : "The categories may not contain null.";
      * @require categories.doesNotContainDuplicates() : "The categories may not contain duplicates.";
      * 
-     * @require cachingPeriod == null || cachingPeriod.isNonNegative() : "The caching period is null or non-negative.";
+     * @require cachingPeriod == null || cachingPeriod.isNonNegative() && cachingPeriod.isLessThanOrEqualTo(Time.TROPICAL_YEAR) : "The caching period is null or non-negative and less than a year.";
      * 
      * @require semanticBase.isLoaded() : "The semantic base is already loaded.";
      * 
@@ -361,7 +330,7 @@ public final class SemanticType extends Type implements Immutable {
         assert categories.doesNotContainNull() : "The categories may not contain null.";
         assert categories.doesNotContainDuplicates() : "The categories may not contain duplicates.";
         
-        assert cachingPeriod == null || cachingPeriod.isNonNegative() : "The caching period is null or non-negative.";
+        assert cachingPeriod == null || cachingPeriod.isNonNegative() && cachingPeriod.isLessThanOrEqualTo(Time.TROPICAL_YEAR) : "The caching period is null or non-negative and less than a year.";
         
         assert semanticBase.isLoaded() : "The semantic base is already loaded.";
         
@@ -384,13 +353,15 @@ public final class SemanticType extends Type implements Immutable {
      * @param cachingPeriod the caching period of this semantic type when used as an attribute.
      * @param semanticBase the semantic type on which this semantic type is based.
      * 
+     * @return this semantic type.
+     * 
      * @require !isLoaded() : "The type declaration may not yet have been loaded.";
      * @require Database.isMainThread() : "This method may only be called in the main thread.";
      * 
      * @require new FreezableArray<Category>(categories).doesNotContainNull() : "The categories may not contain null.";
      * @require new FreezableArray<Category>(categories).doesNotContainDuplicates() : "The categories may not contain duplicates.";
      * 
-     * @require cachingPeriod == null || cachingPeriod.isNonNegative() : "The caching period is null or non-negative.";
+     * @require cachingPeriod == null || cachingPeriod.isNonNegative() && cachingPeriod.isLessThanOrEqualTo(Time.TROPICAL_YEAR) : "The caching period is null or non-negative and less than a year.";
      * 
      * @require semanticBase.isLoaded() : "The semantic base is already loaded.";
      * 
@@ -406,6 +377,8 @@ public final class SemanticType extends Type implements Immutable {
      * Loads the type declaration from the given parameters.
      * 
      * @param semanticBase the semantic type on which this semantic type is based.
+     * 
+     * @return this semantic type.
      * 
      * @require !isLoaded() : "The type declaration may not yet have been loaded.";
      * @require Database.isMainThread() : "This method may only be called in the main thread.";
@@ -452,7 +425,7 @@ public final class SemanticType extends Type implements Immutable {
      * 
      * @require isLoaded() : "The type declaration is already loaded.";
      * 
-     * @ensure return == null || return.isNonNegative() : "The caching period is null or non-negative.";
+     * @ensure return == null || return.isNonNegative() && return.isLessThanOrEqualTo(Time.TROPICAL_YEAR) : "The caching period is null or non-negative and less than a year.";
      */
     @Pure
     public @Nullable Time getCachingPeriod() {
@@ -526,7 +499,7 @@ public final class SemanticType extends Type implements Immutable {
         assert isLoaded() : "The type declaration is already loaded.";
         
         assert categories != null;
-        return !categories.isEmpty();
+        return categories.isNotEmpty();
     }
     
     /**

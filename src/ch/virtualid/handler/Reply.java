@@ -102,9 +102,9 @@ public abstract class Reply extends Handler implements SQLizable {
     
     
     /**
-     * Each reply needs to {@link #add(ch.virtualid.handler.Reply.Factory) register} a factory that inherits from this class.
+     * Each reply needs to {@link #add(ch.virtualid.identity.SemanticType, ch.virtualid.handler.Reply.Factory) register} a factory that inherits from this class.
      */
-    protected static abstract class Factory extends Handler.Factory {
+    protected static abstract class Factory {
         
         /**
          * Creates a reply that handles contents of the indicated type.
@@ -129,15 +129,16 @@ public abstract class Reply extends Handler implements SQLizable {
     /**
      * Maps reply types to the factory that creates handlers for that type.
      */
-    private static final @Nonnull Map<SemanticType, Reply.Factory> factories = new ConcurrentHashMap<SemanticType, Reply.Factory>();
+    private static final @Nonnull Map<SemanticType, Factory> factories = new ConcurrentHashMap<SemanticType, Factory>();
     
     /**
-     * Adds the given reply factory.
+     * Adds the given factory that creates handlers for the given type.
      * 
+     * @param type the type to handle.
      * @param factory the factory to add.
      */
-    protected static void add(@Nonnull Reply.Factory factory) {
-        factories.put(factory.getType(), factory);
+    protected static void add(@Nonnull SemanticType type, @Nonnull Factory factory) {
+        factories.put(type, factory);
     }
     
     /**

@@ -1,11 +1,15 @@
 package ch.virtualid.identity;
 
 import ch.virtualid.annotations.Pure;
+import ch.virtualid.auxiliary.Time;
+import ch.virtualid.client.Cache;
 import ch.virtualid.database.Database;
 import ch.virtualid.exceptions.external.ExternalException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identifier.InternalNonHostIdentifier;
 import ch.virtualid.interfaces.Immutable;
+import ch.xdf.Int8Wrapper;
 import ch.xdf.StringWrapper;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -15,7 +19,7 @@ import javax.annotation.Nonnull;
  * This class models a syntactic type.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 1.9
+ * @version 2.0
  */
 public final class SyntacticType extends Type implements Immutable {
     
@@ -44,12 +48,18 @@ public final class SyntacticType extends Type implements Immutable {
     
     
     /**
+     * Stores the semantic type {@code parameters.syntactic.type@virtualid.ch}.
+     */
+    public static final @Nonnull SemanticType PARAMETERS = SemanticType.create("parameters.syntactic.type@virtualid.ch").load(new Category[] {Category.SYNTACTIC_TYPE}, Time.TROPICAL_YEAR, Int8Wrapper.TYPE);
+    
+    
+    /**
      * Stores the number of generic parameters of this syntactic type.
      * A value of -1 indicates a variable number of parameters.
      * 
      * @invariant !isLoaded() || numberOfParameters >= -1 : "The number of parameters is at least -1.";
      */
-    private int numberOfParameters;
+    private byte numberOfParameters;
     
     /**
      * Creates a new identity with the given number and address.
@@ -69,8 +79,7 @@ public final class SyntacticType extends Type implements Immutable {
      * @param identifier the identifier of the new syntactic type.
      * 
      * @require Database.isMainThread() : "This method may only be called in the main thread.";
-     * @require Identifier.isValid(identifier) : "The string is a valid identifier.";
-     * @require !Identifier.isHost(identifier) : "The string may not denote a host identifier.";
+     * @require InternalNonHostIdentifier.isValid(identifier) : "The string is a valid internal non-host identifier.";
      * 
      * @ensure !isLoaded() : "The type declaration has not yet been loaded.";
      */
@@ -83,8 +92,8 @@ public final class SyntacticType extends Type implements Immutable {
     void load() throws SQLException, IOException, PacketException, ExternalException {
         assert !isLoaded() : "The type declaration may not yet have been loaded.";
         
-        // TODO: Make the lookup for the number of generic parameters.
-        this.numberOfParameters = -1;
+        this.numberOfParameters = new Int8Wrapper(Cache.getStaleAttributeValue(this, null, PARAMETERS)).getValue();
+        if (numberOfParameters < -1) throw new InvalidEncodingException("The number of parameters has to be at least -1.");
         setLoaded();
     }
     
@@ -97,6 +106,7 @@ public final class SyntacticType extends Type implements Immutable {
      * @require Database.isMainThread() : "This method may only be called in the main thread.";
      * 
      * @require numberOfParameters >= -1 : "The number of parameters is at least -1.";
+     * @require numberOfParameters <= 127 : "The number of parameters is at most 127.";
      * 
      * @ensure isLoaded() : "The type declaration has been loaded.";
      */
@@ -105,8 +115,9 @@ public final class SyntacticType extends Type implements Immutable {
         assert Database.isMainThread() : "This method may only be called in the main thread.";
         
         assert numberOfParameters >= -1 : "The number of parameters is at least -1.";
+        assert numberOfParameters <= 127 : "The number of parameters is at most 127.";
         
-        this.numberOfParameters = numberOfParameters;
+        this.numberOfParameters = (byte) numberOfParameters;
         setLoaded();
         
         return this;
@@ -131,7 +142,7 @@ public final class SyntacticType extends Type implements Immutable {
      * @ensure numberOfParameters >= -1 : "The number of parameters is at least -1.";
      */
     @Pure
-    public int getNumberOfParameters() {
+    public byte getNumberOfParameters() {
         assert isLoaded() : "The type declaration is already loaded.";
         
         return numberOfParameters;

@@ -138,20 +138,4 @@ public abstract class Handler extends Concept implements Immutable, Blockable {
     @Pure
     public abstract @Nonnull Service getService();
     
-    
-    /**
-     * A factory creates handlers that can handle contents of the indicated type.
-     */
-    protected static abstract class Factory {
-        
-        /**
-         * Returns the type of contents that handlers created by this factory handle.
-         * 
-         * @return the type of contents that handlers created by this factory handle.
-         */
-        @Pure
-        public abstract @Nonnull SemanticType getType();
-        
-    }
-    
 }
