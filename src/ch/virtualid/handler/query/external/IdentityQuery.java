@@ -11,7 +11,7 @@ import ch.virtualid.handler.Method;
 import ch.virtualid.handler.reply.query.IdentityReply;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identifier.InternalIdentifier;
-import ch.virtualid.identifier.NonHostIdentifier;
+import ch.virtualid.identifier.InternalNonHostIdentifier;
 import ch.virtualid.identity.SemanticType;
 import ch.xdf.Block;
 import ch.xdf.EmptyWrapper;
@@ -46,7 +46,7 @@ public final class IdentityQuery extends CoreServiceExternalQuery {
      * 
      * @param subject the subject of this handler.
      */
-    public IdentityQuery(@Nonnull NonHostIdentifier subject) {
+    public IdentityQuery(@Nonnull InternalNonHostIdentifier subject) {
         super(null, subject);
     }
     
@@ -103,8 +103,8 @@ public final class IdentityQuery extends CoreServiceExternalQuery {
         assert hasSignature() : "This handler has a signature.";
         
         final @Nonnull InternalIdentifier subject = getSubject();
-        if (!(subject instanceof NonHostIdentifier)) throw new PacketException(PacketError.IDENTIFIER, "The identity may only be queried of non-host identities.");
-        return new IdentityReply((NonHostIdentifier) subject);
+        if (!(subject instanceof InternalNonHostIdentifier)) throw new PacketException(PacketError.IDENTIFIER, "The identity may only be queried of non-host identities.");
+        return new IdentityReply((InternalNonHostIdentifier) subject);
     }
     
     

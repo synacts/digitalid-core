@@ -29,7 +29,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * This class represents the context for contacts.
+ * This class models the context for contacts.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 1.4

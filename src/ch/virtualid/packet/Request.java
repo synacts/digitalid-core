@@ -15,9 +15,9 @@ import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Method;
 import ch.virtualid.handler.query.external.AttributesQuery;
 import ch.virtualid.identifier.HostIdentifier;
-import ch.virtualid.identifier.Identifier;
+import ch.virtualid.identifier.IdentifierClass;
 import ch.virtualid.identifier.InternalIdentifier;
-import ch.virtualid.identifier.NonHostIdentifier;
+import ch.virtualid.identifier.InternalNonHostIdentifier;
 import ch.virtualid.identity.Successor;
 import ch.virtualid.module.CoreService;
 import ch.virtualid.module.Service;
@@ -283,12 +283,12 @@ public class Request extends Packet {
         } catch (@Nonnull PacketException exception) {
             if (exception.getError() == PacketError.KEYROTATION && this instanceof ClientRequest) {
                 return ((ClientRequest) this).recommit(methods, verified);
-            } else if (exception.getError() == PacketError.RELOCATION && subject instanceof NonHostIdentifier) {
-                final @Nonnull NonHostIdentifier address = Successor.getReloaded(subject, true);
+            } else if (exception.getError() == PacketError.RELOCATION && subject instanceof InternalNonHostIdentifier) {
+                final @Nonnull InternalNonHostIdentifier address = Successor.getReloaded((InternalNonHostIdentifier) subject, true);
                 final @Nonnull HostIdentifier recipient = getMethod(0).getService().equals(CoreService.SERVICE) ? address.getHostIdentifier() : getRecipient();
                 return resend(methods, recipient, address, verified);
             } else if (exception.getError() == PacketError.SERVICE && !getMethod(0).isOnHost()) {
-                final @Nonnull HostIdentifier recipient = Identifier.create(Cache.getAttributeValue(subject.getIdentity(), (Role) getMethod(0).getEntity(), getMethod(0).getService().getType(), false)).toHostIdentifier();
+                final @Nonnull HostIdentifier recipient = IdentifierClass.create(Cache.getAttributeValue(subject.getIdentity(), (Role) getMethod(0).getEntity(), getMethod(0).getService().getType(), false)).toHostIdentifier();
                 return resend(methods, recipient, subject, verified);
             } else {
                 throw exception;

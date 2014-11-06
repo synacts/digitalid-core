@@ -14,7 +14,7 @@ import ch.virtualid.handler.ActionReply;
 import ch.virtualid.handler.Method;
 import ch.virtualid.handler.reply.action.CoreServiceActionReply;
 import ch.virtualid.identifier.HostIdentifier;
-import ch.virtualid.identifier.NonHostIdentifier;
+import ch.virtualid.identifier.InternalNonHostIdentifier;
 import ch.virtualid.identity.InternalIdentity;
 import ch.virtualid.identity.Person;
 import ch.virtualid.identity.SemanticType;
@@ -106,7 +106,7 @@ public final class RoleIssuance extends CoreServiceExternalAction {
         final @Nonnull SignatureWrapper certificate = SignatureWrapper.decodeUnverified(block, null);
         if (!(certificate instanceof HostSignatureWrapper)) throw new InvalidEncodingException("The block has to be signed by a host.");
         this.certificate = (HostSignatureWrapper) certificate;
-        if (!(this.certificate.getSigner() instanceof NonHostIdentifier)) throw new InvalidEncodingException("The certificate has to be signed by a non-host.");
+        if (!(this.certificate.getSigner() instanceof InternalNonHostIdentifier)) throw new InvalidEncodingException("The certificate has to be signed by a non-host.");
         
         this.attribute = new SelfcontainedWrapper(certificate.getElementNotNull()).getElement();
         if (!attribute.getType().isAttributeFor(getSubject().getIdentity().getCategory())) throw new InvalidEncodingException("The block is an attribute for the subject.");

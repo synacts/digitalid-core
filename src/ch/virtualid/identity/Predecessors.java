@@ -1,19 +1,22 @@
 package ch.virtualid.identity;
 
+import ch.virtualid.annotations.Capturable;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.database.Database;
 import ch.virtualid.errors.InitializationError;
+import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Reply;
-import ch.virtualid.identifier.Identifier;
-import ch.virtualid.identifier.NonHostIdentifier;
+import ch.virtualid.identifier.IdentifierClass;
+import ch.virtualid.identifier.InternalNonHostIdentifier;
 import ch.virtualid.interfaces.Blockable;
-import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.util.FreezableArrayList;
 import ch.virtualid.util.FreezableList;
 import ch.virtualid.util.ReadonlyList;
 import ch.xdf.Block;
 import ch.xdf.ListWrapper;
+import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -32,7 +35,7 @@ import javax.annotation.Nullable;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public final class Predecessors extends FreezableArrayList<Predecessor> implements Immutable, Blockable {
+public final class Predecessors extends FreezableArrayList<Predecessor> implements ReadonlyPredecessors, Blockable {
     
     /**
      * Stores the semantic type {@code list.predecessor.identity@virtualid.ch}.
@@ -47,13 +50,22 @@ public final class Predecessors extends FreezableArrayList<Predecessor> implemen
     public Predecessors() {}
     
     /**
+     * Creates new predecessors from the given predecessors.
+     * 
+     * @param predecessors the predecessors to add to the new predecessors.
+     */
+    public Predecessors(@Nonnull ReadonlyPredecessors predecessors) {
+        for (final @Nonnull Predecessor predecessor : predecessors) {
+            add(predecessor);
+        }
+    }
+    
+    /**
      * Creates a new list of predecessors from the given block.
      * 
      * @param block the block containing the list of predecessors.
      * 
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
-     * 
-     * @ensure isFrozen() : "This list of predecessors is frozen.";
      */
     public Predecessors(@Nonnull Block block) throws InvalidEncodingException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
@@ -62,7 +74,6 @@ public final class Predecessors extends FreezableArrayList<Predecessor> implemen
         for (final @Nonnull Block predecessor : predecessors) {
             add(new Predecessor(predecessor));
         }
-        freeze();
     }
     
     @Pure
@@ -79,6 +90,31 @@ public final class Predecessors extends FreezableArrayList<Predecessor> implemen
             predecessors.add(predecessor.toBlock());
         }
         return new ListWrapper(TYPE, predecessors.freeze()).toBlock();
+    }
+    
+    
+    @Override
+    public @Nonnull ReadonlyPredecessors freeze() {
+        super.freeze();
+        return this;
+    }
+    
+    
+    @Pure
+    @Override
+    public @Capturable @Nonnull Predecessors clone() {
+        return new Predecessors(this);
+    }
+    
+    
+    @Override
+    public @Nonnull ReadonlyList<NonHostIdentity> getIdentities() throws SQLException, IOException, PacketException, ExternalException {
+        final @Nonnull FreezableList<NonHostIdentity> identities = new FreezableArrayList<NonHostIdentity>(size());
+        for (final @Nonnull Predecessor predecessor : this) {
+            final @Nullable NonHostIdentity identity = predecessor.getIdentity();
+            if (identity != null) identities.add(identity);
+        }
+        return identities.freeze();
     }
     
     
@@ -121,7 +157,7 @@ public final class Predecessors extends FreezableArrayList<Predecessor> implemen
         assert Database.isMainThread() : "This static block is called in the main thread.";
         
         try (@Nonnull Statement statement = Database.createStatement()) {
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS general_predecessors (identifier " + Identifier.FORMAT + " NOT NULL, predecessors " + Block.FORMAT + " NOT NULL, reply " + Reply.FORMAT + ", PRIMARY KEY (identifier), FOREIGN KEY (reply) " + Reply.REFERENCE + ")");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS general_predecessors (identifier " + IdentifierClass.FORMAT + " NOT NULL, predecessors " + Block.FORMAT + " NOT NULL, reply " + Reply.FORMAT + ", PRIMARY KEY (identifier), FOREIGN KEY (reply) " + Reply.REFERENCE + ")");
         } catch (@Nonnull SQLException exception) {
             throw new InitializationError("The database tables of the predecessors could not be created.", exception);
         }
@@ -135,32 +171,21 @@ public final class Predecessors extends FreezableArrayList<Predecessor> implemen
      * 
      * @return the predecessors of the given identifier as stored in the database.
      * 
-     * @require Mapper.isMapped(identifier) : "The identifier is mapped.";
-     * 
      * @ensure return.isFrozen() : "The returned predecessors are frozen.";
      */
-    public static @Nonnull Predecessors get(@Nonnull NonHostIdentifier identifier) throws SQLException {
-        assert Mapper.isMapped(identifier) : "The identifier is mapped.";
-        
+    public static @Nonnull ReadonlyPredecessors get(@Nonnull InternalNonHostIdentifier identifier) throws SQLException {
         final @Nonnull String SQL = "SELECT predecessors FROM general_predecessors WHERE identifier = " + identifier;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
-            if (resultSet.next()) return new Predecessors(Block.get(TYPE, resultSet, 1));
+            if (resultSet.next()) return new Predecessors(Block.get(TYPE, resultSet, 1)).freeze();
             else throw new SQLException("The identifier " + identifier + " has no predecessors.");
         } catch (@Nonnull InvalidEncodingException exception) {
             throw new SQLException("The predecessors of " + identifier + " have an invalid encoding.", exception);
         }
     }
     
-    /**
-     * Sets these values as the predecessors of the given identifier.
-     * 
-     * @param identifier the identifier whose predecessors are to be set.
-     * @param reply the reply stating that the given identifier has these predecessors.
-     * 
-     * @require !Mapper.isMapped(identifier) : "The identifier is not mapped.";
-     */
-    public void set(@Nonnull NonHostIdentifier identifier, @Nullable Reply reply) throws SQLException {
-        assert !Mapper.isMapped(identifier) : "The identifier is not mapped.";
+    @Override
+    public void set(@Nonnull InternalNonHostIdentifier identifier, @Nullable Reply reply) throws SQLException {
+        assert !identifier.isMapped() : "The identifier is not mapped.";
         
         final @Nonnull String SQL = "INSERT INTO general_predecessors (identifier, predecessors) VALUES (?, ?)";
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {

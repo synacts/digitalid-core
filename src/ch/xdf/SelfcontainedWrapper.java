@@ -6,6 +6,7 @@ import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identifier.Identifier;
+import ch.virtualid.identifier.IdentifierClass;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.identity.SyntacticType;
 import ch.virtualid.interfaces.Blockable;
@@ -98,7 +99,7 @@ public final class SelfcontainedWrapper extends BlockWrapper implements Immutabl
         
         this.tuple = new Block(IMPLEMENTATION, block);
         final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(tuple).getElementsNotNull(2);
-        final @Nonnull Identifier identifier = Identifier.create(elements.getNotNull(0));
+        final @Nonnull Identifier identifier = IdentifierClass.create(elements.getNotNull(0));
         this.element = elements.getNotNull(1);
         element.setType(identifier.getIdentity().toSemanticType());
     }

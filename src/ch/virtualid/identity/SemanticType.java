@@ -7,7 +7,7 @@ import ch.virtualid.database.Database;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketException;
-import ch.virtualid.identifier.NonHostIdentifier;
+import ch.virtualid.identifier.InternalNonHostIdentifier;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.FreezableLinkedList;
@@ -125,7 +125,7 @@ public final class SemanticType extends Type implements Immutable {
      * 
      * @ensure !isLoaded() : "The type declaration has not yet been loaded.";
      */
-    SemanticType(long number, @Nonnull NonHostIdentifier address) {
+    SemanticType(long number, @Nonnull InternalNonHostIdentifier address) {
         super(number, address);
     }
     
@@ -141,7 +141,7 @@ public final class SemanticType extends Type implements Immutable {
      * @ensure !isLoaded() : "The type declaration has not yet been loaded.";
      */
     public static @Nonnull SemanticType create(@Nonnull String identifier) {
-        return Mapper.mapSemanticType(new NonHostIdentifier(identifier));
+        return Mapper.mapSemanticType(new InternalNonHostIdentifier(identifier));
     }
     
     

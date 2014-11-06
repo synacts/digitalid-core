@@ -8,7 +8,7 @@ import ch.virtualid.identity.SemanticType;
 import javax.annotation.Nonnull;
 
 /**
- * This class represents the core service.
+ * This class models the core service.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0

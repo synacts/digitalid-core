@@ -3,7 +3,7 @@ package ch.virtualid.identity;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
-import ch.virtualid.identifier.NonHostIdentifier;
+import ch.virtualid.identifier.InternalNonHostIdentifier;
 import ch.virtualid.interfaces.Immutable;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -18,7 +18,7 @@ import javax.annotation.Nonnull;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public abstract class Type extends NonHostIdentity implements InternalNonHostIdentity, Immutable {
+public abstract class Type extends NonHostIdentityClass implements InternalNonHostIdentity, Immutable {
     
     /**
      * Stores the semantic type {@code type@virtualid.ch}.
@@ -30,7 +30,7 @@ public abstract class Type extends NonHostIdentity implements InternalNonHostIde
      * Stores the presumable address of this type.
      * The address is updated when the type is relocated.
      */
-    private @Nonnull NonHostIdentifier address;
+    private @Nonnull InternalNonHostIdentifier address;
     
     /**
      * Stores whether the type declaration has already been loaded.
@@ -44,7 +44,7 @@ public abstract class Type extends NonHostIdentity implements InternalNonHostIde
      * @param number the number that represents this identity.
      * @param address the current address of this type.
      */
-    Type(long number, @Nonnull NonHostIdentifier address) {
+    Type(long number, @Nonnull InternalNonHostIdentifier address) {
         super(number);
         
         this.address = address;
@@ -52,7 +52,7 @@ public abstract class Type extends NonHostIdentity implements InternalNonHostIde
     
     @Pure
     @Override
-    public final @Nonnull NonHostIdentifier getAddress() {
+    public final @Nonnull InternalNonHostIdentifier getAddress() {
         return address;
     }
     
@@ -61,14 +61,15 @@ public abstract class Type extends NonHostIdentity implements InternalNonHostIde
      * 
      * @param address the new address of this type.
      */
-    final void setAddress(@Nonnull NonHostIdentifier address) {
+    final void setAddress(@Nonnull InternalNonHostIdentifier address) {
         this.address = address;
     }
     
     @Pure
     @Override
-    public final boolean hasBeenMerged() {
-        return false;
+    public final boolean hasBeenMerged(@Nonnull SQLException exception) throws SQLException {
+        Mapper.unmap(this);
+        throw exception;
     }
     
     

@@ -1,12 +1,14 @@
 package ch.virtualid.identifier;
 
 import ch.virtualid.annotations.Pure;
+import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.IdentityNotFoundException;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identity.Category;
-import ch.virtualid.identity.EmailPerson;
 import ch.virtualid.identity.Mapper;
+import ch.virtualid.identity.Person;
 import ch.virtualid.interfaces.Immutable;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
@@ -15,7 +17,7 @@ import javax.naming.directory.Attributes;
 import javax.naming.directory.InitialDirContext;
 
 /**
- * This class represents email identifiers.
+ * This class models email identifiers.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
@@ -56,9 +58,9 @@ public final class EmailIdentifier extends ExternalIdentifier implements Immutab
     
     @Pure
     @Override
-    public @Nonnull EmailPerson getIdentity() throws SQLException, InvalidEncodingException, IdentityNotFoundException {
+    public @Nonnull Person getIdentity() throws SQLException, IOException, PacketException, ExternalException {
         if (!providerExists()) throw new IdentityNotFoundException(this);
-        return Mapper.mapExternalIdentity(this).toEmailPerson();
+        return Mapper.getIdentity(this).toPerson();
     }
     
     

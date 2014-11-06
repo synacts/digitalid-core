@@ -5,7 +5,7 @@ import ch.virtualid.annotations.Capturable;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
-import ch.virtualid.identifier.Identifier;
+import ch.virtualid.identifier.IdentifierClass;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.util.FreezableArrayList;
@@ -76,7 +76,7 @@ public class AttributeSet extends FreezableLinkedHashSet<SemanticType> implement
         
         final @Nonnull ReadonlyList<Block> elements = new ListWrapper(block).getElementsNotNull();
         for (final @Nonnull Block element : elements) {
-            final @Nonnull SemanticType type = Identifier.create(element).getIdentity().toSemanticType();
+            final @Nonnull SemanticType type = IdentifierClass.create(element).getIdentity().toSemanticType();
             type.checkIsAttributeType();
             add(type);
         }

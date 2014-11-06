@@ -7,7 +7,7 @@ import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
-import ch.virtualid.identifier.Identifier;
+import ch.virtualid.identifier.IdentifierClass;
 import ch.virtualid.identity.Category;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
@@ -111,7 +111,7 @@ public final class AgentPermissions extends FreezableLinkedHashMap<SemanticType,
         final @Nonnull ReadonlyList<Block> elements = new ListWrapper(block).getElementsNotNull();
         for (final @Nonnull Block element : elements) {
             final @Nonnull ReadonlyArray<Block> subelements = new TupleWrapper(element).getElementsNotNull(2);
-            final @Nonnull SemanticType type = Identifier.create(subelements.getNotNull(0)).getIdentity().toSemanticType();
+            final @Nonnull SemanticType type = IdentifierClass.create(subelements.getNotNull(0)).getIdentity().toSemanticType();
             type.checkIsAttributeType();
             put(type, new BooleanWrapper(subelements.getNotNull(1)).getValue());
         }

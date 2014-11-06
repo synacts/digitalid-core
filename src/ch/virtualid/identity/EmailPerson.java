@@ -20,26 +20,13 @@ public final class EmailPerson extends ExternalPerson implements Immutable {
     
     
     /**
-     * Stores the address of this email person.
-     */
-    private final @Nonnull EmailIdentifier address;
-    
-    /**
      * Creates a new email person with the given number and address.
      * 
      * @param number the number that represents this identity.
      * @param address the address of this email person.
      */
     EmailPerson(long number, @Nonnull EmailIdentifier address) {
-        super(number);
-        
-        this.address = address;
-    }
-    
-    @Pure
-    @Override
-    public @Nonnull EmailIdentifier getAddress() {
-        return address;
+        super(number, address);
     }
     
     @Pure

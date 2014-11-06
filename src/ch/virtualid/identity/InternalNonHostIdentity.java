@@ -1,7 +1,7 @@
 package ch.virtualid.identity;
 
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.identifier.NonHostIdentifier;
+import ch.virtualid.identifier.InternalNonHostIdentifier;
 import ch.virtualid.interfaces.Immutable;
 import javax.annotation.Nonnull;
 
@@ -14,7 +14,7 @@ import javax.annotation.Nonnull;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public interface InternalNonHostIdentity extends InternalIdentity, Immutable {
+public interface InternalNonHostIdentity extends InternalIdentity, NonHostIdentity, Immutable {
     
     /**
      * Stores the semantic type {@code nonhost.internal@virtualid.ch}.
@@ -24,6 +24,6 @@ public interface InternalNonHostIdentity extends InternalIdentity, Immutable {
     
     @Pure
     @Override
-    public @Nonnull NonHostIdentifier getAddress();
+    public @Nonnull InternalNonHostIdentifier getAddress();
     
 }

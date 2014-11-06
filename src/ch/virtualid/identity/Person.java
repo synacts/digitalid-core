@@ -1,10 +1,7 @@
 package ch.virtualid.identity;
 
-import ch.virtualid.exceptions.external.ExternalException;
-import ch.virtualid.exceptions.packet.PacketException;
-import ch.virtualid.identifier.NonHostIdentifier;
+import ch.virtualid.identifier.InternalNonHostIdentifier;
 import ch.virtualid.interfaces.Immutable;
-import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -18,9 +15,9 @@ import javax.annotation.Nullable;
  * @see ExternalPerson
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 1.8
+ * @version 2.0
  */
-public abstract class Person extends NonHostIdentity implements Immutable {
+public abstract class Person extends NonHostIdentityClass implements Immutable {
     
     /**
      * Stores the semantic type {@code person@virtualid.ch}.
@@ -38,26 +35,24 @@ public abstract class Person extends NonHostIdentity implements Immutable {
     }
     
     
+    /**
+     * Sets the address of this person.
+     * 
+     * @param address the new address of this person.
+     */
+    abstract void setAddress(@Nonnull InternalNonHostIdentifier address);
+    
     @Override
-    public final boolean hasBeenMerged() throws SQLException, IOException, PacketException, ExternalException  {
-        final @Nullable NonHostIdentifier successor = Successor.get(getAddress());
-        if (successor != null) {
-            final long number = getNumber();
-            successor.getIdentity();
-            if (number != getNumber()) {
-                // The number and address got updated 'automatically' (because this is the 'official' identity obtained through the mapper).
-                return true;
-            } else {
-                // The number and address might need to be updated 'manually' (because this is an 'inofficial' identity obtained through calling Identity.create(...) directly).
-                final @Nonnull Identity identity = getAddress().getIdentity();
-                assert identity instanceof Person : "The relocated identity should still be a person.";
-                // TODO: In case of external persons, only update the number and leave the address as is? Probably yes, but set the successor accordingly.
-//                update(identity.number, ((Person) identity).getNonHostAddress());
-                // TODO: The following line is wrong (always returns false) and the whole method should be improved!
-                return getNumber() != identity.getNumber();
-            }
+    public final boolean hasBeenMerged(@Nonnull SQLException exception) throws SQLException {
+        final @Nullable InternalNonHostIdentifier successor = Successor.get(getAddress());
+        if (successor != null && successor.isMapped()) {
+            final @Nonnull InternalNonHostIdentity person = successor.getMappedIdentity();
+            setAddress(person.getAddress());
+            setNumber(person.getNumber());
+            return true;
         } else {
-            return false;
+            Mapper.unmap(this);
+            throw exception;
         }
     }
     

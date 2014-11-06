@@ -4,7 +4,7 @@ import ch.virtualid.annotations.Pure;
 import ch.virtualid.database.Database;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
-import ch.virtualid.identifier.NonHostIdentifier;
+import ch.virtualid.identifier.InternalNonHostIdentifier;
 import ch.virtualid.interfaces.Immutable;
 import ch.xdf.StringWrapper;
 import java.io.IOException;
@@ -59,7 +59,7 @@ public final class SyntacticType extends Type implements Immutable {
      * 
      * @ensure !isLoaded() : "The type declaration has not yet been loaded.";
      */
-    SyntacticType(long number, @Nonnull NonHostIdentifier address) {
+    SyntacticType(long number, @Nonnull InternalNonHostIdentifier address) {
         super(number, address);
     }
     
@@ -75,7 +75,7 @@ public final class SyntacticType extends Type implements Immutable {
      * @ensure !isLoaded() : "The type declaration has not yet been loaded.";
      */
     public static @Nonnull SyntacticType create(@Nonnull String identifier) {
-        return Mapper.mapSyntacticType(new NonHostIdentifier(identifier));
+        return Mapper.mapSyntacticType(new InternalNonHostIdentifier(identifier));
     }
     
     

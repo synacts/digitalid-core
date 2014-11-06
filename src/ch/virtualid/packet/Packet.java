@@ -16,6 +16,7 @@ import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Method;
 import ch.virtualid.handler.Reply;
+import ch.virtualid.handler.action.external.CertificateIssuance;
 import ch.virtualid.handler.action.internal.AccountOpen;
 import ch.virtualid.handler.query.external.AttributesQuery;
 import ch.virtualid.handler.query.external.IdentityQuery;
@@ -23,8 +24,9 @@ import ch.virtualid.handler.reply.query.AttributesReply;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identifier.Identifier;
 import ch.virtualid.identifier.InternalIdentifier;
-import ch.virtualid.identity.InternalIdentity;
+import ch.virtualid.identifier.InternalNonHostIdentifier;
 import ch.virtualid.identity.SemanticType;
+import ch.virtualid.identity.Successor;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.server.Server;
 import ch.virtualid.util.FreezableArrayList;
@@ -225,7 +227,8 @@ public abstract class Packet implements Immutable {
                     }
                 } else {
                     if (!signature.hasSubject()) throw new PacketException(PacketError.SIGNATURE, "Each signature in a request must have a subject.", null, isResponse);
-                    if (signature.getSubjectNotNull() instanceof HostIdentifier && !type.equals(AttributesQuery.TYPE)) throw new PacketException(PacketError.METHOD, "A host can only be the subject of an attributes query and not " + type.getAddress() + ".", null, isResponse);
+                    final @Nonnull InternalIdentifier subject = signature.getSubjectNotNull();
+                    if (subject instanceof HostIdentifier && !type.equals(AttributesQuery.TYPE) && !type.equals(CertificateIssuance.TYPE)) throw new PacketException(PacketError.METHOD, "A host can only be the subject of an attributes query and a certificate issuance but not " + type.getAddress() + ".", null, isResponse);
                     
                     if (reference == null) reference = signature;
                     else if (!signature.isSignedLike(reference)) throw new PacketException(PacketError.SIGNATURE, "All the signatures of a request have to be signed alike.", null, isResponse);
@@ -235,9 +238,11 @@ public abstract class Packet implements Immutable {
                     if (type.equals(IdentityQuery.TYPE) || type.equals(AccountOpen.TYPE)) {
                         entity = account;
                     } else {
-                        final @Nonnull InternalIdentity identity = signature.getSubjectNotNull().getIdentity();
-                        if (!identity.getAddress().equals(signature.getSubjectNotNull())) throw new PacketException(PacketError.RELOCATION, "The subject " + signature.getSubjectNotNull() + " has been relocated to " + identity.getAddress() + ".", null, isResponse);
-                        entity = new Account(account.getHost(), identity);
+                        if (subject instanceof InternalNonHostIdentifier) {
+                            final @Nullable InternalNonHostIdentifier successor = Successor.get((InternalNonHostIdentifier) subject);
+                            if (successor != null) throw new PacketException(PacketError.RELOCATION, "The subject " + subject + " has been relocated to " + successor + ".", null, isResponse);
+                        }
+                        entity = new Account(account.getHost(), subject.getIdentity());
                     }
                     final @Nonnull Method method = Method.get(entity, signature, recipient, block);
                     if (!account.getHost().supports(method.getService())) throw new PacketException(PacketError.METHOD, "The host " + recipient + " does not support the service " + method.getService().getType().getAddress() + ".", null, isResponse);

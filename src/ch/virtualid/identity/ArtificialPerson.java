@@ -1,7 +1,7 @@
 package ch.virtualid.identity;
 
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.identifier.NonHostIdentifier;
+import ch.virtualid.identifier.InternalNonHostIdentifier;
 import ch.virtualid.interfaces.Immutable;
 import javax.annotation.Nonnull;
 
@@ -25,7 +25,7 @@ public final class ArtificialPerson extends InternalPerson implements Immutable 
      * @param number the number that represents this identity.
      * @param address the current address of this identity.
      */
-    ArtificialPerson(long number, @Nonnull NonHostIdentifier address) {
+    ArtificialPerson(long number, @Nonnull InternalNonHostIdentifier address) {
         super(number, address);
     }
     

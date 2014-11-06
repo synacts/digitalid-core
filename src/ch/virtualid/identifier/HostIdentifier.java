@@ -6,6 +6,7 @@ import ch.virtualid.entity.Site;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identity.HostIdentity;
+import ch.virtualid.identity.Identity;
 import ch.virtualid.identity.Mapper;
 import ch.virtualid.interfaces.Immutable;
 import java.io.IOException;
@@ -13,7 +14,7 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 
 /**
- * This class represents host identifiers.
+ * This class models host identifiers.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
@@ -52,6 +53,16 @@ public final class HostIdentifier extends InternalIdentifier implements Immutabl
         assert isValid(string) : "The string is a valid host identifier.";
     }
     
+    
+    @Pure
+    @Override
+    public @Nonnull HostIdentity getMappedIdentity() throws SQLException {
+        assert isMapped() : "This identifier is mapped.";
+        
+        final @Nonnull Identity identity = Mapper.getMappedIdentity(this);
+        if (identity instanceof HostIdentity) return (HostIdentity) identity;
+        else throw new SQLException("The mapped identity has a wrong type.");
+    }
     
     @Pure
     @Override

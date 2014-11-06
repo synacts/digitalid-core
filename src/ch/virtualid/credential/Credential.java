@@ -12,7 +12,7 @@ import ch.virtualid.cryptography.PublicKey;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketException;
-import ch.virtualid.identifier.Identifier;
+import ch.virtualid.identifier.IdentifierClass;
 import ch.virtualid.identity.InternalNonHostIdentity;
 import ch.virtualid.identity.NonHostIdentity;
 import ch.virtualid.identity.Person;
@@ -243,7 +243,7 @@ public abstract class Credential implements Immutable {
         assert i == null || i.getType().isBasedOn(Exponent.TYPE) : "The serial number is either null or based on the indicated type.";
         
         final @Nonnull TupleWrapper tuple = new TupleWrapper(exposed);
-        this.issuer = Identifier.create(tuple.getElementNotNull(0)).getIdentity().toInternalNonHostIdentity();
+        this.issuer = IdentifierClass.create(tuple.getElementNotNull(0)).getIdentity().toInternalNonHostIdentity();
         this.issuance = new Time(tuple.getElementNotNull(1));
         if (!issuance.isPositive() || !issuance.isMultipleOf(Time.HALF_HOUR)) throw new InvalidEncodingException("The issuance time has to be positive and a multiple of half an hour.");
         this.publicKey = Cache.getPublicKey(issuer.getAddress().getHostIdentifier(), issuance);
@@ -254,7 +254,7 @@ public abstract class Credential implements Immutable {
         } else {
             this.randomizedPermissions = new RandomizedAgentPermissions(hash);
         }
-        this.role = tuple.isElementNull(3) ? null : Identifier.create(tuple.getElementNotNull(3)).getIdentity().toSemanticType();
+        this.role = tuple.isElementNull(3) ? null : IdentifierClass.create(tuple.getElementNotNull(3)).getIdentity().toSemanticType();
         if (role != null && !role.isRoleType()) throw new InvalidEncodingException("The role has to be either null or a role type");
         this.attribute = tuple.getElement(4);
         if (role != null && attribute != null) throw new InvalidEncodingException("The role and the attribute may not both be not null.");

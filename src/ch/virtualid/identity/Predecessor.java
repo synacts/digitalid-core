@@ -1,8 +1,11 @@
 package ch.virtualid.identity;
 
 import ch.virtualid.annotations.Pure;
+import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
-import ch.virtualid.identifier.Identifier;
+import ch.virtualid.exceptions.packet.PacketException;
+import ch.virtualid.identifier.IdentifierClass;
+import ch.virtualid.identifier.NonHostIdentifier;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.util.FreezableArray;
@@ -10,6 +13,7 @@ import ch.virtualid.util.ReadonlyArray;
 import ch.xdf.Block;
 import ch.xdf.ListWrapper;
 import ch.xdf.TupleWrapper;
+import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -39,14 +43,14 @@ public final class Predecessor implements Immutable, Blockable {
     /**
      * Stores the identifier of this predecessor.
      */
-    private final @Nonnull Identifier identifier;
+    private final @Nonnull NonHostIdentifier identifier;
     
     /**
      * Stores the predecessors of this predecessor.
      * 
      * @invariant predecessors.isFrozen() : "The predecessors are frozen.";
      */
-    private final @Nonnull Predecessors predecessors;
+    private final @Nonnull ReadonlyPredecessors predecessors;
     
     /**
      * Creates a new predecessor with the given identifier and predecessors.
@@ -56,7 +60,7 @@ public final class Predecessor implements Immutable, Blockable {
      * 
      * @require predecessors.isFrozen() : "The predecessors are frozen.";
      */
-    public Predecessor(@Nonnull Identifier identifier, @Nonnull Predecessors predecessors) throws SQLException {
+    public Predecessor(@Nonnull NonHostIdentifier identifier, @Nonnull ReadonlyPredecessors predecessors) throws SQLException {
         assert predecessors.isFrozen() : "The predecessors are frozen.";
         
         this.identifier = identifier;
@@ -74,8 +78,8 @@ public final class Predecessor implements Immutable, Blockable {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(2);
-        this.identifier = Identifier.create(elements.getNotNull(0));
-        this.predecessors = new Predecessors(elements.getNotNull(1));
+        this.identifier = IdentifierClass.create(elements.getNotNull(0)).toNonHostIdentifier();
+        this.predecessors = new Predecessors(elements.getNotNull(1)).freeze();
     }
     
     @Pure
@@ -105,7 +109,7 @@ public final class Predecessor implements Immutable, Blockable {
      * 
      * @return the identifier of this predecessor.
      */
-    public @Nonnull Identifier getIdentifier() {
+    public @Nonnull NonHostIdentifier getIdentifier() {
         return identifier;
     }
     
@@ -116,8 +120,20 @@ public final class Predecessor implements Immutable, Blockable {
      * 
      * @ensure return.isFrozen() : "The predecessors are frozen.";
      */
-    public @Nonnull Predecessors getPredecessors() {
+    public @Nonnull ReadonlyPredecessors getPredecessors() {
         return predecessors;
+    }
+    
+    
+    /**
+     * Returns the identity of this predecessor or null if none of its predecessors (including itself) is mapped.
+     * 
+     * @return the identity of this predecessor or null if none of its predecessors (including itself) is mapped.
+     */
+    @Nullable NonHostIdentity getIdentity() throws SQLException, IOException, PacketException, ExternalException {
+        if (identifier.isMapped()) return identifier.getMappedIdentity();
+        if (predecessors.getIdentities().isNotEmpty()) return identifier.getIdentity().toNonHostIdentity();
+        return null;
     }
     
     

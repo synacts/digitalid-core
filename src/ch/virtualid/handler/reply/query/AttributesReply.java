@@ -4,10 +4,11 @@ import ch.virtualid.annotations.Pure;
 import ch.virtualid.concepts.Certificate;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.exceptions.external.ExternalException;
+import ch.virtualid.exceptions.external.InvalidSignatureException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Reply;
 import ch.virtualid.handler.query.external.AttributesQuery;
-import ch.virtualid.identifier.NonHostIdentifier;
+import ch.virtualid.identifier.InternalNonHostIdentifier;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.util.FreezableArrayList;
 import ch.virtualid.util.FreezableList;
@@ -75,7 +76,7 @@ public final class AttributesReply extends CoreServiceQueryReply {
      * @require attributes.isFrozen() : "The attributes are frozen.";
      * @require areCertificates(attributes) : "All the attributes which are not null are certificates.";
      */
-    public AttributesReply(@Nonnull NonHostIdentifier subject, @Nonnull ReadonlyList<SignatureWrapper> attributes) throws SQLException, PacketException {
+    public AttributesReply(@Nonnull InternalNonHostIdentifier subject, @Nonnull ReadonlyList<SignatureWrapper> attributes) throws SQLException, PacketException {
         super(subject);
         
         assert attributes.isFrozen() : "The attributes are frozen.";
@@ -105,8 +106,12 @@ public final class AttributesReply extends CoreServiceQueryReply {
         for (final @Nullable Block element : elements) {
             if (element != null) {
                 final @Nonnull SignatureWrapper attribute = SignatureWrapper.decodeUnverified(element, null);
-                attribute.verifyAsCertificate(); // TODO: Rather strip the signature off than fail?
-                attributes.add(attribute);
+                try {
+                    attribute.verifyAsCertificate();
+                    attributes.add(attribute);
+                } catch (@Nonnull InvalidSignatureException exception) {
+                    attributes.add(new SignatureWrapper(Certificate.TYPE, attribute.getElementNotNull(), null));
+                }
             } else {
                 attributes.add(null);
             }

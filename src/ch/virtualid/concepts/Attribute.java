@@ -8,7 +8,7 @@ import ch.virtualid.entity.Entity;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.expression.PassiveExpression;
-import ch.virtualid.identifier.Identifier;
+import ch.virtualid.identifier.IdentifierClass;
 import ch.virtualid.identity.SemanticType;
 import ch.xdf.Block;
 import ch.xdf.SelfcontainedWrapper;
@@ -153,7 +153,7 @@ public final class Attribute extends Concept {
     public static @Nonnull Attribute get(@Nonnull Entity entity, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         // TODO: Assert the block type.
         
-        return get(entity, Identifier.create(block).getIdentity().toSemanticType());
+        return get(entity, IdentifierClass.create(block).getIdentity().toSemanticType());
     }
     
     /**

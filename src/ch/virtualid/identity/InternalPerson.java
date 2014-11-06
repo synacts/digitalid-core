@@ -1,7 +1,7 @@
 package ch.virtualid.identity;
 
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.identifier.NonHostIdentifier;
+import ch.virtualid.identifier.InternalNonHostIdentifier;
 import ch.virtualid.interfaces.Immutable;
 import javax.annotation.Nonnull;
 
@@ -26,7 +26,7 @@ public abstract class InternalPerson extends Person implements InternalNonHostId
      * Stores the presumable address of this internal person.
      * The address is updated when the person is relocated or merged.
      */
-    private @Nonnull NonHostIdentifier address;
+    private @Nonnull InternalNonHostIdentifier address;
     
     /**
      * Creates a new internal person with the given number and address.
@@ -34,7 +34,7 @@ public abstract class InternalPerson extends Person implements InternalNonHostId
      * @param number the number that represents this identity.
      * @param address the current address of this internal person.
      */
-    InternalPerson(long number, @Nonnull NonHostIdentifier address) {
+    InternalPerson(long number, @Nonnull InternalNonHostIdentifier address) {
         super(number);
         
         this.address = address;
@@ -42,16 +42,12 @@ public abstract class InternalPerson extends Person implements InternalNonHostId
     
     @Pure
     @Override
-    public final @Nonnull NonHostIdentifier getAddress() {
+    public final @Nonnull InternalNonHostIdentifier getAddress() {
         return address;
     }
     
-    /**
-     * Sets the address of this internal person.
-     * 
-     * @param address the new address of this person.
-     */
-    final void setAddress(@Nonnull NonHostIdentifier address) {
+    @Override
+    final void setAddress(@Nonnull InternalNonHostIdentifier address) {
         this.address = address;
     }
     

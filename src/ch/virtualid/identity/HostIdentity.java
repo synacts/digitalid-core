@@ -76,8 +76,8 @@ public final class HostIdentity extends IdentityClass implements InternalIdentit
     
     @Pure
     @Override
-    public boolean hasBeenMerged() {
-        return false;
+    public boolean hasBeenMerged(@Nonnull SQLException exception) throws SQLException {
+        throw exception;
     }
     
 }

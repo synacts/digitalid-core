@@ -1,10 +1,9 @@
 package ch.virtualid.identity;
 
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.identifier.ExternalIdentifier;
+import ch.virtualid.identifier.NonHostIdentifier;
 import ch.virtualid.interfaces.Immutable;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * This interface models an external identity.
@@ -24,14 +23,6 @@ public interface ExternalIdentity extends Identity, Immutable {
     
     @Pure
     @Override
-    public @Nonnull ExternalIdentifier getAddress();
-    
-    /**
-     * Returns the successor of this external identity or null if there is none.
-     * 
-     * @return the successor of this external identity or null if there is none.
-     */
-    @Pure
-    public @Nullable InternalIdentity getSuccessor();
+    public @Nonnull NonHostIdentifier getAddress();
     
 }

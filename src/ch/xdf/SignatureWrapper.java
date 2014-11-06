@@ -12,7 +12,7 @@ import ch.virtualid.exceptions.external.InactiveSignatureException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
-import ch.virtualid.identifier.Identifier;
+import ch.virtualid.identifier.IdentifierClass;
 import ch.virtualid.identifier.InternalIdentifier;
 import ch.virtualid.identity.InternalIdentity;
 import ch.virtualid.identity.SemanticType;
@@ -34,6 +34,7 @@ import javax.annotation.Nullable;
  * Format: {@code block = ((identifier, time, element, audit), hostSignature, clientSignature, credentialsSignature)}
  * 
  * @invariant !isSigned() || hasSubject() : "If this signature is signed, it has a subject.";
+ * @invariant !isCertificate() || getElement() != null : "If this is a certificate, the element is not null.";
  * 
  * @see HostSignatureWrapper
  * @see ClientSignatureWrapper
@@ -119,11 +120,13 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
      * 
      * @require type.isLoaded() : "The type declaration is loaded.";
      * @require type.isBasedOn(getSyntacticType()) : "The given type is based on the indicated syntactic type.";
+     * @require !type.isBasedOn(Certificate.TYPE) || element != null : "If the signature is a certificate, the element is not null.";
      * @require element == null || element.getType().isBasedOn(type.getParameters().getNotNull(0)) : "The element is either null or based on the parameter of the given type.";
      */
     public SignatureWrapper(@Nonnull SemanticType type, @Nullable Block element, @Nullable InternalIdentifier subject) {
         super(type);
         
+        assert !type.isBasedOn(Certificate.TYPE) || element != null : "If the signature is a certificate, the element is not null.";
         assert element == null || element.getType().isBasedOn(type.getParameters().getNotNull(0)) : "The element is either null or based on the parameter of the given type.";
         
         this.element = element;
@@ -141,6 +144,7 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
      * 
      * @require type.isLoaded() : "The type declaration is loaded.";
      * @require type.isBasedOn(getSyntacticType()) : "The given type is based on the indicated syntactic type.";
+     * @require !type.isBasedOn(Certificate.TYPE) || element != null : "If the signature is a certificate, the element is not null.";
      * @require element == null || element.getType().isBasedOn(type.getParameters().getNotNull(0)) : "The element is either null or based on the parameter of the given type.";
      */
     public SignatureWrapper(@Nonnull SemanticType type, @Nullable Blockable element, @Nullable InternalIdentifier subject) {
@@ -202,12 +206,13 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
         this.cache = new Block(IMPLEMENTATION, block);
         final @Nonnull Block content = new TupleWrapper(cache).getElementNotNull(0);
         final @Nonnull TupleWrapper tuple = new TupleWrapper(content);
-        this.subject = tuple.isElementNull(0) ? null : Identifier.create(tuple.getElementNotNull(0)).toInternalIdentifier();
+        this.subject = tuple.isElementNull(0) ? null : IdentifierClass.create(tuple.getElementNotNull(0)).toInternalIdentifier();
         if (isSigned() && subject == null) throw new InvalidEncodingException("The subject may not be null if the element is signed.");
         this.time = tuple.isElementNull(1) ? null : new Time(tuple.getElementNotNull(1));
         if (hasSubject() && time == null) throw new InvalidEncodingException("The signature time may not be null if this signature has a subject.");
         if (time != null && !time.isPositive()) throw new InvalidEncodingException("The signature time has to be positive.");
-        this.element = tuple.getElementNotNull(2);
+        this.element = tuple.getElement(2);
+        if (getType().isBasedOn(Certificate.TYPE) && element == null) throw new InvalidEncodingException("If this signature is a certificate, the element may not be null.");
         this.audit = tuple.isElementNull(3) ? null : new Audit(tuple.getElementNotNull(3));
     }
     

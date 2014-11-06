@@ -1,17 +1,19 @@
 package ch.virtualid.identifier;
 
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.exceptions.external.ExternalException;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identity.Category;
 import ch.virtualid.identity.Mapper;
-import ch.virtualid.identity.MobilePerson;
+import ch.virtualid.identity.Person;
 import ch.virtualid.interfaces.Immutable;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 
 /**
- * This class represents mobile identifiers.
+ * This class models mobile identifiers.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
@@ -52,8 +54,8 @@ public final class MobileIdentifier extends ExternalIdentifier implements Immuta
     
     @Pure
     @Override
-    public @Nonnull MobilePerson getIdentity() throws SQLException, InvalidEncodingException {
-        return Mapper.mapExternalIdentity(this).toMobilePerson();
+    public @Nonnull Person getIdentity() throws SQLException, IOException, PacketException, ExternalException {
+        return Mapper.getIdentity(this).toPerson();
     }
     
     

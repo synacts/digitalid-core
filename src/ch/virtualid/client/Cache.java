@@ -11,6 +11,7 @@ import ch.virtualid.errors.InitializationError;
 import ch.virtualid.exceptions.external.AttributeNotFoundException;
 import ch.virtualid.exceptions.external.CertificateNotFoundException;
 import ch.virtualid.exceptions.external.ExternalException;
+import ch.virtualid.exceptions.external.IdentityNotFoundException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.reply.query.AttributesReply;
@@ -19,7 +20,6 @@ import ch.virtualid.identity.HostIdentity;
 import ch.virtualid.identity.Identity;
 import ch.virtualid.identity.InternalIdentity;
 import ch.virtualid.identity.Mapper;
-import static ch.virtualid.identity.Mapper.isMapped;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.packet.Request;
 import ch.virtualid.packet.Response;
@@ -203,7 +203,7 @@ public final class Cache {
         for (final @Nullable SemanticType type : types) assert type != null && type.isAttributeFor(identity.getCategory()) : "Each type is not null and can be used as an attribute for the category of the given identity.";
         
         throw new UnsupportedOperationException("Retrieving attributes is not yet supported!");
-//        // TODO (long-term): Verify the new public key of virtualid.ch with the stale one and remove the following line.
+//        // TODO (long-term): Verify the new public key of virtualid.ch with the stale one and remove the following line. (Or maybe store in a field whether the root key is being loaded and in that case return the stale one.)
 //        if (identity.equals(HostIdentity.VIRTUALID)) time = Time.MIN;
 //        
 //        boolean verification = true;
@@ -384,21 +384,27 @@ public final class Cache {
     
     
     /**
+     * Establishes the identity of the given host identifier by checking its existence and requesting its public key chain.
      * 
+     * @param identifier the host identifier whose identity is to be established.
      * 
-     * @param identifier
+     * @return the newly established identity of the given host identifier.
      * 
-     * @return
-     * 
-     * @require !isMapped(identifier) : "The identifier is not mapped.";
+     * @require !identifier.isMapped() : "The identifier is not mapped.";
      */
     public static @Nonnull HostIdentity establishHostIdentity(@Nonnull HostIdentifier identifier) throws SQLException, IOException, PacketException, ExternalException {
-        assert !isMapped(identifier) : "The identifier is not mapped.";
+        assert !identifier.isMapped() : "The identifier is not mapped.";
         
-        final @Nonnull Response response = new Request(identifier).send(false);
+        final @Nonnull Response response;
+        try {
+            response = new Request(identifier).send(false);
+        } catch (@Nonnull IOException exception) {
+            throw new IdentityNotFoundException(identifier);
+        }
         final @Nonnull AttributesReply reply = response.getReplyNotNull(0);
         final @Nonnull HostIdentity identity = Mapper.mapHostIdentity(identifier);
-        // TODO: Store the returned public key chain in the cache.
+        // TODO: Store the returned public key chain in the cache (and check that it is certified).
+        reply.getSignatureNotNull().verify();
         return identity;
     }
     

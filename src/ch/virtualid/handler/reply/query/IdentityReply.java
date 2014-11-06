@@ -8,12 +8,12 @@ import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Reply;
 import ch.virtualid.handler.query.external.IdentityQuery;
-import ch.virtualid.identifier.Identifier;
-import ch.virtualid.identifier.NonHostIdentifier;
+import ch.virtualid.identifier.IdentifierClass;
+import ch.virtualid.identifier.InternalNonHostIdentifier;
 import ch.virtualid.identity.Category;
-import ch.virtualid.identity.Mapper;
 import ch.virtualid.identity.NonHostIdentity;
 import ch.virtualid.identity.Predecessors;
+import ch.virtualid.identity.ReadonlyPredecessors;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.identity.Successor;
 import ch.virtualid.util.FreezableArray;
@@ -54,6 +54,8 @@ public final class IdentityReply extends CoreServiceQueryReply {
     
     /**
      * Stores the category of the subject.
+     * 
+     * @invariant category.isInternalNonHostIdentity() : "The category denotes an internal non-host identity.";
      */
     private final @Nonnull Category category;
     
@@ -62,23 +64,24 @@ public final class IdentityReply extends CoreServiceQueryReply {
      * 
      * @invariant predecessors.isFrozen() : "The predecessors are frozen.";
      */
-    private final @Nonnull Predecessors predecessors;
+    private final @Nonnull ReadonlyPredecessors predecessors;
     
     /**
      * Stores the successor of the subject.
      */
-    private final @Nullable NonHostIdentifier successor;
+    private final @Nullable InternalNonHostIdentifier successor;
     
     /**
      * Creates a query reply for the identity of given subject.
      * 
      * @param subject the subject of this handler.
      */
-    public IdentityReply(@Nonnull NonHostIdentifier subject) throws SQLException, PacketException {
+    public IdentityReply(@Nonnull InternalNonHostIdentifier subject) throws SQLException, PacketException {
         super(subject);
         
-        if (!Mapper.isMapped(subject)) throw new PacketException(PacketError.IDENTIFIER, "The identity with the identifier " + subject + " does not exist on this host.");
-        this.category = Mapper.getMappedIdentity(subject).getCategory();
+        if (!subject.isMapped()) throw new PacketException(PacketError.IDENTIFIER, "The identity with the identifier " + subject + " does not exist on this host.");
+        this.category = subject.getMappedIdentity().getCategory();
+        if (category.isInternalNonHostIdentity()) throw new SQLException("The category is " + category.name() + " instead of an internal non-host identitiy.");
         this.predecessors = Predecessors.get(subject);
         this.successor = Successor.get(subject);
     }
@@ -101,8 +104,9 @@ public final class IdentityReply extends CoreServiceQueryReply {
         
         final @Nonnull TupleWrapper tuple = new TupleWrapper(block);
         this.category = Category.get(tuple.getElementNotNull(0));
-        this.predecessors = new Predecessors(tuple.getElementNotNull(1));
-        this.successor = tuple.isElementNull(2) ? null : Identifier.create(tuple.getElementNotNull(2)).toNonHostIdentifier();
+        if (category.isInternalNonHostIdentity()) throw new InvalidEncodingException("The category is " + category.name() + " instead of an internal non-host identitiy.");
+        this.predecessors = new Predecessors(tuple.getElementNotNull(1)).freeze();
+        this.successor = tuple.isElementNull(2) ? null : IdentifierClass.create(tuple.getElementNotNull(2)).toInternalNonHostIdentifier();
     }
     
     @Pure
@@ -126,6 +130,8 @@ public final class IdentityReply extends CoreServiceQueryReply {
      * Returns the category of the subject.
      * 
      * @return the category of the subject.
+     * 
+     * @ensure return.isInternalNonHostIdentity() : "The category denotes an internal non-host identity.";
      */
     @Pure
     public @Nonnull Category getCategory() {
@@ -140,7 +146,7 @@ public final class IdentityReply extends CoreServiceQueryReply {
      * @ensure return.isFrozen() : "The predecessors are frozen.";
      */
     @Pure
-    public @Nonnull Predecessors getPredecessors() {
+    public @Nonnull ReadonlyPredecessors getPredecessors() {
         return predecessors;
     }
     
@@ -150,7 +156,7 @@ public final class IdentityReply extends CoreServiceQueryReply {
      * @return the successor of the subject.
      */
     @Pure
-    public @Nullable NonHostIdentifier getSuccessor() {
+    public @Nullable InternalNonHostIdentifier getSuccessor() {
         return successor;
     }
     

@@ -13,15 +13,15 @@ import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 
 /**
- * This class represents internal identifiers.
+ * This class models internal identifiers.
  * 
  * @see HostIdentifier
- * @see NonHostIdentifier
+ * @see InternalNonHostIdentifier
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public abstract class InternalIdentifier extends Identifier implements Immutable {
+public abstract class InternalIdentifier extends IdentifierClass implements Immutable {
     
     /**
      * The pattern that valid internal identifiers have to match.
@@ -37,7 +37,7 @@ public abstract class InternalIdentifier extends Identifier implements Immutable
      */
     @Pure
     static boolean isConforming(@Nonnull String string) {
-        return Identifier.isConforming(string) && pattern.matcher(string).matches() && string.length() - string.indexOf("@") < 40;
+        return IdentifierClass.isConforming(string) && pattern.matcher(string).matches() && string.length() - string.indexOf("@") < 40;
     }
     
     /**
@@ -49,7 +49,7 @@ public abstract class InternalIdentifier extends Identifier implements Immutable
      */
     @Pure
     public static boolean isValid(@Nonnull String string) {
-        return string.contains("@") ? NonHostIdentifier.isValid(string) : HostIdentifier.isValid(string);
+        return string.contains("@") ? InternalNonHostIdentifier.isValid(string) : HostIdentifier.isValid(string);
     }
     
     /**
@@ -65,7 +65,7 @@ public abstract class InternalIdentifier extends Identifier implements Immutable
     public static @Nonnull InternalIdentifier create(@Nonnull String string) {
         assert isValid(string) : "The string is a valid internal identifier.";
         
-        return string.contains("@") ? new NonHostIdentifier(string) : new HostIdentifier(string);
+        return string.contains("@") ? new InternalNonHostIdentifier(string) : new HostIdentifier(string);
     }
     
     
@@ -82,6 +82,10 @@ public abstract class InternalIdentifier extends Identifier implements Immutable
         assert isValid(string) : "The string is a valid internal identifier.";
     }
     
+    
+    @Pure
+    @Override
+    public abstract @Nonnull InternalIdentity getMappedIdentity() throws SQLException;
     
     @Pure
     @Override

@@ -5,14 +5,16 @@ import ch.virtualid.errors.ShouldNeverHappenError;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identity.Category;
-import ch.virtualid.identity.ExternalIdentity;
+import ch.virtualid.identity.Identity;
+import ch.virtualid.identity.Mapper;
+import ch.virtualid.identity.Person;
 import ch.virtualid.interfaces.Immutable;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 
 /**
- * This class represents external identifiers.
+ * This class models external identifiers.
  * 
  * @see EmailIdentifier
  * @see MobileIdentifier
@@ -20,7 +22,7 @@ import javax.annotation.Nonnull;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public abstract class ExternalIdentifier extends Identifier implements Immutable {
+public abstract class ExternalIdentifier extends IdentifierClass implements NonHostIdentifier, Immutable {
     
     /**
      * Returns whether the given string conforms to the criteria of this class.
@@ -31,7 +33,7 @@ public abstract class ExternalIdentifier extends Identifier implements Immutable
      */
     @Pure
     static boolean isConforming(@Nonnull String string) {
-        return Identifier.isConforming(string) && string.contains(":");
+        return IdentifierClass.isConforming(string) && string.contains(":");
     }
     
     /**
@@ -91,7 +93,17 @@ public abstract class ExternalIdentifier extends Identifier implements Immutable
     
     @Pure
     @Override
-    public abstract @Nonnull ExternalIdentity getIdentity() throws SQLException, IOException, PacketException, ExternalException;
+    public final @Nonnull Person getMappedIdentity() throws SQLException {
+        assert isMapped() : "This identifier is mapped.";
+        
+        final @Nonnull Identity identity = Mapper.getMappedIdentity(this);
+        if (identity instanceof Person) return (Person) identity;
+        else throw new SQLException("The mapped identity has a wrong type.");
+    }
+    
+    @Pure
+    @Override
+    public abstract @Nonnull Person getIdentity() throws SQLException, IOException, PacketException, ExternalException;
     
     
     /**

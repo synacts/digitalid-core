@@ -7,7 +7,7 @@ import ch.virtualid.entity.Entity;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketException;
-import ch.virtualid.identifier.Identifier;
+import ch.virtualid.identifier.IdentifierClass;
 import ch.virtualid.identity.IdentityClass;
 import ch.virtualid.identity.Person;
 import ch.virtualid.identity.SemanticType;
@@ -146,7 +146,7 @@ public final class Contact extends Concept implements Immutable, Blockable, SQLi
     public static @Nonnull Contact get(@Nonnull Entity entity, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
-        return get(entity, Identifier.create(block).getIdentity().toPerson());
+        return get(entity, IdentifierClass.create(block).getIdentity().toPerson());
     }
     
     /**
