@@ -12,6 +12,7 @@ import ch.virtualid.identifier.InternalIdentifier;
 import ch.virtualid.pusher.Pusher;
 import ch.virtualid.server.Host;
 import ch.xdf.SignatureWrapper;
+import java.sql.SQLException;
 import javax.annotation.Nonnull;
 
 /**
@@ -76,6 +77,11 @@ public abstract class ExternalAction extends Action {
         return false;
     }
     
+    
+    /**
+     * Executes this action if an error occurred during pushing.
+     */
+    public abstract void executeOnFailure() throws SQLException;
     
     /**
      * Returns the permission that an agent needs to cover in order to see the audit of this external action when the pushing failed.

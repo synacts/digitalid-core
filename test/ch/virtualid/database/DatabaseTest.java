@@ -103,9 +103,9 @@ public class DatabaseTest {
         if (isSubclass()) {
             final @Nonnull String SQL = "INSERT" + Database.getConfiguration().IGNORE() + " INTO test_identifier (identifier, identity, value) VALUES ('a@syntacts.com', 1, 6)";
             try (@Nonnull Statement statement = Database.createStatement()) {
-                Database.getConfiguration().onInsertIgnore(statement, "test_identifier", "identifier");
+                Database.onInsertIgnore(statement, "test_identifier", "identifier");
                 statement.executeUpdate(SQL);
-                Database.getConfiguration().onInsertNotIgnore(statement, "test_identifier");
+                Database.onInsertNotIgnore(statement, "test_identifier");
                 
                 final @Nonnull ResultSet resultSet = statement.executeQuery("SELECT value FROM test_identifier WHERE identifier = 'a@syntacts.com'");
                 Assert.assertTrue(resultSet.next());
@@ -119,9 +119,9 @@ public class DatabaseTest {
         if (isSubclass()) {
             final @Nonnull String SQL = Database.getConfiguration().REPLACE() + " INTO test_identifier (identifier, identity, value) VALUES ('a@syntacts.com', 1, 7)";
             try (@Nonnull Statement statement = Database.createStatement()) {
-                Database.getConfiguration().onInsertUpdate(statement, "test_identifier", 1, "identifier", "identity", "value");
+                Database.onInsertUpdate(statement, "test_identifier", 1, "identifier", "identity", "value");
                 statement.executeUpdate(SQL);
-                Database.getConfiguration().onInsertNotUpdate(statement, "test_identifier");
+                Database.onInsertNotUpdate(statement, "test_identifier");
                 
                 final @Nonnull ResultSet resultSet = statement.executeQuery("SELECT value FROM test_identifier WHERE identifier = 'a@syntacts.com'");
                 Assert.assertTrue(resultSet.next());

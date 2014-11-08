@@ -175,6 +175,11 @@ public final class AccessRequest extends CoreServiceExternalAction {
         // TODO: Add this access request to a list of pending access requests.
     }
     
+    @Override
+    public void executeOnFailure() throws SQLException {
+        // TODO!
+    }
+    
     
     /**
      * Stores the audit restrictions for this action.

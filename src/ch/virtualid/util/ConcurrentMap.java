@@ -17,6 +17,6 @@ public interface ConcurrentMap<K, V> extends java.util.concurrent.ConcurrentMap<
      * 
      * @return the value that is now associated with the given key.
      */
-    public V putIfAbsentReturnPresent(K key, V value);
+    public V putIfAbsentElseReturnPresent(K key, V value);
     
 }

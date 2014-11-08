@@ -169,6 +169,11 @@ public final class RoleIssuance extends CoreServiceExternalAction {
         executeOnBoth();
     }
     
+    @Override
+    public void executeOnFailure() throws SQLException {
+        // TODO!
+    }
+    
     
     /**
      * Stores the audit permissions for this action.

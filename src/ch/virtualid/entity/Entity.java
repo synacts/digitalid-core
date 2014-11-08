@@ -6,7 +6,6 @@ import ch.virtualid.concept.Aspect;
 import ch.virtualid.concept.Concept;
 import ch.virtualid.concept.Instance;
 import ch.virtualid.errors.ShouldNeverHappenError;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.identity.Identity;
 import ch.virtualid.identity.InternalIdentity;
 import ch.virtualid.interfaces.Immutable;
@@ -40,12 +39,6 @@ public abstract class Entity extends Instance implements Immutable, SQLizable {
     
     
     /**
-     * Stores the data type used to reference instances of this class.
-     */
-    public static final @Nonnull String FORMAT = "BIGINT";
-    
-    
-    /**
      * Returns the site of this entity.
      * 
      * @return the site of this entity.
@@ -71,6 +64,11 @@ public abstract class Entity extends Instance implements Immutable, SQLizable {
     
     
     /**
+     * Stores the data type used to reference instances of this class.
+     */
+    public static final @Nonnull String FORMAT = "BIGINT";
+    
+    /**
      * Returns the given column of the result set as an instance of this class.
      * 
      * @param site the site that accommodates the returned entity.
@@ -80,7 +78,7 @@ public abstract class Entity extends Instance implements Immutable, SQLizable {
      * @return the given column of the result set as an instance of this class.
      */
     @Pure
-    public static @Nonnull Entity get(@Nonnull Site site, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException, InvalidEncodingException {
+    public static @Nonnull Entity get(@Nonnull Site site, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
         if (site instanceof Host) {
             return Account.get((Host) site, resultSet, columnIndex);
         } else if (site instanceof Client) {

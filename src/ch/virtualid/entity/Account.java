@@ -1,7 +1,7 @@
 package ch.virtualid.entity;
 
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.identity.Identity;
 import ch.virtualid.identity.IdentityClass;
 import ch.virtualid.identity.InternalIdentity;
 import ch.virtualid.interfaces.Immutable;
@@ -84,8 +84,10 @@ public final class Account extends Entity implements Immutable, SQLizable {
      * @return the given column of the result set as an instance of this class.
      */
     @Pure
-    public static @Nonnull Account get(@Nonnull Host host, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException, InvalidEncodingException {
-        return new Account(host, IdentityClass.get(resultSet, columnIndex).toInternalIdentity());
+    public static @Nonnull Account get(@Nonnull Host host, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+        final @Nonnull Identity identity = IdentityClass.get(resultSet, columnIndex);
+        if (identity instanceof InternalIdentity) return new Account(host, (InternalIdentity) identity);
+        else throw new SQLException("The identity of " + identity.getAddress() + " is not internal.");
     }
     
     

@@ -4,23 +4,29 @@ import ch.virtualid.agent.Agent;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.concepts.Password;
 import ch.virtualid.database.Database;
+import ch.virtualid.entity.Account;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.Role;
 import ch.virtualid.entity.Site;
+import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.InternalQuery;
+import ch.virtualid.identifier.IdentifierClass;
+import ch.virtualid.identity.Identity;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.BothModule;
 import ch.virtualid.module.CoreService;
 import ch.virtualid.server.Host;
-import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.FreezableLinkedList;
 import ch.virtualid.util.FreezableList;
+import ch.virtualid.util.ReadonlyArray;
 import ch.virtualid.util.ReadonlyList;
 import ch.xdf.Block;
 import ch.xdf.ListWrapper;
 import ch.xdf.StringWrapper;
 import ch.xdf.TupleWrapper;
+import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -32,7 +38,7 @@ import javax.annotation.Nullable;
  * This class provides database access to the {@link Password passwords} of the core service.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 1.7
+ * @version 2.0
  */
 public final class Passwords implements BothModule {
     
@@ -40,16 +46,17 @@ public final class Passwords implements BothModule {
     
     @Override
     public void createTables(@Nonnull Site site) throws SQLException {
-        try (final @Nonnull Statement statement = Database.createStatement()) {
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "password (entity BIGINT NOT NULL, password VARCHAR(50) NOT NULL COLLATE " + Database.getConfiguration().BINARY() + ", PRIMARY KEY (entity), FOREIGN KEY (entity) " + site.getReference() + ")");
+        try (@Nonnull Statement statement = Database.createStatement()) {
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "password (entity " + Entity.FORMAT + " NOT NULL, password VARCHAR(50) NOT NULL COLLATE " + Database.getConfiguration().BINARY() + ", PRIMARY KEY (entity), FOREIGN KEY (entity) " + site.getReference() + ")");
             Database.onInsertUpdate(statement, site + "password", 1, "entity", "password");
         }
     }
     
     @Override
     public void deleteTables(@Nonnull Site site) throws SQLException {
-        try (final @Nonnull Statement statement = Database.createStatement()) {
-            // TODO: Delete the tables of this module.
+        try (@Nonnull Statement statement = Database.createStatement()) {
+            Database.onInsertNotUpdate(statement, site + "password");
+            statement.executeUpdate("DROP TABLE IF EXISTS " + site + "password");
         }
     }
     
@@ -57,7 +64,7 @@ public final class Passwords implements BothModule {
     /**
      * Stores the semantic type {@code entry.passwords.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType MODULE_ENTRY = SemanticType.create("entry.passwords.module@virtualid.ch").load(TupleWrapper.TYPE, ch.virtualid.identity.SemanticType.UNKNOWN);
+    private static final @Nonnull SemanticType MODULE_ENTRY = SemanticType.create("entry.passwords.module@virtualid.ch").load(TupleWrapper.TYPE, Identity.IDENTIFIER, Password.TYPE);
     
     /**
      * Stores the semantic type {@code passwords.module@virtualid.ch}.
@@ -73,20 +80,32 @@ public final class Passwords implements BothModule {
     @Pure
     @Override
     public @Nonnull Block exportModule(@Nonnull Host host) throws SQLException {
-        final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
-        try (final @Nonnull Statement statement = Database.createStatement()) {
-            // TODO: Retrieve all the entries from the database table(s).
+        final @Nonnull String SQL = "SELECT entity, password FROM " + host + "password";
+        try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
+            final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
+            while (resultSet.next()) {
+                final @Nonnull Account account = Account.get(host, resultSet, 1);
+                final @Nonnull String password = resultSet.getString(2);
+                entries.add(new TupleWrapper(MODULE_ENTRY, account.getIdentity().getAddress(), new StringWrapper(Password.TYPE, password)).toBlock());
+            }
+            return new ListWrapper(MODULE, entries.freeze()).toBlock();
         }
-        return new ListWrapper(MODULE, entries.freeze()).toBlock();
     }
     
     @Override
-    public void importModule(@Nonnull Host host, @Nonnull Block block) throws SQLException, InvalidEncodingException {
+    public void importModule(@Nonnull Host host, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         assert block.getType().isBasedOn(getModuleFormat()) : "The block is based on the format of this module.";
         
-        final @Nonnull ReadonlyList<Block> entries = new ListWrapper(block).getElementsNotNull();
-        for (final @Nonnull Block entry : entries) {
-            // TODO: Add all entries to the database table(s).
+        final @Nonnull String SQL = Database.getConfiguration().REPLACE() + " INTO " + host + "password (entity, password) VALUES (?, ?)";
+        try (@Nonnull PreparedStatement preparedStatement = Database.prepareInsertStatement(SQL)) {
+            final @Nonnull ReadonlyList<Block> entries = new ListWrapper(block).getElementsNotNull();
+            for (final @Nonnull Block entry : entries) {
+                final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(2);
+                preparedStatement.setLong(1, IdentifierClass.create(elements.getNotNull(0)).getIdentity().toInternalNonHostIdentity().getNumber());
+                preparedStatement.setString(2, new StringWrapper(elements.getNotNull(1)).getString());
+                preparedStatement.addBatch();
+            }
+            preparedStatement.executeBatch();
         }
     }
     
@@ -105,9 +124,7 @@ public final class Passwords implements BothModule {
     @Pure
     @Override
     public @Nonnull Block getState(@Nonnull Entity entity, @Nonnull Agent agent) throws SQLException {
-        final @Nonnull FreezableArray<Block> elements = new FreezableArray<Block>(1);
-        if (agent.isClient()) elements.set(0, new StringWrapper(Password.TYPE, get(entity)).toBlock());
-        return new TupleWrapper(STATE, elements.freeze()).toBlock();
+        return new TupleWrapper(STATE, agent.isClient() ? new StringWrapper(Password.TYPE, get(entity)) : null).toBlock();
     }
     
     @Override
@@ -180,7 +197,7 @@ public final class Passwords implements BothModule {
         assert Password.isValid(oldValue) : "The old value is valid.";
         assert Password.isValid(newValue) : "The new value is valid.";
         
-        final @Nonnull Entity entity = password.getEntityNotNull();
+        final @Nonnull Entity entity = password.getEntity();
         final @Nonnull String SQL = "UPDATE " + entity.getSite() + "password SET password = ? WHERE entity = ? AND password = ?";
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
             preparedStatement.setString(1, newValue);

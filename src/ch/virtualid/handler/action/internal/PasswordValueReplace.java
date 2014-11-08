@@ -82,7 +82,7 @@ public final class PasswordValueReplace extends CoreServiceInternalAction {
      * @require Password.isValid(newValue) : "The new value is valid.";
      */
     public PasswordValueReplace(@Nonnull Password password, @Nonnull String oldValue, @Nonnull String newValue) {
-        super((Role) password.getEntityNotNull());
+        super((Role) password.getEntity());
         
         assert Password.isValid(oldValue) : "The old value is valid.";
         assert Password.isValid(newValue) : "The new value is valid.";

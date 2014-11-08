@@ -1,8 +1,9 @@
 package ch.virtualid.handler;
 
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.concept.Concept;
+import ch.virtualid.entity.Account;
 import ch.virtualid.entity.Entity;
+import ch.virtualid.entity.Role;
 import ch.virtualid.identifier.InternalIdentifier;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
@@ -21,7 +22,12 @@ import javax.annotation.Nullable;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public abstract class Handler extends Concept implements Immutable, Blockable {
+public abstract class Handler implements Immutable, Blockable {
+    
+    /**
+     * Stores the entity to which this handler belongs or null if it is impersonal.
+     */
+    private final @Nullable Entity entity;
     
     /**
      * Stores the subject of this handler.
@@ -43,8 +49,7 @@ public abstract class Handler extends Concept implements Immutable, Blockable {
      * @param subject the subject of this handler.
      */
     protected Handler(@Nullable Entity entity, @Nonnull InternalIdentifier subject) {
-        super(entity);
-        
+        this.entity = entity;
         this.signature = null;
         this.subject = subject;
     }
@@ -60,21 +65,64 @@ public abstract class Handler extends Concept implements Immutable, Blockable {
      * @ensure hasSignature() : "This handler has a signature.";
      */
     protected Handler(@Nullable Entity entity, @Nonnull SignatureWrapper signature) {
-        super(entity);
-        
+        this.entity = entity;
         this.signature = signature;
         this.subject = signature.getSubjectNotNull();
     }
     
     /**
-     * Returns a description of this handler.
+     * Returns the entity to which this handler belongs or null if it is impersonal.
      * 
-     * @return a description of this handler.
+     * @return the entity to which this handler belongs or null if it is impersonal.
      */
     @Pure
-    @Override
-    public abstract @Nonnull String toString();
+    public final @Nullable Entity getEntity() {
+        return entity;
+    }
     
+    /**
+     * Returns whether this handler has an entity.
+     * 
+     * @return whether this handler has an entity.
+     */
+    @Pure
+    public final boolean hasEntity() {
+        return entity != null;
+    }
+    
+    /**
+     * Returns the entity to which this handler belongs.
+     * 
+     * @return the entity to which this handler belongs.
+     * 
+     * @require hasEntity() : "This handler has an entity.";
+     */
+    @Pure
+    public final @Nonnull Entity getEntityNotNull() {
+        assert entity != null : "This handler has an entity.";
+        
+        return entity;
+    }
+    
+    /**
+     * Returns whether this handler is on a host.
+     * 
+     * @return whether this handler is on a host.
+     */
+    @Pure
+    public final boolean isOnHost() {
+        return entity instanceof Account;
+    }
+    
+    /**
+     * Returns whether this handler is on a client.
+     * 
+     * @return whether this handler is on a client.
+     */
+    @Pure
+    public final boolean isOnClient() {
+        return entity instanceof Role;
+    }
     
     /**
      * Returns the subject of this handler.
@@ -137,5 +185,14 @@ public abstract class Handler extends Concept implements Immutable, Blockable {
      */
     @Pure
     public abstract @Nonnull Service getService();
+    
+    /**
+     * Returns a description of this handler.
+     * 
+     * @return a description of this handler.
+     */
+    @Pure
+    @Override
+    public abstract @Nonnull String toString();
     
 }

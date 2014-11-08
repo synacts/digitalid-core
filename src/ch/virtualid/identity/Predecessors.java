@@ -29,6 +29,8 @@ import javax.annotation.Nullable;
  * <p>
  * <em>Important:</em> Make sure that you don't violate the invariants when adding!
  * 
+ * TODO: Support the export and import of all predecessors that belong to identifiers of a certain host.
+ * 
  * @invariant doesNotContainNull() : "This list of predecessors does not contain null.";
  * @invariant doesNotContainDuplicates() : "This list of predecessors does not contain duplicates.";
  * 

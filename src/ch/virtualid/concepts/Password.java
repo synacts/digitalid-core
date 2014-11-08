@@ -128,7 +128,7 @@ public final class Password extends Concept {
     @Pure
     @Override
     public @Nonnull String toString() {
-        return "The password of " + getEntityNotNull().getIdentity().getAddress() + " is '" + value + "'.";
+        return "The password of " + getEntity().getIdentity().getAddress() + " is '" + value + "'.";
     }
     
     
@@ -154,7 +154,7 @@ public final class Password extends Concept {
         if (Database.isSingleAccess()) {
             @Nullable Password password = index.get(entity);
             if (password == null) {
-                password = index.putIfAbsentReturnPresent(entity, new Password(entity, value));
+                password = index.putIfAbsentElseReturnPresent(entity, new Password(entity, value));
                 entity.observe(new Observer() { @Override public void notify(@Nonnull Aspect aspect, @Nonnull Instance instance) { index.remove(instance); } }, Entity.REMOVED);
             }
             return password;

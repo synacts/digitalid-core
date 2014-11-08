@@ -36,7 +36,7 @@ public final class Attributes implements BothModule {
     
     @Override
     public void createTables(@Nonnull Site site) throws SQLException {
-        try (final @Nonnull Statement statement = Database.createStatement()) {
+        try (@Nonnull Statement statement = Database.createStatement()) {
 //            statement.executeUpdate("CREATE TABLE IF NOT EXISTS attribute_value (entity BIGINT NOT NULL, type BIGINT NOT NULL, published BOOLEAN NOT NULL, value LONGBLOB NOT NULL, PRIMARY KEY (entity, type, published), FOREIGN KEY (entity) REFERENCES " + connection.getReference() + ", FOREIGN KEY (type) REFERENCES general_identity (identity))");
 //            statement.executeUpdate("CREATE TABLE IF NOT EXISTS attribute_visibility (entity BIGINT NOT NULL, type BIGINT NOT NULL, visibility TEXT NOT NULL COLLATE " + Database.UTF16_BIN + ", PRIMARY KEY (entity, type), FOREIGN KEY (entity) REFERENCES " + connection.getReference() + ", FOREIGN KEY (type) REFERENCES general_identity (identity))");
         }
@@ -44,7 +44,7 @@ public final class Attributes implements BothModule {
     
     @Override
     public void deleteTables(@Nonnull Site site) throws SQLException {
-        try (final @Nonnull Statement statement = Database.createStatement()) {
+        try (@Nonnull Statement statement = Database.createStatement()) {
             // TODO: Delete the tables of this module.
         }
     }
@@ -70,7 +70,7 @@ public final class Attributes implements BothModule {
     @Override
     public @Nonnull Block exportModule(@Nonnull Host host) throws SQLException {
         final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
-        try (final @Nonnull Statement statement = Database.createStatement()) {
+        try (@Nonnull Statement statement = Database.createStatement()) {
             // TODO: Retrieve all the entries from the database table(s).
         }
         return new ListWrapper(MODULE, entries.freeze()).toBlock();
@@ -107,7 +107,7 @@ public final class Attributes implements BothModule {
     @Override
     public @Nonnull Block getState(@Nonnull Entity entity, @Nonnull Agent agent) throws SQLException {
         final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
-        try (final @Nonnull Statement statement = Database.createStatement()) {
+        try (@Nonnull Statement statement = Database.createStatement()) {
             // TODO: Retrieve the entries of the given entity from the database table(s).
         }
         return new ListWrapper(STATE, entries.freeze()).toBlock();
@@ -125,7 +125,7 @@ public final class Attributes implements BothModule {
     
     @Override
     public void removeState(@Nonnull Entity entity) throws SQLException {
-        try (final @Nonnull Statement statement = Database.createStatement()) {
+        try (@Nonnull Statement statement = Database.createStatement()) {
 //            statement.executeUpdate("DELETE FROM attribute_value WHERE entity = " + entity);
 //            statement.executeUpdate("DELETE FROM attribute_visibility WHERE entity = " + entity);
         }

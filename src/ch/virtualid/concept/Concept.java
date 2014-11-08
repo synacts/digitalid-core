@@ -6,7 +6,6 @@ import ch.virtualid.entity.Account;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.Role;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * This class models an abstract {@link Concept concept} in the {@link Database database}.
@@ -17,53 +16,28 @@ import javax.annotation.Nullable;
 public abstract class Concept extends Instance {
     
     /**
-     * Stores the entity to which this concept belongs or null if it is impersonal.
+     * Stores the entity to which this concept belongs.
      */
-    private final @Nullable Entity entity;
+    private final @Nonnull Entity entity;
     
     /**
      * Creates a new concept with the given entity.
      * 
-     * @param entity the entity to which this concept belongs or null if it is impersonal.
+     * @param entity the entity to which this concept belongs.
      */
-    protected Concept(@Nullable Entity entity) {
+    protected Concept(@Nonnull Entity entity) {
         this.entity = entity;
-    }
-    
-    /**
-     * Returns the entity to which this concept belongs or null if it is impersonal.
-     * 
-     * @return the entity to which this concept belongs or null if it is impersonal.
-     */
-    @Pure
-    public final @Nullable Entity getEntity() {
-        return entity;
-    }
-    
-    /**
-     * Returns whether this concept has an entity.
-     * 
-     * @return whether this concept has an entity.
-     */
-    @Pure
-    public final boolean hasEntity() {
-        return entity != null;
     }
     
     /**
      * Returns the entity to which this concept belongs.
      * 
      * @return the entity to which this concept belongs.
-     * 
-     * @require hasEntity() : "This concept has an entity.";
      */
     @Pure
-    public final @Nonnull Entity getEntityNotNull() {
-        assert entity != null : "This concept has an entity.";
-        
+    public final @Nonnull Entity getEntity() {
         return entity;
     }
-    
     
     /**
      * Returns whether this concept is on a host.

@@ -29,7 +29,7 @@ public final class ConcurrentHashMap<K, V> extends java.util.concurrent.Concurre
     public ConcurrentHashMap(int initialCapacity, float loadFactor, int concurrencyLevel) {
         super(initialCapacity, loadFactor, concurrencyLevel);
     }
-
+    
     /**
      * Creates a new, empty map with the specified initial capacity
      * and load factor and with the default concurrencyLevel (16).
@@ -45,7 +45,7 @@ public final class ConcurrentHashMap<K, V> extends java.util.concurrent.Concurre
     public ConcurrentHashMap(int initialCapacity, float loadFactor) {
         super(initialCapacity, loadFactor);
     }
-
+    
     /**
      * Creates a new, empty map with the specified initial capacity,
      * and with default load factor (0.75) and concurrencyLevel (16).
@@ -58,7 +58,7 @@ public final class ConcurrentHashMap<K, V> extends java.util.concurrent.Concurre
     public ConcurrentHashMap(int initialCapacity) {
         super(initialCapacity);
     }
-
+    
     /**
      * Creates a new, empty map with a default initial capacity (16),
      * load factor (0.75) and concurrencyLevel (16).
@@ -66,7 +66,7 @@ public final class ConcurrentHashMap<K, V> extends java.util.concurrent.Concurre
     public ConcurrentHashMap() {
         super();
     }
-
+    
     /**
      * Creates a new map with the same mappings as the given map.
      * The map is created with a capacity of 1.5 times the number
@@ -78,10 +78,10 @@ public final class ConcurrentHashMap<K, V> extends java.util.concurrent.Concurre
     public ConcurrentHashMap(Map<? extends K, ? extends V> m) {
         super(m);
     }
-
+    
     
     @Override
-    public V putIfAbsentReturnPresent(K key, V value) {
+    public V putIfAbsentElseReturnPresent(K key, V value) {
         V previous = putIfAbsent(key, value);
         if (previous == null) return value;
         else return previous;

@@ -24,6 +24,8 @@ import javax.annotation.Nullable;
 /**
  * This class models the successor of an {@link Identifier identifier}.
  * 
+ * TODO: Support the export and import of all successors that belong to identifiers of a certain host.
+ * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 1.8
  */

@@ -20,14 +20,14 @@ public final class ClientCredentials implements ClientModule {
     
     @Override
     public void createTables(@Nonnull Site site) throws SQLException {
-        try (final @Nonnull Statement statement = Database.createStatement()) {
+        try (@Nonnull Statement statement = Database.createStatement()) {
             // TODO: Create the tables of this module.
         }
     }
     
     @Override
     public void deleteTables(@Nonnull Site site) throws SQLException {
-        try (final @Nonnull Statement statement = Database.createStatement()) {
+        try (@Nonnull Statement statement = Database.createStatement()) {
             // TODO: Delete the tables of this module.
         }
     }

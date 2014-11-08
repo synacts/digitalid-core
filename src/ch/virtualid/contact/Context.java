@@ -500,10 +500,10 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
     public static @Nonnull Context get(@Nonnull Entity entity, long number) {
         if (Database.isSingleAccess()) {
             @Nullable ConcurrentMap<Long, Context> map = index.get(entity);
-            if (map == null) map = index.putIfAbsentReturnPresent(entity, new ConcurrentHashMap<Long, Context>());
+            if (map == null) map = index.putIfAbsentElseReturnPresent(entity, new ConcurrentHashMap<Long, Context>());
             @Nullable Context context = map.get(number);
             if (context == null) {
-                context = map.putIfAbsentReturnPresent(number, new Context(entity, number));
+                context = map.putIfAbsentElseReturnPresent(number, new Context(entity, number));
                 entity.observe(new Observer() { @Override public void notify(@Nonnull Aspect aspect, @Nonnull Instance instance) { index.remove(instance); } }, Entity.REMOVED);
             }
             return context;

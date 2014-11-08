@@ -57,16 +57,6 @@ public abstract class ActionReply extends Reply implements Auditable {
     
     
     /**
-     * Returns the class of the external action whose reply class this is.
-     * 
-     * @return the class of the external action whose reply class this is.
-     */
-    @Pure
-    @Deprecated // TODO: Was probably replaced with the getReplyClass() in the method.
-    public abstract @Nonnull Class<? extends ExternalAction> getActionClass();
-    
-    
-    /**
      * Executes this action reply by the pusher.
      * 
      * @param action the external action that was sent.
@@ -74,7 +64,7 @@ public abstract class ActionReply extends Reply implements Auditable {
      * @throws PacketException if the authorization is not sufficient.
      * 
      * @require hasSignature() : "This handler has a signature.";
-     * @require getActionClass().isInstance(action) : "The given action is an instance of the indicated class.";
+     * @require action.getReplyClass().isInstance(this) : "This object is an instance of the action's reply class.";
      * @require getSubject().equals(action.getSubject()) : "The subjects of the reply and the action are the same.";
      * @require getEntityNotNull().equals(action.getEntityNotNull()) : "The entities of the reply and the action are the same.";
      * @require ((HostSignatureWrapper) getSignatureNotNull()).getSigner().equals(action.getRecipient()) : "The reply is signed by the action's recipient.";

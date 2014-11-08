@@ -4,7 +4,6 @@ import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.concept.Aspect;
 import ch.virtualid.entity.Account;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.errors.ShouldNeverHappenError;
@@ -44,12 +43,6 @@ import javax.annotation.Nullable;
  * @version 2.0
  */
 public final class PushReturned extends ExternalAction {
-    
-    /**
-     * Stores the aspect of the reply being invalid in the observed action.
-     */
-    public static final @Nonnull Aspect INVALID = new Aspect(PushReturned.class, "invalid reply");
-    
     
     /**
      * Stores the semantic type {@code valid.returned.push@virtualid.ch}.
@@ -131,8 +124,8 @@ public final class PushReturned extends ExternalAction {
         final @Nonnull CompressionWrapper _compression = new CompressionWrapper(_signature.getElementNotNull());
         final @Nonnull SelfcontainedWrapper _content = new SelfcontainedWrapper(_compression.getElementNotNull());
         try {
-            this.reply = (ActionReply) Reply.get(entity, (HostSignatureWrapper) _signature, _content.getElement());
-        } catch (@Nonnull PacketException | ClassCastException exception) {
+            this.reply = Reply.get(entity, (HostSignatureWrapper) _signature, _content.getElement()).toActionReply();
+        } catch (@Nonnull PacketException exception) {
             throw new InvalidEncodingException("Could not decode the reply to an external action.", exception);
         }
     }
@@ -194,7 +187,9 @@ public final class PushReturned extends ExternalAction {
     public void executeOnClient() throws SQLException {
         assert isOnClient() : "This method is called on a client.";
         
-        if (!isValid()) notify(INVALID); // TODO: Also add it to the Errors module?
+        if (!isValid()) {
+            // TODO: Add it to the Errors module.
+        }
         else reply.executeBySynchronizer();
     }
     

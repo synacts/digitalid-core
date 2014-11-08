@@ -175,7 +175,7 @@ public final class Contact extends Concept implements Immutable, Blockable, SQLi
         if (object == this) return true;
         if (object == null || !(object instanceof Contact)) return false;
         final @Nonnull Contact other = (Contact) object;
-        return this.person.equals(other.person) && this.getEntityNotNull().equals(other.getEntityNotNull());
+        return this.person.equals(other.person) && this.getEntity().equals(other.getEntity());
     }
     
     @Pure
@@ -183,7 +183,7 @@ public final class Contact extends Concept implements Immutable, Blockable, SQLi
     public int hashCode() {
         int hash = 7;
         hash = 89 * hash + getPerson().hashCode();
-        hash = 89 * hash + getEntityNotNull().hashCode();
+        hash = 89 * hash + getEntity().hashCode();
         return hash;
     }
     
