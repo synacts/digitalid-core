@@ -64,6 +64,12 @@ public final class ClientRequest extends Request {
     }
     
     
+    @Pure
+    @Override
+    public boolean isSigned() {
+        return true;
+    }
+    
     @Override
     @Nonnull Response resend(@Nonnull FreezableList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject, boolean verified) throws SQLException, IOException, PacketException, ExternalException {
         if (!subject.getHostIdentifier().equals(recipient)) throw new PacketException(PacketError.INTERNAL, "The host of the subject " + subject + " does not match the recipient " + recipient + ".");

@@ -14,8 +14,11 @@ import ch.virtualid.handler.reply.query.AttributesReply;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identifier.InternalIdentifier;
 import ch.virtualid.identity.SemanticType;
+import ch.virtualid.util.ReadonlyArray;
 import ch.xdf.Block;
+import ch.xdf.BooleanWrapper;
 import ch.xdf.SignatureWrapper;
+import ch.xdf.TupleWrapper;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
@@ -32,9 +35,14 @@ import javax.annotation.Nullable;
 public final class AttributesQuery extends CoreServiceExternalQuery {
     
     /**
+     * Stores the semantic type {@code published.query.attribute@virtualid.ch}.
+     */
+    private static final @Nonnull SemanticType PUBLISHED = SemanticType.create("published.query.attribute@virtualid.ch").load(BooleanWrapper.TYPE);
+    
+    /**
      * Stores the semantic type {@code query.attribute@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("query.attribute@virtualid.ch").load(AttributeSet.TYPE);
+    public static final @Nonnull SemanticType TYPE = SemanticType.create("query.attribute@virtualid.ch").load(TupleWrapper.TYPE, AttributeSet.TYPE, PUBLISHED);
     
     @Pure
     @Override
@@ -52,21 +60,28 @@ public final class AttributesQuery extends CoreServiceExternalQuery {
     private final @Nonnull ReadonlyAttributeSet attributes;
     
     /**
+     * Stores whether the published values are queried.
+     */
+    private final boolean published;
+    
+    /**
      * Creates an attributes query to query the given attributes of the given subject.
      * 
      * @param role the role to which this handler belongs.
      * @param subject the subject of this handler.
      * @param attributes the queried attributes.
+     * @param published whether the published values are queried.
      * 
      * @require attributes.isFrozen() : "The attributes are frozen.";
      * @require attributes.isNotEmpty() : "The attributes are not empty.";
      */
-    public AttributesQuery(@Nullable Role role, @Nonnull InternalIdentifier subject, @Nonnull ReadonlyAttributeSet attributes) {
+    public AttributesQuery(@Nullable Role role, @Nonnull InternalIdentifier subject, @Nonnull ReadonlyAttributeSet attributes, boolean published) {
         super(role, subject);
         
         assert attributes.isFrozen() : "The attributes are frozen.";
         assert attributes.isNotEmpty() : "The attributes are not empty.";
         
+        this.published = published;
         this.attributes = attributes;
         this.requiredPermissions = attributes.toAgentPermissions().freeze();
     }
@@ -91,21 +106,23 @@ public final class AttributesQuery extends CoreServiceExternalQuery {
         
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
-        this.attributes = new AttributeSet(block).freeze();
+        final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(2);
+        this.attributes = new AttributeSet(elements.getNotNull(0)).freeze();
         if (attributes.isEmpty()) throw new InvalidEncodingException("The attributes may not be empty.");
+        this.published = new BooleanWrapper(elements.getNotNull(1)).getValue();
         this.requiredPermissions = attributes.toAgentPermissions().freeze();
     }
     
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        return attributes.toBlock().setType(TYPE);
+        return new TupleWrapper(TYPE, attributes, new BooleanWrapper(PUBLISHED, published)).toBlock();
     }
     
     @Pure
     @Override
     public @Nonnull String toString() {
-        return "Queries the attributes " + attributes + ".";
+        return "Queries the " + (published ? "published" : "unpublished") + " attributes " + attributes + ".";
     }
     
     
@@ -119,6 +136,15 @@ public final class AttributesQuery extends CoreServiceExternalQuery {
      */
     public @Nonnull ReadonlyAttributeSet getAttributes() {
         return attributes;
+    }
+    
+    /**
+     * Returns whether the published values are queried.
+     * 
+     * @return whether the published values are queried.
+     */
+    public boolean isPublished() {
+        return published;
     }
     
     

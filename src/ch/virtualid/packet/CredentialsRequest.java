@@ -101,6 +101,12 @@ public final class CredentialsRequest extends Request {
     }
     
     
+    @Pure
+    @Override
+    public boolean isSigned() {
+        return true;
+    }
+    
     @Override
     @Nonnull Response resend(@Nonnull FreezableList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject, boolean verified) throws SQLException, IOException, PacketException, ExternalException {
         return new CredentialsRequest(methods, recipient, subject, getAudit(), credentials, certificates, lodged, value).send(verified);

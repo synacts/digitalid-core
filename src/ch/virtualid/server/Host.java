@@ -119,7 +119,7 @@ public final class Host extends Site {
             final @Nonnull SignatureWrapper certificate;
             if (Server.hasHost(HostIdentifier.VIRTUALID)) {
                 // If the new host is running on the same server as virtualid.ch, certify its public key immediately.
-                certificate = new HostSignatureWrapper(Certificate.TYPE, publicKeyWrapper, identifier, HostIdentifier.VIRTUALID);
+                certificate = new HostSignatureWrapper(Certificate.TYPE, publicKeyWrapper, identifier, PublicKeyChain.IDENTIFIER);
             } else {
                 certificate = new SignatureWrapper(Certificate.TYPE, publicKeyWrapper, null);
             }

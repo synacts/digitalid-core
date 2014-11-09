@@ -14,7 +14,9 @@ import ch.virtualid.server.Host;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * An entity captures the {@link Site site} and the {@link Identity identity} of a {@link Concept concept}.
@@ -91,6 +93,18 @@ public abstract class Entity extends Instance implements Immutable, SQLizable {
     @Override
     public final void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
         preparedStatement.setLong(parameterIndex, getNumber());
+    }
+    
+    /**
+     * Sets the parameter at the given index of the prepared statement to the given entity.
+     * 
+     * @param entity the entity to which the parameter at the given index is to be set.
+     * @param preparedStatement the prepared statement whose parameter is to be set.
+     * @param parameterIndex the index of the parameter to set.
+     */
+    public static void set(@Nullable Entity entity, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+        if (entity == null) preparedStatement.setNull(parameterIndex, Types.BIGINT);
+        else entity.set(preparedStatement, parameterIndex);
     }
     
     @Pure

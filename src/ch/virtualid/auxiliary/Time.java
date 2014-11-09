@@ -167,13 +167,23 @@ public final class Time implements Immutable, Blockable, Comparable<Time>, SQLiz
     
     
     /**
-     * Returns the time this interval ago now.
+     * Returns this interval ago now.
      * 
-     * @return the time this interval ago now.
+     * @return this interval ago now.
      */
     @Pure
     public @Nonnull Time ago() {
         return new Time(System.currentTimeMillis() - value);
+    }
+    
+    /**
+     * Returns this interval ahead of now.
+     * 
+     * @return this interval ahead of now.
+     */
+    @Pure
+    public @Nonnull Time ahead() {
+        return new Time(System.currentTimeMillis() + value);
     }
     
     

@@ -19,6 +19,7 @@ import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.Service;
 import ch.virtualid.packet.Packet;
+import ch.virtualid.packet.Response;
 import ch.virtualid.server.Host;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.ReadonlyArray;
@@ -212,7 +213,7 @@ public final class PushReturned extends ExternalAction {
     }
     
     @Override
-    public @Nullable Reply send() throws PacketException {
+    public @Nullable Response send() throws PacketException {
         throw new PacketException(PacketError.INTERNAL, "Returned push replies cannot be sent.");
     }
     

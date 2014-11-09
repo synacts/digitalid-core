@@ -53,6 +53,11 @@ public final class Response extends Packet {
     private @Nullable HostIdentifier signer;
     
     /**
+     * Stores the request that caused this response.
+     */
+    private final @Nullable Request request;
+    
+    /**
      * Packs the given packet exception as a response without signing.
      * 
      * @param request the corresponding request or null if not yet decoded.
@@ -62,6 +67,8 @@ public final class Response extends Packet {
      */
     public Response(@Nullable Request request, @Nonnull PacketException exception) throws SQLException, IOException, PacketException, ExternalException {
         super(new Pair<ReadonlyList<Reply>, ReadonlyList<PacketException>>(new FreezableArrayList<Reply>(1).freeze(), new FreezableArrayList<PacketException>(exception).freeze()), 1, null, null, request == null ? null : request.getEncryption().getSymmetricKey(), null, null);
+        
+        this.request = request;
     }
     
     /**
@@ -77,6 +84,7 @@ public final class Response extends Packet {
      * @require exceptions.isFrozen() : "The list of exceptions is frozen.";
      * @require replies.size() == exceptions.size() : "The number of replies and exceptions are the same.";
      * 
+     * @ensure hasRequest() : "This response has a request.";
      * @ensure getSize() == request.getSize() : "The size of this response equals the size of the request.";
      */
     public Response(@Nonnull Request request, @Nonnull ReadonlyList<Reply> replies, @Nonnull ReadonlyList<PacketException> exceptions, @Nullable Audit audit) throws SQLException, IOException, PacketException, ExternalException {
@@ -86,6 +94,8 @@ public final class Response extends Packet {
         assert replies.isNotEmpty() : "The list of replies is not empty.";
         assert exceptions.isFrozen() : "The list of exceptions is frozen.";
         assert replies.size() == exceptions.size() : "The number of replies and exceptions are the same.";
+        
+        this.request = request;
     }
     
     
@@ -96,10 +106,37 @@ public final class Response extends Packet {
      * @param inputStream the input stream to read the response from.
      * @param verified determines whether the signature is verified (if not, it needs to be checked by the caller).
      * 
+     * @ensure hasRequest() : "This response has a request.";
      * @ensure getSize() == request.getSize() : "The size of this response equals the size of the given request.";
      */
     public Response(@Nonnull Request request, @Nonnull InputStream inputStream, boolean verified) throws SQLException, IOException, PacketException, ExternalException {
         super(inputStream, request, verified);
+        
+        this.request = request;
+    }
+    
+    
+    /**
+     * Returns whether this response has a request.
+     * 
+     * @return whether this response has a request.
+     */
+    public boolean hasRequest() {
+        return request != null;
+    }
+    
+    /**
+     * Returns the request that caused this response.
+     * 
+     * @return the request that caused this response.
+     * 
+     * @require hasRequest() : "This response has a request.";
+     */
+    @Pure
+    public @Nonnull Request getRequest() {
+        assert request != null : "This response has a request.";
+        
+        return request;
     }
     
     

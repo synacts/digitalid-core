@@ -4,6 +4,7 @@ import ch.virtualid.annotations.Pure;
 import ch.virtualid.concepts.Certificate;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.exceptions.external.ExternalException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.external.InvalidSignatureException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Reply;
@@ -63,6 +64,7 @@ public final class AttributesReply extends CoreServiceQueryReply {
      * Stores the attributes of this reply.
      * 
      * @invariant attributes.isFrozen() : "The attributes are frozen.";
+     * @invariant attributes.isNotEmpty() : "The attributes are not empty.";
      * @invariant areCertificates(attributes) : "All the attributes which are not null are certificates.";
      */
     private final @Nonnull ReadonlyList<SignatureWrapper> attributes;
@@ -74,12 +76,14 @@ public final class AttributesReply extends CoreServiceQueryReply {
      * @param attributes the attributes of this reply.
      * 
      * @require attributes.isFrozen() : "The attributes are frozen.";
+     * @require attributes.isNotEmpty() : "The attributes are not empty.";
      * @require areCertificates(attributes) : "All the attributes which are not null are certificates.";
      */
     public AttributesReply(@Nonnull InternalNonHostIdentifier subject, @Nonnull ReadonlyList<SignatureWrapper> attributes) throws SQLException, PacketException {
         super(subject);
         
         assert attributes.isFrozen() : "The attributes are frozen.";
+        assert attributes.isNotEmpty() : "The attributes are not empty.";
         assert areCertificates(attributes) : "All the attributes which are not null are certificates.";
         
         this.attributes = attributes;
@@ -117,6 +121,7 @@ public final class AttributesReply extends CoreServiceQueryReply {
             }
         }
         this.attributes = attributes.freeze();
+        if (attributes.isEmpty()) throw new InvalidEncodingException("The attributes may not be empty.");
     }
     
     @Pure
@@ -142,8 +147,9 @@ public final class AttributesReply extends CoreServiceQueryReply {
      * 
      * @return the attributes of this reply.
      * 
-     * @invariant return.isFrozen() : "The attributes are frozen.";
-     * @invariant areCertificates(return) : "All the attributes which are not null are certificates.";
+     * @ensure return.isFrozen() : "The attributes are frozen.";
+     * @ensure attributes.isNotEmpty() : "The attributes are not empty.";
+     * @ensure areCertificates(return) : "All the attributes which are not null are certificates.";
      */
     public @Nonnull ReadonlyList<SignatureWrapper> getAttributes() {
         return attributes;

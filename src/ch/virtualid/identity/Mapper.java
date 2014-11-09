@@ -28,9 +28,9 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -69,7 +69,7 @@ public final class Mapper {
     /**
      * Stores the registered triplets of tables, columns and unique constraint that reference a person.
      */
-    private static final @Nonnull List<Triplet<String, String, String[]>> references = new ArrayList<Triplet<String, String, String[]>>();
+    private static final @Nonnull Set<Triplet<String, String, String[]>> references = new LinkedHashSet<Triplet<String, String, String[]>>();
     
     /**
      * Adds the given table, columns and unique constraint to the list of registered references.
@@ -495,6 +495,7 @@ public final class Mapper {
                 }
                 LOGGER.log(Level.INFORMATION, "The identity of " + predecessor.getAddress() + " was succesfully merged into " + identifier + ".");
             }
+            if (identities.size() > 1) Cache.invalidateCachedAttributes(identity);
         }
         LOGGER.log(Level.INFORMATION, "The identity of " + identifier + " was succesfully established.");
         

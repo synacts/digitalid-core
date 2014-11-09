@@ -45,6 +45,18 @@ public interface SQLizable {
     public void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException;
     
     /**
+     * Sets the parameter at the given index of the prepared statement to the given reply.
+     * 
+     * @param reply the reply to which the parameter at the given index is to be set.
+     * @param preparedStatement the prepared statement whose parameter is to be set.
+     * @param parameterIndex the index of the parameter to set.
+     */
+//    public static void set(@Nullable Reply reply, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+//        if (reply == null) preparedStatement.setNull(parameterIndex, Types.BIGINT);
+//        else reply.set(preparedStatement, parameterIndex);
+//    }
+    
+    /**
      * Returns the string that represents this object in the database.
      * 
      * @return the string that represents this object in the database.

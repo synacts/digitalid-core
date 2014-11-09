@@ -14,6 +14,7 @@ import ch.xdf.StringWrapper;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -209,6 +210,18 @@ public abstract class IdentifierClass implements Identifier, Immutable, Blockabl
     @Override
     public final void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
         preparedStatement.setString(parameterIndex, string);
+    }
+    
+    /**
+     * Sets the parameter at the given index of the prepared statement to the given identifier.
+     * 
+     * @param identifier the identifier to which the parameter at the given index is to be set.
+     * @param preparedStatement the prepared statement whose parameter is to be set.
+     * @param parameterIndex the index of the parameter to set.
+     */
+    public static void set(@Nullable Identifier identifier, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+        if (identifier == null) preparedStatement.setNull(parameterIndex, Types.VARCHAR);
+        else identifier.set(preparedStatement, parameterIndex);
     }
     
     

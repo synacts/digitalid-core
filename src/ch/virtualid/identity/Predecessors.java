@@ -189,10 +189,11 @@ public final class Predecessors extends FreezableArrayList<Predecessor> implemen
     public void set(@Nonnull InternalNonHostIdentifier identifier, @Nullable Reply reply) throws SQLException {
         assert !identifier.isMapped() : "The identifier is not mapped.";
         
-        final @Nonnull String SQL = "INSERT INTO general_predecessors (identifier, predecessors) VALUES (?, ?)";
+        final @Nonnull String SQL = "INSERT INTO general_predecessors (identifier, predecessors, reply) VALUES (?, ?, ?)";
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
-            preparedStatement.setString(1, identifier.getString());
-            this.toBlock().set(preparedStatement, 2);
+            identifier.set(preparedStatement, 1);
+            toBlock().set(preparedStatement, 2);
+            Reply.set(reply, preparedStatement, 3);
             preparedStatement.executeUpdate();
         }
     }

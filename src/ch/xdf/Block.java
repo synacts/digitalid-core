@@ -24,6 +24,7 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -663,6 +664,22 @@ public final class Block implements Immutable, SQLizable {
         } else {
             preparedStatement.setBytes(parameterIndex, getBytes());
         }
+    }
+    
+    /**
+     * Sets the parameter at the given index of the prepared statement to the given block.
+     * 
+     * @param block the block to which the parameter at the given index is to be set.
+     * @param preparedStatement the prepared statement whose parameter is to be set.
+     * @param parameterIndex the index of the parameter to set.
+     * 
+     * @require block == null || block.isEncoded() : "The block is either null or encoded.";
+     */
+    public static void set(@Nullable Block block, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+        assert block == null || block.isEncoded() : "The block is either null or encoded.";
+        
+        if (block == null) preparedStatement.setNull(parameterIndex, Types.BLOB);
+        else block.set(preparedStatement, parameterIndex);
     }
     
     @Pure

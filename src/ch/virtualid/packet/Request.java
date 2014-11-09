@@ -80,7 +80,7 @@ public class Request extends Packet {
      * @ensure getSize() == 1 : "The size of this request is 1.";
      */
     public Request(@Nonnull HostIdentifier identifier) throws SQLException, IOException, PacketException, ExternalException {
-        this(new FreezableArrayList<Method>(new AttributesQuery(null, identifier, new AttributeSet(PublicKeyChain.TYPE).freeze())).freeze(), identifier, null, identifier, null, null);
+        this(new FreezableArrayList<Method>(new AttributesQuery(null, identifier, new AttributeSet(PublicKeyChain.TYPE).freeze(), true)).freeze(), identifier, null, identifier, null, null);
     }
     
     /**
@@ -133,7 +133,7 @@ public class Request extends Packet {
     
     @Pure
     @Override
-    void checkRecency() throws InactiveSignatureException {
+    final void checkRecency() throws InactiveSignatureException {
         for (final @Nonnull Method method : methods) {
             method.getSignatureNotNull().checkRecency();
         }
@@ -237,6 +237,16 @@ public class Request extends Packet {
         return getMethod(0).getService();
     }
     
+    
+    /**
+     * Returns whether this request is signed.
+     * 
+     * @return whether this request is signed.
+     */
+    @Pure
+    public boolean isSigned() {
+        return false;
+    }
     
     /**
      * Resends this request and returns the response, optionally verifying the signature.

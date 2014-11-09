@@ -7,6 +7,7 @@ import ch.virtualid.interfaces.SQLizable;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -73,6 +74,18 @@ public abstract class IdentityClass implements Identity, Immutable, SQLizable {
     @Override
     public final void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
         preparedStatement.setLong(parameterIndex, number);
+    }
+    
+    /**
+     * Sets the parameter at the given index of the prepared statement to the given identity.
+     * 
+     * @param identity the identity to which the parameter at the given index is to be set.
+     * @param preparedStatement the prepared statement whose parameter is to be set.
+     * @param parameterIndex the index of the parameter to set.
+     */
+    public static void set(@Nullable Identity identity, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+        if (identity == null) preparedStatement.setNull(parameterIndex, Types.BIGINT);
+        else identity.set(preparedStatement, parameterIndex);
     }
     
     

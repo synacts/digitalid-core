@@ -14,13 +14,13 @@ import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.ActionReply;
 import ch.virtualid.handler.ExternalAction;
 import ch.virtualid.handler.Method;
-import ch.virtualid.handler.Reply;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identifier.IdentifierClass;
 import ch.virtualid.identifier.InternalIdentifier;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.Service;
 import ch.virtualid.packet.Packet;
+import ch.virtualid.packet.Response;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.ReadonlyArray;
 import ch.xdf.Block;
@@ -219,7 +219,7 @@ public final class PushFailed extends ExternalAction {
     }
     
     @Override
-    public @Nullable Reply send() throws PacketException {
+    public @Nullable Response send() throws PacketException {
         throw new PacketException(PacketError.INTERNAL, "Failed push actions cannot be sent.");
     }
     

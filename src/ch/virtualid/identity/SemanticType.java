@@ -435,6 +435,25 @@ public final class SemanticType extends Type implements Immutable {
     }
     
     /**
+     * Returns the caching period of this semantic type when used as an attribute.
+     * 
+     * @return the caching period of this semantic type when used as an attribute.
+     * 
+     * @require isLoaded() : "The type declaration is already loaded.";
+     * @require getCachingPeriod() != null : "The caching period is not null.";
+     * 
+     * @ensure return.isNonNegative() && return.isLessThanOrEqualTo(Time.TROPICAL_YEAR) : "The caching period is non-negative and less than a year.";
+     */
+    @Pure
+    public @Nonnull Time getCachingPeriodNotNull() {
+        assert isLoaded() : "The type declaration is already loaded.";
+        @Nullable Time cachingPeriod = getCachingPeriod();
+        assert cachingPeriod != null : "The caching period is not null.";
+        
+        return cachingPeriod;
+    }
+    
+    /**
      * Returns the syntactic base of this semantic type.
      * 
      * @return the syntactic base of this semantic type.

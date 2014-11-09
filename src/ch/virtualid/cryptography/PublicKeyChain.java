@@ -3,6 +3,7 @@ package ch.virtualid.cryptography;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.identifier.InternalNonHostIdentifier;
 import ch.virtualid.identity.Category;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
@@ -23,6 +24,12 @@ import org.javatuples.Pair;
 public final class PublicKeyChain extends KeyChain<PublicKey> implements Immutable, Blockable {
     
     /**
+     * Stores the internal non-host identifier {@code public.key.chain.host@virtualid.ch}.
+     */
+    public final static @Nonnull InternalNonHostIdentifier IDENTIFIER = new InternalNonHostIdentifier("public.key.chain.host@virtualid.ch");
+    
+    
+    /**
      * Stores the semantic type {@code item.public.key.chain.host@virtualid.ch}.
      */
     private static final @Nonnull SemanticType ITEM = SemanticType.create("item.public.key.chain.host@virtualid.ch").load(TupleWrapper.TYPE, Time.TYPE, PublicKey.TYPE);
@@ -30,7 +37,7 @@ public final class PublicKeyChain extends KeyChain<PublicKey> implements Immutab
     /**
      * Stores the semantic type {@code public.key.chain.host@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("public.key.chain.host@virtualid.ch").load(new Category[] {Category.HOST}, Time.TROPICAL_YEAR, ListWrapper.TYPE, ITEM);
+    public static final @Nonnull SemanticType TYPE = SemanticType.create(IDENTIFIER.getString()).load(new Category[] {Category.HOST}, Time.TROPICAL_YEAR, ListWrapper.TYPE, ITEM);
     
     
     /**

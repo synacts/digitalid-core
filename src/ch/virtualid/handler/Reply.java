@@ -25,6 +25,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Types;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Timer;
@@ -274,6 +275,18 @@ public abstract class Reply extends Handler implements SQLizable {
     public void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
         if (number == null) preparedStatement.setNull(parameterIndex, java.sql.Types.BIGINT);
         else preparedStatement.setLong(parameterIndex, number);
+    }
+    
+    /**
+     * Sets the parameter at the given index of the prepared statement to the given reply.
+     * 
+     * @param reply the reply to which the parameter at the given index is to be set.
+     * @param preparedStatement the prepared statement whose parameter is to be set.
+     * @param parameterIndex the index of the parameter to set.
+     */
+    public static void set(@Nullable Reply reply, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+        if (reply == null) preparedStatement.setNull(parameterIndex, Types.BIGINT);
+        else reply.set(preparedStatement, parameterIndex);
     }
     
     /**

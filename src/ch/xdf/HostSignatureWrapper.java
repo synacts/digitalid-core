@@ -7,6 +7,7 @@ import ch.virtualid.concepts.Certificate;
 import ch.virtualid.cryptography.Element;
 import ch.virtualid.cryptography.PrivateKey;
 import ch.virtualid.cryptography.PublicKey;
+import ch.virtualid.cryptography.PublicKeyChain;
 import ch.virtualid.errors.ShouldNeverHappenError;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
@@ -18,6 +19,7 @@ import ch.virtualid.identifier.IdentifierClass;
 import ch.virtualid.identifier.InternalIdentifier;
 import ch.virtualid.identifier.InternalNonHostIdentifier;
 import ch.virtualid.identity.Category;
+import ch.virtualid.identity.HostIdentity;
 import ch.virtualid.identity.InternalIdentity;
 import ch.virtualid.identity.NonHostIdentity;
 import ch.virtualid.identity.SemanticType;
@@ -175,9 +177,13 @@ public final class HostSignatureWrapper extends SignatureWrapper implements Immu
         assert hostSignature.getType().isBasedOn(SIGNATURE) : "The signature is based on the implementation type.";
         
         this.signer = IdentifierClass.create(new TupleWrapper(hostSignature).getElementNotNull(0)).toInternalIdentifier();
-        this.publicKey = Cache.getPublicKey(signer.getHostIdentifier(), getTimeNotNull());
+        if (signer.getHostIdentifier().equals(HostIdentifier.VIRTUALID)) {
+            this.publicKey = new PublicKeyChain(Cache.getStaleAttributeValue(HostIdentity.VIRTUALID, null, PublicKeyChain.TYPE)).getKey(getTimeNotNull());
+        } else {
+            this.publicKey = Cache.getPublicKey(signer.getHostIdentifier(), getTimeNotNull());
+        }
         
-        if (getType().isBasedOn(Certificate.TYPE) && getSigner() instanceof HostIdentifier) throw new InvalidEncodingException("If this signature is a certificate, the signer may not be a host.");
+        if (isCertificate() && getSigner() instanceof HostIdentifier) throw new InvalidEncodingException("If this signature is a certificate, the signer may not be a host.");
     }
     
     /**

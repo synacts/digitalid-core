@@ -187,10 +187,12 @@ public abstract class Method extends Handler {
      * This method can be overridden to support, for example, one-time credentials.
      * You might also want to return {@code false} for {@link #isSimilarTo(ch.virtualid.handler.Method)}.
      * 
-     * @return the reply to this method in case of queries or, potentially, external actions.
+     * @return the response to the request that is encoded by this method.
+     * 
+     * @ensure return.hasRequest() : "The returned response has a request.";
      */
-    public @Nullable Reply send() throws SQLException, IOException, PacketException, ExternalException {
-        return Method.send(new FreezableArrayList<Method>(this).freeze()).getReply(0);
+    public @Nonnull Response send() throws SQLException, IOException, PacketException, ExternalException {
+        return Method.send(new FreezableArrayList<Method>(this).freeze());
     }
     
     /**
@@ -202,9 +204,7 @@ public abstract class Method extends Handler {
      */
     @SuppressWarnings("unchecked")
     public final @Nonnull <T extends Reply> T sendNotNull() throws SQLException, IOException, PacketException, ExternalException {
-        final @Nullable Reply reply = send();
-        assert reply != null;
-        return (T) reply;
+        return (T) send().getReplyNotNull(0);
     }
     
     
@@ -261,6 +261,8 @@ public abstract class Method extends Handler {
      * @require methods.isFrozen() : "The list of methods is frozen.";
      * @require !methods.isEmpty() : "The list of methods is not empty.";
      * @require areSimilar(methods) : "All methods are similar and not null.";
+     * 
+     * @ensure return.hasRequest() : "The returned response has a request.";
      */
     public static @Nonnull Response send(@Nonnull ReadonlyList<Method> methods) throws SQLException, IOException, PacketException, ExternalException {
         assert methods.isFrozen() : "The list of methods is frozen.";
