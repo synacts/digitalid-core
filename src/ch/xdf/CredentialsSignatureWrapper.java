@@ -215,6 +215,8 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
      * @require credentialsAreValid(credentials) : "The credentials are valid.";
      * @require certificates == null || certificates.isFrozen() : "The certificates are either null or frozen.";
      * @require certificatesAreValid(certificates, credentials) : "The certificates are valid (given the given credentials).";
+     * 
+     * @ensure isVerified() : "This signature is verified.";
      */
     public CredentialsSignatureWrapper(@Nonnull SemanticType type, @Nullable Block element, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull ReadonlyList<Credential> credentials, @Nullable ReadonlyList<HostSignatureWrapper> certificates, boolean lodged, @Nullable BigInteger value) throws SQLException, IOException, PacketException, ExternalException {
         super(type, element, subject, audit);
@@ -251,6 +253,8 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
      * @require credentialsAreValid(credentials) : "The credentials are valid.";
      * @require certificates == null || certificates.isFrozen() : "The certificates are either null or frozen.";
      * @require certificatesAreValid(certificates, credentials) : "The certificates are valid (given the given credentials).";
+     * 
+     * @ensure isVerified() : "This signature is verified.";
      */
     public CredentialsSignatureWrapper(@Nonnull SemanticType type, @Nullable Blockable element, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull ReadonlyList<Credential> credentials, @Nullable ReadonlyList<HostSignatureWrapper> certificates, boolean lodged, @Nullable BigInteger value) throws SQLException, IOException, PacketException, ExternalException {
         this(type, Block.toBlock(element), subject, audit, credentials, certificates, lodged, value);
@@ -262,14 +266,15 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
      * 
      * @param block the block to be wrapped.
      * @param credentialsSignature the signature to be decoded.
+     * @param verified whether the signature is already verified.
      * @param entity the entity that decodes the signature or null.
      * 
      * @require block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
      * @require credentialsSignature.getType().isBasedOn(SIGNATURE) : "The signature is based on the implementation type.";
      */
     @SuppressWarnings("AssignmentToMethodParameter")
-    CredentialsSignatureWrapper(final @Nonnull Block block, final @Nonnull Block credentialsSignature, @Nullable Entity entity) throws SQLException, IOException, PacketException, ExternalException {
-        super(block);
+    CredentialsSignatureWrapper(final @Nonnull Block block, final @Nonnull Block credentialsSignature, boolean verified, @Nullable Entity entity) throws SQLException, IOException, PacketException, ExternalException {
+        super(block, verified);
         
         assert credentialsSignature.getType().isBasedOn(SIGNATURE) : "The signature is based on the implementation type.";
         
@@ -316,7 +321,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
             list = new ListWrapper(tuple.getElementNotNull(5)).getElementsNotNull();
             final @Nonnull FreezableList<HostSignatureWrapper> certificates = new FreezableArrayList<HostSignatureWrapper>(list.size());
             for (final @Nonnull Block element : list) {
-                final @Nonnull SignatureWrapper certificate = SignatureWrapper.decodeUnverified(element, null);
+                final @Nonnull SignatureWrapper certificate = SignatureWrapper.decodeWithoutVerifying(element, verified, null);
                 if (certificate instanceof HostSignatureWrapper) certificates.add((HostSignatureWrapper) certificate);
                 else throw new InvalidEncodingException("An appended certificate is not signed by a host.");
             }
@@ -704,6 +709,8 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
     @Pure
     @Override
     public void verify() throws SQLException, IOException, PacketException, ExternalException {
+        assert isNotVerified() : "This signature is not verified.";
+        
         if (getTimeNotNull().isLessThan(Time.TROPICAL_YEAR.ago())) throw new InvalidSignatureException("The credentials signature is out of date.");
         
         final @Nonnull TupleWrapper tuple = new TupleWrapper(getCache());
@@ -796,6 +803,8 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
         if (certificates != null) {
             for (final @Nonnull HostSignatureWrapper certificate : certificates) certificate.verifyAsCertificate();
         }
+        
+        setVerified();
     }
     
     @Override
@@ -937,6 +946,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
     @Pure
     @Override
     public void verifyAsCertificate() throws InvalidEncodingException {
+        assert isNotVerified() : "This signature is not verified.";
         assert isCertificate() : "This signature is a certificate.";
         
         throw new InvalidEncodingException("A certificate cannot be signed with credentials.");

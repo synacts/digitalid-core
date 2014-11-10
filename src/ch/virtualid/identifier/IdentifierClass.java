@@ -134,6 +134,12 @@ public abstract class IdentifierClass implements Identifier, Immutable, Blockabl
         return Mapper.isMapped(this);
     }
     
+    @Pure
+    @Override
+    public final boolean isNotMapped() throws SQLException {
+        return Mapper.isNotMapped(this);
+    }
+    
     
     @Pure
     @Override

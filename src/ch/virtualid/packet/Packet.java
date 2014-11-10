@@ -188,7 +188,7 @@ public abstract class Packet implements Immutable {
         for (int i = 0; i < size; i++) {
             if (elements.isNotNull(i)) {
                 final @Nonnull SignatureWrapper signature;
-                try { signature = verified ? SignatureWrapper.decode(elements.getNotNull(i), account) : SignatureWrapper.decodeUnverified(elements.getNotNull(i), account); } catch (InvalidEncodingException | InvalidSignatureException exception) { throw new PacketException(PacketError.SIGNATURE, "A signature is invalid.", exception, isResponse); }
+                try { signature = verified ? SignatureWrapper.decode(elements.getNotNull(i), account) : SignatureWrapper.decodeWithoutVerifying(elements.getNotNull(i), false, account); } catch (InvalidEncodingException | InvalidSignatureException exception) { throw new PacketException(PacketError.SIGNATURE, "A signature is invalid.", exception, isResponse); }
                 if (signature.getAudit() != null) audit = signature.getAudit();
                 
                 final @Nonnull CompressionWrapper compression;

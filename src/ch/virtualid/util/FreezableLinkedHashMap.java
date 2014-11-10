@@ -93,6 +93,12 @@ public class FreezableLinkedHashMap<K,V> extends LinkedHashMap<K,V> implements F
     
     @Pure
     @Override
+    public boolean isNotEmpty() {
+        return !isEmpty();
+    }
+    
+    @Pure
+    @Override
     public @Nonnull FreezableSet<K> keySet() {
         return new BackedFreezableSet<K>(this, super.keySet());
     }

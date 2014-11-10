@@ -153,7 +153,7 @@ public final class SemanticType extends Type implements Immutable {
     
     @Override
     void load() throws SQLException, IOException, PacketException, ExternalException {
-        assert !isLoaded() : "The type declaration may not yet have been loaded.";
+        assert isNotLoaded() : "The type declaration is not loaded.";
         
         if (categories != null) throw new InvalidEncodingException("The semantic base may not be circular.");
         
@@ -201,7 +201,7 @@ public final class SemanticType extends Type implements Immutable {
      * 
      * @return this semantic type.
      * 
-     * @require !isLoaded() : "The type declaration may not yet have been loaded.";
+     * @require isNotLoaded() : "The type declaration is not loaded.";
      * @require Database.isMainThread() : "This method may only be called in the main thread.";
      * 
      * @require categories.isFrozen() : "The categories have to be frozen.";
@@ -220,7 +220,7 @@ public final class SemanticType extends Type implements Immutable {
      * @ensure isLoaded() : "The type declaration has been loaded.";
      */
     public @Nonnull SemanticType load(@Nonnull ReadonlyList<Category> categories, @Nullable Time cachingPeriod, @Nonnull SyntacticType syntacticBase, @Nonnull ReadonlyList<SemanticType> parameters) {
-        assert !isLoaded() : "The type declaration may not yet have been loaded.";
+        assert isNotLoaded() : "The type declaration is not loaded.";
         assert Database.isMainThread() : "This method may only be called in the main thread.";
         
         assert categories.isFrozen() : "The categories have to be frozen.";
@@ -256,7 +256,7 @@ public final class SemanticType extends Type implements Immutable {
      * 
      * @return this semantic type.
      * 
-     * @require !isLoaded() : "The type declaration may not yet have been loaded.";
+     * @require isNotLoaded() : "The type declaration is not loaded.";
      * @require Database.isMainThread() : "This method may only be called in the main thread.";
      * 
      * @require new FreezableArray<Category>(categories).doesNotContainNull() : "The categories may not contain null.";
@@ -284,7 +284,7 @@ public final class SemanticType extends Type implements Immutable {
      * 
      * @return this semantic type.
      * 
-     * @require !isLoaded() : "The type declaration may not yet have been loaded.";
+     * @require isNotLoaded() : "The type declaration is not loaded.";
      * @require Database.isMainThread() : "This method may only be called in the main thread.";
      * 
      * @require new FreezableArray<SemanticType>(parameters).doesNotContainNull() : "The parameters may not contain null.";
@@ -307,7 +307,7 @@ public final class SemanticType extends Type implements Immutable {
      * 
      * @return this semantic type.
      * 
-     * @require !isLoaded() : "The type declaration may not yet have been loaded.";
+     * @require isNotLoaded() : "The type declaration is not loaded.";
      * @require Database.isMainThread() : "This method may only be called in the main thread.";
      * 
      * @require categories.isFrozen() : "The categories have to be frozen.";
@@ -323,7 +323,7 @@ public final class SemanticType extends Type implements Immutable {
      * @ensure isLoaded() : "The type declaration has been loaded.";
      */
     public @Nonnull SemanticType load(@Nonnull ReadonlyList<Category> categories, @Nullable Time cachingPeriod, @Nonnull SemanticType semanticBase) {
-        assert !isLoaded() : "The type declaration may not yet have been loaded.";
+        assert isNotLoaded() : "The type declaration is not loaded.";
         assert Database.isMainThread() : "This method may only be called in the main thread.";
         
         assert categories.isFrozen() : "The categories have to be frozen.";
@@ -355,7 +355,7 @@ public final class SemanticType extends Type implements Immutable {
      * 
      * @return this semantic type.
      * 
-     * @require !isLoaded() : "The type declaration may not yet have been loaded.";
+     * @require isNotLoaded() : "The type declaration is not loaded.";
      * @require Database.isMainThread() : "This method may only be called in the main thread.";
      * 
      * @require new FreezableArray<Category>(categories).doesNotContainNull() : "The categories may not contain null.";
@@ -380,7 +380,7 @@ public final class SemanticType extends Type implements Immutable {
      * 
      * @return this semantic type.
      * 
-     * @require !isLoaded() : "The type declaration may not yet have been loaded.";
+     * @require isNotLoaded() : "The type declaration is not loaded.";
      * @require Database.isMainThread() : "This method may only be called in the main thread.";
      * 
      * @require semanticBase.isLoaded() : "The semantic base is already loaded.";

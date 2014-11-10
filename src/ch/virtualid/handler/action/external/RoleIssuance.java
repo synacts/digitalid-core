@@ -7,7 +7,6 @@ import ch.virtualid.entity.Account;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
-import ch.virtualid.exceptions.external.InvalidSignatureException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.ActionReply;
@@ -103,7 +102,7 @@ public final class RoleIssuance extends CoreServiceExternalAction {
         
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
-        final @Nonnull SignatureWrapper certificate = SignatureWrapper.decodeUnverified(block, null);
+        final @Nonnull SignatureWrapper certificate = SignatureWrapper.decodeWithoutVerifying(block, false, null);
         if (!(certificate instanceof HostSignatureWrapper)) throw new InvalidEncodingException("The block has to be signed by a host.");
         this.certificate = (HostSignatureWrapper) certificate;
         if (!(this.certificate.getSigner() instanceof InternalNonHostIdentifier)) throw new InvalidEncodingException("The certificate has to be signed by a non-host.");
@@ -150,7 +149,7 @@ public final class RoleIssuance extends CoreServiceExternalAction {
         
         try {
             certificate.verify();
-        } catch (@Nonnull InvalidEncodingException | InvalidSignatureException exception) {
+        } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
             throw new PacketException(PacketError.METHOD, "TODO", exception);
         }
         

@@ -259,14 +259,14 @@ public abstract class Method extends Handler {
      * @throws FailedRequestException if the blocks of the methods could not be sent.
      * 
      * @require methods.isFrozen() : "The list of methods is frozen.";
-     * @require !methods.isEmpty() : "The list of methods is not empty.";
+     * @require methods.isNotEmpty() : "The list of methods is not empty.";
      * @require areSimilar(methods) : "All methods are similar and not null.";
      * 
      * @ensure return.hasRequest() : "The returned response has a request.";
      */
     public static @Nonnull Response send(@Nonnull ReadonlyList<Method> methods) throws SQLException, IOException, PacketException, ExternalException {
         assert methods.isFrozen() : "The list of methods is frozen.";
-        assert !methods.isEmpty() : "The list of handlers is not empty.";
+        assert methods.isNotEmpty() : "The list of methods is not empty.";
         assert areSimilar(methods) : "All methods are similar and not null.";
         
         final @Nonnull Method reference = methods.getNotNull(0);

@@ -10,6 +10,7 @@ import ch.virtualid.entity.Entity;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InactiveSignatureException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.exceptions.external.InvalidSignatureException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identifier.IdentifierClass;
@@ -89,6 +90,11 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
     private final @Nullable Audit audit;
     
     /**
+     * Stores whether this signature is verified.
+     */
+    private boolean verified;
+    
+    /**
      * Encodes the element into a new block. (Only to be called by subclasses!)
      * 
      * @param type the semantic type of the new block.
@@ -99,6 +105,8 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
      * @require type.isLoaded() : "The type declaration is loaded.";
      * @require type.isBasedOn(getSyntacticType()) : "The given type is based on the indicated syntactic type.";
      * @require element == null || element.getType().isBasedOn(type.getParameters().getNotNull(0)) : "The element is either null or based on the parameter of the given type.";
+     * 
+     * @ensure isVerified() : "This signature is verified.";
      */
     protected SignatureWrapper(@Nonnull SemanticType type, @Nullable Block element, @Nonnull InternalIdentifier subject, @Nullable Audit audit) {
         super(type);
@@ -109,6 +117,7 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
         this.subject = subject;
         this.time = new Time();
         this.audit = audit;
+        this.verified = true;
     }
     
     /**
@@ -122,6 +131,8 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
      * @require type.isBasedOn(getSyntacticType()) : "The given type is based on the indicated syntactic type.";
      * @require !type.isBasedOn(Certificate.TYPE) || element != null : "If the signature is a certificate, the element is not null.";
      * @require element == null || element.getType().isBasedOn(type.getParameters().getNotNull(0)) : "The element is either null or based on the parameter of the given type.";
+     * 
+     * @ensure isVerified() : "This signature is verified.";
      */
     public SignatureWrapper(@Nonnull SemanticType type, @Nullable Block element, @Nullable InternalIdentifier subject) {
         super(type);
@@ -133,6 +144,7 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
         this.subject = subject;
         this.time = subject == null ? null : new Time();
         this.audit = null;
+        this.verified = true;
     }
     
     /**
@@ -146,6 +158,8 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
      * @require type.isBasedOn(getSyntacticType()) : "The given type is based on the indicated syntactic type.";
      * @require !type.isBasedOn(Certificate.TYPE) || element != null : "If the signature is a certificate, the element is not null.";
      * @require element == null || element.getType().isBasedOn(type.getParameters().getNotNull(0)) : "The element is either null or based on the parameter of the given type.";
+     * 
+     * @ensure isVerified() : "This signature is verified.";
      */
     public SignatureWrapper(@Nonnull SemanticType type, @Nullable Blockable element, @Nullable InternalIdentifier subject) {
         this(type, Block.toBlock(element), subject);
@@ -164,7 +178,7 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
      */
     @Pure
     public static @Nonnull SignatureWrapper decode(@Nonnull Block block, @Nullable Entity entity) throws SQLException, IOException, PacketException, ExternalException {
-        final @Nonnull SignatureWrapper signatureWrapper = decodeUnverified(block, entity);
+        final @Nonnull SignatureWrapper signatureWrapper = decodeWithoutVerifying(block, false, entity);
         signatureWrapper.verify();
         return signatureWrapper;
     }
@@ -173,6 +187,7 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
      * Wraps and decodes the given block without verifying the signature.
      * 
      * @param block the block to be wrapped and decoded.
+     * @param verified whether the signature is already verified.
      * @param entity the entity that decodes the signature.
      * 
      * @return the signature wrapper of the appropriate subclass.
@@ -180,16 +195,16 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
      * @require block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
      */
     @Pure
-    public static @Nonnull SignatureWrapper decodeUnverified(@Nonnull Block block, @Nullable Entity entity) throws SQLException, IOException, PacketException, ExternalException {
+    public static @Nonnull SignatureWrapper decodeWithoutVerifying(@Nonnull Block block, boolean verified, @Nullable Entity entity) throws SQLException, IOException, PacketException, ExternalException {
         final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(new Block(IMPLEMENTATION, block)).getElements(4);
         final @Nullable Block hostSignature = elements.get(1);
         final @Nullable Block clientSignature = elements.get(2);
         final @Nullable Block credentialsSignature = elements.get(3);
         
-        if (hostSignature != null && clientSignature == null && credentialsSignature == null) return new HostSignatureWrapper(block, hostSignature);
-        if (hostSignature == null && clientSignature != null && credentialsSignature == null) return new ClientSignatureWrapper(block, clientSignature);
-        if (hostSignature == null && clientSignature == null && credentialsSignature != null) return new CredentialsSignatureWrapper(block, credentialsSignature, entity);
-        if (hostSignature == null && clientSignature == null && credentialsSignature == null) return new SignatureWrapper(block);
+        if (hostSignature != null && clientSignature == null && credentialsSignature == null) return new HostSignatureWrapper(block, hostSignature, verified);
+        if (hostSignature == null && clientSignature != null && credentialsSignature == null) return new ClientSignatureWrapper(block, clientSignature, verified);
+        if (hostSignature == null && clientSignature == null && credentialsSignature != null) return new CredentialsSignatureWrapper(block, credentialsSignature, verified, entity);
+        if (hostSignature == null && clientSignature == null && credentialsSignature == null) return new SignatureWrapper(block, verified);
         throw new InvalidEncodingException("The element may only be signed by either a host, a client, with credentials or not at all.");
     }
     
@@ -197,10 +212,11 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
      * Wraps and decodes the given block.
      * 
      * @param block the block to be wrapped and decoded.
+     * @param verified whether the signature is already verified.
      * 
      * @require block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
      */
-    SignatureWrapper(@Nonnull Block block) throws InvalidEncodingException {
+    SignatureWrapper(@Nonnull Block block, boolean verified) throws InvalidEncodingException {
         super(block);
         
         this.cache = new Block(IMPLEMENTATION, block);
@@ -214,6 +230,7 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
         this.element = tuple.getElement(2);
         if (getType().isBasedOn(Certificate.TYPE) && element == null) throw new InvalidEncodingException("If this signature is a certificate, the element may not be null.");
         this.audit = tuple.isElementNull(3) ? null : new Audit(tuple.getElementNotNull(3));
+        this.verified = verified;
     }
     
     
@@ -350,10 +367,45 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
     
     
     /**
-     * Verifies the signature and throws an exception if it is not valid.
+     * Returns whether this signature is verified.
+     * 
+     * @return whether this signature is verified.
+     */
+    public final boolean isVerified() {
+        return verified;
+    }
+    
+    /**
+     * Returns whether this signature is not verified.
+     * 
+     * @return whether this signature is not verified.
+     */
+    public final boolean isNotVerified() {
+        return !verified;
+    }
+    
+    /**
+     * Sets this signature to verified.
+     */
+    final void setVerified() {
+        this.verified = true;
+    }
+    
+    /**
+     * Verifies this signature.
+     * 
+     * @throws InvalidSignatureException if this signature is not valid.
+     * 
+     * @require isNotVerified() : "This signature is not verified.";
+     * 
+     * @ensure isVerified() : "This signature is verified.";
      */
     @Pure
-    public void verify() throws SQLException, IOException, PacketException, ExternalException {}
+    public void verify() throws SQLException, IOException, PacketException, ExternalException {
+        assert isNotVerified() : "This signature is not verified.";
+        
+        setVerified();
+    }
     
     /**
      * Signs the element. (This method should be overridden in subclasses.)
@@ -475,10 +527,12 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
     /**
      * Verifies this signature as a certificate and throws an exception if it is not valid.
      * 
+     * @require isNotVerified() : "This signature is not verified.";
      * @require isCertificate() : "This signature is a certificate.";
      */
     @Pure
     public void verifyAsCertificate() throws SQLException, IOException, PacketException, ExternalException {
+        assert isNotVerified() : "This signature is not verified.";
         assert isCertificate() : "This signature is a certificate.";
     }
     

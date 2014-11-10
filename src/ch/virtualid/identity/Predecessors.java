@@ -187,7 +187,7 @@ public final class Predecessors extends FreezableArrayList<Predecessor> implemen
     
     @Override
     public void set(@Nonnull InternalNonHostIdentifier identifier, @Nullable Reply reply) throws SQLException {
-        assert !identifier.isMapped() : "The identifier is not mapped.";
+        assert identifier.isNotMapped() : "The identifier is not mapped.";
         
         final @Nonnull String SQL = "INSERT INTO general_predecessors (identifier, predecessors, reply) VALUES (?, ?, ?)";
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {

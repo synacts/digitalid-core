@@ -99,7 +99,7 @@ public final class CertificateIssuance extends CoreServiceExternalAction {
         
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
-        final @Nonnull SignatureWrapper certificate = SignatureWrapper.decodeUnverified(block, entity);
+        final @Nonnull SignatureWrapper certificate = SignatureWrapper.decodeWithoutVerifying(block, false, entity);
         if (!(certificate instanceof HostSignatureWrapper)) throw new InvalidEncodingException("The block has to be signed by a host.");
         this.certificate = (HostSignatureWrapper) certificate;
         if (!this.certificate.isCertificate()) throw new InvalidEncodingException("The certificate has to be indeed a certificate.");

@@ -261,7 +261,7 @@ public abstract class Reply extends Handler implements SQLizable {
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet rs = statement.executeQuery("SELECT signature FROM general_reply WHERE reply = " + number)) {
             if (rs.next()) {
                 final @Nonnull Block block = Block.get(Packet.SIGNATURE, rs, 1);
-                final @Nonnull SignatureWrapper signature = SignatureWrapper.decodeUnverified(block, entity);
+                final @Nonnull SignatureWrapper signature = SignatureWrapper.decodeWithoutVerifying(block, true, entity);
                 final @Nonnull CompressionWrapper compression = new CompressionWrapper(signature.getElementNotNull());
                 final @Nonnull SelfcontainedWrapper content = new SelfcontainedWrapper(compression.getElementNotNull());
                 return get(entity, signature.toHostSignatureWrapper(), number, content.getElement());

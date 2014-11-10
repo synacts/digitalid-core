@@ -300,11 +300,11 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
      * 
      * @param newPermissions the permissions to be added to this context.
      * 
-     * @require !newPermissions.isEmpty() : "The new permissions are not empty.";
+     * @require newPermissions.isNotEmpty() : "The new permissions are not empty.";
      */
     @OnlyForActions
     public void addPermissionsForActions(@Nonnull ReadonlyContactPermissions newPermissions) throws SQLException {
-        assert !newPermissions.isEmpty() : "The new permissions are not empty.";
+        assert newPermissions.isNotEmpty() : "The new permissions are not empty.";
         
 //        Contexts.addPermissions(this, newPermissions);
         if (permissions != null) permissions.addAll(newPermissions);
@@ -327,11 +327,11 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
      * 
      * @param oldPermissions the permissions to be removed from this context.
      * 
-     * @require !oldPermissions.isEmpty() : "The old permissions are not empty.";
+     * @require oldPermissions.isNotEmpty() : "The old permissions are not empty.";
      */
     @OnlyForActions
     public void removePermissionsForActions(@Nonnull ReadonlyContactPermissions oldPermissions) throws SQLException {
-        assert !oldPermissions.isEmpty() : "The old permissions are not empty.";
+        assert oldPermissions.isNotEmpty() : "The old permissions are not empty.";
         
 //        Contexts.removePermissions(this, oldPermissions);
         if (permissions != null) permissions.removeAll(permissions);

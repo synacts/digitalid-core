@@ -72,7 +72,7 @@ public final class Cache {
                 final @Nullable InputStream inputStream = Cache.class.getResourceAsStream("/ch/virtualid/resources/virtualid.ch.certificate.xdf");
                 final @Nonnull SignatureWrapper attribute;
                 if (inputStream != null) {
-                    attribute = SignatureWrapper.decodeUnverified(new SelfcontainedWrapper(inputStream, true).getElement().checkType(Certificate.TYPE), null);
+                    attribute = SignatureWrapper.decodeWithoutVerifying(new SelfcontainedWrapper(inputStream, true).getElement().checkType(Certificate.TYPE), true, null);
                 } else {
                     // Since the public key chain of 'virtualid.ch' is not available, the host 'virtualid.ch' is created on this server.
                     final @Nonnull Host host = new Host(HostIdentifier.VIRTUALID);
@@ -122,7 +122,7 @@ public final class Cache {
             @Nullable SignatureWrapper attribute = null;
             while (resultSet.next()) {
                 final boolean found = resultSet.getBoolean(1);
-                if (found) attribute = SignatureWrapper.decodeUnverified(Block.get(Certificate.TYPE, resultSet, 2), role);
+                if (found) attribute = SignatureWrapper.decodeWithoutVerifying(Block.get(Certificate.TYPE, resultSet, 2), true, role);
                 else if (attribute == null) attribute = new SignatureWrapper(Packet.SIGNATURE, (Block) null, null);
             }
             return attribute;
@@ -141,12 +141,12 @@ public final class Cache {
      * 
      * @require time.isNonNegative() : "The given time is non-negative.";
      * @require type.isAttributeFor(identity.getCategory()) : "The type can be used as an attribute for the category of the given identity.";
-     * @require attribute == null || attribute.isCertificate() : "The attribute is either null or a certificate.";
+     * @require attribute == null || attribute.isVerified() && attribute.isCertificate() : "The attribute is either null or a verified certificate.";
      */
     private static void setCachedAttribute(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull Time time, @Nonnull SemanticType type, @Nullable SignatureWrapper attribute, @Nullable Reply reply) throws SQLException {
         assert time.isNonNegative() : "The given time is non-negative.";
         assert type.isAttributeFor(identity.getCategory()) : "The type can be used as an attribute for the category of the given identity.";
-        assert attribute == null || attribute.isCertificate() : "The attribute is either null or a certificate.";
+        assert attribute == null || attribute.isVerified() && attribute.isCertificate() : "The attribute is either null or a verified certificate.";
         
         final @Nonnull String statement = Database.getConfiguration().REPLACE() + " INTO general_cache (identity, role, type, found, time, value, reply) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(statement)) {
@@ -390,10 +390,10 @@ public final class Cache {
      * 
      * @return the newly established identity of the given host identifier.
      * 
-     * @require !identifier.isMapped() : "The identifier is not mapped.";
+     * @require identifier.isNotMapped() : "The identifier is not mapped.";
      */
     public static @Nonnull HostIdentity establishHostIdentity(@Nonnull HostIdentifier identifier) throws SQLException, IOException, PacketException, ExternalException {
-        assert !identifier.isMapped() : "The identifier is not mapped.";
+        assert identifier.isNotMapped() : "The identifier is not mapped.";
         
         final @Nonnull Response response;
         try {

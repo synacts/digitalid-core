@@ -68,18 +68,27 @@ public abstract class Type extends NonHostIdentityClass implements InternalNonHo
     
     
     /**
-     * Stores whether the type declaration has already been loaded.
+     * Stores whether the type declaration is loaded.
      * (Lazy loading is necessary for recursive type declarations.)
      */
     private boolean loaded = false;
     
     /**
-     * Returns whether the type declaration has already been loaded.
+     * Returns whether the type declaration is loaded.
      * 
-     * @return whether the type declaration has already been loaded.
+     * @return whether the type declaration is loaded.
      */
     public final boolean isLoaded() {
         return loaded;
+    }
+    
+    /**
+     * Returns whether the type declaration is not loaded.
+     * 
+     * @return whether the type declaration is not loaded.
+     */
+    public final boolean isNotLoaded() {
+        return !loaded;
     }
     
     /**
@@ -94,7 +103,7 @@ public abstract class Type extends NonHostIdentityClass implements InternalNonHo
     /**
      * Loads the type declaration from the cache or the network.
      * 
-     * @require !isLoaded() : "The type declaration may not yet have been loaded.";
+     * @require isNotLoaded() : "The type declaration is not loaded.";
      * 
      * @ensure isLoaded() : "The type declaration has been loaded.";
      */

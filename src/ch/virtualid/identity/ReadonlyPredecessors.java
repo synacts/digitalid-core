@@ -43,7 +43,7 @@ public interface ReadonlyPredecessors extends ReadonlyList<Predecessor>, Blockab
      * @param identifier the identifier whose predecessors are to be set.
      * @param reply the reply stating that the given identifier has these predecessors.
      * 
-     * @require !identifier.isMapped() : "The identifier is not mapped.";
+     * @require identifier.isNotMapped() : "The identifier is not mapped.";
      */
     public void set(@Nonnull InternalNonHostIdentifier identifier, @Nullable Reply reply) throws SQLException;
     

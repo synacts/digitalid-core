@@ -35,6 +35,14 @@ public interface ReadonlyMap<K,V> extends Readonly {
     public boolean isEmpty();
     
     /**
+     * Returns whether this map is not empty.
+     * 
+     * @return whether this map is not empty.
+     */
+    @Pure
+    public boolean isNotEmpty();
+    
+    /**
      * @see Map#containsKey(java.lang.Object)
      */
     @Pure

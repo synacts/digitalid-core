@@ -317,6 +317,17 @@ public final class Mapper {
     }
     
     /**
+     * Returns whether the given identifier is not mapped.
+     * 
+     * @param identifier the identifier of interest.
+     * 
+     * @return whether the given identifier is not mapped.
+     */
+    public static boolean isNotMapped(@Nonnull Identifier identifier) throws SQLException {
+        return !isMapped(identifier);
+    }
+    
+    /**
      * Returns the mapped identity of the given identifier.
      * 
      * @param identifier the identifier whose identity is to be returned.
@@ -442,10 +453,10 @@ public final class Mapper {
      * 
      * @throws IdentityNotFoundException if no identity with the given identifier was found.
      * 
-     * @require !isMapped(identifier) : "The identifier is not mapped.";
+     * @require isNotMapped(identifier) : "The identifier is not mapped.";
      */
     private static @Nonnull InternalNonHostIdentity establishInternalNonHostIdentity(@Nonnull InternalNonHostIdentifier identifier) throws SQLException, IOException, PacketException, ExternalException {
-        assert !isMapped(identifier) : "The identifier is not mapped.";
+        assert isNotMapped(identifier) : "The identifier is not mapped.";
         
         // Query the identity of the given identifier.
         final @Nonnull IdentityReply reply;
@@ -516,10 +527,10 @@ public final class Mapper {
      * 
      * @return the newly established identity of the given identifier.
      * 
-     * @require !isMapped(identifier) : "The identifier is not mapped.";
+     * @require isNotMapped(identifier) : "The identifier is not mapped.";
      */
     private static @Nonnull Person establishExternalIdentity(@Nonnull ExternalIdentifier identifier) throws SQLException, IOException, PacketException, ExternalException {
-        assert !isMapped(identifier) : "The identifier is not mapped.";
+        assert isNotMapped(identifier) : "The identifier is not mapped.";
         
         final @Nonnull Person person = mapExternalIdentity(identifier);
         try {

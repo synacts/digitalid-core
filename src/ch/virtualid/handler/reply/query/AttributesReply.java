@@ -109,7 +109,7 @@ public final class AttributesReply extends CoreServiceQueryReply {
         final @Nonnull FreezableList<SignatureWrapper> attributes = new FreezableArrayList<SignatureWrapper>(elements.size());
         for (final @Nullable Block element : elements) {
             if (element != null) {
-                final @Nonnull SignatureWrapper attribute = SignatureWrapper.decodeUnverified(element, null);
+                final @Nonnull SignatureWrapper attribute = SignatureWrapper.decodeWithoutVerifying(element, false, null);
                 try {
                     attribute.verifyAsCertificate();
                     attributes.add(attribute);

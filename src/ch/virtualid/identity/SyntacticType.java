@@ -90,7 +90,7 @@ public final class SyntacticType extends Type implements Immutable {
     
     @Override
     void load() throws SQLException, IOException, PacketException, ExternalException {
-        assert !isLoaded() : "The type declaration may not yet have been loaded.";
+        assert isNotLoaded() : "The type declaration is not loaded.";
         
         this.numberOfParameters = new Int8Wrapper(Cache.getStaleAttributeValue(this, null, PARAMETERS)).getValue();
         if (numberOfParameters < -1) throw new InvalidEncodingException("The number of parameters has to be at least -1.");
@@ -102,7 +102,7 @@ public final class SyntacticType extends Type implements Immutable {
      * 
      * @param numberOfParameters the number of generic parameters.
      * 
-     * @require !isLoaded() : "The type declaration may not yet have been loaded.";
+     * @require isNotLoaded() : "The type declaration is not loaded.";
      * @require Database.isMainThread() : "This method may only be called in the main thread.";
      * 
      * @require numberOfParameters >= -1 : "The number of parameters is at least -1.";
@@ -111,7 +111,7 @@ public final class SyntacticType extends Type implements Immutable {
      * @ensure isLoaded() : "The type declaration has been loaded.";
      */
     public @Nonnull SyntacticType load(int numberOfParameters) {
-        assert !isLoaded() : "The type declaration may not yet have been loaded.";
+        assert isNotLoaded() : "The type declaration is not loaded.";
         assert Database.isMainThread() : "This method may only be called in the main thread.";
         
         assert numberOfParameters >= -1 : "The number of parameters is at least -1.";

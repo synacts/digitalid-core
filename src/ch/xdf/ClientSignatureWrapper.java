@@ -67,6 +67,8 @@ public final class ClientSignatureWrapper extends SignatureWrapper implements Im
      * @require type.isLoaded() : "The type declaration is loaded.";
      * @require type.isBasedOn(getSyntacticType()) : "The given type is based on the indicated syntactic type.";
      * @require element == null || element.getType().isBasedOn(type.getParameters().getNotNull(0)) : "The element is either null or based on the parameter of the given type.";
+     * 
+     * @ensure isVerified() : "This signature is verified.";
      */
     public ClientSignatureWrapper(@Nonnull SemanticType type, @Nullable Block element, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull SecretCommitment commitment) {
         super(type, element, subject, audit);
@@ -86,6 +88,8 @@ public final class ClientSignatureWrapper extends SignatureWrapper implements Im
      * @require type.isLoaded() : "The type declaration is loaded.";
      * @require type.isBasedOn(getSyntacticType()) : "The given type is based on the indicated syntactic type.";
      * @require element == null || element.getType().isBasedOn(type.getParameters().getNotNull(0)) : "The element is either null or based on the parameter of the given type.";
+     * 
+     * @ensure isVerified() : "This signature is verified.";
      */
     public ClientSignatureWrapper(@Nonnull SemanticType type, @Nullable Blockable element, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull SecretCommitment commitment) {
         this(type, Block.toBlock(element), subject, audit, commitment);
@@ -97,12 +101,13 @@ public final class ClientSignatureWrapper extends SignatureWrapper implements Im
      * 
      * @param block the block to be wrapped.
      * @param clientSignature the signature to be decoded.
+     * @param verified whether the signature is already verified.
      * 
      * @require block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
      * @require clientSignature.getType().isBasedOn(SIGNATURE) : "The signature is based on the implementation type.";
      */
-    ClientSignatureWrapper(@Nonnull Block block, @Nonnull Block clientSignature) throws SQLException, IOException, PacketException, ExternalException {
-        super(block);
+    ClientSignatureWrapper(@Nonnull Block block, @Nonnull Block clientSignature, boolean verified) throws SQLException, IOException, PacketException, ExternalException {
+        super(block, verified);
         
         assert clientSignature.getType().isBasedOn(SIGNATURE) : "The signature is based on the implementation type.";
         
@@ -131,6 +136,8 @@ public final class ClientSignatureWrapper extends SignatureWrapper implements Im
     @Pure
     @Override
     public void verify() throws InvalidEncodingException, InvalidSignatureException {
+        assert isNotVerified() : "This signature is not verified.";
+        
         if (getTimeNotNull().isLessThan(Time.TROPICAL_YEAR.ago())) throw new InvalidSignatureException("The client signature is out of date.");
         
         final @Nonnull TupleWrapper tuple = new TupleWrapper(getCache());
@@ -142,6 +149,8 @@ public final class ClientSignatureWrapper extends SignatureWrapper implements Im
         final @Nonnull BigInteger h = t.xor(hash);
         final @Nonnull Element value = commitment.getPublicKey().getAu().pow(s).multiply(commitment.getValue().pow(h));
         if (!t.equals(value.toBlock().getHash()) || s.getBitLength() > Parameters.RANDOM_EXPONENT) throw new InvalidSignatureException("The client signature is invalid.");
+        
+        setVerified();
     }
     
     @Override
@@ -165,6 +174,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper implements Im
     @Pure
     @Override
     public void verifyAsCertificate() throws InvalidEncodingException {
+        assert isNotVerified() : "This signature is not verified.";
         assert isCertificate() : "This signature is a certificate.";
         
         throw new InvalidEncodingException("A certificate cannot be signed by a client.");

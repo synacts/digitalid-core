@@ -221,11 +221,11 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
      * 
      * @param newPermissions the permissions to be added to this agent.
      * 
-     * @require !newPermissions.isEmpty() : "The new permissions are not empty.";
+     * @require newPermissions.isNotEmpty() : "The new permissions are not empty.";
      */
     @OnlyForActions
     public final void addPermissionsForActions(@Nonnull ReadonlyAgentPermissions newPermissions) throws SQLException {
-        assert !newPermissions.isEmpty() : "The new permissions are not empty.";
+        assert newPermissions.isNotEmpty() : "The new permissions are not empty.";
         
 //        Agents.addPermissions(this, newPermissions);
 //        if (permissions != null) permissions.addAll(newPermissions);
@@ -248,11 +248,11 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
      * 
      * @param oldPermissions the permissions to be removed from this agent.
      * 
-     * @require !oldPermissions.isEmpty() : "The old permissions are not empty.";
+     * @require oldPermissions.isNotEmpty() : "The old permissions are not empty.";
      */
     @OnlyForActions
     public final void removePermissionsForActions(@Nonnull ReadonlyAgentPermissions oldPermissions) throws SQLException {
-        assert !oldPermissions.isEmpty() : "The old permissions are not empty.";
+        assert oldPermissions.isNotEmpty() : "The old permissions are not empty.";
         
 //        Agents.removePermissions(this, oldPermissions);
         if (permissions != null) permissions.removeAll(permissions);
