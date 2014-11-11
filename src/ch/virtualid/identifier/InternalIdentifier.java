@@ -26,7 +26,7 @@ public abstract class InternalIdentifier extends IdentifierClass implements Immu
     /**
      * The pattern that valid internal identifiers have to match.
      */
-    private static final Pattern pattern = Pattern.compile("(?:(?:[a-z0-9]+(?:[._-][a-z0-9]+)*)?@)?[a-z0-9]+(?:[.-][a-z0-9]+)*\\.[a-z][a-z]+");
+    private static final Pattern PATTERN = Pattern.compile("(?:(?:[a-z0-9]+(?:[._-][a-z0-9]+)*)?@)?[a-z0-9]+(?:[.-][a-z0-9]+)*\\.[a-z][a-z]+");
     
     /**
      * Returns whether the given string conforms to the criteria of this class.
@@ -37,7 +37,7 @@ public abstract class InternalIdentifier extends IdentifierClass implements Immu
      */
     @Pure
     static boolean isConforming(@Nonnull String string) {
-        return IdentifierClass.isConforming(string) && pattern.matcher(string).matches() && string.length() - string.indexOf("@") < 40;
+        return IdentifierClass.isConforming(string) && PATTERN.matcher(string).matches() && string.length() - string.indexOf("@") < 40;
     }
     
     /**

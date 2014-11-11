@@ -46,6 +46,20 @@ public final class AttributesReply extends CoreServiceQueryReply {
     
     
     /**
+     * Returns whether all the attributes which are not null are verified.
+     * 
+     * @param attributes the list of attributes which is to be checked.
+     * 
+     * @return whether all the attributes which are not null are verified.
+     */
+    public static boolean areVerified(@Nonnull ReadonlyList<SignatureWrapper> attributes) {
+        for (final @Nullable SignatureWrapper attribute : attributes) {
+            if (attribute != null && !attribute.isVerified()) return false;
+        }
+        return true;
+    }
+    
+    /**
      * Returns whether all the attributes which are not null are certificates.
      * 
      * @param attributes the list of attributes which is to be checked.
@@ -65,6 +79,7 @@ public final class AttributesReply extends CoreServiceQueryReply {
      * 
      * @invariant attributes.isFrozen() : "The attributes are frozen.";
      * @invariant attributes.isNotEmpty() : "The attributes are not empty.";
+     * @invariant areVerified(attributes) : "All the attributes which are not null are verified.";
      * @invariant areCertificates(attributes) : "All the attributes which are not null are certificates.";
      */
     private final @Nonnull ReadonlyList<SignatureWrapper> attributes;
@@ -77,6 +92,7 @@ public final class AttributesReply extends CoreServiceQueryReply {
      * 
      * @require attributes.isFrozen() : "The attributes are frozen.";
      * @require attributes.isNotEmpty() : "The attributes are not empty.";
+     * @require areVerified(attributes) : "All the attributes which are not null are verified.";
      * @require areCertificates(attributes) : "All the attributes which are not null are certificates.";
      */
     public AttributesReply(@Nonnull InternalNonHostIdentifier subject, @Nonnull ReadonlyList<SignatureWrapper> attributes) throws SQLException, PacketException {
@@ -84,6 +100,7 @@ public final class AttributesReply extends CoreServiceQueryReply {
         
         assert attributes.isFrozen() : "The attributes are frozen.";
         assert attributes.isNotEmpty() : "The attributes are not empty.";
+        assert areVerified(attributes) : "All the attributes which are not null are verified.";
         assert areCertificates(attributes) : "All the attributes which are not null are certificates.";
         
         this.attributes = attributes;
@@ -148,7 +165,8 @@ public final class AttributesReply extends CoreServiceQueryReply {
      * @return the attributes of this reply.
      * 
      * @ensure return.isFrozen() : "The attributes are frozen.";
-     * @ensure attributes.isNotEmpty() : "The attributes are not empty.";
+     * @ensure return.isNotEmpty() : "The attributes are not empty.";
+     * @ensure areVerified(return) : "All the attributes which are not null are verified.";
      * @ensure areCertificates(return) : "All the attributes which are not null are certificates.";
      */
     public @Nonnull ReadonlyList<SignatureWrapper> getAttributes() {

@@ -3,20 +3,22 @@ package ch.virtualid.auxiliary;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.database.Database;
 import ch.virtualid.errors.ShouldNeverHappenError;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
 import ch.xdf.Block;
 import ch.xdf.DataWrapper;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.imageio.ImageIO;
 
 /**
@@ -45,6 +47,19 @@ public final class Image implements Immutable, Blockable, SQLizable {
      */
     public Image(@Nonnull BufferedImage image) {
         this.image = image;
+    }
+    
+    /**
+     * Creates a new image from the given resource.
+     * 
+     * @param resource the resource to load the image from.
+     */
+    public Image(@Nonnull String resource) throws IOException {
+        try (@Nonnull InputStream inputStream = Image.class.getResourceAsStream(resource)) {
+            final @Nullable BufferedImage image = ImageIO.read(inputStream);
+            if (image == null) throw new IOException("Could not load the image from '" + resource + "'.");
+            this.image = image;
+        }
     }
     
     /**

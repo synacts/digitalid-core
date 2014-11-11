@@ -82,6 +82,7 @@ public final class IdentityReply extends CoreServiceQueryReply {
         if (!subject.isMapped()) throw new PacketException(PacketError.IDENTIFIER, "The identity with the identifier " + subject + " does not exist on this host.");
         this.category = subject.getMappedIdentity().getCategory();
         if (category.isInternalNonHostIdentity()) throw new SQLException("The category is " + category.name() + " instead of an internal non-host identitiy.");
+        if (!Predecessors.exist(subject)) throw new PacketException(PacketError.IDENTIFIER, "The identity with the identifier " + subject + " is not yet initialized.");
         this.predecessors = Predecessors.get(subject);
         this.successor = Successor.get(subject);
     }

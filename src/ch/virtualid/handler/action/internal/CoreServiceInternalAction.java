@@ -101,6 +101,8 @@ public abstract class CoreServiceInternalAction extends InternalAction {
     
     /**
      * Returns the active public key of the recipient.
+     * This method can be overridden to prevent a key
+     * rotation exception by returning the value null.
      * 
      * @return the active public key of the recipient.
      */
@@ -108,7 +110,6 @@ public abstract class CoreServiceInternalAction extends InternalAction {
     public @Nullable PublicKey getPublicKey() {
         return publicKey;
     }
-    
     
     /**
      * Executes this internal action on both the host and client.

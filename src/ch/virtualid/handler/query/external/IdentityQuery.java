@@ -102,7 +102,7 @@ public final class IdentityQuery extends CoreServiceExternalQuery {
         assert isOnHost() : "This method is called on a host.";
         assert hasSignature() : "This handler has a signature.";
         
-        final @Nonnull InternalIdentifier subject = getSubject();
+        final @Nonnull InternalIdentifier subject = getSubject(); // The following exception should never be thrown as the condition is already checked in the packet class.
         if (!(subject instanceof InternalNonHostIdentifier)) throw new PacketException(PacketError.IDENTIFIER, "The identity may only be queried of non-host identities.");
         return new IdentityReply((InternalNonHostIdentifier) subject);
     }

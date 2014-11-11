@@ -48,14 +48,14 @@ public final class Passwords implements BothModule {
     public void createTables(@Nonnull Site site) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "password (entity " + Entity.FORMAT + " NOT NULL, password VARCHAR(50) NOT NULL COLLATE " + Database.getConfiguration().BINARY() + ", PRIMARY KEY (entity), FOREIGN KEY (entity) " + site.getReference() + ")");
-            Database.onInsertUpdate(statement, site + "password", 1, "entity", "password");
+            Database.onInsertIgnore(statement, site + "password", "entity");
         }
     }
     
     @Override
     public void deleteTables(@Nonnull Site site) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
-            Database.onInsertNotUpdate(statement, site + "password");
+            Database.onInsertNotIgnore(statement, site + "password");
             statement.executeUpdate("DROP TABLE IF EXISTS " + site + "password");
         }
     }
@@ -175,7 +175,7 @@ public final class Passwords implements BothModule {
     public static void set(@Nonnull Entity entity, @Nonnull String value) throws SQLException {
         assert Password.isValid(value) : "The value is valid.";
         
-        final @Nonnull String SQL = Database.getConfiguration().REPLACE() + " INTO " + entity.getSite() + "password (entity, password) VALUES (?, ?)";
+        final @Nonnull String SQL = "INSERT" + Database.getConfiguration().IGNORE()+ " INTO " + entity.getSite() + "password (entity, password) VALUES (?, ?)";
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
             preparedStatement.setLong(1, entity.getNumber());
             preparedStatement.setString(2, value);

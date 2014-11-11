@@ -1,6 +1,7 @@
 package ch.virtualid.server;
 
 import ch.virtualid.annotations.Pure;
+import ch.virtualid.auxiliary.Image;
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.client.Client;
 import ch.virtualid.concepts.Attribute;
@@ -129,7 +130,7 @@ public final class Host extends Site {
         // TODO: Load which services this host runs and initialize them afterwards.
         CoreService.SERVICE.createTables(this);
         
-        this.client = new Client("_" + identifier.asHostName());
+        this.client = new Client("_" + identifier.asHostName(), identifier.getString(), new Image("/ch/virtualid/resources/Host.png"));
         
         Server.addHost(this);
     }

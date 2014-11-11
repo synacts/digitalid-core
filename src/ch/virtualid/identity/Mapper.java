@@ -12,6 +12,7 @@ import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Reply;
+import ch.virtualid.handler.action.internal.AccountOpen;
 import ch.virtualid.handler.query.external.IdentityQuery;
 import ch.virtualid.handler.reply.query.IdentityReply;
 import ch.virtualid.identifier.ExternalIdentifier;
@@ -23,6 +24,7 @@ import ch.virtualid.identifier.NonHostIdentifier;
 import ch.virtualid.io.Level;
 import ch.virtualid.io.Logger;
 import ch.virtualid.server.Host;
+import ch.virtualid.server.Server;
 import ch.virtualid.util.ReadonlyList;
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -346,6 +348,7 @@ public final class Mapper {
     
     /**
      * Maps the given identifier to a new number with the given category.
+     * This method should only be called by {@link AccountOpen} outside of this class.
      * 
      * @param identifier the identifier to be mapped.
      * @param category the category of the identity to map.
@@ -355,7 +358,7 @@ public final class Mapper {
      * 
      * @ensure return.getCategory().equals(category) : "The category of the returned identity equals the given category.";
      */
-    private static @Nonnull Identity mapIdentity(@Nonnull Identifier identifier, @Nonnull Category category, @Nullable Reply reply) throws SQLException {
+    public static @Nonnull Identity mapIdentity(@Nonnull Identifier identifier, @Nonnull Category category, @Nullable Reply reply) throws SQLException {
         if (isMapped(identifier)) {
             final @Nonnull Identity identity =  identifiers.get(identifier);
             if (!identity.getCategory().equals(category)) throw new SQLException("The identifier " + identifier + " should have been mapped with the category " + category + " but has already been mapped with the category " + identity.getCategory() + ".");
@@ -457,6 +460,8 @@ public final class Mapper {
      */
     private static @Nonnull InternalNonHostIdentity establishInternalNonHostIdentity(@Nonnull InternalNonHostIdentifier identifier) throws SQLException, IOException, PacketException, ExternalException {
         assert isNotMapped(identifier) : "The identifier is not mapped.";
+        
+        if (Server.hasHost(identifier.getHostIdentifier())) throw new IdentityNotFoundException(identifier);
         
         // Query the identity of the given identifier.
         final @Nonnull IdentityReply reply;

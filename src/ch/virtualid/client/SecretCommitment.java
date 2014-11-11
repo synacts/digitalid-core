@@ -5,6 +5,8 @@ import ch.virtualid.auxiliary.Time;
 import ch.virtualid.cryptography.Element;
 import ch.virtualid.cryptography.Exponent;
 import ch.virtualid.cryptography.PublicKey;
+import ch.virtualid.exceptions.packet.PacketError;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identity.HostIdentity;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
@@ -13,6 +15,8 @@ import javax.annotation.Nonnull;
 
 /**
  * This class extends the {@link Commitment commitment} of a {@link Client client} with its {@link Client#getSecret() secret}.
+ * 
+ * @invariant getPublicKey().getAu().pow(getSecret()).equals(getValue()) : "The secret matches the commitment.";
  * 
  * @see ClientSignatureWrapper
  * 
@@ -35,9 +39,10 @@ public final class SecretCommitment extends Commitment implements Immutable, Blo
      * @param publicKey the public key of this commitment.
      * @param secret the secret of this commitment.
      */
-    SecretCommitment(@Nonnull HostIdentity host, @Nonnull Time time, @Nonnull Element value, @Nonnull PublicKey publicKey, @Nonnull Exponent secret) {
+    SecretCommitment(@Nonnull HostIdentity host, @Nonnull Time time, @Nonnull Element value, @Nonnull PublicKey publicKey, @Nonnull Exponent secret) throws PacketException {
         super(host, time, value, publicKey);
         
+        if (!publicKey.getAu().pow(secret).equals(value)) throw new PacketException(PacketError.INTERNAL, "The secret does not match the commitment.");
         this.secret = secret;
     }
     

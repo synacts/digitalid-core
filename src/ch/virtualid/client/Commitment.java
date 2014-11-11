@@ -6,7 +6,6 @@ import ch.virtualid.cryptography.Element;
 import ch.virtualid.cryptography.Exponent;
 import ch.virtualid.cryptography.PublicKey;
 import ch.virtualid.exceptions.external.ExternalException;
-import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identifier.IdentifierClass;
 import ch.virtualid.identity.HostIdentity;
@@ -188,7 +187,6 @@ public class Commitment implements Immutable, Blockable {
      */
     @Pure
     public final @Nonnull SecretCommitment addSecret(@Nonnull Exponent secret) throws PacketException {
-        if (!publicKey.getAu().pow(secret).equals(value)) throw new PacketException(PacketError.INTERNAL, "The client secret does not match the commitment.");
         return new SecretCommitment(host, time, value, publicKey, secret);
     }
     

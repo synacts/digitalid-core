@@ -1,17 +1,23 @@
 package ch.virtualid.client;
 
 import ch.virtualid.annotations.Pure;
+import ch.virtualid.auxiliary.Image;
+import ch.virtualid.auxiliary.Time;
 import ch.virtualid.concept.Aspect;
 import ch.virtualid.concept.Instance;
 import ch.virtualid.concept.Observer;
+import ch.virtualid.cryptography.Element;
 import ch.virtualid.cryptography.Exponent;
 import ch.virtualid.cryptography.Parameters;
+import ch.virtualid.cryptography.PublicKey;
 import ch.virtualid.database.Database;
 import ch.virtualid.database.SQLiteConfiguration;
 import ch.virtualid.entity.Role;
 import ch.virtualid.entity.Site;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
+import ch.virtualid.identifier.InternalNonHostIdentifier;
+import ch.virtualid.identity.HostIdentity;
 import ch.virtualid.identity.InternalNonHostIdentity;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.io.Directory;
@@ -20,6 +26,7 @@ import ch.virtualid.module.client.Roles;
 import ch.virtualid.util.FreezableList;
 import ch.virtualid.util.ReadonlyList;
 import ch.xdf.SelfcontainedWrapper;
+import ch.xdf.StringWrapper;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -33,7 +40,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * A client is configured with a name and a secret.
+ * A client is configured with an identifier and a secret.
  * 
  * TODO: Make sure that the client secret gets rotated!
  * 
@@ -53,22 +60,43 @@ public class Client extends Site implements Observer {
      */
     public static final @Nonnull SemanticType SECRET = SemanticType.create("secret.client@virtualid.ch").load(Exponent.TYPE);
     
+    /**
+     * Stores the semantic type {@code name.client.agent@virtualid.ch}.
+     */
+    public static final @Nonnull SemanticType NAME = SemanticType.create("name.client.agent@virtualid.ch").load(StringWrapper.TYPE);
     
     /**
-     * The pattern that valid client names have to match.
+     * Stores the semantic type {@code icon.client.agent@virtualid.ch}.
      */
-    private static final @Nonnull Pattern pattern = Pattern.compile("[a-z_][a-z0-9_$]+", Pattern.CASE_INSENSITIVE);
+    public static final @Nonnull SemanticType ICON = SemanticType.create("icon.client.agent@virtualid.ch").load(Image.TYPE);
+    
     
     /**
-     * Returns whether the given name is valid for clients.
-     * 
-     * @param name the client name to check for validity.
-     * 
-     * @return whether the given name is valid for clients.
+     * The pattern that valid client identifiers have to match.
      */
-    public static boolean isValid(@Nonnull String name) {
-        return name.length() <= 40 && pattern.matcher(name).matches() && !name.equals("general") && !(Database.getConfiguration() instanceof SQLiteConfiguration && name.contains("$"));
+    private static final @Nonnull Pattern PATTERN = Pattern.compile("[a-z_][a-z0-9_$]+", Pattern.CASE_INSENSITIVE);
+    
+    /**
+     * Returns whether the given identifier is valid for clients.
+     * 
+     * @param identifier the client identifier to check for validity.
+     * 
+     * @return whether the given identifier is valid for clients.
+     */
+    public static boolean isValid(@Nonnull String identifier) {
+        return identifier.length() <= 40 && PATTERN.matcher(identifier).matches() && !identifier.equals("general") && !(Database.getConfiguration() instanceof SQLiteConfiguration && identifier.contains("$"));
     }
+    
+    
+    /**
+     * Stores the maximal length of the name.
+     */
+    public static final int NAME_LENGTH = 50;
+    
+    /**
+     * Stores the size of the square icon.
+     */
+    public static final int ICON_SIZE = 256;
     
     
     @Pure
@@ -79,9 +107,9 @@ public class Client extends Site implements Observer {
     
     
     /**
-     * Stores the name of this client.
+     * Stores the identifier of this client.
      */
-    private final @Nonnull String name;
+    private final @Nonnull String identifier;
     
     /**
      * Stores the secret of this client.
@@ -89,20 +117,38 @@ public class Client extends Site implements Observer {
     private final @Nonnull Exponent secret;
     
     /**
-     * Creates a new client with the given name.
+     * Stores the name of this client.
      * 
-     * @param name the name of the new client.
-     * 
-     * @require Client.isValid(name) : "The name is valid.";
+     * @invariant name.length() <= Client.NAME_LENGTH : "The name has at most the indicated length.";
      */
-    public Client(@Nonnull String name) throws SQLException, IOException, PacketException, ExternalException {
-        super(name);
+    private final @Nonnull String name;
+    
+    /**
+     * Stores the icon of this client.
+     * 
+     * @invariant icon.isSquare(Client.ICON_SIZE) : "The icon has the specified size.";
+     */
+    private final @Nonnull Image icon;
+    
+    /**
+     * Creates a new client with the given identifier.
+     * 
+     * @param identifier the identifier of the new client.
+     * 
+     * @require Client.isValid(identifier) : "The identifier is valid.";
+     */
+    public Client(@Nonnull String identifier, @Nonnull String name, @Nonnull Image icon) throws SQLException, IOException, PacketException, ExternalException {
+        super(identifier);
         
-        assert Client.isValid(name) : "The name is valid.";
+        assert Client.isValid(identifier) : "The identifier is valid.";
+        assert name.length() <= Client.NAME_LENGTH : "The name has at most the indicated length.";
+        assert icon.isSquare(Client.ICON_SIZE) : "The icon has the specified size.";
         
+        this.identifier = identifier;
         this.name = name;
+        this.icon = icon;
         
-        final @Nonnull File file = new File(Directory.CLIENTS.getPath() +  Directory.SEPARATOR + name + ".client.xdf");
+        final @Nonnull File file = new File(Directory.CLIENTS.getPath() +  Directory.SEPARATOR + identifier + ".client.xdf");
         if (file.exists()) {
             this.secret = new Exponent(new SelfcontainedWrapper(new FileInputStream(file), true).getElement().checkType(SECRET));
         } else {
@@ -117,13 +163,13 @@ public class Client extends Site implements Observer {
     }
     
     /**
-     * Returns the name of this client.
+     * Returns the identifier of this client.
      * 
-     * @return the name of this client.
+     * @return the identifier of this client.
      */
     @Pure
-    public @Nonnull String getName() {
-        return name;
+    public @Nonnull String getIdentifier() {
+        return identifier;
     }
     
     /**
@@ -134,6 +180,47 @@ public class Client extends Site implements Observer {
     @Pure
     public @Nonnull Exponent getSecret() {
         return secret;
+    }
+    
+    /**
+     * Returns the name of this client.
+     * 
+     * @return the name of this client.
+     * 
+     * @ensure return.length() <= Client.NAME_LENGTH : "The name has at most the indicated length.";
+     */
+    @Pure
+    public final @Nonnull String getName() {
+        return name;
+    }
+    
+    /**
+     * Returns the icon of this client.
+     * 
+     * @return the icon of this client.
+     * 
+     * @ensure return.isSquare(Client.ICON_SIZE) : "The icon has the specified size.";
+     */
+    @Pure
+    public final @Nonnull Image getIcon() {
+        return icon;
+    }
+    
+    
+    /**
+     * Returns a new commitment for the given subject.
+     * 
+     * @param subject the subject for which to commit.
+     * 
+     * @return a new commitment for the given subject.
+     */
+    @Pure
+    public final @Nonnull Commitment getCommitment(@Nonnull InternalNonHostIdentifier subject) throws SQLException, IOException, PacketException, ExternalException {
+        final @Nonnull HostIdentity host = subject.getHostIdentifier().getIdentity();
+        final @Nonnull Time time = new Time();
+        final @Nonnull PublicKey publicKey = Cache.getPublicKeyChain(host).getKey(time);
+        final @Nonnull Element value = publicKey.getAu().pow(secret);
+        return new Commitment(host, time, value, publicKey);
     }
     
     

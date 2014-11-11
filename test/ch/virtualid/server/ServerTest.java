@@ -1,5 +1,6 @@
 package ch.virtualid.server;
 
+import ch.virtualid.auxiliary.Image;
 import ch.virtualid.client.Client;
 import ch.virtualid.io.Directory;
 import ch.virtualid.setup.ServerSetup;
@@ -21,7 +22,7 @@ public final class ServerTest extends ServerSetup {
         
         // Server
         Server.start("test.virtualid.ch");
-        Client client = new Client("Tester");
+        Client client = new Client("Tester", "Tester", new Image("/ch/virtualid/resources/Host.png"));
         
 //        // Hosting and Category
 //        Request.openAccount(client, "person@test.virtualid.ch", client.getName(), Category.NATURAL_PERSON);

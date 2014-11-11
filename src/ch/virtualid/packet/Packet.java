@@ -17,6 +17,7 @@ import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Method;
 import ch.virtualid.handler.Reply;
 import ch.virtualid.handler.action.external.CertificateIssuance;
+import ch.virtualid.handler.action.internal.AccountInitialize;
 import ch.virtualid.handler.action.internal.AccountOpen;
 import ch.virtualid.handler.query.external.AttributesQuery;
 import ch.virtualid.handler.query.external.IdentityQuery;
@@ -25,6 +26,7 @@ import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identifier.Identifier;
 import ch.virtualid.identifier.InternalIdentifier;
 import ch.virtualid.identifier.InternalNonHostIdentifier;
+import ch.virtualid.identity.Predecessors;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.identity.Successor;
 import ch.virtualid.interfaces.Immutable;
@@ -238,11 +240,13 @@ public abstract class Packet implements Immutable {
                     if (type.equals(IdentityQuery.TYPE) || type.equals(AccountOpen.TYPE)) {
                         entity = account;
                     } else {
+                        entity = new Account(account.getHost(), subject.getIdentity());
                         if (subject instanceof InternalNonHostIdentifier) {
-                            final @Nullable InternalNonHostIdentifier successor = Successor.get((InternalNonHostIdentifier) subject);
+                            final @Nonnull InternalNonHostIdentifier internalNonHostIdentifier = (InternalNonHostIdentifier) subject;
+                            if (!type.equals(AccountInitialize.TYPE) && !Predecessors.exist(internalNonHostIdentifier)) throw new PacketException(PacketError.IDENTIFIER, "The subject " + subject + " is not yet initialized.");
+                            final @Nullable InternalNonHostIdentifier successor = Successor.get(internalNonHostIdentifier);
                             if (successor != null) throw new PacketException(PacketError.RELOCATION, "The subject " + subject + " has been relocated to " + successor + ".", null, isResponse);
                         }
-                        entity = new Account(account.getHost(), subject.getIdentity());
                     }
                     final @Nonnull Method method = Method.get(entity, signature, recipient, block);
                     if (!account.getHost().supports(method.getService())) throw new PacketException(PacketError.METHOD, "The host " + recipient + " does not support the service " + method.getService().getType().getAddress() + ".", null, isResponse);

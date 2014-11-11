@@ -166,6 +166,21 @@ public final class Predecessors extends FreezableArrayList<Predecessor> implemen
     }
     
     /**
+     * Returns whether the predecessors of the given identifier exist.
+     * 
+     * @param identifier the identifier whose predecessors are to be checked.
+     * 
+     * @return whether the predecessors of the given identifier exist.
+     */
+    public static boolean exist(@Nonnull InternalNonHostIdentifier identifier) throws SQLException {
+        final @Nonnull String SQL = "SELECT EXISTS (SELECT 1 FROM general_predecessors WHERE identifier = " + identifier + ")";
+        try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
+            if (resultSet.next()) return resultSet.getBoolean(1);
+            else throw new SQLException("This should never happen.");
+        }
+    }
+    
+    /**
      * Returns the predecessors of the given identifier as stored in the database.
      * Please note that the returned predecessors are only claimed and not yet verified.
      * 
@@ -173,9 +188,13 @@ public final class Predecessors extends FreezableArrayList<Predecessor> implemen
      * 
      * @return the predecessors of the given identifier as stored in the database.
      * 
+     * @require exist(identifier) : "The predecessors of the given identifier exist.";
+     * 
      * @ensure return.isFrozen() : "The returned predecessors are frozen.";
      */
     public static @Nonnull ReadonlyPredecessors get(@Nonnull InternalNonHostIdentifier identifier) throws SQLException {
+        assert exist(identifier) : "The predecessors of the given identifier exist.";
+        
         final @Nonnull String SQL = "SELECT predecessors FROM general_predecessors WHERE identifier = " + identifier;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
             if (resultSet.next()) return new Predecessors(Block.get(TYPE, resultSet, 1)).freeze();
