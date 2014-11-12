@@ -28,8 +28,6 @@ import org.javatuples.Pair;
 /**
  * Contacts have certain {@link ContactPermissions permissions} and {@link Authentications authentications}.
  * 
- * @invariant hasEntity() : "This contact has an entity.";
- * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 1.6
  */
@@ -160,7 +158,7 @@ public final class Contact extends Concept implements Immutable, Blockable, SQLi
      */
     @Pure
     public static @Nonnull Contact get(@Nonnull Entity entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException, InvalidEncodingException {
-        return get(entity, IdentityClass.get(resultSet, columnIndex).toPerson());
+        return get(entity, IdentityClass.getNotNull(resultSet, columnIndex).toPerson());
     }
     
     @Override

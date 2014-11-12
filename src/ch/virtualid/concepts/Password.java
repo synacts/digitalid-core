@@ -137,6 +137,14 @@ public final class Password extends Concept {
      */
     private static final @Nonnull ConcurrentMap<Entity, Password> index = new ConcurrentHashMap<Entity, Password>();
     
+    static {
+        if (Database.isSingleAccess()) {
+            Instance.observeAspects(new Observer() {
+                @Override public void notify(@Nonnull Aspect aspect, @Nonnull Instance instance) { index.remove(instance); }
+            }, Entity.DELETED);
+        }
+    }
+    
     /**
      * Returns the (locally cached) password of the given entity.
      * 
@@ -153,10 +161,7 @@ public final class Password extends Concept {
         final @Nonnull String value = Passwords.get(entity);
         if (Database.isSingleAccess()) {
             @Nullable Password password = index.get(entity);
-            if (password == null) {
-                password = index.putIfAbsentElseReturnPresent(entity, new Password(entity, value));
-                entity.observe(new Observer() { @Override public void notify(@Nonnull Aspect aspect, @Nonnull Instance instance) { index.remove(instance); } }, Entity.REMOVED);
-            }
+            if (password == null) password = index.putIfAbsentElseReturnPresent(entity, new Password(entity, value));
             return password;
         } else {
             return new Password(entity, value);

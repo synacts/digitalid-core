@@ -9,11 +9,13 @@ import ch.virtualid.concept.Observer;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.Role;
+import ch.virtualid.entity.Site;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
+import ch.virtualid.module.both.Contexts;
 import ch.virtualid.util.ConcurrentHashMap;
 import ch.virtualid.util.ConcurrentMap;
 import ch.xdf.Block;
@@ -88,9 +90,16 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
     public static final @Nonnull String FORMAT = "BIGINT";
     
     /**
-     * Stores the foreign key constraint used to reference instances of this class.
+     * Returns the foreign key constraint used to reference instances of this class.
+     * 
+     * @param site the site at which the foreign key constraint is declared.
+     * 
+     * @return the foreign key constraint used to reference instances of this class.
      */
-    public static final @Nonnull String REFERENCE = "REFERENCES context (entity, context) ON DELETE CASCADE ON UPDATE CASCADE";
+    public static @Nonnull String getReference(@Nonnull Site site) throws SQLException {
+        Contexts.createReferenceTable(site);
+        return "REFERENCES " + site + "context_name (entity, context) ON DELETE CASCADE";
+    }
     
     
     /**
@@ -504,7 +513,7 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
             @Nullable Context context = map.get(number);
             if (context == null) {
                 context = map.putIfAbsentElseReturnPresent(number, new Context(entity, number));
-                entity.observe(new Observer() { @Override public void notify(@Nonnull Aspect aspect, @Nonnull Instance instance) { index.remove(instance); } }, Entity.REMOVED);
+                entity.observe(new Observer() { @Override public void notify(@Nonnull Aspect aspect, @Nonnull Instance instance) { index.remove(instance); } }, Entity.DELETED);
             }
             return context;
         } else {

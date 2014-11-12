@@ -2,6 +2,7 @@ package ch.virtualid.entity;
 
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Client;
+import ch.virtualid.concept.Aspect;
 import ch.virtualid.concept.Instance;
 import ch.virtualid.server.Host;
 import java.sql.SQLException;
@@ -17,6 +18,17 @@ import javax.annotation.Nonnull;
  * @version 2.0
  */
 public abstract class Site extends Instance {
+    
+    /**
+     * Stores the aspect of a new site being created.
+     */
+    public static final @Nonnull Aspect CREATED = new Aspect(Site.class, "created");
+    
+    /**
+     * Stores the aspect of a site being deleted.
+     */
+    public static final @Nonnull Aspect DELETED = new Aspect(Site.class, "deleted");
+    
     
     /**
      * Stores the prefix of the site-specific database tables.

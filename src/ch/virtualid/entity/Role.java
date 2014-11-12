@@ -1,8 +1,6 @@
 package ch.virtualid.entity;
 
 import ch.virtualid.agent.Agent;
-import ch.virtualid.agent.ClientAgent;
-import ch.virtualid.agent.OutgoingRole;
 import ch.virtualid.annotations.OnlyForActions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Client;
@@ -10,22 +8,19 @@ import ch.virtualid.concept.Aspect;
 import ch.virtualid.concept.Instance;
 import ch.virtualid.concept.Observer;
 import ch.virtualid.database.Database;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.identity.InternalNonHostIdentity;
-import ch.virtualid.identity.Person;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
 import ch.virtualid.module.client.Roles;
+import ch.virtualid.util.ConcurrentHashMap;
+import ch.virtualid.util.ConcurrentMap;
 import ch.virtualid.util.FreezableList;
 import ch.virtualid.util.ReadonlyList;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import org.javatuples.Pair;
 
 /**
  * This class models a role on the client-side.
@@ -36,8 +31,6 @@ import org.javatuples.Pair;
  * @version 2.0
  */
 public final class Role extends Entity implements Immutable, SQLizable, Observer {
-    
-    // TODO: Make sure to also issue the CREATED notification!
     
     /**
      * Stores the aspect of a new role being added to the observed role.
@@ -51,7 +44,7 @@ public final class Role extends Entity implements Immutable, SQLizable, Observer
     private final @Nonnull Client client;
     
     /**
-     * Stores the number that references this role in the database.
+     * Stores the number that references this role.
      */
     private final long number;
     
@@ -79,21 +72,17 @@ public final class Role extends Entity implements Immutable, SQLizable, Observer
     
     /**
      * Creates a new role for the given client with the given number, issuer, relation, recipient and agent.
-     * <p>
-     * <em>Important:</em> This constructor should only be called from this class and the roles module.
-     * For all other purposes, please use {@link #add(ch.virtualid.client.Client, ch.virtualid.identity.InternalNonHostIdentity, ch.virtualid.identity.SemanticType, ch.virtualid.entity.Role, boolean, long)} or {@link #get(ch.virtualid.client.Client, java.sql.ResultSet, int)}.
      * 
      * @param client the client that can assume the new role.
      * @param number the number that references the new role.
      * @param issuer the issuer of the new role.
      * @param relation the relation of the new role.
      * @param recipient the recipient of the new role.
-     * @param isClient whether the agent number denotes a client.
      * @param agentNumber the agent number of the new role.
      * 
      * @require relation == null || relation.isRoleType() : "The relation is either null or a role type.";
      */
-    public Role(@Nonnull Client client, long number, @Nonnull InternalNonHostIdentity issuer, @Nullable SemanticType relation, @Nullable Role recipient, boolean isClient, long agentNumber) {
+    private Role(@Nonnull Client client, long number, @Nonnull InternalNonHostIdentity issuer, @Nullable SemanticType relation, @Nullable Role recipient, long agentNumber) {
         assert relation == null || relation.isRoleType() : "The relation is either null or a role type.";
         
         this.client = client;
@@ -101,7 +90,7 @@ public final class Role extends Entity implements Immutable, SQLizable, Observer
         this.issuer = issuer;
         this.relation = relation;
         this.recipient = recipient;
-        this.agent = isClient ? ClientAgent.get(this, agentNumber, true) : OutgoingRole.get(this, agentNumber, false, false);
+        this.agent = Agent.get(this, agentNumber, recipient == null, false);
     }
     
     /**
@@ -166,6 +155,16 @@ public final class Role extends Entity implements Immutable, SQLizable, Observer
         return recipient == null;
     }
     
+    /**
+     * Returns whether this role is not native.
+     * 
+     * @return whether this role is not native.
+     */
+    @Pure
+    public boolean isNotNative() {
+        return recipient != null;
+    }
+    
     
     @Pure
     @Override
@@ -188,6 +187,11 @@ public final class Role extends Entity implements Immutable, SQLizable, Observer
     
     /**
      * Stores the roles of this role.
+     * 
+     * @invariant roles == null || roles.isNotFrozen() : "The roles are not frozen.";
+     * @invariant roles == null || roles.doesNotContainNull() : "The roles do not contain null.";
+     * @invariant roles == null || roles.doesNotContainDuplicates() : "The roles do not contain duplicates.";
+     * @invariant roles == null || for (Role role : roles) role.isNotNative() : "Every role in the roles is not native.";
      */
     private @Nullable FreezableList<Role> roles;
     
@@ -195,12 +199,15 @@ public final class Role extends Entity implements Immutable, SQLizable, Observer
      * Returns the roles of this role.
      * 
      * @return the roles of this role.
+     * 
+     * @ensure return.isNotFrozen() : "The returned list is not frozen.";
+     * @ensure return.doesNotContainNull() : "The returned list does not contain null.";
+     * @ensure return.doesNotContainDuplicates() : "The returned list does not contain duplicates.";
+     * @ensure for (Role role : return) role.isNotNative() : "Every role in the returned list is not native.";
      */
     @Pure
     public @Nonnull ReadonlyList<Role> getRoles() throws SQLException {
-        if (roles == null) {
-            roles = Roles.getRoles(this);
-        }
+        if (roles == null) roles = Roles.getRoles(this);
         return roles;
     }
     
@@ -210,21 +217,23 @@ public final class Role extends Entity implements Immutable, SQLizable, Observer
      * @param issuer the issuer of the role to add.
      * @param relation the relation of the role to add.
      * @param agentNumber the agent number of the role to add.
+     * 
+     * @require relation.isRoleType() : "The relation is a role type.";
      */
     @OnlyForActions
     public void addRole(@Nonnull InternalNonHostIdentity issuer, @Nonnull SemanticType relation, long agentNumber) throws SQLException {
-        final @Nonnull Role role = add(client, issuer, relation, this, false, agentNumber);
-        role.observe(this, REMOVED);
+        assert relation.isRoleType() : "The relation is a role type.";
         
-        if (roles != null) roles.add(role);
+        final @Nonnull Role role = add(client, issuer, relation, this, agentNumber);
+        role.observe(this, DELETED);
+        
+        if (roles != null && !roles.contains(role)) roles.add(role);
         notify(ADDED);
     }
     
     @Override
     public void notify(@Nonnull Aspect aspect, @Nonnull Instance instance) {
-        if (aspect.equals(REMOVED) && roles != null) {
-            roles.remove(instance);
-        }
+        if (aspect.equals(DELETED) && roles != null) roles.remove(instance);
     }
     
     /**
@@ -232,14 +241,50 @@ public final class Role extends Entity implements Immutable, SQLizable, Observer
      */
     public void remove() throws SQLException {
         remove(this);
-        notify(REMOVED);
+        notify(DELETED);
     }
     
     
     /**
      * Caches the roles given their client and number.
      */
-    private static final @Nonnull Map<Pair<Client, Long>, Role> index = new HashMap<Pair<Client, Long>, Role>();
+    private static final @Nonnull ConcurrentMap<Client, ConcurrentMap<Long, Role>> index = new ConcurrentHashMap<Client, ConcurrentMap<Long, Role>>();
+    
+    static {
+        if (Database.isSingleAccess()) {
+            Instance.observeAspects(new Observer() {
+                @Override public void notify(@Nonnull Aspect aspect, @Nonnull Instance instance) { index.remove(instance); }
+            }, Client.DELETED);
+        }
+    }
+    
+    /**
+     * Returns the potentially locally cached role with the given arguments.
+     * 
+     * @param client the client that can assume the returned role.
+     * @param number the number that references the returned role.
+     * @param issuer the issuer of the returned role.
+     * @param relation the relation of the returned role.
+     * @param recipient the recipient of the returned role.
+     * @param agentNumber the agent number of the returned role.
+     * 
+     * @return a new or existing role with the given arguments.
+     * 
+     * @require relation == null || relation.isRoleType() : "The relation is either null or a role type.";
+     */
+    public static @Nonnull Role get(@Nonnull Client client, long number, @Nonnull InternalNonHostIdentity issuer, @Nullable SemanticType relation, @Nullable Role recipient, long agentNumber) throws SQLException {
+        assert relation == null || relation.isRoleType() : "The relation is either null or a role type.";
+        
+        if (Database.isSingleAccess()) {
+            @Nullable ConcurrentMap<Long, Role> map = index.get(client);
+            if (map == null) map = index.putIfAbsentElseReturnPresent(client, new ConcurrentHashMap<Long, Role>());
+            @Nullable Role role = map.get(number);
+            if (role == null) role = map.putIfAbsentElseReturnPresent(number, new Role(client, number, issuer, relation, recipient, agentNumber));
+            return role;
+        } else {
+            return new Role(client, number, issuer, relation, recipient, agentNumber);
+        }
+    }
     
     /**
      * Returns a new or existing role with the given arguments.
@@ -252,30 +297,18 @@ public final class Role extends Entity implements Immutable, SQLizable, Observer
      * @param issuer the issuer of the returned role.
      * @param relation the relation of the returned role.
      * @param recipient the recipient of the returned role.
-     * @param isClient whether the agent number denotes a client.
      * @param agentNumber the agent number of the returned role.
      * 
      * @return a new or existing role with the given arguments.
      * 
      * @require relation == null || relation.isRoleType() : "The relation is either null or a role type.";
      */
-    public static @Nonnull Role add(@Nonnull Client client, @Nonnull InternalNonHostIdentity issuer, @Nullable SemanticType relation, @Nullable Role recipient, boolean isClient, long agentNumber) throws SQLException {
+    public static @Nonnull Role add(@Nonnull Client client, @Nonnull InternalNonHostIdentity issuer, @Nullable SemanticType relation, @Nullable Role recipient, long agentNumber) throws SQLException {
         assert relation == null || relation.isRoleType() : "The relation is either null or a role type.";
         
-        final long number = Roles.map(client, issuer, relation, recipient, agentNumber);
-        if (Database.isSingleAccess()) {
-            synchronized(index) {
-                final @Nonnull Pair<Client, Long> pair = new Pair<Client, Long>(client, number);
-                @Nullable Role role = index.get(pair);
-                if (role == null) {
-                    role = new Role(client, number, issuer, relation, recipient, isClient, agentNumber);
-                    index.put(pair, role);
-                }
-                return role;
-            }
-        } else {
-            return new Role(client, number, issuer, relation, recipient, isClient, agentNumber);
-        }
+        final @Nonnull Role role = get(client, Roles.map(client, issuer, relation, recipient, agentNumber), issuer, relation, recipient, agentNumber);
+        role.notify(CREATED);
+        return role;
     }
     
     /**
@@ -286,9 +319,8 @@ public final class Role extends Entity implements Immutable, SQLizable, Observer
     private static void remove(@Nonnull Role role) throws SQLException {
         Roles.remove(role);
         if (Database.isSingleAccess()) {
-            synchronized(index) {
-                index.remove(new Pair<Client, Long>(role.getClient(), role.getNumber()));
-            }
+            @Nullable ConcurrentMap<Long, Role> map = index.get(role.getClient());
+            if (map != null) map.remove(role.getNumber());
         }
     }
     
@@ -302,36 +334,24 @@ public final class Role extends Entity implements Immutable, SQLizable, Observer
      * @return the given column of the result set as an instance of this class.
      */
     @Pure
-    public static @Nonnull Role get(@Nonnull Client client, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+    public static @Nullable Role get(@Nonnull Client client, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
         final long number = resultSet.getLong(columnIndex);
-        if (Database.isSingleAccess()) {
-            synchronized(index) {
-                final @Nonnull Pair<Client, Long> pair = new Pair<Client, Long>(client, number);
-                @Nullable Role role = index.get(pair);
-                if (role == null) {
-                    role = Roles.load(client, number);
-                    index.put(pair, role);
-                }
-                return role;
-            }
-        } else {
-            return Roles.load(client, number);
-        }
+        if (resultSet.wasNull()) return null;
+        return Roles.load(client, number);
     }
     
     /**
-     * Returns the role that the given client has for the given person.
+     * Returns the given column of the result set as an instance of this class.
      * 
-     * @param client the client for whom a role is to be returned.
-     * @param person the person that issued the role to be returned.
+     * @param client the client that can assume the returned role.
+     * @param resultSet the result set to retrieve the data from.
+     * @param columnIndex the index of the column containing the data.
      * 
-     * @return the role that the given client has for the given person.
-     * 
-     * @throws InvalidEncodingException if no such role can be found.
+     * @return the given column of the result set as an instance of this class.
      */
     @Pure
-    public static @Nonnull Role get(@Nonnull Client client, @Nonnull Person person) throws SQLException, InvalidEncodingException {
-        throw new UnsupportedOperationException("Cannot yet return a role for the given person."); // TODO
+    public static @Nonnull Role getNotNull(@Nonnull Client client, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+        return Roles.load(client, resultSet.getLong(columnIndex));
     }
     
     

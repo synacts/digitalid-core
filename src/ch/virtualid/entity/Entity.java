@@ -35,9 +35,9 @@ public abstract class Entity extends Instance implements Immutable, SQLizable {
     public static final @Nonnull Aspect CREATED = new Aspect(Entity.class, "created");
     
     /**
-     * Stores the aspect of the observed role being removed.
+     * Stores the aspect of the observed entity being deleted.
      */
-    public static final @Nonnull Aspect REMOVED = new Aspect(Entity.class, "removed");
+    public static final @Nonnull Aspect DELETED = new Aspect(Entity.class, "deleted");
     
     
     /**
@@ -84,7 +84,7 @@ public abstract class Entity extends Instance implements Immutable, SQLizable {
         if (site instanceof Host) {
             return Account.get((Host) site, resultSet, columnIndex);
         } else if (site instanceof Client) {
-            return Role.get((Client) site, resultSet, columnIndex);
+            return Role.getNotNull((Client) site, resultSet, columnIndex);
         } else {
             throw new ShouldNeverHappenError("A site is either a host or a client.");
         }

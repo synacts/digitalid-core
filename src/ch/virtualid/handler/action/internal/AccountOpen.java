@@ -47,6 +47,8 @@ import javax.annotation.Nullable;
  * Opens a new account with the given category.
  * (This class inherits directly from the action class because no entity can be given.)
  * 
+ * TODO: Include a random agent number.
+ * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 1.8
  */
@@ -212,16 +214,17 @@ public final class AccountOpen extends Action {
         // TODO: Include the resctriction mechanisms like the tokens.
         
         final @Nonnull InternalIdentity identity = (InternalIdentity) Mapper.mapIdentity(subject, category, null);
-        final @Nonnull Account account = new Account(((Account) getEntityNotNull()).getHost(), identity);
+        final @Nonnull Account account = Account.get(((Account) getEntityNotNull()).getHost(), identity);
         
         // TODO: Authorize the client agent here with maximal permissions!
         final @Nonnull ReadonlyAgentPermissions permissions = new AgentPermissions(AgentPermissions.GENERAL, true).freeze();
-        // Agents.accreditClient(identity, commitment, name, authorization);
+        // Agents.accreditClient(identity, commitment, name, permissions);
         
         // TODO: Does the root context need to be created first?
         final @Nonnull Restrictions restrictions = new Restrictions(true, true, true, Context.get(account, Context.ROOT));
-        // Agents.authorizeClient(identity, commitment, restrictions, authorization);
+        // Agents.authorizeClient(identity, commitment, restrictions, permissions);
         
+        account.opened();
         return null;
     }
     

@@ -67,7 +67,24 @@ public abstract class IdentityClass implements Identity, Immutable, SQLizable {
      * @ensure !(result instanceof Type) || ((Type) result).isLoaded() : "If the result is a type, its declaration is loaded.";
      */
     @Pure
-    public static @Nonnull Identity get(@Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+    public static @Nullable Identity get(@Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+        final long number = resultSet.getLong(columnIndex);
+        if (resultSet.wasNull()) return null;
+        else return Mapper.getIdentity(number);
+    }
+    
+    /**
+     * Returns the given column of the result set as an instance of this class.
+     * 
+     * @param resultSet the result set to retrieve the data from.
+     * @param columnIndex the index of the column containing the data.
+     * 
+     * @return the given column of the result set as an instance of this class.
+     * 
+     * @ensure !(result instanceof Type) || ((Type) result).isLoaded() : "If the result is a type, its declaration is loaded.";
+     */
+    @Pure
+    public static @Nonnull Identity getNotNull(@Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
         return Mapper.getIdentity(resultSet.getLong(columnIndex));
     }
     

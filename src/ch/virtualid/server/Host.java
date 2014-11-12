@@ -114,7 +114,7 @@ public final class Host extends Site {
             publicKeyWrapper.write(new FileOutputStream(publicKeyFile), true);
         }
         
-        final @Nonnull Account account = new Account(this, identity);
+        final @Nonnull Account account = Account.get(this, identity);
         final @Nonnull Attribute attribute = Attribute.get(account, PublicKeyChain.TYPE);
         if (attribute.getValue() == null) {
             final @Nonnull SignatureWrapper certificate;
@@ -162,7 +162,7 @@ public final class Host extends Site {
      */
     @Pure
     public @Nonnull Account getAccount() {
-        return new Account(this, identity);
+        return Account.get(this, identity);
     }
     
     /**

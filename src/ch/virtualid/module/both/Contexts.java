@@ -9,6 +9,7 @@ import ch.virtualid.entity.Role;
 import ch.virtualid.entity.Site;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.handler.InternalQuery;
+import ch.virtualid.identity.Mapper;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.BothModule;
 import ch.virtualid.module.CoreService;
@@ -28,29 +29,45 @@ import javax.annotation.Nullable;
  * This class provides database access to the {@link Context contexts} of the core service.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 0.0
+ * @version 0.1
  */
 public final class Contexts implements BothModule {
     
     static { CoreService.SERVICE.add(new Contexts()); }
     
+    /**
+     * Creates the table which is referenced for the given site.
+     * 
+     * @param site the site for which the reference table is created.
+     */
+    public static void createReferenceTable(@Nonnull Site site) throws SQLException {
+        try (@Nonnull Statement statement = Database.createStatement()) {
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "context_name (entity " + Entity.FORMAT + " NOT NULL, context " + Context.FORMAT + " NOT NULL, name VARCHAR(50) NOT NULL COLLATE " + Database.getConfiguration().BINARY() + ", icon " + Database.getConfiguration().BLOB() + " NOT NULL, PRIMARY KEY (entity, context), FOREIGN KEY (entity) " + site.getReference() + ")");
+        }
+    }
+    
     @Override
     public void createTables(@Nonnull Site site) throws SQLException {
-//        try (@Nonnull Statement statement = Database.createStatement()) {
-//            statement.executeUpdate("CREATE TABLE IF NOT EXISTS context_name (identity BIGINT NOT NULL, context BIGINT NOT NULL, name VARCHAR(50) NOT NULL COLLATE " + Database.UTF16_BIN + ", PRIMARY KEY (identity, context), FOREIGN KEY (identity) REFERENCES general_identity (identity))");
-//            statement.executeUpdate("CREATE TABLE IF NOT EXISTS context_permission (identity BIGINT NOT NULL, context BIGINT NOT NULL, type BIGINT NOT NULL, PRIMARY KEY (identity, context, type), FOREIGN KEY (identity) REFERENCES general_identity (identity), FOREIGN KEY (type) REFERENCES general_identity (identity))");
-//            statement.executeUpdate("CREATE TABLE IF NOT EXISTS context_authentication (identity BIGINT NOT NULL, context BIGINT NOT NULL, type BIGINT NOT NULL, PRIMARY KEY (identity, context, type), FOREIGN KEY (identity) REFERENCES general_identity (identity), FOREIGN KEY (type) REFERENCES general_identity (identity))");
-//            statement.executeUpdate("CREATE TABLE IF NOT EXISTS context_subcontext (identity BIGINT NOT NULL, context BIGINT NOT NULL, subcontext BIGINT NOT NULL, sequence " + Database.getConfiguration().TINYINT() + ", PRIMARY KEY (identity, context, subcontext), FOREIGN KEY (identity) REFERENCES general_identity (identity))");
-//            statement.executeUpdate("CREATE TABLE IF NOT EXISTS context_contact (identity BIGINT NOT NULL, context BIGINT NOT NULL, contact BIGINT NOT NULL, PRIMARY KEY (identity, context, contact), FOREIGN KEY (identity) REFERENCES general_identity (identity), FOREIGN KEY (contact) REFERENCES general_identity (identity))");
-//        }
-//        
-//        Mapper.addReference("context_contact", "contact");
+        try (@Nonnull Statement statement = Database.createStatement()) {
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "context_preference (entity " + Entity.FORMAT + " NOT NULL, context " + Context.FORMAT + " NOT NULL, type " + Mapper.FORMAT + " NOT NULL, PRIMARY KEY (entity, context, type), FOREIGN KEY (entity, context) " + Context.getReference(site) + ", FOREIGN KEY (type) " + site.getReference() + ")");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "context_permission (entity " + Entity.FORMAT + " NOT NULL, context " + Context.FORMAT + " NOT NULL, type " + Mapper.FORMAT + " NOT NULL, PRIMARY KEY (entity, context, type), FOREIGN KEY (entity, context) " + Context.getReference(site) + ", FOREIGN KEY (type) " + site.getReference() + ")");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "context_authentication (entity " + Entity.FORMAT + " NOT NULL, context " + Context.FORMAT + " NOT NULL, type " + Mapper.FORMAT + " NOT NULL, PRIMARY KEY (entity, context, type), FOREIGN KEY (entity, context) " + Context.getReference(site) + ", FOREIGN KEY (type) " + site.getReference() + ")");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "context_subcontext (entity " + Entity.FORMAT + " NOT NULL, context " + Context.FORMAT + " NOT NULL, subcontext " + Context.FORMAT + " NOT NULL, sequence SMALLINT, PRIMARY KEY (entity, context, subcontext), FOREIGN KEY (entity, context) " + Context.getReference(site) + ", FOREIGN KEY (entity, subcontext) " + Context.getReference(site) + ")");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "context_contact (entity " + Entity.FORMAT + " NOT NULL, context " + Context.FORMAT + " NOT NULL, contact " + Mapper.FORMAT + " NOT NULL, PRIMARY KEY (entity, context, contact), FOREIGN KEY (entity, context) " + Context.getReference(site) + ", FOREIGN KEY (contact) " + site.getReference() + ")");
+            Mapper.addReference(site + "context_contact", "contact", "entity", "context", "contact");
+        }
     }
     
     @Override
     public void deleteTables(@Nonnull Site site) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
-            // TODO: Delete the tables of this module.
+            Mapper.removeReference(site + "context_contact", "contact", "entity", "context", "contact");
+            statement.executeUpdate("DROP TABLE IF EXISTS " + site + "context_contact");
+            statement.executeUpdate("DROP TABLE IF EXISTS " + site + "context_subcontext");
+            statement.executeUpdate("DROP TABLE IF EXISTS " + site + "context_authentication");
+            statement.executeUpdate("DROP TABLE IF EXISTS " + site + "context_permission");
+            statement.executeUpdate("DROP TABLE IF EXISTS " + site + "context_preference");
+            statement.executeUpdate("DROP TABLE IF EXISTS " + site + "context_name");
         }
     }
     

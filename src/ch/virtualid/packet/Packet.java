@@ -21,6 +21,7 @@ import ch.virtualid.handler.action.internal.AccountInitialize;
 import ch.virtualid.handler.action.internal.AccountOpen;
 import ch.virtualid.handler.query.external.AttributesQuery;
 import ch.virtualid.handler.query.external.IdentityQuery;
+import ch.virtualid.handler.query.internal.StateQuery;
 import ch.virtualid.handler.reply.query.AttributesReply;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identifier.Identifier;
@@ -240,12 +241,12 @@ public abstract class Packet implements Immutable {
                     if (type.equals(IdentityQuery.TYPE) || type.equals(AccountOpen.TYPE)) {
                         entity = account;
                     } else {
-                        entity = new Account(account.getHost(), subject.getIdentity());
+                        entity = Account.get(account.getHost(), subject.getIdentity());
                         if (subject instanceof InternalNonHostIdentifier) {
                             final @Nonnull InternalNonHostIdentifier internalNonHostIdentifier = (InternalNonHostIdentifier) subject;
                             if (!type.equals(AccountInitialize.TYPE) && !Predecessors.exist(internalNonHostIdentifier)) throw new PacketException(PacketError.IDENTIFIER, "The subject " + subject + " is not yet initialized.");
                             final @Nullable InternalNonHostIdentifier successor = Successor.get(internalNonHostIdentifier);
-                            if (successor != null) throw new PacketException(PacketError.RELOCATION, "The subject " + subject + " has been relocated to " + successor + ".", null, isResponse);
+                            if (!type.equals(StateQuery.TYPE) && successor != null) throw new PacketException(PacketError.RELOCATION, "The subject " + subject + " has been relocated to " + successor + ".", null, isResponse);
                         }
                     }
                     final @Nonnull Method method = Method.get(entity, signature, recipient, block);

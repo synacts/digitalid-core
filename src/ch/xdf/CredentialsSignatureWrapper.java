@@ -18,7 +18,6 @@ import ch.virtualid.cryptography.Parameters;
 import ch.virtualid.cryptography.PublicKey;
 import ch.virtualid.entity.Account;
 import ch.virtualid.entity.Entity;
-import ch.virtualid.entity.Role;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InactiveSignatureException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
@@ -33,6 +32,7 @@ import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.module.both.Agents;
+import ch.virtualid.module.client.Roles;
 import ch.virtualid.packet.Audit;
 import ch.virtualid.server.Host;
 import ch.virtualid.util.FreezableArray;
@@ -291,10 +291,10 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
                 final @Nonnull InternalPerson person = subject.getIdentity().toInternalPerson();
                 // If the subject is hosted on the given host, the entity is recreated for that subject.
                 if (host.getIdentifier().equals(subject.getHostIdentifier())) {
-                    entity = new Account(host, person);
+                    entity = Account.get(host, person);
                 // Otherwise, the context structure is accessed through a role of the corresponding client.
                 } else {
-                    entity = Role.get(host.getClient(), person);
+                    entity = Roles.getRole(host.getClient(), person);
                 }
             }
             restrictions = new Restrictions(entity, restrictionsBlock);

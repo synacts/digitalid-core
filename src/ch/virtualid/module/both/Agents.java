@@ -4,13 +4,16 @@ import ch.virtualid.agent.Agent;
 import ch.virtualid.agent.ClientAgent;
 import ch.virtualid.agent.OutgoingRole;
 import ch.virtualid.annotations.Pure;
+import ch.virtualid.auxiliary.Time;
 import ch.virtualid.client.Commitment;
+import ch.virtualid.contact.Context;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.Role;
 import ch.virtualid.entity.Site;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.handler.query.internal.AgentsQuery;
+import ch.virtualid.identity.Mapper;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.BothModule;
 import ch.virtualid.module.CoreService;
@@ -30,33 +33,53 @@ import javax.annotation.Nullable;
  * This class provides database access to the {@link Agent agents} of the core service.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 0.0
+ * @version 0.1
  */
 public final class Agents implements BothModule {
     
     static { CoreService.SERVICE.add(new Agents()); }
     
+    /**
+     * Creates the table which is referenced for the given site.
+     * 
+     * @param site the site for which the reference table is created.
+     */
+    public static void createReferenceTable(@Nonnull Site site) throws SQLException {
+        try (@Nonnull Statement statement = Database.createStatement()) {
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "agent (entity " + Entity.FORMAT + " NOT NULL, agent " + Agent.FORMAT + " NOT NULL, client BOOLEAN NOT NULL, removed BOOLEAN NOT NULL DEFAULT FALSE, PRIMARY KEY (entity, agent), FOREIGN KEY (entity) " + site.getReference() + ")");
+        }
+    }
+    
     @Override
     public void createTables(@Nonnull Site site) throws SQLException {
-//        try (@Nonnull Statement statement = Database.createStatement()) {
-//            statement.executeUpdate("CREATE TABLE IF NOT EXISTS authorization (authorizationID " + Database.PRIMARY_KEY + ", identity BIGINT NOT NULL, removed BOOLEAN NOT NULL DEFAULT FALSE, FOREIGN KEY (identity) REFERENCES general_identity (identity))");
-//            statement.executeUpdate("CREATE TABLE IF NOT EXISTS authorization_restrictions (authorizationID BIGINT NOT NULL, client BOOLEAN NOT NULL, context BIGINT NOT NULL, writing BOOLEAN NOT NULL, history BIGINT NOT NULL, role BOOLEAN NOT NULL, PRIMARY KEY (authorizationID), FOREIGN KEY (authorizationID) REFERENCES authorization (authorizationID) ON DELETE CASCADE)");
-//            statement.executeUpdate("CREATE TABLE IF NOT EXISTS authorization_permission (authorizationID BIGINT NOT NULL, preference BOOLEAN NOT NULL, type BIGINT NOT NULL, writing BOOLEAN NOT NULL, PRIMARY KEY (authorizationID, preference, type), FOREIGN KEY (authorizationID) REFERENCES authorization (authorizationID) ON DELETE CASCADE, FOREIGN KEY (type) REFERENCES general_identity (identity))");
-//            
-//            statement.executeUpdate("CREATE TABLE IF NOT EXISTS agent_order (stronger BIGINT NOT NULL, weaker BIGINT NOT NULL, PRIMARY KEY (stronger, weaker), FOREIGN KEY (stronger) REFERENCES authorization (authorizationID), FOREIGN KEY (weaker) REFERENCES authorization (authorizationID))");
-//            
-//            statement.executeUpdate("CREATE TABLE IF NOT EXISTS client (authorizationID BIGINT NOT NULL, host BIGINT NOT NULL, time BIGINT NOT NULL, commitment BLOB NOT NULL, name VARCHAR(50) NOT NULL COLLATE " + Database.UTF16_BIN + ", icon BLOB, PRIMARY KEY (authorizationID), FOREIGN KEY (authorizationID) REFERENCES authorization (authorizationID), FOREIGN KEY (host) REFERENCES general_identity (identity))");
-//            statement.executeUpdate("CREATE TABLE IF NOT EXISTS outgoing_role (authorizationID BIGINT NOT NULL, relation BIGINT NOT NULL, context BIGINT NOT NULL, PRIMARY KEY (authorizationID), FOREIGN KEY (authorizationID) REFERENCES authorization (authorizationID), FOREIGN KEY (relation) REFERENCES general_identity (identity))");
-//            statement.executeUpdate("CREATE TABLE IF NOT EXISTS incoming_role (authorizationID BIGINT NOT NULL, issuer BIGINT NOT NULL, relation BIGINT NOT NULL, PRIMARY KEY (authorizationID), FOREIGN KEY (authorizationID) REFERENCES authorization (authorizationID) ON DELETE CASCADE, FOREIGN KEY (issuer) REFERENCES general_identity (identity), FOREIGN KEY (relation) REFERENCES general_identity (identity))");
-//        }
-//        
-//        Mapper.addReference("incoming_role", "issuer");
+        try (@Nonnull Statement statement = Database.createStatement()) {
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "agent_permission (entity " + Entity.FORMAT + " NOT NULL, agent " + Agent.FORMAT + " NOT NULL, type " + Mapper.FORMAT + " NOT NULL, writing BOOLEAN NOT NULL, PRIMARY KEY (entity, agent, type), FOREIGN KEY (entity, agent) " + Agent.getReference(site) + ", FOREIGN KEY (type) " + site.getReference() + ")");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "agent_restrictions (entity " + Entity.FORMAT + " NOT NULL, agent " + Agent.FORMAT + " NOT NULL, client BOOLEAN NOT NULL, role BOOLEAN NOT NULL, writing BOOLEAN NOT NULL, context " + Context.FORMAT + ", contact " + Mapper.FORMAT + ", PRIMARY KEY (entity, agent), FOREIGN KEY (entity, agent) " + Agent.getReference(site) + ", FOREIGN KEY (entity, context) " + Context.getReference(site) + ", FOREIGN KEY (contact) " + site.getReference() + ")");
+            Mapper.addReference(site + "agent_restrictions", "contact");
+            
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "agent_order (entity " + Entity.FORMAT + " NOT NULL, stronger " + Agent.FORMAT + " NOT NULL, weaker " + Agent.FORMAT + " NOT NULL, PRIMARY KEY (entity, stronger, weaker), FOREIGN KEY (entity, stronger) " + Agent.getReference(site) + ", FOREIGN KEY (entity, weaker) " + Agent.getReference(site) + ")");
+            
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "client (entity " + Entity.FORMAT + " NOT NULL, agent " + Agent.FORMAT + " NOT NULL, host " + Mapper.FORMAT + " NOT NULL, time " + Time.FORMAT + " NOT NULL, value " + Database.getConfiguration().BLOB() + " NOT NULL, name VARCHAR(50) NOT NULL COLLATE " + Database.getConfiguration().BINARY() + ", icon " + Database.getConfiguration().BLOB() + " NOT NULL, PRIMARY KEY (entity, agent), FOREIGN KEY (entity, agent) " + Agent.getReference(site) + ", FOREIGN KEY (host) " + site.getReference() + ")");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "outgoing_role (entity " + Entity.FORMAT + " NOT NULL, agent " + Agent.FORMAT + " NOT NULL, relation " + Mapper.FORMAT + " NOT NULL, context " + Context.FORMAT + " NOT NULL, PRIMARY KEY (entity, agent), FOREIGN KEY (entity, agent) " + Agent.getReference(site) + ", FOREIGN KEY (relation) " + site.getReference() + ", FOREIGN KEY (entity, context) " + Context.getReference(site) + ")");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "incoming_role (entity " + Entity.FORMAT + " NOT NULL, issuer " + Mapper.FORMAT + " NOT NULL, relation " + Mapper.FORMAT + " NOT NULL, agent " + Agent.FORMAT + " NOT NULL, PRIMARY KEY (entity, issuer, relation), FOREIGN KEY (entity) " + site.getReference() + ", FOREIGN KEY (issuer) " + site.getReference() + ", FOREIGN KEY (relation) " + site.getReference() + ")");
+            Mapper.addReference(site + "incoming_role", "issuer", "entity", "issuer", "relation");
+        }
     }
     
     @Override
     public void deleteTables(@Nonnull Site site) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
-            // TODO: Delete the tables of this module.
+            Mapper.removeReference(site + "incoming_role", "issuer", "entity", "issuer", "relation");
+            statement.executeUpdate("DROP TABLE IF EXISTS " + site + "incoming_role");
+            statement.executeUpdate("DROP TABLE IF EXISTS " + site + "outgoing_role");
+            statement.executeUpdate("DROP TABLE IF EXISTS " + site + "client");
+            
+            statement.executeUpdate("DROP TABLE IF EXISTS " + site + "agent_order");
+            
+            Mapper.removeReference(site + "agent_restrictions", "contact");
+            statement.executeUpdate("DROP TABLE IF EXISTS " + site + "agent_restrictions");
+            statement.executeUpdate("DROP TABLE IF EXISTS " + site + "agent_permission");
+            statement.executeUpdate("DROP TABLE IF EXISTS " + site + "agent");
         }
     }
     
@@ -168,7 +191,7 @@ public final class Agents implements BothModule {
 //        assert name.length() <= 50 : "The client name may have at most 50 characters.";
 //        
 //        long number = Database.executeInsert(connection, "INSERT INTO authorization (identity) VALUES (" + identity + ")");
-//        @Nonnull String sql = "INSERT INTO client (authorizationID, host, time, commitment, name) VALUES (?, ?, ?, ?, ?)";
+//        @Nonnull String sql = "INSERT INTO client (agent, host, time, commitment, name) VALUES (?, ?, ?, ?, ?)";
 //        try (@Nonnull PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 //            preparedStatement.setLong(1, number);
 //            preparedStatement.setLong(2, commitment.getHost().getNumber());
@@ -190,7 +213,7 @@ public final class Agents implements BothModule {
 //     * @return the client with the given commitment at the given identity or null if no such client is found.
 //     */
     public static @Nullable ClientAgent getClientAgent(@Nonnull Entity entity, @Nonnull Commitment commitment) throws SQLException {
-//        @Nonnull String sql = "SELECT authorization.authorizationID, client.name FROM authorization JOIN client ON authorization.authorizationID = client.authorizationID WHERE authorization.identity = ? AND NOT authorization.removed AND client.host = ? AND client.time = ? AND client.commitment = ?";
+//        @Nonnull String sql = "SELECT authorization.agent, client.name FROM authorization JOIN client ON authorization.agent = client.agent WHERE authorization.identity = ? AND NOT authorization.removed AND client.host = ? AND client.time = ? AND client.commitment = ?";
 //        try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(sql)) {
 //            preparedStatement.setLong(1, entity.getNumber());
 //            preparedStatement.setLong(2, commitment.getHost().getNumber());
@@ -218,7 +241,7 @@ public final class Agents implements BothModule {
 //        
 //        try (@Nonnull Statement statement = connection.createStatement()) {
 //            long number = Database.executeInsert(statement, "INSERT INTO authorization (identity) VALUES (" + identity + ")");
-//            statement.executeUpdate("INSERT INTO outgoing_role (authorizationID, relation, context) VALUES (" + number + ", " + relation + ", " + context + ")");
+//            statement.executeUpdate("INSERT INTO outgoing_role (agent, relation, context) VALUES (" + number + ", " + relation + ", " + context + ")");
 //            return new OutgoingRole(connection, number, identity, relation, context);
 //        } catch (@Nonnull SQLException exception) {
 //            if (relation.hasBeenMerged()) return addOutgoingRole(connection, identity, relation, context);
@@ -241,7 +264,7 @@ public final class Agents implements BothModule {
 //        
 //        // TODO: Create the OutgoingRole according to the restrictable parameter.
 //        
-//        @Nonnull String sql = "SELECT authorization.authorizationID, outgoing_role.context FROM authorization JOIN outgoing_role ON authorization.authorizationID = outgoing_role.authorizationID WHERE authorization.identity = " + entity + " AND NOT authorization.removed AND outgoing_role.relation = " + relation;
+//        @Nonnull String sql = "SELECT authorization.agent, outgoing_role.context FROM authorization JOIN outgoing_role ON authorization.agent = outgoing_role.agent WHERE authorization.identity = " + entity + " AND NOT authorization.removed AND outgoing_role.relation = " + relation;
 //        try (@Nonnull Statement statement = connection.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(sql)) {
 //            if (resultSet.next()) {
 //                return new OutgoingRole(connection, resultSet.getLong(1), entity, relation, new Context(resultSet.getLong(2)));
@@ -262,7 +285,7 @@ public final class Agents implements BothModule {
 //     */
 //    public static void removeAgent(@Nonnull Agent agent) throws SQLException {
 //        try (@Nonnull Statement statement = connection.createStatement()) {
-//            statement.executeUpdate("UPDATE authorization SET removed = TRUE WHERE authorizationID = " + agent);
+//            statement.executeUpdate("UPDATE authorization SET removed = TRUE WHERE agent = " + agent);
 //        }
 //    }
 //    
@@ -280,7 +303,7 @@ public final class Agents implements BothModule {
 //        
 //        try (@Nonnull Statement statement = connection.createStatement()) {
 //            long number = Database.executeInsert(statement, "INSERT INTO authorization (identity) VALUES (" + identity + ")");
-//            statement.executeUpdate("INSERT INTO incoming_role (authorizationID, issuer, relation) VALUES (" + number + ", " + issuer + ", " + relation + ")");
+//            statement.executeUpdate("INSERT INTO incoming_role (agent, issuer, relation) VALUES (" + number + ", " + issuer + ", " + relation + ")");
 //            return new IncomingRole(connection, number, identity, issuer, relation);
 //        } catch (@Nonnull SQLException exception) {
 //            if (issuer.hasBeenMerged() || relation.hasBeenMerged()) return addIncomingRole(connection, identity, issuer, relation);
@@ -300,7 +323,7 @@ public final class Agents implements BothModule {
 //    static @Nullable IncomingRole getIncomingRole(@Nonnull NonHostIdentity identity, @Nonnull NonHostIdentity issuer, @Nonnull SemanticType relation) throws SQLException {
 //        assert relation.isRoleType() : "The relation is a role type.";
 //        
-//        @Nonnull String sql = "SELECT authorization.authorizationID FROM authorization JOIN incoming_role ON authorization.authorizationID = incoming_role.authorizationID WHERE authorization.identity = " + identity + " AND NOT authorization.removed AND incoming_role.issuer = " + issuer + " AND incoming_role.relation = " + relation;
+//        @Nonnull String sql = "SELECT authorization.agent FROM authorization JOIN incoming_role ON authorization.agent = incoming_role.agent WHERE authorization.identity = " + identity + " AND NOT authorization.removed AND incoming_role.issuer = " + issuer + " AND incoming_role.relation = " + relation;
 //        try (@Nonnull Statement statement = connection.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(sql)) {
 //            if (resultSet.next()) {
 //                return new IncomingRole(connection, resultSet.getLong(1), identity, issuer, relation);
@@ -322,7 +345,7 @@ public final class Agents implements BothModule {
 //    static @Nonnull Set<IncomingRole> getIncomingRoles(@Nonnull NonHostIdentity identity, @Nonnull Agent agent) throws SQLException {
 //        assert agent.getRestrictions() != null : "The restrictions of the agent is not null.";
 //        
-//        @Nonnull String sql = "SELECT authorization.authorizationID, issuer.identity, issuer.category, issuer.address, relation.identity, relation.category, relation.address FROM authorization JOIN incoming_role ON authorization.authorizationID = incoming_role.authorizationID JOIN general_identity AS issuer ON incoming_role.issuer = general_identity.identity JOIN general_identity AS relation ON incoming_role.relation = general_identity.identity WHERE authorization.identity = " + identity;
+//        @Nonnull String sql = "SELECT authorization.agent, issuer.identity, issuer.category, issuer.address, relation.identity, relation.category, relation.address FROM authorization JOIN incoming_role ON authorization.agent = incoming_role.agent JOIN general_identity AS issuer ON incoming_role.issuer = general_identity.identity JOIN general_identity AS relation ON incoming_role.relation = general_identity.identity WHERE authorization.identity = " + identity;
 //        try (@Nonnull Statement statement = connection.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(sql)) {
 //            @Nonnull Set<IncomingRole> incomingRoles = new LinkedHashSet<IncomingRole>();
 //            while (resultSet.next()) {
@@ -345,7 +368,7 @@ public final class Agents implements BothModule {
 //     */
 //    public static void removeIncomingRole(@Nonnull IncomingRole incomingRole) throws SQLException {
 //        try (@Nonnull Statement statement = connection.createStatement()) {
-//            statement.executeUpdate("DELETE FROM authorization WHERE authorizationID = " + incomingRole);
+//            statement.executeUpdate("DELETE FROM authorization WHERE agent = " + incomingRole);
 //        }
 //    }
 //    
@@ -357,7 +380,7 @@ public final class Agents implements BothModule {
 //     * @return the restrictions of the given authorization or null if not yet set.
 //     */
 //    public static @Nullable Restrictions getRestrictions(@Nonnull Authorization authorization) throws SQLException {
-//        @Nonnull String query = "SELECT client, context, writing, history, role FROM authorization_restrictions WHERE authorizationID = " + authorization;
+//        @Nonnull String query = "SELECT client, context, writing, history, role FROM authorization_restrictions WHERE agent = " + authorization;
 //        try (@Nonnull Statement statement = connection.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(query)) {
 //            if (resultSet.next()) return new Restrictions(resultSet.getBoolean(1), new Context(resultSet.getLong(2)), resultSet.getBoolean(3), resultSet.getLong(4), resultSet.getBoolean(5));
 //            else return null;
@@ -374,7 +397,7 @@ public final class Agents implements BothModule {
 //     */
 //    public static void setRestrictions(@Nonnull Authorization authorization, @Nonnull Restrictions restrictions) throws SQLException {
 //        try (@Nonnull Statement statement = connection.createStatement()) {
-//            statement.executeUpdate("REPLACE INTO authorization_restrictions (authorizationID, client, context, writing, history, role) VALUES (" + authorization + ", " + restrictions.isClient() + ", " + restrictions.getContext() + ", " + restrictions.isWriting() + ", " + restrictions.getHistory() + ", " + restrictions.isRole() + ")");
+//            statement.executeUpdate("REPLACE INTO authorization_restrictions (agent, client, context, writing, history, role) VALUES (" + authorization + ", " + restrictions.isClient() + ", " + restrictions.getContext() + ", " + restrictions.isWriting() + ", " + restrictions.getHistory() + ", " + restrictions.isRole() + ")");
 //        }
 //    }
 //    
@@ -386,7 +409,7 @@ public final class Agents implements BothModule {
 //     * @return the permissions (or preferences) of the given authorization.
 //     */
 //    public static @Nonnull AgentPermissions getPermissions(@Nonnull Agent agent) throws SQLException {
-//        @Nonnull String query = "SELECT general_identity.identity, general_identity.category, general_identity.address, authorization_permission.writing FROM authorization_permission JOIN general_identity ON authorization_permission.type = general_identity.identity WHERE authorizationID = " + agent + " AND preference = " + preference;
+//        @Nonnull String query = "SELECT general_identity.identity, general_identity.category, general_identity.address, authorization_permission.writing FROM authorization_permission JOIN general_identity ON authorization_permission.type = general_identity.identity WHERE agent = " + agent + " AND preference = " + preference;
 //        try (@Nonnull Statement statement = connection.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(query)) {
 //           AgentPermissionsermissions perAgentPermissionsnew Permissions();
 //            while (resultSet.next()) {
@@ -411,7 +434,7 @@ public final class Agents implements BothModule {
 //     * @param permissions the permissions (or preferences) to be added to the given authorization.
 //     */
 //    public static void addPermissions(@Nonnull Authorization authorization, boolean pAgentPermissions@Nonnull Permissions permissions) throws SQLException {
-//        @Nonnull String sql = "REPLACE INTO authorization_permission (authorizationID, preference, type, writing) VALUES (" + authorization + ", " + preference + ", ?, ?)";
+//        @Nonnull String sql = "REPLACE INTO authorization_permission (agent, preference, type, writing) VALUES (" + authorization + ", " + preference + ", ?, ?)";
 //        try (@Nonnull PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 //            for (@Nonnull SemanticType type : permissions.keySet()) {
 //                preparedStatement.setLong(1, type.getNumber());
@@ -438,7 +461,7 @@ public final class Agents implements BothModule {
 //     */
 //    public static void setPermissions(@Nonnull Authorization authorization, boolAgentPermissionsnce, @Nonnull Permissions permissions) throws SQLException {
 //        try (@Nonnull Statement statement = connection.createStatement()) {
-//            statement.executeUpdate("DELETE FROM authorization_permission WHERE authorizationID = " + authorization + " AND preference = " + preference);
+//            statement.executeUpdate("DELETE FROM authorization_permission WHERE agent = " + authorization + " AND preference = " + preference);
 //        }
 //        
 //        addPermissions(connection, authorization, preference, permissions);
@@ -454,7 +477,7 @@ public final class Agents implements BothModule {
 //     * @return the number of rows deleted from the database.
 //     */
 //    public static int removePermissions(@Nonnull Authorization authorization,AgentPermissionseference, @Nonnull Permissions permissions) throws SQLException {
-//        @Nonnull String sql = "DELETE FROM authorization_permission WHERE authorizationID = " + authorization + " AND preference = " + preference + " AND type = ?";
+//        @Nonnull String sql = "DELETE FROM authorization_permission WHERE agent = " + authorization + " AND preference = " + preference + " AND type = ?";
 //        try (@Nonnull PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 //            for (@Nonnull SemanticType type : permissions.keySet()) {
 //                preparedStatement.setLong(1, type.getNumber());
@@ -487,7 +510,7 @@ public final class Agents implements BothModule {
 //    public static @Nonnull Set<Agent> getAgents(@Nonnull Agent agent) throws SQLException {
 //        assert agent.getRestrictions() != null : "The restrictions of the agent is not null.";
 //        
-//        @Nonnull String sql = "SELECT agent_order.weaker, identity.identity, identity.category, identity.address, host.identity, host.category, host.address, client.time, client.commitment, client.name, relation.identity, relation.category, relation.address, outgoing_role.context FROM agent_order JOIN authorization ON agent_order.weaker = authorization.authorizationID JOIN general_identity AS identity ON authorization.identity = general_identity.identity LEFT JOIN (client JOIN general_identity AS host ON client.host = general_identity.identity) ON agent_order.weaker = client.authorizationID LEFT JOIN (outgoing_role JOIN general_identity AS relation ON outgoing_role.relation = general_identity.identity) ON agent_order.weaker = outgoing_role.authorizationID WHERE agent_order.stronger = " + agent + " AND NOT authorization.removed";
+//        @Nonnull String sql = "SELECT agent_order.weaker, identity.identity, identity.category, identity.address, host.identity, host.category, host.address, client.time, client.commitment, client.name, relation.identity, relation.category, relation.address, outgoing_role.context FROM agent_order JOIN authorization ON agent_order.weaker = authorization.agent JOIN general_identity AS identity ON authorization.identity = general_identity.identity LEFT JOIN (client JOIN general_identity AS host ON client.host = general_identity.identity) ON agent_order.weaker = client.agent LEFT JOIN (outgoing_role JOIN general_identity AS relation ON outgoing_role.relation = general_identity.identity) ON agent_order.weaker = outgoing_role.agent WHERE agent_order.stronger = " + agent + " AND NOT authorization.removed";
 //        try (@Nonnull Statement statement = connection.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(sql)) {
 //            @Nonnull Set<Agent> agents = new LinkedHashSet<Agent>();
 //            while (resultSet.next()) {
@@ -520,8 +543,8 @@ public final class Agents implements BothModule {
 //            // Determine the weaker agents.
 //            @Nullable Restrictions restrictions = agent.getRestrictions();
 //            if (restrictions != null) {
-//                statement.executeUpdate("INSERT INTO agent_order (stronger, weaker) SELECT " + agent + ", authorization.authorizationID FROM authorization LEFT JOIN authorization_restrictions AS restrictions USING (authorizationID) WHERE authorization.identity = " + agent.getIdentity()
-//                        + " AND (restrictions.authorizationID IS NULL OR ("
+//                statement.executeUpdate("INSERT INTO agent_order (stronger, weaker) SELECT " + agent + ", authorization.agent FROM authorization LEFT JOIN authorization_restrictions AS restrictions USING (agent) WHERE authorization.identity = " + agent.getIdentity()
+//                        + " AND (restrictions.agent IS NULL OR ("
 //                            + "(NOT restrictions.client OR " + restrictions.isClient() + ") AND "
 //                            + "(restrictions.context & " + restrictions.getContext().getMask() + " = " + restrictions.getContext() + ") AND "
 //                            + "(NOT restrictions.writing OR " + restrictions.isWriting() + ") AND "
@@ -529,23 +552,23 @@ public final class Agents implements BothModule {
 //                            + "(NOT restrictions.role OR " + restrictions.isRole() + ")))"
 //                        + " AND (restrictions.client" + (restrictions.isWriting() ? ""
 //                            + " OR EXISTS (SELECT * FROM outgoing_role JOIN authorization_permission as permission ON outgoing_role.relation = permission.type OR permission.type = " + SemanticType.CLIENT_GENERAL_PERMISSION
-//                                + " WHERE outgoing_role.authorizationID = authorization.authorizationID AND outgoing_role.context & " + restrictions.getContext().getMask() + " = " + restrictions.getContext()
-//                                + " AND permission.authorizationID = " + agent + " AND NOT permission.preference AND permission.writing)" : "")
-//                        + ") AND NOT EXISTS (SELECT * FROM authorization_permission AS weaker LEFT JOIN authorization_permission AS stronger ON stronger.authorizationID = " + agent + " AND NOT stronger.preference AND (weaker.type = stronger.type OR stronger.type = " + SemanticType.CLIENT_GENERAL_PERMISSION + ") AND (NOT weaker.writing OR stronger.writing) WHERE weaker.authorizationID = authorization.authorizationID AND NOT weaker.preference AND stronger.authorizationID IS NULL)");
+//                                + " WHERE outgoing_role.agent = authorization.agent AND outgoing_role.context & " + restrictions.getContext().getMask() + " = " + restrictions.getContext()
+//                                + " AND permission.agent = " + agent + " AND NOT permission.preference AND permission.writing)" : "")
+//                        + ") AND NOT EXISTS (SELECT * FROM authorization_permission AS weaker LEFT JOIN authorization_permission AS stronger ON stronger.agent = " + agent + " AND NOT stronger.preference AND (weaker.type = stronger.type OR stronger.type = " + SemanticType.CLIENT_GENERAL_PERMISSION + ") AND (NOT weaker.writing OR stronger.writing) WHERE weaker.agent = authorization.agent AND NOT weaker.preference AND stronger.agent IS NULL)");
 //            }
 //            
 //            // Determine the stronger agents.
-//            int updated = statement.executeUpdate("INSERT INTO agent_order (stronger, weaker) SELECT authorization.authorizationID, " + agent + " FROM authorization JOIN authorization_restrictions AS restrictions USING (authorizationID) WHERE authorization.identity = " + agent.getIdentity()
+//            int updated = statement.executeUpdate("INSERT INTO agent_order (stronger, weaker) SELECT authorization.agent, " + agent + " FROM authorization JOIN authorization_restrictions AS restrictions USING (agent) WHERE authorization.identity = " + agent.getIdentity()
 //                    + " AND ("
 //                        + "(NOT " + agent.isClient() + " OR restrictions.client)" + (restrictions == null ? "" : " AND "
 //                        + "(restrictions.context IN (" + restrictions.getContext().getSupercontextsAsString() + ")) AND "
 //                        + "(NOT " + restrictions.isWriting() + " OR restrictions.writing) AND "
 //                        + "(" + restrictions.getHistory() + " >= restrictions.history) AND "
 //                        + "(NOT " + restrictions.isRole() + " OR restrictions.role)")
-//                     + ") AND (restrictions.client OR EXISTS (SELECT * FROM outgoing_role WHERE outgoing_role.authorizationID = authorization.authorizationID))" 
+//                     + ") AND (restrictions.client OR EXISTS (SELECT * FROM outgoing_role WHERE outgoing_role.agent = authorization.agent))" 
 //                    + (agent instanceof OutgoingRole ? " AND (restrictions.writing AND restrictions.context IN (" + ((OutgoingRole) agent).getContext().getSupercontextsAsString() + ")"
-//                        + " AND EXISTS (SELECT * FROM authorization_permission as permission WHERE permission.authorizationID = authorization.authorizationID AND NOT permission.preference AND permission.writing AND (permission.type = " + ((OutgoingRole) agent).getRelation() + " OR permission.type = " + SemanticType.CLIENT_GENERAL_PERMISSION + ")))" : "")
-//                    + " AND NOT EXISTS (SELECT * FROM authorization_permission AS weaker LEFT JOIN authorization_permission AS stronger ON stronger.authorizationID = authorization.authorizationID AND NOT stronger.preference AND (weaker.type = stronger.type OR stronger.type = " + SemanticType.CLIENT_GENERAL_PERMISSION + ") AND (NOT weaker.writing OR stronger.writing) WHERE weaker.authorizationID = " + agent + " AND NOT weaker.preference AND stronger.authorizationID IS NULL)");
+//                        + " AND EXISTS (SELECT * FROM authorization_permission as permission WHERE permission.agent = authorization.agent AND NOT permission.preference AND permission.writing AND (permission.type = " + ((OutgoingRole) agent).getRelation() + " OR permission.type = " + SemanticType.CLIENT_GENERAL_PERMISSION + ")))" : "")
+//                    + " AND NOT EXISTS (SELECT * FROM authorization_permission AS weaker LEFT JOIN authorization_permission AS stronger ON stronger.agent = authorization.agent AND NOT stronger.preference AND (weaker.type = stronger.type OR stronger.type = " + SemanticType.CLIENT_GENERAL_PERMISSION + ") AND (NOT weaker.writing OR stronger.writing) WHERE weaker.agent = " + agent + " AND NOT weaker.preference AND stronger.agent IS NULL)");
 //            
 //            if (updated == 0 && agent instanceof OutgoingRole && ((OutgoingRole) agent).getRelation().hasBeenMerged()) redetermineAgents(connection, agent);
 //        }
@@ -559,7 +582,7 @@ public final class Agents implements BothModule {
 //     * @param commitment the commitment to set for the given client agent.
 //     */
 //    public static void setClientCommitment(@Nonnull ClientAgent clientAgent, @Nonnull Commitment commitment) throws SQLException {
-//        @Nonnull String sql = "UPDATE client SET host = ?, time = ?, commitment = ? WHERE authorizationID = ?";
+//        @Nonnull String sql = "UPDATE client SET host = ?, time = ?, commitment = ? WHERE agent = ?";
 //        try (@Nonnull PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 //            preparedStatement.setLong(1, commitment.getHost().getNumber());
 //            preparedStatement.setLong(2, commitment.getTime());
@@ -579,7 +602,7 @@ public final class Agents implements BothModule {
 //    public static void setClientName(@Nonnull ClientAgent clientAgent, @Nonnull String name) throws SQLException {
 //        assert name.length() <= 50 : "The client name may have at most 50 characters.";
 //        
-//        @Nonnull String sql = "UPDATE client SET name = ? WHERE authorizationID = ?";
+//        @Nonnull String sql = "UPDATE client SET name = ? WHERE agent = ?";
 //        try (@Nonnull PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 //            preparedStatement.setString(1, name);
 //            preparedStatement.setLong(2, clientAgent.getNumber());
@@ -595,7 +618,7 @@ public final class Agents implements BothModule {
 //     */
 //    public static void setOutgoingRoleContext(@Nonnull OutgoingRole outgoingRole, @Nonnull Context context) throws SQLException {
 //        try (@Nonnull Statement statement = connection.createStatement()) {
-//            statement.executeUpdate("UPDATE outgoing_role SET context = " + context + " WHERE authorizationID = " + outgoingRole);
+//            statement.executeUpdate("UPDATE outgoing_role SET context = " + context + " WHERE agent = " + outgoingRole);
 //        }
 //    }
     

@@ -226,6 +226,11 @@ public class Client extends Site implements Observer {
     
     /**
      * Stores the roles of this client.
+     * 
+     * @invariant roles == null || roles.isNotFrozen() : "The roles are not frozen.";
+     * @invariant roles == null || roles.doesNotContainNull() : "The roles do not contain null.";
+     * @invariant roles == null || roles.doesNotContainDuplicates() : "The roles do not contain duplicates.";
+     * @invariant roles == null || for (Role role : roles) role.isNative() : "Every role in the roles is native.";
      */
     private @Nullable FreezableList<Role> roles;
     
@@ -233,6 +238,11 @@ public class Client extends Site implements Observer {
      * Returns the roles of this client.
      * 
      * @return the roles of this client.
+     * 
+     * @ensure return.isNotFrozen() : "The returned list is not frozen.";
+     * @ensure return.doesNotContainNull() : "The returned list does not contain null.";
+     * @ensure return.doesNotContainDuplicates() : "The returned list does not contain duplicates.";
+     * @ensure for (Role role : return) role.isNative() : "Every role in the returned list is native.";
      */
     @Pure
     public @Nonnull ReadonlyList<Role> getRoles() throws SQLException {
@@ -246,18 +256,16 @@ public class Client extends Site implements Observer {
      * @param issuer the issuer of the role to add.
      */
     public void addRole(@Nonnull InternalNonHostIdentity issuer) throws SQLException {
-        final @Nonnull Role role = Role.add(this, issuer, null, null, true, new SecureRandom().nextLong());
-        role.observe(this, Role.REMOVED);
+        final @Nonnull Role role = Role.add(this, issuer, null, null, new SecureRandom().nextLong());
+        role.observe(this, Role.DELETED);
         
-        if (roles != null) roles.add(role);
+        if (roles != null && !roles.contains(role)) roles.add(role);
         notify(ROLE_ADDED);
     }
     
     @Override
     public void notify(@Nonnull Aspect aspect, @Nonnull Instance instance) {
-        if (aspect.equals(Role.REMOVED) && roles != null) {
-            roles.remove(instance);
-        }
+        if (aspect.equals(Role.DELETED) && roles != null) roles.remove(instance);
     }
     
 }

@@ -5,13 +5,16 @@ import ch.virtualid.annotations.Pure;
 import ch.virtualid.concept.Aspect;
 import ch.virtualid.concept.Concept;
 import ch.virtualid.entity.Entity;
+import ch.virtualid.entity.Site;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
+import ch.virtualid.identity.Identity;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
+import ch.virtualid.module.both.Agents;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.ReadonlyArray;
 import ch.xdf.Block;
@@ -24,7 +27,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * This class models an agent that acts on behalf of a virtual identity.
+ * This class models an agent that acts on behalf of an {@link Identity identity}.
  * 
  * @see ClientAgent
  * @see OutgoingRole
@@ -63,9 +66,16 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
     public static final @Nonnull String FORMAT = "BIGINT";
     
     /**
-     * Stores the foreign key constraint used to reference instances of this class.
+     * Returns the foreign key constraint used to reference instances of this class.
+     * 
+     * @param site the site at which the foreign key constraint is declared.
+     * 
+     * @return the foreign key constraint used to reference instances of this class.
      */
-    public static final @Nonnull String REFERENCE = "REFERENCES agent (entity, agent) ON DELETE CASCADE ON UPDATE CASCADE";
+    public static @Nonnull String getReference(@Nonnull Site site) throws SQLException {
+        Agents.createReferenceTable(site);
+        return "REFERENCES " + site + "agent (entity, agent) ON DELETE CASCADE";
+    }
     
     
     /**
@@ -348,11 +358,27 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
         return new TupleWrapper(TYPE, elements.freeze()).toBlock();
     }
     
+    
+    /**
+     * Returns the agent with the given number at the given entity.
+     * 
+     * @param entity the entity to which the agent belongs.
+     * @param number the number that denotes the new agent.
+     * @param client whether the agent is a client agent.
+     * @param removed whether the agent has been removed.
+     */
+    @Pure
+    public static @Nonnull Agent get(@Nonnull Entity entity, long number, boolean client, boolean removed) {
+        return client ? ClientAgent.get(entity, number, removed) : OutgoingRole.get(entity, number, removed, false);
+    }
+    
     /**
      * Returns the agent with the number given by the block.
      * 
      * @param entity the entity to which the agent belongs.
      * @param block a block containing the number of the agent.
+     * 
+     * @return the agent with the number given by the block.
      * 
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
@@ -364,7 +390,7 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
         final long number = new Int64Wrapper(elements.getNotNull(0)).getValue();
         final boolean client = new BooleanWrapper(elements.getNotNull(1)).getValue();
         final boolean removed = new BooleanWrapper(elements.getNotNull(2)).getValue();
-        return client ? ClientAgent.get(entity, number, removed) : OutgoingRole.get(entity, number, removed, false);
+        return get(entity, number, client, removed);
     }
     
     @Override

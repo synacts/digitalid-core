@@ -22,4 +22,10 @@ public final class AccountInitialize {
         
     }
     
+//    @Pure
+//    @Override
+//    public @Nullable PublicKey getPublicKey() {
+//        return null; // The commitment does not have to be with the active public key of the recipient.
+//    }
+    
 }
