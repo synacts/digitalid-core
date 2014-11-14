@@ -12,6 +12,7 @@ import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Reply;
+import ch.virtualid.handler.action.internal.AccountInitialize;
 import ch.virtualid.handler.action.internal.AccountOpen;
 import ch.virtualid.handler.query.external.IdentityQuery;
 import ch.virtualid.handler.reply.query.IdentityReply;
@@ -447,6 +448,28 @@ public final class Mapper {
     
     
     /**
+     * Merges the given identities into the new identity.
+     * (This method should only be called by {@link AccountInitialize}.)
+     * 
+     * @param identities the identities which are to be merged.
+     * @param newIdentity the new identity of the given identities.
+     */
+    public static void mergeIdentities(@Nonnull ReadonlyList<NonHostIdentity> identities, @Nonnull InternalNonHostIdentity newIdentity) throws SQLException {
+        final long newNumber = newIdentity.getNumber();
+        try (@Nonnull Statement statement = Database.createStatement()) {
+            for (final @Nonnull NonHostIdentity identity : identities) {
+                final long oldNumber = identity.getNumber();
+                updateReferences(statement, oldNumber, newNumber);
+                statement.executeUpdate("UPDATE general_identifier SET identity = " + newNumber + " WHERE identity = " + oldNumber);
+                statement.executeUpdate("DELETE FROM general_identity WHERE identity = " + oldNumber);
+                LOGGER.log(Level.INFORMATION, "The identity of " + identity.getAddress() + " was succesfully merged into " + newIdentity.getAddress() + ".");
+                unmap(identity);
+            }
+        }
+        if (identities.size() > 1) Cache.invalidateCachedAttributes(newIdentity);
+    }
+    
+    /**
      * Establishes the identity of the given internal non-host identifier by checking
      * its existence and requesting its category, predecessors and successor.
      * 
@@ -482,7 +505,7 @@ public final class Mapper {
             final @Nonnull NonHostIdentifier address = identity.getAddress();
             final @Nonnull String message = "The claimed predecessor " + address + " of " + identifier;
             if (!(identity.getCategory().isExternalPerson() && category.isInternalPerson() || identity.getCategory() == category)) throw new InvalidDeclarationException(message + " has a wrong category.", identifier, reply);
-            final @Nonnull Predecessor predecessor = new Predecessor(address, address instanceof InternalNonHostIdentifier ? Predecessors.get((InternalNonHostIdentifier) address) : new Predecessors().freeze());
+            final @Nonnull Predecessor predecessor = new Predecessor(address);
             if (!predecessors.contains(predecessor)) throw new InvalidDeclarationException(message + " has other predecessors.", identifier, reply);
             if (!Successor.getReloaded(address, false).equals(identifier)) throw new InvalidDeclarationException(message + " does not link back.", identifier, reply);
         }
@@ -495,23 +518,14 @@ public final class Mapper {
                 statement.executeUpdate("INSERT INTO general_identifier (identifier, identity) VALUES (" + identifier + ", " + identity + ")");
                 statement.executeUpdate("UPDATE general_identity SET address = " + identifier + " WHERE identity = " + identity);
             }
+            unmap(identity);
             LOGGER.log(Level.INFORMATION, "The identity of " + identity.getAddress() + " was succesfully relocated to " + identifier + ".");
             
         // Create a new identity and merge existing predecessors into this new identity.
         } else {
             identity = mapIdentity(identifier, category, reply).toInternalNonHostIdentity();
             if (identities.size() > 1 && !category.isInternalPerson()) throw new InvalidDeclarationException("Only internal persons may have more than one predecessor.", identifier, reply);
-            final long newNumber = identity.getNumber();
-            for (final @Nonnull NonHostIdentity predecessor : identities) {
-                final long oldNumber = predecessor.getNumber();
-                try (@Nonnull Statement statement = Database.createStatement()) {
-                    updateReferences(statement, oldNumber, newNumber);
-                    statement.executeUpdate("UPDATE general_identifier SET identity = " + newNumber + " WHERE identity = " + oldNumber);
-                    statement.executeUpdate("DELETE FROM general_identity WHERE identity = " + oldNumber);
-                }
-                LOGGER.log(Level.INFORMATION, "The identity of " + predecessor.getAddress() + " was succesfully merged into " + identifier + ".");
-            }
-            if (identities.size() > 1) Cache.invalidateCachedAttributes(identity);
+            mergeIdentities(identities, identity);
         }
         LOGGER.log(Level.INFORMATION, "The identity of " + identifier + " was succesfully established.");
         

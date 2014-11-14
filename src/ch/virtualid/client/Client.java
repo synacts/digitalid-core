@@ -15,16 +15,29 @@ import ch.virtualid.database.SQLiteConfiguration;
 import ch.virtualid.entity.Role;
 import ch.virtualid.entity.Site;
 import ch.virtualid.exceptions.external.ExternalException;
+import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
+import ch.virtualid.handler.action.internal.AccountClose;
+import ch.virtualid.handler.action.internal.AccountInitialize;
+import ch.virtualid.handler.action.internal.AccountOpen;
+import ch.virtualid.handler.query.internal.StateQuery;
+import ch.virtualid.handler.reply.query.StateReply;
+import ch.virtualid.identifier.ExternalIdentifier;
 import ch.virtualid.identifier.InternalNonHostIdentifier;
+import ch.virtualid.identity.Category;
 import ch.virtualid.identity.HostIdentity;
 import ch.virtualid.identity.InternalNonHostIdentity;
+import ch.virtualid.identity.Mapper;
+import ch.virtualid.identity.Predecessor;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.io.Directory;
 import ch.virtualid.module.CoreService;
 import ch.virtualid.module.client.Roles;
+import ch.virtualid.util.FreezableArrayList;
+import ch.virtualid.util.FreezableLinkedList;
 import ch.virtualid.util.FreezableList;
 import ch.virtualid.util.ReadonlyList;
+import ch.xdf.Block;
 import ch.xdf.SelfcontainedWrapper;
 import ch.xdf.StringWrapper;
 import java.io.File;
@@ -38,6 +51,7 @@ import java.util.Random;
 import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import org.javatuples.Pair;
 
 /**
  * A client is configured with an identifier and a secret.
@@ -254,18 +268,89 @@ public class Client extends Site implements Observer {
      * Adds the given role to the roles of this client.
      * 
      * @param issuer the issuer of the role to add.
+     * @param agentNumber the agent number of the role to add.
+     * 
+     * @return the newly created role of this client.
      */
-    public void addRole(@Nonnull InternalNonHostIdentity issuer) throws SQLException {
-        final @Nonnull Role role = Role.add(this, issuer, null, null, new SecureRandom().nextLong());
+    private @Nonnull Role addRole(@Nonnull InternalNonHostIdentity issuer, long agentNumber) throws SQLException {
+        final @Nonnull Role role = Role.add(this, issuer, null, null, agentNumber);
         role.observe(this, Role.DELETED);
         
         if (roles != null && !roles.contains(role)) roles.add(role);
         notify(ROLE_ADDED);
+        return role;
     }
     
     @Override
     public void notify(@Nonnull Aspect aspect, @Nonnull Instance instance) {
         if (aspect.equals(Role.DELETED) && roles != null) roles.remove(instance);
+    }
+    
+    
+    /**
+     * Opens a new account with the given identifier and merges existing roles and identifiers into it.
+     * 
+     * TODO: Make the method more resilient to failures so that it can also be restarted mid-way through.
+     * 
+     * @param subject the identifier of the account which is to be created.
+     * @param category the category of the account which is to be created.
+     * @param roles the roles to be closed and merged into the new account.
+     * @param identifiers the identifiers to be merged into the new account.
+     * 
+     * @return the role of this client at the newly created account.
+     * 
+     * @require subject.doesNotExist() : "The subject does not exist.";
+     * @require category.isInternalNonHostIdentity() : "The category denotes an internal non-host identity.";
+     * @require !category.isType() || roles.size() <= 1 && identifiers.isEmpty() : "If the category denotes a type, at most one role and no identifier may be given.";
+     */
+    public @Nonnull Role openAccount(@Nonnull InternalNonHostIdentifier subject, @Nonnull Category category, @Nonnull ReadonlyList<Role> roles, @Nonnull ReadonlyList<ExternalIdentifier> identifiers) throws SQLException, IOException, PacketException, ExternalException {
+        assert subject.doesNotExist() : "The subject does not exist.";
+        assert category.isInternalNonHostIdentity() : "The category denotes an internal non-host identity.";
+        assert !category.isType() || roles.size() <= 1 && identifiers.isEmpty() : "If the category denotes a type, at most one role and no identifier may be given.";
+        
+        final @Nonnull AccountOpen accountOpen = new AccountOpen(subject, Category.NATURAL_PERSON, this); accountOpen.send();
+        final @Nonnull InternalNonHostIdentity identity = (InternalNonHostIdentity) Mapper.mapIdentity(subject, category, null);
+        final @Nonnull Role newRole = addRole(identity, accountOpen.getAgentNumber());
+        Database.commit();
+        
+        final @Nonnull FreezableList<Pair<Predecessor, Block>> states = new FreezableArrayList<Pair<Predecessor, Block>>(roles.size() + identifiers.size());
+        
+        for (final @Nonnull Role role : roles) {
+            if (role.isNotNative()) throw new PacketException(PacketError.INTERNAL, "Only native roles can be merged.");
+            final @Nonnull StateReply reply = new StateQuery(role).sendNotNull(); // TODO: Store the reply permanently?
+            final @Nonnull Predecessor predecessor = new Predecessor(role.getIdentity().getAddress());
+            states.add(new Pair<Predecessor, Block>(predecessor, reply.toBlock()));
+            Database.commit();
+            Synchronizer.execute(new AccountClose(role, subject));
+            role.remove();
+        }
+        
+        for (final @Nonnull ExternalIdentifier identifier : identifiers) {
+            // TODO: Ask 'virtualid.ch' to let the relocation be confirmed by the user.
+        }
+        
+        for (final @Nonnull ExternalIdentifier identifier : identifiers) {
+            // TODO: Wait until the relocation from 'virtualid.ch' can be verified.
+            states.add(new Pair<Predecessor, Block>(new Predecessor(identifier), null));
+        }
+        
+        Synchronizer.execute(new AccountInitialize(newRole, states.freeze()));
+        return newRole;
+    }
+    
+    /**
+     * Opens a new account with the given identifier and category.
+     * 
+     * @param identifier the identifier of the account to be created.
+     * @param category the category of the account to be created.
+     * 
+     * @return the role of this client at the newly created account.
+     * 
+     * @require subject.doesNotExist() : "The subject does not exist.";
+     * @require category.isInternalNonHostIdentity() : "The category denotes an internal non-host identity.";
+     */
+    public @Nonnull Role openAccount(@Nonnull InternalNonHostIdentifier identifier, @Nonnull Category category) throws SQLException, IOException, PacketException, ExternalException {
+        return openAccount(identifier, category, new FreezableLinkedList<Role>().freeze(), new FreezableLinkedList<ExternalIdentifier>().freeze());
     }
     
 }

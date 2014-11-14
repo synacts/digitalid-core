@@ -15,11 +15,11 @@ import org.junit.Test;
  */
 public class ServerSetup extends DatabaseSetup {
     
-    protected final HostIdentifier recipient = new HostIdentifier("syntacts.com");
+    protected static final HostIdentifier recipient = new HostIdentifier("example.com");
     
     @BeforeClass
     public static void setUpServer() {
-        Server.start("syntacts.com");
+        Server.start("example.com");
     }
     
     @AfterClass

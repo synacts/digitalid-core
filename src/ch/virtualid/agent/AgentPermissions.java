@@ -67,6 +67,16 @@ public final class AgentPermissions extends FreezableLinkedHashMap<SemanticType,
      */
     public static final @Nonnull ReadonlyAgentPermissions NONE = new AgentPermissions().freeze();
     
+    /**
+     * Stores a general read permission.
+     */
+    public static final @Nonnull ReadonlyAgentPermissions GENERAL_READ = new AgentPermissions(GENERAL, false).freeze();
+    
+    /**
+     * Stores a general write permission.
+     */
+    public static final @Nonnull ReadonlyAgentPermissions GENERAL_WRITE = new AgentPermissions(GENERAL, true).freeze();
+    
     
     /**
      * Creates an empty map of agent permissions.

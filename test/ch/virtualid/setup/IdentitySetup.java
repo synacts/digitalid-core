@@ -1,8 +1,16 @@
 package ch.virtualid.setup;
 
+import ch.virtualid.auxiliary.Image;
 import ch.virtualid.client.Client;
+import ch.virtualid.entity.Role;
+import ch.virtualid.exceptions.external.ExternalException;
+import ch.virtualid.exceptions.packet.PacketException;
+import ch.virtualid.identifier.IdentifierClass;
+import ch.virtualid.identifier.InternalNonHostIdentifier;
+import ch.virtualid.identity.Category;
 import ch.virtualid.identity.Identity;
-import ch.virtualid.identity.Person;
+import java.io.IOException;
+import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -16,13 +24,24 @@ import org.junit.Test;
  */
 public class IdentitySetup extends ServerSetup {
     
-    protected @Nonnull Client client;
+    private static @Nonnull Client client;
     
-    protected @Nonnull Person person;
+    protected static @Nonnull Client getClient() {
+        return client;
+    }
+    
+    protected static final @Nonnull InternalNonHostIdentifier subject = (InternalNonHostIdentifier) IdentifierClass.create("person@example.com");
+    
+    private static @Nonnull Role role;
+    
+    protected static @Nonnull Role getRole() {
+        return role;
+    }
     
     @BeforeClass
-    public static void setUpIdentity() {
-        // TODO: Create a new account at syntacts.com
+    public static void setUpIdentity() throws SQLException, IOException, PacketException, ExternalException {
+        client = new Client("tester", "Test Client", new Image("/ch/virtualid/resources/Host.png"));
+        role = client.openAccount(subject, Category.NATURAL_PERSON);
     }
     
     @AfterClass

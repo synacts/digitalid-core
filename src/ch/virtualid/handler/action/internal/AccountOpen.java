@@ -1,5 +1,6 @@
 package ch.virtualid.handler.action.internal;
 
+import ch.virtualid.agent.Agent;
 import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
@@ -23,7 +24,7 @@ import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identifier.InternalIdentifier;
 import ch.virtualid.identifier.InternalNonHostIdentifier;
 import ch.virtualid.identity.Category;
-import ch.virtualid.identity.InternalIdentity;
+import ch.virtualid.identity.InternalNonHostIdentity;
 import ch.virtualid.identity.Mapper;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.CoreService;
@@ -35,19 +36,21 @@ import ch.virtualid.util.FreezableArrayList;
 import ch.virtualid.util.ReadonlyArray;
 import ch.xdf.Block;
 import ch.xdf.ClientSignatureWrapper;
+import ch.xdf.Int64Wrapper;
 import ch.xdf.SignatureWrapper;
 import ch.xdf.StringWrapper;
 import ch.xdf.TupleWrapper;
 import java.io.IOException;
+import java.security.SecureRandom;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * Opens a new account with the given category.
+ * Opens a new account with the given category and client.
  * (This class inherits directly from the action class because no entity can be given.)
  * 
- * TODO: Include a random agent number.
+ * @invariant getSubject().getHostIdentifier().equals(getRecipient()) : "The host of the subject has to match the recipient for the action to open an account.";
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 1.8
@@ -57,7 +60,7 @@ public final class AccountOpen extends Action {
     /**
      * Stores the semantic type {@code open.account@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("open.account@virtualid.ch").load(TupleWrapper.TYPE, Category.TYPE, Client.NAME, Client.ICON);
+    public static final @Nonnull SemanticType TYPE = SemanticType.create("open.account@virtualid.ch").load(TupleWrapper.TYPE, Category.TYPE, Agent.NUMBER, Client.NAME, Client.ICON);
     
     @Pure
     @Override
@@ -72,6 +75,11 @@ public final class AccountOpen extends Action {
      * @invariant category.isInternalNonHostIdentity() : "The category denotes an internal non-host identity.";
      */
     private final @Nonnull Category category;
+    
+    /**
+     * Stores the number of the client agent.
+     */
+    private final long agentNumber;
     
     /**
      * Stores the commitment of the client agent.
@@ -112,6 +120,7 @@ public final class AccountOpen extends Action {
         assert category.isInternalNonHostIdentity() : "The category denotes an internal non-host identity.";
         
         this.category = category;
+        this.agentNumber = new SecureRandom().nextLong();
         this.commitment = client.getCommitment(subject);
         this.secret = client.getSecret();
         this.name = client.getName();
@@ -136,26 +145,30 @@ public final class AccountOpen extends Action {
         
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
-        final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(3);
+        if (!getSubject().getHostIdentifier().equals(getRecipient())) throw new PacketException(PacketError.IDENTIFIER, "The host of the subject has to match the recipient for the action to open an account.");
+        
+        final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(4);
         
         this.category = Category.get(elements.getNotNull(0));
         if (!category.isInternalNonHostIdentity()) throw new InvalidEncodingException("The category has to denote an internal non-host identity.");
+        
+        this.agentNumber = new Int64Wrapper(elements.getNotNull(1)).getValue();
         
         if (!(signature instanceof ClientSignatureWrapper)) throw new InvalidEncodingException("The action to open an account has to be signed by a client.");
         this.commitment = ((ClientSignatureWrapper) signature).getCommitment();
         this.secret = null;
         
-        this.name = new StringWrapper(elements.getNotNull(1)).getString();
+        this.name = new StringWrapper(elements.getNotNull(2)).getString();
         if (name.length() > Client.NAME_LENGTH) throw new InvalidEncodingException("The name must have at most the indicated length.");
         
-        this.icon = new Image(elements.getNotNull(2));
+        this.icon = new Image(elements.getNotNull(3));
         if (icon.isSquare(Client.ICON_SIZE)) throw new InvalidEncodingException("The icon must have the specified size.");
     }
     
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        return new TupleWrapper(TYPE, new FreezableArray<Block>(category.toBlock(), new StringWrapper(Client.NAME, name).toBlock(), icon.toBlock().setType(Client.ICON)).freeze()).toBlock();
+        return new TupleWrapper(TYPE, new FreezableArray<Block>(category.toBlock(), new Int64Wrapper(Agent.NUMBER, agentNumber).toBlock(), new StringWrapper(Client.NAME, name).toBlock(), icon.toBlock().setType(Client.ICON)).freeze()).toBlock();
     }
     
     @Pure
@@ -164,6 +177,15 @@ public final class AccountOpen extends Action {
         return "Opens a new account with the category '" + category.name() + "'.";
     }
     
+    
+    /**
+     * Returns the number of the client agent.
+     * 
+     * @return the number of the client agent.
+     */
+    public long getAgentNumber() {
+        return agentNumber;
+    }
     
     /**
      * Returns the commitment of the client agent.
@@ -213,8 +235,8 @@ public final class AccountOpen extends Action {
         
         // TODO: Include the resctriction mechanisms like the tokens.
         
-        final @Nonnull InternalIdentity identity = (InternalIdentity) Mapper.mapIdentity(subject, category, null);
-        final @Nonnull Account account = Account.get(((Account) getEntityNotNull()).getHost(), identity);
+        final @Nonnull InternalNonHostIdentity identity = (InternalNonHostIdentity) Mapper.mapIdentity(subject, category, null);
+        final @Nonnull Account account = Account.get(getAccount().getHost(), identity);
         
         // TODO: Authorize the client agent here with maximal permissions!
         final @Nonnull ReadonlyAgentPermissions permissions = new AgentPermissions(AgentPermissions.GENERAL, true).freeze();
@@ -236,6 +258,19 @@ public final class AccountOpen extends Action {
     
     @Pure
     @Override
+    public @Nonnull ReadonlyAgentPermissions getAuditPermissions() {
+        return AgentPermissions.GENERAL_WRITE;
+    }
+    
+    @Pure
+    @Override
+    public @Nonnull Restrictions getAuditRestrictions() {
+        return Restrictions.MAX;
+    }
+    
+    
+    @Pure
+    @Override
     public boolean isSimilarTo(@Nonnull Method other) {
         return false;
     }
@@ -244,6 +279,22 @@ public final class AccountOpen extends Action {
     public @Nonnull Response send() throws SQLException, IOException, PacketException, ExternalException {
         if (secret == null) throw new PacketException(PacketError.INTERNAL, "The secret may not be null for sending.");
         return new ClientRequest(new FreezableArrayList<Method>(this).freeze(), getSubject(), null, commitment.addSecret(secret)).send();
+    }
+    
+    
+    /**
+     * The factory class for the surrounding method.
+     */
+    private static final class Factory extends Method.Factory {
+        
+        static { Method.add(TYPE, new Factory()); }
+        
+        @Pure
+        @Override
+        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
+            return new AccountOpen(entity, signature, recipient, block);
+        }
+        
     }
     
 }

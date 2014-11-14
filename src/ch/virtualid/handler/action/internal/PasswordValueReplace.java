@@ -4,12 +4,12 @@ import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.concepts.Password;
 import ch.virtualid.entity.Entity;
-import ch.virtualid.entity.Role;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Method;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identity.SemanticType;
+import ch.virtualid.module.BothModule;
 import ch.virtualid.module.both.Passwords;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.ReadonlyArray;
@@ -82,7 +82,7 @@ public final class PasswordValueReplace extends CoreServiceInternalAction {
      * @require Password.isValid(newValue) : "The new value is valid.";
      */
     public PasswordValueReplace(@Nonnull Password password, @Nonnull String oldValue, @Nonnull String newValue) {
-        super((Role) password.getEntity());
+        super(password.getRole());
         
         assert Password.isValid(oldValue) : "The old value is valid.";
         assert Password.isValid(newValue) : "The new value is valid.";
@@ -172,7 +172,7 @@ public final class PasswordValueReplace extends CoreServiceInternalAction {
     
     @Pure
     @Override
-    public @Nonnull SemanticType getModule() {
+    public @Nonnull BothModule getModule() {
         return Passwords.MODULE;
     }
     

@@ -36,7 +36,7 @@ public final class Synchronizer extends Thread {
     public static void execute(@Nonnull InternalAction action) throws SQLException {
         assert action.isOnClient() : "The internal action is on the client.";
         
-        final @Nonnull SemanticType module = action.getModule(); // TODO: Make sure the module is not suspended. Otherwise, pause until it's no longer suspended.
+//        final @Nonnull SemanticType module = action.getModule(); // TODO: Make sure the module is not suspended. Otherwise, pause until it's no longer suspended.
         
         // TODO: Include the entity, recipient and subject in the queue! + service
 //        Synchronization.queue(action); // Writes the action with its entity to the database through the connection of the action without commit. -> Include the name of the client in the database table.

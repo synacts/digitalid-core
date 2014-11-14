@@ -91,7 +91,7 @@ public final class StateQuery extends CoreServiceInternalQuery {
     
     @Override
     protected @Nonnull StateReply executeOnHost(@Nonnull Agent agent) throws SQLException {
-        final @Nonnull Account account = (Account) getEntityNotNull();
+        final @Nonnull Account account = getAccount();
         return new StateReply(account, CoreService.SERVICE.getState(account, agent));
     }
     

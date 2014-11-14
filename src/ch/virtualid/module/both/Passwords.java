@@ -42,7 +42,9 @@ import javax.annotation.Nullable;
  */
 public final class Passwords implements BothModule {
     
-    static { CoreService.SERVICE.add(new Passwords()); }
+    public static final Passwords MODULE = new Passwords();
+    
+    static { CoreService.SERVICE.add(MODULE); }
     
     @Override
     public void createTables(@Nonnull Site site) throws SQLException {
@@ -69,12 +71,12 @@ public final class Passwords implements BothModule {
     /**
      * Stores the semantic type {@code passwords.module@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType MODULE = SemanticType.create("passwords.module@virtualid.ch").load(ListWrapper.TYPE, MODULE_ENTRY);
+    private static final @Nonnull SemanticType MODULE_FORMAT = SemanticType.create("passwords.module@virtualid.ch").load(ListWrapper.TYPE, MODULE_ENTRY);
     
     @Pure
     @Override
     public @Nonnull SemanticType getModuleFormat() {
-        return MODULE;
+        return MODULE_FORMAT;
     }
     
     @Pure
@@ -88,7 +90,7 @@ public final class Passwords implements BothModule {
                 final @Nonnull String password = resultSet.getString(2);
                 entries.add(new TupleWrapper(MODULE_ENTRY, account.getIdentity().getAddress(), new StringWrapper(Password.TYPE, password)).toBlock());
             }
-            return new ListWrapper(MODULE, entries.freeze()).toBlock();
+            return new ListWrapper(MODULE_FORMAT, entries.freeze()).toBlock();
         }
     }
     
@@ -113,18 +115,18 @@ public final class Passwords implements BothModule {
     /**
      * Stores the semantic type {@code passwords.state@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType STATE = SemanticType.create("passwords.state@virtualid.ch").load(TupleWrapper.TYPE, Password.TYPE);
+    private static final @Nonnull SemanticType STATE_FORMAT = SemanticType.create("passwords.state@virtualid.ch").load(TupleWrapper.TYPE, Password.TYPE);
     
     @Pure
     @Override
     public @Nonnull SemanticType getStateFormat() {
-        return STATE;
+        return STATE_FORMAT;
     }
     
     @Pure
     @Override
     public @Nonnull Block getState(@Nonnull Entity entity, @Nonnull Agent agent) throws SQLException {
-        return new TupleWrapper(STATE, agent.isClient() ? new StringWrapper(Password.TYPE, get(entity)) : null).toBlock();
+        return new TupleWrapper(STATE_FORMAT, agent.isClient() ? new StringWrapper(Password.TYPE, get(entity)) : null).toBlock();
     }
     
     @Override

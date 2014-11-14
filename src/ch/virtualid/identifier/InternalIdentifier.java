@@ -98,13 +98,23 @@ public abstract class InternalIdentifier extends IdentifierClass implements Immu
      * @return whether an identity with this internal identifier exists.
      */
     @Pure
-    public boolean exists() throws SQLException, IOException, PacketException, ExternalException {
+    public final boolean exists() throws SQLException, IOException, PacketException, ExternalException {
         try {
             Mapper.getIdentity(this);
             return true;
         } catch (@Nonnull IdentityNotFoundException exception) {
             return false;
         }
+    }
+    
+    /**
+     * Returns whether an identity with this internal identifier does not exist.
+     * 
+     * @return whether an identity with this internal identifier does not exist.
+     */
+    @Pure
+    public final boolean doesNotExist() throws SQLException, IOException, PacketException, ExternalException {
+        return !exists();
     }
     
     

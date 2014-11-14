@@ -81,17 +81,17 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
     /**
      * Stores the semantic type {@code number.agent@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType NUMBER = SemanticType.create("number.agent@virtualid.ch").load(Int64Wrapper.TYPE);
+    public static final @Nonnull SemanticType NUMBER = SemanticType.create("number.agent@virtualid.ch").load(Int64Wrapper.TYPE);
     
     /**
      * Stores the semantic type {@code client.agent@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType CLIENT = SemanticType.create("client.agent@virtualid.ch").load(BooleanWrapper.TYPE);
+    public static final @Nonnull SemanticType CLIENT = SemanticType.create("client.agent@virtualid.ch").load(BooleanWrapper.TYPE);
     
     /**
      * Stores the semantic type {@code removed.agent@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType REMOVED = SemanticType.create("removed.agent@virtualid.ch").load(BooleanWrapper.TYPE);
+    public static final @Nonnull SemanticType REMOVED = SemanticType.create("removed.agent@virtualid.ch").load(BooleanWrapper.TYPE);
     
     /**
      * Stores the semantic type {@code agent@virtualid.ch}.

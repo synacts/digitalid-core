@@ -10,7 +10,7 @@ import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.action.internal.CoreServiceInternalAction;
 import ch.virtualid.identifier.HostIdentifier;
-import ch.virtualid.identity.SemanticType;
+import ch.virtualid.module.BothModule;
 import ch.virtualid.util.FreezableLinkedList;
 import ch.virtualid.util.ReadonlyList;
 import ch.xdf.SignatureWrapper;
@@ -131,12 +131,12 @@ public abstract class InternalAction extends Action implements InternalMethod {
      * @return the module on which this action operates.
      */
     @Pure
-    public abstract @Nonnull SemanticType getModule(); // TODO: Maybe change the return type to Class<? extends BothModule>?
+    public abstract @Nonnull BothModule getModule();
     
     /**
-     * Stores an empty list of semantic types.
+     * Stores an empty list of modules.
      */
-    private static final @Nonnull ReadonlyList<SemanticType> emptyList = new FreezableLinkedList<SemanticType>().freeze();
+    private static final @Nonnull ReadonlyList<BothModule> emptyList = new FreezableLinkedList<BothModule>().freeze();
     
     /**
      * Returns the modules that need to be reloaded and are thus suspended.
@@ -144,7 +144,7 @@ public abstract class InternalAction extends Action implements InternalMethod {
      * @return the modules that need to be reloaded and are thus suspended.
      */
     @Pure
-    public @Nonnull ReadonlyList<SemanticType> suspendModules() {
+    public @Nonnull ReadonlyList<BothModule> suspendModules() {
         return emptyList;
     }
     

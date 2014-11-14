@@ -5,6 +5,7 @@ import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identifier.IdentifierClass;
+import ch.virtualid.identifier.InternalNonHostIdentifier;
 import ch.virtualid.identifier.NonHostIdentifier;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
@@ -65,6 +66,16 @@ public final class Predecessor implements Immutable, Blockable {
         
         this.identifier = identifier;
         this.predecessors = predecessors;
+    }
+    
+    /**
+     * Creates a new predecessor with the given identifier.
+     * This constructor loads the predecessors on its own.
+     * 
+     * @param identifier the identifier of this predecessor.
+     */
+    public Predecessor(@Nonnull NonHostIdentifier identifier) throws SQLException {
+        this(identifier, identifier instanceof InternalNonHostIdentifier ? Predecessors.get((InternalNonHostIdentifier) identifier) : new Predecessors().freeze());
     }
     
     /**

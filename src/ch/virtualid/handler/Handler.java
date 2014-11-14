@@ -125,6 +125,36 @@ public abstract class Handler implements Immutable, Blockable {
     }
     
     /**
+     * Returns the account to which this handler belongs.
+     * 
+     * @return the account to which this handler belongs.
+     * 
+     * @require isOnHost() : "This handler is on a host.";
+     */
+    @Pure
+    public final @Nonnull Account getAccount() {
+        assert isOnHost() : "This handler is on a host.";
+        
+        assert entity != null;
+        return (Account) entity;
+    }
+    
+    /**
+     * Returns the role to which this handler belongs.
+     * 
+     * @return the role to which this handler belongs.
+     * 
+     * @require isOnClient() : "This handler is on a client.";
+     */
+    @Pure
+    public final @Nonnull Role getRole() {
+        assert isOnClient() : "This handler is on a client.";
+        
+        assert entity != null;
+        return (Role) entity;
+    }
+    
+    /**
      * Returns the subject of this handler.
      * 
      * @return the subject of this handler.

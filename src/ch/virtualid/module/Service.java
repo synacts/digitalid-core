@@ -122,18 +122,6 @@ public abstract class Service implements BothModule {
     private final FreezableMap<SemanticType, BothModule> bothModules = new FreezableLinkedHashMap<SemanticType, BothModule>();
     
     /**
-     * Returns the both module with the given state format.
-     * 
-     * @param type the state format of the module to return.
-     * 
-     * @return the both module with the given state format.
-     */
-    @Pure
-    public final @Nullable BothModule get(@Nonnull SemanticType type) {
-        return bothModules.get(type);
-    }
-    
-    /**
      * Adds the given both module to the list of host, client and both modules.
      * 
      * @param bothModule the module to add to the list of host, client and both modules.

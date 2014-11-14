@@ -69,6 +69,11 @@ public final class Restrictions implements Immutable, Blockable {
      */
     public static final @Nonnull Restrictions NONE = new Restrictions(false, false, false);
     
+    /**
+     * Stores the strongest restrictions (without a context and contact).
+     */
+    public static final @Nonnull Restrictions MAX = new Restrictions(true, true, true);
+    
     
     /**
      * Stores whether the authorization is restricted to clients.

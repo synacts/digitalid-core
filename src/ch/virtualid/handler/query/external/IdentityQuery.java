@@ -4,6 +4,7 @@ import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Entity;
+import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
@@ -16,6 +17,7 @@ import ch.virtualid.identity.SemanticType;
 import ch.xdf.Block;
 import ch.xdf.EmptyWrapper;
 import ch.xdf.SignatureWrapper;
+import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 
@@ -117,7 +119,7 @@ public final class IdentityQuery extends CoreServiceExternalQuery {
         
         @Pure
         @Override
-        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws InvalidEncodingException {
+        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
             return new IdentityQuery(entity, signature, recipient, block);
         }
         

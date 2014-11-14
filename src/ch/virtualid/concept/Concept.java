@@ -59,4 +59,32 @@ public abstract class Concept extends Instance {
         return entity instanceof Role;
     }
     
+    /**
+     * Returns the account to which this concept belongs.
+     * 
+     * @return the account to which this concept belongs.
+     * 
+     * @require isOnHost() : "This concept is on a host.";
+     */
+    @Pure
+    public final @Nonnull Account getAccount() {
+        assert isOnHost() : "This concept is on a host.";
+        
+        return (Account) entity;
+    }
+    
+    /**
+     * Returns the role to which this concept belongs.
+     * 
+     * @return the role to which this concept belongs.
+     * 
+     * @require isOnClient() : "This concept is on a client.";
+     */
+    @Pure
+    public final @Nonnull Role getRole() {
+        assert isOnClient() : "This concept is on a client.";
+        
+        return (Role) entity;
+    }
+    
 }

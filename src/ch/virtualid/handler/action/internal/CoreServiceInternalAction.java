@@ -25,7 +25,7 @@ import javax.annotation.Nullable;
 /**
  * This class models the {@link InternalAction internal actions} of the {@link CoreService core service}.
  * 
- * @invariant getEntityNotNull().getIdentity().getAddress().getHostIdentifier().equals(getRecipient()) : "The host of the entity and the recipient are the same for internal actions of the core service.");
+ * @invariant getSubject().getHostIdentifier().equals(getRecipient()) : "The host of the subject has to match the recipient for internal actions of the core service.";
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
@@ -62,7 +62,7 @@ public abstract class CoreServiceInternalAction extends InternalAction {
     protected CoreServiceInternalAction(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
-        if (!getEntityNotNull().getIdentity().getAddress().getHostIdentifier().equals(getRecipient())) throw new PacketException(PacketError.IDENTIFIER, "The host of the entity and the recipient have to be the same for internal actions of the core service.");
+        if (!getSubject().getHostIdentifier().equals(getRecipient())) throw new PacketException(PacketError.IDENTIFIER, "The host of the subject has to match the recipient for internal actions of the core service.");
         
         this.publicKey = Cache.getPublicKey(getRecipient(), signature.getTimeNotNull());
     }
@@ -110,6 +110,7 @@ public abstract class CoreServiceInternalAction extends InternalAction {
     public @Nullable PublicKey getPublicKey() {
         return publicKey;
     }
+    
     
     /**
      * Executes this internal action on both the host and client.

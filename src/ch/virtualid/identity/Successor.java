@@ -82,6 +82,7 @@ public final class Successor {
             
             if (successor != null) {
                 set(identifier, successor, reply);
+                Mapper.unmap(identifier.getIdentity());
                 if (verified && !successor.getIdentity().equals(identifier.getIdentity()))
                     throw new InvalidDeclarationException("The identifier " + identifier + " and its indicated successor " + successor + " denote different identities.", identifier, reply);
             } else {
@@ -98,7 +99,7 @@ public final class Successor {
      * @param successor the successor to be set for the given identifier.
      * @param reply the reply stating that the given identifier has the given successor.
      */
-    public static void set(@Nonnull NonHostIdentifier identifier, @Nonnull InternalNonHostIdentifier successor, @Nullable Reply reply) throws SQLException, InvalidDeclarationException {
+    public static void set(@Nonnull NonHostIdentifier identifier, @Nonnull InternalNonHostIdentifier successor, @Nullable Reply reply) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("INSERT INTO general_successor (identifier, successor, reply) VALUES (" + identifier + ", " + successor + ", " + reply + ")");
         }
