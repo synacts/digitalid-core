@@ -207,7 +207,7 @@ public final class Mapper {
      * 
      * @param identity the identity which is to be removed.
      */
-    static void unmap(@Nonnull Identity identity) {
+    public static void unmap(@Nonnull Identity identity) {
         numbers.remove(identity.getNumber());
         identifiers.remove(identity.getAddress());
         LOGGER.log(Level.INFORMATION, "The identity of " + identity.getAddress() + " was unmapped.");
@@ -507,7 +507,7 @@ public final class Mapper {
             if (!(identity.getCategory().isExternalPerson() && category.isInternalPerson() || identity.getCategory() == category)) throw new InvalidDeclarationException(message + " has a wrong category.", identifier, reply);
             final @Nonnull Predecessor predecessor = new Predecessor(address);
             if (!predecessors.contains(predecessor)) throw new InvalidDeclarationException(message + " has other predecessors.", identifier, reply);
-            if (!Successor.getReloaded(address, false).equals(identifier)) throw new InvalidDeclarationException(message + " does not link back.", identifier, reply);
+            if (!Successor.getReloaded(address).equals(identifier)) throw new InvalidDeclarationException(message + " does not link back.", identifier, reply);
         }
         
         final @Nonnull InternalNonHostIdentity identity;
@@ -533,6 +533,7 @@ public final class Mapper {
         final @Nullable InternalNonHostIdentifier successor = reply.getSuccessor();
         if (successor != null) {
             Successor.set(identifier, successor, reply);
+            if (!successor.getIdentity().equals(identifier.getIdentity())) throw new InvalidDeclarationException("The claimed successor " + successor + " of " + identifier + " does not link back.", identifier, reply);
             return successor.getIdentity();
         } else {
             return identity;
@@ -553,7 +554,9 @@ public final class Mapper {
         
         final @Nonnull Person person = mapExternalIdentity(identifier);
         try {
-            return Successor.getReloaded(identifier, false).getIdentity().toPerson();
+            final @Nonnull InternalNonHostIdentity identity = Successor.getReloaded(identifier).getIdentity();
+            if (!identity.equals(identifier.getIdentity())) throw new InvalidDeclarationException("The claimed successor " + identity.getAddress() + " of " + identifier + " does not link back.", identifier, null);
+            return identity.toPerson();
         } catch (@Nonnull PacketException exception) {
             if (exception.getError() == PacketError.EXTERNAL) return person;
             else throw exception;

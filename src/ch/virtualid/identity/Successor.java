@@ -3,7 +3,6 @@ package ch.virtualid.identity;
 import ch.virtualid.database.Database;
 import ch.virtualid.errors.InitializationError;
 import ch.virtualid.exceptions.external.ExternalException;
-import ch.virtualid.exceptions.external.InvalidDeclarationException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Reply;
@@ -43,7 +42,6 @@ public final class Successor {
     
     /**
      * Returns the successor of the given identifier as stored in the database.
-     * Please note that the returned successor is only claimed and not yet verified.
      * 
      * @param identifier the identifier whose successor is to be returned.
      * 
@@ -59,14 +57,13 @@ public final class Successor {
     
     /**
      * Returns the successor of the given identifier as stored in the database or retrieved by a new request.
-     * Please note that the returned successor is only claimed and not yet verified.
      * 
      * @param identifier the identifier whose successor is to be returned.
      * @param verified determines whether the identity of the successor is verified.
      * 
      * @return the successor of the given identifier as stored in the database or retrieved by a new request.
      */
-    public static @Nonnull InternalNonHostIdentifier getReloaded(@Nonnull NonHostIdentifier identifier, boolean verified) throws SQLException, IOException, PacketException, ExternalException {
+    public static @Nonnull InternalNonHostIdentifier getReloaded(@Nonnull NonHostIdentifier identifier) throws SQLException, IOException, PacketException, ExternalException {
         @Nullable InternalNonHostIdentifier successor = get(identifier);
         if (successor == null) {
             final @Nonnull Reply reply;
@@ -80,20 +77,15 @@ public final class Successor {
                 throw new UnsupportedOperationException("The verification of email addresses is not supported yet.");
             }
             
-            if (successor != null) {
-                set(identifier, successor, reply);
-                Mapper.unmap(identifier.getIdentity());
-                if (verified && !successor.getIdentity().equals(identifier.getIdentity()))
-                    throw new InvalidDeclarationException("The identifier " + identifier + " and its indicated successor " + successor + " denote different identities.", identifier, reply);
-            } else {
-                throw new PacketException(PacketError.EXTERNAL, "The identity with the identifier " + identifier + " has not been relocated.");
-            }
+            if (successor != null) set(identifier, successor, reply);
+            else throw new PacketException(PacketError.EXTERNAL, "The identity with the identifier " + identifier + " has not been relocated.");
         }
         return successor;
     }
     
     /**
      * Sets the successor of the given identifier to the given value.
+     * Only commit the transaction if the successor has been verified.
      * 
      * @param identifier the identifier whose successor is to be set.
      * @param successor the successor to be set for the given identifier.

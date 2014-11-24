@@ -130,7 +130,7 @@ public final class AccountInitialize extends CoreServiceInternalAction {
             } else {
                 if (predecessor.getPredecessors().isNotEmpty()) throw new InvalidDeclarationException(message + " is an external person and may not have any predecessors.", subject, null);
             }
-            if (!Successor.getReloaded(identifier, false).equals(subject)) throw new InvalidDeclarationException(message + " does not link back.", subject, null);
+            if (!Successor.getReloaded(identifier).equals(subject)) throw new InvalidDeclarationException(message + " does not link back.", subject, null);
             states.add(new Pair<Predecessor, Block>(predecessor, tuple.getElement(1)));
         }
         this.states = states.freeze();

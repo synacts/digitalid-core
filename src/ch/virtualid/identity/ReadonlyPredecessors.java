@@ -39,6 +39,7 @@ public interface ReadonlyPredecessors extends ReadonlyList<Predecessor>, Blockab
     
     /**
      * Sets these values as the predecessors of the given identifier.
+     * Only commit the transaction if the predecessors have been verified.
      * 
      * @param identifier the identifier whose predecessors are to be set.
      * @param reply the reply stating that the given identifier has these predecessors.

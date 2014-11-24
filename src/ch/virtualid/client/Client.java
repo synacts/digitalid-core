@@ -308,7 +308,7 @@ public class Client extends Site implements Observer {
         assert category.isInternalNonHostIdentity() : "The category denotes an internal non-host identity.";
         assert !category.isType() || roles.size() <= 1 && identifiers.isEmpty() : "If the category denotes a type, at most one role and no identifier may be given.";
         
-        final @Nonnull AccountOpen accountOpen = new AccountOpen(subject, Category.NATURAL_PERSON, this); accountOpen.send();
+        final @Nonnull AccountOpen accountOpen = new AccountOpen(subject, category, this); accountOpen.send();
         final @Nonnull InternalNonHostIdentity identity = (InternalNonHostIdentity) Mapper.mapIdentity(subject, category, null);
         final @Nonnull Role newRole = addRole(identity, accountOpen.getAgentNumber());
         Database.commit();
@@ -317,6 +317,7 @@ public class Client extends Site implements Observer {
         
         for (final @Nonnull Role role : roles) {
             if (role.isNotNative()) throw new PacketException(PacketError.INTERNAL, "Only native roles can be merged.");
+            if (role.getIdentity().getCategory() != category) throw new PacketException(PacketError.INTERNAL, "A role is of the wrong category.");
             final @Nonnull StateReply reply = new StateQuery(role).sendNotNull(); // TODO: Store the reply permanently?
             final @Nonnull Predecessor predecessor = new Predecessor(role.getIdentity().getAddress());
             states.add(new Pair<Predecessor, Block>(predecessor, reply.toBlock()));

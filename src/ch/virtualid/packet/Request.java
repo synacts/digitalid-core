@@ -10,14 +10,17 @@ import ch.virtualid.cryptography.SymmetricKey;
 import ch.virtualid.entity.Role;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InactiveSignatureException;
+import ch.virtualid.exceptions.external.InvalidDeclarationException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Method;
 import ch.virtualid.handler.query.external.AttributesQuery;
+import ch.virtualid.handler.query.external.IdentityQuery;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identifier.IdentifierClass;
 import ch.virtualid.identifier.InternalIdentifier;
 import ch.virtualid.identifier.InternalNonHostIdentifier;
+import ch.virtualid.identity.Mapper;
 import ch.virtualid.identity.Successor;
 import ch.virtualid.module.CoreService;
 import ch.virtualid.module.Service;
@@ -294,7 +297,14 @@ public class Request extends Packet {
             if (exception.getError() == PacketError.KEYROTATION && this instanceof ClientRequest) {
                 return ((ClientRequest) this).recommit(methods, verified);
             } else if (exception.getError() == PacketError.RELOCATION && subject instanceof InternalNonHostIdentifier) {
-                final @Nonnull InternalNonHostIdentifier address = Successor.getReloaded((InternalNonHostIdentifier) subject, true);
+                if (getMethod(0).getType().equals(IdentityQuery.TYPE)) throw new PacketException(PacketError.EXTERNAL, "The response to an identity query may not be a relocation exception.");
+                @Nullable InternalNonHostIdentifier address = Successor.get((InternalNonHostIdentifier) subject);
+                if (address == null) {
+                    address = Successor.getReloaded((InternalNonHostIdentifier) subject);
+                    if (!address.getIdentity().equals(subject.getIdentity())) throw new InvalidDeclarationException("The claimed successor " + address + " of " + subject + " does not link back.", subject, null);
+                } else if (subject.isMapped()) {
+                    Mapper.unmap(subject.getMappedIdentity());
+                }
                 final @Nonnull HostIdentifier recipient = getMethod(0).getService().equals(CoreService.SERVICE) ? address.getHostIdentifier() : getRecipient();
                 return resend(methods, recipient, address, verified);
             } else if (exception.getError() == PacketError.SERVICE && !getMethod(0).isOnHost()) {

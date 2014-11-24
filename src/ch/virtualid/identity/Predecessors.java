@@ -182,7 +182,6 @@ public final class Predecessors extends FreezableArrayList<Predecessor> implemen
     
     /**
      * Returns the predecessors of the given identifier as stored in the database.
-     * Please note that the returned predecessors are only claimed and not yet verified.
      * 
      * @param identifier the identifier whose predecessors are to be returned.
      * 
