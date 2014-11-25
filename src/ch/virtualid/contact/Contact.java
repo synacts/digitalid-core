@@ -68,7 +68,7 @@ public final class Contact extends Concept implements Immutable, Blockable, SQLi
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        return person.getAddress().toBlock().setType(TYPE);
+        return person.toBlock(TYPE);
     }
     
     

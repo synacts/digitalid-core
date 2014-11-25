@@ -96,10 +96,10 @@ public abstract class Credential implements Immutable {
         assert attribute == null || attribute.getType().isBasedOn(Attribute.TYPE) : "The attribute is either null or based on the attribute type.";
         
         final @Nonnull FreezableArray<Block> elements = new FreezableArray<Block>(5);
-        elements.set(0, issuer.getAddress().toBlock().setType(ISSUER));
+        elements.set(0, issuer.toBlock(ISSUER));
         elements.set(1, issuance.toBlock().setType(ISSUANCE));
         elements.set(2, new HashWrapper(HASH, randomizedPermissions.getHash()).toBlock());
-        elements.set(3, role == null ? null : role.getAddress().toBlock().setType(ROLE));
+        elements.set(3, role == null ? null : role.toBlock(ROLE));
         elements.set(4, attribute);
         return new TupleWrapper(EXPOSED, elements.freeze()).toBlock();
     }

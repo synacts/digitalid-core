@@ -39,6 +39,22 @@ public final class Role extends Entity implements Immutable, SQLizable, Observer
     
     
     /**
+     * Stores the semantic type {@code issuer.role@virtualid.ch}.
+     */
+    public static final @Nonnull SemanticType ISSUER = SemanticType.create("issuer.role@virtualid.ch").load(InternalNonHostIdentity.IDENTIFIER);
+    
+    /**
+     * Stores the semantic type {@code relation.role@virtualid.ch}.
+     */
+    public static final @Nonnull SemanticType RELATION = SemanticType.create("relation.role@virtualid.ch").load(SemanticType.IDENTIFIER);
+    
+    /**
+     * Stores the semantic type {@code agent.role@virtualid.ch}.
+     */
+    public static final @Nonnull SemanticType AGENT = SemanticType.create("agent.role@virtualid.ch").load(Agent.NUMBER);
+    
+    
+    /**
      * Stores the client that can assume this role.
      */
     private final @Nonnull Client client;

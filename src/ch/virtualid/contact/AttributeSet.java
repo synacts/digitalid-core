@@ -96,7 +96,7 @@ public class AttributeSet extends FreezableLinkedHashSet<SemanticType> implement
     public final @Nonnull Block toBlock() {
         final @Nonnull FreezableList<Block> elements = new FreezableArrayList<Block>(size());
         for (final @Nonnull SemanticType type : this) {
-            elements.add(type.getAddress().toBlock().setType(SemanticType.ATTRIBUTE_IDENTIFIER));
+            elements.add(type.toBlock(SemanticType.ATTRIBUTE_IDENTIFIER));
         }
         return new ListWrapper(getType(), elements.freeze()).toBlock();
     }

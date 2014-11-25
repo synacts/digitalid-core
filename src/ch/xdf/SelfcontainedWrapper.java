@@ -69,7 +69,7 @@ public final class SelfcontainedWrapper extends BlockWrapper implements Immutabl
     public SelfcontainedWrapper(@Nonnull SemanticType type, @Nonnull Block element) {
         super(type);
         
-        final @Nonnull FreezableArray<Block> elements = new FreezableArray<Block>(element.getType().getAddress().toBlock().setType(SemanticType.IDENTIFIER), element);
+        final @Nonnull FreezableArray<Block> elements = new FreezableArray<Block>(element.getType().toBlock(SemanticType.IDENTIFIER), element);
         this.tuple = new TupleWrapper(IMPLEMENTATION, elements.freeze()).toBlock();
         this.element = element;
     }

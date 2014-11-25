@@ -138,7 +138,7 @@ public class Commitment implements Immutable, Blockable, SQLizable {
     @Override
     public final @Nonnull Block toBlock() {
         final @Nonnull FreezableArray<Block> elements = new FreezableArray<Block>(3);
-        elements.set(0, host.getAddress().toBlock().setType(HOST));
+        elements.set(0, host.toBlock(HOST));
         elements.set(1, time.toBlock().setType(TIME));
         elements.set(2, value.toBlock().setType(VALUE));
         return new TupleWrapper(TYPE, elements.freeze()).toBlock();

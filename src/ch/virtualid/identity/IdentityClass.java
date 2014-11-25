@@ -2,8 +2,10 @@ package ch.virtualid.identity;
 
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
+import ch.xdf.Block;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -53,6 +55,21 @@ public abstract class IdentityClass implements Identity, Immutable, SQLizable {
      */
     final void setNumber(long number) {
         this.number = number;
+    }
+    
+    
+    @Pure
+    @Override
+    public final @Nonnull Block toBlock(@Nonnull SemanticType type) {
+        assert type.isBasedOn(Identity.IDENTIFIER) : "The type is based on an identifier.";
+        
+        return getAddress().toBlock().setType(type);
+    }
+    
+    @Pure
+    @Override
+    public final @Nonnull Blockable toBlockable(@Nonnull SemanticType type) {
+        return toBlock(type).toBlockable();
     }
     
     

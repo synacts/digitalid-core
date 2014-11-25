@@ -141,7 +141,7 @@ public final class AgentPermissions extends FreezableLinkedHashMap<SemanticType,
         final @Nonnull FreezableList<Block> elements = new FreezableLinkedList<Block>();
         for (final @Nonnull SemanticType semanticType : keySet()) {
             final @Nonnull FreezableArray<Block> subelements = new FreezableArray<Block>(2);
-            subelements.set(0, semanticType.getAddress().toBlock().setType(ATTRIBUTE_TYPE));
+            subelements.set(0, semanticType.toBlock(ATTRIBUTE_TYPE));
             subelements.set(1, new BooleanWrapper(WRITING, get(semanticType)).toBlock());
             elements.add(new TupleWrapper(PERMISSION, subelements.freeze()).toBlock());
         }

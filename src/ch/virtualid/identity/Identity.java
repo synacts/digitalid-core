@@ -3,8 +3,10 @@ package ch.virtualid.identity;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.identifier.Identifier;
+import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
+import ch.xdf.Block;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 
@@ -58,6 +60,33 @@ public interface Identity extends Immutable, SQLizable {
      * @return whether this identity has been merged.
      */
     public boolean hasBeenMerged(@Nonnull SQLException exception) throws SQLException;
+    
+    
+    /**
+     * Returns the address of this identity as a block of the given type.
+     * 
+     * @param type the semantic type of the block which is to be returned.
+     * 
+     * @return the address of this identity as a block of the given type.
+     * 
+     * @require type.isBasedOn(Identity.IDENTIFIER) : "The type is based on an identifier.";
+     * 
+     * @ensure return.getType().equals(type) : "The returned block has the given type.";
+     */
+    public @Nonnull Block toBlock(@Nonnull SemanticType type);
+    
+    /**
+     * Returns the address of this identity as a blockable of the given type.
+     * 
+     * @param type the semantic type of the blockable which is to be returned.
+     * 
+     * @return the address of this identity as a blockable of the given type.
+     * 
+     * @require type.isBasedOn(Identity.IDENTIFIER) : "The type is based on an identifier.";
+     * 
+     * @ensure return.getType().equals(type) : "The returned blockable has the given type.";
+     */
+    public @Nonnull Blockable toBlockable(@Nonnull SemanticType type);
     
     
     /**
