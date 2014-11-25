@@ -3,6 +3,8 @@ package ch.virtualid.agent;
 import ch.virtualid.annotations.OnlyForActions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.concept.Aspect;
+import ch.virtualid.concept.Instance;
+import ch.virtualid.concept.Observer;
 import ch.virtualid.contact.Context;
 import ch.virtualid.credential.Credential;
 import ch.virtualid.database.Database;
@@ -13,14 +15,13 @@ import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
+import ch.virtualid.util.ConcurrentHashMap;
+import ch.virtualid.util.ConcurrentMap;
 import java.security.SecureRandom;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import org.javatuples.Pair;
 
 /**
  * This class models an outgoing role that acts as an agent on behalf of a virtual identity.
@@ -208,9 +209,15 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
     /**
      * Caches outgoing roles given their entity and number.
      */
-    private static final @Nonnull Map<Pair<Entity, Long>, OutgoingRole> index = new HashMap<Pair<Entity, Long>, OutgoingRole>();
+    private static final @Nonnull ConcurrentMap<Entity, ConcurrentMap<Long, OutgoingRole>> index = new ConcurrentHashMap<Entity, ConcurrentMap<Long, OutgoingRole>>();
     
-    // TODO: Make similar changes as in the Context class.
+    static {
+        if (Database.isSingleAccess()) {
+            Instance.observeAspects(new Observer() {
+                @Override public void notify(@Nonnull Aspect aspect, @Nonnull Instance instance) { index.remove(instance); }
+            }, Entity.DELETED);
+        }
+    }
     
     /**
      * Returns a (locally cached) outgoing role that might not (yet) exist in the database.
@@ -225,15 +232,11 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
     @Pure
     public static @Nonnull OutgoingRole get(@Nonnull Entity entity, long number, boolean removed, boolean restrictable) {
         if (!restrictable && Database.isSingleAccess()) {
-            synchronized(index) {
-                final @Nonnull Pair<Entity, Long> pair = new Pair<Entity, Long>(entity, number);
-                @Nullable OutgoingRole outgoingRole = index.get(pair);
-                if (outgoingRole == null) {
-                    outgoingRole = new OutgoingRole(entity, number, removed, restrictable);
-                    index.put(pair, outgoingRole);
-                }
-                return outgoingRole;
-            }
+            @Nullable ConcurrentMap<Long, OutgoingRole> map = index.get(entity);
+            if (map == null) map = index.putIfAbsentElseReturnPresent(entity, new ConcurrentHashMap<Long, OutgoingRole>());
+            @Nullable OutgoingRole outgoingRole = map.get(number);
+            if (outgoingRole == null) outgoingRole = map.putIfAbsentElseReturnPresent(number, new OutgoingRole(entity, number, removed, restrictable));
+            return outgoingRole;
         } else {
             return new OutgoingRole(entity, number, removed, restrictable);
         }

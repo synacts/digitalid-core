@@ -24,6 +24,7 @@ import java.security.SecureRandom;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -497,6 +498,14 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
      */
     private static final @Nonnull ConcurrentMap<Entity, ConcurrentMap<Long, Context>> index = new ConcurrentHashMap<Entity, ConcurrentMap<Long, Context>>();
     
+    static {
+        if (Database.isSingleAccess()) {
+            Instance.observeAspects(new Observer() {
+                @Override public void notify(@Nonnull Aspect aspect, @Nonnull Instance instance) { index.remove(instance); }
+            }, Entity.DELETED);
+        }
+    }
+    
     /**
      * Returns a (locally cached) context that might not (yet) exist in the database.
      * 
@@ -511,10 +520,7 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
             @Nullable ConcurrentMap<Long, Context> map = index.get(entity);
             if (map == null) map = index.putIfAbsentElseReturnPresent(entity, new ConcurrentHashMap<Long, Context>());
             @Nullable Context context = map.get(number);
-            if (context == null) {
-                context = map.putIfAbsentElseReturnPresent(number, new Context(entity, number));
-                entity.observe(new Observer() { @Override public void notify(@Nonnull Aspect aspect, @Nonnull Instance instance) { index.remove(instance); } }, Entity.DELETED);
-            }
+            if (context == null) context = map.putIfAbsentElseReturnPresent(number, new Context(entity, number));
             return context;
         } else {
             return new Context(entity, number);
@@ -557,7 +563,23 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
      * @return the given column of the result set as an instance of this class.
      */
     @Pure
-    public static @Nonnull Context get(@Nonnull Entity entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+    public static @Nullable Context get(@Nonnull Entity entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+        final long number = resultSet.getLong(columnIndex);
+        if (resultSet.wasNull()) return null;
+        else return get(entity, number);
+    }
+    
+    /**
+     * Returns the given column of the result set as an instance of this class.
+     * 
+     * @param entity the entity to which the context belongs.
+     * @param resultSet the result set to retrieve the data from.
+     * @param columnIndex the index of the column containing the data.
+     * 
+     * @return the given column of the result set as an instance of this class.
+     */
+    @Pure
+    public static @Nonnull Context getNotNull(@Nonnull Entity entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
         return get(entity, resultSet.getLong(columnIndex));
     }
     
@@ -565,6 +587,19 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
     public void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
         preparedStatement.setLong(parameterIndex, getNumber());
     }
+    
+    /**
+     * Sets the parameter at the given index of the prepared statement to the given context.
+     * 
+     * @param context the context to which the parameter at the given index is to be set.
+     * @param preparedStatement the prepared statement whose parameter is to be set.
+     * @param parameterIndex the index of the parameter to set.
+     */
+    public static void set(@Nullable Context context, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+        if (context == null) preparedStatement.setNull(parameterIndex, Types.BIGINT);
+        else context.set(preparedStatement, parameterIndex);
+    }
+    
     
     /**
      * Resets the contexts of the given entity after having reloaded the contexts module.
@@ -586,13 +621,13 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
         if (object == this) return true;
         if (object == null || !(object instanceof Context)) return false;
         final @Nonnull Context other = (Context) object;
-        return this.number == other.number;
+        return this.getEntity().equals(other.getEntity()) && this.number == other.number;
     }
     
     @Pure
     @Override
     public int hashCode() {
-        return (int) (this.number ^ (this.number >>> 32));
+        return 41 * getEntity().hashCode() + (int) (this.number ^ (this.number >>> 32));
     }
     
     @Pure

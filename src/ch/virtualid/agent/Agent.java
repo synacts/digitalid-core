@@ -1,5 +1,6 @@
 package ch.virtualid.agent;
 
+import static ch.virtualid.agent.Agent.get;
 import ch.virtualid.annotations.OnlyForActions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.concept.Aspect;
@@ -22,6 +23,7 @@ import ch.xdf.BooleanWrapper;
 import ch.xdf.Int64Wrapper;
 import ch.xdf.TupleWrapper;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -391,6 +393,44 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
         final boolean client = new BooleanWrapper(elements.getNotNull(1)).getValue();
         final boolean removed = new BooleanWrapper(elements.getNotNull(2)).getValue();
         return get(entity, number, client, removed);
+    }
+    
+    /**
+     * Returns the given columns of the result set as an instance of this class.
+     * 
+     * @param entity the entity to which the agent belongs.
+     * @param resultSet the result set to retrieve the data from.
+     * @param columnIndexes the indexes of the columns containing the data.
+     * 
+     * @return the given column of the result set as an instance of this class.
+     * 
+     * @require columnIndexes.length == 3 : "The number of given indexes is 3.";
+     */
+    @Pure
+    public static @Nullable Agent get(@Nonnull Entity entity, @Nonnull ResultSet resultSet, int... columnIndexes) throws SQLException {
+        assert columnIndexes.length == 3 : "The number of given indexes is 3.";
+        
+        final long number = resultSet.getLong(columnIndexes[0]);
+        if (resultSet.wasNull()) return null;
+        return get(entity, number, resultSet.getBoolean(columnIndexes[1]), resultSet.getBoolean(columnIndexes[2]));
+    }
+    
+    /**
+     * Returns the given columns of the result set as an instance of this class.
+     * 
+     * @param entity the entity to which the agent belongs.
+     * @param resultSet the result set to retrieve the data from.
+     * @param columnIndexes the indexes of the columns containing the data.
+     * 
+     * @return the given column of the result set as an instance of this class.
+     * 
+     * @require columnIndexes.length == 3 : "The number of given indexes is 3.";
+     */
+    @Pure
+    public static @Nonnull Agent getNotNull(@Nonnull Entity entity, @Nonnull ResultSet resultSet, int... columnIndexes) throws SQLException {
+        assert columnIndexes.length == 3 : "The number of given indexes is 3.";
+        
+        return get(entity, resultSet.getLong(columnIndexes[0]), resultSet.getBoolean(columnIndexes[1]), resultSet.getBoolean(columnIndexes[2]));
     }
     
     @Override

@@ -33,7 +33,14 @@ import javax.annotation.Nullable;
  */
 public final class Contexts implements BothModule {
     
-    static { CoreService.SERVICE.add(new Contexts()); }
+    /**
+     * Initializes this class.
+     */
+    static void initialize() {}
+    
+    public static final Contexts MODULE = new Contexts();
+    
+    static { CoreService.SERVICE.add(MODULE); }
     
     /**
      * Creates the table which is referenced for the given site.
@@ -80,12 +87,12 @@ public final class Contexts implements BothModule {
     /**
      * Stores the semantic type {@code contexts.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType MODULE = SemanticType.create("contexts.module@virtualid.ch").load(ListWrapper.TYPE, MODULE_ENTRY);
+    private static final @Nonnull SemanticType MODULE_FORMAT = SemanticType.create("contexts.module@virtualid.ch").load(ListWrapper.TYPE, MODULE_ENTRY);
     
     @Pure
     @Override
     public @Nonnull SemanticType getModuleFormat() {
-        return MODULE;
+        return MODULE_FORMAT;
     }
     
     @Pure
@@ -95,7 +102,7 @@ public final class Contexts implements BothModule {
         try (@Nonnull Statement statement = Database.createStatement()) {
             // TODO: Retrieve all the entries from the database table(s).
         }
-        return new ListWrapper(MODULE, entries.freeze()).toBlock();
+        return new ListWrapper(MODULE_FORMAT, entries.freeze()).toBlock();
     }
     
     @Override

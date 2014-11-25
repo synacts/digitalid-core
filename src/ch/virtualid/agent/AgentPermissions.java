@@ -39,17 +39,17 @@ public final class AgentPermissions extends FreezableLinkedHashMap<SemanticType,
     /**
      * Stores the semantic type {@code type.permission.agent@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType ATTRIBUTE_TYPE = SemanticType.create("type.permission.agent@virtualid.ch").load(SemanticType.IDENTIFIER);
+    public static final @Nonnull SemanticType ATTRIBUTE_TYPE = SemanticType.create("type.permission.agent@virtualid.ch").load(SemanticType.IDENTIFIER);
     
     /**
      * Stores the semantic type {@code writing.permission.agent@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType WRITING = SemanticType.create("writing.permission.agent@virtualid.ch").load(BooleanWrapper.TYPE);
+    public static final @Nonnull SemanticType WRITING = SemanticType.create("writing.permission.agent@virtualid.ch").load(BooleanWrapper.TYPE);
     
     /**
      * Stores the semantic type {@code permission.agent@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType PERMISSION = SemanticType.create("permission.agent@virtualid.ch").load(TupleWrapper.TYPE, ATTRIBUTE_TYPE, WRITING); 
+    public static final @Nonnull SemanticType PERMISSION = SemanticType.create("permission.agent@virtualid.ch").load(TupleWrapper.TYPE, ATTRIBUTE_TYPE, WRITING); 
     
     /**
      * Stores the semantic type {@code list.permission.agent@virtualid.ch}.

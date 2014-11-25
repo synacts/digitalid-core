@@ -1,29 +1,32 @@
 package ch.virtualid.contact;
 
 import ch.virtualid.annotations.Pure;
+import ch.virtualid.concept.Aspect;
 import ch.virtualid.concept.Concept;
+import ch.virtualid.concept.Instance;
+import ch.virtualid.concept.Observer;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.exceptions.external.ExternalException;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identifier.IdentifierClass;
+import ch.virtualid.identity.Identity;
 import ch.virtualid.identity.IdentityClass;
 import ch.virtualid.identity.Person;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
+import ch.virtualid.util.ConcurrentHashMap;
+import ch.virtualid.util.ConcurrentMap;
 import ch.xdf.Block;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
+import java.sql.Types;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import org.javatuples.Pair;
 
 /**
  * Contacts have certain {@link ContactPermissions permissions} and {@link Authentications authentications}.
@@ -103,12 +106,18 @@ public final class Contact extends Concept implements Immutable, Blockable, SQLi
     /**
      * Caches contacts given their entity and person.
      */
-    private static final @Nonnull Map<Pair<Entity, Person>, Contact> index = new HashMap<Pair<Entity, Person>, Contact>();
+    private static final @Nonnull ConcurrentMap<Entity, ConcurrentMap<Person, Contact>> index = new ConcurrentHashMap<Entity, ConcurrentMap<Person, Contact>>();
     
-    // TODO: Make similar changes as in the Context class.
+    static {
+        if (Database.isSingleAccess()) {
+            Instance.observeAspects(new Observer() {
+                @Override public void notify(@Nonnull Aspect aspect, @Nonnull Instance instance) { index.remove(instance); }
+            }, Entity.DELETED);
+        }
+    }
     
     /**
-     * Returns a (locally cached) contact of the given person.
+     * Returns the (locally cached) contact of the given person.
      * 
      * @param entity the entity to which the contact belongs.
      * @param person the person that is behind the contact.
@@ -118,15 +127,11 @@ public final class Contact extends Concept implements Immutable, Blockable, SQLi
     @Pure
     public static @Nonnull Contact get(@Nonnull Entity entity, @Nonnull Person person) {
         if (Database.isSingleAccess()) {
-            synchronized(index) {
-                final @Nonnull Pair<Entity, Person> pair = new Pair<Entity, Person>(entity, person);
-                @Nullable Contact contact = index.get(pair);
-                if (contact == null) {
-                    contact = new Contact(entity, person);
-                    index.put(pair, contact);
-                }
-                return contact;
-            }
+            @Nullable ConcurrentMap<Person, Contact> map = index.get(entity);
+            if (map == null) map = index.putIfAbsentElseReturnPresent(entity, new ConcurrentHashMap<Person, Contact>());
+            @Nullable Contact contact = map.get(person);
+            if (contact == null) contact = map.putIfAbsentElseReturnPresent(person, new Contact(entity, person));
+            return contact;
         } else {
             return new Contact(entity, person);
         }
@@ -157,13 +162,44 @@ public final class Contact extends Concept implements Immutable, Blockable, SQLi
      * @return the given column of the result set as an instance of this class.
      */
     @Pure
-    public static @Nonnull Contact get(@Nonnull Entity entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException, InvalidEncodingException {
-        return get(entity, IdentityClass.getNotNull(resultSet, columnIndex).toPerson());
+    public static @Nullable Contact get(@Nonnull Entity entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+        final @Nullable Identity identity = IdentityClass.get(resultSet, columnIndex);
+        if (identity == null) return null;
+        if (identity instanceof Person) return get(entity, (Person) identity);
+        else throw new SQLException("A non-person was stored as a contact.");
+    }
+    
+    /**
+     * Returns the given column of the result set as an instance of this class.
+     * 
+     * @param entity the entity to which the contact belongs.
+     * @param resultSet the result set to retrieve the data from.
+     * @param columnIndex the index of the column containing the data.
+     * 
+     * @return the given column of the result set as an instance of this class.
+     */
+    @Pure
+    public static @Nonnull Contact getNotNull(@Nonnull Entity entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+        final @Nonnull Identity identity = IdentityClass.getNotNull(resultSet, columnIndex);
+        if (identity instanceof Person) return get(entity, (Person) identity);
+        else throw new SQLException("A non-person was stored as a contact.");
     }
     
     @Override
     public void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
         preparedStatement.setLong(parameterIndex, person.getNumber());
+    }
+    
+    /**
+     * Sets the parameter at the given index of the prepared statement to the given contact.
+     * 
+     * @param contact the contact to which the parameter at the given index is to be set.
+     * @param preparedStatement the prepared statement whose parameter is to be set.
+     * @param parameterIndex the index of the parameter to set.
+     */
+    public static void set(@Nullable Contact contact, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+        if (contact == null) preparedStatement.setNull(parameterIndex, Types.BIGINT);
+        else contact.set(preparedStatement, parameterIndex);
     }
     
     

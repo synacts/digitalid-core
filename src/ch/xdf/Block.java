@@ -13,6 +13,7 @@ import ch.virtualid.errors.ShouldNeverHappenError;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
+import ch.virtualid.interfaces.BlockableObject;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
 import java.io.IOException;
@@ -613,6 +614,17 @@ public final class Block implements Immutable, SQLizable {
         }
         
         assert invariant();
+    }
+    
+    
+    /**
+     * Returns this block as a blockable object.
+     * 
+     * @return this block as a blockable object.
+     */
+    @Pure
+    public @Nonnull Blockable toBlockable() {
+        return new BlockableObject(this);
     }
     
     

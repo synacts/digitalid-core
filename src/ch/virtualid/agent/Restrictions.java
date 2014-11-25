@@ -4,19 +4,25 @@ import ch.virtualid.annotations.Pure;
 import ch.virtualid.contact.Contact;
 import ch.virtualid.contact.Context;
 import ch.virtualid.entity.Entity;
+import ch.virtualid.entity.Site;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
+import ch.virtualid.identity.Mapper;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
+import ch.virtualid.interfaces.SQLizable;
 import ch.virtualid.util.FreezableArray;
 import ch.xdf.Block;
 import ch.xdf.BooleanWrapper;
 import ch.xdf.TupleWrapper;
 import java.io.IOException;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -31,7 +37,7 @@ import javax.annotation.Nullable;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public final class Restrictions implements Immutable, Blockable {
+public final class Restrictions implements Immutable, Blockable, SQLizable {
     
     /**
      * Stores the semantic type {@code client.restrictions.agent@virtualid.ch}.
@@ -380,10 +386,99 @@ public final class Restrictions implements Immutable, Blockable {
         return hash;
     }
     
+    /**
+     * Returns this context as a formatted string.
+     * 
+     * @return this context as a formatted string.
+     */
+    @Pure
+    public @Nonnull String toFormattedString() {
+        return "(Client: " + client + ", Role: " + role + ", Writing: " + writing + ", Context: " + context + ", Contact: " + contact + ")";
+    }
+    
+    
+    /**
+     * Stores the columns used to store instances of this class in the database.
+     */
+    public static final @Nonnull String FORMAT_NOT_NULL = "client BOOLEAN NOT NULL, role BOOLEAN NOT NULL, writing BOOLEAN NOT NULL, context " + Context.FORMAT + ", contact " + Mapper.FORMAT;
+    
+    /**
+     * Stores the columns used to store instances of this class in the database.
+     */
+    public static final @Nonnull String FORMAT_NULL = "client BOOLEAN, role BOOLEAN, writing BOOLEAN, context " + Context.FORMAT + ", contact " + Mapper.FORMAT;
+    
+    /**
+     * Stores the columns used to retrieve instances of this class from the database.
+     */
+    public static final @Nonnull String COLUMNS = "client, role, writing, context, contact";
+    
+    /**
+     * Returns the foreign key constraints used by instances of this class.
+     * 
+     * @param site the site at which the foreign key constraint is declared.
+     * 
+     * @return the foreign key constraints used by instances of this class.
+     */
+    public static @Nonnull String getForeignKeys(@Nonnull Site site) throws SQLException {
+        return "FOREIGN KEY (entity, context) " + Context.getReference(site) + ", FOREIGN KEY (contact) " + site.getReference();
+    }
+    
+    /**
+     * Returns the given columns of the result set as an instance of this class.
+     * 
+     * @param entity the entity to which the restrictions belong.
+     * @param resultSet the result set to retrieve the data from.
+     * @param startIndex the start index of the columns containing the data.
+     * 
+     * @return the given columns of the result set as an instance of this class.
+     */
+    @Pure
+    public static @Nonnull Restrictions get(@Nonnull Entity entity, @Nonnull ResultSet resultSet, int startIndex) throws SQLException {
+        final boolean client = resultSet.getBoolean(startIndex + 0);
+        final boolean role = resultSet.getBoolean(startIndex + 1);
+        final boolean writing = resultSet.getBoolean(startIndex + 2);
+        final @Nullable Context context = Context.get(entity, resultSet, startIndex + 3);
+        final @Nullable Contact contact = Contact.get(entity, resultSet, startIndex + 4);
+        return new Restrictions(client, role, writing, context, contact);
+     }
+    
+    /**
+     * Sets the parameters at the given start index of the prepared statement to this object.
+     * 
+     * @param preparedStatement the prepared statement whose parameters are to be set.
+     * @param startIndex the start index of the parameters to set.
+     */
+    @Override
+    public void set(@Nonnull PreparedStatement preparedStatement, int startIndex) throws SQLException {
+        preparedStatement.setBoolean(startIndex + 0, client);
+        preparedStatement.setBoolean(startIndex + 1, role);
+        preparedStatement.setBoolean(startIndex + 2, writing);
+        Context.set(context, preparedStatement, startIndex + 3);
+        Contact.set(contact, preparedStatement, startIndex + 4);
+    }
+    
+    /**
+     * Sets the parameters at the given start index of the prepared statement to the given restrictions.
+     * 
+     * @param restrictions the restrictions to which the parameters at the given index are to be set.
+     * @param preparedStatement the prepared statement whose parameters are to be set.
+     * @param startIndex the start index of the parameters to set.
+     */
+    public static void set(@Nullable Restrictions restrictions, @Nonnull PreparedStatement preparedStatement, int startIndex) throws SQLException {
+        if (restrictions == null) {
+            preparedStatement.setNull(startIndex + 0, Types.BOOLEAN);
+            preparedStatement.setNull(startIndex + 1, Types.BOOLEAN);
+            preparedStatement.setNull(startIndex + 2, Types.BOOLEAN);
+            preparedStatement.setNull(startIndex + 3, Types.BIGINT);
+            preparedStatement.setNull(startIndex + 4, Types.BIGINT);
+        }
+        else restrictions.set(preparedStatement, startIndex);
+    }
+    
     @Pure
     @Override
     public @Nonnull String toString() {
-        return "(Client: " + client + ", Role: " + role + ", Writing: " + writing + ", Context: " + context + ", Contact: " + contact + ")";
+        return client + ", " + role + ", " + writing + ", " + context + ", " + contact;
     }
     
 }

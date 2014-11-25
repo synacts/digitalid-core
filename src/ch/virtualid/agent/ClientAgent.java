@@ -6,18 +6,19 @@ import ch.virtualid.auxiliary.Image;
 import ch.virtualid.client.Client;
 import ch.virtualid.client.Commitment;
 import ch.virtualid.concept.Aspect;
+import ch.virtualid.concept.Instance;
+import ch.virtualid.concept.Observer;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
+import ch.virtualid.util.ConcurrentHashMap;
+import ch.virtualid.util.ConcurrentMap;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import org.javatuples.Pair;
 
 /**
  * This class models a client that acts as an agent on behalf of a virtual identity.
@@ -220,9 +221,15 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
     /**
      * Caches client agents given their entity and number.
      */
-    private static final @Nonnull Map<Pair<Entity, Long>, ClientAgent> index = new HashMap<Pair<Entity, Long>, ClientAgent>();
+    private static final @Nonnull ConcurrentMap<Entity, ConcurrentMap<Long, ClientAgent>> index = new ConcurrentHashMap<Entity, ConcurrentMap<Long, ClientAgent>>();
     
-    // TODO: Make similar changes as in the Context class.
+    static {
+        if (Database.isSingleAccess()) {
+            Instance.observeAspects(new Observer() {
+                @Override public void notify(@Nonnull Aspect aspect, @Nonnull Instance instance) { index.remove(instance); }
+            }, Entity.DELETED);
+        }
+    }
     
     /**
      * Returns a (locally cached) client agent that might not (yet) exist in the database.
@@ -236,15 +243,11 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
     @Pure
     public static @Nonnull ClientAgent get(@Nonnull Entity entity, long number, boolean removed) {
         if (Database.isSingleAccess()) {
-            synchronized(index) {
-                final @Nonnull Pair<Entity, Long> pair = new Pair<Entity, Long>(entity, number);
-                @Nullable ClientAgent clientAgent = index.get(pair);
-                if (clientAgent == null) {
-                    clientAgent = new ClientAgent(entity, number, removed);
-                    index.put(pair, clientAgent);
-                }
-                return clientAgent;
-            }
+            @Nullable ConcurrentMap<Long, ClientAgent> map = index.get(entity);
+            if (map == null) map = index.putIfAbsentElseReturnPresent(entity, new ConcurrentHashMap<Long, ClientAgent>());
+            @Nullable ClientAgent clientAgent = map.get(number);
+            if (clientAgent == null) clientAgent = map.putIfAbsentElseReturnPresent(number, new ClientAgent(entity, number, removed));
+            return clientAgent;
         } else {
             return new ClientAgent(entity, number, removed);
         }

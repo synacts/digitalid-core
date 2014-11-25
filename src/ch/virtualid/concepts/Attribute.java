@@ -1,26 +1,24 @@
 package ch.virtualid.concepts;
 
 import ch.virtualid.annotations.OnlyForActions;
+import ch.virtualid.annotations.Pure;
 import ch.virtualid.concept.Aspect;
 import ch.virtualid.concept.Concept;
+import ch.virtualid.concept.Instance;
+import ch.virtualid.concept.Observer;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.Entity;
-import ch.virtualid.exceptions.external.ExternalException;
-import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.expression.PassiveExpression;
-import ch.virtualid.identifier.IdentifierClass;
 import ch.virtualid.identity.SemanticType;
-import ch.xdf.Block;
+import ch.virtualid.interfaces.Immutable;
+import ch.virtualid.util.ConcurrentHashMap;
+import ch.virtualid.util.ConcurrentMap;
 import ch.xdf.SelfcontainedWrapper;
 import ch.xdf.SignatureWrapper;
-import java.io.IOException;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import org.javatuples.Pair;
 
 /**
  * This class models an attribute with its value and visibility.
@@ -28,7 +26,7 @@ import org.javatuples.Pair;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 1.5
  */
-public final class Attribute extends Concept {
+public final class Attribute extends Concept implements Immutable {
     
     // TODO: Add aspects for adding and removing attributes?
     
@@ -55,15 +53,6 @@ public final class Attribute extends Concept {
     
     
     /**
-     * Stores an index of attributes that are already represented by instances of this class.
-     */
-    private static final @Nonnull Map<Pair<Entity, SemanticType>, Attribute> index = new HashMap<Pair<Entity, SemanticType>, Attribute>();
-    // TODO: Split into Map<Entity, Map<SemanticType, Attribute>> and observe the removal of roles! What about the removal of permissions?
-    // TODO: This is also needed to reset all attributes of an entity.
-    // TODO: Make similar changes as in the Context class.
-    
-    
-    /**
      * Stores the type of this attribute.
      * 
      * @invariant type.isAttributeType() : "The type is an attribute type.";
@@ -76,13 +65,10 @@ public final class Attribute extends Concept {
      */
     private boolean valueLoaded = false;
     
-    // TODO: Store the certificate as well and not just the value!
-    private @Nullable SignatureWrapper certificate;
-    
     /**
      * Stores the value of this attribute.
      */
-    private @Nullable Block value;
+    private @Nullable SignatureWrapper value;
     
     
     /**
@@ -93,7 +79,7 @@ public final class Attribute extends Concept {
     /**
      * Stores the unpublished value of this attribute.
      */
-    private @Nullable Block unpublished;
+    private @Nullable SignatureWrapper unpublished;
     
     
     /**
@@ -112,59 +98,15 @@ public final class Attribute extends Concept {
      * 
      * @param entity the entity to which this attribute belongs.
      * @param type the type of this attribute.
+     * 
+     * @require type.isAttributeType() : "The type is an attribute type.";
      */
     private Attribute(@Nonnull Entity entity, @Nonnull SemanticType type) {
         super(entity);
-        this.type = type;
-    }
-    
-    /**
-     * Returns the attribute that represents the given type at the given entity.
-     * It is guaranteed that always the same attribute is returned on the client-side.
-     * 
-     * @param entity the entity of the attribute to be returned.
-     * @param type the type of the attribute to be returned.
-     * @return the attribute that represents the given type at the given entity.
-     */
-    public static @Nonnull Attribute get(@Nonnull Entity entity, @Nonnull SemanticType type) {
-        if (Database.isSingleAccess()) {
-            synchronized(index) {
-                @Nonnull Pair<Entity, SemanticType> pair = new Pair<Entity, SemanticType>(entity, type);
-                @Nullable Attribute attribute = index.get(pair);
-                if (attribute == null) {
-                    attribute = new Attribute(entity, type);
-                    index.put(pair, attribute);
-                }
-                return attribute;
-            }
-        } else {
-            return new Attribute(entity, type);
-        }
-    }
-    
-    /**
-     * Returns the attribute in the given block at the given entity.
-     * 
-     * @param entity the entity of the attribute to be returned.
-     * @param block the block containing the type of the attribute.
-     * 
-     * @return the attribute in the given block at the given entity.
-     */
-    public static @Nonnull Attribute get(@Nonnull Entity entity, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
-        // TODO: Assert the block type.
         
-        return get(entity, IdentifierClass.create(block).getIdentity().toSemanticType());
-    }
-    
-    /**
-     * Returns all the attributes of the given entity.
-     * 
-     * @param entity the entity whose attributes are to be returned.
-     * @return all the attributes of the given entity.
-     */
-    public static @Nonnull Set<Attribute> getAll(@Nonnull Entity entity) throws SQLException {
-        throw new SQLException();
-//        return Attributes.getAll(entity);
+        assert type.isAttributeType() : "The type is an attribute type.";
+        
+        this.type = type;
     }
     
     
@@ -172,6 +114,8 @@ public final class Attribute extends Concept {
      * Returns the type of this attribute.
      * 
      * @return the type of this attribute.
+     * 
+     * @ensure return.isAttributeType() : "The type is an attribute type.";
      */
     public @Nonnull SemanticType getType() {
         return type;
@@ -183,7 +127,7 @@ public final class Attribute extends Concept {
      * 
      * @return the value of this attribute or null if not yet set.
      */
-    public @Nullable Block getValue() throws SQLException {
+    public @Nullable SignatureWrapper getValue() throws SQLException {
         if (!valueLoaded) {
 //            value = Attributes.getValue(this, true);
             valueLoaded = true;
@@ -191,7 +135,7 @@ public final class Attribute extends Concept {
         return value;
     }
     
-    public void setValue(@Nullable Block value) throws SQLException {
+    public void setValue(@Nullable SignatureWrapper value) throws SQLException {
         assert isOnClient() : "";
         
         // The old and the new value is not identical (and particularly not both null).
@@ -201,7 +145,7 @@ public final class Attribute extends Concept {
     }
     
     @OnlyForActions
-    public void replaceValue(@Nullable Block oldValue, @Nullable Block newValue) throws SQLException {
+    public void replaceValue(@Nullable SignatureWrapper oldValue, @Nullable SignatureWrapper newValue) throws SQLException {
         assert oldValue != newValue : "";
         
 //        if (oldValue == null) Attributes.addValue(this, true, newValue);
@@ -220,7 +164,7 @@ public final class Attribute extends Concept {
      * 
      * @return the unpublished value of this attribute or null if not yet set or available.
      */
-    public @Nullable Block getUnpublishedValue() {
+    public @Nullable SignatureWrapper getUnpublishedValue() {
         if (!unpublishedLoaded) {
 //            unpublished = Attributes.getValue(this);
             unpublishedLoaded = true;
@@ -243,6 +187,69 @@ public final class Attribute extends Concept {
     }
     
     
+    /**
+     * Caches attributes given their entity and number.
+     */
+    private static final @Nonnull ConcurrentMap<Entity, ConcurrentMap<SemanticType, Attribute>> index = new ConcurrentHashMap<Entity, ConcurrentMap<SemanticType, Attribute>>();
+    
+    static {
+        if (Database.isSingleAccess()) {
+            Instance.observeAspects(new Observer() {
+                @Override public void notify(@Nonnull Aspect aspect, @Nonnull Instance instance) { index.remove(instance); }
+            }, Entity.DELETED);
+        }
+    }
+    
+    /**
+     * Returns a (locally cached) attribute that might not (yet) exist in the database.
+     * 
+     * @param entity the entity to which the attribute belongs.
+     * @param type the type that denotes the attribute.
+     * 
+     * @return a new or existing attribute with the given entity and type.
+     */
+    @Pure
+    public static @Nonnull Attribute get(@Nonnull Entity entity, @Nonnull SemanticType type) {
+        if (Database.isSingleAccess()) {
+            @Nullable ConcurrentMap<SemanticType, Attribute> map = index.get(entity);
+            if (map == null) map = index.putIfAbsentElseReturnPresent(entity, new ConcurrentHashMap<SemanticType, Attribute>());
+            @Nullable Attribute context = map.get(type);
+            if (context == null) context = map.putIfAbsentElseReturnPresent(type, new Attribute(entity, type));
+            return context;
+        } else {
+            return new Attribute(entity, type);
+        }
+    }
+    
+    /**
+     * Returns all the attributes of the given entity.
+     * 
+     * @param entity the entity whose attributes are to be returned.
+     * 
+     * @return all the attributes of the given entity.
+     */
+    public static @Nonnull Set<Attribute> getAll(@Nonnull Entity entity) throws SQLException {
+        throw new SQLException();
+//        return Attributes.getAll(entity);
+    }
+    
+    
+    @Pure
+    @Override
+    public boolean equals(Object object) {
+        if (object == this) return true;
+        if (object == null || !(object instanceof Attribute)) return false;
+        final @Nonnull Attribute other = (Attribute) object;
+        return this.getEntity().equals(other.getEntity()) && this.type.equals(other.type);
+    }
+    
+    @Pure
+    @Override
+    public int hashCode() {
+        return 41 * getEntity().hashCode() + type.hashCode();
+    }
+    
+    @Pure
     @Override
     public @Nonnull String toString() {
         return type.toString();

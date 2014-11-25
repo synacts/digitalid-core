@@ -5,13 +5,19 @@ import ch.virtualid.auxiliary.Time;
 import ch.virtualid.cryptography.Element;
 import ch.virtualid.cryptography.Exponent;
 import ch.virtualid.cryptography.PublicKey;
+import ch.virtualid.database.Database;
+import ch.virtualid.entity.Entity;
+import ch.virtualid.entity.Site;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identifier.IdentifierClass;
 import ch.virtualid.identity.HostIdentity;
+import ch.virtualid.identity.IdentityClass;
+import ch.virtualid.identity.Mapper;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
+import ch.virtualid.interfaces.SQLizable;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.ReadonlyArray;
 import ch.xdf.Block;
@@ -19,6 +25,8 @@ import ch.xdf.IntegerWrapper;
 import ch.xdf.TupleWrapper;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -31,7 +39,7 @@ import javax.annotation.Nullable;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public class Commitment implements Immutable, Blockable {
+public class Commitment implements Immutable, Blockable, SQLizable {
     
     /**
      * Stores the semantic type {@code host.commitment.client@virtualid.ch}.
@@ -214,6 +222,62 @@ public class Commitment implements Immutable, Blockable {
     @Override
     public @Nonnull String toString() {
         return "Commitment [Host: " + host.getAddress() + ", Time: " + time.asDate() + "]";
+    }
+    
+    
+    /**
+     * Stores the columns used to store instances of this class in the database.
+     */
+    public static final @Nonnull String FORMAT = "host " + Mapper.FORMAT + " NOT NULL, time " + Time.FORMAT + " NOT NULL, value " + Database.getConfiguration().BLOB() + " NOT NULL";
+    
+    /**
+     * Stores the columns used to retrieve instances of this class from the database.
+     */
+    public static final @Nonnull String COLUMNS = "host, time, value";
+    
+    /**
+     * Returns the foreign key constraints used by instances of this class.
+     * 
+     * @param site the site at which the foreign key constraint is declared.
+     * 
+     * @return the foreign key constraints used by instances of this class.
+     */
+    public static @Nonnull String getForeignKeys(@Nonnull Site site) {
+        return "FOREIGN KEY (host) " + site.getReference();
+    }
+    
+    /**
+     * Returns the given columns of the result set as an instance of this class.
+     * 
+     * @param entity the entity to which the commitment belong.
+     * @param resultSet the result set to retrieve the data from.
+     * @param startIndex the start index of the columns containing the data.
+     * 
+     * @return the given columns of the result set as an instance of this class.
+     */
+    @Pure
+    public static @Nonnull Commitment get(@Nonnull Entity entity, @Nonnull ResultSet resultSet, int startIndex) throws SQLException {
+        try {
+            final @Nonnull HostIdentity host = IdentityClass.getNotNull(resultSet, startIndex + 0).toHostIdentity();
+            final @Nonnull Time time = Time.get(resultSet, startIndex + 1);
+            final @Nonnull BigInteger value = new IntegerWrapper(Block.get(Element.TYPE, resultSet, startIndex + 2)).getValue();
+            return new Commitment(host, time, value);
+        } catch (@Nonnull IOException | PacketException | ExternalException exception) {
+            throw new SQLException("A problem occurred while retrieving a commitment.", exception);
+        }
+     }
+    
+    /**
+     * Sets the parameters at the given start index of the prepared statement to this object.
+     * 
+     * @param preparedStatement the prepared statement whose parameters are to be set.
+     * @param startIndex the start index of the parameters to set.
+     */
+    @Override
+    public void set(@Nonnull PreparedStatement preparedStatement, int startIndex) throws SQLException {
+        host.set(preparedStatement, startIndex + 0);
+        time.set(preparedStatement, startIndex + 1);
+        value.toBlock().set(preparedStatement, startIndex + 2);
     }
     
 }

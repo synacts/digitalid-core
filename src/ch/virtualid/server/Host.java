@@ -124,7 +124,7 @@ public final class Host extends Site {
             } else {
                 certificate = new SignatureWrapper(Certificate.TYPE, publicKeyWrapper, null);
             }
-            attribute.replaceValue(null, certificate.toBlock());
+            attribute.replaceValue(null, certificate);
         }
         
         // TODO: Load which services this host runs and initialize them afterwards.
