@@ -1,11 +1,15 @@
 package ch.virtualid.identity;
 
 import ch.virtualid.annotations.Pure;
+import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.exceptions.packet.PacketException;
+import ch.virtualid.identifier.IdentifierClass;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
 import ch.xdf.Block;
+import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -25,7 +29,7 @@ import javax.annotation.Nullable;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public abstract class IdentityClass implements Identity, Immutable, SQLizable {
+public abstract class IdentityClass implements Identity, Immutable, Blockable, SQLizable {
     
     /**
      * Stores the internal number that represents and indexes this identity.
@@ -60,16 +64,42 @@ public abstract class IdentityClass implements Identity, Immutable, SQLizable {
     
     @Pure
     @Override
+    public final @Nonnull SemanticType getType() {
+        return Identity.IDENTIFIER;
+    }
+    
+    @Pure
+    @Override
+    public final @Nonnull Block toBlock() {
+        return getAddress().toBlock();
+    }
+    
+    @Pure
+    @Override
     public final @Nonnull Block toBlock(@Nonnull SemanticType type) {
         assert type.isBasedOn(Identity.IDENTIFIER) : "The type is based on an identifier.";
         
-        return getAddress().toBlock().setType(type);
+        return toBlock().setType(type);
     }
     
     @Pure
     @Override
     public final @Nonnull Blockable toBlockable(@Nonnull SemanticType type) {
         return toBlock(type).toBlockable();
+    }
+    
+    /**
+     * Returns a new identity from the given block.
+     * 
+     * @param block the block containing the identity.
+     * 
+     * @return a new identity from the given block.
+     * 
+     * @require block.getType().isBasedOn(Identity.IDENTIFIER) : "The block is based on the identifier type.";
+     */
+    @Pure
+    public static @Nonnull Identity create(@Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
+        return IdentifierClass.create(block).getIdentity();
     }
     
     

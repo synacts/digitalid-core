@@ -22,6 +22,10 @@ import org.junit.runners.MethodSorters;
 /**
  * Unit testing of the class {@link Database}.
  * 
+ * @see MySQLTest
+ * @see PostgreSQLTest
+ * @see SQLiteTest
+ * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 1.0
  */
@@ -37,6 +41,7 @@ public class DatabaseTest {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS test_identity (identity " + Database.getConfiguration().PRIMARY_KEY() + ", category " + Database.getConfiguration().TINYINT() + " NOT NULL, address VARCHAR(100) NOT NULL COLLATE " + Database.getConfiguration().BINARY() + ")");
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS test_identifier (identifier VARCHAR(100) NOT NULL COLLATE " + Database.getConfiguration().BINARY() + ", identity BIGINT NOT NULL, value BIGINT, PRIMARY KEY (identifier), FOREIGN KEY (identity) REFERENCES test_identity (identity))");
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS test_block (block " + Database.getConfiguration().BLOB() + " NOT NULL)");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS test_batch (a BIGINT NOT NULL, b BIGINT NOT NULL)");
             Database.commit();
         }
     }
@@ -211,6 +216,26 @@ public class DatabaseTest {
                 final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(2);
                 Assert.assertEquals(string1, new StringWrapper(elements.getNotNull(0)).getString());
                 Assert.assertEquals(string2, new StringWrapper(elements.getNotNull(1)).getString());
+            }
+        }
+    }
+    
+    @Test
+    public void _12_testBatchInsertWithPreparedStatement() throws SQLException {
+        if (isSubclass()) {
+            final @Nonnull String SQL = "INSERT INTO test_batch (a, b) VALUES (?, ?)";
+            try (@Nonnull PreparedStatement preparedStatement = Database.prepareInsertStatement(SQL)) {
+                preparedStatement.setLong(1, 3l);
+                for (int i = 0; i < 10000; i++) {
+                    preparedStatement.setLong(2, i);
+                    // preparedStatement.executeUpdate();
+                    preparedStatement.addBatch();
+                }
+                preparedStatement.executeBatch();
+            }
+            try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery("SELECT a FROM test_batch WHERE b = 99")) {
+                Assert.assertTrue(resultSet.next());
+                Assert.assertEquals(3l, resultSet.getLong(1));
             }
         }
     }

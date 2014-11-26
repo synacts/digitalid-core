@@ -20,7 +20,7 @@ import javax.annotation.Nonnull;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public interface Identity extends Immutable, SQLizable {
+public interface Identity extends Immutable, Blockable, SQLizable {
     
     /**
      * Stores the semantic type {@code @virtualid.ch}.

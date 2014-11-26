@@ -6,7 +6,6 @@ import ch.virtualid.cryptography.Element;
 import ch.virtualid.cryptography.Exponent;
 import ch.virtualid.cryptography.PublicKey;
 import ch.virtualid.database.Database;
-import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.Site;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
@@ -249,14 +248,13 @@ public class Commitment implements Immutable, Blockable, SQLizable {
     /**
      * Returns the given columns of the result set as an instance of this class.
      * 
-     * @param entity the entity to which the commitment belong.
      * @param resultSet the result set to retrieve the data from.
      * @param startIndex the start index of the columns containing the data.
      * 
      * @return the given columns of the result set as an instance of this class.
      */
     @Pure
-    public static @Nonnull Commitment get(@Nonnull Entity entity, @Nonnull ResultSet resultSet, int startIndex) throws SQLException {
+    public static @Nonnull Commitment get(@Nonnull ResultSet resultSet, int startIndex) throws SQLException {
         try {
             final @Nonnull HostIdentity host = IdentityClass.getNotNull(resultSet, startIndex + 0).toHostIdentity();
             final @Nonnull Time time = Time.get(resultSet, startIndex + 1);

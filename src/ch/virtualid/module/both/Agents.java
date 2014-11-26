@@ -16,10 +16,8 @@ import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.Role;
 import ch.virtualid.entity.Site;
 import ch.virtualid.exceptions.external.ExternalException;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.query.internal.AgentsQuery;
-import ch.virtualid.identifier.IdentifierClass;
 import ch.virtualid.identity.Identity;
 import ch.virtualid.identity.IdentityClass;
 import ch.virtualid.identity.InternalNonHostIdentity;
@@ -128,34 +126,34 @@ public final class Agents implements BothModule {
     /**
      * Stores the semantic type {@code entry.agent.agents.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType AGENT_ENTRY = SemanticType.create("entry.agent.agents.module@virtualid.ch").load(TupleWrapper.TYPE, Identity.IDENTIFIER, Agent.NUMBER, Agent.CLIENT, Agent.REMOVED);
+    private static final @Nonnull SemanticType AGENT_MODULE_ENTRY = SemanticType.create("entry.agent.agents.module@virtualid.ch").load(TupleWrapper.TYPE, Identity.IDENTIFIER, Agent.NUMBER, Agent.CLIENT, Agent.REMOVED);
     
     /**
      * Stores the semantic type {@code table.agent.agents.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType AGENT_TABLE = SemanticType.create("table.agent.agents.module@virtualid.ch").load(ListWrapper.TYPE, AGENT_ENTRY);
+    private static final @Nonnull SemanticType AGENT_MODULE_TABLE = SemanticType.create("table.agent.agents.module@virtualid.ch").load(ListWrapper.TYPE, AGENT_MODULE_ENTRY);
     
     
     /**
      * Stores the semantic type {@code entry.permission.agent.agents.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType AGENT_PERMISSION_ENTRY = SemanticType.create("entry.permission.agent.agents.module@virtualid.ch").load(TupleWrapper.TYPE, Identity.IDENTIFIER, Agent.NUMBER, AgentPermissions.ATTRIBUTE_TYPE, AgentPermissions.WRITING);
+    private static final @Nonnull SemanticType AGENT_PERMISSION_MODULE_ENTRY = SemanticType.create("entry.permission.agent.agents.module@virtualid.ch").load(TupleWrapper.TYPE, Identity.IDENTIFIER, Agent.NUMBER, AgentPermissions.ATTRIBUTE_TYPE, AgentPermissions.WRITING);
     
     /**
      * Stores the semantic type {@code table.permission.agent.agents.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType AGENT_PERMISSION_TABLE = SemanticType.create("table.permission.agent.agents.module@virtualid.ch").load(ListWrapper.TYPE, AGENT_PERMISSION_ENTRY);
+    private static final @Nonnull SemanticType AGENT_PERMISSION_MODULE_TABLE = SemanticType.create("table.permission.agent.agents.module@virtualid.ch").load(ListWrapper.TYPE, AGENT_PERMISSION_MODULE_ENTRY);
     
     
     /**
      * Stores the semantic type {@code entry.restrictions.agent.agents.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType AGENT_RESTRICTIONS_ENTRY = SemanticType.create("entry.restrictions.agent.agents.module@virtualid.ch").load(TupleWrapper.TYPE, Identity.IDENTIFIER, Agent.NUMBER, Restrictions.TYPE);
+    private static final @Nonnull SemanticType AGENT_RESTRICTIONS_MODULE_ENTRY = SemanticType.create("entry.restrictions.agent.agents.module@virtualid.ch").load(TupleWrapper.TYPE, Identity.IDENTIFIER, Agent.NUMBER, Restrictions.TYPE);
     
     /**
      * Stores the semantic type {@code table.restrictions.agent.agents.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType AGENT_RESTRICTIONS_TABLE = SemanticType.create("table.restrictions.agent.agents.module@virtualid.ch").load(ListWrapper.TYPE, AGENT_RESTRICTIONS_ENTRY);
+    private static final @Nonnull SemanticType AGENT_RESTRICTIONS_MODULE_TABLE = SemanticType.create("table.restrictions.agent.agents.module@virtualid.ch").load(ListWrapper.TYPE, AGENT_RESTRICTIONS_MODULE_ENTRY);
     
     
     /**
@@ -171,51 +169,51 @@ public final class Agents implements BothModule {
     /**
      * Stores the semantic type {@code entry.order.agent.agents.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType AGENT_ORDER_ENTRY = SemanticType.create("entry.order.agent.agents.module@virtualid.ch").load(TupleWrapper.TYPE, Identity.IDENTIFIER, AGENT_ORDER_STRONGER, AGENT_ORDER_WEAKER);
+    private static final @Nonnull SemanticType AGENT_ORDER_MODULE_ENTRY = SemanticType.create("entry.order.agent.agents.module@virtualid.ch").load(TupleWrapper.TYPE, Identity.IDENTIFIER, AGENT_ORDER_STRONGER, AGENT_ORDER_WEAKER);
     
     /**
      * Stores the semantic type {@code table.order.agent.agents.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType AGENT_ORDER_TABLE = SemanticType.create("table.order.agent.agents.module@virtualid.ch").load(ListWrapper.TYPE, AGENT_ORDER_ENTRY);
+    private static final @Nonnull SemanticType AGENT_ORDER_MODULE_TABLE = SemanticType.create("table.order.agent.agents.module@virtualid.ch").load(ListWrapper.TYPE, AGENT_ORDER_MODULE_ENTRY);
     
     
     /**
      * Stores the semantic type {@code entry.client.agents.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType CLIENT_ENTRY = SemanticType.create("entry.client.agents.module@virtualid.ch").load(TupleWrapper.TYPE, Identity.IDENTIFIER, Agent.NUMBER, Commitment.TYPE, Client.NAME, Client.ICON);
+    private static final @Nonnull SemanticType CLIENT_MODULE_ENTRY = SemanticType.create("entry.client.agents.module@virtualid.ch").load(TupleWrapper.TYPE, Identity.IDENTIFIER, Agent.NUMBER, Commitment.TYPE, Client.NAME, Client.ICON);
     
     /**
      * Stores the semantic type {@code table.client.agents.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType CLIENT_TABLE = SemanticType.create("table.client.agents.module@virtualid.ch").load(ListWrapper.TYPE, CLIENT_ENTRY);
+    private static final @Nonnull SemanticType CLIENT_MODULE_TABLE = SemanticType.create("table.client.agents.module@virtualid.ch").load(ListWrapper.TYPE, CLIENT_MODULE_ENTRY);
     
     
     /**
      * Stores the semantic type {@code entry.outgoing.role.agents.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType OUTGOING_ROLE_ENTRY = SemanticType.create("entry.outgoing.role.agents.module@virtualid.ch").load(TupleWrapper.TYPE, Identity.IDENTIFIER, Agent.NUMBER, Role.RELATION, Context.TYPE);
+    private static final @Nonnull SemanticType OUTGOING_ROLE_MODULE_ENTRY = SemanticType.create("entry.outgoing.role.agents.module@virtualid.ch").load(TupleWrapper.TYPE, Identity.IDENTIFIER, Agent.NUMBER, Role.RELATION, Context.TYPE);
     
     /**
      * Stores the semantic type {@code table.outgoing.role.agents.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType OUTGOING_ROLE_TABLE = SemanticType.create("table.outgoing.role.agents.module@virtualid.ch").load(ListWrapper.TYPE, OUTGOING_ROLE_ENTRY);
+    private static final @Nonnull SemanticType OUTGOING_ROLE_MODULE_TABLE = SemanticType.create("table.outgoing.role.agents.module@virtualid.ch").load(ListWrapper.TYPE, OUTGOING_ROLE_MODULE_ENTRY);
     
     
     /**
      * Stores the semantic type {@code entry.incoming.role.agents.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType INCOMING_ROLE_ENTRY = SemanticType.create("entry.incoming.role.agents.module@virtualid.ch").load(TupleWrapper.TYPE, Identity.IDENTIFIER, Role.ISSUER, Role.RELATION, Role.AGENT);
+    private static final @Nonnull SemanticType INCOMING_ROLE_MODULE_ENTRY = SemanticType.create("entry.incoming.role.agents.module@virtualid.ch").load(TupleWrapper.TYPE, Identity.IDENTIFIER, Role.ISSUER, Role.RELATION, Role.AGENT);
     
     /**
      * Stores the semantic type {@code table.incoming.role.agents.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType INCOMING_ROLE_TABLE = SemanticType.create("table.incoming.role.agents.module@virtualid.ch").load(ListWrapper.TYPE, INCOMING_ROLE_ENTRY);
+    private static final @Nonnull SemanticType INCOMING_ROLE_MODULE_TABLE = SemanticType.create("table.incoming.role.agents.module@virtualid.ch").load(ListWrapper.TYPE, INCOMING_ROLE_MODULE_ENTRY);
     
     
     /**
      * Stores the semantic type {@code agents.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType MODULE_FORMAT = SemanticType.create("agents.module@virtualid.ch").load(TupleWrapper.TYPE, AGENT_TABLE, AGENT_PERMISSION_TABLE, AGENT_RESTRICTIONS_TABLE, AGENT_ORDER_TABLE, CLIENT_TABLE, INCOMING_ROLE_TABLE, OUTGOING_ROLE_TABLE);
+    private static final @Nonnull SemanticType MODULE_FORMAT = SemanticType.create("agents.module@virtualid.ch").load(TupleWrapper.TYPE, AGENT_MODULE_TABLE, AGENT_PERMISSION_MODULE_TABLE, AGENT_RESTRICTIONS_MODULE_TABLE, AGENT_ORDER_MODULE_TABLE, CLIENT_MODULE_TABLE, INCOMING_ROLE_MODULE_TABLE, OUTGOING_ROLE_MODULE_TABLE);
     
     @Pure
     @Override
@@ -232,25 +230,25 @@ public final class Agents implements BothModule {
             try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT entity, agent, client, removed FROM " + host + "agent")) {
                 final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
                 while (resultSet.next()) {
-                    final @Nonnull Account account = Account.get(host, resultSet, 1);
+                    final @Nonnull Identity identity = IdentityClass.getNotNull(resultSet, 1);
                     final long number = resultSet.getLong(2);
                     final boolean client = resultSet.getBoolean(3);
                     final boolean removed = resultSet.getBoolean(4);
-                    entries.add(new TupleWrapper(AGENT_ENTRY, account.getIdentity().getAddress(), new Int64Wrapper(Agent.NUMBER, number), new BooleanWrapper(Agent.CLIENT, client), new BooleanWrapper(Agent.REMOVED, removed)).toBlock());
+                    entries.add(new TupleWrapper(AGENT_MODULE_ENTRY, identity, new Int64Wrapper(Agent.NUMBER, number), new BooleanWrapper(Agent.CLIENT, client), new BooleanWrapper(Agent.REMOVED, removed)).toBlock());
                 }
-                tables.set(0, new ListWrapper(AGENT_TABLE, entries.freeze()).toBlock());
+                tables.set(0, new ListWrapper(AGENT_MODULE_TABLE, entries.freeze()).toBlock());
             }
             
             try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT entity, agent, type, writing FROM " + host + "agent_permission")) {
                 final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
                 while (resultSet.next()) {
-                    final @Nonnull Account account = Account.get(host, resultSet, 1);
+                    final @Nonnull Identity identity = IdentityClass.getNotNull(resultSet, 1);
                     final long number = resultSet.getLong(2);
                     final @Nonnull Identity type = IdentityClass.getNotNull(resultSet, 3);
                     final boolean writing = resultSet.getBoolean(4);
-                    entries.add(new TupleWrapper(AGENT_PERMISSION_ENTRY, account.getIdentity().getAddress(), new Int64Wrapper(Agent.NUMBER, number), type.toBlockable(AgentPermissions.ATTRIBUTE_TYPE), new BooleanWrapper(AgentPermissions.WRITING, writing)).toBlock());
+                    entries.add(new TupleWrapper(AGENT_PERMISSION_MODULE_ENTRY, identity, new Int64Wrapper(Agent.NUMBER, number), type.toBlockable(AgentPermissions.ATTRIBUTE_TYPE), new BooleanWrapper(AgentPermissions.WRITING, writing)).toBlock());
                 }
-                tables.set(1, new ListWrapper(AGENT_PERMISSION_TABLE, entries.freeze()).toBlock());
+                tables.set(1, new ListWrapper(AGENT_PERMISSION_MODULE_TABLE, entries.freeze()).toBlock());
             }
             
             try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT entity, agent, " + Restrictions.COLUMNS + " FROM " + host + "agent_restrictions")) {
@@ -259,33 +257,33 @@ public final class Agents implements BothModule {
                     final @Nonnull Account account = Account.get(host, resultSet, 1);
                     final long number = resultSet.getLong(2);
                     final @Nonnull Restrictions restrictions = Restrictions.get(account, resultSet, 3);
-                    entries.add(new TupleWrapper(AGENT_RESTRICTIONS_ENTRY, account.getIdentity().getAddress(), new Int64Wrapper(Agent.NUMBER, number), restrictions).toBlock());
+                    entries.add(new TupleWrapper(AGENT_RESTRICTIONS_MODULE_ENTRY, account.getIdentity(), new Int64Wrapper(Agent.NUMBER, number), restrictions).toBlock());
                 }
-                tables.set(2, new ListWrapper(AGENT_RESTRICTIONS_TABLE, entries.freeze()).toBlock());
+                tables.set(2, new ListWrapper(AGENT_RESTRICTIONS_MODULE_TABLE, entries.freeze()).toBlock());
             }
             
             try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT entity, stronger, weaker FROM " + host + "agent_order")) {
                 final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
                 while (resultSet.next()) {
-                    final @Nonnull Account account = Account.get(host, resultSet, 1);
+                    final @Nonnull Identity identity = IdentityClass.getNotNull(resultSet, 1);
                     final long stronger = resultSet.getLong(2);
                     final long weaker = resultSet.getLong(3);
-                    entries.add(new TupleWrapper(AGENT_ORDER_ENTRY, account.getIdentity().getAddress(), new Int64Wrapper(AGENT_ORDER_STRONGER, stronger), new Int64Wrapper(AGENT_ORDER_WEAKER, weaker)).toBlock());
+                    entries.add(new TupleWrapper(AGENT_ORDER_MODULE_ENTRY, identity, new Int64Wrapper(AGENT_ORDER_STRONGER, stronger), new Int64Wrapper(AGENT_ORDER_WEAKER, weaker)).toBlock());
                 }
-                tables.set(3, new ListWrapper(AGENT_ORDER_TABLE, entries.freeze()).toBlock());
+                tables.set(3, new ListWrapper(AGENT_ORDER_MODULE_TABLE, entries.freeze()).toBlock());
             }
             
             try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT entity, agent, " + Commitment.COLUMNS + ", name, icon FROM " + host + "client")) {
                 final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
                 while (resultSet.next()) {
-                    final @Nonnull Account account = Account.get(host, resultSet, 1);
+                    final @Nonnull Identity identity = IdentityClass.getNotNull(resultSet, 1);
                     final long number = resultSet.getLong(2);
-                    final @Nonnull Commitment commitment = Commitment.get(account, resultSet, 3);
+                    final @Nonnull Commitment commitment = Commitment.get(resultSet, 3);
                     final @Nonnull String name = resultSet.getString(6);
                     final @Nonnull Image icon = Image.get(resultSet, 7);
-                    entries.add(new TupleWrapper(CLIENT_ENTRY, account.getIdentity().getAddress(), new Int64Wrapper(Agent.NUMBER, number), commitment, new StringWrapper(Client.NAME, name), icon.toBlock().setType(Client.ICON).toBlockable()).toBlock());
+                    entries.add(new TupleWrapper(CLIENT_MODULE_ENTRY, identity, new Int64Wrapper(Agent.NUMBER, number), commitment, new StringWrapper(Client.NAME, name), icon.toBlock().setType(Client.ICON).toBlockable()).toBlock());
                 }
-                tables.set(4, new ListWrapper(CLIENT_TABLE, entries.freeze()).toBlock());
+                tables.set(4, new ListWrapper(CLIENT_MODULE_TABLE, entries.freeze()).toBlock());
             }
             
             try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT entity, agent, relation, context FROM " + host + "outgoing_role")) {
@@ -295,21 +293,21 @@ public final class Agents implements BothModule {
                     final long number = resultSet.getLong(2);
                     final @Nonnull Identity relation = IdentityClass.getNotNull(resultSet, 3);
                     final @Nonnull Context context = Context.getNotNull(account, resultSet, 4);
-                    entries.add(new TupleWrapper(OUTGOING_ROLE_ENTRY, account.getIdentity().getAddress(), new Int64Wrapper(Agent.NUMBER, number), relation.toBlockable(Role.RELATION), context).toBlock());
+                    entries.add(new TupleWrapper(OUTGOING_ROLE_MODULE_ENTRY, account.getIdentity(), new Int64Wrapper(Agent.NUMBER, number), relation.toBlockable(Role.RELATION), context).toBlock());
                 }
-                tables.set(5, new ListWrapper(OUTGOING_ROLE_TABLE, entries.freeze()).toBlock());
+                tables.set(5, new ListWrapper(OUTGOING_ROLE_MODULE_TABLE, entries.freeze()).toBlock());
             }
             
             try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT entity, issuer, relation, agent FROM " + host + "incoming_role")) {
                 final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
                 while (resultSet.next()) {
-                    final @Nonnull Account account = Account.get(host, resultSet, 1);
+                    final @Nonnull Identity identity = IdentityClass.getNotNull(resultSet, 1);
                     final @Nonnull Identity issuer = IdentityClass.getNotNull(resultSet, 2);
                     final @Nonnull Identity relation = IdentityClass.getNotNull(resultSet, 3);
-                    final long number = resultSet.getLong(2);
-                    entries.add(new TupleWrapper(INCOMING_ROLE_ENTRY, account.getIdentity().getAddress(), issuer.toBlockable(Role.ISSUER), relation.toBlockable(Role.RELATION), new Int64Wrapper(Role.AGENT, number)).toBlock());
+                    final long number = resultSet.getLong(4);
+                    entries.add(new TupleWrapper(INCOMING_ROLE_MODULE_ENTRY, identity, issuer.toBlockable(Role.ISSUER), relation.toBlockable(Role.RELATION), new Int64Wrapper(Role.AGENT, number)).toBlock());
                 }
-                tables.set(6, new ListWrapper(INCOMING_ROLE_TABLE, entries.freeze()).toBlock());
+                tables.set(6, new ListWrapper(INCOMING_ROLE_MODULE_TABLE, entries.freeze()).toBlock());
             }
             
         }
@@ -327,7 +325,7 @@ public final class Agents implements BothModule {
             final @Nonnull ReadonlyList<Block> entries = new ListWrapper(tables.getNotNull(0)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(4);
-                IdentifierClass.create(elements.getNotNull(0)).getIdentity().toInternalNonHostIdentity().set(preparedStatement, 1);
+                IdentityClass.create(elements.getNotNull(0)).toInternalNonHostIdentity().set(preparedStatement, 1);
                 preparedStatement.setLong(2, new Int64Wrapper(elements.getNotNull(1)).getValue());
                 preparedStatement.setBoolean(3, new BooleanWrapper(elements.getNotNull(2)).getValue());
                 preparedStatement.setBoolean(4, new BooleanWrapper(elements.getNotNull(3)).getValue());
@@ -340,9 +338,9 @@ public final class Agents implements BothModule {
             final @Nonnull ReadonlyList<Block> entries = new ListWrapper(tables.getNotNull(1)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(4);
-                IdentifierClass.create(elements.getNotNull(0)).getIdentity().toInternalNonHostIdentity().set(preparedStatement, 1);
+                IdentityClass.create(elements.getNotNull(0)).toInternalNonHostIdentity().set(preparedStatement, 1);
                 preparedStatement.setLong(2, new Int64Wrapper(elements.getNotNull(1)).getValue());
-                IdentifierClass.create(elements.getNotNull(2)).getIdentity().toSemanticType().set(preparedStatement, 3);
+                IdentityClass.create(elements.getNotNull(2)).toSemanticType().set(preparedStatement, 3);
                 preparedStatement.setBoolean(4, new BooleanWrapper(elements.getNotNull(3)).getValue());
                 preparedStatement.addBatch();
             }
@@ -353,7 +351,7 @@ public final class Agents implements BothModule {
             final @Nonnull ReadonlyList<Block> entries = new ListWrapper(tables.getNotNull(2)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(3);
-                final @Nonnull InternalNonHostIdentity identity = IdentifierClass.create(elements.getNotNull(0)).getIdentity().toInternalNonHostIdentity();
+                final @Nonnull InternalNonHostIdentity identity = IdentityClass.create(elements.getNotNull(0)).toInternalNonHostIdentity();
                 identity.set(preparedStatement, 1);
                 preparedStatement.setLong(2, new Int64Wrapper(elements.getNotNull(1)).getValue());
                 new Restrictions(Account.get(host, identity), elements.getNotNull(2)).set(preparedStatement, 3);
@@ -366,7 +364,7 @@ public final class Agents implements BothModule {
             final @Nonnull ReadonlyList<Block> entries = new ListWrapper(tables.getNotNull(3)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(3);
-                IdentifierClass.create(elements.getNotNull(0)).getIdentity().toInternalNonHostIdentity().set(preparedStatement, 1);
+                IdentityClass.create(elements.getNotNull(0)).toInternalNonHostIdentity().set(preparedStatement, 1);
                 preparedStatement.setLong(2, new Int64Wrapper(elements.getNotNull(1)).getValue());
                 preparedStatement.setLong(3, new Int64Wrapper(elements.getNotNull(2)).getValue());
                 preparedStatement.addBatch();
@@ -378,7 +376,7 @@ public final class Agents implements BothModule {
             final @Nonnull ReadonlyList<Block> entries = new ListWrapper(tables.getNotNull(4)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(5);
-                IdentifierClass.create(elements.getNotNull(0)).getIdentity().toInternalNonHostIdentity().set(preparedStatement, 1);
+                IdentityClass.create(elements.getNotNull(0)).toInternalNonHostIdentity().set(preparedStatement, 1);
                 preparedStatement.setLong(2, new Int64Wrapper(elements.getNotNull(1)).getValue());
                 new Commitment(elements.getNotNull(2)).set(preparedStatement, 3);
                 preparedStatement.setString(6, new StringWrapper(elements.getNotNull(3)).getString());
@@ -392,10 +390,10 @@ public final class Agents implements BothModule {
             final @Nonnull ReadonlyList<Block> entries = new ListWrapper(tables.getNotNull(5)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(4);
-                final @Nonnull InternalNonHostIdentity identity = IdentifierClass.create(elements.getNotNull(0)).getIdentity().toInternalNonHostIdentity();
+                final @Nonnull InternalNonHostIdentity identity = IdentityClass.create(elements.getNotNull(0)).toInternalNonHostIdentity();
                 identity.set(preparedStatement, 1);
                 preparedStatement.setLong(2, new Int64Wrapper(elements.getNotNull(1)).getValue());
-                IdentifierClass.create(elements.getNotNull(2)).getIdentity().toSemanticType().set(preparedStatement, 3);
+                IdentityClass.create(elements.getNotNull(2)).toSemanticType().set(preparedStatement, 3);
                 Context.get(Account.get(host, identity), elements.getNotNull(3)).set(preparedStatement, 4);
                 preparedStatement.addBatch();
             }
@@ -406,9 +404,9 @@ public final class Agents implements BothModule {
             final @Nonnull ReadonlyList<Block> entries = new ListWrapper(tables.getNotNull(6)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(4);
-                IdentifierClass.create(elements.getNotNull(0)).getIdentity().toInternalNonHostIdentity().set(preparedStatement, 1);
-                IdentifierClass.create(elements.getNotNull(1)).getIdentity().toInternalNonHostIdentity().set(preparedStatement, 2);
-                IdentifierClass.create(elements.getNotNull(2)).getIdentity().toSemanticType().set(preparedStatement, 3);
+                IdentityClass.create(elements.getNotNull(0)).toInternalNonHostIdentity().set(preparedStatement, 1);
+                IdentityClass.create(elements.getNotNull(1)).toInternalNonHostIdentity().set(preparedStatement, 2);
+                IdentityClass.create(elements.getNotNull(2)).toSemanticType().set(preparedStatement, 3);
                 preparedStatement.setLong(4, new Int64Wrapper(elements.getNotNull(3)).getValue());
                 preparedStatement.addBatch();
             }
@@ -418,45 +416,261 @@ public final class Agents implements BothModule {
     
     
     /**
-     * Stores the semantic type {@code entry.agents.state@virtualid.ch}.
+     * Stores the semantic type {@code entry.agent.agents.state@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType STATE_ENTRY = SemanticType.create("entry.agents.state@virtualid.ch").load(TupleWrapper.TYPE, ch.virtualid.identity.SemanticType.UNKNOWN);
+    private static final @Nonnull SemanticType AGENT_STATE_ENTRY = SemanticType.create("entry.agent.agents.state@virtualid.ch").load(TupleWrapper.TYPE, Agent.NUMBER, Agent.CLIENT, Agent.REMOVED);
+    
+    /**
+     * Stores the semantic type {@code table.agent.agents.state@virtualid.ch}.
+     */
+    private static final @Nonnull SemanticType AGENT_STATE_TABLE = SemanticType.create("table.agent.agents.state@virtualid.ch").load(ListWrapper.TYPE, AGENT_STATE_ENTRY);
+    
+    
+    /**
+     * Stores the semantic type {@code entry.permission.agent.agents.state@virtualid.ch}.
+     */
+    private static final @Nonnull SemanticType AGENT_PERMISSION_STATE_ENTRY = SemanticType.create("entry.permission.agent.agents.state@virtualid.ch").load(TupleWrapper.TYPE, Agent.NUMBER, AgentPermissions.ATTRIBUTE_TYPE, AgentPermissions.WRITING);
+    
+    /**
+     * Stores the semantic type {@code table.permission.agent.agents.state@virtualid.ch}.
+     */
+    private static final @Nonnull SemanticType AGENT_PERMISSION_STATE_TABLE = SemanticType.create("table.permission.agent.agents.state@virtualid.ch").load(ListWrapper.TYPE, AGENT_PERMISSION_STATE_ENTRY);
+    
+    
+    /**
+     * Stores the semantic type {@code entry.restrictions.agent.agents.state@virtualid.ch}.
+     */
+    private static final @Nonnull SemanticType AGENT_RESTRICTIONS_STATE_ENTRY = SemanticType.create("entry.restrictions.agent.agents.state@virtualid.ch").load(TupleWrapper.TYPE, Agent.NUMBER, Restrictions.TYPE);
+    
+    /**
+     * Stores the semantic type {@code table.restrictions.agent.agents.state@virtualid.ch}.
+     */
+    private static final @Nonnull SemanticType AGENT_RESTRICTIONS_STATE_TABLE = SemanticType.create("table.restrictions.agent.agents.state@virtualid.ch").load(ListWrapper.TYPE, AGENT_RESTRICTIONS_STATE_ENTRY);
+    
+    
+    /**
+     * Stores the semantic type {@code entry.client.agents.state@virtualid.ch}.
+     */
+    private static final @Nonnull SemanticType CLIENT_STATE_ENTRY = SemanticType.create("entry.client.agents.state@virtualid.ch").load(TupleWrapper.TYPE, Agent.NUMBER, Commitment.TYPE, Client.NAME, Client.ICON);
+    
+    /**
+     * Stores the semantic type {@code table.client.agents.state@virtualid.ch}.
+     */
+    private static final @Nonnull SemanticType CLIENT_STATE_TABLE = SemanticType.create("table.client.agents.state@virtualid.ch").load(ListWrapper.TYPE, CLIENT_STATE_ENTRY);
+    
+    
+    /**
+     * Stores the semantic type {@code entry.outgoing.role.agents.state@virtualid.ch}.
+     */
+    private static final @Nonnull SemanticType OUTGOING_ROLE_STATE_ENTRY = SemanticType.create("entry.outgoing.role.agents.state@virtualid.ch").load(TupleWrapper.TYPE, Agent.NUMBER, Role.RELATION, Context.TYPE);
+    
+    /**
+     * Stores the semantic type {@code table.outgoing.role.agents.state@virtualid.ch}.
+     */
+    private static final @Nonnull SemanticType OUTGOING_ROLE_STATE_TABLE = SemanticType.create("table.outgoing.role.agents.state@virtualid.ch").load(ListWrapper.TYPE, OUTGOING_ROLE_STATE_ENTRY);
+    
+    
+    /**
+     * Stores the semantic type {@code entry.incoming.role.agents.state@virtualid.ch}.
+     */
+    private static final @Nonnull SemanticType INCOMING_ROLE_STATE_ENTRY = SemanticType.create("entry.incoming.role.agents.state@virtualid.ch").load(TupleWrapper.TYPE, Role.ISSUER, Role.RELATION, Role.AGENT);
+    
+    /**
+     * Stores the semantic type {@code table.incoming.role.agents.state@virtualid.ch}.
+     */
+    private static final @Nonnull SemanticType INCOMING_ROLE_STATE_TABLE = SemanticType.create("table.incoming.role.agents.state@virtualid.ch").load(ListWrapper.TYPE, INCOMING_ROLE_STATE_ENTRY);
+    
     
     /**
      * Stores the semantic type {@code agents.state@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType STATE = SemanticType.create("agents.state@virtualid.ch").load(ListWrapper.TYPE, STATE_ENTRY);
+    private static final @Nonnull SemanticType STATE_FORMAT = SemanticType.create("agents.state@virtualid.ch").load(TupleWrapper.TYPE, AGENT_STATE_TABLE, AGENT_PERMISSION_STATE_TABLE, AGENT_RESTRICTIONS_STATE_TABLE, CLIENT_STATE_TABLE, INCOMING_ROLE_STATE_TABLE, OUTGOING_ROLE_STATE_TABLE);
     
     @Pure
     @Override
     public @Nonnull SemanticType getStateFormat() {
-        return STATE;
+        return STATE_FORMAT;
     }
     
     @Pure
     @Override
     public @Nonnull Block getState(@Nonnull Entity entity, @Nonnull Agent agent) throws SQLException {
-        final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
+        final @Nonnull Site site = entity.getSite();
+        final @Nonnull String from = " FROM " + site + "agent_order o, " + site;
+        final @Nonnull String where = " t WHERE o.entity = " + entity + " AND o.stronger = " + agent + " AND o.entity = t.entity AND o.weaker = t.agent";
+        
+        final @Nonnull FreezableArray<Block> tables = new FreezableArray<Block>(6);
         try (@Nonnull Statement statement = Database.createStatement()) {
-            // TODO: Retrieve the entries of the given entity from the database table(s).
+            
+            try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT agent, client, removed" + from + "agent" + where)) {
+                final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
+                while (resultSet.next()) {
+                    final long number = resultSet.getLong(1);
+                    final boolean client = resultSet.getBoolean(2);
+                    final boolean removed = resultSet.getBoolean(3);
+                    entries.add(new TupleWrapper(AGENT_STATE_ENTRY, new Int64Wrapper(Agent.NUMBER, number), new BooleanWrapper(Agent.CLIENT, client), new BooleanWrapper(Agent.REMOVED, removed)).toBlock());
+                }
+                tables.set(0, new ListWrapper(AGENT_STATE_TABLE, entries.freeze()).toBlock());
+            }
+            
+            try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT agent, type, writing" + from + "agent_permission" + where)) {
+                final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
+                while (resultSet.next()) {
+                    final long number = resultSet.getLong(1);
+                    final @Nonnull Identity type = IdentityClass.getNotNull(resultSet, 2);
+                    final boolean writing = resultSet.getBoolean(3);
+                    entries.add(new TupleWrapper(AGENT_PERMISSION_STATE_ENTRY, new Int64Wrapper(Agent.NUMBER, number), type.toBlockable(AgentPermissions.ATTRIBUTE_TYPE), new BooleanWrapper(AgentPermissions.WRITING, writing)).toBlock());
+                }
+                tables.set(1, new ListWrapper(AGENT_PERMISSION_STATE_TABLE, entries.freeze()).toBlock());
+            }
+            
+            try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT agent, " + Restrictions.COLUMNS + from + "agent_restrictions" + where)) {
+                final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
+                while (resultSet.next()) {
+                    final long number = resultSet.getLong(1);
+                    final @Nonnull Restrictions restrictions = Restrictions.get(entity, resultSet, 2);
+                    entries.add(new TupleWrapper(AGENT_RESTRICTIONS_STATE_ENTRY, new Int64Wrapper(Agent.NUMBER, number), restrictions).toBlock());
+                }
+                tables.set(2, new ListWrapper(AGENT_RESTRICTIONS_STATE_TABLE, entries.freeze()).toBlock());
+            }
+            
+            try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT agent, " + Commitment.COLUMNS + ", name, icon" + from + "client" + where)) {
+                final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
+                while (resultSet.next()) {
+                    final long number = resultSet.getLong(1);
+                    final @Nonnull Commitment commitment = Commitment.get(resultSet, 2);
+                    final @Nonnull String name = resultSet.getString(5);
+                    final @Nonnull Image icon = Image.get(resultSet, 6);
+                    entries.add(new TupleWrapper(CLIENT_STATE_ENTRY, new Int64Wrapper(Agent.NUMBER, number), commitment, new StringWrapper(Client.NAME, name), icon.toBlock().setType(Client.ICON).toBlockable()).toBlock());
+                }
+                tables.set(3, new ListWrapper(CLIENT_STATE_TABLE, entries.freeze()).toBlock());
+            }
+            
+            try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT agent, relation, context" + from + "outgoing_role" + where)) {
+                final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
+                while (resultSet.next()) {
+                    final long number = resultSet.getLong(1);
+                    final @Nonnull Identity relation = IdentityClass.getNotNull(resultSet, 2);
+                    final @Nonnull Context context = Context.getNotNull(entity, resultSet, 3);
+                    entries.add(new TupleWrapper(OUTGOING_ROLE_STATE_ENTRY, new Int64Wrapper(Agent.NUMBER, number), relation.toBlockable(Role.RELATION), context).toBlock());
+                }
+                tables.set(4, new ListWrapper(OUTGOING_ROLE_STATE_TABLE, entries.freeze()).toBlock());
+            }
+            
+            try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT issuer, relation, agent FROM " + site + "incoming_role WHERE entity = " + entity + " AND " + agent.getRestrictions().isRole())) {
+                final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
+                while (resultSet.next()) {
+                    final @Nonnull Identity issuer = IdentityClass.getNotNull(resultSet, 1);
+                    final @Nonnull Identity relation = IdentityClass.getNotNull(resultSet, 2);
+                    final long number = resultSet.getLong(3);
+                    entries.add(new TupleWrapper(INCOMING_ROLE_STATE_ENTRY, issuer.toBlockable(Role.ISSUER), relation.toBlockable(Role.RELATION), new Int64Wrapper(Role.AGENT, number)).toBlock());
+                }
+                tables.set(5, new ListWrapper(INCOMING_ROLE_STATE_TABLE, entries.freeze()).toBlock());
+            }
+            
         }
-        return new ListWrapper(STATE, entries.freeze()).toBlock();
+        return new TupleWrapper(MODULE_FORMAT, tables.freeze()).toBlock();
     }
     
     @Override
-    public void addState(@Nonnull Entity entity, @Nonnull Block block) throws SQLException, InvalidEncodingException {
+    public void addState(@Nonnull Entity entity, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         assert block.getType().isBasedOn(getStateFormat()) : "The block is based on the indicated type.";
         
-        final @Nonnull ReadonlyList<Block> entries = new ListWrapper(block).getElementsNotNull();
-        for (final @Nonnull Block entry : entries) {
-            // TODO: Add the entries of the given entity to the database table(s).
+        final @Nonnull ReadonlyArray<Block> tables = new TupleWrapper(block).getElementsNotNull(6);
+        final @Nonnull String prefix = Database.getConfiguration().REPLACE() + " INTO " + entity.getSite();
+        
+        try (@Nonnull PreparedStatement preparedStatement = Database.prepareInsertStatement(prefix + "agent (entity, agent, client, removed) VALUES (?, ?, ?, ?)")) {
+            entity.set(preparedStatement, 1);
+            final @Nonnull ReadonlyList<Block> entries = new ListWrapper(tables.getNotNull(0)).getElementsNotNull();
+            for (final @Nonnull Block entry : entries) {
+                final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(3);
+                preparedStatement.setLong(2, new Int64Wrapper(elements.getNotNull(0)).getValue());
+                preparedStatement.setBoolean(3, new BooleanWrapper(elements.getNotNull(1)).getValue());
+                preparedStatement.setBoolean(4, new BooleanWrapper(elements.getNotNull(2)).getValue());
+                preparedStatement.addBatch();
+            }
+            preparedStatement.executeBatch();
         }
+        
+        try (@Nonnull PreparedStatement preparedStatement = Database.prepareInsertStatement(prefix + "agent_permission (entity, agent, type, writing) VALUES (?, ?, ?, ?)")) {
+            entity.set(preparedStatement, 1);
+            final @Nonnull ReadonlyList<Block> entries = new ListWrapper(tables.getNotNull(1)).getElementsNotNull();
+            for (final @Nonnull Block entry : entries) {
+                final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(3);
+                preparedStatement.setLong(2, new Int64Wrapper(elements.getNotNull(0)).getValue());
+                IdentityClass.create(elements.getNotNull(1)).toSemanticType().set(preparedStatement, 3);
+                preparedStatement.setBoolean(4, new BooleanWrapper(elements.getNotNull(2)).getValue());
+                preparedStatement.addBatch();
+            }
+            preparedStatement.executeBatch();
+        }
+        
+        try (@Nonnull PreparedStatement preparedStatement = Database.prepareInsertStatement(prefix + "agent_restrictions (entity, agent, " + Restrictions.COLUMNS + ") VALUES (?, ?, ?, ?, ?, ?, ?)")) {
+            entity.set(preparedStatement, 1);
+            final @Nonnull ReadonlyList<Block> entries = new ListWrapper(tables.getNotNull(2)).getElementsNotNull();
+            for (final @Nonnull Block entry : entries) {
+                final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(2);
+                preparedStatement.setLong(2, new Int64Wrapper(elements.getNotNull(0)).getValue());
+                new Restrictions(entity, elements.getNotNull(1)).set(preparedStatement, 3);
+                preparedStatement.addBatch();
+            }
+            preparedStatement.executeBatch();
+        }
+        
+        try (@Nonnull PreparedStatement preparedStatement = Database.prepareInsertStatement(prefix + "client (entity, agent, " + Commitment.COLUMNS + ", name, icon) VALUES (?, ?, ?, ?, ?, ?, ?)")) {
+            entity.set(preparedStatement, 1);
+            final @Nonnull ReadonlyList<Block> entries = new ListWrapper(tables.getNotNull(4)).getElementsNotNull();
+            for (final @Nonnull Block entry : entries) {
+                final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(4);
+                preparedStatement.setLong(2, new Int64Wrapper(elements.getNotNull(0)).getValue());
+                new Commitment(elements.getNotNull(1)).set(preparedStatement, 3);
+                preparedStatement.setString(6, new StringWrapper(elements.getNotNull(2)).getString());
+                new Image(elements.getNotNull(3)).set(preparedStatement, 7);
+                preparedStatement.addBatch();
+            }
+            preparedStatement.executeBatch();
+        }
+        
+        try (@Nonnull PreparedStatement preparedStatement = Database.prepareInsertStatement(prefix + "outgoing_role (entity, agent, relation, context) VALUES (?, ?, ?, ?)")) {
+            entity.set(preparedStatement, 1);
+            final @Nonnull ReadonlyList<Block> entries = new ListWrapper(tables.getNotNull(5)).getElementsNotNull();
+            for (final @Nonnull Block entry : entries) {
+                final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(3);
+                preparedStatement.setLong(2, new Int64Wrapper(elements.getNotNull(0)).getValue());
+                IdentityClass.create(elements.getNotNull(1)).toSemanticType().set(preparedStatement, 3);
+                Context.get(entity, elements.getNotNull(2)).set(preparedStatement, 4);
+                preparedStatement.addBatch();
+            }
+            preparedStatement.executeBatch();
+        }
+        
+        try (@Nonnull PreparedStatement preparedStatement = Database.prepareInsertStatement(prefix + "incoming_role (entity, issuer, relation, agent) VALUES (?, ?, ?, ?)")) {
+            entity.set(preparedStatement, 1);
+            final @Nonnull ReadonlyList<Block> entries = new ListWrapper(tables.getNotNull(6)).getElementsNotNull();
+            for (final @Nonnull Block entry : entries) {
+                final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(3);
+                IdentityClass.create(elements.getNotNull(0)).toInternalNonHostIdentity().set(preparedStatement, 2);
+                IdentityClass.create(elements.getNotNull(1)).toSemanticType().set(preparedStatement, 3);
+                preparedStatement.setLong(4, new Int64Wrapper(elements.getNotNull(2)).getValue());
+                preparedStatement.addBatch();
+            }
+            preparedStatement.executeBatch();
+        }
+        
+        // TODO: Redetermine the order of all agents!
     }
     
     @Override
     public void removeState(@Nonnull Entity entity) throws SQLException {
+        final @Nonnull Site site = entity.getSite();
         try (@Nonnull Statement statement = Database.createStatement()) {
-            // TODO: Remove the entries of the given entity from the database table(s).
+            statement.executeUpdate("DELETE FROM " + site + "incoming_role WHERE entity = " + entity);
+            statement.executeUpdate("DELETE FROM " + site + "outgoing_role WHERE entity = " + entity);
+            statement.executeUpdate("DELETE FROM " + site + "client WHERE entity = " + entity);
+            statement.executeUpdate("DELETE FROM " + site + "agent_order WHERE entity = " + entity);
+            statement.executeUpdate("DELETE FROM " + site + "agent_restrictions WHERE entity = " + entity);
+            statement.executeUpdate("DELETE FROM " + site + "agent_permission WHERE entity = " + entity);
+            statement.executeUpdate("DELETE FROM " + site + "agent WHERE entity = " + entity);
         }
     }
     
