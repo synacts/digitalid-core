@@ -505,13 +505,13 @@ public final class SemanticType extends Type implements Immutable {
     
     
     /**
-     * Returns whether this semantic type can be used as an attribute.
+     * Returns whether this semantic type can be used to denote an attribute.
      * 
-     * @return whether this semantic type can be used as an attribute.
+     * @return whether this semantic type can be used to denote an attribute.
      * 
      * @require isLoaded() : "The type declaration is already loaded.";
      * 
-     * @ensure isAttributeType() == (getCachingPeriod() != null) : "If (and only if) this semantic type can be used as an attribute, the caching period is not null.";
+     * @ensure isAttributeType() == (getCachingPeriod() != null) : "If (and only if) this semantic type can be used to denote an attribute, the caching period is not null.";
      */
     @Pure
     public boolean isAttributeType() {
@@ -522,19 +522,26 @@ public final class SemanticType extends Type implements Immutable {
     }
     
     /**
-     * Checks that this semantic type can be used as an attribute and throws a {@link InvalidEncodingException} if not.
+     * Checks that this semantic type can be used to denote an attribute.
+     * 
+     * @return this semantic type.
+     * 
+     * @throws InvalidEncodingException if this is not the case.
+     * 
+     * @require isLoaded() : "The type declaration is already loaded.";
      */
     @Pure
-    public void checkIsAttributeType() throws InvalidEncodingException {
-        if (!isAttributeType()) throw new InvalidEncodingException(this + " is not an attribute type.");
+    public @Nonnull SemanticType checkIsAttributeType() throws InvalidEncodingException {
+        if (!isAttributeType()) throw new InvalidEncodingException(getAddress() + " is not an attribute type.");
+        return this;
     }
     
     /**
-     * Returns whether this semantic type can be used as an attribute for the given category.
+     * Returns whether this semantic type can be used to denote an attribute for the given category.
      * 
      * @param category the category of interest.
      * 
-     * @return whether this semantic type can be used as an attribute for the given category.
+     * @return whether this semantic type can be used to denote an attribute for the given category.
      * 
      * @require isLoaded() : "The type declaration is already loaded.";
      */
@@ -581,9 +588,9 @@ public final class SemanticType extends Type implements Immutable {
     }
     
     /**
-     * Returns whether this semantic type can be used to denote roles.
+     * Returns whether this semantic type can be used to denote a role.
      * 
-     * @return whether this semantic type can be used to denote roles.
+     * @return whether this semantic type can be used to denote a role.
      * 
      * @require isLoaded() : "The type declaration is already loaded.";
      */
@@ -593,11 +600,18 @@ public final class SemanticType extends Type implements Immutable {
     }
     
     /**
-     * Checks that this semantic type can be used to denote roles and throws a {@link InvalidEncodingException} if not.
+     * Checks that this semantic type can be used to denote a role.
+     * 
+     * @return this semantic type.
+     * 
+     * @throws InvalidEncodingException if this is not the case.
+     * 
+     * @require isLoaded() : "The type declaration is already loaded.";
      */
     @Pure
-    public void checkIsRoleType() throws InvalidEncodingException {
-        if (!isRoleType()) throw new InvalidEncodingException(this + " is not a role type.");
+    public @Nonnull SemanticType checkIsRoleType() throws InvalidEncodingException {
+        if (!isRoleType()) throw new InvalidEncodingException(getAddress() + " is not a role type.");
+        return this;
     }
     
 }

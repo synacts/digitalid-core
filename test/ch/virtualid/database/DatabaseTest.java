@@ -109,7 +109,7 @@ public class DatabaseTest {
             final @Nonnull String SQL = "INSERT" + Database.getConfiguration().IGNORE() + " INTO test_identifier (identifier, identity, value) VALUES ('a@syntacts.com', 1, 6)";
             try (@Nonnull Statement statement = Database.createStatement()) {
                 Database.onInsertIgnore(statement, "test_identifier", "identifier");
-                statement.executeUpdate(SQL);
+                Assert.assertEquals(0, statement.executeUpdate(SQL));
                 Database.onInsertNotIgnore(statement, "test_identifier");
                 
                 final @Nonnull ResultSet resultSet = statement.executeQuery("SELECT value FROM test_identifier WHERE identifier = 'a@syntacts.com'");
@@ -226,9 +226,10 @@ public class DatabaseTest {
             final @Nonnull String SQL = "INSERT INTO test_batch (a, b) VALUES (?, ?)";
             try (@Nonnull PreparedStatement preparedStatement = Database.prepareInsertStatement(SQL)) {
                 preparedStatement.setLong(1, 3l);
-                for (int i = 0; i < 10000; i++) {
+                // MySQL and SQLite have the same bad performance when batched as with direct updates.
+                for (int i = 0; i < 1000; i++) {
                     preparedStatement.setLong(2, i);
-                    // preparedStatement.executeUpdate();
+//                    preparedStatement.executeUpdate();
                     preparedStatement.addBatch();
                 }
                 preparedStatement.executeBatch();

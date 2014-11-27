@@ -98,7 +98,7 @@ public final class Passwords implements BothModule {
     public void importModule(@Nonnull Host host, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         assert block.getType().isBasedOn(getModuleFormat()) : "The block is based on the format of this module.";
         
-        final @Nonnull String SQL = Database.getConfiguration().REPLACE() + " INTO " + host + "password (entity, password) VALUES (?, ?)";
+        final @Nonnull String SQL = "INSERT INTO " + host + "password (entity, password) VALUES (?, ?)";
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareInsertStatement(SQL)) {
             final @Nonnull ReadonlyList<Block> entries = new ListWrapper(block).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
@@ -177,20 +177,22 @@ public final class Passwords implements BothModule {
     public static void set(@Nonnull Entity entity, @Nonnull String value) throws SQLException {
         assert Password.isValid(value) : "The value is valid.";
         
-        final @Nonnull String SQL = "INSERT" + Database.getConfiguration().IGNORE()+ " INTO " + entity.getSite() + "password (entity, password) VALUES (?, ?)";
+        final @Nonnull String SQL = "INSERT" + Database.getConfiguration().IGNORE() + " INTO " + entity.getSite() + "password (entity, password) VALUES (?, ?)";
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
-            preparedStatement.setLong(1, entity.getNumber());
+            entity.set(preparedStatement, 1);
             preparedStatement.setString(2, value);
             preparedStatement.executeUpdate();
         }
     }
     
     /**
-     * Replaces the value of the given password or throws an {@link SQLException} if the passed value is not the old value.
+     * Replaces the value of the given password.
      * 
      * @param password the password whose value is to be replaced.
      * @param oldValue the old value to be replaced with the new value.
      * @param newValue the new value with which the old value is replaced.
+     * 
+     * @throws SQLException if the passed value is not the old value.
      * 
      * @require Password.isValid(oldValue) : "The old value is valid.";
      * @require Password.isValid(newValue) : "The new value is valid.";
@@ -203,7 +205,7 @@ public final class Passwords implements BothModule {
         final @Nonnull String SQL = "UPDATE " + entity.getSite() + "password SET password = ? WHERE entity = ? AND password = ?";
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
             preparedStatement.setString(1, newValue);
-            preparedStatement.setLong(2, entity.getNumber());
+            entity.set(preparedStatement, 2);
             preparedStatement.setString(3, oldValue);
             if (preparedStatement.executeUpdate() == 0) throw new SQLException("The password of " + entity.getIdentity().getAddress() + " could not be replaced.");
         }

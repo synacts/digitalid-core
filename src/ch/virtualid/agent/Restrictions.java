@@ -481,4 +481,14 @@ public final class Restrictions implements Immutable, Blockable, SQLizable {
         return client + ", " + role + ", " + writing + ", " + context + ", " + contact;
     }
     
+    @Pure
+    public @Nonnull String toUpdateValues() {
+        return "client = " + client + ", role = " + role + ", writing = " + writing + ", context = " + context + ", contact = " + contact;
+    }
+    
+    @Pure
+    public @Nonnull String toUpdateCondition() {
+        return "client = " + client + " AND role = " + role + " AND writing = " + writing + " AND context " + (context == null ? "IS NULL" : "= " + context) + " AND contact " + (contact == null ? "IS NULL" : "= " + contact);
+    }
+    
 }

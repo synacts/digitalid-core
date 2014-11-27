@@ -5,6 +5,7 @@ import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Image;
 import ch.virtualid.client.Client;
 import ch.virtualid.client.Commitment;
+import ch.virtualid.client.Synchronizer;
 import ch.virtualid.concept.Aspect;
 import ch.virtualid.concept.Instance;
 import ch.virtualid.concept.Observer;
@@ -13,6 +14,7 @@ import ch.virtualid.entity.Entity;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
+import ch.virtualid.module.both.Agents;
 import ch.virtualid.util.ConcurrentHashMap;
 import ch.virtualid.util.ConcurrentMap;
 import java.sql.ResultSet;
@@ -21,7 +23,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * This class models a client that acts as an agent on behalf of a virtual identity.
+ * This class models a client agent that acts on behalf of an {@link Identity identity}.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
@@ -81,22 +83,19 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
      * @return the commitment of this client agent.
      */
     public @Nonnull Commitment getCommitment() throws SQLException {
-        if (commitment == null) {
-            throw new SQLException();
-//            commitment = Agents.getCommitment(this);
-        }
+        if (commitment == null) commitment = Agents.getCommitment(this);
         return commitment;
     }
     
     /**
-     * Sets the commitment of this client agent.
+     * Sets the commitment of this client agent to the given commitment.
      * 
      * @param newCommitment the new commitment of this client agent.
      */
     public void setCommitment(@Nonnull Commitment newCommitment) throws SQLException {
         final @Nonnull Commitment oldCommitment = getCommitment();
         if (!newCommitment.equals(oldCommitment)) {
-//            Synchronizer.execute(new ClientAgentCommitmentReplace(this, oldCommitment, newCommitment));
+            Synchronizer.execute(new ClientAgentCommitmentReplace(this, oldCommitment, newCommitment));
         }
     }
     
@@ -108,7 +107,7 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
      */
     @OnlyForActions
     public void replaceCommitment(@Nonnull Commitment oldCommitment, @Nonnull Commitment newCommitment) throws SQLException {
-//        Agents.replaceCommitment(this, oldCommitment, newCommitment);
+        Agents.replaceCommitment(this, oldCommitment, newCommitment);
         commitment = newCommitment;
         notify(COMMITMENT);
     }
@@ -120,10 +119,7 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
      * @return the name of this client agent.
      */
     public @Nonnull String getName() throws SQLException {
-        if (name == null) {
-            throw new SQLException();
-//            name = Agents.getName(this);
-        }
+        if (name == null) name = Agents.getName(this);
         return name;
     }
     
@@ -139,7 +135,7 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
         
         final @Nonnull String oldName = getName();
         if (!newName.equals(oldName)) {
-//            Synchronizer.execute(new ClientAgentNameReplace(this, oldName, newName));
+            Synchronizer.execute(new ClientAgentNameReplace(this, oldName, newName));
         }
     }
     
@@ -157,7 +153,7 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
         assert oldName.length() <= Client.NAME_LENGTH : "The old name has at most the indicated length.";
         assert newName.length() <= Client.NAME_LENGTH : "The new name has at most the indicated length.";
         
-//        Agents.replaceName(this, oldName, newName);
+        Agents.replaceName(this, oldName, newName);
         name = newName;
         notify(NAME);
     }
@@ -169,10 +165,7 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
      * @return the icon of this client agent.
      */
     public @Nonnull Image getIcon() throws SQLException {
-        if (icon == null) {
-            throw new SQLException();
-//            icon = Agents.getIcon(this);
-        }
+        if (icon == null) icon = Agents.getIcon(this);
         return icon;
     }
     
@@ -188,7 +181,7 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
         
         final @Nonnull Image oldIcon = getIcon();
         if (!newIcon.equals(oldIcon)) {
-//            Synchronizer.execute(new ClientAgentIconReplace(this, oldIcon, newIcon));
+            Synchronizer.execute(new ClientAgentIconReplace(this, oldIcon, newIcon));
         }
     }
     
@@ -206,12 +199,13 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
         assert oldIcon.isSquare(Client.ICON_SIZE) : "The old icon has the specified size.";
         assert newIcon.isSquare(Client.ICON_SIZE) : "The new icon has the specified size.";
         
-//        Agents.replaceIcon(this, oldIcon, newIcon);
+        Agents.replaceIcon(this, oldIcon, newIcon);
         icon = newIcon;
         notify(ICON);
     }
     
     
+    @Pure
     @Override
     public boolean isClient() {
         return true;
