@@ -673,7 +673,7 @@ public final class Agents implements BothModule {
             Database.onInsertNotIgnore(statement, site + "incoming_role");
         }
         
-        // TODO: Redetermine the order of all agents!
+        redetermineOrder(entity, null);
     }
     
     @Override
@@ -859,44 +859,32 @@ public final class Agents implements BothModule {
     }
     
     /**
+     * Redetermines which agents are stronger and weaker than the given agent or, if that one is null, all agents at the given entity.
+     * Please note that it is intentionally ignored whether agents have been removed. Make sure to check this at some other places!
+     * 
+     * @param entity the entity whose order of agents is to be redetermined.
+     * @param agent the agent whose order is to be redetermined or null.
+     */
+    private static void redetermineOrder(@Nonnull Entity entity, @Nullable Agent agent) throws SQLException {
+        final @Nonnull Site site = entity.getSite();
+        try (@Nonnull Statement statement = Database.createStatement()) {
+            statement.executeUpdate("DELETE FROM " + site + "agent_order WHERE entity = " + entity + (agent != null ? " AND (stronger = " + agent + " OR weaker = " + agent + ")": ""));
+            statement.executeUpdate("INSERT INTO " + site + "agent_order (entity, stronger, weaker) SELECT " + entity + ", rs.agent, rw.agent FROM " + site + "agent_restrictions AS rs, " + site + "agent_restrictions AS rw WHERE rs.entity = " + entity + " AND rw.entity = " + entity + (agent != null ? " AND (rs.agent = " + agent + " OR rw.agent = " + agent + ")": "")
+                    + " AND (NOT rw.client OR rs.client) AND (NOT rw.role OR rs.role) AND (NOT rw.writing OR rs.writing)"
+                    + " AND (rw.context IS NULL OR rs.context IS NOT NULL AND EXISTS (SELECT * FROM " + site + "context_subcontext AS cx WHERE cx.entity = " + entity + " AND cx.context = rs.context AND cx.subcontext = rw.context))"
+                    + " AND (rw.contact IS NULL OR rs.context IS NOT NULL AND EXISTS (SELECT * FROM " + site + "context_subcontext AS cx, " + site + "context_contact AS cc WHERE cx.entity = " + entity + " AND cx.context = rs.context AND cc.entity = " + entity + " AND cc.context = cx.subcontext AND cc.contact = rw.contact) OR rs.contact IS NOT NULL AND rw.contact = rs.contact)"
+                    + " AND (rw.client OR rs.writing AND rs.context IS NOT NULL AND EXISTS (SELECT * FROM " + site + "agent_permission AS ps, " + site + "context_subcontext AS cx, " + site + "outgoing_role AS or WHERE ps.entity = " + entity + " AND ps.agent = rs.agent AND cx.entity = " + entity + " AND cx.context = rs.context AND or.entity = " + entity + " AND or.agent = rw.agent AND (ps.type = or.relation OR ps.type = " + AgentPermissions.GENERAL +") AND ps.writing AND cx.subcontext = or.context))"
+                    + " AND NOT EXISTS (SELECT * FROM " + site + "agent_permission AS pw LEFT JOIN " + site + "agent_permission AS ps ON pw.entity = " + entity + " AND ps.entity = " + entity + " AND ps.agent = rs.agent AND pw.agent = rw.agent AND (ps.type = pw.type OR ps.type = " + AgentPermissions.GENERAL + ") AND (NOT pw.writing OR ps.writing) WHERE ps.agent IS NULL)");
+        }
+    }
+    
+    /**
      * Redetermines which agents are stronger and weaker than the given agent.
      * 
      * @param agent the agent whose order is to be redetermined.
      */
-    public static void redetermineOrder(@Nonnull Agent agent) throws SQLException {
-        final @Nonnull Entity entity = agent.getEntity();
-        final @Nonnull Site site = entity.getSite();
-        try (@Nonnull Statement statement = Database.createStatement()) {
-            statement.executeUpdate("DELETE FROM " + site + "agent_order WHERE entity = " + entity + " AND stronger = " + agent + " OR weaker = " + agent);
-            final @Nonnull Restrictions restrictions = agent.getRestrictions();
-            
-            // Determine the weaker agents.
-            if (!agent.isRemoved()) {
-                statement.executeUpdate("INSERT INTO " + site + "agent_order (entity, stronger, weaker) SELECT " + entity + ", " + agent + ", a.agent FROM " + site + "agent AS a, " + site + "agent_restrictions AS r WHERE a.entity = " + entity
-                        + " AND (NOT a.client OR " + agent.isClient() + ") AND a.entity = r.entity AND a.agent = r.agent"
-                        + " AND (NOT r.role OR " + restrictions.isRole() + ")"
-                        + " AND (NOT r.writing OR " + restrictions.isWriting() + ")"
-                            + "(restrictions.context & " + restrictions.getContext().getMask() + " = " + restrictions.getContext() + ") AND "
-                        + " AND (restrictions.client" + (restrictions.isWriting() ? ""
-                            + " OR EXISTS (SELECT * FROM outgoing_role JOIN authorization_permission as permission ON outgoing_role.relation = permission.type OR permission.type = " + SemanticType.CLIENT_GENERAL_PERMISSION
-                                + " WHERE outgoing_role.agent = authorization.agent AND outgoing_role.context & " + restrictions.getContext().getMask() + " = " + restrictions.getContext()
-                                + " AND permission.agent = " + agent + " AND NOT permission.preference AND permission.writing)" : "")
-                        + ") AND NOT EXISTS (SELECT * FROM authorization_permission AS weaker LEFT JOIN authorization_permission AS stronger ON stronger.agent = " + agent + " AND NOT stronger.preference AND (weaker.type = stronger.type OR stronger.type = " + SemanticType.CLIENT_GENERAL_PERMISSION + ") AND (NOT weaker.writing OR stronger.writing) WHERE weaker.agent = authorization.agent AND NOT weaker.preference AND stronger.agent IS NULL)");
-            }
-            
-            // Determine the stronger agents.
-            statement.executeUpdate("INSERT INTO agent_order (stronger, weaker) SELECT authorization.agent, " + agent + " FROM authorization JOIN authorization_restrictions AS restrictions USING (agent) WHERE authorization.identity = " + agent.getIdentity()
-                    + " AND ("
-                        + "(NOT " + agent.isClient() + " OR restrictions.client)" + (restrictions == null ? "" : " AND "
-                        + "(restrictions.context IN (" + restrictions.getContext().getSupercontextsAsString() + ")) AND "
-                        + "(NOT " + restrictions.isWriting() + " OR restrictions.writing) AND "
-                        + "(" + restrictions.getHistory() + " >= restrictions.history) AND "
-                        + "(NOT " + restrictions.isRole() + " OR restrictions.role)")
-                     + ") AND (restrictions.client OR EXISTS (SELECT * FROM outgoing_role WHERE outgoing_role.agent = authorization.agent))" 
-                    + (agent instanceof OutgoingRole ? " AND (restrictions.writing AND restrictions.context IN (" + ((OutgoingRole) agent).getContext().getSupercontextsAsString() + ")"
-                        + " AND EXISTS (SELECT * FROM authorization_permission as permission WHERE permission.agent = authorization.agent AND NOT permission.preference AND permission.writing AND (permission.type = " + ((OutgoingRole) agent).getRelation() + " OR permission.type = " + SemanticType.CLIENT_GENERAL_PERMISSION + ")))" : "")
-                    + " AND NOT EXISTS (SELECT * FROM authorization_permission AS weaker LEFT JOIN authorization_permission AS stronger ON stronger.agent = authorization.agent AND NOT stronger.preference AND (weaker.type = stronger.type OR stronger.type = " + SemanticType.CLIENT_GENERAL_PERMISSION + ") AND (NOT weaker.writing OR stronger.writing) WHERE weaker.agent = " + agent + " AND NOT weaker.preference AND stronger.agent IS NULL)");
-        }
+    private static void redetermineOrder(@Nonnull Agent agent) throws SQLException {
+        redetermineOrder(agent.getEntity(), agent);
     }
     
     
