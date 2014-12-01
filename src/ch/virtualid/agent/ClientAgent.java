@@ -91,6 +91,8 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
      * Sets the commitment of this client agent to the given commitment.
      * 
      * @param newCommitment the new commitment of this client agent.
+     * 
+     * @require isOnClient() : "This client agent is on a client.";
      */
     public void setCommitment(@Nonnull Commitment newCommitment) throws SQLException {
         final @Nonnull Commitment oldCommitment = getCommitment();
@@ -128,6 +130,7 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
      * 
      * @param newName the new name of this client agent.
      * 
+     * @require isOnClient() : "This client agent is on a client.";
      * @require name.length() <= Client.NAME_LENGTH : "The name has at most the indicated length.";
      */
     public void setName(@Nonnull String newName) throws SQLException {
@@ -174,6 +177,7 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
      * 
      * @param newIcon the new icon of this client agent.
      * 
+     * @require isOnClient() : "This client agent is on a client.";
      * @require newIcon.isSquare(Client.ICON_SIZE) : "The new icon has the specified size.";
      */
     public void setIcon(@Nonnull Image newIcon) throws SQLException {
@@ -260,6 +264,25 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
     @Pure
     public static @Nonnull ClientAgent get(@Nonnull Entity entity, @Nonnull ResultSet resultSet, int columnIndex, boolean removed) throws SQLException {
         return get(entity, resultSet.getLong(columnIndex), removed);
+    }
+    
+    /**
+     * Resets the client agents of the given entity after having reloaded the agents module.
+     * 
+     * @param entity the entity whose client agents are to be reset.
+     */
+    public static void reset(@Nonnull Entity entity) throws SQLException {
+        if (Database.isSingleAccess()) {
+            final @Nullable ConcurrentMap<Long, ClientAgent> map = index.get(entity);
+            if (map != null) {
+                for (final @Nonnull ClientAgent clientAgent : map.values()) {
+                    clientAgent.commitment = null;
+                    clientAgent.name = null;
+                    clientAgent.icon = null;
+                    clientAgent.reset();
+                }
+            }
+        }
     }
     
 }

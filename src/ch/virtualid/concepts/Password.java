@@ -174,10 +174,12 @@ public final class Password extends Concept {
      * @param entity the entity whose password is to be reset.
      */
     public static void reset(@Nonnull Entity entity) throws SQLException {
-        final @Nullable Password password = index.get(entity);
-        if (password != null) {
-            password.value = Passwords.get(entity);
-            password.notify(RESET);
+        if (Database.isSingleAccess()) {
+            final @Nullable Password password = index.get(entity);
+            if (password != null) {
+                password.value = Passwords.get(entity);
+                password.notify(RESET);
+            }
         }
     }
     

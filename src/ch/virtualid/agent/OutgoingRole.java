@@ -10,7 +10,6 @@ import ch.virtualid.contact.Context;
 import ch.virtualid.credential.Credential;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.Entity;
-import ch.virtualid.entity.Role;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
@@ -53,6 +52,8 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
     
     /**
      * Stores the context to which this outgoing role is assigned.
+     * 
+     * @invariant context.getEntity().equals(getEntity()) : "The context belongs to the same entity.";
      */
     private @Nullable Context context;
     
@@ -76,18 +77,19 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
     }
     
     /**
-     * Creates a new outgoing role at the given role.
+     * Creates a new outgoing role with the given context.
      * 
-     * @param role the role to which the outgoing role belongs.
      * @param relation the relation between the issuing and the receiving identity.
      * @param context the context to which the outgoing role is assigned.
      * 
      * @require relation.isRoleType() : "The relation is a role type.";
+     * @require context.isOnClient() : "The context is on a client.";
      */
-    public static @Nonnull OutgoingRole create(@Nonnull Role role, @Nonnull SemanticType relation, @Nonnull Context context) {
+    public static @Nonnull OutgoingRole create(@Nonnull SemanticType relation, @Nonnull Context context) {
         assert relation.isRoleType() : "The relation is a role type.";
+        assert context.isOnClient() : "The context is on a client.";
         
-        final @Nonnull OutgoingRole outgoingRole = get(role, new SecureRandom().nextLong(), false, false);
+        final @Nonnull OutgoingRole outgoingRole = get(context.getRole(), new SecureRandom().nextLong(), false, false);
         Synchronizer.execute(new OutgoingRoleCreate(outgoingRole, relation, context));
         return outgoingRole;
     }
@@ -100,10 +102,12 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
      * @param context the context to which the outgoing role is assigned.
      * 
      * @require relation.isRoleType() : "The relation is a role type.";
+     * @require context.getEntity().equals(outgoingRole.getEntity()) : "The context belongs to the entity of the outgoing role.";
      */
     @OnlyForActions
     public static void createForActions(@Nonnull OutgoingRole outgoingRole, @Nonnull SemanticType relation, @Nonnull Context context) {
         assert relation.isRoleType() : "The relation is a role type.";
+        assert context.getEntity().equals(outgoingRole.getEntity()) : "The context belongs to the entity of the outgoing role.";
         
         Agents.create(outgoingRole, relation, context);
         outgoingRole.notify(Agent.CREATED);
@@ -128,6 +132,7 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
      * 
      * @param newRelation the new relation of this outgoing role.
      * 
+     * @require isOnClient() : "This outgoing role is on a client.";
      * @require newRelation.isRoleType() : "The new relation is a role type.";
      */
     public void setRelation(@Nonnull SemanticType newRelation) throws SQLException {
@@ -163,6 +168,8 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
      * Returns the context to which this outgoing role is assigned.
      * 
      * @return the context to which this outgoing role is assigned.
+     * 
+     * @ensure return.getEntity().equals(getEntity()) : "The context belongs to the same entity.";
      */
     @Pure
     public @Nonnull Context getContext() throws SQLException {
@@ -174,8 +181,13 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
      * Sets the context of this outgoing role.
      * 
      * @param newContext the new context of this outgoing role.
+     * 
+     * @require isOnClient() : "This outgoing role is on a client.";
+     * @require newContext.getEntity().equals(getEntity()) : "The context belongs to the same entity.";
      */
     public void setContext(@Nonnull Context newContext) throws SQLException {
+        assert newContext.getEntity().equals(getEntity()) : "The context belongs to the same entity.";
+        
         final @Nonnull Context oldContext = getContext();
         if (!newContext.equals(oldContext)) {
             Synchronizer.execute(new OutgoingRoleContextReplace(this, oldContext, newContext));
@@ -187,9 +199,15 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
      * 
      * @param oldContext the old context of this outgoing role.
      * @param newContext the new context of this outgoing role.
+     * 
+     * @require oldContext.getEntity().equals(getEntity()) : "The old context belongs to the same entity.";
+     * @require newContext.getEntity().equals(getEntity()) : "The new context belongs to the same entity.";
      */
     @OnlyForActions
     public void replaceContext(@Nonnull Context oldContext, @Nonnull Context newContext) throws SQLException {
+        assert oldContext.getEntity().equals(getEntity()) : "The old context belongs to the same entity.";
+        assert newContext.getEntity().equals(getEntity()) : "The new context belongs to the same entity.";
+        
         Agents.replaceContext(this, oldContext, newContext);
         context = newContext;
         notify(CONTEXT);
@@ -253,6 +271,24 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
     @Pure
     public static @Nonnull OutgoingRole get(@Nonnull Entity entity, @Nonnull ResultSet resultSet, int columnIndex, boolean removed, boolean restrictable) throws SQLException {
         return get(entity, resultSet.getLong(columnIndex), removed, restrictable);
+    }
+    
+    /**
+     * Resets the outgoing roles of the given entity after having reloaded the agents module.
+     * 
+     * @param entity the entity whose outgoing roles are to be reset.
+     */
+    public static void reset(@Nonnull Entity entity) throws SQLException {
+        if (Database.isSingleAccess()) {
+            final @Nullable ConcurrentMap<Long, OutgoingRole> map = index.get(entity);
+            if (map != null) {
+                for (final @Nonnull OutgoingRole outgoingRole : map.values()) {
+                    outgoingRole.relation = null;
+                    outgoingRole.context = null;
+                    outgoingRole.reset();
+                }
+            }
+        }
     }
     
     

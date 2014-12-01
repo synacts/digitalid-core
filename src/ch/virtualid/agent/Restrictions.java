@@ -353,6 +353,34 @@ public final class Restrictions implements Immutable, Blockable, SQLizable {
     
     
     /**
+     * Returns whether these restrictions match the given agent.
+     * 
+     * @param agent the agent which needs to be matched.
+     * 
+     * @return whether these restrictions match the given agent.
+     */
+    @Pure
+    public boolean match(@Nonnull Agent agent) {
+        return isClient() == agent.isClient();
+    }
+    
+    /**
+     * Checks that these restrictions match the given agent.
+     * 
+     * @param other the agent which needs to be matched.
+     * 
+     * @return these restrictions.
+     * 
+     * @throws InvalidEncodingException otherwise.
+     */
+    @Pure
+    public @Nonnull Restrictions checkMatch(@Nonnull Agent agent) throws InvalidEncodingException {
+        if (!match(agent)) throw new InvalidEncodingException("The restrictions do not match the given agent.");
+        return this;
+    }
+    
+    
+    /**
      * Returns these restrictions restricted by the given restrictions (except the context and contact, which are left unaffected).
      * 
      * @param restrictions the restrictions with which to restrict these restrictions.

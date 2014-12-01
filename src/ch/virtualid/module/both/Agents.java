@@ -80,7 +80,7 @@ public final class Agents implements BothModule {
      */
     public static void createReferenceTable(@Nonnull Site site) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "agent (entity " + Entity.FORMAT + " NOT NULL, agent " + Agent.FORMAT + " NOT NULL, client BOOLEAN NOT NULL, removed BOOLEAN NOT NULL DEFAULT TRUE, PRIMARY KEY (entity, agent), FOREIGN KEY (entity) " + site.getReference() + ")");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "agent (entity " + Entity.FORMAT + " NOT NULL, agent " + Agent.FORMAT + " NOT NULL, client BOOLEAN NOT NULL, removed BOOLEAN NOT NULL, PRIMARY KEY (entity, agent), FOREIGN KEY (entity) " + site.getReference() + ")");
         }
     }
     
@@ -674,6 +674,9 @@ public final class Agents implements BothModule {
         }
         
         redetermineOrder(entity, null);
+        
+        ClientAgent.reset(entity);
+        OutgoingRole.reset(entity);
     }
     
     @Override
@@ -773,6 +776,7 @@ public final class Agents implements BothModule {
             }
             preparedStatement.executeBatch();
         }
+        redetermineOrder(agent);
     }
     
     /**
@@ -792,6 +796,7 @@ public final class Agents implements BothModule {
             final int[] counts = preparedStatement.executeBatch();
             for (final int count : counts) if (count < 1) throw new SQLException("Could not find a particular permission.");
         }
+        redetermineOrder(agent);
     }
     
     
@@ -801,12 +806,16 @@ public final class Agents implements BothModule {
      * @param agent the agent whose restrictions are to be returned.
      * 
      * @return the restrictions of the given agent.
+     * 
+     * @ensure return.match(agent) : "The returned restrictions match the given agent.";
      */
     public static @Nonnull Restrictions getRestrictions(@Nonnull Agent agent) throws SQLException {
         final @Nonnull String SQL = "SELECT " + Restrictions.COLUMNS + " FROM " + agent.getEntity().getSite() + "agent_restrictions WHERE entity = " + agent.getEntity() + " AND agent = " + agent;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
-            if (resultSet.next()) return Restrictions.get(agent.getEntity(), resultSet, 1);
+            if (resultSet.next()) return Restrictions.get(agent.getEntity(), resultSet, 1).checkMatch(agent);
             else throw new SQLException("The given agent has no restrictions.");
+        } catch (@Nonnull InvalidEncodingException exception) {
+            throw new SQLException("Some values returned by the database are invalid.", exception);
         }
     }
     
@@ -816,7 +825,7 @@ public final class Agents implements BothModule {
      * @param agent the agent whose restrictions are to be set initially.
      * @param restrictions the restrictions to be set for the given agent.
      */
-    public static void setRestrictions(@Nonnull Agent agent, @Nonnull Restrictions restrictions) throws SQLException {
+    private static void setRestrictions(@Nonnull Agent agent, @Nonnull Restrictions restrictions) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("INSERT INTO " + agent.getEntity().getSite() + "agent_restrictions (entity, agent, " + Restrictions.COLUMNS + ") VALUES (" + agent.getEntity() + ", " + agent + ", " + restrictions + ")");
         }
@@ -829,12 +838,19 @@ public final class Agents implements BothModule {
      * @param oldRestrictions the old restrictions to be replaced with the new restrictions.
      * @param newRestrictions the new restrictions with which the old restrictions are replaced.
      * 
-     * @throws SQLException if the passed restrictions not the old restrictions.
+     * @throws SQLException if the passed restrictions are not the old restrictions.
+     * 
+     * @require oldRestrictions.match(agent) : "The old restrictions match the given agent.";
+     * @require newRestrictions.match(agent) : "The new restrictions match the given agent.";
      */
     public static void replaceRestrictions(@Nonnull Agent agent, @Nonnull Restrictions oldRestrictions, @Nonnull Restrictions newRestrictions) throws SQLException {
+        assert oldRestrictions.match(agent) : "The old restrictions match the given agent.";
+        assert newRestrictions.match(agent) : "The new restrictions match the given agent.";
+        
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("UPDATE " + agent.getEntity().getSite() + "agent_restrictions SET " + newRestrictions.toUpdateValues() + " WHERE entity = " + agent.getEntity() + " AND agent = " + agent + " AND " + oldRestrictions.toUpdateCondition());
         }
+        redetermineOrder(agent);
     }
     
     

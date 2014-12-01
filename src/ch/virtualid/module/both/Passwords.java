@@ -135,6 +135,8 @@ public final class Passwords implements BothModule {
         
         final @Nullable Block element = new TupleWrapper(block).getElement(0);
         if (element != null) set(entity, new StringWrapper(element).getString());
+        
+        Password.reset(entity);
     }
     
     @Override
@@ -157,12 +159,17 @@ public final class Passwords implements BothModule {
      * @param entity the entity whose password is to be returned.
      * 
      * @return the password of the given entity.
+     * 
+     * @ensure Password.isValid(return) : "The returned value is valid.";
      */
     public static @Nonnull String get(@Nonnull Entity entity) throws SQLException {
         final @Nonnull String SQL = "SELECT password FROM " + entity.getSite() + "password WHERE entity = " + entity;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
-            if (resultSet.next()) return resultSet.getString(1);
-            else throw new SQLException(entity.getIdentity().getAddress().toString() + " has no password.");
+            if (resultSet.next()) {
+                final @Nonnull String value = resultSet.getString(1);
+                if (!Password.isValid(value)) throw new SQLException("The stored password is not valid.");
+                return value;
+            } else throw new SQLException(entity.getIdentity().getAddress().toString() + " has no password.");
         }
     }
     

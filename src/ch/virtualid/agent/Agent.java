@@ -55,6 +55,11 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
     public static final @Nonnull Aspect DELETED = new Aspect(Agent.class, "deleted");
     
     /**
+     * Stores the aspect of the agent being reset after having reloaded the agents module.
+     */
+    public static final @Nonnull Aspect RESET = new Aspect(Agent.class, "agent reset");
+    
+    /**
      * Stores the aspect of the permissions being changed at the observed agent.
      */
     public static final @Nonnull Aspect PERMISSIONS = new Aspect(Agent.class, "permissions changed");
@@ -123,6 +128,8 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
     
     /**
      * Stores the restrictions of this agent or null if not yet loaded.
+     * 
+     * @invariant restrictions.match(this) : "The restrictions match this agent.";
      */
     protected @Nullable Restrictions restrictions;
     
@@ -154,15 +161,27 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
     
     
     /**
-     * Returns whether this agent has been removed.
+     * Returns whether this agent is removed.
      * <p>
      * <em>Important:</em> If the agent comes from a block, this information is not to be trusted!
      * 
-     * @return whether this agent has been removed.
+     * @return whether this agent is removed.
      */
     @Pure
     public final boolean isRemoved() {
         return removed;
+    }
+    
+    /**
+     * Returns whether this agent is not removed.
+     * <p>
+     * <em>Important:</em> If the agent comes from a block, this information is not to be trusted!
+     * 
+     * @return whether this agent is not removed.
+     */
+    @Pure
+    public final boolean isNotRemoved() {
+        return !removed;
     }
     
     /**
@@ -175,8 +194,13 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
     
     /**
      * Removes this agent from the database by marking it as being removed.
+     * 
+     * @require isOnClient() : "This agent is on a client.";
+     * @require isNotRemoved() : "This agent is not removed.";
      */
     public final void remove() throws SQLException {
+        assert isNotRemoved() : "This agent is not removed.";
+        
         Synchronizer.execute(new AgentRemove(this));
     }
     
@@ -192,8 +216,13 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
     
     /**
      * Unremoves this agent from the database by marking it as no longer being removed.
+     * 
+     * @require isOnClient() : "This agent is on a client.";
+     * @require isRemoved() : "This agent is removed.";
      */
     public final void unremove() throws SQLException {
+        assert isRemoved() : "This agent is removed.";
+        
         Synchronizer.execute(new AgentUnremove(this));
     }
     
@@ -226,6 +255,8 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
      * make sure to {@link #removePermissions(ch.virtualid.agent.ReadonlyAgentPermissions) remove} them first.
      * 
      * @param permissions the permissions to be added to this agent.
+     * 
+     * @require isOnClient() : "This agent is on a client.";
      */
     public final void addPermissions(@Nonnull ReadonlyAgentPermissions permissions) throws SQLException {
         if (!permissions.isEmpty()) Synchronizer.execute(new AgentPermissionsAdd(this, permissions));
@@ -251,6 +282,8 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
      * Removes the given permissions from this agent.
      * 
      * @param permissions the permissions to be removed from this agent.
+     * 
+     * @require isOnClient() : "This agent is on a client.";
      */
     public final void removePermissions(@Nonnull ReadonlyAgentPermissions permissions) throws SQLException {
         if (!permissions.isEmpty()) Synchronizer.execute(new AgentPermissionsRemove(this, permissions));
@@ -277,19 +310,26 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
      * Returns the restrictions of this agent.
      * 
      * @return the restrictions of this agent.
+     * 
+     * @ensure return.match(this) : "The restrictions match this agent.";
      */
     @Pure
     public final @Nonnull Restrictions getRestrictions() throws SQLException {
         if (restrictions == null) restrictions = Agents.getRestrictions(this);
-        return restrictions; // TODO: Check that the restrictions match the agent kind.
+        return restrictions;
     }
     
     /**
      * Sets the restrictions of this agent.
      * 
      * @param newRestrictions the new restrictions of this agent.
+     * 
+     * @require isOnClient() : "This agent is on a client.";
+     * @require newRestrictions.match(this) : "The new restrictions match this agent.";
      */
     public final void setRestrictions(@Nonnull Restrictions newRestrictions) throws SQLException {
+        assert newRestrictions.match(this) : "The new restrictions match this agent.";
+        
         final @Nonnull Restrictions oldRestrictions = getRestrictions();
         if (!newRestrictions.equals(oldRestrictions)) {
             Synchronizer.execute(new AgentRestrictionsReplace(this, oldRestrictions, newRestrictions));
@@ -301,12 +341,25 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
      * 
      * @param oldRestrictions the old restrictions of this agent.
      * @param newRestrictions the new restrictions of this agent.
+     * 
+     * @require oldRestrictions.match(this) : "The old restrictions match this agent.";
+     * @require newRestrictions.match(this) : "The new restrictions match this agent.";
      */
     @OnlyForActions
     public final void replaceRestrictions(@Nonnull Restrictions oldRestrictions, @Nonnull Restrictions newRestrictions) throws SQLException {
         Agents.replaceRestrictions(this, oldRestrictions, newRestrictions);
         restrictions = newRestrictions;
         notify(RESTRICTIONS);
+    }
+    
+    
+    /**
+     * Resets this agent after having reloaded the agents module.
+     */
+    final void reset() {
+        permissions = null;
+        restrictions = null;
+        notify(RESET);
     }
     
     
