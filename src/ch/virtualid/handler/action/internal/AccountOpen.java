@@ -94,14 +94,14 @@ public final class AccountOpen extends Action {
     /**
      * Stores the name of the client agent.
      * 
-     * @invariant name.length() <= Client.NAME_LENGTH : "The name has at most the indicated length.";
+     * @invariant Client.isValid(name) : "The name is valid.";
      */
     private final @Nonnull String name;
     
     /**
      * Stores the icon of the client agent.
      * 
-     * @invariant icon.isSquare(Client.ICON_SIZE) : "The icon has the specified size.";
+     * @invariant Client.isValid(icon) : "The icon is valid.";
      */
     private final @Nonnull Image icon;
     
@@ -159,10 +159,10 @@ public final class AccountOpen extends Action {
         this.secret = null;
         
         this.name = new StringWrapper(elements.getNotNull(2)).getString();
-        if (name.length() > Client.NAME_LENGTH) throw new InvalidEncodingException("The name must have at most the indicated length.");
+        if (!Client.isValid(name)) throw new InvalidEncodingException("The name is invalid.");
         
         this.icon = new Image(elements.getNotNull(3));
-        if (icon.isSquare(Client.ICON_SIZE)) throw new InvalidEncodingException("The icon must have the specified size.");
+        if (!Client.isValid(icon)) throw new InvalidEncodingException("The icon is invalid.");
     }
     
     @Pure

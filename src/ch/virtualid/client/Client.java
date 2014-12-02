@@ -97,20 +97,36 @@ public class Client extends Site implements Observer {
      * 
      * @return whether the given identifier is valid for clients.
      */
-    public static boolean isValid(@Nonnull String identifier) {
+    public static boolean isValidIdentifier(@Nonnull String identifier) {
         return identifier.length() <= 40 && PATTERN.matcher(identifier).matches() && !identifier.equals("general") && !(Database.getConfiguration() instanceof SQLiteConfiguration && identifier.contains("$"));
     }
     
     
     /**
-     * Stores the maximal length of the name.
+     * Returns whether the given name is valid.
+     * A valid name has at most 50 characters.
+     * 
+     * @param name the name to be checked.
+     * 
+     * @return whether the given name is valid.
      */
-    public static final int NAME_LENGTH = 50;
+    @Pure
+    public static boolean isValid(@Nonnull String name) {
+        return name.length() <= 50;
+    }
     
     /**
-     * Stores the size of the square icon.
+     * Returns whether the given icon is valid.
+     * A valid icon is a square of 256 pixels.
+     * 
+     * @param icon the icon to be checked.
+     * 
+     * @return whether the given name is valid.
      */
-    public static final int ICON_SIZE = 256;
+    @Pure
+    public static boolean isValid(@Nonnull Image icon) {
+        return icon.isSquare(256);
+    }
     
     
     @Pure
@@ -122,6 +138,8 @@ public class Client extends Site implements Observer {
     
     /**
      * Stores the identifier of this client.
+     * 
+     * @invariant isValidIdentifier(identifier) : "The identifier is valid.";
      */
     private final @Nonnull String identifier;
     
@@ -133,14 +151,14 @@ public class Client extends Site implements Observer {
     /**
      * Stores the name of this client.
      * 
-     * @invariant name.length() <= Client.NAME_LENGTH : "The name has at most the indicated length.";
+     * @invariant isValid(name) : "The name is valid.";
      */
     private final @Nonnull String name;
     
     /**
      * Stores the icon of this client.
      * 
-     * @invariant icon.isSquare(Client.ICON_SIZE) : "The icon has the specified size.";
+     * @invariant isValid(icon) : "The icon is valid.";
      */
     private final @Nonnull Image icon;
     
@@ -149,14 +167,16 @@ public class Client extends Site implements Observer {
      * 
      * @param identifier the identifier of the new client.
      * 
-     * @require Client.isValid(identifier) : "The identifier is valid.";
+     * @require isValidIdentifier(identifier) : "The identifier is valid.";
+     * @require isValid(name) : "The name is valid.";
+     * @require isValid(icon) : "The icon is valid.";
      */
     public Client(@Nonnull String identifier, @Nonnull String name, @Nonnull Image icon) throws SQLException, IOException, PacketException, ExternalException {
         super(identifier);
         
-        assert Client.isValid(identifier) : "The identifier is valid.";
-        assert name.length() <= Client.NAME_LENGTH : "The name has at most the indicated length.";
-        assert icon.isSquare(Client.ICON_SIZE) : "The icon has the specified size.";
+        assert isValidIdentifier(identifier) : "The identifier is valid.";
+        assert isValid(name) : "The name is valid.";
+        assert isValid(icon) : "The icon is valid.";
         
         this.identifier = identifier;
         this.name = name;
@@ -201,7 +221,7 @@ public class Client extends Site implements Observer {
      * 
      * @return the name of this client.
      * 
-     * @ensure return.length() <= Client.NAME_LENGTH : "The name has at most the indicated length.";
+     * @ensure isValid(return) : "The returned name is valid.";
      */
     @Pure
     public final @Nonnull String getName() {
@@ -213,7 +233,7 @@ public class Client extends Site implements Observer {
      * 
      * @return the icon of this client.
      * 
-     * @ensure return.isSquare(Client.ICON_SIZE) : "The icon has the specified size.";
+     * @ensure isValid(return) : "The returned icon is valid.";
      */
     @Pure
     public final @Nonnull Image getIcon() {

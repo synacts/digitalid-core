@@ -235,6 +235,16 @@ public class Commitment implements Immutable, Blockable, SQLizable {
     public static final @Nonnull String COLUMNS = "host, time, value";
     
     /**
+     * Stores the condition used to retrieve instances of this class from the database.
+     */
+    public static final @Nonnull String CONDITION = "host = ? AND time = ? AND value = ?";
+    
+    /**
+     * Stores the string used to update instances of this class in the database.
+     */
+    public static final @Nonnull String UPDATE = "host = ?, time = ?, value = ?";
+    
+    /**
      * Returns the foreign key constraints used by instances of this class.
      * 
      * @param site the site at which the foreign key constraint is declared.

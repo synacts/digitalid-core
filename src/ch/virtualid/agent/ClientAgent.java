@@ -54,14 +54,14 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
     /**
      * Stores the name of this client agent.
      * 
-     * @invariant name.length() <= Client.NAME_LENGTH : "The name has at most the indicated length.";
+     * @invariant Client.isValid(name) : "The name is valid.";
      */
     private @Nullable String name;
     
     /**
      * Stores the icon of this client agent.
      * 
-     * @invariant icon.isSquare(Client.ICON_SIZE) : "The icon has the specified size.";
+     * @invariant Client.isValid(icon) : "The icon is valid.";
      */
     private @Nullable Image icon;
     
@@ -119,6 +119,8 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
      * Returns the name of this client agent.
      * 
      * @return the name of this client agent.
+     * 
+     * @ensure Client.isValid(return) : "The returned name is valid.";
      */
     public @Nonnull String getName() throws SQLException {
         if (name == null) name = Agents.getName(this);
@@ -131,10 +133,10 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
      * @param newName the new name of this client agent.
      * 
      * @require isOnClient() : "This client agent is on a client.";
-     * @require name.length() <= Client.NAME_LENGTH : "The name has at most the indicated length.";
+     * @require Client.isValid(newName) : "The new name is valid.";
      */
     public void setName(@Nonnull String newName) throws SQLException {
-        assert newName.length() <= Client.NAME_LENGTH : "The new name has at most the indicated length.";
+        assert Client.isValid(newName) : "The new name is valid.";
         
         final @Nonnull String oldName = getName();
         if (!newName.equals(oldName)) {
@@ -148,14 +150,11 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
      * @param oldName the old name of this client agent.
      * @param newName the new name of this client agent.
      * 
-     * @require oldName.length() <= Client.NAME_LENGTH : "The old name has at most the indicated length.";
-     * @require newName.length() <= Client.NAME_LENGTH : "The new name has at most the indicated length.";
+     * @require Client.isValid(oldName) : "The old name is valid.";
+     * @require Client.isValid(newName) : "The new name is valid.";
      */
     @OnlyForActions
     public void replaceName(@Nonnull String oldName, @Nonnull String newName) throws SQLException {
-        assert oldName.length() <= Client.NAME_LENGTH : "The old name has at most the indicated length.";
-        assert newName.length() <= Client.NAME_LENGTH : "The new name has at most the indicated length.";
-        
         Agents.replaceName(this, oldName, newName);
         name = newName;
         notify(NAME);
@@ -166,6 +165,8 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
      * Returns the icon of this client agent.
      * 
      * @return the icon of this client agent.
+     * 
+     * @ensure Client.isValid(return) : "The returned icon is valid.";
      */
     public @Nonnull Image getIcon() throws SQLException {
         if (icon == null) icon = Agents.getIcon(this);
@@ -178,10 +179,10 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
      * @param newIcon the new icon of this client agent.
      * 
      * @require isOnClient() : "This client agent is on a client.";
-     * @require newIcon.isSquare(Client.ICON_SIZE) : "The new icon has the specified size.";
+     * @require Client.isValid(newIcon) : "The new icon is valid.";
      */
     public void setIcon(@Nonnull Image newIcon) throws SQLException {
-        assert newIcon.isSquare(Client.ICON_SIZE) : "The new icon has the specified size.";
+        assert Client.isValid(newIcon) : "The new icon is valid.";
         
         final @Nonnull Image oldIcon = getIcon();
         if (!newIcon.equals(oldIcon)) {
@@ -195,14 +196,11 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
      * @param oldIcon the old icon of this client agent.
      * @param newIcon the new icon of this client agent.
      * 
-     * @require oldIcon.isSquare(Client.ICON_SIZE) : "The old icon has the specified size.";
-     * @require newIcon.isSquare(Client.ICON_SIZE) : "The new icon has the specified size.";
+     * @require Client.isValid(oldIcon) : "The old icon is valid.";
+     * @require Client.isValid(newIcon) : "The new icon is valid.";
      */
     @OnlyForActions
     public void replaceIcon(@Nonnull Image oldIcon, @Nonnull Image newIcon) throws SQLException {
-        assert oldIcon.isSquare(Client.ICON_SIZE) : "The old icon has the specified size.";
-        assert newIcon.isSquare(Client.ICON_SIZE) : "The new icon has the specified size.";
-        
         Agents.replaceIcon(this, oldIcon, newIcon);
         icon = newIcon;
         notify(ICON);

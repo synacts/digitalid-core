@@ -11,6 +11,7 @@ import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Image;
 import ch.virtualid.client.Client;
 import ch.virtualid.client.Commitment;
+import ch.virtualid.contact.Contact;
 import ch.virtualid.contact.Context;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.Account;
@@ -93,7 +94,7 @@ public final class Agents implements BothModule {
             
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "agent_order (entity " + Entity.FORMAT + " NOT NULL, stronger " + Agent.FORMAT + " NOT NULL, weaker " + Agent.FORMAT + " NOT NULL, PRIMARY KEY (entity, stronger, weaker), FOREIGN KEY (entity, stronger) " + Agent.getReference(site) + ", FOREIGN KEY (entity, weaker) " + Agent.getReference(site) + ")");
             
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "client (entity " + Entity.FORMAT + " NOT NULL, agent " + Agent.FORMAT + " NOT NULL, " + Commitment.FORMAT + ", name VARCHAR(50) NOT NULL COLLATE " + Database.getConfiguration().BINARY() + ", icon " + Image.FORMAT + " NOT NULL, PRIMARY KEY (entity, agent), FOREIGN KEY (entity, agent) " + Agent.getReference(site) + ", " + Commitment.getForeignKeys(site) + ")");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "client_agent (entity " + Entity.FORMAT + " NOT NULL, agent " + Agent.FORMAT + " NOT NULL, " + Commitment.FORMAT + ", name VARCHAR(50) NOT NULL COLLATE " + Database.getConfiguration().BINARY() + ", icon " + Image.FORMAT + " NOT NULL, PRIMARY KEY (entity, agent), FOREIGN KEY (entity, agent) " + Agent.getReference(site) + ", " + Commitment.getForeignKeys(site) + ")");
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "outgoing_role (entity " + Entity.FORMAT + " NOT NULL, agent " + Agent.FORMAT + " NOT NULL, relation " + Mapper.FORMAT + " NOT NULL, context " + Context.FORMAT + " NOT NULL, PRIMARY KEY (entity, agent), FOREIGN KEY (entity, agent) " + Agent.getReference(site) + ", FOREIGN KEY (relation) " + site.getReference() + ", FOREIGN KEY (entity, context) " + Context.getReference(site) + ")");
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "incoming_role (entity " + Entity.FORMAT + " NOT NULL, issuer " + Mapper.FORMAT + " NOT NULL, relation " + Mapper.FORMAT + " NOT NULL, agent " + Agent.FORMAT + " NOT NULL, PRIMARY KEY (entity, issuer, relation), FOREIGN KEY (entity) " + site.getReference() + ", FOREIGN KEY (issuer) " + site.getReference() + ", FOREIGN KEY (relation) " + site.getReference() + ")");
             Mapper.addReference(site + "incoming_role", "issuer", "entity", "issuer", "relation");
@@ -367,7 +368,7 @@ public final class Agents implements BothModule {
             preparedStatement.executeBatch();
         }
         
-        try (@Nonnull PreparedStatement preparedStatement = Database.prepareInsertStatement(prefix + "client (entity, agent, " + Commitment.COLUMNS + ", name, icon) VALUES (?, ?, ?, ?, ?, ?, ?)")) {
+        try (@Nonnull PreparedStatement preparedStatement = Database.prepareInsertStatement(prefix + "client_agent (entity, agent, " + Commitment.COLUMNS + ", name, icon) VALUES (?, ?, ?, ?, ?, ?, ?)")) {
             final @Nonnull ReadonlyList<Block> entries = new ListWrapper(tables.getNotNull(4)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(5);
@@ -623,7 +624,7 @@ public final class Agents implements BothModule {
             preparedStatement.executeBatch();
         }
         
-        try (@Nonnull PreparedStatement preparedStatement = Database.prepareInsertStatement(prefix + "client (entity, agent, " + Commitment.COLUMNS + ", name, icon) VALUES (?, ?, ?, ?, ?, ?, ?)")) {
+        try (@Nonnull PreparedStatement preparedStatement = Database.prepareInsertStatement(prefix + "client_agent (entity, agent, " + Commitment.COLUMNS + ", name, icon) VALUES (?, ?, ?, ?, ?, ?, ?)")) {
             entity.set(preparedStatement, 1);
             final @Nonnull ReadonlyList<Block> entries = new ListWrapper(tables.getNotNull(4)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
@@ -685,7 +686,7 @@ public final class Agents implements BothModule {
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("DELETE FROM " + site + "incoming_role WHERE entity = " + entity);
             statement.executeUpdate("DELETE FROM " + site + "outgoing_role WHERE entity = " + entity);
-            statement.executeUpdate("DELETE FROM " + site + "client WHERE entity = " + entity);
+            statement.executeUpdate("DELETE FROM " + site + "client_agent WHERE entity = " + entity);
             statement.executeUpdate("DELETE FROM " + site + "agent_order WHERE entity = " + entity);
             statement.executeUpdate("DELETE FROM " + site + "agent_restrictions WHERE entity = " + entity);
             statement.executeUpdate("DELETE FROM " + site + "agent_permission WHERE entity = " + entity);
@@ -828,11 +829,14 @@ public final class Agents implements BothModule {
     private static void setRestrictions(@Nonnull Agent agent, @Nonnull Restrictions restrictions) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("INSERT INTO " + agent.getEntity().getSite() + "agent_restrictions (entity, agent, " + Restrictions.COLUMNS + ") VALUES (" + agent.getEntity() + ", " + agent + ", " + restrictions + ")");
+        } catch (@Nonnull SQLException exception) {
+            final @Nullable Contact contact = restrictions.getContact();
+            if (contact != null && contact.getPerson().hasBeenMerged(exception)) setRestrictions(agent, restrictions);
         }
     }
     
     /**
-     * Replaces the restrictions of the given agent to the given restrictions.
+     * Replaces the restrictions of the given agent.
      * 
      * @param agent the agent whose restrictions are to be replaced.
      * @param oldRestrictions the old restrictions to be replaced with the new restrictions.
@@ -847,8 +851,19 @@ public final class Agents implements BothModule {
         assert oldRestrictions.match(agent) : "The old restrictions match the given agent.";
         assert newRestrictions.match(agent) : "The new restrictions match the given agent.";
         
+        final int count;
         try (@Nonnull Statement statement = Database.createStatement()) {
-            statement.executeUpdate("UPDATE " + agent.getEntity().getSite() + "agent_restrictions SET " + newRestrictions.toUpdateValues() + " WHERE entity = " + agent.getEntity() + " AND agent = " + agent + " AND " + oldRestrictions.toUpdateCondition());
+            count = statement.executeUpdate("UPDATE " + agent.getEntity().getSite() + "agent_restrictions SET " + newRestrictions.toUpdateValues() + " WHERE entity = " + agent.getEntity() + " AND agent = " + agent + " AND " + oldRestrictions.toUpdateCondition());
+        } catch (@Nonnull SQLException exception) {
+            final @Nullable Contact contact = newRestrictions.getContact();
+            if (contact != null && contact.getPerson().hasBeenMerged(exception)) replaceRestrictions(agent, oldRestrictions, newRestrictions);
+            return;
+        }
+        if (count == 0) {
+            final @Nullable Contact contact = oldRestrictions.getContact();
+            final @Nonnull SQLException exception = new SQLException("The restrictions of the agent with the number " + agent + " of " + agent.getEntity().getIdentity().getAddress() + " could not be replaced.");
+            if (contact != null && contact.getPerson().hasBeenMerged(exception)) replaceRestrictions(agent, oldRestrictions, newRestrictions);
+            return;
         }
         redetermineOrder(agent);
     }
@@ -905,53 +920,173 @@ public final class Agents implements BothModule {
     
     
     /**
-     * Adds the client with the given commitment to the given identity and returns the generated agent.
+     * Adds the client agent with the given parameters to the given entity.
      * 
-     * @param identity the identity to which the client is to be added.
-     * @param commitment the commitment of the client to be added.
-     * @param name the name of the client to be added.
-     * @return the generated agent for this client.
-     * @require name.length() <= 50 : "The client name may have at most 50 characters.";
+     * @param clientAgent the client agent which is to be added.
+     * @param permissions the permissions of the client agent.
+     * @param restrictions the restrictions of the client agent.
+     * @param commitment the commitment of the client agent.
+     * @param name the name of the given client agent.
+     * @param icon the icon of the given client agent.
+     * 
+     * @require name.length() <= Client.NAME_LENGTH : "The name has at most the indicated length.";
+     * @require icon.isSquare(Client.ICON_SIZE) : "The icon has the specified size.";
      */
-    public static @Nonnull ClientAgent addClientAgent(@Nonnull NonHostIdentity identity, @Nonnull Commitment commitment, @Nonnull String name) throws SQLException {
-        assert name.length() <= 50 : "The client name may have at most 50 characters.";
+    public static void addClientAgent(@Nonnull ClientAgent clientAgent, @Nonnull ReadonlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nonnull Commitment commitment, @Nonnull String name, @Nonnull Image icon) throws SQLException {
+        assert name.length() <= Client.NAME_LENGTH : "The name has at most the indicated length.";
+        assert icon.isSquare(Client.ICON_SIZE) : "The icon has the specified size.";
         
-        long number = Database.executeInsert("INSERT INTO authorization (identity) VALUES (" + identity + ")");
-        @Nonnull String sql = "INSERT INTO client (agent, host, time, commitment, name) VALUES (?, ?, ?, ?, ?)";
-        try (@Nonnull PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            preparedStatement.setLong(1, number);
-            preparedStatement.setLong(2, commitment.getHost().getNumber());
-            preparedStatement.setLong(3, commitment.getTime());
-            preparedStatement.setBytes(4, commitment.getValue().toByteArray());
-            preparedStatement.setString(5, name);
+        addAgent(clientAgent);
+        setRestrictions(clientAgent, restrictions);
+        addPermissions(clientAgent, permissions);
+        
+        final @Nonnull Entity entity = clientAgent.getEntity();
+        final @Nonnull String SQL = "INSERT INTO " + entity.getSite() + "client_agent (entity, agent, " + Commitment.COLUMNS + ", name, icon) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
+            entity.set(preparedStatement, 1);
+            clientAgent.set(preparedStatement, 2);
+            commitment.set(preparedStatement, 3);
+            preparedStatement.setString(6, name);
+            icon.set(preparedStatement, 7);
             preparedStatement.executeUpdate();
         }
-        
-        return new ClientAgent(identity, number, commitment, name);
     }
     
     /**
-     * Returns the client with the given commitment at the given identity or null if no such client is found.
+     * Returns the client agent with the given commitment at the given entity or null if no such client agent is found.
      * 
-     * @param entity the identity whose client is to be returned.
-     * @param commitment the commitment of the client which is to be returned.
+     * @param entity the entity whose client agent is to be returned.
+     * @param commitment the commitment of the client agent to be returned.
      * 
-     * @return the client with the given commitment at the given identity or null if no such client is found.
+     * @return the client agent with the given commitment at the given entity or null if no such client agent is found.
      */
     public static @Nullable ClientAgent getClientAgent(@Nonnull Entity entity, @Nonnull Commitment commitment) throws SQLException {
-        @Nonnull String sql = "SELECT authorization.agent, client.name FROM authorization JOIN client ON authorization.agent = client.agent WHERE authorization.identity = ? AND NOT authorization.removed AND client.host = ? AND client.time = ? AND client.commitment = ?";
-        try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(sql)) {
-            preparedStatement.setLong(1, entity.getNumber());
-            preparedStatement.setLong(2, commitment.getHost().getNumber());
-            preparedStatement.setLong(3, commitment.getTime());
-            preparedStatement.setBytes(4, commitment.getValue().toByteArray());
+        final @Nonnull Site site = entity.getSite();
+        final @Nonnull String SQL = "SELECT a.agent, a.removed FROM " + site + "client_agent AS c, " + site + "agent AS a WHERE c.entity = " + entity + " AND a.entity = " + entity + " AND c.agent = a.agent AND " + Commitment.CONDITION;
+        try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
+            commitment.set(preparedStatement, 1);
             try (@Nonnull ResultSet resultSet = preparedStatement.executeQuery()) {
-                if (resultSet.next()) return new ClientAgent(entity, resultSet.getLong(1), commitment, resultSet.getString(2));
+                if (resultSet.next()) return ClientAgent.get(entity, resultSet.getLong(1), resultSet.getBoolean(2));
                 else return null;
             }
         }
-        return null;
     }
+    
+    /**
+     * Returns the commitment of the given client agent.
+     * 
+     * @param clientAgent the client agent whose commitment is to be returned.
+     */
+    public static @Nonnull Commitment getCommitment(@Nonnull ClientAgent clientAgent) throws SQLException {
+        final @Nonnull Entity entity = clientAgent.getEntity();
+        final @Nonnull String SQL = "SELECT " + Commitment.COLUMNS + " FROM " + entity.getSite() + "client_agent WHERE entity = " + entity + " AND agent = " + clientAgent;
+        try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
+            if (resultSet.next()) return Commitment.get(resultSet, 1);
+            else throw new SQLException("The given client agent has no commitment.");
+        }
+    }
+    
+    /**
+     * Replaces the commitment of the given client agent.
+     * 
+     * @param clientAgent the client agent whose commitment is to be replaced.
+     * @param oldCommitment the old commitment of the given client agent.
+     * @param newCommitment the new commitment of the given client agent.
+     */
+    public static void replaceCommitment(@Nonnull ClientAgent clientAgent, @Nonnull Commitment oldCommitment, @Nonnull Commitment newCommitment) throws SQLException {
+        final @Nonnull Entity entity = clientAgent.getEntity();
+        final @Nonnull String SQL = "UPDATE client_agent SET " + Commitment.UPDATE + " WHERE entity = " + entity + " AND agent = " + clientAgent + " AND " + Commitment.CONDITION;
+        try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
+            newCommitment.set(preparedStatement, 1);
+            oldCommitment.set(preparedStatement, 4);
+            if (preparedStatement.executeUpdate() == 0) throw new SQLException("The commitment of the client agent with the number " + clientAgent + " could not be replaced.");
+        }
+    }
+    
+    /**
+     * Returns the name of the given client agent.
+     * 
+     * @param clientAgent the client agent whose name is to be returned.
+     * 
+     * @ensure Client.isValid(return) : "The returned name is valid.";
+     */
+    public static @Nonnull String getName(@Nonnull ClientAgent clientAgent) throws SQLException {
+        final @Nonnull Entity entity = clientAgent.getEntity();
+        final @Nonnull String SQL = "SELECT name FROM " + entity.getSite() + "client_agent WHERE entity = " + entity + " AND agent = " + clientAgent;
+        try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
+            if (resultSet.next()) {
+                final @Nonnull String name = resultSet.getString(1);
+                if (!Client.isValid(name)) throw new SQLException("The name of the client agent with the number " + clientAgent + " is invalid.");
+                return name;
+            } else throw new SQLException("The given client agent has no name.");
+        }
+    }
+    
+    /**
+     * Replaces the name of the given client agent.
+     * 
+     * @param clientAgent the client agent whose name is to be replaced.
+     * @param oldName the old name of the given client agent.
+     * @param newName the new name of the given client agent.
+     * 
+     * @require Client.isValid(oldName) : "The old name is valid.";
+     * @require Client.isValid(newName) : "The new name is valid.";
+     */
+    public static void replaceName(@Nonnull ClientAgent clientAgent, @Nonnull String oldName, @Nonnull String newName) throws SQLException {
+        assert Client.isValid(oldName) : "The old name is valid.";
+        assert Client.isValid(newName) : "The new name is valid.";
+        
+        final @Nonnull Entity entity = clientAgent.getEntity();
+        final @Nonnull String SQL = "UPDATE " + entity.getSite() + "client_agent SET name = ? WHERE entity = " + entity + " AND agent = " + clientAgent + " AND name = ?";
+        try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
+            preparedStatement.setString(1, newName);
+            preparedStatement.setString(2, oldName);
+            if (preparedStatement.executeUpdate() == 0) throw new SQLException("The name of the client agent with the number " + clientAgent + " could not be replaced.");
+        }
+    }
+    
+    /**
+     * Returns the icon of the given client agent.
+     * 
+     * @param clientAgent the client agent whose icon is to be returned.
+     * 
+     * @ensure Client.isValid(return) : "The returned icon is valid.";
+     */
+    public static @Nonnull Image getIcon(@Nonnull ClientAgent clientAgent) throws SQLException {
+        final @Nonnull Entity entity = clientAgent.getEntity();
+        final @Nonnull String SQL = "SELECT icon FROM " + entity.getSite() + "client_agent WHERE entity = " + entity + " AND agent = " + clientAgent;
+        try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
+            if (resultSet.next()) {
+                final @Nonnull Image icon = Image.get(resultSet, 1);
+                if (!Client.isValid(icon)) throw new SQLException("The icon of the client agent with the number " + clientAgent + " is invalid.");
+                return icon;
+            } else throw new SQLException("The given client agent has no icon.");
+        }
+    }
+    
+    /**
+     * Replaces the icon of the given client agent.
+     * 
+     * @param clientAgent the client agent whose icon is to be replaced.
+     * @param oldIcon the old icon of the given client agent.
+     * @param newIcon the new icon of the given client agent.
+     * 
+     * @require Client.isValid(oldIcon) : "The old icon is valid.";
+     * @require Client.isValid(newIcon) : "The new icon is valid.";
+     */
+    public static void replaceIcon(@Nonnull ClientAgent clientAgent, @Nonnull Image oldIcon, @Nonnull Image newIcon) throws SQLException {
+        assert Client.isValid(oldIcon) : "The old icon is valid.";
+        assert Client.isValid(newIcon) : "The new icon is valid.";
+        
+        final @Nonnull Entity entity = clientAgent.getEntity();
+        final @Nonnull String SQL = "UPDATE " + entity.getSite() + "client_agent SET icon = ? WHERE entity = " + entity + " AND agent = " + clientAgent + " AND icon = ?";
+        try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
+            newIcon.set(preparedStatement, 1);
+            oldIcon.set(preparedStatement, 2);
+            if (preparedStatement.executeUpdate() == 0) throw new SQLException("The icon of the client agent with the number " + clientAgent + " could not be replaced.");
+        }
+    }
+    
     
     /**
      * Adds the outgoing role with the given relation, context and visibility to the given identity and returns the generated agent.
@@ -1004,6 +1139,19 @@ public final class Agents implements BothModule {
         return null;
     }
     
+     /**
+     * Sets the context of the given outgoing role to the given value.
+     * 
+     * @param outgoingRole the outgoing role whose context is to be set.
+     * @param context the context to set for the given outgoing role.
+     */
+    public static void setOutgoingRoleContext(@Nonnull OutgoingRole outgoingRole, @Nonnull Context context) throws SQLException {
+        try (@Nonnull Statement statement = connection.createStatement()) {
+            statement.executeUpdate("UPDATE outgoing_role SET context = " + context + " WHERE agent = " + outgoingRole);
+        }
+    }
+    
+   
     /**
      * Adds the incoming role with the given issuer and relation to the given identity and returns the generated authorization.
      * 
@@ -1084,54 +1232,6 @@ public final class Agents implements BothModule {
     public static void removeIncomingRole(@Nonnull IncomingRole incomingRole) throws SQLException {
         try (@Nonnull Statement statement = connection.createStatement()) {
             statement.executeUpdate("DELETE FROM authorization WHERE agent = " + incomingRole);
-        }
-    }
-    
-    
-    /**
-     * Sets the commitment of the given client agent to the given value.
-     * 
-     * @param clientAgent the client agent whose commitment is to be set.
-     * @param commitment the commitment to set for the given client agent.
-     */
-    public static void setClientCommitment(@Nonnull ClientAgent clientAgent, @Nonnull Commitment commitment) throws SQLException {
-        @Nonnull String sql = "UPDATE client SET host = ?, time = ?, commitment = ? WHERE agent = ?";
-        try (@Nonnull PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            preparedStatement.setLong(1, commitment.getHost().getNumber());
-            preparedStatement.setLong(2, commitment.getTime());
-            preparedStatement.setBytes(3, commitment.getValue().toByteArray());
-            preparedStatement.setLong(4, clientAgent.getNumber());
-            preparedStatement.executeUpdate();
-        }
-    }
-    
-    /**
-     * Sets the name of the given client agent to the given string.
-     * 
-     * @param clientAgent the client agent whose name is to be set.
-     * @param name the name to set for the given client agent.
-     * @require name.length() <= 50 : "The client name may have at most 50 characters.";
-     */
-    public static void setClientName(@Nonnull ClientAgent clientAgent, @Nonnull String name) throws SQLException {
-        assert name.length() <= 50 : "The client name may have at most 50 characters.";
-        
-        @Nonnull String sql = "UPDATE client SET name = ? WHERE agent = ?";
-        try (@Nonnull PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            preparedStatement.setString(1, name);
-            preparedStatement.setLong(2, clientAgent.getNumber());
-            preparedStatement.executeUpdate();
-        }
-    }
-    
-    /**
-     * Sets the context of the given outgoing role to the given value.
-     * 
-     * @param outgoingRole the outgoing role whose context is to be set.
-     * @param context the context to set for the given outgoing role.
-     */
-    public static void setOutgoingRoleContext(@Nonnull OutgoingRole outgoingRole, @Nonnull Context context) throws SQLException {
-        try (@Nonnull Statement statement = connection.createStatement()) {
-            statement.executeUpdate("UPDATE outgoing_role SET context = " + context + " WHERE agent = " + outgoingRole);
         }
     }
     
