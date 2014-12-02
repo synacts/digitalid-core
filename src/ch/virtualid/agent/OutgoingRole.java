@@ -105,11 +105,8 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
      * @require context.getEntity().equals(outgoingRole.getEntity()) : "The context belongs to the entity of the outgoing role.";
      */
     @OnlyForActions
-    public static void createForActions(@Nonnull OutgoingRole outgoingRole, @Nonnull SemanticType relation, @Nonnull Context context) {
-        assert relation.isRoleType() : "The relation is a role type.";
-        assert context.getEntity().equals(outgoingRole.getEntity()) : "The context belongs to the entity of the outgoing role.";
-        
-        Agents.create(outgoingRole, relation, context);
+    public static void createForActions(@Nonnull OutgoingRole outgoingRole, @Nonnull SemanticType relation, @Nonnull Context context) throws SQLException {
+        Agents.addOutgoingRole(outgoingRole, relation, context);
         outgoingRole.notify(Agent.CREATED);
     }
     
@@ -119,7 +116,7 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
      * 
      * @return the relation between the issuing and the receiving identity.
      * 
-     * @ensure relation.isRoleType() : "The relation is a role type.";
+     * @ensure return.isRoleType() : "The returned relation is a role type.";
      */
     @Pure
     public @Nonnull SemanticType getRelation() throws SQLException {
@@ -155,9 +152,6 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
      */
     @OnlyForActions
     public void replaceRelation(@Nonnull SemanticType oldRelation, @Nonnull SemanticType newRelation) throws SQLException {
-        assert oldRelation.isRoleType() : "The old relation is a role type.";
-        assert newRelation.isRoleType() : "The new relation is a role type.";
-        
         Agents.replaceRelation(this, oldRelation, newRelation);
         relation = newRelation;
         notify(RELATION);
@@ -205,9 +199,6 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
      */
     @OnlyForActions
     public void replaceContext(@Nonnull Context oldContext, @Nonnull Context newContext) throws SQLException {
-        assert oldContext.getEntity().equals(getEntity()) : "The old context belongs to the same entity.";
-        assert newContext.getEntity().equals(getEntity()) : "The new context belongs to the same entity.";
-        
         Agents.replaceContext(this, oldContext, newContext);
         context = newContext;
         notify(CONTEXT);

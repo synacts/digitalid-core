@@ -22,12 +22,10 @@ import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.query.internal.AgentsQuery;
-import ch.virtualid.identity.Category;
 import ch.virtualid.identity.Identity;
 import ch.virtualid.identity.IdentityClass;
 import ch.virtualid.identity.InternalNonHostIdentity;
 import ch.virtualid.identity.Mapper;
-import ch.virtualid.identity.NonHostIdentity;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.BothModule;
 import ch.virtualid.module.CoreService;
@@ -50,8 +48,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.HashSet;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -59,7 +56,7 @@ import javax.annotation.Nullable;
  * This class provides database access to the {@link Agent agents} of the core service.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 0.2
+ * @version 1.9
  */
 public final class Agents implements BothModule {
     
@@ -678,6 +675,8 @@ public final class Agents implements BothModule {
         
         ClientAgent.reset(entity);
         OutgoingRole.reset(entity);
+        
+        if (entity instanceof Role) resetIncomingRoles((Role) entity);
     }
     
     @Override
@@ -920,7 +919,7 @@ public final class Agents implements BothModule {
     
     
     /**
-     * Adds the client agent with the given parameters to the given entity.
+     * Adds the client agent with the given parameters to the database.
      * 
      * @param clientAgent the client agent which is to be added.
      * @param permissions the permissions of the client agent.
@@ -929,12 +928,12 @@ public final class Agents implements BothModule {
      * @param name the name of the given client agent.
      * @param icon the icon of the given client agent.
      * 
-     * @require name.length() <= Client.NAME_LENGTH : "The name has at most the indicated length.";
-     * @require icon.isSquare(Client.ICON_SIZE) : "The icon has the specified size.";
+     * @require Client.isValid(name) : "The name is valid.";
+     * @require Client.isValid(icon) : "The icon is valid.";
      */
     public static void addClientAgent(@Nonnull ClientAgent clientAgent, @Nonnull ReadonlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nonnull Commitment commitment, @Nonnull String name, @Nonnull Image icon) throws SQLException {
-        assert name.length() <= Client.NAME_LENGTH : "The name has at most the indicated length.";
-        assert icon.isSquare(Client.ICON_SIZE) : "The icon has the specified size.";
+        assert Client.isValid(name) : "The name is valid.";
+        assert Client.isValid(icon) : "The icon is valid.";
         
         addAgent(clientAgent);
         setRestrictions(clientAgent, restrictions);
@@ -1089,149 +1088,216 @@ public final class Agents implements BothModule {
     
     
     /**
-     * Adds the outgoing role with the given relation, context and visibility to the given identity and returns the generated agent.
+     * Adds the outgoing role with the given parameters to the database.
      * 
-     * @param identity the identity to which the outgoing role is to be added.
+     * @param outgoingRole the outgoing role which is to be added to the database.
      * @param relation the relation between the issuing and the receiving identity.
      * @param context the context to which the outgoing role is to be assigned.
-     * @return the generated agent for this outgoing role.
+     * 
      * @require relation.isRoleType() : "The relation is a role type.";
+     * @require context.getEntity().equals(outgoingRole.getEntity()) : "The context belongs to the entity of the outgoing role.";
      */
-    public static @Nonnull OutgoingRole addOutgoingRole(@Nonnull NonHostIdentity identity, @Nonnull SemanticType relation, @Nonnull Context context) throws SQLException {
+    public static void addOutgoingRole(@Nonnull OutgoingRole outgoingRole, @Nonnull SemanticType relation, @Nonnull Context context) throws SQLException {
         assert relation.isRoleType() : "The relation is a role type.";
+        assert context.getEntity().equals(outgoingRole.getEntity()) : "The context belongs to the entity of the outgoing role.";
         
-        try (@Nonnull Statement statement = connection.createStatement()) {
-            long number = Database.executeInsert(statement, "INSERT INTO authorization (identity) VALUES (" + identity + ")");
-            statement.executeUpdate("INSERT INTO outgoing_role (agent, relation, context) VALUES (" + number + ", " + relation + ", " + context + ")");
-            return new OutgoingRole(number, identity, relation, context);
-        } catch (@Nonnull SQLException exception) {
-            if (relation.hasBeenMerged()) return addOutgoingRole(identity, relation, context);
-            else throw exception;
+        addAgent(outgoingRole);
+        setRestrictions(outgoingRole, Restrictions.NONE);
+        
+        final @Nonnull Entity entity = outgoingRole.getEntity();
+        try (@Nonnull Statement statement = Database.createStatement()) {
+            statement.executeUpdate("INSERT INTO " + entity.getSite() + "outgoing_role (entity, agent, relation, context) VALUES (" + entity + ", " + outgoingRole + ", " + relation + ", " + context + ")");
+        }
+        
+        redetermineOrder(outgoingRole);
+        
+        if (entity instanceof Account) {
+            // TODO: Push the outgoing role to all the contacts in the given context!
         }
     }
     
     /**
-     * Returns the outgoing role with the given relation at the given identity or null if no such role is found.
+     * Returns the outgoing role with the given relation at the given entity or null if no such role is found.
      * 
-     * @param entity the identity whose outgoing role is to be returned.
+     * @param entity the entity whose outgoing role is to be returned.
      * @param relation the relation between the issuing and the receiving identity.
+     * @param restrictable whether the outgoing role can be restricted.
      * 
-     * @return the outgoing role with the given relation at the given identity or null if no such role is found.
+     * @return the outgoing role with the given relation at the given entity or null if no such role is found.
      * 
      * @require relation.isRoleType() : "The relation is a role type.";
      */
     public static @Nullable OutgoingRole getOutgoingRole(@Nonnull Entity entity, @Nonnull SemanticType relation, boolean restrictable) throws SQLException {
         assert relation.isRoleType() : "The relation is a role type.";
         
-        // TODO: Create the OutgoingRole according to the restrictable parameter.
-        
-        @Nonnull String sql = "SELECT authorization.agent, outgoing_role.context FROM authorization JOIN outgoing_role ON authorization.agent = outgoing_role.agent WHERE authorization.identity = " + entity + " AND NOT authorization.removed AND outgoing_role.relation = " + relation;
-        try (@Nonnull Statement statement = connection.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(sql)) {
-            if (resultSet.next()) {
-                return new OutgoingRole(resultSet.getLong(1), entity, relation, new Context(resultSet.getLong(2)));
-            } else {
-                if (relation.hasBeenMerged()) return getOutgoingRole(entity, relation);
-                else return null;
-            }
+        final @Nonnull Site site = entity.getSite();
+        final @Nonnull String SQL = "SELECT a.agent, a.removed FROM " + site + "outgoing_role AS o, " + site + "agent AS a WHERE o.entity = " + entity + " AND a.entity = " + entity + " AND o.agent = a.agent AND o.relation = " + relation;
+        try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
+            if (resultSet.next()) return OutgoingRole.get(entity, resultSet.getLong(1), resultSet.getBoolean(2), restrictable);
+            else return null;
+        }
+    }
+    
+    /**
+     * Returns the relation of the given outgoing role.
+     * 
+     * @param outgoingRole the outgoing role whose relation is to be returned.
+     * 
+     * @ensure return.isRoleType() : "The returned relation is a role type.";
+     */
+    public static @Nonnull SemanticType getRelation(@Nonnull OutgoingRole outgoingRole) throws SQLException {
+        final @Nonnull Entity entity = outgoingRole.getEntity();
+        final @Nonnull String SQL = "SELECT relation FROM " + entity.getSite() + "outgoing_role WHERE entity = " + entity + " AND agent = " + outgoingRole;
+        try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
+            if (resultSet.next()) return IdentityClass.getNotNull(resultSet, 1).toSemanticType().checkIsRoleType();
+            else throw new SQLException("The given outgoing role has no relation.");
         } catch (@Nonnull InvalidEncodingException exception) {
             throw new SQLException("Some values returned by the database are invalid.", exception);
         }
-        return null;
     }
     
-     /**
-     * Sets the context of the given outgoing role to the given value.
+    /**
+     * Replaces the relation of the given outgoing role.
      * 
-     * @param outgoingRole the outgoing role whose context is to be set.
-     * @param context the context to set for the given outgoing role.
+     * @param outgoingRole the outgoing role whose relation is to be replaced.
+     * @param oldRelation the old relation of the given outgoing role.
+     * @param newRelation the new relation of the given outgoing role.
+     * 
+     * @require oldRelation.isRoleType() : "The old relation is a role type.";
+     * @require newRelation.isRoleType() : "The new relation is a role type.";
      */
-    public static void setOutgoingRoleContext(@Nonnull OutgoingRole outgoingRole, @Nonnull Context context) throws SQLException {
-        try (@Nonnull Statement statement = connection.createStatement()) {
-            statement.executeUpdate("UPDATE outgoing_role SET context = " + context + " WHERE agent = " + outgoingRole);
+    public static void replaceRelation(@Nonnull OutgoingRole outgoingRole, @Nonnull SemanticType oldRelation, @Nonnull SemanticType newRelation) throws SQLException {
+        assert oldRelation.isRoleType() : "The old relation is a role type.";
+        assert newRelation.isRoleType() : "The new relation is a role type.";
+        
+        final @Nonnull Entity entity = outgoingRole.getEntity();
+        try (@Nonnull Statement statement = Database.createStatement()) {
+            final @Nonnull String SQL = "UPDATE " + entity.getSite() + "outgoing_role SET relation = " + newRelation + " WHERE entity = " + entity + " AND agent = " + outgoingRole + " AND relation = " + oldRelation;
+            if (statement.executeUpdate(SQL) == 0) throw new SQLException("The relation of the client agent with the number " + outgoingRole + " could not be replaced.");
+        }
+        redetermineOrder(outgoingRole);
+    }
+    
+    /**
+     * Returns the context of the given outgoing role.
+     * 
+     * @param outgoingRole the outgoing role whose context is to be returned.
+     * 
+     * @ensure return.getEntity().equals(outgoingRole.getEntity()) : "The context belongs to the same entity as the outgoing role.";
+     */
+    public static @Nonnull Context getContext(@Nonnull OutgoingRole outgoingRole) throws SQLException {
+        final @Nonnull Entity entity = outgoingRole.getEntity();
+        final @Nonnull String SQL = "SELECT context FROM " + entity.getSite() + "outgoing_role WHERE entity = " + entity + " AND agent = " + outgoingRole;
+        try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
+            if (resultSet.next()) return Context.getNotNull(entity, resultSet, 1);
+            else throw new SQLException("The given outgoing role has no context.");
         }
     }
     
-   
     /**
-     * Adds the incoming role with the given issuer and relation to the given identity and returns the generated authorization.
+     * Replaces the context of the given outgoing role.
      * 
-     * @param identity the identity to which the incoming role is to be added.
+     * @param outgoingRole the outgoing role whose context is to be replaced.
+     * @param oldContext the old context of the given outgoing role.
+     * @param newContext the new context of the given outgoing role.
+     * 
+     * @require oldContext.isRoleType() : "The old context is a role type.";
+     * @require newContext.isRoleType() : "The new context is a role type.";
+     */
+    public static void replaceContext(@Nonnull OutgoingRole outgoingRole, @Nonnull Context oldContext, @Nonnull Context newContext) throws SQLException {
+        assert oldContext.getEntity().equals(outgoingRole.getEntity()) : "The old context belongs to the same entity as the outgoing role.";
+        assert newContext.getEntity().equals(outgoingRole.getEntity()) : "The new context belongs to the same entity as the outgoing role.";
+        
+        final @Nonnull Entity entity = outgoingRole.getEntity();
+        try (@Nonnull Statement statement = Database.createStatement()) {
+            final @Nonnull String SQL = "UPDATE " + entity.getSite() + "outgoing_role SET context = " + newContext + " WHERE entity = " + entity + " AND agent = " + outgoingRole + " AND context = " + oldContext;
+            if (statement.executeUpdate(SQL) == 0) throw new SQLException("The context of the client agent with the number " + outgoingRole + " could not be replaced.");
+        }
+        redetermineOrder(outgoingRole);
+    }
+    
+    
+    /**
+     * Adds the incoming role with the given issuer, relation and agent number to the given entity.
+     * 
+     * @param entity the entity to which the incoming role is to be added.
      * @param issuer the issuer of the incoming role.
      * @param relation the relation of the incoming role.
-     * @return the generated authorization for this incoming role.
+     * @param agentNumber the agent number of the incoming role.
+     * 
      * @require relation.isRoleType() : "The relation is a role type.";
      */
-    public static @Nonnull IncomingRole addIncomingRole(@Nonnull NonHostIdentity identity, @Nonnull NonHostIdentity issuer, @Nonnull SemanticType relation) throws SQLException {
+    public static void addIncomingRole(@Nonnull Entity entity, @Nonnull InternalNonHostIdentity issuer, @Nonnull SemanticType relation, long agentNumber) throws SQLException {
         assert relation.isRoleType() : "The relation is a role type.";
         
-        try (@Nonnull Statement statement = connection.createStatement()) {
-            long number = Database.executeInsert(statement, "INSERT INTO authorization (identity) VALUES (" + identity + ")");
-            statement.executeUpdate("INSERT INTO incoming_role (agent, issuer, relation) VALUES (" + number + ", " + issuer + ", " + relation + ")");
-            return new IncomingRole(number, identity, issuer, relation);
+        try (@Nonnull Statement statement = Database.createStatement()) {
+            statement.executeUpdate("INSERT INTO " + entity.getSite() + "incoming_role (entity, issuer, relation, agent) VALUES (" + entity + ", " + issuer + ", " + relation + ", " + agentNumber + ")");
         } catch (@Nonnull SQLException exception) {
-            if (issuer.hasBeenMerged() || relation.hasBeenMerged()) return addIncomingRole(identity, issuer, relation);
-            else throw exception;
+            if (issuer.hasBeenMerged(exception)) addIncomingRole(entity, issuer, relation, agentNumber);
+            return;
         }
+        
+        if (entity instanceof Role) ((Role) entity).addRole(issuer, relation, agentNumber);
     }
     
     /**
-     * Returns the incoming role with the given issuer and relation at the given identity or null if no such role is found.
+     * Removes the incoming role with the given issuer and relation at the given entity.
      * 
-     * @param identity the identity whose incoming role is to be returned.
-     * @param issuer the issuer of the incoming role which is to be returned.
-     * @param relation the relation of the incoming role which is to be returned.
-     * @return the incoming role with the given issuer and relation at the given identity or null if no such role is found.
+     * @param entity the entity from which the incoming role is to be removed.
+     * @param issuer the issuer of the incoming role which is to be removed.
+     * @param relation the relation of the incoming role which is to be removed.
+     * 
      * @require relation.isRoleType() : "The relation is a role type.";
      */
-    public static @Nullable IncomingRole getIncomingRole(@Nonnull NonHostIdentity identity, @Nonnull NonHostIdentity issuer, @Nonnull SemanticType relation) throws SQLException {
+    public static void removeIncomingRole(@Nonnull Entity entity, @Nonnull InternalNonHostIdentity issuer, @Nonnull SemanticType relation) throws SQLException {
         assert relation.isRoleType() : "The relation is a role type.";
         
-        @Nonnull String sql = "SELECT authorization.agent FROM authorization JOIN incoming_role ON authorization.agent = incoming_role.agent WHERE authorization.identity = " + identity + " AND NOT authorization.removed AND incoming_role.issuer = " + issuer + " AND incoming_role.relation = " + relation;
-        try (@Nonnull Statement statement = connection.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(sql)) {
-            if (resultSet.next()) {
-                return new IncomingRole(resultSet.getLong(1), identity, issuer, relation);
-            } else {
-                if (issuer.hasBeenMerged() || relation.hasBeenMerged()) return getIncomingRole(identity, issuer, relation);
-                else return null;
+        try (@Nonnull Statement statement = Database.createStatement()) {
+            final @Nonnull String SQL = "DELETE FROM " + entity.getSite() + "incoming_role WHERE entity = " + entity + " AND issuer = " + issuer + " AND relation = " + relation;
+            if (statement.executeUpdate(SQL) == 0) {
+                final @Nonnull SQLException exception = new SQLException("The incoming role with the issuer " + issuer.getAddress() + " and relation " + relation.getAddress() + " could not be removed.");
+                if (issuer.hasBeenMerged(exception)) removeIncomingRole(entity, issuer, relation);
+                return;
+            }
+        }
+        
+        if (entity instanceof Role) {
+            for (final @Nonnull Role role : ((Role) entity).getRoles()) {
+                if (role.getIssuer().equals(issuer) && relation.equals(role.getRelation())) role.remove();
             }
         }
     }
     
     /**
-     * Returns the incoming roles of the given identity restricted by the given agent.
+     * Resets the incoming roles of the given role.
      * 
-     * @param identity the identity whose incoming roles are to be returned.
-     * @param agent the agent with which to restrict the incoming roles.
-     * @return the incoming roles of the given identity restricted by the given agent.
-     * @require agent.getRestrictions() != null : "The restrictions of the agent is not null.";
+     * @param role the role whose incoming roles are to be reset.
      */
-    public static @Nonnull Set<IncomingRole> getIncomingRoles(@Nonnull NonHostIdentity identity, @Nonnull Agent agent) throws SQLException {
-        assert agent.getRestrictions() != null : "The restrictions of the agent is not null.";
-        
-        @Nonnull String sql = "SELECT authorization.agent, issuer.identity, issuer.category, issuer.address, relation.identity, relation.category, relation.address FROM authorization JOIN incoming_role ON authorization.agent = incoming_role.agent JOIN general_identity AS issuer ON incoming_role.issuer = general_identity.identity JOIN general_identity AS relation ON incoming_role.relation = general_identity.identity WHERE authorization.identity = " + identity;
-        try (@Nonnull Statement statement = connection.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(sql)) {
-            @Nonnull Set<IncomingRole> incomingRoles = new LinkedHashSet<IncomingRole>();
+    public static void resetIncomingRoles(@Nonnull Role role) throws SQLException {
+        final @Nonnull ReadonlyList<Role> roles = role.getRoles();
+        final @Nonnull HashSet<Role> foundRoles = new HashSet<Role>();
+        final @Nonnull String SQL = "SELECT issuer, relation, agent FROM " + role.getSite() + "incoming_role WHERE entity = " + role;
+        try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
             while (resultSet.next()) {
-                @Nonnull NonHostIdentity issuer = Identity.create(Category.get(resultSet.getByte(3)), resultSet.getLong(2), new NonHostIdentifier(resultSet.getString(4))).toNonHostIdentity();
-                @Nonnull SemanticType relation = Identity.create(Category.get(resultSet.getByte(6)), resultSet.getLong(5), new NonHostIdentifier(resultSet.getString(7))).toSemanticType();
-                @Nonnull IncomingRole incomingRole = new IncomingRole(resultSet.getLong(1), identity, issuer, relation);
-                incomingRole.restrictTo(agent);
-                incomingRoles.add(incomingRole);
+                final @Nonnull InternalNonHostIdentity issuer = IdentityClass.getNotNull(resultSet, 1).toInternalNonHostIdentity();
+                final @Nonnull SemanticType relation = IdentityClass.getNotNull(resultSet, 2).toSemanticType().checkIsRoleType();
+                final long agentNumber = resultSet.getLong(3);
+                
+                boolean found = false;
+                for (final @Nonnull Role subrole : roles) {
+                    if (subrole.getIssuer().equals(issuer) && relation.equals(subrole.getRelation())) {
+                        foundRoles.add(role);
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) role.addRole(issuer, relation, agentNumber);
             }
-            return incomingRoles;
         } catch (@Nonnull InvalidEncodingException exception) {
             throw new SQLException("Some values returned by the database are invalid.", exception);
         }
-    }
-    
-    /**
-     * Removes the given incoming role.
-     * 
-     * @param incomingRole the incoming role to be removed.
-     */
-    public static void removeIncomingRole(@Nonnull IncomingRole incomingRole) throws SQLException {
-        try (@Nonnull Statement statement = connection.createStatement()) {
-            statement.executeUpdate("DELETE FROM authorization WHERE agent = " + incomingRole);
+        for (final @Nonnull Role subrole : roles) {
+            if (!foundRoles.contains(subrole)) subrole.remove();
         }
     }
     
