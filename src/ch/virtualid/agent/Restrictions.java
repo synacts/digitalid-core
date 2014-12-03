@@ -361,7 +361,7 @@ public final class Restrictions implements Immutable, Blockable, SQLizable {
      */
     @Pure
     public boolean match(@Nonnull Agent agent) {
-        return isClient() == agent.isClient();
+        return isClient() == agent.isClient() && (context == null || context.getEntity().equals(agent.getEntity())) && (contact == null || contact.getEntity().equals(agent.getEntity()));
     }
     
     /**

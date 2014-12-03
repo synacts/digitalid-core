@@ -77,7 +77,7 @@ public final class PasswordValueReplace extends CoreServiceInternalAction {
      * @param oldValue the old value of the password.
      * @param newValue the new value of the password.
      * 
-     * @require Password.isOnClient() : "The password is on a client.";
+     * @require password.isOnClient() : "The password is on a client.";
      * @require Password.isValid(oldValue) : "The old value is valid.";
      * @require Password.isValid(newValue) : "The new value is valid.";
      */

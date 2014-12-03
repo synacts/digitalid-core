@@ -1,6 +1,8 @@
 package ch.virtualid.handler.action.internal;
 
 import ch.virtualid.agent.Agent;
+import ch.virtualid.agent.AgentPermissions;
+import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.exceptions.external.ExternalException;
@@ -10,24 +12,26 @@ import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.BothModule;
 import ch.virtualid.module.both.Agents;
+import ch.virtualid.util.ReadonlyArray;
 import ch.xdf.Block;
 import ch.xdf.SignatureWrapper;
+import ch.xdf.TupleWrapper;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 
 /**
- * Removes the given {@link Agent agent}.
+ * Adds {@AgentPermissions permissions} to an {@link Agent agent}.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public final class AgentRemove extends CoreServiceInternalAction {
+public final class AgentPermissionsAdd extends CoreServiceInternalAction {
     
     /**
-     * Stores the semantic type {@code remove.agent@virtualid.ch}.
+     * Stores the semantic type {@code add.permissions.agent@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("remove.agent@virtualid.ch").load(Agent.TYPE);
+    public static final @Nonnull SemanticType TYPE = SemanticType.create("add.permissions.agent@virtualid.ch").load(TupleWrapper.TYPE, Agent.TYPE, AgentPermissions.TYPE);
     
     @Pure
     @Override
@@ -37,21 +41,28 @@ public final class AgentRemove extends CoreServiceInternalAction {
     
     
     /**
-     * Stores the agent to be removed.
+     * Stores the agent of this action.
      */
     private final @Nonnull Agent agent;
     
     /**
-     * Creates an internal action to remove the given agent.
+     * Stores the permissions which are to be added.
+     */
+    private final @Nonnull ReadonlyAgentPermissions permissions;
+    
+    /**
+     * Creates an internal action to add the given permissions to the given agent.
      * 
-     * @param agent the agent which is to be removed.
+     * @param agent the agent whose permissions are to be extended.
+     * @param permissions the permissions to be added to the given agent.
      * 
      * @require agent.isOnClient() : "The agent is on a client.";
      */
-    public AgentRemove(@Nonnull Agent agent) {
+    public AgentPermissionsAdd(@Nonnull Agent agent, @Nonnull ReadonlyAgentPermissions permissions) {
         super(agent.getRole());
         
         this.agent = agent;
+        this.permissions = permissions;
     }
     
     /**
@@ -67,26 +78,34 @@ public final class AgentRemove extends CoreServiceInternalAction {
      * 
      * @ensure hasSignature() : "This handler has a signature.";
      */
-    private AgentRemove(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
+    private AgentPermissionsAdd(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
-        this.agent = Agent.get(entity, block);
+        final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(2);
+        this.agent = Agent.get(entity, elements.getNotNull(0));
+        this.permissions = new AgentPermissions(elements.getNotNull(1));
     }
     
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        return agent.toBlock().setType(TYPE);
+        return new TupleWrapper(TYPE, agent, permissions).toBlock();
     }
     
     @Pure
     @Override
     public @Nonnull String toString() {
-        return "Removes the agent with the number " + agent + ".";
+        return "Adds the permissions " + permissions + " to the agent with the number " + agent + ".";
     }
     
+    
+    @Pure
+    @Override
+    public @Nonnull ReadonlyAgentPermissions getRequiredPermissions() {
+        return permissions;
+    }
     
     @Pure
     @Override
@@ -103,16 +122,16 @@ public final class AgentRemove extends CoreServiceInternalAction {
     
     @Override
     protected void executeOnBoth() throws SQLException {
-        agent.removeForActions();
+        agent.addPermissionsForActions(permissions);
     }
     
     
     @Pure
     @Override
-    public @Nonnull AgentUnremove getReverse() {
+    public @Nonnull AgentPermissionsRemove getReverse() {
         assert isOnClient() : "This method is called on a client.";
         
-        return new AgentUnremove(agent);
+        return new AgentPermissionsRemove(agent, permissions);
     }
     
     
@@ -133,7 +152,7 @@ public final class AgentRemove extends CoreServiceInternalAction {
         @Pure
         @Override
         protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException  {
-            return new AgentRemove(entity, signature, recipient, block);
+            return new AgentPermissionsAdd(entity, signature, recipient, block);
         }
         
     }

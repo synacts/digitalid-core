@@ -889,6 +889,26 @@ public final class Agents implements BothModule {
     }
     
     /**
+     * Returns whether the first agent is stronger than the second agent.
+     * 
+     * @param agent1 the first agent.
+     * @param agent2 the second agent.
+     * 
+     * @return whether the first agent is stronger than the second agent.
+     * 
+     * @require agent1.getEntity().equals(agent2.getEntity()) : "Both agents belong to the same entity.";
+     */
+    public static boolean isStronger(@Nonnull Agent agent1, @Nonnull Agent agent2) throws SQLException {
+        assert agent1.getEntity().equals(agent2.getEntity()) : "Both agents belong to the same entity.";
+        
+        final @Nonnull Entity entity = agent1.getEntity();
+        final @Nonnull String SQL = "SELECT EXISTS (SELECT * FROM " + entity.getSite() + "agent_order WHERE entity = " + entity + " AND stronger = " + agent1 + " AND weaker = " + agent2 + ")";
+        try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
+            return resultSet.next() && resultSet.getBoolean(1);
+        }
+    }
+    
+    /**
      * Redetermines which agents are stronger and weaker than the given agent or, if that one is null, all agents at the given entity.
      * Please note that it is intentionally ignored whether agents have been removed. Make sure to check this at some other places!
      * 

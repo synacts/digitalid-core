@@ -17,17 +17,17 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 
 /**
- * Removes the given {@link Agent agent}.
+ * Unremoves the given {@link Agent agent}.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public final class AgentRemove extends CoreServiceInternalAction {
+public final class AgentUnremove extends CoreServiceInternalAction {
     
     /**
-     * Stores the semantic type {@code remove.agent@virtualid.ch}.
+     * Stores the semantic type {@code unremove.agent@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("remove.agent@virtualid.ch").load(Agent.TYPE);
+    public static final @Nonnull SemanticType TYPE = SemanticType.create("unremove.agent@virtualid.ch").load(Agent.TYPE);
     
     @Pure
     @Override
@@ -37,18 +37,18 @@ public final class AgentRemove extends CoreServiceInternalAction {
     
     
     /**
-     * Stores the agent to be removed.
+     * Stores the agent to be unremoved.
      */
     private final @Nonnull Agent agent;
     
     /**
-     * Creates an internal action to remove the given agent.
+     * Creates an internal action to unremove the given agent.
      * 
-     * @param agent the agent which is to be removed.
+     * @param agent the agent which is to be unremoved.
      * 
      * @require agent.isOnClient() : "The agent is on a client.";
      */
-    public AgentRemove(@Nonnull Agent agent) {
+    public AgentUnremove(@Nonnull Agent agent) {
         super(agent.getRole());
         
         this.agent = agent;
@@ -67,7 +67,7 @@ public final class AgentRemove extends CoreServiceInternalAction {
      * 
      * @ensure hasSignature() : "This handler has a signature.";
      */
-    private AgentRemove(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
+    private AgentUnremove(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
@@ -84,7 +84,7 @@ public final class AgentRemove extends CoreServiceInternalAction {
     @Pure
     @Override
     public @Nonnull String toString() {
-        return "Removes the agent with the number " + agent + ".";
+        return "Unremoves the agent with the number " + agent + ".";
     }
     
     
@@ -103,16 +103,16 @@ public final class AgentRemove extends CoreServiceInternalAction {
     
     @Override
     protected void executeOnBoth() throws SQLException {
-        agent.removeForActions();
+        agent.unremoveForActions();
     }
     
     
     @Pure
     @Override
-    public @Nonnull AgentUnremove getReverse() {
+    public @Nonnull AgentRemove getReverse() {
         assert isOnClient() : "This method is called on a client.";
         
-        return new AgentUnremove(agent);
+        return new AgentRemove(agent);
     }
     
     
@@ -133,7 +133,7 @@ public final class AgentRemove extends CoreServiceInternalAction {
         @Pure
         @Override
         protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException  {
-            return new AgentRemove(entity, signature, recipient, block);
+            return new AgentUnremove(entity, signature, recipient, block);
         }
         
     }

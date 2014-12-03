@@ -12,6 +12,11 @@ import ch.virtualid.entity.Site;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
+import ch.virtualid.handler.action.internal.AgentPermissionsAdd;
+import ch.virtualid.handler.action.internal.AgentPermissionsRemove;
+import ch.virtualid.handler.action.internal.AgentRemove;
+import ch.virtualid.handler.action.internal.AgentRestrictionsReplace;
+import ch.virtualid.handler.action.internal.AgentUnremove;
 import ch.virtualid.identity.Identity;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
@@ -328,8 +333,6 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
      * @require newRestrictions.match(this) : "The new restrictions match this agent.";
      */
     public final void setRestrictions(@Nonnull Restrictions newRestrictions) throws SQLException {
-        assert newRestrictions.match(this) : "The new restrictions match this agent.";
-        
         final @Nonnull Restrictions oldRestrictions = getRestrictions();
         if (!newRestrictions.equals(oldRestrictions)) {
             Synchronizer.execute(new AgentRestrictionsReplace(this, oldRestrictions, newRestrictions));
@@ -381,10 +384,12 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
      * @param agent the agent that needs to be covered.
      * 
      * @return whether this agent covers the given agent.
+     * 
+     * @require getEntity().equals(agent.getEntity()) : "The given agent belongs to the same entity.";
      */
     @Pure
     public final boolean covers(@Nonnull Agent agent) throws SQLException {
-        return !isRemoved() && getPermissions().cover(agent.getPermissions()) && getRestrictions().cover(agent.getRestrictions());
+        return !isRemoved() && Agents.isStronger(this, agent);
     }
     
     /**
