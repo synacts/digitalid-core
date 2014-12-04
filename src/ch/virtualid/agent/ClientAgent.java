@@ -3,7 +3,6 @@ package ch.virtualid.agent;
 import ch.virtualid.annotations.OnlyForActions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Image;
-import ch.virtualid.client.Client;
 import ch.virtualid.client.Commitment;
 import ch.virtualid.client.Synchronizer;
 import ch.virtualid.concept.Aspect;
@@ -11,6 +10,9 @@ import ch.virtualid.concept.Instance;
 import ch.virtualid.concept.Observer;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.Entity;
+import ch.virtualid.handler.action.internal.ClientAgentCommitmentReplace;
+import ch.virtualid.handler.action.internal.ClientAgentIconReplace;
+import ch.virtualid.handler.action.internal.ClientAgentNameReplace;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
@@ -136,8 +138,6 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
      * @require Client.isValid(newName) : "The new name is valid.";
      */
     public void setName(@Nonnull String newName) throws SQLException {
-        assert Client.isValid(newName) : "The new name is valid.";
-        
         final @Nonnull String oldName = getName();
         if (!newName.equals(oldName)) {
             Synchronizer.execute(new ClientAgentNameReplace(this, oldName, newName));
@@ -182,8 +182,6 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
      * @require Client.isValid(newIcon) : "The new icon is valid.";
      */
     public void setIcon(@Nonnull Image newIcon) throws SQLException {
-        assert Client.isValid(newIcon) : "The new icon is valid.";
-        
         final @Nonnull Image oldIcon = getIcon();
         if (!newIcon.equals(oldIcon)) {
             Synchronizer.execute(new ClientAgentIconReplace(this, oldIcon, newIcon));
@@ -211,6 +209,25 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
     @Override
     public boolean isClient() {
         return true;
+    }
+    
+    
+    /**
+     * Creates this client agent in the database.
+     * 
+     * @param permissions the permissions of the client agent.
+     * @param restrictions the restrictions of the client agent.
+     * @param commitment the commitment of the client agent.
+     * @param name the name of the given client agent.
+     * @param icon the icon of the given client agent.
+     * 
+     * @require Client.isValid(name) : "The name is valid.";
+     * @require Client.isValid(icon) : "The icon is valid.";
+     */
+    @OnlyForActions
+    public void createForActions(@Nonnull ReadonlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nonnull Commitment commitment, @Nonnull String name, @Nonnull Image icon) throws SQLException {
+        Agents.addClientAgent(this, permissions, restrictions, commitment, name, icon);
+        notify(Agent.CREATED);
     }
     
     

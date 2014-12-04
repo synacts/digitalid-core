@@ -220,7 +220,7 @@ public class Commitment implements Immutable, Blockable, SQLizable {
     @Pure
     @Override
     public @Nonnull String toString() {
-        return "Commitment [Host: " + host.getAddress() + ", Time: " + time.asDate() + "]";
+        return "[Host: " + host.getAddress() + ", Time: " + time.asDate() + "]";
     }
     
     

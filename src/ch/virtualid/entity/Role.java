@@ -8,15 +8,21 @@ import ch.virtualid.concept.Aspect;
 import ch.virtualid.concept.Instance;
 import ch.virtualid.concept.Observer;
 import ch.virtualid.database.Database;
+import ch.virtualid.exceptions.external.ExternalException;
+import ch.virtualid.exceptions.packet.PacketException;
+import ch.virtualid.handler.query.internal.StateQuery;
+import ch.virtualid.handler.reply.query.StateReply;
 import ch.virtualid.identity.InternalNonHostIdentity;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
+import ch.virtualid.module.CoreService;
 import ch.virtualid.module.client.Roles;
 import ch.virtualid.util.ConcurrentHashMap;
 import ch.virtualid.util.ConcurrentMap;
 import ch.virtualid.util.FreezableList;
 import ch.virtualid.util.ReadonlyList;
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
@@ -155,6 +161,9 @@ public final class Role extends Entity implements Immutable, SQLizable, Observer
      * Returns the agent of this role.
      * 
      * @return the agent of this role.
+     * 
+     * @ensure isNative() == return instanceof ClientAgent : "In case this role is native, the returned agent is a client agent.";
+     * @ensure isNotNative() == return instanceof OutgoingRole : "In case this role is not native, the returned agent is an outgoing role.";
      */
     @Pure
     public @Nonnull Agent getAgent() {
@@ -198,6 +207,26 @@ public final class Role extends Entity implements Immutable, SQLizable, Observer
     @Override
     public long getNumber() {
         return number;
+    }
+    
+    
+    /**
+     * Returns whether this role is accredited.
+     * If it is, the current state is retrieved.
+     * 
+     * @return whether this role is accredited.
+     */
+    public boolean isAccredited() throws SQLException {
+        try { // TODO: Probably replace this with a method by the synchronizer which also adjusts the audit time.
+            final @Nonnull StateReply reply = new StateQuery(this).sendNotNull();
+            CoreService.SERVICE.removeState(this);
+            CoreService.SERVICE.addState(this, reply.toBlock());
+            Database.commit();
+            return true;
+        } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
+            Database.rollback();
+            return false;
+        }
     }
     
     

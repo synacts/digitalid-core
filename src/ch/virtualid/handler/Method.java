@@ -300,7 +300,7 @@ public abstract class Method extends Handler {
                 return new CredentialsRequest(methods, recipient, subject, null, credentials, certificates, false, null).send();
             }
         } else {
-            if (entity == null) throw new PacketException(PacketError.INTERNAL, "The entity may only be null in case of external queries.");
+            assert entity != null : "The entity can only be null in case of external queries.";
             
             if (reference instanceof ExternalAction) {
                 if (entity instanceof Account) {
@@ -323,7 +323,7 @@ public abstract class Method extends Handler {
                 }
                 
                 final @Nonnull ReadonlyAgentPermissions permissions = getRequiredPermissions(methods);
-                final @Nonnull Audit audit = new Audit(Time.MIN); // Synchronizer.getAudit(service);
+                final @Nonnull Audit audit = new Audit(Time.MIN); // TODO: Synchronizer.getAudit(service);
                 final boolean lodged = reference instanceof InternalAction;
                 
                 if (service.equals(CoreService.SERVICE)) {

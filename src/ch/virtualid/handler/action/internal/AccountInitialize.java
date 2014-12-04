@@ -175,10 +175,7 @@ public final class AccountInitialize extends CoreServiceInternalAction {
             throw new SQLException("A problem occurred while adding a state.", exception);
         }
         
-        if (states.isEmpty()) {
-            Passwords.set(entity, "");
-            // TODO: Create the root context.
-        }
+        if (states.isEmpty()) Passwords.set(entity, "");
     }
     
     

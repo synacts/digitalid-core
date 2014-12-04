@@ -72,9 +72,9 @@ public interface Identifier extends Immutable, Blockable, SQLizable {
     
     
     /**
-     * Returns this identifier as an {@link NonHostIdentifier}.
+     * Returns this identifier as a {@link NonHostIdentifier}.
      * 
-     * @return this identifier as an {@link NonHostIdentifier}.
+     * @return this identifier as a {@link NonHostIdentifier}.
      * 
      * @throws InvalidEncodingException if this identifier is not an instance of {@link NonHostIdentifier}.
      */

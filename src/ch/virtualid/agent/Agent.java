@@ -246,6 +246,8 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
      * Returns the permissions of this agent.
      * 
      * @return the permissions of this agent.
+     * 
+     * @ensure return.isNotFrozen() : "The permissions are not frozen.";
      */
     @Pure
     public final @Nonnull ReadonlyAgentPermissions getPermissions() throws SQLException {
@@ -262,6 +264,7 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
      * @param permissions the permissions to be added to this agent.
      * 
      * @require isOnClient() : "This agent is on a client.";
+     * @require permissions.isFrozen() : "The permissions are frozen.";
      */
     public final void addPermissions(@Nonnull ReadonlyAgentPermissions permissions) throws SQLException {
         if (!permissions.isEmpty()) Synchronizer.execute(new AgentPermissionsAdd(this, permissions));
@@ -272,12 +275,10 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
      * 
      * @param newPermissions the permissions to be added to this agent.
      * 
-     * @require newPermissions.isNotEmpty() : "The new permissions are not empty.";
+     * @require newPermissions.isFrozen() : "The new permissions are frozen.";
      */
     @OnlyForActions
     public final void addPermissionsForActions(@Nonnull ReadonlyAgentPermissions newPermissions) throws SQLException {
-        assert newPermissions.isNotEmpty() : "The new permissions are not empty.";
-        
         Agents.addPermissions(this, newPermissions);
         if (permissions != null) permissions.putAll(newPermissions);
         notify(PERMISSIONS);
@@ -289,6 +290,7 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
      * @param permissions the permissions to be removed from this agent.
      * 
      * @require isOnClient() : "This agent is on a client.";
+     * @require permissions.isFrozen() : "The permissions are frozen.";
      */
     public final void removePermissions(@Nonnull ReadonlyAgentPermissions permissions) throws SQLException {
         if (!permissions.isEmpty()) Synchronizer.execute(new AgentPermissionsRemove(this, permissions));
@@ -299,14 +301,12 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
      * 
      * @param oldPermissions the permissions to be removed from this agent.
      * 
-     * @require oldPermissions.isNotEmpty() : "The old permissions are not empty.";
+     * @require oldPermissions.isFrozen() : "The old permissions are frozen.";
      */
     @OnlyForActions
     public final void removePermissionsForActions(@Nonnull ReadonlyAgentPermissions oldPermissions) throws SQLException {
-        assert oldPermissions.isNotEmpty() : "The old permissions are not empty.";
-        
         Agents.removePermissions(this, oldPermissions);
-        if (permissions != null) permissions.removeAll(permissions);
+        if (permissions != null) permissions.removeAll(oldPermissions);
         notify(PERMISSIONS);
     }
     
@@ -504,6 +504,33 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
     @Override
     public final void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
         preparedStatement.setLong(parameterIndex, getNumber());
+    }
+    
+    
+    /**
+     * Returns this agent as a {@link ClientAgent}.
+     * 
+     * @return this agent as a {@link ClientAgent}.
+     * 
+     * @throws InvalidEncodingException if this agent is not an instance of {@link ClientAgent}.
+     */
+    @Pure
+    public final @Nonnull ClientAgent toClientAgent() throws InvalidEncodingException {
+        if (this instanceof ClientAgent) return (ClientAgent) this;
+        throw new InvalidEncodingException("This agent cannot be cast to ClientAgent.");
+    }
+    
+    /**
+     * Returns this agent as an {@link OutgoingRole}.
+     * 
+     * @return this agent as an {@link OutgoingRole}.
+     * 
+     * @throws InvalidEncodingException if this agent is not an instance of {@link OutgoingRole}.
+     */
+    @Pure
+    public final @Nonnull OutgoingRole toOutgoingRole() throws InvalidEncodingException {
+        if (this instanceof OutgoingRole) return (OutgoingRole) this;
+        throw new InvalidEncodingException("This agent cannot be cast to OutgoingRole.");
     }
     
     

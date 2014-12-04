@@ -2,6 +2,7 @@ package ch.virtualid.handler.action.internal;
 
 import ch.virtualid.agent.Agent;
 import ch.virtualid.agent.AgentPermissions;
+import ch.virtualid.agent.ClientAgent;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
@@ -238,13 +239,12 @@ public final class AccountOpen extends Action {
         final @Nonnull InternalNonHostIdentity identity = (InternalNonHostIdentity) Mapper.mapIdentity(subject, category, null);
         final @Nonnull Account account = Account.get(getAccount().getHost(), identity);
         
-        // TODO: Authorize the client agent here with maximal permissions!
-        final @Nonnull ReadonlyAgentPermissions permissions = new AgentPermissions(AgentPermissions.GENERAL, true).freeze();
-        // Agents.accreditClient(identity, commitment, name, permissions);
+        final @Nonnull Context context = Context.getRoot(account);
+        context.createForActions();
         
-        // TODO: Does the root context need to be created first?
-        final @Nonnull Restrictions restrictions = new Restrictions(true, true, true, Context.get(account, Context.ROOT));
-        // Agents.authorizeClient(identity, commitment, restrictions, permissions);
+        final @Nonnull ClientAgent clientAgent = ClientAgent.get(account, agentNumber, false);
+        final @Nonnull Restrictions restrictions = new Restrictions(true, true, true, context);
+        clientAgent.createForActions(AgentPermissions.GENERAL_WRITE, restrictions, commitment, name, icon);
         
         account.opened();
         return null;

@@ -1,5 +1,6 @@
 package ch.virtualid.server;
 
+import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Image;
 import ch.virtualid.auxiliary.Time;
@@ -130,7 +131,8 @@ public final class Host extends Site {
         // TODO: Load which services this host runs and initialize them afterwards.
         CoreService.SERVICE.createTables(this);
         
-        this.client = new Client("_" + identifier.asHostName(), identifier.getString(), new Image("/ch/virtualid/resources/Host.png"));
+        // TODO: What are the right permissions to pass here?
+        this.client = new Client("_" + identifier.asHostName(), identifier.getString(), new Image("/ch/virtualid/resources/Host.png"), AgentPermissions.GENERAL_WRITE);
         
         Server.addHost(this);
     }

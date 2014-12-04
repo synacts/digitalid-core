@@ -765,8 +765,12 @@ public final class Agents implements BothModule {
      * 
      * @param agent the agent to which the permissions are to be added.
      * @param permissions the permissions to be added to the given agent.
+     * 
+     * @require permissions.isFrozen() : "The permissions are frozen.";
      */
     public static void addPermissions(@Nonnull Agent agent, @Nonnull ReadonlyAgentPermissions permissions) throws SQLException {
+        assert permissions.isFrozen() : "The permissions are frozen.";
+        
         final @Nonnull String SQL = "INSERT INTO " + agent.getEntity().getSite() + "agent_permission (entity, agent, type, writing) VALUES (" + agent.getEntity() + ", " + agent + ", ?, ?)";
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
             for (final @Nonnull SemanticType type : permissions.keySet()) {
@@ -784,8 +788,12 @@ public final class Agents implements BothModule {
      * 
      * @param agent the agent from which the permissions are to be removed.
      * @param permissions the permissions to be removed from the given agent.
+     * 
+     * @require permissions.isFrozen() : "The permissions are frozen.";
      */
     public static void removePermissions(@Nonnull Agent agent, @Nonnull ReadonlyAgentPermissions permissions) throws SQLException {
+        assert permissions.isFrozen() : "The permissions are frozen.";
+        
         final @Nonnull String SQL = "DELETE FROM " + agent.getEntity().getSite() + "agent_permission WHERE entity = " + agent.getEntity() + " AND agent = " + agent + " AND type = ? AND writing = ?";
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
             for (final @Nonnull SemanticType type : permissions.keySet()) {
@@ -948,10 +956,12 @@ public final class Agents implements BothModule {
      * @param name the name of the given client agent.
      * @param icon the icon of the given client agent.
      * 
+     * @require permissions.isFrozen() : "The permissions are frozen.";
      * @require Client.isValid(name) : "The name is valid.";
      * @require Client.isValid(icon) : "The icon is valid.";
      */
     public static void addClientAgent(@Nonnull ClientAgent clientAgent, @Nonnull ReadonlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nonnull Commitment commitment, @Nonnull String name, @Nonnull Image icon) throws SQLException {
+        assert permissions.isFrozen() : "The permissions are frozen.";
         assert Client.isValid(name) : "The name is valid.";
         assert Client.isValid(icon) : "The icon is valid.";
         

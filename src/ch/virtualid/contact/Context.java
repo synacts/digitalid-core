@@ -148,14 +148,12 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
     }
     
     /**
-     * Creates the given context in the database.
-     * 
-     * @param context the context to create in the database.
+     * Creates this context in the database.
      */
     @OnlyForActions
-    public static void createForActions(@Nonnull Context context) {
-//        Contexts.create(context);
-        context.notify(CREATED);
+    public void createForActions() {
+//        Contexts.create(this);
+        notify(CREATED);
     }
     
     @Pure
@@ -525,6 +523,18 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
         } else {
             return new Context(entity, number);
         }
+    }
+    
+    /**
+     * Returns the root context that might not exist in the database.
+     * 
+     * @param entity the entity whose root context is to be returned.
+     * 
+     * @return the root context that might not exist in the database.
+     */
+    @Pure
+    public static @Nonnull Context getRoot(@Nonnull Entity entity) {
+        return get(entity, ROOT);
     }
     
     /**

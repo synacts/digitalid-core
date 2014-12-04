@@ -1,5 +1,6 @@
 package ch.virtualid.client;
 
+import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Image;
 import ch.virtualid.auxiliary.Time;
@@ -20,6 +21,7 @@ import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.action.internal.AccountClose;
 import ch.virtualid.handler.action.internal.AccountInitialize;
 import ch.virtualid.handler.action.internal.AccountOpen;
+import ch.virtualid.handler.action.internal.ClientAgentAccredit;
 import ch.virtualid.handler.query.internal.StateQuery;
 import ch.virtualid.handler.reply.query.StateReply;
 import ch.virtualid.identifier.ExternalIdentifier;
@@ -163,24 +165,37 @@ public class Client extends Site implements Observer {
     private final @Nonnull Image icon;
     
     /**
+     * Stores the preferred permissions of this client.
+     * 
+     * @invariant preferredPermissions.isFrozen() : "The preferred permissions are frozen.";
+     */
+    private final @Nonnull ReadonlyAgentPermissions preferredPermissions;
+    
+    /**
      * Creates a new client with the given identifier.
      * 
      * @param identifier the identifier of the new client.
+     * @param name the name of the new client.
+     * @param icon the icon of the new client.
+     * @param preferredPermissions the preferred permissions of the new client.
      * 
      * @require isValidIdentifier(identifier) : "The identifier is valid.";
      * @require isValid(name) : "The name is valid.";
      * @require isValid(icon) : "The icon is valid.";
+     * @require preferredPermissions.isFrozen() : "The preferred permissions are frozen.";
      */
-    public Client(@Nonnull String identifier, @Nonnull String name, @Nonnull Image icon) throws SQLException, IOException, PacketException, ExternalException {
+    public Client(@Nonnull String identifier, @Nonnull String name, @Nonnull Image icon, @Nonnull ReadonlyAgentPermissions preferredPermissions) throws SQLException, IOException, PacketException, ExternalException {
         super(identifier);
         
         assert isValidIdentifier(identifier) : "The identifier is valid.";
         assert isValid(name) : "The name is valid.";
         assert isValid(icon) : "The icon is valid.";
+        assert preferredPermissions.isFrozen() : "The preferred permissions are frozen.";
         
         this.identifier = identifier;
         this.name = name;
         this.icon = icon;
+        this.preferredPermissions = preferredPermissions;
         
         final @Nonnull File file = new File(Directory.CLIENTS.getPath() +  Directory.SEPARATOR + identifier + ".client.xdf");
         if (file.exists()) {
@@ -200,6 +215,8 @@ public class Client extends Site implements Observer {
      * Returns the identifier of this client.
      * 
      * @return the identifier of this client.
+     * 
+     * @ensure isValidIdentifier(identifier) : "The identifier is valid.";
      */
     @Pure
     public @Nonnull String getIdentifier() {
@@ -238,6 +255,18 @@ public class Client extends Site implements Observer {
     @Pure
     public final @Nonnull Image getIcon() {
         return icon;
+    }
+    
+    /**
+     * Returns the preferred permissions of this client.
+     * 
+     * @return the preferred permissions of this client.
+     * 
+     * @ensure return.isFrozen() : "The preferred permissions are frozen.";
+     */
+    @Pure
+    public final @Nonnull ReadonlyAgentPermissions getPreferredPermissions() {
+        return preferredPermissions;
     }
     
     
@@ -279,7 +308,7 @@ public class Client extends Site implements Observer {
      * @ensure for (Role role : return) role.isNative() : "Every role in the returned list is native.";
      */
     @Pure
-    public @Nonnull ReadonlyList<Role> getRoles() throws SQLException {
+    public final @Nonnull ReadonlyList<Role> getRoles() throws SQLException {
         if (roles == null) roles = Roles.getRoles(this);
         return roles;
     }
@@ -296,7 +325,7 @@ public class Client extends Site implements Observer {
         final @Nonnull Role role = Role.add(this, issuer, null, null, agentNumber);
         role.observe(this, Role.DELETED);
         
-        if (roles != null && !roles.contains(role)) roles.add(role);
+        if (roles != null) roles.add(role);
         notify(ROLE_ADDED);
         return role;
     }
@@ -304,6 +333,35 @@ public class Client extends Site implements Observer {
     @Override
     public void notify(@Nonnull Aspect aspect, @Nonnull Instance instance) {
         if (aspect.equals(Role.DELETED) && roles != null) roles.remove(instance);
+    }
+    
+    
+    /**
+     * Accredits this client at the given identity.
+     * Loop on {@link Role#isAccredited()} afterwards.
+     * 
+     * @param identity the identity at which this client is to be accredited.
+     * @param password the password for accreditation at the given identity.
+     * 
+     * @return the role which was accredited at the given identity.
+     * 
+     * @require Password.isValid(password) : "The password is valid.";
+     */
+    public final @Nonnull Role accredit(@Nonnull InternalNonHostIdentity identity, @Nonnull String password) throws SQLException, IOException, PacketException, ExternalException {
+        final @Nonnull Role role = addRole(identity, new SecureRandom().nextLong());
+        Database.commit();
+        try {
+            final @Nonnull ClientAgentAccredit action = new ClientAgentAccredit(role, password);
+            action.executeOnClient();
+            action.send();
+            Database.commit();
+        } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
+            Database.rollback();
+            role.remove();
+            Database.commit();
+            throw exception;
+        }
+        return role;
     }
     
     
@@ -323,7 +381,7 @@ public class Client extends Site implements Observer {
      * @require category.isInternalNonHostIdentity() : "The category denotes an internal non-host identity.";
      * @require !category.isType() || roles.size() <= 1 && identifiers.isEmpty() : "If the category denotes a type, at most one role and no identifier may be given.";
      */
-    public @Nonnull Role openAccount(@Nonnull InternalNonHostIdentifier subject, @Nonnull Category category, @Nonnull ReadonlyList<Role> roles, @Nonnull ReadonlyList<ExternalIdentifier> identifiers) throws SQLException, IOException, PacketException, ExternalException {
+    public final @Nonnull Role openAccount(@Nonnull InternalNonHostIdentifier subject, @Nonnull Category category, @Nonnull ReadonlyList<Role> roles, @Nonnull ReadonlyList<ExternalIdentifier> identifiers) throws SQLException, IOException, PacketException, ExternalException {
         assert subject.doesNotExist() : "The subject does not exist.";
         assert category.isInternalNonHostIdentity() : "The category denotes an internal non-host identity.";
         assert !category.isType() || roles.size() <= 1 && identifiers.isEmpty() : "If the category denotes a type, at most one role and no identifier may be given.";
@@ -370,7 +428,7 @@ public class Client extends Site implements Observer {
      * @require subject.doesNotExist() : "The subject does not exist.";
      * @require category.isInternalNonHostIdentity() : "The category denotes an internal non-host identity.";
      */
-    public @Nonnull Role openAccount(@Nonnull InternalNonHostIdentifier identifier, @Nonnull Category category) throws SQLException, IOException, PacketException, ExternalException {
+    public final @Nonnull Role openAccount(@Nonnull InternalNonHostIdentifier identifier, @Nonnull Category category) throws SQLException, IOException, PacketException, ExternalException {
         return openAccount(identifier, category, new FreezableLinkedList<Role>().freeze(), new FreezableLinkedList<ExternalIdentifier>().freeze());
     }
     

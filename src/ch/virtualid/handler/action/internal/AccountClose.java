@@ -69,7 +69,7 @@ public final class AccountClose extends CoreServiceInternalAction {
         assert role.isNative() : "The role is native.";
         
         this.successor = successor;
-        this.restrictions = new Restrictions(true, true, true, Context.get(role, Context.ROOT));
+        this.restrictions = new Restrictions(true, true, true, Context.getRoot(role));
     }
     
     /**
@@ -91,7 +91,7 @@ public final class AccountClose extends CoreServiceInternalAction {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         this.successor = IdentifierClass.create(block).toInternalNonHostIdentifier();
-        this.restrictions = new Restrictions(true, true, true, Context.get(entity, Context.ROOT));
+        this.restrictions = new Restrictions(true, true, true, Context.getRoot(entity));
     }
     
     @Pure

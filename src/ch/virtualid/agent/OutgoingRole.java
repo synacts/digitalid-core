@@ -11,6 +11,9 @@ import ch.virtualid.credential.Credential;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.exceptions.packet.PacketException;
+import ch.virtualid.handler.action.internal.OutgoingRoleContextReplace;
+import ch.virtualid.handler.action.internal.OutgoingRoleCreate;
+import ch.virtualid.handler.action.internal.OutgoingRoleRelationReplace;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
@@ -85,29 +88,25 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
      * @require relation.isRoleType() : "The relation is a role type.";
      * @require context.isOnClient() : "The context is on a client.";
      */
-    public static @Nonnull OutgoingRole create(@Nonnull SemanticType relation, @Nonnull Context context) {
-        assert relation.isRoleType() : "The relation is a role type.";
-        assert context.isOnClient() : "The context is on a client.";
-        
+    public static @Nonnull OutgoingRole create(@Nonnull SemanticType relation, @Nonnull Context context) throws SQLException {
         final @Nonnull OutgoingRole outgoingRole = get(context.getRole(), new SecureRandom().nextLong(), false, false);
         Synchronizer.execute(new OutgoingRoleCreate(outgoingRole, relation, context));
         return outgoingRole;
     }
     
     /**
-     * Creates the given outgoing role in the database.
+     * Creates this outgoing role in the database.
      * 
-     * @param outgoingRole the outgoing role to create in the database.
      * @param relation the relation between the issuing and the receiving identity.
      * @param context the context to which the outgoing role is assigned.
      * 
      * @require relation.isRoleType() : "The relation is a role type.";
-     * @require context.getEntity().equals(outgoingRole.getEntity()) : "The context belongs to the entity of the outgoing role.";
+     * @require context.getEntity().equals(getEntity()) : "The context belongs to the entity of this outgoing role.";
      */
     @OnlyForActions
-    public static void createForActions(@Nonnull OutgoingRole outgoingRole, @Nonnull SemanticType relation, @Nonnull Context context) throws SQLException {
-        Agents.addOutgoingRole(outgoingRole, relation, context);
-        outgoingRole.notify(Agent.CREATED);
+    public void createForActions(@Nonnull SemanticType relation, @Nonnull Context context) throws SQLException {
+        Agents.addOutgoingRole(this, relation, context);
+        notify(Agent.CREATED);
     }
     
     
@@ -133,8 +132,6 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
      * @require newRelation.isRoleType() : "The new relation is a role type.";
      */
     public void setRelation(@Nonnull SemanticType newRelation) throws SQLException {
-        assert newRelation.isRoleType() : "The new relation is a role type.";
-        
         final @Nonnull SemanticType oldRelation = getRelation();
         if (!newRelation.equals(oldRelation)) {
             Synchronizer.execute(new OutgoingRoleRelationReplace(this, oldRelation, newRelation));
@@ -177,11 +174,9 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
      * @param newContext the new context of this outgoing role.
      * 
      * @require isOnClient() : "This outgoing role is on a client.";
-     * @require newContext.getEntity().equals(getEntity()) : "The context belongs to the same entity.";
+     * @require newContext.getEntity().equals(getEntity()) : "The new context belongs to the same entity.";
      */
     public void setContext(@Nonnull Context newContext) throws SQLException {
-        assert newContext.getEntity().equals(getEntity()) : "The context belongs to the same entity.";
-        
         final @Nonnull Context oldContext = getContext();
         if (!newContext.equals(oldContext)) {
             Synchronizer.execute(new OutgoingRoleContextReplace(this, oldContext, newContext));

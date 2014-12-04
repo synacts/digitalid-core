@@ -1,5 +1,6 @@
 package ch.virtualid.setup;
 
+import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.auxiliary.Image;
 import ch.virtualid.client.Client;
 import ch.virtualid.entity.Role;
@@ -40,7 +41,7 @@ public class IdentitySetup extends ServerSetup {
     
     @BeforeClass
     public static void setUpIdentity() throws SQLException, IOException, PacketException, ExternalException {
-        client = new Client("tester", "Test Client", new Image("/ch/virtualid/resources/Host.png"));
+        client = new Client("tester", "Test Client", new Image("/ch/virtualid/resources/Host.png"), AgentPermissions.GENERAL_WRITE);
         role = client.openAccount(subject, Category.NATURAL_PERSON);
     }
     

@@ -47,6 +47,8 @@ public final class AgentPermissionsAdd extends CoreServiceInternalAction {
     
     /**
      * Stores the permissions which are to be added.
+     * 
+     * @invariant permissions.isFrozen() : "The permissions are frozen.";
      */
     private final @Nonnull ReadonlyAgentPermissions permissions;
     
@@ -57,9 +59,12 @@ public final class AgentPermissionsAdd extends CoreServiceInternalAction {
      * @param permissions the permissions to be added to the given agent.
      * 
      * @require agent.isOnClient() : "The agent is on a client.";
+     * @require permissions.isFrozen() : "The permissions are frozen.";
      */
     public AgentPermissionsAdd(@Nonnull Agent agent, @Nonnull ReadonlyAgentPermissions permissions) {
         super(agent.getRole());
+        
+        assert permissions.isFrozen() : "The permissions are frozen.";
         
         this.agent = agent;
         this.permissions = permissions;
@@ -85,7 +90,7 @@ public final class AgentPermissionsAdd extends CoreServiceInternalAction {
         
         final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(2);
         this.agent = Agent.get(entity, elements.getNotNull(0));
-        this.permissions = new AgentPermissions(elements.getNotNull(1));
+        this.permissions = new AgentPermissions(elements.getNotNull(1)).freeze();
     }
     
     @Pure
