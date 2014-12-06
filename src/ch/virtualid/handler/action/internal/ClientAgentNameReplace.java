@@ -45,12 +45,6 @@ public final class ClientAgentNameReplace extends CoreServiceInternalAction {
      */
     public static final @Nonnull SemanticType TYPE = SemanticType.create("replace.name.client.agent@virtualid.ch").load(TupleWrapper.TYPE, Agent.TYPE, OLD_NAME, NEW_NAME);
     
-    @Pure
-    @Override
-    public @Nonnull SemanticType getType() {
-        return TYPE;
-    }
-    
     
     /**
      * Stores the client agent of this action.
@@ -109,8 +103,6 @@ public final class ClientAgentNameReplace extends CoreServiceInternalAction {
     private ClientAgentNameReplace(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
-        assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
-        
         final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(3);
         this.clientAgent = Agent.get(entity, elements.getNotNull(0)).toClientAgent();
         this.oldName = new StringWrapper(elements.getNotNull(1)).getString();
@@ -150,22 +142,24 @@ public final class ClientAgentNameReplace extends CoreServiceInternalAction {
         clientAgent.replaceName(oldName, newName);
     }
     
-    
     @Pure
     @Override
     public @Nonnull ClientAgentNameReplace getReverse() {
-        assert isOnClient() : "This method is called on a client.";
-        
         return new ClientAgentNameReplace(clientAgent, newName, oldName);
     }
     
     
     @Pure
     @Override
+    public @Nonnull SemanticType getType() {
+        return TYPE;
+    }
+    
+    @Pure
+    @Override
     public @Nonnull BothModule getModule() {
         return Agents.MODULE;
     }
-    
     
     /**
      * The factory class for the surrounding method.

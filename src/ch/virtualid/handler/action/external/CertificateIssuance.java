@@ -15,7 +15,7 @@ import ch.virtualid.handler.Method;
 import ch.virtualid.handler.reply.action.CoreServiceActionReply;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identity.InternalIdentity;
-import ch.virtualid.identity.Person;
+import ch.virtualid.identity.InternalNonHostIdentity;
 import ch.virtualid.identity.SemanticType;
 import ch.xdf.Block;
 import ch.xdf.HostSignatureWrapper;
@@ -39,12 +39,6 @@ public final class CertificateIssuance extends CoreServiceExternalAction {
      */
     public static final @Nonnull SemanticType TYPE = SemanticType.create("issuance.certificate@virtualid.ch").load(Certificate.TYPE);
     
-    @Pure
-    @Override
-    public @Nonnull SemanticType getType() {
-        return TYPE;
-    }
-    
     
     /**
      * Stores the attribute that is certified.
@@ -67,18 +61,17 @@ public final class CertificateIssuance extends CoreServiceExternalAction {
      * @param subject the subject of this external action.
      * @param attribute the attribute to certify.
      * 
-     * @require account.getIdentity() instanceof Person : "The account belongs to a person.";
+     * @require account.getIdentity() instanceof InternalNonHostIdentity : "The account belongs to an internal non-host identity.";
      * @require attribute.getType().isAttributeFor(subject.getCategory()) : "The block is an attribute for the subject.";
      */
     public CertificateIssuance(@Nonnull Account account, @Nonnull InternalIdentity subject, @Nonnull Block attribute) {
         super(account, subject);
         
-        assert account.getIdentity() instanceof Person : "The account belongs to a person.";
+        assert account.getIdentity() instanceof InternalNonHostIdentity : "The account belongs to an internal non-host identity.";
         assert attribute.getType().isAttributeFor(subject.getCategory()) : "The block is an attribute for the subject.";
         
         this.attribute = attribute;
         this.certificate = new HostSignatureWrapper(TYPE, attribute, subject.getAddress(), account.getIdentity().getAddress());
-        this.auditPermissions = new AgentPermissions(attribute.getType(), false).freeze();
     }
     
     /**
@@ -97,8 +90,6 @@ public final class CertificateIssuance extends CoreServiceExternalAction {
     private CertificateIssuance(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
-        assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
-        
         final @Nonnull SignatureWrapper certificate = SignatureWrapper.decodeWithoutVerifying(block, false, entity);
         if (!(certificate instanceof HostSignatureWrapper)) throw new InvalidEncodingException("The block has to be signed by a host.");
         this.certificate = (HostSignatureWrapper) certificate;
@@ -106,8 +97,6 @@ public final class CertificateIssuance extends CoreServiceExternalAction {
         
         this.attribute = new SelfcontainedWrapper(certificate.getElementNotNull()).getElement();
         if (!attribute.getType().isAttributeFor(getSubject().getIdentity().getCategory())) throw new InvalidEncodingException("The block is an attribute for the subject.");
-        
-        this.auditPermissions = new AgentPermissions(attribute.getType(), false).freeze();
     }
     
     @Pure
@@ -120,6 +109,13 @@ public final class CertificateIssuance extends CoreServiceExternalAction {
     @Override
     public @Nonnull String toString() {
         return "Issues a certificate for " + attribute.getType().getAddress() + ".";
+    }
+    
+    
+    @Pure
+    @Override
+    public @Nonnull ReadonlyAgentPermissions getAuditPermissions() {
+        return new AgentPermissions(attribute.getType(), false).freeze();
     }
     
     
@@ -138,9 +134,6 @@ public final class CertificateIssuance extends CoreServiceExternalAction {
     
     @Override
     public @Nullable ActionReply executeOnHost() throws PacketException, SQLException {
-        assert isOnHost() : "This method is called on a host.";
-        assert hasSignature() : "This handler has a signature.";
-        
         final @Nonnull SignatureWrapper signature = getSignatureNotNull();
         if (!(signature instanceof HostSignatureWrapper)) throw new PacketException(PacketError.AUTHORIZATION, "TODO");
         
@@ -158,8 +151,6 @@ public final class CertificateIssuance extends CoreServiceExternalAction {
     
     @Override
     public void executeOnClient() throws SQLException {
-        assert isOnClient() : "This method is called on a client.";
-        
         // TODO: I'm not sure how far the checks should go on the client.
         
         executeOnBoth();
@@ -171,17 +162,11 @@ public final class CertificateIssuance extends CoreServiceExternalAction {
     }
     
     
-    /**
-     * Stores the audit permissions for this action.
-     */
-    private final @Nonnull ReadonlyAgentPermissions auditPermissions;
-    
     @Pure
     @Override
-    public @Nonnull ReadonlyAgentPermissions getAuditPermissions() {
-        return auditPermissions;
+    public @Nonnull SemanticType getType() {
+        return TYPE;
     }
-    
     
     /**
      * The factory class for the surrounding method.

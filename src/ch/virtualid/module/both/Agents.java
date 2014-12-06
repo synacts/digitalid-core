@@ -1140,10 +1140,6 @@ public final class Agents implements BothModule {
         }
         
         redetermineOrder(outgoingRole);
-        
-        if (entity instanceof Account) {
-            // TODO: Push the outgoing role to all the contacts in the given context!
-        }
     }
     
     /**
@@ -1264,10 +1260,7 @@ public final class Agents implements BothModule {
             statement.executeUpdate("INSERT INTO " + entity.getSite() + "incoming_role (entity, issuer, relation, agent) VALUES (" + entity + ", " + issuer + ", " + relation + ", " + agentNumber + ")");
         } catch (@Nonnull SQLException exception) {
             if (issuer.hasBeenMerged(exception)) addIncomingRole(entity, issuer, relation, agentNumber);
-            return;
         }
-        
-        if (entity instanceof Role) ((Role) entity).addRole(issuer, relation, agentNumber);
     }
     
     /**

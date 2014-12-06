@@ -33,12 +33,6 @@ public final class AgentPermissionsAdd extends CoreServiceInternalAction {
      */
     public static final @Nonnull SemanticType TYPE = SemanticType.create("add.permissions.agent@virtualid.ch").load(TupleWrapper.TYPE, Agent.TYPE, AgentPermissions.TYPE);
     
-    @Pure
-    @Override
-    public @Nonnull SemanticType getType() {
-        return TYPE;
-    }
-    
     
     /**
      * Stores the agent of this action.
@@ -86,8 +80,6 @@ public final class AgentPermissionsAdd extends CoreServiceInternalAction {
     private AgentPermissionsAdd(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
-        assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
-        
         final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(2);
         this.agent = Agent.get(entity, elements.getNotNull(0));
         this.permissions = new AgentPermissions(elements.getNotNull(1)).freeze();
@@ -130,22 +122,24 @@ public final class AgentPermissionsAdd extends CoreServiceInternalAction {
         agent.addPermissionsForActions(permissions);
     }
     
-    
     @Pure
     @Override
     public @Nonnull AgentPermissionsRemove getReverse() {
-        assert isOnClient() : "This method is called on a client.";
-        
         return new AgentPermissionsRemove(agent, permissions);
     }
     
     
     @Pure
     @Override
+    public @Nonnull SemanticType getType() {
+        return TYPE;
+    }
+    
+    @Pure
+    @Override
     public @Nonnull BothModule getModule() {
         return Agents.MODULE;
     }
-    
     
     /**
      * The factory class for the surrounding method.

@@ -40,12 +40,6 @@ public final class AccountClose extends CoreServiceInternalAction {
      */
     public static final @Nonnull SemanticType TYPE = SemanticType.create("close.account@virtualid.ch").load(InternalNonHostIdentity.IDENTIFIER);
     
-    @Pure
-    @Override
-    public @Nonnull SemanticType getType() {
-        return TYPE;
-    }
-    
     
     /**
      * Stores the successor of the given account.
@@ -88,8 +82,6 @@ public final class AccountClose extends CoreServiceInternalAction {
     private AccountClose(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
-        assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
-        
         this.successor = IdentifierClass.create(block).toInternalNonHostIdentifier();
         this.restrictions = new Restrictions(true, true, true, Context.getRoot(entity));
     }
@@ -105,13 +97,6 @@ public final class AccountClose extends CoreServiceInternalAction {
     @Override
     public @Nonnull String toString() {
         return "Closes the given account with the successor " + successor + ".";
-    }
-    
-    
-    @Override
-    protected void executeOnBoth() throws SQLException {
-        CoreService.SERVICE.removeState(getEntityNotNull());
-        if (successor != null) Successor.set((NonHostIdentifier) getSubject(), successor, null);
     }
     
     
@@ -132,7 +117,6 @@ public final class AccountClose extends CoreServiceInternalAction {
         return restrictions;
     }
     
-    
     @Pure
     @Override
     public @Nonnull ReadonlyAgentPermissions getAuditPermissions() {
@@ -146,21 +130,30 @@ public final class AccountClose extends CoreServiceInternalAction {
     }
     
     
+    @Override
+    protected void executeOnBoth() throws SQLException {
+        CoreService.SERVICE.removeState(getEntityNotNull());
+        if (successor != null) Successor.set((NonHostIdentifier) getSubject(), successor, null);
+    }
+    
     @Pure
     @Override
     public @Nullable InternalAction getReverse() {
-        assert isOnClient() : "This method is called on a client.";
-        
         return null;
     }
     
     
     @Pure
     @Override
+    public @Nonnull SemanticType getType() {
+        return TYPE;
+    }
+    
+    @Pure
+    @Override
     public @Nonnull BothModule getModule() {
         return CoreService.SERVICE;
     }
-    
     
     /**
      * The factory class for the surrounding method.

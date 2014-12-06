@@ -48,12 +48,6 @@ public final class ClientAgentAccredit extends CoreServiceInternalAction {
      */
     public static final @Nonnull SemanticType TYPE = SemanticType.create("accredit.client.agent@virtualid.ch").load(TupleWrapper.TYPE, Agent.TYPE, AgentPermissions.TYPE, Client.NAME, Client.ICON, Password.TYPE);
     
-    @Pure
-    @Override
-    public @Nonnull SemanticType getType() {
-        return TYPE;
-    }
-    
     
     /**
      * Stores the outgoing role of this action.
@@ -135,8 +129,6 @@ public final class ClientAgentAccredit extends CoreServiceInternalAction {
     private ClientAgentAccredit(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
-        assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
-        
         final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(5);
         
         this.clientAgent = Agent.get(entity, elements.getNotNull(0)).toClientAgent();
@@ -184,37 +176,34 @@ public final class ClientAgentAccredit extends CoreServiceInternalAction {
     
     @Override
     public void executeOnHostInternalAction() throws PacketException, SQLException {
-        assert isOnHost() : "This method is called on a host.";
-        assert hasSignature() : "This handler has a signature.";
-        
-        if (!Password.get(getEntityNotNull()).getValue().equals(password)) throw new PacketException(PacketError.AUTHORIZATION, "The password is not correct.");
+        if (!Password.get(getAccount()).getValue().equals(password)) throw new PacketException(PacketError.AUTHORIZATION, "The password is not correct.");
         executeOnBoth();
     }
     
     @Override
     public void executeOnClient() throws SQLException {
-        assert isOnClient() : "This method is called on a client.";
-        
         Context.getRoot(getRole()).createForActions();
         executeOnBoth();
     }
     
-    
     @Pure
     @Override
     public @Nullable InternalAction getReverse() {
-        assert isOnClient() : "This method is called on a client.";
-        
         return null;
     }
     
     
     @Pure
     @Override
+    public @Nonnull SemanticType getType() {
+        return TYPE;
+    }
+    
+    @Pure
+    @Override
     public @Nonnull BothModule getModule() {
         return Agents.MODULE;
     }
-    
     
     /**
      * The factory class for the surrounding method.

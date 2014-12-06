@@ -84,7 +84,6 @@ public abstract class CoreServiceInternalQuery extends InternalQuery {
         return AgentPermissions.NONE;
     }
     
-    
     @Pure
     @Override
     public @Nonnull Restrictions getRequiredRestrictions() {
@@ -110,10 +109,7 @@ public abstract class CoreServiceInternalQuery extends InternalQuery {
     
     @Override
     public @Nonnull QueryReply executeOnHost() throws PacketException, SQLException {
-        assert isOnHost() : "This method is called on a host.";
-        assert hasSignature() : "This handler has a signature.";
-        
-        final @Nonnull Agent agent = getSignatureNotNull().getAgentCheckedAndRestricted(getEntityNotNull(), publicKey);
+        final @Nonnull Agent agent = getSignatureNotNull().getAgentCheckedAndRestricted(getAccount(), publicKey);
         
         final @Nonnull ReadonlyAgentPermissions permissions = getRequiredPermissions();
         if (!permissions.equals(AgentPermissions.NONE)) agent.getPermissions().checkCover(permissions);

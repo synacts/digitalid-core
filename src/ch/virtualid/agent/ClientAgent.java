@@ -221,12 +221,18 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
      * @param name the name of the given client agent.
      * @param icon the icon of the given client agent.
      * 
+     * @require permissions.isFrozen() : "The permissions are frozen.";
      * @require Client.isValid(name) : "The name is valid.";
      * @require Client.isValid(icon) : "The icon is valid.";
      */
     @OnlyForActions
     public void createForActions(@Nonnull ReadonlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nonnull Commitment commitment, @Nonnull String name, @Nonnull Image icon) throws SQLException {
         Agents.addClientAgent(this, permissions, restrictions, commitment, name, icon);
+        this.permissions = permissions.clone();
+        this.restrictions = restrictions;
+        this.commitment = commitment;
+        this.name = name;
+        this.icon = icon;
         notify(Agent.CREATED);
     }
     

@@ -65,6 +65,7 @@ public abstract class ExternalAction extends Action {
         return super.isSimilarTo(other) && other instanceof ExternalAction;
     }
     
+    
     @Pure
     @Override
     public boolean canBeSentByHosts() {

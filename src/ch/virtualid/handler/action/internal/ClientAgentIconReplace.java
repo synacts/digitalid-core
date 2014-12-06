@@ -46,12 +46,6 @@ public final class ClientAgentIconReplace extends CoreServiceInternalAction {
      */
     public static final @Nonnull SemanticType TYPE = SemanticType.create("replace.icon.client.agent@virtualid.ch").load(TupleWrapper.TYPE, Agent.TYPE, OLD_ICON, NEW_ICON);
     
-    @Pure
-    @Override
-    public @Nonnull SemanticType getType() {
-        return TYPE;
-    }
-    
     
     /**
      * Stores the client agent of this action.
@@ -110,8 +104,6 @@ public final class ClientAgentIconReplace extends CoreServiceInternalAction {
     private ClientAgentIconReplace(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
-        assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
-        
         final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(3);
         this.clientAgent = Agent.get(entity, elements.getNotNull(0)).toClientAgent();
         this.oldIcon = new Image(elements.getNotNull(1));
@@ -151,22 +143,24 @@ public final class ClientAgentIconReplace extends CoreServiceInternalAction {
         clientAgent.replaceIcon(oldIcon, newIcon);
     }
     
-    
     @Pure
     @Override
     public @Nonnull ClientAgentIconReplace getReverse() {
-        assert isOnClient() : "This method is called on a client.";
-        
         return new ClientAgentIconReplace(clientAgent, newIcon, oldIcon);
     }
     
     
     @Pure
     @Override
+    public @Nonnull SemanticType getType() {
+        return TYPE;
+    }
+    
+    @Pure
+    @Override
     public @Nonnull BothModule getModule() {
         return Agents.MODULE;
     }
-    
     
     /**
      * The factory class for the surrounding method.

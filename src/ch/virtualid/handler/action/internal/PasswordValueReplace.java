@@ -44,12 +44,6 @@ public final class PasswordValueReplace extends CoreServiceInternalAction {
      */
     public static final @Nonnull SemanticType TYPE = SemanticType.create("replace.password@virtualid.ch").load(TupleWrapper.TYPE, OLD_VALUE, NEW_VALUE);
     
-    @Pure
-    @Override
-    public @Nonnull SemanticType getType() {
-        return TYPE;
-    }
-    
     
     /**
      * Stores the password whose value is to be replaced.
@@ -108,8 +102,6 @@ public final class PasswordValueReplace extends CoreServiceInternalAction {
     private PasswordValueReplace(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
-        assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
-        
         final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(2);
         this.password = Password.get(entity);
         this.oldValue = new StringWrapper(elements.getNotNull(0)).getString();
@@ -132,26 +124,16 @@ public final class PasswordValueReplace extends CoreServiceInternalAction {
     }
     
     
-    /**
-     * Stores the required restrictions for this internal method.
-     */
-    private static final @Nonnull Restrictions requiredRestrictions = new Restrictions(true, false, true);
-    
     @Pure
     @Override
     public @Nonnull Restrictions getRequiredRestrictions() {
-        return requiredRestrictions;
+        return new Restrictions(true, false, true);
     }
-    
-    /**
-     * Stores the audit restrictions for this action.
-     */
-    private static final @Nonnull Restrictions auditRestrictions = new Restrictions(true, false, false);
     
     @Pure
     @Override
     public @Nonnull Restrictions getAuditRestrictions() {
-        return auditRestrictions;
+        return new Restrictions(true, false, false);
     }
     
     
@@ -160,22 +142,24 @@ public final class PasswordValueReplace extends CoreServiceInternalAction {
         password.replaceName(oldValue, newValue);
     }
     
-    
     @Pure
     @Override
     public @Nonnull PasswordValueReplace getReverse() {
-        assert isOnClient() : "This method is called on a client.";
-        
         return new PasswordValueReplace(password, newValue, oldValue);
     }
     
     
     @Pure
     @Override
+    public @Nonnull SemanticType getType() {
+        return TYPE;
+    }
+    
+    @Pure
+    @Override
     public @Nonnull BothModule getModule() {
         return Passwords.MODULE;
     }
-    
     
     /**
      * The factory class for the surrounding method.

@@ -81,7 +81,6 @@ public abstract class CoreServiceInternalAction extends InternalAction {
         return AgentPermissions.NONE;
     }
     
-    
     @Pure
     @Override
     public @Nonnull Restrictions getRequiredRestrictions() {
@@ -119,10 +118,7 @@ public abstract class CoreServiceInternalAction extends InternalAction {
     
     @Override
     public void executeOnHostInternalAction() throws PacketException, SQLException {
-        assert isOnHost() : "This method is called on a host.";
-        assert hasSignature() : "This handler has a signature.";
-        
-        final @Nonnull Agent agent = getSignatureNotNull().getAgentCheckedAndRestricted(getEntityNotNull(), getPublicKey());
+        final @Nonnull Agent agent = getSignatureNotNull().getAgentCheckedAndRestricted(getAccount(), getPublicKey());
         
         final @Nonnull ReadonlyAgentPermissions permissions = getRequiredPermissions();
         if (!permissions.equals(AgentPermissions.NONE)) agent.getPermissions().checkCover(permissions);
@@ -138,8 +134,6 @@ public abstract class CoreServiceInternalAction extends InternalAction {
     
     @Override
     public void executeOnClient() throws SQLException {
-        assert isOnClient() : "This method is called on a client.";
-        
         executeOnBoth();
     }
     

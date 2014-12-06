@@ -43,12 +43,6 @@ public final class AgentRestrictionsReplace extends CoreServiceInternalAction {
      */
     public static final @Nonnull SemanticType TYPE = SemanticType.create("replace.restrictions.agent@virtualid.ch").load(TupleWrapper.TYPE, Agent.TYPE, OLD_RESTRICTIONS, NEW_RESTRICTIONS);
     
-    @Pure
-    @Override
-    public @Nonnull SemanticType getType() {
-        return TYPE;
-    }
-    
     
     /**
      * Stores the agent of this action.
@@ -107,8 +101,6 @@ public final class AgentRestrictionsReplace extends CoreServiceInternalAction {
     private AgentRestrictionsReplace(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
-        assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
-        
         final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(3);
         this.agent = Agent.get(entity, elements.getNotNull(0));
         this.oldRestrictions = new Restrictions(entity, elements.getNotNull(1)).checkMatch(agent);
@@ -152,22 +144,24 @@ public final class AgentRestrictionsReplace extends CoreServiceInternalAction {
         agent.replaceRestrictions(oldRestrictions, newRestrictions);
     }
     
-    
     @Pure
     @Override
     public @Nonnull AgentRestrictionsReplace getReverse() {
-        assert isOnClient() : "This method is called on a client.";
-        
         return new AgentRestrictionsReplace(agent, newRestrictions, oldRestrictions);
     }
     
     
     @Pure
     @Override
+    public @Nonnull SemanticType getType() {
+        return TYPE;
+    }
+    
+    @Pure
+    @Override
     public @Nonnull BothModule getModule() {
         return Agents.MODULE;
     }
-    
     
     /**
      * The factory class for the surrounding method.

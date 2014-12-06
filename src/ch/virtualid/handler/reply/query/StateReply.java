@@ -28,12 +28,6 @@ public final class StateReply extends CoreServiceQueryReply {
      */
     public static final @Nonnull SemanticType TYPE = SemanticType.create("reply.module@virtualid.ch").load(CoreService.STATE);
     
-    @Pure
-    @Override
-    public @Nonnull SemanticType getType() {
-        return TYPE;
-    }
-    
     
     /**
      * Stores the block containing the state of the given entity.
@@ -53,8 +47,6 @@ public final class StateReply extends CoreServiceQueryReply {
     public StateReply(@Nonnull Account account, @Nonnull Block block) {
         super(account);
         
-        assert block.getType().equals(CoreService.STATE) : "The block has the indicated type.";
-        
         this.block = block.setType(TYPE);
     }
     
@@ -72,8 +64,6 @@ public final class StateReply extends CoreServiceQueryReply {
     private StateReply(@Nullable Entity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws InvalidEncodingException {
         super(entity, signature, number);
         
-        assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
-        
         this.block = block;
     }
     
@@ -89,6 +79,12 @@ public final class StateReply extends CoreServiceQueryReply {
         return "Replies the state.";
     }
     
+    
+    @Pure
+    @Override
+    public @Nonnull SemanticType getType() {
+        return TYPE;
+    }
     
     /**
      * The factory class for the surrounding method.

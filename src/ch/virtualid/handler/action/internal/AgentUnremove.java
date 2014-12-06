@@ -29,12 +29,6 @@ public final class AgentUnremove extends CoreServiceInternalAction {
      */
     public static final @Nonnull SemanticType TYPE = SemanticType.create("unremove.agent@virtualid.ch").load(Agent.TYPE);
     
-    @Pure
-    @Override
-    public @Nonnull SemanticType getType() {
-        return TYPE;
-    }
-    
     
     /**
      * Stores the agent to be unremoved.
@@ -70,8 +64,6 @@ public final class AgentUnremove extends CoreServiceInternalAction {
     private AgentUnremove(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
-        assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
-        
         this.agent = Agent.get(entity, block);
     }
     
@@ -106,22 +98,24 @@ public final class AgentUnremove extends CoreServiceInternalAction {
         agent.unremoveForActions();
     }
     
-    
     @Pure
     @Override
     public @Nonnull AgentRemove getReverse() {
-        assert isOnClient() : "This method is called on a client.";
-        
         return new AgentRemove(agent);
     }
     
     
     @Pure
     @Override
+    public @Nonnull SemanticType getType() {
+        return TYPE;
+    }
+    
+    @Pure
+    @Override
     public @Nonnull BothModule getModule() {
         return Agents.MODULE;
     }
-    
     
     /**
      * The factory class for the surrounding method.

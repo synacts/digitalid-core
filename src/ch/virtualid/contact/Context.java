@@ -18,6 +18,7 @@ import ch.virtualid.interfaces.SQLizable;
 import ch.virtualid.module.both.Contexts;
 import ch.virtualid.util.ConcurrentHashMap;
 import ch.virtualid.util.ConcurrentMap;
+import ch.virtualid.util.ReadonlySet;
 import ch.xdf.Block;
 import ch.xdf.Int64Wrapper;
 import java.security.SecureRandom;
@@ -444,7 +445,7 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
      * @return whether this context is a subcontext of the given context.
      * @require context.getIdentity().equals(getIdentity()) : "The identity of the given context is the same.";
      */
-    public final boolean isSubcontextOf(@Nonnull Context context) throws SQLException {
+    public boolean isSubcontextOf(@Nonnull Context context) throws SQLException {
 //        assert context.getIdentity().equals(getIdentity()) : "The identity of the given context is the same.";
         
         return context.isSupercontextOf(this);
@@ -456,7 +457,9 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
      * 
      * @return a set with the contacts of this context.
      */
-//    public @Nonnull Set<Contact> getContacts() throws SQLException;
+    public @Nonnull ReadonlySet<Contact> getContacts() throws SQLException {
+        throw new SQLException();
+    }
     
     /**
      * Returns whether this context contains the given contact.
@@ -474,21 +477,27 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
      * 
      * @param contacts the contacts to be added to this context.
      */
-//    public void addContacts(@Nonnull Set<Contact> contacts) throws SQLException;
+    public void addContacts(@Nonnull ReadonlySet<Contact> contacts) throws SQLException {
+        throw new SQLException();
+    }
     
     /**
      * Removes the given contacts from this context.
      * 
      * @param contacts the contacts to be removed from this context.
      */
-//    public void removeContacts(@Nonnull Set<Contact> contacts) throws SQLException;
+    public void removeContacts(@Nonnull ReadonlySet<Contact> contacts) throws SQLException {
+        throw new SQLException();
+    }
     
     /**
      * Returns a set with all the contacts of this context (i.e. the contacts from subcontexts are included as well).
      * 
      * @return a set with all the contacts of this context (i.e. the contacts from subcontexts are included as well).
      */
-//    public @Nonnull Set<Contact> getAllContacts() throws SQLException;
+    public @Nonnull ReadonlySet<Contact> getAllContacts() throws SQLException {
+        throw new SQLException();
+    }
     
     
     /**

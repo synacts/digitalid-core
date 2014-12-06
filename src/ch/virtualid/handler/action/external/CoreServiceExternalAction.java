@@ -75,6 +75,7 @@ public abstract class CoreServiceExternalAction extends ExternalAction {
         return true;
     }
     
+    
     @Pure
     @Override
     public @Nonnull ReadonlyAgentPermissions getRequiredPermissions() {

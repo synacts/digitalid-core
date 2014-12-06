@@ -54,7 +54,7 @@ import javax.annotation.Nullable;
  * @invariant getSubject().getHostIdentifier().equals(getRecipient()) : "The host of the subject has to match the recipient for the action to open an account.";
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 1.8
+ * @version 1.9
  */
 public final class AccountOpen extends Action {
     
@@ -62,12 +62,6 @@ public final class AccountOpen extends Action {
      * Stores the semantic type {@code open.account@virtualid.ch}.
      */
     public static final @Nonnull SemanticType TYPE = SemanticType.create("open.account@virtualid.ch").load(TupleWrapper.TYPE, Category.TYPE, Agent.NUMBER, Client.NAME, Client.ICON);
-    
-    @Pure
-    @Override
-    public @Nonnull SemanticType getType() {
-        return TYPE;
-    }
     
     
     /**
@@ -144,8 +138,6 @@ public final class AccountOpen extends Action {
     private AccountOpen(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
-        assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
-        
         if (!getSubject().getHostIdentifier().equals(getRecipient())) throw new PacketException(PacketError.IDENTIFIER, "The host of the subject has to match the recipient for the action to open an account.");
         
         final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(4);
@@ -198,26 +190,21 @@ public final class AccountOpen extends Action {
     }
     
     
-    @Pure
-    @Override
-    public @Nonnull Service getService() {
-        return CoreService.SERVICE;
-    }
-    
-    
-    @Override
-    public boolean canBeSentByHosts() {
-        return false;
-    }
-    
-    @Override
-    public boolean canOnlyBeSentByHosts() {
-        return false;
-    }
-
     @Override
     public ReadonlyAgentPermissions getRequiredPermissions() {
         return AgentPermissions.NONE;
+    }
+    
+    @Pure
+    @Override
+    public @Nonnull ReadonlyAgentPermissions getAuditPermissions() {
+        return AgentPermissions.GENERAL_WRITE;
+    }
+    
+    @Pure
+    @Override
+    public @Nonnull Restrictions getAuditRestrictions() {
+        return Restrictions.MAX;
     }
     
     
@@ -228,9 +215,6 @@ public final class AccountOpen extends Action {
     
     @Override
     public @Nullable ActionReply executeOnHost() throws PacketException, SQLException {
-        assert isOnHost() : "This method is called on a host.";
-        assert hasSignature() : "This handler has a signature.";
-        
         final @Nonnull InternalIdentifier subject = getSubject();
         if (subject.isMapped()) throw new PacketException(PacketError.IDENTIFIER, "The account with the identifier " + subject + " already exists.");
         
@@ -258,17 +242,16 @@ public final class AccountOpen extends Action {
     
     @Pure
     @Override
-    public @Nonnull ReadonlyAgentPermissions getAuditPermissions() {
-        return AgentPermissions.GENERAL_WRITE;
+    public boolean canBeSentByHosts() {
+        return false;
     }
     
     @Pure
     @Override
-    public @Nonnull Restrictions getAuditRestrictions() {
-        return Restrictions.MAX;
+    public boolean canOnlyBeSentByHosts() {
+        return false;
     }
-    
-    
+
     @Pure
     @Override
     public boolean isSimilarTo(@Nonnull Method other) {
@@ -281,6 +264,18 @@ public final class AccountOpen extends Action {
         return new ClientRequest(new FreezableArrayList<Method>(this).freeze(), getSubject(), null, commitment.addSecret(secret)).send();
     }
     
+    
+    @Pure
+    @Override
+    public @Nonnull SemanticType getType() {
+        return TYPE;
+    }
+    
+    @Pure
+    @Override
+    public @Nonnull Service getService() {
+        return CoreService.SERVICE;
+    }
     
     /**
      * The factory class for the surrounding method.

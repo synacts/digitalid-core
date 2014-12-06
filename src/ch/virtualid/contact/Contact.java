@@ -10,8 +10,10 @@ import ch.virtualid.entity.Entity;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identifier.IdentifierClass;
+import ch.virtualid.identity.ExternalPerson;
 import ch.virtualid.identity.Identity;
 import ch.virtualid.identity.IdentityClass;
+import ch.virtualid.identity.InternalPerson;
 import ch.virtualid.identity.Person;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
@@ -79,6 +81,50 @@ public final class Contact extends Concept implements Immutable, Blockable, SQLi
      */
     public @Nonnull Person getPerson() {
         return person;
+    }
+    
+    /**
+     * Returns whether this contact is internal.
+     * 
+     * @return whether this contact is internal.
+     */
+    public boolean isInternal() {
+        return person instanceof InternalPerson;
+    }
+    
+    /**
+     * Returns the internal person of this contact.
+     * 
+     * @return the internal person of this contact.
+     * 
+     * @require isInternal() : "This contact is internal.";
+     */
+    public @Nonnull InternalPerson getInternalPerson() {
+        assert isInternal() : "This contact is internal.";
+        
+        return (InternalPerson) person;
+    }
+    
+    /**
+     * Returns whether this contact is external.
+     * 
+     * @return whether this contact is external.
+     */
+    public boolean isExternal() {
+        return person instanceof ExternalPerson;
+    }
+    
+    /**
+     * Returns the external person of this contact.
+     * 
+     * @return the external person of this contact.
+     * 
+     * @require isExternal() : "This contact is external.";
+     */
+    public @Nonnull ExternalPerson getExternalPerson() {
+        assert isExternal() : "This contact is external.";
+        
+        return (ExternalPerson) person;
     }
     
     

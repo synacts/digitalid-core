@@ -43,7 +43,7 @@ import org.javatuples.Pair;
  * Initializes a new account with the given states.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 1.9
+ * @version 2.0
  */
 public final class AccountInitialize extends CoreServiceInternalAction {
     
@@ -56,12 +56,6 @@ public final class AccountInitialize extends CoreServiceInternalAction {
      * Stores the semantic type {@code initialize.account@virtualid.ch}.
      */
     public static final @Nonnull SemanticType TYPE = SemanticType.create("initialize.account@virtualid.ch").load(ListWrapper.TYPE, STATE);
-    
-    @Pure
-    @Override
-    public @Nonnull SemanticType getType() {
-        return TYPE;
-    }
     
     
     /**
@@ -107,8 +101,6 @@ public final class AccountInitialize extends CoreServiceInternalAction {
      */
     private AccountInitialize(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
-        
-        assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         final @Nonnull InternalNonHostIdentifier subject = (InternalNonHostIdentifier) getSubject();
         if (Predecessors.exist(subject)) throw new PacketException(PacketError.METHOD, "The subject " + subject + " is already initialized.");
@@ -159,6 +151,18 @@ public final class AccountInitialize extends CoreServiceInternalAction {
         return null;
     }
     
+    @Pure
+    @Override
+    public @Nonnull ReadonlyAgentPermissions getAuditPermissions() {
+        return AgentPermissions.GENERAL_WRITE;
+    }
+    
+    @Pure
+    @Override
+    public @Nonnull Restrictions getAuditRestrictions() {
+        return Restrictions.MAX;
+    }
+    
     
     @Override
     protected void executeOnBoth() throws SQLException {
@@ -178,35 +182,24 @@ public final class AccountInitialize extends CoreServiceInternalAction {
         if (states.isEmpty()) Passwords.set(entity, "");
     }
     
-    
-    @Pure
-    @Override
-    public @Nonnull ReadonlyAgentPermissions getAuditPermissions() {
-        return AgentPermissions.GENERAL_WRITE;
-    }
-    
-    @Pure
-    @Override
-    public @Nonnull Restrictions getAuditRestrictions() {
-        return Restrictions.MAX;
-    }
-    
-    
     @Pure
     @Override
     public @Nonnull AccountClose getReverse() {
-        assert isOnClient() : "This method is called on a client.";
-        
         return new AccountClose(getRole(), null);
     }
     
     
     @Pure
     @Override
+    public @Nonnull SemanticType getType() {
+        return TYPE;
+    }
+    
+    @Pure
+    @Override
     public @Nonnull BothModule getModule() {
         return CoreService.SERVICE;
     }
-    
     
     /**
      * The factory class for the surrounding method.

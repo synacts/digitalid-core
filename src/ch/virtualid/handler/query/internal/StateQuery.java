@@ -34,12 +34,6 @@ public final class StateQuery extends CoreServiceInternalQuery {
      */
     public static final @Nonnull SemanticType TYPE = SemanticType.create("query.module@virtualid.ch").load(EmptyWrapper.TYPE);
     
-    @Pure
-    @Override
-    public @Nonnull SemanticType getType() {
-        return TYPE;
-    }
-    
     
     /**
      * Creates an internal query for the state of the given role.
@@ -66,8 +60,6 @@ public final class StateQuery extends CoreServiceInternalQuery {
      */
     private StateQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
-        
-        assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
     }
     
     @Pure
@@ -95,6 +87,12 @@ public final class StateQuery extends CoreServiceInternalQuery {
         return new StateReply(account, CoreService.SERVICE.getState(account, agent));
     }
     
+    
+    @Pure
+    @Override
+    public @Nonnull SemanticType getType() {
+        return TYPE;
+    }
     
     /**
      * The factory class for the surrounding method.

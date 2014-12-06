@@ -46,12 +46,6 @@ public final class OutgoingRoleRelationReplace extends CoreServiceInternalAction
      */
     public static final @Nonnull SemanticType TYPE = SemanticType.create("replace.relation.outgoing.role@virtualid.ch").load(TupleWrapper.TYPE, Agent.TYPE, OLD_RELATION, NEW_RELATION);
     
-    @Pure
-    @Override
-    public @Nonnull SemanticType getType() {
-        return TYPE;
-    }
-    
     
     /**
      * Stores the outgoing role of this action.
@@ -110,8 +104,6 @@ public final class OutgoingRoleRelationReplace extends CoreServiceInternalAction
     private OutgoingRoleRelationReplace(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
-        assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
-        
         final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(3);
         this.outgoingRole = Agent.get(entity, elements.getNotNull(0)).toOutgoingRole();
         this.oldRelation = IdentityClass.create(elements.getNotNull(1)).toSemanticType().checkIsRoleType();
@@ -155,22 +147,24 @@ public final class OutgoingRoleRelationReplace extends CoreServiceInternalAction
         outgoingRole.replaceRelation(oldRelation, newRelation);
     }
     
-    
     @Pure
     @Override
     public @Nonnull OutgoingRoleRelationReplace getReverse() {
-        assert isOnClient() : "This method is called on a client.";
-        
         return new OutgoingRoleRelationReplace(outgoingRole, newRelation, oldRelation);
     }
     
     
     @Pure
     @Override
+    public @Nonnull SemanticType getType() {
+        return TYPE;
+    }
+    
+    @Pure
+    @Override
     public @Nonnull BothModule getModule() {
         return Agents.MODULE;
     }
-    
     
     /**
      * The factory class for the surrounding method.

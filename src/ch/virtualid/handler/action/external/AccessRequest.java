@@ -18,8 +18,8 @@ import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identity.InternalPerson;
 import ch.virtualid.identity.SemanticType;
 import ch.xdf.Block;
+import ch.xdf.ClientSignatureWrapper;
 import ch.xdf.CredentialsSignatureWrapper;
-import ch.xdf.HostSignatureWrapper;
 import ch.xdf.SignatureWrapper;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -39,12 +39,11 @@ public final class AccessRequest extends CoreServiceExternalAction {
      */
     public static final @Nonnull SemanticType TYPE = SemanticType.create("request.access@virtualid.ch").load(ContactPermissions.TYPE);
     
-    @Pure
-    @Override
-    public @Nonnull SemanticType getType() {
-        return TYPE;
-    }
     
+    /**
+     * Stores the person of this access request.
+     */
+    private final @Nonnull InternalPerson person;
     
     /**
      * Stores the permissions of this access request.
@@ -73,9 +72,8 @@ public final class AccessRequest extends CoreServiceExternalAction {
         assert permissions.isFrozen() : "The permissions are frozen.";
         assert permissions.isNotEmpty() : "The permissions are not empty.";
         
+        this.person = subject;
         this.permissions = permissions;
-        this.requiredPermissions = permissions.toAgentPermissions().freeze();
-        this.faildedAuditRestrictions = new Restrictions(false, false, true, Contact.get(entity, subject));
     }
     
     /**
@@ -94,12 +92,9 @@ public final class AccessRequest extends CoreServiceExternalAction {
     private AccessRequest(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
-        assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
-        
+        this.person = entity.getIdentity().toInternalPerson();
         this.permissions = new ContactPermissions(block).freeze();
         if (permissions.isEmpty()) throw new InvalidEncodingException("The permissions may not be empty.");
-        this.requiredPermissions = permissions.toAgentPermissions().freeze();
-        this.faildedAuditRestrictions = new Restrictions(false, false, true, Contact.get(entity, signature.getSubjectNotNull().getIdentity().toPerson()));
     }
     
     @Pure
@@ -134,17 +129,22 @@ public final class AccessRequest extends CoreServiceExternalAction {
         return false;
     }
     
-    /**
-     * Stores the required permissions for this method.
-     * 
-     * @invariant requiredPermissions.isFrozen() : "The required permissions are frozen.";
-     */
-    private final @Nonnull ReadonlyAgentPermissions requiredPermissions;
-    
     @Pure
     @Override
     public @Nonnull ReadonlyAgentPermissions getRequiredPermissions() {
-        return requiredPermissions;
+        return permissions.toAgentPermissions().freeze();
+    }
+    
+    @Pure
+    @Override
+    public @Nonnull Restrictions getAuditRestrictions() {
+        return new Restrictions(false, false, true);
+    }
+    
+    @Pure
+    @Override
+    public @Nonnull Restrictions getFailedAuditRestrictions() {
+        return new Restrictions(false, false, true, Contact.get(getEntityNotNull(), person));
     }
     
     
@@ -156,54 +156,31 @@ public final class AccessRequest extends CoreServiceExternalAction {
     
     @Override
     public @Nullable ActionReply executeOnHost() throws PacketException, SQLException {
-        assert isOnHost() : "This method is called on a host.";
-        assert hasSignature() : "This handler has a signature.";
-        
         final @Nonnull SignatureWrapper signature = getSignatureNotNull();
         if (signature instanceof CredentialsSignatureWrapper) {
             ((CredentialsSignatureWrapper) signature).checkCover(getRequiredPermissions());
-        } else if (!(signature instanceof HostSignatureWrapper)) {
-            throw new PacketException(PacketError.AUTHORIZATION, "TODO");
+        } else if (signature instanceof ClientSignatureWrapper) {
+            throw new PacketException(PacketError.AUTHORIZATION, "Access requests may not be signed by clients.");
         }
         return null;
     }
     
     @Override
     public void executeOnClient() throws SQLException {
-        assert isOnClient() : "This method is called on a client.";
-        
         // TODO: Add this access request to a list of pending access requests.
     }
     
     @Override
     public void executeOnFailure() throws SQLException {
-        // TODO!
+        // TODO: Add this access request to a list of failed access requests.
     }
     
-    
-    /**
-     * Stores the audit restrictions for this action.
-     */
-    private static final @Nonnull Restrictions auditRestrictions = new Restrictions(false, false, true);
     
     @Pure
     @Override
-    public @Nonnull Restrictions getAuditRestrictions() {
-        return auditRestrictions;
+    public @Nonnull SemanticType getType() {
+        return TYPE;
     }
-    
-    
-    /**
-     * Stores the failed audit restrictions for this action.
-     */
-    private final @Nonnull Restrictions faildedAuditRestrictions;
-    
-    @Pure
-    @Override
-    public @Nonnull Restrictions getFailedAuditRestrictions() {
-        return faildedAuditRestrictions;
-    }
-    
     
     /**
      * The factory class for the surrounding method.
