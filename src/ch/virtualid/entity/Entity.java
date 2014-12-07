@@ -1,43 +1,37 @@
 package ch.virtualid.entity;
 
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.client.Client;
 import ch.virtualid.concept.Aspect;
 import ch.virtualid.concept.Concept;
-import ch.virtualid.concept.Instance;
-import ch.virtualid.errors.ShouldNeverHappenError;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.handler.Handler;
 import ch.virtualid.identity.Identity;
 import ch.virtualid.identity.InternalIdentity;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
-import ch.virtualid.server.Host;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Types;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
- * An entity captures the {@link Site site} and the {@link Identity identity} of a {@link Concept concept}.
+ * An entity captures the {@link Site site} and the {@link Identity identity} of a {@link Concept concept} or {@link Handler handler}.
  * 
- * @see Account
- * @see Role
+ * @see EntityClass
+ * @see HostEntity
+ * @see NonHostEntity
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public abstract class Entity extends Instance implements Immutable, SQLizable {
+public interface Entity extends Immutable, SQLizable {
     
     /**
      * Stores the aspect of the observed entity being created.
      */
-    public static final @Nonnull Aspect CREATED = new Aspect(Entity.class, "created");
+    public static final @Nonnull Aspect CREATED = new Aspect(EntityClass.class, "created");
     
     /**
      * Stores the aspect of the observed entity being deleted.
      */
-    public static final @Nonnull Aspect DELETED = new Aspect(Entity.class, "deleted");
+    public static final @Nonnull Aspect DELETED = new Aspect(EntityClass.class, "deleted");
     
     
     /**
@@ -66,51 +60,63 @@ public abstract class Entity extends Instance implements Immutable, SQLizable {
     
     
     /**
-     * Stores the data type used to reference instances of this class.
-     */
-    public static final @Nonnull String FORMAT = "BIGINT";
-    
-    /**
-     * Returns the given column of the result set as an instance of this class.
+     * Returns this entity as a {@link HostEntity}.
      * 
-     * @param site the site that accommodates the returned entity.
-     * @param resultSet the result set to retrieve the data from.
-     * @param columnIndex the index of the column containing the data.
+     * @return this entity as a {@link HostEntity}.
      * 
-     * @return the given column of the result set as an instance of this class.
+     * @throws InvalidEncodingException if this entity is not an instance of {@link HostEntity}.
      */
     @Pure
-    public static @Nonnull Entity get(@Nonnull Site site, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
-        if (site instanceof Host) {
-            return Account.get((Host) site, resultSet, columnIndex);
-        } else if (site instanceof Client) {
-            return Role.getNotNull((Client) site, resultSet, columnIndex);
-        } else {
-            throw new ShouldNeverHappenError("A site is either a host or a client.");
-        }
-    }
-    
-    @Override
-    public final void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
-        preparedStatement.setLong(parameterIndex, getNumber());
-    }
+    public @Nonnull HostEntity toHostEntity() throws InvalidEncodingException;
     
     /**
-     * Sets the parameter at the given index of the prepared statement to the given entity.
+     * Returns this entity as a {@link NonHostEntity}.
      * 
-     * @param entity the entity to which the parameter at the given index is to be set.
-     * @param preparedStatement the prepared statement whose parameter is to be set.
-     * @param parameterIndex the index of the parameter to set.
+     * @return this entity as a {@link NonHostEntity}.
+     * 
+     * @throws InvalidEncodingException if this entity is not an instance of {@link NonHostEntity}.
      */
-    public static void set(@Nullable Entity entity, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
-        if (entity == null) preparedStatement.setNull(parameterIndex, Types.BIGINT);
-        else entity.set(preparedStatement, parameterIndex);
-    }
-    
     @Pure
-    @Override
-    public final @Nonnull String toString() {
-        return String.valueOf(getNumber());
-    }
+    public @Nonnull NonHostEntity toNonHostEntity() throws InvalidEncodingException;
+    
+    /**
+     * Returns this entity as an {@link Account}.
+     * 
+     * @return this entity as an {@link Account}.
+     * 
+     * @throws InvalidEncodingException if this entity is not an instance of {@link Account}.
+     */
+    @Pure
+    public @Nonnull Account toAccount() throws InvalidEncodingException;
+    
+    /**
+     * Returns this entity as a {@link HostAccount}.
+     * 
+     * @return this entity as a {@link HostAccount}.
+     * 
+     * @throws InvalidEncodingException if this entity is not an instance of {@link HostAccount}.
+     */
+    @Pure
+    public @Nonnull HostAccount toHostAccount() throws InvalidEncodingException;
+    
+    /**
+     * Returns this entity as a {@link NonHostAccount}.
+     * 
+     * @return this entity as a {@link NonHostAccount}.
+     * 
+     * @throws InvalidEncodingException if this entity is not an instance of {@link NonHostAccount}.
+     */
+    @Pure
+    public @Nonnull NonHostAccount toNonHostAccount() throws InvalidEncodingException;
+    
+    /**
+     * Returns this entity as a {@link Role}.
+     * 
+     * @return this entity as a {@link Role}.
+     * 
+     * @throws InvalidEncodingException if this entity is not an instance of {@link Role}.
+     */
+    @Pure
+    public @Nonnull Role toRole() throws InvalidEncodingException;
     
 }

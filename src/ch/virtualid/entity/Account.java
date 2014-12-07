@@ -1,18 +1,15 @@
 package ch.virtualid.entity;
 
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.concept.Aspect;
-import ch.virtualid.concept.Instance;
-import ch.virtualid.concept.Observer;
-import ch.virtualid.database.Database;
+import ch.virtualid.errors.ShouldNeverHappenError;
+import ch.virtualid.identity.HostIdentity;
 import ch.virtualid.identity.Identity;
 import ch.virtualid.identity.IdentityClass;
 import ch.virtualid.identity.InternalIdentity;
+import ch.virtualid.identity.InternalNonHostIdentity;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
 import ch.virtualid.server.Host;
-import ch.virtualid.util.ConcurrentHashMap;
-import ch.virtualid.util.ConcurrentMap;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
@@ -21,10 +18,13 @@ import javax.annotation.Nullable;
 /**
  * This class models an account on the host-side.
  * 
+ * @see HostAccount
+ * @see NonHostAccount
+ * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public final class Account extends Entity implements Immutable, SQLizable {
+public abstract class Account extends EntityClass implements Immutable, SQLizable {
     
     /**
      * Stores the host of this account.
@@ -32,19 +32,12 @@ public final class Account extends Entity implements Immutable, SQLizable {
     private final @Nonnull Host host;
     
     /**
-     * Stores the identity of this account.
-     */
-    private final @Nonnull InternalIdentity identity;
-    
-    /**
-     * Creates a new account with the given client and role.
+     * Creates a new account with the given host.
      * 
      * @param host the host of this account.
-     * @param identity the identity of this account.
      */
-    private Account(@Nonnull Host host, @Nonnull InternalIdentity identity) {
+    Account(@Nonnull Host host) {
         this.host = host;
-        this.identity = identity;
     }
     
     
@@ -54,27 +47,21 @@ public final class Account extends Entity implements Immutable, SQLizable {
      * @return the host of this account.
      */
     @Pure
-    public @Nonnull Host getHost() {
+    public final @Nonnull Host getHost() {
         return host;
     }
     
     
     @Pure
     @Override
-    public @Nonnull Host getSite() {
+    public final @Nonnull Host getSite() {
         return host;
     }
     
     @Pure
     @Override
-    public @Nonnull InternalIdentity getIdentity() {
-        return identity;
-    }
-    
-    @Pure
-    @Override
-    public long getNumber() {
-        return identity.getNumber();
+    public final long getNumber() {
+        return getIdentity().getNumber();
     }
     
     
@@ -83,7 +70,7 @@ public final class Account extends Entity implements Immutable, SQLizable {
      */
     @Pure
     public void opened() {
-        notify(CREATED);
+        notify(Entity.CREATED);
     }
     
     /**
@@ -91,22 +78,9 @@ public final class Account extends Entity implements Immutable, SQLizable {
      */
     @Pure
     public void closed() {
-        notify(DELETED);
+        notify(Entity.DELETED);
     }
     
-    
-    /**
-     * Caches accounts given their host and identity.
-     */
-    private static final @Nonnull ConcurrentMap<Host, ConcurrentMap<InternalIdentity, Account>> index = new ConcurrentHashMap<Host, ConcurrentMap<InternalIdentity, Account>>();
-    
-    static {
-        if (Database.isSingleAccess()) {
-            Instance.observeAspects(new Observer() {
-                @Override public void notify(@Nonnull Aspect aspect, @Nonnull Instance instance) { index.remove(instance); }
-            }, Host.DELETED);
-        }
-    }
     
     /**
      * Returns a potentially locally cached account.
@@ -118,14 +92,12 @@ public final class Account extends Entity implements Immutable, SQLizable {
      */
     @Pure
     public static @Nonnull Account get(@Nonnull Host host, @Nonnull InternalIdentity identity) {
-        if (Database.isSingleAccess()) {
-            @Nullable ConcurrentMap<InternalIdentity, Account> map = index.get(host);
-            if (map == null) map = index.putIfAbsentElseReturnPresent(host, new ConcurrentHashMap<InternalIdentity, Account>());
-            @Nullable Account account = map.get(identity);
-            if (account == null) account = map.putIfAbsentElseReturnPresent(identity, new Account(host, identity));
-            return account;
+        if (identity instanceof HostIdentity) {
+            return HostAccount.get(host, (HostIdentity) identity);
+        } else if (identity instanceof InternalNonHostIdentity) {
+            return NonHostAccount.get(host, (InternalNonHostIdentity) identity);
         } else {
-            return new Account(host, identity);
+            throw new ShouldNeverHappenError("An internal identity is either a host or a non-host.");
         }
     }
     
@@ -139,7 +111,7 @@ public final class Account extends Entity implements Immutable, SQLizable {
      * @return the given column of the result set as an instance of this class.
      */
     @Pure
-    public static @Nonnull Account get(@Nonnull Host host, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+    public static @Nonnull Account getNotNull(@Nonnull Host host, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
         final @Nonnull Identity identity = IdentityClass.getNotNull(resultSet, columnIndex);
         if (identity instanceof InternalIdentity) return get(host, (InternalIdentity) identity);
         else throw new SQLException("The identity of " + identity.getAddress() + " is not internal.");
@@ -148,20 +120,20 @@ public final class Account extends Entity implements Immutable, SQLizable {
     
     @Pure
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         int hash = 7;
         hash = 41 * hash + host.hashCode();
-        hash = 41 * hash + identity.hashCode();
+        hash = 41 * hash + getIdentity().hashCode();
         return hash;
     }
     
     @Pure
     @Override
-    public boolean equals(@Nullable Object object) {
+    public final boolean equals(@Nullable Object object) {
         if (object == this) return true;
         if (object == null || !(object instanceof Account)) return false;
         final @Nonnull Account other = (Account) object;
-        return this.host.equals(other.host) && this.identity.equals(other.identity);
+        return this.host.equals(other.host) && this.getIdentity().equals(other.getIdentity());
     }
     
 }

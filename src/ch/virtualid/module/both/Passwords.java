@@ -86,7 +86,7 @@ public final class Passwords implements BothModule {
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
             final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
             while (resultSet.next()) {
-                final @Nonnull Account account = Account.get(host, resultSet, 1);
+                final @Nonnull Account account = Account.getNotNull(host, resultSet, 1);
                 final @Nonnull String password = resultSet.getString(2);
                 entries.add(new TupleWrapper(MODULE_ENTRY, account.getIdentity().getAddress(), new StringWrapper(Password.TYPE, password)).toBlock());
             }

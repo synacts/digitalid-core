@@ -165,8 +165,6 @@ public abstract class IdentityClass implements Identity, Immutable, Blockable, S
     @Pure
     @Override
     public final int hashCode() {
-        assert !(this instanceof Person) : "The hash code of persons may change and should thus not be used.";
-        
         return (int) (number ^ (number >>> 32));
     }
     

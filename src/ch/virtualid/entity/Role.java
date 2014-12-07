@@ -36,7 +36,7 @@ import javax.annotation.Nullable;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public final class Role extends Entity implements Immutable, SQLizable, Observer {
+public final class Role extends EntityClass implements NonHostEntity, Immutable, SQLizable, Observer {
     
     /**
      * Stores the aspect of a new role being added to the observed role.

@@ -90,7 +90,7 @@ public interface Identity extends Immutable, Blockable, SQLizable {
     
     
     /**
-     * Returns this identity as an {@link InternalIdentity} or throws an {@link InvalidEncodingException} if it is not an instance thereof.
+     * Returns this identity as an {@link InternalIdentity}.
      * 
      * @return this identity as an {@link InternalIdentity}.
      * 
@@ -100,7 +100,7 @@ public interface Identity extends Immutable, Blockable, SQLizable {
     public @Nonnull InternalIdentity toInternalIdentity() throws InvalidEncodingException;
     
     /**
-     * Returns this identity as an {@link ExternalIdentity} or throws an {@link InvalidEncodingException} if it is not an instance thereof.
+     * Returns this identity as an {@link ExternalIdentity}.
      * 
      * @return this identity as an {@link ExternalIdentity}.
      * 
@@ -111,7 +111,7 @@ public interface Identity extends Immutable, Blockable, SQLizable {
     
     
     /**
-     * Returns this identity as a {@link HostIdentity} or throws an {@link InvalidEncodingException} if it is not an instance thereof.
+     * Returns this identity as a {@link HostIdentity}.
      * 
      * @return this identity as a {@link HostIdentity}.
      * 
@@ -121,7 +121,7 @@ public interface Identity extends Immutable, Blockable, SQLizable {
     public @Nonnull HostIdentity toHostIdentity() throws InvalidEncodingException;
     
     /**
-     * Returns this identity as a {@link NonHostIdentity} or throws an {@link InvalidEncodingException} if it is not an instance thereof.
+     * Returns this identity as a {@link NonHostIdentity}.
      * 
      * @return this identity as a {@link NonHostIdentity}.
      * 
@@ -131,7 +131,7 @@ public interface Identity extends Immutable, Blockable, SQLizable {
     public @Nonnull NonHostIdentity toNonHostIdentity() throws InvalidEncodingException;
     
     /**
-     * Returns this identity as an {@link InternalNonHostIdentity} or throws an {@link InvalidEncodingException} if it is not an instance thereof.
+     * Returns this identity as an {@link InternalNonHostIdentity}.
      * 
      * @return this identity as an {@link InternalNonHostIdentity}.
      * 
@@ -141,7 +141,7 @@ public interface Identity extends Immutable, Blockable, SQLizable {
     public @Nonnull InternalNonHostIdentity toInternalNonHostIdentity() throws InvalidEncodingException;
     
     /**
-     * Returns this identity as a {@link Type} or throws an {@link InvalidEncodingException} if it is not an instance thereof.
+     * Returns this identity as a {@link Type}.
      * 
      * @return this identity as a {@link Type}.
      * 
@@ -151,7 +151,7 @@ public interface Identity extends Immutable, Blockable, SQLizable {
     public @Nonnull Type toType() throws InvalidEncodingException;
     
     /**
-     * Returns this identity as a {@link SyntacticType} or throws an {@link InvalidEncodingException} if it is not an instance thereof.
+     * Returns this identity as a {@link SyntacticType}.
      * 
      * @return this identity as a {@link SyntacticType}.
      * 
@@ -161,7 +161,7 @@ public interface Identity extends Immutable, Blockable, SQLizable {
     public @Nonnull SyntacticType toSyntacticType() throws InvalidEncodingException;
     
     /**
-     * Returns this identity as a {@link SemanticType} or throws an {@link InvalidEncodingException} if it is not an instance thereof.
+     * Returns this identity as a {@link SemanticType}.
      * 
      * @return this identity as a {@link SemanticType}.
      * 
@@ -172,7 +172,7 @@ public interface Identity extends Immutable, Blockable, SQLizable {
     
     
     /**
-     * Returns this identity as a {@link Person} or throws an {@link InvalidEncodingException} if it is not an instance thereof.
+     * Returns this identity as a {@link Person}.
      * 
      * @return this identity as a {@link Person}.
      * 
@@ -182,7 +182,7 @@ public interface Identity extends Immutable, Blockable, SQLizable {
     public @Nonnull Person toPerson() throws InvalidEncodingException;
     
     /**
-     * Returns this identity as an {@link InternalPerson} or throws an {@link InvalidEncodingException} if it is not an instance thereof.
+     * Returns this identity as an {@link InternalPerson}.
      * 
      * @return this identity as an {@link InternalPerson}.
      * 
@@ -192,7 +192,7 @@ public interface Identity extends Immutable, Blockable, SQLizable {
     public @Nonnull InternalPerson toInternalPerson() throws InvalidEncodingException;
     
     /**
-     * Returns this identity as a {@link NaturalPerson} or throws an {@link InvalidEncodingException} if it is not an instance thereof.
+     * Returns this identity as a {@link NaturalPerson}.
      * 
      * @return this identity as a {@link NaturalPerson}.
      * 
@@ -202,7 +202,7 @@ public interface Identity extends Immutable, Blockable, SQLizable {
     public @Nonnull NaturalPerson toNaturalPerson() throws InvalidEncodingException;
     
     /**
-     * Returns this identity as a {@link ArtificialPerson} or throws an {@link InvalidEncodingException} if it is not an instance thereof.
+     * Returns this identity as a {@link ArtificialPerson}.
      * 
      * @return this identity as a {@link ArtificialPerson}.
      * 
@@ -212,7 +212,7 @@ public interface Identity extends Immutable, Blockable, SQLizable {
     public @Nonnull ArtificialPerson toArtificialPerson() throws InvalidEncodingException;
     
     /**
-     * Returns this identity as an {@link ExternalPerson} or throws an {@link InvalidEncodingException} if it is not an instance thereof.
+     * Returns this identity as an {@link ExternalPerson}.
      * 
      * @return this identity as an {@link ExternalPerson}.
      * 
@@ -222,7 +222,7 @@ public interface Identity extends Immutable, Blockable, SQLizable {
     public @Nonnull ExternalPerson toExternalPerson() throws InvalidEncodingException;
     
     /**
-     * Returns this identity as an {@link EmailPerson} or throws an {@link InvalidEncodingException} if it is not an instance thereof.
+     * Returns this identity as an {@link EmailPerson}.
      * 
      * @return this identity as an {@link EmailPerson}.
      * 
@@ -232,7 +232,7 @@ public interface Identity extends Immutable, Blockable, SQLizable {
     public @Nonnull EmailPerson toEmailPerson() throws InvalidEncodingException;
     
     /**
-     * Returns this identity as a {@link MobilePerson} or throws an {@link InvalidEncodingException} if it is not an instance thereof.
+     * Returns this identity as a {@link MobilePerson}.
      * 
      * @return this identity as a {@link MobilePerson}.
      * 

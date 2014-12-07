@@ -247,7 +247,7 @@ public final class Agents implements BothModule {
             try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT entity, agent, " + Restrictions.COLUMNS + " FROM " + host + "agent_restrictions")) {
                 final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
                 while (resultSet.next()) {
-                    final @Nonnull Account account = Account.get(host, resultSet, 1);
+                    final @Nonnull Account account = Account.getNotNull(host, resultSet, 1);
                     final long number = resultSet.getLong(2);
                     final @Nonnull Restrictions restrictions = Restrictions.get(account, resultSet, 3);
                     entries.add(new TupleWrapper(AGENT_RESTRICTIONS_MODULE_ENTRY, account.getIdentity(), new Int64Wrapper(Agent.NUMBER, number), restrictions).toBlock());
@@ -282,7 +282,7 @@ public final class Agents implements BothModule {
             try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT entity, agent, relation, context FROM " + host + "outgoing_role")) {
                 final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
                 while (resultSet.next()) {
-                    final @Nonnull Account account = Account.get(host, resultSet, 1);
+                    final @Nonnull Account account = Account.getNotNull(host, resultSet, 1);
                     final long number = resultSet.getLong(2);
                     final @Nonnull Identity relation = IdentityClass.getNotNull(resultSet, 3);
                     final @Nonnull Context context = Context.getNotNull(account, resultSet, 4);

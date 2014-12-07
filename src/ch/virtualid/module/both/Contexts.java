@@ -28,6 +28,12 @@ import javax.annotation.Nullable;
 /**
  * This class provides database access to the {@link Context contexts} of the core service.
  * 
+ * Big Problem: How do agents learn when a context above the one they are authorized for receives a new preference, permission or authentication?
+ * Possible Solutions:
+ * – They don't (and thus get out of synch and need to reload from time to time). => Best option!
+ * – Agents always see the full context structure but without the contacts (and possibly names).
+ * – Agents cannot be restricted to a specific context and see thus always everything (including the contacts).
+ * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 0.1
  */
@@ -139,6 +145,7 @@ public final class Contexts implements BothModule {
         final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
         try (@Nonnull Statement statement = Database.createStatement()) {
             // TODO: Retrieve the entries of the given entity from the database table(s).
+            // This might be a little bit complicated as the context for which the client is authorized needs to be aggregated.
         }
         return new ListWrapper(STATE, entries.freeze()).toBlock();
     }
