@@ -118,7 +118,7 @@ public abstract class CoreServiceInternalAction extends InternalAction {
     
     @Override
     public void executeOnHostInternalAction() throws PacketException, SQLException {
-        final @Nonnull Agent agent = getSignatureNotNull().getAgentCheckedAndRestricted(getAccount(), getPublicKey());
+        final @Nonnull Agent agent = getSignatureNotNull().getAgentCheckedAndRestricted(getNonHostAccount(), getPublicKey());
         
         final @Nonnull ReadonlyAgentPermissions permissions = getRequiredPermissions();
         if (!permissions.equals(AgentPermissions.NONE)) agent.getPermissions().checkCover(permissions);

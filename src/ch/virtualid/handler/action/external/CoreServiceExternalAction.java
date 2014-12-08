@@ -4,6 +4,7 @@ import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Entity;
+import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.handler.ExternalAction;
 import ch.virtualid.handler.reply.action.CoreServiceActionReply;
@@ -34,7 +35,7 @@ public abstract class CoreServiceExternalAction extends ExternalAction {
      * @require !(entity instanceof Account) || canBeSentByHosts() : "Methods encoded on hosts can be sent by hosts.";
      * @require !(entity instanceof Role) || !canOnlyBeSentByHosts() : "Methods encoded on clients cannot only be sent by hosts.";
      */
-    protected CoreServiceExternalAction(@Nonnull Entity entity, @Nonnull InternalIdentity subject) {
+    protected CoreServiceExternalAction(@Nonnull NonHostEntity entity, @Nonnull InternalIdentity subject) {
         super(entity, subject.getAddress(), subject.getAddress().getHostIdentifier());
     }
     

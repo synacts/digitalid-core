@@ -2,7 +2,7 @@ package ch.virtualid.handler.reply.query;
 
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.concepts.Certificate;
-import ch.virtualid.entity.Entity;
+import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.external.InvalidSignatureException;
@@ -117,7 +117,7 @@ public final class AttributesReply extends CoreServiceQueryReply {
      * @ensure hasSignature() : "This handler has a signature.";
      * @ensure !isOnHost() : "Query replies are never decoded on hosts.";
      */
-    private AttributesReply(@Nullable Entity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
+    private AttributesReply(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, number);
         
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
@@ -183,7 +183,7 @@ public final class AttributesReply extends CoreServiceQueryReply {
         
         @Pure
         @Override
-        protected @Nonnull Reply create(@Nullable Entity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
+        protected @Nonnull Reply create(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
             return new AttributesReply(entity, signature, number, block);
         }
         

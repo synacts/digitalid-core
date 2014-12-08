@@ -36,12 +36,6 @@ public final class IdentityQuery extends CoreServiceExternalQuery {
      */
     public static final @Nonnull SemanticType TYPE = SemanticType.create("query.identity@virtualid.ch").load(EmptyWrapper.TYPE);
     
-    @Pure
-    @Override
-    public @Nonnull SemanticType getType() {
-        return TYPE;
-    }
-    
     
     /**
      * Creates an identity query to retrieve the identity of the given subject.
@@ -69,8 +63,6 @@ public final class IdentityQuery extends CoreServiceExternalQuery {
      */
     private IdentityQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws InvalidEncodingException {
         super(entity, signature, recipient);
-        
-        assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
     }
     
     @Pure
@@ -101,14 +93,17 @@ public final class IdentityQuery extends CoreServiceExternalQuery {
     
     @Override
     public @Nonnull IdentityReply executeOnHost() throws PacketException, SQLException {
-        assert isOnHost() : "This method is called on a host.";
-        assert hasSignature() : "This handler has a signature.";
-        
         final @Nonnull InternalIdentifier subject = getSubject(); // The following exception should never be thrown as the condition is already checked in the packet class.
         if (!(subject instanceof InternalNonHostIdentifier)) throw new PacketException(PacketError.IDENTIFIER, "The identity may only be queried of non-host identities.");
         return new IdentityReply((InternalNonHostIdentifier) subject);
     }
     
+    
+    @Pure
+    @Override
+    public @Nonnull SemanticType getType() {
+        return TYPE;
+    }
     
     /**
      * The factory class for the surrounding method.

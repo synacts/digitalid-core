@@ -3,7 +3,7 @@ package ch.virtualid.module;
 import ch.virtualid.agent.Agent;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Client;
-import ch.virtualid.entity.Entity;
+import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.entity.Site;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
@@ -227,7 +227,7 @@ public abstract class Service implements BothModule {
     
     @Pure
     @Override
-    public final @Nonnull Block getState(@Nonnull Entity entity, @Nonnull Agent agent) throws SQLException {
+    public final @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull Agent agent) throws SQLException {
         final @Nonnull FreezableList<Block> elements = new FreezableArrayList<Block>(bothModules.size());
         for (final @Nonnull BothModule bothModule : bothModules.values()) {
             elements.add(new SelfcontainedWrapper(STATE, bothModule.getState(entity, agent)).toBlock());
@@ -236,7 +236,7 @@ public abstract class Service implements BothModule {
     }
     
     @Override
-    public final void addState(@Nonnull Entity entity, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
+    public final void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         assert block.getType().isBasedOn(getStateFormat()) : "The block is based on the indicated type.";
         
         final @Nonnull ReadonlyList<Block> elements = new ListWrapper(block).getElementsNotNull();
@@ -247,7 +247,7 @@ public abstract class Service implements BothModule {
     }
     
     @Override
-    public final void removeState(@Nonnull Entity entity) throws SQLException {
+    public final void removeState(@Nonnull NonHostEntity entity) throws SQLException {
       for (final @Nonnull BothModule bothModule : bothModules.values()) bothModule.removeState(entity);
     }
     

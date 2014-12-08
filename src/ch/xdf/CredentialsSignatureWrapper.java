@@ -16,8 +16,10 @@ import ch.virtualid.cryptography.Element;
 import ch.virtualid.cryptography.Exponent;
 import ch.virtualid.cryptography.Parameters;
 import ch.virtualid.cryptography.PublicKey;
-import ch.virtualid.entity.Account;
 import ch.virtualid.entity.Entity;
+import ch.virtualid.entity.HostEntity;
+import ch.virtualid.entity.NonHostAccount;
+import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InactiveSignatureException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
@@ -272,7 +274,6 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
      * @require block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
      * @require credentialsSignature.getType().isBasedOn(SIGNATURE) : "The signature is based on the implementation type.";
      */
-    @SuppressWarnings("AssignmentToMethodParameter")
     CredentialsSignatureWrapper(final @Nonnull Block block, final @Nonnull Block credentialsSignature, boolean verified, @Nullable Entity entity) throws SQLException, IOException, PacketException, ExternalException {
         super(block, verified);
         
@@ -285,19 +286,22 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
         final @Nullable Block restrictionsBlock = tuple.getElement(2);
         if (restrictionsBlock != null) {
             if (entity == null) throw new InvalidEncodingException("The restrictions of a credentials signature cannot be decoded without an entity.");
-            if (entity instanceof Account) {
-                final @Nonnull Host host = ((Account) entity).getHost();
+            final @Nonnull NonHostEntity nonHostEntity;
+            if (entity instanceof HostEntity) {
+                final @Nonnull Host host = ((HostEntity) entity).getHost();
                 final @Nonnull InternalIdentifier subject = getSubjectNotNull();
                 final @Nonnull InternalPerson person = subject.getIdentity().toInternalPerson();
                 // If the subject is hosted on the given host, the entity is recreated for that subject.
                 if (host.getIdentifier().equals(subject.getHostIdentifier())) {
-                    entity = Account.get(host, person);
+                    nonHostEntity = NonHostAccount.get(host, person);
                 // Otherwise, the context structure is accessed through a role of the corresponding client.
                 } else {
-                    entity = Roles.getRole(host.getClient(), person);
+                    nonHostEntity = Roles.getRole(host.getClient(), person);
                 }
+            } else {
+                nonHostEntity = (NonHostEntity) entity;
             }
-            restrictions = new Restrictions(entity, restrictionsBlock);
+            restrictions = new Restrictions(nonHostEntity, restrictionsBlock);
         } else {
             restrictions = null;
         }
@@ -955,14 +959,14 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
     
     @Pure
     @Override
-    public @Nullable OutgoingRole getAgent(@Nonnull Entity entity) throws SQLException {
+    public @Nullable OutgoingRole getAgent(@Nonnull NonHostEntity entity) throws SQLException {
         final @Nonnull Credential credential = getCredentials().getNotNull(0);
         return credential.isRoleBased() ? Agents.getOutgoingRole(entity, credential.getRoleNotNull(), false) : null;
     }
     
     @Pure
     @Override
-    public @Nonnull OutgoingRole getAgentCheckedAndRestricted(@Nonnull Entity entity, @Nullable PublicKey publicKey) throws SQLException, PacketException {
+    public @Nonnull OutgoingRole getAgentCheckedAndRestricted(@Nonnull NonHostEntity entity, @Nullable PublicKey publicKey) throws SQLException, PacketException {
         final @Nonnull Credential credential = getCredentials().getNotNull(0);
         if (credential.isRoleBased()) {
             final @Nullable OutgoingRole outgoingRole = Agents.getOutgoingRole(entity, credential.getRoleNotNull(), true);

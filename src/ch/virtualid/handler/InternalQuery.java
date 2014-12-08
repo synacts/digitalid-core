@@ -18,6 +18,7 @@ import javax.annotation.Nonnull;
  * Internal queries can only be sent by {@link Client clients} and are always signed identity-based.
  * 
  * @invariant hasEntity() : "This internal query has an entity.";
+ * @invariant isNonHost() : "This internal query belongs to a non-host.";
  * @invariant getEntityNotNull().getIdentity().equals(getSubject().getIdentity()) : "The identity of the entity and the subject are the same.";
  * 
  * @see CoreServiceInternalQuery
@@ -52,6 +53,7 @@ public abstract class InternalQuery extends Query implements InternalMethod {
     protected InternalQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
+        if (!isNonHost()) throw new PacketException(PacketError.IDENTIFIER, "Internal queries have to belong to a non-host.");
         if (!getEntityNotNull().getIdentity().equals(getSubject().getIdentity())) throw new PacketException(PacketError.IDENTIFIER, "The identity of the entity and the subject have to be the same for internal queries.");
     }
     

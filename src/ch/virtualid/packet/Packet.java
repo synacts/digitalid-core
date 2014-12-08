@@ -6,6 +6,7 @@ import ch.virtualid.auxiliary.Time;
 import ch.virtualid.cryptography.SymmetricKey;
 import ch.virtualid.entity.Account;
 import ch.virtualid.entity.Entity;
+import ch.virtualid.entity.HostAccount;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InactiveSignatureException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
@@ -173,7 +174,7 @@ public abstract class Packet implements Immutable {
         
         final @Nullable HostIdentifier recipient = encryption.getRecipient();
         if (isResponse != (recipient == null)) throw new PacketException(PacketError.ENCRYPTION, "The recipient of a request may not be null.", null, isResponse);
-        final @Nullable Account account = recipient == null ? null : Server.getHost(recipient).getAccount();
+        final @Nullable HostAccount account = recipient == null ? null : Server.getHost(recipient).getAccount();
         
         final @Nonnull ReadonlyList<Block> elements;
         try { elements = new ListWrapper(encryption.getElementNotNull()).getElements(); } catch (InvalidEncodingException exception) { throw new PacketException(PacketError.ELEMENTS, "The elements could not be decoded.", exception, isResponse); }
@@ -217,7 +218,7 @@ public abstract class Packet implements Immutable {
                             } else {
                                 final @Nonnull Method method = request.getMethod(i);
                                 final @Nullable Class<? extends Reply> replyClass = method.getReplyClass();
-                                final @Nonnull Reply reply = Reply.get(method.getEntity(), (HostSignatureWrapper) signature, block);
+                                final @Nonnull Reply reply = Reply.get(method.getNonHostEntity(), (HostSignatureWrapper) signature, block);
                                 if (replyClass == null) throw new PacketException(PacketError.REPLY, "No reply was expected but '" + reply.getClass().getName() + "' was received.", new WrongReplyException(reply), isResponse);
                                 if (!replyClass.isInstance(reply)) throw new PacketException(PacketError.REPLY, "A reply was '" + reply.getClass().getName() + "' instead of '" + replyClass.getName() + "'.", new WrongReplyException(reply), isResponse);
                                 response.setReply(i, reply);

@@ -3,7 +3,7 @@ package ch.virtualid.module;
 import ch.virtualid.agent.Agent;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Client;
-import ch.virtualid.entity.Entity;
+import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.entity.Role;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
@@ -46,7 +46,7 @@ public interface BothModule extends HostModule, ClientModule {
      * @ensure return.getType().equals(getStateFormat()) : "The returned block has the indicated type.";
      */
     @Pure
-    public @Nonnull Block getState(@Nonnull Entity entity, @Nonnull Agent agent) throws SQLException;
+    public @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull Agent agent) throws SQLException;
     
     /**
      * Adds the partial state in the given block to the given entity.
@@ -56,21 +56,21 @@ public interface BothModule extends HostModule, ClientModule {
      * 
      * @require block.getType().isBasedOn(getStateFormat()) : "The block is based on the indicated type.";
      */
-    public void addState(@Nonnull Entity entity, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException;
+    public void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException;
     
     /**
      * Removes all the entries of the given entity in this module.
      * 
      * @param entity the entity whose entries are to be removed.
      */
-    public void removeState(@Nonnull Entity entity) throws SQLException;
+    public void removeState(@Nonnull NonHostEntity entity) throws SQLException;
     
     /**
      * Returns an internal query for reloading the data of this module.
      * <p>
      * <em>Important:</em> The block of the corresponding {@link QueryReply}
      * has to be based on the semantic type of {@link #getStateFormat()} in order to
-     * pass it to {@link #addState(ch.virtualid.entity.Entity, ch.xdf.Block)}.
+     * pass it to {@link #addState(ch.virtualid.entity.NonHostEntity, ch.xdf.Block)}.
      * 
      * @param role the role whose data has to be reloaded.
      * 

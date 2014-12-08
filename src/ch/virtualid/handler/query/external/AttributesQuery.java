@@ -44,12 +44,6 @@ public final class AttributesQuery extends CoreServiceExternalQuery {
      */
     public static final @Nonnull SemanticType TYPE = SemanticType.create("query.attribute@virtualid.ch").load(TupleWrapper.TYPE, AttributeSet.TYPE, PUBLISHED);
     
-    @Pure
-    @Override
-    public @Nonnull SemanticType getType() {
-        return TYPE;
-    }
-    
     
     /**
      * Stores the attributes that are queried.
@@ -103,8 +97,6 @@ public final class AttributesQuery extends CoreServiceExternalQuery {
      */
     private AttributesQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException  {
         super(entity, signature, recipient);
-        
-        assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(2);
         this.attributes = new AttributeSet(elements.getNotNull(0)).freeze();
@@ -170,9 +162,6 @@ public final class AttributesQuery extends CoreServiceExternalQuery {
     
     @Override
     public @Nonnull AttributesReply executeOnHost() throws PacketException, SQLException {
-        assert isOnHost() : "This method is called on a host.";
-        assert hasSignature() : "This handler has a signature.";
-        
         // TODO:
         /*
         AgentPermissions authorization = null;
@@ -218,6 +207,12 @@ public final class AttributesQuery extends CoreServiceExternalQuery {
 //        return new AttributesReply();
     }
     
+    
+    @Pure
+    @Override
+    public @Nonnull SemanticType getType() {
+        return TYPE;
+    }
     
     /**
      * The factory class for the surrounding method.

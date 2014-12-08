@@ -1,7 +1,7 @@
 package ch.virtualid.handler;
 
 import ch.virtualid.entity.Account;
-import ch.virtualid.entity.Entity;
+import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.handler.reply.query.CoreServiceQueryReply;
 import ch.virtualid.handler.reply.query.IdentityReply;
@@ -50,7 +50,7 @@ public abstract class QueryReply extends Reply {
      * @ensure hasSignature() : "This handler has a signature.";
      * @ensure !isOnHost() : "Query replies are never decoded on hosts.";
      */
-    protected QueryReply(@Nullable Entity entity, @Nonnull HostSignatureWrapper signature, long number) throws InvalidEncodingException {
+    protected QueryReply(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number) throws InvalidEncodingException {
         super(entity, signature, number);
         
         if (isOnHost()) throw new InvalidEncodingException("Query replies are never decoded on hosts.");

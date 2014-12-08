@@ -6,6 +6,8 @@ import ch.virtualid.concepts.Password;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.Account;
 import ch.virtualid.entity.Entity;
+import ch.virtualid.entity.EntityClass;
+import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.entity.Role;
 import ch.virtualid.entity.Site;
 import ch.virtualid.exceptions.external.ExternalException;
@@ -49,7 +51,7 @@ public final class Passwords implements BothModule {
     @Override
     public void createTables(@Nonnull Site site) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "password (entity " + Entity.FORMAT + " NOT NULL, password VARCHAR(50) NOT NULL COLLATE " + Database.getConfiguration().BINARY() + ", PRIMARY KEY (entity), FOREIGN KEY (entity) " + site.getReference() + ")");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "password (entity " + EntityClass.FORMAT + " NOT NULL, password VARCHAR(50) NOT NULL COLLATE " + Database.getConfiguration().BINARY() + ", PRIMARY KEY (entity), FOREIGN KEY (entity) " + site.getReference() + ")");
             Database.onInsertIgnore(statement, site + "password", "entity");
         }
     }
@@ -125,12 +127,12 @@ public final class Passwords implements BothModule {
     
     @Pure
     @Override
-    public @Nonnull Block getState(@Nonnull Entity entity, @Nonnull Agent agent) throws SQLException {
+    public @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull Agent agent) throws SQLException {
         return new TupleWrapper(STATE_FORMAT, agent.isClient() ? new StringWrapper(Password.TYPE, get(entity)) : null).toBlock();
     }
     
     @Override
-    public void addState(@Nonnull Entity entity, @Nonnull Block block) throws SQLException, InvalidEncodingException {
+    public void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws SQLException, InvalidEncodingException {
         assert block.getType().isBasedOn(getStateFormat()) : "The block is based on the indicated type.";
         
         final @Nullable Block element = new TupleWrapper(block).getElement(0);
@@ -140,7 +142,7 @@ public final class Passwords implements BothModule {
     }
     
     @Override
-    public void removeState(@Nonnull Entity entity) throws SQLException {
+    public void removeState(@Nonnull NonHostEntity entity) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("DELETE FROM " + entity.getSite() + "password WHERE entity = " + entity);
         }

@@ -11,8 +11,8 @@ import ch.virtualid.client.Client;
 import ch.virtualid.client.Commitment;
 import ch.virtualid.contact.Context;
 import ch.virtualid.cryptography.Exponent;
-import ch.virtualid.entity.Account;
 import ch.virtualid.entity.Entity;
+import ch.virtualid.entity.NonHostAccount;
 import ch.virtualid.errors.ShouldNeverHappenError;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
@@ -221,7 +221,7 @@ public final class AccountOpen extends Action {
         // TODO: Include the resctriction mechanisms like the tokens.
         
         final @Nonnull InternalNonHostIdentity identity = (InternalNonHostIdentity) Mapper.mapIdentity(subject, category, null);
-        final @Nonnull Account account = Account.get(getAccount().getHost(), identity);
+        final @Nonnull NonHostAccount account = NonHostAccount.get(getAccount().getHost(), identity);
         
         final @Nonnull Context context = Context.getRoot(account);
         context.createForActions();

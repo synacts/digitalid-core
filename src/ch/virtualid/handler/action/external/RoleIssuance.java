@@ -70,7 +70,7 @@ public final class RoleIssuance extends CoreServiceExternalAction {
     public RoleIssuance(@Nonnull OutgoingRole outgoingRole, @Nonnull InternalPerson subject) throws SQLException {
         super(outgoingRole.getAccount(), subject);
         
-        this.issuer = (InternalNonHostIdentity) outgoingRole.getAccount().getIdentity(); // TODO: Remove the cast when the entity hierarchy is rewritten.
+        this.issuer = outgoingRole.getAccount().getIdentity();
         this.relation = outgoingRole.getRelation();
         this.agentNumber = outgoingRole.getNumber();
     }
@@ -134,7 +134,7 @@ public final class RoleIssuance extends CoreServiceExternalAction {
      * Executes this action on both hosts and clients.
      */
     private void executeOnBoth() throws SQLException {
-        Agents.addIncomingRole(getEntityNotNull(), issuer, relation, agentNumber);
+        Agents.addIncomingRole(getNonHostEntity(), issuer, relation, agentNumber);
     }
     
     @Override

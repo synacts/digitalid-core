@@ -1,7 +1,7 @@
 package ch.virtualid.handler.reply.query;
 
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.entity.Entity;
+import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketError;
@@ -98,7 +98,7 @@ public final class IdentityReply extends CoreServiceQueryReply {
      * @ensure hasSignature() : "This handler has a signature.";
      * @ensure !isOnHost() : "Query replies are never decoded on hosts.";
      */
-    private IdentityReply(@Nullable Entity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws InvalidEncodingException {
+    private IdentityReply(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws InvalidEncodingException {
         super(entity, signature, number);
         
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
@@ -171,7 +171,7 @@ public final class IdentityReply extends CoreServiceQueryReply {
         
         @Pure
         @Override
-        protected @Nonnull Reply create(@Nullable Entity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
+        protected @Nonnull Reply create(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
             return new IdentityReply(entity, signature, number, block);
         }
         

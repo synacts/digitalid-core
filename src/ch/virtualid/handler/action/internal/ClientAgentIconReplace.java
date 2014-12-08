@@ -105,7 +105,7 @@ public final class ClientAgentIconReplace extends CoreServiceInternalAction {
         super(entity, signature, recipient);
         
         final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(3);
-        this.clientAgent = Agent.get(entity, elements.getNotNull(0)).toClientAgent();
+        this.clientAgent = Agent.get(entity.toNonHostEntity(), elements.getNotNull(0)).toClientAgent();
         this.oldIcon = new Image(elements.getNotNull(1));
         if (!Client.isValid(oldIcon)) throw new InvalidEncodingException("The old icon is invalid.");
         this.newIcon = new Image(elements.getNotNull(2));

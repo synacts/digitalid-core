@@ -3,11 +3,12 @@ package ch.virtualid.contact;
 import ch.virtualid.annotations.OnlyForActions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.concept.Aspect;
-import ch.virtualid.concept.Concept;
 import ch.virtualid.concept.Instance;
+import ch.virtualid.concept.NonHostConcept;
 import ch.virtualid.concept.Observer;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.Entity;
+import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.entity.Role;
 import ch.virtualid.entity.Site;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
@@ -38,7 +39,7 @@ import javax.annotation.Nullable;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 1.4
  */
-public final class Context extends Concept implements Immutable, Blockable, SQLizable {
+public final class Context extends NonHostConcept implements Immutable, Blockable, SQLizable {
     
     /**
      * Stores the aspect of the name being changed at the observed context.
@@ -131,7 +132,7 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
      * @param entity the entity to which the context belongs.
      * @param number the number that denotes the context.
      */
-    private Context(@Nonnull Entity entity, long number) {
+    private Context(@Nonnull NonHostEntity entity, long number) {
         super(entity);
         
         this.number = number;
@@ -503,7 +504,7 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
     /**
      * Caches contexts given their entity and number.
      */
-    private static final @Nonnull ConcurrentMap<Entity, ConcurrentMap<Long, Context>> index = new ConcurrentHashMap<Entity, ConcurrentMap<Long, Context>>();
+    private static final @Nonnull ConcurrentMap<NonHostEntity, ConcurrentMap<Long, Context>> index = new ConcurrentHashMap<NonHostEntity, ConcurrentMap<Long, Context>>();
     
     static {
         if (Database.isSingleAccess()) {
@@ -522,7 +523,7 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
      * @return a new or existing context with the given entity and number.
      */
     @Pure
-    public static @Nonnull Context get(@Nonnull Entity entity, long number) {
+    public static @Nonnull Context get(@Nonnull NonHostEntity entity, long number) {
         if (Database.isSingleAccess()) {
             @Nullable ConcurrentMap<Long, Context> map = index.get(entity);
             if (map == null) map = index.putIfAbsentElseReturnPresent(entity, new ConcurrentHashMap<Long, Context>());
@@ -542,7 +543,7 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
      * @return the root context that might not exist in the database.
      */
     @Pure
-    public static @Nonnull Context getRoot(@Nonnull Entity entity) {
+    public static @Nonnull Context getRoot(@Nonnull NonHostEntity entity) {
         return get(entity, ROOT);
     }
     
@@ -553,7 +554,7 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
      * @param string a string in hexadecimal notation encoding the context number.
      */
     @Pure
-    public static @Nonnull Context get(@Nonnull Entity entity, @Nonnull String string) throws InvalidEncodingException {
+    public static @Nonnull Context get(@Nonnull NonHostEntity entity, @Nonnull String string) throws InvalidEncodingException {
         return get(entity, parse(string));
     }
     
@@ -566,7 +567,7 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
     @Pure
-    public static @Nonnull Context get(@Nonnull Entity entity, @Nonnull Block block) throws InvalidEncodingException {
+    public static @Nonnull Context get(@Nonnull NonHostEntity entity, @Nonnull Block block) throws InvalidEncodingException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         return get(entity, new Int64Wrapper(block).getValue());
@@ -582,7 +583,7 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
      * @return the given column of the result set as an instance of this class.
      */
     @Pure
-    public static @Nullable Context get(@Nonnull Entity entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+    public static @Nullable Context get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
         final long number = resultSet.getLong(columnIndex);
         if (resultSet.wasNull()) return null;
         else return get(entity, number);
@@ -598,7 +599,7 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
      * @return the given column of the result set as an instance of this class.
      */
     @Pure
-    public static @Nonnull Context getNotNull(@Nonnull Entity entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+    public static @Nonnull Context getNotNull(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
         return get(entity, resultSet.getLong(columnIndex));
     }
     
@@ -625,7 +626,7 @@ public final class Context extends Concept implements Immutable, Blockable, SQLi
      * 
      * @param entity the entity whose contexts are to be reset.
      */
-    public static void reset(@Nonnull Entity entity) {
+    public static void reset(@Nonnull NonHostEntity entity) {
         final @Nullable ConcurrentMap<Long, Context> map = index.get(entity);
         if (map != null) {
             final @Nonnull Collection<Context> contexts = map.values();

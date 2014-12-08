@@ -14,6 +14,7 @@ import ch.virtualid.contact.ReadonlyAuthentications;
 import ch.virtualid.credential.Credential;
 import ch.virtualid.entity.Account;
 import ch.virtualid.entity.Entity;
+import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.entity.Role;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
@@ -72,8 +73,10 @@ public abstract class Method extends Handler {
      * 
      * @require !(entity instanceof Account) || canBeSentByHosts() : "Methods encoded on hosts can be sent by hosts.";
      * @require !(entity instanceof Role) || !canOnlyBeSentByHosts() : "Methods encoded on clients cannot only be sent by hosts.";
+     * 
+     * @ensure isNonHost() : "This method belongs to a non-host.";
      */
-    protected Method(@Nullable Entity entity, @Nonnull InternalIdentifier subject, @Nonnull HostIdentifier recipient) {
+    protected Method(@Nullable NonHostEntity entity, @Nonnull InternalIdentifier subject, @Nonnull HostIdentifier recipient) {
         super(entity, subject);
         
         assert !(entity instanceof Account) || canBeSentByHosts() : "Methods encoded on hosts can be sent by hosts.";
@@ -189,6 +192,8 @@ public abstract class Method extends Handler {
      * 
      * @return the response to the request that is encoded by this method.
      * 
+     * @require isNonHost() : "This method belongs to a non-host.";
+     * 
      * @ensure return.hasRequest() : "The returned response has a request.";
      */
     public @Nonnull Response send() throws SQLException, IOException, PacketException, ExternalException {
@@ -199,6 +204,8 @@ public abstract class Method extends Handler {
      * Sends the block encoded by this method to the stored recipient.
      * 
      * @return the reply to this method, which may not be null.
+     * 
+     * @require isNonHost() : "This method belongs to a non-host.";
      * 
      * @see #getReplyClass()
      */
@@ -228,7 +235,7 @@ public abstract class Method extends Handler {
         if (reference == null) return false;
         while (iterator.hasNext()) {
             final @Nullable Method method = iterator.next();
-            if (method == null || !method.isSimilarTo(reference) || !reference.isSimilarTo(method)) return false;
+            if (method == null || !method.isNonHost() || !method.isSimilarTo(reference) || !reference.isSimilarTo(method)) return false;
         }
         return true;
     }
@@ -276,8 +283,8 @@ public abstract class Method extends Handler {
         final @Nonnull Service service = reference.getService();
         final @Nonnull HostIdentifier recipient = reference.getRecipient();
         
-        if (entity instanceof Account && !reference.canBeSentByHosts()) throw new PacketException(PacketError.INTERNAL, "These methods cannot be sent by hosts.");
-        if (entity instanceof Role && reference.canOnlyBeSentByHosts()) throw new PacketException(PacketError.INTERNAL, "These methods cannot be sent by clients.");
+        if (reference.isOnHost() && !reference.canBeSentByHosts()) throw new PacketException(PacketError.INTERNAL, "These methods cannot be sent by hosts.");
+        if (reference.isOnClient() && reference.canOnlyBeSentByHosts()) throw new PacketException(PacketError.INTERNAL, "These methods cannot be sent by clients.");
         
         // TODO: Delete the following two lines and implement a real lookup!
         final @Nullable ReadonlyList<Credential> credentials = null;
@@ -286,7 +293,7 @@ public abstract class Method extends Handler {
         if (reference instanceof ExternalQuery) {
             final @Nonnull ReadonlyAuthentications authentications;
             if (entity != null && entity instanceof Role && identity instanceof Person) {
-                authentications = Contact.get(entity, (Person) identity).getAuthentications();
+                authentications = Contact.get((Role) entity, (Person) identity).getAuthentications();
             } else {
                 authentications = Authentications.NONE;
             }

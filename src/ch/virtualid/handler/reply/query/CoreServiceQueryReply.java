@@ -2,7 +2,7 @@ package ch.virtualid.handler.reply.query;
 
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Account;
-import ch.virtualid.entity.Entity;
+import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.handler.QueryReply;
 import ch.virtualid.identifier.InternalIdentifier;
@@ -49,7 +49,7 @@ public abstract class CoreServiceQueryReply extends QueryReply {
      * @ensure hasSignature() : "This handler has a signature.";
      * @ensure !isOnHost() : "Query replies are never decoded on hosts.";
      */
-    protected CoreServiceQueryReply(@Nullable Entity entity, @Nonnull HostSignatureWrapper signature, long number) throws InvalidEncodingException {
+    protected CoreServiceQueryReply(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number) throws InvalidEncodingException {
         super(entity, signature, number);
     }
     

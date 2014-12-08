@@ -6,6 +6,7 @@ import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.cryptography.PublicKey;
 import ch.virtualid.entity.Entity;
+import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.entity.Role;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidDeclarationException;
@@ -166,7 +167,7 @@ public final class AccountInitialize extends CoreServiceInternalAction {
     
     @Override
     protected void executeOnBoth() throws SQLException {
-        final @Nonnull Entity entity = getEntityNotNull();
+        final @Nonnull NonHostEntity entity = getNonHostEntity();
         
         try {
             final @Nonnull FreezableList<NonHostIdentity> identities = new FreezableArrayList<NonHostIdentity>(states.size());
@@ -174,7 +175,7 @@ public final class AccountInitialize extends CoreServiceInternalAction {
                 identities.add(state.getValue0().getIdentifier().getIdentity().toNonHostIdentity());
                 CoreService.SERVICE.addState(entity, state.getValue1());
             }
-            Mapper.mergeIdentities(identities.freeze(), entity.getIdentity().toInternalNonHostIdentity());
+            Mapper.mergeIdentities(identities.freeze(), entity.getIdentity());
         } catch (@Nonnull IOException | PacketException | ExternalException exception) {
             throw new SQLException("A problem occurred while adding a state.", exception);
         }

@@ -1,7 +1,7 @@
 package ch.virtualid.concepts;
 
-import ch.virtualid.concept.Concept;
-import ch.virtualid.entity.Entity;
+import ch.virtualid.concept.NonHostConcept;
+import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.identity.SemanticType;
 import ch.xdf.ListWrapper;
 import ch.xdf.SignatureWrapper;
@@ -13,7 +13,7 @@ import javax.annotation.Nonnull;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 0.0
  */
-public final class Certificate extends Concept {
+public final class Certificate extends NonHostConcept {
     
     /**
      * Stores the semantic type {@code certificate@virtualid.ch}.
@@ -26,7 +26,7 @@ public final class Certificate extends Concept {
     public static final @Nonnull SemanticType LIST = SemanticType.create("list.certificate@virtualid.ch").load(ListWrapper.TYPE, TYPE);
     
     
-    public Certificate(@Nonnull Entity entity) {
+    public Certificate(@Nonnull NonHostEntity entity) {
         super(entity);
     }
     

@@ -81,7 +81,7 @@ public final class AgentPermissionsRemove extends CoreServiceInternalAction {
         super(entity, signature, recipient);
         
         final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(2);
-        this.agent = Agent.get(entity, elements.getNotNull(0));
+        this.agent = Agent.get(entity.toNonHostEntity(), elements.getNotNull(0));
         this.permissions = new AgentPermissions(elements.getNotNull(1)).freeze();
     }
     

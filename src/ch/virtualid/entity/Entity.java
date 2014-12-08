@@ -40,7 +40,7 @@ public interface Entity extends Immutable, SQLizable {
      * @return the site of this entity.
      */
     @Pure
-    public abstract @Nonnull Site getSite();
+    public @Nonnull Site getSite();
     
     /**
      * Returns the identity of this entity.
@@ -48,7 +48,7 @@ public interface Entity extends Immutable, SQLizable {
      * @return the identity of this entity.
      */
     @Pure
-    public abstract @Nonnull InternalIdentity getIdentity();
+    public @Nonnull InternalIdentity getIdentity();
     
     /**
      * Returns the number that references this entity in the database.
@@ -56,7 +56,7 @@ public interface Entity extends Immutable, SQLizable {
      * @return the number that references this entity in the database.
      */
     @Pure
-    public abstract long getNumber();
+    public long getNumber();
     
     
     /**

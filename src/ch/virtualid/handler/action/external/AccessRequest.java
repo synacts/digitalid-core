@@ -7,6 +7,7 @@ import ch.virtualid.contact.Contact;
 import ch.virtualid.contact.ContactPermissions;
 import ch.virtualid.contact.ReadonlyContactPermissions;
 import ch.virtualid.entity.Entity;
+import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketError;
@@ -66,7 +67,7 @@ public final class AccessRequest extends CoreServiceExternalAction {
      * @require permissions.isFrozen() : "The permissions are frozen.";
      * @require !permissions.isEmpty() : "The permissions are not empty.";
      */
-    public AccessRequest(@Nonnull Entity entity, @Nonnull InternalPerson subject, @Nonnull ReadonlyContactPermissions permissions) {
+    public AccessRequest(@Nonnull NonHostEntity entity, @Nonnull InternalPerson subject, @Nonnull ReadonlyContactPermissions permissions) {
         super(entity, subject);
         
         assert permissions.isFrozen() : "The permissions are frozen.";
@@ -144,7 +145,7 @@ public final class AccessRequest extends CoreServiceExternalAction {
     @Pure
     @Override
     public @Nonnull Restrictions getFailedAuditRestrictions() {
-        return new Restrictions(false, false, true, Contact.get(getEntityNotNull(), person));
+        return new Restrictions(false, false, true, Contact.get(getNonHostEntity(), person));
     }
     
     

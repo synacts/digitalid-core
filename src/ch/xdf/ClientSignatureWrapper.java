@@ -9,7 +9,7 @@ import ch.virtualid.cryptography.Element;
 import ch.virtualid.cryptography.Exponent;
 import ch.virtualid.cryptography.Parameters;
 import ch.virtualid.cryptography.PublicKey;
-import ch.virtualid.entity.Entity;
+import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.external.InvalidSignatureException;
@@ -97,7 +97,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper implements Im
     
     /**
      * Wraps the given block and decodes the given signature.
-     * (Only to be called by {@link SignatureWrapper#decodeUnverified(ch.xdf.Block, ch.virtualid.entity.Entity)}.)
+     * (Only to be called by {@link SignatureWrapper#decodeUnverified(ch.xdf.Block, ch.virtualid.entity.NonHostEntity)}.)
      * 
      * @param block the block to be wrapped.
      * @param clientSignature the signature to be decoded.
@@ -183,13 +183,13 @@ public final class ClientSignatureWrapper extends SignatureWrapper implements Im
     
     @Pure
     @Override
-    public @Nullable ClientAgent getAgent(@Nonnull Entity entity) throws SQLException {
+    public @Nullable ClientAgent getAgent(@Nonnull NonHostEntity entity) throws SQLException {
         return Agents.getClientAgent(entity, commitment);
     }
     
     @Pure
     @Override
-    public @Nonnull ClientAgent getAgentCheckedAndRestricted(@Nonnull Entity entity, @Nullable PublicKey publicKey) throws PacketException, SQLException {
+    public @Nonnull ClientAgent getAgentCheckedAndRestricted(@Nonnull NonHostEntity entity, @Nullable PublicKey publicKey) throws PacketException, SQLException {
         if (publicKey != null && !commitment.getPublicKey().equals(publicKey)) throw new PacketException(PacketError.KEYROTATION, "The client has to recommit its secret.");
         final @Nullable ClientAgent agent = Agents.getClientAgent(entity, commitment);
         if (agent == null) throw new PacketException(PacketError.AUTHORIZATION, "The element was not signed by an authorized client.");

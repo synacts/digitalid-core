@@ -3,7 +3,7 @@ package ch.virtualid.agent;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.contact.Contact;
 import ch.virtualid.contact.Context;
-import ch.virtualid.entity.Entity;
+import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.entity.Site;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
@@ -171,7 +171,7 @@ public final class Restrictions implements Immutable, Blockable, SQLizable {
      * 
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
-    public Restrictions(@Nonnull Entity entity, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
+    public Restrictions(@Nonnull NonHostEntity entity, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         final @Nonnull TupleWrapper tuple = new TupleWrapper(block);
@@ -461,7 +461,7 @@ public final class Restrictions implements Immutable, Blockable, SQLizable {
      * @return the given columns of the result set as an instance of this class.
      */
     @Pure
-    public static @Nonnull Restrictions get(@Nonnull Entity entity, @Nonnull ResultSet resultSet, int startIndex) throws SQLException {
+    public static @Nonnull Restrictions get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int startIndex) throws SQLException {
         final boolean client = resultSet.getBoolean(startIndex + 0);
         final boolean role = resultSet.getBoolean(startIndex + 1);
         final boolean writing = resultSet.getBoolean(startIndex + 2);

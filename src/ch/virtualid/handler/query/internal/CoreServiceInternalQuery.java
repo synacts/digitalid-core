@@ -109,7 +109,7 @@ public abstract class CoreServiceInternalQuery extends InternalQuery {
     
     @Override
     public @Nonnull QueryReply executeOnHost() throws PacketException, SQLException {
-        final @Nonnull Agent agent = getSignatureNotNull().getAgentCheckedAndRestricted(getAccount(), publicKey);
+        final @Nonnull Agent agent = getSignatureNotNull().getAgentCheckedAndRestricted(getNonHostAccount(), publicKey);
         
         final @Nonnull ReadonlyAgentPermissions permissions = getRequiredPermissions();
         if (!permissions.equals(AgentPermissions.NONE)) agent.getPermissions().checkCover(permissions);

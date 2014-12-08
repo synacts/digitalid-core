@@ -6,7 +6,7 @@ import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Account;
-import ch.virtualid.entity.Entity;
+import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.reply.action.CoreServiceActionReply;
@@ -49,7 +49,7 @@ public abstract class ActionReply extends Reply implements Auditable {
      * 
      * @ensure hasSignature() : "This handler has a signature.";
      */
-    protected ActionReply(@Nullable Entity entity, @Nonnull HostSignatureWrapper signature, long number) throws InvalidEncodingException {
+    protected ActionReply(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number) throws InvalidEncodingException {
         super(entity, signature, number);
         
         if (!hasEntity()) throw new InvalidEncodingException("An action reply must have an entity.");

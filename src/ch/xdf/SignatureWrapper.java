@@ -7,6 +7,7 @@ import ch.virtualid.auxiliary.Time;
 import ch.virtualid.concepts.Certificate;
 import ch.virtualid.cryptography.PublicKey;
 import ch.virtualid.entity.Entity;
+import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InactiveSignatureException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
@@ -545,7 +546,7 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
      * @return the agent that signed the wrapped element or null if no such agent is found.
      */
     @Pure
-    public @Nullable Agent getAgent(@Nonnull Entity entity) throws SQLException {
+    public @Nullable Agent getAgent(@Nonnull NonHostEntity entity) throws SQLException {
         return null;
     }
     
@@ -560,7 +561,7 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
      * @throws PacketException if no such agent is found or the check failed.
      */
     @Pure
-    public @Nonnull Agent getAgentCheckedAndRestricted(@Nonnull Entity entity, @Nullable PublicKey publicKey) throws SQLException, PacketException {
+    public @Nonnull Agent getAgentCheckedAndRestricted(@Nonnull NonHostEntity entity, @Nullable PublicKey publicKey) throws SQLException, PacketException {
         throw new PacketException(PacketError.AUTHORIZATION, "The element was not signed by an authorized agent.");
     }
     

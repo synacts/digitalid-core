@@ -11,6 +11,7 @@ import ch.virtualid.cryptography.KeyPair;
 import ch.virtualid.cryptography.PrivateKeyChain;
 import ch.virtualid.cryptography.PublicKeyChain;
 import ch.virtualid.entity.Account;
+import ch.virtualid.entity.HostAccount;
 import ch.virtualid.entity.Site;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
@@ -163,8 +164,8 @@ public final class Host extends Site {
      * @return the account of this host.
      */
     @Pure
-    public @Nonnull Account getAccount() {
-        return Account.get(this, identity);
+    public @Nonnull HostAccount getAccount() {
+        return HostAccount.get(this, identity);
     }
     
     /**

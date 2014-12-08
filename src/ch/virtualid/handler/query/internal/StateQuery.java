@@ -2,7 +2,6 @@ package ch.virtualid.handler.query.internal;
 
 import ch.virtualid.agent.Agent;
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.entity.Account;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.Role;
 import ch.virtualid.exceptions.external.ExternalException;
@@ -83,8 +82,7 @@ public final class StateQuery extends CoreServiceInternalQuery {
     
     @Override
     protected @Nonnull StateReply executeOnHost(@Nonnull Agent agent) throws SQLException {
-        final @Nonnull Account account = getAccount();
-        return new StateReply(account, CoreService.SERVICE.getState(account, agent));
+        return new StateReply(getNonHostAccount(), CoreService.SERVICE.getState(getNonHostAccount(), agent));
     }
     
     

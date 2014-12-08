@@ -4,11 +4,12 @@ import ch.virtualid.annotations.OnlyForActions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Synchronizer;
 import ch.virtualid.concept.Aspect;
-import ch.virtualid.concept.Concept;
 import ch.virtualid.concept.Instance;
+import ch.virtualid.concept.NonHostConcept;
 import ch.virtualid.concept.Observer;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.Entity;
+import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.entity.Role;
 import ch.virtualid.handler.action.internal.PasswordValueReplace;
 import ch.virtualid.identity.SemanticType;
@@ -26,7 +27,7 @@ import javax.annotation.Nullable;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public final class Password extends Concept {
+public final class Password extends NonHostConcept {
     
     /**
      * Stores the aspect of the value being changed at the observed password.
@@ -74,7 +75,7 @@ public final class Password extends Concept {
      * 
      * @require isValid(value) : "The value is valid.";
      */
-    private Password(@Nonnull Entity entity, @Nonnull String value) {
+    private Password(@Nonnull NonHostEntity entity, @Nonnull String value) {
         super(entity);
         
         assert isValid(value) : "The value is valid.";
@@ -135,7 +136,7 @@ public final class Password extends Concept {
     /**
      * Caches passwords given their entity.
      */
-    private static final @Nonnull ConcurrentMap<Entity, Password> index = new ConcurrentHashMap<Entity, Password>();
+    private static final @Nonnull ConcurrentMap<NonHostEntity, Password> index = new ConcurrentHashMap<NonHostEntity, Password>();
     
     static {
         if (Database.isSingleAccess()) {
@@ -155,7 +156,7 @@ public final class Password extends Concept {
      * @require !(entity instanceof Role) || ((Role) entity).isNative() : "If the entity is a role, it is native.";
      */
     @Pure
-    public static @Nonnull Password get(@Nonnull Entity entity) throws SQLException {
+    public static @Nonnull Password get(@Nonnull NonHostEntity entity) throws SQLException {
         assert !(entity instanceof Role) || ((Role) entity).isNative() : "If the entity is a role, it is native.";
         
         final @Nonnull String value = Passwords.get(entity);
@@ -173,7 +174,7 @@ public final class Password extends Concept {
      * 
      * @param entity the entity whose password is to be reset.
      */
-    public static void reset(@Nonnull Entity entity) throws SQLException {
+    public static void reset(@Nonnull NonHostEntity entity) throws SQLException {
         if (Database.isSingleAccess()) {
             final @Nullable Password password = index.get(entity);
             if (password != null) {

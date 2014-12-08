@@ -6,6 +6,7 @@ import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Entity;
+import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.action.internal.AccountOpen;
 import ch.virtualid.identifier.HostIdentifier;
@@ -40,7 +41,7 @@ public abstract class Action extends Method implements Auditable {
      * @require !(entity instanceof Account) || canBeSentByHosts() : "Methods encoded on hosts can be sent by hosts.";
      * @require !(entity instanceof Role) || !canOnlyBeSentByHosts() : "Methods encoded on clients cannot only be sent by hosts.";
      */
-    protected Action(@Nullable Entity entity, @Nonnull InternalIdentifier subject, @Nonnull HostIdentifier recipient) {
+    protected Action(@Nullable NonHostEntity entity, @Nonnull InternalIdentifier subject, @Nonnull HostIdentifier recipient) {
         super(entity, subject, recipient);
     }
     

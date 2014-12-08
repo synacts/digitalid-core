@@ -4,8 +4,8 @@ import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.concepts.Certificate;
-import ch.virtualid.entity.Account;
 import ch.virtualid.entity.Entity;
+import ch.virtualid.entity.NonHostAccount;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketError;
@@ -64,7 +64,7 @@ public final class CertificateIssuance extends CoreServiceExternalAction {
      * @require account.getIdentity() instanceof InternalNonHostIdentity : "The account belongs to an internal non-host identity.";
      * @require attribute.getType().isAttributeFor(subject.getCategory()) : "The block is an attribute for the subject.";
      */
-    public CertificateIssuance(@Nonnull Account account, @Nonnull InternalIdentity subject, @Nonnull Block attribute) {
+    public CertificateIssuance(@Nonnull NonHostAccount account, @Nonnull InternalIdentity subject, @Nonnull Block attribute) {
         super(account, subject);
         
         assert account.getIdentity() instanceof InternalNonHostIdentity : "The account belongs to an internal non-host identity.";
@@ -90,7 +90,7 @@ public final class CertificateIssuance extends CoreServiceExternalAction {
     private CertificateIssuance(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
-        final @Nonnull SignatureWrapper certificate = SignatureWrapper.decodeWithoutVerifying(block, false, entity);
+        final @Nonnull SignatureWrapper certificate = SignatureWrapper.decodeWithoutVerifying(block, false, null);
         if (!(certificate instanceof HostSignatureWrapper)) throw new InvalidEncodingException("The block has to be signed by a host.");
         this.certificate = (HostSignatureWrapper) certificate;
         if (!this.certificate.isCertificate()) throw new InvalidEncodingException("The certificate has to be indeed a certificate.");

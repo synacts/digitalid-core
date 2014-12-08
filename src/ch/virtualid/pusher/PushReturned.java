@@ -4,8 +4,8 @@ import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.entity.Account;
 import ch.virtualid.entity.Entity;
+import ch.virtualid.entity.NonHostAccount;
 import ch.virtualid.errors.ShouldNeverHappenError;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
@@ -89,7 +89,7 @@ public final class PushReturned extends ExternalAction {
      * @require reply.getSignature() instanceof HostSignatureWrapper : "The reply is signed by a host (and the signature thus not null).";
      * @require account.getIdentity().equals(reply.getEntityNotNull().getIdentity()) : "The account and the reply's entity have the same identity.";
      */
-    public PushReturned(@Nonnull Account account, boolean valid, @Nonnull ActionReply reply) {
+    public PushReturned(@Nonnull NonHostAccount account, boolean valid, @Nonnull ActionReply reply) {
         super(account, account.getIdentity().getAddress(), account.getHost().getIdentifier());
         
         assert reply.getSignature() instanceof HostSignatureWrapper : "The reply is signed by a host (and the signature thus not null).";
@@ -125,7 +125,7 @@ public final class PushReturned extends ExternalAction {
         final @Nonnull CompressionWrapper _compression = new CompressionWrapper(_signature.getElementNotNull());
         final @Nonnull SelfcontainedWrapper _content = new SelfcontainedWrapper(_compression.getElementNotNull());
         try {
-            this.reply = Reply.get(entity, (HostSignatureWrapper) _signature, _content.getElement()).toActionReply();
+            this.reply = Reply.get(entity.toNonHostEntity(), (HostSignatureWrapper) _signature, _content.getElement()).toActionReply();
         } catch (@Nonnull PacketException exception) {
             throw new InvalidEncodingException("Could not decode the reply to an external action.", exception);
         }

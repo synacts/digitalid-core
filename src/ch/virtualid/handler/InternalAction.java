@@ -26,6 +26,7 @@ import javax.annotation.Nullable;
  * <em>Important:</em> Do not execute internal actions directly but always pass them to the {@link Synchronizer#execute(ch.virtualid.handler.InternalAction) Synchronizer}!
  * 
  * @invariant hasEntity() : "This internal action has an entity.";
+ * @invariant isNonHost() : "This internal action belongs to a non-host.";
  * @invariant getEntityNotNull().getIdentity().equals(getSubject().getIdentity()) : "The identity of the entity and the subject are the same.";
  * 
  * @see CoreServiceInternalAction
@@ -59,6 +60,7 @@ public abstract class InternalAction extends Action implements InternalMethod {
     protected InternalAction(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
+        if (!isNonHost()) throw new PacketException(PacketError.IDENTIFIER, "Internal actions have to belong to a non-host.");
         if (!getEntityNotNull().getIdentity().equals(getSubject().getIdentity())) throw new PacketException(PacketError.IDENTIFIER, "The identity of the entity and the subject have to be the same for internal actions.");
     }
     

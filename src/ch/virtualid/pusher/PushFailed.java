@@ -4,8 +4,8 @@ import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.entity.Account;
 import ch.virtualid.entity.Entity;
+import ch.virtualid.entity.NonHostAccount;
 import ch.virtualid.errors.ShouldNeverHappenError;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
@@ -97,7 +97,7 @@ public final class PushFailed extends ExternalAction {
      * 
      * @require account.getIdentity().equals(action.getEntityNotNull().getIdentity()) : "The account and the action's entity have the same identity.";
      */
-    public PushFailed(@Nonnull Account account, @Nonnull ExternalAction action) {
+    public PushFailed(@Nonnull NonHostAccount account, @Nonnull ExternalAction action) {
         super(account, action.getSubject(), action.getRecipient());
         
         assert account.getIdentity().equals(action.getEntityNotNull().getIdentity()) : "The account and the action's entity have the same identity.";

@@ -4,6 +4,7 @@ import ch.virtualid.agent.Agent;
 import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Entity;
+import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Method;
@@ -101,10 +102,11 @@ public final class AgentRestrictionsReplace extends CoreServiceInternalAction {
     private AgentRestrictionsReplace(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
+        final @Nonnull NonHostEntity nonHostEntity = entity.toNonHostEntity();
         final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(3);
-        this.agent = Agent.get(entity, elements.getNotNull(0));
-        this.oldRestrictions = new Restrictions(entity, elements.getNotNull(1)).checkMatch(agent);
-        this.newRestrictions = new Restrictions(entity, elements.getNotNull(2)).checkMatch(agent);
+        this.agent = Agent.get(nonHostEntity, elements.getNotNull(0));
+        this.oldRestrictions = new Restrictions(nonHostEntity, elements.getNotNull(1)).checkMatch(agent);
+        this.newRestrictions = new Restrictions(nonHostEntity, elements.getNotNull(2)).checkMatch(agent);
     }
     
     @Pure

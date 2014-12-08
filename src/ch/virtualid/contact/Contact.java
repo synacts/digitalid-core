@@ -2,11 +2,12 @@ package ch.virtualid.contact;
 
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.concept.Aspect;
-import ch.virtualid.concept.Concept;
 import ch.virtualid.concept.Instance;
+import ch.virtualid.concept.NonHostConcept;
 import ch.virtualid.concept.Observer;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.Entity;
+import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identifier.IdentifierClass;
@@ -36,7 +37,7 @@ import javax.annotation.Nullable;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 1.6
  */
-public final class Contact extends Concept implements Immutable, Blockable, SQLizable {
+public final class Contact extends NonHostConcept implements Immutable, Blockable, SQLizable {
     
     /**
      * Stores the semantic type {@code contact@virtualid.ch}.
@@ -55,7 +56,7 @@ public final class Contact extends Concept implements Immutable, Blockable, SQLi
      * @param entity the entity to which this contact belongs.
      * @param person the person that is a contact of the entity.
      */
-    private Contact(@Nonnull Entity entity, @Nonnull Person person) {
+    private Contact(@Nonnull NonHostEntity entity, @Nonnull Person person) {
         super(entity);
         
         this.person = person;
@@ -152,7 +153,7 @@ public final class Contact extends Concept implements Immutable, Blockable, SQLi
     /**
      * Caches contacts given their entity and person.
      */
-    private static final @Nonnull ConcurrentMap<Entity, ConcurrentMap<Person, Contact>> index = new ConcurrentHashMap<Entity, ConcurrentMap<Person, Contact>>();
+    private static final @Nonnull ConcurrentMap<NonHostEntity, ConcurrentMap<Person, Contact>> index = new ConcurrentHashMap<NonHostEntity, ConcurrentMap<Person, Contact>>();
     
     static {
         if (Database.isSingleAccess()) {
@@ -171,7 +172,7 @@ public final class Contact extends Concept implements Immutable, Blockable, SQLi
      * @return a new or existing contact with the given entity and person.
      */
     @Pure
-    public static @Nonnull Contact get(@Nonnull Entity entity, @Nonnull Person person) {
+    public static @Nonnull Contact get(@Nonnull NonHostEntity entity, @Nonnull Person person) {
         if (Database.isSingleAccess()) {
             @Nullable ConcurrentMap<Person, Contact> map = index.get(entity);
             if (map == null) map = index.putIfAbsentElseReturnPresent(entity, new ConcurrentHashMap<Person, Contact>());
@@ -192,7 +193,7 @@ public final class Contact extends Concept implements Immutable, Blockable, SQLi
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
     @Pure
-    public static @Nonnull Contact get(@Nonnull Entity entity, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
+    public static @Nonnull Contact get(@Nonnull NonHostEntity entity, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         return get(entity, IdentifierClass.create(block).getIdentity().toPerson());
@@ -208,7 +209,7 @@ public final class Contact extends Concept implements Immutable, Blockable, SQLi
      * @return the given column of the result set as an instance of this class.
      */
     @Pure
-    public static @Nullable Contact get(@Nonnull Entity entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+    public static @Nullable Contact get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
         final @Nullable Identity identity = IdentityClass.get(resultSet, columnIndex);
         if (identity == null) return null;
         if (identity instanceof Person) return get(entity, (Person) identity);
@@ -225,7 +226,7 @@ public final class Contact extends Concept implements Immutable, Blockable, SQLi
      * @return the given column of the result set as an instance of this class.
      */
     @Pure
-    public static @Nonnull Contact getNotNull(@Nonnull Entity entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+    public static @Nonnull Contact getNotNull(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
         final @Nonnull Identity identity = IdentityClass.getNotNull(resultSet, columnIndex);
         if (identity instanceof Person) return get(entity, (Person) identity);
         else throw new SQLException("A non-person was stored as a contact.");

@@ -10,6 +10,7 @@ import ch.virtualid.concept.Instance;
 import ch.virtualid.concept.Observer;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.Entity;
+import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.handler.action.internal.ClientAgentCommitmentReplace;
 import ch.virtualid.handler.action.internal.ClientAgentIconReplace;
 import ch.virtualid.handler.action.internal.ClientAgentNameReplace;
@@ -74,7 +75,7 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
      * @param number the number that references this client agent.
      * @param removed whether this client agent has been removed.
      */
-    private ClientAgent(@Nonnull Entity entity, long number, boolean removed) {
+    private ClientAgent(@Nonnull NonHostEntity entity, long number, boolean removed) {
         super(entity, number, removed);
     }
     
@@ -240,7 +241,7 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
     /**
      * Caches client agents given their entity and number.
      */
-    private static final @Nonnull ConcurrentMap<Entity, ConcurrentMap<Long, ClientAgent>> index = new ConcurrentHashMap<Entity, ConcurrentMap<Long, ClientAgent>>();
+    private static final @Nonnull ConcurrentMap<NonHostEntity, ConcurrentMap<Long, ClientAgent>> index = new ConcurrentHashMap<NonHostEntity, ConcurrentMap<Long, ClientAgent>>();
     
     static {
         if (Database.isSingleAccess()) {
@@ -260,7 +261,7 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
      * @return a new or existing client agent with the given entity and number.
      */
     @Pure
-    public static @Nonnull ClientAgent get(@Nonnull Entity entity, long number, boolean removed) {
+    public static @Nonnull ClientAgent get(@Nonnull NonHostEntity entity, long number, boolean removed) {
         if (Database.isSingleAccess()) {
             @Nullable ConcurrentMap<Long, ClientAgent> map = index.get(entity);
             if (map == null) map = index.putIfAbsentElseReturnPresent(entity, new ConcurrentHashMap<Long, ClientAgent>());
@@ -283,7 +284,7 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
      * @return the given column of the result set as an instance of this class.
      */
     @Pure
-    public static @Nonnull ClientAgent get(@Nonnull Entity entity, @Nonnull ResultSet resultSet, int columnIndex, boolean removed) throws SQLException {
+    public static @Nonnull ClientAgent get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int columnIndex, boolean removed) throws SQLException {
         return get(entity, resultSet.getLong(columnIndex), removed);
     }
     
@@ -292,7 +293,7 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
      * 
      * @param entity the entity whose client agents are to be reset.
      */
-    public static void reset(@Nonnull Entity entity) throws SQLException {
+    public static void reset(@Nonnull NonHostEntity entity) throws SQLException {
         if (Database.isSingleAccess()) {
             final @Nullable ConcurrentMap<Long, ClientAgent> map = index.get(entity);
             if (map != null) {

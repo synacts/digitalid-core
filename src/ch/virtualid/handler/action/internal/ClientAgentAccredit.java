@@ -131,7 +131,7 @@ public final class ClientAgentAccredit extends CoreServiceInternalAction {
         
         final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(5);
         
-        this.clientAgent = Agent.get(entity, elements.getNotNull(0)).toClientAgent();
+        this.clientAgent = Agent.get(entity.toNonHostEntity(), elements.getNotNull(0)).toClientAgent();
         if (clientAgent.isNotRemoved()) throw new InvalidEncodingException("The client agent has to be removed.");
         
         this.permissions = new AgentPermissions(elements.getNotNull(1)).freeze();
@@ -171,12 +171,12 @@ public final class ClientAgentAccredit extends CoreServiceInternalAction {
     
     @Override
     protected void executeOnBoth() throws SQLException {
-        clientAgent.createForActions(permissions, new Restrictions(true, false, false, Context.getRoot(getEntityNotNull())), commitment, name, icon);
+        clientAgent.createForActions(permissions, new Restrictions(true, false, false, Context.getRoot(getNonHostEntity())), commitment, name, icon);
     }
     
     @Override
     public void executeOnHostInternalAction() throws PacketException, SQLException {
-        if (!Password.get(getAccount()).getValue().equals(password)) throw new PacketException(PacketError.AUTHORIZATION, "The password is not correct.");
+        if (!Password.get(getNonHostAccount()).getValue().equals(password)) throw new PacketException(PacketError.AUTHORIZATION, "The password is not correct.");
         executeOnBoth();
     }
     

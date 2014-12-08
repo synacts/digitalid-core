@@ -83,7 +83,7 @@ public final class AccountClose extends CoreServiceInternalAction {
         super(entity, signature, recipient);
         
         this.successor = IdentifierClass.create(block).toInternalNonHostIdentifier();
-        this.restrictions = new Restrictions(true, true, true, Context.getRoot(entity));
+        this.restrictions = new Restrictions(true, true, true, Context.getRoot(entity.toNonHostEntity()));
     }
     
     @Pure
@@ -132,7 +132,7 @@ public final class AccountClose extends CoreServiceInternalAction {
     
     @Override
     protected void executeOnBoth() throws SQLException {
-        CoreService.SERVICE.removeState(getEntityNotNull());
+        CoreService.SERVICE.removeState(getNonHostEntity());
         if (successor != null) Successor.set((NonHostIdentifier) getSubject(), successor, null);
     }
     

@@ -11,6 +11,7 @@ import ch.virtualid.contact.Context;
 import ch.virtualid.credential.Credential;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.Entity;
+import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.action.external.RoleIssuance;
 import ch.virtualid.handler.action.internal.OutgoingRoleContextReplace;
@@ -77,7 +78,7 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
      * @param removed whether this outgoing role has been removed.
      * @param restrictable whether the outgoing role can be restricted.
      */
-    private OutgoingRole(@Nonnull Entity entity, long number, boolean removed, boolean restrictable) {
+    private OutgoingRole(@Nonnull NonHostEntity entity, long number, boolean removed, boolean restrictable) {
         super(entity, number, removed);
         
         this.restrictable = restrictable;
@@ -232,7 +233,7 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
     /**
      * Caches outgoing roles given their entity and number.
      */
-    private static final @Nonnull ConcurrentMap<Entity, ConcurrentMap<Long, OutgoingRole>> index = new ConcurrentHashMap<Entity, ConcurrentMap<Long, OutgoingRole>>();
+    private static final @Nonnull ConcurrentMap<NonHostEntity, ConcurrentMap<Long, OutgoingRole>> index = new ConcurrentHashMap<NonHostEntity, ConcurrentMap<Long, OutgoingRole>>();
     
     static {
         if (Database.isSingleAccess()) {
@@ -253,7 +254,7 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
      * @return a new or existing outgoing role with the given entity and number.
      */
     @Pure
-    public static @Nonnull OutgoingRole get(@Nonnull Entity entity, long number, boolean removed, boolean restrictable) {
+    public static @Nonnull OutgoingRole get(@Nonnull NonHostEntity entity, long number, boolean removed, boolean restrictable) {
         if (!restrictable && Database.isSingleAccess()) {
             @Nullable ConcurrentMap<Long, OutgoingRole> map = index.get(entity);
             if (map == null) map = index.putIfAbsentElseReturnPresent(entity, new ConcurrentHashMap<Long, OutgoingRole>());
@@ -277,7 +278,7 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
      * @return the given column of the result set as an instance of this class.
      */
     @Pure
-    public static @Nonnull OutgoingRole get(@Nonnull Entity entity, @Nonnull ResultSet resultSet, int columnIndex, boolean removed, boolean restrictable) throws SQLException {
+    public static @Nonnull OutgoingRole get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int columnIndex, boolean removed, boolean restrictable) throws SQLException {
         return get(entity, resultSet.getLong(columnIndex), removed, restrictable);
     }
     
@@ -286,7 +287,7 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
      * 
      * @param entity the entity whose outgoing roles are to be reset.
      */
-    public static void reset(@Nonnull Entity entity) throws SQLException {
+    public static void reset(@Nonnull NonHostEntity entity) throws SQLException {
         if (Database.isSingleAccess()) {
             final @Nullable ConcurrentMap<Long, OutgoingRole> map = index.get(entity);
             if (map != null) {

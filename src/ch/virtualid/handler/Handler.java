@@ -3,6 +3,8 @@ package ch.virtualid.handler;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Account;
 import ch.virtualid.entity.Entity;
+import ch.virtualid.entity.NonHostAccount;
+import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.entity.Role;
 import ch.virtualid.identifier.InternalIdentifier;
 import ch.virtualid.identity.SemanticType;
@@ -137,6 +139,48 @@ public abstract class Handler implements Immutable, Blockable {
         
         assert entity != null;
         return (Account) entity;
+    }
+    
+    /**
+     * Returns whether this handler belongs to a non-host.
+     * 
+     * @return whether this handler belongs to a non-host.
+     */
+    @Pure
+    public final boolean isNonHost() {
+        return entity instanceof NonHostEntity;
+    }
+    
+    /**
+     * Returns the non-host entity to which this handler belongs.
+     * 
+     * @return the non-host entity to which this handler belongs.
+     * 
+     * @require isNonHost() : "This handler belongs to a non-host.";
+     */
+    @Pure
+    public final @Nonnull NonHostEntity getNonHostEntity() {
+        assert isNonHost() : "This handler belongs to a non-host.";
+        
+        assert entity != null;
+        return (NonHostEntity) entity;
+    }
+    
+    /**
+     * Returns the non-host account to which this handler belongs.
+     * 
+     * @return the non-host account to which this handler belongs.
+     * 
+     * @require isOnHost() : "This handler is on a host.";
+     * @require isNonHost() : "This handler belongs to a non-host.";
+     */
+    @Pure
+    public final @Nonnull NonHostAccount getNonHostAccount() {
+        assert isOnHost() : "This handler is on a host.";
+        assert isNonHost() : "This handler belongs to a non-host.";
+        
+        assert entity != null;
+        return (NonHostAccount) entity;
     }
     
     /**

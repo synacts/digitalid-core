@@ -3,7 +3,7 @@ package ch.virtualid.concepts;
 import ch.virtualid.annotations.OnlyForActions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.concept.Aspect;
-import ch.virtualid.concept.Concept;
+import ch.virtualid.concept.GeneralConcept;
 import ch.virtualid.concept.Instance;
 import ch.virtualid.concept.Observer;
 import ch.virtualid.database.Database;
@@ -26,7 +26,7 @@ import javax.annotation.Nullable;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 1.5
  */
-public final class Attribute extends Concept implements Immutable {
+public final class Attribute extends GeneralConcept implements Immutable {
     
     // TODO: Add aspects for adding and removing attributes?
     

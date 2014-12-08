@@ -6,8 +6,8 @@ import ch.virtualid.annotations.OnlyForActions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Synchronizer;
 import ch.virtualid.concept.Aspect;
-import ch.virtualid.concept.Concept;
-import ch.virtualid.entity.Entity;
+import ch.virtualid.concept.NonHostConcept;
+import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.entity.Site;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketError;
@@ -45,7 +45,7 @@ import javax.annotation.Nullable;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public abstract class Agent extends Concept implements Immutable, Blockable, SQLizable {
+public abstract class Agent extends NonHostConcept implements Immutable, Blockable, SQLizable {
     
     /**
      * Stores the aspect of the observed agent being created in the database.
@@ -146,7 +146,7 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
      * @param number the number that references this agent.
      * @param removed whether this agent has been removed.
      */
-    Agent(@Nonnull Entity entity, long number, boolean removed) {
+    Agent(@Nonnull NonHostEntity entity, long number, boolean removed) {
         super(entity);
         
         this.number = number;
@@ -438,7 +438,7 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
      * @param removed whether the agent has been removed.
      */
     @Pure
-    public static @Nonnull Agent get(@Nonnull Entity entity, long number, boolean client, boolean removed) {
+    public static @Nonnull Agent get(@Nonnull NonHostEntity entity, long number, boolean client, boolean removed) {
         return client ? ClientAgent.get(entity, number, removed) : OutgoingRole.get(entity, number, removed, false);
     }
     
@@ -453,7 +453,7 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
     @Pure
-    public static @Nonnull Agent get(@Nonnull Entity entity, @Nonnull Block block) throws InvalidEncodingException {
+    public static @Nonnull Agent get(@Nonnull NonHostEntity entity, @Nonnull Block block) throws InvalidEncodingException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(3);
@@ -475,7 +475,7 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
      * @require columnIndexes.length == 3 : "The number of given indexes is 3.";
      */
     @Pure
-    public static @Nullable Agent get(@Nonnull Entity entity, @Nonnull ResultSet resultSet, int... columnIndexes) throws SQLException {
+    public static @Nullable Agent get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int... columnIndexes) throws SQLException {
         assert columnIndexes.length == 3 : "The number of given indexes is 3.";
         
         final long number = resultSet.getLong(columnIndexes[0]);
@@ -495,7 +495,7 @@ public abstract class Agent extends Concept implements Immutable, Blockable, SQL
      * @require columnIndexes.length == 3 : "The number of given indexes is 3.";
      */
     @Pure
-    public static @Nonnull Agent getNotNull(@Nonnull Entity entity, @Nonnull ResultSet resultSet, int... columnIndexes) throws SQLException {
+    public static @Nonnull Agent getNotNull(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int... columnIndexes) throws SQLException {
         assert columnIndexes.length == 3 : "The number of given indexes is 3.";
         
         return get(entity, resultSet.getLong(columnIndexes[0]), resultSet.getBoolean(columnIndexes[1]), resultSet.getBoolean(columnIndexes[2]));

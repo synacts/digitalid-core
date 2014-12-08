@@ -2,7 +2,7 @@ package ch.virtualid.handler.reply.action;
 
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Account;
-import ch.virtualid.entity.Entity;
+import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.handler.ActionReply;
 import ch.virtualid.module.CoreService;
@@ -37,7 +37,7 @@ public abstract class CoreServiceActionReply extends ActionReply {
      * 
      * @ensure hasSignature() : "This handler has a signature.";
      */
-    protected CoreServiceActionReply(@Nullable Entity entity, @Nonnull HostSignatureWrapper signature, long number) throws InvalidEncodingException {
+    protected CoreServiceActionReply(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number) throws InvalidEncodingException {
         super(entity, signature, number);
     }
     

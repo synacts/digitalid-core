@@ -6,6 +6,7 @@ import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Client;
 import ch.virtualid.entity.Entity;
+import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.handler.action.external.CoreServiceExternalAction;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identifier.InternalIdentifier;
@@ -39,7 +40,7 @@ public abstract class ExternalAction extends Action {
      * @require !(entity instanceof Account) || canBeSentByHosts() : "Methods encoded on hosts can be sent by hosts.";
      * @require !(entity instanceof Role) || !canOnlyBeSentByHosts() : "Methods encoded on clients cannot only be sent by hosts.";
      */
-    protected ExternalAction(@Nonnull Entity entity, @Nonnull InternalIdentifier subject, @Nonnull HostIdentifier recipient) {
+    protected ExternalAction(@Nonnull NonHostEntity entity, @Nonnull InternalIdentifier subject, @Nonnull HostIdentifier recipient) {
         super(entity, subject, recipient);
     }
     

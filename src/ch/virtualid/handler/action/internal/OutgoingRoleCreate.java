@@ -8,6 +8,7 @@ import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.contact.Context;
 import ch.virtualid.entity.Entity;
+import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Method;
@@ -96,10 +97,11 @@ public final class OutgoingRoleCreate extends CoreServiceInternalAction {
     private OutgoingRoleCreate(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
+        final @Nonnull NonHostEntity nonHostEntity = entity.toNonHostEntity();
         final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(3);
-        this.outgoingRole = Agent.get(entity, elements.getNotNull(0)).toOutgoingRole();
+        this.outgoingRole = Agent.get(nonHostEntity, elements.getNotNull(0)).toOutgoingRole();
         this.relation = IdentityClass.create(elements.getNotNull(1)).toSemanticType().checkIsRoleType();
-        this.context = Context.get(entity, elements.getNotNull(2));
+        this.context = Context.get(nonHostEntity, elements.getNotNull(2));
     }
     
     @Pure
