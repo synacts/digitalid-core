@@ -1281,13 +1281,6 @@ public final class Agents implements BothModule {
             if (statement.executeUpdate(SQL) == 0) {
                 final @Nonnull SQLException exception = new SQLException("The incoming role with the issuer " + issuer.getAddress() + " and relation " + relation.getAddress() + " could not be removed.");
                 if (issuer.hasBeenMerged(exception)) removeIncomingRole(entity, issuer, relation);
-                return;
-            }
-        }
-        
-        if (entity instanceof Role) {
-            for (final @Nonnull Role role : ((Role) entity).getRoles()) {
-                if (role.getIssuer().equals(issuer) && relation.equals(role.getRelation())) role.remove();
             }
         }
     }

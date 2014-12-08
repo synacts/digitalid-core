@@ -1,5 +1,6 @@
 package ch.virtualid.handler;
 
+import ch.virtualid.agent.Agent;
 import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
@@ -15,6 +16,7 @@ import ch.virtualid.server.Host;
 import ch.xdf.SignatureWrapper;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * External actions can be sent by both {@link Host hosts} and {@link Client clients}.
@@ -105,6 +107,16 @@ public abstract class ExternalAction extends Action {
     @Pure
     public @Nonnull Restrictions getFailedAuditRestrictions() {
         return Restrictions.NONE;
+    }
+    
+    /**
+     * Returns the agent that an agent needs to cover in order to see the audit of this external action when the pushing failed.
+     * 
+     * @return the agent that an agent needs to cover in order to see the audit of this external action when the pushing failed.
+     */
+    @Pure
+    public @Nullable Agent getFailedAuditAgent() throws SQLException {
+        return null;
     }
     
 }

@@ -84,6 +84,60 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
         this.restrictable = restrictable;
     }
     
+    
+    /**
+     * Issues this outgoing role to the given contacts.
+     * 
+     * @param contacts the contacts to issue this outgoing role to.
+     * 
+     * @require isOnHost() : "This outgoing role is on a host.";
+     */
+    public void issue(@Nonnull ReadonlySet<Contact> contacts) throws SQLException {
+        assert isOnHost() : "This outgoing role is on a host.";
+        
+        for (final @Nonnull Contact contact : contacts) {
+            if (contact.isInternal()) {
+                Pusher.send(new RoleIssuance(this, contact.getInternalPerson()));
+            }
+        }
+    }
+    
+    /**
+     * Revokes this outgoing role from the given contacts.
+     * 
+     * @param contacts the contacts to revoke this outgoing role from.
+     * 
+     * @require isOnHost() : "This outgoing role is on a host.";
+     */
+    public void revoke(@Nonnull ReadonlySet<Contact> contacts) throws SQLException {
+        assert isOnHost() : "This outgoing role is on a host.";
+        
+        for (final @Nonnull Contact contact : contacts) {
+            if (contact.isInternal()) {
+                Pusher.send(new RoleIssuance(this, contact.getInternalPerson()));
+            }
+        }
+    }
+    
+    /**
+     * Issues this outgoing role to the contacts of the context.
+     * 
+     * @require isOnHost() : "This outgoing role is on a host.";
+     */
+    public void issue() throws SQLException {
+        issue(getContext().getAllContacts());
+    }
+    
+    /**
+     * Revokes this outgoing role from the contacts of the context.
+     * 
+     * @require isOnHost() : "This outgoing role is on a host.";
+     */
+    public void revoke() throws SQLException {
+        revoke(getContext().getAllContacts());
+    }
+    
+    
     /**
      * Creates a new outgoing role with the given context.
      * 
@@ -113,14 +167,7 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
         Agents.addOutgoingRole(this, relation, context);
         this.relation = relation;
         this.context = context;
-        if (isOnHost()) {
-            final @Nonnull ReadonlySet<Contact> contacts = context.getAllContacts();
-            for (final @Nonnull Contact contact : contacts) {
-                if (contact.isInternal()) {
-                    Pusher.send(new RoleIssuance(this, contact.getInternalPerson()));
-                }
-            }
-        }
+        if (isOnHost()) issue();
         notify(Agent.CREATED);
     }
     
@@ -164,13 +211,10 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
      */
     @OnlyForActions
     public void replaceRelation(@Nonnull SemanticType oldRelation, @Nonnull SemanticType newRelation) throws SQLException {
+        if (isOnHost()) revoke();
         Agents.replaceRelation(this, oldRelation, newRelation);
         relation = newRelation;
-        
-        if (isOnHost()) {
-            // TODO: Push the outgoing role to all the contacts in the given context!
-        }
-        
+        if (isOnHost()) issue();
         notify(RELATION);
     }
     
@@ -215,10 +259,13 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
     @OnlyForActions
     public void replaceContext(@Nonnull Context oldContext, @Nonnull Context newContext) throws SQLException {
         Agents.replaceContext(this, oldContext, newContext);
+        if (isOnHost()) {
+            final @Nonnull ReadonlySet<Contact> oldContacts = oldContext.getAllContacts();
+            final @Nonnull ReadonlySet<Contact> newContacts = newContext.getAllContacts();
+            revoke(oldContacts.subtract(newContacts));
+            issue(newContacts.subtract(oldContacts));
+        }
         context = newContext;
-        
-        // TODO: Reissue the role (if on host)!
-        
         notify(CONTEXT);
     }
     

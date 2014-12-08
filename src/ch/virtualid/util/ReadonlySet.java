@@ -20,6 +20,37 @@ import javax.annotation.Nonnull;
  */
 public interface ReadonlySet<E> extends ReadonlyCollection<E> {
     
+    /**
+     * Returns the union of this and the given set.
+     * 
+     * @param set the set whose elements are added.
+     * 
+     * @return the union of this and the given set.
+     */
+    @Pure
+    public @Capturable @Nonnull FreezableSet<E> add(ReadonlySet<E> set);
+    
+    /**
+     * Returns the relative complement of the given set in this set.
+     * 
+     * @param set the set whose elements are subtracted.
+     * 
+     * @return the relative complement of the given set in this set.
+     */
+    @Pure
+    public @Capturable @Nonnull FreezableSet<E> subtract(ReadonlySet<E> set);
+    
+    /**
+     * Returns the intersection of this and the given set.
+     * 
+     * @param set the set whose elements are intersected.
+     * 
+     * @return the intersection of this and the given set.
+     */
+    @Pure
+    public @Capturable @Nonnull FreezableSet<E> intersect(ReadonlySet<E> set);
+    
+    
     @Pure
     @Override
     public @Capturable @Nonnull FreezableSet<E> clone();

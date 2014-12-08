@@ -6,6 +6,7 @@ import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.exceptions.external.ExternalException;
+import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.ActionReply;
 import ch.virtualid.handler.Method;
@@ -93,8 +94,8 @@ public final class RoleIssuance extends CoreServiceExternalAction {
         
         if (signature instanceof HostSignatureWrapper) {
             this.issuer = signature.toHostSignatureWrapper().getSigner().getIdentity().toInternalNonHostIdentity();
-        } else { // TODO: Set the issuer to null in this case? Somewhere it needs to be checked anyway that the action was properly signed.
-            this.issuer = (InternalNonHostIdentity) entity.getIdentity(); // TODO: Remove the cast after rewriting the entity hierarchy.
+        } else {
+            this.issuer = entity.getIdentity().toInternalNonHostIdentity();
         }
         
         final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(2);
@@ -121,7 +122,11 @@ public final class RoleIssuance extends CoreServiceExternalAction {
         return new Restrictions(false, true, false);
     }
     
-    // TODO: Include the getFailureRestrictions() etc. here.
+    @Pure
+    @Override
+    public @Nonnull OutgoingRole getFailedAuditAgent() {
+        return OutgoingRole.get(getNonHostEntity(), agentNumber, false, false);
+    }
     
     
     @Pure
@@ -139,7 +144,7 @@ public final class RoleIssuance extends CoreServiceExternalAction {
     
     @Override
     public @Nullable ActionReply executeOnHost() throws PacketException, SQLException {
-        // TODO: Check that the issuer is a contact at the given entity.
+        if (!getSignatureNotNull().isSigned()) throw new PacketException(PacketError.AUTHORIZATION, "The issuance of a role has to be signed.");
         executeOnBoth();
         return null;
     }

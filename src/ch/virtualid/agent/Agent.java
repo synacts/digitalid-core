@@ -215,6 +215,7 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
     @OnlyForActions
     public final void removeForActions() throws SQLException {
         Agents.removeAgent(this);
+        if (isOnHost() && this instanceof OutgoingRole) ((OutgoingRole) this).revoke();
         removed = true;
         notify(DELETED);
     }
@@ -237,6 +238,7 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
     @OnlyForActions
     public final void unremoveForActions() throws SQLException {
         Agents.unremoveAgent(this);
+        if (isOnHost() && this instanceof OutgoingRole) ((OutgoingRole) this).issue();
         removed = false;
         notify(CREATED);
     }

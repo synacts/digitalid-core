@@ -46,6 +46,31 @@ class BackedFreezableSet<E> extends BackedFreezableCollection<E> implements Free
     
     @Pure
     @Override
+    public @Capturable @Nonnull FreezableSet<E> add(ReadonlySet<E> set) {
+        final @Nonnull FreezableSet<E> clone = clone();
+        clone.addAll((FreezableSet<E>) set);
+        return clone;
+    }
+    
+    @Pure
+    @Override
+    public @Capturable @Nonnull FreezableSet<E> subtract(ReadonlySet<E> set) {
+        final @Nonnull FreezableSet<E> clone = clone();
+        clone.removeAll((FreezableSet<E>) set);
+        return clone;
+    }
+    
+    @Pure
+    @Override
+    public @Capturable @Nonnull FreezableSet<E> intersect(ReadonlySet<E> set) {
+        final @Nonnull FreezableSet<E> clone = clone();
+        clone.retainAll((FreezableSet<E>) set);
+        return clone;
+    }
+    
+    
+    @Pure
+    @Override
     public @Capturable @Nonnull FreezableSet<E> clone() {
         return new FreezableHashSet<E>(set);
     }
