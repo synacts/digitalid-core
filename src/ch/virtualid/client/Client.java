@@ -133,7 +133,7 @@ public class Client extends Site implements Observer {
     
     @Pure
     @Override
-    public final @Nonnull String getReference() {
+    public final @Nonnull String getEntityReference() {
         return "REFERENCES " + this + "role (role) ON DELETE CASCADE";
     }
     

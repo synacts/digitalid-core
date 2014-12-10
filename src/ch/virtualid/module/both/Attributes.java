@@ -1,24 +1,39 @@
 package ch.virtualid.module.both;
 
 import ch.virtualid.agent.Agent;
+import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.concepts.Attribute;
+import ch.virtualid.concepts.Certificate;
 import ch.virtualid.database.Database;
+import ch.virtualid.entity.EntityClass;
 import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.entity.Role;
 import ch.virtualid.entity.Site;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.exceptions.external.ExternalException;
+import ch.virtualid.exceptions.packet.PacketException;
+import ch.virtualid.expression.PassiveExpression;
 import ch.virtualid.handler.InternalQuery;
+import ch.virtualid.identity.Identity;
+import ch.virtualid.identity.IdentityClass;
+import ch.virtualid.identity.Mapper;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.BothModule;
 import ch.virtualid.module.CoreService;
 import ch.virtualid.server.Host;
+import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.FreezableLinkedList;
 import ch.virtualid.util.FreezableList;
+import ch.virtualid.util.ReadonlyArray;
 import ch.virtualid.util.ReadonlyList;
 import ch.xdf.Block;
+import ch.xdf.BooleanWrapper;
 import ch.xdf.ListWrapper;
+import ch.xdf.StringWrapper;
 import ch.xdf.TupleWrapper;
+import java.io.IOException;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import javax.annotation.Nonnull;
@@ -32,109 +47,252 @@ import javax.annotation.Nullable;
  */
 public final class Attributes implements BothModule {
     
-    static { CoreService.SERVICE.add(new Attributes()); }
+    public static final Attributes MODULE = new Attributes();
     
     @Override
     public void createTables(@Nonnull Site site) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
-//            statement.executeUpdate("CREATE TABLE IF NOT EXISTS attribute_value (entity BIGINT NOT NULL, type BIGINT NOT NULL, published BOOLEAN NOT NULL, value LONGBLOB NOT NULL, PRIMARY KEY (entity, type, published), FOREIGN KEY (entity) REFERENCES " + connection.getReference() + ", FOREIGN KEY (type) REFERENCES general_identity (identity))");
-//            statement.executeUpdate("CREATE TABLE IF NOT EXISTS attribute_visibility (entity BIGINT NOT NULL, type BIGINT NOT NULL, visibility TEXT NOT NULL COLLATE " + Database.UTF16_BIN + ", PRIMARY KEY (entity, type), FOREIGN KEY (entity) REFERENCES " + connection.getReference() + ", FOREIGN KEY (type) REFERENCES general_identity (identity))");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "attribute_value (entity " + EntityClass.FORMAT + " NOT NULL, type " + Mapper.FORMAT + " NOT NULL, published BOOLEAN NOT NULL, value " + Database.getConfiguration().BLOB() + " NOT NULL, PRIMARY KEY (entity, type, published), FOREIGN KEY (entity) " + site.getEntityReference() + ", FOREIGN KEY (type) REFERENCES " + Mapper.REFERENCE + ")");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "attribute_visibility (entity " + EntityClass.FORMAT + " NOT NULL, type " + Mapper.FORMAT + " NOT NULL, visibility TEXT NOT NULL COLLATE " + Database.getConfiguration().BINARY() + ", PRIMARY KEY (entity, type), FOREIGN KEY (entity) REFERENCES " + site.getEntityReference() + ", FOREIGN KEY (type) REFERENCES " + Mapper.REFERENCE + ")");
         }
     }
     
     @Override
     public void deleteTables(@Nonnull Site site) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
-            // TODO: Delete the tables of this module.
+            statement.executeUpdate("DROP TABLE IF EXISTS " + site + "attribute_visibility");
+            statement.executeUpdate("DROP TABLE IF EXISTS " + site + "attribute_value");
         }
     }
     
     
     /**
-     * Stores the semantic type {@code entry.attributes.module@virtualid.ch}.
+     * Stores the semantic type {@code entry.value.attributes.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType MODULE_ENTRY = SemanticType.create("entry.attributes.module@virtualid.ch").load(TupleWrapper.TYPE, ch.virtualid.identity.SemanticType.UNKNOWN);
+    private static final @Nonnull SemanticType VALUE_MODULE_ENTRY = SemanticType.create("entry.value.attributes.module@virtualid.ch").load(TupleWrapper.TYPE, Identity.IDENTIFIER, SemanticType.ATTRIBUTE_IDENTIFIER, Attribute.PUBLISHED, Certificate.TYPE);
+    
+    /**
+     * Stores the semantic type {@code table.value.attributes.module@virtualid.ch}.
+     */
+    private static final @Nonnull SemanticType VALUE_MODULE_TABLE = SemanticType.create("table.value.attributes.module@virtualid.ch").load(ListWrapper.TYPE, VALUE_MODULE_ENTRY);
+    
+    
+    /**
+     * Stores the semantic type {@code entry.visibility.attributes.module@virtualid.ch}.
+     */
+    private static final @Nonnull SemanticType VISIBILITY_MODULE_ENTRY = SemanticType.create("entry.visibility.attributes.module@virtualid.ch").load(TupleWrapper.TYPE, Identity.IDENTIFIER, SemanticType.ATTRIBUTE_IDENTIFIER, PassiveExpression.TYPE);
+    
+    /**
+     * Stores the semantic type {@code table.visibility.attributes.module@virtualid.ch}.
+     */
+    private static final @Nonnull SemanticType VISIBILITY_MODULE_TABLE = SemanticType.create("table.visibility.attributes.module@virtualid.ch").load(ListWrapper.TYPE, VISIBILITY_MODULE_ENTRY);
+    
     
     /**
      * Stores the semantic type {@code attributes.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType MODULE = SemanticType.create("attributes.module@virtualid.ch").load(ListWrapper.TYPE, MODULE_ENTRY);
+    private static final @Nonnull SemanticType MODULE_FORMAT = SemanticType.create("attributes.module@virtualid.ch").load(TupleWrapper.TYPE, VALUE_MODULE_TABLE, VISIBILITY_MODULE_TABLE);
     
     @Pure
     @Override
     public @Nonnull SemanticType getModuleFormat() {
-        return MODULE;
+        return MODULE_FORMAT;
     }
     
     @Pure
     @Override
     public @Nonnull Block exportModule(@Nonnull Host host) throws SQLException {
-        final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
+        final @Nonnull FreezableArray<Block> tables = new FreezableArray<Block>(2);
         try (@Nonnull Statement statement = Database.createStatement()) {
-            // TODO: Retrieve all the entries from the database table(s).
+            
+            try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT entity, type, published, value FROM " + host + "attribute_value")) {
+                final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
+                while (resultSet.next()) {
+                    final @Nonnull Identity identity = IdentityClass.getNotNull(resultSet, 1);
+                    final @Nonnull Identity type = IdentityClass.getNotNull(resultSet, 2);
+                    final boolean published = resultSet.getBoolean(3);
+                    final @Nonnull Block value = Block.get(Certificate.TYPE, resultSet, 4);
+                    entries.add(new TupleWrapper(VALUE_MODULE_ENTRY, identity, type.toBlockable(SemanticType.ATTRIBUTE_IDENTIFIER), new BooleanWrapper(Attribute.PUBLISHED, published), value.toBlockable()).toBlock());
+                }
+                tables.set(0, new ListWrapper(VALUE_MODULE_TABLE, entries.freeze()).toBlock());
+            }
+            
+            try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT entity, type, visibility FROM " + host + "attribute_visibility")) {
+                final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
+                while (resultSet.next()) {
+                    final @Nonnull Identity identity = IdentityClass.getNotNull(resultSet, 1);
+                    final @Nonnull Identity type = IdentityClass.getNotNull(resultSet, 2);
+                    final @Nonnull String visibility = resultSet.getString(3);
+                    entries.add(new TupleWrapper(VISIBILITY_MODULE_ENTRY, identity, type.toBlockable(SemanticType.ATTRIBUTE_IDENTIFIER), new StringWrapper(PassiveExpression.TYPE, visibility)).toBlock());
+                }
+                tables.set(1, new ListWrapper(VISIBILITY_MODULE_TABLE, entries.freeze()).toBlock());
+            }
+            
         }
-        return new ListWrapper(MODULE, entries.freeze()).toBlock();
+        return new TupleWrapper(MODULE_FORMAT, tables.freeze()).toBlock();
     }
     
     @Override
-    public void importModule(@Nonnull Host host, @Nonnull Block block) throws SQLException, InvalidEncodingException {
+    public void importModule(@Nonnull Host host, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         assert block.getType().isBasedOn(getModuleFormat()) : "The block is based on the format of this module.";
         
-        final @Nonnull ReadonlyList<Block> entries = new ListWrapper(block).getElementsNotNull();
-        for (final @Nonnull Block entry : entries) {
-            // TODO: Add all entries to the database table(s).
+        final @Nonnull ReadonlyArray<Block> tables = new TupleWrapper(block).getElementsNotNull(2);
+        final @Nonnull String prefix = "INSERT INTO " + host;
+        
+        try (@Nonnull PreparedStatement preparedStatement = Database.prepareInsertStatement(prefix + "attribute_value (entity, type, published, value) VALUES (?, ?, ?, ?)")) {
+            final @Nonnull ReadonlyList<Block> entries = new ListWrapper(tables.getNotNull(0)).getElementsNotNull();
+            for (final @Nonnull Block entry : entries) {
+                final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(4);
+                IdentityClass.create(elements.getNotNull(0)).toInternalIdentity().set(preparedStatement, 1);
+                IdentityClass.create(elements.getNotNull(1)).toSemanticType().checkIsAttributeType().set(preparedStatement, 2);
+                preparedStatement.setBoolean(3, new BooleanWrapper(elements.getNotNull(2)).getValue());
+                elements.getNotNull(3).set(preparedStatement, 4);
+                preparedStatement.addBatch();
+            }
+            preparedStatement.executeBatch();
+        }
+        
+        try (@Nonnull PreparedStatement preparedStatement = Database.prepareInsertStatement(prefix + "attribute_visibility (entity, type, visibility) VALUES (?, ?, ?)")) {
+            final @Nonnull ReadonlyList<Block> entries = new ListWrapper(tables.getNotNull(1)).getElementsNotNull();
+            for (final @Nonnull Block entry : entries) {
+                final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(3);
+                IdentityClass.create(elements.getNotNull(0)).toInternalIdentity().set(preparedStatement, 1);
+                IdentityClass.create(elements.getNotNull(1)).toSemanticType().checkIsAttributeType().set(preparedStatement, 2);
+                preparedStatement.setString(2, new StringWrapper(elements.getNotNull(2)).getString());
+                preparedStatement.addBatch();
+            }
+            preparedStatement.executeBatch();
         }
     }
     
     
     /**
-     * Stores the semantic type {@code entry.attributes.state@virtualid.ch}.
+     * Stores the semantic type {@code entry.value.attributes.state@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType STATE_ENTRY = SemanticType.create("entry.attributes.state@virtualid.ch").load(TupleWrapper.TYPE, ch.virtualid.identity.SemanticType.UNKNOWN);
+    private static final @Nonnull SemanticType VALUE_STATE_ENTRY = SemanticType.create("entry.value.attributes.state@virtualid.ch").load(TupleWrapper.TYPE, SemanticType.ATTRIBUTE_IDENTIFIER, Attribute.PUBLISHED, Certificate.TYPE);
+    
+    /**
+     * Stores the semantic type {@code table.value.attributes.state@virtualid.ch}.
+     */
+    private static final @Nonnull SemanticType VALUE_STATE_TABLE = SemanticType.create("table.value.attributes.state@virtualid.ch").load(ListWrapper.TYPE, VALUE_STATE_ENTRY);
+    
+    
+    /**
+     * Stores the semantic type {@code entry.visibility.attributes.state@virtualid.ch}.
+     */
+    private static final @Nonnull SemanticType VISIBILITY_STATE_ENTRY = SemanticType.create("entry.visibility.attributes.state@virtualid.ch").load(TupleWrapper.TYPE, SemanticType.ATTRIBUTE_IDENTIFIER, PassiveExpression.TYPE);
+    
+    /**
+     * Stores the semantic type {@code table.visibility.attributes.state@virtualid.ch}.
+     */
+    private static final @Nonnull SemanticType VISIBILITY_STATE_TABLE = SemanticType.create("table.visibility.attributes.state@virtualid.ch").load(ListWrapper.TYPE, VISIBILITY_STATE_ENTRY);
+    
     
     /**
      * Stores the semantic type {@code attributes.state@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType STATE = SemanticType.create("attributes.state@virtualid.ch").load(ListWrapper.TYPE, STATE_ENTRY);
+    private static final @Nonnull SemanticType STATE_FORMAT = SemanticType.create("attributes.state@virtualid.ch").load(TupleWrapper.TYPE, VALUE_STATE_TABLE, VISIBILITY_STATE_TABLE);
     
     @Pure
     @Override
     public @Nonnull SemanticType getStateFormat() {
-        return STATE;
+        return STATE_FORMAT;
     }
     
     @Pure
     @Override
     public @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull Agent agent) throws SQLException {
-        final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
+        final @Nonnull Site site = entity.getSite();
+        final @Nonnull String from = " FROM " + site + "agent_permission p, " + site;
+        final @Nonnull String where = " v WHERE p.entity = " + entity + " AND p.agent = " + agent + " AND v.entity = " + entity + " AND (p.type = " + AgentPermissions.GENERAL + " OR p.type = v.type)";
+        
+        final @Nonnull FreezableArray<Block> tables = new FreezableArray<Block>(2);
         try (@Nonnull Statement statement = Database.createStatement()) {
-            // TODO: Retrieve the entries of the given entity from the database table(s).
+            
+            try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT DISTINCT v.type, v.published, v.value FROM" + from + "attribute_value" + where + " AND (v.published OR p.writing)")) {
+                final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
+                while (resultSet.next()) {
+                    final @Nonnull Identity type = IdentityClass.getNotNull(resultSet, 2);
+                    final boolean published = resultSet.getBoolean(3);
+                    final @Nonnull Block value = Block.get(Certificate.TYPE, resultSet, 4);
+                    entries.add(new TupleWrapper(VALUE_STATE_ENTRY, type.toBlockable(SemanticType.ATTRIBUTE_IDENTIFIER), new BooleanWrapper(Attribute.PUBLISHED, published), value.toBlockable()).toBlock());
+                }
+                tables.set(0, new ListWrapper(VALUE_STATE_TABLE, entries.freeze()).toBlock());
+            }
+            
+            try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT DISTINCT v.type, v.visibility FROM" + from + "attribute_visibility" + where + " AND p.writing")) {
+                final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
+                while (resultSet.next()) {
+                    final @Nonnull Identity type = IdentityClass.getNotNull(resultSet, 2);
+                    final @Nonnull String visibility = resultSet.getString(3);
+                    entries.add(new TupleWrapper(VISIBILITY_STATE_ENTRY, type.toBlockable(SemanticType.ATTRIBUTE_IDENTIFIER), new StringWrapper(PassiveExpression.TYPE, visibility)).toBlock());
+                }
+                tables.set(1, new ListWrapper(VISIBILITY_STATE_TABLE, entries.freeze()).toBlock());
+            }
+            
         }
-        return new ListWrapper(STATE, entries.freeze()).toBlock();
+        return new TupleWrapper(STATE_FORMAT, tables.freeze()).toBlock();
     }
     
     @Override
-    public void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws SQLException, InvalidEncodingException {
+    public void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         assert block.getType().isBasedOn(getStateFormat()) : "The block is based on the indicated type.";
         
-        final @Nonnull ReadonlyList<Block> entries = new ListWrapper(block).getElementsNotNull();
-        for (final @Nonnull Block entry : entries) {
-            // TODO: Add the entries of the given entity to the database table(s).
+        final @Nonnull Site site = entity.getSite();
+        try (@Nonnull Statement statement = Database.createStatement()) {
+            Database.onInsertIgnore(statement, site + "attribute_value", "entity", "type", "published");
+            Database.onInsertIgnore(statement, site + "attribute_visibility", "entity", "type");
         }
+        
+        final @Nonnull ReadonlyArray<Block> tables = new TupleWrapper(block).getElementsNotNull(2);
+        final @Nonnull String prefix = "INSERT" + Database.getConfiguration().IGNORE() + " INTO " + site;
+        
+        try (@Nonnull PreparedStatement preparedStatement = Database.prepareInsertStatement(prefix + "attribute_value (entity, type, published, value) VALUES (?, ?, ?, ?)")) {
+            entity.set(preparedStatement, 1);
+            final @Nonnull ReadonlyList<Block> entries = new ListWrapper(tables.getNotNull(0)).getElementsNotNull();
+            for (final @Nonnull Block entry : entries) {
+                final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(3);
+                IdentityClass.create(elements.getNotNull(0)).toSemanticType().checkIsAttributeType().set(preparedStatement, 2);
+                preparedStatement.setBoolean(3, new BooleanWrapper(elements.getNotNull(1)).getValue());
+                elements.getNotNull(2).set(preparedStatement, 4);
+                preparedStatement.addBatch();
+            }
+            preparedStatement.executeBatch();
+        }
+        
+        try (@Nonnull PreparedStatement preparedStatement = Database.prepareInsertStatement(prefix + "attribute_visibility (entity, type, visibility) VALUES (?, ?, ?)")) {
+            entity.set(preparedStatement, 1);
+            final @Nonnull ReadonlyList<Block> entries = new ListWrapper(tables.getNotNull(1)).getElementsNotNull();
+            for (final @Nonnull Block entry : entries) {
+                final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(2);
+                IdentityClass.create(elements.getNotNull(0)).toSemanticType().checkIsAttributeType().set(preparedStatement, 2);
+                preparedStatement.setString(2, new StringWrapper(elements.getNotNull(1)).getString());
+                preparedStatement.addBatch();
+            }
+            preparedStatement.executeBatch();
+        }
+        
+        try (@Nonnull Statement statement = Database.createStatement()) {
+            Database.onInsertNotIgnore(statement, site + "attribute_value");
+            Database.onInsertNotIgnore(statement, site + "attribute_visibility");
+        }
+        
+        Attribute.reset(entity);
     }
     
     @Override
     public void removeState(@Nonnull NonHostEntity entity) throws SQLException {
+        final @Nonnull Site site = entity.getSite();
         try (@Nonnull Statement statement = Database.createStatement()) {
-//            statement.executeUpdate("DELETE FROM attribute_value WHERE entity = " + entity);
-//            statement.executeUpdate("DELETE FROM attribute_visibility WHERE entity = " + entity);
+            statement.executeUpdate("DELETE FROM " + site + "attribute_visibility WHERE entity = " + entity);
+            statement.executeUpdate("DELETE FROM " + site + "attribute_value WHERE entity = " + entity);
         }
     }
     
     @Pure
     @Override
     public @Nullable InternalQuery getInternalQuery(@Nonnull Role role) {
-        return null; // TODO: Return the internal query for reloading the data of this module.
+        return null;
     }
     
     
@@ -336,5 +494,7 @@ public final class Attributes implements BothModule {
 //            }
 //        }
 //    }
+    
+    static { CoreService.SERVICE.add(MODULE); }
     
 }

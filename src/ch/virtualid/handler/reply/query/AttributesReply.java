@@ -38,12 +38,6 @@ public final class AttributesReply extends CoreServiceQueryReply {
      */
     public static final @Nonnull SemanticType TYPE = SemanticType.create("reply.attribute@virtualid.ch").load(Certificate.LIST);
     
-    @Pure
-    @Override
-    public @Nonnull SemanticType getType() {
-        return TYPE;
-    }
-    
     
     /**
      * Returns whether all the attributes which are not null are verified.
@@ -120,8 +114,6 @@ public final class AttributesReply extends CoreServiceQueryReply {
     private AttributesReply(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, number);
         
-        assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
-        
         final @Nonnull ReadonlyList<Block> elements = new ListWrapper(block).getElements();
         final @Nonnull FreezableList<SignatureWrapper> attributes = new FreezableArrayList<SignatureWrapper>(elements.size());
         for (final @Nullable Block element : elements) {
@@ -173,6 +165,12 @@ public final class AttributesReply extends CoreServiceQueryReply {
         return attributes;
     }
     
+    
+    @Pure
+    @Override
+    public @Nonnull SemanticType getType() {
+        return TYPE;
+    }
     
     /**
      * The factory class for the surrounding method.

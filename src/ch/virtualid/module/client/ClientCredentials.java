@@ -16,7 +16,7 @@ import javax.annotation.Nonnull;
  */
 public final class ClientCredentials implements ClientModule {
     
-    static { CoreService.SERVICE.add(new ClientCredentials()); }
+    public static final ClientCredentials MODULE = new ClientCredentials();
     
     @Override
     public void createTables(@Nonnull Site site) throws SQLException {
@@ -91,5 +91,7 @@ public final class ClientCredentials implements ClientModule {
 //        }
 //        return credential;
 //    }
+    
+    static { CoreService.SERVICE.add(MODULE); }
     
 }

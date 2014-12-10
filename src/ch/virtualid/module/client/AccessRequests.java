@@ -19,7 +19,7 @@ import javax.annotation.Nonnull;
  */
 public final class AccessRequests implements ClientModule {
     
-    static { CoreService.SERVICE.add(new AccessRequests()); }
+    public static final AccessRequests MODULE = new AccessRequests();
     
     @Override
     public void createTables(@Nonnull Site site) throws SQLException {
@@ -34,5 +34,7 @@ public final class AccessRequests implements ClientModule {
             // TODO: Delete the tables of this module.
         }
     }
+    
+    static { CoreService.SERVICE.add(MODULE); }
     
 }

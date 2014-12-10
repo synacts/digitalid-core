@@ -44,7 +44,7 @@ public final class Host extends Site {
     
     @Pure
     @Override
-    public @Nonnull String getReference() {
+    public @Nonnull String getEntityReference() {
         return Mapper.REFERENCE;
     }
     
@@ -132,7 +132,7 @@ public final class Host extends Site {
         // TODO: Load which services this host runs and initialize them afterwards.
         CoreService.SERVICE.createTables(this);
         
-        // TODO: What are the right permissions to pass here?
+        // TODO: What are the right permissions to pass here? Probably an aggregation of all the services.
         this.client = new Client("_" + identifier.asHostName(), identifier.getString(), new Image("/ch/virtualid/resources/Host.png"), AgentPermissions.GENERAL_WRITE);
         
         Server.addHost(this);

@@ -45,12 +45,6 @@ public final class IdentityReply extends CoreServiceQueryReply {
      */
     public static final @Nonnull SemanticType TYPE = SemanticType.create("reply.identity@virtualid.ch").load(TupleWrapper.TYPE, Category.TYPE, Predecessors.TYPE, SUCCESSOR);
     
-    @Pure
-    @Override
-    public @Nonnull SemanticType getType() {
-        return TYPE;
-    }
-    
     
     /**
      * Stores the category of the subject.
@@ -100,8 +94,6 @@ public final class IdentityReply extends CoreServiceQueryReply {
      */
     private IdentityReply(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws InvalidEncodingException {
         super(entity, signature, number);
-        
-        assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         final @Nonnull TupleWrapper tuple = new TupleWrapper(block);
         this.category = Category.get(tuple.getElementNotNull(0));
@@ -161,6 +153,12 @@ public final class IdentityReply extends CoreServiceQueryReply {
         return successor;
     }
     
+    
+    @Pure
+    @Override
+    public @Nonnull SemanticType getType() {
+        return TYPE;
+    }
     
     /**
      * The factory class for the surrounding method.

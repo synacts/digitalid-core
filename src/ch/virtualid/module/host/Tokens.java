@@ -26,7 +26,7 @@ import javax.annotation.Nonnull;
  */
 public final class Tokens implements HostModule {
     
-    static { CoreService.SERVICE.add(new Tokens()); }
+    public static final Tokens MODULE = new Tokens();
     
     @Override
     public void createTables(@Nonnull Site site) throws SQLException {
@@ -47,17 +47,17 @@ public final class Tokens implements HostModule {
     /**
      * Stores the semantic type {@code entry.tokens.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType ENTRY = SemanticType.create("entry.tokens.module@virtualid.ch").load(TupleWrapper.TYPE, ch.virtualid.identity.SemanticType.UNKNOWN);
+    private static final @Nonnull SemanticType MODULE_ENTRY = SemanticType.create("entry.tokens.module@virtualid.ch").load(TupleWrapper.TYPE, ch.virtualid.identity.SemanticType.UNKNOWN);
     
     /**
      * Stores the semantic type {@code tokens.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType MODULE = SemanticType.create("tokens.module@virtualid.ch").load(ListWrapper.TYPE, ENTRY);
+    private static final @Nonnull SemanticType MODULE_FORMAT = SemanticType.create("tokens.module@virtualid.ch").load(ListWrapper.TYPE, MODULE_ENTRY);
     
     @Pure
     @Override
     public @Nonnull SemanticType getModuleFormat() {
-        return MODULE;
+        return MODULE_FORMAT;
     }
     
     @Pure
@@ -67,7 +67,7 @@ public final class Tokens implements HostModule {
         try (@Nonnull Statement statement = Database.createStatement()) {
             // TODO: Retrieve all the entries from the database table(s).
         }
-        return new ListWrapper(MODULE, entries.freeze()).toBlock();
+        return new ListWrapper(MODULE_FORMAT, entries.freeze()).toBlock();
     }
     
     @Override
@@ -79,5 +79,7 @@ public final class Tokens implements HostModule {
             // TODO: Add all entries to the database table(s).
         }
     }
+    
+    static { CoreService.SERVICE.add(MODULE); }
     
 }

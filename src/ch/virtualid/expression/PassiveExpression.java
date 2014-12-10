@@ -1,9 +1,11 @@
 package ch.virtualid.expression;
 
+import ch.virtualid.identity.SemanticType;
+import ch.xdf.StringWrapper;
+import javax.annotation.Nonnull;
+
 /**
  * Description.
- * 
- * @invariant code : "Text.";
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 0.0
@@ -11,11 +13,10 @@ package ch.virtualid.expression;
 public class PassiveExpression {
     
     /**
-     * Asserts that the class invariant still holds.
+     * Stores the semantic type {@code passive.expression@virtualid.ch}.
      */
-    protected void invariant() {
-        assert true: "Text.";
-    }
+    public static final @Nonnull SemanticType TYPE = SemanticType.create("passive.expression@virtualid.ch").load(StringWrapper.TYPE);
+    
     
     public PassiveExpression(String string) {
         

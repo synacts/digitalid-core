@@ -44,8 +44,6 @@ public abstract class BlockWrapper implements Blockable, Immutable {
      * @require block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
      */
     protected BlockWrapper(@Nonnull Block block) {
-        if (!block.getType().isBasedOn(getSyntacticType())) System.out.println(block.getType().getAddress() + " is based on " + block.getType().getSyntacticBase().getAddress() + " instead of " + getSyntacticType().getAddress()); // TODO: Delete this line after testing!
-        
         assert block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
         
         this.block = block;

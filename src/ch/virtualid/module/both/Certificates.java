@@ -32,7 +32,7 @@ import javax.annotation.Nullable;
  */
 public final class Certificates implements BothModule {
     
-    static { CoreService.SERVICE.add(new Certificates()); }
+    public static final Certificates MODULE = new Certificates();
     
     @Override
     public void createTables(@Nonnull Site site) throws SQLException {
@@ -59,12 +59,12 @@ public final class Certificates implements BothModule {
     /**
      * Stores the semantic type {@code certificates.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType MODULE = SemanticType.create("certificates.module@virtualid.ch").load(ListWrapper.TYPE, MODULE_ENTRY);
+    private static final @Nonnull SemanticType MODULE_FORMAT = SemanticType.create("certificates.module@virtualid.ch").load(ListWrapper.TYPE, MODULE_ENTRY);
     
     @Pure
     @Override
     public @Nonnull SemanticType getModuleFormat() {
-        return MODULE;
+        return MODULE_FORMAT;
     }
     
     @Pure
@@ -74,7 +74,7 @@ public final class Certificates implements BothModule {
         try (@Nonnull Statement statement = Database.createStatement()) {
             // TODO: Retrieve all the entries from the database table(s).
         }
-        return new ListWrapper(MODULE, entries.freeze()).toBlock();
+        return new ListWrapper(MODULE_FORMAT, entries.freeze()).toBlock();
     }
     
     @Override
@@ -96,12 +96,12 @@ public final class Certificates implements BothModule {
     /**
      * Stores the semantic type {@code certificates.state@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType STATE = SemanticType.create("certificates.state@virtualid.ch").load(ListWrapper.TYPE, STATE_ENTRY);
+    private static final @Nonnull SemanticType STATE_FORMAT = SemanticType.create("certificates.state@virtualid.ch").load(ListWrapper.TYPE, STATE_ENTRY);
     
     @Pure
     @Override
     public @Nonnull SemanticType getStateFormat() {
-        return STATE;
+        return STATE_FORMAT;
     }
     
     @Pure
@@ -111,7 +111,7 @@ public final class Certificates implements BothModule {
         try (@Nonnull Statement statement = Database.createStatement()) {
             // TODO: Retrieve the entries of the given entity from the database table(s).
         }
-        return new ListWrapper(STATE, entries.freeze()).toBlock();
+        return new ListWrapper(STATE_FORMAT, entries.freeze()).toBlock();
     }
     
     @Override
@@ -136,5 +136,7 @@ public final class Certificates implements BothModule {
     public @Nullable InternalQuery getInternalQuery(@Nonnull Role role) {
         return null; // TODO: Return the internal query for reloading the data of this module.
     }
+    
+    static { CoreService.SERVICE.add(MODULE); }
     
 }

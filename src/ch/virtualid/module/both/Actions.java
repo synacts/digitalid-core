@@ -32,7 +32,7 @@ import javax.annotation.Nullable;
  */
 public final class Actions implements BothModule {
     
-    static { CoreService.SERVICE.add(new Actions()); }
+    public static final Actions MODULE = new Actions();
     
     @Override
     public void createTables(@Nonnull Site site) throws SQLException {
@@ -69,12 +69,12 @@ public final class Actions implements BothModule {
     /**
      * Stores the semantic type {@code actions.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType MODULE = SemanticType.create("actions.module@virtualid.ch").load(ListWrapper.TYPE, MODULE_ENTRY);
+    private static final @Nonnull SemanticType MODULE_FORMAT = SemanticType.create("actions.module@virtualid.ch").load(ListWrapper.TYPE, MODULE_ENTRY);
     
     @Pure
     @Override
     public @Nonnull SemanticType getModuleFormat() {
-        return MODULE;
+        return MODULE_FORMAT;
     }
     
     @Pure
@@ -84,7 +84,7 @@ public final class Actions implements BothModule {
         try (@Nonnull Statement statement = Database.createStatement()) {
             // TODO: Retrieve all the entries from the database table(s).
         }
-        return new ListWrapper(MODULE, entries.freeze()).toBlock();
+        return new ListWrapper(MODULE_FORMAT, entries.freeze()).toBlock();
     }
     
     @Override
@@ -106,12 +106,12 @@ public final class Actions implements BothModule {
     /**
      * Stores the semantic type {@code actions.state@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType STATE = SemanticType.create("actions.state@virtualid.ch").load(ListWrapper.TYPE, STATE_ENTRY);
+    private static final @Nonnull SemanticType STATE_FORMAT = SemanticType.create("actions.state@virtualid.ch").load(ListWrapper.TYPE, STATE_ENTRY);
     
     @Pure
     @Override
     public @Nonnull SemanticType getStateFormat() {
-        return STATE;
+        return STATE_FORMAT;
     }
     
     @Pure
@@ -121,7 +121,7 @@ public final class Actions implements BothModule {
         try (@Nonnull Statement statement = Database.createStatement()) {
             // TODO: Retrieve the entries of the given entity from the database table(s).
         }
-        return new ListWrapper(STATE, entries.freeze()).toBlock();
+        return new ListWrapper(STATE_FORMAT, entries.freeze()).toBlock();
     }
     
     @Override
@@ -232,5 +232,8 @@ public final class Actions implements BothModule {
 //        if (audit != null && agent != null) audit = getAudit(connection, identity, audit.getLastTime(), agent);
 //        return new Pair<Block, Audit>(block, audit);
 //    }
+    
+    
+    static { CoreService.SERVICE.add(MODULE); }
     
 }

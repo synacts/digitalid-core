@@ -293,7 +293,7 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
      * 
      * @param entity the entity whose client agents are to be reset.
      */
-    public static void reset(@Nonnull NonHostEntity entity) throws SQLException {
+    public static void reset(@Nonnull NonHostEntity entity) {
         if (Database.isSingleAccess()) {
             final @Nullable ConcurrentMap<Long, ClientAgent> map = index.get(entity);
             if (map != null) {

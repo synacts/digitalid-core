@@ -448,7 +448,7 @@ public final class Restrictions implements Immutable, Blockable, SQLizable {
      * @return the foreign key constraints used by instances of this class.
      */
     public static @Nonnull String getForeignKeys(@Nonnull Site site) throws SQLException {
-        return "FOREIGN KEY (entity, context) " + Context.getReference(site) + ", FOREIGN KEY (contact) " + site.getReference();
+        return "FOREIGN KEY (entity, context) " + Context.getReference(site) + ", FOREIGN KEY (contact) " + site.getEntityReference();
     }
     
     /**

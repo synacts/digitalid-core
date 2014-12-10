@@ -252,7 +252,7 @@ public class Commitment implements Immutable, Blockable, SQLizable {
      * @return the foreign key constraints used by instances of this class.
      */
     public static @Nonnull String getForeignKeys(@Nonnull Site site) {
-        return "FOREIGN KEY (host) " + site.getReference();
+        return "FOREIGN KEY (host) " + site.getEntityReference();
     }
     
     /**

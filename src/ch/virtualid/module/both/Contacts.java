@@ -32,7 +32,7 @@ import javax.annotation.Nullable;
  */
 public final class Contacts implements BothModule {
     
-    static { CoreService.SERVICE.add(new Contacts()); }
+    public static final Contacts MODULE = new Contacts();
     
     @Override
     public void createTables(@Nonnull Site site) throws SQLException {
@@ -63,12 +63,12 @@ public final class Contacts implements BothModule {
     /**
      * Stores the semantic type {@code contacts.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType MODULE = SemanticType.create("contacts.module@virtualid.ch").load(ListWrapper.TYPE, MODULE_ENTRY);
+    private static final @Nonnull SemanticType MODULE_FORMAT = SemanticType.create("contacts.module@virtualid.ch").load(ListWrapper.TYPE, MODULE_ENTRY);
     
     @Pure
     @Override
     public @Nonnull SemanticType getModuleFormat() {
-        return MODULE;
+        return MODULE_FORMAT;
     }
     
     @Pure
@@ -78,7 +78,7 @@ public final class Contacts implements BothModule {
         try (@Nonnull Statement statement = Database.createStatement()) {
             // TODO: Retrieve all the entries from the database table(s).
         }
-        return new ListWrapper(MODULE, entries.freeze()).toBlock();
+        return new ListWrapper(MODULE_FORMAT, entries.freeze()).toBlock();
     }
     
     @Override
@@ -100,12 +100,12 @@ public final class Contacts implements BothModule {
     /**
      * Stores the semantic type {@code contacts.state@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType STATE = SemanticType.create("contacts.state@virtualid.ch").load(ListWrapper.TYPE, STATE_ENTRY);
+    private static final @Nonnull SemanticType STATE_FORMAT = SemanticType.create("contacts.state@virtualid.ch").load(ListWrapper.TYPE, STATE_ENTRY);
     
     @Pure
     @Override
     public @Nonnull SemanticType getStateFormat() {
-        return STATE;
+        return STATE_FORMAT;
     }
     
     @Pure
@@ -115,7 +115,7 @@ public final class Contacts implements BothModule {
         try (@Nonnull Statement statement = Database.createStatement()) {
             // TODO: Retrieve the entries of the given entity from the database table(s).
         }
-        return new ListWrapper(STATE, entries.freeze()).toBlock();
+        return new ListWrapper(STATE_FORMAT, entries.freeze()).toBlock();
     }
     
     @Override
@@ -269,5 +269,7 @@ public final class Contacts implements BothModule {
 //        int removed = removeTypes(connection, identity, "contact_authentication", "contact", contact.getNumber(), authentications);
 //        if (removed == 0 && contact.hasBeenMerged()) removeTypes(connection, identity, "contact_authentication", "contact", contact.getNumber(), authentications);
 //    }
+    
+    static { CoreService.SERVICE.add(MODULE); }
     
 }

@@ -19,7 +19,7 @@ import javax.annotation.Nonnull;
  */
 public final class Errors implements ClientModule {
     
-    static { CoreService.SERVICE.add(new Errors()); }
+    public static final Errors MODULE = new Errors();
     
     @Override
     public void createTables(@Nonnull Site site) throws SQLException {
@@ -35,5 +35,6 @@ public final class Errors implements ClientModule {
         }
     }
     
+    static { CoreService.SERVICE.add(MODULE); }
     
 }

@@ -31,7 +31,7 @@ public final class Server {
     /**
      * The version of the Virtual ID server implementation.
      */
-    public static final @Nonnull String VERSION = "0.8 (18 October 2014)";
+    public static final @Nonnull String VERSION = "0.9 (10 December 2014)";
     
     /**
      * The authors of the Virtual ID server implementation.

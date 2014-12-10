@@ -46,12 +46,10 @@ public final class Passwords implements BothModule {
     
     public static final Passwords MODULE = new Passwords();
     
-    static { CoreService.SERVICE.add(MODULE); }
-    
     @Override
     public void createTables(@Nonnull Site site) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "password (entity " + EntityClass.FORMAT + " NOT NULL, password VARCHAR(50) NOT NULL COLLATE " + Database.getConfiguration().BINARY() + ", PRIMARY KEY (entity), FOREIGN KEY (entity) " + site.getReference() + ")");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "password (entity " + EntityClass.FORMAT + " NOT NULL, password VARCHAR(50) NOT NULL COLLATE " + Database.getConfiguration().BINARY() + ", PRIMARY KEY (entity), FOREIGN KEY (entity) " + site.getEntityReference() + ")");
             Database.onInsertIgnore(statement, site + "password", "entity");
         }
     }
@@ -219,5 +217,7 @@ public final class Passwords implements BothModule {
             if (preparedStatement.executeUpdate() == 0) throw new SQLException("The password of " + entity.getIdentity().getAddress() + " could not be replaced.");
         }
     }
+    
+    static { CoreService.SERVICE.add(MODULE); }
     
 }

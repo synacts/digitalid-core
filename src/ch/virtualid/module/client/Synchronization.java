@@ -19,7 +19,7 @@ import javax.annotation.Nonnull;
  */
 public final class Synchronization implements ClientModule {
     
-    static { CoreService.SERVICE.add(new Synchronization()); }
+    public static final Synchronization MODULE = new Synchronization();
     
     @Override
     public void createTables(@Nonnull Site site) throws SQLException {
@@ -34,5 +34,7 @@ public final class Synchronization implements ClientModule {
             // TODO: Delete the tables of this module.
         }
     }
+    
+    static { CoreService.SERVICE.add(MODULE); }
     
 }

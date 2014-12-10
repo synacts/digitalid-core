@@ -70,8 +70,6 @@ public final class Agents implements BothModule {
     
     public static final Agents MODULE = new Agents();
     
-    static { CoreService.SERVICE.add(MODULE); }
-    
     /**
      * Creates the table which is referenced for the given site.
      * 
@@ -79,22 +77,22 @@ public final class Agents implements BothModule {
      */
     public static void createReferenceTable(@Nonnull Site site) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "agent (entity " + EntityClass.FORMAT + " NOT NULL, agent " + Agent.FORMAT + " NOT NULL, client BOOLEAN NOT NULL, removed BOOLEAN NOT NULL, PRIMARY KEY (entity, agent), FOREIGN KEY (entity) " + site.getReference() + ")");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "agent (entity " + EntityClass.FORMAT + " NOT NULL, agent " + Agent.FORMAT + " NOT NULL, client BOOLEAN NOT NULL, removed BOOLEAN NOT NULL, PRIMARY KEY (entity, agent), FOREIGN KEY (entity) " + site.getEntityReference() + ")");
         }
     }
     
     @Override
     public void createTables(@Nonnull Site site) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "agent_permission (entity " + EntityClass.FORMAT + " NOT NULL, agent " + Agent.FORMAT + " NOT NULL, type " + Mapper.FORMAT + " NOT NULL, writing BOOLEAN NOT NULL, PRIMARY KEY (entity, agent, type), FOREIGN KEY (entity, agent) " + Agent.getReference(site) + ", FOREIGN KEY (type) " + site.getReference() + ")");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "agent_permission (entity " + EntityClass.FORMAT + " NOT NULL, agent " + Agent.FORMAT + " NOT NULL, type " + Mapper.FORMAT + " NOT NULL, writing BOOLEAN NOT NULL, PRIMARY KEY (entity, agent, type), FOREIGN KEY (entity, agent) " + Agent.getReference(site) + ", FOREIGN KEY (type) " + Mapper.REFERENCE + ")");
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "agent_restrictions (entity " + EntityClass.FORMAT + " NOT NULL, agent " + Agent.FORMAT + " NOT NULL, " + Restrictions.FORMAT_NOT_NULL + ", PRIMARY KEY (entity, agent), FOREIGN KEY (entity, agent) " + Agent.getReference(site) + ", " + Restrictions.getForeignKeys(site) + ")");
             Mapper.addReference(site + "agent_restrictions", "contact");
             
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "agent_order (entity " + EntityClass.FORMAT + " NOT NULL, stronger " + Agent.FORMAT + " NOT NULL, weaker " + Agent.FORMAT + " NOT NULL, PRIMARY KEY (entity, stronger, weaker), FOREIGN KEY (entity, stronger) " + Agent.getReference(site) + ", FOREIGN KEY (entity, weaker) " + Agent.getReference(site) + ")");
             
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "client_agent (entity " + EntityClass.FORMAT + " NOT NULL, agent " + Agent.FORMAT + " NOT NULL, " + Commitment.FORMAT + ", name VARCHAR(50) NOT NULL COLLATE " + Database.getConfiguration().BINARY() + ", icon " + Image.FORMAT + " NOT NULL, PRIMARY KEY (entity, agent), FOREIGN KEY (entity, agent) " + Agent.getReference(site) + ", " + Commitment.getForeignKeys(site) + ")");
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "outgoing_role (entity " + EntityClass.FORMAT + " NOT NULL, agent " + Agent.FORMAT + " NOT NULL, relation " + Mapper.FORMAT + " NOT NULL, context " + Context.FORMAT + " NOT NULL, PRIMARY KEY (entity, agent), FOREIGN KEY (entity, agent) " + Agent.getReference(site) + ", FOREIGN KEY (relation) " + site.getReference() + ", FOREIGN KEY (entity, context) " + Context.getReference(site) + ")");
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "incoming_role (entity " + EntityClass.FORMAT + " NOT NULL, issuer " + Mapper.FORMAT + " NOT NULL, relation " + Mapper.FORMAT + " NOT NULL, agent " + Agent.FORMAT + " NOT NULL, PRIMARY KEY (entity, issuer, relation), FOREIGN KEY (entity) " + site.getReference() + ", FOREIGN KEY (issuer) " + site.getReference() + ", FOREIGN KEY (relation) " + site.getReference() + ")");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "outgoing_role (entity " + EntityClass.FORMAT + " NOT NULL, agent " + Agent.FORMAT + " NOT NULL, relation " + Mapper.FORMAT + " NOT NULL, context " + Context.FORMAT + " NOT NULL, PRIMARY KEY (entity, agent), FOREIGN KEY (entity, agent) " + Agent.getReference(site) + ", FOREIGN KEY (relation) " + Mapper.REFERENCE + ", FOREIGN KEY (entity, context) " + Context.getReference(site) + ")");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "incoming_role (entity " + EntityClass.FORMAT + " NOT NULL, issuer " + Mapper.FORMAT + " NOT NULL, relation " + Mapper.FORMAT + " NOT NULL, agent " + Agent.FORMAT + " NOT NULL, PRIMARY KEY (entity, issuer, relation), FOREIGN KEY (entity) " + site.getEntityReference() + ", FOREIGN KEY (issuer) " + Mapper.REFERENCE + ", FOREIGN KEY (relation) " + Mapper.REFERENCE + ")");
             Mapper.addReference(site + "incoming_role", "issuer", "entity", "issuer", "relation");
         }
     }
@@ -334,7 +332,7 @@ public final class Agents implements BothModule {
                 final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(4);
                 IdentityClass.create(elements.getNotNull(0)).toInternalNonHostIdentity().set(preparedStatement, 1);
                 preparedStatement.setLong(2, new Int64Wrapper(elements.getNotNull(1)).getValue());
-                IdentityClass.create(elements.getNotNull(2)).toSemanticType().set(preparedStatement, 3);
+                IdentityClass.create(elements.getNotNull(2)).toSemanticType().checkIsAttributeType().set(preparedStatement, 3);
                 preparedStatement.setBoolean(4, new BooleanWrapper(elements.getNotNull(3)).getValue());
                 preparedStatement.addBatch();
             }
@@ -387,7 +385,7 @@ public final class Agents implements BothModule {
                 final @Nonnull InternalNonHostIdentity identity = IdentityClass.create(elements.getNotNull(0)).toInternalNonHostIdentity();
                 identity.set(preparedStatement, 1);
                 preparedStatement.setLong(2, new Int64Wrapper(elements.getNotNull(1)).getValue());
-                IdentityClass.create(elements.getNotNull(2)).toSemanticType().set(preparedStatement, 3);
+                IdentityClass.create(elements.getNotNull(2)).toSemanticType().checkIsRoleType().set(preparedStatement, 3);
                 Context.get(NonHostAccount.get(host, identity), elements.getNotNull(3)).set(preparedStatement, 4);
                 preparedStatement.addBatch();
             }
@@ -400,7 +398,7 @@ public final class Agents implements BothModule {
                 final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(4);
                 IdentityClass.create(elements.getNotNull(0)).toInternalNonHostIdentity().set(preparedStatement, 1);
                 IdentityClass.create(elements.getNotNull(1)).toInternalNonHostIdentity().set(preparedStatement, 2);
-                IdentityClass.create(elements.getNotNull(2)).toSemanticType().set(preparedStatement, 3);
+                IdentityClass.create(elements.getNotNull(2)).toSemanticType().checkIsRoleType().set(preparedStatement, 3);
                 preparedStatement.setLong(4, new Int64Wrapper(elements.getNotNull(3)).getValue());
                 preparedStatement.addBatch();
             }
@@ -603,7 +601,7 @@ public final class Agents implements BothModule {
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(3);
                 preparedStatement.setLong(2, new Int64Wrapper(elements.getNotNull(0)).getValue());
-                IdentityClass.create(elements.getNotNull(1)).toSemanticType().set(preparedStatement, 3);
+                IdentityClass.create(elements.getNotNull(1)).toSemanticType().checkIsAttributeType().set(preparedStatement, 3);
                 preparedStatement.setBoolean(4, new BooleanWrapper(elements.getNotNull(2)).getValue());
                 preparedStatement.addBatch();
             }
@@ -642,7 +640,7 @@ public final class Agents implements BothModule {
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(3);
                 preparedStatement.setLong(2, new Int64Wrapper(elements.getNotNull(0)).getValue());
-                IdentityClass.create(elements.getNotNull(1)).toSemanticType().set(preparedStatement, 3);
+                IdentityClass.create(elements.getNotNull(1)).toSemanticType().checkIsRoleType().set(preparedStatement, 3);
                 Context.get(entity, elements.getNotNull(2)).set(preparedStatement, 4);
                 preparedStatement.addBatch();
             }
@@ -655,7 +653,7 @@ public final class Agents implements BothModule {
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(3);
                 IdentityClass.create(elements.getNotNull(0)).toInternalNonHostIdentity().set(preparedStatement, 2);
-                IdentityClass.create(elements.getNotNull(1)).toSemanticType().set(preparedStatement, 3);
+                IdentityClass.create(elements.getNotNull(1)).toSemanticType().checkIsRoleType().set(preparedStatement, 3);
                 preparedStatement.setLong(4, new Int64Wrapper(elements.getNotNull(2)).getValue());
                 preparedStatement.addBatch();
             }
@@ -1317,5 +1315,7 @@ public final class Agents implements BothModule {
             if (!foundRoles.contains(subrole)) subrole.remove();
         }
     }
+    
+    static { CoreService.SERVICE.add(MODULE); }
     
 }

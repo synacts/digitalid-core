@@ -69,6 +69,6 @@ public abstract class Site extends Instance {
      * @return the foreign key referenced by the entity column.
      */
     @Pure
-    public abstract @Nonnull String getReference();
+    public abstract @Nonnull String getEntityReference();
     
 }

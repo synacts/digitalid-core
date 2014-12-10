@@ -19,7 +19,7 @@ import javax.annotation.Nonnull;
  */
 public final class AccreditationRequests implements ClientModule {
     
-    static { CoreService.SERVICE.add(new AccreditationRequests()); }
+    public static final AccreditationRequests MODULE = new AccreditationRequests();
     
     @Override
     public void createTables(@Nonnull Site site) throws SQLException {
@@ -34,5 +34,7 @@ public final class AccreditationRequests implements ClientModule {
             // TODO: Delete the tables of this module.
         }
     }
+    
+    static { CoreService.SERVICE.add(MODULE); }
     
 }

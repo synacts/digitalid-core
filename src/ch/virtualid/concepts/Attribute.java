@@ -8,11 +8,14 @@ import ch.virtualid.concept.Instance;
 import ch.virtualid.concept.Observer;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.Entity;
+import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.expression.PassiveExpression;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Immutable;
+import ch.virtualid.module.both.Attributes;
 import ch.virtualid.util.ConcurrentHashMap;
 import ch.virtualid.util.ConcurrentMap;
+import ch.xdf.BooleanWrapper;
 import ch.xdf.SelfcontainedWrapper;
 import ch.xdf.SignatureWrapper;
 import java.sql.SQLException;
@@ -23,12 +26,12 @@ import javax.annotation.Nullable;
 /**
  * This class models an attribute with its value and visibility.
  * 
+ * @see Attributes
+ * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 1.5
+ * @version 2.0
  */
 public final class Attribute extends GeneralConcept implements Immutable {
-    
-    // TODO: Add aspects for adding and removing attributes?
     
     /**
      * Stores the aspect of a published attribute changing its value.
@@ -45,6 +48,11 @@ public final class Attribute extends GeneralConcept implements Immutable {
      */
     public static final @Nonnull Aspect VISIBILITY = new Aspect(Attribute.class, "visibility");
     
+    
+    /**
+     * Stores the semantic type {@code published.attribute@virtualid.ch}.
+     */
+    public static final @Nonnull SemanticType PUBLISHED = SemanticType.create("published.attribute@virtualid.ch").load(BooleanWrapper.TYPE);
     
     /**
      * Stores the semantic type {@code attribute@virtualid.ch}.
@@ -231,6 +239,27 @@ public final class Attribute extends GeneralConcept implements Immutable {
     public static @Nonnull Set<Attribute> getAll(@Nonnull Entity entity) throws SQLException {
         throw new SQLException();
 //        return Attributes.getAll(entity);
+    }
+    
+    /**
+     * Resets the attributes of the given entity after having reloaded the attributes module.
+     * 
+     * @param entity the entity whose attributes are to be reset.
+     */
+    public static void reset(@Nonnull NonHostEntity entity) {
+        if (Database.isSingleAccess()) {
+            final @Nullable ConcurrentMap<SemanticType, Attribute> map = index.get(entity);
+            if (map != null) {
+                for (final @Nonnull Attribute attribute : map.values()) {
+                    attribute.valueLoaded = false;
+                    attribute.value = null;
+                    attribute.unpublishedLoaded = false;
+                    attribute.unpublished = null;
+                    attribute.visibilityLoaded = false;
+                    attribute.visibility = null;
+                }
+            }
+        }
     }
     
     
