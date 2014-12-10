@@ -126,7 +126,7 @@ public final class Server {
         for (final @Nonnull File file : files) {
             if (file.isFile() && file.getName().endsWith(".jar")) {
                 try {
-                    Database.initializeJarFile(new JarFile(file));
+                    Database.loadJarFile(new JarFile(file));
                 } catch (@Nonnull IOException | ClassNotFoundException exception) {
                     throw new InitializationError("Could not load the service in the file '" + file.getName() + "'.", exception);
                 }
@@ -209,7 +209,7 @@ public final class Server {
         } catch (@Nonnull SQLException | IOException exception) {
             throw new InitializationError("Could not load the database configuration.", exception);
         }
-        Database.initialize(configuration, false, false);
+        Database.initialize(configuration, false, true);
         start(arguments);
         Options.start();
     }

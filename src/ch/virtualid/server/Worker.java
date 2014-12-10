@@ -73,6 +73,8 @@ public final class Worker implements Runnable {
                     
                     Database.commit();
                     for (int i = 0; i < size; i++) {
+                        replies.add(null);
+                        exceptions.add(null);
                         try {
                             final @Nonnull Method method = request.getMethod(i);
                             replies.set(i, method.executeOnHost());

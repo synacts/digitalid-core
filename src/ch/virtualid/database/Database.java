@@ -137,21 +137,21 @@ public final class Database implements Immutable {
     
     
     /**
-     * Initializes all classes in the given directory.
+     * Loads all classes in the given directory.
      * 
      * @param directory the directory containing the classes.
      * @param prefix the path to the given directory as class prefix.
      * 
      * @require directory.isDirectory() : "The directory is indeed a directory.";
      */
-    public static void initializeClasses(@Nonnull File directory, @Nonnull String prefix) throws ClassNotFoundException {
+    public static void loadClasses(@Nonnull File directory, @Nonnull String prefix) throws ClassNotFoundException {
         assert directory.isDirectory() : "The directory is indeed a directory.";
         
         final @Nonnull File[] files = directory.listFiles();
         for (final @Nonnull File file : files) {
             final @Nonnull String fileName = file.getName();
             if (file.isDirectory()) {
-                initializeClasses(file, prefix + fileName + ".");
+                loadClasses(file, prefix + fileName + ".");
             } else if (fileName.endsWith(".class")) {
                 final @Nonnull String className = prefix + fileName.substring(0, fileName.length() - 6);
                 LOGGER.log(Level.INFORMATION, "Initialize class: " + className);
@@ -161,11 +161,11 @@ public final class Database implements Immutable {
     }
     
     /**
-     * Initializes all classes in the given jar file.
+     * Loads all classes in the given jar file.
      * 
      * @param jarFile the jar file containing the classes.
      */
-    public static void initializeJarFile(@Nonnull JarFile jarFile) throws ClassNotFoundException {
+    public static void loadJarFile(@Nonnull JarFile jarFile) throws ClassNotFoundException {
         final @Nonnull Enumeration<JarEntry> entries = jarFile.entries();
         while (entries.hasMoreElements()) {
             final @Nonnull String entryName = entries.nextElement().getName();
@@ -178,44 +178,49 @@ public final class Database implements Immutable {
     }
     
     /**
-     * Initializes all the modules that depend on the database.
-     * Modules need to be initialized in the main thread because
-     * otherwise their initialization might be lost by a rollback.
+     * Loads all the classes of the current code source (either a jar or directory).
+     * (All the classes need to be loaded in the main thread because otherwise their
+     * type initializations might be lost by a rollback of the database transaction.)
+     */
+    public static void loadClasses() {
+        try {
+            // Ensure that the semantic type is loaded before the syntactic type.
+            Class.forName(SemanticType.class.getName());
+            
+            // Ensure that the signature wrapper is loaded before its subclasses.
+            Class.forName(SignatureWrapper.class.getName());
+            
+            final @Nonnull File root = new File(Database.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+            LOGGER.log(Level.INFORMATION, "Root of classes: " + root);
+            
+            if (root.getName().endsWith(".jar")) {
+                loadJarFile(new JarFile(root));
+            } else {
+                loadClasses(root, "");
+            }
+            
+            commit();
+        } catch (@Nonnull URISyntaxException | IOException | ClassNotFoundException | SQLException exception) {
+            throw new InitializationError("Could not load all classes.", exception);
+        }
+        
+        LOGGER.log(Level.INFORMATION, "All classes have been loaded.");
+    }
+    
+    /**
+     * Initializes the database with the given configuration.
      * 
      * @param configuration the configuration of the database.
      * @param singleAccess whether the database is accessed by a single process.
-     * @param testing whether the database is used for testing only without loading all classes.
+     * @param loading whether all the classes of the current code source are to be loaded.
      */
-    public static void initialize(@Nonnull Configuration configuration, boolean singleAccess, boolean testing) {
+    public static void initialize(@Nonnull Configuration configuration, boolean singleAccess, boolean loading) {
         Database.configuration = configuration;
         Database.singleAccess = singleAccess;
         mainThread.set(true);
         connection.remove();
         
-        if (!testing) {
-            try {
-                // Ensure that the semantic type is loaded before the syntactic type.
-                Class.forName(SemanticType.class.getName());
-                
-                // Ensure that the signature wrapper is loaded before its subclasses.
-                Class.forName(SignatureWrapper.class.getName());
-                
-                final @Nonnull File root = new File(Database.class.getProtectionDomain().getCodeSource().getLocation().toURI());
-                LOGGER.log(Level.INFORMATION, "Root of classes: " + root);
-                
-                if (root.getName().endsWith(".jar")) {
-                    initializeJarFile(new JarFile(root));
-                } else {
-                    initializeClasses(root, "");
-                }
-                
-                getConnection().commit();
-            } catch (@Nonnull URISyntaxException | IOException | ClassNotFoundException | SQLException exception) {
-                throw new InitializationError("Could not load all classes.", exception);
-            }
-            
-            LOGGER.log(Level.INFORMATION, "All classes have been loaded.");
-        }
+        if (loading) loadClasses();
     }
     
     /**

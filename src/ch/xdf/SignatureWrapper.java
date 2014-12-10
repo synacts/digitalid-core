@@ -229,7 +229,8 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
         if (hasSubject() && time == null) throw new InvalidEncodingException("The signature time may not be null if this signature has a subject.");
         if (time != null && !time.isPositive()) throw new InvalidEncodingException("The signature time has to be positive.");
         this.element = tuple.getElement(2);
-        if (getType().isBasedOn(Certificate.TYPE) && element == null) throw new InvalidEncodingException("If this signature is a certificate, the element may not be null.");
+        if (element != null) element.setType(block.getType().getParameters().getNotNull(0));
+        else if (getType().isBasedOn(Certificate.TYPE)) throw new InvalidEncodingException("If this signature is a certificate, the element may not be null.");
         this.audit = tuple.isElementNull(3) ? null : new Audit(tuple.getElementNotNull(3));
         this.verified = verified;
     }

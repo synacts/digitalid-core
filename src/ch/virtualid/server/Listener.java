@@ -51,7 +51,7 @@ public final class Listener extends Thread {
      */
     @Override
     public void run() {
-        while (true) {
+        while (!serverSocket.isClosed()) {
             try {
                 final @Nonnull Socket socket = serverSocket.accept();
                 socket.setSoTimeout(10000);

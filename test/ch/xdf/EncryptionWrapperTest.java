@@ -31,11 +31,11 @@ public final class EncryptionWrapperTest extends ServerSetup {
 //                    System.out.println("Block: " + block + "; Symmetric Key: " + symmetricKey);
                     
                     // From client to host:
-                    @Nonnull Block cipherBlock = new EncryptionWrapper(TYPE, block, recipient, symmetricKey).toBlock();
+                    @Nonnull Block cipherBlock = new EncryptionWrapper(TYPE, block, getRecipient(), symmetricKey).toBlock();
 //                    System.out.println("–> From client to host: " + cipherBlock);
                     @Nonnull EncryptionWrapper encryption = new EncryptionWrapper(cipherBlock, null);
                     assertEquals(block, encryption.getElement());
-                    assertEquals(recipient, encryption.getRecipient());
+                    assertEquals(getRecipient(), encryption.getRecipient());
                     assertEquals(symmetricKey, encryption.getSymmetricKey());
                     
                     // From host to client:

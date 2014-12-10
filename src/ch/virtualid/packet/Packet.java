@@ -140,11 +140,11 @@ public abstract class Packet implements Immutable {
             final @Nullable CompressionWrapper compression = content == null ? null : new CompressionWrapper(COMPRESSION, content, CompressionWrapper.ZLIB);
             if (compression != null || audit != null) {
                 if (subject == null || audit == null && block != null && block.getType().equals(PacketException.TYPE))
-                    signatures.set(i, new SignatureWrapper(Packet.SIGNATURE, compression, subject).toBlock());
-                else signatures.set(i, getSignature(compression, subject, audit).toBlock());
+                    signatures.add(new SignatureWrapper(Packet.SIGNATURE, compression, subject).toBlock());
+                else signatures.add(getSignature(compression, subject, audit).toBlock());
                 audit = null;
             } else {
-                signatures.set(i, null);
+                signatures.add(null);
             }
         }
         

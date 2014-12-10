@@ -1,7 +1,9 @@
 package ch.virtualid.setup;
 
+import ch.virtualid.database.Database;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.server.Server;
+import javax.annotation.Nonnull;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -15,11 +17,17 @@ import org.junit.Test;
  */
 public class ServerSetup extends DatabaseSetup {
     
-    protected static final HostIdentifier recipient = new HostIdentifier("example.com");
+    private static @Nonnull HostIdentifier recipient;
+    
+    protected static @Nonnull HostIdentifier getRecipient() {
+        return recipient;
+    }
     
     @BeforeClass
     public static void setUpServer() {
-        Server.start("example.com");
+        Database.loadClasses();
+        recipient = new HostIdentifier("example.com");
+        Server.start(recipient.getString());
     }
     
     @AfterClass

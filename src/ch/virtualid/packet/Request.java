@@ -173,6 +173,7 @@ public class Request extends Packet {
     @RawRecipient
     final void initialize(int size) {
         this.methods = new FreezableArrayList<Method>(size);
+        for (int i = 0; i < size; i++) methods.add(null);
     }
     
     @Override

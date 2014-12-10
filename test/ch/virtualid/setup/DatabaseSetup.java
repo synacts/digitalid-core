@@ -27,9 +27,9 @@ public class DatabaseSetup {
     public static void setupDatabase() throws SQLException, IOException, ClassNotFoundException {
         final int configuration = 0;
         switch (configuration) {
-            case 0: Database.initialize(new MySQLConfiguration(), false, true); break;
-            case 1: Database.initialize(new PostgreSQLConfiguration(), false, true); break;
-            case 2: Database.initialize(new SQLiteConfiguration(), false, true); break;
+            case 0: Database.initialize(new MySQLConfiguration(), false, false); break;
+            case 1: Database.initialize(new PostgreSQLConfiguration(), false, false); break;
+            case 2: Database.initialize(new SQLiteConfiguration(), false, false); break;
             default: throw new SQLException("No such configuration available.");
         }
         Class.forName(SemanticType.class.getName());
@@ -37,7 +37,7 @@ public class DatabaseSetup {
     
     @AfterClass
     public static void breakDownDatabase() throws SQLException {
-        Database.getConfiguration().dropDatabase();
+//        Database.getConfiguration().dropDatabase();
     }
     
     @Test

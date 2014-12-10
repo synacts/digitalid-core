@@ -187,6 +187,10 @@ public final class Response extends Packet {
     void initialize(int size) {
         this.replies = new FreezableArrayList<Reply>(size);
         this.exceptions = new FreezableArrayList<PacketException>(size);
+        for (int i = 0; i < size; i++) {
+            replies.add(null);
+            exceptions.add(null);
+        }
     }
     
     @Override
