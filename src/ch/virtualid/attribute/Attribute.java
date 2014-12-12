@@ -1,4 +1,4 @@
-package ch.virtualid.concepts;
+package ch.virtualid.attribute;
 
 import ch.virtualid.annotations.OnlyForActions;
 import ch.virtualid.annotations.Pure;
@@ -15,9 +15,6 @@ import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.module.both.Attributes;
 import ch.virtualid.util.ConcurrentHashMap;
 import ch.virtualid.util.ConcurrentMap;
-import ch.xdf.BooleanWrapper;
-import ch.xdf.SelfcontainedWrapper;
-import ch.xdf.SignatureWrapper;
 import java.sql.SQLException;
 import java.util.Set;
 import javax.annotation.Nonnull;
@@ -50,17 +47,6 @@ public final class Attribute extends GeneralConcept implements Immutable {
     
     
     /**
-     * Stores the semantic type {@code published.attribute@virtualid.ch}.
-     */
-    public static final @Nonnull SemanticType PUBLISHED = SemanticType.create("published.attribute@virtualid.ch").load(BooleanWrapper.TYPE);
-    
-    /**
-     * Stores the semantic type {@code attribute@virtualid.ch}.
-     */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("attribute@virtualid.ch").load(SelfcontainedWrapper.TYPE);
-    
-    
-    /**
      * Stores the type of this attribute.
      * 
      * @invariant type.isAttributeType() : "The type is an attribute type.";
@@ -76,7 +62,7 @@ public final class Attribute extends GeneralConcept implements Immutable {
     /**
      * Stores the value of this attribute.
      */
-    private @Nullable SignatureWrapper value;
+    private @Nullable AttributeValue value;
     
     
     /**
@@ -87,7 +73,7 @@ public final class Attribute extends GeneralConcept implements Immutable {
     /**
      * Stores the unpublished value of this attribute.
      */
-    private @Nullable SignatureWrapper unpublished;
+    private @Nullable AttributeValue unpublished;
     
     
     /**
@@ -135,15 +121,15 @@ public final class Attribute extends GeneralConcept implements Immutable {
      * 
      * @return the value of this attribute or null if not yet set.
      */
-    public @Nullable SignatureWrapper getValue() throws SQLException {
+    public @Nullable AttributeValue getValue() throws SQLException {
         if (!valueLoaded) {
-//            value = Attributes.getValue(this, true);
+            value = Attributes.getValue(this, true);
             valueLoaded = true;
         }
         return value;
     }
     
-    public void setValue(@Nullable SignatureWrapper value) throws SQLException {
+    public void setValue(@Nullable AttributeValue value) throws SQLException {
         assert isOnClient() : "";
         
         // The old and the new value is not identical (and particularly not both null).
@@ -153,7 +139,7 @@ public final class Attribute extends GeneralConcept implements Immutable {
     }
     
     @OnlyForActions
-    public void replaceValue(@Nullable SignatureWrapper oldValue, @Nullable SignatureWrapper newValue) throws SQLException {
+    public void replaceValue(@Nullable AttributeValue oldValue, @Nullable AttributeValue newValue) throws SQLException {
         assert oldValue != newValue : "";
         
 //        if (oldValue == null) Attributes.addValue(this, true, newValue);
@@ -172,7 +158,7 @@ public final class Attribute extends GeneralConcept implements Immutable {
      * 
      * @return the unpublished value of this attribute or null if not yet set or available.
      */
-    public @Nullable SignatureWrapper getUnpublishedValue() {
+    public @Nullable AttributeValue getUnpublishedValue() {
         if (!unpublishedLoaded) {
 //            unpublished = Attributes.getValue(this);
             unpublishedLoaded = true;

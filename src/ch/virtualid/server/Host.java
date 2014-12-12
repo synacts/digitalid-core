@@ -2,15 +2,14 @@ package ch.virtualid.server;
 
 import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.annotations.Pure;
+import ch.virtualid.attribute.Attribute;
+import ch.virtualid.attribute.AttributeValue;
 import ch.virtualid.auxiliary.Image;
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.client.Client;
-import ch.virtualid.concepts.Attribute;
-import ch.virtualid.concepts.Certificate;
 import ch.virtualid.cryptography.KeyPair;
 import ch.virtualid.cryptography.PrivateKeyChain;
 import ch.virtualid.cryptography.PublicKeyChain;
-import ch.virtualid.entity.Account;
 import ch.virtualid.entity.HostAccount;
 import ch.virtualid.entity.Site;
 import ch.virtualid.exceptions.external.ExternalException;
@@ -22,9 +21,7 @@ import ch.virtualid.identity.Mapper;
 import ch.virtualid.io.Directory;
 import ch.virtualid.module.CoreService;
 import ch.virtualid.module.Service;
-import ch.xdf.HostSignatureWrapper;
 import ch.xdf.SelfcontainedWrapper;
-import ch.xdf.SignatureWrapper;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -109,24 +106,24 @@ public final class Host extends Site {
         }
         
         final @Nonnull SelfcontainedWrapper privateKeyWrapper = new SelfcontainedWrapper(SelfcontainedWrapper.SELFCONTAINED, privateKeyChain);
-        final @Nonnull SelfcontainedWrapper publicKeyWrapper = new SelfcontainedWrapper(Attribute.TYPE, publicKeyChain);
+        final @Nonnull SelfcontainedWrapper publicKeyWrapper = new SelfcontainedWrapper(SelfcontainedWrapper.SELFCONTAINED, publicKeyChain);
         
         if (!privateKeyFile.exists() || !publicKeyFile.exists()) {
             privateKeyWrapper.write(new FileOutputStream(privateKeyFile), true);
             publicKeyWrapper.write(new FileOutputStream(publicKeyFile), true);
         }
         
-        final @Nonnull Account account = Account.get(this, identity);
+        final @Nonnull HostAccount account = HostAccount.get(this, identity);
         final @Nonnull Attribute attribute = Attribute.get(account, PublicKeyChain.TYPE);
         if (attribute.getValue() == null) {
-            final @Nonnull SignatureWrapper certificate;
+            final @Nonnull AttributeValue value;
             if (Server.hasHost(HostIdentifier.VIRTUALID)) {
                 // If the new host is running on the same server as virtualid.ch, certify its public key immediately.
-                certificate = new HostSignatureWrapper(Certificate.TYPE, publicKeyWrapper, identifier, PublicKeyChain.IDENTIFIER);
+                value = new AttributeValue(publicKeyChain, identifier, PublicKeyChain.IDENTIFIER);
             } else {
-                certificate = new SignatureWrapper(Certificate.TYPE, publicKeyWrapper, null);
+                value = new AttributeValue(publicKeyChain);
             }
-            attribute.replaceValue(null, certificate);
+            attribute.replaceValue(null, value);
         }
         
         // TODO: Load which services this host runs and initialize them afterwards.

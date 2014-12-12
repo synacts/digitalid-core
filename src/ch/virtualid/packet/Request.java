@@ -309,7 +309,7 @@ public class Request extends Packet {
                 final @Nonnull HostIdentifier recipient = getMethod(0).getService().equals(CoreService.SERVICE) ? address.getHostIdentifier() : getRecipient();
                 return resend(methods, recipient, address, verified);
             } else if (exception.getError() == PacketError.SERVICE && !getMethod(0).isOnHost()) {
-                final @Nonnull HostIdentifier recipient = IdentifierClass.create(Cache.getFreshAttributeValue(subject.getIdentity(), (Role) getMethod(0).getEntity(), getMethod(0).getService().getType(), false)).toHostIdentifier();
+                final @Nonnull HostIdentifier recipient = IdentifierClass.create(Cache.getFreshAttributeContent(subject.getIdentity(), (Role) getMethod(0).getEntity(), getMethod(0).getService().getType(), false)).toHostIdentifier();
                 return resend(methods, recipient, subject, verified);
             } else {
                 throw exception;

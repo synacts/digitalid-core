@@ -157,16 +157,16 @@ public final class SemanticType extends Type implements Immutable {
         
         if (categories != null) throw new InvalidEncodingException("The semantic base may not be circular.");
         
-        Cache.getAttributes(this, null, Time.MIN, CATEGORIES, CACHING, SYNTACTIC_BASE, PARAMETERS, SEMANTIC_BASE);
+        Cache.getAttributeValues(this, null, Time.MIN, CATEGORIES, CACHING, SYNTACTIC_BASE, PARAMETERS, SEMANTIC_BASE);
         
-        final @Nonnull ReadonlyList<Block> elements = new ListWrapper(Cache.getStaleAttributeValue(this, null, CATEGORIES)).getElementsNotNull();
+        final @Nonnull ReadonlyList<Block> elements = new ListWrapper(Cache.getStaleAttributeContent(this, null, CATEGORIES)).getElementsNotNull();
         final @Nonnull FreezableList<Category> categories = new FreezableArrayList<Category>(elements.size());
         for (final @Nonnull Block element : elements) categories.add(Category.get(element));
         if (categories.doesNotContainDuplicates()) throw new InvalidEncodingException("The list of categories may not contain duplicates.");
         this.categories = categories.freeze();
         
         try {
-            this.cachingPeriod = new Time(Cache.getStaleAttributeValue(this, null, CACHING));
+            this.cachingPeriod = new Time(Cache.getStaleAttributeContent(this, null, CACHING));
             if (cachingPeriod.isNegative() || cachingPeriod.isGreaterThan(Time.TROPICAL_YEAR)) throw new InvalidEncodingException("The caching period must be null or non-negative and less than a year.");
         } catch (@Nonnull AttributeNotFoundException exception) {
             this.cachingPeriod = null;
@@ -174,13 +174,13 @@ public final class SemanticType extends Type implements Immutable {
         if (categories.isNotEmpty() == (cachingPeriod == null)) throw new InvalidEncodingException("If (and only if) this semantic type can be used as an attribute, the caching period may not be null.");
         
         try {
-            this.semanticBase = IdentifierClass.create(Cache.getStaleAttributeValue(this, null, SEMANTIC_BASE)).getIdentity().toSemanticType();
+            this.semanticBase = IdentifierClass.create(Cache.getStaleAttributeContent(this, null, SEMANTIC_BASE)).getIdentity().toSemanticType();
             this.syntacticBase = semanticBase.syntacticBase;
             this.parameters = semanticBase.parameters;
             setLoaded();
         } catch (@Nonnull AttributeNotFoundException exception) {
-            this.syntacticBase = IdentifierClass.create(Cache.getStaleAttributeValue(this, null, SYNTACTIC_BASE)).getIdentity().toSyntacticType();
-            final @Nonnull ReadonlyList<Block> list = new ListWrapper(Cache.getStaleAttributeValue(this, null, PARAMETERS)).getElementsNotNull();
+            this.syntacticBase = IdentifierClass.create(Cache.getStaleAttributeContent(this, null, SYNTACTIC_BASE)).getIdentity().toSyntacticType();
+            final @Nonnull ReadonlyList<Block> list = new ListWrapper(Cache.getStaleAttributeContent(this, null, PARAMETERS)).getElementsNotNull();
             final @Nonnull FreezableList<SemanticType> parameters = new FreezableArrayList<SemanticType>(list.size());
             for (final @Nonnull Block element : elements) parameters.add(Mapper.getIdentity(IdentifierClass.create(element)).toSemanticType());
             if (parameters.doesNotContainDuplicates()) throw new InvalidEncodingException("The list of parameters may not contain duplicates.");

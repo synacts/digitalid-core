@@ -1,7 +1,7 @@
 package ch.virtualid.handler.reply.query;
 
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.concepts.Certificate;
+import ch.virtualid.attribute.AttributeValue;
 import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
@@ -36,7 +36,7 @@ public final class AttributesReply extends CoreServiceQueryReply {
     /**
      * Stores the semantic type {@code reply.attribute@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("reply.attribute@virtualid.ch").load(Certificate.LIST);
+    public static final @Nonnull SemanticType TYPE = SemanticType.create("reply.attribute@virtualid.ch").load(AttributeValue.LIST);
     
     
     /**
@@ -46,8 +46,8 @@ public final class AttributesReply extends CoreServiceQueryReply {
      * 
      * @return whether all the attributes which are not null are verified.
      */
-    public static boolean areVerified(@Nonnull ReadonlyList<SignatureWrapper> attributes) {
-        for (final @Nullable SignatureWrapper attribute : attributes) {
+    public static boolean areVerified(@Nonnull ReadonlyList<AttributeValue> attributes) {
+        for (final @Nullable AttributeValue attribute : attributes) {
             if (attribute != null && !attribute.isVerified()) return false;
         }
         return true;
@@ -60,8 +60,8 @@ public final class AttributesReply extends CoreServiceQueryReply {
      * 
      * @return whether all the attributes which are not null are certificates.
      */
-    public static boolean areCertificates(@Nonnull ReadonlyList<SignatureWrapper> attributes) {
-        for (final @Nullable SignatureWrapper attribute : attributes) {
+    public static boolean areCertificates(@Nonnull ReadonlyList<AttributeValue> attributes) {
+        for (final @Nullable AttributeValue attribute : attributes) {
             if (attribute != null && !attribute.isCertificate()) return false;
         }
         return true;
@@ -76,7 +76,7 @@ public final class AttributesReply extends CoreServiceQueryReply {
      * @invariant areVerified(attributes) : "All the attributes which are not null are verified.";
      * @invariant areCertificates(attributes) : "All the attributes which are not null are certificates.";
      */
-    private final @Nonnull ReadonlyList<SignatureWrapper> attributes;
+    private final @Nonnull ReadonlyList<AttributeValue> attributes;
     
     /**
      * Creates an attributes reply for the queried attributes of given subject.
@@ -89,7 +89,7 @@ public final class AttributesReply extends CoreServiceQueryReply {
      * @require areVerified(attributes) : "All the attributes which are not null are verified.";
      * @require areCertificates(attributes) : "All the attributes which are not null are certificates.";
      */
-    public AttributesReply(@Nonnull InternalNonHostIdentifier subject, @Nonnull ReadonlyList<SignatureWrapper> attributes) throws SQLException, PacketException {
+    public AttributesReply(@Nonnull InternalNonHostIdentifier subject, @Nonnull ReadonlyList<AttributeValue> attributes) throws SQLException, PacketException {
         super(subject);
         
         assert attributes.isFrozen() : "The attributes are frozen.";
@@ -115,15 +115,15 @@ public final class AttributesReply extends CoreServiceQueryReply {
         super(entity, signature, number);
         
         final @Nonnull ReadonlyList<Block> elements = new ListWrapper(block).getElements();
-        final @Nonnull FreezableList<SignatureWrapper> attributes = new FreezableArrayList<SignatureWrapper>(elements.size());
+        final @Nonnull FreezableList<AttributeValue> attributes = new FreezableArrayList<AttributeValue>(elements.size());
         for (final @Nullable Block element : elements) {
             if (element != null) {
-                final @Nonnull SignatureWrapper attribute = SignatureWrapper.decodeWithoutVerifying(element, false, null);
+                final @Nonnull AttributeValue attribute = SignatureWrapper.decodeWithoutVerifying(element, false, null);
                 try {
                     attribute.verifyAsCertificate();
                     attributes.add(attribute);
                 } catch (@Nonnull InvalidSignatureException exception) {
-                    attributes.add(new SignatureWrapper(Certificate.TYPE, attribute.getElementNotNull(), null));
+                    attributes.add(new AttributeValue(AttributeValue.TYPE, attribute.getElementNotNull(), null));
                 }
             } else {
                 attributes.add(null);
@@ -136,10 +136,10 @@ public final class AttributesReply extends CoreServiceQueryReply {
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        final @Nonnull ReadonlyList<SignatureWrapper> attributes = this.attributes;
+        final @Nonnull ReadonlyList<AttributeValue> attributes = this.attributes;
         final @Nonnull FreezableList<Block> elements = new FreezableArrayList<Block>(attributes.size());
-        for (final @Nullable SignatureWrapper attribute : attributes) {
-            elements.add(Block.toBlock(Certificate.TYPE, attribute));
+        for (final @Nullable AttributeValue attribute : attributes) {
+            elements.add(Block.toBlock(AttributeValue.TYPE, attribute));
         }
         return new ListWrapper(TYPE, elements.freeze()).toBlock();
     }
@@ -161,7 +161,7 @@ public final class AttributesReply extends CoreServiceQueryReply {
      * @ensure areVerified(return) : "All the attributes which are not null are verified.";
      * @ensure areCertificates(return) : "All the attributes which are not null are certificates.";
      */
-    public @Nonnull ReadonlyList<SignatureWrapper> getAttributes() {
+    public @Nonnull ReadonlyList<AttributeValue> getAttributes() {
         return attributes;
     }
     

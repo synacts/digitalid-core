@@ -2,6 +2,7 @@ package ch.virtualid.packet;
 
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.annotations.RawRecipient;
+import ch.virtualid.attribute.AttributeValue;
 import ch.virtualid.credential.Credential;
 import ch.virtualid.cryptography.SymmetricKey;
 import ch.virtualid.exceptions.external.ExternalException;
@@ -13,7 +14,6 @@ import ch.virtualid.util.FreezableList;
 import ch.virtualid.util.ReadonlyList;
 import ch.xdf.CompressionWrapper;
 import ch.xdf.CredentialsSignatureWrapper;
-import ch.xdf.HostSignatureWrapper;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.sql.SQLException;
@@ -43,7 +43,7 @@ public final class CredentialsRequest extends Request {
      * @invariant certificates == null || certificates.isFrozen() : "The certificates are either null or frozen.";
      * @invariant CredentialsSignatureWrapper.certificatesAreValid(certificates, credentials) : "The certificates are valid (given the given credentials).";
      */
-    private @Nullable ReadonlyList<HostSignatureWrapper> certificates;
+    private @Nullable ReadonlyList<AttributeValue> certificates;
     
     /**
      * Stores whether the hidden content of the credentials is verifiably encrypted to achieve liability.
@@ -76,8 +76,8 @@ public final class CredentialsRequest extends Request {
      * @require certificates == null || certificates.isFrozen() : "The certificates are either null or frozen.";
      * @require CredentialsSignatureWrapper.certificatesAreValid(certificates, credentials) : "The certificates are valid (given the given credentials).";
      */
-    public CredentialsRequest(@Nonnull ReadonlyList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull ReadonlyList<Credential> credentials, @Nullable ReadonlyList<HostSignatureWrapper> certificates, boolean lodged, @Nullable BigInteger value) throws SQLException, IOException, PacketException, ExternalException {
-        super(methods, recipient, new SymmetricKey(), subject, audit, new Quartet<ReadonlyList<Credential>, ReadonlyList<HostSignatureWrapper>, Boolean, BigInteger>(credentials, certificates, lodged, value));
+    public CredentialsRequest(@Nonnull ReadonlyList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull ReadonlyList<Credential> credentials, @Nullable ReadonlyList<AttributeValue> certificates, boolean lodged, @Nullable BigInteger value) throws SQLException, IOException, PacketException, ExternalException {
+        super(methods, recipient, new SymmetricKey(), subject, audit, new Quartet<ReadonlyList<Credential>, ReadonlyList<AttributeValue>, Boolean, BigInteger>(credentials, certificates, lodged, value));
     }
     
     
@@ -86,7 +86,7 @@ public final class CredentialsRequest extends Request {
     @SuppressWarnings("unchecked")
     void setField(@Nullable Object field) {
         assert field != null : "See the constructor above.";
-        final @Nonnull Quartet<ReadonlyList<Credential>, ReadonlyList<HostSignatureWrapper>, Boolean, BigInteger> quartet = (Quartet<ReadonlyList<Credential>, ReadonlyList<HostSignatureWrapper>, Boolean, BigInteger>) field;
+        final @Nonnull Quartet<ReadonlyList<Credential>, ReadonlyList<AttributeValue>, Boolean, BigInteger> quartet = (Quartet<ReadonlyList<Credential>, ReadonlyList<AttributeValue>, Boolean, BigInteger>) field;
         this.credentials = quartet.getValue0();
         this.certificates = quartet.getValue1();
         this.lodged = quartet.getValue2();

@@ -466,7 +466,7 @@ public final class Mapper {
                 unmap(identity);
             }
         }
-        if (identities.size() > 1) Cache.invalidateCachedAttributes(newIdentity);
+        if (identities.size() > 1) Cache.invalidateCachedAttributeValues(newIdentity);
     }
     
     /**

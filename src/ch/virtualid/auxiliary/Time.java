@@ -521,7 +521,6 @@ public final class Time implements Immutable, Blockable, Comparable<Time>, SQLiz
         if (object == this) return true;
         if (object == null || !(object instanceof Time)) return false;
         final @Nonnull Time other = (Time) object;
-        
         return this.value == other.value;
     }
     

@@ -2,7 +2,7 @@ package ch.virtualid.module.both;
 
 import ch.virtualid.agent.Agent;
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.concepts.Certificate;
+import ch.virtualid.attribute.AttributeValue;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.entity.Role;
@@ -25,7 +25,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * This class provides database access to the {@link Certificate certificates} of the core service.
+ * This class provides database access to the {@link AttributeValue certificates} of the core service.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 0.0

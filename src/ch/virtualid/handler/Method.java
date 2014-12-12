@@ -7,6 +7,7 @@ import ch.virtualid.agent.OutgoingRole;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
+import ch.virtualid.attribute.AttributeValue;
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.contact.Authentications;
 import ch.virtualid.contact.Contact;
@@ -37,7 +38,6 @@ import ch.virtualid.util.FreezableArrayList;
 import ch.virtualid.util.ReadonlyIterator;
 import ch.virtualid.util.ReadonlyList;
 import ch.xdf.Block;
-import ch.xdf.HostSignatureWrapper;
 import ch.xdf.SignatureWrapper;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -288,7 +288,7 @@ public abstract class Method extends Handler {
         
         // TODO: Delete the following two lines and implement a real lookup!
         final @Nullable ReadonlyList<Credential> credentials = null;
-        final @Nullable ReadonlyList<HostSignatureWrapper> certificates = null;
+        final @Nullable ReadonlyList<AttributeValue> certificates = null;
         
         if (reference instanceof ExternalQuery) {
             final @Nonnull ReadonlyAuthentications authentications;

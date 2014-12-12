@@ -1,7 +1,7 @@
 package ch.virtualid;
 
 import ch.virtualid.agent.Agent;
-import ch.virtualid.concepts.Attribute;
+import ch.virtualid.attribute.Attribute;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.setup.DatabaseSetup;
 import ch.virtualid.util.FreezableLinkedHashMap;

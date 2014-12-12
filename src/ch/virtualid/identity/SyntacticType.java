@@ -92,7 +92,7 @@ public final class SyntacticType extends Type implements Immutable {
     void load() throws SQLException, IOException, PacketException, ExternalException {
         assert isNotLoaded() : "The type declaration is not loaded.";
         
-        this.numberOfParameters = new Int8Wrapper(Cache.getStaleAttributeValue(this, null, PARAMETERS)).getValue();
+        this.numberOfParameters = new Int8Wrapper(Cache.getStaleAttributeContent(this, null, PARAMETERS)).getValue();
         if (numberOfParameters < -1) throw new InvalidEncodingException("The number of parameters has to be at least -1.");
         setLoaded();
     }

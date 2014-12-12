@@ -4,7 +4,6 @@ import ch.virtualid.agent.Agent;
 import ch.virtualid.annotations.Exposed;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
-import ch.virtualid.concepts.Certificate;
 import ch.virtualid.cryptography.PublicKey;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.NonHostEntity;
@@ -36,7 +35,6 @@ import javax.annotation.Nullable;
  * Format: {@code block = ((identifier, time, element, audit), hostSignature, clientSignature, credentialsSignature)}
  * 
  * @invariant !isSigned() || hasSubject() : "If this signature is signed, it has a subject.";
- * @invariant !isCertificate() || getElement() != null : "If this is a certificate, the element is not null.";
  * 
  * @see HostSignatureWrapper
  * @see ClientSignatureWrapper
@@ -109,7 +107,7 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
      * 
      * @ensure isVerified() : "This signature is verified.";
      */
-    protected SignatureWrapper(@Nonnull SemanticType type, @Nullable Block element, @Nonnull InternalIdentifier subject, @Nullable Audit audit) {
+    SignatureWrapper(@Nonnull SemanticType type, @Nullable Block element, @Nonnull InternalIdentifier subject, @Nullable Audit audit) {
         super(type);
         
         assert element == null || element.getType().isBasedOn(type.getParameters().getNotNull(0)) : "The element is either null or based on the parameter of the given type.";
@@ -130,7 +128,6 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
      * 
      * @require type.isLoaded() : "The type declaration is loaded.";
      * @require type.isBasedOn(getSyntacticType()) : "The given type is based on the indicated syntactic type.";
-     * @require !type.isBasedOn(Certificate.TYPE) || element != null : "If the signature is a certificate, the element is not null.";
      * @require element == null || element.getType().isBasedOn(type.getParameters().getNotNull(0)) : "The element is either null or based on the parameter of the given type.";
      * 
      * @ensure isVerified() : "This signature is verified.";
@@ -138,7 +135,6 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
     public SignatureWrapper(@Nonnull SemanticType type, @Nullable Block element, @Nullable InternalIdentifier subject) {
         super(type);
         
-        assert !type.isBasedOn(Certificate.TYPE) || element != null : "If the signature is a certificate, the element is not null.";
         assert element == null || element.getType().isBasedOn(type.getParameters().getNotNull(0)) : "The element is either null or based on the parameter of the given type.";
         
         this.element = element;
@@ -157,7 +153,6 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
      * 
      * @require type.isLoaded() : "The type declaration is loaded.";
      * @require type.isBasedOn(getSyntacticType()) : "The given type is based on the indicated syntactic type.";
-     * @require !type.isBasedOn(Certificate.TYPE) || element != null : "If the signature is a certificate, the element is not null.";
      * @require element == null || element.getType().isBasedOn(type.getParameters().getNotNull(0)) : "The element is either null or based on the parameter of the given type.";
      * 
      * @ensure isVerified() : "This signature is verified.";
@@ -206,7 +201,7 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
         if (hostSignature == null && clientSignature != null && credentialsSignature == null) return new ClientSignatureWrapper(block, clientSignature, verified);
         if (hostSignature == null && clientSignature == null && credentialsSignature != null) return new CredentialsSignatureWrapper(block, credentialsSignature, verified, entity);
         if (hostSignature == null && clientSignature == null && credentialsSignature == null) return new SignatureWrapper(block, verified);
-        throw new InvalidEncodingException("The element may only be signed by either a host, a client, with credentials or not at all.");
+        throw new InvalidEncodingException("The element may only be signed either by a host, by a client, with credentials or not at all.");
     }
     
     /**
@@ -230,7 +225,6 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
         if (time != null && !time.isPositive()) throw new InvalidEncodingException("The signature time has to be positive.");
         this.element = tuple.getElement(2);
         if (element != null) element.setType(block.getType().getParameters().getNotNull(0));
-        else if (getType().isBasedOn(Certificate.TYPE)) throw new InvalidEncodingException("If this signature is a certificate, the element may not be null.");
         this.audit = tuple.isElementNull(3) ? null : new Audit(tuple.getElementNotNull(3));
         this.verified = verified;
     }
@@ -373,6 +367,7 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
      * 
      * @return whether this signature is verified.
      */
+    @Pure
     public final boolean isVerified() {
         return verified;
     }
@@ -382,6 +377,7 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
      * 
      * @return whether this signature is not verified.
      */
+    @Pure
     public final boolean isNotVerified() {
         return !verified;
     }
@@ -418,7 +414,7 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
      * @require elements.isNotFrozen() : "The elements are not frozen.";
      * @require elements.isNotNull(0) : "The first element is not null.";
      */
-    protected void sign(@Nonnull FreezableArray<Block> elements) {}
+    void sign(@Nonnull FreezableArray<Block> elements) {}
     
     
     /**
@@ -434,7 +430,7 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
      * @return the signed element.
      */
     @Pure
-    protected final @Nonnull Block getCache() {
+    final @Nonnull Block getCache() {
         if (cache == null) {
             final @Nonnull FreezableArray<Block> subelements = new FreezableArray<Block>(4);
             subelements.set(0, Block.toBlock(SUBJECT, subject));
@@ -513,29 +509,6 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
     public final @Nonnull CredentialsSignatureWrapper toCredentialsSignatureWrapper() throws PacketException {
         if (this instanceof CredentialsSignatureWrapper) return (CredentialsSignatureWrapper) this;
         throw new PacketException(PacketError.SIGNATURE, "The element was not signed with credentials.");
-    }
-    
-    
-    /**
-     * Returns whether this signature is a certificate.
-     * 
-     * @return whether this signature is a certificate.
-     */
-    @Pure
-    public final boolean isCertificate() {
-        return getType().isBasedOn(Certificate.TYPE);
-    }
-    
-    /**
-     * Verifies this signature as a certificate and throws an exception if it is not valid.
-     * 
-     * @require isNotVerified() : "This signature is not verified.";
-     * @require isCertificate() : "This signature is a certificate.";
-     */
-    @Pure
-    public void verifyAsCertificate() throws SQLException, IOException, PacketException, ExternalException {
-        assert isNotVerified() : "This signature is not verified.";
-        assert isCertificate() : "This signature is a certificate.";
     }
     
     

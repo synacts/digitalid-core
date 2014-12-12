@@ -154,7 +154,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper implements Im
     }
     
     @Override
-    protected void sign(@Nonnull FreezableArray<Block> elements) {
+    void sign(@Nonnull FreezableArray<Block> elements) {
         assert elements.isNotFrozen() : "The elements are not frozen.";
         assert elements.isNotNull(0) : "The first element is not null.";
         
@@ -168,16 +168,6 @@ public final class ClientSignatureWrapper extends SignatureWrapper implements Im
         final @Nonnull Exponent s = r.subtract(commitment.getSecret().multiply(h));
         subelements.set(2, s.toBlock());
         elements.set(2, new TupleWrapper(SIGNATURE, subelements.freeze()).toBlock());
-    }
-    
-    
-    @Pure
-    @Override
-    public void verifyAsCertificate() throws InvalidEncodingException {
-        assert isNotVerified() : "This signature is not verified.";
-        assert isCertificate() : "This signature is a certificate.";
-        
-        throw new InvalidEncodingException("A certificate cannot be signed by a client.");
     }
     
     

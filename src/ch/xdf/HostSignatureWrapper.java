@@ -3,7 +3,6 @@ package ch.xdf;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.client.Cache;
-import ch.virtualid.concepts.Certificate;
 import ch.virtualid.cryptography.Element;
 import ch.virtualid.cryptography.PrivateKey;
 import ch.virtualid.cryptography.PublicKey;
@@ -17,11 +16,8 @@ import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identifier.Identifier;
 import ch.virtualid.identifier.IdentifierClass;
 import ch.virtualid.identifier.InternalIdentifier;
-import ch.virtualid.identifier.InternalNonHostIdentifier;
-import ch.virtualid.identity.Category;
 import ch.virtualid.identity.HostIdentity;
 import ch.virtualid.identity.InternalIdentity;
-import ch.virtualid.identity.NonHostIdentity;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
@@ -39,8 +35,6 @@ import javax.annotation.Nullable;
  * Wraps a block with the syntactic type {@code signature@xdf.ch} that is signed by a host.
  * <p>
  * Format: {@code (identifier, value)}
- * 
- * @invariant !isCertificate() || getSigner() instanceof NonHostIdentifier : "If this is a certificate, the signer is a non-host.";
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
@@ -80,10 +74,8 @@ public final class HostSignatureWrapper extends SignatureWrapper implements Immu
      * 
      * @require type.isLoaded() : "The type declaration is loaded.";
      * @require type.isBasedOn(getSyntacticType()) : "The given type is based on the indicated syntactic type.";
-     * @require !type.isBasedOn(Certificate.TYPE) || element != null : "If the signature is a certificate, the element is not null.";
      * @require element == null || element.getType().isBasedOn(type.getParameters().getNotNull(0)) : "The element is either null or based on the parameter of the given type.";
      * @require Server.hasHost(signer.getHostIdentifier()) : "The host of the signer is running on this server.";
-     * @require !type.isBasedOn(Certificate.TYPE) || signer instanceof NonHostIdentifier : "If the signature is a certificate, the signer is a non-host.";
      * 
      * @ensure isVerified() : "This signature is verified.";
      */
@@ -91,30 +83,8 @@ public final class HostSignatureWrapper extends SignatureWrapper implements Immu
         super(type, element, subject, audit);
         
         assert Server.hasHost(signer.getHostIdentifier()) : "The host of the signer is running on this server.";
-        assert !type.isBasedOn(Certificate.TYPE) || signer instanceof InternalNonHostIdentifier : "If the signature is a certificate, the signer is a non-host.";
         
         this.signer = signer;
-    }
-    
-    /**
-     * Encodes the element into a new block and signs it according to the arguments.
-     * 
-     * @param type the semantic type of the new block.
-     * @param element the element to encode into the new block.
-     * @param subject the identifier of the identity about which a statement is made.
-     * @param signer the identifier of the signing identity.
-     * 
-     * @require type.isLoaded() : "The type declaration is loaded.";
-     * @require type.isBasedOn(getSyntacticType()) : "The given type is based on the indicated syntactic type.";
-     * @require !type.isBasedOn(Certificate.TYPE) || element != null : "If the signature is a certificate, the element is not null.";
-     * @require element == null || element.getType().isBasedOn(type.getParameters().getNotNull(0)) : "The element is either null or based on the parameter of the given type.";
-     * @require Server.hasHost(signer.getHostIdentifier()) : "The host of the signer is running on this server.";
-     * @require !type.isBasedOn(Certificate.TYPE) || signer instanceof NonHostIdentifier : "If the signature is a certificate, the signer is a non-host.";
-     * 
-     * @ensure isVerified() : "This signature is verified.";
-     */
-    public HostSignatureWrapper(@Nonnull SemanticType type, @Nullable Block element, @Nonnull InternalIdentifier subject, @Nonnull InternalIdentifier signer) {
-        this(type, element, subject, null, signer);
     }
     
     /**
@@ -128,36 +98,13 @@ public final class HostSignatureWrapper extends SignatureWrapper implements Immu
      * 
      * @require type.isLoaded() : "The type declaration is loaded.";
      * @require type.isBasedOn(getSyntacticType()) : "The given type is based on the indicated syntactic type.";
-     * @require !type.isBasedOn(Certificate.TYPE) || element != null : "If the signature is a certificate, the element is not null.";
      * @require element == null || element.getType().isBasedOn(type.getParameters().getNotNull(0)) : "The element is either null or based on the parameter of the given type.";
      * @require Server.hasHost(signer.getHostIdentifier()) : "The host of the signer is running on this server.";
-     * @require !type.isBasedOn(Certificate.TYPE) || signer instanceof NonHostIdentifier : "If the signature is a certificate, the signer is a non-host.";
      * 
      * @ensure isVerified() : "This signature is verified.";
      */
     public HostSignatureWrapper(@Nonnull SemanticType type, @Nullable Blockable element, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull InternalIdentifier signer) {
         this(type, Block.toBlock(element), subject, audit, signer);
-    }
-    
-    /**
-     * Encodes the element into a new block and signs it according to the arguments.
-     * 
-     * @param type the semantic type of the new block.
-     * @param element the element to encode into the new block.
-     * @param subject the identifier of the identity about which a statement is made.
-     * @param signer the identifier of the signing identity.
-     * 
-     * @require type.isLoaded() : "The type declaration is loaded.";
-     * @require type.isBasedOn(getSyntacticType()) : "The given type is based on the indicated syntactic type.";
-     * @require !type.isBasedOn(Certificate.TYPE) || element != null : "If the signature is a certificate, the element is not null.";
-     * @require element == null || element.getType().isBasedOn(type.getParameters().getNotNull(0)) : "The element is either null or based on the parameter of the given type.";
-     * @require Server.hasHost(signer.getHostIdentifier()) : "The host of the signer is running on this server.";
-     * @require !type.isBasedOn(Certificate.TYPE) || signer instanceof NonHostIdentifier : "If the signature is a certificate, the signer is a non-host.";
-     * 
-     * @ensure isVerified() : "This signature is verified.";
-     */
-    public HostSignatureWrapper(@Nonnull SemanticType type, @Nullable Blockable element, @Nonnull InternalIdentifier subject, @Nonnull InternalIdentifier signer) {
-        this(type, element, subject, null, signer);
     }
     
     /**
@@ -176,8 +123,6 @@ public final class HostSignatureWrapper extends SignatureWrapper implements Immu
         assert hostSignature.getType().isBasedOn(SIGNATURE) : "The signature is based on the implementation type.";
         
         this.signer = IdentifierClass.create(new TupleWrapper(hostSignature).getElementNotNull(0)).toInternalIdentifier();
-        
-        if (isCertificate() && getSigner() instanceof HostIdentifier) throw new InvalidEncodingException("If this signature is a certificate, the signer may not be a host.");
     }
     
     /**
@@ -210,7 +155,7 @@ public final class HostSignatureWrapper extends SignatureWrapper implements Immu
         
         final @Nonnull PublicKey publicKey;
         if (signer.getHostIdentifier().equals(HostIdentifier.VIRTUALID)) {
-            publicKey = new PublicKeyChain(Cache.getStaleAttributeValue(HostIdentity.VIRTUALID, null, PublicKeyChain.TYPE)).getKey(getTimeNotNull());
+            publicKey = new PublicKeyChain(Cache.getStaleAttributeContent(HostIdentity.VIRTUALID, null, PublicKeyChain.TYPE)).getKey(getTimeNotNull());
         } else {
             publicKey = Cache.getPublicKey(signer.getHostIdentifier(), getTimeNotNull());
         }
@@ -222,7 +167,7 @@ public final class HostSignatureWrapper extends SignatureWrapper implements Immu
     }
     
     @Override
-    protected void sign(@Nonnull FreezableArray<Block> elements) {
+    void sign(@Nonnull FreezableArray<Block> elements) {
         assert elements.isNotFrozen() : "The elements are not frozen.";
         assert elements.isNotNull(0) : "The first element is not null.";
         
@@ -236,85 +181,5 @@ public final class HostSignatureWrapper extends SignatureWrapper implements Immu
         }
         elements.set(1, new TupleWrapper(SIGNATURE, subelements.freeze()).toBlock());
     }
-    
-    
-    /**
-     * Stores the semantic type {@code delegation@virtualid.ch}.
-     */
-    public static final @Nonnull SemanticType DELEGATION = SemanticType.create("delegation@virtualid.ch").load(NonHostIdentity.IDENTIFIER); // TODO: , PassiveExpression.TYPE);
-    
-    /**
-     * Stores the semantic type {@code list.delegation@virtualid.ch}.
-     */
-    public static final @Nonnull SemanticType DELEGATIONS = SemanticType.create("list.delegation@virtualid.ch").load(ListWrapper.TYPE, DELEGATION);
-    
-    /**
-     * Stores the semantic type {@code outgoing.list.delegation@virtualid.ch}.
-     */
-    public static final @Nonnull SemanticType OUTGOING_DELEGATIONS = SemanticType.create("outgoing.list.delegation@virtualid.ch").load(new Category[] {Category.SEMANTIC_TYPE, Category.NATURAL_PERSON, Category.ARTIFICIAL_PERSON}, Time.TROPICAL_YEAR, DELEGATIONS);
-    
-    /**
-     * Stores the semantic type {@code incoming.list.delegation@virtualid.ch}.
-     */
-    public static final @Nonnull SemanticType INCOMING_DELEGATIONS = SemanticType.create("incoming.list.delegation@virtualid.ch").load(new Category[] {Category.NATURAL_PERSON, Category.ARTIFICIAL_PERSON}, Time.TROPICAL_YEAR, DELEGATIONS);
-    
-    @Pure
-    @Override
-    public void verifyAsCertificate() throws SQLException, IOException, PacketException, ExternalException {
-        assert isNotVerified() : "This signature is not verified.";
-        assert isCertificate() : "This signature is a certificate.";
-        
-        verify();
-        // TODO: Check that the signer has the corresponding delegation for the given attribute and value.
-    }
-    
-    /**
-     * Determines whether the given VID is authorized to certify the given element.
-     * 
-     * @param identifier the identifier of the certifying VID.
-     * @param value the certified value as a selfcontained block.
-     * @return {@code true} if the given VID is authorized to certify the given element, {@code false} otherwise.
-     * @require identifier != null : "The identifier is not null.";
-     * @require value != null : "The value is not null.";
-     */
-//    @Deprecated
-//    private static boolean isAuthorized(String identifier, Block value) throws Exception {
-//        assert identifier != null : "The identifier is not null.";
-//        assert value != null : "The value is not null.";
-//        
-//        long vid = Mapper.getVid(identifier);
-//        long type = Mapper.getVid(new SelfcontainedWrapper(value).getIdentifier());
-//        
-//        if (vid == type) return true;
-//        
-//        // Load the certification delegations of the VID and recurse for each delegation that matches the type and the value.
-//        long time = System.currentTimeMillis() + getCachingPeriod(Vid.INCOMING_DELEGATIONS) - getCachingPeriod(type);
-//        Block attribute = getAttribute(vid, Vid.INCOMING_DELEGATIONS, time);
-//        if (attribute == null) return false;
-//        
-//        List<Block> incoming_delegations = new ListWrapper(new SelfcontainedWrapper(new SignatureWrapper(attribute, false).getElement()).getElement()).getElements();
-//        for (Block incoming_delegation : incoming_delegations) {
-//            Block[] elements = new TupleWrapper(incoming_delegation).getElementsNotNull(3);
-//            if (Mapper.getVid(new StringWrapper(elements[0]).getString()) == type) {
-//                String restriction = new StringWrapper(elements[2]).getString();
-//                Expression expression = Expression.parse(restriction);
-//                if (expression.matches(value)) {
-//                    // Check that the delegating VID references the current VID with the same type and expression.
-//                    identifier = new StringWrapper(elements[1]).getString();
-//                    attribute = getAttribute(Mapper.getVid(identifier), Vid.OUTGOING_DELEGATIONS, time);
-//                    if (attribute == null) continue;
-//                    List<Block> outgoing_delegations = new ListWrapper(new SelfcontainedWrapper(new SignatureWrapper(attribute, false).getElement()).getElement()).getElements();
-//                    for (Block outgoing_delegation : outgoing_delegations) {
-//                        elements = new TupleWrapper(outgoing_delegation).getElementsNotNull(3);
-//                        if (Mapper.getVid(new StringWrapper(elements[0]).getString()) == type && Mapper.getVid(new StringWrapper(elements[1]).getString()) == vid && new StringWrapper(elements[2]).getString().equalsIgnoreCase(restriction)) {
-//                            if (isAuthorized(identifier, value)) return true;
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//        
-//        return false;
-//    }
     
 }

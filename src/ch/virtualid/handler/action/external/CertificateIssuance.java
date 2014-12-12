@@ -3,7 +3,7 @@ package ch.virtualid.handler.action.external;
 import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.concepts.Certificate;
+import ch.virtualid.attribute.AttributeValue;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.NonHostAccount;
 import ch.virtualid.exceptions.external.ExternalException;
@@ -37,7 +37,7 @@ public final class CertificateIssuance extends CoreServiceExternalAction {
     /**
      * Stores the semantic type {@code issuance.certificate@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("issuance.certificate@virtualid.ch").load(Certificate.TYPE);
+    public static final @Nonnull SemanticType TYPE = SemanticType.create("issuance.certificate@virtualid.ch").load(AttributeValue.TYPE);
     
     
     /**
