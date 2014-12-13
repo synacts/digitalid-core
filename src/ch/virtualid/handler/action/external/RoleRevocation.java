@@ -132,7 +132,7 @@ public final class RoleRevocation extends CoreServiceExternalAction {
     
     @Override
     public @Nullable ActionReply executeOnHost() throws PacketException, SQLException {
-        if (!getSignatureNotNull().isSigned()) throw new PacketException(PacketError.AUTHORIZATION, "The revocation of a role has to be signed.");
+        if (getSignatureNotNull().isNotSigned()) throw new PacketException(PacketError.AUTHORIZATION, "The revocation of a role has to be signed.");
         executeOnBoth();
         return null;
     }

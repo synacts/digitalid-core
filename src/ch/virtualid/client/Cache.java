@@ -2,6 +2,7 @@ package ch.virtualid.client;
 
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.attribute.AttributeValue;
+import ch.virtualid.attribute.CertifiedAttributeValue;
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.contact.AttributeSet;
 import ch.virtualid.cryptography.PublicKey;
@@ -69,11 +70,11 @@ public final class Cache {
                 final @Nullable InputStream inputStream = Cache.class.getResourceAsStream("/ch/virtualid/resources/virtualid.ch.certificate.xdf");
                 final @Nonnull AttributeValue value;
                 if (inputStream != null) {
-                    value = new AttributeValue(new SelfcontainedWrapper(inputStream, true).getElement().checkType(AttributeValue.TYPE), true);
+                    value = AttributeValue.get(new SelfcontainedWrapper(inputStream, true).getElement().checkType(AttributeValue.TYPE), true);
                 } else {
                     // Since the public key chain of 'virtualid.ch' is not available, the host 'virtualid.ch' is created on this server.
                     final @Nonnull Host host = new Host(HostIdentifier.VIRTUALID);
-                    value = new AttributeValue(host.getPublicKeyChain(), HostIdentifier.VIRTUALID, PublicKeyChain.IDENTIFIER);
+                    value = new CertifiedAttributeValue(host.getPublicKeyChain(), HostIdentifier.VIRTUALID, PublicKeyChain.IDENTIFIER);
                     final @Nonnull File certificateFile = new File(Directory.HOSTS.getPath() + Directory.SEPARATOR + "virtualid.ch.certificate.xdf");
                     new SelfcontainedWrapper(SelfcontainedWrapper.SELFCONTAINED, value).write(new FileOutputStream(certificateFile), true);
                 }
@@ -175,7 +176,7 @@ public final class Cache {
     @Pure
     private static @Nonnull Time getExpiration(@Nonnull SemanticType type, @Nullable AttributeValue value, @Nonnull AttributesReply reply) throws InvalidEncodingException {
         if (value != null && !value.getContent().getType().equals(type)) throw new InvalidEncodingException("A replied attribute value does not match the queried type.");
-        return type.getCachingPeriodNotNull().add(value != null && value.isCertified() ? value.getTime() : reply.getSignatureNotNull().getTimeNotNull());
+        return type.getCachingPeriodNotNull().add(value instanceof CertifiedAttributeValue ? ((CertifiedAttributeValue) value).getTime() : reply.getSignatureNotNull().getTimeNotNull());
     }
     
     /**

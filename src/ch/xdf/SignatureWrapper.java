@@ -241,6 +241,17 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
     }
     
     /**
+     * Returns whether the element is not signed.
+     * 
+     * @return whether the element is not signed.
+     */
+    @Pure
+    public final boolean isNotSigned() {
+        return !isSigned();
+    }
+    
+    
+    /**
      * Returns the element of the wrapped block.
      * 
      * @return the element of the wrapped block.

@@ -54,7 +54,7 @@ public final class Attributes implements BothModule {
     @Override
     public void createTables(@Nonnull Site site) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "attribute_value (entity " + EntityClass.FORMAT + " NOT NULL, type " + Mapper.FORMAT + " NOT NULL, published BOOLEAN NOT NULL, value " + Database.getConfiguration().BLOB() + " NOT NULL, PRIMARY KEY (entity, type, published), FOREIGN KEY (entity) " + site.getEntityReference() + ", FOREIGN KEY (type) " + Mapper.REFERENCE + ")");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "attribute_value (entity " + EntityClass.FORMAT + " NOT NULL, type " + Mapper.FORMAT + " NOT NULL, published BOOLEAN NOT NULL, value " + AttributeValue.FORMAT + " NOT NULL, PRIMARY KEY (entity, type, published), FOREIGN KEY (entity) " + site.getEntityReference() + ", FOREIGN KEY (type) " + Mapper.REFERENCE + ")");
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "attribute_visibility (entity " + EntityClass.FORMAT + " NOT NULL, type " + Mapper.FORMAT + " NOT NULL, visibility TEXT NOT NULL COLLATE " + Database.getConfiguration().BINARY() + ", PRIMARY KEY (entity, type), FOREIGN KEY (entity) " + site.getEntityReference() + ", FOREIGN KEY (type) " + Mapper.REFERENCE + ")");
         }
     }
@@ -71,7 +71,7 @@ public final class Attributes implements BothModule {
     /**
      * Stores the semantic type {@code entry.value.attributes.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType VALUE_MODULE_ENTRY = SemanticType.create("entry.value.attributes.module@virtualid.ch").load(TupleWrapper.TYPE, Identity.IDENTIFIER, SemanticType.ATTRIBUTE_IDENTIFIER, Attribute.PUBLISHED, AttributeValue.TYPE);
+    private static final @Nonnull SemanticType VALUE_MODULE_ENTRY = SemanticType.create("entry.value.attributes.module@virtualid.ch").load(TupleWrapper.TYPE, Identity.IDENTIFIER, SemanticType.ATTRIBUTE_IDENTIFIER, AttributeValue.PUBLISHED, AttributeValue.TYPE);
     
     /**
      * Stores the semantic type {@code table.value.attributes.module@virtualid.ch}.
@@ -114,7 +114,7 @@ public final class Attributes implements BothModule {
                     final @Nonnull Identity type = IdentityClass.getNotNull(resultSet, 2);
                     final boolean published = resultSet.getBoolean(3);
                     final @Nonnull Block value = Block.get(AttributeValue.TYPE, resultSet, 4);
-                    entries.add(new TupleWrapper(VALUE_MODULE_ENTRY, identity, type.toBlockable(SemanticType.ATTRIBUTE_IDENTIFIER), new BooleanWrapper(Attribute.PUBLISHED, published), value.toBlockable()).toBlock());
+                    entries.add(new TupleWrapper(VALUE_MODULE_ENTRY, identity, type.toBlockable(SemanticType.ATTRIBUTE_IDENTIFIER), new BooleanWrapper(AttributeValue.PUBLISHED, published), value.toBlockable()).toBlock());
                 }
                 tables.set(0, new ListWrapper(VALUE_MODULE_TABLE, entries.freeze()).toBlock());
             }
@@ -171,7 +171,7 @@ public final class Attributes implements BothModule {
     /**
      * Stores the semantic type {@code entry.value.attributes.state@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType VALUE_STATE_ENTRY = SemanticType.create("entry.value.attributes.state@virtualid.ch").load(TupleWrapper.TYPE, SemanticType.ATTRIBUTE_IDENTIFIER, Attribute.PUBLISHED, AttributeValue.TYPE);
+    private static final @Nonnull SemanticType VALUE_STATE_ENTRY = SemanticType.create("entry.value.attributes.state@virtualid.ch").load(TupleWrapper.TYPE, SemanticType.ATTRIBUTE_IDENTIFIER, AttributeValue.PUBLISHED, AttributeValue.TYPE);
     
     /**
      * Stores the semantic type {@code table.value.attributes.state@virtualid.ch}.
@@ -217,7 +217,7 @@ public final class Attributes implements BothModule {
                     final @Nonnull Identity type = IdentityClass.getNotNull(resultSet, 2);
                     final boolean published = resultSet.getBoolean(3);
                     final @Nonnull Block value = Block.get(AttributeValue.TYPE, resultSet, 4);
-                    entries.add(new TupleWrapper(VALUE_STATE_ENTRY, type.toBlockable(SemanticType.ATTRIBUTE_IDENTIFIER), new BooleanWrapper(Attribute.PUBLISHED, published), value.toBlockable()).toBlock());
+                    entries.add(new TupleWrapper(VALUE_STATE_ENTRY, type.toBlockable(SemanticType.ATTRIBUTE_IDENTIFIER), new BooleanWrapper(AttributeValue.PUBLISHED, published), value.toBlockable()).toBlock());
                 }
                 tables.set(0, new ListWrapper(VALUE_STATE_TABLE, entries.freeze()).toBlock());
             }
@@ -305,8 +305,6 @@ public final class Attributes implements BothModule {
      * @param published whether the attribute is already published.
      * 
      * @return the value of the given attribute or null if no value is found.
-     * 
-     * @ensure return == null || return.isCertificate() : "The returned value is either null or a certificate.";
      */
     public static @Nullable AttributeValue getValue(@Nonnull Attribute attribute, boolean published) throws SQLException {
         final @Nonnull String SQL = "SELECT value FROM " + attribute.getEntity().getSite() + "attribute_value WHERE entity = " + attribute.getEntity() + " AND type = " + attribute.getType() + " AND published = " + published;

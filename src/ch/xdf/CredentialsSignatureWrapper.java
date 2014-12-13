@@ -6,6 +6,7 @@ import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.attribute.AttributeValue;
+import ch.virtualid.attribute.CertifiedAttributeValue;
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.client.Cache;
 import ch.virtualid.contact.Contact;
@@ -178,7 +179,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
      * @invariant certificates.isFrozen() : "The certificates are frozen.";
      * @invariant certificatesAreValid(certificates, credentials) : "The certificates are valid.";
      */
-    private final @Nullable ReadonlyList<AttributeValue> certificates;
+    private final @Nullable ReadonlyList<CertifiedAttributeValue> certificates;
     
     /**
      * Stores whether the hidden content of the credentials is verifiably encrypted to achieve liability.
@@ -220,7 +221,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
      * 
      * @ensure isVerified() : "This signature is verified.";
      */
-    public CredentialsSignatureWrapper(@Nonnull SemanticType type, @Nullable Block element, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull ReadonlyList<Credential> credentials, @Nullable ReadonlyList<AttributeValue> certificates, boolean lodged, @Nullable BigInteger value) throws SQLException, IOException, PacketException, ExternalException {
+    public CredentialsSignatureWrapper(@Nonnull SemanticType type, @Nullable Block element, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull ReadonlyList<Credential> credentials, @Nullable ReadonlyList<CertifiedAttributeValue> certificates, boolean lodged, @Nullable BigInteger value) throws SQLException, IOException, PacketException, ExternalException {
         super(type, element, subject, audit);
         
         assert credentials.isFrozen() : "The credentials are frozen.";
@@ -258,7 +259,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
      * 
      * @ensure isVerified() : "This signature is verified.";
      */
-    public CredentialsSignatureWrapper(@Nonnull SemanticType type, @Nullable Blockable element, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull ReadonlyList<Credential> credentials, @Nullable ReadonlyList<AttributeValue> certificates, boolean lodged, @Nullable BigInteger value) throws SQLException, IOException, PacketException, ExternalException {
+    public CredentialsSignatureWrapper(@Nonnull SemanticType type, @Nullable Blockable element, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull ReadonlyList<Credential> credentials, @Nullable ReadonlyList<CertifiedAttributeValue> certificates, boolean lodged, @Nullable BigInteger value) throws SQLException, IOException, PacketException, ExternalException {
         this(type, Block.toBlock(element), subject, audit, credentials, certificates, lodged, value);
     }
     
@@ -323,8 +324,8 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
         // Certificates
         if (tuple.isElementNotNull(5)) {
             list = new ListWrapper(tuple.getElementNotNull(5)).getElementsNotNull();
-            final @Nonnull FreezableList<AttributeValue> certificates = new FreezableArrayList<AttributeValue>(list.size());
-            for (final @Nonnull Block element : list) certificates.add(new AttributeValue(element, verified));
+            final @Nonnull FreezableList<CertifiedAttributeValue> certificates = new FreezableArrayList<CertifiedAttributeValue>(list.size());
+            for (final @Nonnull Block element : list) certificates.add(AttributeValue.get(element, verified).toCertifiedAttributeValue());
             this.certificates = certificates.freeze();
         } else {
             this.certificates = null;
@@ -390,7 +391,6 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
      * - {@code credentials.size() == 1 } - exactly one credential is provided.<br>
      * - {@code credential.isIdentityBased} - the only credential is identity-based.<br>
      * - {@code (forall certificate : certificates) != null} - none of the certificates is null.<br>
-     * - {@code (forall certificate : certificates).isSigned()} - each of the certificates is signed.<br>
      * - {@code credential.getIssuer().equals((forall certificate : certificates).getSubject())} - the subject of each certificate matches the issuer of the credential.
      * 
      * @param certificates the certificates that are appended to the signature.
@@ -400,7 +400,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
      * 
      * @require validCredentials(credentials) : "The credentials have to be valid.";
      */
-    public static boolean certificatesAreValid(@Nullable ReadonlyList<AttributeValue> certificates, @Nonnull ReadonlyList<Credential> credentials) {
+    public static boolean certificatesAreValid(@Nullable ReadonlyList<CertifiedAttributeValue> certificates, @Nonnull ReadonlyList<Credential> credentials) {
         assert credentialsAreValid(credentials) : "The credentials have to be valid.";
         
         if (certificates != null) {
@@ -408,8 +408,8 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
             final @Nonnull Credential credential = credentials.getNotNull(0);
             if (credential.isAttributeBased()) return false;
             final @Nonnull Identifier issuer = credential.getIssuer().getAddress();
-            for (final @Nullable AttributeValue certificate : certificates) {
-                if (certificate == null || !certificate.isCertified() || !certificate.getSubject().equals(issuer)) return false;
+            for (final @Nullable CertifiedAttributeValue certificate : certificates) {
+                if (certificate == null || !certificate.getSubject().equals(issuer)) return false;
             }
         }
         return true;
@@ -438,7 +438,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
      * @ensure certificatesAreValid(return, getCredentials()) : "The certificates are valid.";
      */
     @Pure
-    public @Nullable ReadonlyList<AttributeValue> getCertificates() {
+    public @Nullable ReadonlyList<CertifiedAttributeValue> getCertificates() {
         return certificates;
     }
     
@@ -586,7 +586,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
                 }
             }
         } else {
-            for (final @Nonnull AttributeValue certificate : certificates) {
+            for (final @Nonnull CertifiedAttributeValue certificate : certificates) {
                 if (certificate.getContent().getType().equals(type)) return certificate.getContent();
             }
         }
@@ -800,7 +800,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
         if (!t.getValue().equals(hash.xor(new ListWrapper(ARRAYS, ts).toBlock().getHash()).xor(tf))) throw new InvalidSignatureException("The credentials signature is invalid: The value t is not correct.");
         
         if (certificates != null) {
-            for (final @Nonnull AttributeValue certificate : certificates) certificate.verify();
+            for (final @Nonnull CertifiedAttributeValue certificate : certificates) certificate.verify();
         }
         
         setVerified();
@@ -926,7 +926,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
         
         if (certificates != null) {
             final @Nonnull FreezableList<Block> certificateList = new FreezableArrayList<Block>(certificates.size());
-            for (final @Nonnull AttributeValue certificate : certificates) certificateList.add(certificate.toBlock());
+            for (final @Nonnull CertifiedAttributeValue certificate : certificates) certificateList.add(certificate.toBlock());
             signature.set(5, new ListWrapper(AttributeValue.LIST, certificateList.freeze()).toBlock());
         }
         

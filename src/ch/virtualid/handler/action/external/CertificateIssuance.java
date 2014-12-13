@@ -4,6 +4,7 @@ import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.attribute.AttributeValue;
+import ch.virtualid.attribute.CertifiedAttributeValue;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.NonHostAccount;
 import ch.virtualid.exceptions.external.ExternalException;
@@ -15,7 +16,6 @@ import ch.virtualid.handler.Method;
 import ch.virtualid.handler.reply.action.CoreServiceActionReply;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identity.InternalIdentity;
-import ch.virtualid.identity.InternalNonHostIdentity;
 import ch.virtualid.identity.SemanticType;
 import ch.xdf.Block;
 import ch.xdf.HostSignatureWrapper;
@@ -49,10 +49,8 @@ public final class CertificateIssuance extends CoreServiceExternalAction {
     
     /**
      * Stores the certificate that is issued.
-     * 
-     * @invariant certificate.isCertificate() : "The certificate is indeed a certificate.";
      */
-    private final @Nonnull HostSignatureWrapper certificate;
+    private final @Nonnull CertifiedAttributeValue certificate;
     
     /**
      * Creates an external action to issue the given certificate to the given subject.
@@ -61,17 +59,15 @@ public final class CertificateIssuance extends CoreServiceExternalAction {
      * @param subject the subject of this external action.
      * @param attribute the attribute to certify.
      * 
-     * @require account.getIdentity() instanceof InternalNonHostIdentity : "The account belongs to an internal non-host identity.";
      * @require attribute.getType().isAttributeFor(subject.getCategory()) : "The block is an attribute for the subject.";
      */
     public CertificateIssuance(@Nonnull NonHostAccount account, @Nonnull InternalIdentity subject, @Nonnull Block attribute) {
         super(account, subject);
         
-        assert account.getIdentity() instanceof InternalNonHostIdentity : "The account belongs to an internal non-host identity.";
         assert attribute.getType().isAttributeFor(subject.getCategory()) : "The block is an attribute for the subject.";
         
         this.attribute = attribute;
-        this.certificate = new HostSignatureWrapper(TYPE, attribute, subject.getAddress(), account.getIdentity().getAddress());
+        this.certificate = new CertifiedAttributeValue(attribute, subject.getAddress(), account.getIdentity().getAddress());
     }
     
     /**
