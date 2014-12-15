@@ -4,9 +4,9 @@ import ch.virtualid.agent.RandomizedAgentPermissions;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
+import ch.virtualid.attribute.AttributeValue;
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.client.Cache;
-import ch.virtualid.attribute.Attribute;
 import ch.virtualid.cryptography.Exponent;
 import ch.virtualid.cryptography.PublicKey;
 import ch.virtualid.exceptions.external.ExternalException;
@@ -70,7 +70,7 @@ public abstract class Credential implements Immutable {
     /**
      * Stores the semantic type {@code exposed.credential@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType EXPOSED = SemanticType.create("exposed.credential@virtualid.ch").load(TupleWrapper.TYPE, ISSUER, ISSUANCE, HASH, ROLE, Attribute.TYPE);
+    public static final @Nonnull SemanticType EXPOSED = SemanticType.create("exposed.credential@virtualid.ch").load(TupleWrapper.TYPE, ISSUER, ISSUANCE, HASH, ROLE, AttributeValue.CONTENT);
     
     /**
      * Returns the block containing the exposed arguments of a credential.
@@ -93,7 +93,7 @@ public abstract class Credential implements Immutable {
     public static @Nonnull Block getExposed(@Nonnull InternalNonHostIdentity issuer, @Nonnull Time issuance, @Nonnull RandomizedAgentPermissions randomizedPermissions, @Nullable SemanticType role, @Nullable Block attribute) {
         assert issuance.isPositive() && issuance.isMultipleOf(Time.HALF_HOUR) : "The issuance time is positive and a multiple of half an hour.";
         assert role == null || role.isRoleType() : "The role is either null or a role type.";
-        assert attribute == null || attribute.getType().isBasedOn(Attribute.TYPE) : "The attribute is either null or based on the attribute type.";
+        assert attribute == null || attribute.getType().isBasedOn(AttributeValue.CONTENT) : "The attribute is either null or based on the attribute type.";
         
         final @Nonnull FreezableArray<Block> elements = new FreezableArray<Block>(5);
         elements.set(0, issuer.toBlock(ISSUER));
@@ -208,7 +208,7 @@ public abstract class Credential implements Immutable {
         assert role == null || restrictions != null : "If a role is given, the restrictions are not null.";
         assert attribute != null || issuer instanceof Person : "If the attribute is null, the issuer is a person.";
         assert (attribute == null) != (restrictions == null) : "Either the attribute or the restrictions are null (but not both).";
-        assert attribute == null || attribute.getType().isBasedOn(Attribute.TYPE) : "The attribute is either null or based on the attribute type.";
+        assert attribute == null || attribute.getType().isBasedOn(AttributeValue.CONTENT) : "The attribute is either null or based on the attribute type.";
         
         this.publicKey = publicKey;
         this.issuer = issuer;

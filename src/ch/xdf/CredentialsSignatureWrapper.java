@@ -27,8 +27,8 @@ import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.external.InvalidSignatureException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
-import ch.virtualid.identifier.Identifier;
 import ch.virtualid.identifier.InternalIdentifier;
+import ch.virtualid.identity.InternalNonHostIdentity;
 import ch.virtualid.identity.InternalPerson;
 import ch.virtualid.identity.Person;
 import ch.virtualid.identity.SemanticType;
@@ -342,11 +342,11 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
      * Returns whether the given credentials are valid.
      * The credentials must fulfill the following criteria:<br>
      * - {@code !credentials.isEmpty()} - at least one credential needs to be provided.<br>
-     * - {@code (forall credential : credentials) != null} - none of the credentials may be null.<br>
+     * - {@code for (credential : credentials) credential != null} - none of the credentials may be null.<br>
      * - {@code !credential.isIdentityBased() || credentials.size() == 1} - if one of the credentials is identity-based, no other credential may be provided.<br>
-     * - {@code (forall credential : credentials) instanceof ClientCredential || (forall credential : credentials) instanceof HostCredential} - either all credentials are client credentials or host credentials.<br>
-     * - {@code (forall credential : credentials) instanceof HostCredential || clientCredential.getU().equals(u)} - on the client-side, all credentials must have the same value u (the client secret).<br>
-     * - {@code (forall credential : credentials) instanceof HostCredential || clientCredential.getV().equals(v)} - on the client-side, all credentials must have the same value v (the hashed identity).
+     * - {@code (for (credential : credentials) credential instanceof ClientCredential) || (for (credential : credentials) credential instanceof HostCredential)} - either all credentials are client credentials or host credentials.<br>
+     * - {@code for (credential : credentials) credential instanceof HostCredential || clientCredential.getU().equals(u)} - on the client-side, all credentials must have the same value u (the client secret).<br>
+     * - {@code for (credential : credentials) credential instanceof HostCredential || clientCredential.getV().equals(v)} - on the client-side, all credentials must have the same value v (the hashed identity).
      * 
      * @param credentials the credentials with which the element is signed.
      * 
@@ -388,10 +388,10 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
     /**
      * Returns whether the given certificates are valid (given the given credentials).
      * The certificates must fulfill the following criteria if they are not null:<br>
-     * - {@code credentials.size() == 1 } - exactly one credential is provided.<br>
-     * - {@code credential.isIdentityBased} - the only credential is identity-based.<br>
-     * - {@code (forall certificate : certificates) != null} - none of the certificates is null.<br>
-     * - {@code credential.getIssuer().equals((forall certificate : certificates).getSubject())} - the subject of each certificate matches the issuer of the credential.
+     * - {@code credentials.size() == 1} - exactly one credential is provided.<br>
+     * - {@code credential.isIdentityBased()} - the only credential is identity-based.<br>
+     * - {@code for (certificate : certificates) certificate != null} - none of the certificates is null.<br>
+     * - {@code for (certificate : certificates) certificate.getSubject().equals(credential.getIssuer())} - the subject of each certificate matches the issuer of the credential.
      * 
      * @param certificates the certificates that are appended to the signature.
      * @param credentials the credentials with which the element is signed.
@@ -407,7 +407,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
             if (credentials.size() != 1) return false;
             final @Nonnull Credential credential = credentials.getNotNull(0);
             if (credential.isAttributeBased()) return false;
-            final @Nonnull Identifier issuer = credential.getIssuer().getAddress();
+            final @Nonnull InternalNonHostIdentity issuer = credential.getIssuer();
             for (final @Nullable CertifiedAttributeValue certificate : certificates) {
                 if (certificate == null || !certificate.getSubject().equals(issuer)) return false;
             }

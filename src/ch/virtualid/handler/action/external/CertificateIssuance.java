@@ -67,7 +67,7 @@ public final class CertificateIssuance extends CoreServiceExternalAction {
         assert attribute.getType().isAttributeFor(subject.getCategory()) : "The block is an attribute for the subject.";
         
         this.attribute = attribute;
-        this.certificate = new CertifiedAttributeValue(attribute, subject.getAddress(), account.getIdentity().getAddress());
+        this.certificate = new CertifiedAttributeValue(attribute, subject, account.getIdentity());
     }
     
     /**

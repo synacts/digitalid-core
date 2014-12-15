@@ -4,6 +4,8 @@ import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.attribute.Attribute;
 import ch.virtualid.attribute.AttributeValue;
+import ch.virtualid.attribute.CertifiedAttributeValue;
+import ch.virtualid.attribute.UncertifiedAttributeValue;
 import ch.virtualid.auxiliary.Image;
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.client.Client;
@@ -119,9 +121,9 @@ public final class Host extends Site {
             final @Nonnull AttributeValue value;
             if (Server.hasHost(HostIdentifier.VIRTUALID)) {
                 // If the new host is running on the same server as virtualid.ch, certify its public key immediately.
-                value = new AttributeValue(publicKeyChain, identifier, PublicKeyChain.IDENTIFIER);
+                value = new CertifiedAttributeValue(publicKeyChain, identity, PublicKeyChain.TYPE);
             } else {
-                value = new AttributeValue(publicKeyChain);
+                value = new UncertifiedAttributeValue(publicKeyChain);
             }
             attribute.replaceValue(null, value);
         }

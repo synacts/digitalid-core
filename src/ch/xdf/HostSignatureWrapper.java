@@ -13,7 +13,6 @@ import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.external.InvalidSignatureException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identifier.HostIdentifier;
-import ch.virtualid.identifier.Identifier;
 import ch.virtualid.identifier.IdentifierClass;
 import ch.virtualid.identifier.InternalIdentifier;
 import ch.virtualid.identity.HostIdentity;
@@ -131,7 +130,7 @@ public final class HostSignatureWrapper extends SignatureWrapper implements Immu
      * @return the identifier of the identity that is signing as a host.
      */
     @Pure
-    public @Nonnull Identifier getSigner() {
+    public @Nonnull InternalIdentifier getSigner() {
         return signer;
     }
     

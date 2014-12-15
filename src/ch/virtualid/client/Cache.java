@@ -74,7 +74,7 @@ public final class Cache {
                 } else {
                     // Since the public key chain of 'virtualid.ch' is not available, the host 'virtualid.ch' is created on this server.
                     final @Nonnull Host host = new Host(HostIdentifier.VIRTUALID);
-                    value = new CertifiedAttributeValue(host.getPublicKeyChain(), HostIdentifier.VIRTUALID, PublicKeyChain.IDENTIFIER);
+                    value = new CertifiedAttributeValue(host.getPublicKeyChain(), HostIdentity.VIRTUALID, PublicKeyChain.TYPE);
                     final @Nonnull File certificateFile = new File(Directory.HOSTS.getPath() + Directory.SEPARATOR + "virtualid.ch.certificate.xdf");
                     new SelfcontainedWrapper(SelfcontainedWrapper.SELFCONTAINED, value).write(new FileOutputStream(certificateFile), true);
                 }
