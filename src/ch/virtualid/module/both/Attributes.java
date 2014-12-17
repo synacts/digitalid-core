@@ -55,7 +55,7 @@ public final class Attributes implements BothModule {
     public void createTables(@Nonnull Site site) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "attribute_value (entity " + EntityClass.FORMAT + " NOT NULL, type " + Mapper.FORMAT + " NOT NULL, published BOOLEAN NOT NULL, value " + AttributeValue.FORMAT + " NOT NULL, PRIMARY KEY (entity, type, published), FOREIGN KEY (entity) " + site.getEntityReference() + ", FOREIGN KEY (type) " + Mapper.REFERENCE + ")");
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "attribute_visibility (entity " + EntityClass.FORMAT + " NOT NULL, type " + Mapper.FORMAT + " NOT NULL, visibility TEXT NOT NULL COLLATE " + Database.getConfiguration().BINARY() + ", PRIMARY KEY (entity, type), FOREIGN KEY (entity) " + site.getEntityReference() + ", FOREIGN KEY (type) " + Mapper.REFERENCE + ")");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "attribute_visibility (entity " + EntityClass.FORMAT + " NOT NULL, type " + Mapper.FORMAT + " NOT NULL, visibility " + PassiveExpression.FORMAT + ", PRIMARY KEY (entity, type), FOREIGN KEY (entity) " + site.getEntityReference() + ", FOREIGN KEY (type) " + Mapper.REFERENCE + ")");
         }
     }
     
@@ -311,7 +311,7 @@ public final class Attributes implements BothModule {
     public static @Nullable AttributeValue getValue(@Nonnull Attribute attribute, boolean published) throws SQLException {
         final @Nonnull String SQL = "SELECT value FROM " + attribute.getEntity().getSite() + "attribute_value WHERE entity = " + attribute.getEntity() + " AND type = " + attribute.getType() + " AND published = " + published;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
-            if (resultSet.next()) return AttributeValue.get(resultSet, 1).checkMatch(attribute);
+            if (resultSet.next()) return AttributeValue.get(resultSet, 1).checkMatches(attribute);
             else return null;
         } catch (@Nonnull InvalidEncodingException exception) {
             throw new SQLException("Some values returned by the database are invalid.", exception);
@@ -328,7 +328,7 @@ public final class Attributes implements BothModule {
      * @require value.match(attribute) : "The value matches the given attribute.";
      */
     public static void insertValue(@Nonnull Attribute attribute, boolean published, @Nonnull AttributeValue value) throws SQLException {
-        assert value.match(attribute) : "The value matches the given attribute.";
+        assert value.matches(attribute) : "The value matches the given attribute.";
         
         final @Nonnull String SQL = "INSERT INTO " + attribute.getEntity().getSite() + "attribute_value (entity, type, published, value) VALUES (?, ?, ?, ?)";
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
@@ -350,7 +350,7 @@ public final class Attributes implements BothModule {
      * @require value.match(attribute) : "The value matches the given attribute.";
      */
     public static void deleteValue(@Nonnull Attribute attribute, boolean published, @Nonnull AttributeValue value) throws SQLException {
-        assert value.match(attribute) : "The value matches the given attribute.";
+        assert value.matches(attribute) : "The value matches the given attribute.";
         
         final @Nonnull String SQL = "DELETE FROM " + attribute.getEntity().getSite() + "attribute_value WHERE entity = ? AND type = ? AND published = ? AND value = ?";
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
@@ -375,8 +375,8 @@ public final class Attributes implements BothModule {
      * @require newValue.match(attribute) : "The new value matches the given attribute.";
      */
     public static void replaceValue(@Nonnull Attribute attribute, boolean published, @Nonnull AttributeValue oldValue, @Nonnull AttributeValue newValue) throws SQLException {
-        assert oldValue.match(attribute) : "The old value matches the given attribute.";
-        assert newValue.match(attribute) : "The new value matches the given attribute.";
+        assert oldValue.matches(attribute) : "The old value matches the given attribute.";
+        assert newValue.matches(attribute) : "The new value matches the given attribute.";
         
         final @Nonnull String SQL = "UPDATE " + attribute.getEntity().getSite() + "attribute_value SET value = ? WHERE entity = ? AND type = ? AND published = ? AND value = ?";
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
@@ -397,7 +397,7 @@ public final class Attributes implements BothModule {
      * @param type the type of the attribute whose visibility is to be returned.
      * @return the visibility of the attribute with the given type of the given entity or null if no such visibility is available.
      */
-    public static @Nullable PassiveExpression getVisibility(@Nonnull Entity entity, @Nonnull SemanticType type) throws SQLException {
+    public static @Nullable PassiveExpression getVisibility(@Nonnull Attribute attribute) throws SQLException {
         @Nonnull String query = "SELECT visibility FROM attribute_visibility WHERE entity = " + entity + " AND type = " + type;
         try (@Nonnull Statement statement = connection.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(query)) {
             if (resultSet.next()) return new PassiveExpression(resultSet.getString(1));

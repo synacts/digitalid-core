@@ -140,7 +140,7 @@ public abstract class AttributeValue implements Immutable, Blockable, SQLizable 
      * @return whether this value matches the given attribute.
      */
     @Pure
-    public boolean match(@Nonnull Attribute attribute) {
+    public boolean matches(@Nonnull Attribute attribute) {
         return content.getType().isAttributeFor(attribute.getEntity().getIdentity().getCategory());
     }
     
@@ -154,8 +154,8 @@ public abstract class AttributeValue implements Immutable, Blockable, SQLizable 
      * @throws InvalidEncodingException otherwise.
      */
     @Pure
-    public @Nonnull AttributeValue checkMatch(@Nonnull Attribute attribute) throws InvalidEncodingException {
-        if (!match(attribute)) throw new InvalidEncodingException("This value does not match the given attribute.");
+    public @Nonnull AttributeValue checkMatches(@Nonnull Attribute attribute) throws InvalidEncodingException {
+        if (!matches(attribute)) throw new InvalidEncodingException("This value does not match the given attribute.");
         return this;
     }
     

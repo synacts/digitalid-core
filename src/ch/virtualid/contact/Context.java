@@ -1,5 +1,6 @@
 package ch.virtualid.contact;
 
+import ch.virtualid.annotations.Capturable;
 import ch.virtualid.annotations.OnlyForActions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.concept.Aspect;
@@ -19,6 +20,7 @@ import ch.virtualid.interfaces.SQLizable;
 import ch.virtualid.module.both.Contexts;
 import ch.virtualid.util.ConcurrentHashMap;
 import ch.virtualid.util.ConcurrentMap;
+import ch.virtualid.util.FreezableSet;
 import ch.virtualid.util.ReadonlySet;
 import ch.xdf.Block;
 import ch.xdf.Int64Wrapper;
@@ -496,7 +498,7 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
      * 
      * @return a set with all the contacts of this context (i.e. the contacts from subcontexts are included as well).
      */
-    public @Nonnull ReadonlySet<Contact> getAllContacts() throws SQLException {
+    public @Nonnull @Capturable FreezableSet<Contact> getAllContacts() throws SQLException {
         throw new SQLException();
     }
     

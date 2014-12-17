@@ -8,6 +8,7 @@ import ch.xdf.StringWrapper;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
+import javax.annotation.Nonnull;
 
 /**
  * This class models restriction expressions.
@@ -20,7 +21,7 @@ final class RestrictionExpression extends Expression {
     /**
      * Stores the symbols for restricting attribute values.
      */
-    private final List<String> symbols = Arrays.asList("=", "≠", "<", ">", "≤", "≥", "/", "!/", "|", "!|", "\\", "!\\");
+    private final @Nonnull List<String> symbols = Arrays.asList("=", "≠", "<", ">", "≤", "≥", "/", "!/", "|", "!|", "\\", "!\\");
 
     /**
      * Stores the attribute type for the restriction or zero for public access.
@@ -43,6 +44,7 @@ final class RestrictionExpression extends Expression {
      * @param type the attribute type for the restriction or zero for public access.
      * @param string the string for the restriction.
      * @param symbol the symbol of this expression.
+     * 
      * @require type == 0 || Mapper.isVid(type) && Category.isSemanticType(type) : "The second number is zero or denote a semantic type.";
      * @require (string == null) == (symbol == null) : "Either both string and symbol are null or none of them.";
      * @require string == null || string.startsWith("\"") && string.endsWith("\"") || string.matches("\\d+") : "If not null, the string either is a string or a number.";
@@ -51,7 +53,7 @@ final class RestrictionExpression extends Expression {
     RestrictionExpression(long type, String string, String symbol) throws SQLException {
         super(null, null, 0);
 
-//        assert type == 0 || Mapper.isVid(type) && Category.isSemanticType(type) : "The second number is zero or denote a semantic type.";
+        assert type == 0 || Mapper.isVid(type) && Category.isSemanticType(type) : "The second number is zero or denote a semantic type.";
         assert (string == null) == (symbol == null) : "Either both string and symbol are null or none of them.";
         assert string == null || string.startsWith("\"") && string.endsWith("\"") || string.matches("\\d+") : "If not null, the string either is a string or a number.";
         assert symbol == null || symbols.contains(symbol) : "If not null, the symbol is valid.";
@@ -80,9 +82,9 @@ final class RestrictionExpression extends Expression {
      */
     private boolean match(Block value) throws InvalidEncodingException {
         assert value != null : "The value is not null.";
-
+        
         if (string == null) return true;
-
+        
         if (string.startsWith("\"") && string.endsWith("\"")) {
             String substring = this.string.substring(1, this.string.length() - 1).toLowerCase();
             String attribute = new StringWrapper(value).getString().toLowerCase();
@@ -109,10 +111,10 @@ final class RestrictionExpression extends Expression {
             if (symbol.equals("≥")) return attribute >= number;
             throw new InvalidEncodingException("The symbol '" + symbol + "' cannot be used for numbers.");
         }
-
+        
         return false;
     }
-
+    
     /**
      * Returns whether this expression matches the given block (for certification restrictions).
      * 
@@ -127,7 +129,7 @@ final class RestrictionExpression extends Expression {
         assert type != 0 : "The type is not zero.";
 
         SelfcontainedWrapper selfcontainedWrapper = new SelfcontainedWrapper(attribute);
-//        long type = Mapper.getVid(selfcontainedWrapper.getIdentifier());
+        long type = Mapper.getVid(selfcontainedWrapper.getIdentifier());
 
         return this.type == type && match(selfcontainedWrapper.getElement());
     }
@@ -146,7 +148,7 @@ final class RestrictionExpression extends Expression {
         if (credentials == null) return false;
 
         for (Credential credential : credentials) {
-//            if (credential.getAttribute() != null && Mapper.getVid(credential.getIdentifier()) == type) return matches(credential.getAttribute());
+            if (credential.getAttribute() != null && Mapper.getVid(credential.getIdentifier()) == type) return matches(credential.getAttribute());
         }
 
         return false;
@@ -159,7 +161,6 @@ final class RestrictionExpression extends Expression {
      */
     @Override
     public String toString() {
-        return "TODO";
-//        try { return (type == 0 ? "everybody" : Mapper.getIdentifier(type)) + (symbol == null ? "" : symbol) + (string == null ? "" : string); } catch (SQLException exception) { return "ERROR" + symbol + string; }
+        try { return (type == 0 ? "everybody" : Mapper.getIdentifier(type)) + (symbol == null ? "" : symbol) + (string == null ? "" : string); } catch (SQLException exception) { return "ERROR" + symbol + string; }
     }
 }

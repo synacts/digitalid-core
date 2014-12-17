@@ -10,6 +10,10 @@ import javax.annotation.Nonnull;
 /**
  * This class models a concept in the {@link Database database}.
  * 
+ * @see HostConcept
+ * @see NonHostConcept
+ * @see GeneralConcept
+ * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */

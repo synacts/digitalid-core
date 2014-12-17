@@ -1,9 +1,10 @@
 package ch.virtualid.expression;
 
+import ch.virtualid.annotations.Pure;
 import ch.virtualid.credential.Credential;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.server.Host;
 import ch.xdf.Block;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -105,6 +106,7 @@ final class BinaryExpression extends Expression {
      * 
      * @return this expression as a string.
      */
+    @Pure
     @Override
     public String toString() {
         return "(" + left + operator + right + ")";

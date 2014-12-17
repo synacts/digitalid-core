@@ -237,14 +237,14 @@ public final class Attribute extends GeneralConcept implements Immutable {
     
     
     /**
-     * Returns the visibility of this attribute or null if not yet set or available.
+     * Returns the visibility of this attribute or null if not set.
      * 
-     * @return the visibility of this attribute or null if not yet set or available.
+     * @return the visibility of this attribute or null if not set.
      */
     @Pure
     public @Nullable PassiveExpression getVisibility() {
         if (!visibilityLoaded) {
-//            visibility = Attributes.getValue(this);
+            visibility = Attributes.getValue(this);
             visibilityLoaded = true;
         }
         return visibility;
