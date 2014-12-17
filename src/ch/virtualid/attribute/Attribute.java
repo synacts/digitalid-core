@@ -2,6 +2,7 @@ package ch.virtualid.attribute;
 
 import ch.virtualid.annotations.OnlyForActions;
 import ch.virtualid.annotations.Pure;
+import ch.virtualid.client.Synchronizer;
 import ch.virtualid.concept.Aspect;
 import ch.virtualid.concept.GeneralConcept;
 import ch.virtualid.concept.Instance;
@@ -10,6 +11,7 @@ import ch.virtualid.database.Database;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.expression.PassiveExpression;
+import ch.virtualid.handler.action.internal.AttributeValueReplace;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.module.both.Attributes;
@@ -61,6 +63,8 @@ public final class Attribute extends GeneralConcept implements Immutable {
     
     /**
      * Stores the value of this attribute.
+     * 
+     * @invariant value == null || value.match(this) : "The value is null or matches this attribute.";
      */
     private @Nullable AttributeValue value;
     
@@ -72,6 +76,8 @@ public final class Attribute extends GeneralConcept implements Immutable {
     
     /**
      * Stores the unpublished value of this attribute.
+     * 
+     * @invariant unpublished == null || unpublished.match(this) : "The unpublished value is null or matches this attribute.";
      */
     private @Nullable AttributeValue unpublished;
     
@@ -83,6 +89,8 @@ public final class Attribute extends GeneralConcept implements Immutable {
     
     /**
      * Stores the visibility of this attribute.
+     * 
+     * @invariant visibility == null || visibility.getEntity().equals(getEntity()) : "The visibility is null or belongs to the same entity.";
      */
     private @Nullable PassiveExpression visibility;
     
@@ -117,10 +125,13 @@ public final class Attribute extends GeneralConcept implements Immutable {
     
     
     /**
-     * Returns the value of this attribute or null if not yet set.
+     * Returns the published value of this attribute or null if not set.
      * 
-     * @return the value of this attribute or null if not yet set.
+     * @return the published value of this attribute or null if not set.
+     * 
+     * @ensure return == null || return.match(this) : "The returned value is null or matches this attribute.";
      */
+    @Pure
     public @Nullable AttributeValue getValue() throws SQLException {
         if (!valueLoaded) {
             value = Attributes.getValue(this, true);
@@ -129,41 +140,99 @@ public final class Attribute extends GeneralConcept implements Immutable {
         return value;
     }
     
-    public void setValue(@Nullable AttributeValue value) throws SQLException {
-        assert isOnClient() : "";
-        
+    /**
+     * Sets the published value of this attribute.
+     * 
+     * @param newValue the new value of this attribute.
+     * 
+     * @require isOnClient() : "This attribute is on a client.";
+     * @require newValue == null || newValue.match(this) : "The new value is null or matches this attribute.";
+     */
+    public void setValue(@Nullable AttributeValue newValue) throws SQLException {
+        final @Nullable AttributeValue oldValue = getValue();
         // The old and the new value is not identical (and particularly not both null).
-        if (this.value != value) { // TODO: Rather a precondition? -> No, rather a real equals().
-//            Synchronizer.execute(new AttributeValueReplace(this, true, getValue(), value));
+        if (oldValue != newValue) {
+            Synchronizer.execute(new AttributeValueReplace(this, true, oldValue, newValue));
         }
     }
     
+    /**
+     * Replaces the published value of this attribute.
+     * 
+     * @param oldValue the old value of this attribute.
+     * @param newValue the new value of this attribute.
+     * 
+     * @require oldValue != newValue : "The old and new value are not identical.";
+     * @require oldValue == null || oldValue.match(this) : "The old value is null or matches this attribute.";
+     * @require newValue == null || newValue.match(this) : "The new value is null or matches this attribute.";
+     */
     @OnlyForActions
     public void replaceValue(@Nullable AttributeValue oldValue, @Nullable AttributeValue newValue) throws SQLException {
-        assert oldValue != newValue : "";
+        assert oldValue != newValue : "The old and new value are not identical.";
         
-//        if (oldValue == null) Attributes.addValue(this, true, newValue);
-//        else if (newValue == null) Attributes.removeValue(this, true, oldValue);
-//        else Attributes.replaceValue(this, true, oldValue, newValue);
+        if (oldValue == null && newValue != null) Attributes.insertValue(this, true, newValue);
+        else if (oldValue != null && newValue == null) Attributes.deleteValue(this, true, oldValue);
+        else if (oldValue != null && newValue != null) Attributes.replaceValue(this, true, oldValue, newValue);
         
         value = newValue;
         valueLoaded = true;
-        
         notify(VALUE);
     }
     
     
     /**
-     * Returns the unpublished value of this attribute or null if not yet set or available.
+     * Returns the unpublished value of this attribute or null if not set.
      * 
-     * @return the unpublished value of this attribute or null if not yet set or available.
+     * @return the unpublished value of this attribute or null if not set.
+     * 
+     * @ensure return == null || return.match(this) : "The returned value is null or matches this attribute.";
      */
-    public @Nullable AttributeValue getUnpublishedValue() {
+    @Pure
+    public @Nullable AttributeValue getUnpublishedValue() throws SQLException {
         if (!unpublishedLoaded) {
-//            unpublished = Attributes.getValue(this);
+            unpublished = Attributes.getValue(this, false);
             unpublishedLoaded = true;
         }
         return unpublished;
+    }
+    
+    /**
+     * Sets the unpublished value of this attribute.
+     * 
+     * @param newValue the new unpublished value of this attribute.
+     * 
+     * @require isOnClient() : "This attribute is on a client.";
+     * @require newValue == null || newValue.match(this) : "The new value is null or matches this attribute.";
+     */
+    public void setUnpublishedValue(@Nullable AttributeValue newValue) throws SQLException {
+        final @Nullable AttributeValue oldValue = getUnpublishedValue();
+        // The old and the new value is not identical (and particularly not both null).
+        if (oldValue != newValue) {
+            Synchronizer.execute(new AttributeValueReplace(this, false, oldValue, newValue));
+        }
+    }
+    
+    /**
+     * Replaces the unpublished value of this attribute.
+     * 
+     * @param oldValue the old unpublished value of this attribute.
+     * @param newValue the new unpublished value of this attribute.
+     * 
+     * @require oldValue != newValue : "The old and new value are not identical.";
+     * @require oldValue == null || oldValue.match(this) : "The old value is null or matches this attribute.";
+     * @require newValue == null || newValue.match(this) : "The new value is null or matches this attribute.";
+     */
+    @OnlyForActions
+    public void replaceUnpublishedValue(@Nullable AttributeValue oldValue, @Nullable AttributeValue newValue) throws SQLException {
+        assert oldValue != newValue : "The old and new value are not identical.";
+        
+        if (oldValue == null && newValue != null) Attributes.insertValue(this, false, newValue);
+        else if (oldValue != null && newValue == null) Attributes.deleteValue(this, false, oldValue);
+        else if (oldValue != null && newValue != null) Attributes.replaceValue(this, false, oldValue, newValue);
+        
+        unpublished = newValue;
+        unpublishedLoaded = true;
+        notify(UNPUBLISHED);
     }
     
     
@@ -172,6 +241,7 @@ public final class Attribute extends GeneralConcept implements Immutable {
      * 
      * @return the visibility of this attribute or null if not yet set or available.
      */
+    @Pure
     public @Nullable PassiveExpression getVisibility() {
         if (!visibilityLoaded) {
 //            visibility = Attributes.getValue(this);

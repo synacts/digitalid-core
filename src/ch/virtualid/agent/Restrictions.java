@@ -367,7 +367,7 @@ public final class Restrictions implements Immutable, Blockable, SQLizable {
     /**
      * Checks that these restrictions match the given agent.
      * 
-     * @param other the agent which needs to be matched.
+     * @param agent the agent which needs to be matched.
      * 
      * @return these restrictions.
      * 

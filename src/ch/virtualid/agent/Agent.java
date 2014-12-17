@@ -127,14 +127,14 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
     /**
      * Stores the permissions of this agent or null if not yet loaded.
      * 
-     * @invariant permissions.isNotFrozen() : "The permissions are not frozen.";
+     * @invariant permissions == null || permissions.isNotFrozen() : "The permissions are null or not frozen.";
      */
     protected @Nullable AgentPermissions permissions;
     
     /**
      * Stores the restrictions of this agent or null if not yet loaded.
      * 
-     * @invariant restrictions.match(this) : "The restrictions match this agent.";
+     * @invariant restrictions == null || restrictions.match(this) : "The restrictions are null or match this agent.";
      */
     protected @Nullable Restrictions restrictions;
     

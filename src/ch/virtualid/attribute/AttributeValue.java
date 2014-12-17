@@ -133,6 +133,34 @@ public abstract class AttributeValue implements Immutable, Blockable, SQLizable 
     
     
     /**
+     * Returns whether this value matches the given attribute.
+     * 
+     * @param attribute the attribute which needs to be matched.
+     * 
+     * @return whether this value matches the given attribute.
+     */
+    @Pure
+    public boolean match(@Nonnull Attribute attribute) {
+        return content.getType().isAttributeFor(attribute.getEntity().getIdentity().getCategory());
+    }
+    
+    /**
+     * Checks that this value matches the given attribute.
+     * 
+     * @param attribute the attribute which needs to be matched.
+     * 
+     * @return this attribute value.
+     * 
+     * @throws InvalidEncodingException otherwise.
+     */
+    @Pure
+    public @Nonnull AttributeValue checkMatch(@Nonnull Attribute attribute) throws InvalidEncodingException {
+        if (!match(attribute)) throw new InvalidEncodingException("This value does not match the given attribute.");
+        return this;
+    }
+    
+    
+    /**
      * Returns the signature of this attribute value.
      * 
      * @return the signature of this attribute value.

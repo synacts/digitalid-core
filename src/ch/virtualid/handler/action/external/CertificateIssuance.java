@@ -8,7 +8,6 @@ import ch.virtualid.attribute.CertifiedAttributeValue;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.NonHostAccount;
 import ch.virtualid.exceptions.external.ExternalException;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.ActionReply;
@@ -19,7 +18,6 @@ import ch.virtualid.identity.InternalIdentity;
 import ch.virtualid.identity.SemanticType;
 import ch.xdf.Block;
 import ch.xdf.HostSignatureWrapper;
-import ch.xdf.SelfcontainedWrapper;
 import ch.xdf.SignatureWrapper;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -41,13 +39,6 @@ public final class CertificateIssuance extends CoreServiceExternalAction {
     
     
     /**
-     * Stores the attribute that is certified.
-     * 
-     * @invariant attribute.getType().isAttributeFor(subject.getIdentity().getCategory()) : "The block is an attribute for the subject.";
-     */
-    private final @Nonnull Block attribute;
-    
-    /**
      * Stores the certificate that is issued.
      */
     private final @Nonnull CertifiedAttributeValue certificate;
@@ -57,17 +48,14 @@ public final class CertificateIssuance extends CoreServiceExternalAction {
      * 
      * @param account the account to which this handler belongs.
      * @param subject the subject of this external action.
-     * @param attribute the attribute to certify.
+     * @param content the attribute content to certify.
      * 
-     * @require attribute.getType().isAttributeFor(subject.getCategory()) : "The block is an attribute for the subject.";
+     * @require content.getType().isAttributeFor(subject.getCategory()) : "The block is an attribute for the subject.";
      */
-    public CertificateIssuance(@Nonnull NonHostAccount account, @Nonnull InternalIdentity subject, @Nonnull Block attribute) {
-        super(account, subject);
+    public CertificateIssuance(@Nonnull NonHostAccount account, @Nonnull InternalIdentity subject, @Nonnull Block content) {
+        super(account, subject); // TODO: Replace the parameters with an instance of {@link Certificate}.
         
-        assert attribute.getType().isAttributeFor(subject.getCategory()) : "The block is an attribute for the subject.";
-        
-        this.attribute = attribute;
-        this.certificate = new CertifiedAttributeValue(attribute, subject, account.getIdentity());
+        this.certificate = new CertifiedAttributeValue(content, subject, account.getIdentity());
     }
     
     /**
@@ -86,32 +74,26 @@ public final class CertificateIssuance extends CoreServiceExternalAction {
     private CertificateIssuance(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
-        final @Nonnull SignatureWrapper certificate = SignatureWrapper.decodeWithoutVerifying(block, false, null);
-        if (!(certificate instanceof HostSignatureWrapper)) throw new InvalidEncodingException("The block has to be signed by a host.");
-        this.certificate = (HostSignatureWrapper) certificate;
-        if (!this.certificate.isCertificate()) throw new InvalidEncodingException("The certificate has to be indeed a certificate.");
-        
-        this.attribute = new SelfcontainedWrapper(certificate.getElementNotNull()).getElement();
-        if (!attribute.getType().isAttributeFor(getSubject().getIdentity().getCategory())) throw new InvalidEncodingException("The block is an attribute for the subject.");
+        this.certificate = AttributeValue.get(block, false).toCertifiedAttributeValue();
     }
     
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        return certificate.toBlock();
+        return certificate.toBlock().setType(TYPE);
     }
     
     @Pure
     @Override
     public @Nonnull String toString() {
-        return "Issues a certificate for " + attribute.getType().getAddress() + ".";
+        return "Issues a certificate for " + certificate.getContent().getType().getAddress() + ".";
     }
     
     
     @Pure
     @Override
     public @Nonnull ReadonlyAgentPermissions getAuditPermissions() {
-        return new AgentPermissions(attribute.getType(), false).freeze();
+        return new AgentPermissions(certificate.getContent().getType(), false).freeze();
     }
     
     
@@ -134,7 +116,7 @@ public final class CertificateIssuance extends CoreServiceExternalAction {
         if (!(signature instanceof HostSignatureWrapper)) throw new PacketException(PacketError.AUTHORIZATION, "TODO");
         
         try {
-            certificate.verifyAsCertificate();
+            certificate.verify();
         } catch (@Nonnull IOException | PacketException | ExternalException exception) { // TODO: What to do with the packet exception?
             throw new PacketException(PacketError.METHOD, "TODO", exception);
         }

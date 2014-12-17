@@ -12,6 +12,7 @@ import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.entity.Role;
 import ch.virtualid.entity.Site;
 import ch.virtualid.exceptions.external.ExternalException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.expression.PassiveExpression;
 import ch.virtualid.handler.InternalQuery;
@@ -30,7 +31,6 @@ import ch.virtualid.util.ReadonlyList;
 import ch.xdf.Block;
 import ch.xdf.BooleanWrapper;
 import ch.xdf.ListWrapper;
-import ch.xdf.SignatureWrapper;
 import ch.xdf.StringWrapper;
 import ch.xdf.TupleWrapper;
 import java.io.IOException;
@@ -305,94 +305,60 @@ public final class Attributes implements BothModule {
      * @param published whether the attribute is already published.
      * 
      * @return the value of the given attribute or null if no value is found.
+     * 
+     * @ensure return == null || return.match(attribute) : "The returned value is null or matches the given attribute.";
      */
     public static @Nullable AttributeValue getValue(@Nonnull Attribute attribute, boolean published) throws SQLException {
         final @Nonnull String SQL = "SELECT value FROM " + attribute.getEntity().getSite() + "attribute_value WHERE entity = " + attribute.getEntity() + " AND type = " + attribute.getType() + " AND published = " + published;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
-            if (resultSet.next()) return SignatureWrapper.decodeWithoutVerifying(Block.get(AttributeValue.TYPE, resultSet, 1), published, null);
+            if (resultSet.next()) return AttributeValue.get(resultSet, 1).checkMatch(attribute);
             else return null;
+        } catch (@Nonnull InvalidEncodingException exception) {
+            throw new SQLException("Some values returned by the database are invalid.", exception);
         }
     }
     
     /**
-     * Inserts the value of the attribute with the given type of the given entity with the given replacement policy.
+     * Inserts the given value for the given attribute.
      * 
-     * @param entity the entity of the attribute whose value is to be inserted.
-     * @param type the type of the attribute whose value is to be inserted.
-     * @param published whether the value is to be published.
-     * @param value a block of type {@code attribute@virtualid.ch}.
-     * @param replace whether an existing value is to be replaced or not.
+     * @param attribute the attribute for which the value is to be inserted.
+     * @param published whether the published value is to be inserted.
+     * @param value the value which is to be inserted for the attribute.
+     * 
+     * @require value.match(attribute) : "The value matches the given attribute.";
      */
-    private static void insertValue(@Nonnull Entity entity, @Nonnull SemanticType type, boolean published, @Nonnull Block value, boolean replace) throws SQLException {
-        @Nonnull String statement = (replace ? "REPLACE" : "INSERT") + " INTO attribute_value (entity, type, published, value) VALUES (?, ?, ?, ?)";
-        try (@Nonnull PreparedStatement preparedStatement = connection.prepareStatement(statement)) {
-            preparedStatement.setLong(1, entity.getNumber());
-            preparedStatement.setLong(2, type.getNumber());
+    public static void insertValue(@Nonnull Attribute attribute, boolean published, @Nonnull AttributeValue value) throws SQLException {
+        assert value.match(attribute) : "The value matches the given attribute.";
+        
+        final @Nonnull String SQL = "INSERT INTO " + attribute.getEntity().getSite() + "attribute_value (entity, type, published, value) VALUES (?, ?, ?, ?)";
+        try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
+            attribute.getEntity().set(preparedStatement, 1);
+            attribute.getType().set(preparedStatement, 2);
             preparedStatement.setBoolean(3, published);
-            Database.setBlock(preparedStatement, 4, value);
+            value.set(preparedStatement, 4);
             preparedStatement.executeUpdate();
-        } catch (@Nonnull SQLException exception) {
-            if (type.hasBeenMerged()) insertValue(connection, entity, type, published, value, replace);
-            else throw exception;
         }
     }
     
     /**
-     * Sets the value of the attribute with the given type of the given entity (by inserting a new entry or replacing an existing one).
+     * Deletes the given value from the given attribute.
      * 
-     * @param entity the entity of the attribute whose value is to be set.
-     * @param type the type of the attribute whose value is to be set.
-     * @param published whether the value is to be published.
-     * @param value a block of type {@code attribute@virtualid.ch}.
-     */
-    public static void setValue(@Nonnull Entity entity, @Nonnull SemanticType type, boolean published, @Nonnull Block value) throws SQLException {
-        insertValue(connection, entity, type, published, value, true);
-    }
-    
-    /**
-     * Adds the value of the attribute with the given type of the given entity or throws an {@link SQLException} if the value of the attribute is already set.
+     * @param attribute the attribute whose value is to be deleted.
+     * @param published whether the published value is to be deleted.
+     * @param value the value which is to be deleted from the attribute.
      * 
-     * @param entity the entity of the attribute whose value is to be added.
-     * @param type the type of the attribute whose value is to be added.
-     * @param published whether the value is to be published.
-     * @param value a block of type {@code attribute@virtualid.ch}.
+     * @require value.match(attribute) : "The value matches the given attribute.";
      */
-    public static void addValue(@Nonnull Entity entity, @Nonnull SemanticType type, boolean published, @Nonnull Block value) throws SQLException {
-        insertValue(connection, entity, type, published, value, false);
-    }
-    
-    /**
-     * Removes the value of the attribute with the given type of the given entity.
-     * 
-     * @param entity the entity of the attribute whose value is to be removed.
-     * @param type the type of the attribute whose value is to be removed.
-     * @param published whether to remove the published or unpublished value.
-     */
-    public static void removeValue(@Nonnull Entity entity, @Nonnull SemanticType type, boolean published) throws SQLException {
-        try (@Nonnull Statement statement = connection.createStatement()) {
-            statement.executeUpdate("DELETE FROM attribute_value WHERE entity = " + entity + " AND type = " + type + " AND published = " + published);
-        }
-    }
-    
-    /**
-     * Removes the value of the attribute with the given type of the given entity or throws an {@link SQLException} if the attribute has a different value.
-     * 
-     * @param entity the entity of the attribute whose value is to be removed.
-     * @param type the type of the attribute whose value is to be removed.
-     * @param published whether to remove the published or unpublished value.
-     * @param value a block of type {@code attribute@virtualid.ch}.
-     */
-    public static void removeValue(@Nonnull Entity entity, @Nonnull SemanticType type, boolean published, @Nonnull Block value) throws SQLException {
-        @Nonnull String statement = "DELETE FROM attribute_value WHERE entity = ? AND type = ? AND published = ? AND value = ?";
-        try (@Nonnull PreparedStatement preparedStatement = connection.prepareStatement(statement)) {
-            preparedStatement.setLong(1, entity.getNumber());
-            preparedStatement.setLong(2, type.getNumber());
+    public static void deleteValue(@Nonnull Attribute attribute, boolean published, @Nonnull AttributeValue value) throws SQLException {
+        assert value.match(attribute) : "The value matches the given attribute.";
+        
+        final @Nonnull String SQL = "DELETE FROM " + attribute.getEntity().getSite() + "attribute_value WHERE entity = ? AND type = ? AND published = ? AND value = ?";
+        try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
+            attribute.getEntity().set(preparedStatement, 1);
+            attribute.getType().set(preparedStatement, 2);
             preparedStatement.setBoolean(3, published);
-            Database.setBlock(preparedStatement, 4, value);
-            if (preparedStatement.executeUpdate() == 0) {
-                if (type.hasBeenMerged()) removeValue(connection, entity, type, published, value);
-                else throw new SQLException("The value of the attribute with the type '" + type + "' of the entity '" + entity + "' could not be removed.");
-            }
+            value.set(preparedStatement, 4);
+            if (preparedStatement.executeUpdate() == 0) throw new SQLException("The value of the attribute with the type " + attribute.getType().getAddress() + " of the entity " + attribute.getEntity().getIdentity().getAddress() + " could not be deleted.");
         }
     }
     
@@ -404,19 +370,22 @@ public final class Attributes implements BothModule {
      * @param published whether to remove the published or unpublished value.
      * @param oldValue the old value to be replaced by the new value.
      * @param newValue the new value by which the old value is replaced.
+     * 
+     * @require oldValue.match(attribute) : "The old value matches the given attribute.";
+     * @require newValue.match(attribute) : "The new value matches the given attribute.";
      */
-    public static void replaceValue(@Nonnull Entity entity, @Nonnull SemanticType type, boolean published, @Nonnull Block oldValue, @Nonnull Block newValue) throws SQLException {
-        @Nonnull String statement = "UPDATE attribute_value SET value = ? WHERE entity = ? AND type = ? AND published = ? AND value = ?";
-        try (@Nonnull PreparedStatement preparedStatement = connection.prepareStatement(statement)) {
-            Database.setBlock(preparedStatement, 1, newValue);
-            preparedStatement.setLong(2, entity.getNumber());
-            preparedStatement.setLong(3, type.getNumber());
+    public static void replaceValue(@Nonnull Attribute attribute, boolean published, @Nonnull AttributeValue oldValue, @Nonnull AttributeValue newValue) throws SQLException {
+        assert oldValue.match(attribute) : "The old value matches the given attribute.";
+        assert newValue.match(attribute) : "The new value matches the given attribute.";
+        
+        final @Nonnull String SQL = "UPDATE " + attribute.getEntity().getSite() + "attribute_value SET value = ? WHERE entity = ? AND type = ? AND published = ? AND value = ?";
+        try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
+            newValue.set(preparedStatement, 1);
+            attribute.getEntity().set(preparedStatement, 2);
+            attribute.getType().set(preparedStatement, 3);
             preparedStatement.setBoolean(4, published);
-            Database.setBlock(preparedStatement, 5, oldValue);
-            if (preparedStatement.executeUpdate() == 0) {
-                if (type.hasBeenMerged()) replaceValue(connection, entity, type, published, oldValue, newValue);
-                else throw new SQLException("The value of the attribute with the type '" + type + "' of the entity '" + entity + "' could not be replaced.");
-            }
+            oldValue.set(preparedStatement, 5);
+            if (preparedStatement.executeUpdate() == 0) throw new SQLException("The value of the attribute with the type " + attribute.getType().getAddress() + " of the entity " + attribute.getEntity().getIdentity().getAddress() + " could not be replaced.");
         }
     }
     
