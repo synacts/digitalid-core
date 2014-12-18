@@ -4,24 +4,33 @@ import ch.virtualid.annotations.Capturable;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.concept.NonHostConcept;
 import ch.virtualid.contact.Contact;
-import ch.virtualid.credential.Credential;
+import ch.virtualid.contact.Context;
 import ch.virtualid.entity.NonHostEntity;
+import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
-import ch.virtualid.identifier.Identifier;
-import ch.virtualid.identity.Category;
-import ch.virtualid.identity.Mapper;
+import ch.virtualid.exceptions.packet.PacketException;
+import ch.virtualid.identifier.IdentifierClass;
+import ch.virtualid.identity.Identity;
+import ch.virtualid.identity.Person;
+import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Immutable;
+import ch.virtualid.util.FreezableArray;
+import ch.virtualid.util.FreezableArrayList;
 import ch.virtualid.util.FreezableSet;
+import ch.virtualid.util.ReadonlyArray;
+import ch.virtualid.util.ReadonlyList;
 import ch.xdf.Block;
+import ch.xdf.CredentialsSignatureWrapper;
+import java.io.IOException;
 import java.sql.SQLException;
-import java.util.List;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * This class parses and represents expressions.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 0.8
+ * @version 2.0
  */
 abstract class Expression extends NonHostConcept implements Immutable {
     
@@ -34,6 +43,13 @@ abstract class Expression extends NonHostConcept implements Immutable {
         super(entity);
     }
     
+    
+    /**
+     * Returns whether this expression is public.
+     * 
+     * @return whether this expression is public.
+     */
+    abstract boolean isPublic();
     
     /**
      * Returns whether this expression is active.
@@ -58,101 +74,84 @@ abstract class Expression extends NonHostConcept implements Immutable {
      * @require isActive() : "This expression is active.";
      */
     @Pure
-    abstract @Nonnull @Capturable FreezableSet<Contact> getContacts();
+    abstract @Nonnull @Capturable FreezableSet<Contact> getContacts() throws SQLException;
     
     /**
-     * Returns whether this expression matches the given block.
+     * Returns whether this expression matches the given content.
      * 
-     * @param content the attribute to check.
+     * @param content the attribute content which is to be checked.
      * 
-     * @return whether this expression matches the given block.
+     * @return whether this expression matches the given content.
      * 
      * @require isImpersonal() : "This expression is impersonal.";
      */
     @Pure
-    abstract boolean matches(@Nonnull Block content) throws InvalidEncodingException, SQLException, Exception;
+    abstract boolean matches(@Nonnull Block content);
     
     /**
-     * Returns whether this expression matches the given credentials.
+     * Returns whether this expression matches the given signature.
      * 
-     * @param credentials the credentials to check.
+     * @param signature the signature which is to be checked.
      * 
-     * @return whether this expression matches the given credentials.
+     * @return whether this expression matches the given signature.
      */
     @Pure
-    abstract boolean matches(Credential[] credentials) throws InvalidEncodingException, SQLException, Exception;
+    abstract boolean matches(@Nonnull CredentialsSignatureWrapper signature);
     
     
     /**
-     * Parses the given string with the given host and VID, and returns an appropriate expression.
+     * Returns this expression as a string.
      * 
-     * @param string the string to parse.
-     * @param connection a connection to the database.
-     * @param host the host of the VID.
-     * @param vid the VID of the contexts.
+     * @param operator the operator of the parent binary expression or null otherwise.
+     * @param right whether this expression is the right child of a binary expression.
      * 
-     * @return the expression of the parsed string.
+     * @return this expression as a string.
      */
-    public static Expression parse(@Nonnull NonHostEntity entity, @Nonnull String string) throws InvalidEncodingException {
-        string = string.trim();
-        if (string.isEmpty()) return new EmptyExpression();
-        
-        int index = lastIndexOf(string, Arrays.asList('+', '-'));
-        if (index == -1) index = lastIndexOf(string, Arrays.asList('*'));
-        if (index != -1) return new BinaryExpression(connection, host, vid, string.substring(0, index), string.substring(index + 1, string.length()), string.charAt(index));
-        
-        if (string.charAt(0) == '(' && string.charAt(string.length() - 1) == ')') return parse(string.substring(1, string.length() - 1), connection, host, vid);
-        
-        // The string is now either a context, a contact or a restriction.
-        
-        String[] symbols = new String[]{"=", "≠", "<", ">", "≤", "≥", "/", "!/", "|", "!|", "\\", "!\\"};
-        for (String symbol : symbols) {
-            index = string.indexOf(symbol);
-            if (index != -1) {
-                String identifier = string.substring(0, index).trim();
-                if (!Identifier.isValid(identifier)) throw new InvalidEncodingException("The string '" + string + "' does not start with a valid identifier.");
-                long type = Mapper.getVid(identifier);
-                if (!Category.isSemanticType(type)) throw new InvalidEncodingException("The identifier '" + identifier + "' does not denote a semantic type.");
-                String substring = string.substring(index + symbol.length(), string.length()).trim();
-                if (substring.startsWith("\"") && substring.endsWith("\"") || substring.matches("\\d+")) return new RestrictionExpression(type, substring, symbol);
-                else throw new InvalidEncodingException("The string '" + substring + "' is neither a quoted string nor a number.");
-            }
-        }
-        
-        if (string.equals("everybody")) return new RestrictionExpression(0, null, null);
-        
-        if (Identifier.isValid(string)) {
-            long contact = Mapper.getVid(string);
-            if (Category.isPerson(contact)) return new ContactExpression(contact);
-            if (Category.isSemanticType(contact)) return new RestrictionExpression(contact, null, null);
-            throw new InvalidEncodingException("The string '" + string + "' is a valid identifier but neither a person nor a semantic type.");
-        }
-        
-        if (string.matches("\\d+")) return new ContextExpression(connection, host, vid, Integer.parseInt(string));
-        
-        throw new InvalidEncodingException("The string '" + string + "' could not be parsed.");
+    @Pure
+    abstract @Nonnull String toString(@Nullable Character operator, boolean right);
+    
+    @Pure
+    @Override
+    public final @Nonnull String toString() {
+        return toString(null, false);
     }
     
+    
     /**
-     * Returns the last index of one of the characters in the given string considering quotation marks and parentheses.
+     * Stores the characters for addition and subtraction.
+     */
+    static final @Nonnull ReadonlyList<Character> addition = new FreezableArrayList<Character>('+', '-').freeze();
+    
+    /**
+     * Stores the character for multiplication.
+     */
+    static final @Nonnull ReadonlyList<Character> multiplication = new FreezableArrayList<Character>('*').freeze();
+    
+    /**
+     * Stores the characters for all binary operators.
+     */
+    static final @Nonnull ReadonlyList<Character> operators = new FreezableArrayList<Character>('+', '-', '*').freeze();
+    
+    /**
+     * Stores the symbols for restriction.
+     */
+    static final @Nonnull ReadonlyArray<String> symbols = new FreezableArray<String>("=", "≠", "<", ">", "≤", "≥", "/", "!/", "|", "!|", "\\", "!\\").freeze();
+    
+    /**
+     * Returns the last index of one of the given characters in the given string considering quotation marks and parentheses.
      * 
      * @param string the string to parse.
      * @param characters the characters to look for.
      * 
-     * @return the last index of one of the characters in the given string considering quotation marks and parentheses.
-     * 
-     * @require string != null : "The string is not null.";
-     * @require characters != null : "The characters is not null.";
+     * @return the last index of one of the given characters in the given string considering quotation marks and parentheses.
      */
-    private static int lastIndexOf(String string, List<Character> characters) throws InvalidEncodingException {
-        assert string != null : "The string is not null.";
-        assert characters != null : "The characters is not null.";
-        
+    private static int lastIndexOf(@Nonnull String string, @Nonnull ReadonlyList<Character> characters) throws InvalidEncodingException {
         int parenthesesCounter = 0;
         boolean quotation = false;
         
-        for (int i = string.length() - 1; i >= 0; i--) {
-            char c = string.charAt(i);
+        final int length = string.length();
+        for (int i = length - 1; i >= 0; i--) {
+            final char c = string.charAt(i);
             
             // Check if the char is in a quotation.
             if (quotation) {
@@ -168,7 +167,7 @@ abstract class Expression extends NonHostConcept implements Immutable {
                 parenthesesCounter++;
                 continue;
             } else if (c == '(') {
-                if (parenthesesCounter <= 0) throw new InvalidEncodingException("The string '" + string + "' has more opening than closing parentheses.");
+                if (parenthesesCounter == 0) throw new InvalidEncodingException("The string '" + string + "' has more opening than closing parentheses.");
                 parenthesesCounter--;
                 continue;
             }
@@ -180,6 +179,79 @@ abstract class Expression extends NonHostConcept implements Immutable {
         if (quotation) throw new InvalidEncodingException("The string '" + string + "' has more closing than opening quotation marks.");
         
         return -1;
+    }
+    
+    /**
+     * Returns whether the given string is quoted.
+     * 
+     * @param string the string to be checked.
+     * 
+     * @return whether the given string is quoted.
+     */
+    static boolean isQuoted(@Nonnull String string) {
+        return string.startsWith("\"") && string.endsWith("\"");
+    }
+    
+    /**
+     * Removes the quotes from the given string.
+     * 
+     * @param string the string to be unquoted.
+     * 
+     * @return the given string without quotes.
+     * 
+     * @require isQuoted(string) : "The string is quoted.";
+     */
+    static @Nonnull String removeQuotes(@Nonnull String string) {
+        assert isQuoted(string) : "The string is quoted.";
+        
+        return string.substring(1, string.length() - 1);
+    }
+    
+    /**
+     * Parses the given string for the given entity.
+     * 
+     * @param entity the entity of the returned expression.
+     * @param string the string which is to be parsed.
+     * 
+     * @return the expression of the parsed string.
+     */
+    static Expression parse(@Nonnull NonHostEntity entity, @Nonnull String string) throws SQLException, IOException, PacketException, ExternalException {
+        if (string.trim().isEmpty()) return new EmptyExpression(entity);
+        
+        int index = lastIndexOf(string, addition);
+        if (index == -1) index = lastIndexOf(string, multiplication);
+        if (index != -1) return new BinaryExpression(entity, string.substring(0, index), string.substring(index + 1, string.length()), string.charAt(index));
+        
+        if (string.charAt(0) == '(' && string.charAt(string.length() - 1) == ')') return parse(entity, string.substring(1, string.length() - 1));
+        
+        // The string is now either a context, a contact or a restriction.
+        
+        for (final @Nonnull String symbol : symbols) {
+            index = string.indexOf(symbol);
+            if (index != -1) {
+                @Nonnull String identifier = string.substring(0, index).trim();
+                if (isQuoted(identifier)) identifier = removeQuotes(identifier);
+                if (!IdentifierClass.isValid(identifier)) throw new InvalidEncodingException("The string '" + string + "' does not start with a valid identifier.");
+                final @Nonnull SemanticType type = IdentifierClass.create(identifier).getIdentity().toSemanticType().checkIsAttributeType();
+                final @Nonnull String substring = string.substring(index + symbol.length(), string.length()).trim();
+                if (isQuoted(substring) || substring.matches("\\d+")) return new RestrictionExpression(entity, type, substring, symbol);
+                else throw new InvalidEncodingException("The string '" + substring + "' is neither a quoted string nor a number.");
+            }
+        }
+        
+        if (string.equals("everybody")) return new EverybodyExpression(entity);
+        
+        if (string.matches("\\d+")) return new ContextExpression(entity, Context.get(entity, Long.parseLong(string)));
+        
+        final @Nonnull String identifier = isQuoted(string) ? removeQuotes(string) : string;
+        if (IdentifierClass.isValid(string)) {
+            final @Nonnull Identity identity = IdentifierClass.create(identifier).getIdentity();
+            if (identity instanceof Person) return new ContactExpression(entity, Contact.get(entity, (Person) identity));
+            if (identity instanceof SemanticType) return new RestrictionExpression(entity, (SemanticType) identity, null, null);
+            throw new InvalidEncodingException("The string '" + string + "' is a valid identifier but neither a person nor a semantic type.");
+        }
+        
+        throw new InvalidEncodingException("The string '" + string + "' could not be parsed.");
     }
     
 }

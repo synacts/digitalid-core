@@ -4,12 +4,15 @@ import ch.virtualid.annotations.Pure;
 import ch.virtualid.concept.NonHostConcept;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.NonHostEntity;
+import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
 import ch.xdf.Block;
 import ch.xdf.StringWrapper;
+import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
@@ -38,7 +41,7 @@ abstract class AbstractExpression extends NonHostConcept implements Immutable, B
      * @param entity the entity to which this abstract expression belongs.
      * @param string the string which is to be parsed for the expression.
      */
-    AbstractExpression(@Nonnull NonHostEntity entity, @Nonnull String string) throws InvalidEncodingException {
+    AbstractExpression(@Nonnull NonHostEntity entity, @Nonnull String string) throws SQLException, IOException, PacketException, ExternalException {
         super(entity);
         
         this.expression = Expression.parse(entity, string);
@@ -53,7 +56,7 @@ abstract class AbstractExpression extends NonHostConcept implements Immutable, B
      * 
      * @require block.getType().isBasedOn(StringWrapper.TYPE) : "The block is based on the string type.";
      */
-    AbstractExpression(@Nonnull NonHostEntity entity, @Nonnull Block block) throws InvalidEncodingException {
+    AbstractExpression(@Nonnull NonHostEntity entity, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         this(entity, new StringWrapper(block).getString());
     }
     

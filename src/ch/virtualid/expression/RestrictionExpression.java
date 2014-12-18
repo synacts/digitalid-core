@@ -1,14 +1,15 @@
 package ch.virtualid.expression;
 
 import ch.virtualid.credential.Credential;
+import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.identity.SemanticType;
 import ch.xdf.Block;
 import ch.xdf.SelfcontainedWrapper;
 import ch.xdf.StringWrapper;
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.List;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * This class models restriction expressions.
@@ -19,24 +20,19 @@ import javax.annotation.Nonnull;
 final class RestrictionExpression extends Expression {
 
     /**
-     * Stores the symbols for restricting attribute values.
-     */
-    private final @Nonnull List<String> symbols = Arrays.asList("=", "≠", "<", ">", "≤", "≥", "/", "!/", "|", "!|", "\\", "!\\");
-
-    /**
      * Stores the attribute type for the restriction or zero for public access.
      */
-    private final long type;
+    private final @Nonnull SemanticType type;
 
     /**
      * Stores the string for the restriction.
      */
-    private final String string;
+    private final @Nonnull String string;
 
     /**
      * Stores the symbol of this expression.
      */
-    private final String symbol;
+    private final @Nonnull String symbol;
 
     /**
      * Creates a new restriction expression with the given type, string and symbol.
@@ -50,8 +46,8 @@ final class RestrictionExpression extends Expression {
      * @require string == null || string.startsWith("\"") && string.endsWith("\"") || string.matches("\\d+") : "If not null, the string either is a string or a number.";
      * @require symbol == null || symbols.contains(symbol) : "If not null, the symbol is valid.";
      */
-    RestrictionExpression(long type, String string, String symbol) throws SQLException {
-        super(null, null, 0);
+    RestrictionExpression(@Nonnull NonHostEntity entity, @Nonnull SemanticType type, @Nullable String string, @Nullable String symbol) {
+        super(entity);
 
         assert type == 0 || Mapper.isVid(type) && Category.isSemanticType(type) : "The second number is zero or denote a semantic type.";
         assert (string == null) == (symbol == null) : "Either both string and symbol are null or none of them.";
@@ -163,4 +159,5 @@ final class RestrictionExpression extends Expression {
     public String toString() {
         try { return (type == 0 ? "everybody" : Mapper.getIdentifier(type)) + (symbol == null ? "" : symbol) + (string == null ? "" : string); } catch (SQLException exception) { return "ERROR" + symbol + string; }
     }
+    
 }

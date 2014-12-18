@@ -5,6 +5,7 @@ import ch.virtualid.annotations.Pure;
 import ch.virtualid.interfaces.Freezable;
 import ch.virtualid.interfaces.Immutable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -71,6 +72,17 @@ public class FreezableArrayList<E> extends ArrayList<E> implements FreezableList
     public FreezableArrayList(@Nullable E element) {
         this();
         add(element);
+    }
+    
+    /**
+     * Creates a new freezable array list with the given elements.
+     * 
+     * @param elements the elements to add to the newly created list.
+     */
+    @SuppressWarnings("unchecked")
+    public FreezableArrayList(@Nonnull E... elements) {
+        this(elements.length);
+        addAll(Arrays.asList(elements));
     }
     
     /**

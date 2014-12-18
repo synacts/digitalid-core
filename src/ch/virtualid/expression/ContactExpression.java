@@ -1,8 +1,11 @@
 package ch.virtualid.expression;
 
+import ch.virtualid.contact.Contact;
 import ch.virtualid.credential.Credential;
+import ch.virtualid.entity.NonHostEntity;
 import ch.xdf.Block;
 import java.sql.SQLException;
+import javax.annotation.Nonnull;
 
 /**
  * This class models contact expressions.
@@ -15,7 +18,7 @@ final class ContactExpression extends Expression {
     /**
      * Stores the contact of this expression.
      */
-    private final long contact;
+    private final @Nonnull Contact contact;
 
     /**
      * Creates a new contact expression with the given contact.
@@ -24,8 +27,8 @@ final class ContactExpression extends Expression {
      * 
      * @require Mapper.isVid(contact) && Category.isSemanticType(contact) : "The second number has to denote a person.";
      */
-    ContactExpression(long contact) throws SQLException {
-        super(null, null, 0);
+    ContactExpression(@Nonnull NonHostEntity entity, @Nonnull Contact contact) {
+        super(entity);
 
 //        assert Mapper.isVid(contact) && Category.isPerson(contact) : "The second number has to denote a person.";
 
@@ -83,4 +86,5 @@ final class ContactExpression extends Expression {
         return "TODO";
 //        try { return Mapper.getIdentifier(contact); } catch (SQLException exception) { return "ERROR"; }
     }
+    
 }

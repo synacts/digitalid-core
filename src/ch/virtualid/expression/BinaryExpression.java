@@ -2,11 +2,14 @@ package ch.virtualid.expression;
 
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.credential.Credential;
+import ch.virtualid.entity.NonHostEntity;
+import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
-import ch.virtualid.server.Host;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.xdf.Block;
-import java.sql.Connection;
+import java.io.IOException;
 import java.sql.SQLException;
+import javax.annotation.Nonnull;
 
 /**
  * This class models binary expressions.
@@ -15,22 +18,22 @@ import java.sql.SQLException;
  * @version 0.8
  */
 final class BinaryExpression extends Expression {
-
+    
     /**
      * Stores the left child of this binary expression.
      */
     private final Expression left;
-
+    
     /**
      * Stores the right child of this binary expression.
      */
     private final Expression right;
-
+    
     /**
      * Stores the operator this binary expression.
      */
     private final char operator;
-
+    
     /**
      * Creates a new binary expression with the given left and right children.
      * 
@@ -40,22 +43,21 @@ final class BinaryExpression extends Expression {
      * @param left the left child to parse.
      * @param right the right child to parse.
      * @param operator the operator to use.
-     * @require left != null : "The left child is not null.";
-     * @require right != null : "The right child is not null.";
+     * 
      * @require operator == '+' || operator == '-' || operator == '*' : "The operator is either plus, minus or times.";
      */
-    BinaryExpression(Connection connection, Host host, long vid, String left, String right, char operator) throws InvalidEncodingException, SQLException, Exception {
-        super(connection, host, vid);
-
+    BinaryExpression(@Nonnull NonHostEntity entity, @Nonnull String left, @Nonnull String right, @Nonnull char operator) throws SQLException, IOException, PacketException, ExternalException {
+        super(entity);
+        
         assert left != null : "The left child is not null.";
         assert right != null : "The right child is not null.";
         assert operator == '+' || operator == '-' || operator == '*' : "The operator is either plus, minus or times.";
-
-        this.left = Expression.parse(left, connection, host, vid);
-        this.right = Expression.parse(right, connection, host, vid);
+        
+        this.left = Expression.parse(entity, left);
+        this.right = Expression.parse(entity, right);
         this.operator = operator;
     }
-
+    
     /**
      * Returns whether this expression is active.
      * 
@@ -65,7 +67,7 @@ final class BinaryExpression extends Expression {
     public boolean isActive() {
         return left.isActive() && right.isActive();
     }
-
+    
     /**
      * Returns whether this expression matches the given block (for certification restrictions).
      * 
@@ -76,7 +78,7 @@ final class BinaryExpression extends Expression {
     @Override
     public boolean matches(Block attribute) throws InvalidEncodingException, SQLException, Exception {
         assert attribute != null : "The attribute is not null.";
-
+        
         switch (operator) {
             case '+': return left.matches(attribute) || right.matches(attribute);
             case '-': return left.matches(attribute) && !right.matches(attribute);
@@ -84,7 +86,7 @@ final class BinaryExpression extends Expression {
             default: return false;
         }
     }
-
+    
     /**
      * Returns whether this expression matches the given credentials.
      * 
@@ -100,7 +102,7 @@ final class BinaryExpression extends Expression {
             default: return false;
         }
     }
-
+    
     /**
      * Returns this expression as a string.
      * 
@@ -111,4 +113,5 @@ final class BinaryExpression extends Expression {
     public String toString() {
         return "(" + left + operator + right + ")";
     }
+    
 }

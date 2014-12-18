@@ -4,6 +4,7 @@ import ch.virtualid.annotations.Capturable;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.interfaces.Freezable;
 import ch.virtualid.interfaces.Immutable;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -71,6 +72,17 @@ public class FreezableLinkedList<E> extends LinkedList<E> implements FreezableLi
     public FreezableLinkedList(@Nullable E element) {
         this();
         add(element);
+    }
+    
+    /**
+     * Creates a new freezable linked list with the given elements.
+     * 
+     * @param elements the elements to add to the newly created list.
+     */
+    @SuppressWarnings("unchecked")
+    public FreezableLinkedList(@Nonnull E... elements) {
+        this();
+        addAll(Arrays.asList(elements));
     }
     
     /**

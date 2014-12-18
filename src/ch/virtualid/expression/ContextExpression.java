@@ -1,10 +1,11 @@
 package ch.virtualid.expression;
 
+import ch.virtualid.contact.Context;
 import ch.virtualid.credential.Credential;
-import ch.virtualid.server.Host;
+import ch.virtualid.entity.NonHostEntity;
 import ch.xdf.Block;
-import java.sql.Connection;
 import java.sql.SQLException;
+import javax.annotation.Nonnull;
 
 /**
  * This class models context expressions.
@@ -17,25 +18,15 @@ final class ContextExpression extends Expression {
     /**
      * Stores the context of this expression.
      */
-    private final int context;
+    private final @Nonnull Context context;
 
     /**
      * Creates a new context expression with the given context.
      * 
-     * @param connection a connection to the database.
-     * @param host the host of the VID.
-     * @param vid the VID of the contexts.
      * @param context the context to use.
-     * @require connection != null : "The connection is not null.";
-     * @require host != null : "The host is not null.";
-     * @require Mapper.isVid(vid) : "The first number has to denote a VID.";
      */
-    ContextExpression(Connection connection, Host host, long vid, int context) throws SQLException {
-        super(connection, host, vid);
-
-        assert connection != null : "The connection is not null.";
-        assert host != null : "The host is not null.";
-//        assert Mapper.isVid(vid) : "The first number has to denote a VID.";
+    ContextExpression(@Nonnull NonHostEntity entity, @Nonnull Context context) {
+        super(entity);
 
         this.context = context;
     }
@@ -92,4 +83,5 @@ final class ContextExpression extends Expression {
     public String toString() {
         return Integer.toString(context);
     }
+    
 }

@@ -7,20 +7,20 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 
 /**
- * This class models empty expressions.
+ * This class models everybody expressions.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 0.8
  */
-final class EmptyExpression extends Expression {
-
+final class EverybodyExpression extends Expression {
+    
     /**
      * Creates a new empty expression.
      */
-    EmptyExpression(@Nonnull NonHostEntity entity) {
+    EverybodyExpression(@Nonnull NonHostEntity entity) {
         super(entity);
     }
-
+    
     /**
      * Returns whether this expression is active.
      * 
@@ -28,9 +28,9 @@ final class EmptyExpression extends Expression {
      */
     @Override
     public boolean isActive() {
-        return true;
+        return false;
     }
-
+    
     /**
      * Returns whether this expression matches the given block (for certification restrictions).
      * 
@@ -41,7 +41,7 @@ final class EmptyExpression extends Expression {
     public boolean matches(Block attribute) {
         return true;
     }
-
+    
     /**
      * Returns whether this expression matches the given credentials.
      * 
@@ -50,9 +50,9 @@ final class EmptyExpression extends Expression {
      */
     @Override
     public boolean matches(Credential[] credentials) throws SQLException, Exception {
-        return false;
+        return true;
     }
-
+    
     /**
      * Returns this expression as a string.
      * 

@@ -4,7 +4,8 @@ import ch.virtualid.annotations.Capturable;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.contact.Contact;
 import ch.virtualid.entity.NonHostEntity;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.exceptions.external.ExternalException;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
@@ -12,6 +13,7 @@ import ch.virtualid.interfaces.SQLizable;
 import ch.virtualid.util.FreezableSet;
 import ch.xdf.Block;
 import ch.xdf.StringWrapper;
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
@@ -36,7 +38,7 @@ public final class ActiveExpression extends AbstractExpression implements Immuta
      * @param entity the entity to which this active expression belongs.
      * @param string the string which is to be parsed for the expression.
      */
-    public ActiveExpression(@Nonnull NonHostEntity entity, @Nonnull String string) throws InvalidEncodingException {
+    public ActiveExpression(@Nonnull NonHostEntity entity, @Nonnull String string) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, string);
     }
     
@@ -48,7 +50,7 @@ public final class ActiveExpression extends AbstractExpression implements Immuta
      * 
      * @require block.getType().isBasedOn(StringWrapper.TYPE) : "The block is based on the string type.";
      */
-    public ActiveExpression(@Nonnull NonHostEntity entity, @Nonnull Block block) throws InvalidEncodingException {
+    public ActiveExpression(@Nonnull NonHostEntity entity, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, block);
     }
     
@@ -71,7 +73,7 @@ public final class ActiveExpression extends AbstractExpression implements Immuta
      * @return the contacts denoted by this active expression.
      */
     @Pure
-    public @Nonnull @Capturable FreezableSet<Contact> getContacts() {
+    public @Nonnull @Capturable FreezableSet<Contact> getContacts() throws SQLException {
         return getExpression().getContacts();
     }
     
@@ -89,7 +91,7 @@ public final class ActiveExpression extends AbstractExpression implements Immuta
     public static @Nonnull ActiveExpression get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
         try {
             return new ActiveExpression(entity, resultSet.getString(columnIndex));
-        } catch (@Nonnull InvalidEncodingException exception) {
+        } catch (@Nonnull IOException | PacketException | ExternalException exception) {
             throw new SQLException("The expression returned by the database is invalid.", exception);
         }
     }

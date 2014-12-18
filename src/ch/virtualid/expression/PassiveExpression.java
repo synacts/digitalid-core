@@ -2,13 +2,15 @@ package ch.virtualid.expression;
 
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.NonHostEntity;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.exceptions.external.ExternalException;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
 import ch.xdf.Block;
 import ch.xdf.StringWrapper;
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
@@ -33,7 +35,7 @@ public final class PassiveExpression extends AbstractExpression implements Immut
      * @param entity the entity to which this passive expression belongs.
      * @param string the string which is to be parsed for the expression.
      */
-    public PassiveExpression(@Nonnull NonHostEntity entity, @Nonnull String string) throws InvalidEncodingException {
+    public PassiveExpression(@Nonnull NonHostEntity entity, @Nonnull String string) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, string);
     }
     
@@ -45,7 +47,7 @@ public final class PassiveExpression extends AbstractExpression implements Immut
      * 
      * @require block.getType().isBasedOn(StringWrapper.TYPE) : "The block is based on the string type.";
      */
-    public PassiveExpression(@Nonnull NonHostEntity entity, @Nonnull Block block) throws InvalidEncodingException {
+    public PassiveExpression(@Nonnull NonHostEntity entity, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, block);
     }
     
@@ -75,7 +77,7 @@ public final class PassiveExpression extends AbstractExpression implements Immut
     public static @Nonnull PassiveExpression get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
         try {
             return new PassiveExpression(entity, resultSet.getString(columnIndex));
-        } catch (@Nonnull InvalidEncodingException exception) {
+        } catch (@Nonnull IOException | PacketException | ExternalException exception) {
             throw new SQLException("The expression returned by the database is invalid.", exception);
         }
     }
