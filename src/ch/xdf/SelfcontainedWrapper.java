@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Wraps a block with the syntactic type {@code selfcontained@xdf.ch} for encoding and decoding.
@@ -46,6 +47,37 @@ public final class SelfcontainedWrapper extends BlockWrapper implements Immutabl
     
     
     /**
+     * Returns the given block in a selfcontained wrapper of the given type or null if the given block is null.
+     * 
+     * @param type the type of the returned selfcontained wrapper.
+     * @param block the block to return in a selfcontained wrapper.
+     * 
+     * @return the given block in a selfcontained wrapper of the given type or null if the given block is null.
+     * 
+     * @require type.isLoaded() : "The type declaration is loaded.";
+     * @require type.isBasedOn(TYPE) : "The given type is based on the indicated syntactic type.";
+     */
+    @Pure
+    public static @Nullable Block toBlock(@Nonnull SemanticType type, @Nullable Block block) {
+        return block == null ? null : new SelfcontainedWrapper(type, block).toBlock();
+    }
+    
+    /**
+     * Returns the element contained in the given block or null if the given block is null.
+     * 
+     * @param block the block containing the element which is to be returned.
+     * 
+     * @return the element contained in the given block or null if the given block is null.
+     * 
+     * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated syntactic type.";
+     */
+    @Pure
+    public static @Nullable Block toElement(@Nullable Block block) throws SQLException, IOException, PacketException, ExternalException {
+        return block == null ? null : new SelfcontainedWrapper(block).getElement();
+    }
+    
+    
+    /**
      * Stores the tuple of this wrapper.
      * 
      * @invariant tuple.getType().equals(IMPLEMENTATION) : "The tuple consists of an identifier and an element.";
@@ -64,7 +96,7 @@ public final class SelfcontainedWrapper extends BlockWrapper implements Immutabl
      * @param element the element to encode into a new block.
      * 
      * @require type.isLoaded() : "The type declaration is loaded.";
-     * @require type.isBasedOn(getSyntacticType()) : "The given type is based on the indicated syntactic type.";
+     * @require type.isBasedOn(TYPE) : "The given type is based on the indicated syntactic type.";
      */
     public SelfcontainedWrapper(@Nonnull SemanticType type, @Nonnull Block element) {
         super(type);
@@ -81,7 +113,7 @@ public final class SelfcontainedWrapper extends BlockWrapper implements Immutabl
      * @param element the element to encode into a new block.
      * 
      * @require type.isLoaded() : "The type declaration is loaded.";
-     * @require type.isBasedOn(getSyntacticType()) : "The given type is based on the indicated syntactic type.";
+     * @require type.isBasedOn(TYPE) : "The given type is based on the indicated syntactic type.";
      */
     public SelfcontainedWrapper(@Nonnull SemanticType type, @Nonnull Blockable element) {
         this(type, element.toBlock());
@@ -92,7 +124,7 @@ public final class SelfcontainedWrapper extends BlockWrapper implements Immutabl
      * 
      * @param block the block to wrap and decode.
      * 
-     * @require block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
+     * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated syntactic type.";
      */
     public SelfcontainedWrapper(@Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(block);

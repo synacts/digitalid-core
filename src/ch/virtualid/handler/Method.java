@@ -7,7 +7,7 @@ import ch.virtualid.agent.OutgoingRole;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.attribute.AttributeValue;
+import ch.virtualid.attribute.CertifiedAttributeValue;
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.contact.Authentications;
 import ch.virtualid.contact.Contact;
@@ -288,7 +288,7 @@ public abstract class Method extends Handler {
         
         // TODO: Delete the following two lines and implement a real lookup!
         final @Nullable ReadonlyList<Credential> credentials = null;
-        final @Nullable ReadonlyList<AttributeValue> certificates = null;
+        final @Nullable ReadonlyList<CertifiedAttributeValue> certificates = null;
         
         if (reference instanceof ExternalQuery) {
             final @Nonnull ReadonlyAuthentications authentications;

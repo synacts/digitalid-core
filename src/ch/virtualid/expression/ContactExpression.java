@@ -1,90 +1,92 @@
 package ch.virtualid.expression;
 
+import ch.virtualid.annotations.Capturable;
+import ch.virtualid.annotations.Pure;
 import ch.virtualid.contact.Contact;
-import ch.virtualid.credential.Credential;
 import ch.virtualid.entity.NonHostEntity;
+import static ch.virtualid.expression.Expression.operators;
+import ch.virtualid.interfaces.Immutable;
+import ch.virtualid.util.FreezableLinkedHashSet;
+import ch.virtualid.util.FreezableSet;
 import ch.xdf.Block;
+import ch.xdf.CredentialsSignatureWrapper;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * This class models contact expressions.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 0.8
+ * @version 2.0
  */
-final class ContactExpression extends Expression {
-
+final class ContactExpression extends Expression implements Immutable {
+    
     /**
      * Stores the contact of this expression.
      */
     private final @Nonnull Contact contact;
-
+    
     /**
      * Creates a new contact expression with the given contact.
      * 
      * @param contact the contact to use.
-     * 
-     * @require Mapper.isVid(contact) && Category.isSemanticType(contact) : "The second number has to denote a person.";
      */
     ContactExpression(@Nonnull NonHostEntity entity, @Nonnull Contact contact) {
         super(entity);
-
-//        assert Mapper.isVid(contact) && Category.isPerson(contact) : "The second number has to denote a person.";
-
+        
         this.contact = contact;
     }
-
-    /**
-     * Returns whether this expression is active.
-     * 
-     * @return whether this expression is active.
-     */
+    
+    
+    @Pure
     @Override
-    public boolean isActive() {
+    boolean isPublic() {
+        return false;
+    }
+    
+    @Pure
+    @Override
+    boolean isActive() {
         return true;
     }
-
-    /**
-     * Returns whether this expression matches the given block (for certification restrictions).
-     * 
-     * @param attribute the attribute to check.
-     * @return whether this expression matches the given block.
-     * @require false : "This method should never be called.";
-     */
+    
+    @Pure
     @Override
-    public boolean matches(Block attribute) {
-        assert false : "This method should never be called.";
-
+    boolean isImpersonal() {
         return false;
     }
-
-    /**
-     * Returns whether this expression matches the given credentials.
-     * 
-     * @param credentials the credentials to check.
-     * @return whether this expression matches the given credentials.
-     */
+    
+    
+    @Pure
     @Override
-    public boolean matches(Credential[] credentials) throws SQLException, Exception {
-        if (credentials == null) return false;
-
-        for (Credential credential : credentials) {
-//            if (credential.getAttribute() == null && Mapper.getVid(credential.getIdentifier()) == contact) return true;
-        }
-
+    @Nonnull @Capturable FreezableSet<Contact> getContacts() throws SQLException {
+        assert isActive() : "This expression is active.";
+        
+        return new FreezableLinkedHashSet<Contact>(contact);
+    }
+    
+    @Pure
+    @Override
+    boolean matches(@Nonnull Block attributeContent) {
+        assert isImpersonal() : "This expression is impersonal.";
+        
         return false;
     }
-
-    /**
-     * Returns this expression as a string.
-     * 
-     * @return this expression as a string.
-     */
+    
+    @Pure
     @Override
-    public String toString() {
-        return "TODO";
-//        try { return Mapper.getIdentifier(contact); } catch (SQLException exception) { return "ERROR"; }
+    boolean matches(@Nonnull CredentialsSignatureWrapper signature) {
+        return signature.isIdentityBased() && !signature.isRoleBased() && signature.getIssuer().equals(contact.getPerson());
+    }
+    
+    
+    @Pure
+    @Override
+    @Nonnull String toString(@Nullable Character operator, boolean right) {
+        assert operator == null || operators.contains(operator) : "The operator is valid.";
+        
+        return addQuotesIfNecessary(contact.getPerson());
     }
     
 }

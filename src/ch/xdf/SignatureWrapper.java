@@ -102,7 +102,7 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
      * @param audit the audit or null if no audit is or shall be appended.
      * 
      * @require type.isLoaded() : "The type declaration is loaded.";
-     * @require type.isBasedOn(getSyntacticType()) : "The given type is based on the indicated syntactic type.";
+     * @require type.isBasedOn(TYPE) : "The given type is based on the indicated syntactic type.";
      * @require element == null || element.getType().isBasedOn(type.getParameters().getNotNull(0)) : "The element is either null or based on the parameter of the given type.";
      * 
      * @ensure isVerified() : "This signature is verified.";
@@ -127,7 +127,7 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
      * @param subject the identifier of the identity about which a statement is made or null if not required.
      * 
      * @require type.isLoaded() : "The type declaration is loaded.";
-     * @require type.isBasedOn(getSyntacticType()) : "The given type is based on the indicated syntactic type.";
+     * @require type.isBasedOn(TYPE) : "The given type is based on the indicated syntactic type.";
      * @require element == null || element.getType().isBasedOn(type.getParameters().getNotNull(0)) : "The element is either null or based on the parameter of the given type.";
      * 
      * @ensure isVerified() : "This signature is verified.";
@@ -152,7 +152,7 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
      * @param subject the identifier of the identity about which a statement is made or null if not required.
      * 
      * @require type.isLoaded() : "The type declaration is loaded.";
-     * @require type.isBasedOn(getSyntacticType()) : "The given type is based on the indicated syntactic type.";
+     * @require type.isBasedOn(TYPE) : "The given type is based on the indicated syntactic type.";
      * @require element == null || element.getType().isBasedOn(type.getParameters().getNotNull(0)) : "The element is either null or based on the parameter of the given type.";
      * 
      * @ensure isVerified() : "This signature is verified.";
@@ -170,7 +170,7 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
      * 
      * @return the signature wrapper of the appropriate subclass.
      * 
-     * @require block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
+     * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated syntactic type.";
      */
     @Pure
     public static @Nonnull SignatureWrapper decode(@Nonnull Block block, @Nullable Entity entity) throws SQLException, IOException, PacketException, ExternalException {
@@ -188,7 +188,7 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
      * 
      * @return the signature wrapper of the appropriate subclass.
      * 
-     * @require block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
+     * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated syntactic type.";
      */
     @Pure
     public static @Nonnull SignatureWrapper decodeWithoutVerifying(@Nonnull Block block, boolean verified, @Nullable Entity entity) throws SQLException, IOException, PacketException, ExternalException {
@@ -210,7 +210,7 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
      * @param block the block to be wrapped and decoded.
      * @param verified whether the signature is already verified.
      * 
-     * @require block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
+     * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated syntactic type.";
      */
     SignatureWrapper(@Nonnull Block block, boolean verified) throws InvalidEncodingException {
         super(block);

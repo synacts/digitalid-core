@@ -1,65 +1,84 @@
 package ch.virtualid.expression;
 
-import ch.virtualid.credential.Credential;
+import ch.virtualid.annotations.Capturable;
+import ch.virtualid.annotations.Pure;
+import ch.virtualid.contact.Contact;
 import ch.virtualid.entity.NonHostEntity;
+import static ch.virtualid.expression.Expression.operators;
+import ch.virtualid.interfaces.Immutable;
+import ch.virtualid.util.FreezableLinkedHashSet;
+import ch.virtualid.util.FreezableSet;
 import ch.xdf.Block;
+import ch.xdf.CredentialsSignatureWrapper;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * This class models empty expressions.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 0.8
+ * @version 2.0
  */
-final class EmptyExpression extends Expression {
-
+final class EmptyExpression extends Expression implements Immutable {
+    
     /**
      * Creates a new empty expression.
+     * 
+     * @param entity the entity to which this expression belongs.
      */
     EmptyExpression(@Nonnull NonHostEntity entity) {
         super(entity);
     }
-
-    /**
-     * Returns whether this expression is active.
-     * 
-     * @return whether this expression is active.
-     */
+    
+    
+    @Pure
     @Override
-    public boolean isActive() {
-        return true;
-    }
-
-    /**
-     * Returns whether this expression matches the given block (for certification restrictions).
-     * 
-     * @param attribute the attribute to check.
-     * @return whether this expression matches the given block.
-     */
-    @Override
-    public boolean matches(Block attribute) {
-        return true;
-    }
-
-    /**
-     * Returns whether this expression matches the given credentials.
-     * 
-     * @param credentials the credentials to check.
-     * @return whether this expression matches the given credentials.
-     */
-    @Override
-    public boolean matches(Credential[] credentials) throws SQLException, Exception {
+    boolean isPublic() {
         return false;
     }
-
-    /**
-     * Returns this expression as a string.
-     * 
-     * @return this expression as a string.
-     */
+    
+    @Pure
     @Override
-    public String toString() {
+    boolean isActive() {
+        return true;
+    }
+    
+    @Pure
+    @Override
+    boolean isImpersonal() {
+        return true;
+    }
+    
+    
+    @Pure
+    @Override
+    @Nonnull @Capturable FreezableSet<Contact> getContacts() throws SQLException {
+        assert isActive() : "This expression is active.";
+        
+        return new FreezableLinkedHashSet<Contact>();
+    }
+    
+    @Pure
+    @Override
+    boolean matches(@Nonnull Block attributeContent) {
+        assert isImpersonal() : "This expression is impersonal.";
+        
+        return true;
+    }
+    
+    @Pure
+    @Override
+    boolean matches(@Nonnull CredentialsSignatureWrapper signature) {
+        return false;
+    }
+    
+    
+    @Pure
+    @Override
+    @Nonnull String toString(@Nullable Character operator, boolean right) {
+        assert operator == null || operators.contains(operator) : "The operator is valid.";
+        
         return "";
     }
     

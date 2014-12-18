@@ -79,28 +79,26 @@ public abstract class Credential implements Immutable {
      * @param issuance the issuance time rounded down to the last half-hour.
      * @param randomizedPermissions the client's randomized permissions or its hash.
      * @param role the role that is assumed by the client or null in case no role is assumed.
-     * @param attribute the attribute without the certificate for attribute-based access control.
+     * @param attributeContent the attribute content for attribute-based access control.
      * 
      * @return the block containing the exposed arguments of a credential.
      * 
      * @require issuance.isPositive() && issuance.isMultipleOf(Time.HALF_HOUR) : "The issuance time is positive and a multiple of half an hour.";
      * @require role == null || role.isRoleType() : "The role is either null or a role type.";
-     * @require attribute == null || attribute.getType().isBasedOn(Attribute.TYPE) : "The attribute is either null or based on the attribute type.";
      * 
      * @ensure return.getType().equals(EXPOSED) : "The returned block has the indicated type.";
      */
     @Pure
-    public static @Nonnull Block getExposed(@Nonnull InternalNonHostIdentity issuer, @Nonnull Time issuance, @Nonnull RandomizedAgentPermissions randomizedPermissions, @Nullable SemanticType role, @Nullable Block attribute) {
+    public static @Nonnull Block getExposed(@Nonnull InternalNonHostIdentity issuer, @Nonnull Time issuance, @Nonnull RandomizedAgentPermissions randomizedPermissions, @Nullable SemanticType role, @Nullable Block attributeContent) {
         assert issuance.isPositive() && issuance.isMultipleOf(Time.HALF_HOUR) : "The issuance time is positive and a multiple of half an hour.";
         assert role == null || role.isRoleType() : "The role is either null or a role type.";
-        assert attribute == null || attribute.getType().isBasedOn(AttributeValue.CONTENT) : "The attribute is either null or based on the attribute type.";
         
         final @Nonnull FreezableArray<Block> elements = new FreezableArray<Block>(5);
         elements.set(0, issuer.toBlock(ISSUER));
         elements.set(1, issuance.toBlock().setType(ISSUANCE));
         elements.set(2, new HashWrapper(HASH, randomizedPermissions.getHash()).toBlock());
-        elements.set(3, role == null ? null : role.toBlock(ROLE));
-        elements.set(4, attribute);
+        elements.set(3, Block.toBlock(ROLE, role));
+        elements.set(4, SelfcontainedWrapper.toBlock(AttributeValue.CONTENT, attributeContent));
         return new TupleWrapper(EXPOSED, elements.freeze()).toBlock();
     }
     
@@ -150,11 +148,9 @@ public abstract class Credential implements Immutable {
     private final @Nullable SemanticType role;
     
     /**
-     * Stores the attribute without the certificate for attribute-based access control or null in case of identity-based authentication.
-     * 
-     * @invariant attribute == null || attribute.getType().isBasedOn(Attribute.TYPE) : "The attribute is either null or based on the attribute type.";
+     * Stores the attribute content for attribute-based access control or null in case of identity-based authentication.
      */
-    private final @Nullable Block attribute;
+    private final @Nullable Block attributeContent;
     
     /**
      * Stores the restrictions of the client or null in case of attribute-based authentication.
@@ -182,14 +178,14 @@ public abstract class Credential implements Immutable {
     
     
     /**
-     * Creates a new credential with the given public key, issuer, issuance time, permissions, attribute, restrictions and argument for clients.
+     * Creates a new credential with the given public key, issuer, issuance time, permissions, attribute content, restrictions and argument for clients.
      * 
      * @param publicKey the public key of the host that issued the credential.
      * @param issuer the internal non-host identity that issued the credential.
      * @param issuance the issuance time rounded down to the last half-hour.
      * @param randomizedPermissions the client's randomized permissions or its hash.
      * @param role the role that is assumed by the client or null in case no role is assumed.
-     * @param attribute the attribute without the certificate for anonymous access control.
+     * @param attributeContent the attribute content for anonymous access control.
      * @param restrictions the restrictions of the client.
      * @param i the serial number of the credential.
      * 
@@ -197,28 +193,26 @@ public abstract class Credential implements Immutable {
      * @require randomizedPermissions.areShown() : "The randomized permissions are shown for client credentials.";
      * @require role == null || role.isRoleType() : "The role is either null or a role type.";
      * @require role == null || restrictions != null : "If a role is given, the restrictions are not null.";
-     * @require attribute != null || issuer instanceof Person : "If the attribute is null, the issuer is a person.";
-     * @require (attribute == null) != (restrictions == null) : "Either the attribute or the restrictions are null (but not both).";
-     * @require attribute == null || attribute.getType().isBasedOn(Attribute.TYPE) : "The attribute is either null or based on the attribute type.";
+     * @require attributeContent != null || issuer instanceof Person : "If the attribute content is null, the issuer is a person.";
+     * @require (attributeContent == null) != (restrictions == null) : "Either the attribute content or the restrictions are null (but not both).";
      */
-    Credential(@Nonnull PublicKey publicKey, @Nonnull InternalNonHostIdentity issuer, @Nonnull Time issuance, @Nonnull RandomizedAgentPermissions randomizedPermissions, @Nullable SemanticType role, @Nullable Block attribute, @Nullable Restrictions restrictions, @Nonnull Exponent i) {
+    Credential(@Nonnull PublicKey publicKey, @Nonnull InternalNonHostIdentity issuer, @Nonnull Time issuance, @Nonnull RandomizedAgentPermissions randomizedPermissions, @Nullable SemanticType role, @Nullable Block attributeContent, @Nullable Restrictions restrictions, @Nonnull Exponent i) {
         assert issuance.isPositive() && issuance.isMultipleOf(Time.HALF_HOUR) : "The issuance time is positive and a multiple of half an hour.";
         assert randomizedPermissions.areShown() : "The randomized permissions are shown for client credentials.";
         assert role == null || role.isRoleType() : "The role is either null or a role type.";
         assert role == null || restrictions != null : "If a role is given, the restrictions are not null.";
-        assert attribute != null || issuer instanceof Person : "If the attribute is null, the issuer is a person.";
-        assert (attribute == null) != (restrictions == null) : "Either the attribute or the restrictions are null (but not both).";
-        assert attribute == null || attribute.getType().isBasedOn(AttributeValue.CONTENT) : "The attribute is either null or based on the attribute type.";
+        assert attributeContent != null || issuer instanceof Person : "If the attribute content is null, the issuer is a person.";
+        assert (attributeContent == null) != (restrictions == null) : "Either the attribute content or the restrictions are null (but not both).";
         
         this.publicKey = publicKey;
         this.issuer = issuer;
         this.issuance = issuance;
         this.randomizedPermissions = randomizedPermissions;
         this.role = role;
-        this.attribute = attribute;
+        this.attributeContent = attributeContent;
         this.restrictions = restrictions;
         
-        this.exposed = getExposed(issuer, issuance, randomizedPermissions, role, attribute);
+        this.exposed = getExposed(issuer, issuance, randomizedPermissions, role, attributeContent);
         this.o = new Exponent(this.exposed.getHash());
         this.i = i;
         
@@ -256,11 +250,11 @@ public abstract class Credential implements Immutable {
         }
         this.role = tuple.isElementNull(3) ? null : IdentifierClass.create(tuple.getElementNotNull(3)).getIdentity().toSemanticType();
         if (role != null && !role.isRoleType()) throw new InvalidEncodingException("The role has to be either null or a role type");
-        this.attribute = tuple.getElement(4);
-        if (role != null && attribute != null) throw new InvalidEncodingException("The role and the attribute may not both be not null.");
+        this.attributeContent = SelfcontainedWrapper.toElement(tuple.getElement(4));
+        if (role != null && attributeContent != null) throw new InvalidEncodingException("The role and the attribute may not both be not null.");
         this.restrictions = restrictions;
-        if (attribute == null && !(issuer instanceof Person)) throw new InvalidEncodingException("If the attribute is null, the issuer has to be a person.");
-        if (attribute != null && restrictions != null) throw new InvalidEncodingException("The attribute and the restrictions may not both be not null.");
+        if (attributeContent == null && !(issuer instanceof Person)) throw new InvalidEncodingException("If the attribute is null, the issuer has to be a person.");
+        if (attributeContent != null && restrictions != null) throw new InvalidEncodingException("The attribute and the restrictions may not both be not null.");
         if (role != null && getPermissions() == null) throw new InvalidEncodingException("If a role is given, the permissions may not be null.");
         if (role != null && restrictions == null) throw new InvalidEncodingException("If a role is given, the restrictions may not be null.");
         
@@ -373,31 +367,27 @@ public abstract class Credential implements Immutable {
     }
     
     /**
-     * Returns the attribute without the certificate for anonymous access control or null in case of identity-based authentication.
+     * Returns the attribute content for anonymous access control or null in case of identity-based authentication.
      * 
-     * @return the attribute without the certificate for anonymous access control or null in case of identity-based authentication.
-     * 
-     * @ensure attribute == null || attribute.getType().isBasedOn(Attribute.TYPE) : "The attribute is either null or based on the attribute type.";
+     * @return the attribute content for anonymous access control or null in case of identity-based authentication.
      */
     @Pure
-    public final @Nullable Block getAttribute() {
-        return attribute;
+    public final @Nullable Block getAttributeContent() {
+        return attributeContent;
     }
     
     /**
-     * Returns the attribute without the certificate for anonymous access control.
+     * Returns the attribute content for anonymous access control.
      * 
-     * @return the attribute without the certificate for anonymous access control.
+     * @return the attribute content for anonymous access control.
      * 
      * @require isAttributeBased() : "This credential is attribute-based.";
-     * 
-     * @ensure attribute.getType().isBasedOn(Attribute.TYPE) : "The attribute is based on the attribute type.";
      */
     @Pure
-    public final @Nonnull Block getAttributeNotNull() {
-        assert attribute != null : "This credential is attribute-based.";
+    public final @Nonnull Block getAttributeContentNotNull() {
+        assert attributeContent != null : "This credential is attribute-based.";
         
-        return attribute;
+        return attributeContent;
     }
     
     /**
@@ -407,7 +397,7 @@ public abstract class Credential implements Immutable {
      */
     @Pure
     public final boolean isAttributeBased() {
-        return attribute != null;
+        return attributeContent != null;
     }
     
     /**
@@ -417,7 +407,7 @@ public abstract class Credential implements Immutable {
      */
     @Pure
     public final boolean isIdentityBased() {
-        return attribute == null;
+        return attributeContent == null;
     }
     
     /**
@@ -499,7 +489,7 @@ public abstract class Credential implements Immutable {
     @Pure
     public final boolean isSimilarTo(@Nonnull Credential credential) {
         return issuer.equals(credential.issuer) && issuance.equals(credential.issuance) && randomizedPermissions.equals(credential.randomizedPermissions) && Objects.equals(role, credential.role) 
-                && Objects.equals(attribute, credential.attribute) && Objects.equals(restrictions, credential.restrictions) && Objects.equals(i, credential.i);
+                && Objects.equals(attributeContent, credential.attributeContent) && Objects.equals(restrictions, credential.restrictions) && Objects.equals(i, credential.i);
     }
     
     
@@ -507,22 +497,15 @@ public abstract class Credential implements Immutable {
     @Override
     public final @Nonnull String toString() {
         final @Nonnull StringBuilder string = new StringBuilder("(Issuer: ").append(issuer.getAddress().getString()).append(", Permissions: ").append(randomizedPermissions.getPermissions());
-        if (isAttributeBased()) {
+        if (attributeContent != null) {
             string.append(", Attribute: (");
             try {
-                final @Nonnull Block element = new SelfcontainedWrapper(attribute).getElement();
-                string.append(element.getType().getAddress().getString());
-                if (element.getType().isBasedOn(StringWrapper.TYPE)) {
-                    string.append(": ").append(new StringWrapper(element).getString());
+                string.append(attributeContent.getType().getAddress().getString());
+                if (attributeContent.getType().isBasedOn(StringWrapper.TYPE)) {
+                    string.append(": ").append(new StringWrapper(attributeContent).getString());
                 }
-            } catch (@Nonnull SQLException exception) {
-                string.append("SQLException");
-            } catch (@Nonnull IOException exception) {
-                string.append("IOException");
-            } catch (@Nonnull PacketException exception) {
-                string.append("PacketException");
-            } catch (@Nonnull ExternalException exception) {
-                string.append("ExternalException");
+            } catch (@Nonnull InvalidEncodingException exception) {
+                string.append("InvalidEncodingException"); // This should never happen.
             }
             string.append(")");
         } else {

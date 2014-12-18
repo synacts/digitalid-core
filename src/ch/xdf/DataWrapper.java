@@ -39,7 +39,7 @@ public final class DataWrapper extends BlockWrapper implements Immutable {
      * @param data the data to encode into the new block.
      * 
      * @require type.isLoaded() : "The type declaration is loaded.";
-     * @require type.isBasedOn(getSyntacticType()) : "The given type is based on the indicated syntactic type.";
+     * @require type.isBasedOn(TYPE) : "The given type is based on the indicated syntactic type.";
      */
     public DataWrapper(@Nonnull SemanticType type, @Captured @Nonnull byte[] data) {
         super(type);
@@ -52,7 +52,7 @@ public final class DataWrapper extends BlockWrapper implements Immutable {
      * 
      * @param block the block to wrap and decode.
      * 
-     * @require block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
+     * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated syntactic type.";
      */
     public DataWrapper(@Nonnull Block block) throws InvalidEncodingException {
         super(block);

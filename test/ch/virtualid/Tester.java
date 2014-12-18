@@ -1,6 +1,5 @@
 package ch.virtualid;
 
-import ch.virtualid.setup.DatabaseSetup;
 import org.junit.Test;
 
 /**
@@ -9,7 +8,7 @@ import org.junit.Test;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 1.0
  */
-public class Tester extends DatabaseSetup {
+public class Tester {
     
     @Test
     public void test() {

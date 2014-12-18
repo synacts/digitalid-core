@@ -14,10 +14,8 @@ import ch.virtualid.identity.Identity;
 import ch.virtualid.identity.Person;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Immutable;
-import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.FreezableArrayList;
 import ch.virtualid.util.FreezableSet;
-import ch.virtualid.util.ReadonlyArray;
 import ch.virtualid.util.ReadonlyList;
 import ch.xdf.Block;
 import ch.xdf.CredentialsSignatureWrapper;
@@ -49,6 +47,7 @@ abstract class Expression extends NonHostConcept implements Immutable {
      * 
      * @return whether this expression is public.
      */
+    @Pure
     abstract boolean isPublic();
     
     /**
@@ -56,6 +55,7 @@ abstract class Expression extends NonHostConcept implements Immutable {
      * 
      * @return whether this expression is active.
      */
+    @Pure
     abstract boolean isActive();
     
     /**
@@ -63,6 +63,7 @@ abstract class Expression extends NonHostConcept implements Immutable {
      * 
      * @return whether this expression is impersonal.
      */
+    @Pure
     abstract boolean isImpersonal();
     
     
@@ -77,16 +78,16 @@ abstract class Expression extends NonHostConcept implements Immutable {
     abstract @Nonnull @Capturable FreezableSet<Contact> getContacts() throws SQLException;
     
     /**
-     * Returns whether this expression matches the given content.
+     * Returns whether this expression matches the given attribute content.
      * 
-     * @param content the attribute content which is to be checked.
+     * @param attributeContent the attribute content which is to be checked.
      * 
-     * @return whether this expression matches the given content.
+     * @return whether this expression matches the given attribute content.
      * 
      * @require isImpersonal() : "This expression is impersonal.";
      */
     @Pure
-    abstract boolean matches(@Nonnull Block content);
+    abstract boolean matches(@Nonnull Block attributeContent);
     
     /**
      * Returns whether this expression matches the given signature.
@@ -96,7 +97,7 @@ abstract class Expression extends NonHostConcept implements Immutable {
      * @return whether this expression matches the given signature.
      */
     @Pure
-    abstract boolean matches(@Nonnull CredentialsSignatureWrapper signature);
+    abstract boolean matches(@Nonnull CredentialsSignatureWrapper signature) throws SQLException;
     
     
     /**
@@ -106,6 +107,8 @@ abstract class Expression extends NonHostConcept implements Immutable {
      * @param right whether this expression is the right child of a binary expression.
      * 
      * @return this expression as a string.
+     * 
+     * @require operator == null || operators.contains(operator) : "The operator is valid.";
      */
     @Pure
     abstract @Nonnull String toString(@Nullable Character operator, boolean right);
@@ -135,7 +138,7 @@ abstract class Expression extends NonHostConcept implements Immutable {
     /**
      * Stores the symbols for restriction.
      */
-    static final @Nonnull ReadonlyArray<String> symbols = new FreezableArray<String>("=", "≠", "<", ">", "≤", "≥", "/", "!/", "|", "!|", "\\", "!\\").freeze();
+    static final @Nonnull ReadonlyList<String> symbols = new FreezableArrayList<String>("=", "≠", "<", ">", "≤", "≥", "/", "!/", "|", "!|", "\\", "!\\").freeze();
     
     /**
      * Returns the last index of one of the given characters in the given string considering quotation marks and parentheses.
@@ -145,6 +148,7 @@ abstract class Expression extends NonHostConcept implements Immutable {
      * 
      * @return the last index of one of the given characters in the given string considering quotation marks and parentheses.
      */
+    @Pure
     private static int lastIndexOf(@Nonnull String string, @Nonnull ReadonlyList<Character> characters) throws InvalidEncodingException {
         int parenthesesCounter = 0;
         boolean quotation = false;
@@ -188,6 +192,7 @@ abstract class Expression extends NonHostConcept implements Immutable {
      * 
      * @return whether the given string is quoted.
      */
+    @Pure
     static boolean isQuoted(@Nonnull String string) {
         return string.startsWith("\"") && string.endsWith("\"");
     }
@@ -201,10 +206,24 @@ abstract class Expression extends NonHostConcept implements Immutable {
      * 
      * @require isQuoted(string) : "The string is quoted.";
      */
+    @Pure
     static @Nonnull String removeQuotes(@Nonnull String string) {
         assert isQuoted(string) : "The string is quoted.";
         
         return string.substring(1, string.length() - 1);
+    }
+    
+    /**
+     * Adds quotes to the identifier of the given identity if necessary.
+     * 
+     * @param identity the identity which is to be returned as an identifier.
+     * 
+     * @return the identifier of the given identity with quotes if necessary.
+     */
+    @Pure
+    static @Nonnull String addQuotesIfNecessary(@Nonnull Identity identity) {
+        final @Nonnull String identifier = identity.getAddress().getString();
+        return identifier.contains("-") ? "\"" + identifier + "\"" : identifier;
     }
     
     /**
@@ -215,6 +234,7 @@ abstract class Expression extends NonHostConcept implements Immutable {
      * 
      * @return the expression of the parsed string.
      */
+    @Pure
     static Expression parse(@Nonnull NonHostEntity entity, @Nonnull String string) throws SQLException, IOException, PacketException, ExternalException {
         if (string.trim().isEmpty()) return new EmptyExpression(entity);
         
@@ -241,13 +261,13 @@ abstract class Expression extends NonHostConcept implements Immutable {
         
         if (string.equals("everybody")) return new EverybodyExpression(entity);
         
-        if (string.matches("\\d+")) return new ContextExpression(entity, Context.get(entity, Long.parseLong(string)));
+        if (string.matches("\\d+")) return new ContextExpression(entity, Context.get(entity, string));
         
         final @Nonnull String identifier = isQuoted(string) ? removeQuotes(string) : string;
         if (IdentifierClass.isValid(string)) {
             final @Nonnull Identity identity = IdentifierClass.create(identifier).getIdentity();
             if (identity instanceof Person) return new ContactExpression(entity, Contact.get(entity, (Person) identity));
-            if (identity instanceof SemanticType) return new RestrictionExpression(entity, (SemanticType) identity, null, null);
+            if (identity instanceof SemanticType) return new RestrictionExpression(entity, ((SemanticType) identity).checkIsAttributeType(), null, null);
             throw new InvalidEncodingException("The string '" + string + "' is a valid identifier but neither a person nor a semantic type.");
         }
         

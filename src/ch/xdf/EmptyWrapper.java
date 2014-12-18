@@ -2,10 +2,10 @@ package ch.xdf;
 
 import ch.virtualid.annotations.Exposed;
 import ch.virtualid.annotations.Pure;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.identity.SyntacticType;
 import ch.virtualid.interfaces.Immutable;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
 import javax.annotation.Nonnull;
 
 /**
@@ -34,7 +34,7 @@ public final class EmptyWrapper extends BlockWrapper implements Immutable {
      * @param type the semantic type of the new block.
      * 
      * @require type.isLoaded() : "The type declaration is loaded.";
-     * @require type.isBasedOn(getSyntacticType()) : "The given type is based on the indicated syntactic type.";
+     * @require type.isBasedOn(TYPE) : "The given type is based on the indicated syntactic type.";
      */
     public EmptyWrapper(@Nonnull SemanticType type) {
         super(type);
@@ -45,7 +45,7 @@ public final class EmptyWrapper extends BlockWrapper implements Immutable {
      * 
      * @param block the block to wrap and decode.
      * 
-     * @require block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
+     * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated syntactic type.";
      */
     public EmptyWrapper(@Nonnull Block block) throws InvalidEncodingException {
         super(block);

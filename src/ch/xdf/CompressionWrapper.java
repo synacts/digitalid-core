@@ -3,11 +3,11 @@ package ch.xdf;
 import ch.virtualid.annotations.Exposed;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.errors.ShouldNeverHappenError;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.identity.SyntacticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.zip.DeflaterOutputStream;
@@ -59,7 +59,7 @@ public final class CompressionWrapper extends BlockWrapper implements Immutable 
      * @param algorithm indicates the algorithm of the compression.
      * 
      * @require type.isLoaded() : "The type declaration is loaded.";
-     * @require type.isBasedOn(getSyntacticType()) : "The given type is based on the indicated syntactic type.";
+     * @require type.isBasedOn(TYPE) : "The given type is based on the indicated syntactic type.";
      * @require element == null || element.getType().isBasedOn(type.getParameters().getNotNull(0)) : "The element is either null or based on the parameter of the given type.";
      * @require algorithm == NONE || algorithm == ZLIB : "The algorithm is either none or ZLIB.";
      */
@@ -81,7 +81,7 @@ public final class CompressionWrapper extends BlockWrapper implements Immutable 
      * @param algorithm indicates the algorithm of the compression.
      * 
      * @require type.isLoaded() : "The type declaration is loaded.";
-     * @require type.isBasedOn(getSyntacticType()) : "The given type is based on the indicated syntactic type.";
+     * @require type.isBasedOn(TYPE) : "The given type is based on the indicated syntactic type.";
      * @require element == null || element.getType().isBasedOn(type.getParameters().getNotNull(0)) : "The element is either null or based on the parameter of the given type.";
      * @require algorithm == NONE || algorithm == ZLIB : "The algorithm is either none or ZLIB.";
      */
@@ -94,7 +94,7 @@ public final class CompressionWrapper extends BlockWrapper implements Immutable 
      * 
      * @param block the block to be wrapped and decoded.
      * 
-     * @require block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
+     * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated syntactic type.";
      */
     public CompressionWrapper(@Nonnull Block block) throws InvalidEncodingException {
         super(block);

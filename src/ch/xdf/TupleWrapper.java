@@ -61,7 +61,7 @@ public final class TupleWrapper extends BlockWrapper implements Immutable {
      * @param elements the elements to encode into a new block.
      * 
      * @require type.isLoaded() : "The type declaration is loaded.";
-     * @require type.isBasedOn(getSyntacticType()) : "The given type is based on the indicated syntactic type.";
+     * @require type.isBasedOn(TYPE) : "The given type is based on the indicated syntactic type.";
      * @require basedOnParameters(type, elements) : "Each element is either null or based on the corresponding parameter of the given type.";
      * @require elements.isFrozen() : "The elements are frozen.";
      */
@@ -81,7 +81,7 @@ public final class TupleWrapper extends BlockWrapper implements Immutable {
      * @param elements the elements to encode into a new block.
      * 
      * @require type.isLoaded() : "The type declaration is loaded.";
-     * @require type.isBasedOn(getSyntacticType()) : "The given type is based on the indicated syntactic type.";
+     * @require type.isBasedOn(TYPE) : "The given type is based on the indicated syntactic type.";
      * @require basedOnParameters(type, elements.toBlock()) : "Each element is either null or based on the corresponding parameter of the given type.";
      */
     public TupleWrapper(@Nonnull SemanticType type, @Nonnull Blockable... elements) {
@@ -99,7 +99,7 @@ public final class TupleWrapper extends BlockWrapper implements Immutable {
      * 
      * @param block the block to wrap and decode.
      * 
-     * @require block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
+     * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated syntactic type.";
      */
     public TupleWrapper(@Nonnull Block block) throws InvalidEncodingException {
         super(block);

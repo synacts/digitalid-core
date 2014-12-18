@@ -1,117 +1,151 @@
 package ch.virtualid.expression;
 
+import ch.virtualid.annotations.Capturable;
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.credential.Credential;
+import ch.virtualid.contact.Contact;
 import ch.virtualid.entity.NonHostEntity;
+import ch.virtualid.errors.ShouldNeverHappenError;
 import ch.virtualid.exceptions.external.ExternalException;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketException;
+import ch.virtualid.interfaces.Immutable;
+import ch.virtualid.util.FreezableLinkedHashSet;
+import ch.virtualid.util.FreezableSet;
 import ch.xdf.Block;
+import ch.xdf.CredentialsSignatureWrapper;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * This class models binary expressions.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 0.8
+ * @version 2.0
  */
-final class BinaryExpression extends Expression {
+final class BinaryExpression extends Expression implements Immutable {
     
     /**
      * Stores the left child of this binary expression.
      */
-    private final Expression left;
+    private final @Nonnull Expression left;
     
     /**
      * Stores the right child of this binary expression.
      */
-    private final Expression right;
+    private final @Nonnull Expression right;
     
     /**
      * Stores the operator this binary expression.
+     * 
+     * @invariant operators.contains(operator) : "The operator is valid.";
      */
     private final char operator;
     
     /**
      * Creates a new binary expression with the given left and right children.
      * 
-     * @param connection a connection to the database.
-     * @param host the host of the VID.
-     * @param vid the VID of the contexts.
+     * @param entity the entity to which this expression belongs.
      * @param left the left child to parse.
      * @param right the right child to parse.
      * @param operator the operator to use.
      * 
-     * @require operator == '+' || operator == '-' || operator == '*' : "The operator is either plus, minus or times.";
+     * @require operators.contains(operator) : "The operator is valid.";
      */
-    BinaryExpression(@Nonnull NonHostEntity entity, @Nonnull String left, @Nonnull String right, @Nonnull char operator) throws SQLException, IOException, PacketException, ExternalException {
+    BinaryExpression(@Nonnull NonHostEntity entity, @Nonnull String left, @Nonnull String right, char operator) throws SQLException, IOException, PacketException, ExternalException {
         super(entity);
         
-        assert left != null : "The left child is not null.";
-        assert right != null : "The right child is not null.";
-        assert operator == '+' || operator == '-' || operator == '*' : "The operator is either plus, minus or times.";
+        assert operators.contains(operator) : "The operator is valid.";
         
         this.left = Expression.parse(entity, left);
         this.right = Expression.parse(entity, right);
         this.operator = operator;
     }
     
-    /**
-     * Returns whether this expression is active.
-     * 
-     * @return whether this expression is active.
-     */
+    
+    @Pure
     @Override
-    public boolean isActive() {
+    boolean isPublic() {
+        switch (operator) {
+            case '+': return left.isPublic() || right.isPublic();
+            case '-': return left.isPublic() && right instanceof EmptyExpression;
+            case '*': return left.isPublic() && right.isPublic();
+            default: return false;
+        }
+    }
+    
+    @Pure
+    @Override
+    boolean isActive() {
         return left.isActive() && right.isActive();
     }
     
-    /**
-     * Returns whether this expression matches the given block (for certification restrictions).
-     * 
-     * @param attribute the attribute to check.
-     * @return whether this expression matches the given block.
-     * @require attribute != null : "The attribute is not null.";
-     */
-    @Override
-    public boolean matches(Block attribute) throws InvalidEncodingException, SQLException, Exception {
-        assert attribute != null : "The attribute is not null.";
-        
-        switch (operator) {
-            case '+': return left.matches(attribute) || right.matches(attribute);
-            case '-': return left.matches(attribute) && !right.matches(attribute);
-            case '*': return left.matches(attribute) && right.matches(attribute);
-            default: return false;
-        }
-    }
-    
-    /**
-     * Returns whether this expression matches the given credentials.
-     * 
-     * @param credentials the credentials to check.
-     * @return whether this expression matches the given credentials.
-     */
-    @Override
-    public boolean matches(Credential[] credentials) throws SQLException, Exception {
-        switch (operator) {
-            case '+': return left.matches(credentials) || right.matches(credentials);
-            case '-': return left.matches(credentials) && !right.matches(credentials);
-            case '*': return left.matches(credentials) && right.matches(credentials);
-            default: return false;
-        }
-    }
-    
-    /**
-     * Returns this expression as a string.
-     * 
-     * @return this expression as a string.
-     */
     @Pure
     @Override
-    public String toString() {
-        return "(" + left + operator + right + ")";
+    boolean isImpersonal() {
+        return left.isImpersonal() && right.isImpersonal();
+    }
+    
+    
+    @Pure
+    @Override
+    @Nonnull @Capturable FreezableSet<Contact> getContacts() throws SQLException {
+        assert isActive() : "This expression is active.";
+        
+        final @Nonnull FreezableSet<Contact> leftContacts = left.getContacts();
+        final @Nonnull FreezableSet<Contact> rightContacts = right.getContacts();
+        switch (operator) {
+            case '+': return leftContacts.add(rightContacts);
+            case '-': return leftContacts.subtract(rightContacts);
+            case '*': return leftContacts.intersect(rightContacts);
+            default: return new FreezableLinkedHashSet<Contact>();
+        }
+    }
+    
+    @Pure
+    @Override
+    boolean matches(@Nonnull Block attributeContent) {
+        assert isImpersonal() : "This expression is impersonal.";
+        
+        switch (operator) {
+            case '+': return left.matches(attributeContent) || right.matches(attributeContent);
+            case '-': return left.matches(attributeContent) && !right.matches(attributeContent);
+            case '*': return left.matches(attributeContent) && right.matches(attributeContent);
+            default: return false;
+        }
+    }
+    
+    @Pure
+    @Override
+    boolean matches(@Nonnull CredentialsSignatureWrapper signature) throws SQLException {
+        switch (operator) {
+            case '+': return left.matches(signature) || right.matches(signature);
+            case '-': return left.matches(signature) && !right.matches(signature);
+            case '*': return left.matches(signature) && right.matches(signature);
+            default: return false;
+        }
+    }
+    
+    
+    @Pure
+    @Override
+    @Nonnull String toString(@Nullable Character operator, boolean right) {
+        assert operator == null || operators.contains(operator) : "The operator is valid.";
+        
+        final @Nonnull String string = this.left.toString(this.operator, false) + this.operator + this.right.toString(this.operator, true);
+        
+        final boolean parentheses;
+        if (operator == null || operator == '+') {
+            parentheses = false;
+        } else if (operator == '-') {
+            parentheses = right && this.operator != '*';
+        } else if (operator == '*') {
+            parentheses = this.operator != '*';
+        } else {
+            throw new ShouldNeverHappenError("The operator '" + operator + "' is invalid.");
+        }
+        
+        return parentheses ? "(" + string + ")" : string;
     }
     
 }

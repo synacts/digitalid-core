@@ -42,7 +42,7 @@ public final class IntvarWrapper extends BlockWrapper implements Immutable {
      * @param value the value to encode into the new block.
      * 
      * @require type.isLoaded() : "The type declaration is loaded.";
-     * @require type.isBasedOn(getSyntacticType()) : "The given type is based on the indicated syntactic type.";
+     * @require type.isBasedOn(TYPE) : "The given type is based on the indicated syntactic type.";
      * @require value >= 0 : "The value is not negative.";
      * @require value <= MAX_VALUE : "The first two bits have to be zero.";
      */
@@ -60,7 +60,7 @@ public final class IntvarWrapper extends BlockWrapper implements Immutable {
      * 
      * @param block the block to wrap and decode.
      * 
-     * @require block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
+     * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated syntactic type.";
      */
     public IntvarWrapper(@Nonnull Block block) throws InvalidEncodingException {
         super(block);

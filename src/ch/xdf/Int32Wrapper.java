@@ -39,7 +39,7 @@ public final class Int32Wrapper extends BlockWrapper implements Immutable {
      * @param value the value to encode into the new block.
      * 
      * @require type.isLoaded() : "The type declaration is loaded.";
-     * @require type.isBasedOn(getSyntacticType()) : "The given type is based on the indicated syntactic type.";
+     * @require type.isBasedOn(TYPE) : "The given type is based on the indicated syntactic type.";
      */
     public Int32Wrapper(@Nonnull SemanticType type, int value) {
         super(type);
@@ -52,7 +52,7 @@ public final class Int32Wrapper extends BlockWrapper implements Immutable {
      * 
      * @param block the block to wrap and decode.
      * 
-     * @require block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
+     * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated syntactic type.";
      */
     public Int32Wrapper(@Nonnull Block block) throws InvalidEncodingException {
         super(block);

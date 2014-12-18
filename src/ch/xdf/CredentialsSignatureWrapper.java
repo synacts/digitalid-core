@@ -176,8 +176,8 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
     /**
      * Stores the certificates that are appended to an identity-based authentication with a single credential.
      * 
-     * @invariant certificates.isFrozen() : "The certificates are frozen.";
-     * @invariant certificatesAreValid(certificates, credentials) : "The certificates are valid.";
+     * @invariant certificates == null || certificates.isFrozen() : "The certificates are frozen.";
+     * @invariant certificates == null || certificatesAreValid(certificates, credentials) : "The certificates are valid.";
      */
     private final @Nullable ReadonlyList<CertifiedAttributeValue> certificates;
     
@@ -211,7 +211,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
      * @param value the value b' or null if the credentials are not to be shortened.
      * 
      * @require type.isLoaded() : "The type declaration is loaded.";
-     * @require type.isBasedOn(getSyntacticType()) : "The given type is based on the indicated syntactic type.";
+     * @require type.isBasedOn(TYPE) : "The given type is based on the indicated syntactic type.";
      * @require element == null || element.getType().isBasedOn(type.getParameters().getNotNull(0)) : "The element is either null or based on the parameter of the given type.";
      * 
      * @require credentials.isFrozen() : "The credentials are frozen.";
@@ -249,7 +249,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
      * @param value the value b' or null if the credentials are not to be shortened.
      * 
      * @require type.isLoaded() : "The type declaration is loaded.";
-     * @require type.isBasedOn(getSyntacticType()) : "The given type is based on the indicated syntactic type.";
+     * @require type.isBasedOn(TYPE) : "The given type is based on the indicated syntactic type.";
      * @require element == null || element.getType().isBasedOn(type.getParameters().getNotNull(0)) : "The element is either null or based on the parameter of the given type.";
      * 
      * @require credentials.isFrozen() : "The credentials are frozen.";
@@ -272,7 +272,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
      * @param verified whether the signature is already verified.
      * @param entity the entity that decodes the signature or null.
      * 
-     * @require block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
+     * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated syntactic type.";
      * @require credentialsSignature.getType().isBasedOn(SIGNATURE) : "The signature is based on the implementation type.";
      */
     CredentialsSignatureWrapper(final @Nonnull Block block, final @Nonnull Block credentialsSignature, boolean verified, @Nullable Entity entity) throws SQLException, IOException, PacketException, ExternalException {
@@ -563,29 +563,29 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
     
     
     /**
-     * Returns the attribute with the given type from the credentials and certificates or null if no such attribute can be found.
+     * Returns the attribute content with the given type from the credentials and certificates or null if no such attribute can be found.
      * 
-     * @param type the semantic type of the attribute which is to be returned.
+     * @param type the semantic type of the attribute content which is to be returned.
      * 
-     * @return the attribute with the given type from the credentials and certificates or null if no such attribute can be found.
+     * @return the attribute content with the given type from the credentials and certificates or null if no such attribute can be found.
      * 
      * @require type.isAttributeType() : "The type is an attribute type.";
      * 
-     * @ensure return.getType().equals(type) : "The returned block has the given type.";
+     * @ensure return == null || return.getType().equals(type) : "The returned block is either null or has the given type.";
      */
     @Pure
-    public @Nullable Block getAttribute(@Nonnull SemanticType type) throws SQLException, IOException, PacketException, ExternalException {
+    public @Nullable Block getAttributeContent(@Nonnull SemanticType type) {
         assert type.isAttributeType() : "The type is an attribute type.";
         
         if (isAttributeBased()) {
             for (final @Nonnull Credential credential : credentials) {
                 if (credential.getIssuer().equals(type)) {
-                    final @Nonnull Block block = new SelfcontainedWrapper(credential.getAttributeNotNull()).getElement();
-                    if (!block.getType().equals(type)) throw new InvalidEncodingException("The type of the attribute does not match the issuer.");
+                    final @Nonnull Block block = credential.getAttributeContentNotNull();
+                    if (!block.getType().equals(type)) return null;
                     return block;
                 }
             }
-        } else {
+        } else if (certificates != null) {
             for (final @Nonnull CertifiedAttributeValue certificate : certificates) {
                 if (certificate.getContent().getType().equals(type)) return certificate.getContent();
             }

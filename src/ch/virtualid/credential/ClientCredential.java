@@ -8,12 +8,12 @@ import ch.virtualid.cryptography.Exponent;
 import ch.virtualid.cryptography.Parameters;
 import ch.virtualid.cryptography.PublicKey;
 import ch.virtualid.errors.ShouldNeverHappenError;
-import ch.virtualid.identity.SemanticType;
-import ch.virtualid.interfaces.Immutable;
-import ch.xdf.Block;
 import ch.virtualid.exceptions.external.InvalidSignatureException;
 import ch.virtualid.identity.InternalNonHostIdentity;
 import ch.virtualid.identity.InternalPerson;
+import ch.virtualid.identity.SemanticType;
+import ch.virtualid.interfaces.Immutable;
+import ch.xdf.Block;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import javax.annotation.Nonnull;
@@ -84,13 +84,13 @@ public final class ClientCredential extends Credential implements Immutable {
     }
     
     /**
-     * Creates a new attribute-based credential with the given public key, issuer, issuance, permissions, attribute and arguments for clients.
+     * Creates a new attribute-based credential with the given public key, issuer, issuance, permissions, attribute content and arguments for clients.
      * 
      * @param publicKey the public key of the host that issued the credential.
      * @param issuer the internal non-host identity that issued the credential.
      * @param issuance the issuance time rounded down to the last half-hour.
      * @param randomizedPermissions the client's randomized permissions.
-     * @param attribute the attribute without the certificate for anonymous access control.
+     * @param attributeContent the attribute content for anonymous access control.
      * 
      * @param c the certifying base of this credential.
      * @param e the certifying exponent of this credential.
@@ -103,21 +103,20 @@ public final class ClientCredential extends Credential implements Immutable {
      * 
      * @require issuance.isPositive() && issuance.isMultipleOf(Time.HALF_HOUR) : "The issuance time is positive and a multiple of half an hour.";
      * @require randomizedPermissions.areShown() : "The randomized permissions are shown for client credentials.";
-     * @require attribute.getType().isBasedOn(Attribute.TYPE) : "The attribute is based on the attribute type.";
      */
-    public ClientCredential(@Nonnull PublicKey publicKey, @Nonnull InternalNonHostIdentity issuer, @Nonnull Time issuance, @Nonnull RandomizedAgentPermissions randomizedPermissions, @Nonnull Block attribute, @Nonnull Element c, @Nonnull Exponent e, @Nonnull Exponent b, @Nonnull Exponent u, @Nonnull Exponent i, @Nonnull Exponent v, boolean oneTime) throws InvalidSignatureException {
-        this(publicKey, issuer, issuance, randomizedPermissions, null, attribute, null, c, e, b, u, i, v, oneTime);
+    public ClientCredential(@Nonnull PublicKey publicKey, @Nonnull InternalNonHostIdentity issuer, @Nonnull Time issuance, @Nonnull RandomizedAgentPermissions randomizedPermissions, @Nonnull Block attributeContent, @Nonnull Element c, @Nonnull Exponent e, @Nonnull Exponent b, @Nonnull Exponent u, @Nonnull Exponent i, @Nonnull Exponent v, boolean oneTime) throws InvalidSignatureException {
+        this(publicKey, issuer, issuance, randomizedPermissions, null, attributeContent, null, c, e, b, u, i, v, oneTime);
     }
     
     /**
-     * Creates a new credential with the given given public key, issuer, issuance, permissions, role, attribute, restrictions and arguments for clients.
+     * Creates a new credential with the given given public key, issuer, issuance, permissions, role, attribute content, restrictions and arguments for clients.
      * 
      * @param publicKey the public key of the host that issued the credential.
      * @param issuer the internal non-host identity that issued the credential.
      * @param issuance the issuance time rounded down to the last half-hour.
      * @param randomizedPermissions the client's randomized permissions.
      * @param role the role that is assumed by the client or null in case no role is assumed.
-     * @param attribute the attribute without the certificate for anonymous access control.
+     * @param attributeContent the attribute content for anonymous access control.
      * @param restrictions the restrictions of the client.
      * 
      * @param c the certifying base of this credential.
@@ -133,17 +132,16 @@ public final class ClientCredential extends Credential implements Immutable {
      * @require randomizedPermissions.areShown() : "The randomized permissions are shown for client credentials.";
      * @require role == null || role.isRoleType() : "The role is either null or a role type.";
      * @require role == null || restrictions != null : "If a role is given, the restrictions are not null.";
-     * @require attribute != null || issuer instanceof Person : "If the attribute is null, the issuer is a person.";
-     * @require (attribute == null) != (restrictions == null) : "Either the attribute or the restrictions are null (but not both).";
-     * @require attribute == null || attribute.getType().isBasedOn(Attribute.TYPE) : "The attribute is either null or based on the attribute type.";
+     * @require attributeContent != null || issuer instanceof Person : "If the attribute content is null, the issuer is a person.";
+     * @require (attributeContent == null) != (restrictions == null) : "Either the attribute content or the restrictions are null (but not both).";
      * @require restrictions == null || restrictions.toBlock().getHash().equals(v.getValue()) : "If the restrictions are not null, their hash has to equal v.";
-     * @require !oneTime || attribute != null : "If the credential can be used only once, the attribute may not be null.";
+     * @require !oneTime || attributeContent != null : "If the credential can be used only once, the attribute content may not be null.";
      */
-    private ClientCredential(@Nonnull PublicKey publicKey, @Nonnull InternalNonHostIdentity issuer, @Nonnull Time issuance, @Nonnull RandomizedAgentPermissions randomizedPermissions, @Nullable SemanticType role, @Nullable Block attribute, @Nullable Restrictions restrictions, @Nonnull Element c, @Nonnull Exponent e, @Nonnull Exponent b, @Nonnull Exponent u, @Nonnull Exponent i, @Nonnull Exponent v, boolean oneTime) throws InvalidSignatureException {
-        super(publicKey, issuer, issuance, randomizedPermissions, role, attribute, restrictions, i);
+    private ClientCredential(@Nonnull PublicKey publicKey, @Nonnull InternalNonHostIdentity issuer, @Nonnull Time issuance, @Nonnull RandomizedAgentPermissions randomizedPermissions, @Nullable SemanticType role, @Nullable Block attributeContent, @Nullable Restrictions restrictions, @Nonnull Element c, @Nonnull Exponent e, @Nonnull Exponent b, @Nonnull Exponent u, @Nonnull Exponent i, @Nonnull Exponent v, boolean oneTime) throws InvalidSignatureException {
+        super(publicKey, issuer, issuance, randomizedPermissions, role, attributeContent, restrictions, i);
         
         assert restrictions == null || restrictions.toBlock().getHash().equals(v.getValue()) : "If the restrictions are not null, their hash has to equal v.";
-        assert !oneTime || attribute != null : "If the credential can be used only once, the attribute may not be null.";
+        assert !oneTime || attributeContent != null : "If the credential can be used only once, the attribute content may not be null.";
         
         this.c = c;
         this.e = e;
@@ -230,7 +228,7 @@ public final class ClientCredential extends Credential implements Immutable {
     public @Nonnull ClientCredential getRandomizedCredential() {
         try {
             final @Nonnull Exponent r = new Exponent(new BigInteger(Parameters.BLINDING_EXPONENT - Parameters.CREDENTIAL_EXPONENT, new SecureRandom()));
-            return new ClientCredential(getPublicKey(), getIssuer(), getIssuance(), getRandomizedPermissions(), getRole(), getAttribute(), getRestrictions(), c.multiply(getPublicKey().getAb().pow(r)), e, b.subtract(e.multiply(r)), u, getI(), v, oneTime);
+            return new ClientCredential(getPublicKey(), getIssuer(), getIssuance(), getRandomizedPermissions(), getRole(), getAttributeContent(), getRestrictions(), c.multiply(getPublicKey().getAb().pow(r)), e, b.subtract(e.multiply(r)), u, getI(), v, oneTime);
         } catch (@Nonnull InvalidSignatureException exception) {
             throw new ShouldNeverHappenError("The randomization of a client credential should yield another valid client credential.", exception);
         }

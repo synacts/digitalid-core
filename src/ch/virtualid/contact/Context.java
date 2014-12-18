@@ -550,14 +550,14 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
     }
     
     /**
-     * Returns the context with the number given by the string in hexadecimal notation.
+     * Returns the context with the number given by the string.
      * 
      * @param entity the entity to which the context belongs.
-     * @param string a string in hexadecimal notation encoding the context number.
+     * @param string a string encoding the context number.
      */
     @Pure
     public static @Nonnull Context get(@Nonnull NonHostEntity entity, @Nonnull String string) throws InvalidEncodingException {
-        return get(entity, parse(string));
+        try { return get(entity, Long.parseLong(string)); } catch (@Nonnull NumberFormatException exception) { throw new InvalidEncodingException("Could not parse the given string.", exception); }
     }
     
     /**
@@ -656,29 +656,6 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
     @Override
     public @Nonnull String toString() {
         return String.valueOf(number);
-    }
-    
-    /**
-     * Returns a hexadecimal representation of this context.
-     * 
-     * @return a hexadecimal representation of this context.
-     */
-    @Pure
-    public @Nonnull String toHexString() {
-        return String.format("0x%016X", number);
-    }
-    
-    /**
-     * Returns the given string in hexadecimal notation as long.
-     * 
-     * @param string the string to parse in hexadecimal notation.
-     * 
-     * @return the given string in hexadecimal notation as long.
-     */
-    @Pure
-    private static long parse(@Nonnull String string) throws InvalidEncodingException {
-        if (string.length() != 18 || !string.startsWith("0x")) throw new InvalidEncodingException("'" + string + "' does not consist of 18 characters and start with '0x'.");
-        return (Long.parseLong(string.substring(2, 10), 16) << 32) | Long.parseLong(string.substring(10, 18), 16);
     }
     
 }

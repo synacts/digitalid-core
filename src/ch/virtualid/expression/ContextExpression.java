@@ -1,25 +1,32 @@
 package ch.virtualid.expression;
 
+import ch.virtualid.annotations.Capturable;
+import ch.virtualid.annotations.Pure;
+import ch.virtualid.contact.Contact;
 import ch.virtualid.contact.Context;
-import ch.virtualid.credential.Credential;
 import ch.virtualid.entity.NonHostEntity;
+import static ch.virtualid.expression.Expression.operators;
+import ch.virtualid.interfaces.Immutable;
+import ch.virtualid.util.FreezableSet;
 import ch.xdf.Block;
+import ch.xdf.CredentialsSignatureWrapper;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * This class models context expressions.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 0.8
+ * @version 2.0
  */
-final class ContextExpression extends Expression {
-
+final class ContextExpression extends Expression implements Immutable {
+    
     /**
      * Stores the context of this expression.
      */
     private final @Nonnull Context context;
-
+    
     /**
      * Creates a new context expression with the given context.
      * 
@@ -27,61 +34,59 @@ final class ContextExpression extends Expression {
      */
     ContextExpression(@Nonnull NonHostEntity entity, @Nonnull Context context) {
         super(entity);
-
+        
         this.context = context;
     }
-
-    /**
-     * Returns whether this expression is active.
-     * 
-     * @return whether this expression is active.
-     */
+    
+    
+    @Pure
     @Override
-    public boolean isActive() {
+    boolean isPublic() {
+        return false;
+    }
+    
+    @Pure
+    @Override
+    boolean isActive() {
         return true;
     }
-
-    /**
-     * Returns whether this expression matches the given block (for certification restrictions).
-     * 
-     * @param attribute the attribute to check.
-     * @return whether this expression matches the given block.
-     * @require false : "This method should never be called.";
-     */
+    
+    @Pure
     @Override
-    public boolean matches(Block attribute) {
-        assert false : "This method should never be called.";
-
+    boolean isImpersonal() {
         return false;
     }
-
-    /**
-     * Returns whether this expression matches the given credentials.
-     * 
-     * @param credentials the credentials to check.
-     * @return whether this expression matches the given credentials.
-     */
+    
+    
+    @Pure
     @Override
-    public boolean matches(Credential[] credentials) throws SQLException, Exception {
-        if (credentials == null) return false;
-
-//        List<Long> contacts = getHost().getContacts(getConnection(), getVid(), context);
-
-        for (Credential credential : credentials) {
-//            if (credential.getAttribute() == null && contacts.contains(Mapper.getVid(credential.getIdentifier()))) return true;
-        }
-
+    @Nonnull @Capturable FreezableSet<Contact> getContacts() throws SQLException {
+        assert isActive() : "This expression is active.";
+        
+        return context.getAllContacts();
+    }
+    
+    @Pure
+    @Override
+    boolean matches(@Nonnull Block attributeContent) {
+        assert isImpersonal() : "This expression is impersonal.";
+        
         return false;
     }
-
-    /**
-     * Returns this expression as a string.
-     * 
-     * @return this expression as a string.
-     */
+    
+    @Pure
     @Override
-    public String toString() {
-        return Integer.toString(context);
+    boolean matches(@Nonnull CredentialsSignatureWrapper signature) throws SQLException {
+        return signature.isIdentityBased() && !signature.isRoleBased() && context.contains(Contact.get(getEntity(), signature.getIssuer()));
+    }
+    
+    
+    @Pure
+    @Override
+    @Nonnull String toString(@Nullable Character operator, boolean right) {
+        assert operator == null || operators.contains(operator) : "The operator is valid.";
+        
+        return context.toString();
     }
     
 }

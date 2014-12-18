@@ -2,6 +2,7 @@ package ch.xdf;
 
 import ch.virtualid.annotations.Exposed;
 import ch.virtualid.annotations.Pure;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.identity.SyntacticType;
 import ch.virtualid.interfaces.Blockable;
@@ -9,7 +10,6 @@ import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.util.FreezableArrayList;
 import ch.virtualid.util.FreezableList;
 import ch.virtualid.util.ReadonlyList;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -59,7 +59,7 @@ public final class ListWrapper extends BlockWrapper implements Immutable {
      * @param elements the elements to encode into a block.
      * 
      * @require type.isLoaded() : "The type declaration is loaded.";
-     * @require type.isBasedOn(getSyntacticType()) : "The given type is based on the indicated syntactic type.";
+     * @require type.isBasedOn(TYPE) : "The given type is based on the indicated syntactic type.";
      * @require basedOnParameter(type, elements) : "Each element is either null or based on the parameter of the given type.";
      * @require elements.isFrozen() : "The elements have to be frozen.";
      */
@@ -79,7 +79,7 @@ public final class ListWrapper extends BlockWrapper implements Immutable {
      * @param elements the elements to encode into a new block.
      * 
      * @require type.isLoaded() : "The type declaration is loaded.";
-     * @require type.isBasedOn(getSyntacticType()) : "The given type is based on the indicated syntactic type.";
+     * @require type.isBasedOn(TYPE) : "The given type is based on the indicated syntactic type.";
      * @require basedOnParameter(type, elements.toBlock()) : "Each element is either null or based on the parameter of the given type.";
      */
     public ListWrapper(@Nonnull SemanticType type, @Nonnull Blockable... elements) {
@@ -97,7 +97,7 @@ public final class ListWrapper extends BlockWrapper implements Immutable {
      * 
      * @param block the block to wrap and decode.
      * 
-     * @require block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
+     * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated syntactic type.";
      */
     public ListWrapper(@Nonnull Block block) throws InvalidEncodingException {
         super(block);

@@ -65,7 +65,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper implements Im
      * @param commitment the commitment containing the client secret.
      * 
      * @require type.isLoaded() : "The type declaration is loaded.";
-     * @require type.isBasedOn(getSyntacticType()) : "The given type is based on the indicated syntactic type.";
+     * @require type.isBasedOn(TYPE) : "The given type is based on the indicated syntactic type.";
      * @require element == null || element.getType().isBasedOn(type.getParameters().getNotNull(0)) : "The element is either null or based on the parameter of the given type.";
      * 
      * @ensure isVerified() : "This signature is verified.";
@@ -86,7 +86,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper implements Im
      * @param commitment the commitment containing the client secret.
      * 
      * @require type.isLoaded() : "The type declaration is loaded.";
-     * @require type.isBasedOn(getSyntacticType()) : "The given type is based on the indicated syntactic type.";
+     * @require type.isBasedOn(TYPE) : "The given type is based on the indicated syntactic type.";
      * @require element == null || element.getType().isBasedOn(type.getParameters().getNotNull(0)) : "The element is either null or based on the parameter of the given type.";
      * 
      * @ensure isVerified() : "This signature is verified.";
@@ -103,7 +103,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper implements Im
      * @param clientSignature the signature to be decoded.
      * @param verified whether the signature is already verified.
      * 
-     * @require block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
+     * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated syntactic type.";
      * @require clientSignature.getType().isBasedOn(SIGNATURE) : "The signature is based on the implementation type.";
      */
     ClientSignatureWrapper(@Nonnull Block block, @Nonnull Block clientSignature, boolean verified) throws SQLException, IOException, PacketException, ExternalException {

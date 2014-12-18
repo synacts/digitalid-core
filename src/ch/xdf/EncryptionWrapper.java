@@ -150,7 +150,7 @@ public final class EncryptionWrapper extends BlockWrapper implements Immutable {
      * @param symmetricKey the symmetric key that is used for the encryption of the element or null if no encryption is used.
      * 
      * @require type.isLoaded() : "The type declaration is loaded.";
-     * @require type.isBasedOn(getSyntacticType()) : "The given type is based on the indicated syntactic type.";
+     * @require type.isBasedOn(TYPE) : "The given type is based on the indicated syntactic type.";
      * @require element == null || element.getType().isBasedOn(type.getParameters().getNotNull(0)) : "The element is either null or based on the parameter of the given type.";
      */
     public EncryptionWrapper(@Nonnull SemanticType type, @Nullable Block element, @Nullable HostIdentifier recipient, @Nullable SymmetricKey symmetricKey) throws SQLException, IOException, PacketException, ExternalException {
@@ -175,7 +175,7 @@ public final class EncryptionWrapper extends BlockWrapper implements Immutable {
      * @param symmetricKey the symmetric key that is used for the encryption of the element or null if no encryption is used.
      * 
      * @require type.isLoaded() : "The type declaration is loaded.";
-     * @require type.isBasedOn(getSyntacticType()) : "The given type is based on the indicated syntactic type.";
+     * @require type.isBasedOn(TYPE) : "The given type is based on the indicated syntactic type.";
      * @require element == null || element.getType().isBasedOn(type.getParameters().getNotNull(0)) : "The element is either null or based on the parameter of the given type.";
      */
     public EncryptionWrapper(@Nonnull SemanticType type, @Nullable Blockable element, @Nullable HostIdentifier recipient, @Nullable SymmetricKey symmetricKey) throws SQLException, IOException, PacketException, ExternalException {
@@ -188,7 +188,7 @@ public final class EncryptionWrapper extends BlockWrapper implements Immutable {
      * @param block the block to be wrapped and decoded.
      * @param symmetricKey the symmetric key used for decryption or null if the element is encrypted for a host or not at all.
      * 
-     * @require block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
+     * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated syntactic type.";
      */
     public EncryptionWrapper(@Nonnull Block block, @Nullable SymmetricKey symmetricKey) throws InvalidEncodingException {
         super(block);

@@ -72,7 +72,7 @@ public final class HostSignatureWrapper extends SignatureWrapper implements Immu
      * @param signer the identifier of the signing identity.
      * 
      * @require type.isLoaded() : "The type declaration is loaded.";
-     * @require type.isBasedOn(getSyntacticType()) : "The given type is based on the indicated syntactic type.";
+     * @require type.isBasedOn(TYPE) : "The given type is based on the indicated syntactic type.";
      * @require element == null || element.getType().isBasedOn(type.getParameters().getNotNull(0)) : "The element is either null or based on the parameter of the given type.";
      * @require Server.hasHost(signer.getHostIdentifier()) : "The host of the signer is running on this server.";
      * 
@@ -96,7 +96,7 @@ public final class HostSignatureWrapper extends SignatureWrapper implements Immu
      * @param signer the identifier of the signing identity.
      * 
      * @require type.isLoaded() : "The type declaration is loaded.";
-     * @require type.isBasedOn(getSyntacticType()) : "The given type is based on the indicated syntactic type.";
+     * @require type.isBasedOn(TYPE) : "The given type is based on the indicated syntactic type.";
      * @require element == null || element.getType().isBasedOn(type.getParameters().getNotNull(0)) : "The element is either null or based on the parameter of the given type.";
      * @require Server.hasHost(signer.getHostIdentifier()) : "The host of the signer is running on this server.";
      * 
@@ -113,7 +113,7 @@ public final class HostSignatureWrapper extends SignatureWrapper implements Immu
      * @param hostSignature the signature to be decoded.
      * @param verified whether the signature is already verified.
      * 
-     * @require block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
+     * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated syntactic type.";
      * @require hostSignature.getType().isBasedOn(SIGNATURE) : "The signature is based on the implementation type.";
      */
     HostSignatureWrapper(@Nonnull Block block, @Nonnull Block hostSignature, boolean verified) throws InvalidEncodingException {
