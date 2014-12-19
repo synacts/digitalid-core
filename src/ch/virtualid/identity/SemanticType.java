@@ -5,6 +5,7 @@ import ch.virtualid.auxiliary.Time;
 import ch.virtualid.client.Cache;
 import ch.virtualid.contact.Context;
 import ch.virtualid.database.Database;
+import ch.virtualid.entity.Entity;
 import ch.virtualid.exceptions.external.AttributeNotFoundException;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
@@ -551,6 +552,39 @@ public final class SemanticType extends Type implements Immutable {
         
         assert categories != null;
         return categories.contains(category);
+    }
+    
+    /**
+     * Returns whether this semantic type can be used to denote an attribute for the given entity.
+     * 
+     * @param entity the entity of interest.
+     * 
+     * @return whether this semantic type can be used to denote an attribute for the given entity.
+     * 
+     * @require isLoaded() : "The type declaration is already loaded.";
+     */
+    @Pure
+    public boolean isAttributeFor(@Nonnull Entity entity) {
+        assert isLoaded() : "The type declaration is already loaded.";
+        
+        return isAttributeFor(entity.getIdentity().getCategory());
+    }
+    
+    /**
+     * Checks that this semantic type can be used to denote an attribute for the given entity.
+     * 
+     * @param entity the entity of interest.
+     * 
+     * @return this semantic type.
+     * 
+     * @throws InvalidEncodingException if this is not the case.
+     * 
+     * @require isLoaded() : "The type declaration is already loaded.";
+     */
+    @Pure
+    public @Nonnull SemanticType checkIsAttributeFor(@Nonnull Entity entity) throws InvalidEncodingException {
+        if (!isAttributeFor(entity)) throw new InvalidEncodingException(getAddress() + " is not an attribute for the given entity.");
+        return this;
     }
     
     /**

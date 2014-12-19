@@ -141,7 +141,7 @@ public abstract class AttributeValue implements Immutable, Blockable, SQLizable 
      */
     @Pure
     public boolean matches(@Nonnull Attribute attribute) {
-        return content.getType().isAttributeFor(attribute.getEntity().getIdentity().getCategory());
+        return content.getType().isAttributeFor(attribute.getEntity());
     }
     
     /**

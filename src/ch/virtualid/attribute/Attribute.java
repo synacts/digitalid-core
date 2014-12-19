@@ -1,5 +1,6 @@
 package ch.virtualid.attribute;
 
+import ch.virtualid.annotations.Capturable;
 import ch.virtualid.annotations.OnlyForActions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Synchronizer;
@@ -12,13 +13,15 @@ import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.expression.PassiveExpression;
 import ch.virtualid.handler.action.internal.AttributeValueReplace;
+import ch.virtualid.handler.action.internal.AttributeVisibilityReplace;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.module.both.Attributes;
 import ch.virtualid.util.ConcurrentHashMap;
 import ch.virtualid.util.ConcurrentMap;
+import ch.virtualid.util.FreezableSet;
 import java.sql.SQLException;
-import java.util.Set;
+import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -51,7 +54,7 @@ public final class Attribute extends GeneralConcept implements Immutable {
     /**
      * Stores the type of this attribute.
      * 
-     * @invariant type.isAttributeType() : "The type is an attribute type.";
+     * @invariant type.isAttributeFor(getEntity()) : "The type is an attribute for the entity.";
      */
     private final @Nonnull SemanticType type;
     
@@ -64,7 +67,7 @@ public final class Attribute extends GeneralConcept implements Immutable {
     /**
      * Stores the value of this attribute.
      * 
-     * @invariant value == null || value.match(this) : "The value is null or matches this attribute.";
+     * @invariant value == null || value.matches(this) : "The value is null or matches this attribute.";
      */
     private @Nullable AttributeValue value;
     
@@ -77,7 +80,7 @@ public final class Attribute extends GeneralConcept implements Immutable {
     /**
      * Stores the unpublished value of this attribute.
      * 
-     * @invariant unpublished == null || unpublished.match(this) : "The unpublished value is null or matches this attribute.";
+     * @invariant unpublished == null || unpublished.matches(this) : "The unpublished value is null or matches this attribute.";
      */
     private @Nullable AttributeValue unpublished;
     
@@ -101,12 +104,12 @@ public final class Attribute extends GeneralConcept implements Immutable {
      * @param entity the entity to which this attribute belongs.
      * @param type the type of this attribute.
      * 
-     * @require type.isAttributeType() : "The type is an attribute type.";
+     * @require type.isAttributeFor(entity) : "The type is an attribute for the entity.";
      */
     private Attribute(@Nonnull Entity entity, @Nonnull SemanticType type) {
         super(entity);
         
-        assert type.isAttributeType() : "The type is an attribute type.";
+        assert type.isAttributeFor(entity) : "The type is an attribute for the entity.";
         
         this.type = type;
     }
@@ -117,7 +120,7 @@ public final class Attribute extends GeneralConcept implements Immutable {
      * 
      * @return the type of this attribute.
      * 
-     * @ensure return.isAttributeType() : "The type is an attribute type.";
+     * @ensure return.isAttributeFor(getEntity()) : "The type is an attribute for the entity.";
      */
     public @Nonnull SemanticType getType() {
         return type;
@@ -129,7 +132,7 @@ public final class Attribute extends GeneralConcept implements Immutable {
      * 
      * @return the published value of this attribute or null if not set.
      * 
-     * @ensure return == null || return.match(this) : "The returned value is null or matches this attribute.";
+     * @ensure return == null || return.matches(this) : "The returned value is null or matches this attribute.";
      */
     @Pure
     public @Nullable AttributeValue getValue() throws SQLException {
@@ -146,12 +149,11 @@ public final class Attribute extends GeneralConcept implements Immutable {
      * @param newValue the new value of this attribute.
      * 
      * @require isOnClient() : "This attribute is on a client.";
-     * @require newValue == null || newValue.match(this) : "The new value is null or matches this attribute.";
+     * @require newValue == null || newValue.matches(this) : "The new value is null or matches this attribute.";
      */
     public void setValue(@Nullable AttributeValue newValue) throws SQLException {
         final @Nullable AttributeValue oldValue = getValue();
-        // The old and the new value is not identical (and particularly not both null).
-        if (oldValue != newValue) {
+        if (!Objects.equals(oldValue, newValue)) {
             Synchronizer.execute(new AttributeValueReplace(this, true, oldValue, newValue));
         }
     }
@@ -162,13 +164,13 @@ public final class Attribute extends GeneralConcept implements Immutable {
      * @param oldValue the old value of this attribute.
      * @param newValue the new value of this attribute.
      * 
-     * @require oldValue != newValue : "The old and new value are not identical.";
-     * @require oldValue == null || oldValue.match(this) : "The old value is null or matches this attribute.";
-     * @require newValue == null || newValue.match(this) : "The new value is null or matches this attribute.";
+     * @require !Objects.equals(oldValue, newValue) : "The old and new value are not equal.";
+     * @require oldValue == null || oldValue.matches(this) : "The old value is null or matches this attribute.";
+     * @require newValue == null || newValue.matches(this) : "The new value is null or matches this attribute.";
      */
     @OnlyForActions
     public void replaceValue(@Nullable AttributeValue oldValue, @Nullable AttributeValue newValue) throws SQLException {
-        assert oldValue != newValue : "The old and new value are not identical.";
+        assert !Objects.equals(oldValue, newValue) : "The old and new value are not equal.";
         
         if (oldValue == null && newValue != null) Attributes.insertValue(this, true, newValue);
         else if (oldValue != null && newValue == null) Attributes.deleteValue(this, true, oldValue);
@@ -185,7 +187,7 @@ public final class Attribute extends GeneralConcept implements Immutable {
      * 
      * @return the unpublished value of this attribute or null if not set.
      * 
-     * @ensure return == null || return.match(this) : "The returned value is null or matches this attribute.";
+     * @ensure return == null || return.matches(this) : "The returned value is null or matches this attribute.";
      */
     @Pure
     public @Nullable AttributeValue getUnpublishedValue() throws SQLException {
@@ -202,12 +204,11 @@ public final class Attribute extends GeneralConcept implements Immutable {
      * @param newValue the new unpublished value of this attribute.
      * 
      * @require isOnClient() : "This attribute is on a client.";
-     * @require newValue == null || newValue.match(this) : "The new value is null or matches this attribute.";
+     * @require newValue == null || newValue.matches(this) : "The new value is null or matches this attribute.";
      */
     public void setUnpublishedValue(@Nullable AttributeValue newValue) throws SQLException {
         final @Nullable AttributeValue oldValue = getUnpublishedValue();
-        // The old and the new value is not identical (and particularly not both null).
-        if (oldValue != newValue) {
+        if (!Objects.equals(oldValue, newValue)) {
             Synchronizer.execute(new AttributeValueReplace(this, false, oldValue, newValue));
         }
     }
@@ -218,13 +219,13 @@ public final class Attribute extends GeneralConcept implements Immutable {
      * @param oldValue the old unpublished value of this attribute.
      * @param newValue the new unpublished value of this attribute.
      * 
-     * @require oldValue != newValue : "The old and new value are not identical.";
-     * @require oldValue == null || oldValue.match(this) : "The old value is null or matches this attribute.";
-     * @require newValue == null || newValue.match(this) : "The new value is null or matches this attribute.";
+     * @require !Objects.equals(oldValue, newValue) : "The old and new value are not equal.";
+     * @require oldValue == null || oldValue.matches(this) : "The old value is null or matches this attribute.";
+     * @require newValue == null || newValue.matches(this) : "The new value is null or matches this attribute.";
      */
     @OnlyForActions
     public void replaceUnpublishedValue(@Nullable AttributeValue oldValue, @Nullable AttributeValue newValue) throws SQLException {
-        assert oldValue != newValue : "The old and new value are not identical.";
+        assert !Objects.equals(oldValue, newValue) : "The old and new value are not equal.";
         
         if (oldValue == null && newValue != null) Attributes.insertValue(this, false, newValue);
         else if (oldValue != null && newValue == null) Attributes.deleteValue(this, false, oldValue);
@@ -240,14 +241,58 @@ public final class Attribute extends GeneralConcept implements Immutable {
      * Returns the visibility of this attribute or null if not set.
      * 
      * @return the visibility of this attribute or null if not set.
+     * 
+     * @require getEntity().getIdentity() instanceof InternalPerson : "The entity of this attribute belongs to an internal person.";
+     * 
+     * @ensure return == null || return.getEntity().equals(getEntity()) : "The returned visibility is null or belongs to the same entity.";
      */
     @Pure
-    public @Nullable PassiveExpression getVisibility() {
+    public @Nullable PassiveExpression getVisibility() throws SQLException {
         if (!visibilityLoaded) {
-            visibility = Attributes.getValue(this);
+            visibility = Attributes.getVisibility(this);
             visibilityLoaded = true;
         }
         return visibility;
+    }
+    
+    /**
+     * Sets the visibility of this attribute.
+     * 
+     * @param newVisibility the new visibility of this attribute.
+     * 
+     * @require isOnClient() : "This attribute is on a client.";
+     * @require getEntity().getIdentity() instanceof InternalPerson : "The entity of this attribute belongs to an internal person.";
+     * @require newVisibility == null || newVisibility.getEntity().equals(getEntity()) : "The new visibility is null or belongs to the same entity.";
+     */
+    public void setVisibility(@Nullable PassiveExpression newVisibility) throws SQLException {
+        final @Nullable PassiveExpression oldVisibility = getVisibility();
+        if (!Objects.equals(oldVisibility, newVisibility)) {
+            Synchronizer.execute(new AttributeVisibilityReplace(this, oldVisibility, newVisibility));
+        }
+    }
+    
+    /**
+     * Replaces the visibility of this attribute.
+     * 
+     * @param oldVisibility the old visibility of this attribute.
+     * @param newVisibility the new visibility of this attribute.
+     * 
+     * @require !Objects.equals(oldVisibility, newVisibility) : "The old and new visibility are not equal.";
+     * @require getEntity().getIdentity() instanceof InternalPerson : "The entity of this attribute belongs to an internal person.";
+     * @require oldVisibility == null || oldVisibility.getEntity().equals(getEntity()) : "The old visibility is null or belongs to the same entity.";
+     * @require newVisibility == null || newVisibility.getEntity().equals(getEntity()) : "The new visibility is null or belongs to the same entity.";
+     */
+    @OnlyForActions
+    public void replaceVisibility(@Nullable PassiveExpression oldVisibility, @Nullable PassiveExpression newVisibility) throws SQLException {
+        assert !Objects.equals(oldVisibility, newVisibility) : "The old and new visibility are not equal.";
+        
+        if (oldVisibility == null && newVisibility != null) Attributes.insertVisibility(this, newVisibility);
+        else if (oldVisibility != null && newVisibility == null) Attributes.deleteVisibility(this, oldVisibility);
+        else if (oldVisibility != null && newVisibility != null) Attributes.replaceVisibility(this, oldVisibility, newVisibility);
+        
+        visibility = newVisibility;
+        visibilityLoaded = true;
+        notify(VISIBILITY);
     }
     
     
@@ -271,6 +316,8 @@ public final class Attribute extends GeneralConcept implements Immutable {
      * @param type the type that denotes the attribute.
      * 
      * @return a new or existing attribute with the given entity and type.
+     * 
+     * @require type.isAttributeFor(entity) : "The type is an attribute for the entity.";
      */
     @Pure
     public static @Nonnull Attribute get(@Nonnull Entity entity, @Nonnull SemanticType type) {
@@ -291,10 +338,11 @@ public final class Attribute extends GeneralConcept implements Immutable {
      * @param entity the entity whose attributes are to be returned.
      * 
      * @return all the attributes of the given entity.
+     * 
+     * @ensure return.isNotFrozen() : "The returned attributes are not frozen.";
      */
-    public static @Nonnull Set<Attribute> getAll(@Nonnull Entity entity) throws SQLException {
-        throw new SQLException();
-//        return Attributes.getAll(entity);
+    public static @Capturable @Nonnull FreezableSet<Attribute> getAll(@Nonnull Entity entity) throws SQLException {
+        return Attributes.getAll(entity);
     }
     
     /**
@@ -337,7 +385,7 @@ public final class Attribute extends GeneralConcept implements Immutable {
     @Pure
     @Override
     public @Nonnull String toString() {
-        return type.toString();
+        return "Attribute (" + type.getAddress().getString() + ")";
     }
     
 }

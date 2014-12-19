@@ -2,6 +2,7 @@ package ch.virtualid.module.both;
 
 import ch.virtualid.agent.Agent;
 import ch.virtualid.agent.AgentPermissions;
+import ch.virtualid.annotations.Capturable;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.attribute.Attribute;
 import ch.virtualid.attribute.AttributeValue;
@@ -18,14 +19,17 @@ import ch.virtualid.expression.PassiveExpression;
 import ch.virtualid.handler.InternalQuery;
 import ch.virtualid.identity.Identity;
 import ch.virtualid.identity.IdentityClass;
+import ch.virtualid.identity.InternalPerson;
 import ch.virtualid.identity.Mapper;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.BothModule;
 import ch.virtualid.module.CoreService;
 import ch.virtualid.server.Host;
 import ch.virtualid.util.FreezableArray;
+import ch.virtualid.util.FreezableLinkedHashSet;
 import ch.virtualid.util.FreezableLinkedList;
 import ch.virtualid.util.FreezableList;
+import ch.virtualid.util.FreezableSet;
 import ch.virtualid.util.ReadonlyArray;
 import ch.virtualid.util.ReadonlyList;
 import ch.xdf.Block;
@@ -254,7 +258,7 @@ public final class Attributes implements BothModule {
             final @Nonnull ReadonlyList<Block> entries = new ListWrapper(tables.getNotNull(0)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(3);
-                IdentityClass.create(elements.getNotNull(0)).toSemanticType().checkIsAttributeType().set(preparedStatement, 2);
+                IdentityClass.create(elements.getNotNull(0)).toSemanticType().checkIsAttributeFor(entity).set(preparedStatement, 2);
                 preparedStatement.setBoolean(3, new BooleanWrapper(elements.getNotNull(1)).getValue());
                 elements.getNotNull(2).set(preparedStatement, 4);
                 preparedStatement.addBatch();
@@ -267,7 +271,7 @@ public final class Attributes implements BothModule {
             final @Nonnull ReadonlyList<Block> entries = new ListWrapper(tables.getNotNull(1)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(2);
-                IdentityClass.create(elements.getNotNull(0)).toSemanticType().checkIsAttributeType().set(preparedStatement, 2);
+                IdentityClass.create(elements.getNotNull(0)).toSemanticType().checkIsAttributeFor(entity).set(preparedStatement, 2);
                 preparedStatement.setString(2, new StringWrapper(elements.getNotNull(1)).getString());
                 preparedStatement.addBatch();
             }
@@ -299,6 +303,27 @@ public final class Attributes implements BothModule {
     
     
     /**
+     * Returns all the attributes of the given entity.
+     * 
+     * @param entity the entity whose attributes are to be returned.
+     * 
+     * @return all the attributes of the given entity.
+     * 
+     * @ensure return.isNotFrozen() : "The returned attributes are not frozen.";
+     */
+    public static @Capturable @Nonnull FreezableSet<Attribute> getAll(@Nonnull Entity entity) throws SQLException {
+        final @Nonnull String SQL = "SELECT type FROM " + entity.getSite() + "attribute_value WHERE entity = " + entity;
+        try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
+            final @Nonnull FreezableSet<Attribute> attributes = new FreezableLinkedHashSet<Attribute>();
+            while (resultSet.next()) attributes.add(Attribute.get(entity, IdentityClass.getNotNull(resultSet, 1).toSemanticType().checkIsAttributeFor(entity)));
+            return attributes;
+        } catch (@Nonnull InvalidEncodingException exception) {
+            throw new SQLException("Some values returned by the database are invalid.", exception);
+        }
+    }
+    
+    
+    /**
      * Returns the value of the given attribute or null if no value is found.
      * 
      * @param attribute the attribute whose value is to be returned.
@@ -306,7 +331,7 @@ public final class Attributes implements BothModule {
      * 
      * @return the value of the given attribute or null if no value is found.
      * 
-     * @ensure return == null || return.match(attribute) : "The returned value is null or matches the given attribute.";
+     * @ensure return == null || return.matches(attribute) : "The returned value is null or matches the given attribute.";
      */
     public static @Nullable AttributeValue getValue(@Nonnull Attribute attribute, boolean published) throws SQLException {
         final @Nonnull String SQL = "SELECT value FROM " + attribute.getEntity().getSite() + "attribute_value WHERE entity = " + attribute.getEntity() + " AND type = " + attribute.getType() + " AND published = " + published;
@@ -325,7 +350,7 @@ public final class Attributes implements BothModule {
      * @param published whether the published value is to be inserted.
      * @param value the value which is to be inserted for the attribute.
      * 
-     * @require value.match(attribute) : "The value matches the given attribute.";
+     * @require value.matches(attribute) : "The value matches the given attribute.";
      */
     public static void insertValue(@Nonnull Attribute attribute, boolean published, @Nonnull AttributeValue value) throws SQLException {
         assert value.matches(attribute) : "The value matches the given attribute.";
@@ -347,7 +372,7 @@ public final class Attributes implements BothModule {
      * @param published whether the published value is to be deleted.
      * @param value the value which is to be deleted from the attribute.
      * 
-     * @require value.match(attribute) : "The value matches the given attribute.";
+     * @require value.matches(attribute) : "The value matches the given attribute.";
      */
     public static void deleteValue(@Nonnull Attribute attribute, boolean published, @Nonnull AttributeValue value) throws SQLException {
         assert value.matches(attribute) : "The value matches the given attribute.";
@@ -363,16 +388,15 @@ public final class Attributes implements BothModule {
     }
     
     /**
-     * Replaces the value of the attribute with the given type of the given entity or throws an {@link SQLException} if it is not the old value of the attribute.
+     * Replaces the value of the given attribute.
      * 
-     * @param entity the entity of the attribute whose value is to be replaced.
-     * @param type the type of the attribute whose value is to be removed.
-     * @param published whether to remove the published or unpublished value.
+     * @param attribute the attribute whose value is to be replaced.
+     * @param published whether to replace the published or unpublished value.
      * @param oldValue the old value to be replaced by the new value.
      * @param newValue the new value by which the old value is replaced.
      * 
-     * @require oldValue.match(attribute) : "The old value matches the given attribute.";
-     * @require newValue.match(attribute) : "The new value matches the given attribute.";
+     * @require oldValue.matches(attribute) : "The old value matches the given attribute.";
+     * @require newValue.matches(attribute) : "The new value matches the given attribute.";
      */
     public static void replaceValue(@Nonnull Attribute attribute, boolean published, @Nonnull AttributeValue oldValue, @Nonnull AttributeValue newValue) throws SQLException {
         assert oldValue.matches(attribute) : "The old value matches the given attribute.";
@@ -391,79 +415,93 @@ public final class Attributes implements BothModule {
     
     
     /**
-     * Returns the visibility of the attribute with the given type of the given entity or null if no such visibility is available.
+     * Returns the visibility of the given attribute or null if no visibility is found.
      * 
-     * @param entity the entity of the attribute whose visibility is to be returned.
-     * @param type the type of the attribute whose visibility is to be returned.
+     * @param attribute the attribute whose visibility is to be returned.
+     * 
      * @return the visibility of the attribute with the given type of the given entity or null if no such visibility is available.
+     * 
+     * @require attribute.getEntity().getIdentity() instanceof InternalPerson : "The entity of the given attribute belongs to an internal person.";
+     * 
+     * @ensure return == null || return.getEntity().equals(attribute.getEntity()) : "The returned visibility is null or belongs to the entity of the given attribute.";
      */
     public static @Nullable PassiveExpression getVisibility(@Nonnull Attribute attribute) throws SQLException {
-        @Nonnull String query = "SELECT visibility FROM attribute_visibility WHERE entity = " + entity + " AND type = " + type;
-        try (@Nonnull Statement statement = connection.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(query)) {
-            if (resultSet.next()) return new PassiveExpression(resultSet.getString(1));
+        assert attribute.getEntity().getIdentity() instanceof InternalPerson : "The entity of the given attribute belongs to an internal person.";
+        
+        final @Nonnull String SQL = "SELECT visibility FROM " + attribute.getEntity().getSite() + "attribute_visibility WHERE entity = " + attribute.getEntity() + " AND type = " + attribute.getType();
+        try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
+            if (resultSet.next()) return PassiveExpression.get((NonHostEntity) attribute.getEntity(), resultSet, 1);
             else return null;
         }
     }
     
     /**
-     * Adds the visibility of the attribute with the given type of the given entity or throws an {@link SQLException} if the visibility of the attribute is already set.
+     * Inserts the given visibility for the given attribute.
      * 
-     * @param entity the entity of the attribute whose visibility is to be added.
-     * @param type the type of the attribute whose visibility is to be added.
-     * @param visibility the visibility of the attribute with the given type.
+     * @param attribute the attribute for which the visibility is to be inserted.
+     * @param visibility the visibility which is to be inserted for the attribute.
+     * 
+     * @require attribute.getEntity().getIdentity() instanceof InternalPerson : "The entity of the given attribute belongs to an internal person.";
+     * @require visibility.getEntity().equals(attribute.getEntity()) : "The visibility and the attribute belong to the same entity.";
      */
-    public static void addVisibility(@Nonnull Entity entity, @Nonnull SemanticType type, @Nonnull PassiveExpression visibility) throws SQLException {
-        @Nonnull String statement = "INSERT INTO attribute_visibility (entity, type, visibility) VALUES (?, ?, ?)";
-        try (@Nonnull PreparedStatement preparedStatement = connection.prepareStatement(statement)) {
-            preparedStatement.setLong(1, entity.getNumber());
-            preparedStatement.setLong(2, type.getNumber());
-            preparedStatement.setString(3, visibility.toString());
+    public static void insertVisibility(@Nonnull Attribute attribute, @Nonnull PassiveExpression visibility) throws SQLException {
+        assert attribute.getEntity().getIdentity() instanceof InternalPerson : "The entity of the given attribute belongs to an internal person.";
+        assert visibility.getEntity().equals(attribute.getEntity()) : "The visibility and the attribute belong to the same entity.";
+        
+        final @Nonnull String SQL = "INSERT INTO " + attribute.getEntity().getSite() + "attribute_visibility (entity, type, visibility) VALUES (?, ?, ?)";
+        try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
+            attribute.getEntity().set(preparedStatement, 1);
+            attribute.getType().set(preparedStatement, 2);
+            visibility.set(preparedStatement, 3);
             preparedStatement.executeUpdate();
-        } catch (@Nonnull SQLException exception) {
-            if (type.hasBeenMerged()) addVisibility(connection, entity, type, visibility);
-            else throw exception;
         }
     }
     
     /**
-     * Removes the visibility of the attribute with the given type of the given entity or throws an {@link SQLException} if the attribute has a different visibility.
+     * Deletes the given visibility from the given attribute.
      * 
-     * @param entity the entity of the attribute whose visibility is to be removed.
-     * @param type the type of the attribute whose visibility is to be removed.
-     * @param visibility the visibility of the attribute which is to be removed.
+     * @param attribute the attribute whose visibility is to be deleted.
+     * @param visibility the visibility which is to be deleted from the attribute.
+     * 
+     * @require attribute.getEntity().getIdentity() instanceof InternalPerson : "The entity of the given attribute belongs to an internal person.";
+     * @require visibility.getEntity().equals(attribute.getEntity()) : "The visibility and the attribute belong to the same entity.";
      */
-    public static void removeVisibility(@Nonnull Entity entity, @Nonnull SemanticType type, @Nonnull PassiveExpression visibility) throws SQLException {
-        @Nonnull String statement = "DELETE FROM attribute_visibility WHERE entity = ? AND type = ? AND visibility = ?";
-        try (@Nonnull PreparedStatement preparedStatement = connection.prepareStatement(statement)) {
-            preparedStatement.setLong(1, entity.getNumber());
-            preparedStatement.setLong(2, type.getNumber());
-            preparedStatement.setString(3, visibility.toString());
-            if (preparedStatement.executeUpdate() == 0) {
-                if (type.hasBeenMerged()) removeVisibility(connection, entity, type, visibility);
-                else throw new SQLException("The visibility of the attribute with the type '" + type + "' of the entity '" + entity + "' could not be removed.");
-            }
+    public static void deleteVisibility(@Nonnull Attribute attribute, @Nonnull PassiveExpression visibility) throws SQLException {
+        assert attribute.getEntity().getIdentity() instanceof InternalPerson : "The entity of the given attribute belongs to an internal person.";
+        assert visibility.getEntity().equals(attribute.getEntity()) : "The visibility and the attribute belong to the same entity.";
+        
+        final @Nonnull String SQL = "DELETE FROM " + attribute.getEntity().getSite() + "attribute_visibility WHERE entity = ? AND type = ? AND visibility = ?";
+        try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
+            attribute.getEntity().set(preparedStatement, 1);
+            attribute.getType().set(preparedStatement, 2);
+            visibility.set(preparedStatement, 3);
+            if (preparedStatement.executeUpdate() == 0) throw new SQLException("The visibility of the attribute with the type " + attribute.getType().getAddress() + " of the entity " + attribute.getEntity().getIdentity().getAddress() + " could not be deleted.");
         }
     }
     
     /**
-     * Replaces the visibility of the attribute with the given type of the given entity or throws an {@link SQLException} if it is not the old visibility of the attribute.
+     * Replaces the visibility of the given attribute.
      * 
-     * @param entity the entity of the attribute whose visibility is to be replaced.
-     * @param type the type of the attribute whose visibility is to be removed.
+     * @param attribute the attribute whose visibility is to be replaced.
      * @param oldVisibility the old visibility to be replaced by the new visibility.
      * @param newVisibility the new visibility by which the old visibility is replaced.
+     * 
+     * @require attribute.getEntity().getIdentity() instanceof InternalPerson : "The entity of the given attribute belongs to an internal person.";
+     * @require oldVisibility.getEntity().equals(attribute.getEntity()) : "The old visibility and the attribute belong to the same entity.";
+     * @require newVisibility.getEntity().equals(attribute.getEntity()) : "The new visibility and the attribute belong to the same entity.";
      */
-    public static void replaceVisibility(@Nonnull Entity entity, @Nonnull SemanticType type, @Nonnull PassiveExpression oldVisibility, @Nonnull PassiveExpression newVisibility) throws SQLException {
-        @Nonnull String statement = "UPDATE attribute_visibility SET visibility = ? WHERE entity = ? AND type = ? AND visibility = ?";
-        try (@Nonnull PreparedStatement preparedStatement = connection.prepareStatement(statement)) {
-            preparedStatement.setString(1, newVisibility.toString());
-            preparedStatement.setLong(2, entity.getNumber());
-            preparedStatement.setLong(3, type.getNumber());
-            preparedStatement.setString(4, oldVisibility.toString());
-            if (preparedStatement.executeUpdate() == 0) {
-                if (type.hasBeenMerged()) replaceVisibility(connection, entity, type, oldVisibility, newVisibility);
-                else throw new SQLException("The visibility of the attribute with the type '" + type + "' of the entity '" + entity + "' could not be replaced.");
-            }
+    public static void replaceVisibility(@Nonnull Attribute attribute, @Nonnull PassiveExpression oldVisibility, @Nonnull PassiveExpression newVisibility) throws SQLException {
+        assert attribute.getEntity().getIdentity() instanceof InternalPerson : "The entity of the given attribute belongs to an internal person.";
+        assert oldVisibility.getEntity().equals(attribute.getEntity()) : "The old visibility and the attribute belong to the same entity.";
+        assert newVisibility.getEntity().equals(attribute.getEntity()) : "The new visibility and the attribute belong to the same entity.";
+        
+        final @Nonnull String SQL = "UPDATE " + attribute.getEntity().getSite() + "attribute_visibility SET visibility = ? WHERE entity = ? AND type = ? AND visibility = ?";
+        try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
+            newVisibility.set(preparedStatement, 1);
+            attribute.getEntity().set(preparedStatement, 2);
+            attribute.getType().set(preparedStatement, 3);
+            oldVisibility.set(preparedStatement, 4);
+            if (preparedStatement.executeUpdate() == 0) throw new SQLException("The visibility of the attribute with the type " + attribute.getType().getAddress() + " of the entity " + attribute.getEntity().getIdentity().getAddress() + " could not be replaced.");
         }
     }
     

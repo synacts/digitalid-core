@@ -601,7 +601,7 @@ public final class Agents implements BothModule {
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(3);
                 preparedStatement.setLong(2, new Int64Wrapper(elements.getNotNull(0)).getValue());
-                IdentityClass.create(elements.getNotNull(1)).toSemanticType().checkIsAttributeType().set(preparedStatement, 3);
+                IdentityClass.create(elements.getNotNull(1)).toSemanticType().checkIsAttributeFor(entity).set(preparedStatement, 3);
                 preparedStatement.setBoolean(4, new BooleanWrapper(elements.getNotNull(2)).getValue());
                 preparedStatement.addBatch();
             }
@@ -749,7 +749,7 @@ public final class Agents implements BothModule {
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
             final @Nonnull AgentPermissions permissions = new AgentPermissions();
             while (resultSet.next()) {
-                final @Nonnull SemanticType type = IdentityClass.getNotNull(resultSet, 1).toSemanticType().checkIsAttributeType();
+                final @Nonnull SemanticType type = IdentityClass.getNotNull(resultSet, 1).toSemanticType().checkIsAttributeFor(agent.getEntity());
                 final boolean writing = resultSet.getBoolean(2);
                 permissions.put(type, writing);
             }

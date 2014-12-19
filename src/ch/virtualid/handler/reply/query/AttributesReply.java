@@ -5,7 +5,6 @@ import ch.virtualid.attribute.AttributeValue;
 import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
-import ch.virtualid.exceptions.external.InvalidSignatureException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Reply;
 import ch.virtualid.handler.query.external.AttributesQuery;
@@ -17,7 +16,6 @@ import ch.virtualid.util.ReadonlyList;
 import ch.xdf.Block;
 import ch.xdf.HostSignatureWrapper;
 import ch.xdf.ListWrapper;
-import ch.xdf.SignatureWrapper;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
@@ -62,7 +60,7 @@ public final class AttributesReply extends CoreServiceQueryReply {
      */
     public static boolean areCertificates(@Nonnull ReadonlyList<AttributeValue> attributes) {
         for (final @Nullable AttributeValue attribute : attributes) {
-            if (attribute != null && !attribute.isCertificate()) return false;
+//            if (attribute != null && !attribute.isCertificate()) return false;
         }
         return true;
     }
@@ -118,13 +116,13 @@ public final class AttributesReply extends CoreServiceQueryReply {
         final @Nonnull FreezableList<AttributeValue> attributes = new FreezableArrayList<AttributeValue>(elements.size());
         for (final @Nullable Block element : elements) {
             if (element != null) {
-                final @Nonnull AttributeValue attribute = SignatureWrapper.decodeWithoutVerifying(element, false, null);
-                try {
-                    attribute.verifyAsCertificate();
-                    attributes.add(attribute);
-                } catch (@Nonnull InvalidSignatureException exception) {
-                    attributes.add(new AttributeValue(AttributeValue.TYPE, attribute.getElementNotNull(), null));
-                }
+//                final @Nonnull AttributeValue attribute = SignatureWrapper.decodeWithoutVerifying(element, false, null);
+//                try {
+//                    attribute.verifyAsCertificate();
+//                    attributes.add(attribute);
+//                } catch (@Nonnull InvalidSignatureException exception) {
+//                    attributes.add(new AttributeValue(AttributeValue.TYPE, attribute.getElementNotNull(), null));
+//                }
             } else {
                 attributes.add(null);
             }
