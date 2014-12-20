@@ -9,6 +9,7 @@ import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
 import ch.xdf.Block;
+import ch.xdf.CredentialsSignatureWrapper;
 import ch.xdf.StringWrapper;
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -61,6 +62,29 @@ public final class PassiveExpression extends AbstractExpression implements Immut
     @Override
     boolean isValid() {
         return true;
+    }
+    
+    
+    /**
+     * Returns whether this passive expression is public.
+     * 
+     * @return whether this passive expression is public.
+     */
+    @Pure
+    public boolean isPublic() {
+        return getExpression().isPublic();
+    }
+    
+    /**
+     * Returns whether this passive expression matches the given signature.
+     * 
+     * @param signature the signature which is to be checked.
+     * 
+     * @return whether this passive expression matches the given signature.
+     */
+    @Pure
+    public boolean matches(@Nonnull CredentialsSignatureWrapper signature) throws SQLException {
+        return getExpression().matches(signature);
     }
     
     

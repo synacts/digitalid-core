@@ -544,20 +544,20 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
      * @require !isRoleBased() : "The authentication is not role-based.";
      */
     @Pure
-    public @Nonnull Person getIssuer() {
+    public @Nonnull InternalPerson getIssuer() {
         assert isIdentityBased() : "The authentication is identity-based.";
         assert !isRoleBased() : "The authentication is not role-based.";
         
-        return (Person) credentials.getNotNull(0).getIssuer();
+        return (InternalPerson) credentials.getNotNull(0).getIssuer();
     }
     
     /**
-     * Checks whether the first and only credential was issued by the given person and throws a {@link PacketException} if not.
+     * Checks whether the first and only credential was issued by the given internal person and throws a {@link PacketException} if not.
      * 
      * @param issuer the issuer to check.
      */
     @Pure
-    public void checkIssuer(@Nonnull Person issuer) throws PacketException {
+    public void checkIssuer(@Nonnull InternalPerson issuer) throws PacketException {
         if (!isIdentityBased() || isRoleBased() || !issuer.equals(getIssuer())) throw new PacketException(PacketError.AUTHORIZATION, "The credential was not issued by " + issuer.getAddress() + ".");
     }
     

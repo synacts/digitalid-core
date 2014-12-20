@@ -2,13 +2,16 @@ package ch.virtualid.handler.reply.query;
 
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.attribute.AttributeValue;
+import ch.virtualid.attribute.UncertifiedAttributeValue;
 import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.exceptions.external.InvalidSignatureException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Reply;
 import ch.virtualid.handler.query.external.AttributesQuery;
-import ch.virtualid.identifier.InternalNonHostIdentifier;
+import ch.virtualid.identifier.InternalIdentifier;
+import ch.virtualid.identity.InternalIdentity;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.util.FreezableArrayList;
 import ch.virtualid.util.FreezableList;
@@ -22,7 +25,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * Replies the queried attributes of the given subject that are accessible by the requester.
+ * Replies the queried attribute values of the given subject that are accessible by the requester.
  * 
  * @see AttributesQuery
  * 
@@ -38,64 +41,47 @@ public final class AttributesReply extends CoreServiceQueryReply {
     
     
     /**
-     * Returns whether all the attributes which are not null are verified.
+     * Returns whether all the attribute values which are not null are verified.
      * 
-     * @param attributes the list of attributes which is to be checked.
+     * @param attributeValues the list of attribute values which is to be checked.
      * 
-     * @return whether all the attributes which are not null are verified.
+     * @return whether all the attribute values which are not null are verified.
      */
-    public static boolean areVerified(@Nonnull ReadonlyList<AttributeValue> attributes) {
-        for (final @Nullable AttributeValue attribute : attributes) {
+    public static boolean areVerified(@Nonnull ReadonlyList<AttributeValue> attributeValues) {
+        for (final @Nullable AttributeValue attribute : attributeValues) {
             if (attribute != null && !attribute.isVerified()) return false;
         }
         return true;
     }
     
+    
     /**
-     * Returns whether all the attributes which are not null are certificates.
+     * Stores the attribute values of this reply.
      * 
-     * @param attributes the list of attributes which is to be checked.
-     * 
-     * @return whether all the attributes which are not null are certificates.
+     * @invariant attributeValues.isFrozen() : "The attribute values are frozen.";
+     * @invariant attributeValues.isNotEmpty() : "The attribute values are not empty.";
+     * @invariant areVerified(attributeValues) : "All the attribute values which are not null are verified.";
      */
-    public static boolean areCertificates(@Nonnull ReadonlyList<AttributeValue> attributes) {
-        for (final @Nullable AttributeValue attribute : attributes) {
-//            if (attribute != null && !attribute.isCertificate()) return false;
-        }
-        return true;
-    }
-    
+    private final @Nonnull ReadonlyList<AttributeValue> attributeValues;
     
     /**
-     * Stores the attributes of this reply.
-     * 
-     * @invariant attributes.isFrozen() : "The attributes are frozen.";
-     * @invariant attributes.isNotEmpty() : "The attributes are not empty.";
-     * @invariant areVerified(attributes) : "All the attributes which are not null are verified.";
-     * @invariant areCertificates(attributes) : "All the attributes which are not null are certificates.";
-     */
-    private final @Nonnull ReadonlyList<AttributeValue> attributes;
-    
-    /**
-     * Creates an attributes reply for the queried attributes of given subject.
+     * Creates an attributes reply for the queried attribute values of given subject.
      * 
      * @param subject the subject of this handler.
-     * @param attributes the attributes of this reply.
+     * @param attributeValues the attribute values of this reply.
      * 
-     * @require attributes.isFrozen() : "The attributes are frozen.";
-     * @require attributes.isNotEmpty() : "The attributes are not empty.";
-     * @require areVerified(attributes) : "All the attributes which are not null are verified.";
-     * @require areCertificates(attributes) : "All the attributes which are not null are certificates.";
+     * @require attributeValues.isFrozen() : "The attribute values are frozen.";
+     * @require attributeValues.isNotEmpty() : "The attribute values are not empty.";
+     * @require areVerified(attributeValues) : "All the attribute values which are not null are verified.";
      */
-    public AttributesReply(@Nonnull InternalNonHostIdentifier subject, @Nonnull ReadonlyList<AttributeValue> attributes) throws SQLException, PacketException {
+    public AttributesReply(@Nonnull InternalIdentifier subject, @Nonnull ReadonlyList<AttributeValue> attributeValues) throws SQLException, PacketException {
         super(subject);
         
-        assert attributes.isFrozen() : "The attributes are frozen.";
-        assert attributes.isNotEmpty() : "The attributes are not empty.";
-        assert areVerified(attributes) : "All the attributes which are not null are verified.";
-        assert areCertificates(attributes) : "All the attributes which are not null are certificates.";
+        assert attributeValues.isFrozen() : "The attribute values are frozen.";
+        assert attributeValues.isNotEmpty() : "The attribute values are not empty.";
+        assert areVerified(attributeValues) : "All the attribute values which are not null are verified.";
         
-        this.attributes = attributes;
+        this.attributeValues = attributeValues;
     }
     
     /**
@@ -112,32 +98,33 @@ public final class AttributesReply extends CoreServiceQueryReply {
     private AttributesReply(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, number);
         
+        final @Nonnull InternalIdentity subject = getSubject().getIdentity();
         final @Nonnull ReadonlyList<Block> elements = new ListWrapper(block).getElements();
-        final @Nonnull FreezableList<AttributeValue> attributes = new FreezableArrayList<AttributeValue>(elements.size());
+        final @Nonnull FreezableList<AttributeValue> attributeValues = new FreezableArrayList<AttributeValue>(elements.size());
         for (final @Nullable Block element : elements) {
             if (element != null) {
-//                final @Nonnull AttributeValue attribute = SignatureWrapper.decodeWithoutVerifying(element, false, null);
-//                try {
-//                    attribute.verifyAsCertificate();
-//                    attributes.add(attribute);
-//                } catch (@Nonnull InvalidSignatureException exception) {
-//                    attributes.add(new AttributeValue(AttributeValue.TYPE, attribute.getElementNotNull(), null));
-//                }
+                final @Nonnull AttributeValue attributeValue = AttributeValue.get(element, false);
+                try {
+                    attributeValue.verify();
+                    if (attributeValue.isCertified() && !attributeValue.toCertifiedAttributeValue().getSubject().equals(subject)) throw new InvalidEncodingException("An attribute is certified for the wrong subject.");
+                    attributeValues.add(attributeValue);
+                } catch (@Nonnull InvalidSignatureException exception) {
+                    attributeValues.add(new UncertifiedAttributeValue(attributeValue.getContent()));
+                }
             } else {
-                attributes.add(null);
+                attributeValues.add(null);
             }
         }
-        this.attributes = attributes.freeze();
-        if (attributes.isEmpty()) throw new InvalidEncodingException("The attributes may not be empty.");
+        if (attributeValues.isEmpty()) throw new InvalidEncodingException("The attribute values may not be empty.");
+        this.attributeValues = attributeValues.freeze();
     }
     
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        final @Nonnull ReadonlyList<AttributeValue> attributes = this.attributes;
-        final @Nonnull FreezableList<Block> elements = new FreezableArrayList<Block>(attributes.size());
-        for (final @Nullable AttributeValue attribute : attributes) {
-            elements.add(Block.toBlock(AttributeValue.TYPE, attribute));
+        final @Nonnull FreezableList<Block> elements = new FreezableArrayList<Block>(attributeValues.size());
+        for (final @Nullable AttributeValue attributeValue : attributeValues) {
+            elements.add(Block.toBlock(AttributeValue.TYPE, attributeValue));
         }
         return new ListWrapper(TYPE, elements.freeze()).toBlock();
     }
@@ -145,22 +132,21 @@ public final class AttributesReply extends CoreServiceQueryReply {
     @Pure
     @Override
     public @Nonnull String toString() {
-        return "Replies the queried attributes.";
+        return "Replies the queried attribute values.";
     }
     
     
     /**
-     * Returns the attributes of this reply.
+     * Returns the attribute values of this reply.
      * 
-     * @return the attributes of this reply.
+     * @return the attribute values of this reply.
      * 
-     * @ensure return.isFrozen() : "The attributes are frozen.";
-     * @ensure return.isNotEmpty() : "The attributes are not empty.";
-     * @ensure areVerified(return) : "All the attributes which are not null are verified.";
-     * @ensure areCertificates(return) : "All the attributes which are not null are certificates.";
+     * @ensure return.isFrozen() : "The attribute values are frozen.";
+     * @ensure return.isNotEmpty() : "The attribute values are not empty.";
+     * @ensure areVerified(return) : "All the attribute values which are not null are verified.";
      */
-    public @Nonnull ReadonlyList<AttributeValue> getAttributes() {
-        return attributes;
+    public @Nonnull ReadonlyList<AttributeValue> getAttributeValues() {
+        return attributeValues;
     }
     
     

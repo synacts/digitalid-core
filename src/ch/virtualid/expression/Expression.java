@@ -27,6 +27,13 @@ import javax.annotation.Nullable;
 /**
  * This class parses and represents expressions.
  * 
+ * @see BinaryExpression
+ * @see ContactExpression
+ * @see ContextExpression
+ * @see EmptyExpression
+ * @see EverybodyExpression
+ * @see RestrictionExpression
+ * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */

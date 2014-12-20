@@ -20,6 +20,7 @@ import ch.virtualid.module.both.Attributes;
 import ch.virtualid.util.ConcurrentHashMap;
 import ch.virtualid.util.ConcurrentMap;
 import ch.virtualid.util.FreezableSet;
+import ch.xdf.BooleanWrapper;
 import java.sql.SQLException;
 import java.util.Objects;
 import javax.annotation.Nonnull;
@@ -52,6 +53,12 @@ public final class Attribute extends GeneralConcept implements Immutable {
     
     
     /**
+     * Stores the semantic type {@code published.value.attribute@virtualid.ch}.
+     */
+    public static final @Nonnull SemanticType PUBLISHED = SemanticType.create("published.value.attribute@virtualid.ch").load(BooleanWrapper.TYPE);
+    
+    
+    /**
      * Stores the type of this attribute.
      * 
      * @invariant type.isAttributeFor(getEntity()) : "The type is an attribute for the entity.";
@@ -67,7 +74,7 @@ public final class Attribute extends GeneralConcept implements Immutable {
     /**
      * Stores the value of this attribute.
      * 
-     * @invariant value == null || value.matches(this) : "The value is null or matches this attribute.";
+     * @invariant value == null || value.isVerified() && value.matches(this) : "The value is null or verified and matches this attribute.";
      */
     private @Nullable AttributeValue value;
     
@@ -80,7 +87,7 @@ public final class Attribute extends GeneralConcept implements Immutable {
     /**
      * Stores the unpublished value of this attribute.
      * 
-     * @invariant unpublished == null || unpublished.matches(this) : "The unpublished value is null or matches this attribute.";
+     * @invariant unpublished == null || unpublished.isVerified() && unpublished.matches(this) : "The unpublished value is null or verified and matches this attribute.";
      */
     private @Nullable AttributeValue unpublished;
     
@@ -132,7 +139,7 @@ public final class Attribute extends GeneralConcept implements Immutable {
      * 
      * @return the published value of this attribute or null if not set.
      * 
-     * @ensure return == null || return.matches(this) : "The returned value is null or matches this attribute.";
+     * @ensure return == null || return.isVerified() && return.matches(this) : "The returned value is null or verified matches this attribute.";
      */
     @Pure
     public @Nullable AttributeValue getValue() throws SQLException {
@@ -149,7 +156,7 @@ public final class Attribute extends GeneralConcept implements Immutable {
      * @param newValue the new value of this attribute.
      * 
      * @require isOnClient() : "This attribute is on a client.";
-     * @require newValue == null || newValue.matches(this) : "The new value is null or matches this attribute.";
+     * @require newValue == null || newValue.isVerified() && newValue.matches(this) : "The new value is null or verified and matches this attribute.";
      */
     public void setValue(@Nullable AttributeValue newValue) throws SQLException {
         final @Nullable AttributeValue oldValue = getValue();
@@ -165,8 +172,8 @@ public final class Attribute extends GeneralConcept implements Immutable {
      * @param newValue the new value of this attribute.
      * 
      * @require !Objects.equals(oldValue, newValue) : "The old and new value are not equal.";
-     * @require oldValue == null || oldValue.matches(this) : "The old value is null or matches this attribute.";
-     * @require newValue == null || newValue.matches(this) : "The new value is null or matches this attribute.";
+     * @require oldValue == null || oldValue.isVerified() && oldValue.matches(this) : "The old value is null or verified and matches this attribute.";
+     * @require newValue == null || newValue.isVerified() && newValue.matches(this) : "The new value is null or verified and matches this attribute.";
      */
     @OnlyForActions
     public void replaceValue(@Nullable AttributeValue oldValue, @Nullable AttributeValue newValue) throws SQLException {
@@ -187,7 +194,7 @@ public final class Attribute extends GeneralConcept implements Immutable {
      * 
      * @return the unpublished value of this attribute or null if not set.
      * 
-     * @ensure return == null || return.matches(this) : "The returned value is null or matches this attribute.";
+     * @ensure return == null || return.isVerified() && return.matches(this) : "The returned value is null or verified and matches this attribute.";
      */
     @Pure
     public @Nullable AttributeValue getUnpublishedValue() throws SQLException {
@@ -204,7 +211,7 @@ public final class Attribute extends GeneralConcept implements Immutable {
      * @param newValue the new unpublished value of this attribute.
      * 
      * @require isOnClient() : "This attribute is on a client.";
-     * @require newValue == null || newValue.matches(this) : "The new value is null or matches this attribute.";
+     * @require newValue == null || newValue.isVerified() && newValue.matches(this) : "The new value is null or verified and matches this attribute.";
      */
     public void setUnpublishedValue(@Nullable AttributeValue newValue) throws SQLException {
         final @Nullable AttributeValue oldValue = getUnpublishedValue();
@@ -220,8 +227,8 @@ public final class Attribute extends GeneralConcept implements Immutable {
      * @param newValue the new unpublished value of this attribute.
      * 
      * @require !Objects.equals(oldValue, newValue) : "The old and new value are not equal.";
-     * @require oldValue == null || oldValue.matches(this) : "The old value is null or matches this attribute.";
-     * @require newValue == null || newValue.matches(this) : "The new value is null or matches this attribute.";
+     * @require oldValue == null || oldValue.isVerified() && oldValue.matches(this) : "The old value is null or verified and matches this attribute.";
+     * @require newValue == null || newValue.isVerified() && newValue.matches(this) : "The new value is null or verified and matches this attribute.";
      */
     @OnlyForActions
     public void replaceUnpublishedValue(@Nullable AttributeValue oldValue, @Nullable AttributeValue newValue) throws SQLException {

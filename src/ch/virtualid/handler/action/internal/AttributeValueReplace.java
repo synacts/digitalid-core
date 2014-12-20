@@ -37,11 +37,6 @@ import javax.annotation.Nullable;
 public final class AttributeValueReplace extends CoreServiceInternalAction {
     
     /**
-     * Stores the semantic type {@code published.value.attribute@virtualid.ch}.
-     */
-    private static final @Nonnull SemanticType PUBLISHED = SemanticType.create("published.value.attribute@virtualid.ch").load(BooleanWrapper.TYPE);
-    
-    /**
      * Stores the semantic type {@code old.value.attribute@virtualid.ch}.
      */
     private static final @Nonnull SemanticType OLD_VALUE = SemanticType.create("old.value.attribute@virtualid.ch").load(AttributeValue.TYPE);
@@ -54,7 +49,7 @@ public final class AttributeValueReplace extends CoreServiceInternalAction {
     /**
      * Stores the semantic type {@code replace.value.attribute@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("replace.value.attribute@virtualid.ch").load(TupleWrapper.TYPE, SemanticType.ATTRIBUTE_IDENTIFIER, PUBLISHED, OLD_VALUE, NEW_VALUE);
+    public static final @Nonnull SemanticType TYPE = SemanticType.create("replace.value.attribute@virtualid.ch").load(TupleWrapper.TYPE, SemanticType.ATTRIBUTE_IDENTIFIER, Attribute.PUBLISHED, OLD_VALUE, NEW_VALUE);
     
     
     /**
@@ -70,14 +65,14 @@ public final class AttributeValueReplace extends CoreServiceInternalAction {
     /**
      * Stores the old value of the attribute.
      * 
-     * @invariant oldValue == null || oldValue.matches(attribute) : "The old value is null or matches the attribute.";
+     * @invariant oldValue == null || oldValue.isVerified() && oldValue.matches(attribute) : "The old value is null or verified and matches the attribute.";
      */
     private final @Nullable AttributeValue oldValue;
     
     /**
      * Stores the new value of the attribute.
      * 
-     * @invariant newValue == null || newValue.matches(attribute) : "The new value is null or matches the attribute.";
+     * @invariant newValue == null || newValue.isVerified() && newValue.matches(attribute) : "The new value is null or verified and matches the attribute.";
      */
     private final @Nullable AttributeValue newValue;
     
@@ -91,15 +86,15 @@ public final class AttributeValueReplace extends CoreServiceInternalAction {
      * 
      * @require attribute.isOnClient() : "The attribute is on a client.";
      * @require !Objects.equals(oldValue, newValue) : "The old and new value are not equal.";
-     * @require oldValue == null || oldValue.matches(attribute) : "The old value is null or matches the attribute.";
-     * @require newValue == null || newValue.matches(attribute) : "The new value is null or matches the attribute.";
+     * @require oldValue == null || oldValue.isVerified() && oldValue.matches(attribute) : "The old value is null or verified and matches the attribute.";
+     * @require newValue == null || newValue.isVerified() && newValue.matches(attribute) : "The new value is null or verified and matches the attribute.";
      */
     public AttributeValueReplace(@Nonnull Attribute attribute, boolean published, @Nullable AttributeValue oldValue, @Nullable AttributeValue newValue) {
         super(attribute.getRole());
         
         assert !Objects.equals(oldValue, newValue) : "The old and new value are not equal.";
-        assert oldValue == null || oldValue.matches(attribute) : "The old value is null or matches the attribute.";
-        assert newValue == null || newValue.matches(attribute) : "The new value is null or matches the attribute.";
+        assert oldValue == null || oldValue.isVerified() && oldValue.matches(attribute) : "The old value is null or verified and matches the attribute.";
+        assert newValue == null || newValue.isVerified() && newValue.matches(attribute) : "The new value is null or verified and matches the attribute.";
         
         this.attribute = attribute;
         this.published = published;
@@ -126,21 +121,21 @@ public final class AttributeValueReplace extends CoreServiceInternalAction {
         final @Nonnull TupleWrapper tuple = new TupleWrapper(block);
         this.attribute = Attribute.get(entity, IdentifierClass.create(tuple.getElementNotNull(0)).getIdentity().toSemanticType().checkIsAttributeFor(entity));
         this.published = new BooleanWrapper(tuple.getElementNotNull(1)).getValue();
-        this.oldValue = tuple.isElementNotNull(2) ? AttributeValue.get(tuple.getElementNotNull(2), false).checkMatches(attribute) : null;
-        this.newValue = tuple.isElementNotNull(3) ? AttributeValue.get(tuple.getElementNotNull(3), false).checkMatches(attribute) : null;
+        this.oldValue = tuple.isElementNotNull(2) ? AttributeValue.get(tuple.getElementNotNull(2), true).checkMatches(attribute) : null;
+        this.newValue = tuple.isElementNotNull(3) ? AttributeValue.get(tuple.getElementNotNull(3), true).checkMatches(attribute) : null;
         if (Objects.equals(oldValue, newValue)) throw new InvalidEncodingException("The old and new value may not be equal.");
     }
     
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        return new TupleWrapper(TYPE, new FreezableArray<Block>(attribute.getType().toBlock(SemanticType.ATTRIBUTE_IDENTIFIER), new BooleanWrapper(PUBLISHED, published).toBlock(), Block.toBlock(OLD_VALUE, oldValue), Block.toBlock(NEW_VALUE, newValue)).freeze()).toBlock();
+        return new TupleWrapper(TYPE, new FreezableArray<Block>(attribute.getType().toBlock(SemanticType.ATTRIBUTE_IDENTIFIER), new BooleanWrapper(Attribute.PUBLISHED, published).toBlock(), Block.toBlock(OLD_VALUE, oldValue), Block.toBlock(NEW_VALUE, newValue)).freeze()).toBlock();
     }
     
     @Pure
     @Override
     public @Nonnull String toString() {
-        return "Replaces the " + (published ? "" : "un") + "published value '" + oldValue + "' with '" + newValue + "' of the attribute with the type " + attribute.getType().getAddress() + ".";
+        return "Replaces the " + (published ? "published" : "unpublished") + " value '" + oldValue + "' with '" + newValue + "' of the attribute with the type " + attribute.getType().getAddress() + ".";
     }
     
     
@@ -153,7 +148,7 @@ public final class AttributeValueReplace extends CoreServiceInternalAction {
     @Pure
     @Override
     public @Nonnull ReadonlyAgentPermissions getAuditPermissions() {
-        return new AgentPermissions(attribute.getType(), !published).freeze();
+        return new AgentPermissions(attribute.getType(), false).freeze();
     }
     
     

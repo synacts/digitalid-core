@@ -215,7 +215,7 @@ public final class Attributes implements BothModule {
         final @Nonnull FreezableArray<Block> tables = new FreezableArray<Block>(2);
         try (@Nonnull Statement statement = Database.createStatement()) {
             
-            try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT DISTINCT v.type, v.published, v.value FROM" + from + "attribute_value" + where + " AND (v.published OR p.writing)")) {
+            try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT DISTINCT v.type, v.published, v.value FROM" + from + "attribute_value" + where)) {
                 final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
                 while (resultSet.next()) {
                     final @Nonnull Identity type = IdentityClass.getNotNull(resultSet, 2);
@@ -331,7 +331,7 @@ public final class Attributes implements BothModule {
      * 
      * @return the value of the given attribute or null if no value is found.
      * 
-     * @ensure return == null || return.matches(attribute) : "The returned value is null or matches the given attribute.";
+     * @ensure return == null || return.isVerified() && return.matches(attribute) : "The returned value is null or verified and matches the given attribute.";
      */
     public static @Nullable AttributeValue getValue(@Nonnull Attribute attribute, boolean published) throws SQLException {
         final @Nonnull String SQL = "SELECT value FROM " + attribute.getEntity().getSite() + "attribute_value WHERE entity = " + attribute.getEntity() + " AND type = " + attribute.getType() + " AND published = " + published;
@@ -350,10 +350,10 @@ public final class Attributes implements BothModule {
      * @param published whether the published value is to be inserted.
      * @param value the value which is to be inserted for the attribute.
      * 
-     * @require value.matches(attribute) : "The value matches the given attribute.";
+     * @require value.isVerified() && value.matches(attribute) : "The value is verified and matches the given attribute.";
      */
     public static void insertValue(@Nonnull Attribute attribute, boolean published, @Nonnull AttributeValue value) throws SQLException {
-        assert value.matches(attribute) : "The value matches the given attribute.";
+        assert value.isVerified() && value.matches(attribute) : "The value is verified and matches the given attribute.";
         
         final @Nonnull String SQL = "INSERT INTO " + attribute.getEntity().getSite() + "attribute_value (entity, type, published, value) VALUES (?, ?, ?, ?)";
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
@@ -372,10 +372,10 @@ public final class Attributes implements BothModule {
      * @param published whether the published value is to be deleted.
      * @param value the value which is to be deleted from the attribute.
      * 
-     * @require value.matches(attribute) : "The value matches the given attribute.";
+     * @require value.isVerified() && value.matches(attribute) : "The value is verified and matches the given attribute.";
      */
     public static void deleteValue(@Nonnull Attribute attribute, boolean published, @Nonnull AttributeValue value) throws SQLException {
-        assert value.matches(attribute) : "The value matches the given attribute.";
+        assert value.isVerified() && value.matches(attribute) : "The value is verified and matches the given attribute.";
         
         final @Nonnull String SQL = "DELETE FROM " + attribute.getEntity().getSite() + "attribute_value WHERE entity = ? AND type = ? AND published = ? AND value = ?";
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
@@ -395,12 +395,12 @@ public final class Attributes implements BothModule {
      * @param oldValue the old value to be replaced by the new value.
      * @param newValue the new value by which the old value is replaced.
      * 
-     * @require oldValue.matches(attribute) : "The old value matches the given attribute.";
-     * @require newValue.matches(attribute) : "The new value matches the given attribute.";
+     * @require oldValue.isVerified() && oldValue.matches(attribute) : "The old value is verified and matches the given attribute.";
+     * @require newValue.isVerified() && newValue.matches(attribute) : "The new value is verified and matches the given attribute.";
      */
     public static void replaceValue(@Nonnull Attribute attribute, boolean published, @Nonnull AttributeValue oldValue, @Nonnull AttributeValue newValue) throws SQLException {
-        assert oldValue.matches(attribute) : "The old value matches the given attribute.";
-        assert newValue.matches(attribute) : "The new value matches the given attribute.";
+        assert oldValue.isVerified() && oldValue.matches(attribute) : "The old value is verified and matches the given attribute.";
+        assert newValue.isVerified() && newValue.matches(attribute) : "The new value is verified and matches the given attribute.";
         
         final @Nonnull String SQL = "UPDATE " + attribute.getEntity().getSite() + "attribute_value SET value = ? WHERE entity = ? AND type = ? AND published = ? AND value = ?";
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {

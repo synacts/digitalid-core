@@ -27,7 +27,7 @@ import javax.annotation.Nonnull;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public class AttributeSet extends FreezableLinkedHashSet<SemanticType> implements ReadonlyAttributeSet, Blockable {
+public class AttributeTypeSet extends FreezableLinkedHashSet<SemanticType> implements ReadonlyAttributeTypeSet, Blockable {
     
     /**
      * Stores the semantic type {@code list.attribute.type@virtualid.ch}.
@@ -38,40 +38,40 @@ public class AttributeSet extends FreezableLinkedHashSet<SemanticType> implement
     /**
      * Creates an empty set of attribute types.
      */
-    public AttributeSet() {}
+    public AttributeTypeSet() {}
     
     /**
-     * Creates a new attribute set with the given attribute type.
+     * Creates a new attribute type set with the given attribute type.
      * 
      * @param type the attribute type to add to the new set.
      * 
      * @require type.isAttributeType() : "The type is an attribute type.";
      * 
-     * @ensure areSingle() : "The new attribute set contains a single element.";
+     * @ensure areSingle() : "The new attribute type set contains a single element.";
      */
-    public AttributeSet(@Nonnull SemanticType type) {
+    public AttributeTypeSet(@Nonnull SemanticType type) {
         assert type.isAttributeType() : "The type is an attribute type.";
         
         add(type);
     }
     
     /**
-     * Creates a new attribute set from the given attribute set.
+     * Creates a new attribute type set from the given attribute type set.
      * 
-     * @param attributeSet the attribute set to add to the new attribute set.
+     * @param attributeSet the attribute type set to add to the new attribute type set.
      */
-    public AttributeSet(@Nonnull ReadonlyAttributeSet attributeSet) {
+    public AttributeTypeSet(@Nonnull ReadonlyAttributeTypeSet attributeSet) {
         addAll(attributeSet);
     }
     
     /**
-     * Creates a new attribute set from the given block.
+     * Creates a new attribute type set from the given block.
      * 
-     * @param block the block containing the attribute set.
+     * @param block the block containing the attribute type set.
      * 
      * @require block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
      */
-    public AttributeSet(@Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
+    public AttributeTypeSet(@Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         assert block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
         
         final @Nonnull ReadonlyList<Block> elements = new ListWrapper(block).getElementsNotNull();
@@ -102,7 +102,7 @@ public class AttributeSet extends FreezableLinkedHashSet<SemanticType> implement
     
     
     @Override
-    public @Nonnull ReadonlyAttributeSet freeze() {
+    public @Nonnull ReadonlyAttributeTypeSet freeze() {
         super.freeze();
         return this;
     }
@@ -126,13 +126,13 @@ public class AttributeSet extends FreezableLinkedHashSet<SemanticType> implement
     }
     
     /**
-     * Adds the given attribute set to this attribute set.
+     * Adds the given attribute type set to this attribute type set.
      * 
-     * @param attributeSet the attribute set to add to this attribute set.
+     * @param attributeSet the attribute type set to add to this attribute type set.
      * 
      * @require isNotFrozen() : "This object is not frozen.";
      */
-    public final void addAll(@Nonnull ReadonlyAttributeSet attributeSet) {
+    public final void addAll(@Nonnull ReadonlyAttributeTypeSet attributeSet) {
         for (final @Nonnull SemanticType type : attributeSet) {
             add(type);
         }
@@ -141,8 +141,8 @@ public class AttributeSet extends FreezableLinkedHashSet<SemanticType> implement
     
     @Pure
     @Override
-    public @Capturable @Nonnull AttributeSet clone() {
-        return new AttributeSet(this);
+    public @Capturable @Nonnull AttributeTypeSet clone() {
+        return new AttributeTypeSet(this);
     }
     
     

@@ -4,7 +4,7 @@ import ch.virtualid.annotations.Pure;
 import ch.virtualid.annotations.RawRecipient;
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.client.Cache;
-import ch.virtualid.contact.AttributeSet;
+import ch.virtualid.contact.AttributeTypeSet;
 import ch.virtualid.cryptography.PublicKeyChain;
 import ch.virtualid.cryptography.SymmetricKey;
 import ch.virtualid.entity.Role;
@@ -83,7 +83,7 @@ public class Request extends Packet {
      * @ensure getSize() == 1 : "The size of this request is 1.";
      */
     public Request(@Nonnull HostIdentifier identifier) throws SQLException, IOException, PacketException, ExternalException {
-        this(new FreezableArrayList<Method>(new AttributesQuery(null, identifier, new AttributeSet(PublicKeyChain.TYPE).freeze(), true)).freeze(), identifier, null, identifier, null, null);
+        this(new FreezableArrayList<Method>(new AttributesQuery(null, identifier, new AttributeTypeSet(PublicKeyChain.TYPE).freeze(), true)).freeze(), identifier, null, identifier, null, null);
     }
     
     /**

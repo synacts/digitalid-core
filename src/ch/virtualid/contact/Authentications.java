@@ -20,12 +20,12 @@ import javax.annotation.Nonnull;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public final class Authentications extends AttributeSet implements ReadonlyAuthentications, Blockable {
+public final class Authentications extends AttributeTypeSet implements ReadonlyAuthentications, Blockable {
     
     /**
      * Stores the semantic type {@code authentication.contact@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("authentication.contact@virtualid.ch").load(AttributeSet.TYPE);
+    public static final @Nonnull SemanticType TYPE = SemanticType.create("authentication.contact@virtualid.ch").load(AttributeTypeSet.TYPE);
     
     
     /**

@@ -104,6 +104,13 @@ public final class CertifiedAttributeValue extends AttributeValue implements Imm
     
     @Pure
     @Override
+    public boolean matches(@Nonnull Attribute attribute) {
+        return super.matches(attribute) && attribute.getAccount().getIdentity().equals(subject);
+    }
+    
+    
+    @Pure
+    @Override
     public @Nonnull HostSignatureWrapper getSignature() {
         return signature;
     }

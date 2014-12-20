@@ -154,7 +154,7 @@ public abstract class AttributeValue implements Immutable, Blockable, SQLizable 
      * @throws InvalidEncodingException otherwise.
      */
     @Pure
-    public @Nonnull AttributeValue checkMatches(@Nonnull Attribute attribute) throws InvalidEncodingException {
+    public final @Nonnull AttributeValue checkMatches(@Nonnull Attribute attribute) throws InvalidEncodingException {
         if (!matches(attribute)) throw new InvalidEncodingException("This value does not match the given attribute.");
         return this;
     }

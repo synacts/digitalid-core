@@ -14,8 +14,8 @@ import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identifier.IdentifierClass;
 import ch.virtualid.identity.InternalNonHostIdentity;
+import ch.virtualid.identity.InternalPerson;
 import ch.virtualid.identity.NonHostIdentity;
-import ch.virtualid.identity.Person;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.util.FreezableArray;
@@ -124,7 +124,7 @@ public abstract class Credential implements Immutable {
     /**
      * Stores the internal non-host identity that issued this credential.
      * 
-     * @invariant !isIdentityBased() || issuer instanceof Person : "If this credential is identity-based, then the issuer is a person.";
+     * @invariant !isIdentityBased() || issuer instanceof InternalPerson : "If this credential is identity-based, then the issuer is an internal person.";
      */
     private final @Nonnull InternalNonHostIdentity issuer;
     
@@ -193,7 +193,7 @@ public abstract class Credential implements Immutable {
      * @require randomizedPermissions.areShown() : "The randomized permissions are shown for client credentials.";
      * @require role == null || role.isRoleType() : "The role is either null or a role type.";
      * @require role == null || restrictions != null : "If a role is given, the restrictions are not null.";
-     * @require attributeContent != null || issuer instanceof Person : "If the attribute content is null, the issuer is a person.";
+     * @require attributeContent != null || issuer instanceof InternalPerson : "If the attribute content is null, the issuer is an internal person.";
      * @require (attributeContent == null) != (restrictions == null) : "Either the attribute content or the restrictions are null (but not both).";
      */
     Credential(@Nonnull PublicKey publicKey, @Nonnull InternalNonHostIdentity issuer, @Nonnull Time issuance, @Nonnull RandomizedAgentPermissions randomizedPermissions, @Nullable SemanticType role, @Nullable Block attributeContent, @Nullable Restrictions restrictions, @Nonnull Exponent i) {
@@ -201,7 +201,7 @@ public abstract class Credential implements Immutable {
         assert randomizedPermissions.areShown() : "The randomized permissions are shown for client credentials.";
         assert role == null || role.isRoleType() : "The role is either null or a role type.";
         assert role == null || restrictions != null : "If a role is given, the restrictions are not null.";
-        assert attributeContent != null || issuer instanceof Person : "If the attribute content is null, the issuer is a person.";
+        assert attributeContent != null || issuer instanceof InternalPerson : "If the attribute content is null, the issuer is an internal person.";
         assert (attributeContent == null) != (restrictions == null) : "Either the attribute content or the restrictions are null (but not both).";
         
         this.publicKey = publicKey;
@@ -253,7 +253,7 @@ public abstract class Credential implements Immutable {
         this.attributeContent = SelfcontainedWrapper.toElement(tuple.getElement(4));
         if (role != null && attributeContent != null) throw new InvalidEncodingException("The role and the attribute may not both be not null.");
         this.restrictions = restrictions;
-        if (attributeContent == null && !(issuer instanceof Person)) throw new InvalidEncodingException("If the attribute is null, the issuer has to be a person.");
+        if (attributeContent == null && !(issuer instanceof InternalPerson)) throw new InvalidEncodingException("If the attribute is null, the issuer has to be an internal person.");
         if (attributeContent != null && restrictions != null) throw new InvalidEncodingException("The attribute and the restrictions may not both be not null.");
         if (role != null && getPermissions() == null) throw new InvalidEncodingException("If a role is given, the permissions may not be null.");
         if (role != null && restrictions == null) throw new InvalidEncodingException("If a role is given, the restrictions may not be null.");
@@ -283,7 +283,7 @@ public abstract class Credential implements Immutable {
      * 
      * @return the internal non-host identity that issued this credential.
      * 
-     * @ensure !isIdentityBased() || issuer instanceof Person : "If this credential is identity-based, then the issuer is a person.";
+     * @ensure !isIdentityBased() || issuer instanceof InternalPerson : "If this credential is identity-based, then the issuer is an internal person.";
      */
     @Pure
     public final @Nonnull InternalNonHostIdentity getIssuer() {

@@ -65,6 +65,19 @@ public final class ImpersonalExpression extends AbstractExpression implements Im
     
     
     /**
+     * Returns whether this impersonal expression matches the given attribute content.
+     * 
+     * @param attributeContent the attribute content which is to be checked.
+     * 
+     * @return whether this impersonal expression matches the given attribute content.
+     */
+    @Pure
+    public boolean matches(@Nonnull Block attributeContent) {
+        return getExpression().matches(attributeContent);
+    }
+    
+    
+    /**
      * Returns the given column of the result set as an instance of this class.
      * 
      * @param entity the entity to which the returned expression belongs.

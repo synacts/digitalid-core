@@ -4,7 +4,7 @@ import ch.virtualid.annotations.Pure;
 import ch.virtualid.attribute.AttributeValue;
 import ch.virtualid.attribute.CertifiedAttributeValue;
 import ch.virtualid.auxiliary.Time;
-import ch.virtualid.contact.AttributeSet;
+import ch.virtualid.contact.AttributeTypeSet;
 import ch.virtualid.cryptography.PublicKey;
 import ch.virtualid.cryptography.PublicKeyChain;
 import ch.virtualid.database.Database;
@@ -209,7 +209,7 @@ public final class Cache {
         for (final @Nullable SemanticType type : types) assert type != null && type.isAttributeFor(identity.getCategory()) : "Each type is not null and can be used as an attribute for the category of the given identity.";
         
         final @Nonnull AttributeValue[] attributeValues = new AttributeValue[types.length];
-        final @Nonnull AttributeSet typesToRetrieve = new AttributeSet();
+        final @Nonnull AttributeTypeSet typesToRetrieve = new AttributeTypeSet();
         final @Nonnull List<Integer> indexesToStore = new LinkedList<Integer>();
         for (int i = 0; i < types.length; i++) {
             final @Nonnull Pair<Boolean, AttributeValue> cache = getCachedAttributeValue(identity, role, time, types[i]);
@@ -224,14 +224,14 @@ public final class Cache {
         if (typesToRetrieve.size() > 0) {
             if (typesToRetrieve.contains(PublicKeyChain.TYPE)) {
                 final @Nonnull AttributesReply reply = new Request(identity.getAddress().getHostIdentifier()).send(false).getReplyNotNull(0);
-                final @Nullable AttributeValue value = reply.getAttributes().get(0);
+                final @Nullable AttributeValue value = reply.getAttributeValues().get(0);
                 setCachedAttributeValue(identity, null, getExpiration(PublicKeyChain.TYPE, value, reply), PublicKeyChain.TYPE, value, reply);
                 reply.getSignatureNotNull().verify();
                 attributeValues[0] = value;
             } else {
                 final @Nonnull Response response = new AttributesQuery(role, identity.getAddress(), typesToRetrieve.freeze(), true).send();
                 final @Nonnull AttributesReply reply = response.getReplyNotNull(0);
-                final @Nonnull ReadonlyList<AttributeValue> values = reply.getAttributes();
+                final @Nonnull ReadonlyList<AttributeValue> values = reply.getAttributeValues();
                 if (values.size() != typesToRetrieve.size()) throw new InvalidEncodingException("The number of queried and replied attributes have to be the same.");
                 int i = 0;
                 for (final @Nonnull SemanticType type : typesToRetrieve) {
@@ -411,7 +411,7 @@ public final class Cache {
         }
         final @Nonnull AttributesReply reply = response.getReplyNotNull(0);
         final @Nonnull HostIdentity identity = Mapper.mapHostIdentity(identifier);
-        final @Nullable AttributeValue value = reply.getAttributes().get(0);
+        final @Nullable AttributeValue value = reply.getAttributeValues().get(0);
         if (value == null) throw new AttributeNotFoundException(identity, PublicKeyChain.TYPE);
         if (!value.isCertified()) throw new CertificateNotFoundException(identity, PublicKeyChain.TYPE);
         setCachedAttributeValue(identity, null, getExpiration(PublicKeyChain.TYPE, value, reply), PublicKeyChain.TYPE, value, reply);
