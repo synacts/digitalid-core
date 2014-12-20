@@ -127,6 +127,8 @@ public final class CertifiedAttributeValue extends AttributeValue implements Imm
      * Returns the time when this attribute value was certified.
      * 
      * @return the time when this attribute value was certified.
+     * 
+     * @ensure time.isPositive() : "The time is positive.";
      */
     @Pure
     public @Nonnull Time getTime() {

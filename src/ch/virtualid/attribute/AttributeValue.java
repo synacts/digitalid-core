@@ -141,7 +141,7 @@ public abstract class AttributeValue implements Immutable, Blockable, SQLizable 
      */
     @Pure
     public boolean matches(@Nonnull Attribute attribute) {
-        return content.getType().isAttributeFor(attribute.getEntity());
+        return content.getType().equals(attribute.getType());
     }
     
     /**
@@ -156,6 +156,25 @@ public abstract class AttributeValue implements Immutable, Blockable, SQLizable 
     @Pure
     public final @Nonnull AttributeValue checkMatches(@Nonnull Attribute attribute) throws InvalidEncodingException {
         if (!matches(attribute)) throw new InvalidEncodingException("This value does not match the given attribute.");
+        return this;
+    }
+    
+    /**
+     * Checks that the content of this value matches the given type.
+     * 
+     * @param type the type which needs to be matched by the content.
+     * 
+     * @return this attribute value.
+     * 
+     * @throws InvalidEncodingException otherwise.
+     * 
+     * @ensure getContent().getType().equals(type) : "The content matches the given type.";
+     */
+    @Pure
+    public final @Nonnull AttributeValue checkContentType(@Nonnull SemanticType type) throws InvalidEncodingException {
+        assert type.isAttributeType() : "The type is an attribute type.";
+        
+        if (!content.getType().equals(type)) throw new InvalidEncodingException("The content of this value does not match the given type.");
         return this;
     }
     

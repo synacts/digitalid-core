@@ -109,6 +109,8 @@ public final class Cache {
      * 
      * @require time.isNonNegative() : "The given time is non-negative.";
      * @require type.isAttributeFor(identity.getCategory()) : "The type can be used as an attribute for the category of the given identity.";
+     * 
+     * @ensure return.getValue1() == null || return.getValue1().getContent().getType().equals(type) : "The content of the returned attribute value is null or matches the given type.";
      */
     private static @Nonnull Pair<Boolean, AttributeValue> getCachedAttributeValue(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull Time time, @Nonnull SemanticType type) throws SQLException, IOException, PacketException, ExternalException {
         assert time.isNonNegative() : "The given time is non-negative.";
@@ -122,7 +124,7 @@ public final class Cache {
             while (resultSet.next()) {
                 found = true;
                 if (resultSet.getBoolean(1)) {
-                    value = AttributeValue.get(resultSet, 2);
+                    value = AttributeValue.get(resultSet, 2).checkContentType(type);
                     break;
                 }
             }
@@ -143,11 +145,15 @@ public final class Cache {
      * @require time.isNonNegative() : "The given time is non-negative.";
      * @require type.isAttributeFor(identity.getCategory()) : "The type can be used as an attribute for the category of the given identity.";
      * @require value == null || value.isVerified() : "The attribute value is null or its signature is verified.";
+     * 
+     * @ensure value == null || value.getContent().getType().equals(type) : "The content of the given attribute value is null or matches the given type.";
      */
-    private static void setCachedAttributeValue(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull Time time, @Nonnull SemanticType type, @Nullable AttributeValue value, @Nullable Reply reply) throws SQLException {
+    private static void setCachedAttributeValue(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull Time time, @Nonnull SemanticType type, @Nullable AttributeValue value, @Nullable Reply reply) throws SQLException, InvalidEncodingException {
         assert time.isNonNegative() : "The given time is non-negative.";
         assert type.isAttributeFor(identity.getCategory()) : "The type can be used as an attribute for the category of the given identity.";
         assert value == null || value.isVerified() : "The attribute value is null or its signature is verified.";
+        
+        if (value != null) value.checkContentType(type);
         
         final @Nonnull String statement = Database.getConfiguration().REPLACE() + " INTO general_cache (identity, role, type, found, time, value, reply) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(statement)) {
@@ -263,7 +269,6 @@ public final class Cache {
      * @require time.isNonNegative() : "The given time is non-negative.";
      * @require type.isAttributeFor(identity.getCategory()) : "The type can be used as an attribute for the category of the given identity.";
      * 
-     * @ensure return.isCertificate() : "The returned attribute is a certificate.";
      * @ensure return.getContent().getType().equals(type)) : "The returned attribute value matches the given type.";
      */
     @Pure
@@ -296,9 +301,7 @@ public final class Cache {
     public static @Nonnull Block getAttributeContent(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull Time time, @Nonnull SemanticType type, boolean certified) throws SQLException, IOException, PacketException, ExternalException {
         final @Nonnull AttributeValue value = getAttributeValue(identity, role, time, type);
         if (certified && !value.isCertified()) throw new CertificateNotFoundException(identity, type);
-        final @Nonnull Block content = value.getContent();
-        if (!content.getType().equals(type)) throw new InvalidEncodingException("The returned content does not match the queried type.");
-        return content;
+        return value.getContent();
     }
     
     /**
