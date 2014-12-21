@@ -115,6 +115,8 @@ public final class Host extends Site {
             publicKeyWrapper.write(new FileOutputStream(publicKeyFile), true);
         }
         
+        CoreService.SERVICE.createTables(this);
+        
         final @Nonnull HostAccount account = HostAccount.get(this, identity);
         final @Nonnull Attribute attribute = Attribute.get(account, PublicKeyChain.TYPE);
         if (attribute.getValue() == null) {
@@ -129,7 +131,6 @@ public final class Host extends Site {
         }
         
         // TODO: Load which services this host runs and initialize them afterwards.
-        CoreService.SERVICE.createTables(this);
         
         // TODO: What are the right permissions to pass here? Probably an aggregation of all the services.
         this.client = new Client("_" + identifier.asHostName(), identifier.getString(), new Image("/ch/virtualid/resources/Host.png"), AgentPermissions.GENERAL_WRITE);

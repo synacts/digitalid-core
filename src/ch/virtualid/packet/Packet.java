@@ -218,7 +218,7 @@ public abstract class Packet implements Immutable {
                             } else {
                                 final @Nonnull Method method = request.getMethod(i);
                                 final @Nullable Class<? extends Reply> replyClass = method.getReplyClass();
-                                final @Nonnull Reply reply = Reply.get(method.getNonHostEntity(), (HostSignatureWrapper) signature, block);
+                                final @Nonnull Reply reply = Reply.get(method.hasEntity() ? method.getNonHostEntity() : null, (HostSignatureWrapper) signature, block);
                                 if (replyClass == null) throw new PacketException(PacketError.REPLY, "No reply was expected but '" + reply.getClass().getName() + "' was received.", new WrongReplyException(reply), isResponse);
                                 if (!replyClass.isInstance(reply)) throw new PacketException(PacketError.REPLY, "A reply was '" + reply.getClass().getName() + "' instead of '" + replyClass.getName() + "'.", new WrongReplyException(reply), isResponse);
                                 response.setReply(i, reply);

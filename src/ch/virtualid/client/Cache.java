@@ -64,7 +64,20 @@ public final class Cache {
             Database.onInsertUpdate(statement, "general_cache", 4, "identity", "role", "type", "found", "time", "value", "reply");
             Mapper.addReference("general_cache", "identity", "identity", "role", "type", "found");
             Mapper.addReference("general_cache", "role", "identity", "role", "type", "found");
-            
+        } catch (@Nonnull SQLException exception) {
+            throw new InitializationError("Could not initialize the cache.", exception);
+        }
+    }
+    
+    /**
+     * Initializes the cache with the public key of {@code virtualid.ch}.
+     * 
+     * @require Database.isMainThread() : "This method is called in the main thread.";
+     */
+    public static void initialize() {
+        assert Database.isMainThread() : "This method is called in the main thread.";
+        
+        try {
             if (!getCachedAttributeValue(HostIdentity.VIRTUALID, null, Time.MIN, PublicKeyChain.TYPE).getValue0()) {
                 // Unless it is the root server, the program should have been delivered with the public key chain certificate of 'virtualid.ch'.
                 final @Nullable InputStream inputStream = Cache.class.getResourceAsStream("/ch/virtualid/resources/virtualid.ch.certificate.xdf");

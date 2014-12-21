@@ -37,7 +37,7 @@ public class DatabaseSetup {
     
     @AfterClass
     public static void breakDownDatabase() throws SQLException {
-//        Database.getConfiguration().dropDatabase();
+        Database.getConfiguration().dropDatabase();
     }
     
     @Test

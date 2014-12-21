@@ -9,6 +9,7 @@ import ch.virtualid.database.Database;
 import ch.virtualid.entity.Site;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
+import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identifier.IdentifierClass;
 import ch.virtualid.identity.HostIdentity;
 import ch.virtualid.identity.IdentityClass;
@@ -17,6 +18,7 @@ import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
+import ch.virtualid.server.Server;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.ReadonlyArray;
 import ch.xdf.Block;
@@ -121,9 +123,10 @@ public class Commitment implements Immutable, Blockable, SQLizable {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(3);
-        this.host = IdentifierClass.create(elements.getNotNull(0)).getIdentity().toHostIdentity();
+        final @Nonnull HostIdentifier identifier = IdentifierClass.create(elements.getNotNull(0)).toHostIdentifier();
+        this.host = identifier.getIdentity();
         this.time = new Time(elements.getNotNull(1));
-        this.publicKey = Cache.getPublicKeyChain(host).getKey(time);
+        this.publicKey = (Server.hasHost(identifier) ? Server.getHost(identifier).getPublicKeyChain() : Cache.getPublicKeyChain(host)).getKey(time);
         this.value = publicKey.getCompositeGroup().getElement(new IntegerWrapper(elements.getNotNull(2)).getValue());
     }
     

@@ -26,6 +26,8 @@ import javax.annotation.Nullable;
 /**
  * The worker is responsible for handling incoming requests asynchronously.
  * 
+ * @see Listener
+ * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 1.8
  */

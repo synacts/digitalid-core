@@ -45,7 +45,7 @@ public final class Listener extends Thread {
             throw new InitializationError("The server could not bind to Virtual ID's port (" + Server.PORT + ").", exception);
         }
     }
-
+    
     /**
      * Accepts incoming requests and lets them handle by {@link Worker workers}.
      */

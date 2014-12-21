@@ -1,6 +1,7 @@
 package ch.virtualid.database;
 
 import ch.virtualid.annotations.Pure;
+import ch.virtualid.client.Cache;
 import ch.virtualid.errors.InitializationError;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Immutable;
@@ -198,6 +199,8 @@ public final class Database implements Immutable {
             } else {
                 loadClasses(root, "");
             }
+            
+            Cache.initialize();
             
             commit();
         } catch (@Nonnull URISyntaxException | IOException | ClassNotFoundException | SQLException exception) {

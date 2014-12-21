@@ -24,16 +24,16 @@ import org.junit.Test;
  */
 public class IdentitySetup extends ServerSetup {
     
-    private static @Nonnull InternalNonHostIdentifier subject;
-    
-    protected static @Nonnull InternalNonHostIdentifier getSubject() {
-        return subject;
-    }
-    
     private static @Nonnull Client client;
     
     protected static @Nonnull Client getClient() {
         return client;
+    }
+    
+    private static @Nonnull InternalNonHostIdentifier subject;
+    
+    protected static @Nonnull InternalNonHostIdentifier getSubject() {
+        return subject;
     }
     
     private static @Nonnull Role role;
@@ -44,8 +44,8 @@ public class IdentitySetup extends ServerSetup {
     
     @BeforeClass
     public static void setUpIdentity() throws SQLException, IOException, PacketException, ExternalException {
-        subject = new InternalNonHostIdentifier("person@example.com");
         client = new Client("tester", "Test Client", new Image("/ch/virtualid/resources/Host.png"), AgentPermissions.GENERAL_WRITE);
+        subject = new InternalNonHostIdentifier("person@example.com");
         role = client.openAccount(subject, Category.NATURAL_PERSON);
     }
     
@@ -54,7 +54,6 @@ public class IdentitySetup extends ServerSetup {
     
     @Test
     public final void testIdentitySetup() {
-        // TODO
         System.out.println("The test is running!");
     }
     

@@ -323,7 +323,7 @@ public class Client extends Site implements Observer {
      */
     private @Nonnull Role addRole(@Nonnull InternalNonHostIdentity issuer, long agentNumber) throws SQLException {
         final @Nonnull Role role = Role.add(this, issuer, null, null, agentNumber);
-        role.observe(this, Role.DELETED);
+        if (Database.isSingleAccess()) role.observe(this, Role.DELETED);
         
         if (roles != null) roles.add(role);
         notify(ROLE_ADDED);
@@ -386,6 +386,7 @@ public class Client extends Site implements Observer {
         assert category.isInternalNonHostIdentity() : "The category denotes an internal non-host identity.";
         assert !category.isType() || roles.size() <= 1 && identifiers.isEmpty() : "If the category denotes a type, at most one role and no identifier may be given.";
         
+        Database.commit();
         final @Nonnull AccountOpen accountOpen = new AccountOpen(subject, category, this); accountOpen.send();
         final @Nonnull InternalNonHostIdentity identity = (InternalNonHostIdentity) Mapper.mapIdentity(subject, category, null);
         final @Nonnull Role newRole = addRole(identity, accountOpen.getAgentNumber());
