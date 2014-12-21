@@ -63,10 +63,11 @@ public final class PostgreSQLConfiguration extends Configuration implements Immu
      * Creates a new PostgreSQL configuration by reading the properties from the indicated file or from the user's input.
      * 
      * @param name the name of the database configuration file (without the suffix).
+     * @param reset whether the database is to be dropped first before creating it again.
      * 
      * @require Database.isValid(name) : "The name is valid for a database.";
      */
-    public PostgreSQLConfiguration(@Nonnull String name) throws SQLException, IOException {
+    public PostgreSQLConfiguration(@Nonnull String name, boolean reset) throws SQLException, IOException {
         super(new Driver());
         
         assert Database.isValid(name) : "The name is valid for a database.";
@@ -106,6 +107,7 @@ public final class PostgreSQLConfiguration extends Configuration implements Immu
         properties.setProperty("password", password);
         
         try (@Nonnull Connection connection = DriverManager.getConnection("jdbc:postgresql://" + server + ":" + port + "/", properties); @Nonnull Statement statement = connection.createStatement()) {
+            if (reset) statement.executeUpdate("DROP DATABASE IF EXISTS " + database);
             final @Nonnull ResultSet resultSet = statement.executeQuery("SELECT EXISTS (SELECT * FROM pg_catalog.pg_database WHERE datname = '" + database + "')");
             if (resultSet.next() && !resultSet.getBoolean(1)) statement.executeUpdate("CREATE DATABASE " + database);
         }
@@ -121,9 +123,11 @@ public final class PostgreSQLConfiguration extends Configuration implements Immu
     
     /**
      * Creates a new PostgreSQL configuration by reading the properties from the default file or from the user's input.
+     * 
+     * @param reset whether the database is to be dropped first before creating it again.
      */
-    public PostgreSQLConfiguration() throws SQLException, IOException {
-        this("PostgreSQL");
+    public PostgreSQLConfiguration(boolean reset) throws SQLException, IOException {
+        this("PostgreSQL", reset);
     }
     
     /**

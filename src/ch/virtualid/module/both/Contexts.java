@@ -2,6 +2,7 @@ package ch.virtualid.module.both;
 
 import ch.virtualid.agent.Agent;
 import ch.virtualid.annotations.Pure;
+import ch.virtualid.auxiliary.Image;
 import ch.virtualid.contact.Context;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.EntityClass;
@@ -21,6 +22,7 @@ import ch.virtualid.util.ReadonlyList;
 import ch.xdf.Block;
 import ch.xdf.ListWrapper;
 import ch.xdf.TupleWrapper;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import javax.annotation.Nonnull;
@@ -172,6 +174,26 @@ public final class Contexts implements BothModule {
         return null; // TODO: Return the internal query for reloading the data of this module.
     }
     
+    
+    /**
+     * Creates the given context.
+     * 
+     * @param context the context to be created.
+     */
+    public static void create(@Nonnull Context context) throws SQLException {
+        final @Nonnull String SQL = "INSERT INTO " + context.getEntity().getSite() + "context_name (entity, context, name, icon) VALUES (?, ?, ?, ?)";
+        try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
+            context.getEntity().set(preparedStatement, 1);
+            context.set(preparedStatement, 2);
+            preparedStatement.setString(3, "New Context");
+            Image.CONTEXT.set(preparedStatement, 4);
+            if (preparedStatement.executeUpdate() == 0) throw new SQLException("The context with the number " + context + " could not be created.");
+        }
+        // TODO: Do it correctly!
+        try (@Nonnull Statement statement = Database.createStatement()) {
+            statement.executeUpdate("INSERT INTO " + context.getEntity().getSite() + "context_subcontext (entity, context, subcontext) VALUES (" + context.getEntity() + ", " + context + ", " + context + ")");
+        }
+    }
     
 //    /**
 //     * Returns whether the given context at the given identity exists.

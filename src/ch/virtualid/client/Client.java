@@ -209,6 +209,7 @@ public class Client extends Site implements Observer {
         // The role table needs to be created in advance.
         Roles.createTable(this);
         CoreService.SERVICE.createTables(this);
+        Database.commit();
     }
     
     /**

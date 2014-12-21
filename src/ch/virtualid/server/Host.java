@@ -12,6 +12,7 @@ import ch.virtualid.client.Client;
 import ch.virtualid.cryptography.KeyPair;
 import ch.virtualid.cryptography.PrivateKeyChain;
 import ch.virtualid.cryptography.PublicKeyChain;
+import ch.virtualid.database.Database;
 import ch.virtualid.entity.HostAccount;
 import ch.virtualid.entity.Site;
 import ch.virtualid.exceptions.external.ExternalException;
@@ -131,9 +132,10 @@ public final class Host extends Site {
         }
         
         // TODO: Load which services this host runs and initialize them afterwards.
+        Database.commit();
         
         // TODO: What are the right permissions to pass here? Probably an aggregation of all the services.
-        this.client = new Client("_" + identifier.asHostName(), identifier.getString(), new Image("/ch/virtualid/resources/Host.png"), AgentPermissions.GENERAL_WRITE);
+        this.client = new Client("_" + identifier.asHostName(), identifier.getString(), Image.HOST, AgentPermissions.GENERAL_WRITE);
         
         Server.addHost(this);
     }

@@ -2,7 +2,6 @@ package ch.virtualid.database;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
 /**
@@ -20,13 +19,8 @@ public final class PostgreSQLTest extends DatabaseTest {
     
     @BeforeClass
     public static void configureDatabase() throws SQLException, IOException {
-        Database.initialize(new PostgreSQLConfiguration(), false, true);
+        Database.initialize(new PostgreSQLConfiguration(true), false, true);
         createTables();
-    }
-    
-    @AfterClass
-    public static void dropDatabase() throws SQLException {
-        Database.getConfiguration().dropDatabase();
     }
     
 }

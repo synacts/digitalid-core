@@ -34,15 +34,17 @@ public final class SQLiteConfiguration extends Configuration implements Immutabl
      * Creates a new SQLite configuration for the database with the given name.
      * 
      * @param name the name of the database file (without the suffix).
+     * @param reset whether the database is to be dropped first before creating it again.
      * 
      * @require Database.isValid(name) : "The name is valid for a database.";
      */
-    public SQLiteConfiguration(@Nonnull String name) throws SQLException {
+    public SQLiteConfiguration(@Nonnull String name, boolean reset) throws SQLException {
         super(new JDBC());
         
         assert Database.isValid(name) : "The name is valid for a database.";
         
         this.name = name;
+        if (reset) dropDatabase();
         new SQLiteConfig().setSharedCache(true);
     }
     
@@ -53,9 +55,11 @@ public final class SQLiteConfiguration extends Configuration implements Immutabl
     
     /**
      * Creates a new SQLite configuration for the database with the given name.
+     * 
+     * @param reset whether the database is to be dropped first before creating it again.
      */
-    public SQLiteConfiguration() throws SQLException {
-        this("SQLite");
+    public SQLiteConfiguration(boolean reset) throws SQLException {
+        this("SQLite", reset);
     }
     
     /**

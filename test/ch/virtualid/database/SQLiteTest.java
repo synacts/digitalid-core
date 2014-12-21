@@ -1,7 +1,6 @@
 package ch.virtualid.database;
 
 import java.sql.SQLException;
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
 /**
@@ -19,13 +18,8 @@ public final class SQLiteTest extends DatabaseTest {
     
     @BeforeClass
     public static void configureDatabase() throws SQLException {
-        Database.initialize(new SQLiteConfiguration(), false, true);
+        Database.initialize(new SQLiteConfiguration(true), false, true);
         createTables();
-    }
-    
-    @AfterClass
-    public static void dropDatabase() throws SQLException {
-        Database.getConfiguration().dropDatabase();
     }
     
 }

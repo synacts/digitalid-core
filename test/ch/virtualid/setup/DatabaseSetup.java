@@ -10,7 +10,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import javax.annotation.Nonnull;
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -24,20 +23,15 @@ import org.junit.Test;
 public class DatabaseSetup {
     
     @BeforeClass
-    public static void setupDatabase() throws SQLException, IOException, ClassNotFoundException {
+    public static void setUpDatabase() throws SQLException, IOException, ClassNotFoundException {
         final int configuration = 0;
         switch (configuration) {
-            case 0: Database.initialize(new MySQLConfiguration(), false, false); break;
-            case 1: Database.initialize(new PostgreSQLConfiguration(), false, false); break;
-            case 2: Database.initialize(new SQLiteConfiguration(), false, false); break;
+            case 0: Database.initialize(new MySQLConfiguration(true), false, false); break;
+            case 1: Database.initialize(new PostgreSQLConfiguration(true), false, false); break;
+            case 2: Database.initialize(new SQLiteConfiguration(true), false, false); break;
             default: throw new SQLException("No such configuration available.");
         }
         Class.forName(SemanticType.class.getName());
-    }
-    
-    @AfterClass
-    public static void breakDownDatabase() throws SQLException {
-        Database.getConfiguration().dropDatabase();
     }
     
     @Test

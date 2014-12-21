@@ -23,7 +23,7 @@ public final class ServerTest extends ServerSetup {
         
         // Server
         Server.start("test.virtualid.ch");
-        Client client = new Client("Tester", "Tester", new Image("/ch/virtualid/resources/Host.png"), AgentPermissions.GENERAL_WRITE);
+        Client client = new Client("Tester", "Tester", Image.CLIENT, AgentPermissions.GENERAL_WRITE);
         
 //        // Hosting and Category
 //        Request.openAccount(client, "person@test.virtualid.ch", client.getName(), Category.NATURAL_PERSON);

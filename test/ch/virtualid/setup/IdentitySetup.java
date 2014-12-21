@@ -12,7 +12,6 @@ import ch.virtualid.identity.Identity;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -44,13 +43,10 @@ public class IdentitySetup extends ServerSetup {
     
     @BeforeClass
     public static void setUpIdentity() throws SQLException, IOException, PacketException, ExternalException {
-        client = new Client("tester", "Test Client", new Image("/ch/virtualid/resources/Host.png"), AgentPermissions.GENERAL_WRITE);
+        client = new Client("tester", "Test Client", Image.CLIENT, AgentPermissions.GENERAL_WRITE);
         subject = new InternalNonHostIdentifier("person@example.com");
         role = client.openAccount(subject, Category.NATURAL_PERSON);
     }
-    
-    @AfterClass
-    public static void breakDownIdentity() {}
     
     @Test
     public final void testIdentitySetup() {

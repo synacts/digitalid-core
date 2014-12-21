@@ -2,6 +2,7 @@ package ch.virtualid.auxiliary;
 
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.database.Database;
+import ch.virtualid.errors.InitializationError;
 import ch.virtualid.errors.ShouldNeverHappenError;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.identity.SemanticType;
@@ -34,6 +35,31 @@ public final class Image implements Immutable, Blockable, SQLizable {
      */
     public static final @Nonnull SemanticType TYPE = SemanticType.create("image@virtualid.ch").load(DataWrapper.TYPE);
     
+    
+    /**
+     * Stores the host image.
+     */
+    public static final Image HOST;
+    
+    /**
+     * Stores the client image.
+     */
+    public static final Image CLIENT;
+    
+    /**
+     * Stores the context image.
+     */
+    public static final Image CONTEXT;
+    
+    static {
+        try {
+            HOST = new Image("/ch/virtualid/resources/Host.png");
+            CLIENT = new Image("/ch/virtualid/resources/Client.png");
+            CONTEXT = new Image("/ch/virtualid/resources/Context.png");
+        } catch (@Nonnull IOException exception) {
+            throw new InitializationError("Could not initialize the images.", exception);
+        }
+    }
     
     /**
      * Stores the buffered image.

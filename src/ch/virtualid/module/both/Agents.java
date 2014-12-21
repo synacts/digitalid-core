@@ -838,6 +838,7 @@ public final class Agents implements BothModule {
         } catch (@Nonnull SQLException exception) {
             final @Nullable Contact contact = restrictions.getContact();
             if (contact != null && contact.getPerson().hasBeenMerged(exception)) setRestrictions(agent, restrictions);
+            else throw exception;
         }
     }
     

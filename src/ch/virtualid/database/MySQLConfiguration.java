@@ -60,10 +60,11 @@ public final class MySQLConfiguration extends Configuration implements Immutable
      * Creates a new MySQL configuration by reading the properties from the indicated file or from the user's input.
      * 
      * @param name the name of the database configuration file (without the suffix).
+     * @param reset whether the database is to be dropped first before creating it again.
      * 
      * @require Database.isValid(name) : "The name is valid for a database.";
      */
-    public MySQLConfiguration(@Nonnull String name) throws SQLException, IOException {
+    public MySQLConfiguration(@Nonnull String name, boolean reset) throws SQLException, IOException {
         super(new Driver());
         
         assert Database.isValid(name) : "The name is valid for a database.";
@@ -103,6 +104,7 @@ public final class MySQLConfiguration extends Configuration implements Immutable
         properties.setProperty("password", password);
         
         try (@Nonnull Connection connection = DriverManager.getConnection("jdbc:mysql://" + server + ":" + port, properties); @Nonnull Statement statement = connection.createStatement()) {
+            if (reset) statement.executeUpdate("DROP DATABASE IF EXISTS " + database);
             statement.executeUpdate("CREATE DATABASE IF NOT EXISTS " + database);
         }
     }
@@ -116,9 +118,11 @@ public final class MySQLConfiguration extends Configuration implements Immutable
     
     /**
      * Creates a new MySQL configuration by reading the properties from the default file or from the user's input.
+     * 
+     * @param reset whether the database is to be dropped first before creating it again.
      */
-    public MySQLConfiguration() throws SQLException, IOException {
-        this("MySQL");
+    public MySQLConfiguration(boolean reset) throws SQLException, IOException {
+        this("MySQL", reset);
     }
     
     /**

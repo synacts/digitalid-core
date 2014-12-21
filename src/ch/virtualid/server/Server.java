@@ -186,9 +186,9 @@ public final class Server {
     public static void main(@Nonnull String[] arguments) {
         final @Nonnull Configuration configuration;
         try {
-            if (MySQLConfiguration.exists()) configuration = new MySQLConfiguration();
-            else if (PostgreSQLConfiguration.exists()) configuration = new PostgreSQLConfiguration();
-            else if (SQLiteConfiguration.exists()) configuration = new SQLiteConfiguration();
+            if (MySQLConfiguration.exists()) configuration = new MySQLConfiguration(false);
+            else if (PostgreSQLConfiguration.exists()) configuration = new PostgreSQLConfiguration(false);
+            else if (SQLiteConfiguration.exists()) configuration = new SQLiteConfiguration(false);
             else {
                 Console.write();
                 Console.write("Please select one of the following databases:");
@@ -197,9 +197,9 @@ public final class Server {
                 Console.write("- 3: SQLite");
                 Console.write();
                 final int input = Console.readInt("Choice: ");
-                if (input == 1) configuration = new MySQLConfiguration();
-                else if (input == 2) configuration = new PostgreSQLConfiguration();
-                else if (input == 3) configuration = new SQLiteConfiguration();
+                if (input == 1) configuration = new MySQLConfiguration(false);
+                else if (input == 2) configuration = new PostgreSQLConfiguration(false);
+                else if (input == 3) configuration = new SQLiteConfiguration(false);
                 else {
                     Console.write(Integer.toString(input) + " was not a valid option.");
                     Console.write();

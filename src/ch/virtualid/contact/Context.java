@@ -155,8 +155,8 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
      * Creates this context in the database.
      */
     @OnlyForActions
-    public void createForActions() {
-//        Contexts.create(this);
+    public void createForActions() throws SQLException {
+        Contexts.create(this);
         notify(CREATED);
     }
     
