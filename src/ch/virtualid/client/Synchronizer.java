@@ -1,12 +1,18 @@
 package ch.virtualid.client;
 
+import ch.virtualid.exceptions.external.ExternalException;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.InternalAction;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.Service;
+import ch.virtualid.packet.Audit;
+import ch.virtualid.packet.Response;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Set;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Description.
@@ -36,13 +42,13 @@ public final class Synchronizer extends Thread {
     public static void execute(@Nonnull InternalAction action) throws SQLException {
         assert action.isOnClient() : "The internal action is on the client.";
         
-        System.out.println("Synchronize " + action.getClass().getSimpleName() + ": " + action);
-//        try {
-//            action.send();
-//        } catch (@Nonnull IOException | PacketException | ExternalException ex) {
-//            throw new RuntimeException(ex);
-//        }
-//        action.executeOnClient();
+        try {
+            final @Nonnull Response response = action.send();
+            final @Nullable Audit audit = response.getAudit();
+        } catch (@Nonnull IOException | PacketException | ExternalException ex) {
+            throw new RuntimeException(ex);
+        }
+        action.executeOnClient();
         
 //        final @Nonnull SemanticType module = action.getModule(); // TODO: Make sure the module is not suspended. Otherwise, pause until it's no longer suspended.
             

@@ -13,6 +13,7 @@ import ch.virtualid.contact.Context;
 import ch.virtualid.cryptography.Exponent;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.NonHostAccount;
+import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.errors.ShouldNeverHappenError;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
@@ -213,6 +214,20 @@ public final class AccountOpen extends Action {
         return null;
     }
     
+    /**
+     * Creates the root context and the client agent for the given entity.
+     * 
+     * @param entity the entity which is to be initialized.
+     */
+    public void initialize(@Nonnull NonHostEntity entity) throws SQLException {
+        final @Nonnull Context context = Context.getRoot(entity);
+        context.createForActions();
+        
+        final @Nonnull ClientAgent clientAgent = ClientAgent.get(entity, agentNumber, false);
+        final @Nonnull Restrictions restrictions = new Restrictions(true, true, true, context);
+        clientAgent.createForActions(AgentPermissions.GENERAL_WRITE, restrictions, commitment, name, icon);
+    }
+    
     @Override
     public @Nullable ActionReply executeOnHost() throws PacketException, SQLException {
         final @Nonnull InternalIdentifier subject = getSubject();
@@ -222,14 +237,7 @@ public final class AccountOpen extends Action {
         
         final @Nonnull InternalNonHostIdentity identity = (InternalNonHostIdentity) Mapper.mapIdentity(subject, category, null);
         final @Nonnull NonHostAccount account = NonHostAccount.get(getAccount().getHost(), identity);
-        
-        final @Nonnull Context context = Context.getRoot(account);
-        context.createForActions();
-        
-        final @Nonnull ClientAgent clientAgent = ClientAgent.get(account, agentNumber, false);
-        final @Nonnull Restrictions restrictions = new Restrictions(true, true, true, context);
-        clientAgent.createForActions(AgentPermissions.GENERAL_WRITE, restrictions, commitment, name, icon);
-        
+        initialize(account);
         account.opened();
         return null;
     }

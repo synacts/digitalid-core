@@ -2,6 +2,7 @@ package ch.virtualid.packet;
 
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
@@ -10,7 +11,6 @@ import ch.virtualid.util.ReadonlyList;
 import ch.xdf.Block;
 import ch.xdf.ListWrapper;
 import ch.xdf.TupleWrapper;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -157,6 +157,13 @@ public final class Audit implements Immutable, Blockable {
     public @Nonnull ReadonlyList<Block> getTrail() throws InvalidEncodingException {
         if (trail == null) throw new InvalidEncodingException("The trail of this audit may not be null.");
         return trail;
+    }
+    
+    
+    @Pure
+    @Override
+    public @Nonnull String toString() {
+        return "Audit from " + lastTime.asDate() + " to " + (thisTime == null ? "null" : thisTime.asDate()) + " with " + (trail == null ? "no" : trail.size()) + " actions";
     }
     
 }

@@ -85,6 +85,7 @@ public final class Worker implements Runnable {
                             }
                             Database.commit();
                         } catch (@Nonnull SQLException exception) {
+                            exception.printStackTrace(); // TODO: Remove eventually.
                             exceptions.set(i, new PacketException(PacketError.INTERNAL, "An SQLException occurred.", exception));
                             Database.rollback();
                         } catch (@Nonnull PacketException exception) {
@@ -95,7 +96,7 @@ public final class Worker implements Runnable {
                     
                     final @Nullable Audit audit;
                     if (request.getAudit() != null) {
-                        audit = new Audit(start); // TODO: Retrieve the audit of the given service.
+                        audit = new Audit(start); // TODO: Retrieve the audit of the given service and commit the database afterwards.
                     } else {
                         audit = null;
                     }

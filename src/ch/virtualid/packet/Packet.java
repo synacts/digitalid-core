@@ -194,72 +194,76 @@ public abstract class Packet implements Immutable {
                 try { signature = verified ? SignatureWrapper.decode(elements.getNotNull(i), account) : SignatureWrapper.decodeWithoutVerifying(elements.getNotNull(i), false, account); } catch (InvalidEncodingException | InvalidSignatureException exception) { throw new PacketException(PacketError.SIGNATURE, "A signature is invalid.", exception, isResponse); }
                 if (signature.getAudit() != null) audit = signature.getAudit();
                 
-                final @Nonnull CompressionWrapper compression;
-                try { compression = new CompressionWrapper(signature.getElementNotNull()); } catch (InvalidEncodingException exception) { throw new PacketException(PacketError.COMPRESSION, "The compression could not be decoded.", exception, isResponse); }
-                
-                final @Nonnull SelfcontainedWrapper content;
-                try { content = new SelfcontainedWrapper(compression.getElementNotNull()); } catch (InvalidEncodingException exception) { throw new PacketException(PacketError.CONTENT, "The content could not be decoded.", exception, isResponse); }
-                
-                final @Nonnull Block block = content.getElement();
-                final @Nonnull SemanticType type = block.getType();
-                if (response != null) {
-                    if (signature.hasSubject() && !signature.getSubjectNotNull().equals(request.getSubject())) throw new PacketException(PacketError.IDENTIFIER, "The subject of the request was " + request.getSubject() + ", the response from " + request.getRecipient() + " was about " + signature.getSubjectNotNull() + " though.", null, isResponse);
+                final @Nullable Block element = signature.getElement();
+                if (element != null) {
+                    final @Nonnull CompressionWrapper compression;
+                    try { compression = new CompressionWrapper(element); } catch (InvalidEncodingException exception) { throw new PacketException(PacketError.COMPRESSION, "The compression could not be decoded.", exception, isResponse); }
                     
-                    if (signature.isSigned()) {
-                        if (reference == null) reference = signature;
-                        else if (!signature.isSignedLike(reference)) throw new PacketException(PacketError.SIGNATURE, "All the signed signatures of a response have to be signed alike.", null, isResponse);
+                    final @Nonnull SelfcontainedWrapper content;
+                    try { content = new SelfcontainedWrapper(compression.getElementNotNull()); } catch (InvalidEncodingException exception) { throw new PacketException(PacketError.CONTENT, "The content could not be decoded.", exception, isResponse); }
+                    
+                    final @Nonnull Block block = content.getElement();
+                    final @Nonnull SemanticType type = block.getType();
+                    if (response != null) {
+                        if (signature.hasSubject() && !signature.getSubjectNotNull().equals(request.getSubject())) throw new PacketException(PacketError.IDENTIFIER, "The subject of the request was " + request.getSubject() + ", the response from " + request.getRecipient() + " was about " + signature.getSubjectNotNull() + " though.", null, isResponse);
                         
-                        if (signature instanceof HostSignatureWrapper) {
-                            final @Nonnull Identifier signer = ((HostSignatureWrapper) signature).getSigner();
-                            if (!signer.equals(request.getRecipient())) throw new PacketException(PacketError.SIGNATURE, "The response from the host " + request.getRecipient() + " was signed by " + signer + ".", null, isResponse);
+                        if (signature.isSigned()) {
+                            if (reference == null) reference = signature;
+                            else if (!signature.isSignedLike(reference)) throw new PacketException(PacketError.SIGNATURE, "All the signed signatures of a response have to be signed alike.", null, isResponse);
                             
-                            if (type.equals(PacketException.TYPE)) {
-                                response.setException(i, PacketException.create(block));
-                            } else {
-                                final @Nonnull Method method = request.getMethod(i);
-                                final @Nullable Class<? extends Reply> replyClass = method.getReplyClass();
-                                final @Nonnull Reply reply = Reply.get(method.hasEntity() ? method.getNonHostEntity() : null, (HostSignatureWrapper) signature, block);
-                                if (replyClass == null) throw new PacketException(PacketError.REPLY, "No reply was expected but '" + reply.getClass().getName() + "' was received.", new WrongReplyException(reply), isResponse);
-                                if (!replyClass.isInstance(reply)) throw new PacketException(PacketError.REPLY, "A reply was '" + reply.getClass().getName() + "' instead of '" + replyClass.getName() + "'.", new WrongReplyException(reply), isResponse);
-                                response.setReply(i, reply);
-                            }
-                        } else throw new PacketException(PacketError.SIGNATURE, "A reply from the host " + request.getRecipient() + " was not signed by a host.", null, isResponse);
-                    } else {
-                        if (type.equals(PacketException.TYPE)) response.setException(i, PacketException.create(block));
-                        else throw new PacketException(PacketError.SIGNATURE, "A reply from the host " + request.getRecipient() + " was not signed.", null, isResponse);
-                    }
-                } else {
-                    if (!signature.hasSubject()) throw new PacketException(PacketError.SIGNATURE, "Each signature in a request must have a subject.", null, isResponse);
-                    final @Nonnull InternalIdentifier subject = signature.getSubjectNotNull();
-                    if (subject instanceof HostIdentifier && !type.equals(AttributesQuery.TYPE) && !type.equals(CertificateIssuance.TYPE)) throw new PacketException(PacketError.METHOD, "A host can only be the subject of an attributes query and a certificate issuance but not " + type.getAddress() + ".", null, isResponse);
-                    
-                    if (reference == null) reference = signature;
-                    else if (!signature.isSignedLike(reference)) throw new PacketException(PacketError.SIGNATURE, "All the signatures of a request have to be signed alike.", null, isResponse);
-                    
-                    final @Nonnull Entity entity;
-                    assert recipient != null && account != null : "In case of requests, both the recipient and the account are set (see the code above).";
-                    if (type.equals(IdentityQuery.TYPE) || type.equals(AccountOpen.TYPE)) {
-                        entity = account;
-                    } else {
-                        entity = Account.get(account.getHost(), subject.getIdentity());
-                        if (subject instanceof InternalNonHostIdentifier) {
-                            final @Nonnull InternalNonHostIdentifier internalNonHostIdentifier = (InternalNonHostIdentifier) subject;
-                            if (!type.equals(AccountInitialize.TYPE) && !Predecessors.exist(internalNonHostIdentifier)) throw new PacketException(PacketError.IDENTIFIER, "The subject " + subject + " is not yet initialized.");
-                            final @Nullable InternalNonHostIdentifier successor = Successor.get(internalNonHostIdentifier);
-                            if (successor != null) throw new PacketException(PacketError.RELOCATION, "The subject " + subject + " has been relocated to " + successor + ".", null, isResponse);
+                            if (signature instanceof HostSignatureWrapper) {
+                                final @Nonnull Identifier signer = ((HostSignatureWrapper) signature).getSigner();
+                                if (!signer.equals(request.getRecipient())) throw new PacketException(PacketError.SIGNATURE, "The response from the host " + request.getRecipient() + " was signed by " + signer + ".", null, isResponse);
+                                
+                                if (type.equals(PacketException.TYPE)) {
+                                    response.setException(i, PacketException.create(block));
+                                } else {
+                                    final @Nonnull Method method = request.getMethod(i);
+                                    final @Nullable Class<? extends Reply> replyClass = method.getReplyClass();
+                                    final @Nonnull Reply reply = Reply.get(method.hasEntity() ? method.getNonHostEntity() : null, (HostSignatureWrapper) signature, block);
+                                    if (replyClass == null) throw new PacketException(PacketError.REPLY, "No reply was expected but '" + reply.getClass().getName() + "' was received.", new WrongReplyException(reply), isResponse);
+                                    if (!replyClass.isInstance(reply)) throw new PacketException(PacketError.REPLY, "A reply was '" + reply.getClass().getName() + "' instead of '" + replyClass.getName() + "'.", new WrongReplyException(reply), isResponse);
+                                    response.setReply(i, reply);
+                                }
+                            } else throw new PacketException(PacketError.SIGNATURE, "A reply from the host " + request.getRecipient() + " was not signed by a host.", null, isResponse);
+                        } else {
+                            if (type.equals(PacketException.TYPE)) response.setException(i, PacketException.create(block));
+                            else throw new PacketException(PacketError.SIGNATURE, "A reply from the host " + request.getRecipient() + " was not signed.", null, isResponse);
                         }
+                    } else {
+                        if (!signature.hasSubject()) throw new PacketException(PacketError.SIGNATURE, "Each signature in a request must have a subject.", null, isResponse);
+                        final @Nonnull InternalIdentifier subject = signature.getSubjectNotNull();
+                        if (subject instanceof HostIdentifier && !type.equals(AttributesQuery.TYPE) && !type.equals(CertificateIssuance.TYPE)) throw new PacketException(PacketError.METHOD, "A host can only be the subject of an attributes query and a certificate issuance but not " + type.getAddress() + ".", null, isResponse);
+                        
+                        if (reference == null) reference = signature;
+                        else if (!signature.isSignedLike(reference)) throw new PacketException(PacketError.SIGNATURE, "All the signatures of a request have to be signed alike.", null, isResponse);
+                        
+                        final @Nonnull Entity entity;
+                        assert recipient != null && account != null : "In case of requests, both the recipient and the account are set (see the code above).";
+                        if (type.equals(IdentityQuery.TYPE) || type.equals(AccountOpen.TYPE)) {
+                            entity = account;
+                        } else {
+                            entity = Account.get(account.getHost(), subject.getIdentity());
+                            if (subject instanceof InternalNonHostIdentifier) {
+                                final @Nonnull InternalNonHostIdentifier internalNonHostIdentifier = (InternalNonHostIdentifier) subject;
+                                if (!type.equals(AccountInitialize.TYPE) && !Predecessors.exist(internalNonHostIdentifier)) throw new PacketException(PacketError.IDENTIFIER, "The subject " + subject + " is not yet initialized.");
+                                final @Nullable InternalNonHostIdentifier successor = Successor.get(internalNonHostIdentifier);
+                                if (successor != null) throw new PacketException(PacketError.RELOCATION, "The subject " + subject + " has been relocated to " + successor + ".", null, isResponse);
+                            }
+                        }
+                        final @Nonnull Method method = Method.get(entity, signature, recipient, block);
+                        if (!account.getHost().supports(method.getService())) throw new PacketException(PacketError.METHOD, "The host " + recipient + " does not support the service " + method.getService().getType().getAddress() + ".", null, isResponse);
+                        ((Request) this).setMethod(i, method);
                     }
-                    final @Nonnull Method method = Method.get(entity, signature, recipient, block);
-                    if (!account.getHost().supports(method.getService())) throw new PacketException(PacketError.METHOD, "The host " + recipient + " does not support the service " + method.getService().getType().getAddress() + ".", null, isResponse);
-                    ((Request) this).setMethod(i, method);
+                    continue;
                 }
+            }
+            
+            if (response != null) {
+                final @Nullable Class<? extends Reply> replyClass = request.getMethod(i).getReplyClass();
+                if (replyClass != null) throw new PacketException(PacketError.REPLY, "A reply of type '" + replyClass.getName() + "' was expected but nothing was received.", null, isResponse);
             } else {
-                if (response != null) {
-                    final @Nullable Class<? extends Reply> replyClass = request.getMethod(i).getReplyClass();
-                    if (replyClass != null) throw new PacketException(PacketError.REPLY, "A reply of type '" + replyClass.getName() + "' was expected but nothing was received.", null, isResponse);
-                } else {
-                    throw new PacketException(PacketError.ELEMENTS, "None of the elements may be null in requests.", null, isResponse);
-                }
+                throw new PacketException(PacketError.ELEMENTS, "None of the elements may be null in requests.", null, isResponse);
             }
         }
         

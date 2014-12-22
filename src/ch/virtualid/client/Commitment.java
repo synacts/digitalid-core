@@ -6,7 +6,6 @@ import ch.virtualid.cryptography.Element;
 import ch.virtualid.cryptography.Exponent;
 import ch.virtualid.cryptography.PublicKey;
 import ch.virtualid.database.Database;
-import ch.virtualid.entity.Site;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identifier.HostIdentifier;
@@ -248,15 +247,9 @@ public class Commitment implements Immutable, Blockable, SQLizable {
     public static final @Nonnull String UPDATE = "host = ?, time = ?, value = ?";
     
     /**
-     * Returns the foreign key constraints used by instances of this class.
-     * 
-     * @param site the site at which the foreign key constraint is declared.
-     * 
-     * @return the foreign key constraints used by instances of this class.
+     * Stores the foreign key constraints used by instances of this class.
      */
-    public static @Nonnull String getForeignKeys(@Nonnull Site site) {
-        return "FOREIGN KEY (host) " + site.getEntityReference();
-    }
+    public static final @Nonnull String REFERENCE = "FOREIGN KEY (host) " + Mapper.REFERENCE;
     
     /**
      * Returns the given columns of the result set as an instance of this class.

@@ -209,13 +209,13 @@ public final class Attributes implements BothModule {
     @Override
     public @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull Agent agent) throws SQLException {
         final @Nonnull Site site = entity.getSite();
-        final @Nonnull String from = " FROM " + site + "agent_permission p, " + site;
-        final @Nonnull String where = " v WHERE p.entity = " + entity + " AND p.agent = " + agent + " AND v.entity = " + entity + " AND (p.type = " + AgentPermissions.GENERAL + " OR p.type = v.type)";
+        final @Nonnull String from = " FROM " + site + "agent_permission AS p, " + site;
+        final @Nonnull String where = " AS v WHERE p.entity = " + entity + " AND p.agent = " + agent + " AND v.entity = " + entity + " AND (p.type = " + AgentPermissions.GENERAL + " OR p.type = v.type)";
         
         final @Nonnull FreezableArray<Block> tables = new FreezableArray<Block>(2);
         try (@Nonnull Statement statement = Database.createStatement()) {
             
-            try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT DISTINCT v.type, v.published, v.value FROM" + from + "attribute_value" + where)) {
+            try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT DISTINCT v.type, v.published, v.value" + from + "attribute_value" + where)) {
                 final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
                 while (resultSet.next()) {
                     final @Nonnull Identity type = IdentityClass.getNotNull(resultSet, 2);
@@ -226,7 +226,7 @@ public final class Attributes implements BothModule {
                 tables.set(0, new ListWrapper(VALUE_STATE_TABLE, entries.freeze()).toBlock());
             }
             
-            try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT DISTINCT v.type, v.visibility FROM" + from + "attribute_visibility" + where + " AND p.writing")) {
+            try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT DISTINCT v.type, v.visibility" + from + "attribute_visibility" + where + " AND p.writing")) {
                 final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
                 while (resultSet.next()) {
                     final @Nonnull Identity type = IdentityClass.getNotNull(resultSet, 2);

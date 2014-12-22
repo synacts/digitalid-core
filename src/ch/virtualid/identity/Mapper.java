@@ -459,11 +459,13 @@ public final class Mapper {
         try (@Nonnull Statement statement = Database.createStatement()) {
             for (final @Nonnull NonHostIdentity identity : identities) {
                 final long oldNumber = identity.getNumber();
-                updateReferences(statement, oldNumber, newNumber);
-                statement.executeUpdate("UPDATE general_identifier SET identity = " + newNumber + " WHERE identity = " + oldNumber);
-                statement.executeUpdate("DELETE FROM general_identity WHERE identity = " + oldNumber);
-                LOGGER.log(Level.INFORMATION, "The identity of " + identity.getAddress() + " was succesfully merged into " + newIdentity.getAddress() + ".");
-                unmap(identity);
+                if (oldNumber != newNumber) {
+                    updateReferences(statement, oldNumber, newNumber);
+                    statement.executeUpdate("UPDATE general_identifier SET identity = " + newNumber + " WHERE identity = " + oldNumber);
+                    statement.executeUpdate("DELETE FROM general_identity WHERE identity = " + oldNumber);
+                    LOGGER.log(Level.INFORMATION, "The identity of " + identity.getAddress() + " was succesfully merged into " + newIdentity.getAddress() + ".");
+                    unmap(identity);
+                }
             }
         }
         if (identities.size() > 1) Cache.invalidateCachedAttributeValues(newIdentity);

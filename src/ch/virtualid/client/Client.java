@@ -391,6 +391,7 @@ public class Client extends Site implements Observer {
         final @Nonnull AccountOpen accountOpen = new AccountOpen(subject, category, this); accountOpen.send();
         final @Nonnull InternalNonHostIdentity identity = (InternalNonHostIdentity) Mapper.mapIdentity(subject, category, null);
         final @Nonnull Role newRole = addRole(identity, accountOpen.getAgentNumber());
+        accountOpen.initialize(newRole);
         Database.commit();
         
         final @Nonnull FreezableList<Pair<Predecessor, Block>> states = new FreezableArrayList<Pair<Predecessor, Block>>(roles.size() + identifiers.size());

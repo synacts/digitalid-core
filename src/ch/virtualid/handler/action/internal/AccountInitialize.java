@@ -103,7 +103,7 @@ public final class AccountInitialize extends CoreServiceInternalAction {
     private AccountInitialize(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
-        final @Nonnull InternalNonHostIdentifier subject = (InternalNonHostIdentifier) getSubject();
+        final @Nonnull InternalNonHostIdentifier subject = getSubject().toInternalNonHostIdentifier();
         if (Predecessors.exist(subject)) throw new PacketException(PacketError.METHOD, "The subject " + subject + " is already initialized.");
         
         final @Nonnull Category category = entity.getIdentity().getCategory();
@@ -170,12 +170,16 @@ public final class AccountInitialize extends CoreServiceInternalAction {
         final @Nonnull NonHostEntity entity = getNonHostEntity();
         
         try {
+            final @Nonnull Predecessors predecessors = new Predecessors(states.size());
             final @Nonnull FreezableList<NonHostIdentity> identities = new FreezableArrayList<NonHostIdentity>(states.size());
             for (final @Nonnull Pair<Predecessor, Block> state : states) {
-                identities.add(state.getValue0().getIdentifier().getIdentity().toNonHostIdentity());
+                final @Nonnull Predecessor predecessor = state.getValue0();
+                identities.add(predecessor.getIdentifier().getIdentity().toNonHostIdentity());
                 CoreService.SERVICE.addState(entity, state.getValue1());
+                predecessors.add(predecessor);
             }
             Mapper.mergeIdentities(identities.freeze(), entity.getIdentity());
+            predecessors.set(getSubject().toInternalNonHostIdentifier(), null);
         } catch (@Nonnull IOException | PacketException | ExternalException exception) {
             throw new SQLException("A problem occurred while adding a state.", exception);
         }

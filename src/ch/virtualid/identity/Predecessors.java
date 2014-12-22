@@ -52,6 +52,15 @@ public final class Predecessors extends FreezableArrayList<Predecessor> implemen
     public Predecessors() {}
     
     /**
+     * Creates an empty list of predecessors with the given capacity.
+     * 
+     * @param initialCapacity the initial capacity of the list.
+     */
+    public Predecessors(int initialCapacity) {
+        super(initialCapacity);
+    }
+    
+    /**
      * Creates new predecessors from the given predecessors.
      * 
      * @param predecessors the predecessors to add to the new predecessors.
@@ -160,6 +169,7 @@ public final class Predecessors extends FreezableArrayList<Predecessor> implemen
         
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS general_predecessors (identifier " + IdentifierClass.FORMAT + " NOT NULL, predecessors " + Block.FORMAT + " NOT NULL, reply " + Reply.FORMAT + ", PRIMARY KEY (identifier), FOREIGN KEY (reply) " + Reply.REFERENCE + ")");
+            Database.onInsertIgnore(statement, "general_predecessors", "identifier");
         } catch (@Nonnull SQLException exception) {
             throw new InitializationError("The database tables of the predecessors could not be created.", exception);
         }
@@ -205,9 +215,7 @@ public final class Predecessors extends FreezableArrayList<Predecessor> implemen
     
     @Override
     public void set(@Nonnull InternalNonHostIdentifier identifier, @Nullable Reply reply) throws SQLException {
-        assert identifier.isNotMapped() : "The identifier is not mapped.";
-        
-        final @Nonnull String SQL = "INSERT INTO general_predecessors (identifier, predecessors, reply) VALUES (?, ?, ?)";
+        final @Nonnull String SQL = "INSERT" + Database.getConfiguration().IGNORE() + " INTO general_predecessors (identifier, predecessors, reply) VALUES (?, ?, ?)";
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
             identifier.set(preparedStatement, 1);
             toBlock().set(preparedStatement, 2);

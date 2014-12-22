@@ -90,7 +90,7 @@ public final class Agents implements BothModule {
             
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "agent_order (entity " + EntityClass.FORMAT + " NOT NULL, stronger " + Agent.FORMAT + " NOT NULL, weaker " + Agent.FORMAT + " NOT NULL, PRIMARY KEY (entity, stronger, weaker), FOREIGN KEY (entity, stronger) " + Agent.getReference(site) + ", FOREIGN KEY (entity, weaker) " + Agent.getReference(site) + ")");
             
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "client_agent (entity " + EntityClass.FORMAT + " NOT NULL, agent " + Agent.FORMAT + " NOT NULL, " + Commitment.FORMAT + ", name VARCHAR(50) NOT NULL COLLATE " + Database.getConfiguration().BINARY() + ", icon " + Image.FORMAT + " NOT NULL, PRIMARY KEY (entity, agent), FOREIGN KEY (entity, agent) " + Agent.getReference(site) + ", " + Commitment.getForeignKeys(site) + ")");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "client_agent (entity " + EntityClass.FORMAT + " NOT NULL, agent " + Agent.FORMAT + " NOT NULL, " + Commitment.FORMAT + ", name VARCHAR(50) NOT NULL COLLATE " + Database.getConfiguration().BINARY() + ", icon " + Image.FORMAT + " NOT NULL, PRIMARY KEY (entity, agent), FOREIGN KEY (entity, agent) " + Agent.getReference(site) + ", " + Commitment.REFERENCE + ")");
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "outgoing_role (entity " + EntityClass.FORMAT + " NOT NULL, agent " + Agent.FORMAT + " NOT NULL, relation " + Mapper.FORMAT + " NOT NULL, context " + Context.FORMAT + " NOT NULL, PRIMARY KEY (entity, agent), FOREIGN KEY (entity, agent) " + Agent.getReference(site) + ", FOREIGN KEY (relation) " + Mapper.REFERENCE + ", FOREIGN KEY (entity, context) " + Context.getReference(site) + ")");
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "incoming_role (entity " + EntityClass.FORMAT + " NOT NULL, issuer " + Mapper.FORMAT + " NOT NULL, relation " + Mapper.FORMAT + " NOT NULL, agent " + Agent.FORMAT + " NOT NULL, PRIMARY KEY (entity, issuer, relation), FOREIGN KEY (entity) " + site.getEntityReference() + ", FOREIGN KEY (issuer) " + Mapper.REFERENCE + ", FOREIGN KEY (relation) " + Mapper.REFERENCE + ")");
             Mapper.addReference(site + "incoming_role", "issuer", "entity", "issuer", "relation");
@@ -476,7 +476,7 @@ public final class Agents implements BothModule {
     /**
      * Stores the semantic type {@code agents.state@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType STATE_FORMAT = SemanticType.create("agents.state@virtualid.ch").load(TupleWrapper.TYPE, AGENT_STATE_TABLE, AGENT_PERMISSION_STATE_TABLE, AGENT_RESTRICTIONS_STATE_TABLE, CLIENT_STATE_TABLE, INCOMING_ROLE_STATE_TABLE, OUTGOING_ROLE_STATE_TABLE);
+    private static final @Nonnull SemanticType STATE_FORMAT = SemanticType.create("agents.state@virtualid.ch").load(TupleWrapper.TYPE, AGENT_STATE_TABLE, AGENT_PERMISSION_STATE_TABLE, AGENT_RESTRICTIONS_STATE_TABLE, CLIENT_STATE_TABLE, OUTGOING_ROLE_STATE_TABLE, INCOMING_ROLE_STATE_TABLE);
     
     @Pure
     @Override
@@ -526,7 +526,7 @@ public final class Agents implements BothModule {
                 tables.set(2, new ListWrapper(AGENT_RESTRICTIONS_STATE_TABLE, entries.freeze()).toBlock());
             }
             
-            try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT agent, " + Commitment.COLUMNS + ", name, icon" + from + "client" + where)) {
+            try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT agent, " + Commitment.COLUMNS + ", name, icon" + from + "client_agent" + where)) {
                 final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
                 while (resultSet.next()) {
                     final long number = resultSet.getLong(1);
@@ -561,7 +561,7 @@ public final class Agents implements BothModule {
             }
             
         }
-        return new TupleWrapper(MODULE_FORMAT, tables.freeze()).toBlock();
+        return new TupleWrapper(STATE_FORMAT, tables.freeze()).toBlock();
     }
     
     @Override

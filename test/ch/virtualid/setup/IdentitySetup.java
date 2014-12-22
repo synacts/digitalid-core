@@ -6,12 +6,17 @@ import ch.virtualid.client.Client;
 import ch.virtualid.entity.Role;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
+import ch.virtualid.handler.query.internal.StateQuery;
+import ch.virtualid.handler.reply.query.StateReply;
 import ch.virtualid.identifier.InternalNonHostIdentifier;
 import ch.virtualid.identity.Category;
 import ch.virtualid.identity.Identity;
+import ch.virtualid.module.CoreService;
+import ch.xdf.Block;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -49,8 +54,12 @@ public class IdentitySetup extends ServerSetup {
     }
     
     @Test
-    public final void testIdentitySetup() {
-        System.out.println("The test is running!");
+    public final void testIdentitySetup() throws SQLException, IOException, PacketException, ExternalException {
+        final @Nonnull StateReply reply = new StateQuery(role).sendNotNull();
+        final @Nonnull Block state = CoreService.SERVICE.getState(role, role.getAgent());
+        System.out.println("Client: " + state);
+        System.out.println("Host:   " + reply.toBlock());
+        Assert.assertEquals(state, reply.toBlock());
     }
     
 }

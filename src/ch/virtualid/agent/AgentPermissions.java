@@ -60,7 +60,7 @@ public final class AgentPermissions extends FreezableLinkedHashMap<SemanticType,
     /**
      * Stores the semantic type {@code general.permission.agent@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType GENERAL = SemanticType.create("general.permission.agent@virtualid.ch").load(new Category[] {Category.HOST}, Time.TROPICAL_YEAR, BooleanWrapper.TYPE);
+    public static final @Nonnull SemanticType GENERAL = SemanticType.create("general.permission.agent@virtualid.ch").load(new Category[] {Category.HOST, Category.SYNTACTIC_TYPE, Category.SEMANTIC_TYPE, Category.NATURAL_PERSON, Category.ARTIFICIAL_PERSON}, Time.TROPICAL_YEAR, BooleanWrapper.TYPE);
     
     /**
      * Stores an empty set of agent permissions.
