@@ -359,11 +359,11 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
     
     
     /**
-     * Resets this agent after having reloaded the agents module.
+     * Resets this agent.
      */
-    final void reset() {
-        permissions = null;
-        restrictions = null;
+    public void reset() {
+        this.permissions = null;
+        this.restrictions = null;
         notify(RESET);
     }
     

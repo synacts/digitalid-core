@@ -270,6 +270,14 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
     }
     
     
+    @Override
+    public void reset() {
+        this.relation = null;
+        this.context = null;
+        super.reset();
+    }
+    
+    
     @Pure
     @Override
     public boolean isClient() {
@@ -337,13 +345,7 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
     public static void reset(@Nonnull NonHostEntity entity) {
         if (Database.isSingleAccess()) {
             final @Nullable ConcurrentMap<Long, OutgoingRole> map = index.get(entity);
-            if (map != null) {
-                for (final @Nonnull OutgoingRole outgoingRole : map.values()) {
-                    outgoingRole.relation = null;
-                    outgoingRole.context = null;
-                    outgoingRole.reset();
-                }
-            }
+            if (map != null) for (final @Nonnull OutgoingRole outgoingRole : map.values()) outgoingRole.reset();
         }
     }
     

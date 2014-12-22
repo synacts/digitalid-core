@@ -62,4 +62,39 @@ public final class AgentTest extends IdentitySetup {
         Assert.assertTrue(role.isAccredited());
     }
     
+    @Test
+    public void _02_testPermissionsAdd() throws SQLException, IOException, PacketException, ExternalException {
+        final @Nonnull AgentPermissions agentPermissions = new AgentPermissions();
+        agentPermissions.put(AttributeType.EMAIL, true);
+        agentPermissions.put(AttributeType.PHONE, false);
+        agentPermissions.freeze();
+        
+        for (final @Nonnull Agent agent : getRole().getAgent().getWeakerAgents()) {
+            if (agent.getNumber() == role.getAgent().getNumber()) agent.addPermissions(agentPermissions);
+        }
+        
+        role.refreshState();
+        final @Nonnull ReadonlyAgentPermissions permissions = role.getAgent().getPermissions();
+        Assert.assertTrue(permissions.canWrite(AttributeType.EMAIL));
+        Assert.assertTrue(permissions.canRead(AttributeType.PHONE));
+        Assert.assertFalse(permissions.canWrite(AttributeType.PHONE));
+    }
+    
+    @Test
+    public void _03_testPermissionsRemove() throws SQLException, IOException, PacketException, ExternalException {
+        final @Nonnull AgentPermissions agentPermissions = new AgentPermissions();
+        agentPermissions.put(AttributeType.PRENAME, true);
+        agentPermissions.put(AttributeType.SURNAME, true);
+        agentPermissions.freeze();
+        
+        role.getAgent().removePermissions(agentPermissions);
+        
+        role.getAgent().reset(); // Not necessary but I want to test the database state.
+        final @Nonnull ReadonlyAgentPermissions permissions = role.getAgent().getPermissions();
+        Assert.assertFalse(permissions.canWrite(AttributeType.PRENAME));
+        Assert.assertFalse(permissions.canWrite(AttributeType.SURNAME));
+        
+        getRole().refreshState(); // TODO: This should only be necessary temporarily.
+    }
+    
 }

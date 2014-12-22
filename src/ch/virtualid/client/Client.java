@@ -310,6 +310,7 @@ public class Client extends Site implements Observer {
      */
     @Pure
     public final @Nonnull ReadonlyList<Role> getRoles() throws SQLException {
+        if (Database.isMultiAccess()) return Roles.getRoles(this);
         if (roles == null) roles = Roles.getRoles(this);
         return roles;
     }

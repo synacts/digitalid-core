@@ -220,6 +220,7 @@ public final class Role extends EntityClass implements NonHostEntity, Immutable,
         CoreService.SERVICE.removeState(this);
         CoreService.SERVICE.addState(this, reply.toBlock());
         Database.commit();
+        agent.reset();
     }
     
     /**
