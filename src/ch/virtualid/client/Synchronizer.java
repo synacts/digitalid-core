@@ -1,5 +1,6 @@
 package ch.virtualid.client;
 
+import ch.virtualid.database.Database;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.InternalAction;
@@ -49,6 +50,7 @@ public final class Synchronizer extends Thread {
             throw new RuntimeException(ex);
         }
         action.executeOnClient();
+        Database.commit();
         
 //        final @Nonnull SemanticType module = action.getModule(); // TODO: Make sure the module is not suspended. Otherwise, pause until it's no longer suspended.
             

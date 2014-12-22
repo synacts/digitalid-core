@@ -57,9 +57,7 @@ public class IdentitySetup extends ServerSetup {
     public final void testIdentitySetup() throws SQLException, IOException, PacketException, ExternalException {
         final @Nonnull StateReply reply = new StateQuery(role).sendNotNull();
         final @Nonnull Block state = CoreService.SERVICE.getState(role, role.getAgent());
-        System.out.println("Client: " + state);
-        System.out.println("Host:   " + reply.toBlock());
-        Assert.assertEquals(state, reply.toBlock());
+        Assert.assertEquals(state.setType(StateReply.TYPE), reply.toBlock());
     }
     
 }

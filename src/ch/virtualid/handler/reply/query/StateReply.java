@@ -32,7 +32,7 @@ public final class StateReply extends CoreServiceQueryReply {
     /**
      * Stores the block containing the state of the given entity.
      * 
-     * @invariant block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
+     * @invariant block.getType().equals(TYPE) : "The block has the indicated type.";
      */
     private final @Nonnull Block block;
     

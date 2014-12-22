@@ -170,6 +170,7 @@ public final class AccountInitialize extends CoreServiceInternalAction {
         final @Nonnull NonHostEntity entity = getNonHostEntity();
         
         try {
+            @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
             final @Nonnull Predecessors predecessors = new Predecessors(states.size());
             final @Nonnull FreezableList<NonHostIdentity> identities = new FreezableArrayList<NonHostIdentity>(states.size());
             for (final @Nonnull Pair<Predecessor, Block> state : states) {
