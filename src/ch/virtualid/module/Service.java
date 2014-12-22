@@ -6,6 +6,7 @@ import ch.virtualid.client.Client;
 import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.entity.Site;
 import ch.virtualid.exceptions.external.ExternalException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.server.Host;
@@ -202,8 +203,10 @@ public abstract class Service implements BothModule {
         
         final @Nonnull ReadonlyList<Block> elements = new ListWrapper(block).getElementsNotNull();
         for (final @Nonnull Block element : elements) {
-            final @Nonnull Block module = new SelfcontainedWrapper(element).toBlock();
-            hostModules.get(module.getType()).importModule(host, module);
+            final @Nonnull Block module = new SelfcontainedWrapper(element).getElement();
+            final @Nullable HostModule hostModule = hostModules.get(module.getType());
+            if (hostModule != null) hostModule.importModule(host, module);
+            else throw new InvalidEncodingException("There is no module for the block of type " + module.getType().getAddress() + ".");
         }
     }
     
@@ -241,8 +244,10 @@ public abstract class Service implements BothModule {
         
         final @Nonnull ReadonlyList<Block> elements = new ListWrapper(block).getElementsNotNull();
         for (final @Nonnull Block element : elements) {
-            final @Nonnull Block state = new SelfcontainedWrapper(element).toBlock();
-            bothModules.get(state.getType()).addState(entity, state);
+            final @Nonnull Block state = new SelfcontainedWrapper(element).getElement();
+            final @Nullable BothModule bothModule = bothModules.get(state.getType());
+            if (bothModule != null) bothModule.addState(entity, state);
+            else throw new InvalidEncodingException("There is no module for the state of type " + state.getType().getAddress() + ".");
         }
     }
     

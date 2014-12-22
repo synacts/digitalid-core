@@ -346,6 +346,8 @@ public abstract class Method extends Handler {
                     // TODO: Retrieve the external credentials from the role or throw a packet exception if the permissions are not covered.
                     return new CredentialsRequest(methods, recipient, subject, audit, credentials, null, lodged, null).send();
                 }
+                
+                // TODO: Retrieve the audit from the response?
             }
         }
     }

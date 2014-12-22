@@ -169,7 +169,7 @@ public final class Passwords implements BothModule {
                 final @Nonnull String value = resultSet.getString(1);
                 if (!Password.isValid(value)) throw new SQLException("The stored password is not valid.");
                 return value;
-            } else throw new SQLException(entity.getIdentity().getAddress().toString() + " has no password.");
+            } else throw new SQLException(entity.getIdentity().getAddress() + " has no password.");
         }
     }
     

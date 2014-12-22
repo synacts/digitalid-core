@@ -9,6 +9,7 @@ import ch.virtualid.concept.Instance;
 import ch.virtualid.concept.Observer;
 import ch.virtualid.database.Database;
 import ch.virtualid.exceptions.external.ExternalException;
+import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.query.internal.StateQuery;
 import ch.virtualid.handler.reply.query.StateReply;
@@ -211,21 +212,37 @@ public final class Role extends EntityClass implements NonHostEntity, Immutable,
     
     
     /**
+     * Reloads the state of this role.
+     */
+    public void reloadState() throws SQLException, IOException, PacketException, ExternalException {
+        // TODO: Probably replace this with a method by the synchronizer which also adjusts the audit time.
+        final @Nonnull StateReply reply = new StateQuery(this).sendNotNull();
+        CoreService.SERVICE.removeState(this);
+        CoreService.SERVICE.addState(this, reply.toBlock());
+        Database.commit();
+    }
+    
+    /**
+     * Refreshes the state of this role.
+     */
+    public void refreshState() throws SQLException, IOException, PacketException, ExternalException {
+        // TODO: Rewrite this method with an AuditQuery instead of a full StateQuery!
+        reloadState();
+    }
+    
+    /**
      * Returns whether this role is accredited.
      * If it is, the current state is retrieved.
      * 
      * @return whether this role is accredited.
      */
-    public boolean isAccredited() throws SQLException {
-        try { // TODO: Probably replace this with a method by the synchronizer which also adjusts the audit time.
-            final @Nonnull StateReply reply = new StateQuery(this).sendNotNull();
-            CoreService.SERVICE.removeState(this);
-            CoreService.SERVICE.addState(this, reply.toBlock());
-            Database.commit();
+    public boolean isAccredited() throws SQLException, IOException, PacketException, ExternalException {
+        try {
+            reloadState();
             return true;
-        } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
-            Database.rollback();
-            return false;
+        } catch (@Nonnull PacketException exception) {
+            if (exception.getError() == PacketError.AUTHORIZATION) return false;
+            else throw exception;
         }
     }
     
