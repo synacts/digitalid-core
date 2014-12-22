@@ -897,6 +897,26 @@ public final class Agents implements BothModule {
     }
     
     /**
+     * Returns the agent weaker than the given agent with the given agent number.
+     * 
+     * @param agent the agent whose weaker agent is to be returned.
+     * @param agentNumber the number of the agent which is to be returned.
+     * 
+     * @return the agent weaker than the given agent with the given agent number.
+     * 
+     * @throws SQLException if no weaker agent with the given number is found.
+     */
+    public static @Nonnull Agent getWeakerAgent(@Nonnull Agent agent, long agentNumber) throws SQLException {
+        final @Nonnull NonHostEntity entity = agent.getEntity();
+        final @Nonnull Site site = entity.getSite();
+        final @Nonnull String SQL = "SELECT agent, client, removed FROM " + site + "agent_order o, " + site + "agent t WHERE o.entity = " + entity + " AND o.stronger = " + agent + " AND o.weaker = " + agentNumber + " AND t.entity = " + entity + " AND t.agent = " + agentNumber;
+        try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
+            if (resultSet.next()) return Agent.get(entity, resultSet, 1, 2, 3);
+            else throw new SQLException("No weaker agent with the given number was found.");
+        }
+    }
+    
+    /**
      * Returns whether the first agent is stronger than the second agent.
      * 
      * @param agent1 the first agent.

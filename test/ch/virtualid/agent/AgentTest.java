@@ -3,6 +3,7 @@ package ch.virtualid.agent;
 import ch.virtualid.attribute.AttributeType;
 import ch.virtualid.auxiliary.Image;
 import ch.virtualid.client.Client;
+import ch.virtualid.contact.Context;
 import ch.virtualid.entity.Role;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
@@ -56,9 +57,7 @@ public final class AgentTest extends IdentitySetup {
     @Test
     public void _01_testUnremoveAgent() throws SQLException, IOException, PacketException, ExternalException {
         getRole().refreshState();
-        for (final @Nonnull Agent agent : getRole().getAgent().getWeakerAgents()) {
-            if (agent.getNumber() == role.getAgent().getNumber()) agent.unremove();
-        }
+        getRole().getAgent().getWeakerAgent(role.getAgent().getNumber()).unremove();
         Assert.assertTrue(role.isAccredited());
     }
     
@@ -69,9 +68,7 @@ public final class AgentTest extends IdentitySetup {
         agentPermissions.put(AttributeType.PHONE, false);
         agentPermissions.freeze();
         
-        for (final @Nonnull Agent agent : getRole().getAgent().getWeakerAgents()) {
-            if (agent.getNumber() == role.getAgent().getNumber()) agent.addPermissions(agentPermissions);
-        }
+        getRole().getAgent().getWeakerAgent(role.getAgent().getNumber()).addPermissions(agentPermissions);
         
         role.refreshState();
         final @Nonnull ReadonlyAgentPermissions permissions = role.getAgent().getPermissions();
@@ -95,6 +92,16 @@ public final class AgentTest extends IdentitySetup {
         Assert.assertFalse(permissions.canWrite(AttributeType.SURNAME));
         
         getRole().refreshState(); // TODO: This should only be necessary temporarily.
+    }
+    
+    @Test
+    public void _04_testRestrictionsReplace() throws SQLException, IOException, PacketException, ExternalException {
+        getRole().getAgent().getWeakerAgent(role.getAgent().getNumber()).setRestrictions(new Restrictions(true, true, true, Context.getRoot(getRole())));
+        
+        role.refreshState();
+        final @Nonnull Restrictions restrictions = role.getAgent().getRestrictions();
+        Assert.assertTrue(restrictions.isRole());
+        Assert.assertTrue(restrictions.isWriting());
     }
     
 }

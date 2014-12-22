@@ -381,6 +381,20 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
     }
     
     /**
+     * Returns the weaker agent with the given agent number.
+     * 
+     * @param agentNumber the number of the returned agent.
+     * 
+     * @return the weaker agent with the given agent number.
+     * 
+     * @throws SQLException if no such weaker agent is found.
+     */
+    @Pure
+    public final @Nonnull Agent getWeakerAgent(long agentNumber) throws SQLException {
+        return Agents.getWeakerAgent(this, agentNumber);
+    }
+    
+    /**
      * Returns whether this agent covers the given agent.
      * 
      * @param agent the agent that needs to be covered.

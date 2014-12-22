@@ -414,11 +414,14 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
      * Please note that this relation is reflexive (i.e. the method returns {@code true} for the same context).
      * 
      * @param context the context to compare with.
+     * 
      * @return whether this context is a supercontext of the given context.
+     * 
      * @require context.getIdentity().equals(getIdentity()) : "The identity of the given context is the same.";
      */
     public boolean isSupercontextOf(@Nonnull Context context) throws SQLException {
-        throw new SQLException();
+        if (equals(context)) return true;
+        else throw new SQLException();
     }
     
     /**
