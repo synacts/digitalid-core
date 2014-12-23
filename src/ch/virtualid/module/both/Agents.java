@@ -911,7 +911,7 @@ public final class Agents implements BothModule {
         final @Nonnull Site site = entity.getSite();
         final @Nonnull String SQL = "SELECT agent, client, removed FROM " + site + "agent_order o, " + site + "agent t WHERE o.entity = " + entity + " AND o.stronger = " + agent + " AND o.weaker = " + agentNumber + " AND t.entity = " + entity + " AND t.agent = " + agentNumber;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
-            if (resultSet.next()) return Agent.get(entity, resultSet, 1, 2, 3);
+            if (resultSet.next()) return Agent.getNotNull(entity, resultSet, 1, 2, 3);
             else throw new SQLException("No weaker agent with the given number was found.");
         }
     }
@@ -1044,7 +1044,7 @@ public final class Agents implements BothModule {
      */
     public static void replaceCommitment(@Nonnull ClientAgent clientAgent, @Nonnull Commitment oldCommitment, @Nonnull Commitment newCommitment) throws SQLException {
         final @Nonnull NonHostEntity entity = clientAgent.getEntity();
-        final @Nonnull String SQL = "UPDATE client_agent SET " + Commitment.UPDATE + " WHERE entity = " + entity + " AND agent = " + clientAgent + " AND " + Commitment.CONDITION;
+        final @Nonnull String SQL = "UPDATE " + entity.getSite() + "client_agent SET " + Commitment.UPDATE + " WHERE entity = " + entity + " AND agent = " + clientAgent + " AND " + Commitment.CONDITION;
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
             newCommitment.set(preparedStatement, 1);
             oldCommitment.set(preparedStatement, 4);

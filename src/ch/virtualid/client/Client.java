@@ -49,7 +49,6 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.sql.SQLException;
-import java.util.Random;
 import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -148,7 +147,7 @@ public class Client extends Site implements Observer {
     /**
      * Stores the secret of this client.
      */
-    private final @Nonnull Exponent secret;
+    private @Nonnull Exponent secret;
     
     /**
      * Stores the name of this client.
@@ -201,8 +200,7 @@ public class Client extends Site implements Observer {
         if (file.exists()) {
             this.secret = new Exponent(new SelfcontainedWrapper(new FileInputStream(file), true).getElement().checkType(SECRET));
         } else {
-            final @Nonnull Random random = new SecureRandom();
-            this.secret = new Exponent(new BigInteger(Parameters.HASH, random));
+            this.secret = new Exponent(new BigInteger(Parameters.HASH, new SecureRandom()));
             new SelfcontainedWrapper(SelfcontainedWrapper.SELFCONTAINED, secret.toBlock().setType(SECRET)).write(new FileOutputStream(file), true);
         }
         
@@ -220,7 +218,7 @@ public class Client extends Site implements Observer {
      * @ensure isValidIdentifier(identifier) : "The identifier is valid.";
      */
     @Pure
-    public @Nonnull String getIdentifier() {
+    public final @Nonnull String getIdentifier() {
         return identifier;
     }
     
@@ -230,7 +228,7 @@ public class Client extends Site implements Observer {
      * @return the secret of this client.
      */
     @Pure
-    public @Nonnull Exponent getSecret() {
+    public final @Nonnull Exponent getSecret() {
         return secret;
     }
     
@@ -272,6 +270,23 @@ public class Client extends Site implements Observer {
     
     
     /**
+     * Returns a new commitment for the given subject with the given secret.
+     * 
+     * @param subject the subject for which to commit the given secret.
+     * @param secret the secret which is to be committed for the subject.
+     * 
+     * @return a new commitment for the given subject with the given secret.
+     */
+    @Pure
+    private static @Nonnull Commitment getCommitment(@Nonnull InternalNonHostIdentifier subject, @Nonnull Exponent secret) throws SQLException, IOException, PacketException, ExternalException {
+        final @Nonnull HostIdentity host = subject.getHostIdentifier().getIdentity();
+        final @Nonnull Time time = new Time();
+        final @Nonnull PublicKey publicKey = Cache.getPublicKeyChain(host).getKey(time);
+        final @Nonnull Element value = publicKey.getAu().pow(secret);
+        return new Commitment(host, time, value, publicKey);
+    }
+    
+    /**
      * Returns a new commitment for the given subject.
      * 
      * @param subject the subject for which to commit.
@@ -280,11 +295,23 @@ public class Client extends Site implements Observer {
      */
     @Pure
     public final @Nonnull Commitment getCommitment(@Nonnull InternalNonHostIdentifier subject) throws SQLException, IOException, PacketException, ExternalException {
-        final @Nonnull HostIdentity host = subject.getHostIdentifier().getIdentity();
-        final @Nonnull Time time = new Time();
-        final @Nonnull PublicKey publicKey = Cache.getPublicKeyChain(host).getKey(time);
-        final @Nonnull Element value = publicKey.getAu().pow(secret);
-        return new Commitment(host, time, value, publicKey);
+        return getCommitment(subject, secret);
+    }
+    
+    /**
+     * Rotates the secret of this client.
+     * 
+     * TODO: Make sure that other instances of the same client learn about the key rotation.
+     */
+    public final void rotateSecret() throws SQLException, IOException, PacketException, ExternalException {
+        final @Nonnull Exponent newSecret = new Exponent(new BigInteger(Parameters.HASH, new SecureRandom()));
+        for (final @Nonnull Role role : getRoles()) {
+            final @Nonnull Commitment newCommitment = getCommitment(role.getIssuer().getAddress(), newSecret);
+            role.getClientAgent().setCommitment(newCommitment);
+        }
+        this.secret = newSecret;
+        final @Nonnull File file = new File(Directory.CLIENTS.getPath() +  Directory.SEPARATOR + identifier + ".client.xdf");
+        new SelfcontainedWrapper(SelfcontainedWrapper.SELFCONTAINED, secret.toBlock().setType(SECRET)).write(new FileOutputStream(file), true);
     }
     
     

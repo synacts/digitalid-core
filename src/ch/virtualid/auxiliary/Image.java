@@ -149,6 +149,28 @@ public final class Image implements Immutable, Blockable, SQLizable {
     }
     
     
+    @Pure
+    @Override
+    public boolean equals(@Nullable Object object) {
+        if (object == this) return true;
+        if (object == null || !(object instanceof Image)) return false;
+        final @Nonnull Image other = (Image) object;
+        return this.toBlock().equals(other.toBlock());
+    }
+    
+    @Pure
+    @Override
+    public int hashCode() {
+        return toBlock().hashCode();
+    }
+    
+    @Pure
+    @Override
+    public @Nonnull String toString() {
+        return "Image (" + image.getWidth()+ " x " + image.getHeight() + " pixels)";
+    }
+    
+    
     /**
      * Stores the data type used to store instances of this class in the database.
      */

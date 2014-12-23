@@ -2,7 +2,6 @@ package ch.virtualid.handler.action.internal;
 
 import ch.virtualid.agent.Agent;
 import ch.virtualid.agent.ClientAgent;
-import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Commitment;
 import ch.virtualid.cryptography.PublicKey;
@@ -35,12 +34,12 @@ public final class ClientAgentCommitmentReplace extends CoreServiceInternalActio
     /**
      * Stores the semantic type {@code old.commitment.client.agent@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType OLD_COMMITMENT = SemanticType.create("old.commitment.client.agent@virtualid.ch").load(Restrictions.TYPE);
+    private static final @Nonnull SemanticType OLD_COMMITMENT = SemanticType.create("old.commitment.client.agent@virtualid.ch").load(Commitment.TYPE);
     
     /**
      * Stores the semantic type {@code new.commitment.client.agent@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType NEW_COMMITMENT = SemanticType.create("new.commitment.client.agent@virtualid.ch").load(Restrictions.TYPE);
+    private static final @Nonnull SemanticType NEW_COMMITMENT = SemanticType.create("new.commitment.client.agent@virtualid.ch").load(Commitment.TYPE);
     
     /**
      * Stores the semantic type {@code replace.commitment.client.agent@virtualid.ch}.

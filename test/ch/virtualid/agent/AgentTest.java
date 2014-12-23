@@ -3,6 +3,7 @@ package ch.virtualid.agent;
 import ch.virtualid.attribute.AttributeType;
 import ch.virtualid.auxiliary.Image;
 import ch.virtualid.client.Client;
+import ch.virtualid.client.Commitment;
 import ch.virtualid.contact.Context;
 import ch.virtualid.entity.Role;
 import ch.virtualid.exceptions.external.ExternalException;
@@ -102,6 +103,40 @@ public final class AgentTest extends IdentitySetup {
         final @Nonnull Restrictions restrictions = role.getAgent().getRestrictions();
         Assert.assertTrue(restrictions.isRole());
         Assert.assertTrue(restrictions.isWriting());
+    }
+    
+    @Test
+    public void _05_testCommitmentReplace() throws SQLException, IOException, PacketException, ExternalException {
+        final @Nonnull ClientAgent clientAgent = role.getClientAgent();
+        final @Nonnull Commitment oldCommitment = clientAgent.getCommitment();
+        client.rotateSecret();
+        clientAgent.reset();
+        final @Nonnull Commitment newCommitment = clientAgent.getCommitment();
+        Assert.assertNotEquals(oldCommitment, newCommitment);
+        
+        getRole().refreshState(); // TODO: This should only be necessary temporarily.
+    }
+    
+    @Test
+    public void _06_testNameReplace() throws SQLException, IOException, PacketException, ExternalException {
+        final @Nonnull String newName = "New Name of Client";
+        final @Nonnull ClientAgent clientAgent = role.getClientAgent();
+        clientAgent.setName(newName);
+        clientAgent.reset(); // Not necessary but I want to test the database state.
+        Assert.assertEquals(newName, clientAgent.getName());
+        
+        getRole().refreshState(); // TODO: This should only be necessary temporarily.
+    }
+    
+    @Test
+    public void _07_testIconReplace() throws SQLException, IOException, PacketException, ExternalException {
+        final @Nonnull Image newIcon = Image.CONTEXT;
+        final @Nonnull ClientAgent clientAgent = role.getClientAgent();
+        clientAgent.setIcon(newIcon);
+        clientAgent.reset(); // Not necessary but I want to test the database state.
+        Assert.assertEquals(newIcon, clientAgent.getIcon());
+        
+        getRole().refreshState(); // TODO: This should only be necessary temporarily.
     }
     
 }

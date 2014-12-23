@@ -1,6 +1,8 @@
 package ch.virtualid.entity;
 
 import ch.virtualid.agent.Agent;
+import ch.virtualid.agent.ClientAgent;
+import ch.virtualid.agent.OutgoingRole;
 import ch.virtualid.annotations.OnlyForActions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Client;
@@ -169,6 +171,34 @@ public final class Role extends EntityClass implements NonHostEntity, Immutable,
     @Pure
     public @Nonnull Agent getAgent() {
         return agent;
+    }
+    
+    /**
+     * Returns the client agent of this role.
+     * 
+     * @return the client agent of this role.
+     * 
+     * @require isNative() : "This role is native.";
+     */
+    @Pure
+    public @Nonnull ClientAgent getClientAgent() {
+        assert isNative() : "This role is native.";
+        
+        return (ClientAgent) agent;
+    }
+    
+    /**
+     * Returns the outgoing role of this role.
+     * 
+     * @return the outgoing role of this role.
+     * 
+     * @require isNotNative() : "This role is not native.";
+     */
+    @Pure
+    public @Nonnull OutgoingRole getOutgoingRole() {
+        assert isNotNative() : "This role is not native.";
+        
+        return (OutgoingRole) agent;
     }
     
     /**

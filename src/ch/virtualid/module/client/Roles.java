@@ -164,7 +164,7 @@ public final class Roles {
     @Pure
     public static @Capturable @Nonnull FreezableList<Role> getRoles(@Nonnull Client client) throws SQLException {
         final @Nonnull FreezableList<Role> roles = new FreezableLinkedList<Role>();
-        final @Nonnull String SQL = "SELECT role, issuer, agent FROM " + client + "role WHERE recipient = NULL";
+        final @Nonnull String SQL = "SELECT role, issuer, agent FROM " + client + "role WHERE recipient IS NULL";
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
             while (resultSet.next()) {
                 final long number = resultSet.getLong(1);
