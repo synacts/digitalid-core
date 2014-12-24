@@ -6,7 +6,7 @@ import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.contact.Context;
 import ch.virtualid.entity.Entity;
-import ch.virtualid.entity.Role;
+import ch.virtualid.entity.NativeRole;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.InternalAction;
@@ -54,13 +54,9 @@ public final class AccountClose extends CoreServiceInternalAction {
      * 
      * @param role the role to which this handler belongs.
      * @param successor the successor of the given account.
-     * 
-     * @require role.isNative() : "The role is native.";
      */
-    public AccountClose(@Nonnull Role role, @Nullable InternalNonHostIdentifier successor) {
+    public AccountClose(@Nonnull NativeRole role, @Nullable InternalNonHostIdentifier successor) {
         super(role);
-        
-        assert role.isNative() : "The role is native.";
         
         this.successor = successor;
         this.restrictions = new Restrictions(true, true, true, Context.getRoot(role));

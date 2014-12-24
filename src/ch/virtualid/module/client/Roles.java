@@ -6,6 +6,8 @@ import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Client;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.EntityClass;
+import ch.virtualid.entity.NativeRole;
+import ch.virtualid.entity.NonNativeRole;
 import ch.virtualid.entity.Role;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketError;
@@ -73,9 +75,11 @@ public final class Roles {
      * @return the existing or newly mapped number for the given role.
      * 
      * @require relation == null || relation.isRoleType() : "The relation is either null or a role type.";
+     * @require (relation == null) == (recipient == null) : "The relation and the recipient are either both null or non-null.";
      */
     public static long map(@Nonnull Client client, @Nonnull InternalNonHostIdentity issuer, @Nullable SemanticType relation, @Nullable Role recipient, long agentNumber) throws SQLException {
         assert relation == null || relation.isRoleType() : "The relation is either null or a role type.";
+        assert (relation == null) == (recipient == null) : "The relation and the recipient are either both null or non-null.";
         
         final @Nonnull String SQL = "SELECT role FROM " + client + "role WHERE issuer = " + issuer + " AND relation = " + relation + " AND recipient = " + recipient + " AND agent = " + agentNumber;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
@@ -99,10 +103,12 @@ public final class Roles {
             if (resultSet.next()) {
                 final @Nonnull InternalNonHostIdentity issuer = IdentityClass.getNotNull(resultSet, 1).toInternalNonHostIdentity();
                 final @Nullable Identity identity = IdentityClass.get(resultSet, 2);
-                final @Nullable SemanticType relation = identity != null ? identity.toSemanticType() : null;
+                final @Nullable SemanticType relation = identity != null ? identity.toSemanticType().checkIsRoleType() : null;
                 final @Nullable Role recipient = Role.get(client, resultSet, 3);
                 final long agentNumber = resultSet.getLong(4);
-                return Role.get(client, number, issuer, relation, recipient, agentNumber);
+                if (relation == null && recipient == null) return NativeRole.get(client, number, issuer, agentNumber);
+                if (relation != null && recipient != null) return NonNativeRole.get(client, number, issuer, relation, recipient, agentNumber);
+                else throw new InvalidEncodingException("The relation and the recipient have to be either both null or non-null.");
             } else throw new SQLException("The role of the client '" + client + "' with the number" + number + " could not be found.");
         } catch (@Nonnull InvalidEncodingException exception) {
             throw new SQLException("The encoding of a database entry is invalid.", exception);
@@ -119,34 +125,33 @@ public final class Roles {
     }
     
     /**
-     * Returns the roles of the given role.
+     * Returns the non-native roles of the given role.
      * 
      * @param role the role whose roles are to be returned.
      * 
-     * @return the roles of the given role.
+     * @return the non-native roles of the given role.
      * 
      * @ensure return.isNotFrozen() : "The returned list is not frozen.";
      * @ensure return.doesNotContainNull() : "The returned list does not contain null.";
      * @ensure return.doesNotContainDuplicates() : "The returned list does not contain duplicates.";
-     * @ensure for (Role role : return) role.isNotNative() : "Every role in the returned list is not native.";
      */
     @Pure
-    public static @Capturable @Nonnull FreezableList<Role> getRoles(@Nonnull Role role) throws SQLException {
+    public static @Capturable @Nonnull FreezableList<NonNativeRole> getRoles(@Nonnull Role role) throws SQLException {
         final @Nonnull Client client = role.getClient();
-        final @Nonnull FreezableList<Role> roles = new FreezableLinkedList<Role>();
         final @Nonnull String SQL = "SELECT role, issuer, relation, agent FROM " + client + "role WHERE recipient = " + role;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
+            final @Nonnull FreezableList<NonNativeRole> roles = new FreezableLinkedList<NonNativeRole>();
             while (resultSet.next()) {
                 final long number = resultSet.getLong(1);
                 final @Nonnull InternalNonHostIdentity issuer = IdentityClass.getNotNull(resultSet, 2).toInternalNonHostIdentity();
                 final @Nonnull SemanticType relation = IdentityClass.getNotNull(resultSet, 3).toSemanticType();
                 final long agentNumber = resultSet.getLong(4);
-                roles.add(Role.get(client, number, issuer, relation, role, agentNumber));
+                roles.add(NonNativeRole.get(client, number, issuer, relation, role, agentNumber));
             }
+            return roles;
         } catch (@Nonnull InvalidEncodingException exception) {
             throw new SQLException("The encoding of a database entry is invalid.", exception);
         }
-        return roles;
     }
     
     /**
@@ -159,23 +164,22 @@ public final class Roles {
      * @ensure return.isNotFrozen() : "The returned list is not frozen.";
      * @ensure return.doesNotContainNull() : "The returned list does not contain null.";
      * @ensure return.doesNotContainDuplicates() : "The returned list does not contain duplicates.";
-     * @ensure for (Role role : return) role.isNative() : "Every role in the returned list is native.";
      */
     @Pure
-    public static @Capturable @Nonnull FreezableList<Role> getRoles(@Nonnull Client client) throws SQLException {
-        final @Nonnull FreezableList<Role> roles = new FreezableLinkedList<Role>();
+    public static @Capturable @Nonnull FreezableList<NativeRole> getRoles(@Nonnull Client client) throws SQLException {
         final @Nonnull String SQL = "SELECT role, issuer, agent FROM " + client + "role WHERE recipient IS NULL";
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
+            final @Nonnull FreezableList<NativeRole> roles = new FreezableLinkedList<NativeRole>();
             while (resultSet.next()) {
                 final long number = resultSet.getLong(1);
                 final @Nonnull InternalNonHostIdentity issuer = IdentityClass.getNotNull(resultSet, 2).toInternalNonHostIdentity();
                 final long agentNumber = resultSet.getLong(3);
-                roles.add(Role.get(client, number, issuer, null, null, agentNumber));
+                roles.add(NativeRole.get(client, number, issuer, agentNumber));
             }
+            return roles;
         } catch (@Nonnull InvalidEncodingException exception) {
             throw new SQLException("The encoding of a database entry is invalid.", exception);
         }
-        return roles;
     }
     
     /**
@@ -195,10 +199,12 @@ public final class Roles {
             if (resultSet.next()) {
                 final long number = resultSet.getLong(1);
                 final @Nullable Identity identity = IdentityClass.get(resultSet, 2);
-                final @Nullable SemanticType relation = identity != null ? identity.toSemanticType() : null;
+                final @Nullable SemanticType relation = identity != null ? identity.toSemanticType().checkIsRoleType() : null;
                 final @Nullable Role recipient = Role.get(client, resultSet, 3);
                 final long agentNumber = resultSet.getLong(4);
-                return Role.get(client, number, person, relation, recipient, agentNumber);
+                if (relation == null && recipient == null) return NativeRole.get(client, number, person, agentNumber);
+                if (relation != null && recipient != null) return NonNativeRole.get(client, number, person, relation, recipient, agentNumber);
+                else throw new InvalidEncodingException("The relation and the recipient have to be either both null or non-null.");
             } else throw new PacketException(PacketError.IDENTIFIER, "No role for the person " + person.getAddress() + " could be found.");
         } catch (@Nonnull InvalidEncodingException exception) {
             throw new SQLException("The encoding of a database entry is invalid.", exception);

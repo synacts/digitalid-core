@@ -17,6 +17,7 @@ import ch.virtualid.database.Database;
 import ch.virtualid.entity.EntityClass;
 import ch.virtualid.entity.NonHostAccount;
 import ch.virtualid.entity.NonHostEntity;
+import ch.virtualid.entity.NonNativeRole;
 import ch.virtualid.entity.Role;
 import ch.virtualid.entity.Site;
 import ch.virtualid.exceptions.external.ExternalException;
@@ -207,7 +208,7 @@ public final class Agents implements BothModule {
     /**
      * Stores the semantic type {@code entry.outgoing.role.agents.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType OUTGOING_ROLE_MODULE_ENTRY = SemanticType.create("entry.outgoing.role.agents.module@virtualid.ch").load(TupleWrapper.TYPE, Identity.IDENTIFIER, Agent.NUMBER, Role.RELATION, Context.TYPE);
+    private static final @Nonnull SemanticType OUTGOING_ROLE_MODULE_ENTRY = SemanticType.create("entry.outgoing.role.agents.module@virtualid.ch").load(TupleWrapper.TYPE, Identity.IDENTIFIER, Agent.NUMBER, NonNativeRole.RELATION, Context.TYPE);
     
     /**
      * Stores the semantic type {@code table.outgoing.role.agents.module@virtualid.ch}.
@@ -1394,8 +1395,8 @@ public final class Agents implements BothModule {
      * @param role the role whose incoming roles are to be reset.
      */
     public static void resetIncomingRoles(@Nonnull Role role) throws SQLException {
-        final @Nonnull ReadonlyList<Role> roles = role.getRoles();
-        final @Nonnull HashSet<Role> foundRoles = new HashSet<Role>();
+        final @Nonnull ReadonlyList<NonNativeRole> roles = role.getRoles();
+        final @Nonnull HashSet<NonNativeRole> foundRoles = new HashSet<NonNativeRole>();
         final @Nonnull String SQL = "SELECT issuer, relation, agent FROM " + role.getSite() + "incoming_role WHERE entity = " + role;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
             while (resultSet.next()) {
@@ -1404,9 +1405,9 @@ public final class Agents implements BothModule {
                 final long agentNumber = resultSet.getLong(3);
                 
                 boolean found = false;
-                for (final @Nonnull Role subrole : roles) {
+                for (final @Nonnull NonNativeRole subrole : roles) {
                     if (subrole.getIssuer().equals(issuer) && relation.equals(subrole.getRelation())) {
-                        foundRoles.add(role);
+                        foundRoles.add(subrole);
                         found = true;
                         break;
                     }
@@ -1416,7 +1417,7 @@ public final class Agents implements BothModule {
         } catch (@Nonnull InvalidEncodingException exception) {
             throw new SQLException("Some values returned by the database are invalid.", exception);
         }
-        for (final @Nonnull Role subrole : roles) {
+        for (final @Nonnull NonNativeRole subrole : roles) {
             if (!foundRoles.contains(subrole)) subrole.remove();
         }
     }

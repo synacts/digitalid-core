@@ -5,7 +5,7 @@ import ch.virtualid.auxiliary.Image;
 import ch.virtualid.client.Client;
 import ch.virtualid.client.Commitment;
 import ch.virtualid.contact.Context;
-import ch.virtualid.entity.Role;
+import ch.virtualid.entity.NativeRole;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.query.internal.StateQuery;
@@ -34,7 +34,7 @@ public final class AgentTest extends IdentitySetup {
     
     private static @Nonnull Client client;
     
-    private static @Nonnull Role role;
+    private static @Nonnull NativeRole role;
     
     @BeforeClass
     public static void accreditClientAgent() throws SQLException, IOException, PacketException, ExternalException {
@@ -107,7 +107,7 @@ public final class AgentTest extends IdentitySetup {
     
     @Test
     public void _05_testCommitmentReplace() throws SQLException, IOException, PacketException, ExternalException {
-        final @Nonnull ClientAgent clientAgent = role.getClientAgent();
+        final @Nonnull ClientAgent clientAgent = role.getAgent();
         final @Nonnull Commitment oldCommitment = clientAgent.getCommitment();
         client.rotateSecret();
         clientAgent.reset();
@@ -120,7 +120,7 @@ public final class AgentTest extends IdentitySetup {
     @Test
     public void _06_testNameReplace() throws SQLException, IOException, PacketException, ExternalException {
         final @Nonnull String newName = "New Name of Client";
-        final @Nonnull ClientAgent clientAgent = role.getClientAgent();
+        final @Nonnull ClientAgent clientAgent = role.getAgent();
         clientAgent.setName(newName);
         clientAgent.reset(); // Not necessary but I want to test the database state.
         Assert.assertEquals(newName, clientAgent.getName());
@@ -131,7 +131,7 @@ public final class AgentTest extends IdentitySetup {
     @Test
     public void _07_testIconReplace() throws SQLException, IOException, PacketException, ExternalException {
         final @Nonnull Image newIcon = Image.CONTEXT;
-        final @Nonnull ClientAgent clientAgent = role.getClientAgent();
+        final @Nonnull ClientAgent clientAgent = role.getAgent();
         clientAgent.setIcon(newIcon);
         clientAgent.reset(); // Not necessary but I want to test the database state.
         Assert.assertEquals(newIcon, clientAgent.getIcon());

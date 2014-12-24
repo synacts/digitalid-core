@@ -4,7 +4,7 @@ import ch.virtualid.agent.OutgoingRole;
 import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Entity;
-import ch.virtualid.entity.Role;
+import ch.virtualid.entity.NonNativeRole;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
@@ -140,7 +140,7 @@ public final class RoleRevocation extends CoreServiceExternalAction {
     @Override
     public void executeOnClient() throws SQLException {
         executeOnBoth();
-        for (final @Nonnull Role role : getRole().getRoles()) {
+        for (final @Nonnull NonNativeRole role : getRole().getRoles()) {
             if (role.getIssuer().equals(issuer) && relation.equals(role.getRelation())) role.remove();
         }
     }

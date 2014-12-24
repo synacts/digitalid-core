@@ -13,6 +13,7 @@ import ch.virtualid.cryptography.Parameters;
 import ch.virtualid.cryptography.PublicKey;
 import ch.virtualid.database.Database;
 import ch.virtualid.database.SQLiteConfiguration;
+import ch.virtualid.entity.NativeRole;
 import ch.virtualid.entity.Role;
 import ch.virtualid.entity.Site;
 import ch.virtualid.exceptions.external.ExternalException;
@@ -305,9 +306,9 @@ public class Client extends Site implements Observer {
      */
     public final void rotateSecret() throws SQLException, IOException, PacketException, ExternalException {
         final @Nonnull Exponent newSecret = new Exponent(new BigInteger(Parameters.HASH, new SecureRandom()));
-        for (final @Nonnull Role role : getRoles()) {
+        for (final @Nonnull NativeRole role : getRoles()) {
             final @Nonnull Commitment newCommitment = getCommitment(role.getIssuer().getAddress(), newSecret);
-            role.getClientAgent().setCommitment(newCommitment);
+            role.getAgent().setCommitment(newCommitment);
         }
         this.secret = newSecret;
         final @Nonnull File file = new File(Directory.CLIENTS.getPath() +  Directory.SEPARATOR + identifier + ".client.xdf");
@@ -321,9 +322,8 @@ public class Client extends Site implements Observer {
      * @invariant roles == null || roles.isNotFrozen() : "The roles are not frozen.";
      * @invariant roles == null || roles.doesNotContainNull() : "The roles do not contain null.";
      * @invariant roles == null || roles.doesNotContainDuplicates() : "The roles do not contain duplicates.";
-     * @invariant roles == null || for (Role role : roles) role.isNative() : "Every role in the roles is native.";
      */
-    private @Nullable FreezableList<Role> roles;
+    private @Nullable FreezableList<NativeRole> roles;
     
     /**
      * Returns the roles of this client.
@@ -333,10 +333,9 @@ public class Client extends Site implements Observer {
      * @ensure return.isNotFrozen() : "The returned list is not frozen.";
      * @ensure return.doesNotContainNull() : "The returned list does not contain null.";
      * @ensure return.doesNotContainDuplicates() : "The returned list does not contain duplicates.";
-     * @ensure for (Role role : return) role.isNative() : "Every role in the returned list is native.";
      */
     @Pure
-    public final @Nonnull ReadonlyList<Role> getRoles() throws SQLException {
+    public final @Nonnull ReadonlyList<NativeRole> getRoles() throws SQLException {
         if (Database.isMultiAccess()) return Roles.getRoles(this);
         if (roles == null) roles = Roles.getRoles(this);
         return roles;
@@ -350,8 +349,8 @@ public class Client extends Site implements Observer {
      * 
      * @return the newly created role of this client.
      */
-    private @Nonnull Role addRole(@Nonnull InternalNonHostIdentity issuer, long agentNumber) throws SQLException {
-        final @Nonnull Role role = Role.add(this, issuer, null, null, agentNumber);
+    private @Nonnull NativeRole addRole(@Nonnull InternalNonHostIdentity issuer, long agentNumber) throws SQLException {
+        final @Nonnull NativeRole role = NativeRole.add(this, issuer, agentNumber);
         if (Database.isSingleAccess()) role.observe(this, Role.DELETED);
         
         if (roles != null) roles.add(role);
@@ -372,12 +371,12 @@ public class Client extends Site implements Observer {
      * @param identity the identity at which this client is to be accredited.
      * @param password the password for accreditation at the given identity.
      * 
-     * @return the role which was accredited at the given identity.
+     * @return the native role which was accredited at the given identity.
      * 
      * @require Password.isValid(password) : "The password is valid.";
      */
-    public final @Nonnull Role accredit(@Nonnull InternalNonHostIdentity identity, @Nonnull String password) throws SQLException, IOException, PacketException, ExternalException {
-        final @Nonnull Role role = addRole(identity, new SecureRandom().nextLong());
+    public final @Nonnull NativeRole accredit(@Nonnull InternalNonHostIdentity identity, @Nonnull String password) throws SQLException, IOException, PacketException, ExternalException {
+        final @Nonnull NativeRole role = addRole(identity, new SecureRandom().nextLong());
         Database.commit();
         try {
             final @Nonnull ClientAgentAccredit action = new ClientAgentAccredit(role, password);
@@ -404,13 +403,13 @@ public class Client extends Site implements Observer {
      * @param roles the roles to be closed and merged into the new account.
      * @param identifiers the identifiers to be merged into the new account.
      * 
-     * @return the role of this client at the newly created account.
+     * @return the native role of this client at the newly created account.
      * 
      * @require subject.doesNotExist() : "The subject does not exist.";
      * @require category.isInternalNonHostIdentity() : "The category denotes an internal non-host identity.";
      * @require !category.isType() || roles.size() <= 1 && identifiers.isEmpty() : "If the category denotes a type, at most one role and no identifier may be given.";
      */
-    public final @Nonnull Role openAccount(@Nonnull InternalNonHostIdentifier subject, @Nonnull Category category, @Nonnull ReadonlyList<Role> roles, @Nonnull ReadonlyList<ExternalIdentifier> identifiers) throws SQLException, IOException, PacketException, ExternalException {
+    public final @Nonnull NativeRole openAccount(@Nonnull InternalNonHostIdentifier subject, @Nonnull Category category, @Nonnull ReadonlyList<NativeRole> roles, @Nonnull ReadonlyList<ExternalIdentifier> identifiers) throws SQLException, IOException, PacketException, ExternalException {
         assert subject.doesNotExist() : "The subject does not exist.";
         assert category.isInternalNonHostIdentity() : "The category denotes an internal non-host identity.";
         assert !category.isType() || roles.size() <= 1 && identifiers.isEmpty() : "If the category denotes a type, at most one role and no identifier may be given.";
@@ -418,14 +417,13 @@ public class Client extends Site implements Observer {
         Database.commit();
         final @Nonnull AccountOpen accountOpen = new AccountOpen(subject, category, this); accountOpen.send();
         final @Nonnull InternalNonHostIdentity identity = (InternalNonHostIdentity) Mapper.mapIdentity(subject, category, null);
-        final @Nonnull Role newRole = addRole(identity, accountOpen.getAgentNumber());
+        final @Nonnull NativeRole newRole = addRole(identity, accountOpen.getAgentNumber());
         accountOpen.initialize(newRole);
         Database.commit();
         
         final @Nonnull FreezableList<Pair<Predecessor, Block>> states = new FreezableArrayList<Pair<Predecessor, Block>>(roles.size() + identifiers.size());
         
-        for (final @Nonnull Role role : roles) {
-            if (role.isNotNative()) throw new PacketException(PacketError.INTERNAL, "Only native roles can be merged.");
+        for (final @Nonnull NativeRole role : roles) {
             if (role.getIdentity().getCategory() != category) throw new PacketException(PacketError.INTERNAL, "A role is of the wrong category.");
             final @Nonnull StateReply reply = new StateQuery(role).sendNotNull(); // TODO: Store the reply permanently?
             final @Nonnull Predecessor predecessor = new Predecessor(role.getIdentity().getAddress());
@@ -454,13 +452,13 @@ public class Client extends Site implements Observer {
      * @param identifier the identifier of the account to be created.
      * @param category the category of the account to be created.
      * 
-     * @return the role of this client at the newly created account.
+     * @return the native role of this client at the newly created account.
      * 
      * @require subject.doesNotExist() : "The subject does not exist.";
      * @require category.isInternalNonHostIdentity() : "The category denotes an internal non-host identity.";
      */
-    public final @Nonnull Role openAccount(@Nonnull InternalNonHostIdentifier identifier, @Nonnull Category category) throws SQLException, IOException, PacketException, ExternalException {
-        return openAccount(identifier, category, new FreezableLinkedList<Role>().freeze(), new FreezableLinkedList<ExternalIdentifier>().freeze());
+    public final @Nonnull NativeRole openAccount(@Nonnull InternalNonHostIdentifier identifier, @Nonnull Category category) throws SQLException, IOException, PacketException, ExternalException {
+        return openAccount(identifier, category, new FreezableLinkedList<NativeRole>().freeze(), new FreezableLinkedList<ExternalIdentifier>().freeze());
     }
     
 }

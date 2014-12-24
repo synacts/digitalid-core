@@ -3,7 +3,7 @@ package ch.virtualid.setup;
 import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.auxiliary.Image;
 import ch.virtualid.client.Client;
-import ch.virtualid.entity.Role;
+import ch.virtualid.entity.NativeRole;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.query.internal.StateQuery;
@@ -36,9 +36,9 @@ public class IdentitySetup extends ServerSetup {
         return client;
     }
     
-    private static @Nonnull Role role;
+    private static @Nonnull NativeRole role;
     
-    protected static @Nonnull Role getRole() {
+    protected static @Nonnull NativeRole getRole() {
         return role;
     }
     

@@ -6,8 +6,8 @@ import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.cryptography.PublicKey;
 import ch.virtualid.entity.Entity;
+import ch.virtualid.entity.NativeRole;
 import ch.virtualid.entity.NonHostEntity;
-import ch.virtualid.entity.Role;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidDeclarationException;
 import ch.virtualid.exceptions.packet.PacketError;
@@ -73,14 +73,12 @@ public final class AccountInitialize extends CoreServiceInternalAction {
      * @param role the role to which this handler belongs.
      * @param states the states to merge into the new account.
      * 
-     * @require role.isNative() : "The role is native.";
      * @require states.isFrozen() : "The list of states is frozen.";
      * @require states.doesNotContainNull() : "The list of states does not contain null.";
      */
-    public AccountInitialize(@Nonnull Role role, @Nonnull ReadonlyList<Pair<Predecessor, Block>> states) throws SQLException, IOException, PacketException, ExternalException {
+    public AccountInitialize(@Nonnull NativeRole role, @Nonnull ReadonlyList<Pair<Predecessor, Block>> states) throws SQLException, IOException, PacketException, ExternalException {
         super(role);
         
-        assert role.isNative() : "The role is native.";
         assert states.isFrozen() : "The list of states is frozen.";
         assert states.doesNotContainNull() : "The list of states does not contain null.";
         
@@ -191,7 +189,7 @@ public final class AccountInitialize extends CoreServiceInternalAction {
     @Pure
     @Override
     public @Nonnull AccountClose getReverse() {
-        return new AccountClose(getRole(), null);
+        return new AccountClose(getRole().toNativeRole(), null);
     }
     
     
