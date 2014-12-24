@@ -87,7 +87,7 @@ public abstract class CoreServiceInternalQuery extends InternalQuery {
     @Pure
     @Override
     public @Nonnull Restrictions getRequiredRestrictions() {
-        return Restrictions.NONE;
+        return Restrictions.MIN;
     }
     
     
@@ -115,7 +115,7 @@ public abstract class CoreServiceInternalQuery extends InternalQuery {
         if (!permissions.equals(AgentPermissions.NONE)) agent.getPermissions().checkCover(permissions);
         
         final @Nonnull Restrictions restrictions = getRequiredRestrictions();
-        if (!restrictions.equals(Restrictions.NONE)) agent.getRestrictions().checkCover(restrictions);
+        if (!restrictions.equals(Restrictions.MIN)) agent.getRestrictions().checkCover(restrictions);
         
         return executeOnHost(agent);
     }

@@ -90,7 +90,7 @@ public abstract class ActionReply extends Reply implements Auditable {
     @Pure
     @Override
     public @Nonnull Restrictions getAuditRestrictions() {
-        return Restrictions.NONE;
+        return Restrictions.MIN;
     }
     
     @Pure

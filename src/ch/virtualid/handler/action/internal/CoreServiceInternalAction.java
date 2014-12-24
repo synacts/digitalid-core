@@ -84,7 +84,7 @@ public abstract class CoreServiceInternalAction extends InternalAction {
     @Pure
     @Override
     public @Nonnull Restrictions getRequiredRestrictions() {
-        return Restrictions.NONE;
+        return Restrictions.MIN;
     }
     
     
@@ -124,7 +124,7 @@ public abstract class CoreServiceInternalAction extends InternalAction {
         if (!permissions.equals(AgentPermissions.NONE)) agent.getPermissions().checkCover(permissions);
         
         final @Nonnull Restrictions restrictions = getRequiredRestrictions();
-        if (!restrictions.equals(Restrictions.NONE)) agent.getRestrictions().checkCover(restrictions);
+        if (!restrictions.equals(Restrictions.MIN)) agent.getRestrictions().checkCover(restrictions);
         
         final @Nullable Agent other = getRequiredAgent();
         if (other != null) agent.checkCovers(other);

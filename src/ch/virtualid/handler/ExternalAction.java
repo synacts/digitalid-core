@@ -106,7 +106,7 @@ public abstract class ExternalAction extends Action {
      */
     @Pure
     public @Nonnull Restrictions getFailedAuditRestrictions() {
-        return Restrictions.NONE;
+        return Restrictions.MIN;
     }
     
     /**

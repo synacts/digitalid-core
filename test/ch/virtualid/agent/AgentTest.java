@@ -139,4 +139,10 @@ public final class AgentTest extends IdentitySetup {
         getRole().refreshState(); // TODO: This should only be necessary temporarily.
     }
     
+    @Test
+    public void _08_testWeakerAgents() throws SQLException, IOException, PacketException, ExternalException {
+        Assert.assertEquals(1, role.getAgent().getWeakerAgents().size());
+        Assert.assertEquals(2, getRole().getAgent().getWeakerAgents().size());
+    }
+    
 }

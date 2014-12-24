@@ -73,7 +73,7 @@ public final class Restrictions implements Immutable, Blockable, SQLizable {
     /**
      * Stores the weakest restrictions (without a context and contact).
      */
-    public static final @Nonnull Restrictions NONE = new Restrictions(false, false, false);
+    public static final @Nonnull Restrictions MIN = new Restrictions(false, false, false);
     
     /**
      * Stores the strongest restrictions (without a context and contact).

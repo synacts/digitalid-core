@@ -89,7 +89,7 @@ public abstract class Action extends Method implements Auditable {
     @Pure
     @Override
     public @Nonnull Restrictions getAuditRestrictions() {
-        return Restrictions.NONE;
+        return Restrictions.MIN;
     }
     
     @Pure

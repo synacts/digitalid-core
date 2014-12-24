@@ -85,10 +85,11 @@ public final class Agents implements BothModule {
     public void createTables(@Nonnull Site site) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "agent_permission (entity " + EntityClass.FORMAT + " NOT NULL, agent " + Agent.FORMAT + " NOT NULL, type " + Mapper.FORMAT + " NOT NULL, writing BOOLEAN NOT NULL, PRIMARY KEY (entity, agent, type), FOREIGN KEY (entity, agent) " + Agent.getReference(site) + ", FOREIGN KEY (type) " + Mapper.REFERENCE + ")");
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "agent_restrictions (entity " + EntityClass.FORMAT + " NOT NULL, agent " + Agent.FORMAT + " NOT NULL, " + Restrictions.FORMAT_NOT_NULL + ", PRIMARY KEY (entity, agent), FOREIGN KEY (entity, agent) " + Agent.getReference(site) + ", " + Restrictions.getForeignKeys(site) + ")");
-            Mapper.addReference(site + "agent_restrictions", "contact");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "agent_permission_order (entity " + EntityClass.FORMAT + " NOT NULL, stronger " + Agent.FORMAT + " NOT NULL, weaker " + Agent.FORMAT + " NOT NULL, PRIMARY KEY (entity, stronger, weaker), FOREIGN KEY (entity, stronger) " + Agent.getReference(site) + ", FOREIGN KEY (entity, weaker) " + Agent.getReference(site) + ")");
             
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "agent_order (entity " + EntityClass.FORMAT + " NOT NULL, stronger " + Agent.FORMAT + " NOT NULL, weaker " + Agent.FORMAT + " NOT NULL, PRIMARY KEY (entity, stronger, weaker), FOREIGN KEY (entity, stronger) " + Agent.getReference(site) + ", FOREIGN KEY (entity, weaker) " + Agent.getReference(site) + ")");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "agent_restrictions (entity " + EntityClass.FORMAT + " NOT NULL, agent " + Agent.FORMAT + " NOT NULL, " + Restrictions.FORMAT_NOT_NULL + ", PRIMARY KEY (entity, agent), FOREIGN KEY (entity, agent) " + Agent.getReference(site) + ", " + Restrictions.getForeignKeys(site) + ")");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "agent_restrictions_ord (entity " + EntityClass.FORMAT + " NOT NULL, stronger " + Agent.FORMAT + " NOT NULL, weaker " + Agent.FORMAT + " NOT NULL, PRIMARY KEY (entity, stronger, weaker), FOREIGN KEY (entity, stronger) " + Agent.getReference(site) + ", FOREIGN KEY (entity, weaker) " + Agent.getReference(site) + ")");
+            Mapper.addReference(site + "agent_restrictions", "contact");
             
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "client_agent (entity " + EntityClass.FORMAT + " NOT NULL, agent " + Agent.FORMAT + " NOT NULL, " + Commitment.FORMAT + ", name VARCHAR(50) NOT NULL COLLATE " + Database.getConfiguration().BINARY() + ", icon " + Image.FORMAT + " NOT NULL, PRIMARY KEY (entity, agent), FOREIGN KEY (entity, agent) " + Agent.getReference(site) + ", " + Commitment.REFERENCE + ")");
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "outgoing_role (entity " + EntityClass.FORMAT + " NOT NULL, agent " + Agent.FORMAT + " NOT NULL, relation " + Mapper.FORMAT + " NOT NULL, context " + Context.FORMAT + " NOT NULL, PRIMARY KEY (entity, agent), FOREIGN KEY (entity, agent) " + Agent.getReference(site) + ", FOREIGN KEY (relation) " + Mapper.REFERENCE + ", FOREIGN KEY (entity, context) " + Context.getReference(site) + ")");
@@ -105,11 +106,13 @@ public final class Agents implements BothModule {
             statement.executeUpdate("DROP TABLE IF EXISTS " + site + "outgoing_role");
             statement.executeUpdate("DROP TABLE IF EXISTS " + site + "client");
             
-            statement.executeUpdate("DROP TABLE IF EXISTS " + site + "agent_order");
-            
             Mapper.removeReference(site + "agent_restrictions", "contact");
+            statement.executeUpdate("DROP TABLE IF EXISTS " + site + "agent_restrictions_ord");
             statement.executeUpdate("DROP TABLE IF EXISTS " + site + "agent_restrictions");
+            
+            statement.executeUpdate("DROP TABLE IF EXISTS " + site + "agent_permission_order");
             statement.executeUpdate("DROP TABLE IF EXISTS " + site + "agent_permission");
+            
             statement.executeUpdate("DROP TABLE IF EXISTS " + site + "agent");
         }
     }
@@ -138,6 +141,27 @@ public final class Agents implements BothModule {
     
     
     /**
+     * Stores the semantic type {@code stronger.order.permission.agent.agents.module@virtualid.ch}.
+     */
+    private static final @Nonnull SemanticType AGENT_PERMISSION_ORDER_STRONGER = SemanticType.create("stronger.order.permission.agent.agents.module@virtualid.ch").load(Agent.NUMBER);
+    
+    /**
+     * Stores the semantic type {@code weaker.order.permission.agent.agents.module@virtualid.ch}.
+     */
+    private static final @Nonnull SemanticType AGENT_PERMISSION_ORDER_WEAKER = SemanticType.create("weaker.order.permission.agent.agents.module@virtualid.ch").load(Agent.NUMBER);
+    
+    /**
+     * Stores the semantic type {@code entry.order.permission.agent.agents.module@virtualid.ch}.
+     */
+    private static final @Nonnull SemanticType AGENT_PERMISSION_ORDER_MODULE_ENTRY = SemanticType.create("entry.order.permission.agent.agents.module@virtualid.ch").load(TupleWrapper.TYPE, Identity.IDENTIFIER, AGENT_PERMISSION_ORDER_STRONGER, AGENT_PERMISSION_ORDER_WEAKER);
+    
+    /**
+     * Stores the semantic type {@code table.order.permission.agent.agents.module@virtualid.ch}.
+     */
+    private static final @Nonnull SemanticType AGENT_PERMISSION_ORDER_MODULE_TABLE = SemanticType.create("table.order.permission.agent.agents.module@virtualid.ch").load(ListWrapper.TYPE, AGENT_PERMISSION_ORDER_MODULE_ENTRY);
+    
+    
+    /**
      * Stores the semantic type {@code entry.restrictions.agent.agents.module@virtualid.ch}.
      */
     private static final @Nonnull SemanticType AGENT_RESTRICTIONS_MODULE_ENTRY = SemanticType.create("entry.restrictions.agent.agents.module@virtualid.ch").load(TupleWrapper.TYPE, Identity.IDENTIFIER, Agent.NUMBER, Restrictions.TYPE);
@@ -149,24 +173,24 @@ public final class Agents implements BothModule {
     
     
     /**
-     * Stores the semantic type {@code stronger.order.agent.agents.module@virtualid.ch}.
+     * Stores the semantic type {@code stronger.order.restrictions.agent.agents.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType AGENT_ORDER_STRONGER = SemanticType.create("stronger.order.agent.agents.module@virtualid.ch").load(Agent.NUMBER);
+    private static final @Nonnull SemanticType AGENT_RESTRICTIONS_ORDER_STRONGER = SemanticType.create("stronger.order.restrictions.agent.agents.module@virtualid.ch").load(Agent.NUMBER);
     
     /**
-     * Stores the semantic type {@code weaker.order.agent.agents.module@virtualid.ch}.
+     * Stores the semantic type {@code weaker.order.restrictions.agent.agents.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType AGENT_ORDER_WEAKER = SemanticType.create("weaker.order.agent.agents.module@virtualid.ch").load(Agent.NUMBER);
+    private static final @Nonnull SemanticType AGENT_RESTRICTIONS_ORDER_WEAKER = SemanticType.create("weaker.order.restrictions.agent.agents.module@virtualid.ch").load(Agent.NUMBER);
     
     /**
-     * Stores the semantic type {@code entry.order.agent.agents.module@virtualid.ch}.
+     * Stores the semantic type {@code entry.order.restrictions.agent.agents.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType AGENT_ORDER_MODULE_ENTRY = SemanticType.create("entry.order.agent.agents.module@virtualid.ch").load(TupleWrapper.TYPE, Identity.IDENTIFIER, AGENT_ORDER_STRONGER, AGENT_ORDER_WEAKER);
+    private static final @Nonnull SemanticType AGENT_RESTRICTIONS_ORDER_MODULE_ENTRY = SemanticType.create("entry.order.restrictions.agent.agents.module@virtualid.ch").load(TupleWrapper.TYPE, Identity.IDENTIFIER, AGENT_RESTRICTIONS_ORDER_STRONGER, AGENT_RESTRICTIONS_ORDER_WEAKER);
     
     /**
-     * Stores the semantic type {@code table.order.agent.agents.module@virtualid.ch}.
+     * Stores the semantic type {@code table.order.restrictions.agent.agents.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType AGENT_ORDER_MODULE_TABLE = SemanticType.create("table.order.agent.agents.module@virtualid.ch").load(ListWrapper.TYPE, AGENT_ORDER_MODULE_ENTRY);
+    private static final @Nonnull SemanticType AGENT_RESTRICTIONS_ORDER_MODULE_TABLE = SemanticType.create("table.order.restrictions.agent.agents.module@virtualid.ch").load(ListWrapper.TYPE, AGENT_RESTRICTIONS_ORDER_MODULE_ENTRY);
     
     
     /**
@@ -205,7 +229,7 @@ public final class Agents implements BothModule {
     /**
      * Stores the semantic type {@code agents.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType MODULE_FORMAT = SemanticType.create("agents.module@virtualid.ch").load(TupleWrapper.TYPE, AGENT_MODULE_TABLE, AGENT_PERMISSION_MODULE_TABLE, AGENT_RESTRICTIONS_MODULE_TABLE, AGENT_ORDER_MODULE_TABLE, CLIENT_MODULE_TABLE, INCOMING_ROLE_MODULE_TABLE, OUTGOING_ROLE_MODULE_TABLE);
+    private static final @Nonnull SemanticType MODULE_FORMAT = SemanticType.create("agents.module@virtualid.ch").load(TupleWrapper.TYPE, AGENT_MODULE_TABLE, AGENT_PERMISSION_MODULE_TABLE, AGENT_PERMISSION_ORDER_MODULE_TABLE, AGENT_RESTRICTIONS_MODULE_TABLE, AGENT_RESTRICTIONS_ORDER_MODULE_TABLE, CLIENT_MODULE_TABLE, INCOMING_ROLE_MODULE_TABLE, OUTGOING_ROLE_MODULE_TABLE);
     
     @Pure
     @Override
@@ -216,7 +240,7 @@ public final class Agents implements BothModule {
     @Pure
     @Override
     public @Nonnull Block exportModule(@Nonnull Host host) throws SQLException {
-        final @Nonnull FreezableArray<Block> tables = new FreezableArray<Block>(7);
+        final @Nonnull FreezableArray<Block> tables = new FreezableArray<Block>(8);
         try (@Nonnull Statement statement = Database.createStatement()) {
             
             try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT entity, agent, client, removed FROM " + host + "agent")) {
@@ -243,6 +267,17 @@ public final class Agents implements BothModule {
                 tables.set(1, new ListWrapper(AGENT_PERMISSION_MODULE_TABLE, entries.freeze()).toBlock());
             }
             
+            try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT entity, stronger, weaker FROM " + host + "agent_permission_order")) {
+                final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
+                while (resultSet.next()) {
+                    final @Nonnull Identity identity = IdentityClass.getNotNull(resultSet, 1);
+                    final long stronger = resultSet.getLong(2);
+                    final long weaker = resultSet.getLong(3);
+                    entries.add(new TupleWrapper(AGENT_PERMISSION_ORDER_MODULE_ENTRY, identity, new Int64Wrapper(AGENT_PERMISSION_ORDER_STRONGER, stronger), new Int64Wrapper(AGENT_PERMISSION_ORDER_WEAKER, weaker)).toBlock());
+                }
+                tables.set(2, new ListWrapper(AGENT_PERMISSION_ORDER_MODULE_TABLE, entries.freeze()).toBlock());
+            }
+            
             try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT entity, agent, " + Restrictions.COLUMNS + " FROM " + host + "agent_restrictions")) {
                 final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
                 while (resultSet.next()) {
@@ -251,18 +286,18 @@ public final class Agents implements BothModule {
                     final @Nonnull Restrictions restrictions = Restrictions.get(account, resultSet, 3);
                     entries.add(new TupleWrapper(AGENT_RESTRICTIONS_MODULE_ENTRY, account.getIdentity(), new Int64Wrapper(Agent.NUMBER, number), restrictions).toBlock());
                 }
-                tables.set(2, new ListWrapper(AGENT_RESTRICTIONS_MODULE_TABLE, entries.freeze()).toBlock());
+                tables.set(3, new ListWrapper(AGENT_RESTRICTIONS_MODULE_TABLE, entries.freeze()).toBlock());
             }
             
-            try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT entity, stronger, weaker FROM " + host + "agent_order")) {
+            try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT entity, stronger, weaker FROM " + host + "agent_restrictions_ord")) {
                 final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
                 while (resultSet.next()) {
                     final @Nonnull Identity identity = IdentityClass.getNotNull(resultSet, 1);
                     final long stronger = resultSet.getLong(2);
                     final long weaker = resultSet.getLong(3);
-                    entries.add(new TupleWrapper(AGENT_ORDER_MODULE_ENTRY, identity, new Int64Wrapper(AGENT_ORDER_STRONGER, stronger), new Int64Wrapper(AGENT_ORDER_WEAKER, weaker)).toBlock());
+                    entries.add(new TupleWrapper(AGENT_RESTRICTIONS_ORDER_MODULE_ENTRY, identity, new Int64Wrapper(AGENT_RESTRICTIONS_ORDER_STRONGER, stronger), new Int64Wrapper(AGENT_RESTRICTIONS_ORDER_WEAKER, weaker)).toBlock());
                 }
-                tables.set(3, new ListWrapper(AGENT_ORDER_MODULE_TABLE, entries.freeze()).toBlock());
+                tables.set(4, new ListWrapper(AGENT_RESTRICTIONS_ORDER_MODULE_TABLE, entries.freeze()).toBlock());
             }
             
             try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT entity, agent, " + Commitment.COLUMNS + ", name, icon FROM " + host + "client")) {
@@ -275,7 +310,7 @@ public final class Agents implements BothModule {
                     final @Nonnull Image icon = Image.get(resultSet, 7);
                     entries.add(new TupleWrapper(CLIENT_MODULE_ENTRY, identity, new Int64Wrapper(Agent.NUMBER, number), commitment, new StringWrapper(Client.NAME, name), icon.toBlock().setType(Client.ICON).toBlockable()).toBlock());
                 }
-                tables.set(4, new ListWrapper(CLIENT_MODULE_TABLE, entries.freeze()).toBlock());
+                tables.set(5, new ListWrapper(CLIENT_MODULE_TABLE, entries.freeze()).toBlock());
             }
             
             try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT entity, agent, relation, context FROM " + host + "outgoing_role")) {
@@ -287,7 +322,7 @@ public final class Agents implements BothModule {
                     final @Nonnull Context context = Context.getNotNull(account, resultSet, 4);
                     entries.add(new TupleWrapper(OUTGOING_ROLE_MODULE_ENTRY, account.getIdentity(), new Int64Wrapper(Agent.NUMBER, number), relation.toBlockable(Role.RELATION), context).toBlock());
                 }
-                tables.set(5, new ListWrapper(OUTGOING_ROLE_MODULE_TABLE, entries.freeze()).toBlock());
+                tables.set(6, new ListWrapper(OUTGOING_ROLE_MODULE_TABLE, entries.freeze()).toBlock());
             }
             
             try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT entity, issuer, relation, agent FROM " + host + "incoming_role")) {
@@ -299,7 +334,7 @@ public final class Agents implements BothModule {
                     final long number = resultSet.getLong(4);
                     entries.add(new TupleWrapper(INCOMING_ROLE_MODULE_ENTRY, identity, issuer.toBlockable(Role.ISSUER), relation.toBlockable(Role.RELATION), new Int64Wrapper(Role.AGENT, number)).toBlock());
                 }
-                tables.set(6, new ListWrapper(INCOMING_ROLE_MODULE_TABLE, entries.freeze()).toBlock());
+                tables.set(7, new ListWrapper(INCOMING_ROLE_MODULE_TABLE, entries.freeze()).toBlock());
             }
             
         }
@@ -310,7 +345,7 @@ public final class Agents implements BothModule {
     public void importModule(@Nonnull Host host, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         assert block.getType().isBasedOn(getModuleFormat()) : "The block is based on the format of this module.";
         
-        final @Nonnull ReadonlyArray<Block> tables = new TupleWrapper(block).getElementsNotNull(7);
+        final @Nonnull ReadonlyArray<Block> tables = new TupleWrapper(block).getElementsNotNull(8);
         final @Nonnull String prefix = "INSERT INTO " + host;
         
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareInsertStatement(prefix + "agent (entity, agent, client, removed) VALUES (?, ?, ?, ?)")) {
@@ -339,8 +374,20 @@ public final class Agents implements BothModule {
             preparedStatement.executeBatch();
         }
         
-        try (@Nonnull PreparedStatement preparedStatement = Database.prepareInsertStatement(prefix + "agent_restrictions (entity, agent, " + Restrictions.COLUMNS + ") VALUES (?, ?, ?, ?, ?, ?, ?)")) {
+        try (@Nonnull PreparedStatement preparedStatement = Database.prepareInsertStatement(prefix + "agent_permission_order (entity, stronger, weaker) VALUES (?, ?, ?)")) {
             final @Nonnull ReadonlyList<Block> entries = new ListWrapper(tables.getNotNull(2)).getElementsNotNull();
+            for (final @Nonnull Block entry : entries) {
+                final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(3);
+                IdentityClass.create(elements.getNotNull(0)).toInternalNonHostIdentity().set(preparedStatement, 1);
+                preparedStatement.setLong(2, new Int64Wrapper(elements.getNotNull(1)).getValue());
+                preparedStatement.setLong(3, new Int64Wrapper(elements.getNotNull(2)).getValue());
+                preparedStatement.addBatch();
+            }
+            preparedStatement.executeBatch();
+        }
+        
+        try (@Nonnull PreparedStatement preparedStatement = Database.prepareInsertStatement(prefix + "agent_restrictions (entity, agent, " + Restrictions.COLUMNS + ") VALUES (?, ?, ?, ?, ?, ?, ?)")) {
+            final @Nonnull ReadonlyList<Block> entries = new ListWrapper(tables.getNotNull(3)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(3);
                 final @Nonnull InternalNonHostIdentity identity = IdentityClass.create(elements.getNotNull(0)).toInternalNonHostIdentity();
@@ -352,8 +399,8 @@ public final class Agents implements BothModule {
             preparedStatement.executeBatch();
         }
         
-        try (@Nonnull PreparedStatement preparedStatement = Database.prepareInsertStatement(prefix + "agent_order (entity, stronger, weaker) VALUES (?, ?, ?)")) {
-            final @Nonnull ReadonlyList<Block> entries = new ListWrapper(tables.getNotNull(3)).getElementsNotNull();
+        try (@Nonnull PreparedStatement preparedStatement = Database.prepareInsertStatement(prefix + "agent_restrictions_ord (entity, stronger, weaker) VALUES (?, ?, ?)")) {
+            final @Nonnull ReadonlyList<Block> entries = new ListWrapper(tables.getNotNull(4)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(3);
                 IdentityClass.create(elements.getNotNull(0)).toInternalNonHostIdentity().set(preparedStatement, 1);
@@ -365,7 +412,7 @@ public final class Agents implements BothModule {
         }
         
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareInsertStatement(prefix + "client_agent (entity, agent, " + Commitment.COLUMNS + ", name, icon) VALUES (?, ?, ?, ?, ?, ?, ?)")) {
-            final @Nonnull ReadonlyList<Block> entries = new ListWrapper(tables.getNotNull(4)).getElementsNotNull();
+            final @Nonnull ReadonlyList<Block> entries = new ListWrapper(tables.getNotNull(5)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(5);
                 IdentityClass.create(elements.getNotNull(0)).toInternalNonHostIdentity().set(preparedStatement, 1);
@@ -379,7 +426,7 @@ public final class Agents implements BothModule {
         }
         
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareInsertStatement(prefix + "outgoing_role (entity, agent, relation, context) VALUES (?, ?, ?, ?)")) {
-            final @Nonnull ReadonlyList<Block> entries = new ListWrapper(tables.getNotNull(5)).getElementsNotNull();
+            final @Nonnull ReadonlyList<Block> entries = new ListWrapper(tables.getNotNull(6)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(4);
                 final @Nonnull InternalNonHostIdentity identity = IdentityClass.create(elements.getNotNull(0)).toInternalNonHostIdentity();
@@ -393,7 +440,7 @@ public final class Agents implements BothModule {
         }
         
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareInsertStatement(prefix + "incoming_role (entity, issuer, relation, agent) VALUES (?, ?, ?, ?)")) {
-            final @Nonnull ReadonlyList<Block> entries = new ListWrapper(tables.getNotNull(6)).getElementsNotNull();
+            final @Nonnull ReadonlyList<Block> entries = new ListWrapper(tables.getNotNull(7)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(4);
                 IdentityClass.create(elements.getNotNull(0)).toInternalNonHostIdentity().set(preparedStatement, 1);
@@ -488,8 +535,8 @@ public final class Agents implements BothModule {
     @Override
     public @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull Agent agent) throws SQLException {
         final @Nonnull Site site = entity.getSite();
-        final @Nonnull String from = " FROM " + site + "agent_order o, " + site;
-        final @Nonnull String where = " t WHERE o.entity = " + entity + " AND o.stronger = " + agent + " AND o.entity = t.entity AND o.weaker = t.agent";
+        final @Nonnull String from = " FROM " + site + "agent_permission_order po, " + site + "agent_restrictions_ord ro, " + site;
+        final @Nonnull String where = " t WHERE po.entity = " + entity + " AND po.stronger = " + agent + " AND ro.entity = " + entity + " AND ro.stronger = " + agent + " AND t.entity = " + entity + " AND po.weaker = t.agent AND ro.weaker = t.agent";
         
         final @Nonnull FreezableArray<Block> tables = new FreezableArray<Block>(6);
         try (@Nonnull Statement statement = Database.createStatement()) {
@@ -573,7 +620,6 @@ public final class Agents implements BothModule {
             Database.onInsertIgnore(statement, site + "agent", "entity", "agent");
             Database.onInsertIgnore(statement, site + "agent_permission", "entity", "agent", "type");
             Database.onInsertIgnore(statement, site + "agent_restrictions", "entity", "agent");
-            Database.onInsertIgnore(statement, site + "agent_order", "entity", "stronger", "weaker");
             Database.onInsertIgnore(statement, site + "client", "entity", "agent");
             Database.onInsertIgnore(statement, site + "outgoing_role", "entity", "agent");
             Database.onInsertIgnore(statement, site + "incoming_role", "entity", "issuer", "relation");
@@ -664,13 +710,13 @@ public final class Agents implements BothModule {
             Database.onInsertNotIgnore(statement, site + "agent");
             Database.onInsertNotIgnore(statement, site + "agent_permission");
             Database.onInsertNotIgnore(statement, site + "agent_restrictions");
-            Database.onInsertNotIgnore(statement, site + "agent_order");
             Database.onInsertNotIgnore(statement, site + "client");
             Database.onInsertNotIgnore(statement, site + "outgoing_role");
             Database.onInsertNotIgnore(statement, site + "incoming_role");
         }
         
-        redetermineOrder(entity, null);
+        redeterminePermissionsOrder(entity, null);
+        redetermineRestrictionsOrder(entity, null);
         
         ClientAgent.reset(entity);
         OutgoingRole.reset(entity);
@@ -685,8 +731,9 @@ public final class Agents implements BothModule {
             statement.executeUpdate("DELETE FROM " + site + "incoming_role WHERE entity = " + entity);
             statement.executeUpdate("DELETE FROM " + site + "outgoing_role WHERE entity = " + entity);
             statement.executeUpdate("DELETE FROM " + site + "client_agent WHERE entity = " + entity);
-            statement.executeUpdate("DELETE FROM " + site + "agent_order WHERE entity = " + entity);
+            statement.executeUpdate("DELETE FROM " + site + "agent_restrictions_ord WHERE entity = " + entity);
             statement.executeUpdate("DELETE FROM " + site + "agent_restrictions WHERE entity = " + entity);
+            statement.executeUpdate("DELETE FROM " + site + "agent_permission_order WHERE entity = " + entity);
             statement.executeUpdate("DELETE FROM " + site + "agent_permission WHERE entity = " + entity);
             statement.executeUpdate("DELETE FROM " + site + "agent WHERE entity = " + entity);
         }
@@ -779,7 +826,7 @@ public final class Agents implements BothModule {
             }
             preparedStatement.executeBatch();
         }
-        redetermineOrder(agent);
+        redeterminePermissionsOrder(agent);
     }
     
     /**
@@ -803,7 +850,34 @@ public final class Agents implements BothModule {
             final int[] counts = preparedStatement.executeBatch();
             for (final int count : counts) if (count < 1) throw new SQLException("Could not find a particular permission.");
         }
-        redetermineOrder(agent);
+        redeterminePermissionsOrder(agent);
+    }
+    
+    
+    /**
+     * Redetermines which agents have stronger and weaker permissions than the given agent or, if that one is null, all agents at the given entity.
+     * Please note that it is intentionally ignored whether agents have been removed. Make sure to check this at some other place!
+     * 
+     * @param entity the entity whose order of agent permissions is to be redetermined.
+     * @param agent the agent whose order of permissions is to be redetermined or null.
+     */
+    private static void redeterminePermissionsOrder(@Nonnull NonHostEntity entity, @Nullable Agent agent) throws SQLException {
+        final @Nonnull Site site = entity.getSite();
+        try (@Nonnull Statement statement = Database.createStatement()) {
+            statement.executeUpdate("DELETE FROM " + site + "agent_permission_order WHERE entity = " + entity + (agent != null ? " AND (stronger = " + agent + " OR weaker = " + agent + ")": ""));
+            statement.executeUpdate("INSERT INTO " + site + "agent_permission_order (entity, stronger, weaker) SELECT " + entity + ", ps.agent, pw.agent FROM " + site + "agent_permission pw, " + site + "agent_permission ps "
+                    + "WHERE pw.entity = " + entity + " AND ps.entity = " + entity + (agent != null ? " AND (pw.agent = " + agent + " OR ps.agent = " + agent + ")": "") + " AND (pw.type = ps.type OR ps.type = " + AgentPermissions.GENERAL +") AND (NOT pw.writing OR ps.writing) "
+                    + "GROUP BY pw.agent, ps.agent HAVING COUNT(*) = (SELECT COUNT(*) FROM " + site + "agent_permission p WHERE p.entity = " + entity + " AND p.agent = pw.agent)");
+        }
+    }
+    
+    /**
+     * Redetermines which agents have stronger and weaker permissions than the given agent.
+     * 
+     * @param agent the agent whose order of permissions is to be redetermined.
+     */
+    private static void redeterminePermissionsOrder(@Nonnull Agent agent) throws SQLException {
+        redeterminePermissionsOrder(agent.getEntity(), agent);
     }
     
     
@@ -840,6 +914,7 @@ public final class Agents implements BothModule {
             if (contact != null && contact.getPerson().hasBeenMerged(exception)) setRestrictions(agent, restrictions);
             else throw exception;
         }
+        redetermineRestrictionsOrder(agent);
     }
     
     /**
@@ -872,7 +947,46 @@ public final class Agents implements BothModule {
             if (contact != null && contact.getPerson().hasBeenMerged(exception)) replaceRestrictions(agent, oldRestrictions, newRestrictions);
             return;
         }
-        redetermineOrder(agent);
+        redetermineRestrictionsOrder(agent);
+    }
+    
+    
+    /**
+     * Redetermines which agents have stronger and weaker restrictions than the given agent or, if that one is null, all agents at the given entity.
+     * Please note that it is intentionally ignored whether agents have been removed. Make sure to check this at some other place!
+     * 
+     * @param entity the entity whose order of agent restrictions is to be redetermined.
+     * @param agent the agent whose order of restrictions is to be redetermined or null.
+     */
+    private static void redetermineRestrictionsOrder(@Nonnull NonHostEntity entity, @Nullable Agent agent) throws SQLException {
+        final @Nonnull Site site = entity.getSite();
+        try (@Nonnull Statement statement = Database.createStatement()) {
+            statement.executeUpdate("DELETE FROM " + site + "agent_restrictions_ord WHERE entity = " + entity + (agent != null ? " AND (stronger = " + agent + " OR weaker = " + agent + ")": ""));
+            statement.executeUpdate("INSERT INTO " + site + "agent_restrictions_ord (entity, stronger, weaker) SELECT " + entity + ", rs.agent, rw.agent FROM " + site + "agent_restrictions rs, " + site + "agent_restrictions rw"
+                    + " WHERE rs.entity = " + entity + " AND rw.entity = " + entity + (agent != null ? " AND (rs.agent = " + agent + " OR rw.agent = " + agent + ")": "")
+                    + " AND (NOT rw.client OR rs.client) AND (NOT rw.role OR rs.role) AND (NOT rw.writing OR rs.writing)"
+                    + " AND (rw.context IS NULL OR rs.context IS NOT NULL AND EXISTS (SELECT * FROM " + site + "context_subcontext cx WHERE cx.entity = " + entity + " AND cx.context = rs.context AND cx.subcontext = rw.context))"
+                    + " AND (rw.contact IS NULL OR rs.context IS NOT NULL AND EXISTS (SELECT * FROM " + site + "context_subcontext cx, " + site + "context_contact cc WHERE cx.entity = " + entity + " AND cx.context = rs.context AND cc.entity = " + entity + " AND cc.context = cx.subcontext AND cc.contact = rw.contact) OR rs.contact IS NOT NULL AND rw.contact = rs.contact)"
+                    + " AND (rw.client OR rs.writing AND rs.context IS NOT NULL AND EXISTS (SELECT * FROM " + site + "context_subcontext cx, " + site + "outgoing_role og WHERE cx.entity = " + entity + " AND cx.context = rs.context AND og.entity = " + entity + " AND og.agent = rw.agent AND cx.subcontext = og.context))");
+        }
+    }
+    
+    /**
+     * Redetermines which agents have stronger and weaker restrictions than the given agent.
+     * 
+     * @param agent the agent whose order of restrictions is to be redetermined.
+     */
+    private static void redetermineRestrictionsOrder(@Nonnull Agent agent) throws SQLException {
+        redetermineRestrictionsOrder(agent.getEntity(), agent);
+    }
+    
+    /**
+     * Redetermines which agents have stronger and weaker restrictions than the given agent.
+     * 
+     * @param entity the entity whose order of agent restrictions is to be redetermined.
+     */
+    static void redetermineRestrictionsOrder(@Nonnull NonHostEntity entity) throws SQLException {
+        redetermineRestrictionsOrder(entity, null);
     }
     
     
@@ -888,7 +1002,7 @@ public final class Agents implements BothModule {
     public static @Capturable @Nonnull FreezableSet<Agent> getWeakerAgents(@Nonnull Agent agent) throws SQLException {
         final @Nonnull NonHostEntity entity = agent.getEntity();
         final @Nonnull Site site = entity.getSite();
-        final @Nonnull String SQL = "SELECT agent, client, removed FROM " + site + "agent_order o, " + site + "agent t WHERE o.entity = " + entity + " AND o.stronger = " + agent + " AND o.entity = t.entity AND o.weaker = t.agent";
+        final @Nonnull String SQL = "SELECT agent, client, removed FROM " + site + "agent_permission_order po, " + site + "agent_restrictions_ord ro, " + site + "agent ag WHERE po.entity = " + entity + " AND po.stronger = " + agent + " AND ro.entity = " + entity + " AND ro.stronger = " + agent + " AND ag.entity = " + entity + " AND po.weaker = ag.agent AND ro.weaker = ag.agent";
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
             final @Nonnull FreezableSet<Agent> agents = new FreezableLinkedHashSet<Agent>();
             while (resultSet.next()) agents.add(Agent.get(entity, resultSet, 1, 2, 3));
@@ -909,7 +1023,7 @@ public final class Agents implements BothModule {
     public static @Nonnull Agent getWeakerAgent(@Nonnull Agent agent, long agentNumber) throws SQLException {
         final @Nonnull NonHostEntity entity = agent.getEntity();
         final @Nonnull Site site = entity.getSite();
-        final @Nonnull String SQL = "SELECT agent, client, removed FROM " + site + "agent_order o, " + site + "agent t WHERE o.entity = " + entity + " AND o.stronger = " + agent + " AND o.weaker = " + agentNumber + " AND t.entity = " + entity + " AND t.agent = " + agentNumber;
+        final @Nonnull String SQL = "SELECT agent, client, removed FROM " + site + "agent_permission_order po, " + site + "agent_restrictions_ord ro, " + site + "agent ag WHERE po.entity = " + entity + " AND po.stronger = " + agent + " AND po.weaker = " + agentNumber + " AND ro.entity = " + entity + " AND ro.stronger = " + agent + " AND ro.weaker = " + agentNumber + " AND ag.entity = " + entity + " AND ag.agent = " + agentNumber;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
             if (resultSet.next()) return Agent.getNotNull(entity, resultSet, 1, 2, 3);
             else throw new SQLException("No weaker agent with the given number was found.");
@@ -930,39 +1044,11 @@ public final class Agents implements BothModule {
         assert agent1.getEntity().equals(agent2.getEntity()) : "Both agents belong to the same entity.";
         
         final @Nonnull NonHostEntity entity = agent1.getEntity();
-        final @Nonnull String SQL = "SELECT EXISTS (SELECT * FROM " + entity.getSite() + "agent_order WHERE entity = " + entity + " AND stronger = " + agent1 + " AND weaker = " + agent2 + ")";
+        final @Nonnull Site site = entity.getSite();
+        final @Nonnull String SQL = "SELECT EXISTS (SELECT * FROM " + site + "agent_permission_order po, " + site + "agent_restrictions_ord ro WHERE po.entity = " + entity + " AND po.stronger = " + agent1 + " AND po.weaker = " + agent2 + " AND ro.entity = " + entity + " AND ro.stronger = " + agent1 + " AND ro.weaker = " + agent2 + ")";
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
             return resultSet.next() && resultSet.getBoolean(1);
         }
-    }
-    
-    /**
-     * Redetermines which agents are stronger and weaker than the given agent or, if that one is null, all agents at the given entity.
-     * Please note that it is intentionally ignored whether agents have been removed. Make sure to check this at some other places!
-     * 
-     * @param entity the entity whose order of agents is to be redetermined.
-     * @param agent the agent whose order is to be redetermined or null.
-     */
-    private static void redetermineOrder(@Nonnull NonHostEntity entity, @Nullable Agent agent) throws SQLException {
-        final @Nonnull Site site = entity.getSite();
-        try (@Nonnull Statement statement = Database.createStatement()) {
-            statement.executeUpdate("DELETE FROM " + site + "agent_order WHERE entity = " + entity + (agent != null ? " AND (stronger = " + agent + " OR weaker = " + agent + ")": ""));
-            statement.executeUpdate("INSERT INTO " + site + "agent_order (entity, stronger, weaker) SELECT " + entity + ", rs.agent, rw.agent FROM " + site + "agent_restrictions AS rs, " + site + "agent_restrictions AS rw WHERE rs.entity = " + entity + " AND rw.entity = " + entity + (agent != null ? " AND (rs.agent = " + agent + " OR rw.agent = " + agent + ")": "")
-                    + " AND (NOT rw.client OR rs.client) AND (NOT rw.role OR rs.role) AND (NOT rw.writing OR rs.writing)"
-                    + " AND (rw.context IS NULL OR rs.context IS NOT NULL AND EXISTS (SELECT * FROM " + site + "context_subcontext AS cx WHERE cx.entity = " + entity + " AND cx.context = rs.context AND cx.subcontext = rw.context))"
-                    + " AND (rw.contact IS NULL OR rs.context IS NOT NULL AND EXISTS (SELECT * FROM " + site + "context_subcontext AS cx, " + site + "context_contact AS cc WHERE cx.entity = " + entity + " AND cx.context = rs.context AND cc.entity = " + entity + " AND cc.context = cx.subcontext AND cc.contact = rw.contact) OR rs.contact IS NOT NULL AND rw.contact = rs.contact)"
-                    + " AND (rw.client OR rs.writing AND rs.context IS NOT NULL AND EXISTS (SELECT * FROM " + site + "agent_permission AS ps, " + site + "context_subcontext AS cx, " + site + "outgoing_role AS og WHERE ps.entity = " + entity + " AND ps.agent = rs.agent AND cx.entity = " + entity + " AND cx.context = rs.context AND og.entity = " + entity + " AND og.agent = rw.agent AND (ps.type = og.relation OR ps.type = " + AgentPermissions.GENERAL +") AND ps.writing AND cx.subcontext = og.context))"
-                    + " AND NOT EXISTS (SELECT * FROM " + site + "agent_permission AS pw LEFT JOIN " + site + "agent_permission AS ps ON pw.entity = " + entity + " AND ps.entity = " + entity + " AND (ps.type = pw.type OR ps.type = " + AgentPermissions.GENERAL + ") AND (NOT pw.writing OR ps.writing) WHERE ps.agent = rs.agent AND pw.agent = rw.agent AND ps.agent IS NULL)");
-        }
-    }
-    
-    /**
-     * Redetermines which agents are stronger and weaker than the given agent.
-     * 
-     * @param agent the agent whose order is to be redetermined.
-     */
-    private static void redetermineOrder(@Nonnull Agent agent) throws SQLException {
-        redetermineOrder(agent.getEntity(), agent);
     }
     
     
@@ -1011,7 +1097,7 @@ public final class Agents implements BothModule {
      */
     public static @Nullable ClientAgent getClientAgent(@Nonnull NonHostEntity entity, @Nonnull Commitment commitment) throws SQLException {
         final @Nonnull Site site = entity.getSite();
-        final @Nonnull String SQL = "SELECT a.agent, a.removed FROM " + site + "client_agent AS c, " + site + "agent AS a WHERE c.entity = " + entity + " AND a.entity = " + entity + " AND c.agent = a.agent AND " + Commitment.CONDITION;
+        final @Nonnull String SQL = "SELECT a.agent, a.removed FROM " + site + "client_agent c, " + site + "agent a WHERE c.entity = " + entity + " AND a.entity = " + entity + " AND c.agent = a.agent AND " + Commitment.CONDITION;
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
             commitment.set(preparedStatement, 1);
             try (@Nonnull ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -1152,14 +1238,13 @@ public final class Agents implements BothModule {
         assert context.getEntity().equals(outgoingRole.getEntity()) : "The context belongs to the entity of the outgoing role.";
         
         addAgent(outgoingRole);
-        setRestrictions(outgoingRole, Restrictions.NONE);
         
         final @Nonnull NonHostEntity entity = outgoingRole.getEntity();
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("INSERT INTO " + entity.getSite() + "outgoing_role (entity, agent, relation, context) VALUES (" + entity + ", " + outgoingRole + ", " + relation + ", " + context + ")");
         }
         
-        redetermineOrder(outgoingRole);
+        setRestrictions(outgoingRole, Restrictions.MIN);
     }
     
     /**
@@ -1177,7 +1262,7 @@ public final class Agents implements BothModule {
         assert relation.isRoleType() : "The relation is a role type.";
         
         final @Nonnull Site site = entity.getSite();
-        final @Nonnull String SQL = "SELECT a.agent, a.removed FROM " + site + "outgoing_role AS o, " + site + "agent AS a WHERE o.entity = " + entity + " AND a.entity = " + entity + " AND o.agent = a.agent AND o.relation = " + relation;
+        final @Nonnull String SQL = "SELECT a.agent, a.removed FROM " + site + "outgoing_role o, " + site + "agent a WHERE o.entity = " + entity + " AND a.entity = " + entity + " AND o.agent = a.agent AND o.relation = " + relation;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
             if (resultSet.next()) return OutgoingRole.get(entity, resultSet.getLong(1), resultSet.getBoolean(2), restrictable);
             else return null;
@@ -1221,7 +1306,6 @@ public final class Agents implements BothModule {
             final @Nonnull String SQL = "UPDATE " + entity.getSite() + "outgoing_role SET relation = " + newRelation + " WHERE entity = " + entity + " AND agent = " + outgoingRole + " AND relation = " + oldRelation;
             if (statement.executeUpdate(SQL) == 0) throw new SQLException("The relation of the client agent with the number " + outgoingRole + " could not be replaced.");
         }
-        redetermineOrder(outgoingRole);
     }
     
     /**
@@ -1259,7 +1343,7 @@ public final class Agents implements BothModule {
             final @Nonnull String SQL = "UPDATE " + entity.getSite() + "outgoing_role SET context = " + newContext + " WHERE entity = " + entity + " AND agent = " + outgoingRole + " AND context = " + oldContext;
             if (statement.executeUpdate(SQL) == 0) throw new SQLException("The context of the client agent with the number " + outgoingRole + " could not be replaced.");
         }
-        redetermineOrder(outgoingRole);
+        redetermineRestrictionsOrder(outgoingRole);
     }
     
     
