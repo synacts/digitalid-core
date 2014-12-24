@@ -82,4 +82,17 @@ final class EmptyExpression extends Expression implements Immutable {
         return "";
     }
     
+    
+    @Pure
+    @Override
+    public boolean equals(@Nullable Object object) {
+        return object instanceof EmptyExpression;
+    }
+    
+    @Pure
+    @Override
+    public int hashCode() {
+        return 1234567;
+    }
+    
 }

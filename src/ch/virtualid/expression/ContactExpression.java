@@ -89,4 +89,20 @@ final class ContactExpression extends Expression implements Immutable {
         return addQuotesIfNecessary(contact.getPerson());
     }
     
+    
+    @Pure
+    @Override
+    public boolean equals(@Nullable Object object) {
+        if (object == this) return true;
+        if (object == null || !(object instanceof ContactExpression)) return false;
+        final @Nonnull ContactExpression other = (ContactExpression) object;
+        return this.contact.equals(other.contact);
+    }
+    
+    @Pure
+    @Override
+    public int hashCode() {
+        return contact.hashCode();
+    }
+    
 }

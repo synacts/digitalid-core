@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * This class models abstract expressions.
@@ -45,7 +46,7 @@ abstract class AbstractExpression extends NonHostConcept implements Immutable, B
         super(entity);
         
         this.expression = Expression.parse(entity, string);
-        if (isValid()) throw new InvalidEncodingException("The expression '" + string + "' is invalid as " + getClass().getSimpleName() + ".");
+        if (!isValid()) throw new InvalidEncodingException("The expression '" + string + "' is invalid as " + getClass().getSimpleName() + ".");
     }
     
     /**
@@ -86,16 +87,32 @@ abstract class AbstractExpression extends NonHostConcept implements Immutable, B
     abstract boolean isValid();
     
     
+    @Pure
+    @Override
+    public final boolean equals(@Nullable Object object) {
+        if (object == this) return true;
+        if (object == null || !(object instanceof AbstractExpression)) return false;
+        final @Nonnull AbstractExpression other = (AbstractExpression) object;
+        return this.expression.equals(other.expression);
+    }
+    
+    @Pure
+    @Override
+    public final int hashCode() {
+        return expression.hashCode();
+    }
+    
+    @Pure
+    @Override
+    public final String toString() {
+        return expression.toString();
+    }
+    
+    
     /**
      * Stores the data type used to store instances of this class in the database.
      */
     public static final @Nonnull String FORMAT = "TEXT NOT NULL COLLATE " + Database.getConfiguration().BINARY();
-    
-    @Pure
-    @Override
-    public String toString() {
-        return expression.toString();
-    }
     
     @Override
     public final void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {

@@ -163,4 +163,24 @@ final class RestrictionExpression extends Expression implements Immutable {
         return addQuotesIfNecessary(type) + (symbol == null ? "" : symbol) + (string == null ? "" : string);
     }
     
+    
+    @Pure
+    @Override
+    public boolean equals(@Nullable Object object) {
+        if (object == this) return true;
+        if (object == null || !(object instanceof RestrictionExpression)) return false;
+        final @Nonnull RestrictionExpression other = (RestrictionExpression) object;
+        return this.type.equals(other.type) && this.string.equals(other.string) && this.symbol.equals(other.symbol);
+    }
+    
+    @Pure
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 19 * hash + type.hashCode();
+        hash = 19 * hash + string.hashCode();
+        hash = 19 * hash + symbol.hashCode();
+        return hash;
+    }
+    
 }

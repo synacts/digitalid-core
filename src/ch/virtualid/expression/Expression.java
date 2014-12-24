@@ -127,6 +127,15 @@ abstract class Expression extends NonHostConcept implements Immutable {
     }
     
     
+    @Pure
+    @Override
+    public abstract boolean equals(@Nullable Object object);
+    
+    @Pure
+    @Override
+    public abstract int hashCode();
+    
+    
     /**
      * Stores the characters for addition and subtraction.
      */

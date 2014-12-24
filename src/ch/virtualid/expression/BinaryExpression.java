@@ -148,4 +148,24 @@ final class BinaryExpression extends Expression implements Immutable {
         return parentheses ? "(" + string + ")" : string;
     }
     
+    
+    @Pure
+    @Override
+    public boolean equals(@Nullable Object object) {
+        if (object == this) return true;
+        if (object == null || !(object instanceof BinaryExpression)) return false;
+        final @Nonnull BinaryExpression other = (BinaryExpression) object;
+        return this.left.equals(other.left) && this.right.equals(other.right) && this.operator == other.operator;
+    }
+    
+    @Pure
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 19 * hash + left.hashCode();
+        hash = 19 * hash + right.hashCode();
+        hash = 19 * hash + operator;
+        return hash;
+    }
+    
 }

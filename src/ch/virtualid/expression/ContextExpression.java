@@ -89,4 +89,20 @@ final class ContextExpression extends Expression implements Immutable {
         return context.toString();
     }
     
+    
+    @Pure
+    @Override
+    public boolean equals(@Nullable Object object) {
+        if (object == this) return true;
+        if (object == null || !(object instanceof ContextExpression)) return false;
+        final @Nonnull ContextExpression other = (ContextExpression) object;
+        return this.context.equals(other.context);
+    }
+    
+    @Pure
+    @Override
+    public int hashCode() {
+        return context.hashCode();
+    }
+    
 }

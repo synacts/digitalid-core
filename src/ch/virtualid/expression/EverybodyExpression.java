@@ -82,4 +82,17 @@ final class EverybodyExpression extends Expression implements Immutable {
         return "everybody";
     }
     
+    
+    @Pure
+    @Override
+    public boolean equals(@Nullable Object object) {
+        return object instanceof EverybodyExpression;
+    }
+    
+    @Pure
+    @Override
+    public int hashCode() {
+        return 7654321;
+    }
+    
 }
