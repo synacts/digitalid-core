@@ -80,15 +80,16 @@ public final class AgentTest extends IdentitySetup {
     
     @Test
     public void _03_testPermissionsRemove() throws SQLException, IOException, PacketException, ExternalException {
+        final @Nonnull ClientAgent clientAgent = role.getAgent();
         final @Nonnull AgentPermissions agentPermissions = new AgentPermissions();
         agentPermissions.put(AttributeType.PRENAME, true);
         agentPermissions.put(AttributeType.SURNAME, true);
         agentPermissions.freeze();
         
-        role.getAgent().removePermissions(agentPermissions);
+        clientAgent.removePermissions(agentPermissions);
         
-        role.getAgent().reset(); // Not necessary but I want to test the database state.
-        final @Nonnull ReadonlyAgentPermissions permissions = role.getAgent().getPermissions();
+        clientAgent.reset(); // Not necessary but I want to test the database state.
+        final @Nonnull ReadonlyAgentPermissions permissions = clientAgent.getPermissions();
         Assert.assertFalse(permissions.canWrite(AttributeType.PRENAME));
         Assert.assertFalse(permissions.canWrite(AttributeType.SURNAME));
         

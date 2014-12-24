@@ -51,6 +51,11 @@ public final class Attribute extends GeneralConcept implements Immutable {
      */
     public static final @Nonnull Aspect VISIBILITY = new Aspect(Attribute.class, "visibility");
     
+    /**
+     * Stores the aspect of an attribute being reset after having reloaded the attributes module.
+     */
+    public static final @Nonnull Aspect RESET = new Aspect(Attribute.class, "attribute reset");
+    
     
     /**
      * Stores the semantic type {@code published.value.attribute@virtualid.ch}.
@@ -304,6 +309,20 @@ public final class Attribute extends GeneralConcept implements Immutable {
     
     
     /**
+     * Resets this attribute.
+     */
+    public void reset() {
+        this.valueLoaded = false;
+        this.value = null;
+        this.unpublishedLoaded = false;
+        this.unpublished = null;
+        this.visibilityLoaded = false;
+        this.visibility = null;
+        notify(RESET);
+    }
+    
+    
+    /**
      * Caches attributes given their entity and number.
      */
     private static final @Nonnull ConcurrentMap<Entity, ConcurrentMap<SemanticType, Attribute>> index = new ConcurrentHashMap<Entity, ConcurrentMap<SemanticType, Attribute>>();
@@ -360,16 +379,7 @@ public final class Attribute extends GeneralConcept implements Immutable {
     public static void reset(@Nonnull NonHostEntity entity) {
         if (Database.isSingleAccess()) {
             final @Nullable ConcurrentMap<SemanticType, Attribute> map = index.get(entity);
-            if (map != null) {
-                for (final @Nonnull Attribute attribute : map.values()) {
-                    attribute.valueLoaded = false;
-                    attribute.value = null;
-                    attribute.unpublishedLoaded = false;
-                    attribute.unpublished = null;
-                    attribute.visibilityLoaded = false;
-                    attribute.visibility = null;
-                }
-            }
+            if (map != null) for (final @Nonnull Attribute attribute : map.values()) attribute.reset();
         }
     }
     

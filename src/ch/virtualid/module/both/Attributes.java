@@ -218,9 +218,9 @@ public final class Attributes implements BothModule {
             try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT DISTINCT v.type, v.published, v.value" + from + "attribute_value" + where)) {
                 final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
                 while (resultSet.next()) {
-                    final @Nonnull Identity type = IdentityClass.getNotNull(resultSet, 2);
-                    final boolean published = resultSet.getBoolean(3);
-                    final @Nonnull Block value = Block.get(AttributeValue.TYPE, resultSet, 4);
+                    final @Nonnull Identity type = IdentityClass.getNotNull(resultSet, 1);
+                    final boolean published = resultSet.getBoolean(2);
+                    final @Nonnull Block value = Block.get(AttributeValue.TYPE, resultSet, 3);
                     entries.add(new TupleWrapper(VALUE_STATE_ENTRY, type.toBlockable(SemanticType.ATTRIBUTE_IDENTIFIER), new BooleanWrapper(AttributeValue.PUBLISHED, published), value.toBlockable()).toBlock());
                 }
                 tables.set(0, new ListWrapper(VALUE_STATE_TABLE, entries.freeze()).toBlock());
@@ -229,8 +229,8 @@ public final class Attributes implements BothModule {
             try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT DISTINCT v.type, v.visibility" + from + "attribute_visibility" + where + " AND p.writing")) {
                 final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
                 while (resultSet.next()) {
-                    final @Nonnull Identity type = IdentityClass.getNotNull(resultSet, 2);
-                    final @Nonnull String visibility = resultSet.getString(3);
+                    final @Nonnull Identity type = IdentityClass.getNotNull(resultSet, 1);
+                    final @Nonnull String visibility = resultSet.getString(2);
                     entries.add(new TupleWrapper(VISIBILITY_STATE_ENTRY, type.toBlockable(SemanticType.ATTRIBUTE_IDENTIFIER), new StringWrapper(PassiveExpression.TYPE, visibility)).toBlock());
                 }
                 tables.set(1, new ListWrapper(VISIBILITY_STATE_TABLE, entries.freeze()).toBlock());

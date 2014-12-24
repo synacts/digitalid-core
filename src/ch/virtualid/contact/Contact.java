@@ -144,7 +144,7 @@ public final class Contact extends NonHostConcept implements Immutable, Blockabl
      * @return the authentications of this contact.
      */
     public @Nonnull ReadonlyAuthentications getAuthentications() throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return Authentications.NONE; // TODO
     }
     
     // TODO: Include methods to aggregate the permissions and authentications over the contexts.
