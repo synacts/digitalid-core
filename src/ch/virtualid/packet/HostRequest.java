@@ -44,7 +44,20 @@ public final class HostRequest extends Request {
      * @require Server.hasHost(signer.getHostIdentifier()) : "The host of the signer is running on this server.";
      */
     public HostRequest(@Nonnull ReadonlyList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject, @Nonnull InternalIdentifier signer) throws SQLException, IOException, PacketException, ExternalException {
-        super(methods, recipient, getSymmetricKey(recipient, Time.TROPICAL_YEAR), subject, null, signer);
+        this(methods, recipient, subject, signer, 0);
+    }
+    
+    /**
+     * Packs the given methods with the given arguments signed by the given host.
+     * 
+     * @param methods the methods of this request.
+     * @param recipient the recipient of this request.
+     * @param subject the subject of this request.
+     * @param signer the identifier of the signing host.
+     * @param iteration how many times this request was resent.
+     */
+    private HostRequest(@Nonnull ReadonlyList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject, @Nonnull InternalIdentifier signer, int iteration) throws SQLException, IOException, PacketException, ExternalException {
+        super(methods, recipient, getSymmetricKey(recipient, Time.TROPICAL_YEAR), subject, null, signer, iteration);
     }
     
     
@@ -70,7 +83,7 @@ public final class HostRequest extends Request {
     }
     
     @Override
-    @Nonnull Response resend(@Nonnull FreezableList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject, boolean verified) throws SQLException, IOException, PacketException, ExternalException {
+    @Nonnull Response resend(@Nonnull FreezableList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject, int iteration, boolean verified) throws SQLException, IOException, PacketException, ExternalException {
         return new HostRequest(methods, recipient, subject, signer).send(verified);
     }
     

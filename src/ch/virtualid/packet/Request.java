@@ -76,6 +76,11 @@ public class Request extends Packet {
     private final @Nonnull InternalIdentifier subject;
     
     /**
+     * Stores how many times this request was resent.
+     */
+    private final int iteration;
+    
+    /**
      * Creates a new request with a query for the public key chain of the given host that is neither encrypted nor signed.
      * 
      * @param identifier the identifier of the host whose public key chain is to be retrieved.
@@ -83,7 +88,7 @@ public class Request extends Packet {
      * @ensure getSize() == 1 : "The size of this request is 1.";
      */
     public Request(@Nonnull HostIdentifier identifier) throws SQLException, IOException, PacketException, ExternalException {
-        this(new FreezableArrayList<Method>(new AttributesQuery(null, identifier, new AttributeTypeSet(PublicKeyChain.TYPE).freeze(), true)).freeze(), identifier, null, identifier, null, null);
+        this(new FreezableArrayList<Method>(new AttributesQuery(null, identifier, new AttributeTypeSet(PublicKeyChain.TYPE).freeze(), true)).freeze(), identifier, null, identifier, null, null, 0);
     }
     
     /**
@@ -98,7 +103,7 @@ public class Request extends Packet {
      * @require Method.areSimilar(methods) : "All methods are similar and not null.";
      */
     public Request(@Nonnull ReadonlyList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject) throws SQLException, IOException, PacketException, ExternalException {
-        this(methods, recipient, new SymmetricKey(), subject, null, null);
+        this(methods, recipient, new SymmetricKey(), subject, null, null, 0);
     }
     
     /**
@@ -110,12 +115,20 @@ public class Request extends Packet {
      * @param subject the identifier of the identity about which a statement is made.
      * @param audit the audit with the time of the last retrieval or null in case of external requests.
      * @param field an object that contains the signing parameter and is passed back with {@link #setField(java.lang.Object)}.
+     * @param iteration how many times this request was resent.
      */
-    Request(@Nonnull ReadonlyList<Method> methods, @Nonnull HostIdentifier recipient, @Nullable SymmetricKey symmetricKey, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nullable Object field) throws SQLException, IOException, PacketException, ExternalException {
+    Request(@Nonnull ReadonlyList<Method> methods, @Nonnull HostIdentifier recipient, @Nullable SymmetricKey symmetricKey, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nullable Object field, int iteration) throws SQLException, IOException, PacketException, ExternalException {
         super(methods, methods.size(), field, recipient, symmetricKey, subject, audit);
+        
+        assert methods.isFrozen() : "The methods are frozen.";
+        assert methods.isNotEmpty() : "The methods are not empty.";
+        assert Method.areSimilar(methods) : "All methods are similar and not null.";
+     
+        if (iteration == 5) throw new PacketException(PacketError.EXTERNAL, "The resending of a request was triggered five times.");
         
         this.recipient = recipient;
         this.subject = subject;
+        this.iteration = iteration + 1;
     }
     
     
@@ -131,6 +144,7 @@ public class Request extends Packet {
         assert recipient != null : "The recipient of the request is not null.";
         this.recipient = recipient;
         this.subject = getMethod(0).getSubject();
+        this.iteration = 0;
     }
     
     
@@ -258,12 +272,13 @@ public class Request extends Packet {
      * @param methods the methods of this request.
      * @param recipient the recipient of this request.
      * @param subject the subject of this request.
+     * @param iteration how many times this request was resent.
      * @param verified determines whether the signature of the response is verified (if not, it needs to be checked by the caller).
      * 
      * @return the response to the resent request.
      */
-    @Nonnull Response resend(@Nonnull FreezableList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject, boolean verified) throws SQLException, IOException, PacketException, ExternalException {
-        return new Request(methods, recipient, subject).send(verified);
+    @Nonnull Response resend(@Nonnull FreezableList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject, int iteration, boolean verified) throws SQLException, IOException, PacketException, ExternalException {
+        return new Request(methods, recipient, new SymmetricKey(), subject, null, null, iteration).send(verified);
     }
     
     /**
@@ -296,7 +311,7 @@ public class Request extends Packet {
             return new Response(this, socket.getInputStream(), verified);
         } catch (@Nonnull PacketException exception) {
             if (exception.getError() == PacketError.KEYROTATION && this instanceof ClientRequest) {
-                return ((ClientRequest) this).recommit(methods, verified);
+                return ((ClientRequest) this).recommit(methods, iteration, verified);
             } else if (exception.getError() == PacketError.RELOCATION && subject instanceof InternalNonHostIdentifier) {
                 if (getMethod(0).getType().equals(IdentityQuery.TYPE)) throw new PacketException(PacketError.EXTERNAL, "The response to an identity query may not be a relocation exception.");
                 @Nullable InternalNonHostIdentifier address = Successor.get((InternalNonHostIdentifier) subject);
@@ -307,10 +322,11 @@ public class Request extends Packet {
                     Mapper.unmap(subject.getMappedIdentity());
                 }
                 final @Nonnull HostIdentifier recipient = getMethod(0).getService().equals(CoreService.SERVICE) ? address.getHostIdentifier() : getRecipient();
-                return resend(methods, recipient, address, verified);
+                return resend(methods, recipient, address, iteration, verified);
             } else if (exception.getError() == PacketError.SERVICE && !getMethod(0).isOnHost()) {
-                final @Nonnull HostIdentifier recipient = IdentifierClass.create(Cache.getFreshAttributeContent(subject.getIdentity(), (Role) getMethod(0).getEntity(), getMethod(0).getService().getType(), false)).toHostIdentifier();
-                return resend(methods, recipient, subject, verified);
+                final @Nonnull HostIdentifier recipient = IdentifierClass.create(Cache.getReloadedAttributeContent(subject.getIdentity(), (Role) getMethod(0).getEntity(), getMethod(0).getService().getType(), false)).toHostIdentifier();
+                if (this.recipient.equals(recipient)) throw new PacketException(PacketError.EXTERNAL, "The recipient after a service error is still the same.", exception);
+                return resend(methods, recipient, subject, iteration, verified);
             } else {
                 throw exception;
             }

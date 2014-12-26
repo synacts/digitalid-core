@@ -49,10 +49,13 @@ import javax.annotation.Nullable;
  * This class provides database access to the {@link Attribute attributes} of the core service.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 0.2
+ * @version 2.0
  */
 public final class Attributes implements BothModule {
     
+    /**
+     * Stores an instance of this module.
+     */
     public static final Attributes MODULE = new Attributes();
     
     @Override

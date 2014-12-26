@@ -77,7 +77,24 @@ public final class CredentialsRequest extends Request {
      * @require CredentialsSignatureWrapper.certificatesAreValid(certificates, credentials) : "The certificates are valid (given the given credentials).";
      */
     public CredentialsRequest(@Nonnull ReadonlyList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull ReadonlyList<Credential> credentials, @Nullable ReadonlyList<CertifiedAttributeValue> certificates, boolean lodged, @Nullable BigInteger value) throws SQLException, IOException, PacketException, ExternalException {
-        super(methods, recipient, new SymmetricKey(), subject, audit, new Quartet<ReadonlyList<Credential>, ReadonlyList<CertifiedAttributeValue>, Boolean, BigInteger>(credentials, certificates, lodged, value));
+        this(methods, recipient, subject, audit, credentials, certificates, lodged, value, 0);
+    }
+    
+    /**
+     * Packs the given methods with the given arguments signed with the given credentials.
+     * 
+     * @param methods the methods of this request.
+     * @param recipient the recipient of this request.
+     * @param subject the subject of this request.
+     * @param audit the audit with the time of the last retrieval.
+     * @param credentials the credentials with which the content is signed.
+     * @param certificates the certificates that are appended to an identity-based authentication or null.
+     * @param lodged whether the hidden content of the credentials is verifiably encrypted to achieve liability.
+     * @param value the value b' or null if the credentials are not to be shortened.
+     * @param iteration how many times this request was resent.
+     */
+    private CredentialsRequest(@Nonnull ReadonlyList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull ReadonlyList<Credential> credentials, @Nullable ReadonlyList<CertifiedAttributeValue> certificates, boolean lodged, @Nullable BigInteger value, int iteration) throws SQLException, IOException, PacketException, ExternalException {
+        super(methods, recipient, new SymmetricKey(), subject, audit, new Quartet<ReadonlyList<Credential>, ReadonlyList<CertifiedAttributeValue>, Boolean, BigInteger>(credentials, certificates, lodged, value), iteration);
     }
     
     
@@ -108,8 +125,8 @@ public final class CredentialsRequest extends Request {
     }
     
     @Override
-    @Nonnull Response resend(@Nonnull FreezableList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject, boolean verified) throws SQLException, IOException, PacketException, ExternalException {
-        return new CredentialsRequest(methods, recipient, subject, getAudit(), credentials, certificates, lodged, value).send(verified);
+    @Nonnull Response resend(@Nonnull FreezableList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject, int iteration, boolean verified) throws SQLException, IOException, PacketException, ExternalException {
+        return new CredentialsRequest(methods, recipient, subject, getAudit(), credentials, certificates, lodged, value, iteration).send(verified);
     }
     
 }

@@ -58,7 +58,7 @@ import javax.annotation.Nullable;
  * This class provides database access to the {@link Agent agents} of the core service.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 1.9
+ * @version 2.0
  */
 public final class Agents implements BothModule {
     
@@ -69,6 +69,9 @@ public final class Agents implements BothModule {
     
     static { Contexts.initialize(); }
     
+    /**
+     * Stores an instance of this module.
+     */
     public static final Agents MODULE = new Agents();
     
     /**
