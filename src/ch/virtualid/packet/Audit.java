@@ -58,7 +58,7 @@ public final class Audit implements Immutable, Blockable {
      * 
      * @invariant trail == null || trail.isFrozen() : "The trail is either null or frozen.";
      * @invariant trail == null || trail.doesNotContainNull() : "The trail is either null or does not contain null.";
-     * @invariant trail == null || for (@Nonnull Block block : trail) block.getType().isBasedOn(Packet.SIGNATURE) : "Each block of the trail is based on the packet signature type.";
+     * @invariant trail == null || for (Block block : trail) block.getType().isBasedOn(Packet.SIGNATURE) : "Each block of the trail is based on the packet signature type.";
      */
     private final @Nullable ReadonlyList<Block> trail;
     
@@ -80,12 +80,12 @@ public final class Audit implements Immutable, Blockable {
      * 
      * @require trail == null || trail.isFrozen() : "The trail is either null or frozen.";
      * @require trail == null || trail.doesNotContainNull() : "The trail is either null or does not contain null.";
-     * @require trail == null || for (@Nonnull Block block : trail) block.getType().isBasedOn(Packet.SIGNATURE) : "Each block of the trail is based on the packet signature type.";
+     * @require trail == null || for (Block block : trail) block.getType().isBasedOn(Packet.SIGNATURE) : "Each block of the trail is based on the packet signature type.";
      */
     public Audit(@Nonnull Time lastTime, @Nullable Time thisTime, @Nullable ReadonlyList<Block> trail) {
         assert trail == null || trail.isFrozen() : "The trail is either null or frozen.";
         assert trail == null || trail.doesNotContainNull() : "The trail is either null or does not contain null.";
-        if (trail != null) for (@Nonnull Block block : trail) assert block.getType().isBasedOn(Packet.SIGNATURE) : "Each block of the trail is based on the packet signature type.";
+        if (trail != null) for (final @Nonnull Block block : trail) assert block.getType().isBasedOn(Packet.SIGNATURE) : "Each block of the trail is based on the packet signature type.";
         
         this.lastTime = lastTime;
         this.thisTime = thisTime;
@@ -151,7 +151,7 @@ public final class Audit implements Immutable, Blockable {
      * 
      * @return the trail of this audit.
      * 
-     * @ensure for (@Nonnull Block block : return) block.getType().isBasedOn(Packet.SIGNATURE) : "Each block of the returned list is based on the packet signature type.";
+     * @ensure for (Block block : return) block.getType().isBasedOn(Packet.SIGNATURE) : "Each block of the returned list is based on the packet signature type.";
      */
     @Pure
     public @Nonnull ReadonlyList<Block> getTrail() throws InvalidEncodingException {
