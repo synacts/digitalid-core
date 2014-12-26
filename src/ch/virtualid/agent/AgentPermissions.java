@@ -8,9 +8,12 @@ import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identity.Category;
+import ch.virtualid.identity.Identity;
 import ch.virtualid.identity.IdentityClass;
+import ch.virtualid.identity.Mapper;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
+import ch.virtualid.interfaces.SQLizable;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.FreezableLinkedHashMap;
 import ch.virtualid.util.FreezableLinkedList;
@@ -22,6 +25,8 @@ import ch.xdf.BooleanWrapper;
 import ch.xdf.ListWrapper;
 import ch.xdf.TupleWrapper;
 import java.io.IOException;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -34,7 +39,7 @@ import javax.annotation.Nullable;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public final class AgentPermissions extends FreezableLinkedHashMap<SemanticType, Boolean> implements ReadonlyAgentPermissions, Blockable {
+public final class AgentPermissions extends FreezableLinkedHashMap<SemanticType, Boolean> implements ReadonlyAgentPermissions, Blockable, SQLizable {
     
     /**
      * Stores the semantic type {@code type.permission.agent@virtualid.ch}.
@@ -174,8 +179,40 @@ public final class AgentPermissions extends FreezableLinkedHashMap<SemanticType,
     
     @Pure
     @Override
+    public boolean areSingle() {
+        return size() == 1;
+    }
+    
+    /**
+     * Checks that these permissions are single.
+     * 
+     * @return these permissions.
+     * 
+     * @throws InvalidEncodingException if this is not the case.
+     */
+    @Pure
+    public @Nonnull AgentPermissions checkAreSingle() throws InvalidEncodingException {
+        if (!areSingle()) throw new InvalidEncodingException("These permissions are not single.");
+        return this;
+    }
+    
+    @Pure
+    @Override
     public boolean areEmptyOrSingle() {
         return size() <= 1;
+    }
+    
+    /**
+     * Checks that these permissions are empty or single.
+     * 
+     * @return these permissions.
+     * 
+     * @throws InvalidEncodingException if this is not the case.
+     */
+    @Pure
+    public @Nonnull AgentPermissions checkAreEmptyOrSingle() throws InvalidEncodingException {
+        if (!areEmptyOrSingle()) throw new InvalidEncodingException("These permissions are not empty or single.");
+        return this;
     }
     
     
@@ -352,6 +389,113 @@ public final class AgentPermissions extends FreezableLinkedHashMap<SemanticType,
         }
         string.append("]");
         return string.toString();
+    }
+    
+    
+    /**
+     * Stores the columns used to store instances of this class in the database.
+     */
+    public static final @Nonnull String FORMAT_NOT_NULL = "type " + Mapper.FORMAT + " NOT NULL, type_writing BOOLEAN NOT NULL";
+    
+    /**
+     * Stores the columns used to store instances of this class in the database.
+     */
+    public static final @Nonnull String FORMAT_NULL = "type " + Mapper.FORMAT + ", type_writing BOOLEAN";
+    
+    /**
+     * Stores the columns used to retrieve instances of this class from the database.
+     */
+    public static final @Nonnull String COLUMNS = "type, type_writing";
+    
+    /**
+     * Stores the condition used to retrieve instances of this class from the database.
+     */
+    public static final @Nonnull String CONDITION = "type = ? AND type_writing = ?";
+    
+    /**
+     * Stores the foreign key constraints used by instances of this class.
+     */
+    public static final @Nonnull String REFERENCE = "FOREIGN KEY (type) " + Mapper.REFERENCE;
+    
+    /**
+     * Returns the given columns of the result set as an instance of this class.
+     * 
+     * @param resultSet the result set to retrieve the data from.
+     * @param startIndex the start index of the columns containing the data.
+     * 
+     * @return the given columns of the result set as an instance of this class.
+     * 
+     * @ensure return.isNotFrozen() : "The permissions are not frozen.";
+     */
+    @Pure
+    public static @Capturable @Nonnull AgentPermissions get(@Nonnull ResultSet resultSet, int startIndex) throws SQLException {
+        try {
+            final @Nonnull AgentPermissions permissions = new AgentPermissions();
+            while (resultSet.next()) {
+                final @Nonnull SemanticType type = IdentityClass.getNotNull(resultSet, startIndex).toSemanticType().checkIsAttributeType();
+                final boolean writing = resultSet.getBoolean(startIndex + 1);
+                permissions.put(type, writing);
+            }
+            return permissions;
+        } catch (@Nonnull InvalidEncodingException exception) {
+            throw new SQLException("Some values returned by the database are invalid.", exception);
+        }
+     }
+    
+    /**
+     * Returns the given columns of the result set as an instance of this class.
+     * 
+     * @param resultSet the result set to retrieve the data from.
+     * @param startIndex the start index of the columns containing the data.
+     * 
+     * @return the given columns of the result set as an instance of this class.
+     * 
+     * @ensure return.isNotFrozen() : "The permissions are not frozen.";
+     * @ensure return.areEmptyOrSingle() : "The returned permissions are empty or single.";
+     */
+    @Pure
+    public static @Capturable @Nonnull AgentPermissions getEmptyOrSingle(@Nonnull ResultSet resultSet, int startIndex) throws SQLException {
+        try {
+            final @Nonnull AgentPermissions permissions = new AgentPermissions();
+            final @Nullable Identity identity = IdentityClass.get(resultSet, startIndex);
+            if (identity != null) permissions.put(identity.toSemanticType().checkIsAttributeType(), resultSet.getBoolean(startIndex + 1));
+            return permissions;
+        } catch (@Nonnull InvalidEncodingException exception) {
+            throw new SQLException("Some values returned by the database are invalid.", exception);
+        }
+     }
+    
+    /**
+     * Sets the parameters at the given start index of the prepared statement to this object.
+     * 
+     * @param preparedStatement the prepared statement whose parameters are to be set.
+     * @param startIndex the start index of the parameters to set.
+     */
+    @Override
+    public void set(@Nonnull PreparedStatement preparedStatement, int startIndex) throws SQLException {
+        for (final @Nonnull SemanticType type : keySet()) {
+            type.set(preparedStatement, startIndex);
+            preparedStatement.setBoolean(startIndex + 1, get(type));
+            preparedStatement.addBatch();
+        }
+    }
+    
+    /**
+     * Sets the parameters at the given start index of the prepared statement to this object.
+     * 
+     * @param preparedStatement the prepared statement whose parameters are to be set.
+     * @param startIndex the start index of the parameters to set.
+     * 
+     * @require areEmptyOrSingle() : "These permissions are empty or single.";
+     */
+    @Override
+    public void setEmptyOrSingle(@Nonnull PreparedStatement preparedStatement, int startIndex) throws SQLException {
+        assert areEmptyOrSingle() : "These permissions are empty or single.";
+        
+        for (final @Nonnull SemanticType type : keySet()) {
+            type.set(preparedStatement, startIndex);
+            preparedStatement.setBoolean(startIndex + 1, get(type));
+        }
     }
     
 }

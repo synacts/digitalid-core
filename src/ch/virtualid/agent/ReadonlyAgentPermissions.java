@@ -6,6 +6,8 @@ import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.util.ReadonlyMap;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import javax.annotation.Nonnull;
 
 /**
@@ -27,6 +29,14 @@ public interface ReadonlyAgentPermissions extends ReadonlyMap<SemanticType, Bool
      */
     @Pure
     public boolean areValid();
+    
+    /**
+     * Returns whether these agent permissions contain a single permission.
+     * 
+     * @return whether these agent permissions contain a single permission.
+     */
+    @Pure
+    public boolean areSingle();
     
     /**
      * Returns whether these agent permissions are empty or contain a single permission.
@@ -102,5 +112,24 @@ public interface ReadonlyAgentPermissions extends ReadonlyMap<SemanticType, Bool
     @Pure
     @Override
     public @Capturable @Nonnull AgentPermissions clone();
+    
+    
+    /**
+     * Sets the parameters at the given start index of the prepared statement to this object.
+     * 
+     * @param preparedStatement the prepared statement whose parameters are to be set.
+     * @param startIndex the start index of the parameters to set.
+     */
+    public void set(@Nonnull PreparedStatement preparedStatement, int startIndex) throws SQLException;
+    
+    /**
+     * Sets the parameters at the given start index of the prepared statement to this object.
+     * 
+     * @param preparedStatement the prepared statement whose parameters are to be set.
+     * @param startIndex the start index of the parameters to set.
+     * 
+     * @require areEmptyOrSingle() : "These permissions are empty or single.";
+     */
+    public void setEmptyOrSingle(@Nonnull PreparedStatement preparedStatement, int startIndex) throws SQLException;
     
 }

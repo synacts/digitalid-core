@@ -33,6 +33,7 @@ import ch.xdf.TupleWrapper;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -73,24 +74,6 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
      * Stores the aspect of the restrictions being changed at the observed agent.
      */
     public static final @Nonnull Aspect RESTRICTIONS = new Aspect(Agent.class, "restrictions changed");
-    
-    
-    /**
-     * Stores the data type used to store instances of this class in the database.
-     */
-    public static final @Nonnull String FORMAT = "BIGINT";
-    
-    /**
-     * Returns the foreign key constraint used to reference instances of this class.
-     * 
-     * @param site the site at which the foreign key constraint is declared.
-     * 
-     * @return the foreign key constraint used to reference instances of this class.
-     */
-    public static @Nonnull String getReference(@Nonnull Site site) throws SQLException {
-        Agents.createReferenceTable(site);
-        return "REFERENCES " + site + "agent (entity, agent) ON DELETE CASCADE";
-    }
     
     
     /**
@@ -479,6 +462,24 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
         return get(entity, number, client, removed);
     }
     
+    
+    /**
+     * Stores the data type used to store instances of this class in the database.
+     */
+    public static final @Nonnull String FORMAT = "BIGINT";
+    
+    /**
+     * Returns the foreign key constraint used to reference instances of this class.
+     * 
+     * @param site the site at which the foreign key constraint is declared.
+     * 
+     * @return the foreign key constraint used to reference instances of this class.
+     */
+    public static @Nonnull String getReference(@Nonnull Site site) throws SQLException {
+        Agents.createReferenceTable(site);
+        return "REFERENCES " + site + "agent (entity, agent) ON DELETE CASCADE";
+    }
+    
     /**
      * Returns the given columns of the result set as an instance of this class.
      * 
@@ -520,6 +521,18 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
     @Override
     public final void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
         preparedStatement.setLong(parameterIndex, getNumber());
+    }
+    
+    /**
+     * Sets the parameter at the given index of the prepared statement to the given agent.
+     * 
+     * @param agent the agent to which the parameter at the given index is to be set.
+     * @param preparedStatement the prepared statement whose parameter is to be set.
+     * @param parameterIndex the index of the parameter to set.
+     */
+    public static void set(@Nullable Agent agent, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+        if (agent == null) preparedStatement.setNull(parameterIndex, Types.BIGINT);
+        else agent.set(preparedStatement, parameterIndex);
     }
     
     

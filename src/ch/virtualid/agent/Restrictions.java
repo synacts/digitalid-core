@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Types;
 import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -428,17 +427,12 @@ public final class Restrictions implements Immutable, Blockable, SQLizable {
     /**
      * Stores the columns used to store instances of this class in the database.
      */
-    public static final @Nonnull String FORMAT_NOT_NULL = "client BOOLEAN NOT NULL, role BOOLEAN NOT NULL, writing BOOLEAN NOT NULL, context " + Context.FORMAT + ", contact " + Mapper.FORMAT;
-    
-    /**
-     * Stores the columns used to store instances of this class in the database.
-     */
-    public static final @Nonnull String FORMAT_NULL = "client BOOLEAN, role BOOLEAN, writing BOOLEAN, context " + Context.FORMAT + ", contact " + Mapper.FORMAT;
+    public static final @Nonnull String FORMAT = "client BOOLEAN NOT NULL, role BOOLEAN NOT NULL, context_writing BOOLEAN NOT NULL, context " + Context.FORMAT + ", contact " + Mapper.FORMAT;
     
     /**
      * Stores the columns used to retrieve instances of this class from the database.
      */
-    public static final @Nonnull String COLUMNS = "client, role, writing, context, contact";
+    public static final @Nonnull String COLUMNS = "client, role, context_writing, context, contact";
     
     /**
      * Returns the foreign key constraints used by instances of this class.
@@ -485,38 +479,30 @@ public final class Restrictions implements Immutable, Blockable, SQLizable {
         Contact.set(contact, preparedStatement, startIndex + 4);
     }
     
-    /**
-     * Sets the parameters at the given start index of the prepared statement to the given restrictions.
-     * 
-     * @param restrictions the restrictions to which the parameters at the given index are to be set.
-     * @param preparedStatement the prepared statement whose parameters are to be set.
-     * @param startIndex the start index of the parameters to set.
-     */
-    public static void set(@Nullable Restrictions restrictions, @Nonnull PreparedStatement preparedStatement, int startIndex) throws SQLException {
-        if (restrictions == null) {
-            preparedStatement.setNull(startIndex + 0, Types.BOOLEAN);
-            preparedStatement.setNull(startIndex + 1, Types.BOOLEAN);
-            preparedStatement.setNull(startIndex + 2, Types.BOOLEAN);
-            preparedStatement.setNull(startIndex + 3, Types.BIGINT);
-            preparedStatement.setNull(startIndex + 4, Types.BIGINT);
-        }
-        else restrictions.set(preparedStatement, startIndex);
-    }
-    
     @Pure
     @Override
     public @Nonnull String toString() {
         return client + ", " + role + ", " + writing + ", " + context + ", " + contact;
     }
     
+    /**
+     * Returns these restrictions as update values.
+     * 
+     * @return these restrictions as update values.
+     */
     @Pure
     public @Nonnull String toUpdateValues() {
-        return "client = " + client + ", role = " + role + ", writing = " + writing + ", context = " + context + ", contact = " + contact;
+        return "client = " + client + ", role = " + role + ", context_writing = " + writing + ", context = " + context + ", contact = " + contact;
     }
     
+    /**
+     * Returns these restrictions as update condition.
+     * 
+     * @return these restrictions as update condition.
+     */
     @Pure
     public @Nonnull String toUpdateCondition() {
-        return "client = " + client + " AND role = " + role + " AND writing = " + writing + " AND context " + (context == null ? "IS NULL" : "= " + context) + " AND contact " + (contact == null ? "IS NULL" : "= " + contact);
+        return "client = " + client + " AND role = " + role + " AND context_writing = " + writing + " AND context " + (context == null ? "IS NULL" : "= " + context) + " AND contact " + (contact == null ? "IS NULL" : "= " + contact);
     }
     
 }

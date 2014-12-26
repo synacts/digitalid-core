@@ -1,34 +1,50 @@
 package ch.virtualid.module.both;
 
+import ch.virtualid.agent.Agent;
+import ch.virtualid.agent.AgentPermissions;
+import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
+import ch.virtualid.auxiliary.Time;
 import ch.virtualid.database.Database;
+import ch.virtualid.entity.EntityClass;
+import ch.virtualid.entity.NonHostEntity;
+import ch.virtualid.entity.Role;
 import ch.virtualid.entity.Site;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
-import ch.virtualid.handler.Action;
+import ch.virtualid.handler.InternalAction;
+import ch.virtualid.handler.InternalQuery;
+import ch.virtualid.identifier.IdentifierClass;
+import ch.virtualid.identity.HostIdentity;
+import ch.virtualid.identity.InternalNonHostIdentity;
+import ch.virtualid.identity.Mapper;
 import ch.virtualid.identity.SemanticType;
+import ch.virtualid.io.Level;
 import ch.virtualid.module.BothModule;
 import ch.virtualid.module.CoreService;
-import ch.virtualid.module.HostModule;
+import ch.virtualid.packet.Packet;
 import ch.virtualid.server.Host;
 import ch.virtualid.util.FreezableLinkedList;
 import ch.virtualid.util.FreezableList;
 import ch.virtualid.util.ReadonlyList;
 import ch.xdf.Block;
+import ch.xdf.EmptyWrapper;
 import ch.xdf.ListWrapper;
 import ch.xdf.TupleWrapper;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Timer;
+import java.util.TimerTask;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
- * This class provides database access to the {@link Action actions} of the core service.
- * This module is used on both hosts and clients but its state never needs to be transferred
- * so it implements only the {@link HostModule} and not the {@link BothModule} as well.
+ * This class provides database access to the {@link InternalAction internal actions} of the core service.
+ * This module does not support getting, adding and deleting an entity's state as this is not desired.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public final class Actions implements HostModule {
+public final class Actions implements BothModule {
     
     /**
      * Stores an instance of this module.
@@ -36,28 +52,32 @@ public final class Actions implements HostModule {
     public static final Actions MODULE = new Actions();
     
     @Override
-    public void createTables(@Nonnull Site site) throws SQLException {
+    public void createTables(final @Nonnull Site site) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS action (identity BIGINT NOT NULL, time BIGINT NOT NULL, client BOOLEAN, role BOOLEAN, context BIGINT, contact BIGINT, type BIGINT, writing BOOLEAN, authorizationID BIGINT, request LONGBLOB NOT NULL, PRIMARY KEY (identity, time), INDEX(time), FOREIGN KEY (identity) REFERENCES general_identity (identity), FOREIGN KEY (authorizationID) REFERENCES authorization (authorizationID), FOREIGN KEY (contact) REFERENCES general_identity (identity), FOREIGN KEY (type) REFERENCES general_identity (identity))");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "action (entity " + EntityClass.FORMAT + " NOT NULL, service " + Mapper.FORMAT + " NOT NULL, time BIGINT NOT NULL, recipient " + IdentifierClass.FORMAT + " NOT NULL, " + Restrictions.FORMAT + ", " + AgentPermissions.FORMAT_NULL + ", agent " + Agent.FORMAT + ", action " + Database.getConfiguration().BLOB() + " NOT NULL, PRIMARY KEY (entity, service, time), INDEX(time), FOREIGN KEY (entity) " + site.getEntityReference() + ", FOREIGN KEY (service) " + Mapper.REFERENCE + ", " + Restrictions.getForeignKeys(site) + ", " + AgentPermissions.REFERENCE + ", FOREIGN KEY (entity, agent) " + Agent.getReference(site) + ")");
+            Mapper.addReference(site + "action", "contact");
+            if (site instanceof Host) Mapper.addReference(site + "action", "entity", "entity", "time");
         }
         
-//        Mapper.addReference("action", "identity");
-//        Mapper.addReference("action", "contact");
-//        
-//        new Timer().schedule(new TimerTask() {
-//            @Override
-//            public void run() {
-//                try (@Nonnull Statement statement = Database.createStatement()) {
-//                    statement.executeUpdate("DELETE FROM request WHERE time < UNIX_TIMESTAMP() * 1000 - " + Time.TROPICAL_YEAR.getValue());
-//                } catch (@Nonnull SQLException exception) {}
-//            }
-//        }, 0, Time.TROPICAL_YEAR.getValue());
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                try (@Nonnull Statement statement = Database.createStatement()) {
+                    statement.executeUpdate("DELETE FROM " + site + "action WHERE time < " + Time.TROPICAL_YEAR.ago());
+                    Database.commit();
+                } catch (@Nonnull SQLException exception) {
+                    Database.LOGGER.log(Level.WARNING, exception);
+                }
+            }
+        }, Time.HOUR.getValue(), Time.MONTH.getValue());
     }
     
     @Override
     public void deleteTables(@Nonnull Site site) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
-            // TODO: Delete the tables of this module.
+            if (site instanceof Host) Mapper.removeReference(site + "action", "entity", "entity", "time");
+            Mapper.removeReference(site + "action", "contact");
+            statement.executeUpdate("DROP TABLE IF EXISTS " + site + "action");
         }
     }
     
@@ -65,7 +85,7 @@ public final class Actions implements HostModule {
     /**
      * Stores the semantic type {@code entry.actions.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType MODULE_ENTRY = SemanticType.create("entry.actions.module@virtualid.ch").load(TupleWrapper.TYPE, ch.virtualid.identity.SemanticType.UNKNOWN);
+    private static final @Nonnull SemanticType MODULE_ENTRY = SemanticType.create("entry.actions.module@virtualid.ch").load(TupleWrapper.TYPE, InternalNonHostIdentity.IDENTIFIER, SemanticType.ATTRIBUTE_IDENTIFIER, Time.TYPE, HostIdentity.IDENTIFIER, Restrictions.TYPE, AgentPermissions.TYPE, Agent.NUMBER, Packet.SIGNATURE);
     
     /**
      * Stores the semantic type {@code actions.module@virtualid.ch}.
@@ -96,6 +116,38 @@ public final class Actions implements HostModule {
         for (final @Nonnull Block entry : entries) {
             // TODO: Add all entries to the database table(s).
         }
+    }
+    
+    
+    /**
+     * Stores the semantic type {@code actions.state@virtualid.ch}.
+     */
+    private static final @Nonnull SemanticType STATE_FORMAT = SemanticType.create("actions.state@virtualid.ch").load(EmptyWrapper.TYPE);
+    
+    @Pure
+    @Override
+    public @Nonnull SemanticType getStateFormat() {
+        return STATE_FORMAT;
+    }
+    
+    @Pure
+    @Override
+    public @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull Agent agent) throws SQLException {
+        return new EmptyWrapper(STATE_FORMAT).toBlock();
+    }
+    
+    @Override
+    public void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws SQLException, InvalidEncodingException {
+        assert block.getType().isBasedOn(getStateFormat()) : "The block is based on the indicated type.";
+    }
+    
+    @Override
+    public void removeState(@Nonnull NonHostEntity entity) throws SQLException {}
+    
+    @Pure
+    @Override
+    public @Nullable InternalQuery getInternalQuery(@Nonnull Role role) {
+        return null;
     }
     
     

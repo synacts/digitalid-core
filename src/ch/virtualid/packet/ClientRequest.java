@@ -50,8 +50,6 @@ public final class ClientRequest extends Request {
      */
     public ClientRequest(@Nonnull ReadonlyList<Method> methods, @Nonnull InternalIdentifier subject, @Nonnull Audit audit, @Nonnull SecretCommitment commitment) throws SQLException, IOException, PacketException, ExternalException {
         this(methods, subject, audit, commitment, 0);
-        
-        assert methods.getNotNull(0).isOnClient() : "The methods are on a client.";
     }
     
     /**
