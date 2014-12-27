@@ -6,7 +6,10 @@ import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
+import ch.virtualid.contact.Contact;
+import ch.virtualid.contact.Context;
 import ch.virtualid.database.Database;
+import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.EntityClass;
 import ch.virtualid.entity.NonHostAccount;
 import ch.virtualid.entity.NonHostEntity;
@@ -15,6 +18,7 @@ import ch.virtualid.entity.Site;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketException;
+import ch.virtualid.handler.Action;
 import ch.virtualid.handler.InternalAction;
 import ch.virtualid.handler.InternalQuery;
 import ch.virtualid.identifier.Identifier;
@@ -191,62 +195,86 @@ public final class Actions implements BothModule {
     
     
     /**
-     * Returns the audit trail of the given identity from the given time restricted for the given agent.
+     * Returns the audit trail of the given entity for the given service from the given time.
      * 
-     * @param entity the identity whose audit trail is to be returned.
-     * @param time the time of the last audited request.
-     * @param agent the agent for which the audit trail is to be restricted.
+     * @param entity the entity whose audit trail is to be returned.
+     * @param service the service for which the audit trail is wanted.
+     * @param lastTime the time of the last request for the audit trail.
+     * @param restrictions the restrictions of the requesting agent.
+     * @param permissions the permissions of the requesting agent.
+     * @param agent the agent for which the audit trail is restricted.
      * 
-     * @return the audit trail of the given identity from the given time restricted for the given agent.
+     * @return the audit trail of the given entity for the given service from the given time.
+     * 
+     * @require agent == null || service.equals(CoreService.TYPE) : "The agent is null or the audit trail is requested for the core service.";
      */
     @Pure
-    public static @Nonnull Audit getAudit(@Nonnull NonHostEntity entity, @Nonnull SemanticType service, @Nonnull Time time, @Nonnull Restrictions restrictions, @Nonnull ReadonlyAgentPermissions permissions, @Nullable Agent agent) throws SQLException {
-        @Nonnull StringBuilder query = new StringBuilder("SELECT MAX(time), request FROM request WHERE identity = ").append(entity).append(" AND time > ").append(time);
-        if (restrictions == null) {
-            query.append(" AND client IS NULL AND context IS NULL AND role IS NULL AND contact IS NULL AND type IS NULL AND writing IS NULL");
-        } else {
-            if (!restrictions.isClient()) query.append(" AND (client is NULL OR NOT client)");
-            if (!restrictions.isRole()) query.append(" AND (role is NULL OR NOT role)");
-            query.append(" AND (context IS NULL OR context & ").append(restrictions.getContext().getMask()).append(" = ").append(restrictions.getContext()).append(")");
-            query.append(" AND (contact IS NULL OR contact IN (SELECT contact FROM context_contact WHERE identity = ").append(entity).append(" AND context & ").append(restrictions.getContext().getMask()).append(" = ").append(restrictions.getContext()).append("))");
-            query.append(" AND (type IS NULL AND writing IS NULL OR EXISTS(SELECT * FROM authorization_permission WHERE authorizationID = ").append(agent).append(" AND NOT preference AND (authorization_permission.type = request.type OR authorization_permission.type = ").append(SemanticType.CLIENT_GENERAL_PERMISSION).append(") AND (NOT request.writing OR authorization_permission.writing)))");
-        }
-        query.append(" AND (authorizationID IS NULL OR authorizationID IN (SELECT weaker FROM agent_order WHERE stronger = ").append(agent).append(")) ORDER BY time");
+    public static @Nonnull Audit getAudit(@Nonnull NonHostEntity entity, @Nonnull SemanticType service, @Nonnull Time lastTime, @Nonnull Restrictions restrictions, @Nonnull ReadonlyAgentPermissions permissions, @Nullable Agent agent) throws SQLException {
+        assert agent == null || service.equals(CoreService.TYPE) : "The agent is null or the audit trail is requested for the core service.";
         
-        @Nonnull List<Block> trail = new LinkedList<Block>();
-        try (@Nonnull Statement statement = Database.createStatement()) {
-            try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT " + Database.getConfiguration().CURRENT_TIME())) {
-                if (resultSet.next()) time = resultSet.getLong(1);
-            }
-            try (@Nonnull ResultSet resultSet = statement.executeQuery(query.toString())) {
-                while (resultSet.next()) {
-                    long max = resultSet.getLong(1);
-                    if (max > time) time = max;
-                    trail.add(new Block(resultSet.getBytes(1)));
-                }
-            }
+        final @Nonnull Site site = entity.getSite();
+        final @Nonnull StringBuilder SQL = new StringBuilder("SELECT ").append(Database.getConfiguration().GREATEST()).append("(MAX(time), ").append(Database.getConfiguration().CURRENT_TIME()).append("), NULL UNION ");
+        SQL.append("SELECT NULL, action FROM ").append(site).append("action a WHERE entity = ").append(entity).append(" AND service = ").append(service).append(" AND time > ").append(lastTime);
+        if (!restrictions.isClient()) SQL.append(" AND NOT client");
+        if (!restrictions.isRole()) SQL.append(" AND NOT role");
+        if (!restrictions.isWriting()) SQL.append(" AND NOT context_writing");
+        
+        final @Nullable Context context = restrictions.getContext();
+        final @Nullable Contact contact = restrictions.getContact();
+        if (context == null) {
+            SQL.append(" AND context IS NULL");
+            if (contact == null) SQL.append(" AND contact IS NULL");
+            else SQL.append(" AND (contact IS NULL OR contact = ").append(contact).append(")");
+        } else {
+            SQL.append(" AND (context IS NULL OR EXISTS (SELECT * FROM ").append(context.getEntity().getSite()).append("context_subcontext c WHERE c.entity = ").append(context.getEntity()).append(" AND c.context = ").append(context).append(" AND c.subcontext = a.context))");
+            SQL.append(" AND (contact IS NULL OR EXISTS (SELECT * FROM ").append(context.getEntity().getSite()).append("context_subcontext cx, ").append(context.getEntity().getSite()).append("context_contact cc WHERE cx.entity = ").append(context.getEntity()).append(" AND cx.context = ").append(context).append(" AND cc.entity = ").append(context.getEntity()).append(" AND cc.context = cx.subcontext AND cc.contact = a.contact))");
         }
-        return new Audit(time, trail);
+        
+        SQL.append(" AND (type_writing IS NULL OR NOT type_writing");
+        if (!permissions.canRead(AgentPermissions.GENERAL)) SQL.append(" AND type_writing IN ").append(permissions.allTypesToString());
+        SQL.append(" OR type_writing");
+        if (!permissions.canWrite(AgentPermissions.GENERAL)) SQL.append(" AND type_writing IN ").append(permissions.writeTypesToString());
+        
+        SQL.append(") AND (agent IS NULL");
+        if (agent != null) SQL.append("OR EXISTS (SELECT * FROM ").append(site).append("agent_permission_order po, ").append(site).append("agent_restrictions_ord ro WHERE po.entity = ").append(entity).append(" AND po.stronger = ").append(agent).append(" AND po.weaker = a.agent AND ro.entity = ").append(entity).append(" AND ro.stronger = ").append(agent).append(" AND ro.weaker = a.agent)");
+        SQL.append(")");
+        
+        try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL.toString())) {
+            if (resultSet.next()) {
+                final @Nonnull Time thisTime = Time.get(resultSet, 1);
+                final @Nonnull FreezableList<Block> trail = new FreezableLinkedList<Block>();
+                while (resultSet.next()) {
+                    trail.add(Block.get(Packet.SIGNATURE, resultSet, 2));
+                }
+                return new Audit(lastTime, thisTime, trail.freeze());
+            } else throw new SQLException("");
+        }
     }
     
     /**
-     * Adds the given internal action to the audit trail.
+     * Adds the given action to the audit trail.
      * 
      * @param action the action to be added to the audit trail.
+     * 
+     * @require action.hasEntity() : "The action has an entity.";
+     * @require action.hasSignature() : "The action has a signature.";
      */
-    public static void audit(@Nonnull InternalAction action) throws SQLException {
-        @Nonnull String time = Database.getConfiguration().GREATEST() + "(MAX(time) + 1, " + Database.getConfiguration().CURRENT_TIME() + ")";
-        @Nonnull String statement = "INSERT INTO request (identity, time, client, role, context, contact, type, writing, agent, request) SELECT ?, " + time + ", ?, ?, ?, ?, ?, ?, ?, ? FROM request";
-        try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(statement)) {
-            preparedStatement.setLong(1, entity.getNumber());
-            if (client == null) { preparedStatement.setNull(2, java.sql.Types.BOOLEAN);} else { preparedStatement.setBoolean(2, client); }
-            if (role == null) { preparedStatement.setNull(3, java.sql.Types.BOOLEAN);} else { preparedStatement.setBoolean(3, role); }
-            if (context == null) { preparedStatement.setNull(4, java.sql.Types.BIGINT); } else { preparedStatement.setLong(4, context.getNumber()); }
-            if (contact == null) { preparedStatement.setNull(5, java.sql.Types.BIGINT); } else { preparedStatement.setLong(5, contact.getNumber()); }
-            if (type == null) { preparedStatement.setNull(6, java.sql.Types.BIGINT); } else { preparedStatement.setLong(6, type.getNumber()); }
-            if (writing == null) { preparedStatement.setNull(7, java.sql.Types.BOOLEAN); } else { preparedStatement.setBoolean(7, writing); }
-            if (agent == null) { preparedStatement.setNull(8, java.sql.Types.BIGINT); } else { preparedStatement.setLong(8, agent.getNumber()); }
-            preparedStatement.setBytes(9, request.getSignatures().toBlock().getSection());
+    public static void audit(@Nonnull Action action) throws SQLException {
+        assert action.hasEntity() : "The action has an entity.";
+        assert action.hasSignature() : "The action has a signature.";
+        
+        final @Nonnull Entity entity = action.getEntityNotNull();
+        final @Nonnull Site site = entity.getSite();
+        final @Nonnull String TIME = Database.getConfiguration().GREATEST() + "(MAX(time) + 1, " + Database.getConfiguration().CURRENT_TIME() + ")";
+        final @Nonnull String SQL = "INSERT INTO " + site + "action (entity, service, time, " + Restrictions.COLUMNS + ", " + AgentPermissions.COLUMNS + ", agent, recipient, action) SELECT ?, ?, " + TIME + ", ?, ?, ?, ?, ?, ?, ?, ?, ?, ? FROM " + site + "action";
+        try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
+            entity.set(preparedStatement, 1);
+            action.getService().getType().set(preparedStatement, 2);
+            action.getAuditRestrictions().set(preparedStatement, 3);
+            action.getAuditPermissions().setEmptyOrSingle(preparedStatement, 8);
+            Agent.set(action.getAuditAgent(), preparedStatement, 10);
+            action.getRecipient().set(preparedStatement, 11);
+            action.getSignatureNotNull().toBlock().set(preparedStatement, 12);
             preparedStatement.executeUpdate();
         }
     }

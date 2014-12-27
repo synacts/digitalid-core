@@ -18,6 +18,7 @@ import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.FreezableLinkedHashMap;
 import ch.virtualid.util.FreezableLinkedList;
 import ch.virtualid.util.FreezableList;
+import ch.virtualid.util.FreezableSet;
 import ch.virtualid.util.ReadonlyArray;
 import ch.virtualid.util.ReadonlyList;
 import ch.xdf.Block;
@@ -28,6 +29,7 @@ import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -392,6 +394,33 @@ public final class AgentPermissions extends FreezableLinkedHashMap<SemanticType,
     }
     
     
+    @Pure
+    @Override
+    public @Nonnull String allTypesToString() {
+        final @Nonnull StringBuilder string = new StringBuilder("(");
+        for (final @Nonnull SemanticType type : keySet()) {
+            if (string.length() != 1) string.append(", ");
+            string.append(type);
+        }
+        string.append(")");
+        return string.toString();
+    }
+    
+    @Pure
+    @Override
+    public @Nonnull String writeTypesToString() {
+        final @Nonnull StringBuilder string = new StringBuilder("(");
+        for (final @Nonnull SemanticType type : keySet()) {
+            if (get(type)) {
+                if (string.length() != 1) string.append(", ");
+                string.append(type);
+            }
+        }
+        string.append(")");
+        return string.toString();
+    }
+    
+    
     /**
      * Stores the columns used to store instances of this class in the database.
      */
@@ -492,9 +521,15 @@ public final class AgentPermissions extends FreezableLinkedHashMap<SemanticType,
     public void setEmptyOrSingle(@Nonnull PreparedStatement preparedStatement, int startIndex) throws SQLException {
         assert areEmptyOrSingle() : "These permissions are empty or single.";
         
-        for (final @Nonnull SemanticType type : keySet()) {
-            type.set(preparedStatement, startIndex);
-            preparedStatement.setBoolean(startIndex + 1, get(type));
+        final @Nonnull FreezableSet<SemanticType> keySet = keySet();
+        if (keySet.isEmpty()) {
+            preparedStatement.setNull(startIndex, Types.BIGINT);
+            preparedStatement.setNull(startIndex + 1, Types.BOOLEAN);
+        } else {
+            for (final @Nonnull SemanticType type : keySet()) {
+                type.set(preparedStatement, startIndex);
+                preparedStatement.setBoolean(startIndex + 1, get(type));
+            }
         }
     }
     

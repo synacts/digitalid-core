@@ -12,6 +12,7 @@ import ch.virtualid.identifier.Identifier;
 import ch.virtualid.io.Level;
 import ch.virtualid.io.Logger;
 import ch.virtualid.module.Service;
+import ch.virtualid.module.both.Actions;
 import ch.virtualid.packet.Audit;
 import ch.virtualid.packet.Request;
 import ch.virtualid.packet.Response;
@@ -80,9 +81,7 @@ public final class Worker implements Runnable {
                         try {
                             final @Nonnull Method method = request.getMethod(i);
                             replies.set(i, method.executeOnHost());
-                            if (method instanceof Action) {
-                                // TODO: Audit the executed method if it is an action.
-                            }
+                            if (method instanceof Action) Actions.audit((Action) method);
                             Database.commit();
                         } catch (@Nonnull SQLException exception) {
                             exception.printStackTrace(); // TODO: Remove eventually.

@@ -952,7 +952,7 @@ public final class Agents implements BothModule {
                     + " WHERE rs.entity = " + entity + " AND rw.entity = " + entity + (agent != null ? " AND (rs.agent = " + agent + " OR rw.agent = " + agent + ")": "")
                     + " AND (NOT rw.client OR rs.client) AND (NOT rw.role OR rs.role) AND (NOT rw.context_writing OR rs.context_writing)"
                     + " AND (rw.context IS NULL OR rs.context IS NOT NULL AND EXISTS (SELECT * FROM " + site + "context_subcontext cx WHERE cx.entity = " + entity + " AND cx.context = rs.context AND cx.subcontext = rw.context))"
-                    + " AND (rw.contact IS NULL OR rs.context IS NOT NULL AND EXISTS (SELECT * FROM " + site + "context_subcontext cx, " + site + "context_contact cc WHERE cx.entity = " + entity + " AND cx.context = rs.context AND cc.entity = " + entity + " AND cc.context = cx.subcontext AND cc.contact = rw.contact) OR rs.contact IS NOT NULL AND rw.contact = rs.contact)"
+                    + " AND (rw.contact IS NULL OR rs.contact IS NOT NULL AND rw.contact = rs.contact OR rs.context IS NOT NULL AND EXISTS (SELECT * FROM " + site + "context_subcontext cx, " + site + "context_contact cc WHERE cx.entity = " + entity + " AND cx.context = rs.context AND cc.entity = " + entity + " AND cc.context = cx.subcontext AND cc.contact = rw.contact))"
                     + " AND (rw.client OR rs.context_writing AND rs.context IS NOT NULL AND EXISTS (SELECT * FROM " + site + "context_subcontext cx, " + site + "outgoing_role og WHERE cx.entity = " + entity + " AND cx.context = rs.context AND og.entity = " + entity + " AND og.agent = rw.agent AND cx.subcontext = og.context))");
         }
     }

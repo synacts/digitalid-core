@@ -115,6 +115,23 @@ public interface ReadonlyAgentPermissions extends ReadonlyMap<SemanticType, Bool
     
     
     /**
+     * Returns all types of these permissions as numbers.
+     * 
+     * @return all types of these permissions as numbers.
+     */
+    @Pure
+    public @Nonnull String allTypesToString();
+    
+    /**
+     * Returns the write types of these permissions as numbers.
+     * 
+     * @return the write types of these permissions as numbers.
+     */
+    @Pure
+    public @Nonnull String writeTypesToString();
+    
+    
+    /**
      * Sets the parameters at the given start index of the prepared statement to this object.
      * 
      * @param preparedStatement the prepared statement whose parameters are to be set.
