@@ -2,7 +2,6 @@ package ch.virtualid.packet;
 
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.annotations.RawRecipient;
-import ch.virtualid.auxiliary.Time;
 import ch.virtualid.cryptography.SymmetricKey;
 import ch.virtualid.entity.Account;
 import ch.virtualid.entity.Entity;
@@ -169,8 +168,9 @@ public abstract class Packet implements Immutable {
         final boolean isResponse = (this instanceof Response);
         final @Nullable Response response = isResponse ? (Response) this : null;
         try { this.wrapper = new SelfcontainedWrapper(inputStream, false); } catch (InvalidEncodingException exception) { throw new PacketException(PacketError.PACKET, "The packet could not be decoded.", exception, isResponse); }
+        
         try { this.encryption = new EncryptionWrapper(wrapper.getElement().checkType(ENCRYPTION), isResponse ? request.getEncryption().getSymmetricKey() : null); } catch (InvalidEncodingException exception) { throw new PacketException(PacketError.ENCRYPTION, "The encryption could not be decoded.", exception, isResponse); }
-        if (encryption.getTime().isLessThan(Time.HALF_HOUR.ago())) throw new PacketException(PacketError.ENCRYPTION, "The encryption is older than half an hour.", null, isResponse);
+        try { Replay.check(encryption); } catch (ReplayDetectedException exception) { throw new PacketException(PacketError.REPLAY, "The packet has been replayed.", exception, isResponse); }
         
         final @Nullable HostIdentifier recipient = encryption.getRecipient();
         if (isResponse != (recipient == null)) throw new PacketException(PacketError.ENCRYPTION, "The recipient of a request may not be null.", null, isResponse);
@@ -178,7 +178,6 @@ public abstract class Packet implements Immutable {
         
         final @Nonnull ReadonlyList<Block> elements;
         try { elements = new ListWrapper(encryption.getElementNotNull()).getElements(); } catch (InvalidEncodingException exception) { throw new PacketException(PacketError.ELEMENTS, "The elements could not be decoded.", exception, isResponse); }
-        try { Replay.check(this); } catch (ReplayDetectedException exception) { throw new PacketException(PacketError.REPLAY, "The packet has been replayed.", exception, isResponse); }
         
         this.size = elements.size();
         if (size == 0) throw new PacketException(PacketError.ELEMENTS, "The encryption of a packet must contain at least one element.", null, isResponse);
@@ -192,7 +191,12 @@ public abstract class Packet implements Immutable {
             if (elements.isNotNull(i)) {
                 final @Nonnull SignatureWrapper signature;
                 try { signature = verified ? SignatureWrapper.decode(elements.getNotNull(i), account) : SignatureWrapper.decodeWithoutVerifying(elements.getNotNull(i), false, account); } catch (InvalidEncodingException | InvalidSignatureException exception) { throw new PacketException(PacketError.SIGNATURE, "A signature is invalid.", exception, isResponse); }
-                if (signature.getAudit() != null) audit = signature.getAudit();
+                try { signature.checkRecency(); } catch (InactiveSignatureException exception) { throw new PacketException(PacketError.SIGNATURE, "One of the signatures is no longer active.", exception, isResponse); }
+                
+                if (signature.getAudit() != null) {
+                    audit = signature.getAudit();
+                    if (signature.isNotSigned()) throw new PacketException(PacketError.SIGNATURE, "A packet that contains an audit has to be signed.");
+                }
                 
                 final @Nullable Block element = signature.getElement();
                 if (element != null) {
@@ -284,8 +288,6 @@ public abstract class Packet implements Immutable {
             }
         }
         
-        try { checkRecency(); } catch (InactiveSignatureException exception) { throw new PacketException(PacketError.SIGNATURE, "One the signatures is no longer active.", exception, isResponse); }
-        
         this.audit = audit;
         freeze();
     }
@@ -333,13 +335,6 @@ public abstract class Packet implements Immutable {
     public final void write(@Nonnull OutputStream outputStream) throws IOException {
         wrapper.write(outputStream, false);
     }
-    
-    
-    /**
-     * Checks the signatures of this packet for recency.
-     */
-    @Pure
-    abstract void checkRecency() throws InactiveSignatureException;
     
     
     /**

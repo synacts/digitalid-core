@@ -129,6 +129,12 @@ public final class SQLiteConfiguration extends Configuration implements Immutabl
     
     @Pure
     @Override
+    public @Nonnull String VECTOR() {
+        return "BLOB";
+    }
+    
+    @Pure
+    @Override
     public @Nonnull String REPLACE() {
         return "REPLACE";
     }

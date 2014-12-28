@@ -21,6 +21,7 @@ import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
+import ch.virtualid.handler.action.internal.ClientAgentAccredit;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identifier.InternalIdentifier;
 import ch.virtualid.identity.Identity;
@@ -330,12 +331,12 @@ public abstract class Method extends Handler {
                 }
                 
                 final @Nonnull ReadonlyAgentPermissions permissions = getRequiredPermissions(methods);
-                final @Nonnull Audit audit = new Audit(Time.MIN); // TODO: Synchronizer.getAudit(service);
+                final @Nullable Audit audit = reference instanceof ClientAgentAccredit ? null : new Audit(Time.MIN); // TODO: Synchronizer.getAudit(service);
                 final boolean lodged = reference instanceof InternalAction;
                 
                 if (service.equals(CoreService.SERVICE)) {
                     if (agent instanceof ClientAgent) {
-                        if (!agent.getPermissions().cover(permissions)) throw new PacketException(PacketError.AUTHORIZATION, "The permissions of the role do not cover the required permissions.");
+                        if (!agent.getPermissions().cover(permissions)) throw new PacketException(PacketError.AUTHORIZATION, "The permissions of the client agent do not cover the required permissions.");
                         return new ClientRequest(methods, subject, audit, ((ClientAgent) agent).getCommitment().addSecret(role.getClient().getSecret())).send();
                     } else {
                         assert agent instanceof OutgoingRole;

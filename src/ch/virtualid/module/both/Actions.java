@@ -71,7 +71,7 @@ public final class Actions implements BothModule {
     @Override
     public void createTables(final @Nonnull Site site) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "action (entity " + EntityClass.FORMAT + " NOT NULL, service " + Mapper.FORMAT + " NOT NULL, time BIGINT NOT NULL, " + Restrictions.FORMAT + ", " + AgentPermissions.FORMAT_NULL + ", agent " + Agent.FORMAT + ", recipient " + IdentifierClass.FORMAT + " NOT NULL, action " + Database.getConfiguration().BLOB() + " NOT NULL, PRIMARY KEY (entity, service, time), INDEX(time), FOREIGN KEY (entity) " + site.getEntityReference() + ", FOREIGN KEY (service) " + Mapper.REFERENCE + ", " + Restrictions.getForeignKeys(site) + ", " + AgentPermissions.REFERENCE + ", FOREIGN KEY (entity, agent) " + Agent.getReference(site) + ")");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "action (entity " + EntityClass.FORMAT + " NOT NULL, service " + Mapper.FORMAT + " NOT NULL, time BIGINT NOT NULL, " + AgentPermissions.FORMAT_NULL + ", " + Restrictions.FORMAT + ", agent " + Agent.FORMAT + ", recipient " + IdentifierClass.FORMAT + " NOT NULL, action " + Database.getConfiguration().BLOB() + " NOT NULL, PRIMARY KEY (entity, service, time), INDEX(time), FOREIGN KEY (entity) " + site.getEntityReference() + ", FOREIGN KEY (service) " + Mapper.REFERENCE + ", " + AgentPermissions.REFERENCE + ", " + Restrictions.getForeignKeys(site) + ", FOREIGN KEY (entity, agent) " + Agent.getReference(site) + ")");
             Mapper.addReference(site + "action", "contact");
             if (site instanceof Host) Mapper.addReference(site + "action", "entity", "entity", "time");
         }
@@ -102,7 +102,7 @@ public final class Actions implements BothModule {
     /**
      * Stores the semantic type {@code entry.actions.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType MODULE_ENTRY = SemanticType.create("entry.actions.module@virtualid.ch").load(TupleWrapper.TYPE, InternalNonHostIdentity.IDENTIFIER, SemanticType.ATTRIBUTE_IDENTIFIER, Time.TYPE, Restrictions.TYPE, AgentPermissions.TYPE, Agent.NUMBER, HostIdentity.IDENTIFIER, Packet.SIGNATURE);
+    private static final @Nonnull SemanticType MODULE_ENTRY = SemanticType.create("entry.actions.module@virtualid.ch").load(TupleWrapper.TYPE, InternalNonHostIdentity.IDENTIFIER, SemanticType.ATTRIBUTE_IDENTIFIER, Time.TYPE, AgentPermissions.TYPE, Restrictions.TYPE, Agent.NUMBER, HostIdentity.IDENTIFIER, Packet.SIGNATURE);
     
     /**
      * Stores the semantic type {@code actions.module@virtualid.ch}.
@@ -125,13 +125,13 @@ public final class Actions implements BothModule {
                 final @Nonnull NonHostAccount account = NonHostAccount.getNotNull(host, resultSet, 1);
                 final @Nonnull Identity service = IdentityClass.getNotNull(resultSet, 2);
                 final @Nonnull Time time = Time.get(resultSet, 3);
-                final @Nonnull Restrictions restrictions = Restrictions.get(account, resultSet, 4);
-                final @Nonnull AgentPermissions permissions = AgentPermissions.getEmptyOrSingle(resultSet, 9);
+                final @Nonnull AgentPermissions permissions = AgentPermissions.getEmptyOrSingle(resultSet, 4);
+                final @Nonnull Restrictions restrictions = Restrictions.get(account, resultSet, 6);
                 @Nullable Long number = resultSet.getLong(11);
                 if (resultSet.wasNull()) number = null;
                 final @Nonnull Identifier recipient = IdentifierClass.get(resultSet, 12);
                 final @Nonnull Block action = Block.get(Packet.SIGNATURE, resultSet, 13);
-                entries.add(new TupleWrapper(MODULE_ENTRY, account.getIdentity().toBlockable(InternalNonHostIdentity.IDENTIFIER), service.toBlockable(SemanticType.ATTRIBUTE_IDENTIFIER), time, restrictions, permissions, (number != null ? new Int64Wrapper(Agent.NUMBER, number) : null), recipient.toBlock().setType(HostIdentity.IDENTIFIER).toBlockable(), action.toBlockable()).toBlock());
+                entries.add(new TupleWrapper(MODULE_ENTRY, account.getIdentity().toBlockable(InternalNonHostIdentity.IDENTIFIER), service.toBlockable(SemanticType.ATTRIBUTE_IDENTIFIER), time, permissions, restrictions, (number != null ? new Int64Wrapper(Agent.NUMBER, number) : null), recipient.toBlock().setType(HostIdentity.IDENTIFIER).toBlockable(), action.toBlockable()).toBlock());
             }
             return new ListWrapper(MODULE_FORMAT, entries.freeze()).toBlock();
         }
@@ -149,8 +149,8 @@ public final class Actions implements BothModule {
                 identity.set(preparedStatement, 1);
                 IdentityClass.create(tuple.getElementNotNull(1)).toSemanticType().set(preparedStatement, 2);
                 new Time(tuple.getElementNotNull(2)).set(preparedStatement, 3);
-                new Restrictions(NonHostAccount.get(host, identity), tuple.getElementNotNull(3)).set(preparedStatement, 4); // The entity is wrong for services but it does not matter. (Correct would be Roles.getRole(host.getClient(), identity.toInternalPerson()).)
-                new AgentPermissions(tuple.getElementNotNull(4)).checkAreSingle().setEmptyOrSingle(preparedStatement, 9);
+                new AgentPermissions(tuple.getElementNotNull(3)).checkAreSingle().setEmptyOrSingle(preparedStatement, 4);
+                new Restrictions(NonHostAccount.get(host, identity), tuple.getElementNotNull(4)).set(preparedStatement, 6); // The entity is wrong for services but it does not matter. (Correct would be Roles.getRole(host.getClient(), identity.toInternalPerson()).)
                 if (tuple.isElementNull(5)) preparedStatement.setLong(11, new Int64Wrapper(tuple.getElementNotNull(5)).getValue());
                 else preparedStatement.setNull(11, Types.BIGINT);
                 IdentifierClass.create(tuple.getElementNotNull(6)).toHostIdentifier().set(preparedStatement, 12);
@@ -200,8 +200,8 @@ public final class Actions implements BothModule {
      * @param entity the entity whose audit trail is to be returned.
      * @param service the service for which the audit trail is wanted.
      * @param lastTime the time of the last request for the audit trail.
-     * @param restrictions the restrictions of the requesting agent.
      * @param permissions the permissions of the requesting agent.
+     * @param restrictions the restrictions of the requesting agent.
      * @param agent the agent for which the audit trail is restricted.
      * 
      * @return the audit trail of the given entity for the given service from the given time.
@@ -209,12 +209,19 @@ public final class Actions implements BothModule {
      * @require agent == null || service.equals(CoreService.TYPE) : "The agent is null or the audit trail is requested for the core service.";
      */
     @Pure
-    public static @Nonnull Audit getAudit(@Nonnull NonHostEntity entity, @Nonnull SemanticType service, @Nonnull Time lastTime, @Nonnull Restrictions restrictions, @Nonnull ReadonlyAgentPermissions permissions, @Nullable Agent agent) throws SQLException {
+    public static @Nonnull Audit getAudit(@Nonnull NonHostEntity entity, @Nonnull SemanticType service, @Nonnull Time lastTime, @Nonnull ReadonlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws SQLException {
         assert agent == null || service.equals(CoreService.TYPE) : "The agent is null or the audit trail is requested for the core service.";
         
         final @Nonnull Site site = entity.getSite();
-        final @Nonnull StringBuilder SQL = new StringBuilder("SELECT ").append(Database.getConfiguration().GREATEST()).append("(MAX(time), ").append(Database.getConfiguration().CURRENT_TIME()).append("), NULL UNION ");
+        final @Nonnull StringBuilder SQL = new StringBuilder("SELECT ").append(Database.getConfiguration().GREATEST()).append("(COALESCE(MAX(time), 0), ").append(Database.getConfiguration().CURRENT_TIME()).append("), NULL FROM ").append(site).append("action UNION ");
         SQL.append("SELECT NULL, action FROM ").append(site).append("action a WHERE entity = ").append(entity).append(" AND service = ").append(service).append(" AND time > ").append(lastTime);
+        
+        SQL.append(" AND (type_writing IS NULL OR NOT type_writing");
+        if (!permissions.canRead(AgentPermissions.GENERAL)) SQL.append(" AND type_writing IN ").append(permissions.allTypesToString());
+        SQL.append(" OR type_writing");
+        if (!permissions.canWrite(AgentPermissions.GENERAL)) SQL.append(" AND type_writing IN ").append(permissions.writeTypesToString());
+        SQL.append(")");
+        
         if (!restrictions.isClient()) SQL.append(" AND NOT client");
         if (!restrictions.isRole()) SQL.append(" AND NOT role");
         if (!restrictions.isWriting()) SQL.append(" AND NOT context_writing");
@@ -230,13 +237,8 @@ public final class Actions implements BothModule {
             SQL.append(" AND (contact IS NULL OR EXISTS (SELECT * FROM ").append(context.getEntity().getSite()).append("context_subcontext cx, ").append(context.getEntity().getSite()).append("context_contact cc WHERE cx.entity = ").append(context.getEntity()).append(" AND cx.context = ").append(context).append(" AND cc.entity = ").append(context.getEntity()).append(" AND cc.context = cx.subcontext AND cc.contact = a.contact))");
         }
         
-        SQL.append(" AND (type_writing IS NULL OR NOT type_writing");
-        if (!permissions.canRead(AgentPermissions.GENERAL)) SQL.append(" AND type_writing IN ").append(permissions.allTypesToString());
-        SQL.append(" OR type_writing");
-        if (!permissions.canWrite(AgentPermissions.GENERAL)) SQL.append(" AND type_writing IN ").append(permissions.writeTypesToString());
-        
-        SQL.append(") AND (agent IS NULL");
-        if (agent != null) SQL.append("OR EXISTS (SELECT * FROM ").append(site).append("agent_permission_order po, ").append(site).append("agent_restrictions_ord ro WHERE po.entity = ").append(entity).append(" AND po.stronger = ").append(agent).append(" AND po.weaker = a.agent AND ro.entity = ").append(entity).append(" AND ro.stronger = ").append(agent).append(" AND ro.weaker = a.agent)");
+        SQL.append(" AND (agent IS NULL");
+        if (agent != null) SQL.append(" OR EXISTS (SELECT * FROM ").append(site).append("agent_permission_order po, ").append(site).append("agent_restrictions_ord ro WHERE po.entity = ").append(entity).append(" AND po.stronger = ").append(agent).append(" AND po.weaker = a.agent AND ro.entity = ").append(entity).append(" AND ro.stronger = ").append(agent).append(" AND ro.weaker = a.agent)");
         SQL.append(")");
         
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL.toString())) {
@@ -265,13 +267,13 @@ public final class Actions implements BothModule {
         
         final @Nonnull Entity entity = action.getEntityNotNull();
         final @Nonnull Site site = entity.getSite();
-        final @Nonnull String TIME = Database.getConfiguration().GREATEST() + "(MAX(time) + 1, " + Database.getConfiguration().CURRENT_TIME() + ")";
-        final @Nonnull String SQL = "INSERT INTO " + site + "action (entity, service, time, " + Restrictions.COLUMNS + ", " + AgentPermissions.COLUMNS + ", agent, recipient, action) SELECT ?, ?, " + TIME + ", ?, ?, ?, ?, ?, ?, ?, ?, ?, ? FROM " + site + "action";
+        final @Nonnull String TIME = Database.getConfiguration().GREATEST() + "(COALESCE(MAX(time), 0) + 1, " + Database.getConfiguration().CURRENT_TIME() + ")";
+        final @Nonnull String SQL = "INSERT INTO " + site + "action (entity, service, time, " + AgentPermissions.COLUMNS + ", " + Restrictions.COLUMNS + ", agent, recipient, action) SELECT ?, ?, " + TIME + ", ?, ?, ?, ?, ?, ?, ?, ?, ?, ? FROM " + site + "action";
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
             entity.set(preparedStatement, 1);
             action.getService().getType().set(preparedStatement, 2);
-            action.getAuditRestrictions().set(preparedStatement, 3);
-            action.getAuditPermissions().setEmptyOrSingle(preparedStatement, 8);
+            action.getAuditPermissions().setEmptyOrSingle(preparedStatement, 3);
+            action.getAuditRestrictions().set(preparedStatement, 5);
             Agent.set(action.getAuditAgent(), preparedStatement, 10);
             action.getRecipient().set(preparedStatement, 11);
             action.getSignatureNotNull().toBlock().set(preparedStatement, 12);

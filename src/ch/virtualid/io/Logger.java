@@ -26,7 +26,7 @@ public final class Logger {
     /**
      * Stores the level above which messages are logged.
      */
-    public static final @Nonnull Level LEVEL = Level.INFORMATION;
+    public static final @Nonnull Level LEVEL = Level.WARNING;
     
     
     /**

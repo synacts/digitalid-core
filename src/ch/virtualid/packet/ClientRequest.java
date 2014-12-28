@@ -48,7 +48,7 @@ public final class ClientRequest extends Request {
      * @require Method.areSimilar(methods) : "All methods are similar and not null.";
      * @require methods.getNotNull(0).isOnClient() : "The methods are on a client.";
      */
-    public ClientRequest(@Nonnull ReadonlyList<Method> methods, @Nonnull InternalIdentifier subject, @Nonnull Audit audit, @Nonnull SecretCommitment commitment) throws SQLException, IOException, PacketException, ExternalException {
+    public ClientRequest(@Nonnull ReadonlyList<Method> methods, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull SecretCommitment commitment) throws SQLException, IOException, PacketException, ExternalException {
         this(methods, subject, audit, commitment, 0);
     }
     
@@ -61,7 +61,7 @@ public final class ClientRequest extends Request {
      * @param commitment the commitment containing the client secret.
      * @param iteration how many times this request was resent.
      */
-    private ClientRequest(@Nonnull ReadonlyList<Method> methods, @Nonnull InternalIdentifier subject, @Nonnull Audit audit, @Nonnull SecretCommitment commitment, int iteration) throws SQLException, IOException, PacketException, ExternalException {
+    private ClientRequest(@Nonnull ReadonlyList<Method> methods, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull SecretCommitment commitment, int iteration) throws SQLException, IOException, PacketException, ExternalException {
         super(methods, subject.getHostIdentifier(), getSymmetricKey(subject.getHostIdentifier(), Time.HOUR), subject, audit, commitment, iteration);
     }
     

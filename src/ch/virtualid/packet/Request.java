@@ -9,7 +9,6 @@ import ch.virtualid.cryptography.PublicKeyChain;
 import ch.virtualid.cryptography.SymmetricKey;
 import ch.virtualid.entity.Role;
 import ch.virtualid.exceptions.external.ExternalException;
-import ch.virtualid.exceptions.external.InactiveSignatureException;
 import ch.virtualid.exceptions.external.InvalidDeclarationException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
@@ -145,15 +144,6 @@ public class Request extends Packet {
         this.recipient = recipient;
         this.subject = getMethod(0).getSubject();
         this.iteration = 0;
-    }
-    
-    
-    @Pure
-    @Override
-    final void checkRecency() throws InactiveSignatureException {
-        for (final @Nonnull Method method : methods) {
-            method.getSignatureNotNull().checkRecency();
-        }
     }
     
     

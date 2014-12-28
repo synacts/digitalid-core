@@ -192,6 +192,12 @@ public final class MySQLConfiguration extends Configuration implements Immutable
     
     @Pure
     @Override
+    public @Nonnull String VECTOR() {
+        return "BINARY(17)";
+    }
+    
+    @Pure
+    @Override
     public @Nonnull String REPLACE() {
         return "REPLACE";
     }

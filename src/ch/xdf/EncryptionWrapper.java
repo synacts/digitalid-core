@@ -300,6 +300,16 @@ public final class EncryptionWrapper extends BlockWrapper implements Immutable {
     }
     
     /**
+     * Returns the initialization vector that is used for the encryption of the element or null if no encryption is used.
+     * 
+     * @return the initialization vector that is used for the encryption of the element or null if no encryption is used.
+     */
+    @Pure
+    public @Nullable InitializationVector getInitializationVector() {
+        return initializationVector;
+    }
+    
+    /**
      * Returns whether the element is encrypted.
      * 
      * @return whether the element is encrypted.

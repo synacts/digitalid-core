@@ -109,12 +109,20 @@ public abstract class Configuration implements Immutable {
     public abstract @Nonnull String BLOB();
     
     /**
-     * Returns the syntax for defining a hash.
+     * Returns the syntax for defining a 256-bit hash.
      * 
-     * @return the syntax for defining a hash.
+     * @return the syntax for defining a 256-bit hash.
      */
     @Pure
     public abstract @Nonnull String HASH();
+    
+    /**
+     * Returns the syntax for defining a 128-bit vector.
+     * 
+     * @return the syntax for defining a 128-bit vector.
+     */
+    @Pure
+    public abstract @Nonnull String VECTOR();
     
     /**
      * Returns the syntax for replacing existing entries during inserts.

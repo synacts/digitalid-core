@@ -1,16 +1,22 @@
 package ch.virtualid.server;
 
+import ch.virtualid.agent.Agent;
+import ch.virtualid.agent.ReadonlyAgentPermissions;
+import ch.virtualid.agent.Restrictions;
 import ch.virtualid.auxiliary.Time;
+import ch.virtualid.credential.Credential;
 import ch.virtualid.database.Database;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Action;
+import ch.virtualid.handler.InternalMethod;
 import ch.virtualid.handler.Method;
 import ch.virtualid.handler.Reply;
 import ch.virtualid.identifier.Identifier;
 import ch.virtualid.io.Level;
 import ch.virtualid.io.Logger;
+import ch.virtualid.module.CoreService;
 import ch.virtualid.module.Service;
 import ch.virtualid.module.both.Actions;
 import ch.virtualid.packet.Audit;
@@ -74,7 +80,6 @@ public final class Worker implements Runnable {
                     final @Nonnull FreezableList<Reply> replies = new FreezableArrayList<Reply>(size);
                     final @Nonnull FreezableList<PacketException> exceptions = new FreezableArrayList<PacketException>(size);
                     
-                    Database.commit();
                     for (int i = 0; i < size; i++) {
                         replies.add(null);
                         exceptions.add(null);
@@ -88,28 +93,49 @@ public final class Worker implements Runnable {
                             exceptions.set(i, new PacketException(PacketError.INTERNAL, "An SQLException occurred.", exception));
                             Database.rollback();
                         } catch (@Nonnull PacketException exception) {
+                            exception.printStackTrace(); // TODO: Remove eventually.
                             exceptions.set(i, exception);
                             Database.rollback();
                         }
                     }
                     
-                    final @Nullable Audit audit;
-                    if (request.getAudit() != null) {
-                        audit = new Audit(start); // TODO: Retrieve the audit of the given service and commit the database afterwards.
-                    } else {
-                        audit = null;
+                    @Nullable Audit audit = request.getAudit();
+                    if (audit != null) {
+                        final @Nonnull Method method = request.getMethod(0);
+                        if (!(method instanceof InternalMethod)) throw new PacketException(PacketError.AUTHORIZATION, "An audit may only be requested by internal methods.");
+                        
+                        final @Nullable ReadonlyAgentPermissions permissions;
+                        final @Nullable Restrictions restrictions;
+                        final @Nullable Agent agent;
+                        if (service.equals(CoreService.SERVICE)) {
+                            agent = method.getSignatureNotNull().getAgentCheckedAndRestricted(method.getNonHostAccount(), null);
+                            permissions = agent.getPermissions();
+                            restrictions = agent.getRestrictions();
+                        } else {
+                            final @Nonnull Credential credential = method.getSignatureNotNull().toCredentialsSignatureWrapper().getCredentials().getNotNull(0);
+                            permissions = credential.getPermissions();
+                            restrictions = credential.getRestrictions();
+                            agent = null;
+                            if (permissions == null || restrictions == null) throw new PacketException(PacketError.AUTHORIZATION, "If an audit is requested, neither the permissions nor the restrictions may be null.");
+                        }
+                        audit = Actions.getAudit(method.getNonHostAccount(), CoreService.TYPE, audit.getLastTime(), permissions, restrictions, agent);
+                        Database.commit();
                     }
                     
                     response = new Response(request, replies.freeze(), exceptions.freeze(), audit);
                 } catch (@Nonnull SQLException exception) {
+                    exception.printStackTrace(); // TODO: Remove eventually.
                     Database.rollback();
                     throw new PacketException(PacketError.INTERNAL, "An SQLException occurred.", exception);
                 } catch (@Nonnull IOException exception) {
+                    exception.printStackTrace(); // TODO: Remove eventually.
                     throw new PacketException(PacketError.EXTERNAL, "An IOException occurred.", exception);
                 } catch (@Nonnull ExternalException exception) {
+                    exception.printStackTrace(); // TODO: Remove eventually.
                     throw new PacketException(PacketError.EXTERNAL, "An ExternalException occurred.", exception);
                 }
             } catch (@Nonnull PacketException exception) {
+                exception.printStackTrace(); // TODO: Remove eventually.
                 response = new Response(request, exception.isRemote() ? new PacketException(PacketError.EXTERNAL, "An external error occurred.", exception) : exception);
                 error = exception.getError();
             }

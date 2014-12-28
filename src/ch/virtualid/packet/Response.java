@@ -3,7 +3,6 @@ package ch.virtualid.packet;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.annotations.RawRecipient;
 import ch.virtualid.exceptions.external.ExternalException;
-import ch.virtualid.exceptions.external.InactiveSignatureException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Reply;
 import ch.virtualid.identifier.HostIdentifier;
@@ -137,15 +136,6 @@ public final class Response extends Packet {
         assert request != null : "This response has a request.";
         
         return request;
-    }
-    
-    
-    @Pure
-    @Override
-    void checkRecency() throws InactiveSignatureException {
-        for (final @Nullable Reply reply : replies) {
-            if (reply != null) reply.getSignatureNotNull().checkRecency();
-        }
     }
     
     
