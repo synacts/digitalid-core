@@ -52,6 +52,8 @@ public final class Synchronizer extends Thread {
         action.executeOnClient();
         Database.commit();
         
+        // If a method is not similar to itself, make sure to execute it on the client only *after* it has been executed on the host.
+        
 //        final @Nonnull SemanticType module = action.getModule(); // TODO: Make sure the module is not suspended. Otherwise, pause until it's no longer suspended.
             
             // TODO: Include the entity, recipient and subject in the queue! + service

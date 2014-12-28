@@ -164,6 +164,13 @@ public final class ClientAgentAccredit extends CoreServiceInternalAction {
     
     @Pure
     @Override
+    public boolean isSimilarTo(@Nonnull Method other) {
+        return false;
+    }
+    
+    
+    @Pure
+    @Override
     public @Nonnull Agent getAuditAgent() {
         return clientAgent;
     }

@@ -125,6 +125,13 @@ public final class OutgoingRoleRelationReplace extends CoreServiceInternalAction
     
     @Pure
     @Override
+    public boolean isSimilarTo(@Nonnull Method other) {
+        return !isOnClient() || !getRole().getAgent().equals(outgoingRole);
+    }
+    
+    
+    @Pure
+    @Override
     public @Nonnull ReadonlyAgentPermissions getRequiredPermissions() {
         return new AgentPermissions(newRelation, true).freeze();
     }

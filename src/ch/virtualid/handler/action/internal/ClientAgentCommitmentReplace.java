@@ -116,9 +116,16 @@ public final class ClientAgentCommitmentReplace extends CoreServiceInternalActio
     
     @Pure
     @Override
+    public boolean isSimilarTo(@Nonnull Method other) {
+        return !isOnClient() || !getRole().getAgent().equals(clientAgent);
+    }
+    
+    @Pure
+    @Override
     public @Nullable PublicKey getPublicKey() {
         return null; // The commitment can be replaced with a commitment to an inactive public key of the recipient.
     }
+    
     
     @Pure
     @Override

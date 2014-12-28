@@ -21,7 +21,6 @@ import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
-import ch.virtualid.handler.action.internal.ClientAgentAccredit;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identifier.InternalIdentifier;
 import ch.virtualid.identity.Identity;
@@ -331,7 +330,7 @@ public abstract class Method extends Handler {
                 }
                 
                 final @Nonnull ReadonlyAgentPermissions permissions = getRequiredPermissions(methods);
-                final @Nullable Audit audit = reference instanceof ClientAgentAccredit ? null : new Audit(Time.MIN); // TODO: Synchronizer.getAudit(service);
+                final @Nullable Audit audit = reference.isSimilarTo(reference) ? new Audit(Time.MIN) : null; // TODO: Synchronizer.getAudit(service);
                 final boolean lodged = reference instanceof InternalAction;
                 
                 if (service.equals(CoreService.SERVICE)) {
