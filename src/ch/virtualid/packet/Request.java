@@ -99,7 +99,8 @@ public class Request extends Packet {
      * 
      * @require methods.isFrozen() : "The methods are frozen.";
      * @require methods.isNotEmpty() : "The methods are not empty.";
-     * @require Method.areSimilar(methods) : "All methods are similar and not null.";
+     * @require methods.doesNotContainNull() : "The list of methods does not contain null.";
+     * @require Method.areSimilar(methods) : "All methods are similar and belong to a non-host.";
      */
     public Request(@Nonnull ReadonlyList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject) throws SQLException, IOException, PacketException, ExternalException {
         this(methods, recipient, new SymmetricKey(), subject, null, null, 0);
@@ -121,8 +122,9 @@ public class Request extends Packet {
         
         assert methods.isFrozen() : "The methods are frozen.";
         assert methods.isNotEmpty() : "The methods are not empty.";
-        assert Method.areSimilar(methods) : "All methods are similar and not null.";
-     
+        assert methods.doesNotContainNull() : "The list of methods does not contain null.";
+        assert Method.areSimilar(methods) : "All methods are similar and belong to a non-host.";
+        
         if (iteration == 5) throw new PacketException(PacketError.EXTERNAL, "The resending of a request was triggered five times.");
         
         this.recipient = recipient;

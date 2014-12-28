@@ -58,7 +58,7 @@ public final class Listener extends Thread {
                 threadPoolExecutor.execute(new Worker(socket));
                 LOGGER.log(Level.INFORMATION, "Connection accepted from " + socket.getInetAddress());
             } catch (@Nonnull IOException exception) {
-                LOGGER.log(Level.WARNING, exception);
+                if (!serverSocket.isClosed()) LOGGER.log(Level.WARNING, exception);
             }
         }
     }
@@ -69,10 +69,11 @@ public final class Listener extends Thread {
     void shutDown() {
         try {
             serverSocket.close();
-        } catch (@Nonnull IOException exception) {
+            threadPoolExecutor.shutdown();
+            threadPoolExecutor.awaitTermination(5L, TimeUnit.SECONDS);
+        } catch (@Nonnull IOException | InterruptedException exception) {
             LOGGER.log(Level.WARNING, exception);
         }
-        threadPoolExecutor.shutdown();
     }
     
 }

@@ -40,7 +40,8 @@ public final class HostRequest extends Request {
      * 
      * @require methods.isFrozen() : "The methods are frozen.";
      * @require methods.isNotEmpty() : "The methods are not empty.";
-     * @require Method.areSimilar(methods) : "All methods are similar and not null.";
+     * @require methods.doesNotContainNull() : "The list of methods does not contain null.";
+     * @require Method.areSimilar(methods) : "All methods are similar and belong to a non-host.";
      * @require Server.hasHost(signer.getHostIdentifier()) : "The host of the signer is running on this server.";
      */
     public HostRequest(@Nonnull ReadonlyList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject, @Nonnull InternalIdentifier signer) throws SQLException, IOException, PacketException, ExternalException {

@@ -12,15 +12,11 @@ import javax.annotation.Nullable;
  * 
  * @see InvalidEncodingException
  * @see InvalidSignatureException
+ * @see InactiveSignatureException
  * @see InvalidDeclarationException
  * 
  * @see IdentityNotFoundException
  * @see SomethingNotFoundException
- * 
- * @see InactiveSignatureException
- * @see ReplayDetectedException
- * 
- * @see WrongReplyException
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0

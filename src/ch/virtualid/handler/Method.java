@@ -171,7 +171,9 @@ public abstract class Method extends Handler {
      * - belong to the same service and the same class of methods.<br>
      * (The latter is implemented by inheritance and dynamic method binding.)
      * <p>
-     * You can override this method and return {@code false} if this method should be sent alone (e.g. due to an overridden {@link #send()} method).
+     * You can override this method and return {@code false} if this method
+     * should be sent alone (e.g. due to an overridden {@link #send()} method).
+     * The implementation has to be transitive but must not be reflexive.
      * 
      * @param other the other method to compare this one with.
      * 
@@ -216,26 +218,27 @@ public abstract class Method extends Handler {
     
     
     /**
-     * Returns whether the given methods are {@link #isSimilarTo(ch.virtualid.handler.Method) similar} to each other (in both directions) and not null.
+     * Returns whether the given methods are {@link #isSimilarTo(ch.virtualid.handler.Method) similar} to each other (in both directions) and belong to a non-host.
      * 
-     * @param methods the methods to check for similarity and non-nullness.
+     * @param methods the methods to check for similarity and belonging to a non-host.
      * 
-     * @return whether the given methods are similar to each other and not null.
+     * @return whether the given methods are similar to each other and belong to a non-host.
      * 
      * @require methods.isFrozen() : "The list of methods is frozen.";
      * @require methods.isNotEmpty() : "The list of methods is not empty.";
+     * @require methods.doesNotContainNull() : "The list of methods does not contain null.";
      */
     @Pure
     public static boolean areSimilar(@Nonnull ReadonlyList<? extends Method> methods) {
         assert methods.isFrozen() : "The list of methods is frozen.";
         assert methods.isNotEmpty() : "The list of methods is not empty.";
+        assert methods.doesNotContainNull() : "The list of methods does not contain null.";
         
         final @Nonnull ReadonlyIterator<? extends Method> iterator = methods.iterator();
-        final @Nullable Method reference = iterator.next();
-        if (reference == null) return false;
+        final @Nonnull Method reference = iterator.next();
         while (iterator.hasNext()) {
-            final @Nullable Method method = iterator.next();
-            if (method == null || !method.isNonHost() || !method.isSimilarTo(reference) || !reference.isSimilarTo(method)) return false;
+            final @Nonnull Method method = iterator.next();
+            if (!method.isNonHost() || !method.isSimilarTo(reference) || !reference.isSimilarTo(method)) return false;
         }
         return true;
     }
@@ -267,14 +270,13 @@ public abstract class Method extends Handler {
      * 
      * @require methods.isFrozen() : "The list of methods is frozen.";
      * @require methods.isNotEmpty() : "The list of methods is not empty.";
-     * @require areSimilar(methods) : "All methods are similar and not null.";
+     * @require methods.doesNotContainNull() : "The list of methods does not contain null.";
+     * @require areSimilar(methods) : "All methods are similar and belong to a non-host.";
      * 
      * @ensure return.hasRequest() : "The returned response has a request.";
      */
     public static @Nonnull Response send(@Nonnull ReadonlyList<Method> methods) throws SQLException, IOException, PacketException, ExternalException {
-        assert methods.isFrozen() : "The list of methods is frozen.";
-        assert methods.isNotEmpty() : "The list of methods is not empty.";
-        assert areSimilar(methods) : "All methods are similar and not null.";
+        assert areSimilar(methods) : "All methods are similar and belong to a non-host.";
         
         final @Nonnull Method reference = methods.getNotNull(0);
         final @Nullable Entity entity = reference.getEntity();

@@ -117,7 +117,7 @@ public final class ClientAgentCommitmentReplace extends CoreServiceInternalActio
     @Pure
     @Override
     public boolean isSimilarTo(@Nonnull Method other) {
-        return !isOnClient() || !getRole().getAgent().equals(clientAgent);
+        return super.isSimilarTo(other) && (!isOnClient() || !getRole().getAgent().equals(clientAgent));
     }
     
     @Pure

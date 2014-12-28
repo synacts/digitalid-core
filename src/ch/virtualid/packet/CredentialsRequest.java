@@ -69,7 +69,8 @@ public final class CredentialsRequest extends Request {
      * 
      * @require methods.isFrozen() : "The methods are frozen.";
      * @require methods.isNotEmpty() : "The methods are not empty.";
-     * @require Method.areSimilar(methods) : "All methods are similar and not null.";
+     * @require methods.doesNotContainNull() : "The list of methods does not contain null.";
+     * @require Method.areSimilar(methods) : "All methods are similar and belong to a non-host.";
      * 
      * @require credentials.isFrozen() : "The credentials are frozen.";
      * @require CredentialsSignatureWrapper.credentialsAreValid(credentials) : "The credentials are valid.";

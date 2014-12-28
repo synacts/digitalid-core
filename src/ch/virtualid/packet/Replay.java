@@ -4,7 +4,6 @@ import ch.virtualid.auxiliary.Time;
 import ch.virtualid.cryptography.InitializationVector;
 import ch.virtualid.database.Database;
 import ch.virtualid.errors.InitializationError;
-import ch.virtualid.exceptions.external.ReplayDetectedException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.io.Level;
@@ -18,7 +17,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * Checks that no other packet with the same encryption time and hash was received during the last half hour.
+ * Checks that no other encryption with the same initialization vector was received during the last half hour.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
@@ -55,7 +54,7 @@ public final class Replay {
      * 
      * @param encryption the encryption to check for a replay attack.
      */
-    public static void check(@Nonnull EncryptionWrapper encryption) throws SQLException, ReplayDetectedException, PacketException {
+    public static void check(@Nonnull EncryptionWrapper encryption) throws SQLException, PacketException {
         final @Nonnull Time time = encryption.getTime();
         final @Nullable InitializationVector initializationVector = encryption.getInitializationVector();
         
@@ -69,7 +68,7 @@ public final class Replay {
                 time.set(preparedStatement, 2);
                 preparedStatement.executeUpdate();
             } catch (@Nonnull SQLException exception) {
-                throw new ReplayDetectedException(encryption);
+                throw new PacketException(PacketError.REPLAY, "The encryption has been replayed.", exception);
             }
         }
     }

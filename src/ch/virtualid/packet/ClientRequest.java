@@ -45,7 +45,8 @@ public final class ClientRequest extends Request {
      * 
      * @require methods.isFrozen() : "The methods are frozen.";
      * @require methods.isNotEmpty() : "The methods are not empty.";
-     * @require Method.areSimilar(methods) : "All methods are similar and not null.";
+     * @require methods.doesNotContainNull() : "The list of methods does not contain null.";
+     * @require Method.areSimilar(methods) : "All methods are similar and belong to a non-host.";
      * @require methods.getNotNull(0).isOnClient() : "The methods are on a client.";
      */
     public ClientRequest(@Nonnull ReadonlyList<Method> methods, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull SecretCommitment commitment) throws SQLException, IOException, PacketException, ExternalException {

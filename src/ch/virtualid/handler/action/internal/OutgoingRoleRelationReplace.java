@@ -126,7 +126,7 @@ public final class OutgoingRoleRelationReplace extends CoreServiceInternalAction
     @Pure
     @Override
     public boolean isSimilarTo(@Nonnull Method other) {
-        return !isOnClient() || !getRole().getAgent().equals(outgoingRole);
+        return super.isSimilarTo(other) && (!isOnClient() || !getRole().getAgent().equals(outgoingRole));
     }
     
     

@@ -10,8 +10,6 @@ import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InactiveSignatureException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.external.InvalidSignatureException;
-import ch.virtualid.exceptions.external.ReplayDetectedException;
-import ch.virtualid.exceptions.external.WrongReplyException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Method;
@@ -170,7 +168,7 @@ public abstract class Packet implements Immutable {
         try { this.wrapper = new SelfcontainedWrapper(inputStream, false); } catch (InvalidEncodingException exception) { throw new PacketException(PacketError.PACKET, "The packet could not be decoded.", exception, isResponse); }
         
         try { this.encryption = new EncryptionWrapper(wrapper.getElement().checkType(ENCRYPTION), isResponse ? request.getEncryption().getSymmetricKey() : null); } catch (InvalidEncodingException exception) { throw new PacketException(PacketError.ENCRYPTION, "The encryption could not be decoded.", exception, isResponse); }
-        try { Replay.check(encryption); } catch (ReplayDetectedException exception) { throw new PacketException(PacketError.REPLAY, "The packet has been replayed.", exception, isResponse); }
+        Replay.check(encryption);
         
         final @Nullable HostIdentifier recipient = encryption.getRecipient();
         if (isResponse != (recipient == null)) throw new PacketException(PacketError.ENCRYPTION, "The recipient of a request may not be null.", null, isResponse);
@@ -225,8 +223,8 @@ public abstract class Packet implements Immutable {
                                     final @Nonnull Method method = request.getMethod(i);
                                     final @Nullable Class<? extends Reply> replyClass = method.getReplyClass();
                                     final @Nonnull Reply reply = Reply.get(method.hasEntity() ? method.getNonHostEntity() : null, (HostSignatureWrapper) signature, block);
-                                    if (replyClass == null) throw new PacketException(PacketError.REPLY, "No reply was expected but '" + reply.getClass().getName() + "' was received.", new WrongReplyException(reply), isResponse);
-                                    if (!replyClass.isInstance(reply)) throw new PacketException(PacketError.REPLY, "A reply was '" + reply.getClass().getName() + "' instead of '" + replyClass.getName() + "'.", new WrongReplyException(reply), isResponse);
+                                    if (replyClass == null) throw new PacketException(PacketError.REPLY, "No reply was expected but '" + reply.getClass().getName() + "' was received.", null, isResponse);
+                                    if (!replyClass.isInstance(reply)) throw new PacketException(PacketError.REPLY, "A reply was '" + reply.getClass().getName() + "' instead of '" + replyClass.getName() + "'.", null, isResponse);
                                     response.setReply(i, reply);
                                 }
                             } else throw new PacketException(PacketError.SIGNATURE, "A reply from the host " + request.getRecipient() + " was not signed by a host.", null, isResponse);
