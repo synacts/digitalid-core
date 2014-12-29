@@ -19,9 +19,10 @@ import ch.virtualid.io.Logger;
 import ch.virtualid.module.CoreService;
 import ch.virtualid.module.Service;
 import ch.virtualid.module.both.Actions;
-import ch.virtualid.packet.Audit;
 import ch.virtualid.packet.Request;
+import ch.virtualid.packet.RequestAudit;
 import ch.virtualid.packet.Response;
+import ch.virtualid.packet.ResponseAudit;
 import ch.virtualid.util.FreezableArrayList;
 import ch.virtualid.util.FreezableList;
 import java.io.IOException;
@@ -99,8 +100,9 @@ public final class Worker implements Runnable {
                         }
                     }
                     
-                    @Nullable Audit audit = request.getAudit();
-                    if (audit != null) {
+                    @Nullable RequestAudit requestAudit = request.getAudit();
+                    @Nullable ResponseAudit responseAudit = null;
+                    if (requestAudit != null) {
                         final @Nonnull Method method = request.getMethod(0);
                         if (!(method instanceof InternalMethod)) throw new PacketException(PacketError.AUTHORIZATION, "An audit may only be requested by internal methods.");
                         
@@ -118,11 +120,11 @@ public final class Worker implements Runnable {
                             agent = null;
                             if (permissions == null || restrictions == null) throw new PacketException(PacketError.AUTHORIZATION, "If an audit is requested, neither the permissions nor the restrictions may be null.");
                         }
-                        audit = Actions.getAudit(method.getNonHostAccount(), CoreService.TYPE, audit.getLastTime(), permissions, restrictions, agent);
+                        responseAudit = Actions.getAudit(method.getNonHostAccount(), CoreService.TYPE, requestAudit.getLastTime(), permissions, restrictions, agent);
                         Database.commit();
                     }
                     
-                    response = new Response(request, replies.freeze(), exceptions.freeze(), audit);
+                    response = new Response(request, replies.freeze(), exceptions.freeze(), responseAudit);
                 } catch (@Nonnull SQLException exception) {
                     exception.printStackTrace(); // TODO: Remove eventually.
                     Database.rollback();

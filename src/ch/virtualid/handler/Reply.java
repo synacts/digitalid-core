@@ -226,7 +226,7 @@ public abstract class Reply extends Handler implements SQLizable {
         assert Database.isMainThread() : "This method block is called in the main thread.";
         
         try (@Nonnull Statement statement = Database.createStatement()) {
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS general_reply (reply " + Database.getConfiguration().PRIMARY_KEY() + ", time " + Time.FORMAT + " NOT NULL, signature " + Database.getConfiguration().BLOB() + " NOT NULL)");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS general_reply (reply " + Database.getConfiguration().PRIMARY_KEY() + ", time " + Time.FORMAT + " NOT NULL, signature " + Block.FORMAT + " NOT NULL)");
         } catch (@Nonnull SQLException exception) {
             throw new InitializationError("The database table of the reply logger could not be created.", exception);
         }
@@ -241,7 +241,7 @@ public abstract class Reply extends Handler implements SQLizable {
                     Database.LOGGER.log(Level.WARNING, exception);
                 }
             }
-        }, 3600000l, 2592000000l); // Time.HOUR.getValue(), Time.MONTH.getValue()
+        }, 3600000l, 2592000000l); // Time.HOUR.getValue(), Time.MONTH.getValue() (The initialization of the time class should not be triggered.)
     }
     
     /**

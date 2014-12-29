@@ -26,7 +26,7 @@ public final class Listener extends Thread {
     private static final @Nonnull Logger LOGGER = new Logger("Listener.log");
     
     /**
-     * The server socket is bound to Virtual ID's {@link Server#PORT port}.
+     * Stores the server socket to accept incoming requests.
      */
     private final @Nonnull ServerSocket serverSocket;
     
@@ -36,11 +36,13 @@ public final class Listener extends Thread {
     private final @Nonnull ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(4, 16, 60, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(100), new ThreadPoolExecutor.AbortPolicy());
     
     /**
-     * Creates a new listener that accepts incoming requests.
+     * Creates a new listener that accepts incoming requests on the given port.
+     * 
+     * @param port the port number on which incoming requests are accepted.
      */
-    Listener() {
+    Listener(int port) {
         try {
-            serverSocket = new ServerSocket(Server.PORT);
+            serverSocket = new ServerSocket(port);
         } catch (@Nonnull IOException exception) {
             throw new InitializationError("The server could not bind to Virtual ID's port (" + Server.PORT + ").", exception);
         }

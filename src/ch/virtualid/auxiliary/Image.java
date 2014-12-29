@@ -1,7 +1,6 @@
 package ch.virtualid.auxiliary;
 
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.database.Database;
 import ch.virtualid.errors.InitializationError;
 import ch.virtualid.errors.ShouldNeverHappenError;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
@@ -174,7 +173,7 @@ public final class Image implements Immutable, Blockable, SQLizable {
     /**
      * Stores the data type used to store instances of this class in the database.
      */
-    public static final @Nonnull String FORMAT = Database.getConfiguration().BLOB();
+    public static final @Nonnull String FORMAT = Block.FORMAT;
     
     /**
      * Returns the given column of the result set as an instance of this class.

@@ -208,6 +208,7 @@ public class Client extends Site implements Observer {
         // The role table needs to be created in advance.
         Roles.createTable(this);
         CoreService.SERVICE.createTables(this);
+        Synchronizer.load(this);
         Database.commit();
     }
     
@@ -414,7 +415,7 @@ public class Client extends Site implements Observer {
         assert category.isInternalNonHostIdentity() : "The category denotes an internal non-host identity.";
         assert !category.isType() || roles.size() <= 1 && identifiers.isEmpty() : "If the category denotes a type, at most one role and no identifier may be given.";
         
-        Database.commit();
+        Database.commit(); // This commit is necessary in case the client and host share the same database.
         final @Nonnull AccountOpen accountOpen = new AccountOpen(subject, category, this); accountOpen.send();
         final @Nonnull InternalNonHostIdentity identity = (InternalNonHostIdentity) Mapper.mapIdentity(subject, category, null);
         final @Nonnull NativeRole newRole = addRole(identity, accountOpen.getAgentNumber());

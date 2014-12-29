@@ -10,6 +10,7 @@ import ch.virtualid.cryptography.SymmetricKey;
 import ch.virtualid.entity.Role;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidDeclarationException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Method;
@@ -117,7 +118,7 @@ public class Request extends Packet {
      * @param field an object that contains the signing parameter and is passed back with {@link #setField(java.lang.Object)}.
      * @param iteration how many times this request was resent.
      */
-    Request(@Nonnull ReadonlyList<Method> methods, @Nonnull HostIdentifier recipient, @Nullable SymmetricKey symmetricKey, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nullable Object field, int iteration) throws SQLException, IOException, PacketException, ExternalException {
+    Request(@Nonnull ReadonlyList<Method> methods, @Nonnull HostIdentifier recipient, @Nullable SymmetricKey symmetricKey, @Nonnull InternalIdentifier subject, @Nullable RequestAudit audit, @Nullable Object field, int iteration) throws SQLException, IOException, PacketException, ExternalException {
         super(methods, methods.size(), field, recipient, symmetricKey, subject, audit);
         
         assert methods.isFrozen() : "The methods are frozen.";
@@ -217,6 +218,13 @@ public class Request extends Packet {
     }
     
     
+    @Pure
+    @Override
+    public final @Nullable RequestAudit getAudit() throws InvalidEncodingException {
+        final @Nullable Audit audit = super.getAudit();
+        return audit != null ? audit.toRequestAudit() : null;
+    }
+    
     /**
      * Returns the recipient of this request.
      * 
@@ -299,6 +307,7 @@ public class Request extends Packet {
      */
     public final @Nonnull Response send(boolean verified) throws SQLException, IOException, PacketException, ExternalException {
         try (@Nonnull Socket socket = new Socket("vid." + getRecipient().getString(), Server.PORT)) {
+            socket.setSoTimeout(10000);
             this.write(socket.getOutputStream());
             return new Response(this, socket.getInputStream(), verified);
         } catch (@Nonnull PacketException exception) {

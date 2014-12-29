@@ -225,7 +225,7 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
         if (time != null && !time.isPositive()) throw new InvalidEncodingException("The signature time has to be positive.");
         this.element = tuple.getElement(2);
         if (element != null) element.setType(block.getType().getParameters().getNotNull(0));
-        this.audit = tuple.isElementNull(3) ? null : new Audit(tuple.getElementNotNull(3));
+        this.audit = tuple.isElementNull(3) ? null : Audit.get(tuple.getElementNotNull(3));
         this.verified = verified;
     }
     

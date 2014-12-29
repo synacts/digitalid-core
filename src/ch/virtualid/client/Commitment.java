@@ -5,7 +5,6 @@ import ch.virtualid.auxiliary.Time;
 import ch.virtualid.cryptography.Element;
 import ch.virtualid.cryptography.Exponent;
 import ch.virtualid.cryptography.PublicKey;
-import ch.virtualid.database.Database;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identifier.HostIdentifier;
@@ -229,7 +228,7 @@ public class Commitment implements Immutable, Blockable, SQLizable {
     /**
      * Stores the columns used to store instances of this class in the database.
      */
-    public static final @Nonnull String FORMAT = "host " + Mapper.FORMAT + " NOT NULL, time " + Time.FORMAT + " NOT NULL, value " + Database.getConfiguration().BLOB() + " NOT NULL";
+    public static final @Nonnull String FORMAT = "host " + Mapper.FORMAT + " NOT NULL, time " + Time.FORMAT + " NOT NULL, value " + Block.FORMAT + " NOT NULL";
     
     /**
      * Stores the columns used to retrieve instances of this class from the database.

@@ -8,7 +8,7 @@ import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.attribute.CertifiedAttributeValue;
-import ch.virtualid.auxiliary.Time;
+import ch.virtualid.client.Synchronizer;
 import ch.virtualid.contact.Authentications;
 import ch.virtualid.contact.Contact;
 import ch.virtualid.contact.ReadonlyAuthentications;
@@ -27,13 +27,13 @@ import ch.virtualid.identity.Identity;
 import ch.virtualid.identity.Person;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.CoreService;
-import ch.virtualid.module.Service;
-import ch.virtualid.packet.Audit;
 import ch.virtualid.packet.ClientRequest;
 import ch.virtualid.packet.CredentialsRequest;
 import ch.virtualid.packet.HostRequest;
 import ch.virtualid.packet.Request;
+import ch.virtualid.packet.RequestAudit;
 import ch.virtualid.packet.Response;
+import ch.virtualid.packet.ResponseAudit;
 import ch.virtualid.util.FreezableArrayList;
 import ch.virtualid.util.ReadonlyIterator;
 import ch.virtualid.util.ReadonlyList;
@@ -196,10 +196,14 @@ public abstract class Method extends Handler {
      * 
      * @require isNonHost() : "This method belongs to a non-host.";
      * 
+     * @ensure return.getSize() == 1 : "The response contains one element.";
      * @ensure return.hasRequest() : "The returned response has a request.";
      */
     public @Nonnull Response send() throws SQLException, IOException, PacketException, ExternalException {
-        return Method.send(new FreezableArrayList<Method>(this).freeze());
+        final @Nonnull Response response = Method.send(new FreezableArrayList<Method>(this).freeze(), Synchronizer.getRequestAudit(this));
+        final @Nullable ResponseAudit responseAudit = response.getAudit();
+        response.checkReply(0);
+        return response;
     }
     
     /**
@@ -263,6 +267,7 @@ public abstract class Method extends Handler {
      * Sends the blocks encoded by the given methods to the common recipient.
      * 
      * @param methods the methods whose blocks are to be sent.
+     * @param audit the request audit or null if no audit is requested.
      * 
      * @return a list of replies, which can be null, corresponding to the methods.
      * 
@@ -273,16 +278,16 @@ public abstract class Method extends Handler {
      * @require methods.doesNotContainNull() : "The list of methods does not contain null.";
      * @require areSimilar(methods) : "All methods are similar and belong to a non-host.";
      * 
+     * @ensure return.getSize() == methods.size() : "The returned response and the given methods have the same size.";
      * @ensure return.hasRequest() : "The returned response has a request.";
      */
-    public static @Nonnull Response send(@Nonnull ReadonlyList<Method> methods) throws SQLException, IOException, PacketException, ExternalException {
+    public static @Nonnull Response send(@Nonnull ReadonlyList<Method> methods, @Nullable RequestAudit audit) throws SQLException, IOException, PacketException, ExternalException {
         assert areSimilar(methods) : "All methods are similar and belong to a non-host.";
         
         final @Nonnull Method reference = methods.getNotNull(0);
         final @Nullable Entity entity = reference.getEntity();
         final @Nonnull InternalIdentifier subject = reference.getSubject();
         final @Nonnull Identity identity = subject.getIdentity();
-        final @Nonnull Service service = reference.getService();
         final @Nonnull HostIdentifier recipient = reference.getRecipient();
         
         if (reference.isOnHost() && !reference.canBeSentByHosts()) throw new PacketException(PacketError.INTERNAL, "These methods cannot be sent by hosts.");
@@ -332,10 +337,9 @@ public abstract class Method extends Handler {
                 }
                 
                 final @Nonnull ReadonlyAgentPermissions permissions = getRequiredPermissions(methods);
-                final @Nullable Audit audit = reference.isSimilarTo(reference) ? new Audit(Time.MIN) : null; // TODO: Synchronizer.getAudit(service);
                 final boolean lodged = reference instanceof InternalAction;
                 
-                if (service.equals(CoreService.SERVICE)) {
+                if (reference.getService().equals(CoreService.SERVICE)) {
                     if (agent instanceof ClientAgent) {
                         if (!agent.getPermissions().cover(permissions)) throw new PacketException(PacketError.AUTHORIZATION, "The permissions of the client agent do not cover the required permissions.");
                         return new ClientRequest(methods, subject, audit, ((ClientAgent) agent).getCommitment().addSecret(role.getClient().getSecret())).send();
@@ -348,8 +352,6 @@ public abstract class Method extends Handler {
                     // TODO: Retrieve the external credentials from the role or throw a packet exception if the permissions are not covered.
                     return new CredentialsRequest(methods, recipient, subject, audit, credentials, null, lodged, null).send();
                 }
-                
-                // TODO: Retrieve the audit from the response?
             }
         }
     }

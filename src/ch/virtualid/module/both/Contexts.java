@@ -56,7 +56,7 @@ public final class Contexts implements BothModule {
      */
     public static void createReferenceTable(@Nonnull Site site) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "context_name (entity " + EntityClass.FORMAT + " NOT NULL, context " + Context.FORMAT + " NOT NULL, name VARCHAR(50) NOT NULL COLLATE " + Database.getConfiguration().BINARY() + ", icon " + Database.getConfiguration().BLOB() + " NOT NULL, PRIMARY KEY (entity, context), FOREIGN KEY (entity) " + site.getEntityReference() + ")");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "context_name (entity " + EntityClass.FORMAT + " NOT NULL, context " + Context.FORMAT + " NOT NULL, name VARCHAR(50) NOT NULL COLLATE " + Database.getConfiguration().BINARY() + ", icon " + Image.FORMAT + " NOT NULL, PRIMARY KEY (entity, context), FOREIGN KEY (entity) " + site.getEntityReference() + ")");
         }
     }
     

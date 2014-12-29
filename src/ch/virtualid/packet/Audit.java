@@ -12,30 +12,32 @@ import ch.xdf.Block;
 import ch.xdf.ListWrapper;
 import ch.xdf.TupleWrapper;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * This class models an audit with a time and trail.
  * 
+ * @see RequestAudit
+ * @see ResponseAudit
+ * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public final class Audit implements Immutable, Blockable {
+public abstract class Audit implements Immutable, Blockable {
     
     /**
      * Stores the semantic type {@code last.time.audit@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType LAST_TIME = SemanticType.create("last.time.audit@virtualid.ch").load(Time.TYPE);
+    public static final @Nonnull SemanticType LAST_TIME = SemanticType.create("last.time.audit@virtualid.ch").load(Time.TYPE);
     
     /**
      * Stores the semantic type {@code this.time.audit@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType THIS_TIME = SemanticType.create("this.time.audit@virtualid.ch").load(Time.TYPE);
+    public static final @Nonnull SemanticType THIS_TIME = SemanticType.create("this.time.audit@virtualid.ch").load(Time.TYPE);
     
     /**
      * Stores the semantic type {@code trail.audit@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType TRAIL = SemanticType.create("trail.audit@virtualid.ch").load(Packet.SIGNATURES);
+    public static final @Nonnull SemanticType TRAIL = SemanticType.create("trail.audit@virtualid.ch").load(Packet.SIGNATURES);
     
     /**
      * Stores the semantic type {@code audit@virtualid.ch}.
@@ -49,47 +51,12 @@ public final class Audit implements Immutable, Blockable {
     private final @Nonnull Time lastTime;
     
     /**
-     * Stores the time of this audit.
-     */
-    private final @Nullable Time thisTime;
-    
-    /**
-     * Stores the trail of this audit.
-     * 
-     * @invariant trail == null || trail.isFrozen() : "The trail is either null or frozen.";
-     * @invariant trail == null || trail.doesNotContainNull() : "The trail is either null or does not contain null.";
-     * @invariant trail == null || for (Block block : trail) block.getType().isBasedOn(Packet.SIGNATURE) : "Each block of the trail is based on the packet signature type.";
-     */
-    private final @Nullable ReadonlyList<Block> trail;
-    
-    /**
      * Creates a new audit with the given last time.
      * 
      * @param lastTime the time of the last audit.
      */
-    public Audit(@Nonnull Time lastTime) {
-        this(lastTime, null, null);
-    }
-    
-    /**
-     * Creates a new audit with the given times and trail.
-     * 
-     * @param lastTime the time of the last audit.
-     * @param thisTime the time of this audit.
-     * @param trail the trail of this audit.
-     * 
-     * @require trail == null || trail.isFrozen() : "The trail is either null or frozen.";
-     * @require trail == null || trail.doesNotContainNull() : "The trail is either null or does not contain null.";
-     * @require trail == null || for (Block block : trail) block.getType().isBasedOn(Packet.SIGNATURE) : "Each block of the trail is based on the packet signature type.";
-     */
-    public Audit(@Nonnull Time lastTime, @Nullable Time thisTime, @Nullable ReadonlyList<Block> trail) {
-        assert trail == null || trail.isFrozen() : "The trail is either null or frozen.";
-        assert trail == null || trail.doesNotContainNull() : "The trail is either null or does not contain null.";
-        if (trail != null) for (final @Nonnull Block block : trail) assert block.getType().isBasedOn(Packet.SIGNATURE) : "Each block of the trail is based on the packet signature type.";
-        
+    Audit(@Nonnull Time lastTime) {
         this.lastTime = lastTime;
-        this.thisTime = thisTime;
-        this.trail = trail;
     }
     
     /**
@@ -99,18 +66,23 @@ public final class Audit implements Immutable, Blockable {
      * 
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
-    public Audit(@Nonnull Block block) throws InvalidEncodingException {
+    public static @Nonnull Audit get(@Nonnull Block block) throws InvalidEncodingException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         final @Nonnull TupleWrapper tuple = new TupleWrapper(block);
-        this.lastTime = new Time(tuple.getElementNotNull(0));
-        this.thisTime = tuple.isElementNull(1) ? null : new Time(tuple.getElementNotNull(1));
-        this.trail = tuple.isElementNull(2) ? null : new ListWrapper(tuple.getElementNotNull(2)).getElementsNotNull();
+        final @Nonnull Time lastTime = new Time(tuple.getElementNotNull(0));
+        if (tuple.isElementNull(1)) {
+            return new RequestAudit(lastTime);
+        } else {
+            final @Nonnull Time thisTime = new Time(tuple.getElementNotNull(1));
+            final @Nonnull ReadonlyList<Block> trail = new ListWrapper(tuple.getElementNotNull(2)).getElementsNotNull();
+            return new ResponseAudit(lastTime, thisTime, trail);
+        }
     }
     
     @Pure
     @Override
-    public @Nonnull SemanticType getType() {
+    public final @Nonnull SemanticType getType() {
         return TYPE;
     }
     
@@ -119,8 +91,6 @@ public final class Audit implements Immutable, Blockable {
     public @Nonnull Block toBlock() {
         final @Nonnull FreezableArray<Block> elements = new FreezableArray<Block>(3);
         elements.set(0, lastTime.toBlock().setType(LAST_TIME));
-        elements.set(1, Block.toBlock(THIS_TIME, thisTime));
-        elements.set(2, trail == null ? null : new ListWrapper(TRAIL, trail).toBlock());
         return new TupleWrapper(TYPE, elements.freeze()).toBlock();
     }
     
@@ -131,39 +101,35 @@ public final class Audit implements Immutable, Blockable {
      * @return the time of the last audit.
      */
     @Pure
-    public @Nonnull Time getLastTime() {
+    public final @Nonnull Time getLastTime() {
         return lastTime;
     }
     
+    
     /**
-     * Returns the time of this audit.
+     * Returns this audit as a {@link RequestAudit}.
      * 
-     * @return the time of this audit.
+     * @return this audit as a {@link RequestAudit}.
+     * 
+     * @throws InvalidEncodingException if this audit is not an instance of {@link RequestAudit}.
      */
     @Pure
-    public @Nonnull Time getThisTime() throws InvalidEncodingException {
-        if (thisTime == null) throw new InvalidEncodingException("The time of this audit may not be null.");
-        return thisTime;
+    public final @Nonnull RequestAudit toRequestAudit() throws InvalidEncodingException {
+        if (this instanceof RequestAudit) return (RequestAudit) this;
+        throw new InvalidEncodingException("This audit is not a request audit.");
     }
     
     /**
-     * Returns the trail of this audit.
+     * Returns this audit as a {@link ResponseAudit}.
      * 
-     * @return the trail of this audit.
+     * @return this audit as a {@link ResponseAudit}.
      * 
-     * @ensure for (Block block : return) block.getType().isBasedOn(Packet.SIGNATURE) : "Each block of the returned list is based on the packet signature type.";
+     * @throws InvalidEncodingException if this audit is not an instance of {@link ResponseAudit}.
      */
     @Pure
-    public @Nonnull ReadonlyList<Block> getTrail() throws InvalidEncodingException {
-        if (trail == null) throw new InvalidEncodingException("The trail of this audit may not be null.");
-        return trail;
-    }
-    
-    
-    @Pure
-    @Override
-    public @Nonnull String toString() {
-        return "Audit from " + lastTime.asDate() + " to " + (thisTime == null ? "null" : thisTime.asDate()) + " with " + (trail == null ? "no" : trail.size()) + " actions";
+    public final @Nonnull ResponseAudit toResponseAudit() throws InvalidEncodingException {
+        if (this instanceof ResponseAudit) return (ResponseAudit) this;
+        throw new InvalidEncodingException("This audit is not a response audit.");
     }
     
 }

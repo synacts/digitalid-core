@@ -40,7 +40,7 @@ public class DatabaseTest {
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS test_identity (identity " + Database.getConfiguration().PRIMARY_KEY() + ", category " + Database.getConfiguration().TINYINT() + " NOT NULL, address VARCHAR(100) NOT NULL COLLATE " + Database.getConfiguration().BINARY() + ")");
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS test_identifier (identifier VARCHAR(100) NOT NULL COLLATE " + Database.getConfiguration().BINARY() + ", identity BIGINT NOT NULL, value BIGINT, PRIMARY KEY (identifier), FOREIGN KEY (identity) REFERENCES test_identity (identity))");
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS test_block (block " + Database.getConfiguration().BLOB() + " NOT NULL)");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS test_block (block " + Block.FORMAT + " NOT NULL)");
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS test_batch (a BIGINT NOT NULL, b BIGINT NOT NULL)");
             Database.commit();
         }

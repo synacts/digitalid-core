@@ -1,5 +1,6 @@
 package ch.virtualid.server;
 
+import ch.virtualid.client.Synchronizer;
 import ch.virtualid.database.Configuration;
 import ch.virtualid.database.Database;
 import ch.virtualid.database.MySQLConfiguration;
@@ -29,12 +30,12 @@ import javax.annotation.Nonnull;
 public final class Server {
     
     /**
-     * The version of the Virtual ID server implementation.
+     * The version of the Virtual ID implementation.
      */
-    public static final @Nonnull String VERSION = "0.9 (10 December 2014)";
+    public static final @Nonnull String VERSION = "0.9 (28 December 2014)";
     
     /**
-     * The authors of the Virtual ID server implementation.
+     * The authors of the Virtual ID implementation.
      */
     public static final @Nonnull String AUTHORS = "Kaspar Etter (kaspar.etter@virtualid.ch)";
     
@@ -47,7 +48,7 @@ public final class Server {
     /**
      * References the thread that listens on the socket.
      */
-    private static final @Nonnull Listener listener = new Listener();
+    private static final @Nonnull Listener listener = new Listener(PORT);
     
     /**
      * Maps the identifiers of the hosts that are running on this server to their instances.
@@ -175,6 +176,7 @@ public final class Server {
      */
     public static void shutDown() {
         listener.shutDown();
+        Synchronizer.shutDown();
         System.exit(0);
     }
     

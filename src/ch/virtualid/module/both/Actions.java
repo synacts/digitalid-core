@@ -32,8 +32,8 @@ import ch.virtualid.identity.SemanticType;
 import ch.virtualid.io.Level;
 import ch.virtualid.module.BothModule;
 import ch.virtualid.module.CoreService;
-import ch.virtualid.packet.Audit;
 import ch.virtualid.packet.Packet;
+import ch.virtualid.packet.ResponseAudit;
 import ch.virtualid.server.Host;
 import ch.virtualid.util.FreezableLinkedList;
 import ch.virtualid.util.FreezableList;
@@ -71,7 +71,7 @@ public final class Actions implements BothModule {
     @Override
     public void createTables(final @Nonnull Site site) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "action (entity " + EntityClass.FORMAT + " NOT NULL, service " + Mapper.FORMAT + " NOT NULL, time BIGINT NOT NULL, " + AgentPermissions.FORMAT_NULL + ", " + Restrictions.FORMAT + ", agent " + Agent.FORMAT + ", recipient " + IdentifierClass.FORMAT + " NOT NULL, action " + Database.getConfiguration().BLOB() + " NOT NULL, PRIMARY KEY (entity, service, time), INDEX(time), FOREIGN KEY (entity) " + site.getEntityReference() + ", FOREIGN KEY (service) " + Mapper.REFERENCE + ", " + AgentPermissions.REFERENCE + ", " + Restrictions.getForeignKeys(site) + ", FOREIGN KEY (entity, agent) " + Agent.getReference(site) + ")");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "action (entity " + EntityClass.FORMAT + " NOT NULL, service " + Mapper.FORMAT + " NOT NULL, time " + Time.FORMAT + " NOT NULL, " + AgentPermissions.FORMAT_NULL + ", " + Restrictions.FORMAT + ", agent " + Agent.FORMAT + ", recipient " + IdentifierClass.FORMAT + " NOT NULL, action " + Block.FORMAT + " NOT NULL, PRIMARY KEY (entity, service, time), INDEX(time), FOREIGN KEY (entity) " + site.getEntityReference() + ", FOREIGN KEY (service) " + Mapper.REFERENCE + ", " + AgentPermissions.REFERENCE + ", " + Restrictions.getForeignKeys(site) + ", FOREIGN KEY (entity, agent) " + Agent.getReference(site) + ")");
             Mapper.addReference(site + "action", "contact");
             if (site instanceof Host) Mapper.addReference(site + "action", "entity", "entity", "time");
         }
@@ -209,7 +209,7 @@ public final class Actions implements BothModule {
      * @require agent == null || service.equals(CoreService.TYPE) : "The agent is null or the audit trail is requested for the core service.";
      */
     @Pure
-    public static @Nonnull Audit getAudit(@Nonnull NonHostEntity entity, @Nonnull SemanticType service, @Nonnull Time lastTime, @Nonnull ReadonlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws SQLException {
+    public static @Nonnull ResponseAudit getAudit(@Nonnull NonHostEntity entity, @Nonnull SemanticType service, @Nonnull Time lastTime, @Nonnull ReadonlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws SQLException {
         assert agent == null || service.equals(CoreService.TYPE) : "The agent is null or the audit trail is requested for the core service.";
         
         final @Nonnull Site site = entity.getSite();
@@ -248,8 +248,8 @@ public final class Actions implements BothModule {
                 while (resultSet.next()) {
                     trail.add(Block.get(Packet.SIGNATURE, resultSet, 2));
                 }
-                return new Audit(lastTime, thisTime, trail.freeze());
-            } else throw new SQLException("");
+                return new ResponseAudit(lastTime, thisTime, trail.freeze());
+            } else throw new SQLException("This should never happen.");
         }
     }
     

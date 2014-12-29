@@ -77,7 +77,7 @@ public final class CredentialsRequest extends Request {
      * @require certificates == null || certificates.isFrozen() : "The certificates are either null or frozen.";
      * @require CredentialsSignatureWrapper.certificatesAreValid(certificates, credentials) : "The certificates are valid (given the given credentials).";
      */
-    public CredentialsRequest(@Nonnull ReadonlyList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull ReadonlyList<Credential> credentials, @Nullable ReadonlyList<CertifiedAttributeValue> certificates, boolean lodged, @Nullable BigInteger value) throws SQLException, IOException, PacketException, ExternalException {
+    public CredentialsRequest(@Nonnull ReadonlyList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject, @Nullable RequestAudit audit, @Nonnull ReadonlyList<Credential> credentials, @Nullable ReadonlyList<CertifiedAttributeValue> certificates, boolean lodged, @Nullable BigInteger value) throws SQLException, IOException, PacketException, ExternalException {
         this(methods, recipient, subject, audit, credentials, certificates, lodged, value, 0);
     }
     
@@ -94,7 +94,7 @@ public final class CredentialsRequest extends Request {
      * @param value the value b' or null if the credentials are not to be shortened.
      * @param iteration how many times this request was resent.
      */
-    private CredentialsRequest(@Nonnull ReadonlyList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull ReadonlyList<Credential> credentials, @Nullable ReadonlyList<CertifiedAttributeValue> certificates, boolean lodged, @Nullable BigInteger value, int iteration) throws SQLException, IOException, PacketException, ExternalException {
+    private CredentialsRequest(@Nonnull ReadonlyList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject, @Nullable RequestAudit audit, @Nonnull ReadonlyList<Credential> credentials, @Nullable ReadonlyList<CertifiedAttributeValue> certificates, boolean lodged, @Nullable BigInteger value, int iteration) throws SQLException, IOException, PacketException, ExternalException {
         super(methods, recipient, new SymmetricKey(), subject, audit, new Quartet<ReadonlyList<Credential>, ReadonlyList<CertifiedAttributeValue>, Boolean, BigInteger>(credentials, certificates, lodged, value), iteration);
     }
     

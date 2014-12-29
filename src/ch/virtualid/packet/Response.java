@@ -3,6 +3,7 @@ package ch.virtualid.packet;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.annotations.RawRecipient;
 import ch.virtualid.exceptions.external.ExternalException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Reply;
 import ch.virtualid.identifier.HostIdentifier;
@@ -86,7 +87,7 @@ public final class Response extends Packet {
      * @ensure hasRequest() : "This response has a request.";
      * @ensure getSize() == request.getSize() : "The size of this response equals the size of the request.";
      */
-    public Response(@Nonnull Request request, @Nonnull ReadonlyList<Reply> replies, @Nonnull ReadonlyList<PacketException> exceptions, @Nullable Audit audit) throws SQLException, IOException, PacketException, ExternalException {
+    public Response(@Nonnull Request request, @Nonnull ReadonlyList<Reply> replies, @Nonnull ReadonlyList<PacketException> exceptions, @Nullable ResponseAudit audit) throws SQLException, IOException, PacketException, ExternalException {
         super(new Pair<ReadonlyList<Reply>, ReadonlyList<PacketException>>(replies, exceptions), replies.size(), request.getRecipient(), null, request.getEncryption().getSymmetricKey(), request.getSubject(), audit);
         
         assert replies.isFrozen() : "The list of replies is frozen.";
@@ -114,6 +115,13 @@ public final class Response extends Packet {
         this.request = request;
     }
     
+    
+    @Pure
+    @Override
+    public @Nullable ResponseAudit getAudit() throws InvalidEncodingException {
+        final @Nullable Audit audit = super.getAudit();
+        return audit != null ? audit.toResponseAudit() : null;
+    }
     
     /**
      * Returns whether this response has a request.

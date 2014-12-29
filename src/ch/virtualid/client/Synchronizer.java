@@ -1,66 +1,83 @@
 package ch.virtualid.client;
 
+import ch.virtualid.auxiliary.Time;
 import ch.virtualid.database.Database;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.InternalAction;
+import ch.virtualid.handler.InternalMethod;
+import ch.virtualid.handler.Method;
 import ch.virtualid.identity.SemanticType;
+import ch.virtualid.io.Level;
+import ch.virtualid.io.Logger;
 import ch.virtualid.module.Service;
-import ch.virtualid.packet.Audit;
+import ch.virtualid.module.client.Synchronization;
+import ch.virtualid.packet.RequestAudit;
 import ch.virtualid.packet.Response;
+import ch.virtualid.util.ConcurrentHashMap;
+import ch.virtualid.util.ConcurrentMap;
+import ch.virtualid.util.FreezableLinkedList;
+import ch.virtualid.util.FreezableList;
+import ch.virtualid.util.ReadonlyList;
+import ch.xdf.Block;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Iterator;
+import java.util.concurrent.BlockingDeque;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.TimeUnit;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * Description.
+ * This class synchronizes {@link InternalAction internal actions}.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 0.1
+ * @version 2.0
  */
 public final class Synchronizer extends Thread {
     
-//    private static final @Nonnull Queue<Action> queue; // should be synchronized
+    /**
+     * Stores the logger of the synchronizer.
+     */
+    private static final @Nonnull Logger LOGGER = new Logger("Synchronizer.log");
+    
+    /**
+     * Stores the pending actions of the synchronizer.
+     */
+    private static final @Nonnull BlockingDeque<InternalAction> pendingActions = new LinkedBlockingDeque<InternalAction>();
     
     /**
      * Stores the types of the modules that are currently suspended.
      */
-    private static final @Nonnull Set<SemanticType> suspendedModules = new HashSet<SemanticType>();
+    private static final @Nonnull ConcurrentMap<SemanticType, Object> suspendedModules = new ConcurrentHashMap<SemanticType, Object>();
     
-    static {
-        // Load the queue from the database.
-        // Create a thread and enter run().
+    /**
+     * Loads the pending actions of the given client from the database.
+     * 
+     * @param client the client whose pending actions are to be loaded.
+     */
+    static void load(@Nonnull Client client) {
+        // TODO: If the same client runs in several processes (on different machines), make sure the pending actions are loaded only once.
+        Synchronization.load(client, pendingActions);
     }
     
     /**
-     * Executes the given action on the client and 
+     * Executes the given action on the client and queues it for delivery.
      * 
-     * @param action
+     * @param action the action which is to be executed and sent to the host.
+     * 
+     * @require action.isOnClient() : "The internal action is on the client.";
      */
     public static void execute(@Nonnull InternalAction action) throws SQLException {
         assert action.isOnClient() : "The internal action is on the client.";
         
-        try {
-            final @Nonnull Response response = action.send();
-            final @Nullable Audit audit = response.getAudit();
-        } catch (@Nonnull IOException | PacketException | ExternalException ex) {
-            throw new RuntimeException(ex);
-        }
-        action.executeOnClient();
+        if (action.isSimilarTo(action)) action.executeOnClient();
+        Synchronization.queue(action);
+        pendingActions.add(action);
         Database.commit();
         
-        // If a method is not similar to itself, make sure to execute it on the client only *after* it has been executed on the host.
-        
 //        final @Nonnull SemanticType module = action.getModule(); // TODO: Make sure the module is not suspended. Otherwise, pause until it's no longer suspended.
-            
-            // TODO: Include the entity, recipient and subject in the queue! + service
-//        Synchronization.queue(action); // Writes the action with its entity to the database through the connection of the action without commit. -> Include the name of the client in the database table.
-//        action.executeOnClient();
-//        Database.commit();
-//        queue.add(action);
     }
     
     
@@ -72,96 +89,100 @@ public final class Synchronizer extends Thread {
     }
     
     
+    public static @Nonnull RequestAudit getRequestAudit(@Nonnull Method method) {
+        return method instanceof InternalMethod && method.isSimilarTo(method) ? 
+        if (method instanceof InternalMethod) {
+            
+        }
+        final @Nullable RequestAudit requestAudit = isSimilarTo(this) ? new RequestAudit(Time.MIN) : null; // TODO: Synchronizer.getAudit(service);
+    }
+    
+    
+    public static void execute(@Nonnull ReadonlyList<Block> trail) {
+        
+    }
+    
+    
+    /**
+     * Stores an instance of the synchronizer to be run as a thread.
+     */
+    private static final @Nonnull Synchronizer synchronizer = new Synchronizer();
+    
+    static { synchronizer.start(); }
+    
     /**
      * Updates are done in a regular interval until this boolean becomes false.
      */
-    private boolean active = true;
-    
-    /*
-    
-    Required tables:
-    - action: 
-    - queue:
-    - last:
-    
-    */
-    
-    /**
-     * Asynchronous method to handle the incoming request.
-     */
-    @Override
-    public void run() {
-        while (active) {
-//            try {
-//                // Take all the actions with the same entity, recipient and subject from the queue. + service
-//                // Sign, pack and send them. (Signature depends on InternalAction vs. ExternalAction and getRequiredPermissions().)
-//                // Wait for the response.
-//                // Undo failed actions and remove all from the queue (both locally and in the DB).
-//                // 
-//            } catch (@Nonnull SQLException exception) {
-//                    System.err.println(exception);
-//            }
-            
-            try {
-                sleep(100); // Alternatively, make blocking call on the queue?
-            } catch (@Nonnull InterruptedException exception) {
-                System.err.println(exception);
-            }
-        }
-    }
+    private static boolean active = true;
     
     /**
      * Shuts down the synchronizer after having finished the current update.
      */
-    void shutDown() {
+    public static void shutDown() {
         active = false;
+        
+        try {
+            synchronizer.join();
+        } catch (@Nonnull InterruptedException exception) {
+            LOGGER.log(Level.WARNING, exception);
+        }
     }
     
-//                try {
-//                    synchronizer.shutDown();
-//                    synchronizer.join();
-//                } catch (InterruptedException exception) {
-//                    console.write("The synchronizer could not be stopped properly!");
-//                }
+    /**
+     * Stores the current interval for exponential backoff in milliseconds.
+     */
+    private static long backoff = 1000l;
     
-    // TODO: Just copied from the old implementation!
-    
-//    /**
-//     * Returns the time of the last request to the given VID.
-//     * 
-//     * @param vid the VID of interest.
-//     * @return the time of the last request to the given VID.
-//     * @require isNative(vid) : "This client is accredited at the given VID.";
-//     */
-//    public synchronized long getTimeOfLastRequest(long vid) {
-//        assert isNative(vid) : "This client is accredited at the given VID.";
-//        
-//        return natives.get(vid);
-//    }
-//    
-//    /**
-//     * Sets the time of the last request to the given VID.
-//     * 
-//     * @param identity the VID of the last request.
-//     * @param time the time of the last request.
-//     * @require Mapper.isVid(vid) : "The first number has to denote a VID.";
-//     * @require time > 0 : "The time value is positive.";
-//     */
-//    synchronized void setTimeOfLastRequest(@Nonnull Identity identity, long time) throws SQLException {
-//        assert time > 0 : "The time value is positive.";
-//        
-//        if (!isNative(identity)) credentials.put(identity, new HashMap<Long, Map<RandomizedAgentPermissions, Credential>>());
-//        
-//        try (@Nonnull Statement statement = Database.createStatement()) {
-//            statement.executeUpdate("REPLACE INTO " + getName() + "_natives (vid, time) VALUES (" + identity + ", " + time + ")");
-//            Database.commit();
-//        }
-//        
-//        natives.put(identity, time);
-//    }
-//    
-//    private void audit(long auditTime, @Nullable List<Block> auditTrail) {
-//        // TODO
-//    }
+    /**
+     * Sends the pending actions.
+     */
+    @Override
+    public void run() {
+        while (active) {
+            try {
+                final @Nullable InternalAction reference = pendingActions.poll(1L, TimeUnit.SECONDS);
+                if (reference != null) {
+                    
+                    @Nonnull FreezableList<Method> methods = new FreezableLinkedList<Method>(reference);
+                    final @Nonnull Iterator<InternalAction> iterator = pendingActions.iterator();
+                    while (iterator.hasNext()) {
+                        final @Nonnull InternalAction action = iterator.next();
+                        if (reference.isSimilarTo(action) && action.isSimilarTo(reference)) methods.add(action);
+                        else break;
+                    }
+                    
+                    try {
+                        final int size = methods.size();
+                        final @Nonnull Response response = Method.send(methods.freeze(), null); // TODO: Include audit.
+                        for (int i = 0; i < size; i++) {
+                            try {
+                                response.checkReply(i);
+                                if (i == 0 && !reference.isSimilarTo(reference)) reference.executeOnClient();
+                            } catch (@Nonnull PacketException exception) {
+                                LOGGER.log(Level.WARNING, exception);
+                                ((InternalAction) methods.getNotNull(i)).reverseOnClient();
+                                // TODO: Add a notification to the error module.
+                            }
+                        }
+                        
+                        Synchronization.remove(reference.getRole(), size);
+                        Database.commit();
+                        for (int i = 0; i < size; i++) pendingActions.remove();
+                        
+                        backoff = 1000l; // Reset the backoff interval.
+                    } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
+                        Database.rollback();
+                        pendingActions.addFirst(reference);
+                        // TODO: Add a notification to the error module.
+                        LOGGER.log(Level.WARNING, exception);
+                        sleep(backoff);
+                        backoff *= 2;
+                    }
+                }
+            } catch (@Nonnull InterruptedException | SQLException exception) {
+                LOGGER.log(Level.WARNING, exception);
+            }
+        }
+    }
     
 }

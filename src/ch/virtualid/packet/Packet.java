@@ -269,16 +269,16 @@ public abstract class Packet implements Immutable {
             }
         }
         
-        if (response != null) {
-            if (size == 1) response.getReply(0); // If the first element was an error, it is thrown by retrieving the reply.
-            if (size < request.getSize()) throw new PacketException(PacketError.ELEMENTS, "The response contains fewer elements than the request.", null, isResponse);
+        if (response != null && size < request.getSize()) {
+            response.getReply(0); // If the first element encodes a packet error, it is thrown by retrieving the reply.
+            throw new PacketException(PacketError.ELEMENTS, "The response contains fewer elements than the request.", null, isResponse);
         }
         
         if (!encryption.isEncrypted()) {
             if (size > 1) throw new PacketException(PacketError.ELEMENTS, "If the packet is not encrypted, only one element may be provided.", null, isResponse);
             
             if (response != null) {
-                final @Nullable Reply reply = response.getReply(0); // If the only element encodes a packet error, it was already thrown above.
+                final @Nullable Reply reply = response.getReply(0); // If the only element encodes a packet error, it is thrown by retrieving the reply.
                 if (!(reply instanceof AttributesReply && reply.getSubject() instanceof HostIdentifier)) throw new PacketException(PacketError.ENCRYPTION, "The response should be encrypted but is not.", null, isResponse);
             } else {
                 final @Nonnull Method method = ((Request) this).getMethod(0);
@@ -309,7 +309,7 @@ public abstract class Packet implements Immutable {
      * @return the audit of this packet.
      */
     @Pure
-    public final @Nullable Audit getAudit() {
+    public @Nullable Audit getAudit() throws InvalidEncodingException {
         return audit;
     }
     
