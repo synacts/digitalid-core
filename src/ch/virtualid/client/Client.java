@@ -36,6 +36,8 @@ import ch.virtualid.identity.SemanticType;
 import ch.virtualid.io.Directory;
 import ch.virtualid.module.CoreService;
 import ch.virtualid.module.client.Roles;
+import ch.virtualid.synchronizer.Synchronization;
+import ch.virtualid.synchronizer.Synchronizer;
 import ch.virtualid.util.FreezableArrayList;
 import ch.virtualid.util.FreezableLinkedList;
 import ch.virtualid.util.FreezableList;
@@ -208,7 +210,7 @@ public class Client extends Site implements Observer {
         // The role table needs to be created in advance.
         Roles.createTable(this);
         CoreService.SERVICE.createTables(this);
-        Synchronizer.load(this);
+        Synchronization.load(this);
         Database.commit();
     }
     

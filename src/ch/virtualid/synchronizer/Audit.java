@@ -1,4 +1,4 @@
-package ch.virtualid.packet;
+package ch.virtualid.synchronizer;
 
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
@@ -6,6 +6,7 @@ import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
+import ch.virtualid.packet.Packet;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.ReadonlyList;
 import ch.xdf.Block;

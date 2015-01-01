@@ -1,6 +1,6 @@
 package ch.virtualid.server;
 
-import ch.virtualid.client.Synchronizer;
+import ch.virtualid.synchronizer.Synchronizer;
 import ch.virtualid.database.Configuration;
 import ch.virtualid.database.Database;
 import ch.virtualid.database.MySQLConfiguration;

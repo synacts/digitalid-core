@@ -1,30 +1,27 @@
-package ch.virtualid.client;
+package ch.virtualid.synchronizer;
 
-import ch.virtualid.auxiliary.Time;
 import ch.virtualid.database.Database;
+import ch.virtualid.entity.Role;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.InternalAction;
-import ch.virtualid.handler.InternalMethod;
 import ch.virtualid.handler.Method;
-import ch.virtualid.identity.SemanticType;
 import ch.virtualid.io.Level;
 import ch.virtualid.io.Logger;
+import ch.virtualid.module.BothModule;
 import ch.virtualid.module.Service;
-import ch.virtualid.module.client.Synchronization;
-import ch.virtualid.packet.RequestAudit;
 import ch.virtualid.packet.Response;
 import ch.virtualid.util.ConcurrentHashMap;
 import ch.virtualid.util.ConcurrentMap;
+import ch.virtualid.util.ConcurrentSet;
 import ch.virtualid.util.FreezableLinkedList;
 import ch.virtualid.util.FreezableList;
-import ch.virtualid.util.ReadonlyList;
-import ch.xdf.Block;
+import ch.virtualid.util.ReadonlyCollection;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Iterator;
-import java.util.concurrent.BlockingDeque;
-import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -40,68 +37,47 @@ public final class Synchronizer extends Thread {
     /**
      * Stores the logger of the synchronizer.
      */
-    private static final @Nonnull Logger LOGGER = new Logger("Synchronizer.log");
-    
-    /**
-     * Stores the pending actions of the synchronizer.
-     */
-    private static final @Nonnull BlockingDeque<InternalAction> pendingActions = new LinkedBlockingDeque<InternalAction>();
-    
-    /**
-     * Stores the types of the modules that are currently suspended.
-     */
-    private static final @Nonnull ConcurrentMap<SemanticType, Object> suspendedModules = new ConcurrentHashMap<SemanticType, Object>();
-    
-    /**
-     * Loads the pending actions of the given client from the database.
-     * 
-     * @param client the client whose pending actions are to be loaded.
-     */
-    static void load(@Nonnull Client client) {
-        // TODO: If the same client runs in several processes (on different machines), make sure the pending actions are loaded only once.
-        Synchronization.load(client, pendingActions);
-    }
+    static final @Nonnull Logger LOGGER = new Logger("Synchronizer.log");
     
     /**
      * Executes the given action on the client and queues it for delivery.
      * 
      * @param action the action which is to be executed and sent to the host.
      * 
-     * @require action.isOnClient() : "The internal action is on the client.";
+     * @require action.isOnClient() : "The internal action is on a client.";
      */
     public static void execute(@Nonnull InternalAction action) throws SQLException {
-        assert action.isOnClient() : "The internal action is on the client.";
+        assert action.isOnClient() : "The internal action is on a client.";
         
         if (action.isSimilarTo(action)) action.executeOnClient();
-        Synchronization.queue(action);
-        pendingActions.add(action);
+        Synchronization.add(action);
         Database.commit();
         
 //        final @Nonnull SemanticType module = action.getModule(); // TODO: Make sure the module is not suspended. Otherwise, pause until it's no longer suspended.
     }
     
-    
-    public static void reload(@Nonnull Service service) {
-//        final @Nonnull ReadonlyList<BothModule> modules = service.getModules();
+    /**
+     * Reloads the state of the given service.
+     * 
+     * @param service the service to be reloaded.
+     */
+    public static void reload(@Nonnull Role role, @Nonnull Service service) {
+        final @Nonnull ReadonlyCollection<BothModule> modules = service.getBothModules();
         // TODO: Suspend all modules.
         // TODO: Do the magic.
-        // TODO: Release all modules again.
+        // TODO: Release all modules again and execute the pending actions of these modules (again).
     }
     
     
-    public static @Nonnull RequestAudit getRequestAudit(@Nonnull Method method) {
-        return method instanceof InternalMethod && method.isSimilarTo(method) ? 
-        if (method instanceof InternalMethod) {
-            
-        }
-        final @Nullable RequestAudit requestAudit = isSimilarTo(this) ? new RequestAudit(Time.MIN) : null; // TODO: Synchronizer.getAudit(service);
-    }
+    /**
+     * The thread pool executor runs the {@link Sender senders} that send the {@link InternalAction internal actions}.
+     */
+    private static final @Nonnull ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(4, 16, 60, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(100), new ThreadPoolExecutor.AbortPolicy());
     
-    
-    public static void execute(@Nonnull ReadonlyList<Block> trail) {
-        
-    }
-    
+    /**
+     * Stores the services that are currently suspended because a sender is using it.
+     */
+    private static final @Nonnull ConcurrentMap<Role, ConcurrentSet<Service>> suspendedServices = new ConcurrentHashMap<Role, ConcurrentSet<Service>>();
     
     /**
      * Stores an instance of the synchronizer to be run as a thread.
@@ -123,13 +99,15 @@ public final class Synchronizer extends Thread {
         
         try {
             synchronizer.join();
+            threadPoolExecutor.shutdown();
+            threadPoolExecutor.awaitTermination(5L, TimeUnit.SECONDS);
         } catch (@Nonnull InterruptedException exception) {
             LOGGER.log(Level.WARNING, exception);
         }
     }
     
     /**
-     * Stores the current interval for exponential backoff in milliseconds.
+     * Stores the current interval for exponential backoff in milliseconds. –> per role?
      */
     private static long backoff = 1000l;
     
@@ -140,7 +118,7 @@ public final class Synchronizer extends Thread {
     public void run() {
         while (active) {
             try {
-                final @Nullable InternalAction reference = pendingActions.poll(1L, TimeUnit.SECONDS);
+                final @Nullable InternalAction reference = pendingActions.poll(5L, TimeUnit.SECONDS);
                 if (reference != null) {
                     
                     @Nonnull FreezableList<Method> methods = new FreezableLinkedList<Method>(reference);

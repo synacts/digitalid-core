@@ -33,7 +33,7 @@ import ch.virtualid.io.Level;
 import ch.virtualid.module.BothModule;
 import ch.virtualid.module.CoreService;
 import ch.virtualid.packet.Packet;
-import ch.virtualid.packet.ResponseAudit;
+import ch.virtualid.synchronizer.ResponseAudit;
 import ch.virtualid.server.Host;
 import ch.virtualid.util.FreezableLinkedList;
 import ch.virtualid.util.FreezableList;

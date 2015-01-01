@@ -16,6 +16,7 @@ import ch.virtualid.handler.InternalAction;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.module.CoreService;
 import ch.virtualid.module.Service;
+import ch.xdf.CredentialsSignatureWrapper;
 import ch.xdf.SignatureWrapper;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -118,7 +119,9 @@ public abstract class CoreServiceInternalAction extends InternalAction {
     
     @Override
     public void executeOnHostInternalAction() throws PacketException, SQLException {
-        final @Nonnull Agent agent = getSignatureNotNull().getAgentCheckedAndRestricted(getNonHostAccount(), getPublicKey());
+        final @Nonnull SignatureWrapper signature = getSignatureNotNull();
+        if (signature instanceof CredentialsSignatureWrapper) ((CredentialsSignatureWrapper) signature).checkIsLogded();
+        final @Nonnull Agent agent = signature.getAgentCheckedAndRestricted(getNonHostAccount(), getPublicKey());
         
         final @Nonnull ReadonlyAgentPermissions permissions = getRequiredPermissions();
         if (!permissions.equals(AgentPermissions.NONE)) agent.getPermissions().checkCover(permissions);

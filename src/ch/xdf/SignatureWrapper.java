@@ -20,7 +20,7 @@ import ch.virtualid.identity.SemanticType;
 import ch.virtualid.identity.SyntacticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
-import ch.virtualid.packet.Audit;
+import ch.virtualid.synchronizer.Audit;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.ReadonlyArray;
 import java.io.IOException;
@@ -529,6 +529,9 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
      * @param entity the entity whose agent is to be returned.
      * 
      * @return the agent that signed the wrapped element or null if no such agent is found.
+     * 
+     * @see ClientSignatureWrapper#getAgent(ch.virtualid.entity.NonHostEntity)
+     * @see CredentialsSignatureWrapper#getAgent(ch.virtualid.entity.NonHostEntity)
      */
     @Pure
     public @Nullable Agent getAgent(@Nonnull NonHostEntity entity) throws SQLException {
@@ -544,6 +547,9 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
      * @return the restricted agent that signed the wrapped element.
      * 
      * @throws PacketException if no such agent is found or the check failed.
+     * 
+     * @see ClientSignatureWrapper#getAgentCheckedAndRestricted(ch.virtualid.entity.NonHostEntity, ch.virtualid.cryptography.PublicKey)
+     * @see CredentialsSignatureWrapper#getAgentCheckedAndRestricted(ch.virtualid.entity.NonHostEntity, ch.virtualid.cryptography.PublicKey)
      */
     @Pure
     public @Nonnull Agent getAgentCheckedAndRestricted(@Nonnull NonHostEntity entity, @Nullable PublicKey publicKey) throws SQLException, PacketException {

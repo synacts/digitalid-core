@@ -11,7 +11,7 @@ import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.reply.action.CoreServiceActionReply;
 import ch.virtualid.module.Service;
-import ch.virtualid.packet.Audit;
+import ch.virtualid.synchronizer.Audit;
 import ch.virtualid.pusher.Pusher;
 import ch.xdf.HostSignatureWrapper;
 import java.sql.SQLException;

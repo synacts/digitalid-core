@@ -1,5 +1,7 @@
 package ch.virtualid.util;
 
+import javax.annotation.Nonnull;
+
 /**
  * Extends Java's {@link java.util.concurrent.ConcurrentMap ConcurrentMap} interface with more useful methods.
  * 
@@ -17,6 +19,6 @@ public interface ConcurrentMap<K, V> extends java.util.concurrent.ConcurrentMap<
      * 
      * @return the value that is now associated with the given key.
      */
-    public V putIfAbsentElseReturnPresent(K key, V value);
+    public @Nonnull V putIfAbsentElseReturnPresent(@Nonnull K key, @Nonnull V value);
     
 }

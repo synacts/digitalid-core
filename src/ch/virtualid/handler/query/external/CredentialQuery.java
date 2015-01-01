@@ -1,14 +1,19 @@
-package ch.virtualid.handler.query.internal;
+package ch.virtualid.handler.query.external;
 
 /**
  * Description.
  * 
- * TODO: Isn't this rather an internal or even external action?
+ * Classified as
+ * - query because it does not need to be audited as it does not change the state of a virtual identity and the answer is typically needed immediately
+ * - external because credentials also need to be shortened at other virtual identities.
+ * 
+ * It is important that the issuing host keeps track of all issued credentials for up to a year.
+ * All hidden elements need to be verifiably encrypted, so this class needs to override the send method.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 0.0
  */
-//public final class CredentialQuery extends CoreServiceInternalQuery {
+//public final class CredentialQuery extends CoreServiceExternalQuery {
 //    
 //    public CredentialQuery() {
 //        

@@ -4,7 +4,7 @@ import ch.virtualid.annotations.OnlyForActions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Image;
 import ch.virtualid.client.Commitment;
-import ch.virtualid.client.Synchronizer;
+import ch.virtualid.synchronizer.Synchronizer;
 import ch.virtualid.concept.Aspect;
 import ch.virtualid.concept.Instance;
 import ch.virtualid.concept.Observer;

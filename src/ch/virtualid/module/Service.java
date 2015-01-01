@@ -15,6 +15,7 @@ import ch.virtualid.util.FreezableLinkedHashMap;
 import ch.virtualid.util.FreezableLinkedList;
 import ch.virtualid.util.FreezableList;
 import ch.virtualid.util.FreezableMap;
+import ch.virtualid.util.ReadonlyCollection;
 import ch.virtualid.util.ReadonlyList;
 import ch.xdf.Block;
 import ch.xdf.ListWrapper;
@@ -121,6 +122,16 @@ public abstract class Service implements BothModule {
      * Maps the modules that are used on both hosts and clients from their state format.
      */
     private final FreezableMap<SemanticType, BothModule> bothModules = new FreezableLinkedHashMap<SemanticType, BothModule>();
+    
+    /**
+     * Returns the modules that are used on both hosts and clients of this service.
+     * 
+     * @return the modules that are used on both hosts and clients of this service.
+     */
+    @Pure
+    public final ReadonlyCollection<BothModule> getBothModules() {
+        return bothModules.values();
+    }
     
     /**
      * Adds the given both module to the list of host, client and both modules.

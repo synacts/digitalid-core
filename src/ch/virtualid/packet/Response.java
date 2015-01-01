@@ -1,5 +1,7 @@
 package ch.virtualid.packet;
 
+import ch.virtualid.synchronizer.ResponseAudit;
+import ch.virtualid.synchronizer.Audit;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.annotations.RawRecipient;
 import ch.virtualid.exceptions.external.ExternalException;

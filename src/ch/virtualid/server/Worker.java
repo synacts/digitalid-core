@@ -20,9 +20,9 @@ import ch.virtualid.module.CoreService;
 import ch.virtualid.module.Service;
 import ch.virtualid.module.both.Actions;
 import ch.virtualid.packet.Request;
-import ch.virtualid.packet.RequestAudit;
+import ch.virtualid.synchronizer.RequestAudit;
 import ch.virtualid.packet.Response;
-import ch.virtualid.packet.ResponseAudit;
+import ch.virtualid.synchronizer.ResponseAudit;
 import ch.virtualid.util.FreezableArrayList;
 import ch.virtualid.util.FreezableList;
 import java.io.IOException;
@@ -32,12 +32,12 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * The worker is responsible for handling incoming requests asynchronously.
+ * A worker processes incoming requests asynchronously.
  * 
  * @see Listener
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 1.8
+ * @version 2.0
  */
 public final class Worker implements Runnable {
     
@@ -100,8 +100,8 @@ public final class Worker implements Runnable {
                         }
                     }
                     
-                    @Nullable RequestAudit requestAudit = request.getAudit();
-                    @Nullable ResponseAudit responseAudit = null;
+                    final @Nullable ResponseAudit responseAudit;
+                    final @Nullable RequestAudit requestAudit = request.getAudit();
                     if (requestAudit != null) {
                         final @Nonnull Method method = request.getMethod(0);
                         if (!(method instanceof InternalMethod)) throw new PacketException(PacketError.AUTHORIZATION, "An audit may only be requested by internal methods.");
@@ -120,8 +120,11 @@ public final class Worker implements Runnable {
                             agent = null;
                             if (permissions == null || restrictions == null) throw new PacketException(PacketError.AUTHORIZATION, "If an audit is requested, neither the permissions nor the restrictions may be null.");
                         }
+                        
                         responseAudit = Actions.getAudit(method.getNonHostAccount(), CoreService.TYPE, requestAudit.getLastTime(), permissions, restrictions, agent);
                         Database.commit();
+                    } else {
+                        responseAudit = null;
                     }
                     
                     response = new Response(request, replies.freeze(), exceptions.freeze(), responseAudit);

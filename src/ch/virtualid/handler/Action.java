@@ -11,7 +11,10 @@ import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.action.internal.AccountOpen;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identifier.InternalIdentifier;
-import ch.virtualid.packet.Audit;
+import ch.virtualid.module.BothModule;
+import ch.virtualid.synchronizer.Audit;
+import ch.virtualid.util.FreezableLinkedList;
+import ch.virtualid.util.ReadonlyList;
 import ch.xdf.SignatureWrapper;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
@@ -96,6 +99,30 @@ public abstract class Action extends Method implements Auditable {
     @Override
     public @Nullable Agent getAuditAgent() {
         return null;
+    }
+    
+    
+    /**
+     * Returns the module on which this action operates.
+     * 
+     * @return the module on which this action operates.
+     */
+    @Pure
+    public abstract @Nonnull BothModule getModule();
+    
+    /**
+     * Stores an empty list of modules.
+     */
+    private static final @Nonnull ReadonlyList<BothModule> emptyList = new FreezableLinkedList<BothModule>().freeze();
+    
+    /**
+     * Returns the modules that need to be reloaded and are thus suspended.
+     * 
+     * @return the modules that need to be reloaded and are thus suspended.
+     */
+    @Pure
+    public @Nonnull ReadonlyList<BothModule> suspendModules() {
+        return emptyList;
     }
     
 }

@@ -36,7 +36,7 @@ import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.module.both.Agents;
 import ch.virtualid.module.client.Roles;
-import ch.virtualid.packet.Audit;
+import ch.virtualid.synchronizer.Audit;
 import ch.virtualid.server.Host;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.FreezableArrayList;
@@ -453,6 +453,14 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
     }
     
     /**
+     * Checks whether the hidden content of the credentials is verifiably encrypted to achieve liability.
+     */
+    @Pure
+    public void checkIsLogded() throws PacketException {
+        if (!isLodged()) throw new PacketException(PacketError.SIGNATURE, "The credentials signature has to be lodged.");
+    }
+    
+    /**
      * Returns either the value b' for clients or the value f' for hosts or null if the credentials are not shortened.
      * 
      * @return either the value b' for clients or the value f' for hosts or null if the credentials are not shortened.
@@ -622,7 +630,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
      * @require type.isAttributeType() : "The type is an attribute type.";
      */
     @Pure
-    public void checkRead(@Nonnull SemanticType type) throws PacketException {
+    public void checkCanRead(@Nonnull SemanticType type) throws PacketException {
         if (!canRead(type)) throw new PacketException(PacketError.AUTHORIZATION, "Not all credentials can read " + type.getAddress() + ".");
     }
     
@@ -654,16 +662,16 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
      * @require type.isAttributeType() : "The type is an attribute type.";
      */
     @Pure
-    public void checkWrite(@Nonnull SemanticType type) throws PacketException {
+    public void checkCanWrite(@Nonnull SemanticType type) throws PacketException {
         if (!canWrite(type)) throw new PacketException(PacketError.AUTHORIZATION, "Not all credentials can write " + type.getAddress() + ".");
     }
     
     /**
-     * Returns whether the permissions of each credential covers the given permissions.
+     * Returns whether the permissions of each credential cover the given permissions.
      * 
      * @param permissions the permissions that needs to be covered.
      * 
-     * @return whether the permissions of each credential covers the given permissions.
+     * @return whether the permissions of each credential cover the given permissions.
      */
     @Pure
     public boolean cover(@Nonnull ReadonlyAgentPermissions permissions) {
@@ -675,7 +683,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
     }
     
     /**
-     * Checks whether the permissions of each credential covers the given permissions and throws a {@link PacketException} if not.
+     * Checks whether the permissions of each credential cover the given permissions and throws a {@link PacketException} if not.
      * 
      * @param permissions the permissions that need to be covered.
      */

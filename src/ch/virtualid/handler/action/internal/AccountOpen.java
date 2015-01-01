@@ -29,6 +29,7 @@ import ch.virtualid.identity.Category;
 import ch.virtualid.identity.InternalNonHostIdentity;
 import ch.virtualid.identity.Mapper;
 import ch.virtualid.identity.SemanticType;
+import ch.virtualid.module.BothModule;
 import ch.virtualid.module.CoreService;
 import ch.virtualid.module.Service;
 import ch.virtualid.packet.ClientRequest;
@@ -275,13 +276,19 @@ public final class AccountOpen extends Action {
     
     @Pure
     @Override
+    public @Nonnull Service getService() {
+        return CoreService.SERVICE;
+    }
+    
+    @Pure
+    @Override
     public @Nonnull SemanticType getType() {
         return TYPE;
     }
     
     @Pure
     @Override
-    public @Nonnull Service getService() {
+    public @Nonnull BothModule getModule() {
         return CoreService.SERVICE;
     }
     

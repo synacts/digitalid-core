@@ -20,7 +20,7 @@ import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.module.both.Agents;
-import ch.virtualid.packet.Audit;
+import ch.virtualid.synchronizer.Audit;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.ReadonlyArray;
 import java.io.IOException;

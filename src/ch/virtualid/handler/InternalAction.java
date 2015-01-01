@@ -2,7 +2,7 @@ package ch.virtualid.handler;
 
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Client;
-import ch.virtualid.client.Synchronizer;
+import ch.virtualid.synchronizer.Synchronizer;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.Role;
 import ch.virtualid.exceptions.external.ExternalException;
@@ -10,9 +10,6 @@ import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.action.internal.CoreServiceInternalAction;
 import ch.virtualid.identifier.HostIdentifier;
-import ch.virtualid.module.BothModule;
-import ch.virtualid.util.FreezableLinkedList;
-import ch.virtualid.util.ReadonlyList;
 import ch.xdf.SignatureWrapper;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -124,30 +121,6 @@ public abstract class InternalAction extends Action implements InternalMethod {
     public final void reverseOnClient() throws SQLException {
         final @Nullable InternalAction reverse = getReverse();
         if (reverse != null) reverse.executeOnClient();
-    }
-    
-    
-    /**
-     * Returns the module on which this action operates.
-     * 
-     * @return the module on which this action operates.
-     */
-    @Pure
-    public abstract @Nonnull BothModule getModule();
-    
-    /**
-     * Stores an empty list of modules.
-     */
-    private static final @Nonnull ReadonlyList<BothModule> emptyList = new FreezableLinkedList<BothModule>().freeze();
-    
-    /**
-     * Returns the modules that need to be reloaded and are thus suspended.
-     * 
-     * @return the modules that need to be reloaded and are thus suspended.
-     */
-    @Pure
-    public @Nonnull ReadonlyList<BothModule> suspendModules() {
-        return emptyList;
     }
     
 }

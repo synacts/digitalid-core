@@ -18,6 +18,8 @@ import ch.virtualid.handler.reply.action.CoreServiceActionReply;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identity.InternalPerson;
 import ch.virtualid.identity.SemanticType;
+import ch.virtualid.module.BothModule;
+import ch.virtualid.module.CoreService;
 import ch.xdf.Block;
 import ch.xdf.ClientSignatureWrapper;
 import ch.xdf.CredentialsSignatureWrapper;
@@ -181,6 +183,12 @@ public final class AccessRequest extends CoreServiceExternalAction {
     @Override
     public @Nonnull SemanticType getType() {
         return TYPE;
+    }
+    
+    @Pure
+    @Override
+    public @Nonnull BothModule getModule() {
+        return CoreService.SERVICE;
     }
     
     /**

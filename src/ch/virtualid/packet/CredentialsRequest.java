@@ -1,5 +1,7 @@
 package ch.virtualid.packet;
 
+import ch.virtualid.synchronizer.Audit;
+import ch.virtualid.synchronizer.RequestAudit;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.annotations.RawRecipient;
 import ch.virtualid.attribute.CertifiedAttributeValue;

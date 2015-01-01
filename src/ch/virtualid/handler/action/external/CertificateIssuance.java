@@ -16,6 +16,8 @@ import ch.virtualid.handler.reply.action.CoreServiceActionReply;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identity.InternalIdentity;
 import ch.virtualid.identity.SemanticType;
+import ch.virtualid.module.BothModule;
+import ch.virtualid.module.both.Attributes;
 import ch.xdf.Block;
 import ch.xdf.HostSignatureWrapper;
 import ch.xdf.SignatureWrapper;
@@ -144,6 +146,12 @@ public final class CertificateIssuance extends CoreServiceExternalAction {
     @Override
     public @Nonnull SemanticType getType() {
         return TYPE;
+    }
+    
+    @Pure
+    @Override
+    public @Nonnull BothModule getModule() {
+        return Attributes.MODULE;
     }
     
     /**

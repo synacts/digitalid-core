@@ -15,7 +15,6 @@ import ch.xdf.Block;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * These modules are used on both {@link Host hosts} and {@link Client clients}.
@@ -77,6 +76,6 @@ public interface BothModule extends HostModule, ClientModule {
      * @return an internal query for reloading the data of this module.
      */
     @Pure
-    public @Nullable InternalQuery getInternalQuery(@Nonnull Role role);
+    public @Nonnull InternalQuery getInternalQuery(@Nonnull Role role);
     
 }

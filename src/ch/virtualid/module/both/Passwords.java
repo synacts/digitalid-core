@@ -148,8 +148,8 @@ public final class Passwords implements BothModule {
     
     @Pure
     @Override
-    public @Nullable InternalQuery getInternalQuery(@Nonnull Role role) {
-        return null;
+    public @Nonnull InternalQuery getInternalQuery(@Nonnull Role role) {
+        return null; // TODO
     }
     
     

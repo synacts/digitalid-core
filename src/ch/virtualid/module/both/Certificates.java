@@ -22,7 +22,6 @@ import ch.xdf.TupleWrapper;
 import java.sql.SQLException;
 import java.sql.Statement;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * This class provides database access to the {@link AttributeValue certificates} of the core service.
@@ -133,7 +132,7 @@ public final class Certificates implements BothModule {
     
     @Pure
     @Override
-    public @Nullable InternalQuery getInternalQuery(@Nonnull Role role) {
+    public @Nonnull InternalQuery getInternalQuery(@Nonnull Role role) {
         return null; // TODO: Return the internal query for reloading the data of this module.
     }
     

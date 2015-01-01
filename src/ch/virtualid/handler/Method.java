@@ -8,7 +8,6 @@ import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.attribute.CertifiedAttributeValue;
-import ch.virtualid.client.Synchronizer;
 import ch.virtualid.contact.Authentications;
 import ch.virtualid.contact.Contact;
 import ch.virtualid.contact.ReadonlyAuthentications;
@@ -31,9 +30,9 @@ import ch.virtualid.packet.ClientRequest;
 import ch.virtualid.packet.CredentialsRequest;
 import ch.virtualid.packet.HostRequest;
 import ch.virtualid.packet.Request;
-import ch.virtualid.packet.RequestAudit;
 import ch.virtualid.packet.Response;
-import ch.virtualid.packet.ResponseAudit;
+import ch.virtualid.synchronizer.RequestAudit;
+import ch.virtualid.synchronizer.ResponseAudit;
 import ch.virtualid.util.FreezableArrayList;
 import ch.virtualid.util.ReadonlyIterator;
 import ch.virtualid.util.ReadonlyList;
@@ -200,8 +199,9 @@ public abstract class Method extends Handler {
      * @ensure return.hasRequest() : "The returned response has a request.";
      */
     public @Nonnull Response send() throws SQLException, IOException, PacketException, ExternalException {
-        final @Nonnull Response response = Method.send(new FreezableArrayList<Method>(this).freeze(), Synchronizer.getRequestAudit(this));
-        final @Nullable ResponseAudit responseAudit = response.getAudit();
+        final @Nonnull Response response = Method.send(new FreezableArrayList<Method>(this).freeze(), RequestAudit.get(this));
+        final @Nullable ResponseAudit audit = response.getAudit();
+        if (audit != null) audit.executeAsynchronously(this);
         response.checkReply(0);
         return response;
     }

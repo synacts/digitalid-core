@@ -2,7 +2,7 @@ package ch.virtualid.concepts;
 
 import ch.virtualid.annotations.OnlyForActions;
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.client.Synchronizer;
+import ch.virtualid.synchronizer.Synchronizer;
 import ch.virtualid.concept.Aspect;
 import ch.virtualid.concept.Instance;
 import ch.virtualid.concept.NonHostConcept;

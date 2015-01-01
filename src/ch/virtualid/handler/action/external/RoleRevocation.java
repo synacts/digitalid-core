@@ -16,6 +16,7 @@ import ch.virtualid.identity.IdentityClass;
 import ch.virtualid.identity.InternalNonHostIdentity;
 import ch.virtualid.identity.InternalPerson;
 import ch.virtualid.identity.SemanticType;
+import ch.virtualid.module.BothModule;
 import ch.virtualid.module.both.Agents;
 import ch.xdf.Block;
 import ch.xdf.HostSignatureWrapper;
@@ -155,6 +156,12 @@ public final class RoleRevocation extends CoreServiceExternalAction {
     @Override
     public @Nonnull SemanticType getType() {
         return TYPE;
+    }
+    
+    @Pure
+    @Override
+    public @Nonnull BothModule getModule() {
+        return Agents.MODULE;
     }
     
     /**
