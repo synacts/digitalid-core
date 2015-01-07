@@ -13,7 +13,6 @@ import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.InternalQuery;
-import ch.virtualid.handler.QueryReply;
 import ch.virtualid.handler.reply.query.CoreServiceQueryReply;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.module.CoreService;
@@ -91,10 +90,6 @@ public abstract class CoreServiceInternalQuery extends InternalQuery {
     }
     
     
-    @Pure
-    @Override
-    public abstract @Nonnull Class<? extends CoreServiceQueryReply> getReplyClass();
-    
     /**
      * Executes this internal query on the host.
      * 
@@ -105,10 +100,10 @@ public abstract class CoreServiceInternalQuery extends InternalQuery {
      * @require isOnHost() : "This method is called on a host.";
      * @require hasSignature() : "This handler has a signature.";
      */
-    protected abstract @Nonnull QueryReply executeOnHost(@Nonnull Agent agent) throws SQLException;
+    protected abstract @Nonnull CoreServiceQueryReply executeOnHost(@Nonnull Agent agent) throws SQLException;
     
     @Override
-    public @Nonnull QueryReply executeOnHost() throws PacketException, SQLException {
+    public @Nonnull CoreServiceQueryReply executeOnHost() throws PacketException, SQLException {
         final @Nonnull Agent agent = getSignatureNotNull().getAgentCheckedAndRestricted(getNonHostAccount(), publicKey);
         
         final @Nonnull ReadonlyAgentPermissions permissions = getRequiredPermissions();

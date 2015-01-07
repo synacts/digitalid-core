@@ -15,16 +15,13 @@ import ch.virtualid.module.BothModule;
 import ch.virtualid.module.ClientModule;
 import ch.virtualid.module.CoreService;
 import ch.virtualid.module.Service;
-import ch.virtualid.util.ConcurrentHashMap;
 import ch.virtualid.util.ConcurrentHashSet;
-import ch.virtualid.util.ConcurrentMap;
 import ch.virtualid.util.ConcurrentSet;
 import ch.virtualid.util.ReadonlyList;
 import ch.xdf.Block;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.concurrent.BlockingDeque;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -40,6 +37,40 @@ import javax.annotation.Nullable;
 public final class Synchronization implements ClientModule {
     
     public static final Synchronization MODULE = new Synchronization();
+    
+    @Override
+    public void createTables(@Nonnull Site site) throws SQLException {
+        try (@Nonnull Statement statement = Database.createStatement()) {
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "synchronization_action (entity " + EntityClass.FORMAT + " NOT NULL, service " + Mapper.FORMAT + " NOT NULL, time " + Time.FORMAT + " NOT NULL, recipient " + IdentifierClass.FORMAT + " NOT NULL, action " + Block.FORMAT + " NOT NULL, PRIMARY KEY (entity, service, time), INDEX(time), FOREIGN KEY (entity) " + site.getEntityReference() + ", FOREIGN KEY (service) " + Mapper.REFERENCE + ")");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "synchronization_last (entity " + EntityClass.FORMAT + " NOT NULL, service " + Mapper.FORMAT + " NOT NULL, time " + Time.FORMAT + " NOT NULL, PRIMARY KEY (entity, service), FOREIGN KEY (entity) " + site.getEntityReference() + ", FOREIGN KEY (service) " + Mapper.REFERENCE + ")");
+        }
+    }
+    
+    @Override
+    public void deleteTables(@Nonnull Site site) throws SQLException {
+        try (@Nonnull Statement statement = Database.createStatement()) {
+            statement.executeUpdate("DROP TABLE IF EXISTS " + site + "synchronization_action");
+            statement.executeUpdate("DROP TABLE IF EXISTS " + site + "synchronization_last");
+        }
+    }
+    
+    
+    /**
+     * Stores the pending actions of the synchronizer.
+     */
+    static final @Nonnull BlockingDeque<InternalAction> pendingActions = new LinkedBlockingDeque<InternalAction>();
+    
+    /**
+     * Loads the pending actions of the given client from the database.
+     * 
+     * @param client the client whose pending actions are to be loaded.
+     */
+    public static void load(@Nonnull Client client) {
+        // TODO: If the same client runs in several processes (on different machines), make sure the pending actions and suspended modules are loaded only once.
+        Synchronization.load(client);
+        // TODO: Also load the suspended modules from the database.
+    }
+    
     
     static void suspend(Role role, ReadonlyList<BothModule> modules) {
         throw new UnsupportedOperationException("suspend in Synchronization is not supported yet.");
@@ -62,53 +93,7 @@ public final class Synchronization implements ClientModule {
         pendingActions.remove(action);
     }
     
-    @Override
-    public void createTables(@Nonnull Site site) throws SQLException {
-        try (@Nonnull Statement statement = Database.createStatement()) {
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "synchronization_action (entity " + EntityClass.FORMAT + " NOT NULL, service " + Mapper.FORMAT + " NOT NULL, time " + Time.FORMAT + " NOT NULL, recipient " + IdentifierClass.FORMAT + " NOT NULL, action " + Block.FORMAT + " NOT NULL, PRIMARY KEY (entity, service, time), INDEX(time), FOREIGN KEY (entity) " + site.getEntityReference() + ", FOREIGN KEY (service) " + Mapper.REFERENCE + ")");
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "synchronization_last (entity " + EntityClass.FORMAT + " NOT NULL, service " + Mapper.FORMAT + " NOT NULL, time " + Time.FORMAT + " NOT NULL, PRIMARY KEY (entity, service), FOREIGN KEY (entity) " + site.getEntityReference() + ", FOREIGN KEY (service) " + Mapper.REFERENCE + ")");
-            // TOOD: Table for the suspended modules (per role): synchronization_module
-        }
-    }
     
-    @Override
-    public void deleteTables(@Nonnull Site site) throws SQLException {
-        try (@Nonnull Statement statement = Database.createStatement()) {
-            statement.executeUpdate("DROP TABLE IF EXISTS " + site + "synchronization_action");
-            statement.executeUpdate("DROP TABLE IF EXISTS " + site + "synchronization_last");
-        }
-    }
-    
-    
-    /**
-     * Stores the pending actions of the synchronizer.
-     */
-    static final @Nonnull BlockingDeque<InternalAction> pendingActions = new LinkedBlockingDeque<InternalAction>();
-    
-    /**
-     * Stores the modules that are currently suspended.
-     */
-    static final @Nonnull ConcurrentMap<Role, ConcurrentSet<BothModule>> suspendedModules = new ConcurrentHashMap<Role, ConcurrentSet<BothModule>>();
-    
-    /**
-     * Loads the pending actions of the given client from the database.
-     * 
-     * @param client the client whose pending actions are to be loaded.
-     */
-    public static void load(@Nonnull Client client) {
-        // TODO: If the same client runs in several processes (on different machines), make sure the pending actions and suspended modules are loaded only once.
-        Synchronization.load(client);
-        // TODO: Also load the suspended modules from the database.
-    }
-    
-    /**
-     * Loads the pending actions of the given client from the database.
-     * 
-     * @param client the client whose pending actions are to be loaded.
-     */
-    public static void load(@Nonnull Client client, @Nonnull ConcurrentLinkedQueue<InternalAction> pendingActions) {
-        // TODO
-    }
     
     /**
      * Returns the time of the last request to the given VID.

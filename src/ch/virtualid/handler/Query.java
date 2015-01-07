@@ -67,10 +67,6 @@ public abstract class Query extends Method {
     }
     
     
-    @Pure
-    @Override
-    public abstract @Nonnull Class<? extends QueryReply> getReplyClass();
-    
     @Override
     public abstract @Nonnull QueryReply executeOnHost() throws PacketException, SQLException;
     

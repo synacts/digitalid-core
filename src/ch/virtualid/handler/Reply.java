@@ -181,6 +181,7 @@ public abstract class Reply extends Handler implements SQLizable {
         return get(entity, signature, store(signature), block);
     }
     
+    
     /**
      * Returns this reply as an {@link ActionReply}.
      * 
@@ -205,6 +206,19 @@ public abstract class Reply extends Handler implements SQLizable {
     public final @Nonnull QueryReply toQueryReply() throws PacketException {
         if (this instanceof QueryReply) return (QueryReply) this;
         throw new PacketException(PacketError.REPLY, "A query reply was expected but an action reply was found.", null, true);
+    }
+    
+    
+    @Pure
+    @Override
+    protected final boolean protectedEquals(@Nullable Object object) {
+        return super.protectedEquals(object) && object instanceof Reply;
+    }
+    
+    @Pure
+    @Override
+    protected final int protectedHashCode() {
+        return super.protectedHashCode();
     }
     
     

@@ -10,14 +10,14 @@ import ch.virtualid.concept.Observer;
 import ch.virtualid.database.Database;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
-import ch.virtualid.handler.query.internal.StateQuery;
-import ch.virtualid.handler.reply.query.StateReply;
 import ch.virtualid.identity.InternalNonHostIdentity;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
 import ch.virtualid.module.CoreService;
 import ch.virtualid.module.client.Roles;
+import ch.virtualid.synchronizer.StateQuery;
+import ch.virtualid.synchronizer.StateReply;
 import ch.virtualid.util.FreezableList;
 import ch.virtualid.util.ReadonlyList;
 import java.io.IOException;
@@ -191,9 +191,8 @@ public abstract class Role extends EntityClass implements NonHostEntity, Immutab
      */
     public final void reloadState() throws SQLException, IOException, PacketException, ExternalException {
         // TODO: Probably replace this with a method by the synchronizer which also adjusts the audit time.
-        final @Nonnull StateReply reply = new StateQuery(this).sendNotNull();
-        CoreService.SERVICE.removeState(this);
-        CoreService.SERVICE.addState(this, reply.toBlock());
+        final @Nonnull StateReply reply = new StateQuery(this, CoreService.SERVICE).sendNotNull();
+        reply.updateState();
         Database.commit();
         getAgent().reset();
     }

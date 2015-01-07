@@ -12,6 +12,7 @@ import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.module.Service;
 import ch.xdf.SignatureWrapper;
+import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -268,5 +269,46 @@ public abstract class Handler implements Immutable, Blockable {
     @Pure
     @Override
     public abstract @Nonnull String toString();
+    
+    
+    /**
+     * Returns whether the given object is equal to this handler.
+     * This method does not override {@link Object#equals(java.lang.Object)}
+     * in order to enforce an equals implementation with an abstract method.
+     * 
+     * @param object the object to be checked for equality.
+     * 
+     * @return whether the given object is equal to this handler.
+     */
+    @Pure
+    protected boolean protectedEquals(@Nullable Object object) {
+        if (object == this) return true;
+        if (object == null || !(object instanceof Handler)) return false;
+        final @Nonnull Handler other = (Handler) object;
+        return Objects.equals(this.entity, other.entity) && Objects.equals(this.subject, other.subject);
+    }
+    
+    /**
+     * Returns the hash code of this method.
+     * This method does not override {@link Object#hashCode()} in order
+     * to enforce a hash code implementation with an abstract method.
+     * 
+     * @return the hash code of this method.
+     */
+    @Pure
+    protected int protectedHashCode() {
+        int hash = 7;
+        hash = 89 * hash + Objects.hashCode(this.entity);
+        hash = 89 * hash + Objects.hashCode(this.subject);
+        return hash;
+    }
+    
+    @Pure
+    @Override
+    public abstract boolean equals(@Nullable Object object);
+    
+    @Pure
+    @Override
+    public abstract int hashCode();
     
 }

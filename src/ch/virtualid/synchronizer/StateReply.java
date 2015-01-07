@@ -1,15 +1,21 @@
-package ch.virtualid.handler.reply.query;
+package ch.virtualid.synchronizer;
 
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Account;
 import ch.virtualid.entity.NonHostEntity;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.entity.Role;
+import ch.virtualid.exceptions.external.ExternalException;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Reply;
-import ch.virtualid.handler.query.internal.StateQuery;
+import ch.virtualid.handler.reply.query.CoreServiceQueryReply;
 import ch.virtualid.identity.SemanticType;
-import ch.virtualid.module.CoreService;
+import ch.virtualid.module.BothModule;
+import ch.virtualid.module.Service;
 import ch.xdf.Block;
 import ch.xdf.HostSignatureWrapper;
+import ch.xdf.SelfcontainedWrapper;
+import java.io.IOException;
+import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -26,28 +32,24 @@ public final class StateReply extends CoreServiceQueryReply {
     /**
      * Stores the semantic type {@code reply.module@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("reply.module@virtualid.ch").load(CoreService.STATE);
+    public static final @Nonnull SemanticType TYPE = SemanticType.create("reply.module@virtualid.ch").load(SelfcontainedWrapper.TYPE);
     
     
     /**
-     * Stores the block containing the state of the given entity.
-     * 
-     * @invariant block.getType().equals(TYPE) : "The block has the indicated type.";
+     * Stores the block that contains the state of the given entity.
      */
-    private final @Nonnull Block block;
+    final @Nonnull Block block;
     
     /**
      * Creates a query reply for the state of the given account.
      * 
      * @param account the account to which this query reply belongs.
-     * @param block the block that represents the state of the account.
-     * 
-     * @require block.getType().equals(CoreService.FORMAT) : "The block has the indicated type.";
+     * @param block the block that contains the state of the account.
      */
     public StateReply(@Nonnull Account account, @Nonnull Block block) {
         super(account);
         
-        this.block = block.setType(TYPE);
+        this.block = block;
     }
     
     /**
@@ -61,22 +63,48 @@ public final class StateReply extends CoreServiceQueryReply {
      * @ensure hasSignature() : "This handler has a signature.";
      * @ensure !isOnHost() : "Query replies are never decoded on hosts.";
      */
-    private StateReply(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws InvalidEncodingException {
+    private StateReply(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, number);
         
-        this.block = block;
+        this.block = new SelfcontainedWrapper(block).getElement();
     }
     
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        return block;
+        return new SelfcontainedWrapper(TYPE, block).toBlock();
     }
     
     @Pure
     @Override
     public @Nonnull String toString() {
         return "Replies the state.";
+    }
+    
+    
+    /**
+     * Updates the state of the given entity without committing.
+     * 
+     * @require isOnClient() : "This method is called on a client.";
+     */
+    public void updateState() throws SQLException, IOException, PacketException, ExternalException {
+        final @Nonnull BothModule module = Service.getModule(block.getType());
+        final @Nonnull Role role = getRole();
+        module.removeState(role);
+        module.addState(role, block);
+    }
+    
+    
+    @Pure
+    @Override
+    public boolean equals(@Nullable Object object) {
+        return protectedEquals(object) && object instanceof StateReply && this.block.equals(((StateReply) object).block);
+    }
+    
+    @Pure
+    @Override
+    public int hashCode() {
+        return 89 * protectedHashCode() + block.hashCode();
     }
     
     
@@ -95,7 +123,7 @@ public final class StateReply extends CoreServiceQueryReply {
         
         @Pure
         @Override
-        protected @Nonnull Reply create(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws InvalidEncodingException {
+        protected @Nonnull Reply create(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
             return new StateReply(entity, signature, number, block);
         }
         

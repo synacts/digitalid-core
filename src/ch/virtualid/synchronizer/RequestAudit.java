@@ -74,9 +74,8 @@ public final class RequestAudit extends Audit implements Immutable, Blockable {
     public static void release(@Nonnull Method method) {
         if (method.isOnClient() && method instanceof InternalMethod && method.isSimilarTo(method)) {
             final @Nonnull Role role = method.getRole();
-            @Nullable ConcurrentSet<Service> set = suspendedServices.get(role);
-            if (set == null) set = suspendedServices.putIfAbsentElseReturnPresent(role, new ConcurrentHashSet<Service>());
-            set.remove(method.getService());
+            final @Nullable ConcurrentSet<Service> set = suspendedServices.get(role);
+            if (set != null) set.remove(method.getService());
         }
     }
     

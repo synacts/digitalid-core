@@ -4,11 +4,8 @@ import ch.virtualid.agent.Agent;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Client;
 import ch.virtualid.entity.NonHostEntity;
-import ch.virtualid.entity.Role;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
-import ch.virtualid.handler.InternalQuery;
-import ch.virtualid.handler.QueryReply;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.server.Host;
 import ch.xdf.Block;
@@ -63,19 +60,5 @@ public interface BothModule extends HostModule, ClientModule {
      * @param entity the entity whose entries are to be removed.
      */
     public void removeState(@Nonnull NonHostEntity entity) throws SQLException;
-    
-    /**
-     * Returns an internal query for reloading the data of this module.
-     * <p>
-     * <em>Important:</em> The block of the corresponding {@link QueryReply}
-     * has to be based on the semantic type of {@link #getStateFormat()} in order to
-     * pass it to {@link #addState(ch.virtualid.entity.NonHostEntity, ch.xdf.Block)}.
-     * 
-     * @param role the role whose data has to be reloaded.
-     * 
-     * @return an internal query for reloading the data of this module.
-     */
-    @Pure
-    public @Nonnull InternalQuery getInternalQuery(@Nonnull Role role);
     
 }

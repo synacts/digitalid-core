@@ -7,6 +7,7 @@ import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.entity.Site;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.server.Host;
@@ -15,7 +16,6 @@ import ch.virtualid.util.FreezableLinkedHashMap;
 import ch.virtualid.util.FreezableLinkedList;
 import ch.virtualid.util.FreezableList;
 import ch.virtualid.util.FreezableMap;
-import ch.virtualid.util.ReadonlyCollection;
 import ch.virtualid.util.ReadonlyList;
 import ch.xdf.Block;
 import ch.xdf.ListWrapper;
@@ -47,6 +47,20 @@ public abstract class Service implements BothModule {
      */
     public static @Nonnull ReadonlyList<Service> getServices() {
         return services;
+    }
+    
+    /**
+     * Returns the module whose state format matches the given type.
+     * 
+     * @return the module whose state format matches the given type.
+     */
+    @Pure
+    public static @Nonnull BothModule getModule(@Nonnull SemanticType type) throws PacketException {
+        for (final @Nonnull Service service : services) {
+            final @Nullable BothModule module = service.bothModules.get(type);
+            if (module != null) return module;
+        }
+        throw new PacketException(PacketError.SERVICE, "No installed service supports the module with the state format " + type.getAddress() + ".");
     }
     
     
@@ -122,16 +136,6 @@ public abstract class Service implements BothModule {
      * Maps the modules that are used on both hosts and clients from their state format.
      */
     private final FreezableMap<SemanticType, BothModule> bothModules = new FreezableLinkedHashMap<SemanticType, BothModule>();
-    
-    /**
-     * Returns the modules that are used on both hosts and clients of this service.
-     * 
-     * @return the modules that are used on both hosts and clients of this service.
-     */
-    @Pure
-    public final ReadonlyCollection<BothModule> getBothModules() {
-        return bothModules.values();
-    }
     
     /**
      * Adds the given both module to the list of host, client and both modules.

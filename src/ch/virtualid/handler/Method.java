@@ -141,14 +141,6 @@ public abstract class Method extends Handler {
     
     
     /**
-     * Returns the class that handles the reply of this method or null if the method never gives a reply.
-     * 
-     * @return the class that handles the reply of this method or null if the method never gives a reply.
-     */
-    @Pure
-    public abstract @Nullable Class<? extends Reply> getReplyClass();
-    
-    /**
      * Executes this method on the host.
      * 
      * @return a reply for this method or null.
@@ -158,9 +150,17 @@ public abstract class Method extends Handler {
      * @require isOnHost() : "This method is called on a host.";
      * @require hasSignature() : "This handler has a signature.";
      * 
-     * @ensure return == null || getReplyClass() != null && getReplyClass().isInstance(return) : "If a reply is returned, it is an instance of the indicated class.";
+     * @ensure matches(return) : "The returned reply matches this method.";
      */
     public abstract @Nullable Reply executeOnHost() throws PacketException, SQLException;
+    
+    /**
+     * Returns whether the given reply matches this method.
+     * 
+     * @return whether the given reply matches this method.
+     */
+    @Pure
+    public abstract boolean matches(@Nullable Reply reply);
     
     
     /**
@@ -213,7 +213,7 @@ public abstract class Method extends Handler {
      * 
      * @require isNonHost() : "This method belongs to a non-host.";
      * 
-     * @see #getReplyClass()
+     * @ensure matches(return) : "The returned reply matches this method.";
      */
     @SuppressWarnings("unchecked")
     public final @Nonnull <T extends Reply> T sendNotNull() throws SQLException, IOException, PacketException, ExternalException {
@@ -423,6 +423,7 @@ public abstract class Method extends Handler {
         else return factory.create(entity, signature, recipient, block);
     }
     
+    
     /**
      * Returns this method as an {@link Action}.
      * 
@@ -447,6 +448,19 @@ public abstract class Method extends Handler {
     public final @Nonnull Query toQuery() throws InvalidEncodingException {
         if (this instanceof Query) return (Query) this;
         throw new InvalidEncodingException("The method with the type " + getType().getAddress() + " is not a query.");
+    }
+    
+    
+    @Pure
+    @Override
+    protected final boolean protectedEquals(@Nullable Object object) {
+        return super.protectedEquals(object) && object instanceof Method && this.recipient.equals(((Method) object).recipient);
+    }
+    
+    @Pure
+    @Override
+    protected final int protectedHashCode() {
+        return 89 * super.protectedHashCode() + recipient.hashCode();
     }
     
 }

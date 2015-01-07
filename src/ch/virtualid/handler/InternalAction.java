@@ -2,7 +2,6 @@ package ch.virtualid.handler;
 
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Client;
-import ch.virtualid.synchronizer.Synchronizer;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.Role;
 import ch.virtualid.exceptions.external.ExternalException;
@@ -10,6 +9,7 @@ import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.action.internal.CoreServiceInternalAction;
 import ch.virtualid.identifier.HostIdentifier;
+import ch.virtualid.synchronizer.Synchronizer;
 import ch.xdf.SignatureWrapper;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -91,17 +91,18 @@ public abstract class InternalAction extends Action implements InternalMethod {
      */
     protected abstract void executeOnHostInternalAction() throws PacketException, SQLException;
     
-    @Pure
-    @Override
-    public final @Nullable Class<? extends ActionReply> getReplyClass() {
-        return null;
-    }
-    
     @Override
     public final @Nullable ActionReply executeOnHost() throws PacketException, SQLException {
         executeOnHostInternalAction();
         return null;
     }
+    
+    @Pure
+    @Override
+    public final boolean matches(@Nullable Reply reply) {
+        return reply == null;
+    }
+    
     
     /**
      * Returns the reverse of this action or null if this action cannot be reversed.

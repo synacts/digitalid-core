@@ -12,6 +12,7 @@ import ch.virtualid.handler.Action;
 import ch.virtualid.handler.InternalAction;
 import ch.virtualid.handler.InternalMethod;
 import ch.virtualid.handler.Method;
+import ch.virtualid.handler.action.internal.ClientAgentCommitmentReplace;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
@@ -154,14 +155,20 @@ public final class ResponseAudit extends Audit implements Immutable, Blockable {
                     if (suspendModules.isNotEmpty()) {
                         Synchronization.suspend(role, suspendModules);
                     } else {
-                        if (!agent.equals(signature.getAgent(role))) {
+                        if (agent.equals(signature.getAgent(role))) {
+                            Actions.audit(action);
+                            Database.commit();
+                        } else {
                             try {
                                 action.executeOnClient();
                                 Actions.audit(action);
                                 Database.commit();
                             } catch (@Nonnull SQLException exception) {
                                 Database.rollback();
-                                if (action.isSimilarTo(action)) {
+                                if (action instanceof ClientAgentCommitmentReplace) {
+                                    Actions.audit(action);
+                                    Database.commit();
+                                } else {
                                     final @Nonnull List<InternalAction> pendingActions = new LinkedList<InternalAction>();
                                     final @Nonnull Iterator<InternalAction> iterator = Synchronization.pendingActions.descendingIterator();
                                     while (iterator.hasNext()) {

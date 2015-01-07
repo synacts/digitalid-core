@@ -65,10 +65,6 @@ public abstract class Action extends Method implements Auditable {
     }
     
     
-    @Pure
-    @Override
-    public abstract @Nullable Class<? extends ActionReply> getReplyClass();
-    
     @Override
     public abstract @Nullable ActionReply executeOnHost() throws PacketException, SQLException;
     

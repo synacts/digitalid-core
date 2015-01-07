@@ -1,4 +1,4 @@
-package ch.virtualid.handler.query.internal;
+package ch.virtualid.synchronizer;
 
 import ch.virtualid.agent.Agent;
 import ch.virtualid.annotations.Pure;
@@ -7,19 +7,22 @@ import ch.virtualid.entity.Role;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Method;
-import ch.virtualid.handler.reply.query.StateReply;
+import ch.virtualid.handler.Reply;
+import ch.virtualid.handler.query.internal.CoreServiceInternalQuery;
 import ch.virtualid.identifier.HostIdentifier;
+import ch.virtualid.identity.IdentityClass;
 import ch.virtualid.identity.SemanticType;
-import ch.virtualid.module.CoreService;
+import ch.virtualid.module.BothModule;
+import ch.virtualid.module.Service;
 import ch.xdf.Block;
-import ch.xdf.EmptyWrapper;
 import ch.xdf.SignatureWrapper;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
- * Queries the state of the given role.
+ * Queries the state of the given module for the given role.
  * 
  * @see StateReply
  * 
@@ -31,16 +34,24 @@ public final class StateQuery extends CoreServiceInternalQuery {
     /**
      * Stores the semantic type {@code query.module@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("query.module@virtualid.ch").load(EmptyWrapper.TYPE);
+    public static final @Nonnull SemanticType TYPE = SemanticType.create("query.module@virtualid.ch").load(SemanticType.IDENTIFIER);
     
     
     /**
-     * Creates an internal query for the state of the given role.
+     * Stores the module whose state is queried.
+     */
+    private final @Nonnull BothModule module;
+    
+    /**
+     * Creates an internal query for the state of the given module.
      * 
      * @param role the role to which this handler belongs.
+     * @param module the module whose state is queried.
      */
-    public StateQuery(@Nonnull Role role) {
+    public StateQuery(@Nonnull Role role, @Nonnull BothModule module) {
         super(role);
+        
+        this.module = module;
     }
     
     /**
@@ -59,12 +70,14 @@ public final class StateQuery extends CoreServiceInternalQuery {
      */
     private StateQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
+        
+        this.module = Service.getModule(IdentityClass.create(block).toSemanticType());
     }
     
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        return new EmptyWrapper(TYPE).toBlock();
+        return module.getStateFormat().toBlock(TYPE);
     }
     
     @Pure
@@ -74,15 +87,28 @@ public final class StateQuery extends CoreServiceInternalQuery {
     }
     
     
-    @Pure
-    @Override
-    public @Nonnull Class<StateReply> getReplyClass() {
-        return StateReply.class;
-    }
-    
     @Override
     protected @Nonnull StateReply executeOnHost(@Nonnull Agent agent) throws SQLException {
-        return new StateReply(getNonHostAccount(), CoreService.SERVICE.getState(getNonHostAccount(), agent));
+        return new StateReply(getNonHostAccount(), module.getState(getNonHostAccount(), agent));
+    }
+    
+    @Pure
+    @Override
+    public boolean matches(@Nullable Reply reply) {
+        return reply instanceof StateReply && ((StateReply) reply).block.getType().equals(module.getStateFormat());
+    }
+    
+    
+    @Pure
+    @Override
+    public boolean equals(@Nullable Object object) {
+        return protectedEquals(object) && object instanceof StateQuery && this.module.equals(((StateQuery) object).module);
+    }
+    
+    @Pure
+    @Override
+    public int hashCode() {
+        return 89 * protectedHashCode() + module.hashCode();
     }
     
     

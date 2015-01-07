@@ -1,6 +1,5 @@
 package ch.virtualid.packet;
 
-import ch.virtualid.synchronizer.Audit;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.annotations.RawRecipient;
 import ch.virtualid.cryptography.SymmetricKey;
@@ -30,6 +29,7 @@ import ch.virtualid.identity.SemanticType;
 import ch.virtualid.identity.Successor;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.server.Server;
+import ch.virtualid.synchronizer.Audit;
 import ch.virtualid.util.FreezableArrayList;
 import ch.virtualid.util.FreezableList;
 import ch.virtualid.util.ReadonlyList;
@@ -222,10 +222,8 @@ public abstract class Packet implements Immutable {
                                     response.setException(i, PacketException.create(block));
                                 } else {
                                     final @Nonnull Method method = request.getMethod(i);
-                                    final @Nullable Class<? extends Reply> replyClass = method.getReplyClass();
                                     final @Nonnull Reply reply = Reply.get(method.hasEntity() ? method.getNonHostEntity() : null, (HostSignatureWrapper) signature, block);
-                                    if (replyClass == null) throw new PacketException(PacketError.REPLY, "No reply was expected but '" + reply.getClass().getName() + "' was received.", null, isResponse);
-                                    if (!replyClass.isInstance(reply)) throw new PacketException(PacketError.REPLY, "A reply was '" + reply.getClass().getName() + "' instead of '" + replyClass.getName() + "'.", null, isResponse);
+                                    if (!method.matches(reply)) throw new PacketException(PacketError.REPLY, "A reply does not match its corresponding method.", null, isResponse);
                                     response.setReply(i, reply);
                                 }
                             } else throw new PacketException(PacketError.SIGNATURE, "A reply from the host " + request.getRecipient() + " was not signed by a host.", null, isResponse);
@@ -262,12 +260,8 @@ public abstract class Packet implements Immutable {
                 }
             }
             
-            if (response != null) {
-                final @Nullable Class<? extends Reply> replyClass = request.getMethod(i).getReplyClass();
-                if (replyClass != null) throw new PacketException(PacketError.REPLY, "A reply of type '" + replyClass.getName() + "' was expected but nothing was received.", null, isResponse);
-            } else {
-                throw new PacketException(PacketError.ELEMENTS, "None of the elements may be null in requests.", null, isResponse);
-            }
+            if (response == null) throw new PacketException(PacketError.ELEMENTS, "None of the elements may be null in requests.", null, isResponse);
+            else if (!request.getMethod(i).matches(null)) throw new PacketException(PacketError.REPLY, "A reply was expected but none was received.", null, isResponse);
         }
         
         if (response != null && size < request.getSize()) {

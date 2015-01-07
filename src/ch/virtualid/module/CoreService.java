@@ -1,8 +1,6 @@
 package ch.virtualid.module;
 
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.entity.Role;
-import ch.virtualid.handler.query.internal.StateQuery;
 import ch.virtualid.identity.Identity;
 import ch.virtualid.identity.SemanticType;
 import javax.annotation.Nonnull;
@@ -61,12 +59,6 @@ public final class CoreService extends Service {
     @Override
     public @Nonnull SemanticType getStateFormat() {
         return STATE;
-    }
-    
-    @Pure
-    @Override
-    public @Nonnull StateQuery getInternalQuery(@Nonnull Role role) {
-        return new StateQuery(role);
     }
     
 }
