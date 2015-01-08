@@ -1,7 +1,5 @@
 package ch.virtualid.packet;
 
-import ch.virtualid.synchronizer.Audit;
-import ch.virtualid.synchronizer.RequestAudit;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.annotations.RawRecipient;
 import ch.virtualid.auxiliary.Time;
@@ -12,7 +10,6 @@ import ch.virtualid.cryptography.SymmetricKey;
 import ch.virtualid.entity.Role;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidDeclarationException;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Method;
@@ -27,6 +24,8 @@ import ch.virtualid.identity.Successor;
 import ch.virtualid.module.CoreService;
 import ch.virtualid.module.Service;
 import ch.virtualid.server.Server;
+import ch.virtualid.synchronizer.Audit;
+import ch.virtualid.synchronizer.RequestAudit;
 import ch.virtualid.util.ConcurrentHashMap;
 import ch.virtualid.util.ConcurrentMap;
 import ch.virtualid.util.FreezableArrayList;
@@ -61,8 +60,8 @@ public class Request extends Packet {
     /**
      * Stores the methods of this request.
      * 
-     * @invariant methods.isFrozen() : "The methods are frozen.";
-     * @invariant methods.isNotEmpty() : "The methods are not empty.";
+     * @invariant methods.isFrozen() : "The list of methods is frozen.";
+     * @invariant methods.isNotEmpty() : "The list of methods is not empty.";
      * @invariant Method.areSimilar(methods) : "All methods are similar and not null.";
      */
     private @Nonnull FreezableList<Method> methods;
@@ -100,10 +99,10 @@ public class Request extends Packet {
      * @param recipient the recipient of this request.
      * @param subject the subject of this request.
      * 
-     * @require methods.isFrozen() : "The methods are frozen.";
-     * @require methods.isNotEmpty() : "The methods are not empty.";
+     * @require methods.isFrozen() : "The list of methods is frozen.";
+     * @require methods.isNotEmpty() : "The list of methods is not empty.";
      * @require methods.doesNotContainNull() : "The list of methods does not contain null.";
-     * @require Method.areSimilar(methods) : "All methods are similar and belong to a non-host.";
+     * @require Method.areSimilar(methods) : "The methods are similar to each other.";
      */
     public Request(@Nonnull ReadonlyList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject) throws SQLException, IOException, PacketException, ExternalException {
         this(methods, recipient, new SymmetricKey(), subject, null, null, 0);
@@ -123,10 +122,10 @@ public class Request extends Packet {
     Request(@Nonnull ReadonlyList<Method> methods, @Nonnull HostIdentifier recipient, @Nullable SymmetricKey symmetricKey, @Nonnull InternalIdentifier subject, @Nullable RequestAudit audit, @Nullable Object field, int iteration) throws SQLException, IOException, PacketException, ExternalException {
         super(methods, methods.size(), field, recipient, symmetricKey, subject, audit);
         
-        assert methods.isFrozen() : "The methods are frozen.";
-        assert methods.isNotEmpty() : "The methods are not empty.";
+        assert methods.isFrozen() : "The list of methods is frozen.";
+        assert methods.isNotEmpty() : "The list of methods is not empty.";
         assert methods.doesNotContainNull() : "The list of methods does not contain null.";
-        assert Method.areSimilar(methods) : "All methods are similar and belong to a non-host.";
+        assert Method.areSimilar(methods) : "The methods are similar to each other.";
         
         if (iteration == 5) throw new PacketException(PacketError.EXTERNAL, "The resending of a request was triggered five times.");
         
@@ -222,9 +221,9 @@ public class Request extends Packet {
     
     @Pure
     @Override
-    public final @Nullable RequestAudit getAudit() throws InvalidEncodingException {
+    public final @Nullable RequestAudit getAudit() {
         final @Nullable Audit audit = super.getAudit();
-        return audit != null ? audit.toRequestAudit() : null;
+        return audit != null ? (RequestAudit) audit : null;
     }
     
     /**

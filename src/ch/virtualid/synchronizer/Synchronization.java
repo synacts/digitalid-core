@@ -8,6 +8,7 @@ import ch.virtualid.entity.Role;
 import ch.virtualid.entity.Site;
 import ch.virtualid.handler.Action;
 import ch.virtualid.handler.InternalAction;
+import ch.virtualid.handler.Method;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identifier.IdentifierClass;
 import ch.virtualid.identity.Mapper;
@@ -15,12 +16,14 @@ import ch.virtualid.module.BothModule;
 import ch.virtualid.module.ClientModule;
 import ch.virtualid.module.CoreService;
 import ch.virtualid.module.Service;
-import ch.virtualid.util.ConcurrentHashSet;
-import ch.virtualid.util.ConcurrentSet;
+import ch.virtualid.util.FreezableLinkedList;
+import ch.virtualid.util.FreezableList;
+import ch.virtualid.util.ReadonlyCollection;
 import ch.virtualid.util.ReadonlyList;
 import ch.xdf.Block;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Iterator;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 import javax.annotation.Nonnull;
@@ -34,7 +37,7 @@ import javax.annotation.Nullable;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public final class Synchronization implements ClientModule {
+final class Synchronization implements ClientModule {
     
     public static final Synchronization MODULE = new Synchronization();
     
@@ -67,32 +70,66 @@ public final class Synchronization implements ClientModule {
      */
     public static void load(@Nonnull Client client) {
         // TODO: If the same client runs in several processes (on different machines), make sure the pending actions and suspended modules are loaded only once.
-        Synchronization.load(client);
-        // TODO: Also load the suspended modules from the database.
+    }
+    
+    public static void remove(@Nonnull Role role) {
+        // TODO: Remove all the pending actions that belong to the given role. Also make sure that this method is called from the role class.
+    }
+    
+    /**
+     * Redoes all the pending actions of the given role that operate on one of the given modules until the given last action.
+     * 
+     * @param role
+     * @param modules
+     * @param lastAction 
+     */
+    static void redo(@Nonnull Role role, @Nonnull ReadonlyCollection<BothModule> modules, @Nullable InternalAction lastAction) {
+        // TODO: Commit each action individually.
     }
     
     
-    static void suspend(Role role, ReadonlyList<BothModule> modules) {
-        throw new UnsupportedOperationException("suspend in Synchronization is not supported yet.");
-        @Nullable ConcurrentSet<BothModule> set = suspendedModules.get(role);
-        if (set == null) set = Synchronization.suspendedModules.putIfAbsentElseReturnPresent(role, new ConcurrentHashSet<BothModule>());
-        for (@Nonnull BothModule module : modules) set.add(module);
-    }
-    
-    static void setLastTime(Role role, Service service, Time thisTime) {
-        throw new UnsupportedOperationException("setLastTime in Synchronization is not supported yet.");
-    }
-    
-    static void add(InternalAction action) {
-        throw new UnsupportedOperationException("queue in Synchronization is not supported yet.");
+    static void add(@Nonnull InternalAction action) {
+        // TODO
         pendingActions.add(action);
     }
     
-    static void remove(InternalAction action) {
-        throw new UnsupportedOperationException("remove in Synchronization is not supported yet.");
+    static void remove(@Nonnull InternalAction action) {
+        // TODO
         pendingActions.remove(action);
     }
     
+    static void remove(@Nonnull ReadonlyList<Method> methods) {
+        // TODO
+        pendingActions.removeAll((FreezableList<Method>) methods);
+    }
+    
+    
+    static @Nonnull ReadonlyList<InternalAction> reversePendingActions(@Nonnull BothModule module) throws SQLException {
+        final @Nonnull FreezableList<InternalAction> reversedActions = new FreezableLinkedList<InternalAction>();
+        final @Nonnull Iterator<InternalAction> iterator = pendingActions.descendingIterator();
+        while (iterator.hasNext()) {
+            final @Nonnull InternalAction pendingAction = iterator.next();
+            if (pendingAction.getModule().equals(module)) {
+                pendingAction.reverseOnClient();
+                reversedActions.add(pendingAction);
+            }
+        }
+        return reversedActions.freeze();
+    }
+    
+    static void redoReversedActions(@Nonnull ReadonlyList<InternalAction> reversedActions) throws SQLException {
+        for (@Nonnull InternalAction reversedAction : reversedActions) {
+            try {
+                reversedAction.executeOnClient();
+                Database.commit();
+            } catch (@Nonnull SQLException e) {
+                Database.rollback();
+                // TODO: Add the action to the error module.
+                remove(reversedAction);
+                Database.commit();
+            }
+        }
+    }
     
     
     /**
@@ -102,9 +139,13 @@ public final class Synchronization implements ClientModule {
      * 
      * @return the time of the last request to the given VID.
      */
-    public static @Nonnull Time getLastTime(@Nonnull Role role, @Nonnull Service service) throws SQLException {
+    static @Nonnull Time getLastTime(@Nonnull Role role, @Nonnull Service service) throws SQLException {
         // TODO
         return natives.get(vid);
+    }
+    
+    static void setLastTime(@Nonnull Role role, @Nonnull Service service, @Nonnull Time thisTime) throws SQLException {
+        // TODO
     }
     
     /**

@@ -18,7 +18,7 @@ import ch.virtualid.io.Level;
 import ch.virtualid.io.Logger;
 import ch.virtualid.module.CoreService;
 import ch.virtualid.module.Service;
-import ch.virtualid.module.both.Actions;
+import ch.virtualid.synchronizer.Actions;
 import ch.virtualid.packet.Request;
 import ch.virtualid.synchronizer.RequestAudit;
 import ch.virtualid.packet.Response;

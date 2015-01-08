@@ -1,28 +1,27 @@
 package ch.virtualid.synchronizer;
 
+import ch.virtualid.auxiliary.Time;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.Role;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.InternalAction;
 import ch.virtualid.handler.Method;
-import ch.virtualid.handler.Reply;
 import ch.virtualid.io.Level;
 import ch.virtualid.io.Logger;
-import ch.virtualid.module.BothModule;
 import ch.virtualid.module.Service;
 import ch.virtualid.packet.Response;
 import ch.virtualid.util.ConcurrentHashMap;
 import ch.virtualid.util.ConcurrentHashSet;
 import ch.virtualid.util.ConcurrentMap;
 import ch.virtualid.util.ConcurrentSet;
+import ch.virtualid.util.FreezableArrayList;
 import ch.virtualid.util.FreezableLinkedList;
 import ch.virtualid.util.FreezableList;
-import ch.virtualid.util.ReadonlyCollection;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Iterator;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import javax.annotation.Nonnull;
@@ -73,7 +72,7 @@ public final class Synchronizer extends Thread {
      * 
      * @return whether the given service is suspended for the given role.
      */
-    private static boolean isSuspended(@Nonnull Role role, @Nonnull Service service) {
+    static boolean isSuspended(@Nonnull Role role, @Nonnull Service service) {
         final @Nullable ConcurrentSet<Service> set = suspendedServices.get(role);
         if (set != null) return set.contains(service);
         else return false;
@@ -91,7 +90,7 @@ public final class Synchronizer extends Thread {
      * 
      * @ensure isSuspended(role, service) : "The given service is suspended.";
      */
-    private static boolean suspend(@Nonnull Role role, @Nonnull Service service) {
+    static boolean suspend(@Nonnull Role role, @Nonnull Service service) {
         assert !isSuspended(role, service) : "The given service is not suspended.";
         
         @Nullable ConcurrentSet<Service> set = suspendedServices.get(role);
@@ -112,13 +111,43 @@ public final class Synchronizer extends Thread {
      * @ensure !isSuspended(role, service) : "The given service is not suspended.";
      */
     @SuppressWarnings("NotifyNotInSynchronizedContext")
-    private static boolean resume(@Nonnull Role role, @Nonnull Service service) {
+    static boolean resume(@Nonnull Role role, @Nonnull Service service) {
         assert isSuspended(role, service) : "The given service is suspended.";
         
         final @Nonnull ConcurrentSet<Service> set = suspendedServices.get(role);
         final boolean result = set.remove(service);
         set.notifyAll();
         return result;
+    }
+    
+    /**
+     * Reloads the state of the given service for the given role.
+     * 
+     * @param role the role for which the service is to be reloaded.
+     * @param service the service which is to be reloaded for the given role.
+     * 
+     * @require isSuspended(role, service) : "The given service is suspended.";
+     */
+    static void reloadSuspended(@Nonnull Role role, @Nonnull Service service) throws SQLException, IOException, PacketException, ExternalException {
+        assert isSuspended(role, service) : "The given service is suspended.";
+        
+        try {
+            Synchronization.getLastTime(role, service); // Read from the database in order to synchronize with other processes.
+            final @Nonnull Response response = Method.send(new FreezableArrayList<Method>(new StateQuery(role, service)).freeze(), new RequestAudit(Time.MAX));
+            final @Nullable ResponseAudit responseAudit = response.getAudit();
+            assert responseAudit != null : "The response audit is not null as an audit was requested.";
+            Synchronization.setLastTime(role, service, responseAudit.getThisTime());
+            
+            final @Nonnull StateReply reply = response.getReplyNotNull(0);
+            reply.updateState();
+            
+            final @Nullable InternalAction lastAction = Synchronization.pendingActions.peekLast();
+            Database.commit();
+            
+            Synchronization.redo(role, service.getBothModules(), lastAction);
+        } finally {
+            resume(role, service);
+        }
     }
     
     /**
@@ -132,23 +161,15 @@ public final class Synchronizer extends Thread {
     public static void reload(@Nonnull Role role, @Nonnull Service service) throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
         @Nullable ConcurrentSet<Service> set = suspendedServices.get(role);
         if (set == null) set = suspendedServices.putIfAbsentElseReturnPresent(role, new ConcurrentHashSet<Service>());
-        while (isSuspended(role, service) || !suspend(role, service)) set.wait();
-        
-        Reply response = service.getInternalQuery(role).sendNotNull();
-        final @Nonnull ReadonlyCollection<BothModule> modules = service.getBothModules();
-        // TODO: Suspend all modules.
-        // TODO: Do the magic.
-        // TODO: Release all modules again and execute the pending actions of these modules (again).
-        resume(role, service);
+        while (!suspend(role, service)) set.wait();
+        reloadSuspended(role, service);
     }
     
     
     /**
-     * The thread pool executor runs the {@link Sender senders} that send the {@link InternalAction internal actions}.
+     * The thread pool executor runs the {@link Sender senders} that send the pending {@link InternalAction internal actions}.
      */
     private static final @Nonnull ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(4, 16, 60, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(100), new ThreadPoolExecutor.AbortPolicy());
-    
-    // TODO: Subscribe to role deletions and remove them then from the deque and map (add the pending actions to the error module).
     
     /**
      * Stores an instance of the synchronizer to be run as a thread.
@@ -158,12 +179,12 @@ public final class Synchronizer extends Thread {
     static { synchronizer.start(); }
     
     /**
-     * Updates are done in a regular interval until this boolean becomes false.
+     * Actions are sent until this boolean becomes false.
      */
     private static boolean active = true;
     
     /**
-     * Shuts down the synchronizer after having finished the current update.
+     * Shuts down the synchronizer after having sent the current actions.
      */
     public static void shutDown() {
         active = false;
@@ -178,9 +199,16 @@ public final class Synchronizer extends Thread {
     }
     
     /**
-     * Stores the current interval for exponential backoff in milliseconds. –> per role?
+     * Stores the current interval for exponential backoff in milliseconds.
      */
-    private static long backoff = 1000l;
+    private static long backoff = 125l;
+    
+    /**
+     * Resets the interval for exponential backoff.
+     */
+    public static void resetBackoffInterval() {
+        backoff = 125l;
+    }
     
     /**
      * Sends the pending actions.
@@ -189,46 +217,40 @@ public final class Synchronizer extends Thread {
     public void run() {
         while (active) {
             try {
-                final @Nullable InternalAction reference = pendingActions.poll(5L, TimeUnit.SECONDS);
-                if (reference != null) {
+                if (Synchronization.pendingActions.poll(5L, TimeUnit.SECONDS) != null) {
                     
-                    @Nonnull FreezableList<Method> methods = new FreezableLinkedList<Method>(reference);
-                    final @Nonnull Iterator<InternalAction> iterator = pendingActions.iterator();
-                    while (iterator.hasNext()) {
-                        final @Nonnull InternalAction action = iterator.next();
-                        if (reference.isSimilarTo(action) && action.isSimilarTo(reference)) methods.add(action);
-                        else break;
-                    }
-                    
-                    try {
-                        final int size = methods.size();
-                        final @Nonnull Response response = Method.send(methods.freeze(), null); // TODO: Include audit.
-                        for (int i = 0; i < size; i++) {
-                            try {
-                                response.checkReply(i);
-                                if (i == 0 && !reference.isSimilarTo(reference)) reference.executeOnClient();
-                            } catch (@Nonnull PacketException exception) {
-                                LOGGER.log(Level.WARNING, exception);
-                                ((InternalAction) methods.getNotNull(i)).reverseOnClient();
-                                // TODO: Add a notification to the error module.
+                    @Nullable InternalAction reference = null;
+                    final @Nonnull FreezableList<Method> methods = new FreezableLinkedList<Method>();
+                    for (final @Nonnull InternalAction action : Synchronization.pendingActions) {
+                        if (!isSuspended(action.getRole(), action.getService())) {
+                            if (reference == null) {
+                                reference = action;
+                                methods.add(reference);
+                                if (!reference.isSimilarTo(reference) || !reference.isSimilarTo(reference)) break;
+                            } else {
+                                if (reference.isSimilarTo(action) && action.isSimilarTo(reference)) methods.add(action);
                             }
                         }
-                        
-                        Synchronization.remove(reference.getRole(), size);
-                        Database.commit();
-                        for (int i = 0; i < size; i++) pendingActions.remove();
-                        
-                        backoff = 1000l; // Reset the backoff interval.
-                    } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
-                        Database.rollback();
-                        pendingActions.addFirst(reference);
-                        // TODO: Add a notification to the error module.
-                        LOGGER.log(Level.WARNING, exception);
+                    }
+                    
+                    if (methods.isNotEmpty()) {
+                        assert reference != null;
+                        suspend(reference.getRole(), reference.getService());
+                        try {
+                            threadPoolExecutor.execute(new Sender(methods));
+                            resetBackoffInterval();
+                        } catch (@Nonnull RejectedExecutionException exception) {
+                            resume(reference.getRole(), reference.getService());
+                            LOGGER.log(Level.WARNING, exception);
+                            sleep(backoff);
+                            backoff *= 2;
+                        }
+                    } else {
                         sleep(backoff);
                         backoff *= 2;
                     }
                 }
-            } catch (@Nonnull InterruptedException | SQLException exception) {
+            } catch (@Nonnull InterruptedException exception) {
                 LOGGER.log(Level.WARNING, exception);
             }
         }

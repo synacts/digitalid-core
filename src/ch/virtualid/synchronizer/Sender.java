@@ -1,15 +1,16 @@
 package ch.virtualid.synchronizer;
 
 import ch.virtualid.database.Database;
+import ch.virtualid.entity.Role;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.InternalAction;
 import ch.virtualid.handler.Method;
 import ch.virtualid.io.Level;
+import ch.virtualid.module.Service;
 import ch.virtualid.packet.Response;
 import ch.virtualid.util.ReadonlyList;
 import java.io.IOException;
-import static java.lang.Thread.sleep;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 
@@ -21,7 +22,7 @@ import javax.annotation.Nonnull;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public final class Sender implements Runnable {
+final class Sender extends Thread {
     
     /**
      * Stores the methods which are sent by this sender.
@@ -29,7 +30,8 @@ public final class Sender implements Runnable {
      * @invariant methods.isFrozen() : "The list of methods is frozen.";
      * @invariant methods.isNotEmpty() : "The list of methods is not empty.";
      * @invariant methods.doesNotContainNull() : "The list of methods does not contain null.";
-     * @invariant Method.areSimilar(methods) : "All methods are similar and belong to a non-host.";
+     * @invariant Method.areSimilar(methods) : "The methods are similar to each other.";
+     * @invariant for (Method method : methods) method instanceof InternalAction : "The methods are internal actions.";
      */
     private final @Nonnull ReadonlyList<Method> methods;
     
@@ -41,13 +43,15 @@ public final class Sender implements Runnable {
      * @require methods.isFrozen() : "The list of methods is frozen.";
      * @require methods.isNotEmpty() : "The list of methods is not empty.";
      * @require methods.doesNotContainNull() : "The list of methods does not contain null.";
-     * @require Method.areSimilar(methods) : "All methods are similar and belong to a non-host.";
+     * @require Method.areSimilar(methods) : "The methods are similar to each other.";
+     * @require for (Method method : methods) method instanceof InternalAction : "The methods are internal actions.";
      */
-    public Sender(@Nonnull ReadonlyList<Method> methods) {
+    Sender(@Nonnull ReadonlyList<Method> methods) {
         assert methods.isFrozen() : "The list of methods is frozen.";
         assert methods.isNotEmpty() : "The list of methods is not empty.";
         assert methods.doesNotContainNull() : "The list of methods does not contain null.";
-        assert Method.areSimilar(methods) : "All methods are similar and belong to a non-host.";
+        assert Method.areSimilar(methods) : "The methods are similar to each other.";
+        for (final @Nonnull Method method : methods) assert method instanceof InternalAction : "The methods are internal actions.";
         
         this.methods = methods;
     }
@@ -57,33 +61,83 @@ public final class Sender implements Runnable {
      */
     @Override
     public void run() {
+        final @Nonnull InternalAction reference = (InternalAction) methods.getNotNull(0);
+        final @Nonnull Role role = reference.getRole();
+        final @Nonnull Service service = reference.getService();
+        
         try {
-            final int size = methods.size();
-            final @Nonnull Response response = Method.send(methods, null); // TODO: Include audit.
-            for (int i = 0; i < size; i++) {
+            final @Nonnull RequestAudit requestAudit = new RequestAudit(Synchronization.getLastTime(role, service));
+            
+            long backoff = 1000l;
+            while (backoff > 0l) {
                 try {
-                    response.checkReply(i);
-                    if (i == 0 && !reference.isSimilarTo(reference)) reference.executeOnClient();
-                } catch (@Nonnull PacketException exception) {
-                    LOGGER.log(Level.WARNING, exception);
-                    ((InternalAction) methods.getNotNull(i)).reverseOnClient();
-                    // TODO: Add a notification to the error module.
+                    final @Nonnull Response response = Method.send(methods, requestAudit);
+                    Synchronization.remove(methods);
+                    Database.commit();
+                    
+                    if (reference.isSimilarTo(reference)) {
+                        for (int i = methods.size() - 1; i >= 0; i--) {
+                            try {
+                                response.checkReply(i);
+                            } catch (@Nonnull PacketException exception) {
+                                Synchronizer.LOGGER.log(Level.WARNING, exception);
+                                // TODO: Add a notification to the error module.
+                                final @Nonnull InternalAction action = (InternalAction) methods.getNotNull(i);
+                                try {
+                                    action.reverseOnClient();
+                                    Database.commit();
+                                } catch (@Nonnull SQLException exc) {
+                                    Synchronizer.LOGGER.log(Level.WARNING, exc);
+                                    final @Nonnull ReadonlyList<InternalAction> reversedActions = Synchronization.reversePendingActions(action.getModule());
+                                    
+                                    try {
+                                        action.reverseOnClient();
+                                        Database.commit();
+                                    } catch (@Nonnull SQLException e) {
+                                        Synchronizer.LOGGER.log(Level.ERROR, e);
+                                        Database.rollback();
+                                        Synchronizer.reloadSuspended(role, service);
+                                        return;
+                                    }
+                                    
+                                    Synchronization.redoReversedActions(reversedActions);
+                                }
+                            }
+                        }
+                    } else {
+                        try {
+                            response.checkReply(0);
+                            reference.executeOnClient();
+                            Database.commit();
+                        } catch (@Nonnull PacketException exception) {
+                            Synchronizer.LOGGER.log(Level.WARNING, exception);
+                            // TODO: Add a notification to the error module.
+                            Database.commit();
+                        }
+                    }
+                    
+                    Synchronization.remove(reference.getRole(), size);
+                    Database.commit();
+                    for (int i = 0; i < size; i++) pendingActions.remove();
+                    
+                    backoff = 0l;
+                } catch (@Nonnull IOException exception) {
+                    sleep(backoff);
+                    backoff *= 2;
                 }
             }
-            
-            Synchronization.remove(reference.getRole(), size);
-            Database.commit();
-            for (int i = 0; i < size; i++) pendingActions.remove();
-            
-            backoff = 1000l; // Reset the backoff interval.
-        } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
-            Database.rollback();
-            pendingActions.addFirst(reference);
-            // TODO: Add a notification to the error module.
-            LOGGER.log(Level.WARNING, exception);
-            sleep(backoff);
-            backoff *= 2;
+        } catch (@Nonnull InterruptedException | SQLException | PacketException | ExternalException exception) {
+            Synchronizer.LOGGER.log(Level.WARNING, exception);
+            try {
+                Database.rollback();
+                // TODO: Add a notification to the error module.
+                Database.commit();
+            } catch (@Nonnull SQLException e) {
+                Synchronizer.LOGGER.log(Level.WARNING, exception);
+            }
         }
+        
+        Synchronizer.resume(role, service);
     }
     
 }

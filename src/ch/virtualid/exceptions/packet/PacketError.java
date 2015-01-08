@@ -66,49 +66,49 @@ public enum PacketError implements Blockable, Immutable, SQLizable {
     CONTENT(7),
     
     /**
+     * The error code for an invalid service.
+     */
+    SERVICE(8),
+    
+    /**
      * The error code for an invalid method type.
      */
-    METHOD(8),
+    METHOD(9),
     
     /**
      * The error code for an invalid reply type.
      */
-    REPLY(9),
+    REPLY(10),
     
     /**
-     * The error code for an invalid identifier as subject.
+     * The error code for an invalid audit.
      */
-    IDENTIFIER(10),
-    
-    /**
-     * The error code for an insufficient authorization.
-     */
-    AUTHORIZATION(11),
-    
-    /**
-     * The error code for a required key rotation.
-     */
-    KEYROTATION(12),
-    
-    /**
-     * The error code for a relocated identity.
-     */
-    RELOCATION(13),
-    
-    /**
-     * The error code for an outdated action.
-     */
-    OUTDATED(14),
-    
-    /**
-     * The error code for an invalid service.
-     */
-    SERVICE(14),
+    AUDIT(11),
     
     /**
      * The error code for a replayed packet.
      */
-    REPLAY(15);
+    REPLAY(12),
+    
+    /**
+     * The error code for an invalid identifier as subject.
+     */
+    IDENTIFIER(13),
+    
+    /**
+     * The error code for a relocated identity.
+     */
+    RELOCATION(14),
+    
+    /**
+     * The error code for an insufficient authorization.
+     */
+    AUTHORIZATION(15),
+    
+    /**
+     * The error code for a required key rotation.
+     */
+    KEYROTATION(16);
     
     
     /**

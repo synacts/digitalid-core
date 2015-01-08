@@ -1,4 +1,4 @@
-package ch.virtualid.module.both;
+package ch.virtualid.synchronizer;
 
 import ch.virtualid.agent.Agent;
 import ch.virtualid.agent.AgentPermissions;
@@ -13,14 +13,12 @@ import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.EntityClass;
 import ch.virtualid.entity.NonHostAccount;
 import ch.virtualid.entity.NonHostEntity;
-import ch.virtualid.entity.Role;
 import ch.virtualid.entity.Site;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Action;
 import ch.virtualid.handler.InternalAction;
-import ch.virtualid.handler.InternalQuery;
 import ch.virtualid.identifier.Identifier;
 import ch.virtualid.identifier.IdentifierClass;
 import ch.virtualid.identity.HostIdentity;
@@ -33,7 +31,6 @@ import ch.virtualid.io.Level;
 import ch.virtualid.module.BothModule;
 import ch.virtualid.module.CoreService;
 import ch.virtualid.packet.Packet;
-import ch.virtualid.synchronizer.ResponseAudit;
 import ch.virtualid.server.Host;
 import ch.virtualid.util.FreezableLinkedList;
 import ch.virtualid.util.FreezableList;
@@ -66,7 +63,7 @@ public final class Actions implements BothModule {
     /**
      * Stores an instance of this module.
      */
-    public static final Actions MODULE = new Actions();
+    static final Actions MODULE = new Actions();
     
     @Override
     public void createTables(final @Nonnull Site site) throws SQLException {
@@ -186,12 +183,6 @@ public final class Actions implements BothModule {
     
     @Override
     public void removeState(@Nonnull NonHostEntity entity) throws SQLException {}
-    
-    @Pure
-    @Override
-    public @Nullable InternalQuery getInternalQuery(@Nonnull Role role) {
-        return null;
-    }
     
     
     /**

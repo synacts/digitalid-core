@@ -150,14 +150,14 @@ public abstract class Method extends Handler {
      * @require isOnHost() : "This method is called on a host.";
      * @require hasSignature() : "This handler has a signature.";
      * 
-     * @ensure matches(return) : "The returned reply matches this method.";
+     * @ensure matches(return) : "This method matches the returned reply.";
      */
     public abstract @Nullable Reply executeOnHost() throws PacketException, SQLException;
     
     /**
-     * Returns whether the given reply matches this method.
+     * Returns whether this method matches the given reply.
      * 
-     * @return whether the given reply matches this method.
+     * @return whether this method matches the given reply.
      */
     @Pure
     public abstract boolean matches(@Nullable Reply reply);
@@ -193,15 +193,20 @@ public abstract class Method extends Handler {
      * 
      * @return the response to the request that is encoded by this method.
      * 
-     * @require isNonHost() : "This method belongs to a non-host.";
-     * 
      * @ensure return.getSize() == 1 : "The response contains one element.";
      * @ensure return.hasRequest() : "The returned response has a request.";
      */
     public @Nonnull Response send() throws SQLException, IOException, PacketException, ExternalException {
-        final @Nonnull Response response = Method.send(new FreezableArrayList<Method>(this).freeze(), RequestAudit.get(this));
-        final @Nullable ResponseAudit audit = response.getAudit();
-        if (audit != null) audit.executeAsynchronously(this);
+        final @Nullable RequestAudit requestAudit = RequestAudit.get(this);
+        final @Nonnull Response response;
+        try {
+            response = Method.send(new FreezableArrayList<Method>(this).freeze(), requestAudit);
+        } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
+            if (requestAudit != null) RequestAudit.release(this);
+            throw exception;
+        }
+        final @Nullable ResponseAudit responseAudit = response.getAudit();
+        if (responseAudit != null) responseAudit.executeAsynchronously(this);
         response.checkReply(0);
         return response;
     }
@@ -211,22 +216,24 @@ public abstract class Method extends Handler {
      * 
      * @return the reply to this method, which may not be null.
      * 
-     * @require isNonHost() : "This method belongs to a non-host.";
+     * @require !matches(null) : "This method does not match null.";
      * 
-     * @ensure matches(return) : "The returned reply matches this method.";
+     * @ensure matches(return) : "This method matches the returned reply.";
      */
     @SuppressWarnings("unchecked")
     public final @Nonnull <T extends Reply> T sendNotNull() throws SQLException, IOException, PacketException, ExternalException {
+        assert !matches(null) : "This method does not match null.";
+        
         return (T) send().getReplyNotNull(0);
     }
     
     
     /**
-     * Returns whether the given methods are {@link #isSimilarTo(ch.virtualid.handler.Method) similar} to each other (in both directions) and belong to a non-host.
+     * Returns whether the given methods are {@link #isSimilarTo(ch.virtualid.handler.Method) similar} to each other (in both directions).
      * 
-     * @param methods the methods to check for similarity and belonging to a non-host.
+     * @param methods the methods to check for similarity.
      * 
-     * @return whether the given methods are similar to each other and belong to a non-host.
+     * @return whether the given methods are similar to each other.
      * 
      * @require methods.isFrozen() : "The list of methods is frozen.";
      * @require methods.isNotEmpty() : "The list of methods is not empty.";
@@ -242,7 +249,7 @@ public abstract class Method extends Handler {
         final @Nonnull Method reference = iterator.next();
         while (iterator.hasNext()) {
             final @Nonnull Method method = iterator.next();
-            if (!method.isNonHost() || !method.isSimilarTo(reference) || !reference.isSimilarTo(method)) return false;
+            if (!method.isSimilarTo(reference) || !reference.isSimilarTo(method)) return false;
         }
         return true;
     }
@@ -276,13 +283,13 @@ public abstract class Method extends Handler {
      * @require methods.isFrozen() : "The list of methods is frozen.";
      * @require methods.isNotEmpty() : "The list of methods is not empty.";
      * @require methods.doesNotContainNull() : "The list of methods does not contain null.";
-     * @require areSimilar(methods) : "All methods are similar and belong to a non-host.";
+     * @require areSimilar(methods) : "The methods are similar to each other.";
      * 
      * @ensure return.getSize() == methods.size() : "The returned response and the given methods have the same size.";
      * @ensure return.hasRequest() : "The returned response has a request.";
      */
     public static @Nonnull Response send(@Nonnull ReadonlyList<Method> methods, @Nullable RequestAudit audit) throws SQLException, IOException, PacketException, ExternalException {
-        assert areSimilar(methods) : "All methods are similar and belong to a non-host.";
+        assert areSimilar(methods) : "The methods are similar to each other.";
         
         final @Nonnull Method reference = methods.getNotNull(0);
         final @Nullable Entity entity = reference.getEntity();
@@ -317,13 +324,12 @@ public abstract class Method extends Handler {
             assert entity != null : "The entity can only be null in case of external queries.";
             
             if (reference instanceof ExternalAction) {
-                if (entity instanceof Account) {
-                    return new HostRequest(methods, recipient, subject, ((Account) entity).getIdentity().getAddress()).send();
-                } else {
-                    assert entity instanceof Role;
+                if (entity instanceof Role) {
                     final @Nonnull ReadonlyAgentPermissions permissions = getRequiredPermissions(methods);
                     // TODO: Get the identity-based credential from the role or throw a packet exception if the permissions are not covered.
                     return new CredentialsRequest(methods, recipient, subject, null, credentials, null, true, null).send();
+                } else {
+                    return new HostRequest(methods, recipient, subject, entity.getIdentity().getAddress()).send();
                 }
             } else {
                 assert reference instanceof InternalMethod;
@@ -438,6 +444,32 @@ public abstract class Method extends Handler {
     }
     
     /**
+     * Returns this method as an {@link InternalAction}.
+     * 
+     * @return this method as an {@link InternalAction}.
+     * 
+     * @throws InvalidEncodingException if this method is not an instance of {@link InternalAction}.
+     */
+    @Pure
+    public final @Nonnull InternalAction toInternalAction() throws InvalidEncodingException {
+        if (this instanceof InternalAction) return (InternalAction) this;
+        throw new InvalidEncodingException("The method with the type " + getType().getAddress() + " is not an internal action.");
+    }
+    
+    /**
+     * Returns this method as an {@link ExternalAction}.
+     * 
+     * @return this method as an {@link ExternalAction}.
+     * 
+     * @throws InvalidEncodingException if this method is not an instance of {@link ExternalAction}.
+     */
+    @Pure
+    public final @Nonnull ExternalAction toExternalAction() throws InvalidEncodingException {
+        if (this instanceof ExternalAction) return (ExternalAction) this;
+        throw new InvalidEncodingException("The method with the type " + getType().getAddress() + " is not an external action.");
+    }
+    
+    /**
      * Returns this method as a {@link Query}.
      * 
      * @return this method as a {@link Query}.
@@ -448,6 +480,32 @@ public abstract class Method extends Handler {
     public final @Nonnull Query toQuery() throws InvalidEncodingException {
         if (this instanceof Query) return (Query) this;
         throw new InvalidEncodingException("The method with the type " + getType().getAddress() + " is not a query.");
+    }
+    
+    /**
+     * Returns this method as an {@link InternalQuery}.
+     * 
+     * @return this method as an {@link InternalQuery}.
+     * 
+     * @throws InvalidEncodingException if this method is not an instance of {@link InternalQuery}.
+     */
+    @Pure
+    public final @Nonnull InternalQuery toInternalQuery() throws InvalidEncodingException {
+        if (this instanceof InternalQuery) return (InternalQuery) this;
+        throw new InvalidEncodingException("The method with the type " + getType().getAddress() + " is not an internal query.");
+    }
+    
+    /**
+     * Returns this method as an {@link ExternalQuery}.
+     * 
+     * @return this method as an {@link ExternalQuery}.
+     * 
+     * @throws InvalidEncodingException if this method is not an instance of {@link ExternalQuery}.
+     */
+    @Pure
+    public final @Nonnull ExternalQuery toExternalQuery() throws InvalidEncodingException {
+        if (this instanceof ExternalQuery) return (ExternalQuery) this;
+        throw new InvalidEncodingException("The method with the type " + getType().getAddress() + " is not an external query.");
     }
     
     

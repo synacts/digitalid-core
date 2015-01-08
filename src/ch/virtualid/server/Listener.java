@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import javax.annotation.Nonnull;
@@ -57,8 +58,13 @@ public final class Listener extends Thread {
             try {
                 final @Nonnull Socket socket = serverSocket.accept();
                 socket.setSoTimeout(10000);
-                threadPoolExecutor.execute(new Worker(socket));
-                LOGGER.log(Level.INFORMATION, "Connection accepted from " + socket.getInetAddress());
+                try {
+                    threadPoolExecutor.execute(new Worker(socket));
+                    LOGGER.log(Level.INFORMATION, "Connection accepted from " + socket.getInetAddress());
+                } catch (@Nonnull RejectedExecutionException exception) {
+                    LOGGER.log(Level.WARNING, exception);
+                    socket.close();
+                }
             } catch (@Nonnull IOException exception) {
                 if (!serverSocket.isClosed()) LOGGER.log(Level.WARNING, exception);
             }

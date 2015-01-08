@@ -1,15 +1,14 @@
 package ch.virtualid.packet;
 
-import ch.virtualid.synchronizer.ResponseAudit;
-import ch.virtualid.synchronizer.Audit;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.annotations.RawRecipient;
 import ch.virtualid.exceptions.external.ExternalException;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Reply;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identifier.InternalIdentifier;
+import ch.virtualid.synchronizer.Audit;
+import ch.virtualid.synchronizer.ResponseAudit;
 import ch.virtualid.util.FreezableArrayList;
 import ch.virtualid.util.FreezableList;
 import ch.virtualid.util.ReadonlyList;
@@ -120,9 +119,9 @@ public final class Response extends Packet {
     
     @Pure
     @Override
-    public @Nullable ResponseAudit getAudit() throws InvalidEncodingException {
+    public @Nullable ResponseAudit getAudit() {
         final @Nullable Audit audit = super.getAudit();
-        return audit != null ? audit.toResponseAudit() : null;
+        return audit != null ? (ResponseAudit) audit : null;
     }
     
     /**

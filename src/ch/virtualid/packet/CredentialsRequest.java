@@ -69,10 +69,10 @@ public final class CredentialsRequest extends Request {
      * @param lodged whether the hidden content of the credentials is verifiably encrypted to achieve liability.
      * @param value the value b' or null if the credentials are not to be shortened.
      * 
-     * @require methods.isFrozen() : "The methods are frozen.";
-     * @require methods.isNotEmpty() : "The methods are not empty.";
+     * @require methods.isFrozen() : "The list of methods is frozen.";
+     * @require methods.isNotEmpty() : "The list of methods is not empty.";
      * @require methods.doesNotContainNull() : "The list of methods does not contain null.";
-     * @require Method.areSimilar(methods) : "All methods are similar and belong to a non-host.";
+     * @require Method.areSimilar(methods) : "The methods are similar to each other.";
      * 
      * @require credentials.isFrozen() : "The credentials are frozen.";
      * @require CredentialsSignatureWrapper.credentialsAreValid(credentials) : "The credentials are valid.";

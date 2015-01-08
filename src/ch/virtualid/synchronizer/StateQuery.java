@@ -48,7 +48,7 @@ public final class StateQuery extends CoreServiceInternalQuery {
      * @param role the role to which this handler belongs.
      * @param module the module whose state is queried.
      */
-    public StateQuery(@Nonnull Role role, @Nonnull BothModule module) {
+    StateQuery(@Nonnull Role role, @Nonnull BothModule module) {
         super(role);
         
         this.module = module;

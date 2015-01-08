@@ -30,6 +30,8 @@ import ch.virtualid.identity.Successor;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.server.Server;
 import ch.virtualid.synchronizer.Audit;
+import ch.virtualid.synchronizer.RequestAudit;
+import ch.virtualid.synchronizer.ResponseAudit;
 import ch.virtualid.util.FreezableArrayList;
 import ch.virtualid.util.FreezableList;
 import ch.virtualid.util.ReadonlyList;
@@ -105,6 +107,9 @@ public abstract class Packet implements Immutable {
     
     /**
      * Stores the audit of this packet.
+     * 
+     * @invariant !(this instanceof Request) || audit == null || audit instanceof RequestAudit : "If this is a request, the audit is either null or a request audit.";
+     * @invariant !(this instanceof Response) || audit == null || audit instanceof ResponseAudit : "If this is a response, the audit is either null or a response audit.";
      */
     private final @Nullable Audit audit;
     
@@ -123,9 +128,15 @@ public abstract class Packet implements Immutable {
      * @param symmetricKey the symmetric key used for encryption or null if the content is not encrypted.
      * @param subject the identifier of the identity about which a statement is made in a method or a reply.
      * @param audit the audit with the time of the last retrieval or null in case of external requests.
+     * 
+     * @require !(this instanceof Request) || audit == null || audit instanceof RequestAudit : "If this is a request, the audit is either null or a request audit.";
+     * @require !(this instanceof Response) || audit == null || audit instanceof ResponseAudit : "If this is a response, the audit is either null or a response audit.";
      */
     @SuppressWarnings("AssignmentToMethodParameter")
     Packet(@Nonnull Object list, int size, @Nullable Object field, @Nullable HostIdentifier recipient, @Nullable SymmetricKey symmetricKey, @Nullable InternalIdentifier subject, @Nullable Audit audit) throws SQLException, IOException, PacketException, ExternalException {
+        assert !(this instanceof Request) || audit == null || audit instanceof RequestAudit : "If this is a request, the audit is either null or a request audit.";
+        assert !(this instanceof Response) || audit == null || audit instanceof ResponseAudit : "If this is a response, the audit is either null or a response audit.";
+        
         setList(list);
         setField(field);
         this.size = size;
@@ -192,8 +203,9 @@ public abstract class Packet implements Immutable {
                 try { signature = verified ? SignatureWrapper.decode(elements.getNotNull(i), account) : SignatureWrapper.decodeWithoutVerifying(elements.getNotNull(i), false, account); } catch (InvalidEncodingException | InvalidSignatureException exception) { throw new PacketException(PacketError.SIGNATURE, "A signature is invalid.", exception, isResponse); }
                 try { signature.checkRecency(); } catch (InactiveSignatureException exception) { throw new PacketException(PacketError.SIGNATURE, "One of the signatures is no longer active.", exception, isResponse); }
                 
-                if (signature.getAudit() != null) {
-                    audit = signature.getAudit();
+                final @Nullable Audit _audit = signature.getAudit();
+                if (_audit != null) {
+                    audit = isResponse ? _audit.toResponseAudit() : _audit.toRequestAudit();
                     if (signature.isNotSigned()) throw new PacketException(PacketError.SIGNATURE, "A packet that contains an audit has to be signed.");
                 }
                 
@@ -281,7 +293,12 @@ public abstract class Packet implements Immutable {
             }
         }
         
+        if (isResponse) {
+            if (audit == null && request.getAudit() != null) throw new PacketException(PacketError.AUDIT, "An audit was requested but none was received.", null, isResponse);
+            if (audit != null && request.getAudit() == null) throw new PacketException(PacketError.AUDIT, "No audit was requested but one was received.", null, isResponse);
+        }
         this.audit = audit;
+        
         freeze();
     }
     
@@ -302,9 +319,12 @@ public abstract class Packet implements Immutable {
      * Returns the audit of this packet.
      * 
      * @return the audit of this packet.
+     * 
+     * @ensure !(this instanceof Request) || return == null || return instanceof RequestAudit : "If this is a request, the returned audit is either null or a request audit.";
+     * @ensure !(this instanceof Response) || return == null || return instanceof ResponseAudit : "If this is a response, the returned audit is either null or a response audit.";
      */
     @Pure
-    public @Nullable Audit getAudit() throws InvalidEncodingException {
+    public @Nullable Audit getAudit() {
         return audit;
     }
     

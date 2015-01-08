@@ -46,7 +46,7 @@ public final class StateReply extends CoreServiceQueryReply {
      * @param account the account to which this query reply belongs.
      * @param block the block that contains the state of the account.
      */
-    public StateReply(@Nonnull Account account, @Nonnull Block block) {
+    StateReply(@Nonnull Account account, @Nonnull Block block) {
         super(account);
         
         this.block = block;
@@ -87,7 +87,7 @@ public final class StateReply extends CoreServiceQueryReply {
      * 
      * @require isOnClient() : "This method is called on a client.";
      */
-    public void updateState() throws SQLException, IOException, PacketException, ExternalException {
+    void updateState() throws SQLException, IOException, PacketException, ExternalException {
         final @Nonnull BothModule module = Service.getModule(block.getType());
         final @Nonnull Role role = getRole();
         module.removeState(role);

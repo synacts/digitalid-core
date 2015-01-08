@@ -19,7 +19,6 @@ import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.io.Level;
 import ch.virtualid.module.BothModule;
 import ch.virtualid.module.Service;
-import ch.virtualid.module.both.Actions;
 import ch.virtualid.packet.Packet;
 import ch.virtualid.packet.Response;
 import ch.virtualid.util.ConcurrentHashSet;
@@ -40,7 +39,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * This class models a response audit with the trail and the times of the last and this audit.
@@ -135,13 +133,12 @@ public final class ResponseAudit extends Audit implements Immutable, Blockable {
      * @param method the method that was sent.
      */
     public void execute(@Nonnull Method method) throws SQLException, IOException, PacketException, ExternalException {
-        if (method.isOnClient() && method instanceof InternalMethod && method.isSimilarTo(method)) {
+        if (method.isOnClient() && method instanceof InternalMethod) {
             final @Nonnull Role role = method.getRole();
             final @Nonnull Agent agent = role.getAgent();
             final @Nonnull Service service = method.getService();
             final @Nonnull HostIdentifier recipient = method.getRecipient();
-            @Nullable ConcurrentSet<BothModule> suspendedModules = Synchronization.suspendedModules.get(role);
-            if (suspendedModules == null) suspendedModules = Synchronization.suspendedModules.putIfAbsentElseReturnPresent(role, new ConcurrentHashSet<BothModule>());
+            final @Nonnull ConcurrentSet<BothModule> suspendedModules = new ConcurrentHashSet<BothModule>();
             
             for (@Nonnull Block block : trail) {
                 final @Nonnull SignatureWrapper signature = SignatureWrapper.decodeWithoutVerifying(block, true, role);
@@ -153,7 +150,7 @@ public final class ResponseAudit extends Audit implements Immutable, Blockable {
                 if (!suspendedModules.contains(module)) {
                     final @Nonnull ReadonlyList<BothModule> suspendModules = action.suspendModules();
                     if (suspendModules.isNotEmpty()) {
-                        Synchronization.suspend(role, suspendModules);
+                        suspendedModules.addAll((FreezableList<BothModule>) suspendModules);
                     } else {
                         if (agent.equals(signature.getAgent(role))) {
                             Actions.audit(action);
@@ -185,7 +182,7 @@ public final class ResponseAudit extends Audit implements Immutable, Blockable {
                                         Database.commit();
                                     } catch (@Nonnull SQLException e) {
                                         Database.rollback();
-                                        Synchronization.suspend(role, new FreezableArrayList<BothModule>(module).freeze());
+                                        suspendedModules.add(module);
                                         break;
                                     }
                                     
@@ -208,6 +205,7 @@ public final class ResponseAudit extends Audit implements Immutable, Blockable {
             }
             
             Synchronization.setLastTime(role, service, thisTime);
+            Database.commit();
             
             if (suspendedModules.isNotEmpty()) {
                 final @Nonnull FreezableList<Method> methods = new FreezableArrayList<Method>(suspendedModules.size());
