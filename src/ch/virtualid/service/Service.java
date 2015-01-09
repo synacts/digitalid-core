@@ -1,4 +1,4 @@
-package ch.virtualid.module;
+package ch.virtualid.service;
 
 import ch.virtualid.agent.Agent;
 import ch.virtualid.annotations.Pure;
@@ -10,6 +10,10 @@ import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identity.SemanticType;
+import ch.virtualid.module.BothModule;
+import ch.virtualid.module.ClientModule;
+import ch.virtualid.module.HostModule;
+import ch.virtualid.module.Module;
 import ch.virtualid.server.Host;
 import ch.virtualid.util.FreezableArrayList;
 import ch.virtualid.util.FreezableLinkedHashMap;
@@ -37,17 +41,32 @@ import javax.annotation.Nullable;
 public abstract class Service implements BothModule {
     
     /**
-     * Stores a list of the services installed on this server.
+     * Maps the services that are installed on this server from their type.
      */
-    private static final @Nonnull FreezableList<Service> services = new FreezableLinkedList<Service>();
+    private static final @Nonnull FreezableMap<SemanticType, Service> services = new FreezableLinkedHashMap<SemanticType, Service>();
     
     /**
      * Returns a list of the services installed on this server.
      * 
      * @return a list of the services installed on this server.
      */
-    public static @Nonnull ReadonlyList<Service> getServices() {
-        return services;
+    @Pure
+    public static @Nonnull ReadonlyCollection<Service> getServices() {
+        return services.values();
+    }
+    
+    /**
+     * Returns the service with the given type.
+     * 
+     * @param type the type of the desired service.
+     * 
+     * @return the service with the given type.
+     */
+    @Pure
+    public static @Nonnull Service getService(@Nonnull SemanticType type) throws PacketException {
+        final @Nullable Service service = services.get(type);
+        if (service != null) return service;
+        throw new PacketException(PacketError.SERVICE, "No service with the type " + type.getAddress() + " is installed.");
     }
     
     /**
@@ -57,7 +76,8 @@ public abstract class Service implements BothModule {
      */
     @Pure
     public static @Nonnull BothModule getModule(@Nonnull SemanticType type) throws PacketException {
-        for (final @Nonnull Service service : services) {
+        for (final @Nonnull Service service : services.values()) {
+            if (service.getStateFormat().equals(type)) return service;
             final @Nullable BothModule module = service.bothModules.get(type);
             if (module != null) return module;
         }
@@ -84,7 +104,7 @@ public abstract class Service implements BothModule {
     protected Service(@Nonnull String name, @Nonnull String version) {
         this.name = name;
         this.version = version;
-        services.add(this);
+        services.put(getType(), this);
     }
     
     /**
@@ -126,17 +146,17 @@ public abstract class Service implements BothModule {
     /**
      * Maps the modules that are used on hosts from their module format.
      */
-    private final FreezableMap<SemanticType, HostModule> hostModules = new FreezableLinkedHashMap<SemanticType, HostModule>();
+    private final @Nonnull FreezableMap<SemanticType, HostModule> hostModules = new FreezableLinkedHashMap<SemanticType, HostModule>();
     
     /**
      * Stores the modules of this service that are used on clients.
      */
-    private final FreezableList<Module> clientModules = new FreezableLinkedList<Module>();
+    private final @Nonnull FreezableList<Module> clientModules = new FreezableLinkedList<Module>();
     
     /**
      * Maps the modules that are used on both hosts and clients from their state format.
      */
-    private final FreezableMap<SemanticType, BothModule> bothModules = new FreezableLinkedHashMap<SemanticType, BothModule>();
+    private final @Nonnull FreezableMap<SemanticType, BothModule> bothModules = new FreezableLinkedHashMap<SemanticType, BothModule>();
     
     /**
      * Returns the modules that are used on both hosts and clients of this service.
@@ -144,7 +164,7 @@ public abstract class Service implements BothModule {
      * @return the modules that are used on both hosts and clients of this service.
      */
     @Pure
-    public final ReadonlyCollection<BothModule> getBothModules() {
+    public final @Nonnull ReadonlyCollection<BothModule> getBothModules() {
         return bothModules.values();
     }
     

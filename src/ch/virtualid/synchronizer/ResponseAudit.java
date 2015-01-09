@@ -14,9 +14,9 @@ import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.io.Level;
 import ch.virtualid.module.BothModule;
-import ch.virtualid.module.Service;
 import ch.virtualid.packet.Packet;
 import ch.virtualid.packet.Response;
+import ch.virtualid.service.Service;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.FreezableArrayList;
 import ch.virtualid.util.FreezableHashSet;
@@ -216,6 +216,8 @@ public final class ResponseAudit extends Audit implements Immutable, Blockable {
                 } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
                     Synchronizer.LOGGER.log(Level.WARNING, exception);
                 }
+                
+                Synchronizer.resume(method.getRole(), method.getService());
             }
         }).start();
     }

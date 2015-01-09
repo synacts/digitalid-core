@@ -12,7 +12,7 @@ import ch.virtualid.identifier.InternalNonHostIdentifier;
 import ch.virtualid.identity.Category;
 import ch.virtualid.identity.Identity;
 import ch.virtualid.identity.InternalNonHostIdentity;
-import ch.virtualid.module.CoreService;
+import ch.virtualid.service.CoreService;
 import ch.xdf.Block;
 import java.io.IOException;
 import java.sql.SQLException;

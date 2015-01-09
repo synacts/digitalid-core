@@ -1,5 +1,6 @@
 package ch.virtualid.handler.action.internal;
 
+import ch.virtualid.service.CoreServiceInternalAction;
 import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
@@ -24,7 +25,7 @@ import ch.virtualid.identity.Predecessors;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.identity.Successor;
 import ch.virtualid.module.BothModule;
-import ch.virtualid.module.CoreService;
+import ch.virtualid.service.CoreService;
 import ch.virtualid.module.both.Passwords;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.FreezableArrayList;

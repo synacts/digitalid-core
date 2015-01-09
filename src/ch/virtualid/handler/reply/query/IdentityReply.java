@@ -1,5 +1,6 @@
 package ch.virtualid.handler.reply.query;
 
+import ch.virtualid.service.CoreServiceQueryReply;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.exceptions.external.ExternalException;

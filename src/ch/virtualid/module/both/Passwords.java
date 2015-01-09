@@ -8,17 +8,15 @@ import ch.virtualid.entity.Account;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.EntityClass;
 import ch.virtualid.entity.NonHostEntity;
-import ch.virtualid.entity.Role;
 import ch.virtualid.entity.Site;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketException;
-import ch.virtualid.handler.InternalQuery;
 import ch.virtualid.identifier.IdentifierClass;
 import ch.virtualid.identity.Identity;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.BothModule;
-import ch.virtualid.module.CoreService;
+import ch.virtualid.service.CoreService;
 import ch.virtualid.server.Host;
 import ch.virtualid.util.FreezableLinkedList;
 import ch.virtualid.util.FreezableList;
@@ -144,12 +142,6 @@ public final class Passwords implements BothModule {
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("DELETE FROM " + entity.getSite() + "password WHERE entity = " + entity);
         }
-    }
-    
-    @Pure
-    @Override
-    public @Nonnull InternalQuery getInternalQuery(@Nonnull Role role) {
-        return null; // TODO
     }
     
     

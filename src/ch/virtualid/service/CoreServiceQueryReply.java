@@ -1,4 +1,4 @@
-package ch.virtualid.handler.reply.query;
+package ch.virtualid.service;
 
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Account;
@@ -6,8 +6,6 @@ import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.handler.QueryReply;
 import ch.virtualid.identifier.InternalIdentifier;
-import ch.virtualid.module.CoreService;
-import ch.virtualid.module.Service;
 import ch.xdf.HostSignatureWrapper;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

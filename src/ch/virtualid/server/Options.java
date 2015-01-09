@@ -6,7 +6,7 @@ import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.io.Console;
 import ch.virtualid.io.Option;
-import ch.virtualid.module.Service;
+import ch.virtualid.service.Service;
 import ch.virtualid.util.FreezableArrayList;
 import ch.virtualid.util.ReadonlyList;
 import java.io.IOException;

@@ -6,7 +6,7 @@ import ch.virtualid.database.Database;
 import ch.virtualid.entity.Site;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.identity.SemanticType;
-import ch.virtualid.module.CoreService;
+import ch.virtualid.service.CoreService;
 import ch.virtualid.module.HostModule;
 import ch.virtualid.server.Host;
 import ch.virtualid.util.FreezableLinkedList;

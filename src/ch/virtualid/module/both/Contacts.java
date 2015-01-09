@@ -11,7 +11,7 @@ import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.handler.InternalQuery;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.BothModule;
-import ch.virtualid.module.CoreService;
+import ch.virtualid.service.CoreService;
 import ch.virtualid.server.Host;
 import ch.virtualid.util.FreezableLinkedList;
 import ch.virtualid.util.FreezableList;

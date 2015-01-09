@@ -1,5 +1,6 @@
 package ch.virtualid.handler.action.external;
 
+import ch.virtualid.service.CoreServiceExternalAction;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
@@ -14,12 +15,12 @@ import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.ActionReply;
 import ch.virtualid.handler.Method;
-import ch.virtualid.handler.reply.action.CoreServiceActionReply;
+import ch.virtualid.service.CoreServiceActionReply;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identity.InternalPerson;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.BothModule;
-import ch.virtualid.module.CoreService;
+import ch.virtualid.service.CoreService;
 import ch.xdf.Block;
 import ch.xdf.ClientSignatureWrapper;
 import ch.xdf.CredentialsSignatureWrapper;

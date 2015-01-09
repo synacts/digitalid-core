@@ -10,7 +10,7 @@ import ch.virtualid.identifier.InternalIdentifier;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
-import ch.virtualid.module.Service;
+import ch.virtualid.service.Service;
 import ch.xdf.SignatureWrapper;
 import java.util.Objects;
 import javax.annotation.Nonnull;

@@ -7,7 +7,7 @@ import ch.virtualid.handler.InternalMethod;
 import ch.virtualid.handler.Method;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
-import ch.virtualid.module.Service;
+import ch.virtualid.service.Service;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

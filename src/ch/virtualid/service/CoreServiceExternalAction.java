@@ -1,4 +1,4 @@
-package ch.virtualid.handler.action.external;
+package ch.virtualid.service;
 
 import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
@@ -8,11 +8,8 @@ import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.ExternalAction;
-import ch.virtualid.handler.reply.action.CoreServiceActionReply;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identity.InternalIdentity;
-import ch.virtualid.module.CoreService;
-import ch.virtualid.module.Service;
 import ch.xdf.SignatureWrapper;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;

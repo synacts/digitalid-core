@@ -6,7 +6,7 @@ import ch.virtualid.entity.Site;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.handler.ExternalAction;
 import ch.virtualid.identity.SemanticType;
-import ch.virtualid.module.CoreService;
+import ch.virtualid.service.CoreService;
 import ch.virtualid.module.HostModule;
 import ch.virtualid.pusher.Pusher;
 import ch.virtualid.server.Host;

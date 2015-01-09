@@ -7,7 +7,7 @@ import ch.virtualid.entity.Role;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
-import ch.virtualid.handler.query.internal.CoreServiceInternalQuery;
+import ch.virtualid.service.CoreServiceInternalQuery;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.xdf.SignatureWrapper;
 import java.io.IOException;

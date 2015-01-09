@@ -7,17 +7,15 @@ import ch.virtualid.client.Client;
 import ch.virtualid.concept.Aspect;
 import ch.virtualid.concept.Instance;
 import ch.virtualid.concept.Observer;
-import ch.virtualid.database.Database;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identity.InternalNonHostIdentity;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
-import ch.virtualid.module.CoreService;
 import ch.virtualid.module.client.Roles;
-import ch.virtualid.synchronizer.StateQuery;
-import ch.virtualid.synchronizer.StateReply;
+import ch.virtualid.service.Service;
+import ch.virtualid.synchronizer.Synchronizer;
 import ch.virtualid.util.FreezableList;
 import ch.virtualid.util.ReadonlyList;
 import java.io.IOException;
@@ -187,22 +185,23 @@ public abstract class Role extends EntityClass implements NonHostEntity, Immutab
     
     
     /**
-     * Reloads the state of this role.
+     * Reloads the state of the given service for this role.
+     * 
+     * @param service the service whose state is to be reloaded for this role.
      */
-    public final void reloadState() throws SQLException, IOException, PacketException, ExternalException {
-        // TODO: Probably replace this with a method by the synchronizer which also adjusts the audit time.
-        final @Nonnull StateReply reply = new StateQuery(this, CoreService.SERVICE).sendNotNull();
-        reply.updateState();
-        Database.commit();
+    public final void reloadState(@Nonnull Service service) throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
+        Synchronizer.reload(this, service);
         getAgent().reset();
     }
     
     /**
-     * Refreshes the state of this role.
+     * Refreshes the state of the given service for this role.
+     * 
+     * @param service the service whose state is to be refreshed for this role.
      */
-    public final void refreshState() throws SQLException, IOException, PacketException, ExternalException {
-        // TODO: Rewrite this method with an AuditQuery instead of a full StateQuery!
-        reloadState();
+    public final void refreshState(@Nonnull Service service) throws SQLException, IOException, PacketException, ExternalException {
+        Synchronizer.refresh(this, service);
+        getAgent().reset();
     }
     
     

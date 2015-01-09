@@ -6,13 +6,12 @@ import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.Role;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
+import ch.virtualid.handler.InternalQuery;
 import ch.virtualid.handler.Method;
 import ch.virtualid.handler.Reply;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identity.IdentityClass;
 import ch.virtualid.identity.SemanticType;
-import ch.virtualid.module.BothModule;
-import ch.virtualid.service.CoreServiceInternalQuery;
 import ch.virtualid.service.Service;
 import ch.xdf.Block;
 import ch.xdf.SignatureWrapper;
@@ -22,36 +21,36 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * Queries the state of the given module for the given role.
+ * Queries the audit of the given service for the given role.
  * 
- * @see StateReply
+ * @see AuditReply
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public final class StateQuery extends CoreServiceInternalQuery { // TODO: Inherit from InternalQuery instead to provide the right service?
+public final class AuditQuery extends InternalQuery {
     
     /**
-     * Stores the semantic type {@code query.module@virtualid.ch}.
+     * Stores the semantic type {@code query.audit@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("query.module@virtualid.ch").load(SemanticType.IDENTIFIER);
+    public static final @Nonnull SemanticType TYPE = SemanticType.create("query.audit@virtualid.ch").load(SemanticType.IDENTIFIER);
     
     
     /**
      * Stores the module whose state is queried.
      */
-    private final @Nonnull BothModule module;
+    private final @Nonnull Service service;
     
     /**
-     * Creates an internal query for the state of the given module.
+     * Creates an internal query for the audit of the given service.
      * 
      * @param role the role to which this handler belongs.
-     * @param module the module whose state is queried.
+     * @param service the service whose audit is queried.
      */
-    StateQuery(@Nonnull Role role, @Nonnull BothModule module) {
+    AuditQuery(@Nonnull Role role, @Nonnull Service service) {
         super(role);
         
-        this.module = module;
+        this.service = service;
     }
     
     /**
@@ -68,47 +67,47 @@ public final class StateQuery extends CoreServiceInternalQuery { // TODO: Inheri
      * @ensure hasSignature() : "This handler has a signature.";
      * @ensure isOnHost() : "Queries are only decoded on hosts.";
      */
-    private StateQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
+    private AuditQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
-        this.module = Service.getModule(IdentityClass.create(block).toSemanticType());
+        this.service = Service.getService(IdentityClass.create(block).toSemanticType());
     }
     
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        return module.getStateFormat().toBlock(TYPE);
+        return service.getType().toBlock(TYPE);
     }
     
     @Pure
     @Override
     public @Nonnull String toString() {
-        return "Queries the state of the " + module.getClass().getSimpleName() + ".";
+        return "Queries the audit of the " + service.getName() + ".";
     }
     
     
     @Override
-    protected @Nonnull StateReply executeOnHost(@Nonnull Agent agent) throws SQLException {
-        return new StateReply(getNonHostAccount(), module.getState(getNonHostAccount(), agent));
+    protected @Nonnull AuditReply executeOnHost(@Nonnull Agent agent) throws SQLException {
+        return new AuditReply(getNonHostAccount());
     }
     
     @Pure
     @Override
     public boolean matches(@Nullable Reply reply) {
-        return reply instanceof StateReply && ((StateReply) reply).block.getType().equals(module.getStateFormat());
+        return reply instanceof AuditReply;
     }
     
     
     @Pure
     @Override
     public boolean equals(@Nullable Object object) {
-        return protectedEquals(object) && object instanceof StateQuery && this.module.equals(((StateQuery) object).module);
+        return protectedEquals(object) && object instanceof AuditQuery && this.service.equals(((AuditQuery) object).service);
     }
     
     @Pure
     @Override
     public int hashCode() {
-        return 89 * protectedHashCode() + module.hashCode();
+        return 89 * protectedHashCode() + service.hashCode();
     }
     
     
@@ -128,7 +127,7 @@ public final class StateQuery extends CoreServiceInternalQuery { // TODO: Inheri
         @Pure
         @Override
         protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
-            return new StateQuery(entity, signature, recipient, block);
+            return new AuditQuery(entity, signature, recipient, block);
         }
         
     }

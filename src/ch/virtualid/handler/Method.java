@@ -25,7 +25,7 @@ import ch.virtualid.identifier.InternalIdentifier;
 import ch.virtualid.identity.Identity;
 import ch.virtualid.identity.Person;
 import ch.virtualid.identity.SemanticType;
-import ch.virtualid.module.CoreService;
+import ch.virtualid.service.CoreService;
 import ch.virtualid.packet.ClientRequest;
 import ch.virtualid.packet.CredentialsRequest;
 import ch.virtualid.packet.HostRequest;

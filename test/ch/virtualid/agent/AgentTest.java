@@ -10,7 +10,7 @@ import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.synchronizer.StateQuery;
 import ch.virtualid.synchronizer.StateReply;
-import ch.virtualid.module.CoreService;
+import ch.virtualid.service.CoreService;
 import ch.virtualid.setup.IdentitySetup;
 import ch.xdf.Block;
 import java.io.IOException;

@@ -29,7 +29,7 @@ import ch.virtualid.identity.Mapper;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.io.Level;
 import ch.virtualid.module.BothModule;
-import ch.virtualid.module.CoreService;
+import ch.virtualid.service.CoreService;
 import ch.virtualid.packet.Packet;
 import ch.virtualid.server.Host;
 import ch.virtualid.util.FreezableLinkedList;
@@ -230,7 +230,7 @@ public final class Actions implements BothModule {
         
         SQL.append(" AND (agent IS NULL");
         if (agent != null) SQL.append(" OR EXISTS (SELECT * FROM ").append(site).append("agent_permission_order po, ").append(site).append("agent_restrictions_ord ro WHERE po.entity = ").append(entity).append(" AND po.stronger = ").append(agent).append(" AND po.weaker = a.agent AND ro.entity = ").append(entity).append(" AND ro.stronger = ").append(agent).append(" AND ro.weaker = a.agent)");
-        SQL.append(")");
+        SQL.append(") ORDER BY time ASC");
         
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL.toString())) {
             if (resultSet.next()) {

@@ -1,4 +1,4 @@
-package ch.virtualid.handler.query.external;
+package ch.virtualid.service;
 
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Entity;
@@ -6,11 +6,9 @@ import ch.virtualid.entity.Role;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.ExternalQuery;
-import ch.virtualid.handler.reply.query.CoreServiceQueryReply;
+import ch.virtualid.service.CoreServiceQueryReply;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identifier.InternalIdentifier;
-import ch.virtualid.module.CoreService;
-import ch.virtualid.module.Service;
 import ch.xdf.SignatureWrapper;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;

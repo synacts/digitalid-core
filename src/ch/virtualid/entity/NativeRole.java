@@ -14,6 +14,8 @@ import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identity.InternalNonHostIdentity;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.module.client.Roles;
+import ch.virtualid.service.CoreService;
+import ch.virtualid.synchronizer.Synchronization;
 import ch.virtualid.util.ConcurrentHashMap;
 import ch.virtualid.util.ConcurrentMap;
 import java.io.IOException;
@@ -62,9 +64,9 @@ public final class NativeRole extends Role implements Immutable {
      * 
      * @return whether this role is accredited.
      */
-    public boolean isAccredited() throws SQLException, IOException, PacketException, ExternalException {
+    public boolean isAccredited() throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
         try {
-            reloadState();
+            reloadState(CoreService.SERVICE);
             return true;
         } catch (@Nonnull PacketException exception) {
             if (exception.getError() == PacketError.AUTHORIZATION) return false;
@@ -129,6 +131,7 @@ public final class NativeRole extends Role implements Immutable {
     @Override
     public void remove() throws SQLException {
         Roles.remove(this);
+        Synchronization.remove(this);
         if (Database.isSingleAccess()) {
             final @Nullable ConcurrentMap<Long, NativeRole> map = index.get(getClient());
             if (map != null) map.remove(getNumber());

@@ -17,7 +17,7 @@ import ch.virtualid.handler.Method;
 import ch.virtualid.handler.Reply;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identity.SemanticType;
-import ch.virtualid.module.Service;
+import ch.virtualid.service.Service;
 import ch.virtualid.packet.Packet;
 import ch.virtualid.packet.Response;
 import ch.virtualid.server.Host;

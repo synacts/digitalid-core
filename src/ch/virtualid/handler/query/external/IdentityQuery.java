@@ -1,5 +1,6 @@
 package ch.virtualid.handler.query.external;
 
+import ch.virtualid.service.CoreServiceExternalQuery;
 import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.annotations.Pure;

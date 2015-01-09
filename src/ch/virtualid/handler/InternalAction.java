@@ -7,7 +7,7 @@ import ch.virtualid.entity.Role;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
-import ch.virtualid.handler.action.internal.CoreServiceInternalAction;
+import ch.virtualid.service.CoreServiceInternalAction;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.synchronizer.Synchronizer;
 import ch.xdf.SignatureWrapper;

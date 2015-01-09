@@ -1,4 +1,4 @@
-package ch.virtualid.handler.query.internal;
+package ch.virtualid.service;
 
 import ch.virtualid.agent.Agent;
 import ch.virtualid.agent.AgentPermissions;
@@ -13,10 +13,7 @@ import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.InternalQuery;
-import ch.virtualid.handler.reply.query.CoreServiceQueryReply;
 import ch.virtualid.identifier.HostIdentifier;
-import ch.virtualid.module.CoreService;
-import ch.virtualid.module.Service;
 import ch.xdf.SignatureWrapper;
 import java.io.IOException;
 import java.sql.SQLException;

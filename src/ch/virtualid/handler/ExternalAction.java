@@ -8,7 +8,7 @@ import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Client;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.NonHostEntity;
-import ch.virtualid.handler.action.external.CoreServiceExternalAction;
+import ch.virtualid.service.CoreServiceExternalAction;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identifier.InternalIdentifier;
 import ch.virtualid.pusher.Pusher;

@@ -1,5 +1,6 @@
 package ch.virtualid.handler.action.internal;
 
+import ch.virtualid.service.CoreServiceInternalAction;
 import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.concepts.Password;

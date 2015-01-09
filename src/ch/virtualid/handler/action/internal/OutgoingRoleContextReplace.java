@@ -1,5 +1,6 @@
 package ch.virtualid.handler.action.internal;
 
+import ch.virtualid.service.CoreServiceInternalAction;
 import ch.virtualid.agent.Agent;
 import ch.virtualid.agent.OutgoingRole;
 import ch.virtualid.agent.Restrictions;

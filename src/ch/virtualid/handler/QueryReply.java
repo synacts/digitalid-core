@@ -3,7 +3,7 @@ package ch.virtualid.handler;
 import ch.virtualid.entity.Account;
 import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
-import ch.virtualid.handler.reply.query.CoreServiceQueryReply;
+import ch.virtualid.service.CoreServiceQueryReply;
 import ch.virtualid.handler.reply.query.IdentityReply;
 import ch.virtualid.identifier.InternalIdentifier;
 import ch.xdf.HostSignatureWrapper;

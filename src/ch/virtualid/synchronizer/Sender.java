@@ -7,7 +7,7 @@ import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.InternalAction;
 import ch.virtualid.handler.Method;
 import ch.virtualid.io.Level;
-import ch.virtualid.module.Service;
+import ch.virtualid.service.Service;
 import ch.virtualid.packet.Response;
 import ch.virtualid.util.ReadonlyList;
 import java.io.IOException;

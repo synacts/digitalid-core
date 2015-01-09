@@ -1,5 +1,6 @@
 package ch.virtualid.handler.action.internal;
 
+import ch.virtualid.service.CoreServiceInternalAction;
 import ch.virtualid.agent.Agent;
 import ch.virtualid.agent.ClientAgent;
 import ch.virtualid.annotations.Pure;

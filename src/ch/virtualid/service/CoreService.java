@@ -1,4 +1,4 @@
-package ch.virtualid.module;
+package ch.virtualid.service;
 
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.identity.Identity;

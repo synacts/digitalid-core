@@ -3,7 +3,7 @@ package ch.virtualid.module.client;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.Site;
 import ch.virtualid.module.ClientModule;
-import ch.virtualid.module.CoreService;
+import ch.virtualid.service.CoreService;
 import ch.virtualid.pusher.PushFailed;
 import java.sql.SQLException;
 import java.sql.Statement;

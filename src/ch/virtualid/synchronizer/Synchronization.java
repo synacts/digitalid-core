@@ -6,20 +6,28 @@ import ch.virtualid.database.Database;
 import ch.virtualid.entity.EntityClass;
 import ch.virtualid.entity.Role;
 import ch.virtualid.entity.Site;
+import ch.virtualid.exceptions.external.ExternalException;
+import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Action;
 import ch.virtualid.handler.InternalAction;
 import ch.virtualid.handler.Method;
+import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identifier.IdentifierClass;
 import ch.virtualid.identity.Mapper;
 import ch.virtualid.module.BothModule;
 import ch.virtualid.module.ClientModule;
-import ch.virtualid.module.CoreService;
-import ch.virtualid.module.Service;
+import ch.virtualid.packet.Packet;
+import ch.virtualid.service.CoreService;
+import ch.virtualid.service.Service;
 import ch.virtualid.util.FreezableLinkedList;
 import ch.virtualid.util.FreezableList;
 import ch.virtualid.util.ReadonlyCollection;
 import ch.virtualid.util.ReadonlyList;
 import ch.xdf.Block;
+import ch.xdf.SelfcontainedWrapper;
+import ch.xdf.SignatureWrapper;
+import java.io.IOException;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Iterator;
@@ -67,23 +75,32 @@ public final class Synchronization implements ClientModule {
      * 
      * @param client the client whose pending actions are to be loaded.
      */
-    public static void load(@Nonnull Client client) {
+    public static void load(@Nonnull Client client) throws SQLException, IOException, PacketException, ExternalException {
         // TODO: If the same client runs in several processes (on different machines), make sure the pending actions and suspended modules are loaded only once.
-    }
-    
-    public static void remove(@Nonnull Role role) {
-        // TODO: Remove all the pending actions that belong to the given role. Also make sure that this method is called from the role class.
+        final @Nonnull String SQL = "SELECT entity, recipient, action FROM " + client + "synchronization_action ORDER BY time ASC";
+        try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
+            while (resultSet.next()) {
+                final @Nonnull Role role = Role.getNotNull(client, resultSet, 1);
+                final @Nonnull HostIdentifier recipient = IdentifierClass.get(resultSet, 2).toHostIdentifier();
+                final @Nonnull SelfcontainedWrapper content = new SelfcontainedWrapper(Block.get(Packet.CONTENT, resultSet, 3));
+                final @Nonnull SignatureWrapper signature = new SignatureWrapper(Packet.SIGNATURE, (Block) null, role.getIdentity().getAddress());
+                final @Nonnull InternalAction action = Method.get(role, signature, recipient, content.getElement()).toInternalAction();
+                pendingActions.add(action);
+            }
+        }
     }
     
     /**
-     * Redoes all the pending actions of the given role that operate on one of the given modules until the given last action.
+     * Removes the pending actions of the given role.
      * 
-     * @param role
-     * @param modules
-     * @param lastAction 
+     * @param role the role whose actions are to be removed.
      */
-    static void redo(@Nonnull Role role, @Nonnull ReadonlyCollection<BothModule> modules, @Nullable InternalAction lastAction) {
-        // TODO: Commit each action individually.
+    public static void remove(@Nonnull Role role) throws SQLException {
+        final @Nonnull Iterator<InternalAction> iterator = pendingActions.iterator();
+        while (iterator.hasNext()) {
+            final @Nonnull InternalAction action =  iterator.next();
+            if (action.getRole().equals(role)) iterator.remove();
+        }
     }
     
     
@@ -102,6 +119,17 @@ public final class Synchronization implements ClientModule {
         pendingActions.removeAll((FreezableList<Method>) methods);
     }
     
+    
+    /**
+     * Redoes all the pending actions of the given role that operate on one of the given modules until the given last action.
+     * 
+     * @param role
+     * @param modules
+     * @param lastAction 
+     */
+    static void redo(@Nonnull Role role, @Nonnull ReadonlyCollection<BothModule> modules, @Nullable InternalAction lastAction) {
+        // TODO: Commit each action individually.
+    }
     
     static @Nonnull ReadonlyList<InternalAction> reverseInterferingActions(@Nonnull Action failedAction) throws SQLException {
         final @Nonnull Role role = failedAction.getRole();

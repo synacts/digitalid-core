@@ -7,10 +7,11 @@ import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.InternalAction;
 import ch.virtualid.handler.Method;
+import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.io.Level;
 import ch.virtualid.io.Logger;
-import ch.virtualid.module.Service;
 import ch.virtualid.packet.Response;
+import ch.virtualid.service.Service;
 import ch.virtualid.util.ConcurrentHashMap;
 import ch.virtualid.util.ConcurrentHashSet;
 import ch.virtualid.util.ConcurrentMap;
@@ -134,9 +135,7 @@ public final class Synchronizer extends Thread {
         try {
             Synchronization.getLastTime(role, service); // Read from the database in order to synchronize with other processes.
             final @Nonnull Response response = Method.send(new FreezableArrayList<Method>(new StateQuery(role, service)).freeze(), new RequestAudit(Time.MAX));
-            final @Nullable ResponseAudit responseAudit = response.getAudit();
-            assert responseAudit != null : "The response audit is not null as an audit was requested.";
-            Synchronization.setLastTime(role, service, responseAudit.getThisTime());
+            Synchronization.setLastTime(role, service, response.getAuditNotNull().getThisTime());
             
             final @Nonnull StateReply reply = response.getReplyNotNull(0);
             reply.updateState();
@@ -163,6 +162,25 @@ public final class Synchronizer extends Thread {
         if (set == null) set = suspendedServices.putIfAbsentElseReturnPresent(role, new ConcurrentHashSet<Service>());
         while (!suspend(role, service)) set.wait();
         reloadSuspended(role, service);
+    }
+    
+    /**
+     * Refreshes the state of the given service for the given role.
+     * This method returns immediately if an audit is already requested.
+     * 
+     * @param role the role for which the service is to be refreshed.
+     * @param service the service which is to be refreshed for the given role.
+     */
+    public static void refresh(@Nonnull Role role, @Nonnull Service service) throws SQLException, IOException, PacketException, ExternalException {
+        if (suspend(role, service)) {
+            try {
+                final @Nonnull RequestAudit requestAudit = new RequestAudit(Synchronization.getLastTime(role, service));
+                final @Nonnull Response response = Method.send(new FreezableArrayList<Method>(new AuditQuery(role, service)).freeze(), requestAudit);
+                response.getAuditNotNull().execute(role, service, HostIdentifier.VIRTUALID, ResponseAudit.emptyMethodList, ResponseAudit.emptyModuleSet); // TODO: Determine the right recipient.
+            } finally {
+                resume(role, service);
+            }
+        }
     }
     
     

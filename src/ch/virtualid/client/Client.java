@@ -34,7 +34,7 @@ import ch.virtualid.identity.Mapper;
 import ch.virtualid.identity.Predecessor;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.io.Directory;
-import ch.virtualid.module.CoreService;
+import ch.virtualid.service.CoreService;
 import ch.virtualid.module.client.Roles;
 import ch.virtualid.synchronizer.Synchronization;
 import ch.virtualid.synchronizer.Synchronizer;
