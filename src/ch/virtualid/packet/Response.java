@@ -125,6 +125,20 @@ public final class Response extends Packet {
     }
     
     /**
+     * Returns the audit of this packet.
+     * 
+     * @return the audit of this packet.
+     * 
+     * @require getAudit() != null : "The audit is not null.";
+     */
+    @Pure
+    public @Nonnull ResponseAudit getAuditNotNull() {
+        final @Nullable ResponseAudit audit = getAudit();
+        assert audit != null : "The audit is not null.";
+        return audit;
+    }
+    
+    /**
      * Returns whether this response has a request.
      * 
      * @return whether this response has a request.

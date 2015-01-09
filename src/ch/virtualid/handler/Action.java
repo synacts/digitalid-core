@@ -78,6 +78,13 @@ public abstract class Action extends Method implements Auditable {
      */
     public abstract void executeOnClient() throws SQLException;
     
+    /**
+     * This method is executed after successful transmission.
+     * 
+     * @throws SQLException if this handler cannot be executed.
+     */
+    public void executeOnSuccess() throws SQLException {}
+    
     
     @Pure
     @Override

@@ -9,7 +9,6 @@ import ch.virtualid.entity.Site;
 import ch.virtualid.handler.Action;
 import ch.virtualid.handler.InternalAction;
 import ch.virtualid.handler.Method;
-import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identifier.IdentifierClass;
 import ch.virtualid.identity.Mapper;
 import ch.virtualid.module.BothModule;
@@ -37,7 +36,7 @@ import javax.annotation.Nullable;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-final class Synchronization implements ClientModule {
+public final class Synchronization implements ClientModule {
     
     public static final Synchronization MODULE = new Synchronization();
     
@@ -104,12 +103,14 @@ final class Synchronization implements ClientModule {
     }
     
     
-    static @Nonnull ReadonlyList<InternalAction> reversePendingActions(@Nonnull BothModule module) throws SQLException {
+    static @Nonnull ReadonlyList<InternalAction> reverseInterferingActions(@Nonnull Action failedAction) throws SQLException {
+        final @Nonnull Role role = failedAction.getRole();
+        final @Nonnull Service service = failedAction.getService();
         final @Nonnull FreezableList<InternalAction> reversedActions = new FreezableLinkedList<InternalAction>();
         final @Nonnull Iterator<InternalAction> iterator = pendingActions.descendingIterator();
         while (iterator.hasNext()) {
             final @Nonnull InternalAction pendingAction = iterator.next();
-            if (pendingAction.getModule().equals(module)) {
+            if (pendingAction.getRole().equals(role) && pendingAction.getService().equals(service) && pendingAction.interferesWith(failedAction)) {
                 pendingAction.reverseOnClient();
                 reversedActions.add(pendingAction);
             }
@@ -167,11 +168,6 @@ final class Synchronization implements ClientModule {
         }
         
         natives.put(identity, time);
-    }
-    
-    public static void store(Role role, Service service, HostIdentifier recipient, Action action) {
-        throw new UnsupportedOperationException("store in Synchronization is not supported yet.");
-        // TODO: also update the last synchronization time?
     }
     
     static { CoreService.SERVICE.add(MODULE); }

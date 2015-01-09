@@ -32,7 +32,6 @@ import ch.virtualid.packet.HostRequest;
 import ch.virtualid.packet.Request;
 import ch.virtualid.packet.Response;
 import ch.virtualid.synchronizer.RequestAudit;
-import ch.virtualid.synchronizer.ResponseAudit;
 import ch.virtualid.util.FreezableArrayList;
 import ch.virtualid.util.ReadonlyIterator;
 import ch.virtualid.util.ReadonlyList;
@@ -205,8 +204,7 @@ public abstract class Method extends Handler {
             if (requestAudit != null) RequestAudit.release(this);
             throw exception;
         }
-        final @Nullable ResponseAudit responseAudit = response.getAudit();
-        if (responseAudit != null) responseAudit.executeAsynchronously(this);
+        if (requestAudit != null) response.getAuditNotNull().executeAsynchronously(this);
         response.checkReply(0);
         return response;
     }

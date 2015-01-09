@@ -1,18 +1,14 @@
 package ch.virtualid.synchronizer;
 
-import ch.virtualid.agent.Agent;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.Role;
 import ch.virtualid.exceptions.external.ExternalException;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Action;
 import ch.virtualid.handler.InternalAction;
-import ch.virtualid.handler.InternalMethod;
 import ch.virtualid.handler.Method;
-import ch.virtualid.handler.action.internal.ClientAgentCommitmentReplace;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
@@ -21,12 +17,14 @@ import ch.virtualid.module.BothModule;
 import ch.virtualid.module.Service;
 import ch.virtualid.packet.Packet;
 import ch.virtualid.packet.Response;
-import ch.virtualid.util.ConcurrentHashSet;
-import ch.virtualid.util.ConcurrentSet;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.FreezableArrayList;
+import ch.virtualid.util.FreezableHashSet;
+import ch.virtualid.util.FreezableLinkedList;
 import ch.virtualid.util.FreezableList;
+import ch.virtualid.util.FreezableSet;
 import ch.virtualid.util.ReadonlyList;
+import ch.virtualid.util.ReadonlySet;
 import ch.xdf.Block;
 import ch.xdf.CompressionWrapper;
 import ch.xdf.ListWrapper;
@@ -35,10 +33,8 @@ import ch.xdf.SignatureWrapper;
 import ch.xdf.TupleWrapper;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * This class models a response audit with the trail and the times of the last and this audit.
@@ -128,94 +124,81 @@ public final class ResponseAudit extends Audit implements Immutable, Blockable {
     
     
     /**
+     * Stores an empty set of modules.
+     */
+    static final @Nonnull ReadonlySet<BothModule> emptyModuleSet = new FreezableHashSet<BothModule>().freeze();
+    
+    /**
+     * Stores an empty list of methods.
+     */
+    static final @Nonnull ReadonlyList<Method> emptyMethodList = new FreezableLinkedList<Method>().freeze();
+    
+    /**
      * Executes the trail of this audit.
      * 
-     * @param method the method that was sent.
+     * @param role the role for which the trail is to be executed.
+     * @param service the service whose trail is to be executed.
+     * @param recipient the recipient of the actions in the trail.
+     * @param methods the methods that were sent with the audit request.
+     * @param ignoredModules the modules that are ignored when executing the trail.
      */
-    public void execute(@Nonnull Method method) throws SQLException, IOException, PacketException, ExternalException {
-        if (method.isOnClient() && method instanceof InternalMethod) {
-            final @Nonnull Role role = method.getRole();
-            final @Nonnull Agent agent = role.getAgent();
-            final @Nonnull Service service = method.getService();
-            final @Nonnull HostIdentifier recipient = method.getRecipient();
-            final @Nonnull ConcurrentSet<BothModule> suspendedModules = new ConcurrentHashSet<BothModule>();
+    void execute(@Nonnull Role role, @Nonnull Service service, @Nonnull HostIdentifier recipient, @Nonnull ReadonlyList<Method> methods, @Nonnull ReadonlySet<BothModule> ignoredModules) throws SQLException, IOException, PacketException, ExternalException {
+        final @Nonnull FreezableSet<BothModule> suspendedModules = new FreezableHashSet<BothModule>();
+        for (@Nonnull Block block : trail) {
+            final @Nonnull SignatureWrapper signature = SignatureWrapper.decodeWithoutVerifying(block, true, role);
+            final @Nonnull CompressionWrapper compression = new CompressionWrapper(signature.getElementNotNull());
+            final @Nonnull Block element = new SelfcontainedWrapper(compression.getElementNotNull()).getElement();
+            final @Nonnull Action action = Method.get(role, signature, recipient, element).toAction();
             
-            for (@Nonnull Block block : trail) {
-                final @Nonnull SignatureWrapper signature = SignatureWrapper.decodeWithoutVerifying(block, true, role);
-                final @Nonnull CompressionWrapper compression = new CompressionWrapper(signature.getElementNotNull());
-                final @Nonnull Block element = new SelfcontainedWrapper(compression.getElementNotNull()).getElement();
-                final @Nonnull Action action = Method.get(role, signature, recipient, element).toAction();
-                final @Nonnull BothModule module = action.getModule();
-                
-                if (!suspendedModules.contains(module)) {
-                    final @Nonnull ReadonlyList<BothModule> suspendModules = action.suspendModules();
-                    if (suspendModules.isNotEmpty()) {
-                        suspendedModules.addAll((FreezableList<BothModule>) suspendModules);
-                    } else {
-                        if (agent.equals(signature.getAgent(role))) {
-                            Actions.audit(action);
-                            Database.commit();
-                        } else {
-                            try {
-                                action.executeOnClient();
-                                Actions.audit(action);
-                                Database.commit();
-                            } catch (@Nonnull SQLException exception) {
-                                Database.rollback();
-                                if (action instanceof ClientAgentCommitmentReplace) {
-                                    Actions.audit(action);
-                                    Database.commit();
-                                } else {
-                                    final @Nonnull List<InternalAction> pendingActions = new LinkedList<InternalAction>();
-                                    final @Nonnull Iterator<InternalAction> iterator = Synchronization.pendingActions.descendingIterator();
-                                    while (iterator.hasNext()) {
-                                        final @Nonnull InternalAction pendingAction = iterator.next();
-                                        if (pendingAction.getModule().equals(module)) {
-                                            pendingAction.reverseOnClient();
-                                            pendingActions.add(pendingAction);
-                                        }
-                                    }
-                                    
-                                    try {
-                                        action.executeOnClient();
-                                        Actions.audit(action);
-                                        Database.commit();
-                                    } catch (@Nonnull SQLException e) {
-                                        Database.rollback();
-                                        suspendedModules.add(module);
-                                        break;
-                                    }
-                                    
-                                    for (@Nonnull InternalAction pendingAction : pendingActions) {
-                                        try {
-                                            pendingAction.executeOnClient();
-                                            Database.commit();
-                                        } catch (@Nonnull SQLException e) {
-                                            Database.rollback();
-                                            // TODO: Add the action to the error module.
-                                            Synchronization.remove(pendingAction);
-                                            Database.commit();
-                                        }
-                                    }
-                                }
-                            }
-                        }
+            final @Nonnull ReadonlyList<BothModule> suspendModules = action.suspendModules();
+            if (suspendModules.isNotEmpty()) {
+                suspendedModules.addAll((FreezableList<BothModule>) suspendModules);
+            }
+            
+            final @Nonnull BothModule module = action.getModule();
+            if (!suspendedModules.contains(module) && !ignoredModules.contains(module) && !methods.contains(action)) {
+                try {
+                    action.executeOnClient();
+                } catch (@Nonnull SQLException exception) {
+                    Synchronizer.LOGGER.log(Level.WARNING, exception);
+                    Database.rollback();
+                    
+                    final @Nonnull ReadonlyList<InternalAction> reversedActions = Synchronization.reverseInterferingActions(action);
+                    
+                    try {
+                        action.executeOnClient();
+                        Actions.audit(action);
+                        Database.commit();
+                    } catch (@Nonnull SQLException e) {
+                        Synchronizer.LOGGER.log(Level.WARNING, e);
+                        Database.rollback();
+                        suspendedModules.add(module);
                     }
+                    
+                    Synchronization.redoReversedActions(reversedActions);
                 }
             }
             
-            Synchronization.setLastTime(role, service, thisTime);
+            Actions.audit(action);
             Database.commit();
-            
-            if (suspendedModules.isNotEmpty()) {
-                final @Nonnull FreezableList<Method> methods = new FreezableArrayList<Method>(suspendedModules.size());
-                for (@Nonnull BothModule module : suspendedModules) methods.add(module.getInternalQuery(role));
-                final @Nonnull Response response = Method.send(methods.freeze(), RequestAudit.get(methods.getNotNull(0)));
-                // TODO: Be able to handle the replies automatically.
-                // TODO: Resume the suspended modules.
+        }
+        
+        Synchronization.setLastTime(role, service, thisTime);
+        Database.commit();
+        
+        suspendedModules.removeAll((FreezableSet<BothModule>) ignoredModules);
+        if (suspendedModules.isNotEmpty()) {
+            final @Nonnull FreezableList<Method> queries = new FreezableArrayList<Method>(suspendedModules.size());
+            for (final @Nonnull BothModule module : suspendedModules) queries.add(new StateQuery(role, module));
+            final @Nonnull Response response = Method.send(queries.freeze(), new RequestAudit(Synchronization.getLastTime(role, service)));
+            for (int i = 0; i < response.getSize(); i++) {
+                final @Nonnull StateReply reply = response.getReplyNotNull(i);
+                reply.updateState();
             }
-        } else {
-            throw new InvalidEncodingException("No audit trail should be appended.");
+            final @Nullable InternalAction lastAction = Synchronization.pendingActions.peekLast();
+            Database.commit();
+            Synchronization.redo(role, suspendedModules, lastAction);
+            response.getAuditNotNull().execute(role, service, recipient, emptyMethodList, suspendedModules.freeze());
         }
     }
     
@@ -229,7 +212,7 @@ public final class ResponseAudit extends Audit implements Immutable, Blockable {
             @Override
             public void run() {
                 try {
-                    execute(method);
+                    execute(method.getRole(), method.getService(), method.getRecipient(), new FreezableArrayList<Method>(method).freeze(), emptyModuleSet);
                 } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
                     Synchronizer.LOGGER.log(Level.WARNING, exception);
                 }

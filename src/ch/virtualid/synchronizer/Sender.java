@@ -88,7 +88,7 @@ final class Sender extends Thread {
                                     Database.commit();
                                 } catch (@Nonnull SQLException exc) {
                                     Synchronizer.LOGGER.log(Level.WARNING, exc);
-                                    final @Nonnull ReadonlyList<InternalAction> reversedActions = Synchronization.reversePendingActions(action.getModule());
+                                    final @Nonnull ReadonlyList<InternalAction> reversedActions = Synchronization.reverseInterferingActions(action);
                                     
                                     try {
                                         action.reverseOnClient();
@@ -116,9 +116,7 @@ final class Sender extends Thread {
                         }
                     }
                     
-                    Synchronization.remove(reference.getRole(), size);
-                    Database.commit();
-                    for (int i = 0; i < size; i++) pendingActions.remove();
+                    response.getAuditNotNull().execute(role, service, reference.getRecipient(), methods, ResponseAudit.emptyModuleSet);
                     
                     backoff = 0l;
                 } catch (@Nonnull IOException exception) {

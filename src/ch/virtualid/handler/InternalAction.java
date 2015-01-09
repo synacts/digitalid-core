@@ -105,6 +105,18 @@ public abstract class InternalAction extends Action implements InternalMethod {
     
     
     /**
+     * Returns whether this internal action interferes with the given action.
+     * 
+     * @param action the action which is to be checked for interference.
+     * 
+     * @return whether this internal action interferes with the given action.
+     * 
+     * @require action.getRole().equals(getRole()) : "The role of the given and this action is the same.";
+     * @require action.getService().equals(getService()) : "The service of the given and this action is the same.";
+     */
+    public abstract boolean interferesWith(@Nonnull Action action);
+    
+    /**
      * Returns the reverse of this action or null if this action cannot be reversed.
      * 
      * @return the reverse of this action or null if this action cannot be reversed.
@@ -120,6 +132,8 @@ public abstract class InternalAction extends Action implements InternalMethod {
      * @require isOnClient() : "This method is called on a client.";
      */
     public final void reverseOnClient() throws SQLException {
+        assert isOnClient() : "This method is called on a client.";
+        
         final @Nullable InternalAction reverse = getReverse();
         if (reverse != null) reverse.executeOnClient();
     }
