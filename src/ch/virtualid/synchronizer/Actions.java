@@ -269,7 +269,7 @@ public final class Actions implements BothModule {
         final @Nonnull String SQL = "INSERT INTO " + site + "action (entity, service, time, " + AgentPermissions.COLUMNS + ", " + Restrictions.COLUMNS + ", agent, recipient, action) SELECT ?, ?, " + TIME + ", ?, ?, ?, ?, ?, ?, ?, ?, ?, ? FROM " + site + "action";
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
             entity.set(preparedStatement, 1);
-            action.getService().getType().set(preparedStatement, 2);
+            action.getService().set(preparedStatement, 2);
             action.getAuditPermissions().setEmptyOrSingle(preparedStatement, 3);
             action.getAuditRestrictions().set(preparedStatement, 5);
             Agent.set(action.getAuditAgent(), preparedStatement, 10);

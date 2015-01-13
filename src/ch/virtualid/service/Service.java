@@ -17,8 +17,11 @@ import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identifier.IdentifierClass;
+import ch.virtualid.identity.IdentityClass;
 import ch.virtualid.identity.InternalNonHostIdentity;
+import ch.virtualid.identity.Mapper;
 import ch.virtualid.identity.SemanticType;
+import ch.virtualid.interfaces.SQLizable;
 import ch.virtualid.module.BothModule;
 import ch.virtualid.module.ClientModule;
 import ch.virtualid.module.HostModule;
@@ -35,6 +38,8 @@ import ch.xdf.Block;
 import ch.xdf.ListWrapper;
 import ch.xdf.SelfcontainedWrapper;
 import java.io.IOException;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -47,7 +52,7 @@ import javax.annotation.Nullable;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public abstract class Service implements BothModule {
+public abstract class Service implements BothModule, SQLizable {
     
     /**
      * Maps the services that are installed on this server from their type.
@@ -142,9 +147,13 @@ public abstract class Service implements BothModule {
         return version;
     }
     
+    /**
+     * Returns the name with the version of this service.
+     * 
+     * @return the name with the version of this service.
+     */
     @Pure
-    @Override
-    public final @Nonnull String toString() {
+    public final @Nonnull String getNameWithVersion() {
         return name + " (" + version + ")";
     }
     
@@ -346,6 +355,40 @@ public abstract class Service implements BothModule {
       for (final @Nonnull BothModule bothModule : bothModules.values()) bothModule.removeState(entity);
     }
     
+    
+    /**
+     * Stores the data type used to store instances of this class in the database.
+     */
+    public static final @Nonnull String FORMAT = Mapper.FORMAT;
+    
+    /**
+     * Stores the foreign key constraint used to reference instances of this class.
+     */
+    public static final @Nonnull String REFERENCE = Mapper.REFERENCE;
+    
+    /**
+     * Returns the given column of the result set as an instance of this class.
+     * 
+     * @param resultSet the result set to retrieve the data from.
+     * @param columnIndex the index of the column containing the data.
+     * 
+     * @return the given column of the result set as an instance of this class.
+     */
+    @Pure
+    public static @Nonnull Service get(@Nonnull ResultSet resultSet, int columnIndex) throws SQLException, PacketException, InvalidEncodingException {
+        return getService(IdentityClass.getNotNull(resultSet, columnIndex).toSemanticType());
+    }
+    
+    @Override
+    public void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+        getType().set(preparedStatement, parameterIndex);
+    }
+    
+    @Pure
+    @Override
+    public final @Nonnull String toString() {
+        return getType().toString();
+    }
     
     @Pure
     @Override

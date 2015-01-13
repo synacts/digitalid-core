@@ -143,7 +143,7 @@ public final class Synchronizer extends Thread {
             final @Nullable InternalAction lastAction = Synchronization.pendingActions.peekLast();
             Database.commit();
             
-            Synchronization.redo(role, service.getBothModules(), lastAction);
+            Synchronization.redoPendingActions(role, service.getBothModules(), lastAction);
         } finally {
             resume(role, service);
         }

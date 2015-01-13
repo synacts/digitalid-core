@@ -168,8 +168,8 @@ public final class Cache {
         
         if (value != null) value.checkContentType(type);
         
-        final @Nonnull String statement = Database.getConfiguration().REPLACE() + " INTO general_cache (identity, role, type, found, time, value, reply) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(statement)) {
+        final @Nonnull String SQL = Database.getConfiguration().REPLACE() + " INTO general_cache (identity, role, type, found, time, value, reply) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
             identity.set(preparedStatement, 1);
             if (role != null) role.getIdentity().set(preparedStatement, 2);
             else HostIdentity.VIRTUALID.set(preparedStatement, 2);

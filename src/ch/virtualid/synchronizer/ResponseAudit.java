@@ -197,7 +197,7 @@ public final class ResponseAudit extends Audit implements Immutable, Blockable {
             }
             final @Nullable InternalAction lastAction = Synchronization.pendingActions.peekLast();
             Database.commit();
-            Synchronization.redo(role, suspendedModules, lastAction);
+            Synchronization.redoPendingActions(role, suspendedModules, lastAction);
             response.getAuditNotNull().execute(role, service, recipient, emptyMethodList, suspendedModules.freeze());
         }
     }
