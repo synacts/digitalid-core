@@ -1,9 +1,13 @@
 package ch.virtualid.service;
 
 import ch.virtualid.annotations.Pure;
+import ch.virtualid.entity.Role;
+import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identity.Identity;
+import ch.virtualid.identity.InternalNonHostIdentity;
 import ch.virtualid.identity.SemanticType;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * This class models the core service.
@@ -26,6 +30,13 @@ public final class CoreService extends Service {
     }
     
     
+    @Pure
+    @Override
+    public @Nonnull Service getService() {
+        return SERVICE;
+    }
+    
+    
     /**
      * Stores the semantic type {@code @virtualid.ch}.
      */
@@ -35,6 +46,19 @@ public final class CoreService extends Service {
     @Override
     public @Nonnull SemanticType getType() {
         return TYPE;
+    }
+    
+    
+    @Pure
+    @Override
+    public @Nonnull HostIdentifier getRecipient(@Nonnull Role role) {
+        return role.getIdentity().getAddress().getHostIdentifier();
+    }
+    
+    @Pure
+    @Override
+    public @Nonnull HostIdentifier getRecipient(@Nullable Role role, @Nonnull InternalNonHostIdentity subject) {
+        return subject.getAddress().getHostIdentifier();
     }
     
     

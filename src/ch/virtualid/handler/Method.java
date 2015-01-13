@@ -25,12 +25,12 @@ import ch.virtualid.identifier.InternalIdentifier;
 import ch.virtualid.identity.Identity;
 import ch.virtualid.identity.Person;
 import ch.virtualid.identity.SemanticType;
-import ch.virtualid.service.CoreService;
 import ch.virtualid.packet.ClientRequest;
 import ch.virtualid.packet.CredentialsRequest;
 import ch.virtualid.packet.HostRequest;
 import ch.virtualid.packet.Request;
 import ch.virtualid.packet.Response;
+import ch.virtualid.service.CoreService;
 import ch.virtualid.synchronizer.RequestAudit;
 import ch.virtualid.util.FreezableArrayList;
 import ch.virtualid.util.ReadonlyIterator;
@@ -136,7 +136,9 @@ public abstract class Method extends Handler {
      * @ensure return.isFrozen() : "The returned permissions are frozen.";
      */
     @Pure
-    public abstract @Nonnull ReadonlyAgentPermissions getRequiredPermissions();
+    public @Nonnull ReadonlyAgentPermissions getRequiredPermissions() {
+        return AgentPermissions.NONE;
+    }
     
     
     /**

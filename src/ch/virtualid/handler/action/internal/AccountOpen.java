@@ -30,10 +30,10 @@ import ch.virtualid.identity.InternalNonHostIdentity;
 import ch.virtualid.identity.Mapper;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.BothModule;
-import ch.virtualid.service.CoreService;
-import ch.virtualid.service.Service;
 import ch.virtualid.packet.ClientRequest;
 import ch.virtualid.packet.Response;
+import ch.virtualid.service.CoreService;
+import ch.virtualid.service.Service;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.FreezableArrayList;
 import ch.virtualid.util.ReadonlyArray;
@@ -191,11 +191,6 @@ public final class AccountOpen extends Action {
         return commitment;
     }
     
-    
-    @Override
-    public ReadonlyAgentPermissions getRequiredPermissions() {
-        return AgentPermissions.NONE;
-    }
     
     @Pure
     @Override

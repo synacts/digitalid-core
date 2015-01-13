@@ -1,14 +1,23 @@
 package ch.virtualid.service;
 
 import ch.virtualid.agent.Agent;
+import ch.virtualid.agent.ReadonlyAgentPermissions;
+import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
+import ch.virtualid.attribute.Attribute;
+import ch.virtualid.attribute.AttributeValue;
+import ch.virtualid.client.Cache;
 import ch.virtualid.client.Client;
 import ch.virtualid.entity.NonHostEntity;
+import ch.virtualid.entity.Role;
 import ch.virtualid.entity.Site;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
+import ch.virtualid.identifier.HostIdentifier;
+import ch.virtualid.identifier.IdentifierClass;
+import ch.virtualid.identity.InternalNonHostIdentity;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.BothModule;
 import ch.virtualid.module.ClientModule;
@@ -69,19 +78,24 @@ public abstract class Service implements BothModule {
         throw new PacketException(PacketError.SERVICE, "No service with the type " + type.getAddress() + " is installed.");
     }
     
+    
+    /**
+     * Maps the modules that exist on this server from their state format.
+     */
+    private static final @Nonnull FreezableMap<SemanticType, BothModule> modules = new FreezableLinkedHashMap<SemanticType, BothModule>();
+    
     /**
      * Returns the module whose state format matches the given type.
+     * 
+     * @param stateFormat the state format of the desired module.
      * 
      * @return the module whose state format matches the given type.
      */
     @Pure
-    public static @Nonnull BothModule getModule(@Nonnull SemanticType type) throws PacketException {
-        for (final @Nonnull Service service : services.values()) {
-            if (service.getStateFormat().equals(type)) return service;
-            final @Nullable BothModule module = service.bothModules.get(type);
-            if (module != null) return module;
-        }
-        throw new PacketException(PacketError.SERVICE, "No installed service supports the module with the state format " + type.getAddress() + ".");
+    public static @Nonnull BothModule getModule(@Nonnull SemanticType stateFormat) throws PacketException {
+        final @Nullable BothModule module = modules.get(stateFormat);
+        if (module != null) return module;
+        throw new PacketException(PacketError.SERVICE, "There exists no module with the state format " + stateFormat.getAddress() + ".");
     }
     
     
@@ -105,6 +119,7 @@ public abstract class Service implements BothModule {
         this.name = name;
         this.version = version;
         services.put(getType(), this);
+        modules.put(getStateFormat(), this);
     }
     
     /**
@@ -144,6 +159,34 @@ public abstract class Service implements BothModule {
     
     
     /**
+     * Returns the recipient of internal methods for the given role.
+     * 
+     * @param role the role for which the recipient is to be returned.
+     * 
+     * @return the recipient of internal methods for the given role.
+     */
+    @Pure
+    public @Nonnull HostIdentifier getRecipient(@Nonnull Role role) throws SQLException, PacketException, InvalidEncodingException {
+        final @Nullable AttributeValue attributeValue = Attribute.get(role, getType()).getValue();
+        if (attributeValue == null) throw new PacketException(PacketError.AUTHORIZATION, "Could not read the attribute value of " + getType().getAddress() + ".");
+        return IdentifierClass.create(attributeValue.getContent()).toHostIdentifier();
+    }
+    
+    /**
+     * Returns the recipient of external methods for the given subject.
+     * 
+     * @param role the role that sends the method or null for hosts.
+     * @param subject the subject for which the recipient is to be returned.
+     * 
+     * @return the recipient of external methods for the given subject.
+     */
+    @Pure
+    public @Nonnull HostIdentifier getRecipient(@Nullable Role role, @Nonnull InternalNonHostIdentity subject) throws SQLException, IOException, PacketException, ExternalException {
+        return IdentifierClass.create(Cache.getFreshAttributeContent(subject, role, getType(), false)).toHostIdentifier();
+    }
+    
+    
+    /**
      * Maps the modules that are used on hosts from their module format.
      */
     private final @Nonnull FreezableMap<SemanticType, HostModule> hostModules = new FreezableLinkedHashMap<SemanticType, HostModule>();
@@ -177,6 +220,7 @@ public abstract class Service implements BothModule {
         hostModules.put(bothModule.getModuleFormat(), bothModule);
         clientModules.add(bothModule);
         bothModules.put(bothModule.getStateFormat(), bothModule);
+        modules.put(bothModule.getStateFormat(), bothModule);
     }
     
     /**
@@ -276,10 +320,10 @@ public abstract class Service implements BothModule {
     
     @Pure
     @Override
-    public final @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull Agent agent) throws SQLException {
+    public final @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadonlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws SQLException {
         final @Nonnull FreezableList<Block> elements = new FreezableArrayList<Block>(bothModules.size());
         for (final @Nonnull BothModule bothModule : bothModules.values()) {
-            elements.add(new SelfcontainedWrapper(STATE, bothModule.getState(entity, agent)).toBlock());
+            elements.add(new SelfcontainedWrapper(STATE, bothModule.getState(entity, permissions, restrictions, agent)).toBlock());
         }
         return new ListWrapper(getStateFormat(), elements.freeze()).toBlock();
     }

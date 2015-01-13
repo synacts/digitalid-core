@@ -1,6 +1,8 @@
 package ch.virtualid.module;
 
 import ch.virtualid.agent.Agent;
+import ch.virtualid.agent.ReadonlyAgentPermissions;
+import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Client;
 import ch.virtualid.entity.NonHostEntity;
@@ -12,6 +14,7 @@ import ch.xdf.Block;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * These modules are used on both {@link Host hosts} and {@link Client clients}.
@@ -32,17 +35,19 @@ public interface BothModule extends HostModule, ClientModule {
     public @Nonnull SemanticType getStateFormat();
     
     /**
-     * Returns the partial state of the given entity restricted by the authorization of the given agent.
+     * Returns the partial state of the given entity restricted by the given authorization.
      * 
      * @param entity the entity whose partial state is to be returned.
+     * @param permissions the permissions that restrict the returned state.
+     * @param restrictions the restrictions that restrict the returned state.
      * @param agent the agent whose authorization restricts the returned state.
      * 
-     * @return the partial state of the given entity restricted by the authorization of the given agent.
+     * @return the partial state of the given entity restricted by the given authorization.
      * 
      * @ensure return.getType().equals(getStateFormat()) : "The returned block has the indicated type.";
      */
     @Pure
-    public @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull Agent agent) throws SQLException;
+    public @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadonlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws SQLException;
     
     /**
      * Adds the partial state in the given block to the given entity.

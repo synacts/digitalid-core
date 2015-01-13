@@ -1,18 +1,19 @@
 package ch.virtualid.module.both;
 
 import ch.virtualid.agent.Agent;
+import ch.virtualid.agent.ReadonlyAgentPermissions;
+import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.attribute.AttributeValue;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.NonHostEntity;
-import ch.virtualid.entity.Role;
 import ch.virtualid.entity.Site;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
-import ch.virtualid.handler.InternalQuery;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.BothModule;
-import ch.virtualid.service.CoreService;
 import ch.virtualid.server.Host;
+import ch.virtualid.service.CoreService;
+import ch.virtualid.service.Service;
 import ch.virtualid.util.FreezableLinkedList;
 import ch.virtualid.util.FreezableList;
 import ch.virtualid.util.ReadonlyList;
@@ -22,6 +23,7 @@ import ch.xdf.TupleWrapper;
 import java.sql.SQLException;
 import java.sql.Statement;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * This class provides database access to the {@link AttributeValue certificates} of the core service.
@@ -32,6 +34,12 @@ import javax.annotation.Nonnull;
 public final class Certificates implements BothModule {
     
     public static final Certificates MODULE = new Certificates();
+    
+    @Pure
+    @Override
+    public @Nonnull Service getService() {
+        return CoreService.SERVICE;
+    }
     
     @Override
     public void createTables(@Nonnull Site site) throws SQLException {
@@ -105,7 +113,7 @@ public final class Certificates implements BothModule {
     
     @Pure
     @Override
-    public @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull Agent agent) throws SQLException {
+    public @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadonlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws SQLException {
         final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
         try (@Nonnull Statement statement = Database.createStatement()) {
             // TODO: Retrieve the entries of the given entity from the database table(s).
@@ -128,12 +136,6 @@ public final class Certificates implements BothModule {
         try (@Nonnull Statement statement = Database.createStatement()) {
             // TODO: Remove the entries of the given entity from the database table(s).
         }
-    }
-    
-    @Pure
-    @Override
-    public @Nonnull InternalQuery getInternalQuery(@Nonnull Role role) {
-        return null; // TODO: Return the internal query for reloading the data of this module.
     }
     
     static { CoreService.SERVICE.add(MODULE); }

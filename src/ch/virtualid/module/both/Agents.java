@@ -23,15 +23,15 @@ import ch.virtualid.entity.Site;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketException;
-import ch.virtualid.handler.query.internal.AgentsQuery;
 import ch.virtualid.identity.Identity;
 import ch.virtualid.identity.IdentityClass;
 import ch.virtualid.identity.InternalNonHostIdentity;
 import ch.virtualid.identity.Mapper;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.BothModule;
-import ch.virtualid.service.CoreService;
 import ch.virtualid.server.Host;
+import ch.virtualid.service.CoreService;
+import ch.virtualid.service.Service;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.FreezableLinkedHashSet;
 import ch.virtualid.util.FreezableLinkedList;
@@ -73,6 +73,12 @@ public final class Agents implements BothModule {
      * Stores an instance of this module.
      */
     public static final Agents MODULE = new Agents();
+    
+    @Pure
+    @Override
+    public @Nonnull Service getService() {
+        return CoreService.SERVICE;
+    }
     
     /**
      * Creates the table which is referenced for the given site.
@@ -535,7 +541,9 @@ public final class Agents implements BothModule {
     
     @Pure
     @Override
-    public @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull Agent agent) throws SQLException {
+    public @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadonlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws SQLException {
+        if (agent == null) throw new SQLException("The agent may not be null for state queries of the core service.");
+        
         final @Nonnull Site site = entity.getSite();
         final @Nonnull String from = " FROM " + site + "agent_permission_order po, " + site + "agent_restrictions_ord ro, " + site;
         final @Nonnull String where = " t WHERE po.entity = " + entity + " AND po.stronger = " + agent + " AND ro.entity = " + entity + " AND ro.stronger = " + agent + " AND t.entity = " + entity + " AND po.weaker = t.agent AND ro.weaker = t.agent";
@@ -556,21 +564,13 @@ public final class Agents implements BothModule {
             
             try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT agent, " + AgentPermissions.COLUMNS + from + "agent_permission" + where)) {
                 final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
-                while (resultSet.next()) {
-                    final long number = resultSet.getLong(1);
-                    final @Nonnull AgentPermissions permissions = AgentPermissions.getEmptyOrSingle(resultSet, 2);
-                    entries.add(new TupleWrapper(AGENT_PERMISSION_STATE_ENTRY, new Int64Wrapper(Agent.NUMBER, number), permissions).toBlock());
-                }
+                while (resultSet.next()) entries.add(new TupleWrapper(AGENT_PERMISSION_STATE_ENTRY, new Int64Wrapper(Agent.NUMBER, resultSet.getLong(1)), AgentPermissions.getEmptyOrSingle(resultSet, 2)).toBlock());
                 tables.set(1, new ListWrapper(AGENT_PERMISSION_STATE_TABLE, entries.freeze()).toBlock());
             }
             
             try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT agent, " + Restrictions.COLUMNS + from + "agent_restrictions" + where)) {
                 final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
-                while (resultSet.next()) {
-                    final long number = resultSet.getLong(1);
-                    final @Nonnull Restrictions restrictions = Restrictions.get(entity, resultSet, 2);
-                    entries.add(new TupleWrapper(AGENT_RESTRICTIONS_STATE_ENTRY, new Int64Wrapper(Agent.NUMBER, number), restrictions).toBlock());
-                }
+                while (resultSet.next()) entries.add(new TupleWrapper(AGENT_RESTRICTIONS_STATE_ENTRY, new Int64Wrapper(Agent.NUMBER, resultSet.getLong(1)), Restrictions.get(entity, resultSet, 2)).toBlock());
                 tables.set(2, new ListWrapper(AGENT_RESTRICTIONS_STATE_TABLE, entries.freeze()).toBlock());
             }
             
@@ -597,7 +597,7 @@ public final class Agents implements BothModule {
                 tables.set(4, new ListWrapper(OUTGOING_ROLE_STATE_TABLE, entries.freeze()).toBlock());
             }
             
-            try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT issuer, relation, agent FROM " + site + "incoming_role WHERE entity = " + entity + " AND " + agent.getRestrictions().isRole())) {
+            try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT issuer, relation, agent FROM " + site + "incoming_role WHERE entity = " + entity + " AND " + restrictions.isRole())) {
                 final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
                 while (resultSet.next()) {
                     final @Nonnull Identity issuer = IdentityClass.getNotNull(resultSet, 1);
@@ -737,12 +737,6 @@ public final class Agents implements BothModule {
             statement.executeUpdate("DELETE FROM " + site + "agent_permission WHERE entity = " + entity);
             statement.executeUpdate("DELETE FROM " + site + "agent WHERE entity = " + entity);
         }
-    }
-    
-    @Pure
-    @Override
-    public @Nonnull AgentsQuery getInternalQuery(@Nonnull Role role) {
-        return new AgentsQuery(role);
     }
     
     

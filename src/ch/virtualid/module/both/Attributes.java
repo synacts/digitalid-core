@@ -2,6 +2,8 @@ package ch.virtualid.module.both;
 
 import ch.virtualid.agent.Agent;
 import ch.virtualid.agent.AgentPermissions;
+import ch.virtualid.agent.ReadonlyAgentPermissions;
+import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Capturable;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.attribute.Attribute;
@@ -10,21 +12,20 @@ import ch.virtualid.database.Database;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.EntityClass;
 import ch.virtualid.entity.NonHostEntity;
-import ch.virtualid.entity.Role;
 import ch.virtualid.entity.Site;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.expression.PassiveExpression;
-import ch.virtualid.handler.InternalQuery;
 import ch.virtualid.identity.Identity;
 import ch.virtualid.identity.IdentityClass;
 import ch.virtualid.identity.InternalPerson;
 import ch.virtualid.identity.Mapper;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.BothModule;
-import ch.virtualid.service.CoreService;
 import ch.virtualid.server.Host;
+import ch.virtualid.service.CoreService;
+import ch.virtualid.service.Service;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.FreezableLinkedHashSet;
 import ch.virtualid.util.FreezableLinkedList;
@@ -57,6 +58,12 @@ public final class Attributes implements BothModule {
      * Stores an instance of this module.
      */
     public static final Attributes MODULE = new Attributes();
+    
+    @Pure
+    @Override
+    public @Nonnull Service getService() {
+        return CoreService.SERVICE;
+    }
     
     @Override
     public void createTables(@Nonnull Site site) throws SQLException {
@@ -210,15 +217,12 @@ public final class Attributes implements BothModule {
     
     @Pure
     @Override
-    public @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull Agent agent) throws SQLException {
+    public @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadonlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws SQLException {
         final @Nonnull Site site = entity.getSite();
-        final @Nonnull String from = " FROM " + site + "agent_permission AS p, " + site;
-        final @Nonnull String where = " AS v WHERE p.entity = " + entity + " AND p.agent = " + agent + " AND v.entity = " + entity + " AND (p.type = " + AgentPermissions.GENERAL + " OR p.type = v.type)";
-        
         final @Nonnull FreezableArray<Block> tables = new FreezableArray<Block>(2);
         try (@Nonnull Statement statement = Database.createStatement()) {
             
-            try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT DISTINCT v.type, v.published, v.value" + from + "attribute_value" + where)) {
+            try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT DISTINCT type, published, value FROM " + site + "attribute_value WHERE entity = " + entity + (permissions.canRead(AgentPermissions.GENERAL) ? "" : " AND type IN " + permissions.allTypesToString()))) {
                 final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
                 while (resultSet.next()) {
                     final @Nonnull Identity type = IdentityClass.getNotNull(resultSet, 1);
@@ -229,7 +233,7 @@ public final class Attributes implements BothModule {
                 tables.set(0, new ListWrapper(VALUE_STATE_TABLE, entries.freeze()).toBlock());
             }
             
-            try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT DISTINCT v.type, v.visibility" + from + "attribute_visibility" + where + " AND p.type_writing")) {
+            try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT DISTINCT type, visibility FROM " + site + "attribute_visibility WHERE entity = " + entity + (permissions.canWrite(AgentPermissions.GENERAL) ? "" : " AND type IN " + permissions.writeTypesToString()))) {
                 final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
                 while (resultSet.next()) {
                     final @Nonnull Identity type = IdentityClass.getNotNull(resultSet, 1);
@@ -296,12 +300,6 @@ public final class Attributes implements BothModule {
             statement.executeUpdate("DELETE FROM " + site + "attribute_visibility WHERE entity = " + entity);
             statement.executeUpdate("DELETE FROM " + site + "attribute_value WHERE entity = " + entity);
         }
-    }
-    
-    @Pure
-    @Override
-    public @Nonnull InternalQuery getInternalQuery(@Nonnull Role role) {
-        return null; // TODO!
     }
     
     

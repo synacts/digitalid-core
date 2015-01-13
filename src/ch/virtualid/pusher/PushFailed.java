@@ -1,6 +1,5 @@
 package ch.virtualid.pusher;
 
-import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
@@ -205,12 +204,6 @@ public final class PushFailed extends ExternalAction {
         throw new ShouldNeverHappenError("Failed push actions should never be pushed themselves.");
     }
     
-    
-    @Pure
-    @Override
-    public @Nonnull ReadonlyAgentPermissions getRequiredPermissions() {
-        return AgentPermissions.NONE;
-    }
     
     @Pure
     @Override

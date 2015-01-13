@@ -1,10 +1,12 @@
 package ch.virtualid.module.client;
 
+import ch.virtualid.annotations.Pure;
 import ch.virtualid.contact.Contact;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.Site;
 import ch.virtualid.module.ClientModule;
 import ch.virtualid.service.CoreService;
+import ch.virtualid.service.Service;
 import java.sql.SQLException;
 import java.sql.Statement;
 import javax.annotation.Nonnull;
@@ -20,6 +22,12 @@ import javax.annotation.Nonnull;
 public final class AccessRequests implements ClientModule {
     
     public static final AccessRequests MODULE = new AccessRequests();
+    
+    @Pure
+    @Override
+    public @Nonnull Service getService() {
+        return CoreService.SERVICE;
+    }
     
     @Override
     public void createTables(@Nonnull Site site) throws SQLException {

@@ -1,5 +1,6 @@
 package ch.virtualid.handler;
 
+import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Client;
 import ch.virtualid.entity.Entity;
@@ -7,8 +8,8 @@ import ch.virtualid.entity.Role;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
-import ch.virtualid.service.CoreServiceInternalAction;
 import ch.virtualid.identifier.HostIdentifier;
+import ch.virtualid.service.CoreServiceInternalAction;
 import ch.virtualid.synchronizer.Synchronizer;
 import ch.xdf.SignatureWrapper;
 import java.io.IOException;
@@ -78,6 +79,12 @@ public abstract class InternalAction extends Action implements InternalMethod {
     @Override
     public final boolean canOnlyBeSentByHosts() {
         return false;
+    }
+    
+    @Pure
+    @Override
+    public @Nonnull Restrictions getRequiredRestrictions() {
+        return Restrictions.MIN;
     }
     
     

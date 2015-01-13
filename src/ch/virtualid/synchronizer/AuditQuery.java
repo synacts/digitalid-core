@@ -1,10 +1,10 @@
 package ch.virtualid.synchronizer;
 
-import ch.virtualid.agent.Agent;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.Role;
 import ch.virtualid.exceptions.external.ExternalException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.InternalQuery;
 import ch.virtualid.handler.Method;
@@ -37,7 +37,7 @@ public final class AuditQuery extends InternalQuery {
     
     
     /**
-     * Stores the module whose state is queried.
+     * Stores the service whose audit is queried.
      */
     private final @Nonnull Service service;
     
@@ -47,8 +47,8 @@ public final class AuditQuery extends InternalQuery {
      * @param role the role to which this handler belongs.
      * @param service the service whose audit is queried.
      */
-    AuditQuery(@Nonnull Role role, @Nonnull Service service) {
-        super(role);
+    AuditQuery(@Nonnull Role role, @Nonnull Service service) throws SQLException, PacketException, InvalidEncodingException {
+        super(role, service.getRecipient(role));
         
         this.service = service;
     }
@@ -68,7 +68,7 @@ public final class AuditQuery extends InternalQuery {
      * @ensure isOnHost() : "Queries are only decoded on hosts.";
      */
     private AuditQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
-        super(entity, signature, recipient);
+        super(entity.toNonHostEntity(), signature, recipient);
         
         this.service = Service.getService(IdentityClass.create(block).toSemanticType());
     }
@@ -86,15 +86,22 @@ public final class AuditQuery extends InternalQuery {
     }
     
     
+    @Pure
     @Override
-    protected @Nonnull AuditReply executeOnHost(@Nonnull Agent agent) throws SQLException {
-        return new AuditReply(getNonHostAccount());
+    public @Nonnull Service getService() {
+        return service;
+    }
+    
+    
+    @Override
+    public @Nonnull AuditReply executeOnHost() {
+        return new AuditReply(getNonHostAccount(), service);
     }
     
     @Pure
     @Override
     public boolean matches(@Nullable Reply reply) {
-        return reply instanceof AuditReply;
+        return reply instanceof AuditReply && ((AuditReply) reply).getService().equals(service);
     }
     
     

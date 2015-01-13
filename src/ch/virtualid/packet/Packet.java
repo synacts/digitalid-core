@@ -265,7 +265,7 @@ public abstract class Packet implements Immutable {
                             }
                         }
                         final @Nonnull Method method = Method.get(entity, signature, recipient, block);
-                        if (!account.getHost().supports(method.getService())) throw new PacketException(PacketError.METHOD, "The host " + recipient + " does not support the service " + method.getService().getType().getAddress() + ".", null, isResponse);
+                        if (!account.getHost().supports(method.getService())) throw new PacketException(PacketError.METHOD, "The host " + recipient + " does not support the service '" + method.getService().getName() + "'.", null, isResponse);
                         ((Request) this).setMethod(i, method);
                     }
                     continue;

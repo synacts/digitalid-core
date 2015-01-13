@@ -1,5 +1,6 @@
 package ch.virtualid.synchronizer;
 
+import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.client.Client;
 import ch.virtualid.database.Database;
@@ -47,6 +48,12 @@ import javax.annotation.Nullable;
 public final class Synchronization implements ClientModule {
     
     public static final Synchronization MODULE = new Synchronization();
+    
+    @Pure
+    @Override
+    public @Nonnull Service getService() {
+        return CoreService.SERVICE;
+    }
     
     @Override
     public void createTables(@Nonnull Site site) throws SQLException {

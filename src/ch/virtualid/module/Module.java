@@ -1,8 +1,10 @@
 package ch.virtualid.module;
 
+import ch.virtualid.annotations.Pure;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.Site;
+import ch.virtualid.service.Service;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 
@@ -17,6 +19,14 @@ import javax.annotation.Nonnull;
  * @version 2.0
  */
 public interface Module {
+    
+    /**
+     * Returns the service to which this module belongs.
+     * 
+     * @return the service to which this module belongs.
+     */
+    @Pure
+    public @Nonnull Service getService();
     
     /**
      * Creates the database tables for the given site.

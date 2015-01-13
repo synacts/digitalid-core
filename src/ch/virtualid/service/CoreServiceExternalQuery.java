@@ -6,7 +6,6 @@ import ch.virtualid.entity.Role;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.ExternalQuery;
-import ch.virtualid.service.CoreServiceQueryReply;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identifier.InternalIdentifier;
 import ch.xdf.SignatureWrapper;

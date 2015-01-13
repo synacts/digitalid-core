@@ -6,10 +6,11 @@ import ch.virtualid.entity.Site;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.handler.ExternalAction;
 import ch.virtualid.identity.SemanticType;
-import ch.virtualid.service.CoreService;
 import ch.virtualid.module.HostModule;
 import ch.virtualid.pusher.Pusher;
 import ch.virtualid.server.Host;
+import ch.virtualid.service.CoreService;
+import ch.virtualid.service.Service;
 import ch.virtualid.util.FreezableLinkedList;
 import ch.virtualid.util.FreezableList;
 import ch.virtualid.util.ReadonlyList;
@@ -29,6 +30,12 @@ import javax.annotation.Nonnull;
 public final class Pushing implements HostModule {
     
     public static final Pushing MODULE = new Pushing();
+    
+    @Pure
+    @Override
+    public @Nonnull Service getService() {
+        return CoreService.SERVICE;
+    }
     
     @Override
     public void createTables(@Nonnull Site site) throws SQLException {

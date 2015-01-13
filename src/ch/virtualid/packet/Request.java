@@ -21,9 +21,8 @@ import ch.virtualid.identifier.InternalIdentifier;
 import ch.virtualid.identifier.InternalNonHostIdentifier;
 import ch.virtualid.identity.Mapper;
 import ch.virtualid.identity.Successor;
-import ch.virtualid.service.CoreService;
-import ch.virtualid.service.Service;
 import ch.virtualid.server.Server;
+import ch.virtualid.service.CoreService;
 import ch.virtualid.synchronizer.Audit;
 import ch.virtualid.synchronizer.RequestAudit;
 import ch.virtualid.util.ConcurrentHashMap;
@@ -244,16 +243,6 @@ public class Request extends Packet {
     @Pure
     public final @Nonnull InternalIdentifier getSubject() {
         return subject;
-    }
-    
-    /**
-     * Returns the service of this request.
-     * 
-     * @return the service of this request.
-     */
-    @Pure
-    public final @Nonnull Service getService() {
-        return getMethod(0).getService();
     }
     
     

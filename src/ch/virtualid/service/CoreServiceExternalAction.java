@@ -1,7 +1,5 @@
 package ch.virtualid.service;
 
-import ch.virtualid.agent.AgentPermissions;
-import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.NonHostEntity;
@@ -73,12 +71,6 @@ public abstract class CoreServiceExternalAction extends ExternalAction {
     @Override
     public boolean canOnlyBeSentByHosts() {
         return true;
-    }
-    
-    @Pure
-    @Override
-    public @Nonnull ReadonlyAgentPermissions getRequiredPermissions() {
-        return AgentPermissions.NONE;
     }
     
     

@@ -1,18 +1,25 @@
 package ch.virtualid.synchronizer;
 
 import ch.virtualid.agent.Agent;
+import ch.virtualid.agent.ReadonlyAgentPermissions;
+import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
+import ch.virtualid.credential.Credential;
 import ch.virtualid.entity.Entity;
+import ch.virtualid.entity.NonHostAccount;
 import ch.virtualid.entity.Role;
 import ch.virtualid.exceptions.external.ExternalException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
+import ch.virtualid.handler.InternalQuery;
 import ch.virtualid.handler.Method;
 import ch.virtualid.handler.Reply;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identity.IdentityClass;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.BothModule;
-import ch.virtualid.service.CoreServiceInternalQuery;
+import ch.virtualid.service.CoreService;
 import ch.virtualid.service.Service;
 import ch.xdf.Block;
 import ch.xdf.SignatureWrapper;
@@ -29,7 +36,7 @@ import javax.annotation.Nullable;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public final class StateQuery extends CoreServiceInternalQuery { // TODO: Inherit from InternalQuery instead to provide the right service?
+public final class StateQuery extends InternalQuery {
     
     /**
      * Stores the semantic type {@code query.module@virtualid.ch}.
@@ -48,8 +55,8 @@ public final class StateQuery extends CoreServiceInternalQuery { // TODO: Inheri
      * @param role the role to which this handler belongs.
      * @param module the module whose state is queried.
      */
-    StateQuery(@Nonnull Role role, @Nonnull BothModule module) {
-        super(role);
+    StateQuery(@Nonnull Role role, @Nonnull BothModule module) throws SQLException, PacketException, InvalidEncodingException {
+        super(role, module.getService().getRecipient(role));
         
         this.module = module;
     }
@@ -69,7 +76,7 @@ public final class StateQuery extends CoreServiceInternalQuery { // TODO: Inheri
      * @ensure isOnHost() : "Queries are only decoded on hosts.";
      */
     private StateQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
-        super(entity, signature, recipient);
+        super(entity.toNonHostEntity(), signature, recipient);
         
         this.module = Service.getModule(IdentityClass.create(block).toSemanticType());
     }
@@ -87,15 +94,33 @@ public final class StateQuery extends CoreServiceInternalQuery { // TODO: Inheri
     }
     
     
+    @Pure
     @Override
-    protected @Nonnull StateReply executeOnHost(@Nonnull Agent agent) throws SQLException {
-        return new StateReply(getNonHostAccount(), module.getState(getNonHostAccount(), agent));
+    public @Nonnull Service getService() {
+        return module.getService();
+    }
+    
+    
+    @Override
+    public @Nonnull StateReply executeOnHost() throws PacketException, SQLException {
+        final @Nonnull Service service = module.getService();
+        final @Nonnull NonHostAccount account = getNonHostAccount();
+        if (module.getService().equals(CoreService.SERVICE)) {
+            final @Nonnull Agent agent = getSignatureNotNull().getAgentCheckedAndRestricted(account, null);
+            return new StateReply(account, module.getState(account, agent.getPermissions(), agent.getRestrictions(), agent), service);
+        } else {
+            final @Nonnull Credential credential = getSignatureNotNull().toCredentialsSignatureWrapper().getCredentials().getNotNull(0);
+            final @Nullable ReadonlyAgentPermissions permissions = credential.getPermissions();
+            final @Nullable Restrictions restrictions = credential.getRestrictions();
+            if (permissions == null || restrictions == null) throw new PacketException(PacketError.AUTHORIZATION, "For state queries, neither the permissions nor the restrictions may be null.");
+            return new StateReply(account, module.getState(account, permissions, restrictions, null), service);
+        }
     }
     
     @Pure
     @Override
     public boolean matches(@Nullable Reply reply) {
-        return reply instanceof StateReply && ((StateReply) reply).block.getType().equals(module.getStateFormat());
+        return reply instanceof StateReply && ((StateReply) reply).state.getType().equals(module.getStateFormat());
     }
     
     

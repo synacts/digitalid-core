@@ -1,6 +1,8 @@
 package ch.virtualid.module.both;
 
 import ch.virtualid.agent.Agent;
+import ch.virtualid.agent.ReadonlyAgentPermissions;
+import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.concepts.Password;
 import ch.virtualid.database.Database;
@@ -16,8 +18,9 @@ import ch.virtualid.identifier.IdentifierClass;
 import ch.virtualid.identity.Identity;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.BothModule;
-import ch.virtualid.service.CoreService;
 import ch.virtualid.server.Host;
+import ch.virtualid.service.CoreService;
+import ch.virtualid.service.Service;
 import ch.virtualid.util.FreezableLinkedList;
 import ch.virtualid.util.FreezableList;
 import ch.virtualid.util.ReadonlyArray;
@@ -43,6 +46,12 @@ import javax.annotation.Nullable;
 public final class Passwords implements BothModule {
     
     public static final Passwords MODULE = new Passwords();
+    
+    @Pure
+    @Override
+    public @Nonnull Service getService() {
+        return CoreService.SERVICE;
+    }
     
     @Override
     public void createTables(@Nonnull Site site) throws SQLException {
@@ -123,8 +132,8 @@ public final class Passwords implements BothModule {
     
     @Pure
     @Override
-    public @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull Agent agent) throws SQLException {
-        return new TupleWrapper(STATE_FORMAT, agent.isClient() ? new StringWrapper(Password.TYPE, get(entity)) : null).toBlock();
+    public @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadonlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws SQLException {
+        return new TupleWrapper(STATE_FORMAT, restrictions.isClient() ? new StringWrapper(Password.TYPE, get(entity)) : null).toBlock();
     }
     
     @Override

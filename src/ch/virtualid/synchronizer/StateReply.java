@@ -1,13 +1,13 @@
 package ch.virtualid.synchronizer;
 
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.entity.Account;
+import ch.virtualid.entity.NonHostAccount;
 import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.entity.Role;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
+import ch.virtualid.handler.QueryReply;
 import ch.virtualid.handler.Reply;
-import ch.virtualid.service.CoreServiceQueryReply;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.BothModule;
 import ch.virtualid.service.Service;
@@ -27,7 +27,7 @@ import javax.annotation.Nullable;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public final class StateReply extends CoreServiceQueryReply {
+public final class StateReply extends QueryReply {
     
     /**
      * Stores the semantic type {@code reply.module@virtualid.ch}.
@@ -36,20 +36,27 @@ public final class StateReply extends CoreServiceQueryReply {
     
     
     /**
-     * Stores the block that contains the state of the given entity.
+     * Stores the state of the given entity.
      */
-    final @Nonnull Block block;
+    final @Nonnull Block state;
+    
+    /**
+     * Stores the service to which this state reply belongs.
+     */
+    private final @Nonnull Service service;
     
     /**
      * Creates a query reply for the state of the given account.
      * 
      * @param account the account to which this query reply belongs.
      * @param block the block that contains the state of the account.
+     * @param service the service to which this state reply belongs.
      */
-    StateReply(@Nonnull Account account, @Nonnull Block block) {
+    StateReply(@Nonnull NonHostAccount account, @Nonnull Block block, @Nonnull Service service) {
         super(account);
         
-        this.block = block;
+        this.state = block;
+        this.service = service;
     }
     
     /**
@@ -66,13 +73,14 @@ public final class StateReply extends CoreServiceQueryReply {
     private StateReply(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, number);
         
-        this.block = new SelfcontainedWrapper(block).getElement();
+        this.state = new SelfcontainedWrapper(block).getElement();
+        this.service = Service.getModule(state.getType()).getService();
     }
     
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        return new SelfcontainedWrapper(TYPE, block).toBlock();
+        return new SelfcontainedWrapper(TYPE, state).toBlock();
     }
     
     @Pure
@@ -82,29 +90,36 @@ public final class StateReply extends CoreServiceQueryReply {
     }
     
     
+    @Pure
+    @Override
+    public @Nonnull Service getService() {
+        return service;
+    }
+    
+    
     /**
      * Updates the state of the given entity without committing.
      * 
      * @require isOnClient() : "This method is called on a client.";
      */
     void updateState() throws SQLException, IOException, PacketException, ExternalException {
-        final @Nonnull BothModule module = Service.getModule(block.getType());
+        final @Nonnull BothModule module = Service.getModule(state.getType());
         final @Nonnull Role role = getRole();
         module.removeState(role);
-        module.addState(role, block);
+        module.addState(role, state);
     }
     
     
     @Pure
     @Override
     public boolean equals(@Nullable Object object) {
-        return protectedEquals(object) && object instanceof StateReply && this.block.equals(((StateReply) object).block);
+        return protectedEquals(object) && object instanceof StateReply && this.state.equals(((StateReply) object).state);
     }
     
     @Pure
     @Override
     public int hashCode() {
-        return 89 * protectedHashCode() + block.hashCode();
+        return 89 * protectedHashCode() + state.hashCode();
     }
     
     

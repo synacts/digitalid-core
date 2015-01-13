@@ -29,9 +29,10 @@ import ch.virtualid.identity.Mapper;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.io.Level;
 import ch.virtualid.module.BothModule;
-import ch.virtualid.service.CoreService;
 import ch.virtualid.packet.Packet;
 import ch.virtualid.server.Host;
+import ch.virtualid.service.CoreService;
+import ch.virtualid.service.Service;
 import ch.virtualid.util.FreezableLinkedList;
 import ch.virtualid.util.FreezableList;
 import ch.virtualid.util.ReadonlyList;
@@ -64,6 +65,12 @@ public final class Actions implements BothModule {
      * Stores an instance of this module.
      */
     static final Actions MODULE = new Actions();
+    
+    @Pure
+    @Override
+    public @Nonnull Service getService() {
+        return CoreService.SERVICE;
+    }
     
     @Override
     public void createTables(final @Nonnull Site site) throws SQLException {
@@ -172,7 +179,7 @@ public final class Actions implements BothModule {
     
     @Pure
     @Override
-    public @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull Agent agent) throws SQLException {
+    public @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadonlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws SQLException {
         return new EmptyWrapper(STATE_FORMAT).toBlock();
     }
     
@@ -200,12 +207,12 @@ public final class Actions implements BothModule {
      * @require agent == null || service.equals(CoreService.TYPE) : "The agent is null or the audit trail is requested for the core service.";
      */
     @Pure
-    public static @Nonnull ResponseAudit getAudit(@Nonnull NonHostEntity entity, @Nonnull SemanticType service, @Nonnull Time lastTime, @Nonnull ReadonlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws SQLException {
-        assert agent == null || service.equals(CoreService.TYPE) : "The agent is null or the audit trail is requested for the core service.";
+    public static @Nonnull ResponseAudit getAudit(@Nonnull NonHostEntity entity, @Nonnull Service service, @Nonnull Time lastTime, @Nonnull ReadonlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws SQLException {
+        assert agent == null || service.equals(CoreService.SERVICE) : "The agent is null or the audit trail is requested for the core service.";
         
         final @Nonnull Site site = entity.getSite();
         final @Nonnull StringBuilder SQL = new StringBuilder("SELECT ").append(Database.getConfiguration().GREATEST()).append("(COALESCE(MAX(time), 0), ").append(Database.getConfiguration().CURRENT_TIME()).append("), NULL FROM ").append(site).append("action UNION ");
-        SQL.append("SELECT NULL, action FROM ").append(site).append("action a WHERE entity = ").append(entity).append(" AND service = ").append(service).append(" AND time > ").append(lastTime);
+        SQL.append("SELECT NULL, action FROM ").append(site).append("action a WHERE entity = ").append(entity).append(" AND service = ").append(service.getType()).append(" AND time > ").append(lastTime);
         
         SQL.append(" AND (type_writing IS NULL OR NOT type_writing");
         if (!permissions.canRead(AgentPermissions.GENERAL)) SQL.append(" AND type_writing IN ").append(permissions.allTypesToString());

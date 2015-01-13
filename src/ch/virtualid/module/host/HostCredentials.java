@@ -6,9 +6,10 @@ import ch.virtualid.database.Database;
 import ch.virtualid.entity.Site;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.identity.SemanticType;
-import ch.virtualid.service.CoreService;
 import ch.virtualid.module.HostModule;
 import ch.virtualid.server.Host;
+import ch.virtualid.service.CoreService;
+import ch.virtualid.service.Service;
 import ch.virtualid.util.FreezableLinkedList;
 import ch.virtualid.util.FreezableList;
 import ch.virtualid.util.ReadonlyList;
@@ -28,6 +29,12 @@ import javax.annotation.Nonnull;
 public final class HostCredentials implements HostModule {
     
     public static final HostCredentials MODULE = new HostCredentials();
+    
+    @Pure
+    @Override
+    public @Nonnull Service getService() {
+        return CoreService.SERVICE;
+    }
     
     @Override
     public void createTables(@Nonnull Site site) throws SQLException {

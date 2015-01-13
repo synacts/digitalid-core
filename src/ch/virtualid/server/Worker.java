@@ -16,12 +16,12 @@ import ch.virtualid.handler.Reply;
 import ch.virtualid.identifier.Identifier;
 import ch.virtualid.io.Level;
 import ch.virtualid.io.Logger;
+import ch.virtualid.packet.Request;
+import ch.virtualid.packet.Response;
 import ch.virtualid.service.CoreService;
 import ch.virtualid.service.Service;
 import ch.virtualid.synchronizer.Actions;
-import ch.virtualid.packet.Request;
 import ch.virtualid.synchronizer.RequestAudit;
-import ch.virtualid.packet.Response;
 import ch.virtualid.synchronizer.ResponseAudit;
 import ch.virtualid.util.FreezableArrayList;
 import ch.virtualid.util.FreezableList;
@@ -75,7 +75,10 @@ public final class Worker implements Runnable {
             try {
                 try {
                     request = new Request(socket.getInputStream());
-                    final @Nonnull Service service = request.getService();
+                    final @Nonnull Method reference = request.getMethod(0);
+                    final @Nonnull Service service = reference.getService();
+                    final @Nullable RequestAudit requestAudit = request.getAudit();
+                    final @Nullable Agent agent = requestAudit != null && service.equals(CoreService.SERVICE) ? reference.getSignatureNotNull().getAgentCheckedAndRestricted(reference.getNonHostAccount(), null) : null;
                     
                     final int size = request.getSize();
                     final @Nonnull FreezableList<Reply> replies = new FreezableArrayList<Reply>(size);
@@ -101,27 +104,21 @@ public final class Worker implements Runnable {
                     }
                     
                     final @Nullable ResponseAudit responseAudit;
-                    final @Nullable RequestAudit requestAudit = request.getAudit();
                     if (requestAudit != null) {
-                        final @Nonnull Method method = request.getMethod(0);
-                        if (!(method instanceof InternalMethod)) throw new PacketException(PacketError.AUTHORIZATION, "An audit may only be requested by internal methods.");
-                        
+                        if (!(reference instanceof InternalMethod)) throw new PacketException(PacketError.AUTHORIZATION, "An audit may only be requested by internal methods.");
                         final @Nullable ReadonlyAgentPermissions permissions;
                         final @Nullable Restrictions restrictions;
-                        final @Nullable Agent agent;
                         if (service.equals(CoreService.SERVICE)) {
-                            agent = method.getSignatureNotNull().getAgentCheckedAndRestricted(method.getNonHostAccount(), null);
+                            assert agent != null : "See above.";
                             permissions = agent.getPermissions();
                             restrictions = agent.getRestrictions();
                         } else {
-                            final @Nonnull Credential credential = method.getSignatureNotNull().toCredentialsSignatureWrapper().getCredentials().getNotNull(0);
+                            final @Nonnull Credential credential = reference.getSignatureNotNull().toCredentialsSignatureWrapper().getCredentials().getNotNull(0);
                             permissions = credential.getPermissions();
                             restrictions = credential.getRestrictions();
-                            agent = null;
                             if (permissions == null || restrictions == null) throw new PacketException(PacketError.AUTHORIZATION, "If an audit is requested, neither the permissions nor the restrictions may be null.");
                         }
-                        
-                        responseAudit = Actions.getAudit(method.getNonHostAccount(), CoreService.TYPE, requestAudit.getLastTime(), permissions, restrictions, agent);
+                        responseAudit = Actions.getAudit(reference.getNonHostAccount(), service, requestAudit.getLastTime(), permissions, restrictions, agent);
                         Database.commit();
                     } else {
                         responseAudit = null;

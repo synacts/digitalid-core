@@ -1,8 +1,6 @@
 package ch.virtualid.handler.query.external;
 
 import ch.virtualid.service.CoreServiceExternalQuery;
-import ch.virtualid.agent.AgentPermissions;
-import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.exceptions.external.ExternalException;
@@ -76,13 +74,6 @@ public final class IdentityQuery extends CoreServiceExternalQuery {
     @Override
     public @Nonnull String toString() {
         return "Queries the identity.";
-    }
-    
-    
-    @Pure
-    @Override
-    public @Nonnull ReadonlyAgentPermissions getRequiredPermissions() {
-        return AgentPermissions.NONE;
     }
     
     

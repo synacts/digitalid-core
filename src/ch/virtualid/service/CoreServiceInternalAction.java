@@ -74,19 +74,6 @@ public abstract class CoreServiceInternalAction extends InternalAction {
     }
     
     
-    @Pure
-    @Override
-    public @Nonnull ReadonlyAgentPermissions getRequiredPermissions() {
-        return AgentPermissions.NONE;
-    }
-    
-    @Pure
-    @Override
-    public @Nonnull Restrictions getRequiredRestrictions() {
-        return Restrictions.MIN;
-    }
-    
-    
     /**
      * Returns the agent required for this internal action of the core service.
      * 

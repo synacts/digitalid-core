@@ -13,7 +13,6 @@ import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
-import ch.virtualid.handler.ActionReply;
 import ch.virtualid.handler.Method;
 import ch.virtualid.service.CoreServiceActionReply;
 import ch.virtualid.identifier.HostIdentifier;
@@ -159,7 +158,7 @@ public final class AccessRequest extends CoreServiceExternalAction {
     }
     
     @Override
-    public @Nullable ActionReply executeOnHost() throws PacketException, SQLException {
+    public @Nullable CoreServiceActionReply executeOnHost() throws PacketException, SQLException {
         final @Nonnull SignatureWrapper signature = getSignatureNotNull();
         if (signature instanceof CredentialsSignatureWrapper) {
             ((CredentialsSignatureWrapper) signature).checkCover(getRequiredPermissions());

@@ -74,19 +74,6 @@ public abstract class CoreServiceInternalQuery extends InternalQuery {
     }
     
     
-    @Pure
-    @Override
-    public @Nonnull ReadonlyAgentPermissions getRequiredPermissions() {
-        return AgentPermissions.NONE;
-    }
-    
-    @Pure
-    @Override
-    public @Nonnull Restrictions getRequiredRestrictions() {
-        return Restrictions.MIN;
-    }
-    
-    
     /**
      * Executes this internal query on the host.
      * 
