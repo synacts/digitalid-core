@@ -1,17 +1,16 @@
 package ch.virtualid.agent;
 
-import ch.virtualid.service.CoreServiceInternalAction;
-import ch.virtualid.agent.Agent;
-import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
+import ch.virtualid.handler.Action;
 import ch.virtualid.handler.Method;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.BothModule;
+import ch.virtualid.service.CoreServiceInternalAction;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.ReadonlyArray;
 import ch.xdf.Block;
@@ -20,6 +19,7 @@ import ch.xdf.TupleWrapper;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Replaces the {@Restrictions restrictions} of an {@link Agent agent}.
@@ -27,7 +27,7 @@ import javax.annotation.Nonnull;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public final class AgentRestrictionsReplace extends CoreServiceInternalAction {
+final class AgentRestrictionsReplace extends CoreServiceInternalAction {
     
     /**
      * Stores the semantic type {@code old.restrictions.agent@virtualid.ch}.
@@ -42,7 +42,7 @@ public final class AgentRestrictionsReplace extends CoreServiceInternalAction {
     /**
      * Stores the semantic type {@code replace.restrictions.agent@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("replace.restrictions.agent@virtualid.ch").load(TupleWrapper.TYPE, Agent.TYPE, OLD_RESTRICTIONS, NEW_RESTRICTIONS);
+    private static final @Nonnull SemanticType TYPE = SemanticType.create("replace.restrictions.agent@virtualid.ch").load(TupleWrapper.TYPE, Agent.TYPE, OLD_RESTRICTIONS, NEW_RESTRICTIONS);
     
     
     /**
@@ -75,7 +75,7 @@ public final class AgentRestrictionsReplace extends CoreServiceInternalAction {
      * @require oldRestrictions.match(agent) : "The old restrictions match the agent.";
      * @require newRestrictions.match(agent) : "The new restrictions match the agent.";
      */
-    public AgentRestrictionsReplace(@Nonnull Agent agent, @Nonnull Restrictions oldRestrictions, @Nonnull Restrictions newRestrictions) {
+    AgentRestrictionsReplace(@Nonnull Agent agent, @Nonnull Restrictions oldRestrictions, @Nonnull Restrictions newRestrictions) {
         super(agent.getRole());
         
         assert oldRestrictions.match(agent) : "The old restrictions match the agent.";
@@ -148,8 +148,27 @@ public final class AgentRestrictionsReplace extends CoreServiceInternalAction {
     
     @Pure
     @Override
+    public boolean interferesWith(@Nonnull Action action) {
+        return action instanceof AgentRestrictionsReplace && ((AgentRestrictionsReplace) action).agent.equals(agent);
+    }
+    
+    @Pure
+    @Override
     public @Nonnull AgentRestrictionsReplace getReverse() {
         return new AgentRestrictionsReplace(agent, newRestrictions, oldRestrictions);
+    }
+    
+    
+    @Pure
+    @Override
+    public boolean equals(@Nullable Object object) {
+        return protectedEquals(object) && object instanceof AgentRestrictionsReplace && this.agent.equals(((AgentRestrictionsReplace) object).agent) && this.oldRestrictions.equals(((AgentRestrictionsReplace) object).oldRestrictions) && this.newRestrictions.equals(((AgentRestrictionsReplace) object).newRestrictions);
+    }
+    
+    @Pure
+    @Override
+    public int hashCode() {
+        return 89 * (89 * (89 * protectedHashCode() + agent.hashCode()) + oldRestrictions.hashCode()) + newRestrictions.hashCode();
     }
     
     

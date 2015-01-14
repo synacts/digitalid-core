@@ -4,6 +4,7 @@ import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
+import ch.virtualid.handler.Action;
 import ch.virtualid.handler.Method;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identity.SemanticType;
@@ -16,6 +17,7 @@ import ch.xdf.TupleWrapper;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Adds {@AgentPermissions permissions} to an {@link Agent agent}.
@@ -23,18 +25,18 @@ import javax.annotation.Nonnull;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public final class AgentPermissionsAdd extends CoreServiceInternalAction {
+final class AgentPermissionsAdd extends CoreServiceInternalAction {
     
     /**
      * Stores the semantic type {@code add.permissions.agent@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("add.permissions.agent@virtualid.ch").load(TupleWrapper.TYPE, Agent.TYPE, AgentPermissions.TYPE);
+    private static final @Nonnull SemanticType TYPE = SemanticType.create("add.permissions.agent@virtualid.ch").load(TupleWrapper.TYPE, Agent.TYPE, AgentPermissions.TYPE);
     
     
     /**
      * Stores the agent of this action.
      */
-    private final @Nonnull Agent agent;
+    final @Nonnull Agent agent;
     
     /**
      * Stores the permissions which are to be added.
@@ -52,7 +54,7 @@ public final class AgentPermissionsAdd extends CoreServiceInternalAction {
      * @require agent.isOnClient() : "The agent is on a client.";
      * @require permissions.isFrozen() : "The permissions are frozen.";
      */
-    public AgentPermissionsAdd(@Nonnull Agent agent, @Nonnull ReadonlyAgentPermissions permissions) {
+    AgentPermissionsAdd(@Nonnull Agent agent, @Nonnull ReadonlyAgentPermissions permissions) {
         super(agent.getRole());
         
         assert permissions.isFrozen() : "The permissions are frozen.";
@@ -121,8 +123,27 @@ public final class AgentPermissionsAdd extends CoreServiceInternalAction {
     
     @Pure
     @Override
+    public boolean interferesWith(@Nonnull Action action) {
+        return action instanceof AgentPermissionsAdd && ((AgentPermissionsAdd) action).agent.equals(agent) || action instanceof AgentPermissionsRemove && ((AgentPermissionsRemove) action).agent.equals(agent);
+    }
+    
+    @Pure
+    @Override
     public @Nonnull AgentPermissionsRemove getReverse() {
         return new AgentPermissionsRemove(agent, permissions);
+    }
+    
+    
+    @Pure
+    @Override
+    public boolean equals(@Nullable Object object) {
+        return protectedEquals(object) && object instanceof AgentPermissionsAdd && this.agent.equals(((AgentPermissionsAdd) object).agent) && this.permissions.equals(((AgentPermissionsAdd) object).permissions);
+    }
+    
+    @Pure
+    @Override
+    public int hashCode() {
+        return 89 * (89 * protectedHashCode() + agent.hashCode()) + permissions.hashCode();
     }
     
     

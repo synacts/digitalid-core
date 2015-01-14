@@ -1,17 +1,15 @@
 package ch.virtualid.agent;
 
-import ch.virtualid.service.CoreServiceInternalAction;
-import ch.virtualid.agent.Agent;
-import ch.virtualid.agent.AgentPermissions;
-import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
+import ch.virtualid.handler.Action;
 import ch.virtualid.handler.Method;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.BothModule;
+import ch.virtualid.service.CoreServiceInternalAction;
 import ch.virtualid.util.ReadonlyArray;
 import ch.xdf.Block;
 import ch.xdf.SignatureWrapper;
@@ -19,6 +17,7 @@ import ch.xdf.TupleWrapper;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Removes {@AgentPermissions permissions} from an {@link Agent agent}.
@@ -26,18 +25,18 @@ import javax.annotation.Nonnull;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public final class AgentPermissionsRemove extends CoreServiceInternalAction {
+final class AgentPermissionsRemove extends CoreServiceInternalAction {
     
     /**
      * Stores the semantic type {@code remove.permissions.agent@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("remove.permissions.agent@virtualid.ch").load(TupleWrapper.TYPE, Agent.TYPE, AgentPermissions.TYPE);
+    private static final @Nonnull SemanticType TYPE = SemanticType.create("remove.permissions.agent@virtualid.ch").load(TupleWrapper.TYPE, Agent.TYPE, AgentPermissions.TYPE);
     
     
     /**
      * Stores the agent of this action.
      */
-    private final @Nonnull Agent agent;
+    final @Nonnull Agent agent;
     
     /**
      * Stores the permissions which are to be removed.
@@ -55,7 +54,7 @@ public final class AgentPermissionsRemove extends CoreServiceInternalAction {
      * @require agent.isOnClient() : "The agent is on a client.";
      * @require permissions.isFrozen() : "The permissions are frozen.";
      */
-    public AgentPermissionsRemove(@Nonnull Agent agent, @Nonnull ReadonlyAgentPermissions permissions) {
+    AgentPermissionsRemove(@Nonnull Agent agent, @Nonnull ReadonlyAgentPermissions permissions) {
         super(agent.getRole());
         
         assert permissions.isFrozen() : "The permissions are frozen.";
@@ -118,8 +117,27 @@ public final class AgentPermissionsRemove extends CoreServiceInternalAction {
     
     @Pure
     @Override
+    public boolean interferesWith(@Nonnull Action action) {
+        return action instanceof AgentPermissionsRemove && ((AgentPermissionsRemove) action).agent.equals(agent) || action instanceof AgentPermissionsAdd && ((AgentPermissionsAdd) action).agent.equals(agent);
+    }
+    
+    @Pure
+    @Override
     public @Nonnull AgentPermissionsAdd getReverse() {
         return new AgentPermissionsAdd(agent, permissions);
+    }
+    
+    
+    @Pure
+    @Override
+    public boolean equals(@Nullable Object object) {
+        return protectedEquals(object) && object instanceof AgentPermissionsRemove && this.agent.equals(((AgentPermissionsRemove) object).agent) && this.permissions.equals(((AgentPermissionsRemove) object).permissions);
+    }
+    
+    @Pure
+    @Override
+    public int hashCode() {
+        return 89 * (89 * protectedHashCode() + agent.hashCode()) + permissions.hashCode();
     }
     
     

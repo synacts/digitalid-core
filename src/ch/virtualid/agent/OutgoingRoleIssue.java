@@ -1,23 +1,20 @@
 package ch.virtualid.agent;
 
-import ch.virtualid.service.CoreServiceExternalAction;
-import ch.virtualid.agent.Agent;
-import ch.virtualid.agent.OutgoingRole;
-import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Method;
-import ch.virtualid.service.CoreServiceActionReply;
+import ch.virtualid.handler.Reply;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identity.IdentityClass;
 import ch.virtualid.identity.InternalNonHostIdentity;
 import ch.virtualid.identity.InternalPerson;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.BothModule;
-import ch.virtualid.agent.AgentModule;
+import ch.virtualid.service.CoreServiceActionReply;
+import ch.virtualid.service.CoreServiceExternalAction;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.ReadonlyArray;
 import ch.xdf.Block;
@@ -36,12 +33,12 @@ import javax.annotation.Nullable;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public final class OutgoingRoleIssue extends CoreServiceExternalAction {
+final class OutgoingRoleIssue extends CoreServiceExternalAction {
     
     /**
      * Stores the semantic type {@code issuance.role@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("issuance.role@virtualid.ch").load(TupleWrapper.TYPE, SemanticType.IDENTIFIER, Agent.NUMBER);
+    private static final @Nonnull SemanticType TYPE = SemanticType.create("issuance.role@virtualid.ch").load(TupleWrapper.TYPE, SemanticType.IDENTIFIER, Agent.NUMBER);
     
     
     /**
@@ -69,7 +66,7 @@ public final class OutgoingRoleIssue extends CoreServiceExternalAction {
      * 
      * @require outgoingRole.isOnHost() : "The outgoing role is on a host.";
      */
-    public OutgoingRoleIssue(@Nonnull OutgoingRole outgoingRole, @Nonnull InternalPerson subject) throws SQLException {
+    OutgoingRoleIssue(@Nonnull OutgoingRole outgoingRole, @Nonnull InternalPerson subject) throws SQLException {
         super(outgoingRole.getAccount(), subject);
         
         this.issuer = outgoingRole.getAccount().getIdentity();
@@ -130,12 +127,6 @@ public final class OutgoingRoleIssue extends CoreServiceExternalAction {
     }
     
     
-    @Pure
-    @Override
-    public @Nullable Class<CoreServiceActionReply> getReplyClass() {
-        return null;
-    }
-    
     /**
      * Executes this action on both hosts and clients.
      */
@@ -150,6 +141,12 @@ public final class OutgoingRoleIssue extends CoreServiceExternalAction {
         return null;
     }
     
+    @Pure
+    @Override
+    public boolean matches(@Nullable Reply reply) {
+        return reply == null;
+    }
+    
     @Override
     public void executeOnClient() throws SQLException {
         executeOnBoth();
@@ -159,6 +156,27 @@ public final class OutgoingRoleIssue extends CoreServiceExternalAction {
     @Override
     public void executeOnFailure() throws SQLException {
         // TODO: Add this role issuance to a list of failed external actions.
+    }
+    
+    
+    @Pure
+    @Override
+    public boolean equals(@Nullable Object object) {
+        if (protectedEquals(object) && object instanceof OutgoingRoleIssue) {
+            final @Nonnull OutgoingRoleIssue other = (OutgoingRoleIssue) object;
+            return this.issuer.equals(other.issuer) && this.relation.equals(other.relation) && this.agentNumber == other.agentNumber;
+        }
+        return false;
+    }
+    
+    @Pure
+    @Override
+    public int hashCode() {
+        int hash = protectedHashCode();
+        hash = 89 * hash + issuer.hashCode();
+        hash = 89 * hash + relation.hashCode();
+        hash = 89 * hash + (int) (this.agentNumber ^ (this.agentNumber >>> 32));
+        return hash;
     }
     
     

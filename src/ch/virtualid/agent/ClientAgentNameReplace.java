@@ -1,18 +1,17 @@
 package ch.virtualid.agent;
 
-import ch.virtualid.service.CoreServiceInternalAction;
-import ch.virtualid.agent.Agent;
-import ch.virtualid.agent.ClientAgent;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Client;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketException;
+import ch.virtualid.handler.Action;
 import ch.virtualid.handler.Method;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.BothModule;
+import ch.virtualid.service.CoreServiceInternalAction;
 import ch.virtualid.util.ReadonlyArray;
 import ch.xdf.Block;
 import ch.xdf.SignatureWrapper;
@@ -21,6 +20,7 @@ import ch.xdf.TupleWrapper;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Replaces the name of a {@link ClientAgent client agent}.
@@ -28,7 +28,7 @@ import javax.annotation.Nonnull;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public final class ClientAgentNameReplace extends CoreServiceInternalAction {
+final class ClientAgentNameReplace extends CoreServiceInternalAction {
     
     /**
      * Stores the semantic type {@code old.name.client.agent@virtualid.ch}.
@@ -43,7 +43,7 @@ public final class ClientAgentNameReplace extends CoreServiceInternalAction {
     /**
      * Stores the semantic type {@code replace.name.client.agent@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("replace.name.client.agent@virtualid.ch").load(TupleWrapper.TYPE, Agent.TYPE, OLD_NAME, NEW_NAME);
+    private static final @Nonnull SemanticType TYPE = SemanticType.create("replace.name.client.agent@virtualid.ch").load(TupleWrapper.TYPE, Agent.TYPE, OLD_NAME, NEW_NAME);
     
     
     /**
@@ -76,7 +76,7 @@ public final class ClientAgentNameReplace extends CoreServiceInternalAction {
      * @require Client.isValid(oldName) : "The old name is valid.";
      * @require Client.isValid(newName) : "The new name is valid.";
      */
-    public ClientAgentNameReplace(@Nonnull ClientAgent clientAgent, @Nonnull String oldName, @Nonnull String newName) {
+    ClientAgentNameReplace(@Nonnull ClientAgent clientAgent, @Nonnull String oldName, @Nonnull String newName) {
         super(clientAgent.getRole());
         
         assert Client.isValid(oldName) : "The old name is valid.";
@@ -144,8 +144,35 @@ public final class ClientAgentNameReplace extends CoreServiceInternalAction {
     
     @Pure
     @Override
+    public boolean interferesWith(@Nonnull Action action) {
+        return action instanceof ClientAgentNameReplace && ((ClientAgentNameReplace) action).clientAgent.equals(clientAgent);
+    }
+    
+    @Pure
+    @Override
     public @Nonnull ClientAgentNameReplace getReverse() {
         return new ClientAgentNameReplace(clientAgent, newName, oldName);
+    }
+    
+    
+    @Pure
+    @Override
+    public boolean equals(@Nullable Object object) {
+        if (protectedEquals(object) && object instanceof ClientAgentNameReplace) {
+            final @Nonnull ClientAgentNameReplace other = (ClientAgentNameReplace) object;
+            return this.clientAgent.equals(other.clientAgent) && this.oldName.equals(other.oldName) && this.newName.equals(other.newName);
+        }
+        return false;
+    }
+    
+    @Pure
+    @Override
+    public int hashCode() {
+        int hash = protectedHashCode();
+        hash = 89 * hash + clientAgent.hashCode();
+        hash = 89 * hash + oldName.hashCode();
+        hash = 89 * hash + newName.hashCode();
+        return hash;
     }
     
     

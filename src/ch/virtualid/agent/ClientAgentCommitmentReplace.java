@@ -1,18 +1,17 @@
 package ch.virtualid.agent;
 
-import ch.virtualid.service.CoreServiceInternalAction;
-import ch.virtualid.agent.Agent;
-import ch.virtualid.agent.ClientAgent;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Commitment;
 import ch.virtualid.cryptography.PublicKey;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
+import ch.virtualid.handler.Action;
 import ch.virtualid.handler.Method;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.BothModule;
+import ch.virtualid.service.CoreServiceInternalAction;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.ReadonlyArray;
 import ch.xdf.Block;
@@ -29,7 +28,7 @@ import javax.annotation.Nullable;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public final class ClientAgentCommitmentReplace extends CoreServiceInternalAction {
+final class ClientAgentCommitmentReplace extends CoreServiceInternalAction {
     
     /**
      * Stores the semantic type {@code old.commitment.client.agent@virtualid.ch}.
@@ -44,7 +43,7 @@ public final class ClientAgentCommitmentReplace extends CoreServiceInternalActio
     /**
      * Stores the semantic type {@code replace.commitment.client.agent@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("replace.commitment.client.agent@virtualid.ch").load(TupleWrapper.TYPE, Agent.TYPE, OLD_COMMITMENT, NEW_COMMITMENT);
+    private static final @Nonnull SemanticType TYPE = SemanticType.create("replace.commitment.client.agent@virtualid.ch").load(TupleWrapper.TYPE, Agent.TYPE, OLD_COMMITMENT, NEW_COMMITMENT);
     
     
     /**
@@ -71,7 +70,7 @@ public final class ClientAgentCommitmentReplace extends CoreServiceInternalActio
      * 
      * @require clientAgent.isOnClient() : "The client agent is on a client.";
      */
-    public ClientAgentCommitmentReplace(@Nonnull ClientAgent clientAgent, @Nonnull Commitment oldCommitment, @Nonnull Commitment newCommitment) {
+    ClientAgentCommitmentReplace(@Nonnull ClientAgent clientAgent, @Nonnull Commitment oldCommitment, @Nonnull Commitment newCommitment) {
         super(clientAgent.getRole());
         
         this.clientAgent = clientAgent;
@@ -147,8 +146,35 @@ public final class ClientAgentCommitmentReplace extends CoreServiceInternalActio
     
     @Pure
     @Override
+    public boolean interferesWith(@Nonnull Action action) {
+        return action instanceof ClientAgentCommitmentReplace && ((ClientAgentCommitmentReplace) action).clientAgent.equals(clientAgent);
+    }
+    
+    @Pure
+    @Override
     public @Nonnull ClientAgentCommitmentReplace getReverse() {
         return new ClientAgentCommitmentReplace(clientAgent, newCommitment, oldCommitment);
+    }
+    
+    
+    @Pure
+    @Override
+    public boolean equals(@Nullable Object object) {
+        if (protectedEquals(object) && object instanceof ClientAgentCommitmentReplace) {
+            final @Nonnull ClientAgentCommitmentReplace other = (ClientAgentCommitmentReplace) object;
+            return this.clientAgent.equals(other.clientAgent) && this.oldCommitment.equals(other.oldCommitment) && this.newCommitment.equals(other.newCommitment);
+        }
+        return false;
+    }
+    
+    @Pure
+    @Override
+    public int hashCode() {
+        int hash = protectedHashCode();
+        hash = 89 * hash + clientAgent.hashCode();
+        hash = 89 * hash + oldCommitment.hashCode();
+        hash = 89 * hash + newCommitment.hashCode();
+        return hash;
     }
     
     

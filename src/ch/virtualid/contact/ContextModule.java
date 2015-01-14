@@ -5,16 +5,15 @@ import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Image;
-import ch.virtualid.contact.Context;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.EntityClass;
 import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.entity.Site;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.host.Host;
 import ch.virtualid.identity.Mapper;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.BothModule;
-import ch.virtualid.host.Host;
 import ch.virtualid.service.CoreService;
 import ch.virtualid.service.Service;
 import ch.virtualid.util.FreezableLinkedList;
@@ -46,9 +45,9 @@ public final class ContextModule implements BothModule {
     /**
      * Initializes this class.
      */
-    static void initialize() {}
+    public static void initialize() {}
     
-    public static final ContextModule MODULE = new ContextModule();
+    static final ContextModule MODULE = new ContextModule();
     
     @Pure
     @Override

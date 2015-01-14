@@ -1,24 +1,19 @@
 package ch.virtualid.agent;
 
-import ch.virtualid.agent.AgentRemove;
-import ch.virtualid.service.CoreServiceInternalAction;
-import ch.virtualid.agent.Agent;
-import ch.virtualid.agent.AgentPermissions;
-import ch.virtualid.agent.OutgoingRole;
-import ch.virtualid.agent.ReadonlyAgentPermissions;
-import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.contact.Context;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
+import ch.virtualid.handler.Action;
 import ch.virtualid.handler.Method;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identity.Identity;
 import ch.virtualid.identity.IdentityClass;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.BothModule;
+import ch.virtualid.service.CoreServiceInternalAction;
 import ch.virtualid.util.ReadonlyArray;
 import ch.xdf.Block;
 import ch.xdf.SignatureWrapper;
@@ -26,6 +21,7 @@ import ch.xdf.TupleWrapper;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Creates an {@link OutgoingRole outgoing role}.
@@ -33,12 +29,12 @@ import javax.annotation.Nonnull;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public final class OutgoingRoleCreate extends CoreServiceInternalAction {
+final class OutgoingRoleCreate extends CoreServiceInternalAction {
     
     /**
      * Stores the semantic type {@code create.outgoing.role@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("create.outgoing.role@virtualid.ch").load(TupleWrapper.TYPE, Agent.TYPE, Identity.IDENTIFIER, Context.TYPE);
+    private static final @Nonnull SemanticType TYPE = SemanticType.create("create.outgoing.role@virtualid.ch").load(TupleWrapper.TYPE, Agent.TYPE, Identity.IDENTIFIER, Context.TYPE);
     
     
     /**
@@ -71,7 +67,7 @@ public final class OutgoingRoleCreate extends CoreServiceInternalAction {
      * @require relation.isRoleType() : "The relation is a role type.";
      * @require context.getEntity().equals(outgoingRole.getEntity()) : "The context belongs to the entity of the outgoing role.";
      */
-    public OutgoingRoleCreate(@Nonnull OutgoingRole outgoingRole, @Nonnull SemanticType relation, @Nonnull Context context) {
+    OutgoingRoleCreate(@Nonnull OutgoingRole outgoingRole, @Nonnull SemanticType relation, @Nonnull Context context) {
         super(outgoingRole.getRole());
         
         assert relation.isRoleType() : "The relation is a role type.";
@@ -144,8 +140,35 @@ public final class OutgoingRoleCreate extends CoreServiceInternalAction {
     
     @Pure
     @Override
+    public boolean interferesWith(@Nonnull Action action) {
+        return false;
+    }
+    
+    @Pure
+    @Override
     public @Nonnull AgentRemove getReverse() {
         return new AgentRemove(outgoingRole);
+    }
+    
+    
+    @Pure
+    @Override
+    public boolean equals(@Nullable Object object) {
+        if (protectedEquals(object) && object instanceof OutgoingRoleCreate) {
+            final @Nonnull OutgoingRoleCreate other = (OutgoingRoleCreate) object;
+            return this.outgoingRole.equals(other.outgoingRole) && this.relation.equals(other.relation) && this.context.equals(other.context);
+        }
+        return false;
+    }
+    
+    @Pure
+    @Override
+    public int hashCode() {
+        int hash = protectedHashCode();
+        hash = 89 * hash + outgoingRole.hashCode();
+        hash = 89 * hash + relation.hashCode();
+        hash = 89 * hash + context.hashCode();
+        return hash;
     }
     
     

@@ -1,20 +1,21 @@
 package ch.virtualid.agent;
 
-import ch.virtualid.service.CoreServiceInternalAction;
-import ch.virtualid.agent.Agent;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
+import ch.virtualid.handler.Action;
 import ch.virtualid.handler.Method;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.BothModule;
+import ch.virtualid.service.CoreServiceInternalAction;
 import ch.xdf.Block;
 import ch.xdf.SignatureWrapper;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Unremoves the given {@link Agent agent}.
@@ -22,18 +23,18 @@ import javax.annotation.Nonnull;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public final class AgentUnremove extends CoreServiceInternalAction {
+final class AgentUnremove extends CoreServiceInternalAction {
     
     /**
      * Stores the semantic type {@code unremove.agent@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("unremove.agent@virtualid.ch").load(Agent.TYPE);
+    private static final @Nonnull SemanticType TYPE = SemanticType.create("unremove.agent@virtualid.ch").load(Agent.TYPE);
     
     
     /**
      * Stores the agent to be unremoved.
      */
-    private final @Nonnull Agent agent;
+    final @Nonnull Agent agent;
     
     /**
      * Creates an internal action to unremove the given agent.
@@ -42,7 +43,7 @@ public final class AgentUnremove extends CoreServiceInternalAction {
      * 
      * @require agent.isOnClient() : "The agent is on a client.";
      */
-    public AgentUnremove(@Nonnull Agent agent) {
+    AgentUnremove(@Nonnull Agent agent) {
         super(agent.getRole());
         
         this.agent = agent;
@@ -100,8 +101,27 @@ public final class AgentUnremove extends CoreServiceInternalAction {
     
     @Pure
     @Override
+    public boolean interferesWith(@Nonnull Action action) {
+        return action instanceof AgentUnremove && ((AgentUnremove) action).agent.equals(agent) || action instanceof AgentRemove && ((AgentRemove) action).agent.equals(agent);
+    }
+    
+    @Pure
+    @Override
     public @Nonnull AgentRemove getReverse() {
         return new AgentRemove(agent);
+    }
+    
+    
+    @Pure
+    @Override
+    public boolean equals(@Nullable Object object) {
+        return protectedEquals(object) && object instanceof AgentUnremove && this.agent.equals(((AgentUnremove) object).agent);
+    }
+    
+    @Pure
+    @Override
+    public int hashCode() {
+        return 89 * protectedHashCode() + agent.hashCode();
     }
     
     

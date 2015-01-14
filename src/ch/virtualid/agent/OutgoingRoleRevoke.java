@@ -1,24 +1,21 @@
 package ch.virtualid.agent;
 
-import ch.virtualid.service.CoreServiceExternalAction;
-import ch.virtualid.agent.OutgoingRole;
-import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.NonNativeRole;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
-import ch.virtualid.handler.ActionReply;
 import ch.virtualid.handler.Method;
-import ch.virtualid.service.CoreServiceActionReply;
+import ch.virtualid.handler.Reply;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identity.IdentityClass;
 import ch.virtualid.identity.InternalNonHostIdentity;
 import ch.virtualid.identity.InternalPerson;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.BothModule;
-import ch.virtualid.agent.AgentModule;
+import ch.virtualid.service.CoreServiceActionReply;
+import ch.virtualid.service.CoreServiceExternalAction;
 import ch.xdf.Block;
 import ch.xdf.HostSignatureWrapper;
 import ch.xdf.SignatureWrapper;
@@ -33,12 +30,12 @@ import javax.annotation.Nullable;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public final class OutgoingRoleRevoke extends CoreServiceExternalAction {
+final class OutgoingRoleRevoke extends CoreServiceExternalAction {
     
     /**
      * Stores the semantic type {@code revocaton.role@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("revocaton.role@virtualid.ch").load(SemanticType.IDENTIFIER);
+    private static final @Nonnull SemanticType TYPE = SemanticType.create("revocaton.role@virtualid.ch").load(SemanticType.IDENTIFIER);
     
     
     /**
@@ -61,7 +58,7 @@ public final class OutgoingRoleRevoke extends CoreServiceExternalAction {
      * 
      * @require outgoingRole.isOnHost() : "The outgoing role is on a host.";
      */
-    public OutgoingRoleRevoke(@Nonnull OutgoingRole outgoingRole, @Nonnull InternalPerson subject) throws SQLException {
+    OutgoingRoleRevoke(@Nonnull OutgoingRole outgoingRole, @Nonnull InternalPerson subject) throws SQLException {
         super(outgoingRole.getAccount(), subject);
         
         this.issuer = outgoingRole.getAccount().getIdentity();
@@ -119,12 +116,6 @@ public final class OutgoingRoleRevoke extends CoreServiceExternalAction {
     }
     
     
-    @Pure
-    @Override
-    public @Nullable Class<CoreServiceActionReply> getReplyClass() {
-        return null;
-    }
-    
     /**
      * Executes this action on both hosts and clients.
      */
@@ -133,10 +124,16 @@ public final class OutgoingRoleRevoke extends CoreServiceExternalAction {
     }
     
     @Override
-    public @Nullable ActionReply executeOnHost() throws PacketException, SQLException {
+    public @Nullable CoreServiceActionReply executeOnHost() throws PacketException, SQLException {
         if (getSignatureNotNull().isNotSigned()) throw new PacketException(PacketError.AUTHORIZATION, "The revocation of a role has to be signed.");
         executeOnBoth();
         return null;
+    }
+    
+    @Pure
+    @Override
+    public boolean matches(@Nullable Reply reply) {
+        return reply == null;
     }
     
     @Override
@@ -150,6 +147,26 @@ public final class OutgoingRoleRevoke extends CoreServiceExternalAction {
     @Override
     public void executeOnFailure() throws SQLException {
         // TODO: Add this role issuance to a list of failed external actions.
+    }
+    
+    
+    @Pure
+    @Override
+    public boolean equals(@Nullable Object object) {
+        if (protectedEquals(object) && object instanceof OutgoingRoleRevoke) {
+            final @Nonnull OutgoingRoleRevoke other = (OutgoingRoleRevoke) object;
+            return this.issuer.equals(other.issuer) && this.relation.equals(other.relation);
+        }
+        return false;
+    }
+    
+    @Pure
+    @Override
+    public int hashCode() {
+        int hash = protectedHashCode();
+        hash = 89 * hash + issuer.hashCode();
+        hash = 89 * hash + relation.hashCode();
+        return hash;
     }
     
     

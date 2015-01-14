@@ -1,16 +1,9 @@
 package ch.virtualid.agent;
 
-import ch.virtualid.service.CoreServiceInternalAction;
-import ch.virtualid.agent.Agent;
-import ch.virtualid.agent.AgentPermissions;
-import ch.virtualid.agent.ClientAgent;
-import ch.virtualid.agent.ReadonlyAgentPermissions;
-import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Image;
 import ch.virtualid.client.Client;
 import ch.virtualid.client.Commitment;
-import ch.virtualid.password.Password;
 import ch.virtualid.contact.Context;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.Role;
@@ -18,11 +11,14 @@ import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
+import ch.virtualid.handler.Action;
 import ch.virtualid.handler.InternalAction;
 import ch.virtualid.handler.Method;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.BothModule;
+import ch.virtualid.password.Password;
+import ch.virtualid.service.CoreServiceInternalAction;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.ReadonlyArray;
 import ch.xdf.Block;
@@ -41,12 +37,12 @@ import javax.annotation.Nullable;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public final class ClientAgentAccredit extends CoreServiceInternalAction {
+final class ClientAgentAccredit extends CoreServiceInternalAction {
     
     /**
      * Stores the semantic type {@code accredit.client.agent@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("accredit.client.agent@virtualid.ch").load(TupleWrapper.TYPE, Agent.TYPE, AgentPermissions.TYPE, Client.NAME, Client.ICON, Password.TYPE);
+    private static final @Nonnull SemanticType TYPE = SemanticType.create("accredit.client.agent@virtualid.ch").load(TupleWrapper.TYPE, Agent.TYPE, AgentPermissions.TYPE, Client.NAME, Client.ICON, Password.TYPE);
     
     
     /**
@@ -99,7 +95,7 @@ public final class ClientAgentAccredit extends CoreServiceInternalAction {
      * @require outgoingRole.isOnClient() : "The outgoing role is on a client.";
      * @require Password.isValid(password) : "The password is valid.";
      */
-    public ClientAgentAccredit(@Nonnull Role role, @Nonnull String password) throws SQLException, IOException, PacketException, ExternalException {
+    ClientAgentAccredit(@Nonnull Role role, @Nonnull String password) throws SQLException, IOException, PacketException, ExternalException {
         super(role);
         
         assert Password.isValid(password) : "The password is valid.";
@@ -187,6 +183,12 @@ public final class ClientAgentAccredit extends CoreServiceInternalAction {
         executeOnBoth();
     }
     
+    @Pure
+    @Override
+    public boolean interferesWith(@Nonnull Action action) {
+        return false;
+    }
+    
     @Override
     public void executeOnClient() throws SQLException {
         Context.getRoot(getRole()).createForActions();
@@ -197,6 +199,30 @@ public final class ClientAgentAccredit extends CoreServiceInternalAction {
     @Override
     public @Nullable InternalAction getReverse() {
         return null;
+    }
+    
+    
+    @Pure
+    @Override
+    public boolean equals(@Nullable Object object) {
+        if (protectedEquals(object) && object instanceof ClientAgentAccredit) {
+            final @Nonnull ClientAgentAccredit other = (ClientAgentAccredit) object;
+            return this.clientAgent.equals(other.clientAgent) && this.permissions.equals(other.permissions) && this.commitment.equals(other.commitment) && this.name.equals(other.name) && this.icon.equals(other.icon) && this.password.equals(other.password);
+        }
+        return false;
+    }
+    
+    @Pure
+    @Override
+    public int hashCode() {
+        int hash = protectedHashCode();
+        hash = 89 * hash + clientAgent.hashCode();
+        hash = 89 * hash + permissions.hashCode();
+        hash = 89 * hash + commitment.hashCode();
+        hash = 89 * hash + name.hashCode();
+        hash = 89 * hash + icon.hashCode();
+        hash = 89 * hash + password.hashCode();
+        return hash;
     }
     
     

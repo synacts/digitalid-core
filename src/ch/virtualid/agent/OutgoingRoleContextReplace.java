@@ -1,19 +1,17 @@
 package ch.virtualid.agent;
 
-import ch.virtualid.service.CoreServiceInternalAction;
-import ch.virtualid.agent.Agent;
-import ch.virtualid.agent.OutgoingRole;
-import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.contact.Context;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
+import ch.virtualid.handler.Action;
 import ch.virtualid.handler.Method;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.BothModule;
+import ch.virtualid.service.CoreServiceInternalAction;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.ReadonlyArray;
 import ch.xdf.Block;
@@ -22,6 +20,7 @@ import ch.xdf.TupleWrapper;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Replaces the context of a {@link OutgoingRole outgoing role}.
@@ -29,7 +28,7 @@ import javax.annotation.Nonnull;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public final class OutgoingRoleContextReplace extends CoreServiceInternalAction {
+final class OutgoingRoleContextReplace extends CoreServiceInternalAction {
     
     /**
      * Stores the semantic type {@code old.context.outgoing.role@virtualid.ch}.
@@ -44,7 +43,7 @@ public final class OutgoingRoleContextReplace extends CoreServiceInternalAction 
     /**
      * Stores the semantic type {@code replace.context.outgoing.role@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("replace.context.outgoing.role@virtualid.ch").load(TupleWrapper.TYPE, Agent.TYPE, OLD_CONTEXT, NEW_CONTEXT);
+    private static final @Nonnull SemanticType TYPE = SemanticType.create("replace.context.outgoing.role@virtualid.ch").load(TupleWrapper.TYPE, Agent.TYPE, OLD_CONTEXT, NEW_CONTEXT);
     
     
     /**
@@ -77,7 +76,7 @@ public final class OutgoingRoleContextReplace extends CoreServiceInternalAction 
      * @require oldContext.getEntity().equals(outgoingRole.getEntity()) : "The old context belongs to the entity of the outgoing role.";
      * @require newContext.getEntity().equals(outgoingRole.getEntity()) : "The new context belongs to the entity of the outgoing role.";
      */
-    public OutgoingRoleContextReplace(@Nonnull OutgoingRole outgoingRole, @Nonnull Context oldContext, @Nonnull Context newContext) {
+    OutgoingRoleContextReplace(@Nonnull OutgoingRole outgoingRole, @Nonnull Context oldContext, @Nonnull Context newContext) {
         super(outgoingRole.getRole());
         
         assert oldContext.getEntity().equals(outgoingRole.getEntity()) : "The old context belongs to the entity of the outgoing role.";
@@ -150,8 +149,35 @@ public final class OutgoingRoleContextReplace extends CoreServiceInternalAction 
     
     @Pure
     @Override
+    public boolean interferesWith(@Nonnull Action action) {
+        return action instanceof OutgoingRoleContextReplace && ((OutgoingRoleContextReplace) action).outgoingRole.equals(outgoingRole);
+    }
+    
+    @Pure
+    @Override
     public @Nonnull OutgoingRoleContextReplace getReverse() {
         return new OutgoingRoleContextReplace(outgoingRole, newContext, oldContext);
+    }
+    
+    
+    @Pure
+    @Override
+    public boolean equals(@Nullable Object object) {
+        if (protectedEquals(object) && object instanceof OutgoingRoleContextReplace) {
+            final @Nonnull OutgoingRoleContextReplace other = (OutgoingRoleContextReplace) object;
+            return this.outgoingRole.equals(other.outgoingRole) && this.oldContext.equals(other.oldContext) && this.newContext.equals(other.newContext);
+        }
+        return false;
+    }
+    
+    @Pure
+    @Override
+    public int hashCode() {
+        int hash = protectedHashCode();
+        hash = 89 * hash + outgoingRole.hashCode();
+        hash = 89 * hash + oldContext.hashCode();
+        hash = 89 * hash + newContext.hashCode();
+        return hash;
     }
     
     

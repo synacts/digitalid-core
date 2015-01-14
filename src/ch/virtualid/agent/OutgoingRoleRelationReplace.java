@@ -1,19 +1,16 @@
 package ch.virtualid.agent;
 
-import ch.virtualid.service.CoreServiceInternalAction;
-import ch.virtualid.agent.Agent;
-import ch.virtualid.agent.AgentPermissions;
-import ch.virtualid.agent.OutgoingRole;
-import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
+import ch.virtualid.handler.Action;
 import ch.virtualid.handler.Method;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identity.IdentityClass;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.BothModule;
+import ch.virtualid.service.CoreServiceInternalAction;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.ReadonlyArray;
 import ch.xdf.Block;
@@ -22,6 +19,7 @@ import ch.xdf.TupleWrapper;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Replaces the relation of a {@link OutgoingRole outgoing role}.
@@ -29,7 +27,7 @@ import javax.annotation.Nonnull;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public final class OutgoingRoleRelationReplace extends CoreServiceInternalAction {
+final class OutgoingRoleRelationReplace extends CoreServiceInternalAction {
     
     /**
      * Stores the semantic type {@code old.relation.outgoing.role@virtualid.ch}.
@@ -44,7 +42,7 @@ public final class OutgoingRoleRelationReplace extends CoreServiceInternalAction
     /**
      * Stores the semantic type {@code replace.relation.outgoing.role@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("replace.relation.outgoing.role@virtualid.ch").load(TupleWrapper.TYPE, Agent.TYPE, OLD_RELATION, NEW_RELATION);
+    private static final @Nonnull SemanticType TYPE = SemanticType.create("replace.relation.outgoing.role@virtualid.ch").load(TupleWrapper.TYPE, Agent.TYPE, OLD_RELATION, NEW_RELATION);
     
     
     /**
@@ -77,7 +75,7 @@ public final class OutgoingRoleRelationReplace extends CoreServiceInternalAction
      * @require oldRelation.isRoleType() : "The old relation is a role type.";
      * @require newRelation.isRoleType() : "The new relation is a role type.";
      */
-    public OutgoingRoleRelationReplace(@Nonnull OutgoingRole outgoingRole, @Nonnull SemanticType oldRelation, @Nonnull SemanticType newRelation) {
+    OutgoingRoleRelationReplace(@Nonnull OutgoingRole outgoingRole, @Nonnull SemanticType oldRelation, @Nonnull SemanticType newRelation) {
         super(outgoingRole.getRole());
         
         assert oldRelation.isRoleType() : "The old relation is a role type.";
@@ -156,8 +154,35 @@ public final class OutgoingRoleRelationReplace extends CoreServiceInternalAction
     
     @Pure
     @Override
+    public boolean interferesWith(@Nonnull Action action) {
+        return action instanceof OutgoingRoleRelationReplace && ((OutgoingRoleRelationReplace) action).outgoingRole.equals(outgoingRole);
+    }
+    
+    @Pure
+    @Override
     public @Nonnull OutgoingRoleRelationReplace getReverse() {
         return new OutgoingRoleRelationReplace(outgoingRole, newRelation, oldRelation);
+    }
+    
+    
+    @Pure
+    @Override
+    public boolean equals(@Nullable Object object) {
+        if (protectedEquals(object) && object instanceof OutgoingRoleContextReplace) {
+            final @Nonnull OutgoingRoleRelationReplace other = (OutgoingRoleRelationReplace) object;
+            return this.outgoingRole.equals(other.outgoingRole) && this.oldRelation.equals(other.oldRelation) && this.newRelation.equals(other.newRelation);
+        }
+        return false;
+    }
+    
+    @Pure
+    @Override
+    public int hashCode() {
+        int hash = protectedHashCode();
+        hash = 89 * hash + outgoingRole.hashCode();
+        hash = 89 * hash + oldRelation.hashCode();
+        hash = 89 * hash + newRelation.hashCode();
+        return hash;
     }
     
     

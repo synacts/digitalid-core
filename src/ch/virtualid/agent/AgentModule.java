@@ -1,11 +1,5 @@
 package ch.virtualid.agent;
 
-import ch.virtualid.agent.Agent;
-import ch.virtualid.agent.AgentPermissions;
-import ch.virtualid.agent.ClientAgent;
-import ch.virtualid.agent.OutgoingRole;
-import ch.virtualid.agent.ReadonlyAgentPermissions;
-import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Capturable;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Image;
@@ -13,6 +7,7 @@ import ch.virtualid.client.Client;
 import ch.virtualid.client.Commitment;
 import ch.virtualid.contact.Contact;
 import ch.virtualid.contact.Context;
+import ch.virtualid.contact.ContextModule;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.EntityClass;
 import ch.virtualid.entity.NonHostAccount;
@@ -23,14 +18,13 @@ import ch.virtualid.entity.Site;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketException;
+import ch.virtualid.host.Host;
 import ch.virtualid.identity.Identity;
 import ch.virtualid.identity.IdentityClass;
 import ch.virtualid.identity.InternalNonHostIdentity;
 import ch.virtualid.identity.Mapper;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.BothModule;
-import ch.virtualid.contact.ContextModule;
-import ch.virtualid.host.Host;
 import ch.virtualid.service.CoreService;
 import ch.virtualid.service.Service;
 import ch.virtualid.util.FreezableArray;
@@ -63,17 +57,12 @@ import javax.annotation.Nullable;
  */
 public final class AgentModule implements BothModule {
     
-    /**
-     * Initializes this class.
-     */
-    static void initialize() {}
-    
     static { ContextModule.initialize(); }
     
     /**
      * Stores an instance of this module.
      */
-    public static final AgentModule MODULE = new AgentModule();
+    static final AgentModule MODULE = new AgentModule();
     
     @Pure
     @Override
@@ -757,7 +746,7 @@ public final class AgentModule implements BothModule {
      * 
      * @param agent the agent to be removed.
      */
-    public static void removeAgent(@Nonnull Agent agent) throws SQLException {
+    static void removeAgent(@Nonnull Agent agent) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             final @Nonnull String SQL = "UPDATE " + agent.getEntity().getSite() + "agent SET removed = TRUE WHERE entity = " + agent.getEntity() + " AND agent = " + agent + " AND removed = FALSE";
             if (statement.executeUpdate(SQL) == 0) throw new SQLException("The agent with the number " + agent + " of " + agent.getEntity().getIdentity().getAddress() + " could not be removed.");
@@ -769,7 +758,7 @@ public final class AgentModule implements BothModule {
      * 
      * @param agent the agent to be unremoved.
      */
-    public static void unremoveAgent(@Nonnull Agent agent) throws SQLException {
+    static void unremoveAgent(@Nonnull Agent agent) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             final @Nonnull String SQL = "UPDATE " + agent.getEntity().getSite() + "agent SET removed = FALSE WHERE entity = " + agent.getEntity() + " AND agent = " + agent + " AND removed = TRUE";
             if (statement.executeUpdate(SQL) == 0) throw new SQLException("The agent with the number " + agent + " of " + agent.getEntity().getIdentity().getAddress() + " could not be unremoved.");
@@ -787,7 +776,7 @@ public final class AgentModule implements BothModule {
      * @ensure return.isNotFrozen() : "The permissions are not frozen.";
      */
     @Pure
-    public static @Capturable @Nonnull AgentPermissions getPermissions(@Nonnull Agent agent) throws SQLException {
+    static @Capturable @Nonnull AgentPermissions getPermissions(@Nonnull Agent agent) throws SQLException {
         final @Nonnull String SQL = "SELECT " + AgentPermissions.COLUMNS + " FROM " + agent.getEntity().getSite() + "agent_permission WHERE entity = " + agent.getEntity() + " AND agent = " + agent;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
             return AgentPermissions.get(resultSet, 1);
@@ -802,7 +791,7 @@ public final class AgentModule implements BothModule {
      * 
      * @require permissions.isFrozen() : "The permissions are frozen.";
      */
-    public static void addPermissions(@Nonnull Agent agent, @Nonnull ReadonlyAgentPermissions permissions) throws SQLException {
+    static void addPermissions(@Nonnull Agent agent, @Nonnull ReadonlyAgentPermissions permissions) throws SQLException {
         assert permissions.isFrozen() : "The permissions are frozen.";
         
         final @Nonnull String SQL = "INSERT INTO " + agent.getEntity().getSite() + "agent_permission (entity, agent, " + AgentPermissions.COLUMNS + ") VALUES (" + agent.getEntity() + ", " + agent + ", ?, ?)";
@@ -821,7 +810,7 @@ public final class AgentModule implements BothModule {
      * 
      * @require permissions.isFrozen() : "The permissions are frozen.";
      */
-    public static void removePermissions(@Nonnull Agent agent, @Nonnull ReadonlyAgentPermissions permissions) throws SQLException {
+    static void removePermissions(@Nonnull Agent agent, @Nonnull ReadonlyAgentPermissions permissions) throws SQLException {
         assert permissions.isFrozen() : "The permissions are frozen.";
         
         final @Nonnull String SQL = "DELETE FROM " + agent.getEntity().getSite() + "agent_permission WHERE entity = " + agent.getEntity() + " AND agent = " + agent + " AND " + AgentPermissions.CONDITION;
@@ -871,7 +860,7 @@ public final class AgentModule implements BothModule {
      * @ensure return.match(agent) : "The returned restrictions match the given agent.";
      */
     @Pure
-    public static @Nonnull Restrictions getRestrictions(@Nonnull Agent agent) throws SQLException {
+    static @Nonnull Restrictions getRestrictions(@Nonnull Agent agent) throws SQLException {
         final @Nonnull String SQL = "SELECT " + Restrictions.COLUMNS + " FROM " + agent.getEntity().getSite() + "agent_restrictions WHERE entity = " + agent.getEntity() + " AND agent = " + agent;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
             if (resultSet.next()) return Restrictions.get(agent.getEntity(), resultSet, 1).checkMatch(agent);
@@ -910,7 +899,7 @@ public final class AgentModule implements BothModule {
      * @require oldRestrictions.match(agent) : "The old restrictions match the given agent.";
      * @require newRestrictions.match(agent) : "The new restrictions match the given agent.";
      */
-    public static void replaceRestrictions(@Nonnull Agent agent, @Nonnull Restrictions oldRestrictions, @Nonnull Restrictions newRestrictions) throws SQLException {
+    static void replaceRestrictions(@Nonnull Agent agent, @Nonnull Restrictions oldRestrictions, @Nonnull Restrictions newRestrictions) throws SQLException {
         assert oldRestrictions.match(agent) : "The old restrictions match the given agent.";
         assert newRestrictions.match(agent) : "The new restrictions match the given agent.";
         
@@ -981,7 +970,7 @@ public final class AgentModule implements BothModule {
      * @ensure return.isNotFrozen() : "The set is not frozen.";
      */
     @Pure
-    public static @Capturable @Nonnull FreezableSet<Agent> getWeakerAgents(@Nonnull Agent agent) throws SQLException {
+    static @Capturable @Nonnull FreezableSet<Agent> getWeakerAgents(@Nonnull Agent agent) throws SQLException {
         final @Nonnull NonHostEntity entity = agent.getEntity();
         final @Nonnull Site site = entity.getSite();
         final @Nonnull String SQL = "SELECT agent, client, removed FROM " + site + "agent_permission_order po, " + site + "agent_restrictions_ord ro, " + site + "agent ag WHERE po.entity = " + entity + " AND po.stronger = " + agent + " AND ro.entity = " + entity + " AND ro.stronger = " + agent + " AND ag.entity = " + entity + " AND po.weaker = ag.agent AND ro.weaker = ag.agent";
@@ -1003,7 +992,7 @@ public final class AgentModule implements BothModule {
      * @throws SQLException if no weaker agent with the given number is found.
      */
     @Pure
-    public static @Nonnull Agent getWeakerAgent(@Nonnull Agent agent, long agentNumber) throws SQLException {
+    static @Nonnull Agent getWeakerAgent(@Nonnull Agent agent, long agentNumber) throws SQLException {
         final @Nonnull NonHostEntity entity = agent.getEntity();
         final @Nonnull Site site = entity.getSite();
         final @Nonnull String SQL = "SELECT agent, client, removed FROM " + site + "agent_permission_order po, " + site + "agent_restrictions_ord ro, " + site + "agent ag WHERE po.entity = " + entity + " AND po.stronger = " + agent + " AND po.weaker = " + agentNumber + " AND ro.entity = " + entity + " AND ro.stronger = " + agent + " AND ro.weaker = " + agentNumber + " AND ag.entity = " + entity + " AND ag.agent = " + agentNumber;
@@ -1024,7 +1013,7 @@ public final class AgentModule implements BothModule {
      * @require agent1.getEntity().equals(agent2.getEntity()) : "Both agents belong to the same entity.";
      */
     @Pure
-    public static boolean isStronger(@Nonnull Agent agent1, @Nonnull Agent agent2) throws SQLException {
+    static boolean isStronger(@Nonnull Agent agent1, @Nonnull Agent agent2) throws SQLException {
         assert agent1.getEntity().equals(agent2.getEntity()) : "Both agents belong to the same entity.";
         
         final @Nonnull NonHostEntity entity = agent1.getEntity();
@@ -1050,7 +1039,7 @@ public final class AgentModule implements BothModule {
      * @require Client.isValid(name) : "The name is valid.";
      * @require Client.isValid(icon) : "The icon is valid.";
      */
-    public static void addClientAgent(@Nonnull ClientAgent clientAgent, @Nonnull ReadonlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nonnull Commitment commitment, @Nonnull String name, @Nonnull Image icon) throws SQLException {
+    static void addClientAgent(@Nonnull ClientAgent clientAgent, @Nonnull ReadonlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nonnull Commitment commitment, @Nonnull String name, @Nonnull Image icon) throws SQLException {
         assert permissions.isFrozen() : "The permissions are frozen.";
         assert Client.isValid(name) : "The name is valid.";
         assert Client.isValid(icon) : "The icon is valid.";
@@ -1099,7 +1088,7 @@ public final class AgentModule implements BothModule {
      * @param clientAgent the client agent whose commitment is to be returned.
      */
     @Pure
-    public static @Nonnull Commitment getCommitment(@Nonnull ClientAgent clientAgent) throws SQLException {
+    static @Nonnull Commitment getCommitment(@Nonnull ClientAgent clientAgent) throws SQLException {
         final @Nonnull NonHostEntity entity = clientAgent.getEntity();
         final @Nonnull String SQL = "SELECT " + Commitment.COLUMNS + " FROM " + entity.getSite() + "client_agent WHERE entity = " + entity + " AND agent = " + clientAgent;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
@@ -1115,7 +1104,7 @@ public final class AgentModule implements BothModule {
      * @param oldCommitment the old commitment of the given client agent.
      * @param newCommitment the new commitment of the given client agent.
      */
-    public static void replaceCommitment(@Nonnull ClientAgent clientAgent, @Nonnull Commitment oldCommitment, @Nonnull Commitment newCommitment) throws SQLException {
+    static void replaceCommitment(@Nonnull ClientAgent clientAgent, @Nonnull Commitment oldCommitment, @Nonnull Commitment newCommitment) throws SQLException {
         final @Nonnull NonHostEntity entity = clientAgent.getEntity();
         final @Nonnull String SQL = "UPDATE " + entity.getSite() + "client_agent SET " + Commitment.UPDATE + " WHERE entity = " + entity + " AND agent = " + clientAgent + " AND " + Commitment.CONDITION;
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
@@ -1134,7 +1123,7 @@ public final class AgentModule implements BothModule {
      * @ensure Client.isValid(return) : "The returned name is valid.";
      */
     @Pure
-    public static @Nonnull String getName(@Nonnull ClientAgent clientAgent) throws SQLException {
+    static @Nonnull String getName(@Nonnull ClientAgent clientAgent) throws SQLException {
         final @Nonnull NonHostEntity entity = clientAgent.getEntity();
         final @Nonnull String SQL = "SELECT name FROM " + entity.getSite() + "client_agent WHERE entity = " + entity + " AND agent = " + clientAgent;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
@@ -1156,7 +1145,7 @@ public final class AgentModule implements BothModule {
      * @require Client.isValid(oldName) : "The old name is valid.";
      * @require Client.isValid(newName) : "The new name is valid.";
      */
-    public static void replaceName(@Nonnull ClientAgent clientAgent, @Nonnull String oldName, @Nonnull String newName) throws SQLException {
+    static void replaceName(@Nonnull ClientAgent clientAgent, @Nonnull String oldName, @Nonnull String newName) throws SQLException {
         assert Client.isValid(oldName) : "The old name is valid.";
         assert Client.isValid(newName) : "The new name is valid.";
         
@@ -1178,7 +1167,7 @@ public final class AgentModule implements BothModule {
      * @ensure Client.isValid(return) : "The returned icon is valid.";
      */
     @Pure
-    public static @Nonnull Image getIcon(@Nonnull ClientAgent clientAgent) throws SQLException {
+    static @Nonnull Image getIcon(@Nonnull ClientAgent clientAgent) throws SQLException {
         final @Nonnull NonHostEntity entity = clientAgent.getEntity();
         final @Nonnull String SQL = "SELECT icon FROM " + entity.getSite() + "client_agent WHERE entity = " + entity + " AND agent = " + clientAgent;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
@@ -1200,7 +1189,7 @@ public final class AgentModule implements BothModule {
      * @require Client.isValid(oldIcon) : "The old icon is valid.";
      * @require Client.isValid(newIcon) : "The new icon is valid.";
      */
-    public static void replaceIcon(@Nonnull ClientAgent clientAgent, @Nonnull Image oldIcon, @Nonnull Image newIcon) throws SQLException {
+    static void replaceIcon(@Nonnull ClientAgent clientAgent, @Nonnull Image oldIcon, @Nonnull Image newIcon) throws SQLException {
         assert Client.isValid(oldIcon) : "The old icon is valid.";
         assert Client.isValid(newIcon) : "The new icon is valid.";
         
@@ -1224,7 +1213,7 @@ public final class AgentModule implements BothModule {
      * @require relation.isRoleType() : "The relation is a role type.";
      * @require context.getEntity().equals(outgoingRole.getEntity()) : "The context belongs to the entity of the outgoing role.";
      */
-    public static void addOutgoingRole(@Nonnull OutgoingRole outgoingRole, @Nonnull SemanticType relation, @Nonnull Context context) throws SQLException {
+    static void addOutgoingRole(@Nonnull OutgoingRole outgoingRole, @Nonnull SemanticType relation, @Nonnull Context context) throws SQLException {
         assert relation.isRoleType() : "The relation is a role type.";
         assert context.getEntity().equals(outgoingRole.getEntity()) : "The context belongs to the entity of the outgoing role.";
         
@@ -1270,7 +1259,7 @@ public final class AgentModule implements BothModule {
      * @ensure return.isRoleType() : "The returned relation is a role type.";
      */
     @Pure
-    public static @Nonnull SemanticType getRelation(@Nonnull OutgoingRole outgoingRole) throws SQLException {
+    static @Nonnull SemanticType getRelation(@Nonnull OutgoingRole outgoingRole) throws SQLException {
         final @Nonnull NonHostEntity entity = outgoingRole.getEntity();
         final @Nonnull String SQL = "SELECT relation FROM " + entity.getSite() + "outgoing_role WHERE entity = " + entity + " AND agent = " + outgoingRole;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
@@ -1291,7 +1280,7 @@ public final class AgentModule implements BothModule {
      * @require oldRelation.isRoleType() : "The old relation is a role type.";
      * @require newRelation.isRoleType() : "The new relation is a role type.";
      */
-    public static void replaceRelation(@Nonnull OutgoingRole outgoingRole, @Nonnull SemanticType oldRelation, @Nonnull SemanticType newRelation) throws SQLException {
+    static void replaceRelation(@Nonnull OutgoingRole outgoingRole, @Nonnull SemanticType oldRelation, @Nonnull SemanticType newRelation) throws SQLException {
         assert oldRelation.isRoleType() : "The old relation is a role type.";
         assert newRelation.isRoleType() : "The new relation is a role type.";
         
@@ -1311,7 +1300,7 @@ public final class AgentModule implements BothModule {
      * @ensure return.getEntity().equals(outgoingRole.getEntity()) : "The context belongs to the same entity as the outgoing role.";
      */
     @Pure
-    public static @Nonnull Context getContext(@Nonnull OutgoingRole outgoingRole) throws SQLException {
+    static @Nonnull Context getContext(@Nonnull OutgoingRole outgoingRole) throws SQLException {
         final @Nonnull NonHostEntity entity = outgoingRole.getEntity();
         final @Nonnull String SQL = "SELECT context FROM " + entity.getSite() + "outgoing_role WHERE entity = " + entity + " AND agent = " + outgoingRole;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
@@ -1330,7 +1319,7 @@ public final class AgentModule implements BothModule {
      * @require oldContext.isRoleType() : "The old context is a role type.";
      * @require newContext.isRoleType() : "The new context is a role type.";
      */
-    public static void replaceContext(@Nonnull OutgoingRole outgoingRole, @Nonnull Context oldContext, @Nonnull Context newContext) throws SQLException {
+    static void replaceContext(@Nonnull OutgoingRole outgoingRole, @Nonnull Context oldContext, @Nonnull Context newContext) throws SQLException {
         assert oldContext.getEntity().equals(outgoingRole.getEntity()) : "The old context belongs to the same entity as the outgoing role.";
         assert newContext.getEntity().equals(outgoingRole.getEntity()) : "The new context belongs to the same entity as the outgoing role.";
         
@@ -1353,7 +1342,7 @@ public final class AgentModule implements BothModule {
      * 
      * @require relation.isRoleType() : "The relation is a role type.";
      */
-    public static void addIncomingRole(@Nonnull NonHostEntity entity, @Nonnull InternalNonHostIdentity issuer, @Nonnull SemanticType relation, long agentNumber) throws SQLException {
+    static void addIncomingRole(@Nonnull NonHostEntity entity, @Nonnull InternalNonHostIdentity issuer, @Nonnull SemanticType relation, long agentNumber) throws SQLException {
         assert relation.isRoleType() : "The relation is a role type.";
         
         try (@Nonnull Statement statement = Database.createStatement()) {
@@ -1372,7 +1361,7 @@ public final class AgentModule implements BothModule {
      * 
      * @require relation.isRoleType() : "The relation is a role type.";
      */
-    public static void removeIncomingRole(@Nonnull NonHostEntity entity, @Nonnull InternalNonHostIdentity issuer, @Nonnull SemanticType relation) throws SQLException {
+    static void removeIncomingRole(@Nonnull NonHostEntity entity, @Nonnull InternalNonHostIdentity issuer, @Nonnull SemanticType relation) throws SQLException {
         assert relation.isRoleType() : "The relation is a role type.";
         
         try (@Nonnull Statement statement = Database.createStatement()) {
@@ -1389,7 +1378,7 @@ public final class AgentModule implements BothModule {
      * 
      * @param role the role whose incoming roles are to be reset.
      */
-    public static void resetIncomingRoles(@Nonnull Role role) throws SQLException {
+    static void resetIncomingRoles(@Nonnull Role role) throws SQLException {
         final @Nonnull ReadonlyList<NonNativeRole> roles = role.getRoles();
         final @Nonnull HashSet<NonNativeRole> foundRoles = new HashSet<NonNativeRole>();
         final @Nonnull String SQL = "SELECT issuer, relation, agent FROM " + role.getSite() + "incoming_role WHERE entity = " + role;

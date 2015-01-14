@@ -4,7 +4,6 @@ import static ch.virtualid.agent.Agent.get;
 import ch.virtualid.annotations.Capturable;
 import ch.virtualid.annotations.OnlyForActions;
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.synchronizer.Synchronizer;
 import ch.virtualid.concept.Aspect;
 import ch.virtualid.concept.NonHostConcept;
 import ch.virtualid.entity.NonHostEntity;
@@ -17,6 +16,7 @@ import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
+import ch.virtualid.synchronizer.Synchronizer;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.FreezableSet;
 import ch.virtualid.util.ReadonlyArray;
@@ -190,7 +190,7 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
      * Removes this agent from the database by marking it as being removed.
      */
     @OnlyForActions
-    public final void removeForActions() throws SQLException {
+    final void removeForActions() throws SQLException {
         AgentModule.removeAgent(this);
         if (isOnHost() && this instanceof OutgoingRole) ((OutgoingRole) this).revoke();
         removed = true;
@@ -213,7 +213,7 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
      * Unremoves this agent from the database by marking it as no longer being removed.
      */
     @OnlyForActions
-    public final void unremoveForActions() throws SQLException {
+    final void unremoveForActions() throws SQLException {
         AgentModule.unremoveAgent(this);
         if (isOnHost() && this instanceof OutgoingRole) ((OutgoingRole) this).issue();
         removed = false;
@@ -257,7 +257,7 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
      * @require newPermissions.isFrozen() : "The new permissions are frozen.";
      */
     @OnlyForActions
-    public final void addPermissionsForActions(@Nonnull ReadonlyAgentPermissions newPermissions) throws SQLException {
+    final void addPermissionsForActions(@Nonnull ReadonlyAgentPermissions newPermissions) throws SQLException {
         AgentModule.addPermissions(this, newPermissions);
         if (permissions != null) permissions.putAll(newPermissions);
         notify(PERMISSIONS);
@@ -283,7 +283,7 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
      * @require oldPermissions.isFrozen() : "The old permissions are frozen.";
      */
     @OnlyForActions
-    public final void removePermissionsForActions(@Nonnull ReadonlyAgentPermissions oldPermissions) throws SQLException {
+    final void removePermissionsForActions(@Nonnull ReadonlyAgentPermissions oldPermissions) throws SQLException {
         AgentModule.removePermissions(this, oldPermissions);
         if (permissions != null) permissions.removeAll(oldPermissions);
         notify(PERMISSIONS);
@@ -328,7 +328,7 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
      * @require newRestrictions.match(this) : "The new restrictions match this agent.";
      */
     @OnlyForActions
-    public final void replaceRestrictions(@Nonnull Restrictions oldRestrictions, @Nonnull Restrictions newRestrictions) throws SQLException {
+    final void replaceRestrictions(@Nonnull Restrictions oldRestrictions, @Nonnull Restrictions newRestrictions) throws SQLException {
         AgentModule.replaceRestrictions(this, oldRestrictions, newRestrictions);
         restrictions = newRestrictions;
         notify(RESTRICTIONS);

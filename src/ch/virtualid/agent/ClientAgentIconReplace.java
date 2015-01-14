@@ -1,8 +1,5 @@
 package ch.virtualid.agent;
 
-import ch.virtualid.service.CoreServiceInternalAction;
-import ch.virtualid.agent.Agent;
-import ch.virtualid.agent.ClientAgent;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Image;
 import ch.virtualid.client.Client;
@@ -10,10 +7,12 @@ import ch.virtualid.entity.Entity;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketException;
+import ch.virtualid.handler.Action;
 import ch.virtualid.handler.Method;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.BothModule;
+import ch.virtualid.service.CoreServiceInternalAction;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.ReadonlyArray;
 import ch.xdf.Block;
@@ -22,6 +21,7 @@ import ch.xdf.TupleWrapper;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Replaces the icon of a {@link ClientAgent client agent}.
@@ -29,7 +29,7 @@ import javax.annotation.Nonnull;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public final class ClientAgentIconReplace extends CoreServiceInternalAction {
+final class ClientAgentIconReplace extends CoreServiceInternalAction {
     
     /**
      * Stores the semantic type {@code old.icon.client.agent@virtualid.ch}.
@@ -44,7 +44,7 @@ public final class ClientAgentIconReplace extends CoreServiceInternalAction {
     /**
      * Stores the semantic type {@code replace.icon.client.agent@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("replace.icon.client.agent@virtualid.ch").load(TupleWrapper.TYPE, Agent.TYPE, OLD_ICON, NEW_ICON);
+    private static final @Nonnull SemanticType TYPE = SemanticType.create("replace.icon.client.agent@virtualid.ch").load(TupleWrapper.TYPE, Agent.TYPE, OLD_ICON, NEW_ICON);
     
     
     /**
@@ -77,7 +77,7 @@ public final class ClientAgentIconReplace extends CoreServiceInternalAction {
      * @require Client.isValid(oldIcon) : "The old icon is valid.";
      * @require Client.isValid(newIcon) : "The new icon is valid.";
      */
-    public ClientAgentIconReplace(@Nonnull ClientAgent clientAgent, @Nonnull Image oldIcon, @Nonnull Image newIcon) {
+    ClientAgentIconReplace(@Nonnull ClientAgent clientAgent, @Nonnull Image oldIcon, @Nonnull Image newIcon) {
         super(clientAgent.getRole());
         
         assert Client.isValid(oldIcon) : "The old icon is valid.";
@@ -145,8 +145,35 @@ public final class ClientAgentIconReplace extends CoreServiceInternalAction {
     
     @Pure
     @Override
+    public boolean interferesWith(@Nonnull Action action) {
+        return action instanceof ClientAgentIconReplace && ((ClientAgentIconReplace) action).clientAgent.equals(clientAgent);
+    }
+    
+    @Pure
+    @Override
     public @Nonnull ClientAgentIconReplace getReverse() {
         return new ClientAgentIconReplace(clientAgent, newIcon, oldIcon);
+    }
+    
+    
+    @Pure
+    @Override
+    public boolean equals(@Nullable Object object) {
+        if (protectedEquals(object) && object instanceof ClientAgentIconReplace) {
+            final @Nonnull ClientAgentIconReplace other = (ClientAgentIconReplace) object;
+            return this.clientAgent.equals(other.clientAgent) && this.oldIcon.equals(other.oldIcon) && this.newIcon.equals(other.newIcon);
+        }
+        return false;
+    }
+    
+    @Pure
+    @Override
+    public int hashCode() {
+        int hash = protectedHashCode();
+        hash = 89 * hash + clientAgent.hashCode();
+        hash = 89 * hash + oldIcon.hashCode();
+        hash = 89 * hash + newIcon.hashCode();
+        return hash;
     }
     
     

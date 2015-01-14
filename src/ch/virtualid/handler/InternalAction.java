@@ -121,6 +121,7 @@ public abstract class InternalAction extends Action implements InternalMethod {
      * @require action.getRole().equals(getRole()) : "The role of the given and this action is the same.";
      * @require action.getService().equals(getService()) : "The service of the given and this action is the same.";
      */
+    @Pure
     public abstract boolean interferesWith(@Nonnull Action action);
     
     /**
