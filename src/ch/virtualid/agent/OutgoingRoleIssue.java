@@ -9,7 +9,6 @@ import ch.virtualid.entity.Entity;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
-import ch.virtualid.handler.ActionReply;
 import ch.virtualid.handler.Method;
 import ch.virtualid.service.CoreServiceActionReply;
 import ch.virtualid.identifier.HostIdentifier;
@@ -145,7 +144,7 @@ public final class OutgoingRoleIssue extends CoreServiceExternalAction {
     }
     
     @Override
-    public @Nullable ActionReply executeOnHost() throws PacketException, SQLException {
+    public @Nullable CoreServiceActionReply executeOnHost() throws PacketException, SQLException {
         if (getSignatureNotNull().isNotSigned()) throw new PacketException(PacketError.AUTHORIZATION, "The issuance of a role has to be signed.");
         executeOnBoth();
         return null;

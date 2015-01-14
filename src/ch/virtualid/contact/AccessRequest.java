@@ -1,12 +1,8 @@
-package ch.virtualid.access;
+package ch.virtualid.contact;
 
-import ch.virtualid.service.CoreServiceExternalAction;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.contact.Contact;
-import ch.virtualid.contact.ContactPermissions;
-import ch.virtualid.contact.ReadonlyContactPermissions;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.exceptions.external.ExternalException;
@@ -14,12 +10,13 @@ import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Method;
-import ch.virtualid.service.CoreServiceActionReply;
+import ch.virtualid.handler.Reply;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identity.InternalPerson;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.BothModule;
-import ch.virtualid.service.CoreService;
+import ch.virtualid.service.CoreServiceActionReply;
+import ch.virtualid.service.CoreServiceExternalAction;
 import ch.xdf.Block;
 import ch.xdf.ClientSignatureWrapper;
 import ch.xdf.CredentialsSignatureWrapper;
@@ -69,7 +66,7 @@ public final class AccessRequest extends CoreServiceExternalAction {
      * @require permissions.isFrozen() : "The permissions are frozen.";
      * @require !permissions.isEmpty() : "The permissions are not empty.";
      */
-    public AccessRequest(@Nonnull NonHostEntity entity, @Nonnull InternalPerson subject, @Nonnull ReadonlyContactPermissions permissions) {
+    AccessRequest(@Nonnull NonHostEntity entity, @Nonnull InternalPerson subject, @Nonnull ReadonlyContactPermissions permissions) {
         super(entity, subject);
         
         assert permissions.isFrozen() : "The permissions are frozen.";
@@ -151,12 +148,6 @@ public final class AccessRequest extends CoreServiceExternalAction {
     }
     
     
-    @Pure
-    @Override
-    public @Nullable Class<CoreServiceActionReply> getReplyClass() {
-        return null;
-    }
-    
     @Override
     public @Nullable CoreServiceActionReply executeOnHost() throws PacketException, SQLException {
         final @Nonnull SignatureWrapper signature = getSignatureNotNull();
@@ -165,8 +156,16 @@ public final class AccessRequest extends CoreServiceExternalAction {
         } else if (signature instanceof ClientSignatureWrapper) {
             throw new PacketException(PacketError.AUTHORIZATION, "Access requests may not be signed by clients.");
         }
+        executeOnClient();
         return null;
     }
+    
+    @Pure
+    @Override
+    public boolean matches(@Nullable Reply reply) {
+        return reply == null;
+    }
+    
     
     @Override
     public void executeOnClient() throws SQLException {
@@ -181,6 +180,19 @@ public final class AccessRequest extends CoreServiceExternalAction {
     
     @Pure
     @Override
+    public boolean equals(@Nullable Object object) {
+        return protectedEquals(object) && object instanceof AccessRequest && this.permissions.equals(((AccessRequest) object).permissions);
+    }
+    
+    @Pure
+    @Override
+    public int hashCode() {
+        return 89 * protectedHashCode() + permissions.hashCode();
+    }
+    
+    
+    @Pure
+    @Override
     public @Nonnull SemanticType getType() {
         return TYPE;
     }
@@ -188,7 +200,7 @@ public final class AccessRequest extends CoreServiceExternalAction {
     @Pure
     @Override
     public @Nonnull BothModule getModule() {
-        return CoreService.SERVICE;
+        return AccessRequestModule.MODULE;
     }
     
     /**
