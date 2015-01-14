@@ -311,7 +311,7 @@ public final class AttributeModule implements BothModule {
      * @ensure return.isNotFrozen() : "The returned attributes are not frozen.";
      */
     @Pure
-    public static @Capturable @Nonnull FreezableSet<Attribute> getAll(@Nonnull Entity entity) throws SQLException {
+    static @Capturable @Nonnull FreezableSet<Attribute> getAll(@Nonnull Entity entity) throws SQLException {
         final @Nonnull String SQL = "SELECT type FROM " + entity.getSite() + "attribute_value WHERE entity = " + entity;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
             final @Nonnull FreezableSet<Attribute> attributes = new FreezableLinkedHashSet<Attribute>();
@@ -334,7 +334,7 @@ public final class AttributeModule implements BothModule {
      * @ensure return == null || return.isVerified() && return.matches(attribute) : "The returned value is null or verified and matches the given attribute.";
      */
     @Pure
-    public static @Nullable AttributeValue getValue(@Nonnull Attribute attribute, boolean published) throws SQLException {
+    static @Nullable AttributeValue getValue(@Nonnull Attribute attribute, boolean published) throws SQLException {
         final @Nonnull String SQL = "SELECT value FROM " + attribute.getEntity().getSite() + "attribute_value WHERE entity = " + attribute.getEntity() + " AND type = " + attribute.getType() + " AND published = " + published;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
             if (resultSet.next()) return AttributeValue.get(resultSet, 1).checkMatches(attribute);
@@ -353,7 +353,7 @@ public final class AttributeModule implements BothModule {
      * 
      * @require value.isVerified() && value.matches(attribute) : "The value is verified and matches the given attribute.";
      */
-    public static void insertValue(@Nonnull Attribute attribute, boolean published, @Nonnull AttributeValue value) throws SQLException {
+    static void insertValue(@Nonnull Attribute attribute, boolean published, @Nonnull AttributeValue value) throws SQLException {
         assert value.isVerified() && value.matches(attribute) : "The value is verified and matches the given attribute.";
         
         final @Nonnull String SQL = "INSERT INTO " + attribute.getEntity().getSite() + "attribute_value (entity, type, published, value) VALUES (?, ?, ?, ?)";
@@ -375,7 +375,7 @@ public final class AttributeModule implements BothModule {
      * 
      * @require value.isVerified() && value.matches(attribute) : "The value is verified and matches the given attribute.";
      */
-    public static void deleteValue(@Nonnull Attribute attribute, boolean published, @Nonnull AttributeValue value) throws SQLException {
+    static void deleteValue(@Nonnull Attribute attribute, boolean published, @Nonnull AttributeValue value) throws SQLException {
         assert value.isVerified() && value.matches(attribute) : "The value is verified and matches the given attribute.";
         
         final @Nonnull String SQL = "DELETE FROM " + attribute.getEntity().getSite() + "attribute_value WHERE entity = ? AND type = ? AND published = ? AND value = ?";
@@ -399,7 +399,7 @@ public final class AttributeModule implements BothModule {
      * @require oldValue.isVerified() && oldValue.matches(attribute) : "The old value is verified and matches the given attribute.";
      * @require newValue.isVerified() && newValue.matches(attribute) : "The new value is verified and matches the given attribute.";
      */
-    public static void replaceValue(@Nonnull Attribute attribute, boolean published, @Nonnull AttributeValue oldValue, @Nonnull AttributeValue newValue) throws SQLException {
+    static void replaceValue(@Nonnull Attribute attribute, boolean published, @Nonnull AttributeValue oldValue, @Nonnull AttributeValue newValue) throws SQLException {
         assert oldValue.isVerified() && oldValue.matches(attribute) : "The old value is verified and matches the given attribute.";
         assert newValue.isVerified() && newValue.matches(attribute) : "The new value is verified and matches the given attribute.";
         
@@ -427,7 +427,7 @@ public final class AttributeModule implements BothModule {
      * @ensure return == null || return.getEntity().equals(attribute.getEntity()) : "The returned visibility is null or belongs to the entity of the given attribute.";
      */
     @Pure
-    public static @Nullable PassiveExpression getVisibility(@Nonnull Attribute attribute) throws SQLException {
+    static @Nullable PassiveExpression getVisibility(@Nonnull Attribute attribute) throws SQLException {
         assert attribute.getEntity().getIdentity() instanceof InternalPerson : "The entity of the given attribute belongs to an internal person.";
         
         final @Nonnull String SQL = "SELECT visibility FROM " + attribute.getEntity().getSite() + "attribute_visibility WHERE entity = " + attribute.getEntity() + " AND type = " + attribute.getType();
@@ -446,7 +446,7 @@ public final class AttributeModule implements BothModule {
      * @require attribute.getEntity().getIdentity() instanceof InternalPerson : "The entity of the given attribute belongs to an internal person.";
      * @require visibility.getEntity().equals(attribute.getEntity()) : "The visibility and the attribute belong to the same entity.";
      */
-    public static void insertVisibility(@Nonnull Attribute attribute, @Nonnull PassiveExpression visibility) throws SQLException {
+    static void insertVisibility(@Nonnull Attribute attribute, @Nonnull PassiveExpression visibility) throws SQLException {
         assert attribute.getEntity().getIdentity() instanceof InternalPerson : "The entity of the given attribute belongs to an internal person.";
         assert visibility.getEntity().equals(attribute.getEntity()) : "The visibility and the attribute belong to the same entity.";
         
@@ -468,7 +468,7 @@ public final class AttributeModule implements BothModule {
      * @require attribute.getEntity().getIdentity() instanceof InternalPerson : "The entity of the given attribute belongs to an internal person.";
      * @require visibility.getEntity().equals(attribute.getEntity()) : "The visibility and the attribute belong to the same entity.";
      */
-    public static void deleteVisibility(@Nonnull Attribute attribute, @Nonnull PassiveExpression visibility) throws SQLException {
+    static void deleteVisibility(@Nonnull Attribute attribute, @Nonnull PassiveExpression visibility) throws SQLException {
         assert attribute.getEntity().getIdentity() instanceof InternalPerson : "The entity of the given attribute belongs to an internal person.";
         assert visibility.getEntity().equals(attribute.getEntity()) : "The visibility and the attribute belong to the same entity.";
         
@@ -492,7 +492,7 @@ public final class AttributeModule implements BothModule {
      * @require oldVisibility.getEntity().equals(attribute.getEntity()) : "The old visibility and the attribute belong to the same entity.";
      * @require newVisibility.getEntity().equals(attribute.getEntity()) : "The new visibility and the attribute belong to the same entity.";
      */
-    public static void replaceVisibility(@Nonnull Attribute attribute, @Nonnull PassiveExpression oldVisibility, @Nonnull PassiveExpression newVisibility) throws SQLException {
+    static void replaceVisibility(@Nonnull Attribute attribute, @Nonnull PassiveExpression oldVisibility, @Nonnull PassiveExpression newVisibility) throws SQLException {
         assert attribute.getEntity().getIdentity() instanceof InternalPerson : "The entity of the given attribute belongs to an internal person.";
         assert oldVisibility.getEntity().equals(attribute.getEntity()) : "The old visibility and the attribute belong to the same entity.";
         assert newVisibility.getEntity().equals(attribute.getEntity()) : "The new visibility and the attribute belong to the same entity.";

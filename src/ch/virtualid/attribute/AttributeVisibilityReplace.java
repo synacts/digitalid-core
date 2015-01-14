@@ -1,22 +1,22 @@
 package ch.virtualid.attribute;
 
-import ch.virtualid.service.CoreServiceInternalAction;
 import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.attribute.Attribute;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.expression.PassiveExpression;
+import ch.virtualid.handler.Action;
 import ch.virtualid.handler.Method;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identifier.IdentifierClass;
 import ch.virtualid.identity.InternalPerson;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.BothModule;
+import ch.virtualid.service.CoreServiceInternalAction;
 import ch.virtualid.util.FreezableArray;
 import ch.xdf.Block;
 import ch.xdf.SignatureWrapper;
@@ -35,7 +35,7 @@ import javax.annotation.Nullable;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public final class AttributeVisibilityReplace extends CoreServiceInternalAction {
+final class AttributeVisibilityReplace extends CoreServiceInternalAction {
     
     /**
      * Stores the semantic type {@code old.visibility.attribute@virtualid.ch}.
@@ -50,7 +50,7 @@ public final class AttributeVisibilityReplace extends CoreServiceInternalAction 
     /**
      * Stores the semantic type {@code replace.visibility.attribute@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("replace.visibility.attribute@virtualid.ch").load(TupleWrapper.TYPE, SemanticType.ATTRIBUTE_IDENTIFIER, OLD_VISIBILITY, NEW_VISIBILITY);
+    private static final @Nonnull SemanticType TYPE = SemanticType.create("replace.visibility.attribute@virtualid.ch").load(TupleWrapper.TYPE, SemanticType.ATTRIBUTE_IDENTIFIER, OLD_VISIBILITY, NEW_VISIBILITY);
     
     
     /**
@@ -85,7 +85,7 @@ public final class AttributeVisibilityReplace extends CoreServiceInternalAction 
      * @require oldVisibility == null || oldVisibility.getEntity().equals(attribute.getEntity()) : "The old visibility is null or belongs to the entity of the attribute.";
      * @require newVisibility == null || newVisibility.getEntity().equals(attribute.getEntity()) : "The new visibility is null or belongs to the entity of the attribute.";
      */
-    public AttributeVisibilityReplace(@Nonnull Attribute attribute, @Nullable PassiveExpression oldVisibility, @Nullable PassiveExpression newVisibility) {
+    AttributeVisibilityReplace(@Nonnull Attribute attribute, @Nullable PassiveExpression oldVisibility, @Nullable PassiveExpression newVisibility) {
         super(attribute.getRole());
         
         assert !Objects.equals(oldVisibility, newVisibility) : "The old and new visibility are not equal.";
@@ -156,8 +156,35 @@ public final class AttributeVisibilityReplace extends CoreServiceInternalAction 
     
     @Pure
     @Override
+    public boolean interferesWith(@Nonnull Action action) {
+        return action instanceof AttributeVisibilityReplace && ((AttributeVisibilityReplace) action).attribute.equals(attribute);
+    }
+    
+    @Pure
+    @Override
     public @Nonnull AttributeVisibilityReplace getReverse() {
         return new AttributeVisibilityReplace(attribute, newVisibility, oldVisibility);
+    }
+    
+    
+    @Pure
+    @Override
+    public boolean equals(@Nullable Object object) {
+        if (protectedEquals(object) && object instanceof AttributeVisibilityReplace) {
+            final @Nonnull AttributeVisibilityReplace other = (AttributeVisibilityReplace) object;
+            return this.attribute.equals(other.attribute) && Objects.equals(this.oldVisibility, other.oldVisibility) && Objects.equals(this.newVisibility, other.newVisibility);
+        }
+        return false;
+    }
+    
+    @Pure
+    @Override
+    public int hashCode() {
+        int hash = protectedHashCode();
+        hash = 89 * hash + attribute.hashCode();
+        hash = 89 * hash + Objects.hashCode(oldVisibility);
+        hash = 89 * hash + Objects.hashCode(newVisibility);
+        return hash;
     }
     
     

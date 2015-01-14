@@ -3,7 +3,6 @@ package ch.virtualid.attribute;
 import ch.virtualid.annotations.Capturable;
 import ch.virtualid.annotations.OnlyForActions;
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.synchronizer.Synchronizer;
 import ch.virtualid.concept.Aspect;
 import ch.virtualid.concept.GeneralConcept;
 import ch.virtualid.concept.Instance;
@@ -14,6 +13,7 @@ import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.expression.PassiveExpression;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Immutable;
+import ch.virtualid.synchronizer.Synchronizer;
 import ch.virtualid.util.ConcurrentHashMap;
 import ch.virtualid.util.ConcurrentMap;
 import ch.virtualid.util.FreezableSet;
@@ -178,7 +178,7 @@ public final class Attribute extends GeneralConcept implements Immutable {
      * @require newValue == null || newValue.isVerified() && newValue.matches(this) : "The new value is null or verified and matches this attribute.";
      */
     @OnlyForActions
-    public void replaceValue(@Nullable AttributeValue oldValue, @Nullable AttributeValue newValue) throws SQLException {
+    void replaceValue(@Nullable AttributeValue oldValue, @Nullable AttributeValue newValue) throws SQLException {
         assert !Objects.equals(oldValue, newValue) : "The old and new value are not equal.";
         
         if (oldValue == null && newValue != null) AttributeModule.insertValue(this, true, newValue);
@@ -233,7 +233,7 @@ public final class Attribute extends GeneralConcept implements Immutable {
      * @require newValue == null || newValue.isVerified() && newValue.matches(this) : "The new value is null or verified and matches this attribute.";
      */
     @OnlyForActions
-    public void replaceUnpublishedValue(@Nullable AttributeValue oldValue, @Nullable AttributeValue newValue) throws SQLException {
+    void replaceUnpublishedValue(@Nullable AttributeValue oldValue, @Nullable AttributeValue newValue) throws SQLException {
         assert !Objects.equals(oldValue, newValue) : "The old and new value are not equal.";
         
         if (oldValue == null && newValue != null) AttributeModule.insertValue(this, false, newValue);
@@ -292,7 +292,7 @@ public final class Attribute extends GeneralConcept implements Immutable {
      * @require newVisibility == null || newVisibility.getEntity().equals(getEntity()) : "The new visibility is null or belongs to the same entity.";
      */
     @OnlyForActions
-    public void replaceVisibility(@Nullable PassiveExpression oldVisibility, @Nullable PassiveExpression newVisibility) throws SQLException {
+    void replaceVisibility(@Nullable PassiveExpression oldVisibility, @Nullable PassiveExpression newVisibility) throws SQLException {
         assert !Objects.equals(oldVisibility, newVisibility) : "The old and new visibility are not equal.";
         
         if (oldVisibility == null && newVisibility != null) AttributeModule.insertVisibility(this, newVisibility);

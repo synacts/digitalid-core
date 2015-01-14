@@ -1,20 +1,20 @@
 package ch.virtualid.attribute;
 
-import ch.virtualid.service.CoreServiceInternalAction;
 import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.attribute.Attribute;
-import ch.virtualid.attribute.AttributeValue;
+import ch.virtualid.certificate.CertificateIssue;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketException;
+import ch.virtualid.handler.Action;
 import ch.virtualid.handler.Method;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identifier.IdentifierClass;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.BothModule;
+import ch.virtualid.service.CoreServiceInternalAction;
 import ch.virtualid.util.FreezableArray;
 import ch.xdf.Block;
 import ch.xdf.BooleanWrapper;
@@ -34,7 +34,7 @@ import javax.annotation.Nullable;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public final class AttributeValueReplace extends CoreServiceInternalAction {
+final class AttributeValueReplace extends CoreServiceInternalAction {
     
     /**
      * Stores the semantic type {@code old.value.attribute@virtualid.ch}.
@@ -49,7 +49,7 @@ public final class AttributeValueReplace extends CoreServiceInternalAction {
     /**
      * Stores the semantic type {@code replace.value.attribute@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("replace.value.attribute@virtualid.ch").load(TupleWrapper.TYPE, SemanticType.ATTRIBUTE_IDENTIFIER, Attribute.PUBLISHED, OLD_VALUE, NEW_VALUE);
+    private static final @Nonnull SemanticType TYPE = SemanticType.create("replace.value.attribute@virtualid.ch").load(TupleWrapper.TYPE, SemanticType.ATTRIBUTE_IDENTIFIER, Attribute.PUBLISHED, OLD_VALUE, NEW_VALUE);
     
     
     /**
@@ -89,7 +89,7 @@ public final class AttributeValueReplace extends CoreServiceInternalAction {
      * @require oldValue == null || oldValue.isVerified() && oldValue.matches(attribute) : "The old value is null or verified and matches the attribute.";
      * @require newValue == null || newValue.isVerified() && newValue.matches(attribute) : "The new value is null or verified and matches the attribute.";
      */
-    public AttributeValueReplace(@Nonnull Attribute attribute, boolean published, @Nullable AttributeValue oldValue, @Nullable AttributeValue newValue) {
+    AttributeValueReplace(@Nonnull Attribute attribute, boolean published, @Nullable AttributeValue oldValue, @Nullable AttributeValue newValue) {
         super(attribute.getRole());
         
         assert !Objects.equals(oldValue, newValue) : "The old and new value are not equal.";
@@ -160,8 +160,35 @@ public final class AttributeValueReplace extends CoreServiceInternalAction {
     
     @Pure
     @Override
+    public boolean interferesWith(@Nonnull Action action) {
+        return action instanceof AttributeValueReplace && ((AttributeValueReplace) action).attribute.equals(attribute) && ((AttributeValueReplace) action).published == published || action instanceof CertificateIssue && ((CertificateIssue) action).getCertificate().getContent().getType().equals(attribute.getType());
+    }
+    
+    @Pure
+    @Override
     public @Nonnull AttributeValueReplace getReverse() {
         return new AttributeValueReplace(attribute, published, newValue, oldValue);
+    }
+    
+    
+    @Pure
+    @Override
+    public boolean equals(@Nullable Object object) {
+        if (protectedEquals(object) && object instanceof AttributeValueReplace) {
+            final @Nonnull AttributeValueReplace other = (AttributeValueReplace) object;
+            return this.attribute.equals(other.attribute) && this.published == other.published && Objects.equals(this.oldValue, other.oldValue) && Objects.equals(this.newValue, other.newValue);
+        }
+        return false;
+    }
+    
+    @Pure
+    @Override
+    public int hashCode() {
+        int hash = protectedHashCode();
+        hash = 89 * hash + attribute.hashCode();
+        hash = 89 * hash + Objects.hashCode(oldValue);
+        hash = 89 * hash + Objects.hashCode(newValue);
+        return hash;
     }
     
     
