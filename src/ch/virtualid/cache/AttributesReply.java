@@ -1,8 +1,6 @@
 package ch.virtualid.cache;
 
-import ch.virtualid.service.CoreServiceQueryReply;
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.attribute.AttributeValue;
 import ch.virtualid.attribute.AttributeValue;
 import ch.virtualid.attribute.UncertifiedAttributeValue;
 import ch.virtualid.entity.NonHostEntity;
@@ -11,11 +9,10 @@ import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.external.InvalidSignatureException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Reply;
-import ch.virtualid.cache.AttributesQuery;
-import ch.virtualid.attribute.UncertifiedAttributeValue;
 import ch.virtualid.identifier.InternalIdentifier;
 import ch.virtualid.identity.InternalIdentity;
 import ch.virtualid.identity.SemanticType;
+import ch.virtualid.service.CoreServiceQueryReply;
 import ch.virtualid.util.FreezableArrayList;
 import ch.virtualid.util.FreezableList;
 import ch.virtualid.util.ReadonlyList;
@@ -40,7 +37,7 @@ public final class AttributesReply extends CoreServiceQueryReply {
     /**
      * Stores the semantic type {@code reply.attribute@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("reply.attribute@virtualid.ch").load(AttributeValue.LIST);
+    private static final @Nonnull SemanticType TYPE = SemanticType.create("reply.attribute@virtualid.ch").load(AttributeValue.LIST);
     
     
     /**
@@ -50,7 +47,7 @@ public final class AttributesReply extends CoreServiceQueryReply {
      * 
      * @return whether all the attribute values which are not null are verified.
      */
-    public static boolean areVerified(@Nonnull ReadonlyList<AttributeValue> attributeValues) {
+    static boolean areVerified(@Nonnull ReadonlyList<AttributeValue> attributeValues) {
         for (final @Nullable AttributeValue attribute : attributeValues) {
             if (attribute != null && !attribute.isVerified()) return false;
         }
@@ -77,7 +74,7 @@ public final class AttributesReply extends CoreServiceQueryReply {
      * @require attributeValues.isNotEmpty() : "The attribute values are not empty.";
      * @require areVerified(attributeValues) : "All the attribute values which are not null are verified.";
      */
-    public AttributesReply(@Nonnull InternalIdentifier subject, @Nonnull ReadonlyList<AttributeValue> attributeValues) throws SQLException, PacketException {
+    AttributesReply(@Nonnull InternalIdentifier subject, @Nonnull ReadonlyList<AttributeValue> attributeValues) throws SQLException, PacketException {
         super(subject);
         
         assert attributeValues.isFrozen() : "The attribute values are frozen.";
@@ -148,8 +145,21 @@ public final class AttributesReply extends CoreServiceQueryReply {
      * @ensure return.isNotEmpty() : "The attribute values are not empty.";
      * @ensure areVerified(return) : "All the attribute values which are not null are verified.";
      */
-    public @Nonnull ReadonlyList<AttributeValue> getAttributeValues() {
+    @Nonnull ReadonlyList<AttributeValue> getAttributeValues() {
         return attributeValues;
+    }
+    
+    
+    @Pure
+    @Override
+    public boolean equals(@Nullable Object object) {
+        return protectedEquals(object) && object instanceof AttributesReply && this.attributeValues.equals(((AttributesReply) object).attributeValues);
+    }
+    
+    @Pure
+    @Override
+    public int hashCode() {
+        return 89 * protectedHashCode() + attributeValues.hashCode();
     }
     
     

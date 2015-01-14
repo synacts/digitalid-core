@@ -1,11 +1,8 @@
 package ch.virtualid.cache;
 
-import ch.virtualid.service.CoreServiceExternalQuery;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.attribute.Attribute;
-import ch.virtualid.attribute.Attribute;
-import ch.virtualid.attribute.AttributeValue;
 import ch.virtualid.attribute.AttributeValue;
 import ch.virtualid.contact.AttributeTypeSet;
 import ch.virtualid.contact.Contact;
@@ -19,11 +16,12 @@ import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.expression.PassiveExpression;
 import ch.virtualid.handler.Method;
-import ch.virtualid.cache.AttributesReply;
+import ch.virtualid.handler.Reply;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identifier.InternalIdentifier;
 import ch.virtualid.identity.InternalPerson;
 import ch.virtualid.identity.SemanticType;
+import ch.virtualid.service.CoreServiceExternalQuery;
 import ch.virtualid.util.FreezableArrayList;
 import ch.virtualid.util.FreezableList;
 import ch.virtualid.util.ReadonlyArray;
@@ -131,12 +129,6 @@ public final class AttributesQuery extends CoreServiceExternalQuery {
     }
     
     
-    @Pure
-    @Override
-    public @Nonnull Class<AttributesReply> getReplyClass() {
-        return AttributesReply.class;
-    }
-    
     @Override
     public @Nonnull AttributesReply executeOnHost() throws PacketException, SQLException {
         final @Nonnull FreezableList<AttributeValue> attributeValues = new FreezableArrayList<AttributeValue>(attributeTypes.size());
@@ -183,6 +175,32 @@ public final class AttributesQuery extends CoreServiceExternalQuery {
         }
         
         return new AttributesReply(getSubject(), attributeValues.freeze());
+    }
+    
+    @Pure
+    @Override
+    public boolean matches(@Nullable Reply reply) {
+        return reply instanceof AttributesReply;
+    }
+    
+    
+    @Pure
+    @Override
+    public boolean equals(@Nullable Object object) {
+        if (protectedEquals(object) && object instanceof AttributesQuery) {
+            final @Nonnull AttributesQuery other = (AttributesQuery) object;
+            return this.attributeTypes.equals(other.attributeTypes) && this.published == other.published;
+        }
+        return false;
+    }
+    
+    @Pure
+    @Override
+    public int hashCode() {
+        int hash = protectedHashCode();
+        hash = 89 * hash + attributeTypes.hashCode();
+        hash = 89 * hash + (published ? 1 : 0);
+        return hash;
     }
     
     

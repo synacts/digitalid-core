@@ -186,6 +186,7 @@ final class AttributeValueReplace extends CoreServiceInternalAction {
     public int hashCode() {
         int hash = protectedHashCode();
         hash = 89 * hash + attribute.hashCode();
+        hash = 89 * hash + (published ? 1 : 0);
         hash = 89 * hash + Objects.hashCode(oldValue);
         hash = 89 * hash + Objects.hashCode(newValue);
         return hash;

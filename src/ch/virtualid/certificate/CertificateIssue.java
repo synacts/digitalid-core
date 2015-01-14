@@ -1,9 +1,9 @@
 package ch.virtualid.certificate;
 
-import ch.virtualid.service.CoreServiceExternalAction;
 import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.annotations.Pure;
+import ch.virtualid.attribute.AttributeModule;
 import ch.virtualid.attribute.AttributeValue;
 import ch.virtualid.attribute.CertifiedAttributeValue;
 import ch.virtualid.entity.Entity;
@@ -11,14 +11,14 @@ import ch.virtualid.entity.NonHostAccount;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
-import ch.virtualid.handler.ActionReply;
 import ch.virtualid.handler.Method;
-import ch.virtualid.service.CoreServiceActionReply;
+import ch.virtualid.handler.Reply;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identity.InternalIdentity;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.BothModule;
-import ch.virtualid.attribute.AttributeModule;
+import ch.virtualid.service.CoreServiceActionReply;
+import ch.virtualid.service.CoreServiceExternalAction;
 import ch.xdf.Block;
 import ch.xdf.HostSignatureWrapper;
 import ch.xdf.SignatureWrapper;
@@ -93,18 +93,23 @@ public final class CertificateIssue extends CoreServiceExternalAction {
     }
     
     
+    /**
+     * Returns the certificate that is issued.
+     * 
+     * @return the certificate that is issued.
+     */
+    @Pure
+    public @Nonnull CertifiedAttributeValue getCertificate() {
+        return certificate;
+    }
+    
+    
     @Pure
     @Override
     public @Nonnull ReadonlyAgentPermissions getAuditPermissions() {
         return new AgentPermissions(certificate.getContent().getType(), false).freeze();
     }
     
-    
-    @Pure
-    @Override
-    public @Nullable Class<CoreServiceActionReply> getReplyClass() {
-        return null;
-    }
     
     /**
      * Executes this action on both hosts and clients.
@@ -114,7 +119,7 @@ public final class CertificateIssue extends CoreServiceExternalAction {
     }
     
     @Override
-    public @Nullable ActionReply executeOnHost() throws PacketException, SQLException {
+    public @Nullable CoreServiceActionReply executeOnHost() throws PacketException, SQLException {
         final @Nonnull SignatureWrapper signature = getSignatureNotNull();
         if (!(signature instanceof HostSignatureWrapper)) throw new PacketException(PacketError.AUTHORIZATION, "TODO");
         
@@ -130,6 +135,12 @@ public final class CertificateIssue extends CoreServiceExternalAction {
         return null;
     }
     
+    @Pure
+    @Override
+    public boolean matches(@Nullable Reply reply) {
+        return reply == null;
+    }
+    
     @Override
     public void executeOnClient() throws SQLException {
         // TODO: I'm not sure how far the checks should go on the client.
@@ -140,6 +151,19 @@ public final class CertificateIssue extends CoreServiceExternalAction {
     @Override
     public void executeOnFailure() throws SQLException {
         // TODO!
+    }
+    
+    
+    @Pure
+    @Override
+    public boolean equals(@Nullable Object object) {
+        return protectedEquals(object) && object instanceof CertificateIssue && this.certificate.equals(((CertificateIssue) object).certificate);
+    }
+    
+    @Pure
+    @Override
+    public int hashCode() {
+        return 89 * protectedHashCode() + certificate.hashCode();
     }
     
     

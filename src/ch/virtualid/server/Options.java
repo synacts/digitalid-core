@@ -1,14 +1,15 @@
 package ch.virtualid.server;
 
-import ch.virtualid.host.Host;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.io.EscapeOptionException;
 import ch.virtualid.exceptions.packet.PacketException;
+import ch.virtualid.host.Host;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.io.Console;
 import ch.virtualid.io.Option;
 import ch.virtualid.service.Service;
 import ch.virtualid.util.FreezableArrayList;
+import ch.virtualid.util.ReadonlyCollection;
 import ch.virtualid.util.ReadonlyList;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -194,10 +195,10 @@ final class Options {
         
         @Override
         public void execute() {
-            final @Nonnull ReadonlyList<Service> services = Service.getServices();
+            final @Nonnull ReadonlyCollection<Service> services = Service.getServices();
             Console.write("The following services are installed on this server:");
             for (final @Nonnull Service service : services) {
-                Console.write("- " + service);
+                Console.write("- " + service.getNameWithVersion());
             }
             if (services.isEmpty()) Console.write("(None)");
         }
