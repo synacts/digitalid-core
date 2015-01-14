@@ -19,9 +19,9 @@ import javax.annotation.Nonnull;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 0.0
  */
-public final class AccreditationRequestModule implements ClientModule {
+public final class AccreditationModule implements ClientModule {
     
-    public static final AccreditationRequestModule MODULE = new AccreditationRequestModule();
+    public static final AccreditationModule MODULE = new AccreditationModule();
     
     @Pure
     @Override

@@ -30,9 +30,9 @@ import javax.annotation.Nullable;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 0.0
  */
-final class AccessRequestModule implements BothModule {
+final class AccessModule implements BothModule {
     
-    static final AccessRequestModule MODULE = new AccessRequestModule();
+    static final AccessModule MODULE = new AccessModule();
     
     @Pure
     @Override

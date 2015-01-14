@@ -200,7 +200,7 @@ public final class AccessRequest extends CoreServiceExternalAction {
     @Pure
     @Override
     public @Nonnull BothModule getModule() {
-        return AccessRequestModule.MODULE;
+        return AccessModule.MODULE;
     }
     
     /**
