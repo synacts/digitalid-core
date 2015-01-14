@@ -13,7 +13,6 @@ import ch.virtualid.identity.InternalNonHostIdentity;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
-import ch.virtualid.module.client.Roles;
 import ch.virtualid.service.Service;
 import ch.virtualid.synchronizer.Synchronizer;
 import ch.virtualid.util.FreezableList;
@@ -27,7 +26,7 @@ import javax.annotation.Nullable;
 /**
  * This class models a role on the client-side.
  * 
- * @see Roles
+ * @see RoleModule
  * @see NativeRole
  * @see NonNativeRole
  * 
@@ -225,7 +224,7 @@ public abstract class Role extends EntityClass implements NonHostEntity, Immutab
      */
     @Pure
     public @Nonnull ReadonlyList<NonNativeRole> getRoles() throws SQLException {
-        if (roles == null) roles = Roles.getRoles(this);
+        if (roles == null) roles = RoleModule.getRoles(this);
         return roles;
     }
     
@@ -273,7 +272,7 @@ public abstract class Role extends EntityClass implements NonHostEntity, Immutab
     public static @Nullable Role get(@Nonnull Client client, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
         final long number = resultSet.getLong(columnIndex);
         if (resultSet.wasNull()) return null;
-        return Roles.load(client, number);
+        return RoleModule.load(client, number);
     }
     
     /**
@@ -287,7 +286,7 @@ public abstract class Role extends EntityClass implements NonHostEntity, Immutab
      */
     @Pure
     public static @Nonnull Role getNotNull(@Nonnull Client client, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
-        return Roles.load(client, resultSet.getLong(columnIndex));
+        return RoleModule.load(client, resultSet.getLong(columnIndex));
     }
     
     

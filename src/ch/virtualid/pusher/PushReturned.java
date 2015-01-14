@@ -19,7 +19,7 @@ import ch.virtualid.identity.SemanticType;
 import ch.virtualid.service.Service;
 import ch.virtualid.packet.Packet;
 import ch.virtualid.packet.Response;
-import ch.virtualid.server.Host;
+import ch.virtualid.host.Host;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.ReadonlyArray;
 import ch.xdf.Block;

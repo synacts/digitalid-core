@@ -1,6 +1,8 @@
 package ch.virtualid.entity;
 
 import ch.virtualid.annotations.Pure;
+import ch.virtualid.entity.Entity;
+import ch.virtualid.entity.EntityClass;
 import ch.virtualid.errors.ShouldNeverHappenError;
 import ch.virtualid.identity.HostIdentity;
 import ch.virtualid.identity.Identity;
@@ -9,7 +11,7 @@ import ch.virtualid.identity.InternalIdentity;
 import ch.virtualid.identity.InternalNonHostIdentity;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
-import ch.virtualid.server.Host;
+import ch.virtualid.host.Host;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;

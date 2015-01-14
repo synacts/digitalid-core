@@ -19,7 +19,7 @@ import ch.virtualid.identifier.InternalIdentifier;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
-import ch.virtualid.module.both.Agents;
+import ch.virtualid.agent.AgentModule;
 import ch.virtualid.synchronizer.Audit;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.ReadonlyArray;
@@ -174,14 +174,14 @@ public final class ClientSignatureWrapper extends SignatureWrapper implements Im
     @Pure
     @Override
     public @Nullable ClientAgent getAgent(@Nonnull NonHostEntity entity) throws SQLException {
-        return Agents.getClientAgent(entity, commitment);
+        return AgentModule.getClientAgent(entity, commitment);
     }
     
     @Pure
     @Override
     public @Nonnull ClientAgent getAgentCheckedAndRestricted(@Nonnull NonHostEntity entity, @Nullable PublicKey publicKey) throws PacketException, SQLException {
         if (publicKey != null && !commitment.getPublicKey().equals(publicKey)) throw new PacketException(PacketError.KEYROTATION, "The client has to recommit its secret.");
-        final @Nullable ClientAgent agent = Agents.getClientAgent(entity, commitment);
+        final @Nullable ClientAgent agent = AgentModule.getClientAgent(entity, commitment);
         if (agent == null) throw new PacketException(PacketError.AUTHORIZATION, "The element was not signed by an authorized client.");
         agent.checkNotRemoved();
         return agent;

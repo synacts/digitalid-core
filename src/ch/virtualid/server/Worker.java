@@ -20,7 +20,7 @@ import ch.virtualid.packet.Request;
 import ch.virtualid.packet.Response;
 import ch.virtualid.service.CoreService;
 import ch.virtualid.service.Service;
-import ch.virtualid.synchronizer.Actions;
+import ch.virtualid.synchronizer.ActionModule;
 import ch.virtualid.synchronizer.RequestAudit;
 import ch.virtualid.synchronizer.ResponseAudit;
 import ch.virtualid.util.FreezableArrayList;
@@ -90,7 +90,7 @@ public final class Worker implements Runnable {
                         try {
                             final @Nonnull Method method = request.getMethod(i);
                             replies.set(i, method.executeOnHost());
-                            if (method instanceof Action) Actions.audit((Action) method);
+                            if (method instanceof Action) ActionModule.audit((Action) method);
                             Database.commit();
                         } catch (@Nonnull SQLException exception) {
                             exception.printStackTrace(); // TODO: Remove eventually.
@@ -118,7 +118,7 @@ public final class Worker implements Runnable {
                             restrictions = credential.getRestrictions();
                             if (permissions == null || restrictions == null) throw new PacketException(PacketError.AUTHORIZATION, "If an audit is requested, neither the permissions nor the restrictions may be null.");
                         }
-                        responseAudit = Actions.getAudit(reference.getNonHostAccount(), service, requestAudit.getLastTime(), permissions, restrictions, agent);
+                        responseAudit = ActionModule.getAudit(reference.getNonHostAccount(), service, requestAudit.getLastTime(), permissions, restrictions, agent);
                         Database.commit();
                     } else {
                         responseAudit = null;

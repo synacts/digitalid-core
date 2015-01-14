@@ -4,7 +4,7 @@ import ch.virtualid.annotations.Pure;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identity.SemanticType;
-import ch.virtualid.server.Host;
+import ch.virtualid.host.Host;
 import ch.xdf.Block;
 import java.io.IOException;
 import java.sql.SQLException;

@@ -1,6 +1,6 @@
 package ch.virtualid.attribute;
 
-import ch.virtualid.client.Cache;
+import ch.virtualid.cache.Cache;
 import ch.virtualid.database.Database;
 import ch.virtualid.exceptions.external.AttributeNotFoundException;
 import ch.virtualid.exceptions.external.ExternalException;

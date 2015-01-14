@@ -1,5 +1,6 @@
 package ch.virtualid.client;
 
+import ch.virtualid.cache.Cache;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.cryptography.Element;

@@ -11,13 +11,9 @@ import ch.virtualid.concept.Observer;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.NonHostEntity;
-import ch.virtualid.handler.action.internal.ClientAgentCommitmentReplace;
-import ch.virtualid.handler.action.internal.ClientAgentIconReplace;
-import ch.virtualid.handler.action.internal.ClientAgentNameReplace;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
-import ch.virtualid.module.both.Agents;
 import ch.virtualid.util.ConcurrentHashMap;
 import ch.virtualid.util.ConcurrentMap;
 import java.sql.ResultSet;
@@ -86,7 +82,7 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
      * @return the commitment of this client agent.
      */
     public @Nonnull Commitment getCommitment() throws SQLException {
-        if (commitment == null) commitment = Agents.getCommitment(this);
+        if (commitment == null) commitment = AgentModule.getCommitment(this);
         return commitment;
     }
     
@@ -112,7 +108,7 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
      */
     @OnlyForActions
     public void replaceCommitment(@Nonnull Commitment oldCommitment, @Nonnull Commitment newCommitment) throws SQLException {
-        Agents.replaceCommitment(this, oldCommitment, newCommitment);
+        AgentModule.replaceCommitment(this, oldCommitment, newCommitment);
         commitment = newCommitment;
         notify(COMMITMENT);
     }
@@ -126,7 +122,7 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
      * @ensure Client.isValid(return) : "The returned name is valid.";
      */
     public @Nonnull String getName() throws SQLException {
-        if (name == null) name = Agents.getName(this);
+        if (name == null) name = AgentModule.getName(this);
         return name;
     }
     
@@ -156,7 +152,7 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
      */
     @OnlyForActions
     public void replaceName(@Nonnull String oldName, @Nonnull String newName) throws SQLException {
-        Agents.replaceName(this, oldName, newName);
+        AgentModule.replaceName(this, oldName, newName);
         name = newName;
         notify(NAME);
     }
@@ -170,7 +166,7 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
      * @ensure Client.isValid(return) : "The returned icon is valid.";
      */
     public @Nonnull Image getIcon() throws SQLException {
-        if (icon == null) icon = Agents.getIcon(this);
+        if (icon == null) icon = AgentModule.getIcon(this);
         return icon;
     }
     
@@ -200,7 +196,7 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
      */
     @OnlyForActions
     public void replaceIcon(@Nonnull Image oldIcon, @Nonnull Image newIcon) throws SQLException {
-        Agents.replaceIcon(this, oldIcon, newIcon);
+        AgentModule.replaceIcon(this, oldIcon, newIcon);
         icon = newIcon;
         notify(ICON);
     }
@@ -237,7 +233,7 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
      */
     @OnlyForActions
     public void createForActions(@Nonnull ReadonlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nonnull Commitment commitment, @Nonnull String name, @Nonnull Image icon) throws SQLException {
-        Agents.addClientAgent(this, permissions, restrictions, commitment, name, icon);
+        AgentModule.addClientAgent(this, permissions, restrictions, commitment, name, icon);
         this.permissions = permissions.clone();
         this.restrictions = restrictions;
         this.commitment = commitment;

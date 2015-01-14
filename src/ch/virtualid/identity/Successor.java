@@ -6,8 +6,6 @@ import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Reply;
-import ch.virtualid.handler.query.external.IdentityQuery;
-import ch.virtualid.handler.reply.query.IdentityReply;
 import ch.virtualid.identifier.ExternalIdentifier;
 import ch.virtualid.identifier.Identifier;
 import ch.virtualid.identifier.IdentifierClass;

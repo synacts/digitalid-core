@@ -13,9 +13,8 @@ import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identity.InternalNonHostIdentity;
 import ch.virtualid.interfaces.Immutable;
-import ch.virtualid.module.client.Roles;
 import ch.virtualid.service.CoreService;
-import ch.virtualid.synchronizer.Synchronization;
+import ch.virtualid.synchronizer.SynchronizerModule;
 import ch.virtualid.util.ConcurrentHashMap;
 import ch.virtualid.util.ConcurrentMap;
 import java.io.IOException;
@@ -123,15 +122,15 @@ public final class NativeRole extends Role implements Immutable {
      * @return a new or existing native role with the given arguments.
      */
     public static @Nonnull NativeRole add(@Nonnull Client client, @Nonnull InternalNonHostIdentity issuer, long agentNumber) throws SQLException {
-        final @Nonnull NativeRole role = get(client, Roles.map(client, issuer, null, null, agentNumber), issuer, agentNumber);
+        final @Nonnull NativeRole role = get(client, RoleModule.map(client, issuer, null, null, agentNumber), issuer, agentNumber);
         role.notify(CREATED);
         return role;
     }
     
     @Override
     public void remove() throws SQLException {
-        Roles.remove(this);
-        Synchronization.remove(this);
+        RoleModule.remove(this);
+        SynchronizerModule.remove(this);
         if (Database.isSingleAccess()) {
             final @Nullable ConcurrentMap<Long, NativeRole> map = index.get(getClient());
             if (map != null) map.remove(getNumber());

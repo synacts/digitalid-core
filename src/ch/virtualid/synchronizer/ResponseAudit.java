@@ -163,11 +163,11 @@ public final class ResponseAudit extends Audit implements Immutable, Blockable {
                     Synchronizer.LOGGER.log(Level.WARNING, exception);
                     Database.rollback();
                     
-                    final @Nonnull ReadonlyList<InternalAction> reversedActions = Synchronization.reverseInterferingActions(action);
+                    final @Nonnull ReadonlyList<InternalAction> reversedActions = SynchronizerModule.reverseInterferingActions(action);
                     
                     try {
                         action.executeOnClient();
-                        Actions.audit(action);
+                        ActionModule.audit(action);
                         Database.commit();
                     } catch (@Nonnull SQLException e) {
                         Synchronizer.LOGGER.log(Level.WARNING, e);
@@ -175,29 +175,29 @@ public final class ResponseAudit extends Audit implements Immutable, Blockable {
                         suspendedModules.add(module);
                     }
                     
-                    Synchronization.redoReversedActions(reversedActions);
+                    SynchronizerModule.redoReversedActions(reversedActions);
                 }
             }
             
-            Actions.audit(action);
+            ActionModule.audit(action);
             Database.commit();
         }
         
-        Synchronization.setLastTime(role, service, thisTime);
+        SynchronizerModule.setLastTime(role, service, thisTime);
         Database.commit();
         
         suspendedModules.removeAll((FreezableSet<BothModule>) ignoredModules);
         if (suspendedModules.isNotEmpty()) {
             final @Nonnull FreezableList<Method> queries = new FreezableArrayList<Method>(suspendedModules.size());
             for (final @Nonnull BothModule module : suspendedModules) queries.add(new StateQuery(role, module));
-            final @Nonnull Response response = Method.send(queries.freeze(), new RequestAudit(Synchronization.getLastTime(role, service)));
+            final @Nonnull Response response = Method.send(queries.freeze(), new RequestAudit(SynchronizerModule.getLastTime(role, service)));
             for (int i = 0; i < response.getSize(); i++) {
                 final @Nonnull StateReply reply = response.getReplyNotNull(i);
                 reply.updateState();
             }
-            final @Nullable InternalAction lastAction = Synchronization.pendingActions.peekLast();
+            final @Nullable InternalAction lastAction = SynchronizerModule.pendingActions.peekLast();
             Database.commit();
-            Synchronization.redoPendingActions(role, suspendedModules, lastAction);
+            SynchronizerModule.redoPendingActions(role, suspendedModules, lastAction);
             response.getAuditNotNull().execute(role, service, recipient, emptyMethodList, suspendedModules.freeze());
         }
     }

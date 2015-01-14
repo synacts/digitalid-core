@@ -4,7 +4,7 @@ import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Client;
 import ch.virtualid.concept.Aspect;
 import ch.virtualid.concept.Instance;
-import ch.virtualid.server.Host;
+import ch.virtualid.host.Host;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 

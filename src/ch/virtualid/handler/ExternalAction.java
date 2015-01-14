@@ -12,7 +12,7 @@ import ch.virtualid.service.CoreServiceExternalAction;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identifier.InternalIdentifier;
 import ch.virtualid.pusher.Pusher;
-import ch.virtualid.server.Host;
+import ch.virtualid.host.Host;
 import ch.xdf.SignatureWrapper;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;

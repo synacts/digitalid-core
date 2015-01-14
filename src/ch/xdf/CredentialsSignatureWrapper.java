@@ -8,7 +8,7 @@ import ch.virtualid.annotations.Pure;
 import ch.virtualid.attribute.AttributeValue;
 import ch.virtualid.attribute.CertifiedAttributeValue;
 import ch.virtualid.auxiliary.Time;
-import ch.virtualid.client.Cache;
+import ch.virtualid.cache.Cache;
 import ch.virtualid.contact.Contact;
 import ch.virtualid.credential.ClientCredential;
 import ch.virtualid.credential.Credential;
@@ -34,10 +34,10 @@ import ch.virtualid.identity.Person;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
-import ch.virtualid.module.both.Agents;
-import ch.virtualid.module.client.Roles;
+import ch.virtualid.agent.AgentModule;
+import ch.virtualid.entity.RoleModule;
 import ch.virtualid.synchronizer.Audit;
-import ch.virtualid.server.Host;
+import ch.virtualid.host.Host;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.FreezableArrayList;
 import ch.virtualid.util.FreezableList;
@@ -297,7 +297,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
                     nonHostEntity = NonHostAccount.get(host, person);
                 // Otherwise, the context structure is accessed through a role of the corresponding client.
                 } else {
-                    nonHostEntity = Roles.getRole(host.getClient(), person);
+                    nonHostEntity = RoleModule.getRole(host.getClient(), person);
                 }
             } else {
                 nonHostEntity = (NonHostEntity) entity;
@@ -952,7 +952,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
     @Override
     public @Nullable OutgoingRole getAgent(@Nonnull NonHostEntity entity) throws SQLException {
         final @Nonnull Credential credential = getCredentials().getNotNull(0);
-        return credential.isRoleBased() ? Agents.getOutgoingRole(entity, credential.getRoleNotNull(), false) : null;
+        return credential.isRoleBased() ? AgentModule.getOutgoingRole(entity, credential.getRoleNotNull(), false) : null;
     }
     
     @Pure
@@ -960,7 +960,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
     public @Nonnull OutgoingRole getAgentCheckedAndRestricted(@Nonnull NonHostEntity entity, @Nullable PublicKey publicKey) throws SQLException, PacketException {
         final @Nonnull Credential credential = getCredentials().getNotNull(0);
         if (credential.isRoleBased()) {
-            final @Nullable OutgoingRole outgoingRole = Agents.getOutgoingRole(entity, credential.getRoleNotNull(), true);
+            final @Nullable OutgoingRole outgoingRole = AgentModule.getOutgoingRole(entity, credential.getRoleNotNull(), true);
             if (outgoingRole != null && outgoingRole.getContext().contains(Contact.get(entity, (Person) credential.getIssuer()))) {
                 outgoingRole.checkCovers(credential);
                 outgoingRole.restrictTo(credential);

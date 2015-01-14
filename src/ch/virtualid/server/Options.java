@@ -1,5 +1,6 @@
 package ch.virtualid.server;
 
+import ch.virtualid.host.Host;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.io.EscapeOptionException;
 import ch.virtualid.exceptions.packet.PacketException;

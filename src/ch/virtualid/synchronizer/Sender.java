@@ -66,13 +66,13 @@ final class Sender extends Thread {
         final @Nonnull Service service = reference.getService();
         
         try {
-            final @Nonnull RequestAudit requestAudit = new RequestAudit(Synchronization.getLastTime(role, service));
+            final @Nonnull RequestAudit requestAudit = new RequestAudit(SynchronizerModule.getLastTime(role, service));
             
             long backoff = 1000l;
             while (backoff > 0l) {
                 try {
                     final @Nonnull Response response = Method.send(methods, requestAudit);
-                    Synchronization.remove(methods);
+                    SynchronizerModule.remove(methods);
                     Database.commit();
                     
                     if (reference.isSimilarTo(reference)) {
@@ -88,7 +88,7 @@ final class Sender extends Thread {
                                     Database.commit();
                                 } catch (@Nonnull SQLException exc) {
                                     Synchronizer.LOGGER.log(Level.WARNING, exc);
-                                    final @Nonnull ReadonlyList<InternalAction> reversedActions = Synchronization.reverseInterferingActions(action);
+                                    final @Nonnull ReadonlyList<InternalAction> reversedActions = SynchronizerModule.reverseInterferingActions(action);
                                     
                                     try {
                                         action.reverseOnClient();
@@ -100,7 +100,7 @@ final class Sender extends Thread {
                                         return;
                                     }
                                     
-                                    Synchronization.redoReversedActions(reversedActions);
+                                    SynchronizerModule.redoReversedActions(reversedActions);
                                 }
                             }
                         }

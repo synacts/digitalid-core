@@ -17,7 +17,6 @@ import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
-import ch.virtualid.module.both.Contexts;
 import ch.virtualid.util.ConcurrentHashMap;
 import ch.virtualid.util.ConcurrentMap;
 import ch.virtualid.util.FreezableSet;
@@ -102,7 +101,7 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
      * @return the foreign key constraint used to reference instances of this class.
      */
     public static @Nonnull String getReference(@Nonnull Site site) throws SQLException {
-        Contexts.createReferenceTable(site);
+        ContextModule.createReferenceTable(site);
         return "REFERENCES " + site + "context_name (entity, context) ON DELETE CASCADE";
     }
     
@@ -156,7 +155,7 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
      */
     @OnlyForActions
     public void createForActions() throws SQLException {
-        Contexts.create(this);
+        ContextModule.create(this);
         notify(CREATED);
     }
     

@@ -1,5 +1,6 @@
 package ch.virtualid.concepts;
 
+import ch.virtualid.password.Password;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.setup.IdentitySetup;

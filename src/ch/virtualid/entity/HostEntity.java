@@ -4,7 +4,7 @@ import ch.virtualid.annotations.Pure;
 import ch.virtualid.identity.HostIdentity;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
-import ch.virtualid.server.Host;
+import ch.virtualid.host.Host;
 import javax.annotation.Nonnull;
 
 /**

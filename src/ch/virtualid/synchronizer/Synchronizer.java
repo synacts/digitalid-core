@@ -55,7 +55,7 @@ public final class Synchronizer extends Thread {
         assert action.isOnClient() : "The internal action is on a client.";
         
         if (action.isSimilarTo(action)) action.executeOnClient();
-        Synchronization.add(action);
+        SynchronizerModule.add(action);
         Database.commit();
     }
     
@@ -133,17 +133,17 @@ public final class Synchronizer extends Thread {
         assert isSuspended(role, service) : "The given service is suspended.";
         
         try {
-            Synchronization.getLastTime(role, service); // Read from the database in order to synchronize with other processes.
+            SynchronizerModule.getLastTime(role, service); // Read from the database in order to synchronize with other processes.
             final @Nonnull Response response = Method.send(new FreezableArrayList<Method>(new StateQuery(role, service)).freeze(), new RequestAudit(Time.MAX));
-            Synchronization.setLastTime(role, service, response.getAuditNotNull().getThisTime());
+            SynchronizerModule.setLastTime(role, service, response.getAuditNotNull().getThisTime());
             
             final @Nonnull StateReply reply = response.getReplyNotNull(0);
             reply.updateState();
             
-            final @Nullable InternalAction lastAction = Synchronization.pendingActions.peekLast();
+            final @Nullable InternalAction lastAction = SynchronizerModule.pendingActions.peekLast();
             Database.commit();
             
-            Synchronization.redoPendingActions(role, service.getBothModules(), lastAction);
+            SynchronizerModule.redoPendingActions(role, service.getBothModules(), lastAction);
         } finally {
             resume(role, service);
         }
@@ -174,7 +174,7 @@ public final class Synchronizer extends Thread {
     public static void refresh(@Nonnull Role role, @Nonnull Service service) throws SQLException, IOException, PacketException, ExternalException {
         if (suspend(role, service)) {
             try {
-                final @Nonnull RequestAudit requestAudit = new RequestAudit(Synchronization.getLastTime(role, service));
+                final @Nonnull RequestAudit requestAudit = new RequestAudit(SynchronizerModule.getLastTime(role, service));
                 final @Nonnull Response response = Method.send(new FreezableArrayList<Method>(new AuditQuery(role, service)).freeze(), requestAudit);
                 response.getAuditNotNull().execute(role, service, HostIdentifier.VIRTUALID, ResponseAudit.emptyMethodList, ResponseAudit.emptyModuleSet); // TODO: Determine the right recipient.
             } finally {
@@ -235,11 +235,11 @@ public final class Synchronizer extends Thread {
     public void run() {
         while (active) {
             try {
-                if (Synchronization.pendingActions.poll(5L, TimeUnit.SECONDS) != null) {
+                if (SynchronizerModule.pendingActions.poll(5L, TimeUnit.SECONDS) != null) {
                     
                     @Nullable InternalAction reference = null;
                     final @Nonnull FreezableList<Method> methods = new FreezableLinkedList<Method>();
-                    for (final @Nonnull InternalAction action : Synchronization.pendingActions) {
+                    for (final @Nonnull InternalAction action : SynchronizerModule.pendingActions) {
                         if (!isSuspended(action.getRole(), action.getService())) {
                             if (reference == null) {
                                 reference = action;

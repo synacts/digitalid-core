@@ -12,11 +12,8 @@ import ch.virtualid.database.Database;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.expression.PassiveExpression;
-import ch.virtualid.handler.action.internal.AttributeValueReplace;
-import ch.virtualid.handler.action.internal.AttributeVisibilityReplace;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Immutable;
-import ch.virtualid.module.both.Attributes;
 import ch.virtualid.util.ConcurrentHashMap;
 import ch.virtualid.util.ConcurrentMap;
 import ch.virtualid.util.FreezableSet;
@@ -29,7 +26,7 @@ import javax.annotation.Nullable;
 /**
  * This class models an attribute with its value and visibility.
  * 
- * @see Attributes
+ * @see AttributeModule
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
@@ -149,7 +146,7 @@ public final class Attribute extends GeneralConcept implements Immutable {
     @Pure
     public @Nullable AttributeValue getValue() throws SQLException {
         if (!valueLoaded) {
-            value = Attributes.getValue(this, true);
+            value = AttributeModule.getValue(this, true);
             valueLoaded = true;
         }
         return value;
@@ -184,9 +181,9 @@ public final class Attribute extends GeneralConcept implements Immutable {
     public void replaceValue(@Nullable AttributeValue oldValue, @Nullable AttributeValue newValue) throws SQLException {
         assert !Objects.equals(oldValue, newValue) : "The old and new value are not equal.";
         
-        if (oldValue == null && newValue != null) Attributes.insertValue(this, true, newValue);
-        else if (oldValue != null && newValue == null) Attributes.deleteValue(this, true, oldValue);
-        else if (oldValue != null && newValue != null) Attributes.replaceValue(this, true, oldValue, newValue);
+        if (oldValue == null && newValue != null) AttributeModule.insertValue(this, true, newValue);
+        else if (oldValue != null && newValue == null) AttributeModule.deleteValue(this, true, oldValue);
+        else if (oldValue != null && newValue != null) AttributeModule.replaceValue(this, true, oldValue, newValue);
         
         value = newValue;
         valueLoaded = true;
@@ -204,7 +201,7 @@ public final class Attribute extends GeneralConcept implements Immutable {
     @Pure
     public @Nullable AttributeValue getUnpublishedValue() throws SQLException {
         if (!unpublishedLoaded) {
-            unpublished = Attributes.getValue(this, false);
+            unpublished = AttributeModule.getValue(this, false);
             unpublishedLoaded = true;
         }
         return unpublished;
@@ -239,9 +236,9 @@ public final class Attribute extends GeneralConcept implements Immutable {
     public void replaceUnpublishedValue(@Nullable AttributeValue oldValue, @Nullable AttributeValue newValue) throws SQLException {
         assert !Objects.equals(oldValue, newValue) : "The old and new value are not equal.";
         
-        if (oldValue == null && newValue != null) Attributes.insertValue(this, false, newValue);
-        else if (oldValue != null && newValue == null) Attributes.deleteValue(this, false, oldValue);
-        else if (oldValue != null && newValue != null) Attributes.replaceValue(this, false, oldValue, newValue);
+        if (oldValue == null && newValue != null) AttributeModule.insertValue(this, false, newValue);
+        else if (oldValue != null && newValue == null) AttributeModule.deleteValue(this, false, oldValue);
+        else if (oldValue != null && newValue != null) AttributeModule.replaceValue(this, false, oldValue, newValue);
         
         unpublished = newValue;
         unpublishedLoaded = true;
@@ -261,7 +258,7 @@ public final class Attribute extends GeneralConcept implements Immutable {
     @Pure
     public @Nullable PassiveExpression getVisibility() throws SQLException {
         if (!visibilityLoaded) {
-            visibility = Attributes.getVisibility(this);
+            visibility = AttributeModule.getVisibility(this);
             visibilityLoaded = true;
         }
         return visibility;
@@ -298,9 +295,9 @@ public final class Attribute extends GeneralConcept implements Immutable {
     public void replaceVisibility(@Nullable PassiveExpression oldVisibility, @Nullable PassiveExpression newVisibility) throws SQLException {
         assert !Objects.equals(oldVisibility, newVisibility) : "The old and new visibility are not equal.";
         
-        if (oldVisibility == null && newVisibility != null) Attributes.insertVisibility(this, newVisibility);
-        else if (oldVisibility != null && newVisibility == null) Attributes.deleteVisibility(this, oldVisibility);
-        else if (oldVisibility != null && newVisibility != null) Attributes.replaceVisibility(this, oldVisibility, newVisibility);
+        if (oldVisibility == null && newVisibility != null) AttributeModule.insertVisibility(this, newVisibility);
+        else if (oldVisibility != null && newVisibility == null) AttributeModule.deleteVisibility(this, oldVisibility);
+        else if (oldVisibility != null && newVisibility != null) AttributeModule.replaceVisibility(this, oldVisibility, newVisibility);
         
         visibility = newVisibility;
         visibilityLoaded = true;
@@ -368,7 +365,7 @@ public final class Attribute extends GeneralConcept implements Immutable {
      * @ensure return.isNotFrozen() : "The returned attributes are not frozen.";
      */
     public static @Capturable @Nonnull FreezableSet<Attribute> getAll(@Nonnull Entity entity) throws SQLException {
-        return Attributes.getAll(entity);
+        return AttributeModule.getAll(entity);
     }
     
     /**

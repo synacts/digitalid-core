@@ -2,7 +2,7 @@ package ch.virtualid.attribute;
 
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
-import ch.virtualid.concepts.Certificate;
+import ch.virtualid.certificate.Certificate;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketException;

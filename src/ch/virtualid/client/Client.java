@@ -1,5 +1,6 @@
 package ch.virtualid.client;
 
+import ch.virtualid.cache.Cache;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Image;
@@ -19,10 +20,7 @@ import ch.virtualid.entity.Site;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
-import ch.virtualid.handler.action.internal.AccountClose;
-import ch.virtualid.handler.action.internal.AccountInitialize;
-import ch.virtualid.handler.action.internal.AccountOpen;
-import ch.virtualid.handler.action.internal.ClientAgentAccredit;
+import ch.virtualid.agent.ClientAgentAccredit;
 import ch.virtualid.synchronizer.StateQuery;
 import ch.virtualid.synchronizer.StateReply;
 import ch.virtualid.identifier.ExternalIdentifier;
@@ -35,8 +33,8 @@ import ch.virtualid.identity.Predecessor;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.io.Directory;
 import ch.virtualid.service.CoreService;
-import ch.virtualid.module.client.Roles;
-import ch.virtualid.synchronizer.Synchronization;
+import ch.virtualid.entity.RoleModule;
+import ch.virtualid.synchronizer.SynchronizerModule;
 import ch.virtualid.synchronizer.Synchronizer;
 import ch.virtualid.util.FreezableArrayList;
 import ch.virtualid.util.FreezableLinkedList;
@@ -208,9 +206,9 @@ public class Client extends Site implements Observer {
         }
         
         // The role table needs to be created in advance.
-        Roles.createTable(this);
+        RoleModule.createTable(this);
         CoreService.SERVICE.createTables(this);
-        Synchronization.load(this);
+        SynchronizerModule.load(this);
         Database.commit();
     }
     
@@ -339,8 +337,8 @@ public class Client extends Site implements Observer {
      */
     @Pure
     public final @Nonnull ReadonlyList<NativeRole> getRoles() throws SQLException {
-        if (Database.isMultiAccess()) return Roles.getRoles(this);
-        if (roles == null) roles = Roles.getRoles(this);
+        if (Database.isMultiAccess()) return RoleModule.getRoles(this);
+        if (roles == null) roles = RoleModule.getRoles(this);
         return roles;
     }
     

@@ -13,15 +13,10 @@ import ch.virtualid.database.Database;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.exceptions.packet.PacketException;
-import ch.virtualid.handler.action.external.RoleIssuance;
-import ch.virtualid.handler.action.internal.OutgoingRoleContextReplace;
-import ch.virtualid.handler.action.internal.OutgoingRoleCreate;
-import ch.virtualid.handler.action.internal.OutgoingRoleRelationReplace;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
-import ch.virtualid.module.both.Agents;
 import ch.virtualid.pusher.Pusher;
 import ch.virtualid.util.ConcurrentHashMap;
 import ch.virtualid.util.ConcurrentMap;
@@ -97,7 +92,7 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
         
         for (final @Nonnull Contact contact : contacts) {
             if (contact.isInternal()) {
-                Pusher.send(new RoleIssuance(this, contact.getInternalPerson()));
+                Pusher.send(new OutgoingRoleIssue(this, contact.getInternalPerson()));
             }
         }
     }
@@ -114,7 +109,7 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
         
         for (final @Nonnull Contact contact : contacts) {
             if (contact.isInternal()) {
-                Pusher.send(new RoleIssuance(this, contact.getInternalPerson()));
+                Pusher.send(new OutgoingRoleIssue(this, contact.getInternalPerson()));
             }
         }
     }
@@ -164,7 +159,7 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
      */
     @OnlyForActions
     public void createForActions(@Nonnull SemanticType relation, @Nonnull Context context) throws SQLException {
-        Agents.addOutgoingRole(this, relation, context);
+        AgentModule.addOutgoingRole(this, relation, context);
         this.relation = relation;
         this.context = context;
         if (isOnHost()) issue();
@@ -181,7 +176,7 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
      */
     @Pure
     public @Nonnull SemanticType getRelation() throws SQLException {
-        if (relation == null) relation = Agents.getRelation(this);
+        if (relation == null) relation = AgentModule.getRelation(this);
         return relation;
     }
     
@@ -212,7 +207,7 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
     @OnlyForActions
     public void replaceRelation(@Nonnull SemanticType oldRelation, @Nonnull SemanticType newRelation) throws SQLException {
         if (isOnHost()) revoke();
-        Agents.replaceRelation(this, oldRelation, newRelation);
+        AgentModule.replaceRelation(this, oldRelation, newRelation);
         relation = newRelation;
         if (isOnHost()) issue();
         notify(RELATION);
@@ -228,7 +223,7 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
      */
     @Pure
     public @Nonnull Context getContext() throws SQLException {
-        if (context == null) context = Agents.getContext(this);
+        if (context == null) context = AgentModule.getContext(this);
         return context;
     }
     
@@ -258,7 +253,7 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
      */
     @OnlyForActions
     public void replaceContext(@Nonnull Context oldContext, @Nonnull Context newContext) throws SQLException {
-        Agents.replaceContext(this, oldContext, newContext);
+        AgentModule.replaceContext(this, oldContext, newContext);
         if (isOnHost()) {
             final @Nonnull ReadonlySet<Contact> oldContacts = oldContext.getAllContacts();
             final @Nonnull ReadonlySet<Contact> newContacts = newContext.getAllContacts();

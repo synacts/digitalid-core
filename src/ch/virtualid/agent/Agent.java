@@ -12,17 +12,11 @@ import ch.virtualid.entity.Site;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
-import ch.virtualid.handler.action.internal.AgentPermissionsAdd;
-import ch.virtualid.handler.action.internal.AgentPermissionsRemove;
-import ch.virtualid.handler.action.internal.AgentRemove;
-import ch.virtualid.handler.action.internal.AgentRestrictionsReplace;
-import ch.virtualid.handler.action.internal.AgentUnremove;
 import ch.virtualid.identity.Identity;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
-import ch.virtualid.module.both.Agents;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.FreezableSet;
 import ch.virtualid.util.ReadonlyArray;
@@ -197,7 +191,7 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
      */
     @OnlyForActions
     public final void removeForActions() throws SQLException {
-        Agents.removeAgent(this);
+        AgentModule.removeAgent(this);
         if (isOnHost() && this instanceof OutgoingRole) ((OutgoingRole) this).revoke();
         removed = true;
         notify(DELETED);
@@ -220,7 +214,7 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
      */
     @OnlyForActions
     public final void unremoveForActions() throws SQLException {
-        Agents.unremoveAgent(this);
+        AgentModule.unremoveAgent(this);
         if (isOnHost() && this instanceof OutgoingRole) ((OutgoingRole) this).issue();
         removed = false;
         notify(CREATED);
@@ -236,7 +230,7 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
      */
     @Pure
     public final @Nonnull ReadonlyAgentPermissions getPermissions() throws SQLException {
-        if (permissions == null) permissions = Agents.getPermissions(this);
+        if (permissions == null) permissions = AgentModule.getPermissions(this);
         return permissions;
     }
     
@@ -264,7 +258,7 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
      */
     @OnlyForActions
     public final void addPermissionsForActions(@Nonnull ReadonlyAgentPermissions newPermissions) throws SQLException {
-        Agents.addPermissions(this, newPermissions);
+        AgentModule.addPermissions(this, newPermissions);
         if (permissions != null) permissions.putAll(newPermissions);
         notify(PERMISSIONS);
     }
@@ -290,7 +284,7 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
      */
     @OnlyForActions
     public final void removePermissionsForActions(@Nonnull ReadonlyAgentPermissions oldPermissions) throws SQLException {
-        Agents.removePermissions(this, oldPermissions);
+        AgentModule.removePermissions(this, oldPermissions);
         if (permissions != null) permissions.removeAll(oldPermissions);
         notify(PERMISSIONS);
     }
@@ -305,7 +299,7 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
      */
     @Pure
     public final @Nonnull Restrictions getRestrictions() throws SQLException {
-        if (restrictions == null) restrictions = Agents.getRestrictions(this);
+        if (restrictions == null) restrictions = AgentModule.getRestrictions(this);
         return restrictions;
     }
     
@@ -335,7 +329,7 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
      */
     @OnlyForActions
     public final void replaceRestrictions(@Nonnull Restrictions oldRestrictions, @Nonnull Restrictions newRestrictions) throws SQLException {
-        Agents.replaceRestrictions(this, oldRestrictions, newRestrictions);
+        AgentModule.replaceRestrictions(this, oldRestrictions, newRestrictions);
         restrictions = newRestrictions;
         notify(RESTRICTIONS);
     }
@@ -360,7 +354,7 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
      */
     @Pure
     public final @Capturable @Nonnull FreezableSet<Agent> getWeakerAgents() throws SQLException {
-        return Agents.getWeakerAgents(this);
+        return AgentModule.getWeakerAgents(this);
     }
     
     /**
@@ -374,7 +368,7 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
      */
     @Pure
     public final @Nonnull Agent getWeakerAgent(long agentNumber) throws SQLException {
-        return Agents.getWeakerAgent(this, agentNumber);
+        return AgentModule.getWeakerAgent(this, agentNumber);
     }
     
     /**
@@ -388,7 +382,7 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
      */
     @Pure
     public final boolean covers(@Nonnull Agent agent) throws SQLException {
-        return !isRemoved() && Agents.isStronger(this, agent);
+        return !isRemoved() && AgentModule.isStronger(this, agent);
     }
     
     /**
@@ -476,7 +470,7 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
      * @return the foreign key constraint used to reference instances of this class.
      */
     public static @Nonnull String getReference(@Nonnull Site site) throws SQLException {
-        Agents.createReferenceTable(site);
+        AgentModule.createReferenceTable(site);
         return "REFERENCES " + site + "agent (entity, agent) ON DELETE CASCADE";
     }
     

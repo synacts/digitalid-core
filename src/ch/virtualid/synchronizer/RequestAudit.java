@@ -48,7 +48,7 @@ public final class RequestAudit extends Audit implements Immutable, Blockable {
         if (method.isOnClient() && method instanceof InternalMethod) {
             final @Nonnull Role role = method.getRole();
             final @Nonnull Service service = method.getService();
-            if (Synchronizer.suspend(role, service)) return new RequestAudit(Synchronization.getLastTime(role, service));
+            if (Synchronizer.suspend(role, service)) return new RequestAudit(SynchronizerModule.getLastTime(role, service));
         }
         return null;
     }

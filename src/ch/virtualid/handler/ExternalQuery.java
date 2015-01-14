@@ -8,7 +8,7 @@ import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.service.CoreServiceExternalQuery;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identifier.InternalIdentifier;
-import ch.virtualid.server.Host;
+import ch.virtualid.host.Host;
 import ch.xdf.SignatureWrapper;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

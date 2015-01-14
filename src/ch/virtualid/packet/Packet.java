@@ -14,12 +14,12 @@ import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Method;
 import ch.virtualid.handler.Reply;
-import ch.virtualid.handler.action.external.CertificateIssuance;
-import ch.virtualid.handler.action.internal.AccountInitialize;
-import ch.virtualid.handler.action.internal.AccountOpen;
-import ch.virtualid.handler.query.external.AttributesQuery;
-import ch.virtualid.handler.query.external.IdentityQuery;
-import ch.virtualid.handler.reply.query.AttributesReply;
+import ch.virtualid.certificate.CertificateIssue;
+import ch.virtualid.client.AccountInitialize;
+import ch.virtualid.client.AccountOpen;
+import ch.virtualid.cache.AttributesQuery;
+import ch.virtualid.identity.IdentityQuery;
+import ch.virtualid.cache.AttributesReply;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identifier.Identifier;
 import ch.virtualid.identifier.InternalIdentifier;
@@ -246,7 +246,7 @@ public abstract class Packet implements Immutable {
                     } else {
                         if (!signature.hasSubject()) throw new PacketException(PacketError.SIGNATURE, "Each signature in a request must have a subject.", null, isResponse);
                         final @Nonnull InternalIdentifier subject = signature.getSubjectNotNull();
-                        if (subject instanceof HostIdentifier && !type.equals(AttributesQuery.TYPE) && !type.equals(CertificateIssuance.TYPE)) throw new PacketException(PacketError.METHOD, "A host can only be the subject of an attributes query and a certificate issuance but not " + type.getAddress() + ".", null, isResponse);
+                        if (subject instanceof HostIdentifier && !type.equals(AttributesQuery.TYPE) && !type.equals(CertificateIssue.TYPE)) throw new PacketException(PacketError.METHOD, "A host can only be the subject of an attributes query and a certificate issuance but not " + type.getAddress() + ".", null, isResponse);
                         
                         if (reference == null) reference = signature;
                         else if (!signature.isSignedLike(reference)) throw new PacketException(PacketError.SIGNATURE, "All the signatures of a request have to be signed alike.", null, isResponse);
