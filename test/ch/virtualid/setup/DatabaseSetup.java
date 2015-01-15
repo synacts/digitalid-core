@@ -36,9 +36,11 @@ public class DatabaseSetup {
     
     @Test
     public final void testDatabaseSetup() throws SQLException {
-        try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery("SELECT 1")) {
-            Assert.assertTrue(resultSet.next());
-            Assert.assertEquals(1, resultSet.getInt(1));
+        if (getClass().equals(DatabaseSetup.class)) {
+            try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery("SELECT 1")) {
+                Assert.assertTrue(resultSet.next());
+                Assert.assertEquals(1, resultSet.getInt(1));
+            }
         }
     }
     

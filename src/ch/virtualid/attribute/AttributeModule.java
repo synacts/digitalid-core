@@ -277,7 +277,7 @@ public final class AttributeModule implements BothModule {
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(2);
                 IdentityClass.create(elements.getNotNull(0)).toSemanticType().checkIsAttributeFor(entity).set(preparedStatement, 2);
-                preparedStatement.setString(2, new StringWrapper(elements.getNotNull(1)).getString());
+                preparedStatement.setString(3, new StringWrapper(elements.getNotNull(1)).getString());
                 preparedStatement.addBatch();
             }
             preparedStatement.executeBatch();

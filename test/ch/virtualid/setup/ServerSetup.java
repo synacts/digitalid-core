@@ -37,7 +37,9 @@ public class ServerSetup extends DatabaseSetup {
     
     @Test
     public final void testServerSetup() {
-        Assert.assertTrue(Server.hasHost(recipient));
+        if (getClass().equals(ServerSetup.class)) {
+            Assert.assertTrue(Server.hasHost(recipient));
+        }
     }
     
 }

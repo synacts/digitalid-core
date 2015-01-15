@@ -17,6 +17,7 @@ import ch.virtualid.module.ClientModule;
 import ch.virtualid.packet.Packet;
 import ch.virtualid.service.CoreService;
 import ch.virtualid.service.Service;
+import static ch.virtualid.synchronizer.Synchronizer.suspend;
 import ch.virtualid.util.FreezableLinkedList;
 import ch.virtualid.util.FreezableList;
 import ch.virtualid.util.ReadonlyCollection;
@@ -29,11 +30,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import org.javatuples.Pair;
 
 /**
  * This class provides database access to the client synchronization.
@@ -111,6 +115,39 @@ public final class SynchronizerModule implements ClientModule {
     
     
     /**
+     * Returns a list of similar methods from the pending actions and suspends the corresponding service.
+     * 
+     * @return a list of similar methods from the pending actions whose service was not suspended.
+     * 
+     * @ensure return.isNotFrozen() : "The returned list of methods is not frozen.";
+     */
+    static @Nonnull FreezableList<Method> getMethods() {
+        final @Nonnull FreezableList<Method> methods = new FreezableLinkedList<Method>();
+        final @Nonnull Set<Pair<Role, Service>> ignored = new HashSet<Pair<Role, Service>>();
+        final @Nonnull Iterator<InternalAction> iterator = pendingActions.iterator();
+        while (iterator.hasNext()) {
+            final @Nonnull InternalAction reference =  iterator.next();
+            final @Nonnull Role role = reference.getRole();
+            final @Nonnull Service service = reference.getService();
+            final @Nonnull Pair<Role, Service> pair = new Pair<Role, Service>(role, service);
+            if (!ignored.contains(pair) && suspend(role, service)) {
+                methods.add(reference);
+                if (!reference.isSimilarTo(reference)) return methods;
+                while (iterator.hasNext()) {
+                    final @Nonnull InternalAction pendingAction =  iterator.next();
+                    if (pendingAction.getRole().equals(role) && pendingAction.getService().equals(service)) {
+                        if (pendingAction.isSimilarTo(reference) && reference.isSimilarTo(pendingAction)) methods.add(pendingAction);
+                        else return methods;
+                    }
+                }
+            } else {
+                ignored.add(pair);
+            }
+        }
+        return methods;
+    }
+    
+    /**
      * Adds the given action to the list of pending actions.
      * 
      * @param action the action to be added to the pending actions.
@@ -127,7 +164,7 @@ public final class SynchronizerModule implements ClientModule {
             new SelfcontainedWrapper(Packet.CONTENT, action).toBlock().set(preparedStatement, 3);
             preparedStatement.executeUpdate();
         }
-        pendingActions.add(action);
+        boolean add = pendingActions.add(action);
     }
     
     /**

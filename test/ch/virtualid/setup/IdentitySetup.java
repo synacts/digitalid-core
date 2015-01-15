@@ -12,7 +12,6 @@ import ch.virtualid.identity.Category;
 import ch.virtualid.identity.Identity;
 import ch.virtualid.identity.InternalNonHostIdentity;
 import ch.virtualid.service.CoreService;
-import ch.virtualid.synchronizer.Synchronizer;
 import ch.xdf.Block;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -58,10 +57,10 @@ public class IdentitySetup extends ServerSetup {
     
     @After
     public final void testStateEquality() throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
-        role.refreshState(CoreService.SERVICE);
+        try { role.refreshState(CoreService.SERVICE); } catch (Exception e) { e.printStackTrace(); throw e; }
         final @Nonnull Agent agent = role.getAgent();
         final @Nonnull Block beforeState = CoreService.SERVICE.getState(role, agent.getPermissions(), agent.getRestrictions(), agent);
-        Synchronizer.reload(role, CoreService.SERVICE);
+        role.reloadState(CoreService.SERVICE);
         final @Nonnull Block afterState = CoreService.SERVICE.getState(role, agent.getPermissions(), agent.getRestrictions(), agent);
         Assert.assertEquals(beforeState, afterState);
     }

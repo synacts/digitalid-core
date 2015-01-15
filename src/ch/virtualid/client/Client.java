@@ -444,7 +444,9 @@ public class Client extends Site implements Observer {
             states.add(new Pair<Predecessor, Block>(new Predecessor(identifier), null));
         }
         
-        Synchronizer.execute(new AccountInitialize(newRole, states.freeze()));
+        final @Nonnull AccountInitialize accountInitialize = new AccountInitialize(newRole, states.freeze());
+        accountInitialize.send();
+        accountInitialize.executeOnClient();
         return newRole;
     }
     

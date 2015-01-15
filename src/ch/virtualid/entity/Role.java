@@ -198,7 +198,7 @@ public abstract class Role extends EntityClass implements NonHostEntity, Immutab
      * 
      * @param service the service whose state is to be refreshed for this role.
      */
-    public final void refreshState(@Nonnull Service service) throws SQLException, IOException, PacketException, ExternalException {
+    public final void refreshState(@Nonnull Service service) throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
         Synchronizer.refresh(this, service);
         getAgent().reset();
     }
