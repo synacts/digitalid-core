@@ -19,6 +19,7 @@ import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Action;
 import ch.virtualid.handler.InternalAction;
+import ch.virtualid.host.Host;
 import ch.virtualid.identifier.Identifier;
 import ch.virtualid.identifier.IdentifierClass;
 import ch.virtualid.identity.HostIdentity;
@@ -30,7 +31,6 @@ import ch.virtualid.identity.SemanticType;
 import ch.virtualid.io.Level;
 import ch.virtualid.module.BothModule;
 import ch.virtualid.packet.Packet;
-import ch.virtualid.host.Host;
 import ch.virtualid.service.CoreService;
 import ch.virtualid.service.Service;
 import ch.virtualid.util.FreezableLinkedList;
@@ -211,8 +211,8 @@ public final class ActionModule implements BothModule {
         assert agent == null || service.equals(CoreService.SERVICE) : "The agent is null or the audit trail is requested for the core service.";
         
         final @Nonnull Site site = entity.getSite();
-        final @Nonnull StringBuilder SQL = new StringBuilder("SELECT ").append(Database.getConfiguration().GREATEST()).append("(COALESCE(MAX(time), 0), ").append(Database.getConfiguration().CURRENT_TIME()).append("), NULL FROM ").append(site).append("action UNION ");
-        SQL.append("SELECT NULL, action FROM ").append(site).append("action a WHERE entity = ").append(entity).append(" AND service = ").append(service.getType()).append(" AND time > ").append(lastTime);
+        final @Nonnull StringBuilder SQL = new StringBuilder("(SELECT ").append(Database.getConfiguration().GREATEST()).append("(COALESCE(MAX(time), 0), ").append(Database.getConfiguration().CURRENT_TIME()).append("), NULL FROM ").append(site).append("action) UNION ");
+        SQL.append("(SELECT time, action FROM ").append(site).append("action a WHERE entity = ").append(entity).append(" AND service = ").append(service.getType()).append(" AND time > ").append(lastTime);
         
         SQL.append(" AND (type_writing IS NULL OR NOT type_writing");
         if (!permissions.canRead(AgentPermissions.GENERAL)) SQL.append(" AND type_writing IN ").append(permissions.allTypesToString());
@@ -237,7 +237,7 @@ public final class ActionModule implements BothModule {
         
         SQL.append(" AND (agent IS NULL");
         if (agent != null) SQL.append(" OR EXISTS (SELECT * FROM ").append(site).append("agent_permission_order po, ").append(site).append("agent_restrictions_ord ro WHERE po.entity = ").append(entity).append(" AND po.stronger = ").append(agent).append(" AND po.weaker = a.agent AND ro.entity = ").append(entity).append(" AND ro.stronger = ").append(agent).append(" AND ro.weaker = a.agent)");
-        SQL.append(") ORDER BY time ASC");
+        SQL.append(") ORDER BY time ASC)");
         
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL.toString())) {
             if (resultSet.next()) {

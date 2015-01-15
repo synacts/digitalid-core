@@ -36,7 +36,7 @@ import javax.annotation.Nullable;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-final class AccountClose extends CoreServiceInternalAction {
+public final class AccountClose extends CoreServiceInternalAction {
     
     /**
      * Stores the semantic type {@code close.account@virtualid.ch}.

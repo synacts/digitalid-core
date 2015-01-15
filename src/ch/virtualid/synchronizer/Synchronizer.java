@@ -7,7 +7,6 @@ import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.InternalAction;
 import ch.virtualid.handler.Method;
-import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.io.Level;
 import ch.virtualid.io.Logger;
 import ch.virtualid.packet.Response;
@@ -57,6 +56,9 @@ public final class Synchronizer extends Thread {
         if (action.isSimilarTo(action)) action.executeOnClient();
         SynchronizerModule.add(action);
         Database.commit();
+        try {
+            sleep(1000);
+        } catch (InterruptedException exception) {}
     }
     
     
@@ -111,13 +113,12 @@ public final class Synchronizer extends Thread {
      * 
      * @ensure !isSuspended(role, service) : "The given service is not suspended.";
      */
-    @SuppressWarnings("NotifyNotInSynchronizedContext")
     static boolean resume(@Nonnull Role role, @Nonnull Service service) {
         assert isSuspended(role, service) : "The given service is suspended.";
         
         final @Nonnull ConcurrentSet<Service> set = suspendedServices.get(role);
         final boolean result = set.remove(service);
-        set.notifyAll();
+        synchronized (set) { set.notifyAll(); }
         return result;
     }
     
@@ -156,11 +157,10 @@ public final class Synchronizer extends Thread {
      * @param role the role for which the service is to be reloaded.
      * @param service the service which is to be reloaded for the given role.
      */
-    @SuppressWarnings("WaitWhileNotSynced")
     public static void reload(@Nonnull Role role, @Nonnull Service service) throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
         @Nullable ConcurrentSet<Service> set = suspendedServices.get(role);
         if (set == null) set = suspendedServices.putIfAbsentElseReturnPresent(role, new ConcurrentHashSet<Service>());
-        while (!suspend(role, service)) set.wait();
+        while (!suspend(role, service)) synchronized (set) { set.wait(); }
         reloadSuspended(role, service);
     }
     
@@ -174,9 +174,10 @@ public final class Synchronizer extends Thread {
     public static void refresh(@Nonnull Role role, @Nonnull Service service) throws SQLException, IOException, PacketException, ExternalException {
         if (suspend(role, service)) {
             try {
+                final @Nonnull AuditQuery auditQuery = new AuditQuery(role, service);
                 final @Nonnull RequestAudit requestAudit = new RequestAudit(SynchronizerModule.getLastTime(role, service));
-                final @Nonnull Response response = Method.send(new FreezableArrayList<Method>(new AuditQuery(role, service)).freeze(), requestAudit);
-                response.getAuditNotNull().execute(role, service, HostIdentifier.VIRTUALID, ResponseAudit.emptyMethodList, ResponseAudit.emptyModuleSet); // TODO: Determine the right recipient.
+                final @Nonnull Response response = Method.send(new FreezableArrayList<Method>(auditQuery).freeze(), requestAudit);
+                response.getAuditNotNull().execute(role, service, auditQuery.getRecipient(), ResponseAudit.emptyMethodList, ResponseAudit.emptyModuleSet);
             } finally {
                 resume(role, service);
             }
@@ -236,10 +237,12 @@ public final class Synchronizer extends Thread {
         while (active) {
             try {
                 if (SynchronizerModule.pendingActions.poll(5L, TimeUnit.SECONDS) != null) {
+                    System.out.println("----------------------------");
                     
                     @Nullable InternalAction reference = null;
                     final @Nonnull FreezableList<Method> methods = new FreezableLinkedList<Method>();
                     for (final @Nonnull InternalAction action : SynchronizerModule.pendingActions) {
+                        System.out.println("Pending action: " + action.getClass().getSimpleName() + ": " + action.toString());
                         if (!isSuspended(action.getRole(), action.getService())) {
                             if (reference == null) {
                                 reference = action;

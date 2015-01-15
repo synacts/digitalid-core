@@ -89,6 +89,7 @@ public final class Worker implements Runnable {
                         exceptions.add(null);
                         try {
                             final @Nonnull Method method = request.getMethod(i);
+                            System.out.println(method.getClass().getSimpleName());
                             replies.set(i, method.executeOnHost());
                             if (method instanceof Action) ActionModule.audit((Action) method);
                             Database.commit();

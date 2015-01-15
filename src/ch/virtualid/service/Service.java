@@ -15,6 +15,7 @@ import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
+import ch.virtualid.host.Host;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identifier.IdentifierClass;
 import ch.virtualid.identity.IdentityClass;
@@ -26,7 +27,6 @@ import ch.virtualid.module.BothModule;
 import ch.virtualid.module.ClientModule;
 import ch.virtualid.module.HostModule;
 import ch.virtualid.module.Module;
-import ch.virtualid.host.Host;
 import ch.virtualid.util.FreezableArrayList;
 import ch.virtualid.util.FreezableLinkedHashMap;
 import ch.virtualid.util.FreezableLinkedList;
@@ -393,13 +393,13 @@ public abstract class Service implements BothModule, SQLizable {
     @Pure
     @Override
     public final boolean equals(@Nullable Object object) {
-        return object == this;
+        return super.equals(object);
     }
     
     @Pure
     @Override
     public final int hashCode() {
-        return getType().hashCode();
+        return super.hashCode();
     }
     
 }

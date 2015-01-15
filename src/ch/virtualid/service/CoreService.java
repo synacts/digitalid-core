@@ -18,11 +18,6 @@ import javax.annotation.Nullable;
 public final class CoreService extends Service {
     
     /**
-     * Stores the single instance of this service.
-     */
-    public static final @Nonnull CoreService SERVICE = new CoreService();
-    
-    /**
      * Creates a new core service.
      */
     private CoreService() {
@@ -84,5 +79,11 @@ public final class CoreService extends Service {
     public @Nonnull SemanticType getStateFormat() {
         return STATE;
     }
+    
+    
+    /**
+     * Stores the single instance of this service.
+     */
+    public static final @Nonnull CoreService SERVICE = new CoreService();
     
 }
