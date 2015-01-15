@@ -1,6 +1,5 @@
 package ch.virtualid.client;
 
-import ch.virtualid.service.CoreServiceInternalAction;
 import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
@@ -10,6 +9,7 @@ import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.NativeRole;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
+import ch.virtualid.handler.Action;
 import ch.virtualid.handler.InternalAction;
 import ch.virtualid.handler.Method;
 import ch.virtualid.identifier.HostIdentifier;
@@ -21,10 +21,12 @@ import ch.virtualid.identity.SemanticType;
 import ch.virtualid.identity.Successor;
 import ch.virtualid.module.BothModule;
 import ch.virtualid.service.CoreService;
+import ch.virtualid.service.CoreServiceInternalAction;
 import ch.xdf.Block;
 import ch.xdf.SignatureWrapper;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -34,12 +36,12 @@ import javax.annotation.Nullable;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public final class AccountClose extends CoreServiceInternalAction {
+final class AccountClose extends CoreServiceInternalAction {
     
     /**
      * Stores the semantic type {@code close.account@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("close.account@virtualid.ch").load(InternalNonHostIdentity.IDENTIFIER);
+    private static final @Nonnull SemanticType TYPE = SemanticType.create("close.account@virtualid.ch").load(InternalNonHostIdentity.IDENTIFIER);
     
     
     /**
@@ -56,7 +58,7 @@ public final class AccountClose extends CoreServiceInternalAction {
      * @param role the role to which this handler belongs.
      * @param successor the successor of the given account.
      */
-    public AccountClose(@Nonnull NativeRole role, @Nullable InternalNonHostIdentifier successor) {
+    AccountClose(@Nonnull NativeRole role, @Nullable InternalNonHostIdentifier successor) {
         super(role);
         
         this.successor = successor;
@@ -135,8 +137,27 @@ public final class AccountClose extends CoreServiceInternalAction {
     
     @Pure
     @Override
+    public boolean interferesWith(@Nonnull Action action) {
+        return false;
+    }
+    
+    @Pure
+    @Override
     public @Nullable InternalAction getReverse() {
         return null;
+    }
+    
+    
+    @Pure
+    @Override
+    public boolean equals(@Nullable Object object) {
+        return protectedEquals(object) && object instanceof AccountClose && Objects.equals(successor, ((AccountClose) object).successor);
+    }
+    
+    @Pure
+    @Override
+    public int hashCode() {
+        return 89 * protectedHashCode() + Objects.hashCode(successor);
     }
     
     

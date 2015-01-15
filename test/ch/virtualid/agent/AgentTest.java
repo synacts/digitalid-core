@@ -8,10 +8,9 @@ import ch.virtualid.contact.Context;
 import ch.virtualid.entity.NativeRole;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
-import ch.virtualid.synchronizer.StateQuery;
-import ch.virtualid.synchronizer.StateReply;
 import ch.virtualid.service.CoreService;
 import ch.virtualid.setup.IdentitySetup;
+import ch.virtualid.synchronizer.Synchronizer;
 import ch.xdf.Block;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -49,15 +48,17 @@ public final class AgentTest extends IdentitySetup {
     }
     
     @After
-    public void testAgentStateEquality() throws SQLException, IOException, PacketException, ExternalException {
-        final @Nonnull StateReply reply = new StateQuery(role).sendNotNull();
-        final @Nonnull Block state = CoreService.SERVICE.getState(role, role.getAgent());
-        Assert.assertEquals(state.setType(StateReply.TYPE), reply.toBlock());
+    public void testAgentStateEquality() throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
+        final @Nonnull Agent agent = role.getAgent();
+        final @Nonnull Block beforeState = CoreService.SERVICE.getState(role, agent.getPermissions(), agent.getRestrictions(), agent);
+        Synchronizer.reload(role, CoreService.SERVICE);
+        final @Nonnull Block afterState = CoreService.SERVICE.getState(role, agent.getPermissions(), agent.getRestrictions(), agent);
+        Assert.assertEquals(beforeState, afterState);
     }
     
     @Test
-    public void _01_testUnremoveAgent() throws SQLException, IOException, PacketException, ExternalException {
-        getRole().refreshState();
+    public void _01_testUnremoveAgent() throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
+        getRole().refreshState(CoreService.SERVICE);
         getRole().getAgent().getWeakerAgent(role.getAgent().getNumber()).unremove();
         Assert.assertTrue(role.isAccredited());
     }
@@ -71,7 +72,7 @@ public final class AgentTest extends IdentitySetup {
         
         getRole().getAgent().getWeakerAgent(role.getAgent().getNumber()).addPermissions(agentPermissions);
         
-        role.refreshState();
+        role.refreshState(CoreService.SERVICE);
         final @Nonnull ReadonlyAgentPermissions permissions = role.getAgent().getPermissions();
         Assert.assertTrue(permissions.canWrite(AttributeType.EMAIL));
         Assert.assertTrue(permissions.canRead(AttributeType.PHONE));
@@ -92,15 +93,13 @@ public final class AgentTest extends IdentitySetup {
         final @Nonnull ReadonlyAgentPermissions permissions = clientAgent.getPermissions();
         Assert.assertFalse(permissions.canWrite(AttributeType.PRENAME));
         Assert.assertFalse(permissions.canWrite(AttributeType.SURNAME));
-        
-        getRole().refreshState(); // TODO: This should only be necessary temporarily.
     }
     
     @Test
     public void _04_testRestrictionsReplace() throws SQLException, IOException, PacketException, ExternalException {
         getRole().getAgent().getWeakerAgent(role.getAgent().getNumber()).setRestrictions(new Restrictions(true, true, true, Context.getRoot(getRole())));
         
-        role.refreshState();
+        role.refreshState(CoreService.SERVICE);
         final @Nonnull Restrictions restrictions = role.getAgent().getRestrictions();
         Assert.assertTrue(restrictions.isRole());
         Assert.assertTrue(restrictions.isWriting());
@@ -114,8 +113,6 @@ public final class AgentTest extends IdentitySetup {
         clientAgent.reset();
         final @Nonnull Commitment newCommitment = clientAgent.getCommitment();
         Assert.assertNotEquals(oldCommitment, newCommitment);
-        
-        getRole().refreshState(); // TODO: This should only be necessary temporarily.
     }
     
     @Test
@@ -125,8 +122,6 @@ public final class AgentTest extends IdentitySetup {
         clientAgent.setName(newName);
         clientAgent.reset(); // Not necessary but I want to test the database state.
         Assert.assertEquals(newName, clientAgent.getName());
-        
-        getRole().refreshState(); // TODO: This should only be necessary temporarily.
     }
     
     @Test
@@ -136,8 +131,6 @@ public final class AgentTest extends IdentitySetup {
         clientAgent.setIcon(newIcon);
         clientAgent.reset(); // Not necessary but I want to test the database state.
         Assert.assertEquals(newIcon, clientAgent.getIcon());
-        
-        getRole().refreshState(); // TODO: This should only be necessary temporarily.
     }
     
     @Test

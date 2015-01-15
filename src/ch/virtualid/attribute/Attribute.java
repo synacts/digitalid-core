@@ -178,7 +178,7 @@ public final class Attribute extends GeneralConcept implements Immutable {
      * @require newValue == null || newValue.isVerified() && newValue.matches(this) : "The new value is null or verified and matches this attribute.";
      */
     @OnlyForActions
-    void replaceValue(@Nullable AttributeValue oldValue, @Nullable AttributeValue newValue) throws SQLException {
+    public void replaceValue(@Nullable AttributeValue oldValue, @Nullable AttributeValue newValue) throws SQLException {
         assert !Objects.equals(oldValue, newValue) : "The old and new value are not equal.";
         
         if (oldValue == null && newValue != null) AttributeModule.insertValue(this, true, newValue);

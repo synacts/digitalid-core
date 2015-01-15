@@ -651,7 +651,7 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
     @Pure
     @Override
     public int hashCode() {
-        return 41 * getEntity().hashCode() + (int) (this.number ^ (this.number >>> 32));
+        return 41 * getEntity().hashCode() + (int) (number ^ (number >>> 32));
     }
     
     @Pure

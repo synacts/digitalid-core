@@ -1,6 +1,5 @@
 package ch.virtualid.identity;
 
-import ch.virtualid.service.CoreServiceQueryReply;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.exceptions.external.ExternalException;
@@ -8,21 +7,16 @@ import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Reply;
-import ch.virtualid.identity.IdentityQuery;
 import ch.virtualid.identifier.IdentifierClass;
 import ch.virtualid.identifier.InternalNonHostIdentifier;
-import ch.virtualid.identity.Category;
-import ch.virtualid.identity.NonHostIdentity;
-import ch.virtualid.identity.Predecessors;
-import ch.virtualid.identity.ReadonlyPredecessors;
-import ch.virtualid.identity.SemanticType;
-import ch.virtualid.identity.Successor;
+import ch.virtualid.service.CoreServiceQueryReply;
 import ch.virtualid.util.FreezableArray;
 import ch.xdf.Block;
 import ch.xdf.HostSignatureWrapper;
 import ch.xdf.TupleWrapper;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -71,7 +65,7 @@ public final class IdentityReply extends CoreServiceQueryReply {
      * 
      * @param subject the subject of this handler.
      */
-    public IdentityReply(@Nonnull InternalNonHostIdentifier subject) throws SQLException, PacketException {
+    IdentityReply(@Nonnull InternalNonHostIdentifier subject) throws SQLException, PacketException {
         super(subject);
         
         if (!subject.isMapped()) throw new PacketException(PacketError.IDENTIFIER, "The identity with the identifier " + subject + " does not exist on this host.");
@@ -128,7 +122,7 @@ public final class IdentityReply extends CoreServiceQueryReply {
      * @ensure return.isInternalNonHostIdentity() : "The category denotes an internal non-host identity.";
      */
     @Pure
-    public @Nonnull Category getCategory() {
+    @Nonnull Category getCategory() {
         return category;
     }
     
@@ -140,7 +134,7 @@ public final class IdentityReply extends CoreServiceQueryReply {
      * @ensure return.isFrozen() : "The predecessors are frozen.";
      */
     @Pure
-    public @Nonnull ReadonlyPredecessors getPredecessors() {
+    @Nonnull ReadonlyPredecessors getPredecessors() {
         return predecessors;
     }
     
@@ -150,8 +144,29 @@ public final class IdentityReply extends CoreServiceQueryReply {
      * @return the successor of the subject.
      */
     @Pure
-    public @Nullable InternalNonHostIdentifier getSuccessor() {
+    @Nullable InternalNonHostIdentifier getSuccessor() {
         return successor;
+    }
+    
+    
+    @Pure
+    @Override
+    public boolean equals(@Nullable Object object) {
+        if (protectedEquals(object) && object instanceof IdentityReply) {
+            final @Nonnull IdentityReply other = (IdentityReply) object;
+            return this.category == other.category && this.predecessors.equals(other.predecessors) && Objects.equals(this.successor, other.successor);
+        }
+        return false;
+    }
+    
+    @Pure
+    @Override
+    public int hashCode() {
+        int hash = protectedHashCode();
+        hash = 89 * hash + category.hashCode();
+        hash = 89 * hash + predecessors.hashCode();
+        hash = 89 * hash + Objects.hashCode(successor);
+        return hash;
     }
     
     

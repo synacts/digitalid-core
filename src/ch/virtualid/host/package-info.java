@@ -1,4 +1,4 @@
 /**
- * Provides classes for running a server and its hosts.
+ * Provides classes for handling hosts and their access.
  */
-package ch.virtualid.server;
+package ch.virtualid.host;

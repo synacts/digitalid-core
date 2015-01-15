@@ -1,16 +1,16 @@
 package ch.virtualid.password;
 
-import ch.virtualid.service.CoreServiceInternalAction;
 import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
+import ch.virtualid.handler.Action;
 import ch.virtualid.handler.Method;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.BothModule;
-import ch.virtualid.password.PasswordModule;
+import ch.virtualid.service.CoreServiceInternalAction;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.ReadonlyArray;
 import ch.xdf.Block;
@@ -20,6 +20,7 @@ import ch.xdf.TupleWrapper;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Replaces the value of a {@link Password password}.
@@ -27,7 +28,7 @@ import javax.annotation.Nonnull;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public final class PasswordValueReplace extends CoreServiceInternalAction {
+final class PasswordValueReplace extends CoreServiceInternalAction {
     
     /**
      * Stores the semantic type {@code old.password@virtualid.ch}.
@@ -42,7 +43,7 @@ public final class PasswordValueReplace extends CoreServiceInternalAction {
     /**
      * Stores the semantic type {@code replace.password@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("replace.password@virtualid.ch").load(TupleWrapper.TYPE, OLD_VALUE, NEW_VALUE);
+    private static final @Nonnull SemanticType TYPE = SemanticType.create("replace.password@virtualid.ch").load(TupleWrapper.TYPE, OLD_VALUE, NEW_VALUE);
     
     
     /**
@@ -75,7 +76,7 @@ public final class PasswordValueReplace extends CoreServiceInternalAction {
      * @require Password.isValid(oldValue) : "The old value is valid.";
      * @require Password.isValid(newValue) : "The new value is valid.";
      */
-    public PasswordValueReplace(@Nonnull Password password, @Nonnull String oldValue, @Nonnull String newValue) {
+    PasswordValueReplace(@Nonnull Password password, @Nonnull String oldValue, @Nonnull String newValue) {
         super(password.getRole());
         
         assert Password.isValid(oldValue) : "The old value is valid.";
@@ -144,8 +145,35 @@ public final class PasswordValueReplace extends CoreServiceInternalAction {
     
     @Pure
     @Override
+    public boolean interferesWith(@Nonnull Action action) {
+        return action instanceof PasswordValueReplace;
+    }
+    
+    @Pure
+    @Override
     public @Nonnull PasswordValueReplace getReverse() {
         return new PasswordValueReplace(password, newValue, oldValue);
+    }
+    
+    
+    @Pure
+    @Override
+    public boolean equals(@Nullable Object object) {
+        if (protectedEquals(object) && object instanceof PasswordValueReplace) {
+            final @Nonnull PasswordValueReplace other = (PasswordValueReplace) object;
+            return this.password.equals(other.password) && this.oldValue.equals(other.oldValue) && this.newValue.equals(other.newValue);
+        }
+        return false;
+    }
+    
+    @Pure
+    @Override
+    public int hashCode() {
+        int hash = protectedHashCode();
+        hash = 89 * hash + password.hashCode();
+        hash = 89 * hash + oldValue.hashCode();
+        hash = 89 * hash + newValue.hashCode();
+        return hash;
     }
     
     

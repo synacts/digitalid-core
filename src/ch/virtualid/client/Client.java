@@ -1,10 +1,12 @@
 package ch.virtualid.client;
 
-import ch.virtualid.cache.Cache;
+import ch.virtualid.agent.ClientAgent;
+import ch.virtualid.agent.ClientAgentAccredit;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Image;
 import ch.virtualid.auxiliary.Time;
+import ch.virtualid.cache.Cache;
 import ch.virtualid.concept.Aspect;
 import ch.virtualid.concept.Instance;
 import ch.virtualid.concept.Observer;
@@ -16,13 +18,11 @@ import ch.virtualid.database.Database;
 import ch.virtualid.database.SQLiteConfiguration;
 import ch.virtualid.entity.NativeRole;
 import ch.virtualid.entity.Role;
+import ch.virtualid.entity.RoleModule;
 import ch.virtualid.entity.Site;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
-import ch.virtualid.agent.ClientAgentAccredit;
-import ch.virtualid.synchronizer.StateQuery;
-import ch.virtualid.synchronizer.StateReply;
 import ch.virtualid.identifier.ExternalIdentifier;
 import ch.virtualid.identifier.InternalNonHostIdentifier;
 import ch.virtualid.identity.Category;
@@ -33,9 +33,8 @@ import ch.virtualid.identity.Predecessor;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.io.Directory;
 import ch.virtualid.service.CoreService;
-import ch.virtualid.entity.RoleModule;
-import ch.virtualid.synchronizer.SynchronizerModule;
 import ch.virtualid.synchronizer.Synchronizer;
+import ch.virtualid.synchronizer.SynchronizerModule;
 import ch.virtualid.util.FreezableArrayList;
 import ch.virtualid.util.FreezableLinkedList;
 import ch.virtualid.util.FreezableList;
@@ -410,7 +409,7 @@ public class Client extends Site implements Observer {
      * @require category.isInternalNonHostIdentity() : "The category denotes an internal non-host identity.";
      * @require !category.isType() || roles.size() <= 1 && identifiers.isEmpty() : "If the category denotes a type, at most one role and no identifier may be given.";
      */
-    public final @Nonnull NativeRole openAccount(@Nonnull InternalNonHostIdentifier subject, @Nonnull Category category, @Nonnull ReadonlyList<NativeRole> roles, @Nonnull ReadonlyList<ExternalIdentifier> identifiers) throws SQLException, IOException, PacketException, ExternalException {
+    public final @Nonnull NativeRole openAccount(@Nonnull InternalNonHostIdentifier subject, @Nonnull Category category, @Nonnull ReadonlyList<NativeRole> roles, @Nonnull ReadonlyList<ExternalIdentifier> identifiers) throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
         assert subject.doesNotExist() : "The subject does not exist.";
         assert category.isInternalNonHostIdentity() : "The category denotes an internal non-host identity.";
         assert !category.isType() || roles.size() <= 1 && identifiers.isEmpty() : "If the category denotes a type, at most one role and no identifier may be given.";
@@ -426,12 +425,14 @@ public class Client extends Site implements Observer {
         
         for (final @Nonnull NativeRole role : roles) {
             if (role.getIdentity().getCategory() != category) throw new PacketException(PacketError.INTERNAL, "A role is of the wrong category.");
-            final @Nonnull StateReply reply = new StateQuery(role).sendNotNull(); // TODO: Store the reply permanently?
+            Synchronizer.reload(role, CoreService.SERVICE);
+            final @Nonnull ClientAgent clientAgent = role.getAgent();
+            final @Nonnull Block state = CoreService.SERVICE.getState(role, clientAgent.getPermissions(), clientAgent.getRestrictions(), clientAgent);
             final @Nonnull Predecessor predecessor = new Predecessor(role.getIdentity().getAddress());
-            states.add(new Pair<Predecessor, Block>(predecessor, reply.toBlock()));
-            Database.commit();
+            states.add(new Pair<Predecessor, Block>(predecessor, state));
             Synchronizer.execute(new AccountClose(role, subject));
             role.remove();
+            Database.commit();
         }
         
         for (final @Nonnull ExternalIdentifier identifier : identifiers) {
@@ -458,7 +459,7 @@ public class Client extends Site implements Observer {
      * @require subject.doesNotExist() : "The subject does not exist.";
      * @require category.isInternalNonHostIdentity() : "The category denotes an internal non-host identity.";
      */
-    public final @Nonnull NativeRole openAccount(@Nonnull InternalNonHostIdentifier identifier, @Nonnull Category category) throws SQLException, IOException, PacketException, ExternalException {
+    public final @Nonnull NativeRole openAccount(@Nonnull InternalNonHostIdentifier identifier, @Nonnull Category category) throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
         return openAccount(identifier, category, new FreezableLinkedList<NativeRole>().freeze(), new FreezableLinkedList<ExternalIdentifier>().freeze());
     }
     

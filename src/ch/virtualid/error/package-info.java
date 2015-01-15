@@ -1,4 +1,4 @@
 /**
- * Provides classes for handling virtual identities.
+ * Provides classes for handling errors.
  */
-package ch.virtualid.identity;
+package ch.virtualid.error;

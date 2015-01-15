@@ -1,6 +1,5 @@
 package ch.virtualid.client;
 
-import ch.virtualid.service.CoreServiceInternalAction;
 import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
@@ -13,6 +12,7 @@ import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidDeclarationException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
+import ch.virtualid.handler.Action;
 import ch.virtualid.handler.Method;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identifier.InternalNonHostIdentifier;
@@ -25,8 +25,9 @@ import ch.virtualid.identity.Predecessors;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.identity.Successor;
 import ch.virtualid.module.BothModule;
-import ch.virtualid.service.CoreService;
 import ch.virtualid.password.PasswordModule;
+import ch.virtualid.service.CoreService;
+import ch.virtualid.service.CoreServiceInternalAction;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.FreezableArrayList;
 import ch.virtualid.util.FreezableList;
@@ -77,7 +78,7 @@ public final class AccountInitialize extends CoreServiceInternalAction {
      * @require states.isFrozen() : "The list of states is frozen.";
      * @require states.doesNotContainNull() : "The list of states does not contain null.";
      */
-    public AccountInitialize(@Nonnull NativeRole role, @Nonnull ReadonlyList<Pair<Predecessor, Block>> states) throws SQLException, IOException, PacketException, ExternalException {
+    AccountInitialize(@Nonnull NativeRole role, @Nonnull ReadonlyList<Pair<Predecessor, Block>> states) throws SQLException, IOException, PacketException, ExternalException {
         super(role);
         
         assert states.isFrozen() : "The list of states is frozen.";
@@ -189,8 +190,27 @@ public final class AccountInitialize extends CoreServiceInternalAction {
     
     @Pure
     @Override
+    public boolean interferesWith(@Nonnull Action action) {
+        return false;
+    }
+    
+    @Pure
+    @Override
     public @Nonnull AccountClose getReverse() {
         return new AccountClose(getRole().toNativeRole(), null);
+    }
+    
+    
+    @Pure
+    @Override
+    public boolean equals(@Nullable Object object) {
+        return protectedEquals(object) && object instanceof AccountInitialize && this.states.equals(((AccountInitialize) object).states);
+    }
+    
+    @Pure
+    @Override
+    public int hashCode() {
+        return 89 * protectedHashCode() + states.hashCode();
     }
     
     

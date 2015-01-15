@@ -7,12 +7,9 @@ import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Image;
-import ch.virtualid.client.Client;
-import ch.virtualid.client.Commitment;
 import ch.virtualid.contact.Context;
 import ch.virtualid.cryptography.Exponent;
 import ch.virtualid.entity.Entity;
-import ch.virtualid.entity.NonHostAccount;
 import ch.virtualid.entity.NonHostAccount;
 import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.errors.ShouldNeverHappenError;
@@ -23,6 +20,7 @@ import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Action;
 import ch.virtualid.handler.ActionReply;
 import ch.virtualid.handler.Method;
+import ch.virtualid.handler.Reply;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identifier.InternalIdentifier;
 import ch.virtualid.identifier.InternalNonHostIdentifier;
@@ -47,6 +45,7 @@ import ch.xdf.TupleWrapper;
 import java.io.IOException;
 import java.security.SecureRandom;
 import java.sql.SQLException;
+import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -112,7 +111,7 @@ public final class AccountOpen extends Action {
      * 
      * @require category.isInternalNonHostIdentity() : "The category denotes an internal non-host identity.";
      */
-    public AccountOpen(@Nonnull InternalNonHostIdentifier subject, @Nonnull Category category, @Nonnull Client client) throws SQLException, IOException, PacketException, ExternalException {
+    AccountOpen(@Nonnull InternalNonHostIdentifier subject, @Nonnull Category category, @Nonnull Client client) throws SQLException, IOException, PacketException, ExternalException {
         super(null, subject, subject.getHostIdentifier());
         
         assert category.isInternalNonHostIdentity() : "The category denotes an internal non-host identity.";
@@ -206,11 +205,6 @@ public final class AccountOpen extends Action {
     }
     
     
-    @Override
-    public @Nullable Class<? extends ActionReply> getReplyClass() {
-        return null;
-    }
-    
     /**
      * Creates the root context and the client agent for the given entity.
      * 
@@ -237,6 +231,12 @@ public final class AccountOpen extends Action {
         initialize(account);
         account.opened();
         return null;
+    }
+    
+    @Pure
+    @Override
+    public boolean matches(@Nullable Reply reply) {
+        return reply == null;
     }
     
     @Override
@@ -267,6 +267,30 @@ public final class AccountOpen extends Action {
     public @Nonnull Response send() throws SQLException, IOException, PacketException, ExternalException {
         if (secret == null) throw new PacketException(PacketError.INTERNAL, "The secret may not be null for sending.");
         return new ClientRequest(new FreezableArrayList<Method>(this).freeze(), getSubject(), null, commitment.addSecret(secret)).send();
+    }
+    
+    
+    @Pure
+    @Override
+    public boolean equals(@Nullable Object object) {
+        if (protectedEquals(object) && object instanceof AccountOpen) {
+            final @Nonnull AccountOpen other = (AccountOpen) object;
+            return this.category == other.category && this.agentNumber == other.agentNumber && this.commitment.equals(other.commitment) && Objects.equals(this.secret, other.secret) && this.name.equals(other.name) && this.icon.equals(other.icon);
+        }
+        return false;
+    }
+    
+    @Pure
+    @Override
+    public int hashCode() {
+        int hash = protectedHashCode();
+        hash = 89 * hash + category.hashCode();
+        hash = 89 * hash + (int) (agentNumber ^ (agentNumber >>> 32));
+        hash = 89 * hash + commitment.hashCode();
+        hash = 89 * hash + Objects.hashCode(secret);
+        hash = 89 * hash + name.hashCode();
+        hash = 89 * hash + icon.hashCode();
+        return hash;
     }
     
     

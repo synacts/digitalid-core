@@ -25,7 +25,7 @@ import javax.annotation.Nullable;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public final class AuditReply extends QueryReply {
+final class AuditReply extends QueryReply {
     
     /**
      * Stores the semantic type {@code reply.audit@virtualid.ch}.

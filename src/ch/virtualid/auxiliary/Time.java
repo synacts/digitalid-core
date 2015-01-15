@@ -527,7 +527,7 @@ public final class Time implements Immutable, Blockable, Comparable<Time>, SQLiz
     @Pure
     @Override
     public int hashCode() {
-        return (int) (this.value ^ (this.value >>> 32));
+        return (int) (value ^ (value >>> 32));
     }
     
     

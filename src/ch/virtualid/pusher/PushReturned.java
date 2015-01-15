@@ -14,12 +14,13 @@ import ch.virtualid.handler.ActionReply;
 import ch.virtualid.handler.ExternalAction;
 import ch.virtualid.handler.Method;
 import ch.virtualid.handler.Reply;
+import ch.virtualid.host.Host;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identity.SemanticType;
-import ch.virtualid.service.Service;
+import ch.virtualid.module.BothModule;
 import ch.virtualid.packet.Packet;
 import ch.virtualid.packet.Response;
-import ch.virtualid.host.Host;
+import ch.virtualid.service.Service;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.ReadonlyArray;
 import ch.xdf.Block;
@@ -57,13 +58,7 @@ public final class PushReturned extends ExternalAction {
     /**
      * Stores the semantic type {@code returned.push@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("returned.push@virtualid.ch").load(TupleWrapper.TYPE, VALID, REPLY);
-    
-    @Pure
-    @Override
-    public @Nonnull SemanticType getType() {
-        return TYPE;
-    }
+    private static final @Nonnull SemanticType TYPE = SemanticType.create("returned.push@virtualid.ch").load(TupleWrapper.TYPE, VALID, REPLY);
     
     
     /**
@@ -88,7 +83,7 @@ public final class PushReturned extends ExternalAction {
      * @require reply.getSignature() instanceof HostSignatureWrapper : "The reply is signed by a host (and the signature thus not null).";
      * @require account.getIdentity().equals(reply.getEntityNotNull().getIdentity()) : "The account and the reply's entity have the same identity.";
      */
-    public PushReturned(@Nonnull NonHostAccount account, boolean valid, @Nonnull ActionReply reply) {
+    PushReturned(@Nonnull NonHostAccount account, boolean valid, @Nonnull ActionReply reply) {
         super(account, account.getIdentity().getAddress(), account.getHost().getIdentifier());
         
         assert reply.getSignature() instanceof HostSignatureWrapper : "The reply is signed by a host (and the signature thus not null).";
@@ -113,8 +108,6 @@ public final class PushReturned extends ExternalAction {
      */
     private PushReturned(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
-        
-        assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(2);
         this.valid = new BooleanWrapper(elements.getNotNull(0)).getValue();
@@ -172,21 +165,19 @@ public final class PushReturned extends ExternalAction {
     }
     
     
-    @Pure
-    @Override
-    public @Nullable Class<ActionReply> getReplyClass() {
-        return null;
-    }
-    
     @Override
     public @Nullable ActionReply executeOnHost() throws PacketException {
         throw new PacketException(PacketError.METHOD, "Returned push replies cannot be executed on a host.");
     }
     
+    @Pure
+    @Override
+    public boolean matches(@Nullable Reply reply) {
+        return reply == null;
+    }
+    
     @Override
     public void executeOnClient() throws SQLException {
-        assert isOnClient() : "This method is called on a client.";
-        
         if (!isValid()) {
             // TODO: Add it to the Errors module.
         }
@@ -222,7 +213,39 @@ public final class PushReturned extends ExternalAction {
     public @Nonnull Restrictions getAuditRestrictions() {
         return reply.getAuditRestrictions();
     }
-
+    
+    
+    @Pure
+    @Override
+    public boolean equals(@Nullable Object object) {
+        if (protectedEquals(object) && object instanceof PushFailed) {
+            final @Nonnull PushReturned other = (PushReturned) object;
+            return this.valid == other.valid && this.reply.equals(other.reply);
+        }
+        return false;
+    }
+    
+    @Pure
+    @Override
+    public int hashCode() {
+        int hash = protectedHashCode();
+        hash = 89 * hash + (valid ? 1 : 0);
+        hash = 89 * hash + reply.hashCode();
+        return hash;
+    }
+    
+    
+    @Pure
+    @Override
+    public @Nonnull SemanticType getType() {
+        return TYPE;
+    }
+    
+    @Pure
+    @Override
+    public @Nonnull BothModule getModule() {
+        return PusherModule.MODULE;
+    }
     
     /**
      * The factory class for the surrounding method.

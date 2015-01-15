@@ -569,7 +569,7 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
     @Pure
     @Override
     public final int hashCode() {
-        return (int) (this.number ^ (this.number >>> 32));
+        return (int) (number ^ (number >>> 32));
     }
     
     @Pure

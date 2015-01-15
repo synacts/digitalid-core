@@ -13,11 +13,11 @@ import ch.virtualid.entity.Site;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketException;
+import ch.virtualid.host.Host;
 import ch.virtualid.identifier.IdentifierClass;
 import ch.virtualid.identity.Identity;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.BothModule;
-import ch.virtualid.host.Host;
 import ch.virtualid.service.CoreService;
 import ch.virtualid.service.Service;
 import ch.virtualid.util.FreezableLinkedList;
@@ -162,7 +162,7 @@ public final class PasswordModule implements BothModule {
      * 
      * @ensure Password.isValid(return) : "The returned value is valid.";
      */
-    public static @Nonnull String get(@Nonnull Entity entity) throws SQLException {
+    static @Nonnull String get(@Nonnull Entity entity) throws SQLException {
         final @Nonnull String SQL = "SELECT password FROM " + entity.getSite() + "password WHERE entity = " + entity;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
             if (resultSet.next()) {
@@ -204,7 +204,7 @@ public final class PasswordModule implements BothModule {
      * @require Password.isValid(oldValue) : "The old value is valid.";
      * @require Password.isValid(newValue) : "The new value is valid.";
      */
-    public static void replace(@Nonnull Password password, @Nonnull String oldValue, @Nonnull String newValue) throws SQLException {
+    static void replace(@Nonnull Password password, @Nonnull String oldValue, @Nonnull String newValue) throws SQLException {
         assert Password.isValid(oldValue) : "The old value is valid.";
         assert Password.isValid(newValue) : "The new value is valid.";
         

@@ -27,12 +27,12 @@ import javax.annotation.Nullable;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public final class StateReply extends QueryReply {
+final class StateReply extends QueryReply {
     
     /**
      * Stores the semantic type {@code reply.module@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("reply.module@virtualid.ch").load(SelfcontainedWrapper.TYPE);
+    private static final @Nonnull SemanticType TYPE = SemanticType.create("reply.module@virtualid.ch").load(SelfcontainedWrapper.TYPE);
     
     
     /**

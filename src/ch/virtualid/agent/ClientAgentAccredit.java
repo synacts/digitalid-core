@@ -37,7 +37,7 @@ import javax.annotation.Nullable;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-final class ClientAgentAccredit extends CoreServiceInternalAction {
+public final class ClientAgentAccredit extends CoreServiceInternalAction {
     
     /**
      * Stores the semantic type {@code accredit.client.agent@virtualid.ch}.
@@ -95,7 +95,7 @@ final class ClientAgentAccredit extends CoreServiceInternalAction {
      * @require outgoingRole.isOnClient() : "The outgoing role is on a client.";
      * @require Password.isValid(password) : "The password is valid.";
      */
-    ClientAgentAccredit(@Nonnull Role role, @Nonnull String password) throws SQLException, IOException, PacketException, ExternalException {
+    public ClientAgentAccredit(@Nonnull Role role, @Nonnull String password) throws SQLException, IOException, PacketException, ExternalException {
         super(role);
         
         assert Password.isValid(password) : "The password is valid.";

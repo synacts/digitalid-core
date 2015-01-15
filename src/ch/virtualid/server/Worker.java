@@ -107,11 +107,15 @@ public final class Worker implements Runnable {
                     if (requestAudit != null) {
                         if (!(reference instanceof InternalMethod)) throw new PacketException(PacketError.AUTHORIZATION, "An audit may only be requested by internal methods.");
                         final @Nullable ReadonlyAgentPermissions permissions;
-                        final @Nullable Restrictions restrictions;
+                        @Nullable Restrictions restrictions;
                         if (service.equals(CoreService.SERVICE)) {
                             assert agent != null : "See above.";
                             permissions = agent.getPermissions();
-                            restrictions = agent.getRestrictions();
+                            try {
+                                restrictions = agent.getRestrictions();
+                            } catch (@Nonnull SQLException exception) {
+                                restrictions = Restrictions.MIN;
+                            }
                         } else {
                             final @Nonnull Credential credential = reference.getSignatureNotNull().toCredentialsSignatureWrapper().getCredentials().getNotNull(0);
                             permissions = credential.getPermissions();

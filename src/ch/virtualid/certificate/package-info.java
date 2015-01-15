@@ -1,4 +1,4 @@
 /**
- * Provides classes for handling attributes and their certification.
+ * Provides classes for handling certificates.
  */
-package ch.virtualid.attribute;
+package ch.virtualid.certificate;

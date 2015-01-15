@@ -1,18 +1,18 @@
 package ch.virtualid.setup;
 
+import ch.virtualid.agent.Agent;
 import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.auxiliary.Image;
 import ch.virtualid.client.Client;
 import ch.virtualid.entity.NativeRole;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
-import ch.virtualid.synchronizer.StateQuery;
-import ch.virtualid.synchronizer.StateReply;
 import ch.virtualid.identifier.InternalNonHostIdentifier;
 import ch.virtualid.identity.Category;
 import ch.virtualid.identity.Identity;
 import ch.virtualid.identity.InternalNonHostIdentity;
 import ch.virtualid.service.CoreService;
+import ch.virtualid.synchronizer.Synchronizer;
 import ch.xdf.Block;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -49,7 +49,7 @@ public class IdentitySetup extends ServerSetup {
     }
     
     @BeforeClass
-    public static void setUpIdentity() throws SQLException, IOException, PacketException, ExternalException {
+    public static void setUpIdentity() throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
         client = new Client("tester", "Test Client", Image.CLIENT, AgentPermissions.GENERAL_WRITE);
         final @Nonnull InternalNonHostIdentifier identifier = new InternalNonHostIdentifier("person@example.com");
         role = client.openAccount(identifier, Category.NATURAL_PERSON);
@@ -57,10 +57,13 @@ public class IdentitySetup extends ServerSetup {
     }
     
     @After
-    public final void testStateEquality() throws SQLException, IOException, PacketException, ExternalException {
-        final @Nonnull StateReply reply = new StateQuery(role).sendNotNull();
-        final @Nonnull Block state = CoreService.SERVICE.getState(role, role.getAgent());
-        Assert.assertEquals(state.setType(StateReply.TYPE), reply.toBlock());
+    public final void testStateEquality() throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
+        role.refreshState(CoreService.SERVICE);
+        final @Nonnull Agent agent = role.getAgent();
+        final @Nonnull Block beforeState = CoreService.SERVICE.getState(role, agent.getPermissions(), agent.getRestrictions(), agent);
+        Synchronizer.reload(role, CoreService.SERVICE);
+        final @Nonnull Block afterState = CoreService.SERVICE.getState(role, agent.getPermissions(), agent.getRestrictions(), agent);
+        Assert.assertEquals(beforeState, afterState);
     }
     
     @Test

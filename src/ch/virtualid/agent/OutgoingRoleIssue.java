@@ -175,7 +175,7 @@ final class OutgoingRoleIssue extends CoreServiceExternalAction {
         int hash = protectedHashCode();
         hash = 89 * hash + issuer.hashCode();
         hash = 89 * hash + relation.hashCode();
-        hash = 89 * hash + (int) (this.agentNumber ^ (this.agentNumber >>> 32));
+        hash = 89 * hash + (int) (agentNumber ^ (agentNumber >>> 32));
         return hash;
     }
     

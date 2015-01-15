@@ -1,4 +1,4 @@
 /**
- * Provides classes for pushing {@link ch.virtualid.handler.ExternalAction external actions} to their recipients.
+ * Provides classes for handling passwords.
  */
-package ch.virtualid.pusher;
+package ch.virtualid.password;

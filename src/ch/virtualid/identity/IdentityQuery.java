@@ -1,6 +1,5 @@
 package ch.virtualid.identity;
 
-import ch.virtualid.service.CoreServiceExternalQuery;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.exceptions.external.ExternalException;
@@ -8,17 +7,18 @@ import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Method;
-import ch.virtualid.identity.IdentityReply;
+import ch.virtualid.handler.Reply;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identifier.InternalIdentifier;
 import ch.virtualid.identifier.InternalNonHostIdentifier;
-import ch.virtualid.identity.SemanticType;
+import ch.virtualid.service.CoreServiceExternalQuery;
 import ch.xdf.Block;
 import ch.xdf.EmptyWrapper;
 import ch.xdf.SignatureWrapper;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Queries the identity of the given subject.
@@ -41,7 +41,7 @@ public final class IdentityQuery extends CoreServiceExternalQuery {
      * 
      * @param subject the subject of this handler.
      */
-    public IdentityQuery(@Nonnull InternalNonHostIdentifier subject) {
+    IdentityQuery(@Nonnull InternalNonHostIdentifier subject) {
         super(null, subject);
     }
     
@@ -77,17 +77,30 @@ public final class IdentityQuery extends CoreServiceExternalQuery {
     }
     
     
-    @Pure
-    @Override
-    public @Nonnull Class<IdentityReply> getReplyClass() {
-        return IdentityReply.class;
-    }
-    
     @Override
     public @Nonnull IdentityReply executeOnHost() throws PacketException, SQLException {
         final @Nonnull InternalIdentifier subject = getSubject(); // The following exception should never be thrown as the condition is already checked in the packet class.
         if (!(subject instanceof InternalNonHostIdentifier)) throw new PacketException(PacketError.IDENTIFIER, "The identity may only be queried of non-host identities.");
         return new IdentityReply((InternalNonHostIdentifier) subject);
+    }
+    
+    @Pure
+    @Override
+    public boolean matches(@Nullable Reply reply) {
+        return reply instanceof IdentityReply;
+    }
+    
+    
+    @Pure
+    @Override
+    public boolean equals(@Nullable Object object) {
+        return protectedEquals(object) && object instanceof IdentityQuery;
+    }
+    
+    @Pure
+    @Override
+    public int hashCode() {
+        return protectedHashCode();
     }
     
     

@@ -2,7 +2,6 @@ package ch.virtualid.password;
 
 import ch.virtualid.annotations.OnlyForActions;
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.synchronizer.Synchronizer;
 import ch.virtualid.concept.Aspect;
 import ch.virtualid.concept.Instance;
 import ch.virtualid.concept.NonHostConcept;
@@ -11,9 +10,8 @@ import ch.virtualid.database.Database;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.entity.Role;
-import ch.virtualid.password.PasswordValueReplace;
 import ch.virtualid.identity.SemanticType;
-import ch.virtualid.password.PasswordModule;
+import ch.virtualid.synchronizer.Synchronizer;
 import ch.virtualid.util.ConcurrentHashMap;
 import ch.virtualid.util.ConcurrentMap;
 import ch.xdf.StringWrapper;
@@ -119,7 +117,7 @@ public final class Password extends NonHostConcept {
      * @require isValid(newValue) : "The new value is valid.";
      */
     @OnlyForActions
-    public void replaceName(@Nonnull String oldValue, @Nonnull String newValue) throws SQLException {
+    void replaceName(@Nonnull String oldValue, @Nonnull String newValue) throws SQLException {
         PasswordModule.replace(this, oldValue, newValue);
         this.value = newValue;
         notify(VALUE);

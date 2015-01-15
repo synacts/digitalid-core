@@ -36,12 +36,12 @@ import javax.annotation.Nullable;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public final class StateQuery extends InternalQuery {
+final class StateQuery extends InternalQuery {
     
     /**
      * Stores the semantic type {@code query.module@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("query.module@virtualid.ch").load(SemanticType.IDENTIFIER);
+    private static final @Nonnull SemanticType TYPE = SemanticType.create("query.module@virtualid.ch").load(SemanticType.IDENTIFIER);
     
     
     /**

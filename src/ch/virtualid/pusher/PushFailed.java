@@ -13,13 +13,15 @@ import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.ActionReply;
 import ch.virtualid.handler.ExternalAction;
 import ch.virtualid.handler.Method;
+import ch.virtualid.handler.Reply;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identifier.IdentifierClass;
 import ch.virtualid.identifier.InternalIdentifier;
 import ch.virtualid.identity.SemanticType;
-import ch.virtualid.service.Service;
+import ch.virtualid.module.BothModule;
 import ch.virtualid.packet.Packet;
 import ch.virtualid.packet.Response;
+import ch.virtualid.service.Service;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.ReadonlyArray;
 import ch.xdf.Block;
@@ -67,13 +69,7 @@ public final class PushFailed extends ExternalAction {
     /**
      * Stores the semantic type {@code failed.push@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("failed.push@virtualid.ch").load(TupleWrapper.TYPE, NUMBER, SUBJECT, RECIPIENT, ACTION);
-    
-    @Pure
-    @Override
-    public @Nonnull SemanticType getType() {
-        return TYPE;
-    }
+    private static final @Nonnull SemanticType TYPE = SemanticType.create("failed.push@virtualid.ch").load(TupleWrapper.TYPE, NUMBER, SUBJECT, RECIPIENT, ACTION);
     
     
     /**
@@ -96,7 +92,7 @@ public final class PushFailed extends ExternalAction {
      * 
      * @require account.getIdentity().equals(action.getEntityNotNull().getIdentity()) : "The account and the action's entity have the same identity.";
      */
-    public PushFailed(@Nonnull NonHostAccount account, @Nonnull ExternalAction action) {
+    PushFailed(@Nonnull NonHostAccount account, @Nonnull ExternalAction action) {
         super(account, action.getSubject(), action.getRecipient());
         
         assert account.getIdentity().equals(action.getEntityNotNull().getIdentity()) : "The account and the action's entity have the same identity.";
@@ -120,8 +116,6 @@ public final class PushFailed extends ExternalAction {
      */
     private PushFailed(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
-        
-        assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(4);
         this.number = new Int64Wrapper(elements.getNotNull(0)).getValue();
@@ -159,6 +153,7 @@ public final class PushFailed extends ExternalAction {
      * 
      * @return the number of this failed push.
      */
+    @Pure
     public long getNumber() {
         return number;
     }
@@ -168,6 +163,7 @@ public final class PushFailed extends ExternalAction {
      * 
      * @return the action that could not be pushed.
      */
+    @Pure
     public @Nonnull ExternalAction getAction() {
         return action;
     }
@@ -180,21 +176,19 @@ public final class PushFailed extends ExternalAction {
     }
     
     
-    @Pure
-    @Override
-    public @Nullable Class<ActionReply> getReplyClass() {
-        return null;
-    }
-    
     @Override
     public @Nullable ActionReply executeOnHost() throws PacketException {
         throw new PacketException(PacketError.METHOD, "Failed push actions cannot be executed on a host.");
     }
     
+    @Pure
+    @Override
+    public boolean matches(@Nullable Reply reply) {
+        return reply == null;
+    }
+    
     @Override
     public void executeOnClient() throws SQLException {
-        assert isOnClient() : "This method is called on a client.";
-        
         // TODO: Add this failed push to some list where the user can see it (see the Errors module).
         action.executeOnFailure();
     }
@@ -228,7 +222,39 @@ public final class PushFailed extends ExternalAction {
     public @Nonnull Restrictions getAuditRestrictions() {
         return action.getFailedAuditRestrictions();
     }
-
+    
+    
+    @Pure
+    @Override
+    public boolean equals(@Nullable Object object) {
+        if (protectedEquals(object) && object instanceof PushFailed) {
+            final @Nonnull PushFailed other = (PushFailed) object;
+            return this.number == other.number && this.action.equals(other.action);
+        }
+        return false;
+    }
+    
+    @Pure
+    @Override
+    public int hashCode() {
+        int hash = protectedHashCode();
+        hash = 89 * hash + (int) (number ^ (number >>> 32));
+        hash = 89 * hash + action.hashCode();
+        return hash;
+    }
+    
+    
+    @Pure
+    @Override
+    public @Nonnull SemanticType getType() {
+        return TYPE;
+    }
+    
+    @Pure
+    @Override
+    public @Nonnull BothModule getModule() {
+        return PusherModule.MODULE;
+    }
     
     /**
      * The factory class for the surrounding method.
