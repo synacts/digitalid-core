@@ -7,8 +7,8 @@ import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.InternalAction;
 import ch.virtualid.handler.Method;
 import ch.virtualid.io.Level;
-import ch.virtualid.service.Service;
 import ch.virtualid.packet.Response;
+import ch.virtualid.service.Service;
 import ch.virtualid.util.ReadonlyList;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -120,6 +120,7 @@ final class Sender extends Thread {
                     
                     backoff = 0l;
                 } catch (@Nonnull IOException exception) {
+                    System.out.println("IOException in Sender: " + exception); // TODO: Remove eventually.
                     sleep(backoff);
                     backoff *= 2;
                 }
@@ -129,7 +130,7 @@ final class Sender extends Thread {
             try {
                 Database.rollback();
                 // TODO: Add a notification to the error module.
-                Database.commit();
+                // Database.commit();
             } catch (@Nonnull SQLException e) {
                 Synchronizer.LOGGER.log(Level.WARNING, exception);
             }

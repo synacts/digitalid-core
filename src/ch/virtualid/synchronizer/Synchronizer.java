@@ -55,6 +55,7 @@ public final class Synchronizer extends Thread {
         if (action.isSimilarTo(action)) action.executeOnClient();
         SynchronizerModule.add(action);
         Database.commit();
+        Thread.yield();
     }
     
     
@@ -137,6 +138,9 @@ public final class Synchronizer extends Thread {
             Database.commit();
             
             SynchronizerModule.redoPendingActions(role, service.getBothModules(), lastAction);
+        } catch (@Nonnull SQLException | PacketException | IOException | ExternalException exception) {
+            Database.rollback();
+            throw exception;
         } finally {
             resume(role, service);
         }
@@ -170,6 +174,9 @@ public final class Synchronizer extends Thread {
                 final @Nonnull RequestAudit requestAudit = new RequestAudit(SynchronizerModule.getLastTime(role, service));
                 final @Nonnull Response response = Method.send(new FreezableArrayList<Method>(auditQuery).freeze(), requestAudit);
                 response.getAuditNotNull().execute(role, service, auditQuery.getRecipient(), ResponseAudit.emptyMethodList, ResponseAudit.emptyModuleSet);
+            } catch (@Nonnull SQLException | PacketException | IOException | ExternalException exception) {
+                Database.rollback();
+                throw exception;
             } finally {
                 resume(role, service);
             }
@@ -234,7 +241,6 @@ public final class Synchronizer extends Thread {
             try {
                 final @Nullable InternalAction action = SynchronizerModule.pendingActions.poll(5L, TimeUnit.SECONDS);
                 if (action != null) {
-                    System.out.println("Action: " + action.getClass().getSimpleName() + ": " + action.toString());
                     SynchronizerModule.pendingActions.addFirst(action);
                     
                     final @Nonnull ReadonlyList<Method> methods = SynchronizerModule.getMethods().freeze();

@@ -111,8 +111,8 @@ public class FreezableLinkedHashMap<K,V> extends LinkedHashMap<K,V> implements F
     
     @Pure
     @Override
-    public @Nonnull FreezableSet<Map.Entry<K,V>> entrySet() throws UnsupportedOperationException {
-        throw new UnsupportedOperationException("The method 'entrySet()' is not supported for 'FreezableMap'.");
+    public @Nonnull FreezableSet<Map.Entry<K,V>> entrySet() {
+        return new BackedFreezableSet<Map.Entry<K,V>>(this, super.entrySet());
     }
     
     

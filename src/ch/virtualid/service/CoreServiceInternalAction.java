@@ -121,7 +121,7 @@ public abstract class CoreServiceInternalAction extends InternalAction {
     }
     
     @Override
-    public void executeOnClient() throws SQLException {
+    public final void executeOnClient() throws SQLException {
         executeOnBoth();
     }
     

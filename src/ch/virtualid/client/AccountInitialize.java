@@ -104,7 +104,7 @@ public final class AccountInitialize extends CoreServiceInternalAction {
         super(entity, signature, recipient);
         
         final @Nonnull InternalNonHostIdentifier subject = getSubject().toInternalNonHostIdentifier();
-        if (Predecessors.exist(subject)) throw new PacketException(PacketError.METHOD, "The subject " + subject + " is already initialized.");
+        if (isOnHost() && Predecessors.exist(subject)) throw new PacketException(PacketError.METHOD, "The subject " + subject + " is already initialized.");
         
         final @Nonnull Category category = entity.getIdentity().getCategory();
         final @Nonnull ReadonlyList<Block> elements = new ListWrapper(block).getElementsNotNull();

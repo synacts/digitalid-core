@@ -113,6 +113,32 @@ public final class SynchronizerModule implements ClientModule {
         }
     }
     
+    /**
+     * Returns whether the pending actions contain an action of the given role and service.
+     * 
+     * @param role the role of interest.
+     * @param service the service of interest.
+     * 
+     * @return whether the pending actions contain an action of the given role and service.
+     */
+    @Pure
+    private static boolean contains(@Nonnull Role role, @Nonnull Service service) {
+        for (final @Nonnull InternalAction pendingAction : pendingActions) {
+            if (pendingAction.getRole().equals(role) && pendingAction.getService().equals(service)) return true;
+        }
+        return false;
+    }
+    
+    /**
+     * Waits until all actions of the given role and service are completed.
+     * 
+     * @param role the role whose actions are to be completed.
+     * @param service the service whose actions are to be completed.
+     */
+    public static void wait(@Nonnull Role role, @Nonnull Service service) throws InterruptedException {
+        synchronized (pendingActions) { while (contains(role, service)) pendingActions.wait(); }
+    }
+    
     
     /**
      * Returns a list of similar methods from the pending actions and suspends the corresponding service.
@@ -164,7 +190,7 @@ public final class SynchronizerModule implements ClientModule {
             new SelfcontainedWrapper(Packet.CONTENT, action).toBlock().set(preparedStatement, 3);
             preparedStatement.executeUpdate();
         }
-        boolean add = pendingActions.add(action);
+        pendingActions.add(action);
     }
     
     /**
@@ -182,6 +208,7 @@ public final class SynchronizerModule implements ClientModule {
             if (preparedStatement.executeUpdate() != 1) throw new SQLException("Could not find the action to be removed from the pending actions.");
         }
         pendingActions.remove(action);
+        synchronized (pendingActions) { pendingActions.notifyAll(); }
     }
     
     /**
@@ -212,6 +239,7 @@ public final class SynchronizerModule implements ClientModule {
             for (final int count : counts) if (count != 1) throw new SQLException("Could not find an action to be removed from the pending actions.");
         }
         for (final @Nonnull Method method : methods) pendingActions.remove(method); // The pending actions may contain duplicates which may not be removed.
+        synchronized (pendingActions) { pendingActions.notifyAll(); }
     }
     
     

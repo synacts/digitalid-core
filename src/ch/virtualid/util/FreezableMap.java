@@ -33,10 +33,10 @@ public interface FreezableMap<K,V> extends ReadonlyMap<K,V>, Map<K,V>, Freezable
     public FreezableCollection<V> values();
     
     /**
-     * @throws UnsupportedOperationException this operation is not supported.
+     * <em>Important:</em> Never call {@link Map.Entry#setValue(java.lang.Object)} on the elements!
      */
     @Pure
     @Override
-    public FreezableSet<Map.Entry<K,V>> entrySet() throws UnsupportedOperationException;
+    public FreezableSet<Map.Entry<K,V>> entrySet();
     
 }

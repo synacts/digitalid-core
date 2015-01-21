@@ -68,7 +68,7 @@ public final class NativeRole extends Role implements Immutable {
             reloadState(CoreService.SERVICE);
             return true;
         } catch (@Nonnull PacketException exception) {
-            if (exception.getError() == PacketError.AUTHORIZATION) return false;
+            if (exception.getError() == PacketError.AUDIT) return false;
             else throw exception;
         }
     }

@@ -215,8 +215,12 @@ public final class ResponseAudit extends Audit implements Immutable, Blockable {
                     execute(method.getRole(), method.getService(), method.getRecipient(), new FreezableArrayList<Method>(method).freeze(), emptyModuleSet);
                 } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
                     Synchronizer.LOGGER.log(Level.WARNING, exception);
+                    try {
+                        Database.rollback();
+                    } catch (@Nonnull SQLException e) {
+                        Synchronizer.LOGGER.log(Level.WARNING, e);
+                    }
                 }
-                
                 Synchronizer.resume(method.getRole(), method.getService());
             }
         }).start();

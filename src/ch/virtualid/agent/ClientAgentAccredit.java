@@ -17,9 +17,11 @@ import ch.virtualid.handler.Method;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.BothModule;
+import ch.virtualid.packet.Response;
 import ch.virtualid.password.Password;
 import ch.virtualid.service.CoreServiceInternalAction;
 import ch.virtualid.util.FreezableArray;
+import ch.virtualid.util.FreezableArrayList;
 import ch.virtualid.util.ReadonlyArray;
 import ch.xdf.Block;
 import ch.xdf.ClientSignatureWrapper;
@@ -164,6 +166,13 @@ public final class ClientAgentAccredit extends CoreServiceInternalAction {
         return false;
     }
     
+    @Override
+    public @Nonnull Response send() throws SQLException, IOException, PacketException, ExternalException {
+        final @Nonnull Response response = Method.send(new FreezableArrayList<Method>(this).freeze(), null);
+        response.checkReply(0);
+        return response;
+    }
+    
     
     @Pure
     @Override
@@ -187,12 +196,6 @@ public final class ClientAgentAccredit extends CoreServiceInternalAction {
     @Override
     public boolean interferesWith(@Nonnull Action action) {
         return false;
-    }
-    
-    @Override
-    public void executeOnClient() throws SQLException {
-        Context.getRoot(getRole()).createForActions();
-        executeOnBoth();
     }
     
     @Pure

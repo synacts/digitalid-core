@@ -47,8 +47,14 @@ public class IdentitySetup extends ServerSetup {
         return subject;
     }
     
+    protected static void print(@Nonnull String test) {
+        System.out.println("\n----- " + test + " -----");
+        System.out.println("\nDuring:");
+    }
+    
     @BeforeClass
     public static void setUpIdentity() throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
+        print("setUpIdentity");
         client = new Client("tester", "Test Client", Image.CLIENT, AgentPermissions.GENERAL_WRITE);
         final @Nonnull InternalNonHostIdentifier identifier = new InternalNonHostIdentifier("person@example.com");
         role = client.openAccount(identifier, Category.NATURAL_PERSON);
@@ -57,10 +63,11 @@ public class IdentitySetup extends ServerSetup {
     
     @After
     public final void testStateEquality() throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
-        try { role.refreshState(CoreService.SERVICE); } catch (Exception e) { e.printStackTrace(); throw e; }
+        System.out.println("\nAfter:");
+        try { role.refreshState(CoreService.SERVICE); } catch (InterruptedException | SQLException | IOException | PacketException | ExternalException e) { e.printStackTrace(); throw e; }
         final @Nonnull Agent agent = role.getAgent();
         final @Nonnull Block beforeState = CoreService.SERVICE.getState(role, agent.getPermissions(), agent.getRestrictions(), agent);
-        role.reloadState(CoreService.SERVICE);
+        try { role.reloadState(CoreService.SERVICE); } catch (InterruptedException | SQLException | IOException | PacketException | ExternalException e) { e.printStackTrace(); throw e; }
         final @Nonnull Block afterState = CoreService.SERVICE.getState(role, agent.getPermissions(), agent.getRestrictions(), agent);
         Assert.assertEquals(beforeState, afterState);
     }

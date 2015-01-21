@@ -89,7 +89,7 @@ public final class Worker implements Runnable {
                         exceptions.add(null);
                         try {
                             final @Nonnull Method method = request.getMethod(i);
-                            System.out.println(method.getClass().getSimpleName());
+                            System.out.println("- " + method.getClass().getSimpleName()); System.out.flush(); // TODO: Remove eventually.
                             replies.set(i, method.executeOnHost());
                             if (method instanceof Action) ActionModule.audit((Action) method);
                             Database.commit();
@@ -132,7 +132,6 @@ public final class Worker implements Runnable {
                     response = new Response(request, replies.freeze(), exceptions.freeze(), responseAudit);
                 } catch (@Nonnull SQLException exception) {
                     exception.printStackTrace(); // TODO: Remove eventually.
-                    Database.rollback();
                     throw new PacketException(PacketError.INTERNAL, "An SQLException occurred.", exception);
                 } catch (@Nonnull IOException exception) {
                     exception.printStackTrace(); // TODO: Remove eventually.
@@ -142,9 +141,9 @@ public final class Worker implements Runnable {
                     throw new PacketException(PacketError.EXTERNAL, "An ExternalException occurred.", exception);
                 }
             } catch (@Nonnull PacketException exception) {
-                exception.printStackTrace(); // TODO: Remove eventually.
                 response = new Response(request, exception.isRemote() ? new PacketException(PacketError.EXTERNAL, "An external error occurred.", exception) : exception);
                 error = exception.getError();
+                Database.rollback();
             }
             
             // The database transaction is intentionally committed before returning the response so that slow or malicious clients cannot block the database.

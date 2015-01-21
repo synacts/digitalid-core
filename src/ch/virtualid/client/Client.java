@@ -10,6 +10,7 @@ import ch.virtualid.cache.Cache;
 import ch.virtualid.concept.Aspect;
 import ch.virtualid.concept.Instance;
 import ch.virtualid.concept.Observer;
+import ch.virtualid.contact.Context;
 import ch.virtualid.cryptography.Element;
 import ch.virtualid.cryptography.Exponent;
 import ch.virtualid.cryptography.Parameters;
@@ -304,11 +305,14 @@ public class Client extends Site implements Observer {
      * 
      * TODO: Make sure that other instances of the same client learn about the key rotation.
      */
-    public final void rotateSecret() throws SQLException, IOException, PacketException, ExternalException {
+    public final void rotateSecret() throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
         final @Nonnull Exponent newSecret = new Exponent(new BigInteger(Parameters.HASH, new SecureRandom()));
         for (final @Nonnull NativeRole role : getRoles()) {
             final @Nonnull Commitment newCommitment = getCommitment(role.getIssuer().getAddress(), newSecret);
             role.getAgent().setCommitment(newCommitment);
+        }
+        for (final @Nonnull NativeRole role : getRoles()) {
+            role.waitForCompletion(CoreService.SERVICE);
         }
         this.secret = newSecret;
         final @Nonnull File file = new File(Directory.CLIENTS.getPath() +  Directory.SEPARATOR + identifier + ".client.xdf");
@@ -380,6 +384,7 @@ public class Client extends Site implements Observer {
         Database.commit();
         try {
             final @Nonnull ClientAgentAccredit action = new ClientAgentAccredit(role, password);
+            Context.getRoot(role).createForActions();
             action.executeOnClient();
             action.send();
             Database.commit();
@@ -447,6 +452,7 @@ public class Client extends Site implements Observer {
         final @Nonnull AccountInitialize accountInitialize = new AccountInitialize(newRole, states.freeze());
         accountInitialize.send();
         accountInitialize.executeOnClient();
+        Database.commit();
         return newRole;
     }
     

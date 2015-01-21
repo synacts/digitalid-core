@@ -7,6 +7,7 @@ import ch.virtualid.client.Client;
 import ch.virtualid.concept.Aspect;
 import ch.virtualid.concept.Instance;
 import ch.virtualid.concept.Observer;
+import ch.virtualid.database.Database;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identity.InternalNonHostIdentity;
@@ -15,6 +16,7 @@ import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
 import ch.virtualid.service.Service;
 import ch.virtualid.synchronizer.Synchronizer;
+import ch.virtualid.synchronizer.SynchronizerModule;
 import ch.virtualid.util.FreezableList;
 import ch.virtualid.util.ReadonlyList;
 import java.io.IOException;
@@ -190,7 +192,10 @@ public abstract class Role extends EntityClass implements NonHostEntity, Immutab
      */
     public final void reloadState(@Nonnull Service service) throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
         Synchronizer.reload(this, service);
-        getAgent().reset();
+        if (Database.isMultiAccess()) {
+            getAgent().reset();
+            this.roles = null;
+        }
     }
     
     /**
@@ -200,7 +205,19 @@ public abstract class Role extends EntityClass implements NonHostEntity, Immutab
      */
     public final void refreshState(@Nonnull Service service) throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
         Synchronizer.refresh(this, service);
-        getAgent().reset();
+        if (Database.isMultiAccess()) {
+            getAgent().reset();
+            this.roles = null;
+        }
+    }
+    
+    /**
+     * Waits until all actions of the given service are completed.
+     * 
+     * @param service the service whose actions are to be completed.
+     */
+    public final void waitForCompletion(@Nonnull Service service) throws InterruptedException {
+        SynchronizerModule.wait(this, service);
     }
     
     
