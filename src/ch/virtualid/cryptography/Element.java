@@ -1,11 +1,12 @@
 package ch.virtualid.cryptography;
 
 import ch.virtualid.annotations.Pure;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.identity.SemanticType;
+import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.xdf.Block;
 import ch.xdf.IntegerWrapper;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
 import java.math.BigInteger;
 import javax.annotation.Nonnull;
 
@@ -17,7 +18,7 @@ import javax.annotation.Nonnull;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public final class Element extends Number implements Immutable {
+public final class Element extends Number implements Immutable, Blockable {
     
     /**
      * Stores the semantic type {@code element.group@virtualid.ch}.

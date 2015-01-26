@@ -303,6 +303,26 @@ public abstract class Credential implements Immutable {
     }
     
     /**
+     * Returns whether this credential is still valid.
+     * 
+     * @return whether this credential is still valid.
+     */
+    @Pure
+    public final boolean isValid() {
+        return !issuance.isLessThan(Time.TROPICAL_YEAR.ago());
+    }
+    
+    /**
+     * Returns whether this credential is still active.
+     * 
+     * @return whether this credential is still active.
+     */
+    @Pure
+    public final boolean isActive() {
+        return !issuance.isLessThan(Time.HOUR.ago());
+    }
+    
+    /**
      * Returns the client's randomized permissions or simply its hash.
      * 
      * @return the client's randomized permissions or simply its hash.

@@ -1,13 +1,12 @@
 package ch.virtualid.credential;
 
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.credential.Credential;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.Site;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.host.Host;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.HostModule;
-import ch.virtualid.host.Host;
 import ch.virtualid.service.CoreService;
 import ch.virtualid.service.Service;
 import ch.virtualid.util.FreezableLinkedList;
