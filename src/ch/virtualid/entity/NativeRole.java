@@ -14,7 +14,6 @@ import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identity.InternalNonHostIdentity;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.service.CoreService;
-import ch.virtualid.synchronizer.SynchronizerModule;
 import ch.virtualid.util.ConcurrentHashMap;
 import ch.virtualid.util.ConcurrentMap;
 import java.io.IOException;
@@ -129,13 +128,11 @@ public final class NativeRole extends Role implements Immutable {
     
     @Override
     public void remove() throws SQLException {
-        RoleModule.remove(this);
-        SynchronizerModule.remove(this);
         if (Database.isSingleAccess()) {
             final @Nullable ConcurrentMap<Long, NativeRole> map = index.get(getClient());
             if (map != null) map.remove(getNumber());
         }
-        notify(DELETED);
+        super.remove();
     }
     
 }

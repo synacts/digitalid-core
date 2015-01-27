@@ -136,6 +136,20 @@ public final class CertifiedAttributeValue extends AttributeValue implements Imm
     }
     
     /**
+     * Returns whether the certificate of this attribute value is valid the given time.
+     * 
+     * @param time the time of interest.
+     * 
+     * @return whether the certificate of this attribute value is valid the given time.
+     */
+    @Pure
+    public boolean isValid(@Nonnull Time time) {
+        return getTime().add(getContent().getType().getCachingPeriodNotNull()).isGreaterThan(time);
+    }
+    
+    // TODO: Introduce a checkIsValid(time).
+    
+    /**
      * Returns the subject of this attribute value's certificate.
      * 
      * @return the subject of this attribute value's certificate.

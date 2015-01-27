@@ -7,7 +7,9 @@ import ch.virtualid.client.Client;
 import ch.virtualid.concept.Aspect;
 import ch.virtualid.concept.Instance;
 import ch.virtualid.concept.Observer;
+import ch.virtualid.credential.ClientCredential;
 import ch.virtualid.database.Database;
+import static ch.virtualid.entity.Entity.DELETED;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identity.InternalNonHostIdentity;
@@ -128,12 +130,12 @@ public abstract class Role extends EntityClass implements NonHostEntity, Immutab
     }
     
     /**
-     * Returns whether this role is not native.
+     * Returns whether this role is non-native.
      * 
-     * @return whether this role is not native.
+     * @return whether this role is non-native.
      */
     @Pure
-    public final boolean isNotNative() {
+    public final boolean isNonNative() {
         return this instanceof NonNativeRole;
     }
     
@@ -152,15 +154,15 @@ public abstract class Role extends EntityClass implements NonHostEntity, Immutab
     }
     
     /**
-     * Returns this role as a native role.
+     * Returns this role as a non-native role.
      * 
-     * @return this role as a native role.
+     * @return this role as a non-native role.
      * 
-     * @require isNotNative() : "This role is not native.";
+     * @require isNonNative() : "This role is non-native.";
      */
     @Pure
     public final @Nonnull NonNativeRole toNonNativeRole() {
-        assert isNotNative() : "This role is not native.";
+        assert isNonNative() : "This role is non-native.";
         
         return (NonNativeRole) this;
     }
@@ -273,7 +275,12 @@ public abstract class Role extends EntityClass implements NonHostEntity, Immutab
     /**
      * Removes this role.
      */
-    public abstract void remove() throws SQLException;
+    public void remove() throws SQLException {
+        RoleModule.remove(this);
+        ClientCredential.remove(this);
+        SynchronizerModule.remove(this);
+        notify(DELETED);
+    }
     
     
     /**

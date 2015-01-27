@@ -2,7 +2,9 @@ package ch.virtualid.cache;
 
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.attribute.AttributeValue;
+import ch.virtualid.attribute.CertifiedAttributeValue;
 import ch.virtualid.attribute.UncertifiedAttributeValue;
+import ch.virtualid.auxiliary.Time;
 import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
@@ -101,12 +103,17 @@ public final class AttributesReply extends CoreServiceQueryReply {
         final @Nonnull InternalIdentity subject = getSubject().getIdentity();
         final @Nonnull ReadonlyList<Block> elements = new ListWrapper(block).getElements();
         final @Nonnull FreezableList<AttributeValue> attributeValues = new FreezableArrayList<AttributeValue>(elements.size());
+        final @Nonnull Time time = new Time();
         for (final @Nullable Block element : elements) {
             if (element != null) {
                 final @Nonnull AttributeValue attributeValue = AttributeValue.get(element, false);
                 try {
                     attributeValue.verify();
-                    if (attributeValue.isCertified() && !attributeValue.toCertifiedAttributeValue().getSubject().equals(subject)) throw new InvalidEncodingException("An attribute is certified for the wrong subject.");
+                    if (attributeValue.isCertified()) {
+                        final @Nonnull CertifiedAttributeValue certifiedAttributeValue = attributeValue.toCertifiedAttributeValue();
+                        if (!certifiedAttributeValue.getSubject().equals(subject)) throw new InvalidEncodingException("An attribute is certified for the wrong subject.");
+                        if (!certifiedAttributeValue.isValid(time)) throw new InvalidSignatureException("The certificate is no longer valid.");
+                    }
                     attributeValues.add(attributeValue);
                 } catch (@Nonnull InvalidSignatureException exception) {
                     attributeValues.add(new UncertifiedAttributeValue(attributeValue.getContent()));

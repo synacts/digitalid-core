@@ -1,7 +1,11 @@
 package ch.virtualid.credential;
 
+import ch.virtualid.agent.Agent;
 import ch.virtualid.agent.AgentPermissions;
+import ch.virtualid.agent.RandomizedAgentPermissions;
+import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
+import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Client;
 import ch.virtualid.cryptography.Element;
 import ch.virtualid.cryptography.Exponent;
@@ -10,34 +14,179 @@ import ch.virtualid.cryptography.Parameters;
 import ch.virtualid.cryptography.PrivateKey;
 import ch.virtualid.cryptography.PublicKey;
 import ch.virtualid.cryptography.SymmetricKey;
+import ch.virtualid.entity.Entity;
+import ch.virtualid.entity.NonHostAccount;
+import ch.virtualid.entity.Role;
+import ch.virtualid.exceptions.external.ExternalException;
+import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
+import ch.virtualid.handler.Method;
+import ch.virtualid.handler.Reply;
+import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identity.Category;
 import ch.virtualid.identity.Mapper;
+import ch.virtualid.identity.SemanticType;
 import ch.virtualid.packet.Packet;
-import ch.virtualid.service.CoreServiceExternalQuery;
+import ch.virtualid.service.CoreService;
+import ch.virtualid.service.CoreServiceInternalQuery;
+import ch.virtualid.service.Service;
 import ch.xdf.Block;
+import ch.xdf.SignatureWrapper;
 import ch.xdf.TupleWrapper;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.security.SecureRandom;
+import java.sql.SQLException;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
- * Description.
- * 
- * Classified as
- * - query because it does not need to be audited as it does not change the state of a virtual identity and the answer is typically needed immediately
- * - external because credentials also need to be shortened at other virtual identities.
+ * Requests a new identity-based credential with the given permissions and relation.
  * 
  * It is important that the issuing host keeps track of all issued credentials for up to a year.
  * All hidden elements need to be verifiably encrypted, so this class needs to override the send method.
  * 
+ * @see CredentialReply
+ * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 0.0
+ * @version 2.0
  */
-public final class CredentialQuery extends CoreServiceExternalQuery {
+final class CredentialInternalQuery extends CoreServiceInternalQuery {
     
-    public CredentialQuery() {
+    /**
+     * Stores the semantic type {@code query.credential@virtualid.ch}.
+     */
+    private static final @Nonnull SemanticType TYPE = SemanticType.create("query.credential@virtualid.ch").load(RandomizedAgentPermissions.TYPE);
+    
+    
+    /**
+     * Stores the permissions for which a credential is requested.
+     */
+    private final @Nonnull RandomizedAgentPermissions permissions;
+    
+    private final @Nullable SemanticType relation;
+    
+    /**
+     * Stores either the value b' for clients or the value f' for hosts or null if the credentials are not shortened.
+     */
+    private final @Nullable BigInteger value;
+    
+    /**
+     * Creates an internal query for a new credential with the given permissions.
+     * 
+     * @param role the role to which this handler belongs.
+     * @param permissions the permissions for which a credential is requested.
+     */
+    CredentialInternalQuery(@Nonnull Role role, @Nullable SemanticType relation, @Nonnull RandomizedAgentPermissions permissions) {
+        super(role);
+        
+        this.permissions = permissions;
+        this.relation = relation;
+    }
+    
+    /**
+     * Creates an internal query that decodes the given block.
+     * 
+     * @param entity the entity to which this handler belongs.
+     * @param signature the signature of this handler.
+     * @param recipient the recipient of this method.
+     * @param block the content which is to be decoded.
+     * 
+     * @require signature.hasSubject() : "The signature has a subject.";
+     * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
+     * 
+     * @ensure hasSignature() : "This handler has a signature.";
+     * @ensure isOnHost() : "Queries are only decoded on hosts.";
+     */
+    private CredentialInternalQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
+        super(entity.toNonHostEntity(), signature, recipient);
+        
+        this.permissions = new RandomizedAgentPermissions(block);
+    }
+    
+    @Pure
+    @Override
+    public @Nonnull Block toBlock() {
+        return permissions.toBlock().setType(TYPE);
+    }
+    
+    @Pure
+    @Override
+    public @Nonnull String toString() {
+        return "Requests an identity-based credential.";
+    }
+    
+    
+    @Pure
+    @Override
+    public boolean isLodged() {
+        return true;
+    }
+    
+    @Pure
+    @Override
+    public @Nonnull ReadonlyAgentPermissions getRequiredPermissions() {
+        return permissions.getPermissionsNotNull();
+    }
+    
+    
+    @Override
+    public @Nonnull CredentialReply executeOnHost() throws PacketException, SQLException {
+        final @Nonnull Service service = module.getService();
+        final @Nonnull NonHostAccount account = getNonHostAccount();
+        if (module.getService().equals(CoreService.SERVICE)) {
+            final @Nonnull Agent agent = getSignatureNotNull().getAgentCheckedAndRestricted(account, null);
+            return new CredentialReply(account, module.getState(account, agent.getPermissions(), agent.getRestrictions(), agent), service);
+        } else {
+            final @Nonnull Credential credential = getSignatureNotNull().toCredentialsSignatureWrapper().getCredentials().getNotNull(0);
+            final @Nullable ReadonlyAgentPermissions permissions = credential.getPermissions();
+            final @Nullable Restrictions restrictions = credential.getRestrictions();
+            if (permissions == null || restrictions == null) throw new PacketException(PacketError.AUTHORIZATION, "For state queries, neither the permissions nor the restrictions may be null.");
+            return new CredentialReply(account, module.getState(account, permissions, restrictions, null), service);
+        }
+    }
+    
+    @Pure
+    @Override
+    public boolean matches(@Nullable Reply reply) {
+        return reply instanceof CredentialInternalQuery && ((CredentialInternalQuery) reply).state.getType().equals(module.getStateFormat());
+    }
+    
+    
+    @Pure
+    @Override
+    public boolean equals(@Nullable Object object) {
+        return protectedEquals(object) && object instanceof CredentialInternalQuery && this.module.equals(((CredentialInternalQuery) object).module);
+    }
+    
+    @Pure
+    @Override
+    public int hashCode() {
+        return 89 * protectedHashCode() + module.hashCode();
+    }
+    
+    
+    @Pure
+    @Override
+    public @Nonnull SemanticType getType() {
+        return TYPE;
+    }
+    
+    /**
+     * The factory class for the surrounding method.
+     */
+    private static final class Factory extends Method.Factory {
+        
+        static { Method.add(TYPE, new Factory()); }
+        
+        @Pure
+        @Override
+        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
+            return new CredentialInternalQuery(entity, signature, recipient, block);
+        }
         
     }
+    
     
     /**
      * Obtains a credential for the given client on behalf of the given requester at the given issuer for the given authorization.
@@ -46,7 +195,9 @@ public final class CredentialQuery extends CoreServiceExternalQuery {
      * @param requester the VID of a person on behalf of which the credential is to be obtained.
      * @param issuer the VID of a non-host at which the credential is to be obtained.
      * @param randomizedAuthorization the desired authorization in randomized form.
+     * 
      * @return a credential for the given client on behalf of the given requester at the given issuer.
+     * 
      * @require client != null : "The client is not null.";
      * @require Mapper.isVid(requester) && Category.isPerson(requester) : "The requester has to denote a person.";
      * @require Mapper.isVid(issuer) && (Category.isSemanticType(issuer) || issuer == requester) : "The issuer is either a semantic type or the requester itself (roles are not yet supported).";

@@ -76,7 +76,7 @@ final class StateQuery extends InternalQuery {
      * @ensure isOnHost() : "Queries are only decoded on hosts.";
      */
     private StateQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
-        super(entity.toNonHostEntity(), signature, recipient);
+        super(entity, signature, recipient);
         
         this.module = Service.getModule(IdentityClass.create(block).toSemanticType());
     }

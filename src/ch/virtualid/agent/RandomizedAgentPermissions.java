@@ -74,10 +74,10 @@ public final class RandomizedAgentPermissions implements Immutable, Blockable {
      * 
      * @param permissions the permissions to randomize.
      * 
-     * @require permissions.isFrozen() : "The permissions have to be frozen.";
+     * @require permissions.isFrozen() : "The permissions are frozen.";
      */
     public RandomizedAgentPermissions(@Nonnull ReadonlyAgentPermissions permissions) {
-        assert permissions.isFrozen() : "The permissions have to be frozen.";
+        assert permissions.isFrozen() : "The permissions are frozen.";
         
         this.permissions = permissions;
         this.salt = new BigInteger(Parameters.HASH, new SecureRandom());

@@ -56,6 +56,12 @@ public abstract class Query extends Method {
     
     @Pure
     @Override
+    public boolean isLodged() {
+        return false;
+    }
+    
+    @Pure
+    @Override
     public final boolean canBeSentByHosts() {
         return false;
     }

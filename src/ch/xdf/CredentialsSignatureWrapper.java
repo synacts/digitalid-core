@@ -1,5 +1,6 @@
 package ch.xdf;
 
+import ch.virtualid.agent.AgentModule;
 import ch.virtualid.agent.OutgoingRole;
 import ch.virtualid.agent.RandomizedAgentPermissions;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
@@ -21,12 +22,14 @@ import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.HostEntity;
 import ch.virtualid.entity.NonHostAccount;
 import ch.virtualid.entity.NonHostEntity;
+import ch.virtualid.entity.RoleModule;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InactiveSignatureException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.external.InvalidSignatureException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
+import ch.virtualid.host.Host;
 import ch.virtualid.identifier.InternalIdentifier;
 import ch.virtualid.identity.InternalNonHostIdentity;
 import ch.virtualid.identity.InternalPerson;
@@ -34,10 +37,7 @@ import ch.virtualid.identity.Person;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
-import ch.virtualid.agent.AgentModule;
-import ch.virtualid.entity.RoleModule;
 import ch.virtualid.synchronizer.Audit;
-import ch.virtualid.host.Host;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.FreezableArrayList;
 import ch.virtualid.util.FreezableList;
@@ -808,7 +808,10 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
         if (!t.getValue().equals(hash.xor(new ListWrapper(ARRAYS, ts).toBlock().getHash()).xor(tf))) throw new InvalidSignatureException("The credentials signature is invalid: The value t is not correct.");
         
         if (certificates != null) {
-            for (final @Nonnull CertifiedAttributeValue certificate : certificates) certificate.verify();
+            for (final @Nonnull CertifiedAttributeValue certificate : certificates) {
+                certificate.verify();
+                if (!certificate.isValid(getTimeNotNull())) throw new InvalidSignatureException("A certificate is no longer valid.");
+            }
         }
         
         setVerified();

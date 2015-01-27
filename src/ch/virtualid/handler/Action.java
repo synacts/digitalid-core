@@ -5,10 +5,10 @@ import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
+import ch.virtualid.client.AccountOpen;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.exceptions.packet.PacketException;
-import ch.virtualid.client.AccountOpen;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identifier.InternalIdentifier;
 import ch.virtualid.module.BothModule;
@@ -62,6 +62,13 @@ public abstract class Action extends Method implements Auditable {
      */
     protected Action(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) {
         super(entity, signature, recipient);
+    }
+    
+    
+    @Pure
+    @Override
+    public final boolean isLodged() {
+        return true;
     }
     
     

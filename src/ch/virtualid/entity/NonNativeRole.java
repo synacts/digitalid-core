@@ -11,7 +11,6 @@ import static ch.virtualid.entity.Entity.CREATED;
 import ch.virtualid.identity.InternalNonHostIdentity;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Immutable;
-import ch.virtualid.synchronizer.SynchronizerModule;
 import ch.virtualid.util.ConcurrentHashMap;
 import ch.virtualid.util.ConcurrentMap;
 import java.sql.SQLException;
@@ -159,13 +158,11 @@ public final class NonNativeRole extends Role implements Immutable {
     
     @Override
     public void remove() throws SQLException {
-        RoleModule.remove(this);
-        SynchronizerModule.remove(this);
         if (Database.isSingleAccess()) {
             final @Nullable ConcurrentMap<Long, NonNativeRole> map = index.get(getClient());
             if (map != null) map.remove(getNumber());
         }
-        notify(DELETED);
+        super.remove();
     }
     
 }
