@@ -274,7 +274,8 @@ public final class ClientCredential extends Credential implements Immutable {
         
         if (credential == null || !credential.isActive()) {
             final @Nonnull RandomizedAgentPermissions randomizedPermissions = new RandomizedAgentPermissions(permissions);
-            final @Nonnull CredentialReply reply = new CredentialInternalQuery(role.getRecipient(), role.getRelation(), randomizedPermissions).sendNotNull();
+            final @Nonnull BigInteger value = new BigInteger(Parameters.BLINDING_EXPONENT, new SecureRandom());
+            final @Nonnull CredentialReply reply = new CredentialInternalQuery(role, randomizedPermissions, value).sendNotNull();
             credential = map.putIfAbsentElseReturnPresent(permissions, reply.getCredential(randomizedPermissions));
         }
         
@@ -310,7 +311,7 @@ public final class ClientCredential extends Credential implements Immutable {
         
         if (credential == null || !credential.isActive()) {
             final @Nonnull RandomizedAgentPermissions randomizedPermissions = new RandomizedAgentPermissions(permissions);
-            final @Nonnull CredentialReply reply = new CredentialInternalQuery(role, null, randomizedPermissions).sendNotNull();
+            final @Nonnull CredentialReply reply = new CredentialInternalQuery(role, randomizedPermissions).sendNotNull();
             credential = map.putIfAbsentElseReturnPresent(permissions, reply.getCredential(randomizedPermissions));
         }
         

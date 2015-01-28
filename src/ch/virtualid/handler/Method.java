@@ -17,7 +17,6 @@ import ch.virtualid.credential.Credential;
 import ch.virtualid.entity.Account;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.NonHostEntity;
-import ch.virtualid.entity.NonNativeRole;
 import ch.virtualid.entity.Role;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
@@ -42,6 +41,7 @@ import ch.virtualid.util.ReadonlyList;
 import ch.xdf.Block;
 import ch.xdf.SignatureWrapper;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.Objects;
@@ -57,7 +57,7 @@ import javax.annotation.Nullable;
  * @see Query
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 1.9
+ * @version 2.0
  */
 public abstract class Method extends Handler {
     
@@ -123,6 +123,16 @@ public abstract class Method extends Handler {
      */
     @Pure
     public abstract boolean isLodged();
+    
+    /**
+     * Returns either the value b' for clients or the value f' for hosts or null if no credential is shortened.
+     * 
+     * @return either the value b' for clients or the value f' for hosts or null if no credential is shortened.
+     */
+    @Pure
+    public @Nullable BigInteger getValue() {
+        return null;
+    }
     
     /**
      * Returns whether this method can be sent by hosts.
@@ -308,13 +318,10 @@ public abstract class Method extends Handler {
         final @Nonnull InternalIdentifier subject = reference.getSubject();
         final @Nonnull HostIdentifier recipient = reference.getRecipient();
         final boolean lodged = reference.isLodged();
+        final @Nullable BigInteger value = reference.getValue();
         
         if (reference.isOnHost() && !reference.canBeSentByHosts()) throw new PacketException(PacketError.INTERNAL, "These methods cannot be sent by hosts.");
         if (reference.isOnClient() && reference.canOnlyBeSentByHosts()) throw new PacketException(PacketError.INTERNAL, "These methods cannot be sent by clients.");
-        
-        // TODO: Delete the following two lines and implement a real lookup!
-//        final @Nullable ReadonlyList<Credential> credentials = null;
-//        final @Nullable ReadonlyList<CertifiedAttributeValue> certificates = null;
         
         if (reference instanceof ExternalQuery) {
             final @Nonnull ReadonlyAuthentications authentications;
@@ -335,14 +342,14 @@ public abstract class Method extends Handler {
                 final @Nullable FreezableList<CertifiedAttributeValue> certificates;
                 final @Nonnull ReadonlyAgentPermissions permissions = getRequiredPermissions(methods);
                 if (authentications.contains(Authentications.IDENTITY_BASED_TYPE)) {
-                    final @Nonnull ClientCredential clientCredential = ClientCredential.getIdentityBased(role, permissions);
-                    credentials = new FreezableArrayList<Credential>(clientCredential);
+                    final @Nonnull ClientCredential credential = ClientCredential.getIdentityBased(role, permissions);
+                    credentials = new FreezableArrayList<Credential>(credential);
                     certificates = new FreezableArrayList<CertifiedAttributeValue>(authentications.size() - 1);
                     for (final @Nonnull SemanticType type : authentications) {
                         if (!type.equals(Authentications.IDENTITY_BASED_TYPE)) {
-                            final @Nullable AttributeValue value = Attribute.get(entity, type).getValue();
-                            if (value != null && value.isCertified()) {
-                                final @Nonnull CertifiedAttributeValue certifiedAttributeValue = value.toCertifiedAttributeValue();
+                            final @Nullable AttributeValue attributeValue = Attribute.get(entity, type).getValue();
+                            if (attributeValue != null && attributeValue.isCertified()) {
+                                final @Nonnull CertifiedAttributeValue certifiedAttributeValue = attributeValue.toCertifiedAttributeValue();
                                 if (certifiedAttributeValue.isValid(time)) certificates.add(certifiedAttributeValue);
                             }
                         }
@@ -351,24 +358,23 @@ public abstract class Method extends Handler {
                 } else {
                     credentials = new FreezableArrayList<Credential>(authentications.size());
                     for (final @Nonnull SemanticType type : authentications) {
-                        final @Nullable AttributeValue value = Attribute.get(entity, type).getValue();
-                        if (value != null && value.isCertified()) {
-                            final @Nonnull CertifiedAttributeValue certifiedAttributeValue = value.toCertifiedAttributeValue();
+                        final @Nullable AttributeValue attributeValue = Attribute.get(entity, type).getValue();
+                        if (attributeValue != null && attributeValue.isCertified()) {
+                            final @Nonnull CertifiedAttributeValue certifiedAttributeValue = attributeValue.toCertifiedAttributeValue();
                             if (certifiedAttributeValue.isValid(time)) credentials.add(ClientCredential.getAttributeBased(role, certifiedAttributeValue, permissions));
                         }
                     }
                     certificates = null;
                 }
-                return new CredentialsRequest(methods, recipient, subject, null, credentials.freeze(), certificates, lodged, null).send();
+                return new CredentialsRequest(methods, recipient, subject, audit, credentials.freeze(), certificates, lodged, value).send();
             }
         } else {
             assert entity != null : "The entity can only be null in case of external queries.";
             
             if (reference instanceof ExternalAction) {
                 if (entity instanceof Role) {
-                    final @Nonnull ReadonlyAgentPermissions permissions = getRequiredPermissions(methods);
-                    // TODO: Get the identity-based credential from the role or throw a packet exception if the permissions are not covered.
-                    return new CredentialsRequest(methods, recipient, subject, null, credentials, null, lodged, null).send();
+                    final @Nonnull ClientCredential credential = ClientCredential.getIdentityBased((Role) entity, getRequiredPermissions(methods));
+                    return new CredentialsRequest(methods, recipient, subject, audit, new FreezableArrayList<Credential>(credential).freeze(), null, lodged, value).send();
                 } else {
                     return new HostRequest(methods, recipient, subject, entity.getIdentity().getAddress()).send();
                 }
@@ -388,15 +394,12 @@ public abstract class Method extends Handler {
                         if (!agent.getPermissions().cover(getRequiredPermissions(methods))) throw new PacketException(PacketError.AUTHORIZATION, "The permissions of the client agent do not cover the required permissions.");
                         return new ClientRequest(methods, subject, audit, role.toNativeRole().getAgent().getCommitment().addSecret(role.getClient().getSecret())).send();
                     } else {
-                        final @Nonnull NonNativeRole nonNativeRole = role.toNonNativeRole();
-                        // The single credential is role-based.
-                        // TODO: Retrieve the internal credentials from the role or throw a packet exception if the permissions are not covered.
-                        return new CredentialsRequest(methods, recipient, subject, audit, credentials, null, lodged, null).send();
+                        final @Nonnull ClientCredential credential = ClientCredential.getRoleBased(role.toNonNativeRole(), getRequiredPermissions(methods));
+                        return new CredentialsRequest(methods, recipient, subject, audit, new FreezableArrayList<Credential>(credential).freeze(), null, lodged, value).send();
                     }
                 } else {
-                    // The single credential is identity-based.
-                    // TODO: Retrieve the external credentials from the role or throw a packet exception if the permissions are not covered.
-                    return new CredentialsRequest(methods, recipient, subject, audit, credentials, null, lodged, null).send();
+                    final @Nonnull ClientCredential credential = ClientCredential.getIdentityBased(role, getRequiredPermissions(methods));
+                    return new CredentialsRequest(methods, recipient, subject, audit, new FreezableArrayList<Credential>(credential).freeze(), null, lodged, value).send();
                 }
             }
         }

@@ -16,6 +16,7 @@ import ch.virtualid.cryptography.PublicKey;
 import ch.virtualid.cryptography.SymmetricKey;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.NonHostAccount;
+import ch.virtualid.entity.NonNativeRole;
 import ch.virtualid.entity.Role;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketError;
@@ -24,6 +25,7 @@ import ch.virtualid.handler.Method;
 import ch.virtualid.handler.Reply;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identity.Category;
+import ch.virtualid.identity.IdentityClass;
 import ch.virtualid.identity.Mapper;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.packet.Packet;
@@ -41,7 +43,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * Requests a new identity-based credential with the given permissions and relation.
+ * Requests a new identity- or role-based credential with the given permissions and relation.
  * 
  * It is important that the issuing host keeps track of all issued credentials for up to a year.
  * All hidden elements need to be verifiably encrypted, so this class needs to override the send method.
@@ -54,9 +56,9 @@ import javax.annotation.Nullable;
 final class CredentialInternalQuery extends CoreServiceInternalQuery {
     
     /**
-     * Stores the semantic type {@code query.credential@virtualid.ch}.
+     * Stores the semantic type {@code query.internal.credential@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType TYPE = SemanticType.create("query.credential@virtualid.ch").load(RandomizedAgentPermissions.TYPE);
+    private static final @Nonnull SemanticType TYPE = SemanticType.create("query.internal.credential@virtualid.ch").load(TupleWrapper.TYPE, RandomizedAgentPermissions.TYPE, SemanticType.IDENTIFIER);
     
     
     /**
@@ -64,24 +66,45 @@ final class CredentialInternalQuery extends CoreServiceInternalQuery {
      */
     private final @Nonnull RandomizedAgentPermissions permissions;
     
+    /**
+     * Stores the relation of the role-based credential that is requested.
+     * 
+     * @invariant relation.isRoleType() : "The relation is a role type.";
+     */
     private final @Nullable SemanticType relation;
     
     /**
-     * Stores either the value b' for clients or the value f' for hosts or null if the credentials are not shortened.
+     * Stores either the value b' for clients or the value f' for hosts or null if no credential is shortened.
      */
     private final @Nullable BigInteger value;
     
     /**
-     * Creates an internal query for a new credential with the given permissions.
+     * Creates an internal query for a new identity-based credential with the given permissions.
      * 
      * @param role the role to which this handler belongs.
      * @param permissions the permissions for which a credential is requested.
      */
-    CredentialInternalQuery(@Nonnull Role role, @Nullable SemanticType relation, @Nonnull RandomizedAgentPermissions permissions) {
+    CredentialInternalQuery(@Nonnull Role role, @Nonnull RandomizedAgentPermissions permissions) {
         super(role);
         
         this.permissions = permissions;
-        this.relation = relation;
+        this.relation = null;
+        this.value = null;
+    }
+    
+    /**
+     * Creates an internal query for a new role-based credential with the given permissions.
+     * 
+     * @param role the role to which this handler belongs.
+     * @param permissions the permissions for which a credential is requested.
+     * @param value the value used for shortening an existing credential.
+     */
+    CredentialInternalQuery(@Nonnull NonNativeRole role, @Nonnull RandomizedAgentPermissions permissions, @Nonnull BigInteger value) {
+        super(role.getRecipient());
+        
+        this.permissions = permissions;
+        this.relation = role.getRelation();
+        this.value = value;
     }
     
     /**
@@ -101,19 +124,23 @@ final class CredentialInternalQuery extends CoreServiceInternalQuery {
     private CredentialInternalQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity.toNonHostEntity(), signature, recipient);
         
-        this.permissions = new RandomizedAgentPermissions(block);
+        final @Nonnull TupleWrapper tuple = new TupleWrapper(block);
+        this.permissions = new RandomizedAgentPermissions(tuple.getElementNotNull(0));
+        if (tuple.isElementNull(1)) this.relation = null;
+        else this.relation = IdentityClass.create(tuple.getElementNotNull(1)).toSemanticType().checkIsRoleType();
+        // TODO: What about the value?
     }
     
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        return permissions.toBlock().setType(TYPE);
+        return new TupleWrapper(TYPE, permissions, (relation != null ? relation.toBlockable(SemanticType.IDENTIFIER) : null)).toBlock();
     }
     
     @Pure
     @Override
     public @Nonnull String toString() {
-        return "Requests an identity-based credential.";
+        return "Requests an identity- or role-based credential.";
     }
     
     
@@ -121,6 +148,12 @@ final class CredentialInternalQuery extends CoreServiceInternalQuery {
     @Override
     public boolean isLodged() {
         return true;
+    }
+    
+    @Pure
+    @Override
+    public @Nullable BigInteger getValue() {
+        return value;
     }
     
     @Pure

@@ -111,8 +111,8 @@ public final class AttributesReply extends CoreServiceQueryReply {
                     attributeValue.verify();
                     if (attributeValue.isCertified()) {
                         final @Nonnull CertifiedAttributeValue certifiedAttributeValue = attributeValue.toCertifiedAttributeValue();
-                        if (!certifiedAttributeValue.getSubject().equals(subject)) throw new InvalidEncodingException("An attribute is certified for the wrong subject.");
-                        if (!certifiedAttributeValue.isValid(time)) throw new InvalidSignatureException("The certificate is no longer valid.");
+                        certifiedAttributeValue.checkSubject(subject);
+                        certifiedAttributeValue.checkIsValid(time);
                     }
                     attributeValues.add(attributeValue);
                 } catch (@Nonnull InvalidSignatureException exception) {

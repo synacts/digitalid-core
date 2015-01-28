@@ -434,7 +434,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
      * 
      * @return the certificates that are appended to an identity-based authentication.
      * 
-     * @ensure return.isFrozen() : "The certificates are frozen.";
+     * @ensure return == null || return.isFrozen() : "The certificates are null or frozen.";
      * @ensure certificatesAreValid(return, getCredentials()) : "The certificates are valid.";
      */
     @Pure
@@ -810,7 +810,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
         if (certificates != null) {
             for (final @Nonnull CertifiedAttributeValue certificate : certificates) {
                 certificate.verify();
-                if (!certificate.isValid(getTimeNotNull())) throw new InvalidSignatureException("A certificate is no longer valid.");
+                certificate.checkIsValid(getTimeNotNull());
             }
         }
         

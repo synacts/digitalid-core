@@ -5,6 +5,7 @@ import ch.virtualid.auxiliary.Time;
 import ch.virtualid.certificate.Certificate;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.exceptions.external.InvalidSignatureException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identity.InternalIdentity;
 import ch.virtualid.identity.InternalNonHostIdentity;
@@ -147,7 +148,17 @@ public final class CertifiedAttributeValue extends AttributeValue implements Imm
         return getTime().add(getContent().getType().getCachingPeriodNotNull()).isGreaterThan(time);
     }
     
-    // TODO: Introduce a checkIsValid(time).
+    /**
+     * Checks that the certificate of this attribute value is valid the given time.
+     * 
+     * @param time the time of interest.
+     * 
+     * @throws InvalidSignatureException if the certificate is not valid the given time.
+     */
+    @Pure
+    public void checkIsValid(@Nonnull Time time) throws InvalidSignatureException {
+        if (!isValid(time)) throw new InvalidSignatureException("The certificate is no longer valid.");
+    }
     
     /**
      * Returns the subject of this attribute value's certificate.
@@ -157,6 +168,18 @@ public final class CertifiedAttributeValue extends AttributeValue implements Imm
     @Pure
     public @Nonnull InternalIdentity getSubject() {
         return subject;
+    }
+    
+    /**
+     * Checks that the subject of this attribute value equals the given subject.
+     * 
+     * @param subject the subject of interest.
+     * 
+     * @throws InvalidSignatureException if the subject is not equal the given subject.
+     */
+    @Pure
+    public void checkSubject(@Nonnull InternalIdentity subject) throws InvalidSignatureException {
+        if (!this.subject.equals(subject)) throw new InvalidSignatureException("The attribute is certified for the wrong subject.");
     }
     
     /**
