@@ -14,6 +14,7 @@ import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.InternalQuery;
 import ch.virtualid.identifier.HostIdentifier;
+import ch.xdf.CredentialsSignatureWrapper;
 import ch.xdf.SignatureWrapper;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -88,7 +89,9 @@ public abstract class CoreServiceInternalQuery extends InternalQuery {
     
     @Override
     public @Nonnull CoreServiceQueryReply executeOnHost() throws PacketException, SQLException {
-        final @Nonnull Agent agent = getSignatureNotNull().getAgentCheckedAndRestricted(getNonHostAccount(), publicKey);
+        final @Nonnull SignatureWrapper signature = getSignatureNotNull();
+        if (isLodged() && signature instanceof CredentialsSignatureWrapper) ((CredentialsSignatureWrapper) signature).checkIsLogded();
+        final @Nonnull Agent agent = signature.getAgentCheckedAndRestricted(getNonHostAccount(), publicKey);
         
         final @Nonnull ReadonlyAgentPermissions permissions = getRequiredPermissions();
         if (!permissions.equals(AgentPermissions.NONE)) agent.getPermissions().checkCover(permissions);

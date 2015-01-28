@@ -41,32 +41,32 @@ public final class Restrictions implements Immutable, Blockable, SQLizable {
     /**
      * Stores the semantic type {@code client.restrictions.agent@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType CLIENT = SemanticType.create("client.restrictions.agent@virtualid.ch").load(BooleanWrapper.TYPE);
+    private static final @Nonnull SemanticType CLIENT_TYPE = SemanticType.create("client.restrictions.agent@virtualid.ch").load(BooleanWrapper.TYPE);
     
     /**
      * Stores the semantic type {@code role.restrictions.agent@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType ROLE = SemanticType.create("role.restrictions.agent@virtualid.ch").load(BooleanWrapper.TYPE);
+    private static final @Nonnull SemanticType ROLE_TYPE = SemanticType.create("role.restrictions.agent@virtualid.ch").load(BooleanWrapper.TYPE);
     
     /**
      * Stores the semantic type {@code writing.restrictions.agent@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType WRITING = SemanticType.create("writing.restrictions.agent@virtualid.ch").load(BooleanWrapper.TYPE);
+    private static final @Nonnull SemanticType WRITING_TYPE = SemanticType.create("writing.restrictions.agent@virtualid.ch").load(BooleanWrapper.TYPE);
     
     /**
      * Stores the semantic type {@code context.restrictions.agent@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType CONTEXT = SemanticType.create("context.restrictions.agent@virtualid.ch").load(Context.TYPE);
+    private static final @Nonnull SemanticType CONTEXT_TYPE = SemanticType.create("context.restrictions.agent@virtualid.ch").load(Context.TYPE);
     
     /**
      * Stores the semantic type {@code contact.restrictions.agent@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType CONTACT = SemanticType.create("contact.restrictions.agent@virtualid.ch").load(Contact.TYPE);
+    private static final @Nonnull SemanticType CONTACT_TYPE = SemanticType.create("contact.restrictions.agent@virtualid.ch").load(Contact.TYPE);
     
     /**
      * Stores the semantic type {@code restrictions.agent@virtualid.ch}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("restrictions.agent@virtualid.ch").load(TupleWrapper.TYPE, CLIENT, ROLE, WRITING, CONTEXT, CONTACT);
+    public static final @Nonnull SemanticType TYPE = SemanticType.create("restrictions.agent@virtualid.ch").load(TupleWrapper.TYPE, CLIENT_TYPE, ROLE_TYPE, WRITING_TYPE, CONTEXT_TYPE, CONTACT_TYPE);
     
     
     /**
@@ -78,6 +78,21 @@ public final class Restrictions implements Immutable, Blockable, SQLizable {
      * Stores the strongest restrictions (without a context and contact).
      */
     public static final @Nonnull Restrictions MAX = new Restrictions(true, true, true);
+    
+    /**
+     * Stores the restrictions required to modify clients.
+     */
+    public static final @Nonnull Restrictions CLIENT = new Restrictions(true, false, false);
+    
+    /**
+     * Stores the restrictions required to assume incoming roles.
+     */
+    public static final @Nonnull Restrictions ROLE = new Restrictions(false, true, false);
+    
+    /**
+     * Stores the restrictions required to write to contexts.
+     */
+    public static final @Nonnull Restrictions WRITING = new Restrictions(false, false, true);
     
     
     /**
@@ -193,11 +208,11 @@ public final class Restrictions implements Immutable, Blockable, SQLizable {
     @Override
     public @Nonnull Block toBlock() {
         final @Nonnull FreezableArray<Block> elements = new FreezableArray<Block>(5);
-        elements.set(0, new BooleanWrapper(CLIENT, client).toBlock());
-        elements.set(1, new BooleanWrapper(ROLE, role).toBlock());
-        elements.set(2, new BooleanWrapper(WRITING, writing).toBlock());
-        elements.set(3, Block.toBlock(CONTEXT, context));
-        elements.set(4, Block.toBlock(CONTACT, contact));
+        elements.set(0, new BooleanWrapper(CLIENT_TYPE, client).toBlock());
+        elements.set(1, new BooleanWrapper(ROLE_TYPE, role).toBlock());
+        elements.set(2, new BooleanWrapper(WRITING_TYPE, writing).toBlock());
+        elements.set(3, Block.toBlock(CONTEXT_TYPE, context));
+        elements.set(4, Block.toBlock(CONTACT_TYPE, contact));
         return new TupleWrapper(TYPE, elements.freeze()).toBlock();
     }
     

@@ -1,11 +1,11 @@
 package ch.virtualid.credential;
 
 import ch.virtualid.agent.Agent;
-import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.agent.RandomizedAgentPermissions;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
+import ch.virtualid.auxiliary.Time;
 import ch.virtualid.client.Client;
 import ch.virtualid.cryptography.Element;
 import ch.virtualid.cryptography.Exponent;
@@ -19,20 +19,23 @@ import ch.virtualid.entity.NonHostAccount;
 import ch.virtualid.entity.NonNativeRole;
 import ch.virtualid.entity.Role;
 import ch.virtualid.exceptions.external.ExternalException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Method;
 import ch.virtualid.handler.Reply;
+import ch.virtualid.host.Host;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identity.Category;
 import ch.virtualid.identity.IdentityClass;
+import ch.virtualid.identity.InternalPerson;
 import ch.virtualid.identity.Mapper;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.packet.Packet;
-import ch.virtualid.service.CoreService;
 import ch.virtualid.service.CoreServiceInternalQuery;
-import ch.virtualid.service.Service;
 import ch.xdf.Block;
+import ch.xdf.ClientSignatureWrapper;
+import ch.xdf.CredentialsSignatureWrapper;
 import ch.xdf.SignatureWrapper;
 import ch.xdf.TupleWrapper;
 import java.io.IOException;
@@ -44,9 +47,6 @@ import javax.annotation.Nullable;
 
 /**
  * Requests a new identity- or role-based credential with the given permissions and relation.
- * 
- * It is important that the issuing host keeps track of all issued credentials for up to a year.
- * All hidden elements need to be verifiably encrypted, so this class needs to override the send method.
  * 
  * @see CredentialReply
  * 
@@ -83,9 +83,13 @@ final class CredentialInternalQuery extends CoreServiceInternalQuery {
      * 
      * @param role the role to which this handler belongs.
      * @param permissions the permissions for which a credential is requested.
+     * 
+     * @require role.getIdentity() instanceof InternalPerson : "The role belongs to an internal person.";
      */
     CredentialInternalQuery(@Nonnull Role role, @Nonnull RandomizedAgentPermissions permissions) {
         super(role);
+        
+        assert role.getIdentity() instanceof InternalPerson : "The role belongs to an internal person.";
         
         this.permissions = permissions;
         this.relation = null;
@@ -98,9 +102,13 @@ final class CredentialInternalQuery extends CoreServiceInternalQuery {
      * @param role the role to which this handler belongs.
      * @param permissions the permissions for which a credential is requested.
      * @param value the value used for shortening an existing credential.
+     * 
+     * @require role.getIdentity() instanceof InternalPerson : "The role belongs to an internal person.";
      */
     CredentialInternalQuery(@Nonnull NonNativeRole role, @Nonnull RandomizedAgentPermissions permissions, @Nonnull BigInteger value) {
         super(role.getRecipient());
+        
+        assert role.getIdentity() instanceof InternalPerson : "The role belongs to an internal person.";
         
         this.permissions = permissions;
         this.relation = role.getRelation();
@@ -122,13 +130,16 @@ final class CredentialInternalQuery extends CoreServiceInternalQuery {
      * @ensure isOnHost() : "Queries are only decoded on hosts.";
      */
     private CredentialInternalQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
-        super(entity.toNonHostEntity(), signature, recipient);
+        super(entity, signature, recipient);
         
+        if (!(entity.getIdentity() instanceof InternalPerson)) throw new PacketException(PacketError.IDENTIFIER, "An identity- or role-based credential can only be requested for internal persons.");
         final @Nonnull TupleWrapper tuple = new TupleWrapper(block);
         this.permissions = new RandomizedAgentPermissions(tuple.getElementNotNull(0));
         if (tuple.isElementNull(1)) this.relation = null;
         else this.relation = IdentityClass.create(tuple.getElementNotNull(1)).toSemanticType().checkIsRoleType();
-        // TODO: What about the value?
+        if (signature instanceof ClientSignatureWrapper) this.value = ((ClientSignatureWrapper) signature).getCommitment().getValue().getValue();
+        else if (signature instanceof CredentialsSignatureWrapper) this.value = ((CredentialsSignatureWrapper) signature).getValue();
+        else throw new PacketException(PacketError.SIGNATURE, "A credential request must be signed by a client or with credentials.");
     }
     
     @Pure
@@ -162,20 +173,42 @@ final class CredentialInternalQuery extends CoreServiceInternalQuery {
         return permissions.getPermissionsNotNull();
     }
     
+    @Pure
+    @Override
+    public @Nonnull Restrictions getRequiredRestrictions() {
+        if (relation == null) return Restrictions.MIN;
+        else return Restrictions.ROLE;
+    }
+    
     
     @Override
-    public @Nonnull CredentialReply executeOnHost() throws PacketException, SQLException {
-        final @Nonnull Service service = module.getService();
+    protected @Nonnull CredentialReply executeOnHost(@Nonnull Agent agent) throws SQLException {
+        final @Nonnull Restrictions restrictions = agent.getRestrictions();
+        final @Nonnull SignatureWrapper signature = getSignatureNotNull();
         final @Nonnull NonHostAccount account = getNonHostAccount();
-        if (module.getService().equals(CoreService.SERVICE)) {
-            final @Nonnull Agent agent = getSignatureNotNull().getAgentCheckedAndRestricted(account, null);
-            return new CredentialReply(account, module.getState(account, agent.getPermissions(), agent.getRestrictions(), agent), service);
-        } else {
-            final @Nonnull Credential credential = getSignatureNotNull().toCredentialsSignatureWrapper().getCredentials().getNotNull(0);
-            final @Nullable ReadonlyAgentPermissions permissions = credential.getPermissions();
-            final @Nullable Restrictions restrictions = credential.getRestrictions();
-            if (permissions == null || restrictions == null) throw new PacketException(PacketError.AUTHORIZATION, "For state queries, neither the permissions nor the restrictions may be null.");
-            return new CredentialReply(account, module.getState(account, permissions, restrictions, null), service);
+        final @Nonnull Host host = account.getHost();
+        
+        final @Nonnull Time issuance = signature instanceof CredentialsSignatureWrapper ? ((CredentialsSignatureWrapper) signature).getCredentials().getNotNull(0).getIssuance() : signature.getTimeNotNull().roundDown(Time.HALF_HOUR);
+        
+        try {
+            final @Nonnull PublicKey publicKey = host.getPublicKeyChain().getKey(issuance);
+            final @Nonnull PrivateKey privateKey = host.getPrivateKeyChain().getKey(issuance);
+            final @Nonnull Group group = privateKey.getCompositeGroup();
+            
+            assert value != null : "See the constructor.";
+            final @Nonnull Element f = group.getElement(value);
+            final @Nonnull Exponent i = new Exponent(new BigInteger(Parameters.HASH, new SecureRandom()));
+            final @Nonnull Exponent v = new Exponent(restrictions.toBlock().getHash());
+            final @Nonnull Exponent o = new Exponent(Credential.getExposed(account.getIdentity(), issuance, permissions, relation, null).getHash());
+            final @Nonnull Exponent e = new Exponent(BigInteger.probablePrime(Parameters.CREDENTIAL_EXPONENT, new SecureRandom()));
+            
+            final @Nonnull Element c = f.multiply(publicKey.getAi().pow(i)).multiply(publicKey.getAv().pow(v)).multiply(publicKey.getAo().pow(o).inverse()).pow(e.inverse(group)).inverse();
+            
+            // TODO: It is important that the issuing host keeps track of all issued credentials for up to a year. (Store the signature, restrictions (or just v?), (c), e and i, with i being the primary key?)
+            
+            return new CredentialReply(account, restrictions, c, e, i);
+        } catch (@Nonnull InvalidEncodingException exception) {
+            throw new SQLException("No key was found for the time of the signature.");
         }
     }
     
@@ -265,41 +298,6 @@ final class CredentialInternalQuery extends CoreServiceInternalQuery {
         } else {
             throw new UnsupportedOperationException("Credentials for attribute-based access control are not yet supported!");
         }
-    }
-    
-    /**
-     * The handler for requests of type {@code request.credential.client@virtualid.ch}.
-     */
-    private static class ObtainCredential extends Handler {
-
-        private ObtainCredential() throws Exception { super("request.credential.client@virtualid.ch", "response.credential.client@virtualid.ch", true); }
-        
-        @Override
-        public Block handle(Connection connection, Host host, long vid, Block element, SignatureWrapper signature) throws Exception {
-            if (!Category.isPerson(vid)) throw new PacketException(PacketException.IDENTIFIER);
-            
-            BigInteger commitment = signature.getClient();
-            Restrictions restrictions = host.getRestrictions(connection, vid, commitment);
-            AgentPermissions authorization = host.getAuthorization(connection, vid, commitment);
-            if (restrictions == null) throw new PacketException(PacketException.AUTHORIZATION);
-            RandomizedAuthorization randomizedAuthorization = new RandomizedAuthorization(element);
-            authorization.checkCover(randomizedAuthorization.getAuthorization());
-            
-            PublicKey publicKey = host.getPublicKey();
-            PrivateKey privateKey = host.getPrivateKey();
-            Group group = privateKey.getCompositeGroup();
-            
-            Element f = group.getElement(commitment);
-            Exponent i = group.getExponent(new BigInteger(Parameters.HASH, new SecureRandom()));
-            Exponent v = group.getExponent(restrictions.toBlock().getHash());
-            Exponent o = group.getExponent(Credential.getExposed(Mapper.getIdentifier(vid), signature.getSignatureTimeRoundedDown(), randomizedAuthorization, null).getHash());
-            Exponent e = group.getExponent(BigInteger.probablePrime(Parameters.CREDENTIAL_EXPONENT, new SecureRandom()));
-            
-            Element c = f.multiply(publicKey.getAi().pow(i)).multiply(publicKey.getAv().pow(v)).multiply(publicKey.getAo().pow(o).inverse()).pow(e.inverse()).inverse();
-            
-            return new TupleWrapper(new Block[]{c.toBlock(), e.toBlock(), i.toBlock()}).toBlock();
-        }
-        
     }
     
 }

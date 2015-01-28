@@ -259,12 +259,14 @@ public final class ClientCredential extends Credential implements Immutable {
      * 
      * @return a role-based credential for the given role and permissions.
      * 
+     * @require role.getIdentity() instanceof InternalPerson : "The role belongs to an internal person.";
      * @require permissions.isFrozen() : "The permissions are frozen.";
      * @require permissions.isNotEmpty() : "The permissions are not empty.";
      * 
      * @ensure return.isActive() : "The returned credential is active.";
      */
     public static @Nonnull ClientCredential getRoleBased(@Nonnull NonNativeRole role, @Nonnull ReadonlyAgentPermissions permissions) throws SQLException, IOException, PacketException, ExternalException {
+        assert role.getIdentity() instanceof InternalPerson : "The role belongs to an internal person.";
         assert permissions.isFrozen() : "The permissions are frozen.";
         assert permissions.isNotEmpty() : "The permissions are not empty.";
         
@@ -296,12 +298,14 @@ public final class ClientCredential extends Credential implements Immutable {
      * 
      * @return an identity-based credential for the given role and permissions.
      * 
+     * @require role.getIdentity() instanceof InternalPerson : "The role belongs to an internal person.";
      * @require permissions.isFrozen() : "The permissions are frozen.";
      * @require permissions.isNotEmpty() : "The permissions are not empty.";
      * 
      * @ensure return.isActive() : "The returned credential is active.";
      */
     public static @Nonnull ClientCredential getIdentityBased(@Nonnull Role role, @Nonnull ReadonlyAgentPermissions permissions) throws SQLException, IOException, PacketException, ExternalException {
+        assert role.getIdentity() instanceof InternalPerson : "The role belongs to an internal person.";
         assert permissions.isFrozen() : "The permissions are frozen.";
         assert permissions.isNotEmpty() : "The permissions are not empty.";
         
@@ -325,6 +329,7 @@ public final class ClientCredential extends Credential implements Immutable {
     private static final @Nonnull ConcurrentMap<Role, ConcurrentMap<Pair<CertifiedAttributeValue, ReadonlyAgentPermissions>, ClientCredential>> attributeBasedCredentials = new ConcurrentHashMap<Role, ConcurrentMap<Pair<CertifiedAttributeValue, ReadonlyAgentPermissions>, ClientCredential>>();
     
     public static @Nonnull ClientCredential getAttributeBased(@Nonnull Role role, @Nonnull CertifiedAttributeValue value, @Nonnull ReadonlyAgentPermissions permissions) throws SQLException, IOException, PacketException, ExternalException {
+        assert role.getIdentity() instanceof InternalPerson : "The role belongs to an internal person.";
         assert permissions.isFrozen() : "The permissions are frozen.";
         assert permissions.isNotEmpty() : "The permissions are not empty.";
         
