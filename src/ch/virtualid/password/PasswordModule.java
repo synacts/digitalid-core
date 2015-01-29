@@ -44,6 +44,9 @@ import javax.annotation.Nullable;
  */
 public final class PasswordModule implements BothModule {
     
+    /**
+     * Stores an instance of this module.
+     */
     public static final PasswordModule MODULE = new PasswordModule();
     
     @Pure
@@ -70,14 +73,14 @@ public final class PasswordModule implements BothModule {
     
     
     /**
-     * Stores the semantic type {@code entry.passwords.module@virtualid.ch}.
+     * Stores the semantic type {@code entry.password.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType MODULE_ENTRY = SemanticType.create("entry.passwords.module@virtualid.ch").load(TupleWrapper.TYPE, Identity.IDENTIFIER, Password.TYPE);
+    private static final @Nonnull SemanticType MODULE_ENTRY = SemanticType.create("entry.password.module@virtualid.ch").load(TupleWrapper.TYPE, Identity.IDENTIFIER, Password.TYPE);
     
     /**
-     * Stores the semantic type {@code passwords.module@virtualid.ch}.
+     * Stores the semantic type {@code password.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType MODULE_FORMAT = SemanticType.create("passwords.module@virtualid.ch").load(ListWrapper.TYPE, MODULE_ENTRY);
+    private static final @Nonnull SemanticType MODULE_FORMAT = SemanticType.create("password.module@virtualid.ch").load(ListWrapper.TYPE, MODULE_ENTRY);
     
     @Pure
     @Override

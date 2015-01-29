@@ -176,6 +176,7 @@ public final class Server {
      * Shuts down the server after having handled all pending requests.
      */
     public static void shutDown() {
+        Database.shutDown();
         listener.shutDown();
         Synchronizer.shutDown();
         System.exit(0);

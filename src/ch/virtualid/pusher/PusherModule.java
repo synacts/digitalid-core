@@ -33,6 +33,9 @@ import javax.annotation.Nullable;
  */
 public final class PusherModule implements BothModule {
     
+    /**
+     * Stores an instance of this module.
+     */
     public static final PusherModule MODULE = new PusherModule();
     
     @Pure

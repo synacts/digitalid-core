@@ -4,14 +4,13 @@ import ch.virtualid.agent.Agent;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.contact.Contact;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.entity.Site;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.host.Host;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.BothModule;
-import ch.virtualid.host.Host;
 import ch.virtualid.service.CoreService;
 import ch.virtualid.service.Service;
 import ch.virtualid.util.FreezableLinkedList;
@@ -33,6 +32,9 @@ import javax.annotation.Nullable;
  */
 public final class ContactModule implements BothModule {
     
+    /**
+     * Stores an instance of this module.
+     */
     public static final ContactModule MODULE = new ContactModule();
     
     @Pure

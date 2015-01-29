@@ -28,7 +28,6 @@ import ch.virtualid.identity.IdentityClass;
 import ch.virtualid.identity.InternalNonHostIdentity;
 import ch.virtualid.identity.Mapper;
 import ch.virtualid.identity.SemanticType;
-import ch.virtualid.io.Level;
 import ch.virtualid.module.BothModule;
 import ch.virtualid.packet.Packet;
 import ch.virtualid.service.CoreService;
@@ -47,8 +46,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
-import java.util.Timer;
-import java.util.TimerTask;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -78,24 +75,14 @@ public final class ActionModule implements BothModule {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "action (entity " + EntityClass.FORMAT + " NOT NULL, service " + Mapper.FORMAT + " NOT NULL, time " + Time.FORMAT + " NOT NULL, " + AgentPermissions.FORMAT_NULL + ", " + Restrictions.FORMAT + ", agent " + Agent.FORMAT + ", recipient " + IdentifierClass.FORMAT + " NOT NULL, action " + Block.FORMAT + " NOT NULL, PRIMARY KEY (entity, service, time), INDEX(time), FOREIGN KEY (entity) " + site.getEntityReference() + ", FOREIGN KEY (service) " + Mapper.REFERENCE + ", " + AgentPermissions.REFERENCE + ", " + Restrictions.getForeignKeys(site) + ", FOREIGN KEY (entity, agent) " + Agent.getReference(site) + ")");
             Mapper.addReference(site + "action", "contact");
             if (site instanceof Host) Mapper.addReference(site + "action", "entity", "entity", "time");
+            Database.addRegularPurging(site + "action", Time.TROPICAL_YEAR);
         }
-        
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                try (@Nonnull Statement statement = Database.createStatement()) {
-                    statement.executeUpdate("DELETE FROM " + site + "action WHERE time < " + Time.TROPICAL_YEAR.ago());
-                    Database.commit();
-                } catch (@Nonnull SQLException exception) {
-                    Database.LOGGER.log(Level.WARNING, exception);
-                }
-            }
-        }, Time.HOUR.getValue(), Time.MONTH.getValue());
     }
     
     @Override
     public void deleteTables(@Nonnull Site site) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
+            Database.removeRegularPurging(site + "action");
             if (site instanceof Host) Mapper.removeReference(site + "action", "entity", "entity", "time");
             Mapper.removeReference(site + "action", "contact");
             statement.executeUpdate("DROP TABLE IF EXISTS " + site + "action");

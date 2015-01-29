@@ -81,31 +81,31 @@ public final class AttributeModule implements BothModule {
     
     
     /**
-     * Stores the semantic type {@code entry.value.attributes.module@virtualid.ch}.
+     * Stores the semantic type {@code entry.value.attribute.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType VALUE_MODULE_ENTRY = SemanticType.create("entry.value.attributes.module@virtualid.ch").load(TupleWrapper.TYPE, Identity.IDENTIFIER, SemanticType.ATTRIBUTE_IDENTIFIER, AttributeValue.PUBLISHED, AttributeValue.TYPE);
+    private static final @Nonnull SemanticType VALUE_MODULE_ENTRY = SemanticType.create("entry.value.attribute.module@virtualid.ch").load(TupleWrapper.TYPE, Identity.IDENTIFIER, SemanticType.ATTRIBUTE_IDENTIFIER, AttributeValue.PUBLISHED, AttributeValue.TYPE);
     
     /**
-     * Stores the semantic type {@code table.value.attributes.module@virtualid.ch}.
+     * Stores the semantic type {@code table.value.attribute.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType VALUE_MODULE_TABLE = SemanticType.create("table.value.attributes.module@virtualid.ch").load(ListWrapper.TYPE, VALUE_MODULE_ENTRY);
-    
-    
-    /**
-     * Stores the semantic type {@code entry.visibility.attributes.module@virtualid.ch}.
-     */
-    private static final @Nonnull SemanticType VISIBILITY_MODULE_ENTRY = SemanticType.create("entry.visibility.attributes.module@virtualid.ch").load(TupleWrapper.TYPE, Identity.IDENTIFIER, SemanticType.ATTRIBUTE_IDENTIFIER, PassiveExpression.TYPE);
-    
-    /**
-     * Stores the semantic type {@code table.visibility.attributes.module@virtualid.ch}.
-     */
-    private static final @Nonnull SemanticType VISIBILITY_MODULE_TABLE = SemanticType.create("table.visibility.attributes.module@virtualid.ch").load(ListWrapper.TYPE, VISIBILITY_MODULE_ENTRY);
+    private static final @Nonnull SemanticType VALUE_MODULE_TABLE = SemanticType.create("table.value.attribute.module@virtualid.ch").load(ListWrapper.TYPE, VALUE_MODULE_ENTRY);
     
     
     /**
-     * Stores the semantic type {@code attributes.module@virtualid.ch}.
+     * Stores the semantic type {@code entry.visibility.attribute.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType MODULE_FORMAT = SemanticType.create("attributes.module@virtualid.ch").load(TupleWrapper.TYPE, VALUE_MODULE_TABLE, VISIBILITY_MODULE_TABLE);
+    private static final @Nonnull SemanticType VISIBILITY_MODULE_ENTRY = SemanticType.create("entry.visibility.attribute.module@virtualid.ch").load(TupleWrapper.TYPE, Identity.IDENTIFIER, SemanticType.ATTRIBUTE_IDENTIFIER, PassiveExpression.TYPE);
+    
+    /**
+     * Stores the semantic type {@code table.visibility.attribute.module@virtualid.ch}.
+     */
+    private static final @Nonnull SemanticType VISIBILITY_MODULE_TABLE = SemanticType.create("table.visibility.attribute.module@virtualid.ch").load(ListWrapper.TYPE, VISIBILITY_MODULE_ENTRY);
+    
+    
+    /**
+     * Stores the semantic type {@code attribute.module@virtualid.ch}.
+     */
+    private static final @Nonnull SemanticType MODULE_FORMAT = SemanticType.create("attribute.module@virtualid.ch").load(TupleWrapper.TYPE, VALUE_MODULE_TABLE, VISIBILITY_MODULE_TABLE);
     
     @Pure
     @Override

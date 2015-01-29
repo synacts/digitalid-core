@@ -1,10 +1,14 @@
 package ch.virtualid.credential;
 
 import ch.virtualid.annotations.Pure;
+import ch.virtualid.attribute.AttributeValue;
+import ch.virtualid.auxiliary.Time;
 import ch.virtualid.database.Database;
+import ch.virtualid.entity.EntityClass;
 import ch.virtualid.entity.Site;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.host.Host;
+import ch.virtualid.identity.Mapper;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.HostModule;
 import ch.virtualid.service.CoreService;
@@ -23,10 +27,13 @@ import javax.annotation.Nonnull;
  * This class provides database access to the {@link Credential credentials} issued by a {@link Host host}.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 0.0
+ * @version 2.0
  */
 public final class HostCredentialModule implements HostModule {
     
+    /**
+     * Stores an instance of this module.
+     */
     public static final HostCredentialModule MODULE = new HostCredentialModule();
     
     @Pure
@@ -38,27 +45,29 @@ public final class HostCredentialModule implements HostModule {
     @Override
     public void createTables(@Nonnull Site site) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
-            // TODO: Create the tables of this module.
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "credential (entity " + EntityClass.FORMAT + " NOT NULL, time " + Time.FORMAT + " NOT NULL, type " + Mapper.FORMAT + " NOT NULL, published BOOLEAN NOT NULL, value " + AttributeValue.FORMAT + " NOT NULL, PRIMARY KEY (entity, type, published), FOREIGN KEY (entity) " + site.getEntityReference() + ", FOREIGN KEY (type) " + Mapper.REFERENCE + ")");
+            Database.addRegularPurging(site + "credential", Time.TROPICAL_YEAR);
         }
     }
     
     @Override
     public void deleteTables(@Nonnull Site site) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
+            Database.removeRegularPurging(site + "credential");
             // TODO: Delete the tables of this module.
         }
     }
     
     
     /**
-     * Stores the semantic type {@code entry.host.credentials.module@virtualid.ch}.
+     * Stores the semantic type {@code entry.host.credential.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType MODULE_ENTRY = SemanticType.create("entry.host.credentials.module@virtualid.ch").load(TupleWrapper.TYPE, ch.virtualid.identity.SemanticType.UNKNOWN);
+    private static final @Nonnull SemanticType MODULE_ENTRY = SemanticType.create("entry.host.credential.module@virtualid.ch").load(TupleWrapper.TYPE, ch.virtualid.identity.SemanticType.UNKNOWN);
     
     /**
-     * Stores the semantic type {@code host.credentials.module@virtualid.ch}.
+     * Stores the semantic type {@code host.credential.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType MODULE_FORMAT = SemanticType.create("host.credentials.module@virtualid.ch").load(ListWrapper.TYPE, MODULE_ENTRY);
+    private static final @Nonnull SemanticType MODULE_FORMAT = SemanticType.create("host.credential.module@virtualid.ch").load(ListWrapper.TYPE, MODULE_ENTRY);
     
     @Pure
     @Override

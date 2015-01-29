@@ -26,12 +26,6 @@ import javax.annotation.Nullable;
 public final class Time implements Immutable, Blockable, Comparable<Time>, SQLizable {
     
     /**
-     * Stores the semantic type {@code time@virtualid.ch}.
-     */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("time@virtualid.ch").load(Int64Wrapper.TYPE);
-    
-    
-    /**
      * Stores the time of a decade (10 tropical years).
      */
     public static final @Nonnull Time DECADE = new Time(315569251900l);
@@ -106,6 +100,12 @@ public final class Time implements Immutable, Blockable, Comparable<Time>, SQLiz
      * Stores the latest possible time.
      */
     public static final @Nonnull Time MAX = new Time(Long.MAX_VALUE);
+    
+    
+    /**
+     * Stores the semantic type {@code time@virtualid.ch}.
+     */
+    public static final @Nonnull SemanticType TYPE = SemanticType.create("time@virtualid.ch").load(Int64Wrapper.TYPE);
     
     
     /**

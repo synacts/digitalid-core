@@ -152,6 +152,8 @@ public final class PublicKey implements Immutable, Blockable {
     
     /**
      * Stores the composite group for encryption and signing.
+     * 
+     * @invariant compositeGroup.hasNoOrder() : "The order of the composite group is unknown.";
      */
     private final @Nonnull Group compositeGroup;
     
@@ -212,6 +214,8 @@ public final class PublicKey implements Immutable, Blockable {
     
     /**
      * Stores the square group for verifiable encryption.
+     * 
+     * @invariant squareGroup.hasNoOrder() : "The order of the square group is unknown.";
      */
     private final @Nonnull Group squareGroup;
     
@@ -253,8 +257,8 @@ public final class PublicKey implements Immutable, Blockable {
      * @param y the encryption element of the square group.
      * @param zPlus1 the encryption base of the square group.
      * 
-     * @require compositeGroup.getOrder() == null : "The order of the composite group is not known.";
-     * @require squareGroup.getOrder() == null : "The order of the square group is not known.";
+     * @require compositeGroup.hasNoOrder() : "The order of the composite group is unknown.";
+     * @require squareGroup.hasNoOrder() : "The order of the square group is unknown.";
      *          
      * @require ab.isElement(compositeGroup) : "ab is an element in the composite group.";
      * @require au.isElement(compositeGroup) : "au is an element in the composite group.";
@@ -269,8 +273,8 @@ public final class PublicKey implements Immutable, Blockable {
      * @require verifySubgroupProof() : "Assert that au, ai, av and ao are in the subgroup of ab.";
      */
     PublicKey(@Nonnull Group compositeGroup, @Nonnull Exponent e, @Nonnull Element ab, @Nonnull Element au, @Nonnull Element ai, @Nonnull Element av, @Nonnull Element ao, @Nonnull Exponent t, @Nonnull Exponent su, @Nonnull Exponent si, @Nonnull Exponent sv, @Nonnull Exponent so, @Nonnull Group squareGroup, @Nonnull Element g, @Nonnull Element y, @Nonnull Element zPlus1) {
-        assert compositeGroup.getOrder() == null : "The order of the composite group is not known.";
-        assert squareGroup.getOrder() == null : "The order of the square group is not known.";
+        assert compositeGroup.hasNoOrder() : "The order of the composite group is unknown.";
+        assert squareGroup.hasNoOrder() : "The order of the square group is unknown.";
         
         assert ab.isElement(compositeGroup) : "ab is an element in the composite group.";
         assert au.isElement(compositeGroup) : "au is an element in the composite group.";
@@ -330,6 +334,9 @@ public final class PublicKey implements Immutable, Blockable {
         this.y = squareGroup.getElement(elements.getNotNull(14));
         this.zPlus1 = squareGroup.getElement(elements.getNotNull(15));
         
+        if (compositeGroup.hasOrder()) throw new InvalidEncodingException("The order of the composite group may not be known.");
+        if (squareGroup.hasOrder()) throw new InvalidEncodingException("The order of the square group may not be known.");
+        
         if (!verifySubgroupProof()) throw new InvalidEncodingException("The proof that au, ai, av and ao are in the subgroup of ab is invalid.");
     }
     
@@ -383,6 +390,8 @@ public final class PublicKey implements Immutable, Blockable {
      * Returns the composite group for encryption and signing.
      * 
      * @return the composite group for encryption and signing.
+     * 
+     * @return return.hasNoOrder() : "The order of the composite group is unknown.";
      */
     @Pure
     public @Nonnull Group getCompositeGroup() {
@@ -503,6 +512,8 @@ public final class PublicKey implements Immutable, Blockable {
      * Returns the square group for verifiable encryption.
      * 
      * @return the square group for verifiable encryption.
+     * 
+     * @ensure return.hasNoOrder() : "The order of the square group is unknown.";
      */
     @Pure
     public @Nonnull Group getSquareGroup() {

@@ -47,6 +47,9 @@ public final class ContextModule implements BothModule {
      */
     public static void initialize() {}
     
+    /**
+     * Stores an instance of this module.
+     */
     static final ContextModule MODULE = new ContextModule();
     
     @Pure

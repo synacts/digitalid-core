@@ -26,6 +26,9 @@ import javax.annotation.Nonnull;
  */
 public final class TokenModule implements HostModule {
     
+    /**
+     * Stores an instance of this module.
+     */
     public static final TokenModule MODULE = new TokenModule();
     
     @Pure

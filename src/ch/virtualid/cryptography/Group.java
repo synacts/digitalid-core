@@ -1,6 +1,7 @@
 package ch.virtualid.cryptography;
 
 import ch.virtualid.annotations.Pure;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
@@ -8,7 +9,6 @@ import ch.virtualid.util.FreezableArray;
 import ch.xdf.Block;
 import ch.xdf.IntegerWrapper;
 import ch.xdf.TupleWrapper;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.Random;
@@ -118,14 +118,38 @@ public final class Group implements Immutable, Blockable {
     }
     
     /**
-     * Returns the order of this group or null if it is unknown.
+     * Returns whether the order of this group is known.
      * 
-     * @return the order of this group or null if it is unknown.
-     * 
-     * @ensure order == null || order.compareTo(BigInteger.ZERO) == 1 && order.compareTo(modulus) == -1 : "The order is either unknown (indicated with null) or positive and smaller than the modulus.";
+     * @return whether the order of this group is known.
      */
     @Pure
-    public @Nullable BigInteger getOrder() {
+    public boolean hasOrder() {
+        return order != null;
+    }
+    
+    /**
+     * Returns whether the order of this group is unknown.
+     * 
+     * @return whether the order of this group is unknown.
+     */
+    @Pure
+    public boolean hasNoOrder() {
+        return order == null;
+    }
+    
+    /**
+     * Returns the order of this group.
+     * 
+     * @return the order of this group.
+     * 
+     * @require hasOrder() : "The order of this group is known.";
+     * 
+     * @ensure order.compareTo(BigInteger.ZERO) == 1 && order.compareTo(modulus) == -1 : "The order is positive and smaller than the modulus.";
+     */
+    @Pure
+    public @Nonnull BigInteger getOrder() {
+        assert order != null : "The order of this group is known.";
+        
         return order;
     }
     
@@ -133,9 +157,15 @@ public final class Group implements Immutable, Blockable {
      * Returns a new group with the same modulus but without the order.
      * 
      * @return a new group with the same modulus but without the order.
+     * 
+     * @require hasOrder() : "The order of this group is known.";
+     * 
+     * @ensure return.hasNoOrder() : "The order of the returned group is unknown.";
      */
     @Pure
     public @Nonnull Group dropOrder() {
+        assert hasOrder() : "The order of this group is known.";
+        
         return new Group(modulus, null);
     }
     

@@ -6,13 +6,10 @@ import ch.virtualid.database.Database;
 import ch.virtualid.errors.InitializationError;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
-import ch.virtualid.io.Level;
 import ch.xdf.EncryptionWrapper;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Timer;
-import java.util.TimerTask;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -36,17 +33,7 @@ public final class Replay {
             throw new InitializationError("The database table of the replay checker could not be created.", exception);
         }
         
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                try (@Nonnull Statement statement = Database.createStatement()) {
-                    statement.executeUpdate("DELETE FROM general_replay WHERE time < " + Time.HALF_HOUR.add(Time.MINUTE).ago());
-                    Database.commit();
-                } catch (@Nonnull SQLException exception) {
-                    Database.LOGGER.log(Level.WARNING, exception);
-                }
-            }
-        }, Time.MINUTE.getValue(), Time.QUARTER_HOUR.getValue());
+        Database.addRegularPurging("general_replay", Time.HALF_HOUR.add(Time.MINUTE));
     }
     
     /**

@@ -49,6 +49,9 @@ import org.javatuples.Pair;
  */
 public final class SynchronizerModule implements ClientModule {
     
+    /**
+     * Stores an instance of this module.
+     */
     public static final SynchronizerModule MODULE = new SynchronizerModule();
     
     @Pure

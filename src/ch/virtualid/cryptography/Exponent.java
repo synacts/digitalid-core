@@ -9,7 +9,6 @@ import ch.xdf.Block;
 import ch.xdf.IntegerWrapper;
 import java.math.BigInteger;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * An exponent is a number that raises elements of an arbitrary group.
@@ -89,22 +88,21 @@ public final class Exponent extends Number implements Immutable, Blockable {
     }
     
     /**
-     * Inverses this exponent if the order of the given group is known.
+     * Inverses this exponent in the given group.
      * 
      * @param group a group with known order.
      * 
      * @return the multiplicative inverse of this exponent.
      * 
-     * @require group.getOrder() != null : "The order of the group is known.";
+     * @require group.hasOrder() : "The order of the group is known.";
      * @require group.getOrder().gcd(getValue()).compareTo(BigInteger.ONE) == 0 : "The exponent is relatively prime to the group order.";
      */
     @Pure
     public @Nonnull Exponent inverse(@Nonnull Group group) {
-        final @Nullable BigInteger order = group.getOrder();
-        assert order != null : "The order of the group is known.";
-        assert order.gcd(getValue()).compareTo(BigInteger.ONE) == 0 : "The exponent is relatively prime to the group order.";
+        assert group.hasOrder() : "The order of the group is known.";
+        assert group.getOrder().gcd(getValue()).compareTo(BigInteger.ONE) == 0 : "The exponent is relatively prime to the group order.";
         
-        return new Exponent(getValue().modInverse(order));
+        return new Exponent(getValue().modInverse(group.getOrder()));
     }
     
     /**
@@ -114,11 +112,11 @@ public final class Exponent extends Number implements Immutable, Blockable {
      * 
      * @return the next (or the same) relatively prime exponent.
      * 
-     * @require group.getOrder() != null : "The order of the group is known.";
+     * @require group.hasOrder() : "The order of the group is known.";
      */
     @Pure
     public @Nonnull Exponent getNextRelativePrime(@Nonnull Group group) {
-        assert group.getOrder() != null : "The order of the group is known.";
+        assert group.hasOrder() : "The order of the group is known.";
         
         @Nonnull BigInteger next = getValue();
         while (next.gcd(group.getOrder()).compareTo(BigInteger.ONE) == 1) next = next.add(BigInteger.ONE);

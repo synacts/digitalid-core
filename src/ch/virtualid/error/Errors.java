@@ -18,6 +18,9 @@ import javax.annotation.Nonnull;
  */
 public final class Errors implements ClientModule {
     
+    /**
+     * Stores an instance of this module.
+     */
     public static final Errors MODULE = new Errors();
     
     @Pure

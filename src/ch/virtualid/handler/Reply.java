@@ -13,7 +13,6 @@ import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identifier.InternalIdentifier;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.SQLizable;
-import ch.virtualid.io.Level;
 import ch.virtualid.packet.Packet;
 import ch.xdf.Block;
 import ch.xdf.CompressionWrapper;
@@ -28,8 +27,6 @@ import java.sql.Statement;
 import java.sql.Types;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -245,17 +242,7 @@ public abstract class Reply extends Handler implements SQLizable {
             throw new InitializationError("The database table of the reply logger could not be created.", exception);
         }
         
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                try (@Nonnull Statement statement = Database.createStatement()) {
-                    statement.executeUpdate("DELETE FROM general_reply WHERE time < " + Time.TWO_YEARS.ago());
-                    Database.commit();
-                } catch (@Nonnull SQLException exception) {
-                    Database.LOGGER.log(Level.WARNING, exception);
-                }
-            }
-        }, 3600000l, 2592000000l); // Time.HOUR.getValue(), Time.MONTH.getValue() (The initialization of the time class should not be triggered.)
+        Database.addRegularPurging("general_reply", Time.TWO_YEARS);
     }
     
     /**

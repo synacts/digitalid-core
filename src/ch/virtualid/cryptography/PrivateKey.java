@@ -60,6 +60,8 @@ public final class PrivateKey implements Immutable, Blockable {
     
     /**
      * Stores the composite group of this private key.
+     * 
+     * @invariant compositeGroup.hasOrder() : "The order of the composite group is known.";
      */
     private final @Nonnull Group compositeGroup;
     
@@ -100,6 +102,8 @@ public final class PrivateKey implements Immutable, Blockable {
     
     /**
      * Stores the square group of this private key.
+     * 
+     * @invariant squareGroup.hasOrder() : "The order of the square group is known.";
      */
     private final @Nonnull Group squareGroup;
     
@@ -117,9 +121,13 @@ public final class PrivateKey implements Immutable, Blockable {
      * @param x the decryption exponent of the private key.
      * 
      * @require compositeGroup.getModulus().equals(p.multiply(q)) : "The modulus of the composite group is the product of p and q.";
+     * @require compositeGroup.hasOrder() : "The order of the composite group is known.";
+     * @require squareGroup.hasOrder() : "The order of the square group is known.";
      */
     PrivateKey(@Nonnull Group compositeGroup, @Nonnull BigInteger p, @Nonnull BigInteger q, @Nonnull Exponent d, @Nonnull Group squareGroup, @Nonnull Exponent x) {
         assert compositeGroup.getModulus().equals(p.multiply(q)) : "The modulus of the composite group is the product of p and q.";
+        assert compositeGroup.hasOrder() : "The order of the composite group is known.";
+        assert squareGroup.hasOrder() : "The order of the square group is known.";
         
         this.compositeGroup = compositeGroup;
         this.p = p;
@@ -155,6 +163,9 @@ public final class PrivateKey implements Immutable, Blockable {
         this.d = new Exponent(elements.getNotNull(3));
         this.squareGroup = new Group(elements.getNotNull(4));
         this.x = new Exponent(elements.getNotNull(5));
+        
+        if (compositeGroup.hasNoOrder()) throw new InvalidEncodingException("The order of the composite group may not be unknown.");
+        if (squareGroup.hasNoOrder()) throw new InvalidEncodingException("The order of the square group may not be unknown.");
         
         if (!compositeGroup.getModulus().equals(p.multiply(q))) throw new InvalidEncodingException("The modulus of the composite group has to be the product of p and q.");
         
@@ -192,6 +203,8 @@ public final class PrivateKey implements Immutable, Blockable {
      * Returns the composite group of this private key.
      * 
      * @return the composite group of this private key.
+     * 
+     * @ensure return.hasOrder() : "The order of the composite group is known.";
      */
     @Pure
     public @Nonnull Group getCompositeGroup() {
@@ -238,6 +251,8 @@ public final class PrivateKey implements Immutable, Blockable {
      * Returns the square group of this private key.
      * 
      * @return the square group of this private key.
+     * 
+     * @ensure return.hasOrder() : "The order of the square group is known.";
      */
     @Pure
     public @Nonnull Group getSquareGroup() {

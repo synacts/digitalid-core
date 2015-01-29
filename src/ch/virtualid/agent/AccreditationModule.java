@@ -20,6 +20,9 @@ import javax.annotation.Nonnull;
  */
 public final class AccreditationModule implements ClientModule {
     
+    /**
+     * Stores an instance of this module.
+     */
     public static final AccreditationModule MODULE = new AccreditationModule();
     
     @Pure

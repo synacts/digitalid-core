@@ -32,6 +32,9 @@ import javax.annotation.Nullable;
  */
 final class AccessModule implements BothModule {
     
+    /**
+     * Stores an instance of this module.
+     */
     static final AccessModule MODULE = new AccessModule();
     
     @Pure

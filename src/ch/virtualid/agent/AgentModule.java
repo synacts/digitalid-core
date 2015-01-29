@@ -119,117 +119,117 @@ public final class AgentModule implements BothModule {
     
     
     /**
-     * Stores the semantic type {@code entry.agent.agents.module@virtualid.ch}.
+     * Stores the semantic type {@code entry.agent.agent.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType AGENT_MODULE_ENTRY = SemanticType.create("entry.agent.agents.module@virtualid.ch").load(TupleWrapper.TYPE, Identity.IDENTIFIER, Agent.NUMBER, Agent.CLIENT, Agent.REMOVED);
+    private static final @Nonnull SemanticType AGENT_MODULE_ENTRY = SemanticType.create("entry.agent.agent.module@virtualid.ch").load(TupleWrapper.TYPE, Identity.IDENTIFIER, Agent.NUMBER, Agent.CLIENT, Agent.REMOVED);
     
     /**
-     * Stores the semantic type {@code table.agent.agents.module@virtualid.ch}.
+     * Stores the semantic type {@code table.agent.agent.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType AGENT_MODULE_TABLE = SemanticType.create("table.agent.agents.module@virtualid.ch").load(ListWrapper.TYPE, AGENT_MODULE_ENTRY);
-    
-    
-    /**
-     * Stores the semantic type {@code entry.permission.agent.agents.module@virtualid.ch}.
-     */
-    private static final @Nonnull SemanticType AGENT_PERMISSION_MODULE_ENTRY = SemanticType.create("entry.permission.agent.agents.module@virtualid.ch").load(TupleWrapper.TYPE, Identity.IDENTIFIER, Agent.NUMBER, AgentPermissions.TYPE);
-    
-    /**
-     * Stores the semantic type {@code table.permission.agent.agents.module@virtualid.ch}.
-     */
-    private static final @Nonnull SemanticType AGENT_PERMISSION_MODULE_TABLE = SemanticType.create("table.permission.agent.agents.module@virtualid.ch").load(ListWrapper.TYPE, AGENT_PERMISSION_MODULE_ENTRY);
+    private static final @Nonnull SemanticType AGENT_MODULE_TABLE = SemanticType.create("table.agent.agent.module@virtualid.ch").load(ListWrapper.TYPE, AGENT_MODULE_ENTRY);
     
     
     /**
-     * Stores the semantic type {@code stronger.order.permission.agent.agents.module@virtualid.ch}.
+     * Stores the semantic type {@code entry.permission.agent.agent.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType AGENT_PERMISSION_ORDER_STRONGER = SemanticType.create("stronger.order.permission.agent.agents.module@virtualid.ch").load(Agent.NUMBER);
+    private static final @Nonnull SemanticType AGENT_PERMISSION_MODULE_ENTRY = SemanticType.create("entry.permission.agent.agent.module@virtualid.ch").load(TupleWrapper.TYPE, Identity.IDENTIFIER, Agent.NUMBER, AgentPermissions.TYPE);
     
     /**
-     * Stores the semantic type {@code weaker.order.permission.agent.agents.module@virtualid.ch}.
+     * Stores the semantic type {@code table.permission.agent.agent.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType AGENT_PERMISSION_ORDER_WEAKER = SemanticType.create("weaker.order.permission.agent.agents.module@virtualid.ch").load(Agent.NUMBER);
-    
-    /**
-     * Stores the semantic type {@code entry.order.permission.agent.agents.module@virtualid.ch}.
-     */
-    private static final @Nonnull SemanticType AGENT_PERMISSION_ORDER_MODULE_ENTRY = SemanticType.create("entry.order.permission.agent.agents.module@virtualid.ch").load(TupleWrapper.TYPE, Identity.IDENTIFIER, AGENT_PERMISSION_ORDER_STRONGER, AGENT_PERMISSION_ORDER_WEAKER);
-    
-    /**
-     * Stores the semantic type {@code table.order.permission.agent.agents.module@virtualid.ch}.
-     */
-    private static final @Nonnull SemanticType AGENT_PERMISSION_ORDER_MODULE_TABLE = SemanticType.create("table.order.permission.agent.agents.module@virtualid.ch").load(ListWrapper.TYPE, AGENT_PERMISSION_ORDER_MODULE_ENTRY);
+    private static final @Nonnull SemanticType AGENT_PERMISSION_MODULE_TABLE = SemanticType.create("table.permission.agent.agent.module@virtualid.ch").load(ListWrapper.TYPE, AGENT_PERMISSION_MODULE_ENTRY);
     
     
     /**
-     * Stores the semantic type {@code entry.restrictions.agent.agents.module@virtualid.ch}.
+     * Stores the semantic type {@code stronger.order.permission.agent.agent.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType AGENT_RESTRICTIONS_MODULE_ENTRY = SemanticType.create("entry.restrictions.agent.agents.module@virtualid.ch").load(TupleWrapper.TYPE, Identity.IDENTIFIER, Agent.NUMBER, Restrictions.TYPE);
+    private static final @Nonnull SemanticType AGENT_PERMISSION_ORDER_STRONGER = SemanticType.create("stronger.order.permission.agent.agent.module@virtualid.ch").load(Agent.NUMBER);
     
     /**
-     * Stores the semantic type {@code table.restrictions.agent.agents.module@virtualid.ch}.
+     * Stores the semantic type {@code weaker.order.permission.agent.agent.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType AGENT_RESTRICTIONS_MODULE_TABLE = SemanticType.create("table.restrictions.agent.agents.module@virtualid.ch").load(ListWrapper.TYPE, AGENT_RESTRICTIONS_MODULE_ENTRY);
-    
-    
-    /**
-     * Stores the semantic type {@code stronger.order.restrictions.agent.agents.module@virtualid.ch}.
-     */
-    private static final @Nonnull SemanticType AGENT_RESTRICTIONS_ORDER_STRONGER = SemanticType.create("stronger.order.restrictions.agent.agents.module@virtualid.ch").load(Agent.NUMBER);
+    private static final @Nonnull SemanticType AGENT_PERMISSION_ORDER_WEAKER = SemanticType.create("weaker.order.permission.agent.agent.module@virtualid.ch").load(Agent.NUMBER);
     
     /**
-     * Stores the semantic type {@code weaker.order.restrictions.agent.agents.module@virtualid.ch}.
+     * Stores the semantic type {@code entry.order.permission.agent.agent.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType AGENT_RESTRICTIONS_ORDER_WEAKER = SemanticType.create("weaker.order.restrictions.agent.agents.module@virtualid.ch").load(Agent.NUMBER);
+    private static final @Nonnull SemanticType AGENT_PERMISSION_ORDER_MODULE_ENTRY = SemanticType.create("entry.order.permission.agent.agent.module@virtualid.ch").load(TupleWrapper.TYPE, Identity.IDENTIFIER, AGENT_PERMISSION_ORDER_STRONGER, AGENT_PERMISSION_ORDER_WEAKER);
     
     /**
-     * Stores the semantic type {@code entry.order.restrictions.agent.agents.module@virtualid.ch}.
+     * Stores the semantic type {@code table.order.permission.agent.agent.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType AGENT_RESTRICTIONS_ORDER_MODULE_ENTRY = SemanticType.create("entry.order.restrictions.agent.agents.module@virtualid.ch").load(TupleWrapper.TYPE, Identity.IDENTIFIER, AGENT_RESTRICTIONS_ORDER_STRONGER, AGENT_RESTRICTIONS_ORDER_WEAKER);
-    
-    /**
-     * Stores the semantic type {@code table.order.restrictions.agent.agents.module@virtualid.ch}.
-     */
-    private static final @Nonnull SemanticType AGENT_RESTRICTIONS_ORDER_MODULE_TABLE = SemanticType.create("table.order.restrictions.agent.agents.module@virtualid.ch").load(ListWrapper.TYPE, AGENT_RESTRICTIONS_ORDER_MODULE_ENTRY);
+    private static final @Nonnull SemanticType AGENT_PERMISSION_ORDER_MODULE_TABLE = SemanticType.create("table.order.permission.agent.agent.module@virtualid.ch").load(ListWrapper.TYPE, AGENT_PERMISSION_ORDER_MODULE_ENTRY);
     
     
     /**
-     * Stores the semantic type {@code entry.client.agents.module@virtualid.ch}.
+     * Stores the semantic type {@code entry.restrictions.agent.agent.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType CLIENT_MODULE_ENTRY = SemanticType.create("entry.client.agents.module@virtualid.ch").load(TupleWrapper.TYPE, Identity.IDENTIFIER, Agent.NUMBER, Commitment.TYPE, Client.NAME, Client.ICON);
+    private static final @Nonnull SemanticType AGENT_RESTRICTIONS_MODULE_ENTRY = SemanticType.create("entry.restrictions.agent.agent.module@virtualid.ch").load(TupleWrapper.TYPE, Identity.IDENTIFIER, Agent.NUMBER, Restrictions.TYPE);
     
     /**
-     * Stores the semantic type {@code table.client.agents.module@virtualid.ch}.
+     * Stores the semantic type {@code table.restrictions.agent.agent.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType CLIENT_MODULE_TABLE = SemanticType.create("table.client.agents.module@virtualid.ch").load(ListWrapper.TYPE, CLIENT_MODULE_ENTRY);
-    
-    
-    /**
-     * Stores the semantic type {@code entry.outgoing.role.agents.module@virtualid.ch}.
-     */
-    private static final @Nonnull SemanticType OUTGOING_ROLE_MODULE_ENTRY = SemanticType.create("entry.outgoing.role.agents.module@virtualid.ch").load(TupleWrapper.TYPE, Identity.IDENTIFIER, Agent.NUMBER, NonNativeRole.RELATION, Context.TYPE);
-    
-    /**
-     * Stores the semantic type {@code table.outgoing.role.agents.module@virtualid.ch}.
-     */
-    private static final @Nonnull SemanticType OUTGOING_ROLE_MODULE_TABLE = SemanticType.create("table.outgoing.role.agents.module@virtualid.ch").load(ListWrapper.TYPE, OUTGOING_ROLE_MODULE_ENTRY);
+    private static final @Nonnull SemanticType AGENT_RESTRICTIONS_MODULE_TABLE = SemanticType.create("table.restrictions.agent.agent.module@virtualid.ch").load(ListWrapper.TYPE, AGENT_RESTRICTIONS_MODULE_ENTRY);
     
     
     /**
-     * Stores the semantic type {@code entry.incoming.role.agents.module@virtualid.ch}.
+     * Stores the semantic type {@code stronger.order.restrictions.agent.agent.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType INCOMING_ROLE_MODULE_ENTRY = SemanticType.create("entry.incoming.role.agents.module@virtualid.ch").load(TupleWrapper.TYPE, Identity.IDENTIFIER, Role.ISSUER, Role.RELATION, Role.AGENT);
+    private static final @Nonnull SemanticType AGENT_RESTRICTIONS_ORDER_STRONGER = SemanticType.create("stronger.order.restrictions.agent.agent.module@virtualid.ch").load(Agent.NUMBER);
     
     /**
-     * Stores the semantic type {@code table.incoming.role.agents.module@virtualid.ch}.
+     * Stores the semantic type {@code weaker.order.restrictions.agent.agent.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType INCOMING_ROLE_MODULE_TABLE = SemanticType.create("table.incoming.role.agents.module@virtualid.ch").load(ListWrapper.TYPE, INCOMING_ROLE_MODULE_ENTRY);
+    private static final @Nonnull SemanticType AGENT_RESTRICTIONS_ORDER_WEAKER = SemanticType.create("weaker.order.restrictions.agent.agent.module@virtualid.ch").load(Agent.NUMBER);
+    
+    /**
+     * Stores the semantic type {@code entry.order.restrictions.agent.agent.module@virtualid.ch}.
+     */
+    private static final @Nonnull SemanticType AGENT_RESTRICTIONS_ORDER_MODULE_ENTRY = SemanticType.create("entry.order.restrictions.agent.agent.module@virtualid.ch").load(TupleWrapper.TYPE, Identity.IDENTIFIER, AGENT_RESTRICTIONS_ORDER_STRONGER, AGENT_RESTRICTIONS_ORDER_WEAKER);
+    
+    /**
+     * Stores the semantic type {@code table.order.restrictions.agent.agent.module@virtualid.ch}.
+     */
+    private static final @Nonnull SemanticType AGENT_RESTRICTIONS_ORDER_MODULE_TABLE = SemanticType.create("table.order.restrictions.agent.agent.module@virtualid.ch").load(ListWrapper.TYPE, AGENT_RESTRICTIONS_ORDER_MODULE_ENTRY);
     
     
     /**
-     * Stores the semantic type {@code agents.module@virtualid.ch}.
+     * Stores the semantic type {@code entry.client.agent.module@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType MODULE_FORMAT = SemanticType.create("agents.module@virtualid.ch").load(TupleWrapper.TYPE, AGENT_MODULE_TABLE, AGENT_PERMISSION_MODULE_TABLE, AGENT_PERMISSION_ORDER_MODULE_TABLE, AGENT_RESTRICTIONS_MODULE_TABLE, AGENT_RESTRICTIONS_ORDER_MODULE_TABLE, CLIENT_MODULE_TABLE, INCOMING_ROLE_MODULE_TABLE, OUTGOING_ROLE_MODULE_TABLE);
+    private static final @Nonnull SemanticType CLIENT_MODULE_ENTRY = SemanticType.create("entry.client.agent.module@virtualid.ch").load(TupleWrapper.TYPE, Identity.IDENTIFIER, Agent.NUMBER, Commitment.TYPE, Client.NAME, Client.ICON);
+    
+    /**
+     * Stores the semantic type {@code table.client.agent.module@virtualid.ch}.
+     */
+    private static final @Nonnull SemanticType CLIENT_MODULE_TABLE = SemanticType.create("table.client.agent.module@virtualid.ch").load(ListWrapper.TYPE, CLIENT_MODULE_ENTRY);
+    
+    
+    /**
+     * Stores the semantic type {@code entry.outgoing.role.agent.module@virtualid.ch}.
+     */
+    private static final @Nonnull SemanticType OUTGOING_ROLE_MODULE_ENTRY = SemanticType.create("entry.outgoing.role.agent.module@virtualid.ch").load(TupleWrapper.TYPE, Identity.IDENTIFIER, Agent.NUMBER, NonNativeRole.RELATION, Context.TYPE);
+    
+    /**
+     * Stores the semantic type {@code table.outgoing.role.agent.module@virtualid.ch}.
+     */
+    private static final @Nonnull SemanticType OUTGOING_ROLE_MODULE_TABLE = SemanticType.create("table.outgoing.role.agent.module@virtualid.ch").load(ListWrapper.TYPE, OUTGOING_ROLE_MODULE_ENTRY);
+    
+    
+    /**
+     * Stores the semantic type {@code entry.incoming.role.agent.module@virtualid.ch}.
+     */
+    private static final @Nonnull SemanticType INCOMING_ROLE_MODULE_ENTRY = SemanticType.create("entry.incoming.role.agent.module@virtualid.ch").load(TupleWrapper.TYPE, Identity.IDENTIFIER, Role.ISSUER, Role.RELATION, Role.AGENT);
+    
+    /**
+     * Stores the semantic type {@code table.incoming.role.agent.module@virtualid.ch}.
+     */
+    private static final @Nonnull SemanticType INCOMING_ROLE_MODULE_TABLE = SemanticType.create("table.incoming.role.agent.module@virtualid.ch").load(ListWrapper.TYPE, INCOMING_ROLE_MODULE_ENTRY);
+    
+    
+    /**
+     * Stores the semantic type {@code agent.module@virtualid.ch}.
+     */
+    private static final @Nonnull SemanticType MODULE_FORMAT = SemanticType.create("agent.module@virtualid.ch").load(TupleWrapper.TYPE, AGENT_MODULE_TABLE, AGENT_PERMISSION_MODULE_TABLE, AGENT_PERMISSION_ORDER_MODULE_TABLE, AGENT_RESTRICTIONS_MODULE_TABLE, AGENT_RESTRICTIONS_ORDER_MODULE_TABLE, CLIENT_MODULE_TABLE, INCOMING_ROLE_MODULE_TABLE, OUTGOING_ROLE_MODULE_TABLE);
     
     @Pure
     @Override
