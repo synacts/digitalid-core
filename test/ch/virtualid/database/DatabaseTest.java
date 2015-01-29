@@ -212,7 +212,7 @@ public class DatabaseTest {
             try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement("SELECT block FROM test_block")) {
                 final @Nonnull ResultSet resultSet = preparedStatement.executeQuery();
                 Assert.assertTrue(resultSet.next());
-                final @Nonnull Block block = Block.get(TUPLE, resultSet, 1);
+                final @Nonnull Block block = Block.getNotNull(TUPLE, resultSet, 1);
                 final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(2);
                 Assert.assertEquals(string1, new StringWrapper(elements.getNotNull(0)).getString());
                 Assert.assertEquals(string2, new StringWrapper(elements.getNotNull(1)).getString());

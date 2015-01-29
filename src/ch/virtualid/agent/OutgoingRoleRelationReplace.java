@@ -11,7 +11,6 @@ import ch.virtualid.identity.IdentityClass;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.BothModule;
 import ch.virtualid.service.CoreServiceInternalAction;
-import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.ReadonlyArray;
 import ch.xdf.Block;
 import ch.xdf.SignatureWrapper;
@@ -111,7 +110,7 @@ final class OutgoingRoleRelationReplace extends CoreServiceInternalAction {
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        return new TupleWrapper(TYPE, new FreezableArray<Block>(outgoingRole.toBlock(), oldRelation.toBlock().setType(OLD_RELATION), newRelation.toBlock().setType(NEW_RELATION)).freeze()).toBlock();
+        return new TupleWrapper(TYPE, outgoingRole.toBlock(), oldRelation.toBlock().setType(OLD_RELATION), newRelation.toBlock().setType(NEW_RELATION)).toBlock();
     }
     
     @Pure

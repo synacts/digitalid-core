@@ -264,7 +264,7 @@ public class Commitment implements Immutable, Blockable, SQLizable {
         try {
             final @Nonnull HostIdentity host = IdentityClass.getNotNull(resultSet, startIndex + 0).toHostIdentity();
             final @Nonnull Time time = Time.get(resultSet, startIndex + 1);
-            final @Nonnull BigInteger value = new IntegerWrapper(Block.get(Element.TYPE, resultSet, startIndex + 2)).getValue();
+            final @Nonnull BigInteger value = new IntegerWrapper(Block.getNotNull(Element.TYPE, resultSet, startIndex + 2)).getValue();
             return new Commitment(host, time, value);
         } catch (@Nonnull IOException | PacketException | ExternalException exception) {
             throw new SQLException("A problem occurred while retrieving a commitment.", exception);

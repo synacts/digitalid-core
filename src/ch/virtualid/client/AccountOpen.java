@@ -33,7 +33,6 @@ import ch.virtualid.packet.ClientRequest;
 import ch.virtualid.packet.Response;
 import ch.virtualid.service.CoreService;
 import ch.virtualid.service.Service;
-import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.FreezableArrayList;
 import ch.virtualid.util.ReadonlyArray;
 import ch.xdf.Block;
@@ -163,7 +162,7 @@ public final class AccountOpen extends Action {
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        return new TupleWrapper(TYPE, new FreezableArray<Block>(category.toBlock(), new Int64Wrapper(Agent.NUMBER, agentNumber).toBlock(), new StringWrapper(Client.NAME, name).toBlock(), icon.toBlock().setType(Client.ICON)).freeze()).toBlock();
+        return new TupleWrapper(TYPE, category.toBlock(), new Int64Wrapper(Agent.NUMBER, agentNumber).toBlock(), new StringWrapper(Client.NAME, name).toBlock(), icon.toBlock().setType(Client.ICON)).toBlock();
     }
     
     @Pure

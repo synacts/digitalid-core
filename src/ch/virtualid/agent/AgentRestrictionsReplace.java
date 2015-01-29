@@ -11,7 +11,6 @@ import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.BothModule;
 import ch.virtualid.service.CoreServiceInternalAction;
-import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.ReadonlyArray;
 import ch.xdf.Block;
 import ch.xdf.SignatureWrapper;
@@ -112,7 +111,7 @@ final class AgentRestrictionsReplace extends CoreServiceInternalAction {
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        return new TupleWrapper(TYPE, new FreezableArray<Block>(agent.toBlock(), oldRestrictions.toBlock().setType(OLD_RESTRICTIONS), newRestrictions.toBlock().setType(NEW_RESTRICTIONS)).freeze()).toBlock();
+        return new TupleWrapper(TYPE, agent.toBlock(), oldRestrictions.toBlock().setType(OLD_RESTRICTIONS), newRestrictions.toBlock().setType(NEW_RESTRICTIONS)).toBlock();
     }
     
     @Pure

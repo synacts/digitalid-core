@@ -12,7 +12,6 @@ import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.BothModule;
 import ch.virtualid.service.CoreServiceInternalAction;
-import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.ReadonlyArray;
 import ch.xdf.Block;
 import ch.xdf.SignatureWrapper;
@@ -103,7 +102,7 @@ final class ClientAgentCommitmentReplace extends CoreServiceInternalAction {
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        return new TupleWrapper(TYPE, new FreezableArray<Block>(clientAgent.toBlock(), oldCommitment.toBlock().setType(OLD_COMMITMENT), newCommitment.toBlock().setType(NEW_COMMITMENT)).freeze()).toBlock();
+        return new TupleWrapper(TYPE, clientAgent.toBlock(), oldCommitment.toBlock().setType(OLD_COMMITMENT), newCommitment.toBlock().setType(NEW_COMMITMENT)).toBlock();
     }
     
     @Pure

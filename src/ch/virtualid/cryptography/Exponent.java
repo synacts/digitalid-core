@@ -5,10 +5,15 @@ import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
+import ch.virtualid.interfaces.SQLizable;
 import ch.xdf.Block;
 import ch.xdf.IntegerWrapper;
 import java.math.BigInteger;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * An exponent is a number that raises elements of an arbitrary group.
@@ -16,7 +21,7 @@ import javax.annotation.Nonnull;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0
  */
-public final class Exponent extends Number implements Immutable, Blockable {
+public final class Exponent extends Number implements Immutable, Blockable, SQLizable {
     
     /**
      * Stores the semantic type {@code exponent.group@virtualid.ch}.
@@ -121,6 +126,70 @@ public final class Exponent extends Number implements Immutable, Blockable {
         @Nonnull BigInteger next = getValue();
         while (next.gcd(group.getOrder()).compareTo(BigInteger.ONE) == 1) next = next.add(BigInteger.ONE);
         return new Exponent(next);
+    }
+    
+    
+    /**
+     * Stores the data type used to store instances of this class in the database.
+     */
+    public static final @Nonnull String FORMAT = Block.FORMAT;
+    
+    /**
+     * Returns the given column of the result set as an instance of this class.
+     * 
+     * @param resultSet the result set to retrieve the data from.
+     * @param columnIndex the index of the column containing the data.
+     * 
+     * @return the given column of the result set as an instance of this class.
+     */
+    @Pure
+    public static @Nullable Exponent get(@Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+        try {
+            final @Nullable Block block = Block.get(TYPE, resultSet, columnIndex);
+            if (block == null) return null;
+            else return new Exponent(block);
+        } catch (@Nonnull InvalidEncodingException exception) {
+            throw new SQLException("The exponent returned by the database is invalid.", exception);
+        }
+    }
+    
+    /**
+     * Returns the given column of the result set as an instance of this class.
+     * 
+     * @param resultSet the result set to retrieve the data from.
+     * @param columnIndex the index of the column containing the data.
+     * 
+     * @return the given column of the result set as an instance of this class.
+     */
+    @Pure
+    public static @Nonnull Exponent getNotNull(@Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+        try {
+            return new Exponent(Block.getNotNull(TYPE, resultSet, columnIndex));
+        } catch (@Nonnull InvalidEncodingException exception) {
+            throw new SQLException("The exponent returned by the database is invalid.", exception);
+        }
+    }
+    
+    /**
+     * Sets the parameter at the given index of the prepared statement to this object.
+     * 
+     * @param preparedStatement the prepared statement whose parameter is to be set.
+     * @param parameterIndex the index of the parameter to set.
+     */
+    @Override
+    public void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+        toBlock().set(preparedStatement, parameterIndex);
+    }
+    
+    /**
+     * Sets the parameter at the given index of the prepared statement to the given exponent.
+     * 
+     * @param exponent the exponent to which the parameter at the given index is to be set.
+     * @param preparedStatement the prepared statement whose parameter is to be set.
+     * @param parameterIndex the index of the parameter to set.
+     */
+    public static void set(@Nullable Exponent exponent, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+        Block.set(Block.toBlock(exponent), preparedStatement, parameterIndex);
     }
     
 }

@@ -206,7 +206,7 @@ public final class Predecessors extends FreezableArrayList<Predecessor> implemen
         
         final @Nonnull String SQL = "SELECT predecessors FROM general_predecessors WHERE identifier = " + identifier;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
-            if (resultSet.next()) return new Predecessors(Block.get(TYPE, resultSet, 1)).freeze();
+            if (resultSet.next()) return new Predecessors(Block.getNotNull(TYPE, resultSet, 1)).freeze();
             else throw new SQLException("The identifier " + identifier + " has no predecessors.");
         } catch (@Nonnull InvalidEncodingException exception) {
             throw new SQLException("The predecessors of " + identifier + " have an invalid encoding.", exception);

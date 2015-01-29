@@ -13,7 +13,6 @@ import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.BothModule;
 import ch.virtualid.service.CoreServiceInternalAction;
-import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.ReadonlyArray;
 import ch.xdf.Block;
 import ch.xdf.SignatureWrapper;
@@ -115,7 +114,7 @@ final class ClientAgentIconReplace extends CoreServiceInternalAction {
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        return new TupleWrapper(TYPE, new FreezableArray<Block>(clientAgent.toBlock(), oldIcon.toBlock().setType(OLD_ICON), newIcon.toBlock().setType(NEW_ICON)).freeze()).toBlock();
+        return new TupleWrapper(TYPE, clientAgent.toBlock(), oldIcon.toBlock().setType(OLD_ICON), newIcon.toBlock().setType(NEW_ICON)).toBlock();
     }
     
     @Pure

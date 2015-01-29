@@ -74,7 +74,7 @@ public final class ActionModule implements BothModule {
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "action (entity " + EntityClass.FORMAT + " NOT NULL, service " + Mapper.FORMAT + " NOT NULL, time " + Time.FORMAT + " NOT NULL, " + AgentPermissions.FORMAT_NULL + ", " + Restrictions.FORMAT + ", agent " + Agent.FORMAT + ", recipient " + IdentifierClass.FORMAT + " NOT NULL, action " + Block.FORMAT + " NOT NULL, PRIMARY KEY (entity, service, time), INDEX(time), FOREIGN KEY (entity) " + site.getEntityReference() + ", FOREIGN KEY (service) " + Mapper.REFERENCE + ", " + AgentPermissions.REFERENCE + ", " + Restrictions.getForeignKeys(site) + ", FOREIGN KEY (entity, agent) " + Agent.getReference(site) + ")");
             Mapper.addReference(site + "action", "contact");
-            if (site instanceof Host) Mapper.addReference(site + "action", "entity", "entity", "time");
+            if (site instanceof Host) Mapper.addReference(site + "action", "entity", "entity", "service", "time");
             Database.addRegularPurging(site + "action", Time.TROPICAL_YEAR);
         }
     }
@@ -83,7 +83,7 @@ public final class ActionModule implements BothModule {
     public void deleteTables(@Nonnull Site site) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             Database.removeRegularPurging(site + "action");
-            if (site instanceof Host) Mapper.removeReference(site + "action", "entity", "entity", "time");
+            if (site instanceof Host) Mapper.removeReference(site + "action", "entity", "entity", "service", "time");
             Mapper.removeReference(site + "action", "contact");
             statement.executeUpdate("DROP TABLE IF EXISTS " + site + "action");
         }
@@ -121,7 +121,7 @@ public final class ActionModule implements BothModule {
                 @Nullable Long number = resultSet.getLong(11);
                 if (resultSet.wasNull()) number = null;
                 final @Nonnull Identifier recipient = IdentifierClass.get(resultSet, 12);
-                final @Nonnull Block action = Block.get(Packet.SIGNATURE, resultSet, 13);
+                final @Nonnull Block action = Block.getNotNull(Packet.SIGNATURE, resultSet, 13);
                 entries.add(new TupleWrapper(MODULE_ENTRY, account.getIdentity().toBlockable(InternalNonHostIdentity.IDENTIFIER), service.toBlockable(SemanticType.ATTRIBUTE_IDENTIFIER), time, permissions, restrictions, (number != null ? new Int64Wrapper(Agent.NUMBER, number) : null), recipient.toBlock().setType(HostIdentity.IDENTIFIER).toBlockable(), action.toBlockable()).toBlock());
             }
             return new ListWrapper(MODULE_FORMAT, entries.freeze()).toBlock();
@@ -231,7 +231,7 @@ public final class ActionModule implements BothModule {
                 final @Nonnull Time thisTime = Time.get(resultSet, 1);
                 final @Nonnull FreezableList<Block> trail = new FreezableLinkedList<Block>();
                 while (resultSet.next()) {
-                    trail.add(Block.get(Packet.SIGNATURE, resultSet, 2));
+                    trail.add(Block.getNotNull(Packet.SIGNATURE, resultSet, 2));
                 }
                 return new ResponseAudit(lastTime, thisTime, trail.freeze());
             } else throw new SQLException("This should never happen.");

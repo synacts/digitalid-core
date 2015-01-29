@@ -236,7 +236,7 @@ public abstract class AttributeValue implements Immutable, Blockable, SQLizable 
     @Pure
     public static @Nonnull AttributeValue get(@Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
         try {
-            return AttributeValue.get(Block.get(AttributeValue.TYPE, resultSet, columnIndex), true);
+            return AttributeValue.get(Block.getNotNull(TYPE, resultSet, columnIndex), true);
         } catch (@Nonnull IOException | PacketException | ExternalException exception) {
             throw new SQLException("The attribute value returned by the database is invalid.", exception);
         }

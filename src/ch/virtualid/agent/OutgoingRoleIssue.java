@@ -15,7 +15,6 @@ import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.BothModule;
 import ch.virtualid.service.CoreServiceActionReply;
 import ch.virtualid.service.CoreServiceExternalAction;
-import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.ReadonlyArray;
 import ch.xdf.Block;
 import ch.xdf.HostSignatureWrapper;
@@ -104,7 +103,7 @@ final class OutgoingRoleIssue extends CoreServiceExternalAction {
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        return new TupleWrapper(TYPE, new FreezableArray<Block>(relation.toBlock().setType(SemanticType.IDENTIFIER), new Int64Wrapper(Agent.NUMBER, agentNumber).toBlock()).freeze()).toBlock();
+        return new TupleWrapper(TYPE, relation.toBlock().setType(SemanticType.IDENTIFIER), new Int64Wrapper(Agent.NUMBER, agentNumber).toBlock()).toBlock();
     }
     
     @Pure

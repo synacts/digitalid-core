@@ -12,7 +12,6 @@ import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.BothModule;
 import ch.virtualid.service.CoreServiceInternalAction;
-import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.ReadonlyArray;
 import ch.xdf.Block;
 import ch.xdf.SignatureWrapper;
@@ -113,7 +112,7 @@ final class OutgoingRoleContextReplace extends CoreServiceInternalAction {
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        return new TupleWrapper(TYPE, new FreezableArray<Block>(outgoingRole.toBlock(), oldContext.toBlock().setType(OLD_CONTEXT), newContext.toBlock().setType(NEW_CONTEXT)).freeze()).toBlock();
+        return new TupleWrapper(TYPE, outgoingRole.toBlock(), oldContext.toBlock().setType(OLD_CONTEXT), newContext.toBlock().setType(NEW_CONTEXT)).toBlock();
     }
     
     @Pure

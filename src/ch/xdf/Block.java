@@ -668,6 +668,21 @@ public final class Block implements Immutable, SQLizable {
     
     /**
      * Returns the block at the given index of the given result set.
+     * 
+     * @param type the semantic type of the block to be returned.
+     * @param resultSet the result set whose block is to be returned.
+     * @param columnIndex the index of the block to be returned.
+     * 
+     * @return the block at the given index of the given result set.
+     */
+    public static @Nullable Block get(@Nonnull SemanticType type, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+        final @Nonnull byte[] bytes = resultSet.getBytes(columnIndex);
+        if (resultSet.wasNull()) return null;
+        else return new Block(type, bytes);
+    }
+    
+    /**
+     * Returns the block at the given index of the given result set.
      * Please note that the column of the block may not contain null.
      * 
      * @param type the semantic type of the block to be returned.
@@ -676,7 +691,7 @@ public final class Block implements Immutable, SQLizable {
      * 
      * @return the block at the given index of the given result set.
      */
-    public static @Nonnull Block get(@Nonnull SemanticType type, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+    public static @Nonnull Block getNotNull(@Nonnull SemanticType type, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
         return new Block(type, resultSet.getBytes(columnIndex));
     }
     

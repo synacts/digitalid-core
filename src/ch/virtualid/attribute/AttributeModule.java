@@ -125,7 +125,7 @@ public final class AttributeModule implements BothModule {
                     final @Nonnull Identity identity = IdentityClass.getNotNull(resultSet, 1);
                     final @Nonnull Identity type = IdentityClass.getNotNull(resultSet, 2);
                     final boolean published = resultSet.getBoolean(3);
-                    final @Nonnull Block value = Block.get(AttributeValue.TYPE, resultSet, 4);
+                    final @Nonnull Block value = Block.getNotNull(AttributeValue.TYPE, resultSet, 4);
                     entries.add(new TupleWrapper(VALUE_MODULE_ENTRY, identity, type.toBlockable(SemanticType.ATTRIBUTE_IDENTIFIER), new BooleanWrapper(AttributeValue.PUBLISHED, published), value.toBlockable()).toBlock());
                 }
                 tables.set(0, new ListWrapper(VALUE_MODULE_TABLE, entries.freeze()).toBlock());
@@ -225,7 +225,7 @@ public final class AttributeModule implements BothModule {
                 while (resultSet.next()) {
                     final @Nonnull Identity type = IdentityClass.getNotNull(resultSet, 1);
                     final boolean published = resultSet.getBoolean(2);
-                    final @Nonnull Block value = Block.get(AttributeValue.TYPE, resultSet, 3);
+                    final @Nonnull Block value = Block.getNotNull(AttributeValue.TYPE, resultSet, 3);
                     entries.add(new TupleWrapper(VALUE_STATE_ENTRY, type.toBlockable(SemanticType.ATTRIBUTE_IDENTIFIER), new BooleanWrapper(AttributeValue.PUBLISHED, published), value.toBlockable()).toBlock());
                 }
                 tables.set(0, new ListWrapper(VALUE_STATE_TABLE, entries.freeze()).toBlock());

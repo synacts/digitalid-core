@@ -204,9 +204,9 @@ final class CredentialInternalQuery extends CoreServiceInternalQuery {
             
             final @Nonnull Element c = f.multiply(publicKey.getAi().pow(i)).multiply(publicKey.getAv().pow(v)).multiply(publicKey.getAo().pow(o).inverse()).pow(e.inverse(group)).inverse();
             
-            // TODO: It is important that the issuing host keeps track of all issued credentials for up to a year. (Store the signature, restrictions (or just v?), (c), e and i, with i being the primary key?)
+            HostCredentialModule.store(account, e, i, v, signature);
             
-            return new CredentialReply(account, restrictions, c, e, i);
+            return new CredentialReply(account, restrictions, issuance, c, e, i);
         } catch (@Nonnull InvalidEncodingException exception) {
             throw new SQLException("No key was found for the time of the signature.");
         }

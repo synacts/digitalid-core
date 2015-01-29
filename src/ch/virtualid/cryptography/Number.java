@@ -1,11 +1,11 @@
 package ch.virtualid.cryptography;
 
 import ch.virtualid.annotations.Pure;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.xdf.Block;
 import ch.xdf.IntegerWrapper;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
 import java.math.BigInteger;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

@@ -82,6 +82,20 @@ public final class TupleWrapper extends BlockWrapper implements Immutable {
      * 
      * @require type.isLoaded() : "The type declaration is loaded.";
      * @require type.isBasedOn(TYPE) : "The given type is based on the indicated syntactic type.";
+     * @require basedOnParameters(type, elements) : "Each element is either null or based on the corresponding parameter of the given type.";
+     */
+    public TupleWrapper(@Nonnull SemanticType type, @Nonnull Block... elements) {
+        this(type, new FreezableArray<Block>(elements).freeze());
+    }
+    
+    /**
+     * Encodes the given elements into a new block of the given type.
+     * 
+     * @param type the semantic type of the new block.
+     * @param elements the elements to encode into a new block.
+     * 
+     * @require type.isLoaded() : "The type declaration is loaded.";
+     * @require type.isBasedOn(TYPE) : "The given type is based on the indicated syntactic type.";
      * @require basedOnParameters(type, elements.toBlock()) : "Each element is either null or based on the corresponding parameter of the given type.";
      */
     public TupleWrapper(@Nonnull SemanticType type, @Nonnull Blockable... elements) {

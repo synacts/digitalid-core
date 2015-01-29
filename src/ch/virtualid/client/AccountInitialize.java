@@ -28,7 +28,6 @@ import ch.virtualid.module.BothModule;
 import ch.virtualid.password.PasswordModule;
 import ch.virtualid.service.CoreService;
 import ch.virtualid.service.CoreServiceInternalAction;
-import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.FreezableArrayList;
 import ch.virtualid.util.FreezableList;
 import ch.virtualid.util.ReadonlyList;
@@ -134,7 +133,7 @@ public final class AccountInitialize extends CoreServiceInternalAction {
     public @Nonnull Block toBlock() {
         final @Nonnull FreezableList<Block> elements = new FreezableArrayList<Block>(states.size());
         for (final @Nonnull Pair<Predecessor, Block> state : states) {
-            elements.add(new TupleWrapper(STATE, new FreezableArray<Block>(state.getValue0().toBlock(), state.getValue1()).freeze()).toBlock());
+            elements.add(new TupleWrapper(STATE, state.getValue0().toBlock(), state.getValue1()).toBlock());
         }
         return new ListWrapper(TYPE, elements.freeze()).toBlock();
     }

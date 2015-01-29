@@ -20,7 +20,6 @@ import ch.virtualid.module.BothModule;
 import ch.virtualid.packet.Response;
 import ch.virtualid.password.Password;
 import ch.virtualid.service.CoreServiceInternalAction;
-import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.FreezableArrayList;
 import ch.virtualid.util.ReadonlyArray;
 import ch.xdf.Block;
@@ -150,7 +149,7 @@ public final class ClientAgentAccredit extends CoreServiceInternalAction {
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        return new TupleWrapper(TYPE, new FreezableArray<Block>(clientAgent.toBlock(), permissions.toBlock(), new StringWrapper(Client.NAME, name).toBlock(), icon.toBlock().setType(Client.ICON), new StringWrapper(Password.TYPE, password).toBlock()).freeze()).toBlock();
+        return new TupleWrapper(TYPE, clientAgent.toBlock(), permissions.toBlock(), new StringWrapper(Client.NAME, name).toBlock(), icon.toBlock().setType(Client.ICON), new StringWrapper(Password.TYPE, password).toBlock()).toBlock();
     }
     
     @Pure

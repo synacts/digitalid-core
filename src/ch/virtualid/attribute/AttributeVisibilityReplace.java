@@ -17,7 +17,6 @@ import ch.virtualid.identity.InternalPerson;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.BothModule;
 import ch.virtualid.service.CoreServiceInternalAction;
-import ch.virtualid.util.FreezableArray;
 import ch.xdf.Block;
 import ch.xdf.SignatureWrapper;
 import ch.xdf.TupleWrapper;
@@ -126,7 +125,7 @@ final class AttributeVisibilityReplace extends CoreServiceInternalAction {
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        return new TupleWrapper(TYPE, new FreezableArray<Block>(attribute.getType().toBlock(SemanticType.ATTRIBUTE_IDENTIFIER), Block.toBlock(OLD_VISIBILITY, oldVisibility), Block.toBlock(NEW_VISIBILITY, newVisibility)).freeze()).toBlock();
+        return new TupleWrapper(TYPE, attribute.getType().toBlock(SemanticType.ATTRIBUTE_IDENTIFIER), Block.toBlock(OLD_VISIBILITY, oldVisibility), Block.toBlock(NEW_VISIBILITY, newVisibility)).toBlock();
     }
     
     @Pure

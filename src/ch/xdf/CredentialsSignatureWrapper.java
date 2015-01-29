@@ -928,7 +928,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
                 if (lodged) {
                     final @Nonnull Block swi = rrwis[i].subtract(t.multiply(rwis[i])).toBlock().setType(SWI);
                     final @Nonnull Block swb = rrwbs[i].subtract(t.multiply(rwbs[i])).toBlock().setType(SWB);
-                    credential.set(7, new TupleWrapper(ENCRYPTION, new FreezableArray<Block>(wis[i], swi, wbs[i], swb).freeze()).toBlock());
+                    credential.set(7, new TupleWrapper(ENCRYPTION, wis[i], swi, wbs[i], swb).toBlock());
                 }
             }
             list.add(i, new TupleWrapper(CREDENTIAL, credential.freeze()).toBlock());

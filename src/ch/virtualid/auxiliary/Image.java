@@ -186,7 +186,7 @@ public final class Image implements Immutable, Blockable, SQLizable {
     @Pure
     public static @Nonnull Image get(@Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
         try {
-            return new Image(Block.get(TYPE, resultSet, columnIndex));
+            return new Image(Block.getNotNull(TYPE, resultSet, columnIndex));
         } catch (@Nonnull InvalidEncodingException exception) {
             throw new SQLException("A problem occurred while retrieving an image.", exception);
         }
