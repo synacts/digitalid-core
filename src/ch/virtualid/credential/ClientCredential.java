@@ -34,7 +34,7 @@ import org.javatuples.Pair;
  * This class models credentials on the client-side.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.8
  */
 public final class ClientCredential extends Credential implements Immutable {
     
@@ -75,7 +75,7 @@ public final class ClientCredential extends Credential implements Immutable {
      * @param issuer the internal person that issued the credential.
      * @param issuance the issuance time rounded down to the last half-hour.
      * @param randomizedPermissions the client's randomized permissions.
-     * @param role the role that is assumed by the client or null in case no role is assumed.
+     * @param role the role that is assumed or null in case no role is assumed.
      * @param restrictions the restrictions of the client.
      * 
      * @param c the certifying base of this credential.
@@ -101,7 +101,7 @@ public final class ClientCredential extends Credential implements Immutable {
      * @param issuer the internal non-host identity that issued the credential.
      * @param issuance the issuance time rounded down to the last half-hour.
      * @param randomizedPermissions the client's randomized permissions.
-     * @param attributeContent the attribute content for anonymous access control.
+     * @param attributeContent the attribute content for access control.
      * 
      * @param c the certifying base of this credential.
      * @param e the certifying exponent of this credential.
@@ -126,8 +126,8 @@ public final class ClientCredential extends Credential implements Immutable {
      * @param issuer the internal non-host identity that issued the credential.
      * @param issuance the issuance time rounded down to the last half-hour.
      * @param randomizedPermissions the client's randomized permissions.
-     * @param role the role that is assumed by the client or null in case no role is assumed.
-     * @param attributeContent the attribute content for anonymous access control.
+     * @param role the role that is assumed or null in case no role is assumed.
+     * @param attributeContent the attribute content for access control.
      * @param restrictions the restrictions of the client.
      * 
      * @param c the certifying base of this credential.
@@ -278,7 +278,7 @@ public final class ClientCredential extends Credential implements Immutable {
             final @Nonnull RandomizedAgentPermissions randomizedPermissions = new RandomizedAgentPermissions(permissions);
             final @Nonnull BigInteger value = new BigInteger(Parameters.BLINDING_EXPONENT, new SecureRandom());
             final @Nonnull CredentialReply reply = new CredentialInternalQuery(role, randomizedPermissions, value).sendNotNull();
-            credential = map.putIfAbsentElseReturnPresent(permissions, reply.getCredential(randomizedPermissions));
+            credential = map.putIfAbsentElseReturnPresent(permissions, reply.getInternalCredential(randomizedPermissions, role.getRelation(), value, role.getClient().getSecret()));
         }
         
         return credential;
@@ -316,7 +316,7 @@ public final class ClientCredential extends Credential implements Immutable {
         if (credential == null || !credential.isActive()) {
             final @Nonnull RandomizedAgentPermissions randomizedPermissions = new RandomizedAgentPermissions(permissions);
             final @Nonnull CredentialReply reply = new CredentialInternalQuery(role, randomizedPermissions).sendNotNull();
-            credential = map.putIfAbsentElseReturnPresent(permissions, reply.getCredential(randomizedPermissions));
+            credential = map.putIfAbsentElseReturnPresent(permissions, reply.getInternalCredential(randomizedPermissions, null, BigInteger.ZERO, role.getClient().getSecret()));
         }
         
         return credential;
@@ -328,13 +328,28 @@ public final class ClientCredential extends Credential implements Immutable {
      */
     private static final @Nonnull ConcurrentMap<Role, ConcurrentMap<Pair<CertifiedAttributeValue, ReadonlyAgentPermissions>, ClientCredential>> attributeBasedCredentials = new ConcurrentHashMap<Role, ConcurrentMap<Pair<CertifiedAttributeValue, ReadonlyAgentPermissions>, ClientCredential>>();
     
+    /**
+     * Returns an attribute-based credential for the given role, value and permissions.
+     * 
+     * @param role the role for which the credential is to be returned.
+     * @param value the certified attribute value which is to be shortened.
+     * @param permissions the permissions which are to be contained.
+     * 
+     * @return an attribute-based credential for the given role, value and permissions.
+     * 
+     * @require role.getIdentity() instanceof InternalPerson : "The role belongs to an internal person.";
+     * @require permissions.isFrozen() : "The permissions are frozen.";
+     * @require permissions.isNotEmpty() : "The permissions are not empty.";
+     * 
+     * @ensure return.isActive() : "The returned credential is active.";
+     */
     public static @Nonnull ClientCredential getAttributeBased(@Nonnull Role role, @Nonnull CertifiedAttributeValue value, @Nonnull ReadonlyAgentPermissions permissions) throws SQLException, IOException, PacketException, ExternalException {
         assert role.getIdentity() instanceof InternalPerson : "The role belongs to an internal person.";
         assert permissions.isFrozen() : "The permissions are frozen.";
         assert permissions.isNotEmpty() : "The permissions are not empty.";
         
-        // TODO: Shortening with CredentialShorteningQuery.
-        throw new UnsupportedOperationException();
+        // TODO: Shortening with CredentialExternalQuery.
+        throw new UnsupportedOperationException("Credentials for attribute-based access control are not yet supported!");
     }
     
     

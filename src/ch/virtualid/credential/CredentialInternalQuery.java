@@ -6,14 +6,12 @@ import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
-import ch.virtualid.client.Client;
 import ch.virtualid.cryptography.Element;
 import ch.virtualid.cryptography.Exponent;
 import ch.virtualid.cryptography.Group;
 import ch.virtualid.cryptography.Parameters;
 import ch.virtualid.cryptography.PrivateKey;
 import ch.virtualid.cryptography.PublicKey;
-import ch.virtualid.cryptography.SymmetricKey;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.NonHostAccount;
 import ch.virtualid.entity.NonNativeRole;
@@ -26,12 +24,9 @@ import ch.virtualid.handler.Method;
 import ch.virtualid.handler.Reply;
 import ch.virtualid.host.Host;
 import ch.virtualid.identifier.HostIdentifier;
-import ch.virtualid.identity.Category;
 import ch.virtualid.identity.IdentityClass;
 import ch.virtualid.identity.InternalPerson;
-import ch.virtualid.identity.Mapper;
 import ch.virtualid.identity.SemanticType;
-import ch.virtualid.packet.Packet;
 import ch.virtualid.service.CoreServiceInternalQuery;
 import ch.xdf.Block;
 import ch.xdf.ClientSignatureWrapper;
@@ -42,6 +37,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.sql.SQLException;
+import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -206,7 +202,7 @@ final class CredentialInternalQuery extends CoreServiceInternalQuery {
             
             HostCredentialModule.store(account, e, i, v, signature);
             
-            return new CredentialReply(account, restrictions, issuance, c, e, i);
+            return new CredentialReply(account, publicKey, restrictions, issuance, c, e, i);
         } catch (@Nonnull InvalidEncodingException exception) {
             throw new SQLException("No key was found for the time of the signature.");
         }
@@ -215,20 +211,28 @@ final class CredentialInternalQuery extends CoreServiceInternalQuery {
     @Pure
     @Override
     public boolean matches(@Nullable Reply reply) {
-        return reply instanceof CredentialInternalQuery && ((CredentialInternalQuery) reply).state.getType().equals(module.getStateFormat());
+        return reply instanceof CredentialReply;
     }
     
     
     @Pure
     @Override
     public boolean equals(@Nullable Object object) {
-        return protectedEquals(object) && object instanceof CredentialInternalQuery && this.module.equals(((CredentialInternalQuery) object).module);
+        if (protectedEquals(object) && object instanceof CredentialInternalQuery) {
+            final @Nonnull CredentialInternalQuery other = (CredentialInternalQuery) object;
+            return this.permissions.equals(other.permissions) && Objects.equals(this.relation, other.relation) && Objects.equals(this.value, other.value);
+        }
+        return false;
     }
     
     @Pure
     @Override
     public int hashCode() {
-        return 89 * protectedHashCode() + module.hashCode();
+        int hash = protectedHashCode();
+        hash = 89 * hash + permissions.hashCode();
+        hash = 89 * hash + Objects.hashCode(relation);
+        hash = 89 * hash + Objects.hashCode(value);
+        return hash;
     }
     
     
@@ -251,53 +255,6 @@ final class CredentialInternalQuery extends CoreServiceInternalQuery {
             return new CredentialInternalQuery(entity, signature, recipient, block);
         }
         
-    }
-    
-    
-    /**
-     * Obtains a credential for the given client on behalf of the given requester at the given issuer for the given authorization.
-     * 
-     * @param client the client whose secret is used to sign the request.
-     * @param requester the VID of a person on behalf of which the credential is to be obtained.
-     * @param issuer the VID of a non-host at which the credential is to be obtained.
-     * @param randomizedAuthorization the desired authorization in randomized form.
-     * 
-     * @return a credential for the given client on behalf of the given requester at the given issuer.
-     * 
-     * @require client != null : "The client is not null.";
-     * @require Mapper.isVid(requester) && Category.isPerson(requester) : "The requester has to denote a person.";
-     * @require Mapper.isVid(issuer) && (Category.isSemanticType(issuer) || issuer == requester) : "The issuer is either a semantic type or the requester itself (roles are not yet supported).";
-     * @require randomizedAuthorization != null && randomizedAuthorization.getAuthorization() != null && !randomizedAuthorization.getAuthorization().isEmpty() : "The randomized authorization is not empty.";
-     */
-    public static ClientCredential obtainCredential(Client client, long requester, long issuer, RandomizedAuthorization randomizedAuthorization) throws Exception {
-        assert client != null : "The client is not null.";
-        assert Mapper.isVid(requester) && Category.isPerson(requester) : "The requester has to denote a person.";
-        assert Mapper.isVid(issuer) && (Category.isSemanticType(issuer) || issuer == requester) : "The issuer is either a semantic type or the requester itself (roles are not yet supported).";
-        assert randomizedAuthorization != null && randomizedAuthorization.getAuthorization() != null && !randomizedAuthorization.getAuthorization().isEmpty() : "The randomized authorization is not empty.";
-        
-        PublicKey publicKey = new PublicKey(Request.getAttributeNotNullUnwrapped(Mapper.getHost(issuer), Vid.HOST_PUBLIC_KEY));
-        Group group = publicKey.getCompositeGroup();
-        
-        if (issuer == requester) {
-            SelfcontainedWrapper content = new SelfcontainedWrapper("request.credential.client@virtualid.ch", randomizedAuthorization.toBlock());
-            Packet request = new Packet(content, Mapper.getIdentifier(Mapper.getHost(issuer)), new SymmetricKey(), Mapper.getIdentifier(issuer), 0, client.getSecret());
-            Packet response = request.send();
-            Block[] elements = new TupleWrapper(respogetContentstent().getElement()).getElementsNotNull(3);
-            
-            String identifier = respogetSignaturesture().getIdentifier();
-            long time = reqgetSignaturesature().getSignatureTimeRoundedDown();
-            Restrictions restrictions = Request.getRestrictions(client, issuer);
-            Element c = group.getElement(elements[0]);
-            Exponent e = group.getExponent(elements[1]);
-            Exponent b = group.getExponent(BigInteger.ZERO);
-            Exponent u = group.getExponent(client.getSecret());
-            Exponent i = group.getExponent(elements[2]);
-            Exponent v = group.getExponent(restrictions.toBlock().getHash());
-            
-            return new Credential(publicKey, identifier, time, randomizedAuthorization, null, restrictions, c, e, b, u, i, v);
-        } else {
-            throw new UnsupportedOperationException("Credentials for attribute-based access control are not yet supported!");
-        }
     }
     
 }

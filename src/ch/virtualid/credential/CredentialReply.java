@@ -1,5 +1,6 @@
 package ch.virtualid.credential;
 
+import ch.virtualid.agent.RandomizedAgentPermissions;
 import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
@@ -9,20 +10,21 @@ import ch.virtualid.cryptography.Exponent;
 import ch.virtualid.cryptography.PublicKey;
 import ch.virtualid.entity.NonHostAccount;
 import ch.virtualid.entity.NonHostEntity;
-import ch.virtualid.entity.Role;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Reply;
+import ch.virtualid.identity.InternalNonHostIdentity;
+import ch.virtualid.identity.InternalPerson;
 import ch.virtualid.identity.SemanticType;
-import ch.virtualid.module.BothModule;
 import ch.virtualid.service.CoreServiceQueryReply;
-import ch.virtualid.service.Service;
 import ch.xdf.Block;
 import ch.xdf.HostSignatureWrapper;
 import ch.xdf.TupleWrapper;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.sql.SQLException;
+import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -149,28 +151,71 @@ final class CredentialReply extends CoreServiceQueryReply {
     
     
     /**
-     * Updates the state of the given entity without committing.
+     * Returns an internal credential with the given parameters.
      * 
-     * @require isOnClient() : "This method is called on a client.";
+     * @param randomizedPermissions the client's randomized permissions.
+     * @param role the role that is assumed or null in case no role is assumed.
+     * @param b the blinding exponent of the issued credential.
+     * @param u the client's secret of the issued credential.
+     * 
+     * @return an internal credential with the given parameters.
+     * 
+     * @require hasSignature() : "This handler has a signature.";
      */
-    void updateState() throws SQLException, IOException, PacketException, ExternalException {
-        final @Nonnull BothModule module = Service.getModule(state.getType());
-        final @Nonnull Role role = getRole();
-        module.removeState(role);
-        module.addState(role, state);
+    @Nonnull ClientCredential getInternalCredential(@Nonnull RandomizedAgentPermissions randomizedPermissions, @Nullable SemanticType role, @Nonnull BigInteger b, @Nonnull Exponent u) throws SQLException, IOException, PacketException, ExternalException {
+        assert hasSignature() : "This handler has a signature.";
+        
+        if (restrictions == null) throw new InvalidEncodingException("The restrictions may not be null for internal credentials.");
+        final @Nonnull Exponent v = new Exponent(restrictions.toBlock().getHash());
+        
+        final @Nonnull InternalPerson issuer = getSignatureNotNull().getSubjectNotNull().getIdentity().toInternalPerson();
+        return new ClientCredential(publicKey, issuer, issuance, randomizedPermissions, role, restrictions, c, e, new Exponent(b), u, i, v);
+    }
+    
+    /**
+     * Returns an external credential with the given parameters.
+     * 
+     * @param randomizedPermissions the client's randomized permissions.
+     * @param attributeContent the attribute content for access control.
+     * @param b the blinding exponent of the issued credential.
+     * @param u the client's secret of the issued credential.
+     * @param v the hash of the requester's identifier.
+     * 
+     * @return an external credential with the given parameters.
+     * 
+     * @require hasSignature() : "This handler has a signature.";
+     */
+    @Nonnull ClientCredential getExternalCredential(@Nonnull RandomizedAgentPermissions randomizedPermissions, @Nonnull Block attributeContent, @Nonnull BigInteger b, @Nonnull Exponent u, @Nonnull Exponent v) throws SQLException, IOException, PacketException, ExternalException {
+        assert hasSignature() : "This handler has a signature.";
+        
+        if (restrictions != null) throw new InvalidEncodingException("The restrictions must be null for external credentials.");
+        
+        final @Nonnull InternalNonHostIdentity issuer = getSignatureNotNull().getSubjectNotNull().getIdentity().toInternalNonHostIdentity();
+        return new ClientCredential(publicKey, issuer, issuance, randomizedPermissions, attributeContent, c, e, new Exponent(b), u, i, v, false);
     }
     
     
     @Pure
     @Override
     public boolean equals(@Nullable Object object) {
-        return protectedEquals(object) && object instanceof StateReply && this.state.equals(((StateReply) object).state);
+        if (protectedEquals(object) && object instanceof CredentialReply) {
+            final @Nonnull CredentialReply other = (CredentialReply) object;
+            return this.publicKey.equals(other.publicKey) && Objects.equals(this.restrictions, other.restrictions) && this.issuance.equals(other.issuance) && this.c.equals(other.c) && this.e.equals(other.e) && this.i.equals(other.i);
+        }
+        return false;
     }
     
     @Pure
     @Override
     public int hashCode() {
-        return 89 * protectedHashCode() + state.hashCode();
+        int hash = protectedHashCode();
+        hash = 89 * hash + publicKey.hashCode();
+        hash = 89 * hash + Objects.hashCode(restrictions);
+        hash = 89 * hash + issuance.hashCode();
+        hash = 89 * hash + c.hashCode();
+        hash = 89 * hash + e.hashCode();
+        hash = 89 * hash + i.hashCode();
+        return hash;
     }
     
     
