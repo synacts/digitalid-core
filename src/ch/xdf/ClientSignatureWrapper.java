@@ -1,5 +1,6 @@
 package ch.xdf;
 
+import ch.virtualid.agent.AgentModule;
 import ch.virtualid.agent.ClientAgent;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
@@ -19,7 +20,6 @@ import ch.virtualid.identifier.InternalIdentifier;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
-import ch.virtualid.agent.AgentModule;
 import ch.virtualid.synchronizer.Audit;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.ReadonlyArray;
@@ -97,7 +97,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper implements Im
     
     /**
      * Wraps the given block and decodes the given signature.
-     * (Only to be called by {@link SignatureWrapper#decodeUnverified(ch.xdf.Block, ch.virtualid.entity.NonHostEntity)}.)
+     * (Only to be called by {@link SignatureWrapper#decodeWithoutVerifying(ch.xdf.Block, boolean, ch.virtualid.entity.Entity)}.)
      * 
      * @param block the block to be wrapped.
      * @param clientSignature the signature to be decoded.

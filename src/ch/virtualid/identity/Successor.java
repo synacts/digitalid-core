@@ -57,7 +57,6 @@ public final class Successor {
      * Returns the successor of the given identifier as stored in the database or retrieved by a new request.
      * 
      * @param identifier the identifier whose successor is to be returned.
-     * @param verified determines whether the identity of the successor is verified.
      * 
      * @return the successor of the given identifier as stored in the database or retrieved by a new request.
      */

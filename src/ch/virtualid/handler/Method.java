@@ -51,7 +51,7 @@ import javax.annotation.Nullable;
 
 /**
  * This class implements a remote method invocation mechanism.
- * All methods have to extend this class and {@link #add(ch.virtualid.handler.Method.Factory) register} themselves as handlers.
+ * All methods have to extend this class and {@link #add(ch.virtualid.identity.SemanticType, ch.virtualid.handler.Method.Factory) register} themselves as handlers.
  * 
  * @see Action
  * @see Query

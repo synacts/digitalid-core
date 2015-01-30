@@ -420,7 +420,6 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
      * Signs the element. (This method should be overridden in subclasses.)
      * 
      * @param elements the elements of the wrapped block with the indexes 1 to 3 reserved for the signatures.
-     * @param hash the hash of the element with index 0, which is to be signed.
      * 
      * @require elements.isNotFrozen() : "The elements are not frozen.";
      * @require elements.isNotNull(0) : "The first element is not null.";

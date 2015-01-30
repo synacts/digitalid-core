@@ -112,7 +112,7 @@ public final class NativeRole extends Role implements Immutable {
      * Returns a new or existing native role with the given arguments.
      * <p>
      * <em>Important:</em> This method should not be called directly!
-     * (Use {@link Client#addRole(ch.virtualid.identity.InternalNonHostIdentity)} instead.)
+     * (Use {@link Client#addRole(ch.virtualid.identity.InternalNonHostIdentity, long)} instead.)
      * 
      * @param client the client that can assume the returned role.
      * @param issuer the issuer of the returned role.

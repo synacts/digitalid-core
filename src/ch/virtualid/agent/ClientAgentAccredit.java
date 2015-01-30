@@ -6,7 +6,7 @@ import ch.virtualid.client.Client;
 import ch.virtualid.client.Commitment;
 import ch.virtualid.contact.Context;
 import ch.virtualid.entity.Entity;
-import ch.virtualid.entity.Role;
+import ch.virtualid.entity.NativeRole;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketError;
@@ -47,7 +47,7 @@ public final class ClientAgentAccredit extends CoreServiceInternalAction {
     
     
     /**
-     * Stores the outgoing role of this action.
+     * Stores the client agent of this action.
      * 
      * @invariant clientAgent.isRemoved() : "The client agent is removed.";
      */
@@ -87,16 +87,14 @@ public final class ClientAgentAccredit extends CoreServiceInternalAction {
     private final @Nonnull String password;
     
     /**
-     * Creates an internal action to accredit the given client agent.
+     * Creates an internal action to accredit the client agent given by the role.
      * 
-     * @param outgoingRole the outgoing role which is to be created.
-     * @param relation the relation of the given outgoing role.
-     * @param context the context of the given outgoing role.
+     * @param role the role whose client agent is to be accredited.
+     * @param password the password needed to accredit the client agent.
      * 
-     * @require outgoingRole.isOnClient() : "The outgoing role is on a client.";
      * @require Password.isValid(password) : "The password is valid.";
      */
-    public ClientAgentAccredit(@Nonnull Role role, @Nonnull String password) throws SQLException, IOException, PacketException, ExternalException {
+    public ClientAgentAccredit(@Nonnull NativeRole role, @Nonnull String password) throws SQLException, IOException, PacketException, ExternalException {
         super(role);
         
         assert Password.isValid(password) : "The password is valid.";

@@ -33,7 +33,7 @@ public interface FreezableMap<K,V> extends ReadonlyMap<K,V>, Map<K,V>, Freezable
     public FreezableCollection<V> values();
     
     /**
-     * <em>Important:</em> Never call {@link Map.Entry#setValue(java.lang.Object)} on the elements!
+     * <em>Important:</em> Never call {@code Map.Entry#setValue(java.lang.Object)} on the elements!
      */
     @Pure
     @Override

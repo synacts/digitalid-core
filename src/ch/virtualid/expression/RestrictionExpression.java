@@ -19,7 +19,7 @@ import javax.annotation.Nullable;
 /**
  * This class models restriction expressions.
  * 
- * @ivnariant (string == null) == (symbol == null) : "Either both string and symbol are null or none of them.";
+ * @invariant (string == null) == (symbol == null) : "Either both string and symbol are null or none of them.";
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0

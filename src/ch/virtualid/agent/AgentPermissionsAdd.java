@@ -20,7 +20,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * Adds {@AgentPermissions permissions} to an {@link Agent agent}.
+ * Adds {@link AgentPermissions permissions} to an {@link Agent agent}.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0

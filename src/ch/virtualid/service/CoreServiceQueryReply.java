@@ -6,6 +6,7 @@ import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.handler.QueryReply;
 import ch.virtualid.identifier.InternalIdentifier;
+import ch.virtualid.identity.IdentityReply;
 import ch.xdf.HostSignatureWrapper;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

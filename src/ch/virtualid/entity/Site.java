@@ -55,7 +55,7 @@ public abstract class Site extends Instance {
      * 
      * @return the prefix of the site-specific database tables.
      * 
-     * @invariant return.length() <= 41 : "The prefix has at most 41 characters.";
+     * @ensure return.length() <= 41 : "The prefix has at most 41 characters.";
      */
     @Pure
     @Override

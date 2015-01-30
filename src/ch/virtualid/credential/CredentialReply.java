@@ -135,6 +135,8 @@ final class CredentialReply extends CoreServiceQueryReply {
         this.c = publicKey.getCompositeGroup().getElement(tuple.getElementNotNull(2));
         this.e = new Exponent(tuple.getElementNotNull(3));
         this.i = new Exponent(tuple.getElementNotNull(4));
+        
+        if (issuance.isLessThan(Time.HOUR.ago())) throw new InvalidEncodingException("The returned credential is no longer active.");
     }
     
     @Pure

@@ -22,7 +22,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * Replaces the {@Commitment commitment} of a {@link ClientAgent client agent}.
+ * Replaces the {@link Commitment commitment} of a {@link ClientAgent client agent}.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0

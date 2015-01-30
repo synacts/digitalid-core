@@ -26,6 +26,12 @@ public final class ContactPermissions extends AttributeTypeSet implements Readon
     
     
     /**
+     * Stores an empty set of contact permissions.
+     */
+    public static final @Nonnull ReadonlyContactPermissions NONE = new ContactPermissions().freeze();
+    
+    
+    /**
      * Creates an empty set of contact permissions.
      */
     public ContactPermissions() {}

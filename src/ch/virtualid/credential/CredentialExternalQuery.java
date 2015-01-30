@@ -8,10 +8,10 @@ package ch.virtualid.credential;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 0.0
  */
-//final class CredentialExternalQuery extends CoreServiceExternalQuery {
+final class CredentialExternalQuery /* extends CoreServiceExternalQuery */ {
 //    
 //    CredentialExternalQuery(@Nonnull Role role, @Nonnull InternalNonHostIdentity subject, @Nonnull RandomizedAgentPermissions permissions) {
 //        super(role, subject.getAddress());
 //    }
 //    
-//}
+}

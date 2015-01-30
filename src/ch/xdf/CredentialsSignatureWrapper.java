@@ -74,7 +74,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
     /**
      * Stores the semantic type {@code t.credentials.signature@virtualid.ch}.
      */
-    private static final @Nonnull SemanticType T = SemanticType.create("t.credentials.signature@virtualid.ch").load(HashWrapper.TYPE);
+    private static final @Nonnull SemanticType T = SemanticType.create("t.credentials.signature@virtualid.ch").load(Exponent.TYPE);
     
     /**
      * Stores the semantic type {@code su.credentials.signature@virtualid.ch}.
@@ -265,7 +265,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
     
     /**
      * Wraps the given block and decodes the given signature for hosts.
-     * (Only to be called by {@link SignatureWrapper#decodeUnverified(ch.xdf.Block, ch.virtualid.entity.Entity)}.)
+     * (Only to be called by {@link SignatureWrapper#decodeWithoutVerifying(ch.xdf.Block, boolean, ch.virtualid.entity.Entity)}.)
      * 
      * @param block the block to be wrapped.
      * @param credentialsSignature the signature to be decoded.
@@ -313,9 +313,9 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
         boolean lodged = false;
         for (final @Nonnull Block element : list) {
             final @Nonnull TupleWrapper subtuple = new TupleWrapper(element);
-            final @Nonnull HostCredential credential = new HostCredential(subtuple.getElementNotNull(0), tuple.getElement(1), restrictions, tuple.getElement(5));
+            final @Nonnull HostCredential credential = new HostCredential(subtuple.getElementNotNull(0), subtuple.getElement(1), restrictions, subtuple.getElement(5));
             credentials.add(credential);
-            if (tuple.isElementNotNull(7)) lodged = true;
+            if (subtuple.isElementNotNull(7)) lodged = true;
         }
         this.credentials = credentials.freeze();
         this.lodged = lodged;
@@ -805,7 +805,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
             tf = publicKey.getCompositeGroup().getElement(value).pow(t).multiply(element).toBlock().getHash();
         }
         
-        if (!t.getValue().equals(hash.xor(new ListWrapper(ARRAYS, ts).toBlock().getHash()).xor(tf))) throw new InvalidSignatureException("The credentials signature is invalid: The value t is not correct.");
+        if (!t.getValue().equals(hash.xor(new ListWrapper(ARRAYS, ts.freeze()).toBlock().getHash()).xor(tf))) throw new InvalidSignatureException("The credentials signature is invalid: The value t is not correct.");
         
         if (certificates != null) {
             for (final @Nonnull CertifiedAttributeValue certificate : certificates) {

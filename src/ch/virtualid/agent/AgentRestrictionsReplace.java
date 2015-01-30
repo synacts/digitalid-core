@@ -21,7 +21,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * Replaces the {@Restrictions restrictions} of an {@link Agent agent}.
+ * Replaces the {@link Restrictions restrictions} of an {@link Agent agent}.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0

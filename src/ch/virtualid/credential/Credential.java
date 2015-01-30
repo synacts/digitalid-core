@@ -455,13 +455,12 @@ public abstract class Credential implements Immutable {
      * 
      * @return the restrictions of the client.
      * 
-     * @require isRoleBased() : "This credential is role-based.";
+     * @require getRestrictions() != null : "The restrictions are not null.";
      */
     @Pure
     public final @Nonnull Restrictions getRestrictionsNotNull() {
-        assert isRoleBased() : "This credential is role-based.";
+        assert restrictions != null : "The restrictions are not null.";
         
-        assert restrictions != null : "This follows from the class invariant.";
         return restrictions;
     }
     

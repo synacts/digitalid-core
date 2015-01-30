@@ -33,7 +33,7 @@ import javax.annotation.Nullable;
 
 /**
  * This class models replies to {@link Method methods} and {@link #store(ch.xdf.HostSignatureWrapper) stores} them in the {@link Database database}.
- * All replies have to extend this class and {@link #add(ch.virtualid.handler.Reply.Factory) register} themselves as handlers.
+ * All replies have to extend this class and {@link #add(ch.virtualid.identity.SemanticType, ch.virtualid.handler.Reply.Factory) register} themselves as handlers.
  * 
  * @invariant !hasSignature() || getSignature() instanceof HostSignatureWrapper : "If this reply has a signature, it is signed by a host.";
  * 
@@ -241,8 +241,6 @@ public abstract class Reply extends Handler implements SQLizable {
         } catch (@Nonnull SQLException exception) {
             throw new InitializationError("The database table of the reply logger could not be created.", exception);
         }
-        
-        Database.addRegularPurging("general_reply", Time.TWO_YEARS);
     }
     
     /**

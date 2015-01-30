@@ -714,10 +714,10 @@ public final class Block implements Immutable, SQLizable {
      * @param preparedStatement the prepared statement whose parameter is to be set.
      * @param parameterIndex the index of the parameter to set.
      * 
-     * @require block == null || block.isEncoded() : "The block is either null or encoded.";
+     * @require block == null || block.isNotEncoding() : "The block is either null or not encoding.";
      */
     public static void set(@Nullable Block block, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
-        assert block == null || block.isEncoded() : "The block is either null or encoded.";
+        assert block == null || block.isNotEncoding() : "The block is either null or not encoding.";
         
         if (block == null) preparedStatement.setNull(parameterIndex, Types.BLOB);
         else block.set(preparedStatement, parameterIndex);

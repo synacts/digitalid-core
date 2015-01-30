@@ -26,7 +26,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * Replaces the {@AttributeValue value} of an {@link Attribute attribute}.
+ * Replaces the {@link AttributeValue value} of an {@link Attribute attribute}.
  * 
  * @invariant !Objects.equals(oldValue, newValue) : "The old and new value are not equal.";
  * 

@@ -18,7 +18,7 @@ import javax.annotation.Nonnull;
 import javax.crypto.spec.IvParameterSpec;
 
 /**
- * The random initialization vector ensures that multiple {@link EncryptionWrapper encryptions} of the same {@Block block} are different.
+ * The random initialization vector ensures that multiple {@link EncryptionWrapper encryptions} of the same {@link Block block} are different.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 2.0

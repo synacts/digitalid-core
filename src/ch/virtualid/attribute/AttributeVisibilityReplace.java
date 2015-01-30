@@ -27,7 +27,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * Replaces the {@PassiveExpression visibility} of an {@link Attribute attribute}.
+ * Replaces the {@link PassiveExpression visibility} of an {@link Attribute attribute}.
  * 
  * @invariant !Objects.equals(oldVisibility, newVisibility) : "The old and new visibility are not equal.";
  * 

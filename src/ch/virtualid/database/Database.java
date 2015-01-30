@@ -144,6 +144,43 @@ public final class Database implements Immutable {
     
     
     /**
+     * Stores the timer to schedule tasks.
+     */
+    private static final @Nonnull Timer timer = new Timer();
+    
+    /**
+     * Stores the tables which are to be purged regularly.
+     */
+    private static final @Nonnull ConcurrentMap<String, Time> tables = new ConcurrentHashMap<String, Time>();
+    
+    /**
+     * Adds the given table to the list for regular purging.
+     * 
+     * @param table the name of the table which is to be purged regularly.
+     * @param time the time after which entries in the given table can be purged.
+     */
+    public static void addRegularPurging(@Nonnull String table, @Nonnull Time time) {
+        tables.put(table, time);
+    }
+    
+    /**
+     * Removes the given table from the list for regular purging.
+     * 
+     * @param table the name of the table which is no longer to be purged.
+     */
+    public static void removeRegularPurging(@Nonnull String table) {
+        tables.remove(table);
+    }
+    
+    /**
+     * Shuts down the timer.
+     */
+    public static void shutDown() {
+        timer.cancel();
+    }
+    
+    
+    /**
      * Loads all classes in the given directory.
      * 
      * @param directory the directory containing the classes.
@@ -191,9 +228,6 @@ public final class Database implements Immutable {
      */
     public static void loadClasses() {
         try {
-            // Ensure that the time is loaded before the mapper.
-            Class.forName(Time.class.getName());
-            
             // Ensure that the semantic type is loaded before the syntactic type.
             Class.forName(SemanticType.class.getName());
             
@@ -217,6 +251,23 @@ public final class Database implements Immutable {
         }
         
         LOGGER.log(Level.INFORMATION, "All classes have been loaded.");
+        
+        // TODO: If several processes access the database, it's enough when one of them does the purging.
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                try (@Nonnull Statement statement = Database.createStatement()) {
+                    for (final @Nonnull Map.Entry<String, Time> entry : tables.entrySet()) {
+                        statement.executeUpdate("DELETE FROM " + entry.getKey() + " WHERE time < " + entry.getValue().ago());
+                        Database.commit();
+                    }
+                } catch (@Nonnull SQLException exception) {
+                    LOGGER.log(Level.WARNING, exception);
+                }
+            }
+        }, Time.MINUTE.getValue(), Time.HOUR.getValue());
+        
+        addRegularPurging("general_reply", Time.TWO_YEARS);
     }
     
     /**
@@ -459,60 +510,6 @@ public final class Database implements Immutable {
      */
     public static void onInsertNotUpdate(@Nonnull Statement statement, @Nonnull String table) throws SQLException {
         getConfiguration().onInsertNotUpdate(statement, table);
-    }
-    
-    
-    /**
-     * Stores the timer to schedule tasks.
-     */
-    private static final @Nonnull Timer timer = new Timer();
-    
-    /**
-     * Stores the tables which are to be purged regularly.
-     */
-    private static final @Nonnull ConcurrentMap<String, Time> tables = new ConcurrentHashMap<String, Time>();
-    
-    /**
-     * Adds the given table to the list for regular purging.
-     * 
-     * @param table the name of the table which is to be purged regularly.
-     * @param time the time after which entries in the given table can be purged.
-     */
-    public static void addRegularPurging(@Nonnull String table, @Nonnull Time time) {
-        tables.put(table, time);
-    }
-    
-    /**
-     * Removes the given table from the list for regular purging.
-     * 
-     * @param table the name of the table which is no longer to be purged.
-     */
-    public static void removeRegularPurging(@Nonnull String table) {
-        tables.remove(table);
-    }
-    
-    static {
-        // TODO: If several processes access the database, it's enough when one of them does the purging.
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                try (@Nonnull Statement statement = Database.createStatement()) {
-                    for (final @Nonnull Map.Entry<String, Time> entry : tables.entrySet()) {
-                        statement.executeUpdate("DELETE FROM " + entry.getKey() + " WHERE time < " + entry.getValue().ago());
-                        Database.commit();
-                    }
-                } catch (@Nonnull SQLException exception) {
-                    LOGGER.log(Level.WARNING, exception);
-                }
-            }
-        }, Time.MINUTE.getValue(), Time.HOUR.getValue());
-    }
-    
-    /**
-     * Shuts down the timer.
-     */
-    public static void shutDown() {
-        timer.cancel();
     }
     
 }
