@@ -1,6 +1,8 @@
 package ch.virtualid.contact;
 
 import ch.virtualid.annotations.Capturable;
+import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.EndsCommitted;
 import ch.virtualid.annotations.OnlyForActions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.concept.Aspect;
@@ -100,6 +102,7 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
      * 
      * @return the foreign key constraint used to reference instances of this class.
      */
+    @DoesNotCommit
     public static @Nonnull String getReference(@Nonnull Site site) throws SQLException {
         ContextModule.createReferenceTable(site);
         return "REFERENCES " + site + "context_name (entity, context) ON DELETE CASCADE";
@@ -153,6 +156,7 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
     /**
      * Creates this context in the database.
      */
+    @DoesNotCommit
     @OnlyForActions
     public void createForActions() throws SQLException {
         ContextModule.create(this);
@@ -232,6 +236,7 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
      * @ensure isValid(return) : "The returned name is valid.";
      */
     @Pure
+    @DoesNotCommit
     public @Nonnull String getName() throws SQLException {
         if (name == null) {
             throw new SQLException();
@@ -247,6 +252,7 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
      * 
      * @require isValid(name) : "The given name is valid.";
      */
+    @EndsCommitted
     public void setName(@Nonnull String newName) throws SQLException {
         assert isValid(newName) : "The new name is valid.";
         
@@ -265,6 +271,7 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
      * @require isValid(oldName) : "The old name is valid.";
      * @require isValid(newName) : "The new name is valid.";
      */
+    @DoesNotCommit
     @OnlyForActions
     public void replaceName(@Nonnull String oldName, @Nonnull String newName) throws SQLException {
         assert isValid(oldName) : "The old name is valid.";
@@ -287,6 +294,7 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
      * @return the permissions of this context.
      */
     @Pure
+    @DoesNotCommit
     public @Nonnull ReadonlyContactPermissions getPermissions() throws SQLException {
         if (permissions == null) {
             throw new SQLException();
@@ -300,6 +308,7 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
      * 
      * @param permissions the permissions to be added to this context.
      */
+    @EndsCommitted
     public void addPermissions(@Nonnull ReadonlyContactPermissions permissions) throws SQLException {
         if (!permissions.isEmpty()) {
 //            Synchronizer.execute(new ContextPermissionsAdd(this, permissions));
@@ -313,6 +322,7 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
      * 
      * @require newPermissions.isNotEmpty() : "The new permissions are not empty.";
      */
+    @DoesNotCommit
     @OnlyForActions
     public void addPermissionsForActions(@Nonnull ReadonlyContactPermissions newPermissions) throws SQLException {
         assert newPermissions.isNotEmpty() : "The new permissions are not empty.";
@@ -327,6 +337,7 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
      * 
      * @param permissions the permissions to be removed from this context.
      */
+    @EndsCommitted
     public void removePermissions(@Nonnull ReadonlyContactPermissions permissions) throws SQLException {
         if (!permissions.isEmpty()) {
 //            Synchronizer.execute(new ContextPermissionsRemove(this, permissions));
@@ -340,6 +351,7 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
      * 
      * @require oldPermissions.isNotEmpty() : "The old permissions are not empty.";
      */
+    @DoesNotCommit
     @OnlyForActions
     public void removePermissionsForActions(@Nonnull ReadonlyContactPermissions oldPermissions) throws SQLException {
         assert oldPermissions.isNotEmpty() : "The old permissions are not empty.";
@@ -355,6 +367,7 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
      * 
      * @return the authentications of this context.
      */
+    @DoesNotCommit
     public @Nonnull ReadonlyAuthentications getAuthentications() throws SQLException {
         throw new SQLException();
     }
@@ -364,6 +377,7 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
      * 
      * @param authentications the authentications to be added to this context.
      */
+    @EndsCommitted
     public void addAuthentications(@Nonnull ReadonlyAuthentications authentications) throws SQLException {
         
     }
@@ -373,6 +387,7 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
      * 
      * @param authentications the authentications to be removed from this context.
      */
+    @EndsCommitted
     public void removeAuthentications(@Nonnull ReadonlyAuthentications authentications) throws SQLException {
         
     }
@@ -383,6 +398,7 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
      * 
      * @return a list of the subcontexts in the specified sequence.
      */
+    @DoesNotCommit
     public @Nonnull List<Context> getSubcontexts() throws SQLException {
         throw new SQLException();
     }
@@ -394,6 +410,7 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
      * @param position the position the add the given subcontexts.
      * @require (Context subcontext : subcontexts).getIdentity().equals(getIdentity()) : "The identity of all contexts have to be the same.";
      */
+    @EndsCommitted
     public void addSubcontexts(@Nonnull List<Context> subcontexts, byte position) throws SQLException {
         throw new SQLException();
     }
@@ -404,6 +421,7 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
      * @param subcontexts the subcontexts to be removed from this context.
      * @require (Context subcontext : subcontexts).getIdentity().equals(getIdentity()) : "The identity of all contexts have to be the same.";
      */
+    @EndsCommitted
     public void removeSubcontexts(@Nonnull List<Context> subcontexts) throws SQLException {
         throw new SQLException();
     }
@@ -418,6 +436,7 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
      * 
      * @require context.getIdentity().equals(getIdentity()) : "The identity of the given context is the same.";
      */
+    @DoesNotCommit
     public boolean isSupercontextOf(@Nonnull Context context) throws SQLException {
         if (equals(context)) return true;
         else throw new SQLException();
@@ -428,6 +447,7 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
      * 
      * @return a set with all subcontexts of this context (including this context).
      */
+    @DoesNotCommit
     public @Nonnull Set<Context> getAllSubcontexts() throws SQLException {
         throw new SQLException();
     }
@@ -438,6 +458,7 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
      * 
      * @return a set with the subcontexts of this context.
      */
+    @DoesNotCommit
     public @Nonnull Set<Context> getSupercontexts() throws SQLException {
         throw new SQLException();
     }
@@ -450,6 +471,7 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
      * @return whether this context is a subcontext of the given context.
      * @require context.getIdentity().equals(getIdentity()) : "The identity of the given context is the same.";
      */
+    @DoesNotCommit
     public boolean isSubcontextOf(@Nonnull Context context) throws SQLException {
 //        assert context.getIdentity().equals(getIdentity()) : "The identity of the given context is the same.";
         
@@ -462,6 +484,7 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
      * 
      * @return a set with the contacts of this context.
      */
+    @DoesNotCommit
     public @Nonnull ReadonlySet<Contact> getContacts() throws SQLException {
         throw new SQLException();
     }
@@ -473,6 +496,7 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
      * 
      * @return whether this context contains the given contact.
      */
+    @DoesNotCommit
     public boolean contains(@Nonnull Contact contact) throws SQLException {
         throw new SQLException();
     }
@@ -482,6 +506,7 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
      * 
      * @param contacts the contacts to be added to this context.
      */
+    @EndsCommitted
     public void addContacts(@Nonnull ReadonlySet<Contact> contacts) throws SQLException {
         throw new SQLException();
     }
@@ -491,6 +516,7 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
      * 
      * @param contacts the contacts to be removed from this context.
      */
+    @EndsCommitted
     public void removeContacts(@Nonnull ReadonlySet<Contact> contacts) throws SQLException {
         throw new SQLException();
     }
@@ -500,6 +526,7 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
      * 
      * @return a set with all the contacts of this context (i.e. the contacts from subcontexts are included as well).
      */
+    @DoesNotCommit
     public @Nonnull @Capturable FreezableSet<Contact> getAllContacts() throws SQLException {
         throw new SQLException();
     }
@@ -587,6 +614,7 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
      * @return the given column of the result set as an instance of this class.
      */
     @Pure
+    @DoesNotCommit
     public static @Nullable Context get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
         final long number = resultSet.getLong(columnIndex);
         if (resultSet.wasNull()) return null;
@@ -603,11 +631,13 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
      * @return the given column of the result set as an instance of this class.
      */
     @Pure
+    @DoesNotCommit
     public static @Nonnull Context getNotNull(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
         return get(entity, resultSet.getLong(columnIndex));
     }
     
     @Override
+    @DoesNotCommit
     public void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
         preparedStatement.setLong(parameterIndex, getNumber());
     }
@@ -619,6 +649,7 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
      * @param preparedStatement the prepared statement whose parameter is to be set.
      * @param parameterIndex the index of the parameter to set.
      */
+    @DoesNotCommit
     public static void set(@Nullable Context context, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
         if (context == null) preparedStatement.setNull(parameterIndex, Types.BIGINT);
         else context.set(preparedStatement, parameterIndex);

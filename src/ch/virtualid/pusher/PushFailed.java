@@ -2,6 +2,7 @@ package ch.virtualid.pusher;
 
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
+import ch.virtualid.annotations.DoesNotCommit;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.NonHostAccount;
@@ -114,6 +115,7 @@ public final class PushFailed extends ExternalAction {
      * 
      * @ensure hasSignature() : "This handler has a signature.";
      */
+    @DoesNotCommit
     private PushFailed(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
@@ -188,12 +190,14 @@ public final class PushFailed extends ExternalAction {
     }
     
     @Override
+    @DoesNotCommit
     public void executeOnClient() throws SQLException {
         // TODO: Add this failed push to some list where the user can see it (see the Errors module).
         action.executeOnFailure();
     }
     
     @Override
+    @DoesNotCommit
     public void executeOnFailure() throws SQLException {
         throw new ShouldNeverHappenError("Failed push actions should never be pushed themselves.");
     }
@@ -265,6 +269,7 @@ public final class PushFailed extends ExternalAction {
         
         @Pure
         @Override
+        @DoesNotCommit
         protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
             return new PushFailed(entity, signature, recipient, block);
         }

@@ -4,6 +4,7 @@ import ch.virtualid.agent.Agent;
 import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
+import ch.virtualid.annotations.DoesNotCommit;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.AccountOpen;
 import ch.virtualid.entity.Entity;
@@ -73,6 +74,7 @@ public abstract class Action extends Method implements Auditable {
     
     
     @Override
+    @DoesNotCommit
     public abstract @Nullable ActionReply executeOnHost() throws PacketException, SQLException;
     
     
@@ -83,6 +85,7 @@ public abstract class Action extends Method implements Auditable {
      * 
      * @require isOnClient() : "This method is called on a client.";
      */
+    @DoesNotCommit
     public abstract void executeOnClient() throws SQLException;
     
     /**
@@ -90,6 +93,7 @@ public abstract class Action extends Method implements Auditable {
      * 
      * @throws SQLException if this handler cannot be executed.
      */
+    @DoesNotCommit
     public void executeOnSuccess() throws SQLException {}
     
     

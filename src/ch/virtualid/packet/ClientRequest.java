@@ -1,7 +1,7 @@
 package ch.virtualid.packet;
 
-import ch.virtualid.synchronizer.Audit;
-import ch.virtualid.synchronizer.RequestAudit;
+import ch.virtualid.agent.ClientAgentCommitmentReplace;
+import ch.virtualid.annotations.DoesNotCommit;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.annotations.RawRecipient;
 import ch.virtualid.auxiliary.Time;
@@ -15,6 +15,9 @@ import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Method;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identifier.InternalIdentifier;
+import ch.virtualid.synchronizer.Audit;
+import ch.virtualid.synchronizer.RequestAudit;
+import ch.virtualid.synchronizer.Sender;
 import ch.virtualid.util.FreezableList;
 import ch.virtualid.util.ReadonlyList;
 import ch.xdf.ClientSignatureWrapper;
@@ -51,6 +54,7 @@ public final class ClientRequest extends Request {
      * @require Method.areSimilar(methods) : "The methods are similar to each other.";
      * @require methods.getNotNull(0).isOnClient() : "The methods are on a client.";
      */
+    @DoesNotCommit
     public ClientRequest(@Nonnull ReadonlyList<Method> methods, @Nonnull InternalIdentifier subject, @Nullable RequestAudit audit, @Nonnull SecretCommitment commitment) throws SQLException, IOException, PacketException, ExternalException {
         this(methods, subject, audit, commitment, 0);
     }
@@ -64,6 +68,7 @@ public final class ClientRequest extends Request {
      * @param commitment the commitment containing the client secret.
      * @param iteration how many times this request was resent.
      */
+    @DoesNotCommit
     private ClientRequest(@Nonnull ReadonlyList<Method> methods, @Nonnull InternalIdentifier subject, @Nullable RequestAudit audit, @Nonnull SecretCommitment commitment, int iteration) throws SQLException, IOException, PacketException, ExternalException {
         super(methods, subject.getHostIdentifier(), getSymmetricKey(subject.getHostIdentifier(), Time.HOUR), subject, audit, commitment, iteration);
     }
@@ -91,6 +96,7 @@ public final class ClientRequest extends Request {
     }
     
     @Override
+    @DoesNotCommit
     @Nonnull Response resend(@Nonnull FreezableList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject, int iteration, boolean verified) throws SQLException, IOException, PacketException, ExternalException {
         if (!subject.getHostIdentifier().equals(recipient)) throw new PacketException(PacketError.INTERNAL, "The host of the subject " + subject + " does not match the recipient " + recipient + ".");
         return new ClientRequest(methods, subject, getAudit(), commitment).send(verified);
@@ -105,12 +111,15 @@ public final class ClientRequest extends Request {
      * 
      * @return the response to the resent request with the new commitment.
      */
+    @DoesNotCommit
     @Nonnull Response recommit(@Nonnull FreezableList<Method> methods, int iteration, boolean verified) throws SQLException, IOException, PacketException, ExternalException {
         final @Nonnull NativeRole role = methods.getNotNull(0).getRole().toNativeRole();
         final @Nonnull Client client = role.getClient();
-        final @Nonnull Commitment commitment = client.getCommitment(role.getIssuer().getAddress());
-        role.getAgent().setCommitment(commitment);
-        return new ClientRequest(methods, getSubject(), getAudit(), commitment.addSecret(client.getSecret()), iteration).send(verified);
+        final @Nonnull Commitment oldCommitment = role.getAgent().getCommitment();
+        final @Nonnull Commitment newCommitment = client.getCommitment(role.getIssuer().getAddress());
+        final @Nonnull ClientAgentCommitmentReplace action = new ClientAgentCommitmentReplace(role.getAgent(), oldCommitment, newCommitment);
+        final @Nullable RequestAudit newAudit = Sender.runAsynchronously(action, getAudit());
+        return new ClientRequest(methods, getSubject(), newAudit, newCommitment.addSecret(client.getSecret()), iteration).send(verified);
     }
     
 }

@@ -3,6 +3,7 @@ package ch.virtualid.service;
 import ch.virtualid.agent.Agent;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
+import ch.virtualid.annotations.DoesNotCommit;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.attribute.Attribute;
 import ch.virtualid.attribute.AttributeValue;
@@ -175,6 +176,7 @@ public abstract class Service implements BothModule, SQLizable {
      * @return the recipient of internal methods for the given role.
      */
     @Pure
+    @DoesNotCommit
     public @Nonnull HostIdentifier getRecipient(@Nonnull Role role) throws SQLException, PacketException, InvalidEncodingException {
         final @Nullable AttributeValue attributeValue = Attribute.get(role, getType()).getValue();
         if (attributeValue == null) throw new PacketException(PacketError.AUTHORIZATION, "Could not read the attribute value of " + getType().getAddress() + ".");
@@ -190,6 +192,7 @@ public abstract class Service implements BothModule, SQLizable {
      * @return the recipient of external methods for the given subject.
      */
     @Pure
+    @DoesNotCommit
     public @Nonnull HostIdentifier getRecipient(@Nullable Role role, @Nonnull InternalNonHostIdentity subject) throws SQLException, IOException, PacketException, ExternalException {
         return IdentifierClass.create(Cache.getFreshAttributeContent(subject, role, getType(), false)).toHostIdentifier();
     }
@@ -252,6 +255,7 @@ public abstract class Service implements BothModule, SQLizable {
     
     
     @Override
+    @DoesNotCommit
     public final void createTables(@Nonnull Site site) throws SQLException {
         if (site instanceof Host) {
             for (final @Nonnull Module module : hostModules.values()) module.createTables(site);
@@ -261,6 +265,7 @@ public abstract class Service implements BothModule, SQLizable {
     }
     
     @Override
+    @DoesNotCommit
     public final void deleteTables(@Nonnull Site site) throws SQLException {
         if (site instanceof Host) {
             for (final @Nonnull Module module : hostModules.values()) module.deleteTables(site);
@@ -288,6 +293,7 @@ public abstract class Service implements BothModule, SQLizable {
     public abstract @Nonnull SemanticType getModuleFormat();
     
     @Override
+    @DoesNotCommit
     public final @Nonnull Block exportModule(@Nonnull Host host) throws SQLException {
         final @Nonnull FreezableList<Block> elements = new FreezableArrayList<Block>(hostModules.size());
         for (final @Nonnull HostModule hostModule : hostModules.values()) {
@@ -297,6 +303,7 @@ public abstract class Service implements BothModule, SQLizable {
     }
     
     @Override
+    @DoesNotCommit
     public final void importModule(@Nonnull Host host, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         assert block.getType().isBasedOn(getModuleFormat()) : "The block is based on the format of this module.";
         
@@ -329,6 +336,7 @@ public abstract class Service implements BothModule, SQLizable {
     
     @Pure
     @Override
+    @DoesNotCommit
     public final @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadonlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws SQLException {
         final @Nonnull FreezableList<Block> elements = new FreezableArrayList<Block>(bothModules.size());
         for (final @Nonnull BothModule bothModule : bothModules.values()) {
@@ -338,6 +346,7 @@ public abstract class Service implements BothModule, SQLizable {
     }
     
     @Override
+    @DoesNotCommit
     public final void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         assert block.getType().isBasedOn(getStateFormat()) : "The block is based on the indicated type.";
         
@@ -351,6 +360,7 @@ public abstract class Service implements BothModule, SQLizable {
     }
     
     @Override
+    @DoesNotCommit
     public final void removeState(@Nonnull NonHostEntity entity) throws SQLException {
       for (final @Nonnull BothModule bothModule : bothModules.values()) bothModule.removeState(entity);
     }
@@ -375,11 +385,13 @@ public abstract class Service implements BothModule, SQLizable {
      * @return the given column of the result set as an instance of this class.
      */
     @Pure
+    @DoesNotCommit
     public static @Nonnull Service get(@Nonnull ResultSet resultSet, int columnIndex) throws SQLException, PacketException, InvalidEncodingException {
         return getService(IdentityClass.getNotNull(resultSet, columnIndex).toSemanticType());
     }
     
     @Override
+    @DoesNotCommit
     public void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
         getType().set(preparedStatement, parameterIndex);
     }

@@ -1,5 +1,7 @@
 package ch.virtualid.password;
 
+import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.EndsCommitted;
 import ch.virtualid.annotations.OnlyForActions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.concept.Aspect;
@@ -101,6 +103,7 @@ public final class Password extends NonHostConcept {
      * @require isOnClient() : "The password is on a client.";
      * @require isValid(newValue) : "The new value is valid.";
      */
+    @EndsCommitted
     public void setValue(@Nonnull String newValue) throws SQLException {
         if (!newValue.equals(value)) {
             Synchronizer.execute(new PasswordValueReplace(this, value, newValue));
@@ -116,6 +119,7 @@ public final class Password extends NonHostConcept {
      * @require isValid(oldValue) : "The old value is valid.";
      * @require isValid(newValue) : "The new value is valid.";
      */
+    @DoesNotCommit
     @OnlyForActions
     void replaceName(@Nonnull String oldValue, @Nonnull String newValue) throws SQLException {
         PasswordModule.replace(this, oldValue, newValue);
@@ -154,6 +158,7 @@ public final class Password extends NonHostConcept {
      * @require !(entity instanceof Role) || ((Role) entity).isNative() : "If the entity is a role, it is native.";
      */
     @Pure
+    @DoesNotCommit
     public static @Nonnull Password get(@Nonnull NonHostEntity entity) throws SQLException {
         assert !(entity instanceof Role) || ((Role) entity).isNative() : "If the entity is a role, it is native.";
         
@@ -172,6 +177,7 @@ public final class Password extends NonHostConcept {
      * 
      * @param entity the entity whose password is to be reset.
      */
+    @DoesNotCommit
     public static void reset(@Nonnull NonHostEntity entity) throws SQLException {
         if (Database.isSingleAccess()) {
             final @Nullable Password password = index.get(entity);

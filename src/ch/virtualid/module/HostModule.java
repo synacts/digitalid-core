@@ -1,10 +1,11 @@
 package ch.virtualid.module;
 
+import ch.virtualid.annotations.DoesNotCommit;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
-import ch.virtualid.identity.SemanticType;
 import ch.virtualid.host.Host;
+import ch.virtualid.identity.SemanticType;
 import ch.xdf.Block;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -38,6 +39,7 @@ public interface HostModule extends Module {
      * @ensure return.getType().equals(getModuleFormat()) : "The returned block has the format of this module.";
      */
     @Pure
+    @DoesNotCommit
     public @Nonnull Block exportModule(@Nonnull Host host) throws SQLException;
     
     /**
@@ -48,6 +50,7 @@ public interface HostModule extends Module {
      * 
      * @require block.getType().isBasedOn(getModuleFormat()) : "The block is based on the format of this module.";
      */
+    @DoesNotCommit
     public void importModule(@Nonnull Host host, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException;
     
 }

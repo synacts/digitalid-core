@@ -3,6 +3,7 @@ package ch.virtualid.synchronizer;
 import ch.virtualid.agent.Agent;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
+import ch.virtualid.annotations.DoesNotCommit;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.credential.Credential;
 import ch.virtualid.entity.Entity;
@@ -55,6 +56,7 @@ final class StateQuery extends InternalQuery {
      * @param role the role to which this handler belongs.
      * @param module the module whose state is queried.
      */
+    @DoesNotCommit
     StateQuery(@Nonnull Role role, @Nonnull BothModule module) throws SQLException, PacketException, InvalidEncodingException {
         super(role, module.getService().getRecipient(role));
         
@@ -75,6 +77,7 @@ final class StateQuery extends InternalQuery {
      * @ensure hasSignature() : "This handler has a signature.";
      * @ensure isOnHost() : "Queries are only decoded on hosts.";
      */
+    @DoesNotCommit
     private StateQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
@@ -102,6 +105,7 @@ final class StateQuery extends InternalQuery {
     
     
     @Override
+    @DoesNotCommit
     public @Nonnull StateReply executeOnHost() throws PacketException, SQLException {
         final @Nonnull Service service = module.getService();
         final @Nonnull NonHostAccount account = getNonHostAccount();
@@ -152,6 +156,7 @@ final class StateQuery extends InternalQuery {
         
         @Pure
         @Override
+        @DoesNotCommit
         protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
             return new StateQuery(entity, signature, recipient, block);
         }

@@ -1,5 +1,6 @@
 package ch.virtualid.handler;
 
+import ch.virtualid.annotations.DoesNotCommit;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.database.Database;
@@ -112,6 +113,7 @@ public abstract class Reply extends Handler implements SQLizable {
          * @ensure return.hasSignature() : "The returned reply has a signature.";
          */
         @Pure
+        @DoesNotCommit
         protected abstract Reply create(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException;
         
     }
@@ -147,6 +149,7 @@ public abstract class Reply extends Handler implements SQLizable {
      * @ensure return.hasSignature() : "The returned reply has a signature.";
      */
     @Pure
+    @DoesNotCommit
     private static @Nonnull Reply get(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         final @Nullable Reply.Factory factory = factories.get(block.getType());
         if (factory == null) throw new PacketException(PacketError.REPLY, "No reply could be found for the type " + block.getType().getAddress() + ".", null, true);
@@ -167,6 +170,7 @@ public abstract class Reply extends Handler implements SQLizable {
      * @ensure return.hasSignature() : "The returned reply has a signature.";
      */
     @Pure
+    @DoesNotCommit
     public static @Nonnull Reply get(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         return get(entity, signature, store(signature), block);
     }
@@ -232,6 +236,7 @@ public abstract class Reply extends Handler implements SQLizable {
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS general_reply (reply " + Database.getConfiguration().PRIMARY_KEY() + ", time " + Time.FORMAT + " NOT NULL, signature " + Block.FORMAT + " NOT NULL)");
         } catch (@Nonnull SQLException exception) {
+            try { Database.rollback(); } catch (@Nonnull SQLException exc) { throw new InitializationError("Could not rollback.", exc); }
             throw new InitializationError("The database table of the reply logger could not be created.", exception);
         }
     }
@@ -247,6 +252,7 @@ public abstract class Reply extends Handler implements SQLizable {
      * @return the given column of the result set as an instance of this class.
      */
     @Pure
+    @DoesNotCommit
     public static @Nullable Reply get(@Nullable NonHostEntity entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException, IOException, PacketException, ExternalException {
         final long number = resultSet.getLong(columnIndex);
         if (resultSet.wasNull()) return null;
@@ -264,6 +270,7 @@ public abstract class Reply extends Handler implements SQLizable {
     }
     
     @Override
+    @DoesNotCommit
     public void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
         if (number == null) preparedStatement.setNull(parameterIndex, java.sql.Types.BIGINT);
         else preparedStatement.setLong(parameterIndex, number);
@@ -276,6 +283,7 @@ public abstract class Reply extends Handler implements SQLizable {
      * @param preparedStatement the prepared statement whose parameter is to be set.
      * @param parameterIndex the index of the parameter to set.
      */
+    @DoesNotCommit
     public static void set(@Nullable Reply reply, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
         if (reply == null) preparedStatement.setNull(parameterIndex, Types.BIGINT);
         else reply.set(preparedStatement, parameterIndex);
@@ -288,6 +296,7 @@ public abstract class Reply extends Handler implements SQLizable {
      * 
      * @return the key generated for the stored signature.
      */
+    @DoesNotCommit
     private static long store(@Nonnull HostSignatureWrapper signature) throws IdentityNotFoundException, SQLException {
         final @Nonnull String SQL = "INSERT INTO general_reply (time, signature) VALUES (?, ?)";
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareInsertStatement(SQL)) {

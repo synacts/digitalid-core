@@ -1,6 +1,8 @@
 package ch.virtualid.entity;
 
 import ch.virtualid.agent.ClientAgent;
+import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.EndsCommitted;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Client;
 import ch.virtualid.concept.Aspect;
@@ -62,6 +64,7 @@ public final class NativeRole extends Role implements Immutable {
      * 
      * @return whether this role is accredited.
      */
+    @EndsCommitted
     public boolean isAccredited() throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
         try {
             reloadState(CoreService.SERVICE);
@@ -96,7 +99,7 @@ public final class NativeRole extends Role implements Immutable {
      * 
      * @return a new or existing native role with the given arguments.
      */
-    public static @Nonnull NativeRole get(@Nonnull Client client, long number, @Nonnull InternalNonHostIdentity issuer, long agentNumber) throws SQLException {
+    public static @Nonnull NativeRole get(@Nonnull Client client, long number, @Nonnull InternalNonHostIdentity issuer, long agentNumber) {
         if (Database.isSingleAccess()) {
             @Nullable ConcurrentMap<Long, NativeRole> map = index.get(client);
             if (map == null) map = index.putIfAbsentElseReturnPresent(client, new ConcurrentHashMap<Long, NativeRole>());
@@ -120,6 +123,7 @@ public final class NativeRole extends Role implements Immutable {
      * 
      * @return a new or existing native role with the given arguments.
      */
+    @DoesNotCommit
     public static @Nonnull NativeRole add(@Nonnull Client client, @Nonnull InternalNonHostIdentity issuer, long agentNumber) throws SQLException {
         final @Nonnull NativeRole role = get(client, RoleModule.map(client, issuer, null, null, agentNumber), issuer, agentNumber);
         role.notify(CREATED);
@@ -127,6 +131,7 @@ public final class NativeRole extends Role implements Immutable {
     }
     
     @Override
+    @DoesNotCommit
     public void remove() throws SQLException {
         if (Database.isSingleAccess()) {
             final @Nullable ConcurrentMap<Long, NativeRole> map = index.get(getClient());

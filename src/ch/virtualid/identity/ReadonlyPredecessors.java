@@ -1,6 +1,7 @@
 package ch.virtualid.identity;
 
 import ch.virtualid.annotations.Capturable;
+import ch.virtualid.annotations.DoesNotCommit;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
@@ -35,6 +36,7 @@ public interface ReadonlyPredecessors extends ReadonlyList<Predecessor>, Blockab
      * @ensure return.isFrozen() : "The returned list is frozen.";
      * @ensure return.doesNotContainNull() : "The returned list does not contain null.";
      */
+    @DoesNotCommit
     public @Nonnull ReadonlyList<NonHostIdentity> getIdentities() throws SQLException, IOException, PacketException, ExternalException;
     
     /**
@@ -44,6 +46,7 @@ public interface ReadonlyPredecessors extends ReadonlyList<Predecessor>, Blockab
      * @param identifier the identifier whose predecessors are to be set.
      * @param reply the reply stating that the given identifier has these predecessors.
      */
+    @DoesNotCommit
     public void set(@Nonnull InternalNonHostIdentifier identifier, @Nullable Reply reply) throws SQLException;
     
 }

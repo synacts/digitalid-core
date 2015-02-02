@@ -1,5 +1,6 @@
 package ch.virtualid.agent;
 
+import ch.virtualid.annotations.DoesNotCommit;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Image;
 import ch.virtualid.client.Client;
@@ -94,6 +95,7 @@ public final class ClientAgentAccredit extends CoreServiceInternalAction {
      * 
      * @require Password.isValid(password) : "The password is valid.";
      */
+    @DoesNotCommit
     public ClientAgentAccredit(@Nonnull NativeRole role, @Nonnull String password) throws SQLException, IOException, PacketException, ExternalException {
         super(role);
         
@@ -121,6 +123,7 @@ public final class ClientAgentAccredit extends CoreServiceInternalAction {
      * 
      * @ensure hasSignature() : "This handler has a signature.";
      */
+    @DoesNotCommit
     private ClientAgentAccredit(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
@@ -164,6 +167,7 @@ public final class ClientAgentAccredit extends CoreServiceInternalAction {
     }
     
     @Override
+    @DoesNotCommit
     public @Nonnull Response send() throws SQLException, IOException, PacketException, ExternalException {
         final @Nonnull Response response = Method.send(new FreezableArrayList<Method>(this).freeze(), null);
         response.checkReply(0);
@@ -179,11 +183,13 @@ public final class ClientAgentAccredit extends CoreServiceInternalAction {
     
     
     @Override
+    @DoesNotCommit
     protected void executeOnBoth() throws SQLException {
         clientAgent.createForActions(permissions, new Restrictions(true, false, false, Context.getRoot(getNonHostEntity())), commitment, name, icon);
     }
     
     @Override
+    @DoesNotCommit
     public void executeOnHostInternalAction() throws PacketException, SQLException {
         if (!Password.get(getNonHostAccount()).getValue().equals(password)) throw new PacketException(PacketError.AUTHORIZATION, "The password is not correct.");
         executeOnBoth();
@@ -247,6 +253,7 @@ public final class ClientAgentAccredit extends CoreServiceInternalAction {
         
         @Pure
         @Override
+        @DoesNotCommit
         protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException  {
             return new ClientAgentAccredit(entity, signature, recipient, block);
         }

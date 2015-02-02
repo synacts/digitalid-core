@@ -1,5 +1,6 @@
 package ch.virtualid.identity;
 
+import ch.virtualid.annotations.DoesNotCommit;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
@@ -61,6 +62,7 @@ public abstract class Type extends NonHostIdentityClass implements InternalNonHo
     
     @Pure
     @Override
+    @DoesNotCommit
     public final boolean hasBeenMerged(@Nonnull SQLException exception) throws SQLException {
         Mapper.unmap(this);
         throw exception;
@@ -107,6 +109,7 @@ public abstract class Type extends NonHostIdentityClass implements InternalNonHo
      * 
      * @ensure isLoaded() : "The type declaration has been loaded.";
      */
+    @DoesNotCommit
     abstract void load() throws SQLException, IOException, PacketException, ExternalException;
     
     /**
@@ -114,6 +117,7 @@ public abstract class Type extends NonHostIdentityClass implements InternalNonHo
      * 
      * @ensure isLoaded() : "The type declaration is loaded.";
      */
+    @DoesNotCommit
     public final void ensureLoaded() throws SQLException, IOException, PacketException, ExternalException {
         if (!loaded) load();
     }

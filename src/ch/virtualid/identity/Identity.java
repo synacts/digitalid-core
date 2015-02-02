@@ -1,5 +1,6 @@
 package ch.virtualid.identity;
 
+import ch.virtualid.annotations.DoesNotCommit;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.identifier.Identifier;
@@ -59,6 +60,7 @@ public interface Identity extends Immutable, Blockable, SQLizable {
      * 
      * @return whether this identity has been merged.
      */
+    @DoesNotCommit
     public boolean hasBeenMerged(@Nonnull SQLException exception) throws SQLException;
     
     

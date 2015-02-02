@@ -1,5 +1,6 @@
 package ch.virtualid.synchronizer;
 
+import ch.virtualid.annotations.DoesNotCommit;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.entity.Role;
@@ -44,6 +45,7 @@ public final class RequestAudit extends Audit implements Immutable, Blockable {
      * 
      * @return the request audit for the given method.
      */
+    @DoesNotCommit
     public static @Nullable RequestAudit get(@Nonnull Method method) throws SQLException {
         if (method.isOnClient() && method instanceof InternalMethod) {
             final @Nonnull Role role = method.getRole();

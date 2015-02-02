@@ -1,5 +1,6 @@
 package ch.virtualid.agent;
 
+import ch.virtualid.annotations.DoesNotCommit;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.contact.Context;
 import ch.virtualid.entity.Entity;
@@ -91,6 +92,7 @@ final class OutgoingRoleCreate extends CoreServiceInternalAction {
      * 
      * @ensure hasSignature() : "This handler has a signature.";
      */
+    @DoesNotCommit
     private OutgoingRoleCreate(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
@@ -134,6 +136,7 @@ final class OutgoingRoleCreate extends CoreServiceInternalAction {
     
     
     @Override
+    @DoesNotCommit
     protected void executeOnBoth() throws SQLException {
         outgoingRole.createForActions(relation, context);
     }
@@ -193,6 +196,7 @@ final class OutgoingRoleCreate extends CoreServiceInternalAction {
         
         @Pure
         @Override
+        @DoesNotCommit
         protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException  {
             return new OutgoingRoleCreate(entity, signature, recipient, block);
         }

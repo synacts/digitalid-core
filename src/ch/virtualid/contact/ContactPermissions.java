@@ -1,6 +1,7 @@
 package ch.virtualid.contact;
 
 import ch.virtualid.annotations.Capturable;
+import ch.virtualid.annotations.DoesNotCommit;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
@@ -65,6 +66,7 @@ public final class ContactPermissions extends AttributeTypeSet implements Readon
      * 
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
+    @DoesNotCommit
     public ContactPermissions(@Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(block);
     }

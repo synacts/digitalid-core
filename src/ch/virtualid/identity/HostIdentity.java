@@ -1,5 +1,6 @@
 package ch.virtualid.identity;
 
+import ch.virtualid.annotations.DoesNotCommit;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.database.Database;
 import ch.virtualid.errors.InitializationError;
@@ -35,6 +36,7 @@ public final class HostIdentity extends IdentityClass implements InternalIdentit
         try {
             return Mapper.mapHostIdentity(identifier);
         } catch (@Nonnull SQLException exception) {
+            try { Database.rollback(); } catch (@Nonnull SQLException exc) { throw new InitializationError("Could not rollback.", exc); }
             throw new InitializationError("The host identity with the identifier " + identifier + " could not be mapped.", exception);
         }
     }
@@ -76,6 +78,7 @@ public final class HostIdentity extends IdentityClass implements InternalIdentit
     
     @Pure
     @Override
+    @DoesNotCommit
     public boolean hasBeenMerged(@Nonnull SQLException exception) throws SQLException {
         Mapper.unmap(this);
         throw exception;

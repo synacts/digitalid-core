@@ -1,5 +1,7 @@
 package ch.virtualid.synchronizer;
 
+import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.EndsCommitted;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.client.Client;
@@ -62,6 +64,7 @@ public final class SynchronizerModule implements ClientModule {
     }
     
     @Override
+    @DoesNotCommit
     public void createTables(@Nonnull Site site) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "synchronization_action (entity " + EntityClass.FORMAT + " NOT NULL, service " + Service.FORMAT + " NOT NULL, time " + Time.FORMAT + " NOT NULL, action " + Block.FORMAT + " NOT NULL, PRIMARY KEY (entity, service, time), INDEX(time), FOREIGN KEY (entity) " + site.getEntityReference() + ", FOREIGN KEY (service) " + Service.REFERENCE + ")");
@@ -71,6 +74,7 @@ public final class SynchronizerModule implements ClientModule {
     }
     
     @Override
+    @DoesNotCommit
     public void deleteTables(@Nonnull Site site) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             Database.onInsertNotUpdate(statement, "synchronization_last");
@@ -90,6 +94,7 @@ public final class SynchronizerModule implements ClientModule {
      * 
      * @param client the client whose pending actions are to be loaded.
      */
+    @DoesNotCommit
     public static void load(@Nonnull Client client) throws SQLException, IOException, PacketException, ExternalException {
         // TODO: If the same client runs in several processes (on different machines), make sure the pending actions and suspended modules are loaded only once.
         final @Nonnull String SQL = "SELECT entity, service, action FROM " + client + "synchronization_action ORDER BY time ASC";
@@ -109,6 +114,7 @@ public final class SynchronizerModule implements ClientModule {
      * 
      * @param role the role whose actions are to be removed.
      */
+    @DoesNotCommit
     public static void remove(@Nonnull Role role) throws SQLException {
         final @Nonnull Iterator<InternalAction> iterator = pendingActions.iterator();
         while (iterator.hasNext()) {
@@ -184,6 +190,7 @@ public final class SynchronizerModule implements ClientModule {
      * 
      * @require action.isOnClient() : "The internal action is on a client.";
      */
+    @DoesNotCommit
     static void add(@Nonnull InternalAction action) throws SQLException {
         final @Nonnull Role role = action.getRole();
         final @Nonnull String TIME = Database.getConfiguration().GREATEST() + "(COALESCE(MAX(time), 0) + 1, " + Database.getConfiguration().CURRENT_TIME() + ")";
@@ -204,6 +211,7 @@ public final class SynchronizerModule implements ClientModule {
      * 
      * @require action.isOnClient() : "The internal action is on a client.";
      */
+    @DoesNotCommit
     static void remove(@Nonnull InternalAction action) throws SQLException {
         final @Nonnull Role role = action.getRole();
         final @Nonnull String SQL = "DELETE FROM " + role.getSite() + "synchronization_action WHERE entity = " + role + " AND service = " + action.getService() + " AND action = ?";
@@ -225,6 +233,7 @@ public final class SynchronizerModule implements ClientModule {
      * @require Method.areSimilar(methods) : "The methods are similar to each other.";
      * @require methods.getNotNull(0).isOnClient() : "The first method is on a client.";
      */
+    @DoesNotCommit
     static void remove(@Nonnull ReadonlyList<Method> methods) throws SQLException {
         assert methods.isNotEmpty() : "The list of methods is not empty.";
         assert methods.doesNotContainNull() : "The list of methods does not contain null.";
@@ -252,6 +261,7 @@ public final class SynchronizerModule implements ClientModule {
      * @param modules the modules which were reloaded and need to be redone.
      * @param lastAction the last action that might have been affected by the reload.
      */
+    @EndsCommitted
     static void redoPendingActions(@Nonnull Role role, @Nonnull ReadonlyCollection<BothModule> modules, @Nullable InternalAction lastAction) throws SQLException {
         for (final @Nonnull InternalAction action : pendingActions) {
             if (action.getRole().equals(role) && modules.contains(action.getModule())) {
@@ -269,6 +279,7 @@ public final class SynchronizerModule implements ClientModule {
      * 
      * @return a list of all the actions that interfere with the given failed action and were thus reversed.
      */
+    @DoesNotCommit
     static @Nonnull ReadonlyList<InternalAction> reverseInterferingActions(@Nonnull Action failedAction) throws SQLException {
         final @Nonnull Role role = failedAction.getRole();
         final @Nonnull Service service = failedAction.getService();
@@ -289,6 +300,7 @@ public final class SynchronizerModule implements ClientModule {
      * 
      * @param reversedActions the actions that were reversed.
      */
+    @EndsCommitted
     static void redoReversedActions(@Nonnull ReadonlyList<InternalAction> reversedActions) throws SQLException {
         for (@Nonnull InternalAction reversedAction : reversedActions) {
             try {
@@ -313,6 +325,7 @@ public final class SynchronizerModule implements ClientModule {
      * @return the time of the last audit.
      */
     @Pure
+    @DoesNotCommit
     static @Nonnull Time getLastTime(@Nonnull Role role, @Nonnull Service service) throws SQLException {
         final @Nonnull String SQL = "SELECT time FROM " + role.getSite() + "synchronization_last WHERE entity = " + role + " AND service = " + service;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
@@ -328,6 +341,7 @@ public final class SynchronizerModule implements ClientModule {
      * @param service the desired service.
      * @param thisTime the time to be set.
      */
+    @DoesNotCommit
     static void setLastTime(@Nonnull Role role, @Nonnull Service service, @Nonnull Time thisTime) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate(Database.getConfiguration().REPLACE() + " INTO " + role.getSite() + "synchronization_last (entity, service, time) VALUES (" + role + ", " + service + ", " + thisTime + ")");

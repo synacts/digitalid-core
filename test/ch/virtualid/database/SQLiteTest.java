@@ -1,5 +1,7 @@
 package ch.virtualid.database;
 
+import ch.virtualid.annotations.EndsCommitted;
+import ch.virtualid.annotations.Pure;
 import java.sql.SQLException;
 import org.junit.BeforeClass;
 
@@ -11,12 +13,14 @@ import org.junit.BeforeClass;
  */
 public final class SQLiteTest extends DatabaseTest {
     
+    @Pure
     @Override
     protected boolean isSubclass() {
         return true;
     }
     
     @BeforeClass
+    @EndsCommitted
     public static void configureDatabase() throws SQLException {
         Database.initialize(new SQLiteConfiguration(true), false, true);
         createTables();

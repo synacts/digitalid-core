@@ -1,5 +1,6 @@
 package ch.virtualid.contact;
 
+import ch.virtualid.annotations.DoesNotCommit;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.concept.Aspect;
 import ch.virtualid.concept.Instance;
@@ -134,6 +135,7 @@ public final class Contact extends NonHostConcept implements Immutable, Blockabl
      * 
      * @return the permissions of this contact.
      */
+    @DoesNotCommit
     public @Nonnull ReadonlyContactPermissions getPermissions() throws SQLException {
         return ContactPermissions.NONE; // TODO
     }
@@ -143,6 +145,7 @@ public final class Contact extends NonHostConcept implements Immutable, Blockabl
      * 
      * @return the authentications of this contact.
      */
+    @DoesNotCommit
     public @Nonnull ReadonlyAuthentications getAuthentications() throws SQLException {
         return Authentications.IDENTITY_BASED; // TODO
     }
@@ -193,6 +196,7 @@ public final class Contact extends NonHostConcept implements Immutable, Blockabl
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
     @Pure
+    @DoesNotCommit
     public static @Nonnull Contact get(@Nonnull NonHostEntity entity, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
@@ -209,6 +213,7 @@ public final class Contact extends NonHostConcept implements Immutable, Blockabl
      * @return the given column of the result set as an instance of this class.
      */
     @Pure
+    @DoesNotCommit
     public static @Nullable Contact get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
         final @Nullable Identity identity = IdentityClass.get(resultSet, columnIndex);
         if (identity == null) return null;
@@ -226,6 +231,7 @@ public final class Contact extends NonHostConcept implements Immutable, Blockabl
      * @return the given column of the result set as an instance of this class.
      */
     @Pure
+    @DoesNotCommit
     public static @Nonnull Contact getNotNull(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
         final @Nonnull Identity identity = IdentityClass.getNotNull(resultSet, columnIndex);
         if (identity instanceof Person) return get(entity, (Person) identity);
@@ -233,6 +239,7 @@ public final class Contact extends NonHostConcept implements Immutable, Blockabl
     }
     
     @Override
+    @DoesNotCommit
     public void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
         preparedStatement.setLong(parameterIndex, person.getNumber());
     }
@@ -244,6 +251,7 @@ public final class Contact extends NonHostConcept implements Immutable, Blockabl
      * @param preparedStatement the prepared statement whose parameter is to be set.
      * @param parameterIndex the index of the parameter to set.
      */
+    @DoesNotCommit
     public static void set(@Nullable Contact contact, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
         if (contact == null) preparedStatement.setNull(parameterIndex, Types.BIGINT);
         else contact.set(preparedStatement, parameterIndex);

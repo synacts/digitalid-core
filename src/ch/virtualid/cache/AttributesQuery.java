@@ -1,6 +1,7 @@
 package ch.virtualid.cache;
 
 import ch.virtualid.agent.ReadonlyAgentPermissions;
+import ch.virtualid.annotations.DoesNotCommit;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.attribute.Attribute;
 import ch.virtualid.attribute.AttributeValue;
@@ -100,6 +101,7 @@ public final class AttributesQuery extends CoreServiceExternalQuery {
      * @ensure hasSignature() : "This handler has a signature.";
      * @ensure isOnHost() : "Queries are only decoded on hosts.";
      */
+    @DoesNotCommit
     private AttributesQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException  {
         super(entity, signature, recipient);
         
@@ -130,6 +132,7 @@ public final class AttributesQuery extends CoreServiceExternalQuery {
     
     
     @Override
+    @DoesNotCommit
     public @Nonnull AttributesReply executeOnHost() throws PacketException, SQLException {
         final @Nonnull FreezableList<AttributeValue> attributeValues = new FreezableArrayList<AttributeValue>(attributeTypes.size());
         
@@ -219,6 +222,7 @@ public final class AttributesQuery extends CoreServiceExternalQuery {
         
         @Pure
         @Override
+        @DoesNotCommit
         protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
             return new AttributesQuery(entity, signature, recipient, block);
         }

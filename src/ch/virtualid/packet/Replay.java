@@ -1,5 +1,6 @@
 package ch.virtualid.packet;
 
+import ch.virtualid.annotations.DoesNotCommit;
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.cryptography.InitializationVector;
 import ch.virtualid.database.Database;
@@ -30,6 +31,7 @@ public final class Replay {
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS general_replay (vector " + InitializationVector.FORMAT + " NOT NULL PRIMARY KEY, time " + Time.FORMAT + " NOT NULL, INDEX(time))");
         } catch (@Nonnull SQLException exception) {
+            try { Database.rollback(); } catch (@Nonnull SQLException exc) { throw new InitializationError("Could not rollback.", exc); }
             throw new InitializationError("The database table of the replay checker could not be created.", exception);
         }
         
@@ -41,6 +43,7 @@ public final class Replay {
      * 
      * @param encryption the encryption to check for a replay attack.
      */
+    @DoesNotCommit
     public static void check(@Nonnull EncryptionWrapper encryption) throws SQLException, PacketException {
         final @Nonnull Time time = encryption.getTime();
         final @Nullable InitializationVector initializationVector = encryption.getInitializationVector();

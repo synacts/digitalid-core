@@ -4,6 +4,7 @@ import ch.virtualid.agent.Agent;
 import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
+import ch.virtualid.annotations.DoesNotCommit;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.cache.Cache;
 import ch.virtualid.cryptography.PublicKey;
@@ -58,6 +59,7 @@ public abstract class CoreServiceInternalAction extends InternalAction {
      * 
      * @ensure hasSignature() : "This handler has a signature.";
      */
+    @DoesNotCommit
     protected CoreServiceInternalAction(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
@@ -100,9 +102,11 @@ public abstract class CoreServiceInternalAction extends InternalAction {
     /**
      * Executes this internal action on both the host and client.
      */
+    @DoesNotCommit
     protected abstract void executeOnBoth() throws SQLException;
     
     @Override
+    @DoesNotCommit
     public void executeOnHostInternalAction() throws PacketException, SQLException {
         final @Nonnull SignatureWrapper signature = getSignatureNotNull();
         if (signature instanceof CredentialsSignatureWrapper) ((CredentialsSignatureWrapper) signature).checkIsLogded();
@@ -121,6 +125,7 @@ public abstract class CoreServiceInternalAction extends InternalAction {
     }
     
     @Override
+    @DoesNotCommit
     public final void executeOnClient() throws SQLException {
         executeOnBoth();
     }

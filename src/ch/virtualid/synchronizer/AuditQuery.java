@@ -1,5 +1,6 @@
 package ch.virtualid.synchronizer;
 
+import ch.virtualid.annotations.DoesNotCommit;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.Role;
@@ -47,6 +48,7 @@ final class AuditQuery extends InternalQuery {
      * @param role the role to which this handler belongs.
      * @param service the service whose audit is queried.
      */
+    @DoesNotCommit
     AuditQuery(@Nonnull Role role, @Nonnull Service service) throws SQLException, PacketException, InvalidEncodingException {
         super(role, service.getRecipient(role));
         
@@ -67,6 +69,7 @@ final class AuditQuery extends InternalQuery {
      * @ensure hasSignature() : "This handler has a signature.";
      * @ensure isOnHost() : "Queries are only decoded on hosts.";
      */
+    @DoesNotCommit
     private AuditQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity.toNonHostEntity(), signature, recipient);
         
@@ -133,6 +136,7 @@ final class AuditQuery extends InternalQuery {
         
         @Pure
         @Override
+        @DoesNotCommit
         protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
             return new AuditQuery(entity, signature, recipient, block);
         }

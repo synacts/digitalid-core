@@ -1,5 +1,6 @@
 package ch.virtualid.cryptography;
 
+import ch.virtualid.annotations.DoesNotCommit;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.identity.SemanticType;
@@ -143,6 +144,7 @@ public final class Exponent extends Number implements Immutable, Blockable, SQLi
      * @return the given column of the result set as an instance of this class.
      */
     @Pure
+    @DoesNotCommit
     public static @Nullable Exponent get(@Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
         try {
             final @Nullable Block block = Block.get(TYPE, resultSet, columnIndex);
@@ -162,6 +164,7 @@ public final class Exponent extends Number implements Immutable, Blockable, SQLi
      * @return the given column of the result set as an instance of this class.
      */
     @Pure
+    @DoesNotCommit
     public static @Nonnull Exponent getNotNull(@Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
         try {
             return new Exponent(Block.getNotNull(TYPE, resultSet, columnIndex));
@@ -177,6 +180,7 @@ public final class Exponent extends Number implements Immutable, Blockable, SQLi
      * @param parameterIndex the index of the parameter to set.
      */
     @Override
+    @DoesNotCommit
     public void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
         toBlock().set(preparedStatement, parameterIndex);
     }
@@ -188,6 +192,7 @@ public final class Exponent extends Number implements Immutable, Blockable, SQLi
      * @param preparedStatement the prepared statement whose parameter is to be set.
      * @param parameterIndex the index of the parameter to set.
      */
+    @DoesNotCommit
     public static void set(@Nullable Exponent exponent, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
         Block.set(Block.toBlock(exponent), preparedStatement, parameterIndex);
     }

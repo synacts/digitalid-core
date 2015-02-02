@@ -1,10 +1,9 @@
 package ch.virtualid.concepts;
 
+import ch.virtualid.annotations.EndsCommitted;
+import ch.virtualid.database.Database;
 import ch.virtualid.password.Password;
-import ch.virtualid.exceptions.external.ExternalException;
-import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.setup.IdentitySetup;
-import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import org.junit.Assert;
@@ -24,11 +23,19 @@ public final class PasswordTest extends IdentitySetup {
     private static final @Nonnull String VALUE = "Pa$$word";
         
     @Test
-    public void _01_testValueReplace() throws SQLException, IOException, PacketException, ExternalException {
-        final @Nonnull Password password = Password.get(getRole());
-        password.setValue(VALUE);
-        Password.reset(getRole()); // Not necessary but I want to test the database state.
-        Assert.assertEquals(VALUE, password.getValue());
+    @EndsCommitted
+    public void _01_testValueReplace() throws SQLException {
+        try {
+            final @Nonnull Password password = Password.get(getRole());
+            password.setValue(VALUE);
+            Password.reset(getRole()); // Not necessary but I want to test the database state.
+            Assert.assertEquals(VALUE, password.getValue());
+            Database.commit();
+        } catch (@Nonnull SQLException exception) {
+            exception.printStackTrace();
+            Database.rollback();
+            throw exception;
+        }
     }
     
 }

@@ -1,6 +1,7 @@
 package ch.virtualid.expression;
 
 import ch.virtualid.annotations.Capturable;
+import ch.virtualid.annotations.DoesNotCommit;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.contact.Contact;
 import ch.virtualid.entity.NonHostEntity;
@@ -52,6 +53,7 @@ final class BinaryExpression extends Expression implements Immutable {
      * 
      * @require operators.contains(operator) : "The operator is valid.";
      */
+    @DoesNotCommit
     BinaryExpression(@Nonnull NonHostEntity entity, @Nonnull String left, @Nonnull String right, char operator) throws SQLException, IOException, PacketException, ExternalException {
         super(entity);
         
@@ -89,6 +91,7 @@ final class BinaryExpression extends Expression implements Immutable {
     
     @Pure
     @Override
+    @DoesNotCommit
     @Nonnull @Capturable FreezableSet<Contact> getContacts() throws SQLException {
         assert isActive() : "This expression is active.";
         
@@ -117,6 +120,7 @@ final class BinaryExpression extends Expression implements Immutable {
     
     @Pure
     @Override
+    @DoesNotCommit
     boolean matches(@Nonnull CredentialsSignatureWrapper signature) throws SQLException {
         switch (operator) {
             case '+': return left.matches(signature) || right.matches(signature);

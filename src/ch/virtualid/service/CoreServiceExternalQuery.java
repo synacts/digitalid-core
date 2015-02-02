@@ -1,5 +1,6 @@
 package ch.virtualid.service;
 
+import ch.virtualid.annotations.DoesNotCommit;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.Role;
@@ -61,6 +62,7 @@ public abstract class CoreServiceExternalQuery extends ExternalQuery {
     
     
     @Override
+    @DoesNotCommit
     public abstract @Nonnull CoreServiceQueryReply executeOnHost() throws PacketException, SQLException;
     
 }

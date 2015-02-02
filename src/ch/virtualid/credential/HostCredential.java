@@ -1,6 +1,7 @@
 package ch.virtualid.credential;
 
 import ch.virtualid.agent.Restrictions;
+import ch.virtualid.annotations.DoesNotCommit;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.interfaces.Immutable;
@@ -30,6 +31,7 @@ public final class HostCredential extends Credential implements Immutable {
      * @require randomizedPermissions == null || randomizedPermissions.getType().isBasedOn(RandomizedAgentPermissions.TYPE) : "The randomized permissions are either null or based on the indicated type.";
      * @require i == null || i.getType().isBasedOn(Exponent.TYPE) : "The serial number is either null or based on the indicated type.";
      */
+    @DoesNotCommit
     public HostCredential(@Nonnull Block exposed, @Nullable Block randomizedPermissions, @Nullable Restrictions restrictions, @Nullable Block i) throws SQLException, IOException, PacketException, ExternalException {
         super(exposed, randomizedPermissions, restrictions, i);
     }

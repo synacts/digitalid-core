@@ -4,15 +4,16 @@ import ch.virtualid.agent.Agent;
 import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
+import ch.virtualid.annotations.DoesNotCommit;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Account;
 import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketException;
+import ch.virtualid.pusher.Pusher;
 import ch.virtualid.service.CoreServiceActionReply;
 import ch.virtualid.service.Service;
 import ch.virtualid.synchronizer.Audit;
-import ch.virtualid.pusher.Pusher;
 import ch.xdf.HostSignatureWrapper;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
@@ -69,6 +70,7 @@ public abstract class ActionReply extends Reply implements Auditable {
      * @require getEntityNotNull().equals(action.getEntityNotNull()) : "The entities of the reply and the action are the same.";
      * @require ((HostSignatureWrapper) getSignatureNotNull()).getSigner().equals(action.getRecipient()) : "The reply is signed by the action's recipient.";
      */
+    @DoesNotCommit
     public abstract void executeByPusher(@Nonnull ExternalAction action) throws PacketException, SQLException;
     
     /**
@@ -78,6 +80,7 @@ public abstract class ActionReply extends Reply implements Auditable {
      * 
      * @require isOnClient() : "This method is called on a client.";
      */
+    @DoesNotCommit
     public abstract void executeBySynchronizer() throws SQLException;
     
     

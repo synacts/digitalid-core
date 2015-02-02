@@ -1,17 +1,17 @@
 package ch.virtualid.entity;
 
+import ch.virtualid.annotations.DoesNotCommit;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.concept.Aspect;
 import ch.virtualid.concept.Instance;
 import ch.virtualid.concept.Observer;
 import ch.virtualid.database.Database;
-import ch.virtualid.entity.HostEntity;
+import ch.virtualid.host.Host;
 import ch.virtualid.identity.HostIdentity;
 import ch.virtualid.identity.Identity;
 import ch.virtualid.identity.IdentityClass;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
-import ch.virtualid.host.Host;
 import ch.virtualid.util.ConcurrentHashMap;
 import ch.virtualid.util.ConcurrentMap;
 import java.sql.ResultSet;
@@ -95,6 +95,7 @@ public final class HostAccount extends Account implements HostEntity, Immutable,
      * @return the given column of the result set as an instance of this class.
      */
     @Pure
+    @DoesNotCommit
     public static @Nonnull HostAccount getNotNull(@Nonnull Host host, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
         final @Nonnull Identity identity = IdentityClass.getNotNull(resultSet, columnIndex);
         if (identity instanceof HostIdentity) return get(host, (HostIdentity) identity);

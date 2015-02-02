@@ -1,6 +1,7 @@
 package ch.virtualid.password;
 
 import ch.virtualid.agent.Restrictions;
+import ch.virtualid.annotations.DoesNotCommit;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.exceptions.external.ExternalException;
@@ -100,6 +101,7 @@ final class PasswordValueReplace extends CoreServiceInternalAction {
      * 
      * @ensure hasSignature() : "This handler has a signature.";
      */
+    @DoesNotCommit
     private PasswordValueReplace(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
@@ -139,6 +141,7 @@ final class PasswordValueReplace extends CoreServiceInternalAction {
     
     
     @Override
+    @DoesNotCommit
     protected void executeOnBoth() throws SQLException {
         password.replaceName(oldValue, newValue);
     }
@@ -198,6 +201,7 @@ final class PasswordValueReplace extends CoreServiceInternalAction {
         
         @Pure
         @Override
+        @DoesNotCommit
         protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException  {
             return new PasswordValueReplace(entity, signature, recipient, block);
         }

@@ -1,5 +1,6 @@
 package ch.virtualid.identity;
 
+import ch.virtualid.annotations.DoesNotCommit;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.exceptions.external.ExternalException;
@@ -78,6 +79,7 @@ public final class IdentityQuery extends CoreServiceExternalQuery {
     
     
     @Override
+    @DoesNotCommit
     public @Nonnull IdentityReply executeOnHost() throws PacketException, SQLException {
         final @Nonnull InternalIdentifier subject = getSubject(); // The following exception should never be thrown as the condition is already checked in the packet class.
         if (!(subject instanceof InternalNonHostIdentifier)) throw new PacketException(PacketError.IDENTIFIER, "The identity may only be queried of non-host identities.");
@@ -119,6 +121,7 @@ public final class IdentityQuery extends CoreServiceExternalQuery {
         
         @Pure
         @Override
+        @DoesNotCommit
         protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
             return new IdentityQuery(entity, signature, recipient, block);
         }

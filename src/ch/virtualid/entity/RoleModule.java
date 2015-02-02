@@ -2,13 +2,10 @@ package ch.virtualid.entity;
 
 import ch.virtualid.agent.Agent;
 import ch.virtualid.annotations.Capturable;
+import ch.virtualid.annotations.DoesNotCommit;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Client;
 import ch.virtualid.database.Database;
-import ch.virtualid.entity.EntityClass;
-import ch.virtualid.entity.NativeRole;
-import ch.virtualid.entity.NonNativeRole;
-import ch.virtualid.entity.Role;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
@@ -43,6 +40,7 @@ public final class RoleModule {
      * 
      * @param client the client for which to create the database tables.
      */
+    @DoesNotCommit
     public static void createTable(@Nonnull Client client) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + client + "role (role " + Database.getConfiguration().PRIMARY_KEY() + ", issuer " + Mapper.FORMAT + " NOT NULL, relation " + Mapper.FORMAT + ", recipient " + EntityClass.FORMAT + ", agent " + Agent.FORMAT + " NOT NULL, FOREIGN KEY (issuer) " + Mapper.REFERENCE + ", FOREIGN KEY (relation) " + Mapper.REFERENCE + ", FOREIGN KEY (recipient) " + client.getEntityReference() + ")");
@@ -55,6 +53,7 @@ public final class RoleModule {
      * 
      * @param client the client for which to delete the database tables.
      */
+    @DoesNotCommit
     public static void deleteTable(@Nonnull Client client) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             Mapper.removeReference(client + "role", "issuer");
@@ -77,6 +76,7 @@ public final class RoleModule {
      * @require relation == null || relation.isRoleType() : "The relation is either null or a role type.";
      * @require (relation == null) == (recipient == null) : "The relation and the recipient are either both null or non-null.";
      */
+    @DoesNotCommit
     public static long map(@Nonnull Client client, @Nonnull InternalNonHostIdentity issuer, @Nullable SemanticType relation, @Nullable Role recipient, long agentNumber) throws SQLException {
         assert relation == null || relation.isRoleType() : "The relation is either null or a role type.";
         assert (relation == null) == (recipient == null) : "The relation and the recipient are either both null or non-null.";
@@ -97,6 +97,7 @@ public final class RoleModule {
      * @return the role of the given client with the given number.
      */
     @Pure
+    @DoesNotCommit
     public static @Nonnull Role load(@Nonnull Client client, long number) throws SQLException {
         final @Nonnull String SQL = "SELECT issuer, relation, recipient, agent FROM " + client + "role WHERE role = " + number;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
@@ -118,6 +119,7 @@ public final class RoleModule {
     /**
      * Removes the given role, which triggers the removal of all associated concepts.
      */
+    @DoesNotCommit
     public static void remove(@Nonnull Role role) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("DELETE FROM " + role.getClient() + "role WHERE role = " + role);
@@ -136,6 +138,7 @@ public final class RoleModule {
      * @ensure return.doesNotContainDuplicates() : "The returned list does not contain duplicates.";
      */
     @Pure
+    @DoesNotCommit
     public static @Capturable @Nonnull FreezableList<NonNativeRole> getRoles(@Nonnull Role role) throws SQLException {
         final @Nonnull Client client = role.getClient();
         final @Nonnull String SQL = "SELECT role, issuer, relation, agent FROM " + client + "role WHERE recipient = " + role;
@@ -166,6 +169,7 @@ public final class RoleModule {
      * @ensure return.doesNotContainDuplicates() : "The returned list does not contain duplicates.";
      */
     @Pure
+    @DoesNotCommit
     public static @Capturable @Nonnull FreezableList<NativeRole> getRoles(@Nonnull Client client) throws SQLException {
         final @Nonnull String SQL = "SELECT role, issuer, agent FROM " + client + "role WHERE recipient IS NULL";
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
@@ -193,6 +197,7 @@ public final class RoleModule {
      * @throws PacketException if no such role can be found.
      */
     @Pure
+    @DoesNotCommit
     public static @Nonnull Role getRole(@Nonnull Client client, @Nonnull InternalPerson person) throws SQLException, PacketException {
         final @Nonnull String SQL = "SELECT role, relation, recipient, agent FROM " + client + "role WHERE issuer = " + person;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {

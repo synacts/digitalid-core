@@ -1,5 +1,6 @@
 package ch.xdf;
 
+import ch.virtualid.annotations.DoesNotCommit;
 import ch.virtualid.annotations.Exposed;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.exceptions.external.ExternalException;
@@ -72,6 +73,7 @@ public final class SelfcontainedWrapper extends BlockWrapper implements Immutabl
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated syntactic type.";
      */
     @Pure
+    @DoesNotCommit
     public static @Nullable Block toElement(@Nullable Block block) throws SQLException, IOException, PacketException, ExternalException {
         return block == null ? null : new SelfcontainedWrapper(block).getElement();
     }
@@ -126,6 +128,7 @@ public final class SelfcontainedWrapper extends BlockWrapper implements Immutabl
      * 
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated syntactic type.";
      */
+    @DoesNotCommit
     public SelfcontainedWrapper(@Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(block);
         
@@ -144,6 +147,7 @@ public final class SelfcontainedWrapper extends BlockWrapper implements Immutabl
      * 
      * @ensure getType().equals(SELFCONTAINED) : "The type of the new wrapper is selfcontained.";
      */
+    @DoesNotCommit
     public SelfcontainedWrapper(@Nonnull InputStream inputStream, boolean close) throws SQLException, IOException, PacketException, ExternalException {
         this(read(inputStream, close));
     }

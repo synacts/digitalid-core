@@ -1,5 +1,6 @@
 package ch.virtualid.expression;
 
+import ch.virtualid.annotations.EndsCommitted;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import java.sql.SQLException;
 import org.junit.Test;
@@ -16,6 +17,7 @@ public final class ExpressionTest {
      * Test the parsing of several expressions.
      */
     @Test
+    @EndsCommitted
     public void testParsing() throws InvalidEncodingException, SQLException, Exception {
 //        String[] strings = new String[] {"", " ( everybody)", "person@test.virtualid.ch + person@test.virtualid.ch - person@test.virtualid.ch", "person@test.virtualid.ch + (person@test.virtualid.ch - person@test.virtualid.ch)", "person@test.virtualid.ch + name@virtualid.ch * person@test.virtualid.ch"};
 //        for (String string : strings) {

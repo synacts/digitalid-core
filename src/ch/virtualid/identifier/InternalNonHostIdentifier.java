@@ -1,5 +1,6 @@
 package ch.virtualid.identifier;
 
+import ch.virtualid.annotations.DoesNotCommit;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
@@ -49,6 +50,7 @@ public final class InternalNonHostIdentifier extends InternalIdentifier implemen
     
     @Pure
     @Override
+    @DoesNotCommit
     public @Nonnull InternalNonHostIdentity getMappedIdentity() throws SQLException {
         assert isMapped() : "This identifier is mapped.";
         
@@ -59,6 +61,7 @@ public final class InternalNonHostIdentifier extends InternalIdentifier implemen
     
     @Pure
     @Override
+    @DoesNotCommit
     public @Nonnull InternalNonHostIdentity getIdentity() throws SQLException, IOException, PacketException, ExternalException {
         final @Nonnull InternalNonHostIdentity identity = Mapper.getIdentity(this).toInternalNonHostIdentity();
         if (identity instanceof Type) ((Type) identity).ensureLoaded();

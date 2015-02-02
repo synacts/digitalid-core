@@ -3,6 +3,8 @@ package ch.virtualid.client;
 import ch.virtualid.agent.ClientAgent;
 import ch.virtualid.agent.ClientAgentAccredit;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
+import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.EndsCommitted;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Image;
 import ch.virtualid.auxiliary.Time;
@@ -184,6 +186,7 @@ public class Client extends Site implements Observer {
      * @require isValid(icon) : "The icon is valid.";
      * @require preferredPermissions.isFrozen() : "The preferred permissions are frozen.";
      */
+    @EndsCommitted
     public Client(@Nonnull String identifier, @Nonnull String name, @Nonnull Image icon, @Nonnull ReadonlyAgentPermissions preferredPermissions) throws SQLException, IOException, PacketException, ExternalException {
         super(identifier);
         
@@ -280,6 +283,7 @@ public class Client extends Site implements Observer {
      * @return a new commitment for the given subject with the given secret.
      */
     @Pure
+    @DoesNotCommit
     private static @Nonnull Commitment getCommitment(@Nonnull InternalNonHostIdentifier subject, @Nonnull Exponent secret) throws SQLException, IOException, PacketException, ExternalException {
         final @Nonnull HostIdentity host = subject.getHostIdentifier().getIdentity();
         final @Nonnull Time time = new Time();
@@ -296,6 +300,7 @@ public class Client extends Site implements Observer {
      * @return a new commitment for the given subject.
      */
     @Pure
+    @DoesNotCommit
     public final @Nonnull Commitment getCommitment(@Nonnull InternalNonHostIdentifier subject) throws SQLException, IOException, PacketException, ExternalException {
         return getCommitment(subject, secret);
     }
@@ -305,17 +310,21 @@ public class Client extends Site implements Observer {
      * 
      * TODO: Make sure that other instances of the same client learn about the key rotation.
      */
+    @EndsCommitted
     public final void rotateSecret() throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
         final @Nonnull Exponent newSecret = new Exponent(new BigInteger(Parameters.HASH, new SecureRandom()));
         final @Nonnull ReadonlyList<NativeRole> roles = getRoles();
+        Database.commit();
+        
         for (final @Nonnull NativeRole role : roles) {
             final @Nonnull Commitment newCommitment = getCommitment(role.getIssuer().getAddress(), newSecret);
             role.getAgent().setCommitment(newCommitment);
         }
-        Database.commit();
+        
         for (final @Nonnull NativeRole role : roles) {
             role.waitForCompletion(CoreService.SERVICE);
         }
+        
         this.secret = newSecret;
         final @Nonnull File file = new File(Directory.CLIENTS.getPath() +  Directory.SEPARATOR + identifier + ".client.xdf");
         new SelfcontainedWrapper(SelfcontainedWrapper.SELFCONTAINED, secret.toBlock().setType(SECRET)).write(new FileOutputStream(file), true);
@@ -341,6 +350,7 @@ public class Client extends Site implements Observer {
      * @ensure return.doesNotContainDuplicates() : "The returned list does not contain duplicates.";
      */
     @Pure
+    @DoesNotCommit
     public final @Nonnull ReadonlyList<NativeRole> getRoles() throws SQLException {
         if (Database.isMultiAccess()) return RoleModule.getRoles(this);
         if (roles == null) roles = RoleModule.getRoles(this);
@@ -355,6 +365,7 @@ public class Client extends Site implements Observer {
      * 
      * @return the newly created role of this client.
      */
+    @DoesNotCommit
     private @Nonnull NativeRole addRole(@Nonnull InternalNonHostIdentity issuer, long agentNumber) throws SQLException {
         final @Nonnull NativeRole role = NativeRole.add(this, issuer, agentNumber);
         if (Database.isSingleAccess()) role.observe(this, Role.DELETED);
@@ -381,6 +392,7 @@ public class Client extends Site implements Observer {
      * 
      * @require Password.isValid(password) : "The password is valid.";
      */
+    @EndsCommitted
     public final @Nonnull NativeRole accredit(@Nonnull InternalNonHostIdentity identity, @Nonnull String password) throws SQLException, IOException, PacketException, ExternalException {
         final @Nonnull NativeRole role = addRole(identity, new SecureRandom().nextLong());
         Database.commit();
@@ -416,6 +428,7 @@ public class Client extends Site implements Observer {
      * @require category.isInternalNonHostIdentity() : "The category denotes an internal non-host identity.";
      * @require !category.isType() || roles.size() <= 1 && identifiers.isEmpty() : "If the category denotes a type, at most one role and no identifier may be given.";
      */
+    @EndsCommitted
     public final @Nonnull NativeRole openAccount(@Nonnull InternalNonHostIdentifier subject, @Nonnull Category category, @Nonnull ReadonlyList<NativeRole> roles, @Nonnull ReadonlyList<ExternalIdentifier> identifiers) throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
         assert subject.doesNotExist() : "The subject does not exist.";
         assert category.isInternalNonHostIdentity() : "The category denotes an internal non-host identity.";
@@ -469,6 +482,7 @@ public class Client extends Site implements Observer {
      * @require subject.doesNotExist() : "The subject does not exist.";
      * @require category.isInternalNonHostIdentity() : "The category denotes an internal non-host identity.";
      */
+    @EndsCommitted
     public final @Nonnull NativeRole openAccount(@Nonnull InternalNonHostIdentifier identifier, @Nonnull Category category) throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
         return openAccount(identifier, category, new FreezableLinkedList<NativeRole>().freeze(), new FreezableLinkedList<ExternalIdentifier>().freeze());
     }

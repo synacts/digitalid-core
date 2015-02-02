@@ -1,5 +1,6 @@
 package ch.virtualid.identifier;
 
+import ch.virtualid.annotations.DoesNotCommit;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
@@ -40,6 +41,7 @@ public interface Identifier extends Immutable, Blockable, SQLizable {
      * @return whether this identifier is mapped.
      */
     @Pure
+    @DoesNotCommit
     public boolean isMapped() throws SQLException;
     
     /**
@@ -48,6 +50,7 @@ public interface Identifier extends Immutable, Blockable, SQLizable {
      * @return whether this identifier is not mapped.
      */
     @Pure
+    @DoesNotCommit
     public boolean isNotMapped() throws SQLException;
     
     /**
@@ -58,6 +61,7 @@ public interface Identifier extends Immutable, Blockable, SQLizable {
      * @require isMapped() : "This identifier is mapped.";
      */
     @Pure
+    @DoesNotCommit
     public @Nonnull Identity getMappedIdentity() throws SQLException;
     
     /**
@@ -68,6 +72,7 @@ public interface Identifier extends Immutable, Blockable, SQLizable {
      * @ensure !(result instanceof Type) || ((Type) result).isLoaded() : "If the result is a type, its declaration is loaded.";
      */
     @Pure
+    @DoesNotCommit
     public @Nonnull Identity getIdentity() throws SQLException, IOException, PacketException, ExternalException;
     
     

@@ -1,5 +1,6 @@
 package ch.virtualid.agent;
 
+import ch.virtualid.annotations.DoesNotCommit;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Commitment;
 import ch.virtualid.cryptography.PublicKey;
@@ -27,7 +28,7 @@ import javax.annotation.Nullable;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 1.0
  */
-final class ClientAgentCommitmentReplace extends CoreServiceInternalAction {
+public final class ClientAgentCommitmentReplace extends CoreServiceInternalAction {
     
     /**
      * Stores the semantic type {@code old.commitment.client.agent@virtualid.ch}.
@@ -69,7 +70,7 @@ final class ClientAgentCommitmentReplace extends CoreServiceInternalAction {
      * 
      * @require clientAgent.isOnClient() : "The client agent is on a client.";
      */
-    ClientAgentCommitmentReplace(@Nonnull ClientAgent clientAgent, @Nonnull Commitment oldCommitment, @Nonnull Commitment newCommitment) {
+    public ClientAgentCommitmentReplace(@Nonnull ClientAgent clientAgent, @Nonnull Commitment oldCommitment, @Nonnull Commitment newCommitment) {
         super(clientAgent.getRole());
         
         this.clientAgent = clientAgent;
@@ -90,6 +91,7 @@ final class ClientAgentCommitmentReplace extends CoreServiceInternalAction {
      * 
      * @ensure hasSignature() : "This handler has a signature.";
      */
+    @DoesNotCommit
     private ClientAgentCommitmentReplace(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
@@ -139,6 +141,7 @@ final class ClientAgentCommitmentReplace extends CoreServiceInternalAction {
     
     
     @Override
+    @DoesNotCommit
     protected void executeOnBoth() throws SQLException {
         clientAgent.replaceCommitment(oldCommitment, newCommitment);
     }
@@ -198,6 +201,7 @@ final class ClientAgentCommitmentReplace extends CoreServiceInternalAction {
         
         @Pure
         @Override
+        @DoesNotCommit
         protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException  {
             return new ClientAgentCommitmentReplace(entity, signature, recipient, block);
         }

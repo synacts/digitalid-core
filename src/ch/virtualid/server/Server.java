@@ -1,5 +1,6 @@
 package ch.virtualid.server;
 
+import ch.virtualid.annotations.EndsCommitted;
 import ch.virtualid.database.Configuration;
 import ch.virtualid.database.Database;
 import ch.virtualid.database.MySQLConfiguration;
@@ -105,6 +106,7 @@ public final class Server {
     /**
      * Loads all hosts with a configuration but without a tables file in the hosts directory.
      */
+    @EndsCommitted
     private static void loadHosts() {
         final @Nonnull File[] files = Directory.HOSTS.listFiles();
         for (final @Nonnull File file : files) {
@@ -113,6 +115,7 @@ public final class Server {
                     final @Nonnull HostIdentifier identifier = new HostIdentifier(file.getName().substring(0, file.getName().length() - 12));
                     if (!new File(Directory.HOSTS.getPath() + Directory.SEPARATOR + identifier.getString() + ".tables.xdf").exists()) new Host(identifier);
                 } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
+                    try { Database.rollback(); } catch (@Nonnull SQLException exc) { throw new InitializationError("Could not rollback.", exc); }
                     throw new InitializationError("Could not load the host configured in the file '" + file.getName() + "'.", exception);
                 }
             }
@@ -123,13 +126,16 @@ public final class Server {
     /**
      * Loads all services with their code in the services directory.
      */
+    @EndsCommitted
     public static void loadServices() {
         final @Nonnull File[] files = Directory.SERVICES.listFiles();
         for (final @Nonnull File file : files) {
             if (file.isFile() && file.getName().endsWith(".jar")) {
                 try {
                     Database.loadJarFile(new JarFile(file));
-                } catch (@Nonnull IOException | ClassNotFoundException exception) {
+                    Database.commit();
+                } catch (@Nonnull IOException | ClassNotFoundException | SQLException exception) {
+                    try { Database.rollback(); } catch (@Nonnull SQLException exc) { throw new InitializationError("Could not rollback.", exc); }
                     throw new InitializationError("Could not load the service in the file '" + file.getName() + "'.", exception);
                 }
             }
@@ -142,6 +148,7 @@ public final class Server {
      * 
      * @param arguments the identifiers of hosts to be created when starting up.
      */
+    @EndsCommitted
     public static void start(@Nonnull String... arguments) {
         loadServices();
         loadHosts();
@@ -150,6 +157,7 @@ public final class Server {
             try {
                 new Host(new HostIdentifier(argument));
             } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
+                try { Database.rollback(); } catch (@Nonnull SQLException exc) { throw new InitializationError("Could not rollback.", exc); }
                 throw new InitializationError("Could not create the host '" + argument + "'.", exception);
             }
         }
@@ -159,7 +167,9 @@ public final class Server {
         // TODO: Uncomment the following lines:
 //        try {
 //            Cache.getPublicKeyChain(HostIdentity.VIRTUALID);
+//            Database.commit();
 //        } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
+//            try { Database.rollback(); } catch (@Nonnull SQLException exc) { throw new InitializationError("Could not rollback.", exc); }
 //            throw new InitializationError("Could not retrieve the public key chain of 'virtualid.ch'.", exception);
 //        }
     }
@@ -187,6 +197,7 @@ public final class Server {
      * 
      * @param arguments the command line arguments indicating the hosts to be created when starting up.
      */
+    @EndsCommitted
     public static void main(@Nonnull String[] arguments) {
         final @Nonnull Configuration configuration;
         try {

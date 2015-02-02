@@ -1,5 +1,6 @@
 package ch.virtualid.agent;
 
+import ch.virtualid.annotations.DoesNotCommit;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.NonNativeRole;
@@ -58,6 +59,7 @@ final class OutgoingRoleRevoke extends CoreServiceExternalAction {
      * 
      * @require outgoingRole.isOnHost() : "The outgoing role is on a host.";
      */
+    @DoesNotCommit
     OutgoingRoleRevoke(@Nonnull OutgoingRole outgoingRole, @Nonnull InternalPerson subject) throws SQLException {
         super(outgoingRole.getAccount(), subject);
         
@@ -78,6 +80,7 @@ final class OutgoingRoleRevoke extends CoreServiceExternalAction {
      * 
      * @ensure hasSignature() : "This handler has a signature.";
      */
+    @DoesNotCommit
     private OutgoingRoleRevoke(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
@@ -111,6 +114,7 @@ final class OutgoingRoleRevoke extends CoreServiceExternalAction {
     
     @Pure
     @Override
+    @DoesNotCommit
     public @Nullable OutgoingRole getFailedAuditAgent() throws SQLException {
         return AgentModule.getOutgoingRole(getNonHostEntity(), relation, false);
     }
@@ -119,11 +123,13 @@ final class OutgoingRoleRevoke extends CoreServiceExternalAction {
     /**
      * Executes this action on both hosts and clients.
      */
+    @DoesNotCommit
     private void executeOnBoth() throws SQLException {
         AgentModule.removeIncomingRole(getNonHostEntity(), issuer, relation);
     }
     
     @Override
+    @DoesNotCommit
     public @Nullable CoreServiceActionReply executeOnHost() throws PacketException, SQLException {
         if (getSignatureNotNull().isNotSigned()) throw new PacketException(PacketError.AUTHORIZATION, "The revocation of a role has to be signed.");
         executeOnBoth();
@@ -137,6 +143,7 @@ final class OutgoingRoleRevoke extends CoreServiceExternalAction {
     }
     
     @Override
+    @DoesNotCommit
     public void executeOnClient() throws SQLException {
         executeOnBoth();
         for (final @Nonnull NonNativeRole role : getRole().getRoles()) {
@@ -145,6 +152,7 @@ final class OutgoingRoleRevoke extends CoreServiceExternalAction {
     }
     
     @Override
+    @DoesNotCommit
     public void executeOnFailure() throws SQLException {
         // TODO: Add this role issuance to a list of failed external actions.
     }
@@ -191,6 +199,7 @@ final class OutgoingRoleRevoke extends CoreServiceExternalAction {
         
         @Pure
         @Override
+        @DoesNotCommit
         protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
             return new OutgoingRoleRevoke(entity, signature, recipient, block);
         }

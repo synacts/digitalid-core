@@ -1,13 +1,14 @@
 package ch.virtualid.entity;
 
+import ch.virtualid.annotations.DoesNotCommit;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Client;
 import ch.virtualid.concept.Instance;
 import ch.virtualid.errors.ShouldNeverHappenError;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.host.Host;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
-import ch.virtualid.host.Host;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -41,6 +42,7 @@ public abstract class EntityClass extends Instance implements Entity, Immutable,
      * @return the given column of the result set as an instance of this class.
      */
     @Pure
+    @DoesNotCommit
     public static @Nonnull Entity get(@Nonnull Site site, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
         if (site instanceof Host) {
             return Account.getNotNull((Host) site, resultSet, columnIndex);
@@ -52,6 +54,7 @@ public abstract class EntityClass extends Instance implements Entity, Immutable,
     }
     
     @Override
+    @DoesNotCommit
     public final void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
         preparedStatement.setLong(parameterIndex, getNumber());
     }
@@ -63,6 +66,7 @@ public abstract class EntityClass extends Instance implements Entity, Immutable,
      * @param preparedStatement the prepared statement whose parameter is to be set.
      * @param parameterIndex the index of the parameter to set.
      */
+    @DoesNotCommit
     public static void set(@Nullable Entity entity, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
         if (entity == null) preparedStatement.setNull(parameterIndex, Types.BIGINT);
         else entity.set(preparedStatement, parameterIndex);

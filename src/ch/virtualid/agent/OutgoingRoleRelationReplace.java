@@ -1,5 +1,6 @@
 package ch.virtualid.agent;
 
+import ch.virtualid.annotations.DoesNotCommit;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.exceptions.external.ExternalException;
@@ -98,6 +99,7 @@ final class OutgoingRoleRelationReplace extends CoreServiceInternalAction {
      * 
      * @ensure hasSignature() : "This handler has a signature.";
      */
+    @DoesNotCommit
     private OutgoingRoleRelationReplace(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
@@ -147,6 +149,7 @@ final class OutgoingRoleRelationReplace extends CoreServiceInternalAction {
     
     
     @Override
+    @DoesNotCommit
     protected void executeOnBoth() throws SQLException {
         outgoingRole.replaceRelation(oldRelation, newRelation);
     }
@@ -206,6 +209,7 @@ final class OutgoingRoleRelationReplace extends CoreServiceInternalAction {
         
         @Pure
         @Override
+        @DoesNotCommit
         protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException  {
             return new OutgoingRoleRelationReplace(entity, signature, recipient, block);
         }

@@ -1,8 +1,9 @@
 package ch.virtualid.client;
 
-import ch.virtualid.cache.Cache;
+import ch.virtualid.annotations.DoesNotCommit;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
+import ch.virtualid.cache.Cache;
 import ch.virtualid.cryptography.Element;
 import ch.virtualid.cryptography.Exponent;
 import ch.virtualid.cryptography.PublicKey;
@@ -89,6 +90,7 @@ public class Commitment implements Immutable, Blockable, SQLizable {
      * @param time the time at which this commitment was made.
      * @param value the value of this commitment.
      */
+    @DoesNotCommit
     public Commitment(@Nonnull HostIdentity host, @Nonnull Time time, @Nonnull BigInteger value) throws SQLException, IOException, PacketException, ExternalException {
         this.host = host;
         this.time = time;
@@ -118,6 +120,7 @@ public class Commitment implements Immutable, Blockable, SQLizable {
      * 
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
+    @DoesNotCommit
     public Commitment(@Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
@@ -260,6 +263,7 @@ public class Commitment implements Immutable, Blockable, SQLizable {
      * @return the given columns of the result set as an instance of this class.
      */
     @Pure
+    @DoesNotCommit
     public static @Nonnull Commitment get(@Nonnull ResultSet resultSet, int startIndex) throws SQLException {
         try {
             final @Nonnull HostIdentity host = IdentityClass.getNotNull(resultSet, startIndex + 0).toHostIdentity();
@@ -278,6 +282,7 @@ public class Commitment implements Immutable, Blockable, SQLizable {
      * @param startIndex the start index of the parameters to set.
      */
     @Override
+    @DoesNotCommit
     public void set(@Nonnull PreparedStatement preparedStatement, int startIndex) throws SQLException {
         host.set(preparedStatement, startIndex + 0);
         time.set(preparedStatement, startIndex + 1);

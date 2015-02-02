@@ -2,6 +2,7 @@ package ch.virtualid.pusher;
 
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
+import ch.virtualid.annotations.DoesNotCommit;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.NonHostAccount;
@@ -106,6 +107,7 @@ public final class PushReturned extends ExternalAction {
      * 
      * @ensure hasSignature() : "This handler has a signature.";
      */
+    @DoesNotCommit
     private PushReturned(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
@@ -177,6 +179,7 @@ public final class PushReturned extends ExternalAction {
     }
     
     @Override
+    @DoesNotCommit
     public void executeOnClient() throws SQLException {
         if (!isValid()) {
             // TODO: Add it to the Errors module.
@@ -256,6 +259,7 @@ public final class PushReturned extends ExternalAction {
         
         @Pure
         @Override
+        @DoesNotCommit
         protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
             return new PushReturned(entity, signature, recipient, block);
         }

@@ -1,5 +1,6 @@
 package ch.virtualid.synchronizer;
 
+import ch.virtualid.annotations.DoesNotCommit;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.NonHostAccount;
 import ch.virtualid.entity.NonHostEntity;
@@ -61,6 +62,7 @@ final class AuditReply extends QueryReply {
      * @ensure hasSignature() : "This handler has a signature.";
      * @ensure !isOnHost() : "Query replies are never decoded on hosts.";
      */
+    @DoesNotCommit
     private AuditReply(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, number);
         
@@ -115,6 +117,7 @@ final class AuditReply extends QueryReply {
         
         @Pure
         @Override
+        @DoesNotCommit
         protected @Nonnull Reply create(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
             return new AuditReply(entity, signature, number, block);
         }

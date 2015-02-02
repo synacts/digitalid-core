@@ -1,5 +1,6 @@
 package ch.virtualid.agent;
 
+import ch.virtualid.annotations.EndsCommitted;
 import ch.virtualid.attribute.AttributeType;
 import ch.virtualid.auxiliary.Image;
 import ch.virtualid.client.Client;
@@ -36,6 +37,7 @@ public final class AgentTest extends IdentitySetup {
     private static @Nonnull NativeRole role;
     
     @BeforeClass
+    @EndsCommitted
     public static void accreditClientAgent() throws SQLException, IOException, PacketException, ExternalException {
         print("accreditClientAgent");
         try {
@@ -55,6 +57,7 @@ public final class AgentTest extends IdentitySetup {
     }
     
     @After
+    @EndsCommitted
     public void testAgentStateEquality() throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
         try {
             role.waitForCompletion(CoreService.SERVICE);
@@ -80,6 +83,7 @@ public final class AgentTest extends IdentitySetup {
     }
     
     @Test
+    @EndsCommitted
     public void _01_testUnremoveAgent() throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
         print("_01_testUnremoveAgent");
         try {
@@ -95,6 +99,7 @@ public final class AgentTest extends IdentitySetup {
     }
     
     @Test
+    @EndsCommitted
     public void _02_testPermissionsAdd() throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
         print("_02_testPermissionsAdd");
         try {
@@ -121,6 +126,7 @@ public final class AgentTest extends IdentitySetup {
     }
     
     @Test
+    @EndsCommitted
     public void _03_testPermissionsRemove() throws SQLException {
         print("_03_testPermissionsRemove");
         try {
@@ -146,6 +152,7 @@ public final class AgentTest extends IdentitySetup {
     }
     
     @Test
+    @EndsCommitted
     public void _04_testRestrictionsReplace() throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
         print("_04_testRestrictionsReplace");
         try {
@@ -166,6 +173,7 @@ public final class AgentTest extends IdentitySetup {
     }
     
     @Test
+    @EndsCommitted
     public void _05_testCommitmentReplace() throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
         print("_05_testCommitmentReplace");
         try {
@@ -187,6 +195,7 @@ public final class AgentTest extends IdentitySetup {
     }
     
     @Test
+    @EndsCommitted
     public void _06_testNameReplace() throws SQLException {
         print("_06_testNameReplace");
         try {
@@ -204,6 +213,7 @@ public final class AgentTest extends IdentitySetup {
     }
     
     @Test
+    @EndsCommitted
     public void _07_testIconReplace() throws SQLException {
         print("_07_testIconReplace");
         try {
@@ -221,6 +231,7 @@ public final class AgentTest extends IdentitySetup {
     }
     
     @Test
+    @EndsCommitted
     public void _08_testWeakerAgents() throws SQLException {
         print("_08_testWeakerAgents");
         try {

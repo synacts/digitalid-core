@@ -1,5 +1,6 @@
 package ch.virtualid.server;
 
+import ch.virtualid.annotations.EndsCommitted;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.io.EscapeOptionException;
 import ch.virtualid.exceptions.packet.PacketException;
@@ -89,6 +90,7 @@ final class Options {
         ExitServer() { super("Exit the server."); }
         
         @Override
+        @EndsCommitted
         public void execute() {
             // TODO: Remove the true on the following line!
             if (true || Console.readBoolean("Are you sure you want to shut down the server? Yes/No: ")) {
@@ -108,6 +110,7 @@ final class Options {
         ShowVersion() { super("Show the version."); }
         
         @Override
+        @EndsCommitted
         public void execute() {
             Console.write("Version: " + Server.VERSION);
             Console.write("Authors: " + Server.AUTHORS);
@@ -123,6 +126,7 @@ final class Options {
         ShowHosts() { super("Show the hosts."); }
         
         @Override
+        @EndsCommitted
         public void execute() {
             Console.write("The following hosts are running on this server:");
             for (final @Nonnull Host host : Server.getHosts()) {
@@ -141,6 +145,7 @@ final class Options {
         CreateHost() { super("Create a host."); }
         
         @Override
+        @EndsCommitted
         public void execute() {
             if (Console.readBoolean("Are you sure you want to add a new host? Yes/No: ")) {
                 @Nonnull String string = Console.readString("Please enter the identifier of the new host: ");
@@ -151,7 +156,7 @@ final class Options {
                 try {
                     new Host(identifier);
                 } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
-                    Console.write("Could not create the host " + identifier + " (" + exception + ").");
+                    Console.write("Could not create the host " + identifier + " (" + exception + ")."); // TODO: Rollback the transaction?
                 }
             }
         }
@@ -166,6 +171,7 @@ final class Options {
         ExportHost() { super("Export a host."); }
         
         @Override
+        @EndsCommitted
         public void execute() {
             Console.write("To be done."); // TODO
         }
@@ -180,6 +186,7 @@ final class Options {
         ImportHost() { super("Import a host."); }
         
         @Override
+        @EndsCommitted
         public void execute() {
             Console.write("To be done."); // TODO
         }
@@ -194,6 +201,7 @@ final class Options {
         ShowServices() { super("Show the services."); }
         
         @Override
+        @EndsCommitted
         public void execute() {
             final @Nonnull ReadonlyCollection<Service> services = Service.getServices();
             Console.write("The following services are installed on this server:");
@@ -213,6 +221,7 @@ final class Options {
         LoadServices() { super("Reload the services."); }
         
         @Override
+        @EndsCommitted
         public void execute() {
             Console.write("The services are reloaded.");
             Server.loadServices();
@@ -228,6 +237,7 @@ final class Options {
         ActivateService() { super("Activate a service."); }
         
         @Override
+        @EndsCommitted
         public void execute() {
             Console.write("To be done."); // TODO
         }
@@ -242,6 +252,7 @@ final class Options {
         DeactivateService() { super("Deactivate a service."); }
         
         @Override
+        @EndsCommitted
         public void execute() {
             Console.write("To be done."); // TODO
         }
@@ -256,6 +267,7 @@ final class Options {
         ChangeProvider() { super("Change a provider."); }
         
         @Override
+        @EndsCommitted
         public void execute() {
             Console.write("To be done."); // TODO
         }
@@ -270,6 +282,7 @@ final class Options {
         GenerateTokens() { super("Generate tokens."); }
         
         @Override
+        @EndsCommitted
         public void execute() {
             Console.write("To be done."); // TODO
         }
@@ -284,6 +297,7 @@ final class Options {
         ShowMembers() { super("Show members."); }
         
         @Override
+        @EndsCommitted
         public void execute() {
             Console.write("To be done."); // TODO
         }
@@ -298,6 +312,7 @@ final class Options {
         AddMembers() { super("Add members."); }
         
         @Override
+        @EndsCommitted
         public void execute() {
             Console.write("To be done."); // TODO
         }
@@ -312,6 +327,7 @@ final class Options {
         RemoveMembers() { super("Remove members."); }
         
         @Override
+        @EndsCommitted
         public void execute() {
             Console.write("To be done."); // TODO
         }
@@ -326,6 +342,7 @@ final class Options {
         OpenHost() { super("Open a host."); }
         
         @Override
+        @EndsCommitted
         public void execute() {
             Console.write("To be done."); // TODO
         }
@@ -340,6 +357,7 @@ final class Options {
         CloseHost() { super("Close a host."); }
         
         @Override
+        @EndsCommitted
         public void execute() {
             Console.write("To be done."); // TODO
         }

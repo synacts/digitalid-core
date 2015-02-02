@@ -1,5 +1,6 @@
 package ch.virtualid.synchronizer;
 
+import ch.virtualid.annotations.DoesNotCommit;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.NonHostAccount;
 import ch.virtualid.entity.NonHostEntity;
@@ -70,6 +71,7 @@ final class StateReply extends QueryReply {
      * @ensure hasSignature() : "This handler has a signature.";
      * @ensure !isOnHost() : "Query replies are never decoded on hosts.";
      */
+    @DoesNotCommit
     private StateReply(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, number);
         
@@ -102,6 +104,7 @@ final class StateReply extends QueryReply {
      * 
      * @require isOnClient() : "This method is called on a client.";
      */
+    @DoesNotCommit
     void updateState() throws SQLException, IOException, PacketException, ExternalException {
         final @Nonnull BothModule module = Service.getModule(state.getType());
         final @Nonnull Role role = getRole();
@@ -138,6 +141,7 @@ final class StateReply extends QueryReply {
         
         @Pure
         @Override
+        @DoesNotCommit
         protected @Nonnull Reply create(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
             return new StateReply(entity, signature, number, block);
         }

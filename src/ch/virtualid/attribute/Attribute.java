@@ -1,6 +1,8 @@
 package ch.virtualid.attribute;
 
 import ch.virtualid.annotations.Capturable;
+import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.EndsCommitted;
 import ch.virtualid.annotations.OnlyForActions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.concept.Aspect;
@@ -144,6 +146,7 @@ public final class Attribute extends GeneralConcept implements Immutable {
      * @ensure return == null || return.isVerified() && return.matches(this) : "The returned value is null or verified matches this attribute.";
      */
     @Pure
+    @DoesNotCommit
     public @Nullable AttributeValue getValue() throws SQLException {
         if (!valueLoaded) {
             value = AttributeModule.getValue(this, true);
@@ -160,6 +163,7 @@ public final class Attribute extends GeneralConcept implements Immutable {
      * @require isOnClient() : "This attribute is on a client.";
      * @require newValue == null || newValue.isVerified() && newValue.matches(this) : "The new value is null or verified and matches this attribute.";
      */
+    @EndsCommitted
     public void setValue(@Nullable AttributeValue newValue) throws SQLException {
         final @Nullable AttributeValue oldValue = getValue();
         if (!Objects.equals(oldValue, newValue)) {
@@ -177,6 +181,7 @@ public final class Attribute extends GeneralConcept implements Immutable {
      * @require oldValue == null || oldValue.isVerified() && oldValue.matches(this) : "The old value is null or verified and matches this attribute.";
      * @require newValue == null || newValue.isVerified() && newValue.matches(this) : "The new value is null or verified and matches this attribute.";
      */
+    @DoesNotCommit
     @OnlyForActions
     public void replaceValue(@Nullable AttributeValue oldValue, @Nullable AttributeValue newValue) throws SQLException {
         assert !Objects.equals(oldValue, newValue) : "The old and new value are not equal.";
@@ -199,6 +204,7 @@ public final class Attribute extends GeneralConcept implements Immutable {
      * @ensure return == null || return.isVerified() && return.matches(this) : "The returned value is null or verified and matches this attribute.";
      */
     @Pure
+    @DoesNotCommit
     public @Nullable AttributeValue getUnpublishedValue() throws SQLException {
         if (!unpublishedLoaded) {
             unpublished = AttributeModule.getValue(this, false);
@@ -215,6 +221,7 @@ public final class Attribute extends GeneralConcept implements Immutable {
      * @require isOnClient() : "This attribute is on a client.";
      * @require newValue == null || newValue.isVerified() && newValue.matches(this) : "The new value is null or verified and matches this attribute.";
      */
+    @EndsCommitted
     public void setUnpublishedValue(@Nullable AttributeValue newValue) throws SQLException {
         final @Nullable AttributeValue oldValue = getUnpublishedValue();
         if (!Objects.equals(oldValue, newValue)) {
@@ -232,6 +239,7 @@ public final class Attribute extends GeneralConcept implements Immutable {
      * @require oldValue == null || oldValue.isVerified() && oldValue.matches(this) : "The old value is null or verified and matches this attribute.";
      * @require newValue == null || newValue.isVerified() && newValue.matches(this) : "The new value is null or verified and matches this attribute.";
      */
+    @DoesNotCommit
     @OnlyForActions
     void replaceUnpublishedValue(@Nullable AttributeValue oldValue, @Nullable AttributeValue newValue) throws SQLException {
         assert !Objects.equals(oldValue, newValue) : "The old and new value are not equal.";
@@ -256,6 +264,7 @@ public final class Attribute extends GeneralConcept implements Immutable {
      * @ensure return == null || return.getEntity().equals(getEntity()) : "The returned visibility is null or belongs to the same entity.";
      */
     @Pure
+    @DoesNotCommit
     public @Nullable PassiveExpression getVisibility() throws SQLException {
         if (!visibilityLoaded) {
             visibility = AttributeModule.getVisibility(this);
@@ -273,6 +282,7 @@ public final class Attribute extends GeneralConcept implements Immutable {
      * @require getEntity().getIdentity() instanceof InternalPerson : "The entity of this attribute belongs to an internal person.";
      * @require newVisibility == null || newVisibility.getEntity().equals(getEntity()) : "The new visibility is null or belongs to the same entity.";
      */
+    @EndsCommitted
     public void setVisibility(@Nullable PassiveExpression newVisibility) throws SQLException {
         final @Nullable PassiveExpression oldVisibility = getVisibility();
         if (!Objects.equals(oldVisibility, newVisibility)) {
@@ -291,6 +301,7 @@ public final class Attribute extends GeneralConcept implements Immutable {
      * @require oldVisibility == null || oldVisibility.getEntity().equals(getEntity()) : "The old visibility is null or belongs to the same entity.";
      * @require newVisibility == null || newVisibility.getEntity().equals(getEntity()) : "The new visibility is null or belongs to the same entity.";
      */
+    @DoesNotCommit
     @OnlyForActions
     void replaceVisibility(@Nullable PassiveExpression oldVisibility, @Nullable PassiveExpression newVisibility) throws SQLException {
         assert !Objects.equals(oldVisibility, newVisibility) : "The old and new visibility are not equal.";
@@ -364,6 +375,7 @@ public final class Attribute extends GeneralConcept implements Immutable {
      * 
      * @ensure return.isNotFrozen() : "The returned attributes are not frozen.";
      */
+    @DoesNotCommit
     public static @Capturable @Nonnull FreezableSet<Attribute> getAll(@Nonnull Entity entity) throws SQLException {
         return AttributeModule.getAll(entity);
     }

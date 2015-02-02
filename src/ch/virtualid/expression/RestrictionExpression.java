@@ -12,7 +12,6 @@ import ch.virtualid.util.FreezableSet;
 import ch.xdf.Block;
 import ch.xdf.CredentialsSignatureWrapper;
 import ch.xdf.StringWrapper;
-import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -94,7 +93,7 @@ final class RestrictionExpression extends Expression implements Immutable {
     
     @Pure
     @Override
-    @Nonnull @Capturable FreezableSet<Contact> getContacts() throws SQLException {
+    @Nonnull @Capturable FreezableSet<Contact> getContacts() {
         assert isActive() : "This expression is active.";
         
         return new FreezableLinkedHashSet<Contact>();

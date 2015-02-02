@@ -1,6 +1,7 @@
 package ch.virtualid.identity;
 
 import ch.virtualid.annotations.Capturable;
+import ch.virtualid.annotations.DoesNotCommit;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.database.Database;
 import ch.virtualid.errors.InitializationError;
@@ -119,6 +120,7 @@ public final class Predecessors extends FreezableArrayList<Predecessor> implemen
     
     
     @Override
+    @DoesNotCommit
     public @Nonnull ReadonlyList<NonHostIdentity> getIdentities() throws SQLException, IOException, PacketException, ExternalException {
         final @Nonnull FreezableList<NonHostIdentity> identities = new FreezableArrayList<NonHostIdentity>(size());
         for (final @Nonnull Predecessor predecessor : this) {
@@ -171,6 +173,7 @@ public final class Predecessors extends FreezableArrayList<Predecessor> implemen
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS general_predecessors (identifier " + IdentifierClass.FORMAT + " NOT NULL, predecessors " + Block.FORMAT + " NOT NULL, reply " + Reply.FORMAT + ", PRIMARY KEY (identifier), FOREIGN KEY (reply) " + Reply.REFERENCE + ")");
             Database.onInsertIgnore(statement, "general_predecessors", "identifier");
         } catch (@Nonnull SQLException exception) {
+            try { Database.rollback(); } catch (@Nonnull SQLException exc) { throw new InitializationError("Could not rollback.", exc); }
             throw new InitializationError("The database tables of the predecessors could not be created.", exception);
         }
     }
@@ -182,6 +185,7 @@ public final class Predecessors extends FreezableArrayList<Predecessor> implemen
      * 
      * @return whether the predecessors of the given identifier exist.
      */
+    @DoesNotCommit
     public static boolean exist(@Nonnull InternalNonHostIdentifier identifier) throws SQLException {
         final @Nonnull String SQL = "SELECT EXISTS (SELECT 1 FROM general_predecessors WHERE identifier = " + identifier + ")";
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
@@ -201,6 +205,7 @@ public final class Predecessors extends FreezableArrayList<Predecessor> implemen
      * 
      * @ensure return.isFrozen() : "The returned predecessors are frozen.";
      */
+    @DoesNotCommit
     public static @Nonnull ReadonlyPredecessors get(@Nonnull InternalNonHostIdentifier identifier) throws SQLException {
         assert exist(identifier) : "The predecessors of the given identifier exist.";
         
@@ -214,6 +219,7 @@ public final class Predecessors extends FreezableArrayList<Predecessor> implemen
     }
     
     @Override
+    @DoesNotCommit
     public void set(@Nonnull InternalNonHostIdentifier identifier, @Nullable Reply reply) throws SQLException {
         final @Nonnull String SQL = "INSERT" + Database.getConfiguration().IGNORE() + " INTO general_predecessors (identifier, predecessors, reply) VALUES (?, ?, ?)";
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {

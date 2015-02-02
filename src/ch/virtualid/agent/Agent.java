@@ -2,6 +2,8 @@ package ch.virtualid.agent;
 
 import static ch.virtualid.agent.Agent.get;
 import ch.virtualid.annotations.Capturable;
+import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.EndsCommitted;
 import ch.virtualid.annotations.OnlyForActions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.concept.Aspect;
@@ -180,6 +182,7 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
      * @require isOnClient() : "This agent is on a client.";
      * @require isNotRemoved() : "This agent is not removed.";
      */
+    @EndsCommitted
     public final void remove() throws SQLException {
         assert isNotRemoved() : "This agent is not removed.";
         
@@ -189,6 +192,7 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
     /**
      * Removes this agent from the database by marking it as being removed.
      */
+    @DoesNotCommit
     @OnlyForActions
     final void removeForActions() throws SQLException {
         AgentModule.removeAgent(this);
@@ -203,6 +207,7 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
      * @require isOnClient() : "This agent is on a client.";
      * @require isRemoved() : "This agent is removed.";
      */
+    @EndsCommitted
     public final void unremove() throws SQLException {
         assert isRemoved() : "This agent is removed.";
         
@@ -212,6 +217,7 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
     /**
      * Unremoves this agent from the database by marking it as no longer being removed.
      */
+    @DoesNotCommit
     @OnlyForActions
     final void unremoveForActions() throws SQLException {
         AgentModule.unremoveAgent(this);
@@ -229,6 +235,7 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
      * @ensure return.isNotFrozen() : "The permissions are not frozen.";
      */
     @Pure
+    @DoesNotCommit
     public final @Nonnull ReadonlyAgentPermissions getPermissions() throws SQLException {
         if (permissions == null) permissions = AgentModule.getPermissions(this);
         return permissions;
@@ -245,6 +252,7 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
      * @require isOnClient() : "This agent is on a client.";
      * @require permissions.isFrozen() : "The permissions are frozen.";
      */
+    @EndsCommitted
     public final void addPermissions(@Nonnull ReadonlyAgentPermissions permissions) throws SQLException {
         if (!permissions.isEmpty()) Synchronizer.execute(new AgentPermissionsAdd(this, permissions));
     }
@@ -256,6 +264,7 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
      * 
      * @require newPermissions.isFrozen() : "The new permissions are frozen.";
      */
+    @DoesNotCommit
     @OnlyForActions
     final void addPermissionsForActions(@Nonnull ReadonlyAgentPermissions newPermissions) throws SQLException {
         AgentModule.addPermissions(this, newPermissions);
@@ -271,6 +280,7 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
      * @require isOnClient() : "This agent is on a client.";
      * @require permissions.isFrozen() : "The permissions are frozen.";
      */
+    @EndsCommitted
     public final void removePermissions(@Nonnull ReadonlyAgentPermissions permissions) throws SQLException {
         if (!permissions.isEmpty()) Synchronizer.execute(new AgentPermissionsRemove(this, permissions));
     }
@@ -282,6 +292,7 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
      * 
      * @require oldPermissions.isFrozen() : "The old permissions are frozen.";
      */
+    @DoesNotCommit
     @OnlyForActions
     final void removePermissionsForActions(@Nonnull ReadonlyAgentPermissions oldPermissions) throws SQLException {
         AgentModule.removePermissions(this, oldPermissions);
@@ -298,6 +309,7 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
      * @ensure return.match(this) : "The restrictions match this agent.";
      */
     @Pure
+    @DoesNotCommit
     public final @Nonnull Restrictions getRestrictions() throws SQLException {
         if (restrictions == null) restrictions = AgentModule.getRestrictions(this);
         return restrictions;
@@ -311,6 +323,7 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
      * @require isOnClient() : "This agent is on a client.";
      * @require newRestrictions.match(this) : "The new restrictions match this agent.";
      */
+    @EndsCommitted
     public final void setRestrictions(@Nonnull Restrictions newRestrictions) throws SQLException {
         final @Nonnull Restrictions oldRestrictions = getRestrictions();
         if (!newRestrictions.equals(oldRestrictions)) {
@@ -327,6 +340,7 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
      * @require oldRestrictions.match(this) : "The old restrictions match this agent.";
      * @require newRestrictions.match(this) : "The new restrictions match this agent.";
      */
+    @DoesNotCommit
     @OnlyForActions
     final void replaceRestrictions(@Nonnull Restrictions oldRestrictions, @Nonnull Restrictions newRestrictions) throws SQLException {
         AgentModule.replaceRestrictions(this, oldRestrictions, newRestrictions);
@@ -353,6 +367,7 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
      * @ensure return.isNotFrozen() : "The set is not frozen.";
      */
     @Pure
+    @DoesNotCommit
     public final @Capturable @Nonnull FreezableSet<Agent> getWeakerAgents() throws SQLException {
         return AgentModule.getWeakerAgents(this);
     }
@@ -367,6 +382,7 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
      * @throws SQLException if no such weaker agent is found.
      */
     @Pure
+    @DoesNotCommit
     public final @Nonnull Agent getWeakerAgent(long agentNumber) throws SQLException {
         return AgentModule.getWeakerAgent(this, agentNumber);
     }
@@ -381,6 +397,7 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
      * @require getEntity().equals(agent.getEntity()) : "The given agent belongs to the same entity.";
      */
     @Pure
+    @DoesNotCommit
     public final boolean covers(@Nonnull Agent agent) throws SQLException {
         return !isRemoved() && AgentModule.isStronger(this, agent);
     }
@@ -391,6 +408,7 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
      * @param agent the agent that needs to be covered.
      */
     @Pure
+    @DoesNotCommit
     public final void checkCovers(@Nonnull Agent agent) throws PacketException, SQLException {
         if (!covers(agent)) throw new PacketException(PacketError.AUTHORIZATION, "This agent does not cover the other agent.");
     }
@@ -469,6 +487,7 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
      * 
      * @return the foreign key constraint used to reference instances of this class.
      */
+    @DoesNotCommit
     public static @Nonnull String getReference(@Nonnull Site site) throws SQLException {
         AgentModule.createReferenceTable(site);
         return "REFERENCES " + site + "agent (entity, agent) ON DELETE CASCADE";
@@ -486,6 +505,7 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
      * @require columnIndexes.length == 3 : "The number of given indexes is 3.";
      */
     @Pure
+    @DoesNotCommit
     public static @Nullable Agent get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int... columnIndexes) throws SQLException {
         assert columnIndexes.length == 3 : "The number of given indexes is 3.";
         
@@ -506,6 +526,7 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
      * @require columnIndexes.length == 3 : "The number of given indexes is 3.";
      */
     @Pure
+    @DoesNotCommit
     public static @Nonnull Agent getNotNull(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int... columnIndexes) throws SQLException {
         assert columnIndexes.length == 3 : "The number of given indexes is 3.";
         
@@ -513,6 +534,7 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
     }
     
     @Override
+    @DoesNotCommit
     public final void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
         preparedStatement.setLong(parameterIndex, getNumber());
     }
@@ -524,6 +546,7 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
      * @param preparedStatement the prepared statement whose parameter is to be set.
      * @param parameterIndex the index of the parameter to set.
      */
+    @DoesNotCommit
     public static void set(@Nullable Agent agent, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
         if (agent == null) preparedStatement.setNull(parameterIndex, Types.BIGINT);
         else agent.set(preparedStatement, parameterIndex);

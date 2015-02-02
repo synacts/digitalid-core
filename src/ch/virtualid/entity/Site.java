@@ -5,7 +5,6 @@ import ch.virtualid.client.Client;
 import ch.virtualid.concept.Aspect;
 import ch.virtualid.concept.Instance;
 import ch.virtualid.host.Host;
-import java.sql.SQLException;
 import javax.annotation.Nonnull;
 
 /**
@@ -44,7 +43,7 @@ public abstract class Site extends Instance {
      * 
      * @require prefix.length() <= 40 : "The prefix has at most 40 characters.";
      */
-    protected Site(@Nonnull String prefix) throws SQLException {
+    protected Site(@Nonnull String prefix) {
         assert prefix.length() <= 40 : "The prefix has at most 40 characters.";
         
         this.prefix = prefix + "_";

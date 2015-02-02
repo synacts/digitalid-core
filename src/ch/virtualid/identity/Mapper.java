@@ -1,5 +1,6 @@
 package ch.virtualid.identity;
 
+import ch.virtualid.annotations.DoesNotCommit;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.cache.Cache;
 import ch.virtualid.client.AccountInitialize;
@@ -101,6 +102,7 @@ public final class Mapper {
      * @param oldNumber the old number of the person which is updated.
      * @param newNumber the new number of the person which is updated.
      */
+    @DoesNotCommit
     private static void updateReferences(@Nonnull Statement statement, long oldNumber, long newNumber) throws SQLException {
         final @Nonnull String IGNORE = Database.getConfiguration().IGNORE();
         for (final @Nonnull Triplet<String, String, String[]> reference : references) {
@@ -140,6 +142,7 @@ public final class Mapper {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS general_identifier (identifier " + IdentifierClass.FORMAT + " NOT NULL, identity " + Mapper.FORMAT + " NOT NULL, PRIMARY KEY (identifier), FOREIGN KEY (identity) " + Mapper.REFERENCE + ")");
             addReference("general_identifier", "identity");
         } catch (@Nonnull SQLException exception) {
+            try { Database.rollback(); } catch (@Nonnull SQLException exc) { throw new InitializationError("Could not rollback.", exc); }
             throw new InitializationError("The database tables of the mapper could not be created.", exception);
         }
     }
@@ -164,6 +167,7 @@ public final class Mapper {
      * @ensure !(return instanceof Type) || !((Type) return).isLoaded() : "If a type is returned, its declaration has not yet been loaded.";
      */
     @Pure
+    @DoesNotCommit
     private static @Nonnull Identity createIdentity(@Nonnull Category category, long number, @Nonnull Identifier address) throws SQLException {
         try {
             switch (category) {
@@ -220,6 +224,7 @@ public final class Mapper {
      * 
      * @require !numbers.containsKey(number) : "The given number is not yet loaded.";
      */
+    @DoesNotCommit
     private static @Nonnull Identity loadIdentity(long number) throws SQLException {
         assert !numbers.containsKey(number) : "The given number is not yet loaded.";
         
@@ -249,6 +254,7 @@ public final class Mapper {
      * 
      * @ensure !(result instanceof Type) || ((Type) result).isLoaded() : "If the result is a type, its declaration is loaded.";
      */
+    @DoesNotCommit
     static @Nonnull Identity getIdentity(long number) throws SQLException {
         @Nullable Identity identity = numbers.get(number);
         if (identity == null) identity = loadIdentity(number);
@@ -270,6 +276,7 @@ public final class Mapper {
      * 
      * @require !identifiers.containsKey(identifier) : "The given identifier is not yet loaded.";
      */
+    @DoesNotCommit
     private static boolean loadIdentity(@Nonnull Identifier identifier) throws SQLException {
         assert !identifiers.containsKey(identifier) : "The given identifier is not yet loaded.";
         
@@ -313,6 +320,7 @@ public final class Mapper {
      * 
      * @return whether the given identifier is mapped.
      */
+    @DoesNotCommit
     public static boolean isMapped(@Nonnull Identifier identifier) throws SQLException {
         return identifiers.containsKey(identifier) || loadIdentity(identifier);
     }
@@ -324,6 +332,7 @@ public final class Mapper {
      * 
      * @return whether the given identifier is not mapped.
      */
+    @DoesNotCommit
     public static boolean isNotMapped(@Nonnull Identifier identifier) throws SQLException {
         return !isMapped(identifier);
     }
@@ -338,6 +347,7 @@ public final class Mapper {
      * @require isMapped(identifier) : "The identifier is mapped.";
      */
     @Pure
+    @DoesNotCommit
     public static @Nonnull Identity getMappedIdentity(@Nonnull Identifier identifier) throws SQLException {
         assert isMapped(identifier) : "The identifier is mapped.";
         
@@ -357,6 +367,7 @@ public final class Mapper {
      * 
      * @ensure return.getCategory().equals(category) : "The category of the returned identity equals the given category.";
      */
+    @DoesNotCommit
     public static @Nonnull Identity mapIdentity(@Nonnull Identifier identifier, @Nonnull Category category, @Nullable Reply reply) throws SQLException {
         if (isMapped(identifier)) {
             final @Nonnull Identity identity =  identifiers.get(identifier);
@@ -381,6 +392,7 @@ public final class Mapper {
      * 
      * @return the host identity of the mapped identifier.
      */
+    @DoesNotCommit
     public static @Nonnull HostIdentity mapHostIdentity(@Nonnull HostIdentifier identifier) throws SQLException {
         try {
             return mapIdentity(identifier, Category.HOST, null).toHostIdentity();
@@ -407,6 +419,7 @@ public final class Mapper {
             identifiers.put(identifier, type);
             return type;
         } catch (@Nonnull SQLException | InvalidEncodingException exception) {
+            try { Database.rollback(); } catch (@Nonnull SQLException exc) { throw new InitializationError("Could not rollback.", exc); }
             throw new InitializationError("The syntactic type with the identifier " + identifier + " could not be mapped.", exception);
         }
     }
@@ -429,6 +442,7 @@ public final class Mapper {
             identifiers.put(identifier, type);
             return type;
         } catch (@Nonnull SQLException | InvalidEncodingException exception) {
+            try { Database.rollback(); } catch (@Nonnull SQLException exc) { throw new InitializationError("Could not rollback.", exc); }
             throw new InitializationError("The semantic type with the identifier " + identifier + " could not be mapped.", exception);
         }
     }
@@ -440,6 +454,7 @@ public final class Mapper {
      * 
      * @return the external person of the mapped identifier.
      */
+    @DoesNotCommit
     private static @Nonnull ExternalPerson mapExternalIdentity(@Nonnull ExternalIdentifier identifier) throws SQLException, InvalidEncodingException {
         return mapIdentity(identifier, identifier.getCategory(), null).toExternalPerson();
     }
@@ -452,6 +467,7 @@ public final class Mapper {
      * @param identities the identities which are to be merged.
      * @param newIdentity the new identity of the given identities.
      */
+    @DoesNotCommit
     public static void mergeIdentities(@Nonnull ReadonlyList<NonHostIdentity> identities, @Nonnull InternalNonHostIdentity newIdentity) throws SQLException {
         final long newNumber = newIdentity.getNumber();
         try (@Nonnull Statement statement = Database.createStatement()) {
@@ -481,6 +497,7 @@ public final class Mapper {
      * 
      * @require isNotMapped(identifier) : "The identifier is not mapped.";
      */
+    @DoesNotCommit
     private static @Nonnull InternalNonHostIdentity establishInternalNonHostIdentity(@Nonnull InternalNonHostIdentifier identifier) throws SQLException, IOException, PacketException, ExternalException {
         assert isNotMapped(identifier) : "The identifier is not mapped.";
         
@@ -549,6 +566,7 @@ public final class Mapper {
      * 
      * @require isNotMapped(identifier) : "The identifier is not mapped.";
      */
+    @DoesNotCommit
     private static @Nonnull Person establishExternalIdentity(@Nonnull ExternalIdentifier identifier) throws SQLException, IOException, PacketException, ExternalException {
         assert isNotMapped(identifier) : "The identifier is not mapped.";
         
@@ -572,6 +590,7 @@ public final class Mapper {
      * 
      * @return the identity of the given identifier.
      */
+    @DoesNotCommit
     public static @Nonnull Identity getIdentity(@Nonnull Identifier identifier) throws SQLException, IOException, PacketException, ExternalException {
         if (isMapped(identifier)) {
             return identifiers.get(identifier);

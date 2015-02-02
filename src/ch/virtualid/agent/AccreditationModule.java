@@ -1,5 +1,6 @@
 package ch.virtualid.agent;
 
+import ch.virtualid.annotations.DoesNotCommit;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.Site;
@@ -32,6 +33,7 @@ public final class AccreditationModule implements ClientModule {
     }
     
     @Override
+    @DoesNotCommit
     public void createTables(@Nonnull Site site) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             // TODO: Create the tables of this module.
@@ -39,6 +41,7 @@ public final class AccreditationModule implements ClientModule {
     }
     
     @Override
+    @DoesNotCommit
     public void deleteTables(@Nonnull Site site) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             // TODO: Delete the tables of this module.

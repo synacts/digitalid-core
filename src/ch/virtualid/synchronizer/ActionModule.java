@@ -4,6 +4,7 @@ import ch.virtualid.agent.Agent;
 import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
+import ch.virtualid.annotations.DoesNotCommit;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.contact.Contact;
@@ -70,6 +71,7 @@ public final class ActionModule implements BothModule {
     }
     
     @Override
+    @DoesNotCommit
     public void createTables(final @Nonnull Site site) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "action (entity " + EntityClass.FORMAT + " NOT NULL, service " + Mapper.FORMAT + " NOT NULL, time " + Time.FORMAT + " NOT NULL, " + AgentPermissions.FORMAT_NULL + ", " + Restrictions.FORMAT + ", agent " + Agent.FORMAT + ", recipient " + IdentifierClass.FORMAT + " NOT NULL, action " + Block.FORMAT + " NOT NULL, PRIMARY KEY (entity, service, time), INDEX(time), FOREIGN KEY (entity) " + site.getEntityReference() + ", FOREIGN KEY (service) " + Mapper.REFERENCE + ", " + AgentPermissions.REFERENCE + ", " + Restrictions.getForeignKeys(site) + ", FOREIGN KEY (entity, agent) " + Agent.getReference(site) + ")");
@@ -80,6 +82,7 @@ public final class ActionModule implements BothModule {
     }
     
     @Override
+    @DoesNotCommit
     public void deleteTables(@Nonnull Site site) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             Database.removeRegularPurging(site + "action");
@@ -108,6 +111,7 @@ public final class ActionModule implements BothModule {
     
     @Pure
     @Override
+    @DoesNotCommit
     public @Nonnull Block exportModule(@Nonnull Host host) throws SQLException {
         final @Nonnull String SQL = "SELECT entity, service, time, " + Restrictions.COLUMNS + ", " + AgentPermissions.COLUMNS + ", agent, recipient, action FROM " + host + "action";
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
@@ -129,6 +133,7 @@ public final class ActionModule implements BothModule {
     }
     
     @Override
+    @DoesNotCommit
     public void importModule(@Nonnull Host host, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         assert block.getType().isBasedOn(getModuleFormat()) : "The block is based on the format of this module.";
         
@@ -166,16 +171,19 @@ public final class ActionModule implements BothModule {
     
     @Pure
     @Override
+    @DoesNotCommit
     public @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadonlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws SQLException {
         return new EmptyWrapper(STATE_FORMAT).toBlock();
     }
     
     @Override
+    @DoesNotCommit
     public void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws SQLException, InvalidEncodingException {
         assert block.getType().isBasedOn(getStateFormat()) : "The block is based on the indicated type.";
     }
     
     @Override
+    @DoesNotCommit
     public void removeState(@Nonnull NonHostEntity entity) throws SQLException {}
     
     
@@ -194,6 +202,7 @@ public final class ActionModule implements BothModule {
      * @require agent == null || service.equals(CoreService.TYPE) : "The agent is null or the audit trail is requested for the core service.";
      */
     @Pure
+    @DoesNotCommit
     public static @Nonnull ResponseAudit getAudit(@Nonnull NonHostEntity entity, @Nonnull Service service, @Nonnull Time lastTime, @Nonnull ReadonlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws SQLException {
         assert agent == null || service.equals(CoreService.SERVICE) : "The agent is null or the audit trail is requested for the core service.";
         
@@ -246,6 +255,7 @@ public final class ActionModule implements BothModule {
      * @require action.hasEntity() : "The action has an entity.";
      * @require action.hasSignature() : "The action has a signature.";
      */
+    @DoesNotCommit
     public static void audit(@Nonnull Action action) throws SQLException {
         assert action.hasEntity() : "The action has an entity.";
         assert action.hasSignature() : "The action has a signature.";

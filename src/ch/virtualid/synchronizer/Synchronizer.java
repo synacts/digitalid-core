@@ -1,5 +1,6 @@
 package ch.virtualid.synchronizer;
 
+import ch.virtualid.annotations.EndsCommitted;
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.Role;
@@ -52,6 +53,7 @@ public final class Synchronizer extends Thread {
      * 
      * @require action.isOnClient() : "The internal action is on a client.";
      */
+    @EndsCommitted
     public static void execute(@Nonnull InternalAction action) throws SQLException {
         assert action.isOnClient() : "The internal action is on a client.";
         
@@ -126,6 +128,7 @@ public final class Synchronizer extends Thread {
      * 
      * @require isSuspended(role, module.getService()) : "The service is suspended.";
      */
+    @EndsCommitted
     static void reloadSuspended(@Nonnull Role role, @Nonnull BothModule module) throws SQLException, IOException, PacketException, ExternalException {
         final @Nonnull Service service = module.getService();
         assert isSuspended(role, service) : "The service is suspended.";
@@ -152,6 +155,7 @@ public final class Synchronizer extends Thread {
      * @param role the role for which the module is to be reloaded.
      * @param module the module which is to be reloaded for the given role.
      */
+    @EndsCommitted
     public static void reload(@Nonnull Role role, @Nonnull BothModule module) throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
         @Nullable ConcurrentSet<Service> set = suspendedServices.get(role);
         if (set == null) set = suspendedServices.putIfAbsentElseReturnPresent(role, new ConcurrentHashSet<Service>());
@@ -171,6 +175,7 @@ public final class Synchronizer extends Thread {
      * @param role the role for which the service is to be refreshed.
      * @param service the service which is to be refreshed for the given role.
      */
+    @EndsCommitted
     public static void refresh(@Nonnull Role role, @Nonnull Service service) throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
         if (suspend(role, service)) {
             try {
@@ -185,6 +190,7 @@ public final class Synchronizer extends Thread {
             @Nullable ConcurrentSet<Service> set = suspendedServices.get(role);
             if (set == null) set = suspendedServices.putIfAbsentElseReturnPresent(role, new ConcurrentHashSet<Service>());
             synchronized (set) { while (set.contains(service)) set.wait(); }
+            Database.commit();
         }
     }
     

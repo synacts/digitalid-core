@@ -1,6 +1,7 @@
 package ch.virtualid.agent;
 
 import ch.virtualid.annotations.Capturable;
+import ch.virtualid.annotations.DoesNotCommit;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.exceptions.external.ExternalException;
@@ -122,6 +123,7 @@ public final class AgentPermissions extends FreezableLinkedHashMap<SemanticType,
      * 
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
+    @DoesNotCommit
     public AgentPermissions(@Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
@@ -457,6 +459,7 @@ public final class AgentPermissions extends FreezableLinkedHashMap<SemanticType,
      * @ensure return.isNotFrozen() : "The permissions are not frozen.";
      */
     @Pure
+    @DoesNotCommit
     public static @Capturable @Nonnull AgentPermissions get(@Nonnull ResultSet resultSet, int startIndex) throws SQLException {
         try {
             final @Nonnull AgentPermissions permissions = new AgentPermissions();
@@ -483,6 +486,7 @@ public final class AgentPermissions extends FreezableLinkedHashMap<SemanticType,
      * @ensure return.areEmptyOrSingle() : "The returned permissions are empty or single.";
      */
     @Pure
+    @DoesNotCommit
     public static @Capturable @Nonnull AgentPermissions getEmptyOrSingle(@Nonnull ResultSet resultSet, int startIndex) throws SQLException {
         try {
             final @Nonnull AgentPermissions permissions = new AgentPermissions();
@@ -501,6 +505,7 @@ public final class AgentPermissions extends FreezableLinkedHashMap<SemanticType,
      * @param startIndex the start index of the parameters to set.
      */
     @Override
+    @DoesNotCommit
     public void set(@Nonnull PreparedStatement preparedStatement, int startIndex) throws SQLException {
         for (final @Nonnull SemanticType type : keySet()) {
             type.set(preparedStatement, startIndex);
@@ -518,6 +523,7 @@ public final class AgentPermissions extends FreezableLinkedHashMap<SemanticType,
      * @require areEmptyOrSingle() : "These permissions are empty or single.";
      */
     @Override
+    @DoesNotCommit
     public void setEmptyOrSingle(@Nonnull PreparedStatement preparedStatement, int startIndex) throws SQLException {
         assert areEmptyOrSingle() : "These permissions are empty or single.";
         

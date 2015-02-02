@@ -1,6 +1,7 @@
 package ch.virtualid.expression;
 
 import ch.virtualid.annotations.Capturable;
+import ch.virtualid.annotations.DoesNotCommit;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.concept.NonHostConcept;
 import ch.virtualid.contact.Contact;
@@ -82,6 +83,7 @@ abstract class Expression extends NonHostConcept implements Immutable {
      * @require isActive() : "This expression is active.";
      */
     @Pure
+    @DoesNotCommit
     abstract @Nonnull @Capturable FreezableSet<Contact> getContacts() throws SQLException;
     
     /**
@@ -104,6 +106,7 @@ abstract class Expression extends NonHostConcept implements Immutable {
      * @return whether this expression matches the given signature.
      */
     @Pure
+    @DoesNotCommit
     abstract boolean matches(@Nonnull CredentialsSignatureWrapper signature) throws SQLException;
     
     
@@ -251,6 +254,7 @@ abstract class Expression extends NonHostConcept implements Immutable {
      * @return the expression of the parsed string.
      */
     @Pure
+    @DoesNotCommit
     static Expression parse(@Nonnull NonHostEntity entity, @Nonnull String string) throws SQLException, IOException, PacketException, ExternalException {
         if (string.trim().isEmpty()) return new EmptyExpression(entity);
         

@@ -1,5 +1,6 @@
 package ch.virtualid.identity;
 
+import ch.virtualid.annotations.DoesNotCommit;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.exceptions.external.ExternalException;
@@ -65,6 +66,7 @@ public final class IdentityReply extends CoreServiceQueryReply {
      * 
      * @param subject the subject of this handler.
      */
+    @DoesNotCommit
     IdentityReply(@Nonnull InternalNonHostIdentifier subject) throws SQLException, PacketException {
         super(subject);
         
@@ -185,6 +187,7 @@ public final class IdentityReply extends CoreServiceQueryReply {
         
         @Pure
         @Override
+        @DoesNotCommit
         protected @Nonnull Reply create(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
             return new IdentityReply(entity, signature, number, block);
         }

@@ -1,5 +1,6 @@
 package ch.virtualid.identity;
 
+import ch.virtualid.annotations.DoesNotCommit;
 import ch.virtualid.database.Database;
 import ch.virtualid.errors.InitializationError;
 import ch.virtualid.exceptions.external.ExternalException;
@@ -34,6 +35,7 @@ public final class Successor {
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS general_successor (identifier " + IdentifierClass.FORMAT + " NOT NULL, successor " + IdentifierClass.FORMAT + " NOT NULL, reply " + Reply.FORMAT + ", PRIMARY KEY (identifier), FOREIGN KEY (reply) " + Reply.REFERENCE + ")");
         } catch (@Nonnull SQLException exception) {
+            try { Database.rollback(); } catch (@Nonnull SQLException exc) { throw new InitializationError("Could not rollback.", exc); }
             throw new InitializationError("The database tables of the predecessors could not be created.", exception);
         }
     }
@@ -45,6 +47,7 @@ public final class Successor {
      * 
      * @return the successor of the given identifier as stored in the database.
      */
+    @DoesNotCommit
     public static @Nullable InternalNonHostIdentifier get(@Nonnull NonHostIdentifier identifier) throws SQLException {
         @Nonnull String query = "SELECT successor FROM general_successor WHERE identifier = " + identifier;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(query)) {
@@ -60,6 +63,7 @@ public final class Successor {
      * 
      * @return the successor of the given identifier as stored in the database or retrieved by a new request.
      */
+    @DoesNotCommit
     public static @Nonnull InternalNonHostIdentifier getReloaded(@Nonnull NonHostIdentifier identifier) throws SQLException, IOException, PacketException, ExternalException {
         @Nullable InternalNonHostIdentifier successor = get(identifier);
         if (successor == null) {
@@ -88,6 +92,7 @@ public final class Successor {
      * @param successor the successor to be set for the given identifier.
      * @param reply the reply stating that the given identifier has the given successor.
      */
+    @DoesNotCommit
     public static void set(@Nonnull NonHostIdentifier identifier, @Nonnull InternalNonHostIdentifier successor, @Nullable Reply reply) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("INSERT INTO general_successor (identifier, successor, reply) VALUES (" + identifier + ", " + successor + ", " + reply + ")");

@@ -3,6 +3,7 @@ package ch.virtualid.client;
 import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
+import ch.virtualid.annotations.DoesNotCommit;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.cryptography.PublicKey;
 import ch.virtualid.entity.Entity;
@@ -77,6 +78,7 @@ public final class AccountInitialize extends CoreServiceInternalAction {
      * @require states.isFrozen() : "The list of states is frozen.";
      * @require states.doesNotContainNull() : "The list of states does not contain null.";
      */
+    @DoesNotCommit
     AccountInitialize(@Nonnull NativeRole role, @Nonnull ReadonlyList<Pair<Predecessor, Block>> states) throws SQLException, IOException, PacketException, ExternalException {
         super(role);
         
@@ -99,6 +101,7 @@ public final class AccountInitialize extends CoreServiceInternalAction {
      * 
      * @ensure hasSignature() : "This handler has a signature.";
      */
+    @DoesNotCommit
     private AccountInitialize(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
@@ -165,6 +168,7 @@ public final class AccountInitialize extends CoreServiceInternalAction {
     
     
     @Override
+    @DoesNotCommit
     protected void executeOnBoth() throws SQLException {
         final @Nonnull NonHostEntity entity = getNonHostEntity();
         
@@ -234,6 +238,7 @@ public final class AccountInitialize extends CoreServiceInternalAction {
         
         @Pure
         @Override
+        @DoesNotCommit
         protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
             return new AccountInitialize(entity, signature, recipient, block);
         }

@@ -1,5 +1,6 @@
 package ch.virtualid.module;
 
+import ch.virtualid.annotations.DoesNotCommit;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.Entity;
@@ -33,6 +34,7 @@ public interface Module {
      * 
      * @param site the site for which to create the database tables.
      */
+    @DoesNotCommit
     public void createTables(@Nonnull Site site) throws SQLException;
     
     /**
@@ -40,6 +42,7 @@ public interface Module {
      * 
      * @param site the site for which to delete the database tables.
      */
+    @DoesNotCommit
     public void deleteTables(@Nonnull Site site) throws SQLException;
     
 }

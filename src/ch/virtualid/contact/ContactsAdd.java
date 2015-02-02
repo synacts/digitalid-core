@@ -1,4 +1,4 @@
-package ch.virtualid.handler.action.internal;
+package ch.virtualid.contact;
 
 /**
  * Description.

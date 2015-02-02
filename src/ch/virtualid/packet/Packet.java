@@ -1,7 +1,13 @@
 package ch.virtualid.packet;
 
+import ch.virtualid.annotations.DoesNotCommit;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.annotations.RawRecipient;
+import ch.virtualid.cache.AttributesQuery;
+import ch.virtualid.cache.AttributesReply;
+import ch.virtualid.certificate.CertificateIssue;
+import ch.virtualid.client.AccountInitialize;
+import ch.virtualid.client.AccountOpen;
 import ch.virtualid.cryptography.SymmetricKey;
 import ch.virtualid.entity.Account;
 import ch.virtualid.entity.Entity;
@@ -14,16 +20,11 @@ import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Method;
 import ch.virtualid.handler.Reply;
-import ch.virtualid.certificate.CertificateIssue;
-import ch.virtualid.client.AccountInitialize;
-import ch.virtualid.client.AccountOpen;
-import ch.virtualid.cache.AttributesQuery;
-import ch.virtualid.identity.IdentityQuery;
-import ch.virtualid.cache.AttributesReply;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identifier.Identifier;
 import ch.virtualid.identifier.InternalIdentifier;
 import ch.virtualid.identifier.InternalNonHostIdentifier;
+import ch.virtualid.identity.IdentityQuery;
 import ch.virtualid.identity.Predecessors;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.identity.Successor;
@@ -132,6 +133,7 @@ public abstract class Packet implements Immutable {
      * @require !(this instanceof Request) || audit == null || audit instanceof RequestAudit : "If this is a request, the audit is either null or a request audit.";
      * @require !(this instanceof Response) || audit == null || audit instanceof ResponseAudit : "If this is a response, the audit is either null or a response audit.";
      */
+    @DoesNotCommit
     @SuppressWarnings("AssignmentToMethodParameter")
     Packet(@Nonnull Object list, int size, @Nullable Object field, @Nullable HostIdentifier recipient, @Nullable SymmetricKey symmetricKey, @Nullable InternalIdentifier subject, @Nullable Audit audit) throws SQLException, IOException, PacketException, ExternalException {
         assert !(this instanceof Request) || audit == null || audit instanceof RequestAudit : "If this is a request, the audit is either null or a request audit.";
@@ -171,6 +173,7 @@ public abstract class Packet implements Immutable {
      * @require (request == null) == (this instanceof Request) : "If the request is null, this packet is itself a request.";
      * @require (request != null) == (this instanceof Response) : "If the request is not null, this packet is a response.";
      */
+    @DoesNotCommit
     Packet(@Nonnull InputStream inputStream, @Nullable Request request, boolean verified) throws SQLException, IOException, PacketException, ExternalException {
         assert (request == null) == (this instanceof Request) : "If the request is null, this packet is itself a request.";
         assert (request != null) == (this instanceof Response) : "If the request is not null, this packet is a response.";
@@ -392,6 +395,7 @@ public abstract class Packet implements Immutable {
      */
     @Pure
     @RawRecipient
+    @DoesNotCommit
     abstract @Nonnull SignatureWrapper getSignature(@Nullable CompressionWrapper compression, @Nonnull InternalIdentifier subject, @Nullable Audit audit) throws SQLException, IOException, PacketException, ExternalException;
     
     

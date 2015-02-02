@@ -1,6 +1,7 @@
 package ch.virtualid.host;
 
 import ch.virtualid.agent.AgentPermissions;
+import ch.virtualid.annotations.EndsCommitted;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.attribute.Attribute;
 import ch.virtualid.attribute.AttributeValue;
@@ -89,6 +90,7 @@ public final class Host extends Site {
      * 
      * @param identifier the identifier of the new host.
      */
+    @EndsCommitted
     public Host(@Nonnull HostIdentifier identifier) throws SQLException, IOException, PacketException, ExternalException {
         super(identifier.asHostName());
         

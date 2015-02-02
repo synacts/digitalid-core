@@ -2,6 +2,7 @@ package ch.xdf;
 
 import ch.virtualid.annotations.Capturable;
 import ch.virtualid.annotations.Captured;
+import ch.virtualid.annotations.DoesNotCommit;
 import ch.virtualid.annotations.Exposed;
 import ch.virtualid.annotations.ExposedRecipient;
 import ch.virtualid.annotations.NonExposedRecipient;
@@ -675,6 +676,7 @@ public final class Block implements Immutable, SQLizable {
      * 
      * @return the block at the given index of the given result set.
      */
+    @DoesNotCommit
     public static @Nullable Block get(@Nonnull SemanticType type, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
         final @Nonnull byte[] bytes = resultSet.getBytes(columnIndex);
         if (resultSet.wasNull()) return null;
@@ -691,11 +693,13 @@ public final class Block implements Immutable, SQLizable {
      * 
      * @return the block at the given index of the given result set.
      */
+    @DoesNotCommit
     public static @Nonnull Block getNotNull(@Nonnull SemanticType type, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
         return new Block(type, resultSet.getBytes(columnIndex));
     }
     
     @Override
+    @DoesNotCommit
     @NonExposedRecipient
     public void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
         assert isNotEncoding() : "This method is not called during encoding.";
@@ -716,6 +720,7 @@ public final class Block implements Immutable, SQLizable {
      * 
      * @require block == null || block.isNotEncoding() : "The block is either null or not encoding.";
      */
+    @DoesNotCommit
     public static void set(@Nullable Block block, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
         assert block == null || block.isNotEncoding() : "The block is either null or not encoding.";
         

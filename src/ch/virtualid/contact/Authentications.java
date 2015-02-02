@@ -1,6 +1,7 @@
 package ch.virtualid.contact;
 
 import ch.virtualid.annotations.Capturable;
+import ch.virtualid.annotations.DoesNotCommit;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.exceptions.external.ExternalException;
@@ -78,6 +79,7 @@ public final class Authentications extends AttributeTypeSet implements ReadonlyA
      * 
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
+    @DoesNotCommit
     public Authentications(@Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(block);
     }

@@ -1,5 +1,6 @@
 package ch.xdf;
 
+import ch.virtualid.annotations.DoesNotCommit;
 import ch.virtualid.annotations.Exposed;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
@@ -153,6 +154,7 @@ public final class EncryptionWrapper extends BlockWrapper implements Immutable {
      * @require type.isBasedOn(TYPE) : "The given type is based on the indicated syntactic type.";
      * @require element == null || element.getType().isBasedOn(type.getParameters().getNotNull(0)) : "The element is either null or based on the parameter of the given type.";
      */
+    @DoesNotCommit
     public EncryptionWrapper(@Nonnull SemanticType type, @Nullable Block element, @Nullable HostIdentifier recipient, @Nullable SymmetricKey symmetricKey) throws SQLException, IOException, PacketException, ExternalException {
         super(type);
         
@@ -178,6 +180,7 @@ public final class EncryptionWrapper extends BlockWrapper implements Immutable {
      * @require type.isBasedOn(TYPE) : "The given type is based on the indicated syntactic type.";
      * @require element == null || element.getType().isBasedOn(type.getParameters().getNotNull(0)) : "The element is either null or based on the parameter of the given type.";
      */
+    @DoesNotCommit
     public EncryptionWrapper(@Nonnull SemanticType type, @Nullable Blockable element, @Nullable HostIdentifier recipient, @Nullable SymmetricKey symmetricKey) throws SQLException, IOException, PacketException, ExternalException {
         this(type, Block.toBlock(element), recipient, symmetricKey);
     }

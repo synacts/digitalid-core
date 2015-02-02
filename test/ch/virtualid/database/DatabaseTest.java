@@ -1,5 +1,8 @@
 package ch.virtualid.database;
 
+import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.EndsCommitted;
+import ch.virtualid.annotations.Pure;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.util.ReadonlyArray;
@@ -32,10 +35,12 @@ import org.junit.runners.MethodSorters;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class DatabaseTest {
     
+    @Pure
     protected boolean isSubclass() {
         return false;
     }
     
+    @EndsCommitted
     protected static void createTables() throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS test_identity (identity " + Database.getConfiguration().PRIMARY_KEY() + ", category " + Database.getConfiguration().TINYINT() + " NOT NULL, address VARCHAR(100) NOT NULL COLLATE " + Database.getConfiguration().BINARY() + ")");
@@ -47,11 +52,13 @@ public class DatabaseTest {
     }
     
     @After
+    @EndsCommitted
     public void commit() throws SQLException {
         if (isSubclass()) Database.commit();
     }
     
     @Test
+    @DoesNotCommit
     public void _01_testKeyInsertWithStatement() throws SQLException {
         if (isSubclass()) {
             try (@Nonnull Statement statement = Database.createStatement()) {
@@ -61,6 +68,7 @@ public class DatabaseTest {
     }
     
     @Test
+    @DoesNotCommit
     public void _02_testKeyInsertWithPreparedStatement() throws SQLException {
         if (isSubclass()) {
             final @Nonnull String SQL = "INSERT INTO test_identity (category, address) VALUES (?, ?)";
@@ -74,6 +82,7 @@ public class DatabaseTest {
     }
     
     @Test
+    @DoesNotCommit
     public void _03_testInsertWithForeignKeyConstraint() throws SQLException {
         if (isSubclass()) {
             try (@Nonnull Statement statement = Database.createStatement()) {
@@ -83,6 +92,7 @@ public class DatabaseTest {
     }
     
     @Test
+    @DoesNotCommit
     public void _04_testLocalRollbackWithSavepoint() throws SQLException {
         if (isSubclass()) {
             try (@Nonnull Statement statement = Database.createStatement()) {
@@ -104,6 +114,7 @@ public class DatabaseTest {
     }
     
     @Test
+    @DoesNotCommit
     public void _05_testOnInsertIgnore() throws SQLException {
         if (isSubclass()) {
             final @Nonnull String SQL = "INSERT" + Database.getConfiguration().IGNORE() + " INTO test_identifier (identifier, identity, value) VALUES ('a@syntacts.com', 1, 6)";
@@ -120,6 +131,7 @@ public class DatabaseTest {
     }
     
     @Test
+    @DoesNotCommit
     public void _06_testOnInsertUpdate() throws SQLException {
         if (isSubclass()) {
             final @Nonnull String SQL = Database.getConfiguration().REPLACE() + " INTO test_identifier (identifier, identity, value) VALUES ('a@syntacts.com', 1, 7)";
@@ -136,6 +148,7 @@ public class DatabaseTest {
     }
     
     @Test
+    @DoesNotCommit
     public void _07_testSimpleJoin() throws SQLException {
         if (isSubclass()) {
             final @Nonnull String SQL = "SELECT test_identity.category FROM test_identifier JOIN test_identity ON test_identifier.identity = test_identity.identity WHERE identifier = 'a@syntacts.com'";
@@ -147,6 +160,7 @@ public class DatabaseTest {
     }
     
     @Test
+    @DoesNotCommit
     public void _08_testParallelQueries() throws SQLException {
         if (isSubclass()) {
             final @Nonnull String SQL = "SELECT identity FROM test_identity WHERE address = ";
@@ -162,6 +176,7 @@ public class DatabaseTest {
     }
     
     @Test
+    @DoesNotCommit
     public void _09_testParallelUpdates() throws SQLException {
         if (isSubclass()) {
             try (@Nonnull Statement statement1 = Database.createStatement(); @Nonnull Statement statement2 = Database.createStatement()){
@@ -181,6 +196,7 @@ public class DatabaseTest {
     }
     
     @Test
+    @DoesNotCommit
     public void _10_testCurrentTime() throws SQLException {
         if (isSubclass()) {
             final long before = System.currentTimeMillis();
@@ -194,6 +210,7 @@ public class DatabaseTest {
     }
     
     @Test
+    @DoesNotCommit
     public void _11_testHandlingBlocks() throws SQLException, InvalidEncodingException {
         if (isSubclass()) {
             final @Nonnull SemanticType STRING1 = SemanticType.create("string1.tuple@syntacts.com").load(StringWrapper.TYPE);
@@ -221,6 +238,7 @@ public class DatabaseTest {
     }
     
     @Test
+    @DoesNotCommit
     public void _12_testBatchInsertWithPreparedStatement() throws SQLException {
         if (isSubclass()) {
             final @Nonnull String SQL = "INSERT INTO test_batch (a, b) VALUES (?, ?)";

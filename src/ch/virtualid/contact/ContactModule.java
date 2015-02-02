@@ -3,6 +3,7 @@ package ch.virtualid.contact;
 import ch.virtualid.agent.Agent;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
+import ch.virtualid.annotations.DoesNotCommit;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.NonHostEntity;
@@ -44,6 +45,7 @@ public final class ContactModule implements BothModule {
     }
     
     @Override
+    @DoesNotCommit
     public void createTables(@Nonnull Site site) throws SQLException {
 //        try (@Nonnull Statement statement = Database.createStatement()) {
 //            statement.executeUpdate("CREATE TABLE IF NOT EXISTS contact_preference (identity BIGINT NOT NULL, contact BIGINT NOT NULL, type BIGINT NOT NULL, PRIMARY KEY (identity, contact, type), FOREIGN KEY (identity) REFERENCES general_identity (identity), FOREIGN KEY (contact) REFERENCES general_identity (identity), FOREIGN KEY (type) REFERENCES general_identity (identity))");
@@ -57,6 +59,7 @@ public final class ContactModule implements BothModule {
     }
     
     @Override
+    @DoesNotCommit
     public void deleteTables(@Nonnull Site site) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             // TODO: Delete the tables of this module.
@@ -82,6 +85,7 @@ public final class ContactModule implements BothModule {
     
     @Pure
     @Override
+    @DoesNotCommit
     public @Nonnull Block exportModule(@Nonnull Host host) throws SQLException {
         final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
         try (@Nonnull Statement statement = Database.createStatement()) {
@@ -91,6 +95,7 @@ public final class ContactModule implements BothModule {
     }
     
     @Override
+    @DoesNotCommit
     public void importModule(@Nonnull Host host, @Nonnull Block block) throws SQLException, InvalidEncodingException {
         assert block.getType().isBasedOn(getModuleFormat()) : "The block is based on the format of this module.";
         
@@ -119,6 +124,7 @@ public final class ContactModule implements BothModule {
     
     @Pure
     @Override
+    @DoesNotCommit
     public @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadonlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws SQLException {
         final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
         try (@Nonnull Statement statement = Database.createStatement()) {
@@ -128,6 +134,7 @@ public final class ContactModule implements BothModule {
     }
     
     @Override
+    @DoesNotCommit
     public void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws SQLException, InvalidEncodingException {
         assert block.getType().isBasedOn(getStateFormat()) : "The block is based on the indicated type.";
         
@@ -138,6 +145,7 @@ public final class ContactModule implements BothModule {
     }
     
     @Override
+    @DoesNotCommit
     public void removeState(@Nonnull NonHostEntity entity) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             // TODO: Remove the entries of the given entity from the database table(s).
@@ -152,6 +160,7 @@ public final class ContactModule implements BothModule {
 //     * @param contact the contact whose preferences are to be returned.
 //     * @return the preferences of the given contact at the given identity.
 //     */
+//    @DoesNotCommit
 //    static @Nonnull Set<SemanticType> getContactPreferences(@Nonnull NonHostIdentity identity, @Nonnull Person contact) throws SQLException {
 //        @Nonnull Set<SemanticType> preferences = getTypes(connection, identity, "contact_preference", "contact = " + contact);
 //        if (preferences.isEmpty() && contact.hasBeenMerged()) return getContactPreferences(connection, identity, contact);
@@ -165,6 +174,7 @@ public final class ContactModule implements BothModule {
 //     * @param contact the contact whose preferences are to be set.
 //     * @param preferences the preferences to be set for the given contact.
 //     */
+//    @DoesNotCommit
 //    static void setContactPreferences(@Nonnull NonHostIdentity identity, @Nonnull Person contact, @Nonnull Set<SemanticType> preferences) throws SQLException {
 //        try (@Nonnull Statement statement = connection.createStatement()) {
 //            int updated = statement.executeUpdate("DELETE FROM contact_preference WHERE identity = " + identity + " AND contact = " + contact);
@@ -185,6 +195,7 @@ public final class ContactModule implements BothModule {
 //     * @param inherited whether the permissions of the supercontexts are inherited.
 //     * @return the permissions of the given contact at the given identity.
 //     */
+//    @DoesNotCommit
 //    static @Nonnull Set<SemanticType> getContactPermissions(@Nonnull NonHostIdentity identity, @Nonnull Person contact, boolean inherited) throws SQLException {
 //        @Nonnull Set<SemanticType> permissions = getTypes(connection, identity, "contact_permission", "contact = " + contact);
 //        if (permissions.isEmpty() && contact.hasBeenMerged()) return getContactPermissions(connection, identity, contact, inherited);
@@ -204,6 +215,7 @@ public final class ContactModule implements BothModule {
 //     * @param contact the contact whose permissions are extended.
 //     * @param permissions the permissions to be added to the given contact.
 //     */
+//    @DoesNotCommit
 //    static void addContactPermissions(@Nonnull NonHostIdentity identity, @Nonnull Person contact, @Nonnull Set<SemanticType> permissions) throws SQLException {
 //        try {
 //            addTypes(connection, identity, "contact_permission", "contact", contact.getNumber(), permissions);
@@ -220,6 +232,7 @@ public final class ContactModule implements BothModule {
 //     * @param contact the contact whose permissions are reduced.
 //     * @param permissions the permissions to be removed from the given contact.
 //     */
+//    @DoesNotCommit
 //    static void removeContactPermissions(@Nonnull NonHostIdentity identity, @Nonnull Person contact, @Nonnull Set<SemanticType> permissions) throws SQLException {
 //        int removed = removeTypes(connection, identity, "contact_permission", "contact", contact.getNumber(), permissions);
 //        if (removed == 0 && !permissions.isEmpty() && contact.hasBeenMerged()) removeTypes(connection, identity, "contact_permission", "contact", contact.getNumber(), permissions);
@@ -233,6 +246,7 @@ public final class ContactModule implements BothModule {
 //     * @param inherited whether the authentications of the supercontexts are inherited.
 //     * @return the authentications of the given contact at the given identity.
 //     */
+//    @DoesNotCommit
 //    static @Nonnull Set<SemanticType> getContactAuthentications(@Nonnull NonHostIdentity identity, @Nonnull Person contact, boolean inherited) throws SQLException {
 //        @Nonnull Set<SemanticType> authentications = getTypes(connection, identity, "contact_authentication", "contact = " + contact);
 //        if (authentications.isEmpty() && contact.hasBeenMerged()) return getContactAuthentications(connection, identity, contact, inherited);
@@ -252,6 +266,7 @@ public final class ContactModule implements BothModule {
 //     * @param contact the contact whose authentications are extended.
 //     * @param authentications the authentications to be added to the given contact.
 //     */
+//    @DoesNotCommit
 //    static void addContactAuthentications(@Nonnull NonHostIdentity identity, @Nonnull Person contact, @Nonnull Set<SemanticType> authentications) throws SQLException {
 //        try {
 //            addTypes(connection, identity, "contact_authentication", "contact", contact.getNumber(), authentications);
@@ -268,6 +283,7 @@ public final class ContactModule implements BothModule {
 //     * @param contact the contact whose authentications are reduced.
 //     * @param authentications the authentications to be removed from the given contact.
 //     */
+//    @DoesNotCommit
 //    static void removeContactAuthentications(@Nonnull NonHostIdentity identity, @Nonnull Person contact, @Nonnull Set<SemanticType> authentications) throws SQLException {
 //        int removed = removeTypes(connection, identity, "contact_authentication", "contact", contact.getNumber(), authentications);
 //        if (removed == 0 && contact.hasBeenMerged()) removeTypes(connection, identity, "contact_authentication", "contact", contact.getNumber(), authentications);

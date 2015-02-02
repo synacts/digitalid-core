@@ -2,6 +2,7 @@ package ch.virtualid.contact;
 
 import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.annotations.Capturable;
+import ch.virtualid.annotations.DoesNotCommit;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
@@ -71,6 +72,7 @@ public class AttributeTypeSet extends FreezableLinkedHashSet<SemanticType> imple
      * 
      * @require block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
      */
+    @DoesNotCommit
     public AttributeTypeSet(@Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         assert block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
         

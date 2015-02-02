@@ -1,5 +1,6 @@
 package ch.xdf;
 
+import ch.virtualid.annotations.DoesNotCommit;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.cache.Cache;
@@ -20,8 +21,8 @@ import ch.virtualid.identity.InternalIdentity;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
-import ch.virtualid.synchronizer.Audit;
 import ch.virtualid.server.Server;
+import ch.virtualid.synchronizer.Audit;
 import ch.virtualid.util.FreezableArray;
 import ch.virtualid.util.ReadonlyArray;
 import java.io.IOException;
@@ -144,6 +145,7 @@ public final class HostSignatureWrapper extends SignatureWrapper implements Immu
     
     @Pure
     @Override
+    @DoesNotCommit
     public void verify() throws SQLException, IOException, PacketException, ExternalException {
         assert isNotVerified() : "This signature is not verified.";
         

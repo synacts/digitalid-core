@@ -1,5 +1,6 @@
 package ch.virtualid.agent;
 
+import ch.virtualid.annotations.DoesNotCommit;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.exceptions.external.ExternalException;
@@ -65,6 +66,7 @@ final class OutgoingRoleIssue extends CoreServiceExternalAction {
      * 
      * @require outgoingRole.isOnHost() : "The outgoing role is on a host.";
      */
+    @DoesNotCommit
     OutgoingRoleIssue(@Nonnull OutgoingRole outgoingRole, @Nonnull InternalPerson subject) throws SQLException {
         super(outgoingRole.getAccount(), subject);
         
@@ -86,6 +88,7 @@ final class OutgoingRoleIssue extends CoreServiceExternalAction {
      * 
      * @ensure hasSignature() : "This handler has a signature.";
      */
+    @DoesNotCommit
     private OutgoingRoleIssue(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
@@ -129,11 +132,13 @@ final class OutgoingRoleIssue extends CoreServiceExternalAction {
     /**
      * Executes this action on both hosts and clients.
      */
+    @DoesNotCommit
     private void executeOnBoth() throws SQLException {
         AgentModule.addIncomingRole(getNonHostEntity(), issuer, relation, agentNumber);
     }
     
     @Override
+    @DoesNotCommit
     public @Nullable CoreServiceActionReply executeOnHost() throws PacketException, SQLException {
         if (getSignatureNotNull().isNotSigned()) throw new PacketException(PacketError.AUTHORIZATION, "The issuance of a role has to be signed.");
         executeOnBoth();
@@ -147,12 +152,14 @@ final class OutgoingRoleIssue extends CoreServiceExternalAction {
     }
     
     @Override
+    @DoesNotCommit
     public void executeOnClient() throws SQLException {
         executeOnBoth();
         getRole().addRole(issuer, relation, agentNumber);
     }
     
     @Override
+    @DoesNotCommit
     public void executeOnFailure() throws SQLException {
         // TODO: Add this role issuance to a list of failed external actions.
     }
@@ -200,6 +207,7 @@ final class OutgoingRoleIssue extends CoreServiceExternalAction {
         
         @Pure
         @Override
+        @DoesNotCommit
         protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
             return new OutgoingRoleIssue(entity, signature, recipient, block);
         }

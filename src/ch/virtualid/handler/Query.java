@@ -1,5 +1,6 @@
 package ch.virtualid.handler;
 
+import ch.virtualid.annotations.DoesNotCommit;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.Role;
@@ -74,6 +75,7 @@ public abstract class Query extends Method {
     
     
     @Override
+    @DoesNotCommit
     public abstract @Nonnull QueryReply executeOnHost() throws PacketException, SQLException;
     
 }

@@ -2,6 +2,8 @@ package ch.virtualid.setup;
 
 import ch.virtualid.agent.Agent;
 import ch.virtualid.agent.AgentPermissions;
+import ch.virtualid.annotations.EndsCommitted;
+import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Image;
 import ch.virtualid.client.Client;
 import ch.virtualid.database.Database;
@@ -32,18 +34,21 @@ public class IdentitySetup extends ServerSetup {
     
     private static @Nonnull Client client;
     
+    @Pure
     protected static @Nonnull Client getClient() {
         return client;
     }
     
     private static @Nonnull NativeRole role;
     
+    @Pure
     protected static @Nonnull NativeRole getRole() {
         return role;
     }
     
     private static @Nonnull InternalNonHostIdentity subject;
     
+    @Pure
     protected static @Nonnull InternalNonHostIdentity getSubject() {
         return subject;
     }
@@ -55,6 +60,7 @@ public class IdentitySetup extends ServerSetup {
     }
     
     @BeforeClass
+    @EndsCommitted
     public static void setUpIdentity() throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
         print("setUpIdentity");
         try {
@@ -71,6 +77,7 @@ public class IdentitySetup extends ServerSetup {
     }
     
     @After
+    @EndsCommitted
     public final void testStateEquality() throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
         try {
             role.waitForCompletion(CoreService.SERVICE);
@@ -99,6 +106,6 @@ public class IdentitySetup extends ServerSetup {
     }
     
     @Test
-    public final void testIdentitySetup() throws SQLException, IOException, PacketException, ExternalException {}
+    public final void testIdentitySetup() {}
     
 }
