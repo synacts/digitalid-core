@@ -6,7 +6,7 @@ import javax.annotation.Nonnull;
  * Implementing this interface allows a class to observe changes in {@link Instance instances}.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public interface Observer {
     

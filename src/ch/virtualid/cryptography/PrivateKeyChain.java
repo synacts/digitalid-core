@@ -17,7 +17,7 @@ import org.javatuples.Pair;
  * This class models a {@link KeyChain key chain} of {@link PrivateKey private keys}.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public final class PrivateKeyChain extends KeyChain<PrivateKey> implements Immutable, Blockable {
     

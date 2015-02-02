@@ -45,7 +45,7 @@ import org.javatuples.Pair;
  * Initializes a new account with the given states.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public final class AccountInitialize extends CoreServiceInternalAction {
     
@@ -140,7 +140,7 @@ public final class AccountInitialize extends CoreServiceInternalAction {
     
     @Pure
     @Override
-    public @Nonnull String toString() {
+    public @Nonnull String getDescription() {
         return "Initializes the new account.";
     }
     

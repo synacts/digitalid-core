@@ -16,7 +16,7 @@ import javax.annotation.Nonnull;
  * @invariant getValue().compareTo(BigInteger.ZERO) >= 0 && getValue().compareTo(getGroup().getModulus()) == -1 : "The value is non-negative and smaller than the group modulus.";
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public final class Element extends Number implements Immutable, Blockable {
     

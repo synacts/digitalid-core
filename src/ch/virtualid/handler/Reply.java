@@ -26,7 +26,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -41,7 +40,7 @@ import javax.annotation.Nullable;
  * @see QueryReply
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public abstract class Reply extends Handler implements SQLizable {
     
@@ -85,17 +84,11 @@ public abstract class Reply extends Handler implements SQLizable {
      * @require hasSignature() : "This reply has a signature.";
      */
     @Pure
-    public @Nonnull Long getNumber() {
+    public long getNumber() {
         assert hasSignature() : "This reply has a signature.";
         
         assert number != null : "This follows from the constructor.";
         return number;
-    }
-    
-    @Pure
-    @Override
-    public @Nonnull String toString() {
-        return Objects.toString(number);
     }
     
     

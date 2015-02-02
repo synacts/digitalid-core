@@ -18,7 +18,7 @@ import javax.annotation.Nullable;
  * This class stores the groups and exponents of a host's private key.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public final class PrivateKey implements Immutable, Blockable {
     

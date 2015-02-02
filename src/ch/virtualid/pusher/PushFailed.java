@@ -42,7 +42,7 @@ import javax.annotation.Nullable;
  * @see Pusher
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public final class PushFailed extends ExternalAction {
     
@@ -143,7 +143,7 @@ public final class PushFailed extends ExternalAction {
     
     @Pure
     @Override
-    public @Nonnull String toString() {
+    public @Nonnull String getDescription() {
         return "Failed to push an external action of type " + action.getType().getAddress() + ".";
     }
     

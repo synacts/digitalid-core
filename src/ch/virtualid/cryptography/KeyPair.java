@@ -14,7 +14,7 @@ import javax.annotation.Nonnull;
  * This class generates new key pairs.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public final class KeyPair implements Immutable {
     

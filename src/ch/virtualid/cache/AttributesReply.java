@@ -32,7 +32,7 @@ import javax.annotation.Nullable;
  * @see AttributesQuery
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public final class AttributesReply extends CoreServiceQueryReply {
     
@@ -138,7 +138,7 @@ public final class AttributesReply extends CoreServiceQueryReply {
     
     @Pure
     @Override
-    public @Nonnull String toString() {
+    public @Nonnull String getDescription() {
         return "Replies the queried attribute values.";
     }
     

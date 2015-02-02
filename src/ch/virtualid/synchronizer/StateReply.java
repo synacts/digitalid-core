@@ -25,7 +25,7 @@ import javax.annotation.Nullable;
  * @see StateQuery
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 final class StateReply extends QueryReply {
     
@@ -85,7 +85,7 @@ final class StateReply extends QueryReply {
     
     @Pure
     @Override
-    public @Nonnull String toString() {
+    public @Nonnull String getDescription() {
         return "Replies the state.";
     }
     

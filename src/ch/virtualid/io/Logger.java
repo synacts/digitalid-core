@@ -19,7 +19,7 @@ import javax.annotation.Nonnull;
  * @see Level
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public final class Logger {
     
@@ -95,13 +95,15 @@ public final class Logger {
     }
     
     /**
-     * Logs the given throwable with the current time.
+     * Logs the given message and throwable with the current time.
      * 
      * @param level the log level of the message.
+     * @param message the message to be logged.
      * @param throwable the throwable to log.
      */
-    public void log(@Nonnull Level level, @Nonnull Throwable throwable) {
-        log(level, getMessage(throwable));
+    public void log(@Nonnull Level level, @Nonnull String message, @Nonnull Throwable throwable) {
+//        throwable.printStackTrace(); // TODO: Remove!
+        log(level, message + " due to " + getMessage(throwable));
     }
     
     /**

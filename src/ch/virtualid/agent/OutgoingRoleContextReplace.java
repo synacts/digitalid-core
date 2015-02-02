@@ -25,7 +25,7 @@ import javax.annotation.Nullable;
  * Replaces the context of a {@link OutgoingRole outgoing role}.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 final class OutgoingRoleContextReplace extends CoreServiceInternalAction {
     
@@ -117,7 +117,7 @@ final class OutgoingRoleContextReplace extends CoreServiceInternalAction {
     
     @Pure
     @Override
-    public @Nonnull String toString() {
+    public @Nonnull String getDescription() {
         return "Replaces the context " + oldContext + " with " + newContext + " of the outgoing role with the number " + outgoingRole + ".";
     }
     

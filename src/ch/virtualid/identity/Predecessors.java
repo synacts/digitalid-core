@@ -35,7 +35,7 @@ import javax.annotation.Nullable;
  * @invariant doesNotContainDuplicates() : "This list of predecessors does not contain duplicates.";
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public final class Predecessors extends FreezableArrayList<Predecessor> implements ReadonlyPredecessors, Blockable {
     

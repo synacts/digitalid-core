@@ -12,7 +12,7 @@ import javax.annotation.Nonnull;
  * Wraps a block with the syntactic type {@code int64@xdf.ch} for encoding and decoding.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public final class Int64Wrapper extends BlockWrapper implements Immutable {
     

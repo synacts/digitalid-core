@@ -21,7 +21,7 @@ import javax.crypto.spec.IvParameterSpec;
  * The random initialization vector ensures that multiple {@link EncryptionWrapper encryptions} of the same {@link Block block} are different.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public final class InitializationVector extends IvParameterSpec implements Immutable, Blockable, SQLizable {
     

@@ -21,7 +21,7 @@ import javax.annotation.Nonnull;
  * @see PacketException
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public enum PacketError implements Blockable, Immutable, SQLizable {
     

@@ -37,7 +37,7 @@ import javax.annotation.Nullable;
  * @see Listener
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public final class Worker implements Runnable {
     
@@ -152,12 +152,12 @@ public final class Worker implements Runnable {
             final @Nonnull Time end = new Time();
             LOGGER.log(Level.INFORMATION, "Request from '" + socket.getInetAddress() + "' handled in " + end.subtract(start).getValue() + " ms" + (subject != null ? " about " + subject : "") + (error != null ? " with error " + error : "") + ".");
         } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
-            LOGGER.log(Level.WARNING, exception);
+            LOGGER.log(Level.WARNING, "Could not send a response", exception);
         } finally {
             try {
                 if (!socket.isClosed()) socket.close();
             } catch (@Nonnull IOException exception) {
-                LOGGER.log(Level.WARNING, exception);
+                LOGGER.log(Level.WARNING, "Could not close the socket", exception);
             }
         }
         

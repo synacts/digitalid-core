@@ -35,7 +35,7 @@ import javax.annotation.Nullable;
  * @see CredentialExternalQuery
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 final class CredentialReply extends CoreServiceQueryReply {
     
@@ -147,7 +147,7 @@ final class CredentialReply extends CoreServiceQueryReply {
     
     @Pure
     @Override
-    public @Nonnull String toString() {
+    public @Nonnull String getDescription() {
         return "Replies the parameters of a new credential.";
     }
     

@@ -11,7 +11,7 @@ import javax.annotation.Nonnull;
  * @see ContactPermissions
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public interface ReadonlyContactPermissions extends ReadonlyAttributeTypeSet, Blockable {
     

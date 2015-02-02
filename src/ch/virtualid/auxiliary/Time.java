@@ -21,7 +21,7 @@ import javax.annotation.Nullable;
  * Dates are calculated as milliseconds since 1 January 1970, 00:00:00 GMT.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public final class Time implements Immutable, Blockable, Comparable<Time>, SQLizable {
     

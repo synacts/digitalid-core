@@ -12,7 +12,7 @@ import javax.annotation.Nullable;
  * Instances of this class can be {@link Observer observed} for certain {@link Aspect aspects}.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public abstract class Instance {
     

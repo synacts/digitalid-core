@@ -27,7 +27,7 @@ import javax.annotation.Nullable;
  * Creates an {@link OutgoingRole outgoing role}.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 final class OutgoingRoleCreate extends CoreServiceInternalAction {
     
@@ -109,7 +109,7 @@ final class OutgoingRoleCreate extends CoreServiceInternalAction {
     
     @Pure
     @Override
-    public @Nonnull String toString() {
+    public @Nonnull String getDescription() {
         return "Creates the outgoing role with the number " + outgoingRole + ".";
     }
     

@@ -3,6 +3,7 @@ package ch.virtualid.packet;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.annotations.RawRecipient;
 import ch.virtualid.auxiliary.Time;
+import ch.virtualid.cache.AttributesQuery;
 import ch.virtualid.cache.Cache;
 import ch.virtualid.contact.AttributeTypeSet;
 import ch.virtualid.cryptography.PublicKeyChain;
@@ -13,12 +14,11 @@ import ch.virtualid.exceptions.external.InvalidDeclarationException;
 import ch.virtualid.exceptions.packet.PacketError;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Method;
-import ch.virtualid.cache.AttributesQuery;
-import ch.virtualid.identity.IdentityQuery;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identifier.IdentifierClass;
 import ch.virtualid.identifier.InternalIdentifier;
 import ch.virtualid.identifier.InternalNonHostIdentifier;
+import ch.virtualid.identity.IdentityQuery;
 import ch.virtualid.identity.Mapper;
 import ch.virtualid.identity.Successor;
 import ch.virtualid.server.Server;
@@ -52,7 +52,7 @@ import org.javatuples.Pair;
  * @see CredentialsRequest
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public class Request extends Packet {
     
@@ -297,7 +297,7 @@ public class Request extends Packet {
      */
     public final @Nonnull Response send(boolean verified) throws SQLException, IOException, PacketException, ExternalException {
         try (@Nonnull Socket socket = new Socket("vid." + getRecipient().getString(), Server.PORT)) {
-            socket.setSoTimeout(10000);
+            socket.setSoTimeout(1000000); // TODO: Remove two zeroes!
             this.write(socket.getOutputStream());
             return new Response(this, socket.getInputStream(), verified);
         } catch (@Nonnull PacketException exception) {

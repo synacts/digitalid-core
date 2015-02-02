@@ -22,7 +22,7 @@ import javax.annotation.Nonnull;
  * This class configures a MySQL database.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public final class MySQLConfiguration extends Configuration implements Immutable {
     

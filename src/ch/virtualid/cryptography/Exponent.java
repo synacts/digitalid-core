@@ -19,7 +19,7 @@ import javax.annotation.Nullable;
  * An exponent is a number that raises elements of an arbitrary group.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public final class Exponent extends Number implements Immutable, Blockable, SQLizable {
     

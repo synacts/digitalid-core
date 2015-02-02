@@ -3,11 +3,15 @@ package ch.virtualid.error;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.Site;
+import ch.virtualid.handler.Action;
 import ch.virtualid.module.ClientModule;
 import ch.virtualid.service.CoreService;
 import ch.virtualid.service.Service;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import javax.annotation.Nonnull;
 
 /**
@@ -16,12 +20,12 @@ import javax.annotation.Nonnull;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 0.0
  */
-public final class Errors implements ClientModule {
+public final class ErrorModule implements ClientModule {
     
     /**
      * Stores an instance of this module.
      */
-    public static final Errors MODULE = new Errors();
+    public static final ErrorModule MODULE = new ErrorModule();
     
     @Pure
     @Override
@@ -41,6 +45,27 @@ public final class Errors implements ClientModule {
         try (@Nonnull Statement statement = Database.createStatement()) {
             // TODO: Delete the tables of this module.
         }
+    }
+    
+    
+    /**
+     * Stores the date formatter for the output.
+     */
+    private static final @Nonnull ThreadLocal<DateFormat> formatter = new ThreadLocal<DateFormat>() {
+        @Override protected DateFormat initialValue() {
+            return new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss: ");
+        }
+    };
+    
+    /**
+     * Adds the given message and action to the list of errors.
+     * 
+     * @param message the message to be added.
+     * @param action the action to be added.
+     */
+    public static void add(@Nonnull String message, @Nonnull Action action) {
+        // TODO: Make a real implementation.
+        System.err.println(formatter.get().format(new Date()) + message + " '" + action + "'.");
     }
     
     static { CoreService.SERVICE.add(MODULE); }

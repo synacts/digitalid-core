@@ -26,7 +26,7 @@ import org.javatuples.Pair;
  * @see PrivateKeyChain
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 abstract class KeyChain<Key extends Blockable> implements Immutable, Blockable {
     

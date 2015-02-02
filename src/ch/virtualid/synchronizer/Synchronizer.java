@@ -9,6 +9,7 @@ import ch.virtualid.handler.InternalAction;
 import ch.virtualid.handler.Method;
 import ch.virtualid.io.Level;
 import ch.virtualid.io.Logger;
+import ch.virtualid.module.BothModule;
 import ch.virtualid.packet.Response;
 import ch.virtualid.service.Service;
 import ch.virtualid.util.ConcurrentHashMap;
@@ -16,7 +17,9 @@ import ch.virtualid.util.ConcurrentHashSet;
 import ch.virtualid.util.ConcurrentMap;
 import ch.virtualid.util.ConcurrentSet;
 import ch.virtualid.util.FreezableArrayList;
+import ch.virtualid.util.FreezableHashSet;
 import ch.virtualid.util.ReadonlyList;
+import ch.virtualid.util.ReadonlySet;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -30,7 +33,7 @@ import javax.annotation.Nullable;
  * This class synchronizes {@link InternalAction internal actions}.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public final class Synchronizer extends Thread {
     
@@ -116,48 +119,49 @@ public final class Synchronizer extends Thread {
     }
     
     /**
-     * Reloads the state of the given service for the given role.
+     * Reloads the state of the given module for the given role.
      * 
-     * @param role the role for which the service is to be reloaded.
-     * @param service the service which is to be reloaded for the given role.
+     * @param role the role for which the module is to be reloaded.
+     * @param module the module which is to be reloaded for the given role.
      * 
-     * @require isSuspended(role, service) : "The given service is suspended.";
+     * @require isSuspended(role, module.getService()) : "The service is suspended.";
      */
-    static void reloadSuspended(@Nonnull Role role, @Nonnull Service service) throws SQLException, IOException, PacketException, ExternalException {
-        assert isSuspended(role, service) : "The given service is suspended.";
+    static void reloadSuspended(@Nonnull Role role, @Nonnull BothModule module) throws SQLException, IOException, PacketException, ExternalException {
+        final @Nonnull Service service = module.getService();
+        assert isSuspended(role, service) : "The service is suspended.";
         
-        try {
-            SynchronizerModule.getLastTime(role, service); // Read from the database in order to synchronize with other processes.
-            final @Nonnull Response response = Method.send(new FreezableArrayList<Method>(new StateQuery(role, service)).freeze(), new RequestAudit(Time.MAX));
-            SynchronizerModule.setLastTime(role, service, response.getAuditNotNull().getThisTime());
-            
-            final @Nonnull StateReply reply = response.getReplyNotNull(0);
-            reply.updateState();
-            
-            final @Nullable InternalAction lastAction = SynchronizerModule.pendingActions.peekLast();
-            Database.commit();
-            
-            SynchronizerModule.redoPendingActions(role, service.getBothModules(), lastAction);
-        } catch (@Nonnull SQLException | PacketException | IOException | ExternalException exception) {
-            Database.rollback();
-            throw exception;
-        } finally {
-            resume(role, service);
-        }
+        @Nonnull Time lastTime = SynchronizerModule.getLastTime(role, service); // Read from the database in order to synchronize with other processes.
+        if (module.equals(service)) lastTime = Time.MAX;
+        final @Nonnull Response response = Method.send(new FreezableArrayList<Method>(new StateQuery(role, module)).freeze(), new RequestAudit(lastTime));
+        final @Nonnull StateReply reply = response.getReplyNotNull(0);
+        reply.updateState();
+        
+        if (module.equals(service)) SynchronizerModule.setLastTime(role, service, response.getAuditNotNull().getThisTime());
+        final @Nullable InternalAction lastAction = SynchronizerModule.pendingActions.peekLast();
+        Database.commit();
+        
+        final @Nonnull ReadonlySet<BothModule> modules = new FreezableHashSet<BothModule>(module).freeze();
+        SynchronizerModule.redoPendingActions(role, module.equals(service) ? service.getBothModules() : modules, lastAction);
+        if (!module.equals(service)) response.getAuditNotNull().execute(role, service, response.getRequest().getRecipient(), ResponseAudit.emptyMethodList, modules);
     }
     
     /**
-     * Reloads the state of the given service for the given role.
-     * This method blocks until the given service is no longer suspended.
+     * Reloads the state of the given module for the given role.
+     * This method blocks until the service is no longer suspended.
      * 
-     * @param role the role for which the service is to be reloaded.
-     * @param service the service which is to be reloaded for the given role.
+     * @param role the role for which the module is to be reloaded.
+     * @param module the module which is to be reloaded for the given role.
      */
-    public static void reload(@Nonnull Role role, @Nonnull Service service) throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
+    public static void reload(@Nonnull Role role, @Nonnull BothModule module) throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
         @Nullable ConcurrentSet<Service> set = suspendedServices.get(role);
         if (set == null) set = suspendedServices.putIfAbsentElseReturnPresent(role, new ConcurrentHashSet<Service>());
+        final @Nonnull Service service = module.getService();
         synchronized (set) { while (!set.add(service)) set.wait(); }
-        reloadSuspended(role, service);
+        try {
+            reloadSuspended(role, module);
+        } finally {
+            resume(role, service);
+        }
     }
     
     /**
@@ -174,9 +178,6 @@ public final class Synchronizer extends Thread {
                 final @Nonnull RequestAudit requestAudit = new RequestAudit(SynchronizerModule.getLastTime(role, service));
                 final @Nonnull Response response = Method.send(new FreezableArrayList<Method>(auditQuery).freeze(), requestAudit);
                 response.getAuditNotNull().execute(role, service, auditQuery.getRecipient(), ResponseAudit.emptyMethodList, ResponseAudit.emptyModuleSet);
-            } catch (@Nonnull SQLException | PacketException | IOException | ExternalException exception) {
-                Database.rollback();
-                throw exception;
             } finally {
                 resume(role, service);
             }
@@ -216,7 +217,7 @@ public final class Synchronizer extends Thread {
             threadPoolExecutor.shutdown();
             threadPoolExecutor.awaitTermination(5L, TimeUnit.SECONDS);
         } catch (@Nonnull InterruptedException exception) {
-            LOGGER.log(Level.WARNING, exception);
+            LOGGER.log(Level.WARNING, "Could not shut down the synchronizer", exception);
         }
     }
     
@@ -251,7 +252,7 @@ public final class Synchronizer extends Thread {
                         } catch (@Nonnull RejectedExecutionException exception) {
                             final @Nonnull Method reference = methods.getNotNull(0);
                             resume(reference.getRole(), reference.getService());
-                            LOGGER.log(Level.WARNING, exception);
+                            LOGGER.log(Level.WARNING, "Could not add a new sender", exception);
                             sleep(backoff);
                             backoff *= 2;
                         }
@@ -261,7 +262,7 @@ public final class Synchronizer extends Thread {
                     }
                 }
             } catch (@Nonnull InterruptedException exception) {
-                LOGGER.log(Level.WARNING, exception);
+                LOGGER.log(Level.WARNING, "Could not wait for the next pending action", exception);
             }
         }
     }

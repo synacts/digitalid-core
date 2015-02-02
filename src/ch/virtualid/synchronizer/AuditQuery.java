@@ -26,7 +26,7 @@ import javax.annotation.Nullable;
  * @see AuditReply
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 final class AuditQuery extends InternalQuery {
     
@@ -81,7 +81,7 @@ final class AuditQuery extends InternalQuery {
     
     @Pure
     @Override
-    public @Nonnull String toString() {
+    public @Nonnull String getDescription() {
         return "Queries the audit of the " + service.getName() + ".";
     }
     

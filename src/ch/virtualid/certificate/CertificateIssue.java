@@ -31,7 +31,7 @@ import javax.annotation.Nullable;
  * Issues the given certificate to the given subject.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 1.6
+ * @version 0.6
  */
 public final class CertificateIssue extends CoreServiceExternalAction {
     
@@ -88,7 +88,7 @@ public final class CertificateIssue extends CoreServiceExternalAction {
     
     @Pure
     @Override
-    public @Nonnull String toString() {
+    public @Nonnull String getDescription() {
         return "Issues a certificate for " + certificate.getContent().getType().getAddress() + ".";
     }
     

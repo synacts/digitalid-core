@@ -55,7 +55,7 @@ import javax.annotation.Nullable;
  * @invariant getSubject().getHostIdentifier().equals(getRecipient()) : "The host of the subject has to match the recipient for the action to open an account.";
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 1.9
+ * @version 0.9
  */
 public final class AccountOpen extends Action {
     
@@ -167,7 +167,7 @@ public final class AccountOpen extends Action {
     
     @Pure
     @Override
-    public @Nonnull String toString() {
+    public @Nonnull String getDescription() {
         return "Opens a new account with the category '" + category.name() + "'.";
     }
     

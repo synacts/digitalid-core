@@ -27,7 +27,7 @@ import javax.annotation.Nullable;
  * @see ImpersonalExpression
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 abstract class AbstractExpression extends NonHostConcept implements Immutable, Blockable, SQLizable {
     

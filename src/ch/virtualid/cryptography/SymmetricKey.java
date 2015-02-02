@@ -33,7 +33,7 @@ import javax.crypto.spec.SecretKeySpec;
  * Symmetric keys are used to encrypt and decrypt byte arrays with the Advanced Encryption Standard (AES).
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public final class SymmetricKey implements Immutable, Blockable {
     

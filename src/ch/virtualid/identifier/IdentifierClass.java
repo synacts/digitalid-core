@@ -25,7 +25,7 @@ import javax.annotation.Nullable;
  * @see ExternalIdentifier
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public abstract class IdentifierClass implements Identifier, Immutable, Blockable, SQLizable {
     
@@ -249,7 +249,7 @@ public abstract class IdentifierClass implements Identifier, Immutable, Blockabl
     @Pure
     @Override
     public final @Nonnull String toString() {
-        return "'" + string + "'";
+        return "\"" + string + "\"";
     }
     
 }

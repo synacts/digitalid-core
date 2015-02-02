@@ -25,7 +25,7 @@ import javax.imageio.ImageIO;
  * This class models images in the Extensible Data Format (XDF).
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public final class Image implements Immutable, Blockable, SQLizable {
     

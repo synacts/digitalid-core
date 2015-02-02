@@ -17,7 +17,7 @@ import javax.annotation.Nullable;
  * @see Exponent
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 abstract class Number implements Immutable, Blockable {
     

@@ -30,7 +30,7 @@ import javax.annotation.Nullable;
  * @see CoreServiceInternalAction
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public abstract class InternalAction extends Action implements InternalMethod {
     

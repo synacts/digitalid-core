@@ -36,7 +36,7 @@ import javax.annotation.Nullable;
  * Accredits a {@link ClientAgent client agent}.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public final class ClientAgentAccredit extends CoreServiceInternalAction {
     
@@ -152,7 +152,7 @@ public final class ClientAgentAccredit extends CoreServiceInternalAction {
     
     @Pure
     @Override
-    public @Nonnull String toString() {
+    public @Nonnull String getDescription() {
         return "Accredits the client agent with the number " + clientAgent + ".";
     }
     

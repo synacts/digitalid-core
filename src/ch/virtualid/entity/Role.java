@@ -16,6 +16,7 @@ import ch.virtualid.identity.InternalNonHostIdentity;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
+import ch.virtualid.module.BothModule;
 import ch.virtualid.service.Service;
 import ch.virtualid.synchronizer.Synchronizer;
 import ch.virtualid.synchronizer.SynchronizerModule;
@@ -35,7 +36,7 @@ import javax.annotation.Nullable;
  * @see NonNativeRole
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public abstract class Role extends EntityClass implements NonHostEntity, Immutable, SQLizable, Observer {
     
@@ -188,12 +189,14 @@ public abstract class Role extends EntityClass implements NonHostEntity, Immutab
     
     
     /**
-     * Reloads the state of the given service for this role.
+     * Reloads the state of the given module for this role.
+     * <p>
+     * <em>Important:</em> This method should be called in a committed state!
      * 
-     * @param service the service whose state is to be reloaded for this role.
+     * @param module the module whose state is to be reloaded for this role.
      */
-    public final void reloadState(@Nonnull Service service) throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
-        Synchronizer.reload(this, service);
+    public final void reloadState(@Nonnull BothModule module) throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
+        Synchronizer.reload(this, module);
         if (Database.isMultiAccess()) {
             getAgent().reset();
             this.roles = null;
@@ -202,6 +205,8 @@ public abstract class Role extends EntityClass implements NonHostEntity, Immutab
     
     /**
      * Refreshes the state of the given service for this role.
+     * <p>
+     * <em>Important:</em> This method should be called in a committed state!
      * 
      * @param service the service whose state is to be refreshed for this role.
      */
@@ -215,6 +220,8 @@ public abstract class Role extends EntityClass implements NonHostEntity, Immutab
     
     /**
      * Waits until all actions of the given service are completed.
+     * <p>
+     * <em>Important:</em> This method should be called in a committed state!
      * 
      * @param service the service whose actions are to be completed.
      */

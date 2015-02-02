@@ -61,7 +61,7 @@ import org.javatuples.Pair;
  * TODO: Make sure that the client secret gets rotated!
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public class Client extends Site implements Observer {
     
@@ -307,11 +307,13 @@ public class Client extends Site implements Observer {
      */
     public final void rotateSecret() throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
         final @Nonnull Exponent newSecret = new Exponent(new BigInteger(Parameters.HASH, new SecureRandom()));
-        for (final @Nonnull NativeRole role : getRoles()) {
+        final @Nonnull ReadonlyList<NativeRole> roles = getRoles();
+        for (final @Nonnull NativeRole role : roles) {
             final @Nonnull Commitment newCommitment = getCommitment(role.getIssuer().getAddress(), newSecret);
             role.getAgent().setCommitment(newCommitment);
         }
-        for (final @Nonnull NativeRole role : getRoles()) {
+        Database.commit();
+        for (final @Nonnull NativeRole role : roles) {
             role.waitForCompletion(CoreService.SERVICE);
         }
         this.secret = newSecret;

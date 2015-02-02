@@ -24,7 +24,7 @@ import javax.annotation.Nullable;
  * Replaces the relation of a {@link OutgoingRole outgoing role}.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 final class OutgoingRoleRelationReplace extends CoreServiceInternalAction {
     
@@ -115,7 +115,7 @@ final class OutgoingRoleRelationReplace extends CoreServiceInternalAction {
     
     @Pure
     @Override
-    public @Nonnull String toString() {
+    public @Nonnull String getDescription() {
         return "Replaces the relation " + oldRelation.getAddress() + " with " + newRelation.getAddress() + " of the outgoing role with the number " + outgoingRole + ".";
     }
     

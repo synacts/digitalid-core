@@ -34,7 +34,7 @@ import javax.annotation.Nullable;
  * Closes the account and sets the given successor.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public final class AccountClose extends CoreServiceInternalAction {
     
@@ -94,7 +94,7 @@ public final class AccountClose extends CoreServiceInternalAction {
     
     @Pure
     @Override
-    public @Nonnull String toString() {
+    public @Nonnull String getDescription() {
         return "Closes the given account with the successor " + successor + ".";
     }
     

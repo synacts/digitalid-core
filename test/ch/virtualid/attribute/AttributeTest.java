@@ -4,6 +4,7 @@ import ch.virtualid.cache.Cache;
 import ch.virtualid.database.Database;
 import ch.virtualid.exceptions.external.AttributeNotFoundException;
 import ch.virtualid.exceptions.external.ExternalException;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.expression.PassiveExpression;
 import ch.virtualid.setup.IdentitySetup;
@@ -30,38 +31,65 @@ public final class AttributeTest extends IdentitySetup {
     private static final @Nonnull String NAME = "Test Person";
         
     @Test
-    public void _01_testValueReplace() throws SQLException, IOException, PacketException, ExternalException {
+    public void _01_testValueReplace() throws SQLException, InvalidEncodingException {
         print("_01_testValueReplace");
-        final @Nonnull Attribute attribute = Attribute.get(getRole(), AttributeType.NAME);
-        attribute.setValue(new UncertifiedAttributeValue(new StringWrapper(AttributeType.NAME, NAME)));
-        attribute.reset(); // Not necessary but I want to test the database state.
-        final @Nullable AttributeValue attributeValue = attribute.getValue();
-        Assert.assertNotNull(attributeValue);
-        Assert.assertEquals(NAME, new StringWrapper(attributeValue.getContent()).getString());
+        try {
+            final @Nonnull Attribute attribute = Attribute.get(getRole(), AttributeType.NAME);
+            attribute.setValue(new UncertifiedAttributeValue(new StringWrapper(AttributeType.NAME, NAME)));
+            attribute.reset(); // Not necessary but I want to test the database state.
+            final @Nullable AttributeValue attributeValue = attribute.getValue();
+            Assert.assertNotNull(attributeValue);
+            Assert.assertEquals(NAME, new StringWrapper(attributeValue.getContent()).getString());
+            Database.commit();
+        } catch (@Nonnull SQLException | InvalidEncodingException exception) {
+            exception.printStackTrace();
+            Database.rollback();
+            throw exception;
+        }
     }
     
     @Test(expected = AttributeNotFoundException.class)
     public void _02_testNonPublicAccess() throws SQLException, IOException, PacketException, ExternalException {
         print("_02_testNonPublicAccess");
-        Cache.getReloadedAttributeContent(getSubject(), getRole(), AttributeType.NAME, false);
+        try {
+            Cache.getReloadedAttributeContent(getSubject(), getRole(), AttributeType.NAME, false);
+            Database.commit();
+        } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
+            if (!(exception instanceof AttributeNotFoundException)) exception.printStackTrace();
+            Database.rollback();
+            throw exception;
+        }
     }
     
     @Test
     public void _03_testVisibilityReplace() throws SQLException, IOException, PacketException, ExternalException {
         print("_03_testVisibilityReplace");
-        final @Nonnull PassiveExpression passiveExpression = new PassiveExpression(getRole(), "everybody");
-        final @Nonnull Attribute attribute = Attribute.get(getRole(), AttributeType.NAME);
-        attribute.setVisibility(passiveExpression);
-        attribute.reset(); // Not necessary but I want to test the database state.
-        Assert.assertEquals(passiveExpression, attribute.getVisibility());
+        try {
+            final @Nonnull PassiveExpression passiveExpression = new PassiveExpression(getRole(), "everybody");
+            final @Nonnull Attribute attribute = Attribute.get(getRole(), AttributeType.NAME);
+            attribute.setVisibility(passiveExpression);
+            attribute.reset(); // Not necessary but I want to test the database state.
+            Assert.assertEquals(passiveExpression, attribute.getVisibility());
+            Database.commit();
+        } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
+            exception.printStackTrace();
+            Database.rollback();
+            throw exception;
+        }
     }
     
     @Test
     public void _04_testPublicAccess() throws SQLException, IOException, PacketException, ExternalException {
         print("_04_testPublicAccess");
-        final @Nonnull Block content = Cache.getReloadedAttributeContent(getSubject(), getRole(), AttributeType.NAME, false);
-        Assert.assertEquals(NAME, new StringWrapper(content).getString());
-        Database.commit();
+        try {
+            final @Nonnull Block content = Cache.getReloadedAttributeContent(getSubject(), getRole(), AttributeType.NAME, false);
+            Assert.assertEquals(NAME, new StringWrapper(content).getString());
+            Database.commit();
+        } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
+            exception.printStackTrace();
+            Database.rollback();
+            throw exception;
+        }
     }
     
 }

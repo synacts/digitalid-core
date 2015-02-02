@@ -36,7 +36,7 @@ import org.javatuples.Pair;
  * the receiving host's identifier, the encrypted key and the possibly encrypted element.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public final class EncryptionWrapper extends BlockWrapper implements Immutable {
     

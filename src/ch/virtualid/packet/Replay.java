@@ -17,7 +17,7 @@ import javax.annotation.Nullable;
  * Checks that no other encryption with the same initialization vector was received during the last half hour.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public final class Replay {
     

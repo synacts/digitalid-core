@@ -30,7 +30,7 @@ import javax.annotation.Nullable;
  * Issues the given role to the given subject.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 final class OutgoingRoleIssue extends CoreServiceExternalAction {
     
@@ -108,7 +108,7 @@ final class OutgoingRoleIssue extends CoreServiceExternalAction {
     
     @Pure
     @Override
-    public @Nonnull String toString() {
+    public @Nonnull String getDescription() {
         return "Issues a role with the relation " + relation.getAddress() + ".";
     }
     

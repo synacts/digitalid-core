@@ -34,7 +34,7 @@ import javax.annotation.Nullable;
  * {@link CoreService} as its table needs be created in advance by a {@link Client}.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public final class RoleModule {
     

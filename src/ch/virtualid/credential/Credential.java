@@ -43,7 +43,7 @@ import javax.annotation.Nullable;
  * @see HostCredential
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public abstract class Credential implements Immutable {
     

@@ -8,7 +8,7 @@ import javax.annotation.Nonnull;
  * This class extends the {@link java.io.BufferedWriter} with a {@link #writeLine(java.lang.String)} method.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public class BufferedWriter extends java.io.BufferedWriter {
     

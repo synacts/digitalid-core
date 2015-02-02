@@ -22,7 +22,7 @@ import javax.annotation.Nullable;
  * This class compresses, signs and encrypts requests by hosts.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public final class HostRequest extends Request {
     

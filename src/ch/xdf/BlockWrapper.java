@@ -13,7 +13,7 @@ import javax.annotation.Nullable;
  * Blocks are wrapped by separate objects for modular decoding and encoding.
  *
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public abstract class BlockWrapper implements Blockable, Immutable {
     

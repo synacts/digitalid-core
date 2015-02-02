@@ -23,7 +23,7 @@ import javax.annotation.Nullable;
  * This class models a non-host account.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public final class NonHostAccount extends Account implements NonHostEntity, Immutable, SQLizable {
     

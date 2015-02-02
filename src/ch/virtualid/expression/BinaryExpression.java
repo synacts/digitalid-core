@@ -21,7 +21,7 @@ import javax.annotation.Nullable;
  * This class models binary expressions.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 final class BinaryExpression extends Expression implements Immutable {
     

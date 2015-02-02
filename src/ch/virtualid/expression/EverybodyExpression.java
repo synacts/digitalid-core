@@ -18,7 +18,7 @@ import javax.annotation.Nullable;
  * This class models everybody expressions.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 final class EverybodyExpression extends Expression implements Immutable {
     

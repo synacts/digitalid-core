@@ -31,7 +31,7 @@ import javax.annotation.Nullable;
  * @invariant !Objects.equals(oldValue, newValue) : "The old and new value are not equal.";
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 final class AttributeValueReplace extends CoreServiceInternalAction {
     
@@ -133,7 +133,7 @@ final class AttributeValueReplace extends CoreServiceInternalAction {
     
     @Pure
     @Override
-    public @Nonnull String toString() {
+    public @Nonnull String getDescription() {
         return "Replaces the " + (published ? "published" : "unpublished") + " value '" + oldValue + "' with '" + newValue + "' of the attribute with the type " + attribute.getType().getAddress() + ".";
     }
     

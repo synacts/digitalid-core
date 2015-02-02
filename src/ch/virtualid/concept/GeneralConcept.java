@@ -9,7 +9,7 @@ import javax.annotation.Nonnull;
  * This class models a general concept.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public abstract class GeneralConcept extends Concept {
     

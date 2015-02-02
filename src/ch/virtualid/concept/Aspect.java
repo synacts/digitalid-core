@@ -8,7 +8,7 @@ import javax.annotation.Nonnull;
  * This class models {@link Aspect aspects} of {@link Instance instances} that can be (@link Observer observed}.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public final class Aspect implements Immutable {
     

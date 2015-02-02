@@ -37,7 +37,7 @@ import javax.annotation.Nullable;
  * @see SecretCommitment
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public class Commitment implements Immutable, Blockable, SQLizable {
     

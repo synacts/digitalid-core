@@ -10,7 +10,7 @@ import javax.annotation.Nonnull;
  * This class stores commonly used attribute types.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public final class AttributeType {
     

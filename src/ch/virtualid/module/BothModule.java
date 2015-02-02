@@ -20,7 +20,7 @@ import javax.annotation.Nullable;
  * These modules are used on both {@link Host hosts} and {@link Client clients}.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public interface BothModule extends HostModule, ClientModule {
     

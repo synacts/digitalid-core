@@ -24,7 +24,7 @@ import javax.annotation.Nullable;
  * Replaces the {@link Restrictions restrictions} of an {@link Agent agent}.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 final class AgentRestrictionsReplace extends CoreServiceInternalAction {
     
@@ -116,7 +116,7 @@ final class AgentRestrictionsReplace extends CoreServiceInternalAction {
     
     @Pure
     @Override
-    public @Nonnull String toString() {
+    public @Nonnull String getDescription() {
         return "Replaces the restrictions " + oldRestrictions + " with " + newRestrictions + " of the agent with the number " + agent + ".";
     }
     

@@ -41,7 +41,7 @@ import javax.annotation.Nullable;
  * @see CredentialsSignatureWrapper
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public class SignatureWrapper extends BlockWrapper implements Immutable {
     

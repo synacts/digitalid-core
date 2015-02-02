@@ -42,7 +42,7 @@ import javax.annotation.Nullable;
  * @see Configuration
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public final class Database implements Immutable {
     
@@ -256,13 +256,18 @@ public final class Database implements Immutable {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                try (@Nonnull Statement statement = Database.createStatement()) {
+                try (@Nonnull Statement statement = createStatement()) {
                     for (final @Nonnull Map.Entry<String, Time> entry : tables.entrySet()) {
                         statement.executeUpdate("DELETE FROM " + entry.getKey() + " WHERE time < " + entry.getValue().ago());
-                        Database.commit();
+                        commit();
                     }
                 } catch (@Nonnull SQLException exception) {
-                    LOGGER.log(Level.WARNING, exception);
+                    LOGGER.log(Level.WARNING, "Could not prune a table", exception);
+                    try {
+                        rollback();
+                    } catch (@Nonnull SQLException exc) {
+                        LOGGER.log(Level.WARNING, "Could not rollback", exc);
+                    }
                 }
             }
         }, Time.MINUTE.getValue(), Time.HOUR.getValue());

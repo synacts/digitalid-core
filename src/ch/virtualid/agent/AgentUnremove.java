@@ -21,7 +21,7 @@ import javax.annotation.Nullable;
  * Unremoves the given {@link Agent agent}.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 final class AgentUnremove extends CoreServiceInternalAction {
     
@@ -76,7 +76,7 @@ final class AgentUnremove extends CoreServiceInternalAction {
     
     @Pure
     @Override
-    public @Nonnull String toString() {
+    public @Nonnull String getDescription() {
         return "Unremoves the agent with the number " + agent + ".";
     }
     

@@ -26,7 +26,7 @@ import javax.annotation.Nonnull;
  * The server runs the configured hosts.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public final class Server {
     

@@ -17,7 +17,7 @@ import javax.annotation.Nonnull;
  * This class facilitates the encoding and decoding of uncertified attribute values.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public final class UncertifiedAttributeValue extends AttributeValue implements Immutable, Blockable, SQLizable {
     

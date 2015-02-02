@@ -14,7 +14,7 @@ import javax.annotation.Nonnull;
  * @see MobilePerson
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public abstract class ExternalPerson extends Person implements ExternalIdentity, Immutable {
     

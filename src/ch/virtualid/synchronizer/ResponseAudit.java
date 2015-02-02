@@ -40,7 +40,7 @@ import javax.annotation.Nullable;
  * This class models a response audit with the trail and the times of the last and this audit.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public final class ResponseAudit extends Audit implements Immutable, Blockable {
     
@@ -160,22 +160,20 @@ public final class ResponseAudit extends Audit implements Immutable, Blockable {
                 try {
                     action.executeOnClient();
                 } catch (@Nonnull SQLException exception) {
-                    Synchronizer.LOGGER.log(Level.WARNING, exception);
+                    Synchronizer.LOGGER.log(Level.WARNING, "Could not execute an audited action on the client", exception);
                     Database.rollback();
                     
-                    final @Nonnull ReadonlyList<InternalAction> reversedActions = SynchronizerModule.reverseInterferingActions(action);
-                    
                     try {
+                        final @Nonnull ReadonlyList<InternalAction> reversedActions = SynchronizerModule.reverseInterferingActions(action);
                         action.executeOnClient();
                         ActionModule.audit(action);
                         Database.commit();
+                        SynchronizerModule.redoReversedActions(reversedActions);
                     } catch (@Nonnull SQLException e) {
-                        Synchronizer.LOGGER.log(Level.WARNING, e);
+                        Synchronizer.LOGGER.log(Level.WARNING, "Could not execute on the client after having reversed the interfering actions", e);
                         Database.rollback();
                         suspendedModules.add(module);
                     }
-                    
-                    SynchronizerModule.redoReversedActions(reversedActions);
                 }
             }
             
@@ -187,7 +185,7 @@ public final class ResponseAudit extends Audit implements Immutable, Blockable {
         Database.commit();
         
         suspendedModules.removeAll((FreezableSet<BothModule>) ignoredModules);
-        if (suspendedModules.isNotEmpty()) {
+        if (suspendedModules.freeze().isNotEmpty()) {
             final @Nonnull FreezableList<Method> queries = new FreezableArrayList<Method>(suspendedModules.size());
             for (final @Nonnull BothModule module : suspendedModules) queries.add(new StateQuery(role, module));
             final @Nonnull Response response = Method.send(queries.freeze(), new RequestAudit(SynchronizerModule.getLastTime(role, service)));
@@ -198,7 +196,7 @@ public final class ResponseAudit extends Audit implements Immutable, Blockable {
             final @Nullable InternalAction lastAction = SynchronizerModule.pendingActions.peekLast();
             Database.commit();
             SynchronizerModule.redoPendingActions(role, suspendedModules, lastAction);
-            response.getAuditNotNull().execute(role, service, recipient, emptyMethodList, suspendedModules.freeze());
+            response.getAuditNotNull().execute(role, service, recipient, emptyMethodList, suspendedModules);
         }
     }
     
@@ -211,17 +209,21 @@ public final class ResponseAudit extends Audit implements Immutable, Blockable {
         new Thread(new Runnable() {
             @Override
             public void run() {
+                final @Nonnull Role role = method.getRole();
+                final @Nonnull Service service = method.getService();
+                
                 try {
-                    execute(method.getRole(), method.getService(), method.getRecipient(), new FreezableArrayList<Method>(method).freeze(), emptyModuleSet);
+                    execute(role, service, method.getRecipient(), new FreezableArrayList<Method>(method).freeze(), emptyModuleSet);
                 } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
-                    Synchronizer.LOGGER.log(Level.WARNING, exception);
+                    Synchronizer.LOGGER.log(Level.WARNING, "Could not execute the audit of '" + method + "' asynchronously", exception);
                     try {
                         Database.rollback();
                     } catch (@Nonnull SQLException e) {
-                        Synchronizer.LOGGER.log(Level.WARNING, e);
+                        Synchronizer.LOGGER.log(Level.WARNING, "Could not rollback", e);
                     }
                 }
-                Synchronizer.resume(method.getRole(), method.getService());
+                
+                Synchronizer.resume(role, service);
             }
         }).start();
     }

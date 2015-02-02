@@ -11,7 +11,7 @@ import javax.annotation.Nonnull;
  * @see Authentications
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public interface ReadonlyAuthentications extends ReadonlyAttributeTypeSet, Blockable {
     

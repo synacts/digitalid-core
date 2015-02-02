@@ -22,7 +22,7 @@ import javax.annotation.Nullable;
  * @invariant (string == null) == (symbol == null) : "Either both string and symbol are null or none of them.";
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 final class RestrictionExpression extends Expression implements Immutable {
     

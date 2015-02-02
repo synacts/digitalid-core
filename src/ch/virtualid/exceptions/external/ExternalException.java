@@ -19,7 +19,7 @@ import javax.annotation.Nullable;
  * @see SomethingNotFoundException
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public abstract class ExternalException extends Exception implements Immutable {
     
@@ -56,7 +56,7 @@ public abstract class ExternalException extends Exception implements Immutable {
     protected ExternalException(@Nullable String message, @Nullable Throwable cause) {
         super(message == null ? "An external exception occurred." : message, cause);
         
-        LOGGER.log(Level.WARNING, this);
+        LOGGER.log(Level.WARNING, "An external exception occurred", this);
     }
     
     @Pure

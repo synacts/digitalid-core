@@ -44,7 +44,7 @@ import javax.annotation.Nullable;
  * @invariant !isEncoded() || isAllocated() : "If the block is encoded, it is also allocated.";
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public final class Block implements Immutable, SQLizable {
     

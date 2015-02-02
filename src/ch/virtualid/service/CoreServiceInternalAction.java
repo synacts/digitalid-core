@@ -27,7 +27,7 @@ import javax.annotation.Nullable;
  * @invariant getSubject().getHostIdentifier().equals(getRecipient()) : "The host of the subject has to match the recipient for internal actions of the core service.";
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public abstract class CoreServiceInternalAction extends InternalAction {
     

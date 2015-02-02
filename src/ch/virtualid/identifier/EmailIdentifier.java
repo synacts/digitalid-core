@@ -20,7 +20,7 @@ import javax.naming.directory.InitialDirContext;
  * This class models email identifiers.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public final class EmailIdentifier extends ExternalIdentifier implements Immutable {
     

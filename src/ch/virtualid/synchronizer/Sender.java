@@ -2,6 +2,7 @@ package ch.virtualid.synchronizer;
 
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.Role;
+import ch.virtualid.error.ErrorModule;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.InternalAction;
@@ -20,7 +21,7 @@ import javax.annotation.Nonnull;
  * @see Synchronizer
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 final class Sender extends Thread {
     
@@ -71,36 +72,47 @@ final class Sender extends Thread {
             long backoff = 1000l;
             while (backoff > 0l) {
                 try {
-                    final @Nonnull Response response = Method.send(methods, requestAudit);
-                    SynchronizerModule.remove(methods);
-                    Database.commit();
+                    final @Nonnull Response response;
+                    try {
+                        response = Method.send(methods, requestAudit);
+                        Database.commit();
+                    } catch (@Nonnull SQLException | PacketException | ExternalException exception) {
+                        Synchronizer.LOGGER.log(Level.WARNING, "Could not send the methods", exception);
+                        Database.rollback();
+                        for (final @Nonnull Method method : methods) ErrorModule.add("Could not send", (InternalAction) method);
+                        Database.commit();
+                        return;
+                    }
                     
                     if (reference.isSimilarTo(reference)) {
                         for (int i = methods.size() - 1; i >= 0; i--) {
                             try {
                                 response.checkReply(i);
                             } catch (@Nonnull PacketException exception) {
-                                Synchronizer.LOGGER.log(Level.WARNING, exception);
-                                // TODO: Add a notification to the error module.
+                                Synchronizer.LOGGER.log(Level.WARNING, "Could not execute on the host", exception);
                                 final @Nonnull InternalAction action = (InternalAction) methods.getNotNull(i);
+                                
+                                ErrorModule.add("Could not execute on the host", action);
+                                Database.commit();
+                                
                                 try {
                                     action.reverseOnClient();
                                     Database.commit();
                                 } catch (@Nonnull SQLException exc) {
-                                    Synchronizer.LOGGER.log(Level.WARNING, exc);
-                                    final @Nonnull ReadonlyList<InternalAction> reversedActions = SynchronizerModule.reverseInterferingActions(action);
+                                    Synchronizer.LOGGER.log(Level.WARNING, "Could not reverse on the client before having reversed the interfering actions", exc);
+                                    Database.rollback();
                                     
                                     try {
+                                        final @Nonnull ReadonlyList<InternalAction> reversedActions = SynchronizerModule.reverseInterferingActions(action);
                                         action.reverseOnClient();
                                         Database.commit();
+                                        SynchronizerModule.redoReversedActions(reversedActions);
                                     } catch (@Nonnull SQLException e) {
-                                        Synchronizer.LOGGER.log(Level.ERROR, e);
+                                        Synchronizer.LOGGER.log(Level.ERROR, "Could not reverse on the client after having reversed the interfering actions", e);
                                         Database.rollback();
                                         Synchronizer.reloadSuspended(role, service);
                                         return;
                                     }
-                                    
-                                    SynchronizerModule.redoReversedActions(reversedActions);
                                 }
                             }
                         }
@@ -109,9 +121,11 @@ final class Sender extends Thread {
                             response.checkReply(0);
                             reference.executeOnClient();
                             Database.commit();
-                        } catch (@Nonnull PacketException exception) {
-                            Synchronizer.LOGGER.log(Level.WARNING, exception);
-                            // TODO: Add a notification to the error module.
+                        } catch (@Nonnull SQLException | PacketException exception) {
+                            Synchronizer.LOGGER.log(Level.WARNING, "Could not execute on the client", exception);
+                            Database.rollback();
+                            
+                            ErrorModule.add("Could not execute on the client", reference);
                             Database.commit();
                         }
                     }
@@ -126,17 +140,22 @@ final class Sender extends Thread {
                 }
             }
         } catch (@Nonnull InterruptedException | SQLException | PacketException | ExternalException exception) {
-            Synchronizer.LOGGER.log(Level.WARNING, exception);
+            Synchronizer.LOGGER.log(Level.WARNING, "Could not commit or reload", exception);
             try {
                 Database.rollback();
-                // TODO: Add a notification to the error module.
-                // Database.commit();
             } catch (@Nonnull SQLException e) {
-                Synchronizer.LOGGER.log(Level.WARNING, exception);
+                Synchronizer.LOGGER.log(Level.WARNING, "Could not rollback", exception);
             }
+        } finally {
+            try {
+                SynchronizerModule.remove(methods);
+                Database.commit();
+            } catch (@Nonnull SQLException exception) {
+                Synchronizer.LOGGER.log(Level.WARNING, "Could not remove the methods", exception);
+            }
+            
+            Synchronizer.resume(role, service);
         }
-        
-        Synchronizer.resume(role, service);
     }
     
 }

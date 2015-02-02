@@ -14,7 +14,7 @@ import javax.annotation.Nullable;
  * This class models credentials on the host-side.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public final class HostCredential extends Credential implements Immutable {
     

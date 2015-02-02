@@ -28,7 +28,7 @@ import javax.annotation.Nullable;
  * Revokes the given role from the given subject.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 final class OutgoingRoleRevoke extends CoreServiceExternalAction {
     
@@ -98,7 +98,7 @@ final class OutgoingRoleRevoke extends CoreServiceExternalAction {
     
     @Pure
     @Override
-    public @Nonnull String toString() {
+    public @Nonnull String getDescription() {
         return "Revokes the role with the relation " + relation.getAddress() + ".";
     }
     

@@ -39,7 +39,7 @@ import javax.annotation.Nonnull;
  * TODO: Make sure that the host keys get rotated!
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public final class Host extends Site {
     

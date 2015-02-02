@@ -18,7 +18,7 @@ import javax.annotation.Nullable;
  * @invariant verifySubgroupProof() : "The elements au, ai, av and ao are in the subgroup of ab.";
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public final class PublicKey implements Immutable, Blockable {
     

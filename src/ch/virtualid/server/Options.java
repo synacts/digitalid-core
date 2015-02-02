@@ -23,7 +23,7 @@ import javax.annotation.Nonnull;
  * @see Console
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 1.3
+ * @version 0.3
  */
 final class Options {
     

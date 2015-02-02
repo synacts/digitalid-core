@@ -18,7 +18,7 @@ import javax.annotation.Nonnull;
  * This class models the authentications of contacts as a set of attribute types.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public final class Authentications extends AttributeTypeSet implements ReadonlyAuthentications, Blockable {
     

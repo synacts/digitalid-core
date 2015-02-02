@@ -17,7 +17,7 @@ import javax.annotation.Nonnull;
  * A listener accepts incoming {@link Request requests} and lets them handle by {@link Worker workers}.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public final class Listener extends Thread {
     
@@ -57,16 +57,16 @@ public final class Listener extends Thread {
         while (!serverSocket.isClosed()) {
             try {
                 final @Nonnull Socket socket = serverSocket.accept();
-                socket.setSoTimeout(10000);
+                socket.setSoTimeout(1000000); // TODO: Remove two zeroes!
                 try {
                     threadPoolExecutor.execute(new Worker(socket));
                     LOGGER.log(Level.INFORMATION, "Connection accepted from " + socket.getInetAddress());
                 } catch (@Nonnull RejectedExecutionException exception) {
-                    LOGGER.log(Level.WARNING, exception);
+                    LOGGER.log(Level.WARNING, "Could not add a new worker", exception);
                     socket.close();
                 }
             } catch (@Nonnull IOException exception) {
-                if (!serverSocket.isClosed()) LOGGER.log(Level.WARNING, exception);
+                if (!serverSocket.isClosed()) LOGGER.log(Level.WARNING, "Could not accept or close a socket", exception);
             }
         }
     }
@@ -80,7 +80,7 @@ public final class Listener extends Thread {
             threadPoolExecutor.shutdown();
             threadPoolExecutor.awaitTermination(5L, TimeUnit.SECONDS);
         } catch (@Nonnull IOException | InterruptedException exception) {
-            LOGGER.log(Level.WARNING, exception);
+            LOGGER.log(Level.WARNING, "Could not shut down the listener", exception);
         }
     }
     

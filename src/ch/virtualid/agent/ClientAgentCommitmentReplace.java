@@ -25,7 +25,7 @@ import javax.annotation.Nullable;
  * Replaces the {@link Commitment commitment} of a {@link ClientAgent client agent}.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 final class ClientAgentCommitmentReplace extends CoreServiceInternalAction {
     
@@ -107,7 +107,7 @@ final class ClientAgentCommitmentReplace extends CoreServiceInternalAction {
     
     @Pure
     @Override
-    public @Nonnull String toString() {
+    public @Nonnull String getDescription() {
         return "Replaces the commitment " + oldCommitment + " with " + newCommitment + " of the client agent with the number " + clientAgent + ".";
     }
     

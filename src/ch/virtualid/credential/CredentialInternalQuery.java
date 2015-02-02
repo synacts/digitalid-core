@@ -47,7 +47,7 @@ import javax.annotation.Nullable;
  * @see CredentialReply
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 final class CredentialInternalQuery extends CoreServiceInternalQuery {
     
@@ -146,7 +146,7 @@ final class CredentialInternalQuery extends CoreServiceInternalQuery {
     
     @Pure
     @Override
-    public @Nonnull String toString() {
+    public @Nonnull String getDescription() {
         return "Requests an identity- or role-based credential.";
     }
     

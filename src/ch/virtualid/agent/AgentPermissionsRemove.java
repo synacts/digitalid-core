@@ -23,7 +23,7 @@ import javax.annotation.Nullable;
  * Removes {@link AgentPermissions permissions} from an {@link Agent agent}.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 final class AgentPermissionsRemove extends CoreServiceInternalAction {
     
@@ -92,7 +92,7 @@ final class AgentPermissionsRemove extends CoreServiceInternalAction {
     
     @Pure
     @Override
-    public @Nonnull String toString() {
+    public @Nonnull String getDescription() {
         return "Removes the permissions " + permissions + " from the agent with the number " + agent + ".";
     }
     

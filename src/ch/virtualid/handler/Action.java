@@ -29,7 +29,7 @@ import javax.annotation.Nullable;
  * @see ExternalAction
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public abstract class Action extends Method implements Auditable {
     

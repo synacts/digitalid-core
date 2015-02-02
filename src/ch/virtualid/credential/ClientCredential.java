@@ -34,7 +34,7 @@ import org.javatuples.Pair;
  * This class models credentials on the client-side.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 1.8
+ * @version 0.8
  */
 public final class ClientCredential extends Credential implements Immutable {
     

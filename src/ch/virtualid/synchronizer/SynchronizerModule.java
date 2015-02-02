@@ -7,6 +7,7 @@ import ch.virtualid.database.Database;
 import ch.virtualid.entity.EntityClass;
 import ch.virtualid.entity.Role;
 import ch.virtualid.entity.Site;
+import ch.virtualid.error.ErrorModule;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Action;
@@ -45,7 +46,7 @@ import org.javatuples.Pair;
  * @see Synchronizer
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public final class SynchronizerModule implements ClientModule {
     
@@ -219,14 +220,12 @@ public final class SynchronizerModule implements ClientModule {
      * 
      * @param methods the methods to be removed from the pending actions.
      * 
-     * @require methods.isFrozen() : "The list of methods is frozen.";
      * @require methods.isNotEmpty() : "The list of methods is not empty.";
      * @require methods.doesNotContainNull() : "The list of methods does not contain null.";
      * @require Method.areSimilar(methods) : "The methods are similar to each other.";
      * @require methods.getNotNull(0).isOnClient() : "The first method is on a client.";
      */
     static void remove(@Nonnull ReadonlyList<Method> methods) throws SQLException {
-        assert methods.isFrozen() : "The list of methods is frozen.";
         assert methods.isNotEmpty() : "The list of methods is not empty.";
         assert methods.doesNotContainNull() : "The list of methods does not contain null.";
         assert Method.areSimilar(methods) : "The methods are similar to each other.";
@@ -297,7 +296,7 @@ public final class SynchronizerModule implements ClientModule {
                 Database.commit();
             } catch (@Nonnull SQLException e) {
                 Database.rollback();
-                // TODO: Add the action to the error module.
+                ErrorModule.add("Could not redo", reversedAction);
                 remove(reversedAction);
                 Database.commit();
             }

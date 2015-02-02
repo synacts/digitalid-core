@@ -34,7 +34,7 @@ import javax.annotation.Nullable;
  * @see StateReply
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 final class StateQuery extends InternalQuery {
     
@@ -89,7 +89,7 @@ final class StateQuery extends InternalQuery {
     
     @Pure
     @Override
-    public @Nonnull String toString() {
+    public @Nonnull String getDescription() {
         return "Queries the state of the " + module.getClass().getSimpleName() + ".";
     }
     

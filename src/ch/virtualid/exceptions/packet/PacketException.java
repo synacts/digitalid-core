@@ -20,7 +20,7 @@ import javax.annotation.Nullable;
  * @see PacketError
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public final class PacketException extends Exception implements Blockable {
     
@@ -85,7 +85,7 @@ public final class PacketException extends Exception implements Blockable {
         
         this.error = error;
         this.remote = remote;
-        LOGGER.log(Level.WARNING, this);
+        LOGGER.log(Level.WARNING, "A problem occurred", this);
     }
     
     /**

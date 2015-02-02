@@ -35,7 +35,7 @@ import javax.annotation.Nullable;
  * Format: {@code (commitment, t, s)}
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public final class ClientSignatureWrapper extends SignatureWrapper implements Immutable {
     

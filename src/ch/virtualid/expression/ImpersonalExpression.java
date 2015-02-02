@@ -19,7 +19,7 @@ import javax.annotation.Nonnull;
  * This class models impersonal expressions.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public final class ImpersonalExpression extends AbstractExpression implements Immutable, Blockable, SQLizable {
     

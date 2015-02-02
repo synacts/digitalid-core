@@ -26,7 +26,7 @@ import javax.annotation.Nonnull;
  * @invariant getContent().getType().isAttributeFor(getSubject().getCategory()) : "The content is an attribute for the subject.";
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public final class CertifiedAttributeValue extends AttributeValue implements Immutable, Blockable, SQLizable {
     

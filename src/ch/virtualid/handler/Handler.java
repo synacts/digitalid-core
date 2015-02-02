@@ -23,7 +23,7 @@ import javax.annotation.Nullable;
  * @see Reply
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public abstract class Handler implements Immutable, Blockable {
     
@@ -267,8 +267,17 @@ public abstract class Handler implements Immutable, Blockable {
      * @return a description of this handler.
      */
     @Pure
+    public abstract @Nonnull String getDescription();
+    
+    
+    @Pure
     @Override
-    public abstract @Nonnull String toString();
+    public final @Nonnull String toString() {
+        final @Nonnull StringBuilder string = new StringBuilder(getClass().getSimpleName());
+        string.append(" by ").append(entity != null ? entity.getIdentity().getAddress() : "null");
+        string.append(" for ").append(subject).append(" (").append(getDescription()).append(")");
+        return string.toString();
+    }
     
     
     /**

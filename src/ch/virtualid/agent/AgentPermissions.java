@@ -39,7 +39,7 @@ import javax.annotation.Nullable;
  * @invariant areValid() : "These agent permissions are always valid.";
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public final class AgentPermissions extends FreezableLinkedHashMap<SemanticType, Boolean> implements ReadonlyAgentPermissions, Blockable, SQLizable {
     

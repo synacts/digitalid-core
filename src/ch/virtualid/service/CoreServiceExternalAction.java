@@ -19,7 +19,7 @@ import javax.annotation.Nullable;
  * @invariant getSubject().getHostIdentifier().equals(getRecipient()) : "The host of the subject and the recipient are the same for external actions of the core service.");
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public abstract class CoreServiceExternalAction extends ExternalAction {
     

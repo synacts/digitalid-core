@@ -26,7 +26,7 @@ import javax.annotation.Nullable;
  * Replaces the name of a {@link ClientAgent client agent}.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 final class ClientAgentNameReplace extends CoreServiceInternalAction {
     
@@ -119,7 +119,7 @@ final class ClientAgentNameReplace extends CoreServiceInternalAction {
     
     @Pure
     @Override
-    public @Nonnull String toString() {
+    public @Nonnull String getDescription() {
         return "Replaces the name '" + oldName + "' with '" + newName + "' of the client agent with the number " + clientAgent + ".";
     }
     

@@ -23,7 +23,7 @@ import javax.annotation.Nullable;
  * Adds {@link AgentPermissions permissions} to an {@link Agent agent}.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 final class AgentPermissionsAdd extends CoreServiceInternalAction {
     
@@ -92,7 +92,7 @@ final class AgentPermissionsAdd extends CoreServiceInternalAction {
     
     @Pure
     @Override
-    public @Nonnull String toString() {
+    public @Nonnull String getDescription() {
         return "Adds the permissions " + permissions + " to the agent with the number " + agent + ".";
     }
     

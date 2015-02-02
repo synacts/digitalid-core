@@ -30,7 +30,7 @@ import javax.annotation.Nullable;
  * Requests the given permissions of the given subject.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 1.9
+ * @version 0.9
  */
 public final class AccessRequest extends CoreServiceExternalAction {
     
@@ -105,7 +105,7 @@ public final class AccessRequest extends CoreServiceExternalAction {
     
     @Pure
     @Override
-    public @Nonnull String toString() {
+    public @Nonnull String getDescription() {
         return "Requests access to " + permissions + ".";
     }
     

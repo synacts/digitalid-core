@@ -67,7 +67,7 @@ import javax.annotation.Nullable;
  * The randomized permissions are always disclosed unless a commitment is given for certificate shortening.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public final class CredentialsSignatureWrapper extends SignatureWrapper implements Immutable {
     

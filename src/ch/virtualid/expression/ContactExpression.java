@@ -18,7 +18,7 @@ import javax.annotation.Nullable;
  * This class models contact expressions.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 final class ContactExpression extends Expression implements Immutable {
     

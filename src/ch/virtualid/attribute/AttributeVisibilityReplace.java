@@ -32,7 +32,7 @@ import javax.annotation.Nullable;
  * @invariant !Objects.equals(oldVisibility, newVisibility) : "The old and new visibility are not equal.";
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 final class AttributeVisibilityReplace extends CoreServiceInternalAction {
     
@@ -130,7 +130,7 @@ final class AttributeVisibilityReplace extends CoreServiceInternalAction {
     
     @Pure
     @Override
-    public @Nonnull String toString() {
+    public @Nonnull String getDescription() {
         return "Replaces the visibility '" + oldVisibility + "' with '" + newVisibility + "' of the attribute with the type " + attribute.getType().getAddress() + ".";
     }
     

@@ -26,7 +26,7 @@ import javax.annotation.Nullable;
  * Replaces the value of a {@link Password password}.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 final class PasswordValueReplace extends CoreServiceInternalAction {
     
@@ -120,7 +120,7 @@ final class PasswordValueReplace extends CoreServiceInternalAction {
     
     @Pure
     @Override
-    public @Nonnull String toString() {
+    public @Nonnull String getDescription() {
         return "Replaces the password '" + oldValue + "' with '" + newValue + "'.";
     }
     

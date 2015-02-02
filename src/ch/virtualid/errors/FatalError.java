@@ -14,7 +14,7 @@ import javax.annotation.Nullable;
  * @see ShouldNeverHappenError
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public abstract class FatalError extends Error implements Immutable {
     
@@ -51,7 +51,7 @@ public abstract class FatalError extends Error implements Immutable {
     protected FatalError(@Nullable String message, @Nullable Throwable cause) {
         super(message == null ? "A fatal error occurred." : message, cause);
         
-        LOGGER.log(Level.ERROR, this);
+        LOGGER.log(Level.ERROR, "A fatal error occurred", this);
     }
     
     @Pure

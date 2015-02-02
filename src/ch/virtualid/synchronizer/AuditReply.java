@@ -23,7 +23,7 @@ import javax.annotation.Nullable;
  * @see AuditQuery
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 final class AuditReply extends QueryReply {
     
@@ -75,7 +75,7 @@ final class AuditReply extends QueryReply {
     
     @Pure
     @Override
-    public @Nonnull String toString() {
+    public @Nonnull String getDescription() {
         return "Replies the audit.";
     }
     

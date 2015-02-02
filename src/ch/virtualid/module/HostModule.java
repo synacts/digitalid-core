@@ -14,7 +14,7 @@ import javax.annotation.Nonnull;
  * Host modules are only used on the {@link Host host}.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public interface HostModule extends Module {
     

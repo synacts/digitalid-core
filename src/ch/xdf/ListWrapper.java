@@ -17,7 +17,7 @@ import javax.annotation.Nullable;
  * Wraps a block with the syntactic type {@code list@xdf.ch} for encoding and decoding.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 2.0
+ * @version 1.0
  */
 public final class ListWrapper extends BlockWrapper implements Immutable {
     

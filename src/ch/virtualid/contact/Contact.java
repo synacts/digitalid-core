@@ -35,7 +35,7 @@ import javax.annotation.Nullable;
  * Contacts have certain {@link ContactPermissions permissions} and {@link Authentications authentications}.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 1.6
+ * @version 0.6
  */
 public final class Contact extends NonHostConcept implements Immutable, Blockable, SQLizable {
     
