@@ -1,4 +1,4 @@
-package ch.virtualid.concepts;
+package ch.virtualid.password;
 
 import ch.virtualid.annotations.EndsCommitted;
 import ch.virtualid.database.Database;
@@ -25,6 +25,7 @@ public final class PasswordTest extends IdentitySetup {
     @Test
     @EndsCommitted
     public void _01_testValueReplace() throws SQLException {
+        print("_01_testValueReplace");
         try {
             final @Nonnull Password password = Password.get(getRole());
             password.setValue(VALUE);

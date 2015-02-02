@@ -130,6 +130,21 @@ public final class Password extends NonHostConcept {
     
     @Pure
     @Override
+    public boolean equals(Object object) {
+        if (object == this) return true;
+        if (object == null || !(object instanceof Password)) return false;
+        final @Nonnull Password other = (Password) object;
+        return this.getEntity().equals(other.getEntity()) && this.value.equals(other.value);
+    }
+    
+    @Pure
+    @Override
+    public int hashCode() {
+        return 41 * getEntity().hashCode() + value.hashCode();
+    }
+    
+    @Pure
+    @Override
     public @Nonnull String toString() {
         return "The password of " + getEntity().getIdentity().getAddress() + " is '" + value + "'.";
     }
