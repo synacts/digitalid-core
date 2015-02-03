@@ -1,6 +1,6 @@
 package ch.virtualid.identifier;
 
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.database.Database;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
@@ -131,14 +131,14 @@ public abstract class IdentifierClass implements Identifier, Immutable, Blockabl
     
     @Pure
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public final boolean isMapped() throws SQLException {
         return Mapper.isMapped(this);
     }
     
     @Pure
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public final boolean isNotMapped() throws SQLException {
         return Mapper.isNotMapped(this);
     }
@@ -210,7 +210,7 @@ public abstract class IdentifierClass implements Identifier, Immutable, Blockabl
      * @return the given column of the result set as an instance of this class.
      */
     @Pure
-    @DoesNotCommit
+    @NonCommitting
     public static @Nonnull Identifier get(@Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
         final @Nonnull String string = resultSet.getString(columnIndex);
         if (!isValid(string)) throw new SQLException("'" + string + "' is not a valid identifier.");
@@ -218,7 +218,7 @@ public abstract class IdentifierClass implements Identifier, Immutable, Blockabl
     }
     
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public final void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
         preparedStatement.setString(parameterIndex, string);
     }
@@ -230,7 +230,7 @@ public abstract class IdentifierClass implements Identifier, Immutable, Blockabl
      * @param preparedStatement the prepared statement whose parameter is to be set.
      * @param parameterIndex the index of the parameter to set.
      */
-    @DoesNotCommit
+    @NonCommitting
     public static void set(@Nullable Identifier identifier, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
         if (identifier == null) preparedStatement.setNull(parameterIndex, Types.VARCHAR);
         else identifier.set(preparedStatement, parameterIndex);

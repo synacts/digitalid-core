@@ -1,6 +1,6 @@
 package ch.virtualid.agent;
 
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.contact.Contact;
 import ch.virtualid.contact.Context;
@@ -186,7 +186,7 @@ public final class Restrictions implements Immutable, Blockable, SQLizable {
      * 
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
-    @DoesNotCommit
+    @NonCommitting
     public Restrictions(@Nonnull NonHostEntity entity, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
@@ -303,7 +303,7 @@ public final class Restrictions implements Immutable, Blockable, SQLizable {
      * @return whether these restrictions cover the given context.
      */
     @Pure
-    @DoesNotCommit
+    @NonCommitting
     public boolean cover(@Nonnull Context other) throws SQLException {
         return context != null && context.isSupercontextOf(other);
     }
@@ -314,7 +314,7 @@ public final class Restrictions implements Immutable, Blockable, SQLizable {
      * @param other the context that needs to be covered.
      */
     @Pure
-    @DoesNotCommit
+    @NonCommitting
     public void checkCover(@Nonnull Context other) throws PacketException, SQLException {
         if (!cover(other)) throw new PacketException(PacketError.AUTHORIZATION, "The restrictions of the agent do not cover the necessary context.");
     }
@@ -327,7 +327,7 @@ public final class Restrictions implements Immutable, Blockable, SQLizable {
      * @return whether these restrictions cover the given contact.
      */
     @Pure
-    @DoesNotCommit
+    @NonCommitting
     public boolean cover(@Nonnull Contact other) throws SQLException {
         return context != null && !context.contains(other) || contact != null && !contact.equals(other);
     }
@@ -338,7 +338,7 @@ public final class Restrictions implements Immutable, Blockable, SQLizable {
      * @param other the contact that needs to be covered.
      */
     @Pure
-    @DoesNotCommit
+    @NonCommitting
     public void checkCover(@Nonnull Contact other) throws PacketException, SQLException {
         if (!cover(other)) throw new PacketException(PacketError.AUTHORIZATION, "The restrictions of the agent do not cover the necessary contact.");
     }
@@ -351,7 +351,7 @@ public final class Restrictions implements Immutable, Blockable, SQLizable {
      * @return whether these restrictions cover the given restrictions.
      */
     @Pure
-    @DoesNotCommit
+    @NonCommitting
     public boolean cover(@Nonnull Restrictions other) throws SQLException {
         if (other.client && !client) return false;
         if (other.role && !role) return false;
@@ -368,7 +368,7 @@ public final class Restrictions implements Immutable, Blockable, SQLizable {
      * @param restrictions the restrictions that need to be covered.
      */
     @Pure
-    @DoesNotCommit
+    @NonCommitting
     public void checkCover(@Nonnull Restrictions restrictions) throws PacketException, SQLException {
         if (!cover(restrictions)) throw new PacketException(PacketError.AUTHORIZATION, "The restrictions of the agent do not cover the necessary restrictions.");
     }
@@ -464,7 +464,7 @@ public final class Restrictions implements Immutable, Blockable, SQLizable {
      * 
      * @return the foreign key constraints used by instances of this class.
      */
-    @DoesNotCommit
+    @NonCommitting
     public static @Nonnull String getForeignKeys(@Nonnull Site site) throws SQLException {
         return "FOREIGN KEY (entity, context) " + Context.getReference(site) + ", FOREIGN KEY (contact) " + site.getEntityReference();
     }
@@ -479,7 +479,7 @@ public final class Restrictions implements Immutable, Blockable, SQLizable {
      * @return the given columns of the result set as an instance of this class.
      */
     @Pure
-    @DoesNotCommit
+    @NonCommitting
     public static @Nonnull Restrictions get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int startIndex) throws SQLException {
         final boolean client = resultSet.getBoolean(startIndex + 0);
         final boolean role = resultSet.getBoolean(startIndex + 1);
@@ -496,7 +496,7 @@ public final class Restrictions implements Immutable, Blockable, SQLizable {
      * @param startIndex the start index of the parameters to set.
      */
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public void set(@Nonnull PreparedStatement preparedStatement, int startIndex) throws SQLException {
         preparedStatement.setBoolean(startIndex + 0, client);
         preparedStatement.setBoolean(startIndex + 1, role);

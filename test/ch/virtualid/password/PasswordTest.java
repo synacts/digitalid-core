@@ -1,6 +1,6 @@
 package ch.virtualid.password;
 
-import ch.virtualid.annotations.EndsCommitted;
+import ch.virtualid.annotations.Committing;
 import ch.virtualid.database.Database;
 import ch.virtualid.password.Password;
 import ch.virtualid.setup.IdentitySetup;
@@ -23,7 +23,7 @@ public final class PasswordTest extends IdentitySetup {
     private static final @Nonnull String VALUE = "Pa$$word";
         
     @Test
-    @EndsCommitted
+    @Committing
     public void _01_testValueReplace() throws SQLException {
         print("_01_testValueReplace");
         try {

@@ -3,7 +3,7 @@ package ch.virtualid.contact;
 import ch.virtualid.agent.Agent;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.NonHostEntity;
@@ -45,7 +45,7 @@ final class AccessModule implements BothModule {
     }
     
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public void createTables(@Nonnull Site site) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             // TODO: Create the tables of this module.
@@ -53,7 +53,7 @@ final class AccessModule implements BothModule {
     }
     
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public void deleteTables(@Nonnull Site site) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             // TODO: Delete the tables of this module.
@@ -79,7 +79,7 @@ final class AccessModule implements BothModule {
     
     @Pure
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public @Nonnull Block exportModule(@Nonnull Host host) throws SQLException {
         final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
         try (@Nonnull Statement statement = Database.createStatement()) {
@@ -89,7 +89,7 @@ final class AccessModule implements BothModule {
     }
     
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public void importModule(@Nonnull Host host, @Nonnull Block block) throws SQLException, InvalidEncodingException {
         assert block.getType().isBasedOn(getModuleFormat()) : "The block is based on the format of this module.";
         
@@ -118,7 +118,7 @@ final class AccessModule implements BothModule {
     
     @Pure
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadonlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws SQLException {
         final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
         try (@Nonnull Statement statement = Database.createStatement()) {
@@ -128,7 +128,7 @@ final class AccessModule implements BothModule {
     }
     
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws SQLException, InvalidEncodingException {
         assert block.getType().isBasedOn(getStateFormat()) : "The block is based on the indicated type.";
         
@@ -139,7 +139,7 @@ final class AccessModule implements BothModule {
     }
     
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public void removeState(@Nonnull NonHostEntity entity) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             // TODO: Remove the entries of the given entity from the database table(s).

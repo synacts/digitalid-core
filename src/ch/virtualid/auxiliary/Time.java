@@ -1,6 +1,6 @@
 package ch.virtualid.auxiliary;
 
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.identity.SemanticType;
@@ -546,13 +546,13 @@ public final class Time implements Immutable, Blockable, Comparable<Time>, SQLiz
      * @return the given column of the result set as an instance of this class.
      */
     @Pure
-    @DoesNotCommit
+    @NonCommitting
     public static @Nonnull Time get(@Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
         return new Time(resultSet.getLong(columnIndex));
     }
     
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
         preparedStatement.setLong(parameterIndex, value);
     }

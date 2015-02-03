@@ -1,6 +1,6 @@
 package ch.virtualid.packet;
 
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.annotations.RawRecipient;
 import ch.virtualid.exceptions.external.ExternalException;
@@ -67,7 +67,7 @@ public final class Response extends Packet {
      * 
      * @ensure getSize() == 1 : "The size of this response is one.";
      */
-    @DoesNotCommit
+    @NonCommitting
     public Response(@Nullable Request request, @Nonnull PacketException exception) throws SQLException, IOException, PacketException, ExternalException {
         super(new Pair<ReadonlyList<Reply>, ReadonlyList<PacketException>>(new FreezableArrayList<Reply>(1).freeze(), new FreezableArrayList<PacketException>(exception).freeze()), 1, null, null, request == null ? null : request.getEncryption().getSymmetricKey(), null, null);
         
@@ -90,7 +90,7 @@ public final class Response extends Packet {
      * @ensure hasRequest() : "This response has a request.";
      * @ensure getSize() == request.getSize() : "The size of this response equals the size of the request.";
      */
-    @DoesNotCommit
+    @NonCommitting
     public Response(@Nonnull Request request, @Nonnull ReadonlyList<Reply> replies, @Nonnull ReadonlyList<PacketException> exceptions, @Nullable ResponseAudit audit) throws SQLException, IOException, PacketException, ExternalException {
         super(new Pair<ReadonlyList<Reply>, ReadonlyList<PacketException>>(replies, exceptions), replies.size(), request.getRecipient(), null, request.getEncryption().getSymmetricKey(), request.getSubject(), audit);
         
@@ -113,7 +113,7 @@ public final class Response extends Packet {
      * @ensure hasRequest() : "This response has a request.";
      * @ensure getSize() == request.getSize() : "The size of this response equals the size of the given request.";
      */
-    @DoesNotCommit
+    @NonCommitting
     public Response(@Nonnull Request request, @Nonnull InputStream inputStream, boolean verified) throws SQLException, IOException, PacketException, ExternalException {
         super(inputStream, request, verified);
         

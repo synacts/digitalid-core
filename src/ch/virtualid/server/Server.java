@@ -1,6 +1,6 @@
 package ch.virtualid.server;
 
-import ch.virtualid.annotations.EndsCommitted;
+import ch.virtualid.annotations.Committing;
 import ch.virtualid.database.Configuration;
 import ch.virtualid.database.Database;
 import ch.virtualid.database.MySQLConfiguration;
@@ -106,7 +106,7 @@ public final class Server {
     /**
      * Loads all hosts with a configuration but without a tables file in the hosts directory.
      */
-    @EndsCommitted
+    @Committing
     private static void loadHosts() {
         final @Nonnull File[] files = Directory.HOSTS.listFiles();
         for (final @Nonnull File file : files) {
@@ -126,7 +126,7 @@ public final class Server {
     /**
      * Loads all services with their code in the services directory.
      */
-    @EndsCommitted
+    @Committing
     public static void loadServices() {
         final @Nonnull File[] files = Directory.SERVICES.listFiles();
         for (final @Nonnull File file : files) {
@@ -148,7 +148,7 @@ public final class Server {
      * 
      * @param arguments the identifiers of hosts to be created when starting up.
      */
-    @EndsCommitted
+    @Committing
     public static void start(@Nonnull String... arguments) {
         loadServices();
         loadHosts();
@@ -197,7 +197,7 @@ public final class Server {
      * 
      * @param arguments the command line arguments indicating the hosts to be created when starting up.
      */
-    @EndsCommitted
+    @Committing
     public static void main(@Nonnull String[] arguments) {
         final @Nonnull Configuration configuration;
         try {

@@ -1,6 +1,6 @@
 package ch.virtualid.identifier;
 
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.errors.ShouldNeverHappenError;
 import ch.virtualid.exceptions.external.ExternalException;
@@ -94,7 +94,7 @@ public abstract class ExternalIdentifier extends IdentifierClass implements NonH
     
     @Pure
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public final @Nonnull Person getMappedIdentity() throws SQLException {
         assert isMapped() : "This identifier is mapped.";
         
@@ -105,7 +105,7 @@ public abstract class ExternalIdentifier extends IdentifierClass implements NonH
     
     @Pure
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public abstract @Nonnull Person getIdentity() throws SQLException, IOException, PacketException, ExternalException;
     
     

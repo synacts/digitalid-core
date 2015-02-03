@@ -1,6 +1,6 @@
 package ch.virtualid.attribute;
 
-import ch.virtualid.annotations.EndsCommitted;
+import ch.virtualid.annotations.Committing;
 import ch.virtualid.cache.Cache;
 import ch.virtualid.database.Database;
 import ch.virtualid.exceptions.external.AttributeNotFoundException;
@@ -32,7 +32,7 @@ public final class AttributeTest extends IdentitySetup {
     private static final @Nonnull String NAME = "Test Person";
         
     @Test
-    @EndsCommitted
+    @Committing
     public void _01_testValueReplace() throws SQLException, InvalidEncodingException {
         print("_01_testValueReplace");
         try {
@@ -50,7 +50,7 @@ public final class AttributeTest extends IdentitySetup {
         }
     }
     
-    @EndsCommitted
+    @Committing
     @Test(expected = AttributeNotFoundException.class)
     public void _02_testNonPublicAccess() throws SQLException, IOException, PacketException, ExternalException {
         print("_02_testNonPublicAccess");
@@ -65,7 +65,7 @@ public final class AttributeTest extends IdentitySetup {
     }
     
     @Test
-    @EndsCommitted
+    @Committing
     public void _03_testVisibilityReplace() throws SQLException, IOException, PacketException, ExternalException {
         print("_03_testVisibilityReplace");
         try {
@@ -83,7 +83,7 @@ public final class AttributeTest extends IdentitySetup {
     }
     
     @Test
-    @EndsCommitted
+    @Committing
     public void _04_testPublicAccess() throws SQLException, IOException, PacketException, ExternalException {
         print("_04_testPublicAccess");
         try {

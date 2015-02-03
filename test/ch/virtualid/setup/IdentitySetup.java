@@ -2,7 +2,7 @@ package ch.virtualid.setup;
 
 import ch.virtualid.agent.Agent;
 import ch.virtualid.agent.AgentPermissions;
-import ch.virtualid.annotations.EndsCommitted;
+import ch.virtualid.annotations.Committing;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Image;
 import ch.virtualid.client.Client;
@@ -60,7 +60,7 @@ public class IdentitySetup extends ServerSetup {
     }
     
     @BeforeClass
-    @EndsCommitted
+    @Committing
     public static void setUpIdentity() throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
         print("setUpIdentity");
         try {
@@ -77,7 +77,7 @@ public class IdentitySetup extends ServerSetup {
     }
     
     @After
-    @EndsCommitted
+    @Committing
     public final void testStateEquality() throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
         try {
             role.waitForCompletion(CoreService.SERVICE);

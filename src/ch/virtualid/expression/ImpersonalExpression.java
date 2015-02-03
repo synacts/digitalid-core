@@ -1,6 +1,6 @@
 package ch.virtualid.expression;
 
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.exceptions.external.ExternalException;
@@ -36,7 +36,7 @@ public final class ImpersonalExpression extends AbstractExpression implements Im
      * @param entity the entity to which this impersonal expression belongs.
      * @param string the string which is to be parsed for the expression.
      */
-    @DoesNotCommit
+    @NonCommitting
     public ImpersonalExpression(@Nonnull NonHostEntity entity, @Nonnull String string) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, string);
     }
@@ -49,7 +49,7 @@ public final class ImpersonalExpression extends AbstractExpression implements Im
      * 
      * @require block.getType().isBasedOn(StringWrapper.TYPE) : "The block is based on the string type.";
      */
-    @DoesNotCommit
+    @NonCommitting
     public ImpersonalExpression(@Nonnull NonHostEntity entity, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, block);
     }
@@ -90,7 +90,7 @@ public final class ImpersonalExpression extends AbstractExpression implements Im
      * @return the given column of the result set as an instance of this class.
      */
     @Pure
-    @DoesNotCommit
+    @NonCommitting
     public static @Nonnull ImpersonalExpression get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
         try {
             return new ImpersonalExpression(entity, resultSet.getString(columnIndex));

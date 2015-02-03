@@ -1,6 +1,6 @@
 package ch.virtualid.agent;
 
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Image;
 import ch.virtualid.client.Client;
@@ -101,7 +101,7 @@ final class ClientAgentIconReplace extends CoreServiceInternalAction {
      * 
      * @ensure hasSignature() : "This handler has a signature.";
      */
-    @DoesNotCommit
+    @NonCommitting
     private ClientAgentIconReplace(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
@@ -140,7 +140,7 @@ final class ClientAgentIconReplace extends CoreServiceInternalAction {
     
     
     @Override
-    @DoesNotCommit
+    @NonCommitting
     protected void executeOnBoth() throws SQLException {
         clientAgent.replaceIcon(oldIcon, newIcon);
     }
@@ -200,7 +200,7 @@ final class ClientAgentIconReplace extends CoreServiceInternalAction {
         
         @Pure
         @Override
-        @DoesNotCommit
+        @NonCommitting
         protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException  {
             return new ClientAgentIconReplace(entity, signature, recipient, block);
         }

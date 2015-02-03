@@ -1,6 +1,6 @@
 package ch.virtualid.synchronizer;
 
-import ch.virtualid.annotations.EndsCommitted;
+import ch.virtualid.annotations.Committing;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.database.Database;
@@ -143,7 +143,7 @@ public final class ResponseAudit extends Audit implements Immutable, Blockable {
      * @param methods the methods that were sent with the audit request.
      * @param ignoredModules the modules that are ignored when executing the trail.
      */
-    @EndsCommitted
+    @Committing
     void execute(@Nonnull Role role, @Nonnull Service service, @Nonnull HostIdentifier recipient, @Nonnull ReadonlyList<Method> methods, @Nonnull ReadonlySet<BothModule> ignoredModules) throws SQLException, IOException, PacketException, ExternalException {
         final @Nonnull FreezableSet<BothModule> suspendedModules = new FreezableHashSet<BothModule>();
         for (@Nonnull Block block : trail) {
@@ -211,7 +211,7 @@ public final class ResponseAudit extends Audit implements Immutable, Blockable {
     public void executeAsynchronously(final @Nonnull Method method) {
         new Thread(new Runnable() {
             @Override
-            @EndsCommitted
+            @Committing
             public void run() {
                 final @Nonnull Role role = method.getRole();
                 final @Nonnull Service service = method.getService();

@@ -1,6 +1,6 @@
 package ch.virtualid.auxiliary;
 
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.errors.InitializationError;
 import ch.virtualid.errors.ShouldNeverHappenError;
@@ -185,7 +185,7 @@ public final class Image implements Immutable, Blockable, SQLizable {
      * @return the given column of the result set as an instance of this class.
      */
     @Pure
-    @DoesNotCommit
+    @NonCommitting
     public static @Nonnull Image get(@Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
         try {
             return new Image(Block.getNotNull(TYPE, resultSet, columnIndex));
@@ -195,7 +195,7 @@ public final class Image implements Immutable, Blockable, SQLizable {
     }
     
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
         toBlock().set(preparedStatement, parameterIndex);
     }

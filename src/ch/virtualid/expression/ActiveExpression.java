@@ -1,7 +1,7 @@
 package ch.virtualid.expression;
 
 import ch.virtualid.annotations.Capturable;
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.contact.Contact;
 import ch.virtualid.entity.NonHostEntity;
@@ -39,7 +39,7 @@ public final class ActiveExpression extends AbstractExpression implements Immuta
      * @param entity the entity to which this active expression belongs.
      * @param string the string which is to be parsed for the expression.
      */
-    @DoesNotCommit
+    @NonCommitting
     public ActiveExpression(@Nonnull NonHostEntity entity, @Nonnull String string) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, string);
     }
@@ -52,7 +52,7 @@ public final class ActiveExpression extends AbstractExpression implements Immuta
      * 
      * @require block.getType().isBasedOn(StringWrapper.TYPE) : "The block is based on the string type.";
      */
-    @DoesNotCommit
+    @NonCommitting
     public ActiveExpression(@Nonnull NonHostEntity entity, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, block);
     }
@@ -76,7 +76,7 @@ public final class ActiveExpression extends AbstractExpression implements Immuta
      * @return the contacts denoted by this active expression.
      */
     @Pure
-    @DoesNotCommit
+    @NonCommitting
     public @Nonnull @Capturable FreezableSet<Contact> getContacts() throws SQLException {
         return getExpression().getContacts();
     }
@@ -92,7 +92,7 @@ public final class ActiveExpression extends AbstractExpression implements Immuta
      * @return the given column of the result set as an instance of this class.
      */
     @Pure
-    @DoesNotCommit
+    @NonCommitting
     public static @Nonnull ActiveExpression get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
         try {
             return new ActiveExpression(entity, resultSet.getString(columnIndex));

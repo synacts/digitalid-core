@@ -1,7 +1,7 @@
 package ch.virtualid.entity;
 
 import ch.virtualid.agent.OutgoingRole;
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Client;
 import ch.virtualid.concept.Aspect;
@@ -149,7 +149,7 @@ public final class NonNativeRole extends Role implements Immutable {
      * 
      * @require relation.isRoleType() : "The relation is a role type.";
      */
-    @DoesNotCommit
+    @NonCommitting
     static @Nonnull NonNativeRole add(@Nonnull Client client, @Nonnull InternalNonHostIdentity issuer, @Nonnull SemanticType relation, @Nonnull Role recipient, long agentNumber) throws SQLException {
         assert relation.isRoleType() : "The relation is a role type.";
         
@@ -159,7 +159,7 @@ public final class NonNativeRole extends Role implements Immutable {
     }
     
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public void remove() throws SQLException {
         if (Database.isSingleAccess()) {
             final @Nullable ConcurrentMap<Long, NonNativeRole> map = index.get(getClient());

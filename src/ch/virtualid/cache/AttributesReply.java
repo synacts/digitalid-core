@@ -1,6 +1,6 @@
 package ch.virtualid.cache;
 
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.attribute.AttributeValue;
 import ch.virtualid.attribute.CertifiedAttributeValue;
@@ -77,7 +77,7 @@ public final class AttributesReply extends CoreServiceQueryReply {
      * @require attributeValues.isNotEmpty() : "The attribute values are not empty.";
      * @require areVerified(attributeValues) : "All the attribute values which are not null are verified.";
      */
-    @DoesNotCommit
+    @NonCommitting
     AttributesReply(@Nonnull InternalIdentifier subject, @Nonnull ReadonlyList<AttributeValue> attributeValues) throws SQLException, PacketException {
         super(subject);
         
@@ -99,7 +99,7 @@ public final class AttributesReply extends CoreServiceQueryReply {
      * @ensure hasSignature() : "This handler has a signature.";
      * @ensure !isOnHost() : "Query replies are never decoded on hosts.";
      */
-    @DoesNotCommit
+    @NonCommitting
     private AttributesReply(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, number);
         
@@ -188,7 +188,7 @@ public final class AttributesReply extends CoreServiceQueryReply {
         
         @Pure
         @Override
-        @DoesNotCommit
+        @NonCommitting
         protected @Nonnull Reply create(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
             return new AttributesReply(entity, signature, number, block);
         }

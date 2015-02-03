@@ -1,7 +1,7 @@
 package ch.virtualid.handler;
 
 import ch.virtualid.agent.Restrictions;
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Client;
 import ch.virtualid.entity.Entity;
@@ -56,7 +56,7 @@ public abstract class InternalAction extends Action implements InternalMethod {
      * 
      * @ensure hasSignature() : "This handler has a signature.";
      */
-    @DoesNotCommit
+    @NonCommitting
     protected InternalAction(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
@@ -98,11 +98,11 @@ public abstract class InternalAction extends Action implements InternalMethod {
      * @require isOnHost() : "This method is called on a host.";
      * @require hasSignature() : "This handler has a signature.";
      */
-    @DoesNotCommit
+    @NonCommitting
     protected abstract void executeOnHostInternalAction() throws PacketException, SQLException;
     
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public final @Nullable ActionReply executeOnHost() throws PacketException, SQLException {
         executeOnHostInternalAction();
         return null;
@@ -143,7 +143,7 @@ public abstract class InternalAction extends Action implements InternalMethod {
      * 
      * @require isOnClient() : "This method is called on a client.";
      */
-    @DoesNotCommit
+    @NonCommitting
     public final void reverseOnClient() throws SQLException {
         assert isOnClient() : "This method is called on a client.";
         

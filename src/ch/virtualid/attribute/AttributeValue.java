@@ -1,6 +1,6 @@
 package ch.virtualid.attribute;
 
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
@@ -86,7 +86,7 @@ public abstract class AttributeValue implements Immutable, Blockable, SQLizable 
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
     @Pure
-    @DoesNotCommit
+    @NonCommitting
     public static @Nonnull AttributeValue get(@Nonnull Block block, boolean verified) throws SQLException, IOException, PacketException, ExternalException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
@@ -199,7 +199,7 @@ public abstract class AttributeValue implements Immutable, Blockable, SQLizable 
      * @ensure isVerified() : "The signature of this attribute value is verified.";
      */
     @Pure
-    @DoesNotCommit
+    @NonCommitting
     public abstract void verify() throws SQLException, IOException, PacketException, ExternalException;
     
     /**
@@ -237,7 +237,7 @@ public abstract class AttributeValue implements Immutable, Blockable, SQLizable 
      * @return the given column of the result set as an instance of this class.
      */
     @Pure
-    @DoesNotCommit
+    @NonCommitting
     public static @Nonnull AttributeValue get(@Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
         try {
             return AttributeValue.get(Block.getNotNull(TYPE, resultSet, columnIndex), true);
@@ -247,7 +247,7 @@ public abstract class AttributeValue implements Immutable, Blockable, SQLizable 
     }
     
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public final void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
         toBlock().set(preparedStatement, parameterIndex);
     }
@@ -259,7 +259,7 @@ public abstract class AttributeValue implements Immutable, Blockable, SQLizable 
      * @param preparedStatement the prepared statement whose parameter is to be set.
      * @param parameterIndex the index of the parameter to set.
      */
-    @DoesNotCommit
+    @NonCommitting
     public static void set(@Nullable AttributeValue attributeValue, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
         Block.set(Block.toBlock(attributeValue), preparedStatement, parameterIndex);
     }

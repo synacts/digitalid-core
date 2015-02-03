@@ -1,6 +1,6 @@
 package ch.virtualid.database;
 
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.io.Directory;
@@ -39,7 +39,7 @@ public final class SQLiteConfiguration extends Configuration implements Immutabl
      * 
      * @require Database.isValid(name) : "The name is valid for a database.";
      */
-    @DoesNotCommit
+    @NonCommitting
     public SQLiteConfiguration(@Nonnull String name, boolean reset) throws SQLException {
         super(new JDBC());
         
@@ -60,7 +60,7 @@ public final class SQLiteConfiguration extends Configuration implements Immutabl
      * 
      * @param reset whether the database is to be dropped first before creating it again.
      */
-    @DoesNotCommit
+    @NonCommitting
     public SQLiteConfiguration(boolean reset) throws SQLException {
         this("SQLite", reset);
     }
@@ -169,7 +169,7 @@ public final class SQLiteConfiguration extends Configuration implements Immutabl
     
     
     @Override
-    @DoesNotCommit
+    @NonCommitting
     long executeInsert(@Nonnull Statement statement, @Nonnull String SQL) throws SQLException {
         statement.executeUpdate(SQL);
         try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT last_insert_rowid()")) {

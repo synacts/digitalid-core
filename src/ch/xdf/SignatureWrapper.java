@@ -1,7 +1,7 @@
 package ch.xdf;
 
 import ch.virtualid.agent.Agent;
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Exposed;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
@@ -174,7 +174,7 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated syntactic type.";
      */
     @Pure
-    @DoesNotCommit
+    @NonCommitting
     public static @Nonnull SignatureWrapper decode(@Nonnull Block block, @Nullable Entity entity) throws SQLException, IOException, PacketException, ExternalException {
         final @Nonnull SignatureWrapper signatureWrapper = decodeWithoutVerifying(block, false, entity);
         signatureWrapper.verify();
@@ -193,7 +193,7 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated syntactic type.";
      */
     @Pure
-    @DoesNotCommit
+    @NonCommitting
     public static @Nonnull SignatureWrapper decodeWithoutVerifying(@Nonnull Block block, boolean verified, @Nullable Entity entity) throws SQLException, IOException, PacketException, ExternalException {
         final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(new Block(IMPLEMENTATION, block)).getElements(4);
         final @Nullable Block hostSignature = elements.get(1);
@@ -413,7 +413,7 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
      * @ensure isVerified() : "This signature is verified.";
      */
     @Pure
-    @DoesNotCommit
+    @NonCommitting
     public void verify() throws SQLException, IOException, PacketException, ExternalException {
         assert isNotVerified() : "This signature is not verified.";
         
@@ -537,7 +537,7 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
      * @see CredentialsSignatureWrapper#getAgent(ch.virtualid.entity.NonHostEntity)
      */
     @Pure
-    @DoesNotCommit
+    @NonCommitting
     public @Nullable Agent getAgent(@Nonnull NonHostEntity entity) throws SQLException {
         return null;
     }
@@ -556,7 +556,7 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
      * @see CredentialsSignatureWrapper#getAgentCheckedAndRestricted(ch.virtualid.entity.NonHostEntity, ch.virtualid.cryptography.PublicKey)
      */
     @Pure
-    @DoesNotCommit
+    @NonCommitting
     public @Nonnull Agent getAgentCheckedAndRestricted(@Nonnull NonHostEntity entity, @Nullable PublicKey publicKey) throws SQLException, PacketException {
         throw new PacketException(PacketError.AUTHORIZATION, "The element was not signed by an authorized agent.");
     }

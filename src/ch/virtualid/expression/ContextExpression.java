@@ -1,7 +1,7 @@
 package ch.virtualid.expression;
 
 import ch.virtualid.annotations.Capturable;
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.contact.Contact;
 import ch.virtualid.contact.Context;
@@ -61,7 +61,7 @@ final class ContextExpression extends Expression implements Immutable {
     
     @Pure
     @Override
-    @DoesNotCommit
+    @NonCommitting
     @Nonnull @Capturable FreezableSet<Contact> getContacts() throws SQLException {
         assert isActive() : "This expression is active.";
         
@@ -78,7 +78,7 @@ final class ContextExpression extends Expression implements Immutable {
     
     @Pure
     @Override
-    @DoesNotCommit
+    @NonCommitting
     boolean matches(@Nonnull CredentialsSignatureWrapper signature) throws SQLException {
         return signature.isIdentityBased() && !signature.isRoleBased() && context.contains(Contact.get(getEntity(), signature.getIssuer()));
     }

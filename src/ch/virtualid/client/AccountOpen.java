@@ -5,7 +5,7 @@ import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.agent.ClientAgent;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Image;
 import ch.virtualid.contact.Context;
@@ -111,7 +111,7 @@ public final class AccountOpen extends Action {
      * 
      * @require category.isInternalNonHostIdentity() : "The category denotes an internal non-host identity.";
      */
-    @DoesNotCommit
+    @NonCommitting
     AccountOpen(@Nonnull InternalNonHostIdentifier subject, @Nonnull Category category, @Nonnull Client client) throws SQLException, IOException, PacketException, ExternalException {
         super(null, subject, subject.getHostIdentifier());
         
@@ -138,7 +138,7 @@ public final class AccountOpen extends Action {
      * 
      * @ensure hasSignature() : "This handler has a signature.";
      */
-    @DoesNotCommit
+    @NonCommitting
     private AccountOpen(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
@@ -212,7 +212,7 @@ public final class AccountOpen extends Action {
      * 
      * @param entity the entity which is to be initialized.
      */
-    @DoesNotCommit
+    @NonCommitting
     public void initialize(@Nonnull NonHostEntity entity) throws SQLException {
         final @Nonnull Context context = Context.getRoot(entity);
         context.createForActions();
@@ -223,7 +223,7 @@ public final class AccountOpen extends Action {
     }
     
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public @Nullable ActionReply executeOnHost() throws PacketException, SQLException {
         final @Nonnull InternalIdentifier subject = getSubject();
         if (subject.isMapped()) throw new PacketException(PacketError.IDENTIFIER, "The account with the identifier " + subject + " already exists.");
@@ -244,7 +244,7 @@ public final class AccountOpen extends Action {
     }
     
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public void executeOnClient() throws SQLException {
         throw new ShouldNeverHappenError("The action to open an account should never be executed on a client.");
     }
@@ -269,7 +269,7 @@ public final class AccountOpen extends Action {
     }
     
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public @Nonnull Response send() throws SQLException, IOException, PacketException, ExternalException {
         if (secret == null) throw new PacketException(PacketError.INTERNAL, "The secret may not be null for sending.");
         return new ClientRequest(new FreezableArrayList<Method>(this).freeze(), getSubject(), null, commitment.addSecret(secret)).send();
@@ -327,7 +327,7 @@ public final class AccountOpen extends Action {
         
         @Pure
         @Override
-        @DoesNotCommit
+        @NonCommitting
         protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
             return new AccountOpen(entity, signature, recipient, block);
         }

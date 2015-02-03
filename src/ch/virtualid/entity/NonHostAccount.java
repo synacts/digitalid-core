@@ -1,6 +1,6 @@
 package ch.virtualid.entity;
 
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.concept.Aspect;
 import ch.virtualid.concept.Instance;
@@ -95,7 +95,7 @@ public final class NonHostAccount extends Account implements NonHostEntity, Immu
      * @return the given column of the result set as an instance of this class.
      */
     @Pure
-    @DoesNotCommit
+    @NonCommitting
     public static @Nonnull NonHostAccount getNotNull(@Nonnull Host host, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
         final @Nonnull Identity identity = IdentityClass.getNotNull(resultSet, columnIndex);
         if (identity instanceof InternalNonHostIdentity) return get(host, (InternalNonHostIdentity) identity);

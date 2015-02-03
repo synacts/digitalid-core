@@ -1,7 +1,7 @@
 package ch.virtualid.identity;
 
 import ch.virtualid.annotations.Capturable;
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.database.Database;
 import ch.virtualid.errors.InitializationError;
@@ -120,7 +120,7 @@ public final class Predecessors extends FreezableArrayList<Predecessor> implemen
     
     
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public @Nonnull ReadonlyList<NonHostIdentity> getIdentities() throws SQLException, IOException, PacketException, ExternalException {
         final @Nonnull FreezableList<NonHostIdentity> identities = new FreezableArrayList<NonHostIdentity>(size());
         for (final @Nonnull Predecessor predecessor : this) {
@@ -185,7 +185,7 @@ public final class Predecessors extends FreezableArrayList<Predecessor> implemen
      * 
      * @return whether the predecessors of the given identifier exist.
      */
-    @DoesNotCommit
+    @NonCommitting
     public static boolean exist(@Nonnull InternalNonHostIdentifier identifier) throws SQLException {
         final @Nonnull String SQL = "SELECT EXISTS (SELECT 1 FROM general_predecessors WHERE identifier = " + identifier + ")";
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
@@ -205,7 +205,7 @@ public final class Predecessors extends FreezableArrayList<Predecessor> implemen
      * 
      * @ensure return.isFrozen() : "The returned predecessors are frozen.";
      */
-    @DoesNotCommit
+    @NonCommitting
     public static @Nonnull ReadonlyPredecessors get(@Nonnull InternalNonHostIdentifier identifier) throws SQLException {
         assert exist(identifier) : "The predecessors of the given identifier exist.";
         
@@ -219,7 +219,7 @@ public final class Predecessors extends FreezableArrayList<Predecessor> implemen
     }
     
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public void set(@Nonnull InternalNonHostIdentifier identifier, @Nullable Reply reply) throws SQLException {
         final @Nonnull String SQL = "INSERT" + Database.getConfiguration().IGNORE() + " INTO general_predecessors (identifier, predecessors, reply) VALUES (?, ?, ?)";
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {

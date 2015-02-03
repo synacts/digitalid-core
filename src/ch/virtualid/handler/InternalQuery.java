@@ -1,7 +1,7 @@
 package ch.virtualid.handler;
 
 import ch.virtualid.agent.Restrictions;
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Client;
 import ch.virtualid.entity.Entity;
@@ -52,7 +52,7 @@ public abstract class InternalQuery extends Query implements InternalMethod {
      * @ensure hasSignature() : "This handler has a signature.";
      * @ensure isOnHost() : "Queries are only decoded on hosts.";
      */
-    @DoesNotCommit
+    @NonCommitting
     protected InternalQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         

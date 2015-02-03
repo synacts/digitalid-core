@@ -1,6 +1,6 @@
 package ch.virtualid.database;
 
-import ch.virtualid.annotations.EndsCommitted;
+import ch.virtualid.annotations.Committing;
 import ch.virtualid.annotations.Pure;
 import java.sql.SQLException;
 import org.junit.BeforeClass;
@@ -20,7 +20,7 @@ public final class SQLiteTest extends DatabaseTest {
     }
     
     @BeforeClass
-    @EndsCommitted
+    @Committing
     public static void configureDatabase() throws SQLException {
         Database.initialize(new SQLiteConfiguration(true), false, true);
         createTables();

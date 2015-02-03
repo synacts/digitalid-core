@@ -3,7 +3,7 @@ package ch.virtualid.password;
 import ch.virtualid.agent.Agent;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.Account;
@@ -57,7 +57,7 @@ public final class PasswordModule implements BothModule {
     }
     
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public void createTables(@Nonnull Site site) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "password (entity " + EntityClass.FORMAT + " NOT NULL, password VARCHAR(50) NOT NULL COLLATE " + Database.getConfiguration().BINARY() + ", PRIMARY KEY (entity), FOREIGN KEY (entity) " + site.getEntityReference() + ")");
@@ -66,7 +66,7 @@ public final class PasswordModule implements BothModule {
     }
     
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public void deleteTables(@Nonnull Site site) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             Database.onInsertNotIgnore(statement, site + "password");
@@ -93,7 +93,7 @@ public final class PasswordModule implements BothModule {
     
     @Pure
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public @Nonnull Block exportModule(@Nonnull Host host) throws SQLException {
         final @Nonnull String SQL = "SELECT entity, password FROM " + host + "password";
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
@@ -108,7 +108,7 @@ public final class PasswordModule implements BothModule {
     }
     
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public void importModule(@Nonnull Host host, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         assert block.getType().isBasedOn(getModuleFormat()) : "The block is based on the format of this module.";
         
@@ -139,13 +139,13 @@ public final class PasswordModule implements BothModule {
     
     @Pure
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadonlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws SQLException {
         return new TupleWrapper(STATE_FORMAT, restrictions.isClient() ? new StringWrapper(Password.TYPE, get(entity)) : null).toBlock();
     }
     
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws SQLException, InvalidEncodingException {
         assert block.getType().isBasedOn(getStateFormat()) : "The block is based on the indicated type.";
         
@@ -156,7 +156,7 @@ public final class PasswordModule implements BothModule {
     }
     
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public void removeState(@Nonnull NonHostEntity entity) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("DELETE FROM " + entity.getSite() + "password WHERE entity = " + entity);
@@ -173,7 +173,7 @@ public final class PasswordModule implements BothModule {
      * 
      * @ensure Password.isValid(return) : "The returned value is valid.";
      */
-    @DoesNotCommit
+    @NonCommitting
     static @Nonnull String get(@Nonnull Entity entity) throws SQLException {
         final @Nonnull String SQL = "SELECT password FROM " + entity.getSite() + "password WHERE entity = " + entity;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
@@ -193,7 +193,7 @@ public final class PasswordModule implements BothModule {
      * 
      * @require Password.isValid(value) : "The value is valid.";
      */
-    @DoesNotCommit
+    @NonCommitting
     public static void set(@Nonnull Entity entity, @Nonnull String value) throws SQLException {
         assert Password.isValid(value) : "The value is valid.";
         
@@ -217,7 +217,7 @@ public final class PasswordModule implements BothModule {
      * @require Password.isValid(oldValue) : "The old value is valid.";
      * @require Password.isValid(newValue) : "The new value is valid.";
      */
-    @DoesNotCommit
+    @NonCommitting
     static void replace(@Nonnull Password password, @Nonnull String oldValue, @Nonnull String newValue) throws SQLException {
         assert Password.isValid(oldValue) : "The old value is valid.";
         assert Password.isValid(newValue) : "The new value is valid.";

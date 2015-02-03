@@ -1,6 +1,6 @@
 package ch.xdf;
 
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.cache.Cache;
@@ -145,7 +145,7 @@ public final class HostSignatureWrapper extends SignatureWrapper implements Immu
     
     @Pure
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public void verify() throws SQLException, IOException, PacketException, ExternalException {
         assert isNotVerified() : "This signature is not verified.";
         

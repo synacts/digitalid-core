@@ -2,7 +2,7 @@ package ch.virtualid.certificate;
 
 import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.attribute.AttributeModule;
 import ch.virtualid.attribute.AttributeValue;
@@ -75,7 +75,7 @@ public final class CertificateIssue extends CoreServiceExternalAction {
      * 
      * @ensure hasSignature() : "This handler has a signature.";
      */
-    @DoesNotCommit
+    @NonCommitting
     private CertificateIssue(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
@@ -116,13 +116,13 @@ public final class CertificateIssue extends CoreServiceExternalAction {
     /**
      * Executes this action on both hosts and clients.
      */
-    @DoesNotCommit
+    @NonCommitting
     private void executeOnBoth() throws SQLException {
         // TODO: Replace the attribute with the certificate if they match. Otherwise, this should be reported as a packet error (at least on host).
     }
     
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public @Nullable CoreServiceActionReply executeOnHost() throws PacketException, SQLException {
         final @Nonnull SignatureWrapper signature = getSignatureNotNull();
         if (!(signature instanceof HostSignatureWrapper)) throw new PacketException(PacketError.AUTHORIZATION, "TODO");
@@ -146,7 +146,7 @@ public final class CertificateIssue extends CoreServiceExternalAction {
     }
     
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public void executeOnClient() throws SQLException {
         // TODO: I'm not sure how far the checks should go on the client.
         
@@ -154,7 +154,7 @@ public final class CertificateIssue extends CoreServiceExternalAction {
     }
     
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public void executeOnFailure() throws SQLException {
         // TODO!
     }
@@ -194,7 +194,7 @@ public final class CertificateIssue extends CoreServiceExternalAction {
         
         @Pure
         @Override
-        @DoesNotCommit
+        @NonCommitting
         protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
             return new CertificateIssue(entity, signature, recipient, block);
         }

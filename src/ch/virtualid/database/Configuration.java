@@ -1,6 +1,6 @@
 package ch.virtualid.database;
 
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.interfaces.Immutable;
 import java.sql.Connection;
@@ -33,7 +33,7 @@ public abstract class Configuration implements Immutable {
      * 
      * @param driver the JDBC driver of this configuration.
      */
-    @DoesNotCommit
+    @NonCommitting
     protected Configuration(@Nonnull Driver driver) throws SQLException {
         DriverManager.registerDriver(driver);
     }
@@ -59,7 +59,7 @@ public abstract class Configuration implements Immutable {
     /**
      * Drops the configured database.
      */
-    @DoesNotCommit
+    @NonCommitting
     public abstract void dropDatabase() throws SQLException;
     
     
@@ -179,7 +179,7 @@ public abstract class Configuration implements Immutable {
      * 
      * @return the key generated for the inserted entry.
      */
-    @DoesNotCommit
+    @NonCommitting
     long executeInsert(@Nonnull Statement statement, @Nonnull String SQL) throws SQLException {
         statement.executeUpdate(SQL, Statement.RETURN_GENERATED_KEYS);
         try (@Nonnull ResultSet resultSet = statement.getGeneratedKeys()) {
@@ -196,7 +196,7 @@ public abstract class Configuration implements Immutable {
      * 
      * @return a savepoint for the given connection or null if not supported or required.
      */
-    @DoesNotCommit
+    @NonCommitting
     @Nullable Savepoint setSavepoint(@Nonnull Connection connection) throws SQLException {
         return null;
     }
@@ -207,7 +207,7 @@ public abstract class Configuration implements Immutable {
      * @param connection the connection which is to be rolled back and whose savepoint is to be released.
      * @param savepoint the savepoint to roll the connection back to or null if not supported or required.
      */
-    @DoesNotCommit
+    @NonCommitting
     void rollback(@Nonnull Connection connection, @Nullable Savepoint savepoint) throws SQLException {}
     
     
@@ -220,7 +220,7 @@ public abstract class Configuration implements Immutable {
      * 
      * @require columns.length > 0 : "At least one column is provided.";
      */
-    @DoesNotCommit
+    @NonCommitting
     void onInsertIgnore(@Nonnull Statement statement, @Nonnull String table, @Nonnull String... columns) throws SQLException {}
     
     /**
@@ -229,7 +229,7 @@ public abstract class Configuration implements Immutable {
      * @param statement a statement to drop the rule with.
      * @param table the table from which the rule is dropped.
      */
-    @DoesNotCommit
+    @NonCommitting
     void onInsertNotIgnore(@Nonnull Statement statement, @Nonnull String table) throws SQLException {}
     
     
@@ -244,7 +244,7 @@ public abstract class Configuration implements Immutable {
      * @require key > 0 : "The number of columns in the primary key is positive.";
      * @require columns.length >= key : "At least as many columns as in the primary key are provided.";
      */
-    @DoesNotCommit
+    @NonCommitting
     void onInsertUpdate(@Nonnull Statement statement, @Nonnull String table, int key, @Nonnull String... columns) throws SQLException {}
     
     /**
@@ -253,7 +253,7 @@ public abstract class Configuration implements Immutable {
      * @param statement a statement to drop the rule with.
      * @param table the table from which the rule is dropped.
      */
-    @DoesNotCommit
+    @NonCommitting
     void onInsertNotUpdate(@Nonnull Statement statement, @Nonnull String table) throws SQLException {}
     
 }

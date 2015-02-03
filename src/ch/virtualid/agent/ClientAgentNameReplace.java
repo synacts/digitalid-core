@@ -1,6 +1,6 @@
 package ch.virtualid.agent;
 
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Client;
 import ch.virtualid.entity.Entity;
@@ -101,7 +101,7 @@ final class ClientAgentNameReplace extends CoreServiceInternalAction {
      * 
      * @ensure hasSignature() : "This handler has a signature.";
      */
-    @DoesNotCommit
+    @NonCommitting
     private ClientAgentNameReplace(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
@@ -140,7 +140,7 @@ final class ClientAgentNameReplace extends CoreServiceInternalAction {
     
     
     @Override
-    @DoesNotCommit
+    @NonCommitting
     protected void executeOnBoth() throws SQLException {
         clientAgent.replaceName(oldName, newName);
     }
@@ -200,7 +200,7 @@ final class ClientAgentNameReplace extends CoreServiceInternalAction {
         
         @Pure
         @Override
-        @DoesNotCommit
+        @NonCommitting
         protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException  {
             return new ClientAgentNameReplace(entity, signature, recipient, block);
         }

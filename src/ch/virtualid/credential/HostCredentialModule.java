@@ -1,6 +1,6 @@
 package ch.virtualid.credential;
 
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.cryptography.Exponent;
@@ -55,7 +55,7 @@ public final class HostCredentialModule implements HostModule {
     }
     
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public void createTables(@Nonnull Site site) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "credential (time " + Time.FORMAT + " NOT NULL, entity " + EntityClass.FORMAT + " NOT NULL, e " + Exponent.FORMAT + " NOT NULL, i " + Exponent.FORMAT + " NOT NULL, v " + Exponent.FORMAT + ", signature " + Block.FORMAT + " NOT NULL, PRIMARY KEY (time), FOREIGN KEY (entity) " + site.getEntityReference() + ")");
@@ -65,7 +65,7 @@ public final class HostCredentialModule implements HostModule {
     }
     
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public void deleteTables(@Nonnull Site site) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             Database.removeRegularPurging(site + "credential");
@@ -108,7 +108,7 @@ public final class HostCredentialModule implements HostModule {
     
     @Pure
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public @Nonnull Block exportModule(@Nonnull Host host) throws SQLException {
         final @Nonnull String SQL = "SELECT time, entity, e, i, v, signature FROM " + host + "credential";
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
@@ -127,7 +127,7 @@ public final class HostCredentialModule implements HostModule {
     }
     
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public void importModule(@Nonnull Host host, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         assert block.getType().isBasedOn(getModuleFormat()) : "The block is based on the format of this module.";
         
@@ -156,7 +156,7 @@ public final class HostCredentialModule implements HostModule {
      * @param v the hash of restrictions or the subject's identifier.
      * @param signature the signature of the credential request.
      */
-    @DoesNotCommit
+    @NonCommitting
     public static void store(@Nonnull NonHostAccount account, @Nonnull Exponent e, @Nonnull Exponent i, @Nullable Exponent v, @Nonnull SignatureWrapper signature) throws SQLException {
         final @Nonnull Site site = account.getSite();
         final @Nonnull String TIME = Database.getConfiguration().GREATEST() + "(COALESCE(MAX(time), 0) + 1, " + Database.getConfiguration().CURRENT_TIME() + ")";

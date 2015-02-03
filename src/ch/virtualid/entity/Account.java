@@ -1,6 +1,6 @@
 package ch.virtualid.entity;
 
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.errors.ShouldNeverHappenError;
 import ch.virtualid.host.Host;
@@ -112,7 +112,7 @@ public abstract class Account extends EntityClass implements Immutable, SQLizabl
      * @return the given column of the result set as an instance of this class.
      */
     @Pure
-    @DoesNotCommit
+    @NonCommitting
     public static @Nonnull Account getNotNull(@Nonnull Host host, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
         final @Nonnull Identity identity = IdentityClass.getNotNull(resultSet, columnIndex);
         if (identity instanceof InternalIdentity) return get(host, (InternalIdentity) identity);

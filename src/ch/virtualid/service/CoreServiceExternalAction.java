@@ -1,6 +1,6 @@
 package ch.virtualid.service;
 
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.NonHostEntity;
@@ -76,7 +76,7 @@ public abstract class CoreServiceExternalAction extends ExternalAction {
     
     
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public abstract @Nullable CoreServiceActionReply executeOnHost() throws PacketException, SQLException;
     
 }

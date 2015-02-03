@@ -1,9 +1,12 @@
 package ch.virtualid.contact;
 
 import ch.virtualid.agent.Agent;
+import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.Capturable;
+import ch.virtualid.annotations.NonCommitting;
+import ch.virtualid.annotations.NonFrozen;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Image;
 import ch.virtualid.database.Database;
@@ -19,11 +22,14 @@ import ch.virtualid.service.CoreService;
 import ch.virtualid.service.Service;
 import ch.virtualid.util.FreezableLinkedList;
 import ch.virtualid.util.FreezableList;
+import ch.virtualid.util.FreezableSet;
 import ch.virtualid.util.ReadonlyList;
+import ch.virtualid.util.ReadonlySet;
 import ch.xdf.Block;
 import ch.xdf.ListWrapper;
 import ch.xdf.TupleWrapper;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import javax.annotation.Nonnull;
@@ -68,7 +74,7 @@ public final class ContextModule implements BothModule {
      * 
      * @param site the site for which the reference table is created.
      */
-    @DoesNotCommit
+    @NonCommitting
     public static void createReferenceTable(@Nonnull Site site) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "context_name (entity " + EntityClass.FORMAT + " NOT NULL, context " + Context.FORMAT + " NOT NULL, name VARCHAR(50) NOT NULL COLLATE " + Database.getConfiguration().BINARY() + ", icon " + Image.FORMAT + " NOT NULL, PRIMARY KEY (entity, context), FOREIGN KEY (entity) " + site.getEntityReference() + ")");
@@ -76,7 +82,7 @@ public final class ContextModule implements BothModule {
     }
     
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public void createTables(@Nonnull Site site) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "context_preference (entity " + EntityClass.FORMAT + " NOT NULL, context " + Context.FORMAT + " NOT NULL, type " + Mapper.FORMAT + " NOT NULL, PRIMARY KEY (entity, context, type), FOREIGN KEY (entity, context) " + Context.getReference(site) + ", FOREIGN KEY (type) " + site.getEntityReference() + ")");
@@ -90,7 +96,7 @@ public final class ContextModule implements BothModule {
     }
     
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public void deleteTables(@Nonnull Site site) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             Mapper.removeReference(site + "context_contact", "contact", "entity", "context", "contact");
@@ -123,7 +129,7 @@ public final class ContextModule implements BothModule {
     
     @Pure
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public @Nonnull Block exportModule(@Nonnull Host host) throws SQLException {
         final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
         try (@Nonnull Statement statement = Database.createStatement()) {
@@ -133,7 +139,7 @@ public final class ContextModule implements BothModule {
     }
     
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public void importModule(@Nonnull Host host, @Nonnull Block block) throws SQLException, InvalidEncodingException {
         assert block.getType().isBasedOn(getModuleFormat()) : "The block is based on the format of this module.";
         
@@ -163,7 +169,7 @@ public final class ContextModule implements BothModule {
     
     @Pure
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadonlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws SQLException {
         final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
         try (@Nonnull Statement statement = Database.createStatement()) {
@@ -174,7 +180,7 @@ public final class ContextModule implements BothModule {
     }
     
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws SQLException, InvalidEncodingException {
         assert block.getType().isBasedOn(getStateFormat()) : "The block is based on the indicated type.";
         
@@ -185,7 +191,7 @@ public final class ContextModule implements BothModule {
     }
     
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public void removeState(@Nonnull NonHostEntity entity) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             // TODO: Remove the entries of the given entity from the database table(s).
@@ -199,7 +205,7 @@ public final class ContextModule implements BothModule {
      * 
      * @param context the context to be created.
      */
-    @DoesNotCommit
+    @NonCommitting
     public static void create(@Nonnull Context context) throws SQLException {
         final @Nonnull String SQL = "INSERT INTO " + context.getEntity().getSite() + "context_name (entity, context, name, icon) VALUES (?, ?, ?, ?)";
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
@@ -214,6 +220,65 @@ public final class ContextModule implements BothModule {
             statement.executeUpdate("INSERT INTO " + context.getEntity().getSite() + "context_subcontext (entity, context, subcontext) VALUES (" + context.getEntity() + ", " + context + ", " + context + ")");
         }
     }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Contacts –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Returns the permissions of the given agent.
+     * 
+     * @param agent the agent whose permissions are to be returned.
+     * 
+     * @return the permissions of the given agent.
+     */
+    @Pure
+    @NonCommitting
+    static @Capturable @Nonnull @NonFrozen FreezableSet<Contact> getContacts(@Nonnull Context context) throws SQLException {
+        final @Nonnull String SQL = "SELECT " + AgentPermissions.COLUMNS + " FROM " + agent.getEntity().getSite() + "agent_permission WHERE entity = " + agent.getEntity() + " AND agent = " + agent;
+        try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
+            return AgentPermissions.get(resultSet, 1);
+        }
+    }
+    
+    /**
+     * Adds the given permissions to the given agent.
+     * 
+     * @param agent the agent to which the permissions are to be added.
+     * @param permissions the permissions to be added to the given agent.
+     * 
+     * @require permissions.isFrozen() : "The permissions are frozen.";
+     */
+    @NonCommitting
+    static void addContacts(@Nonnull Context context, @Nonnull ReadonlySet<Contact> contacts) throws SQLException {
+        assert permissions.isFrozen() : "The permissions are frozen.";
+        
+        final @Nonnull String SQL = "INSERT INTO " + agent.getEntity().getSite() + "agent_permission (entity, agent, " + AgentPermissions.COLUMNS + ") VALUES (" + agent.getEntity() + ", " + agent + ", ?, ?)";
+        try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
+            permissions.set(preparedStatement, 1);
+            preparedStatement.executeBatch();
+        }
+    }
+    
+    /**
+     * Removes the given permissions from the given agent.
+     * 
+     * @param agent the agent from which the permissions are to be removed.
+     * @param permissions the permissions to be removed from the given agent.
+     * 
+     * @require permissions.isFrozen() : "The permissions are frozen.";
+     */
+    @NonCommitting
+    static void removeContacts(@Nonnull Context context, @Nonnull ReadonlySet<Contact> contacts) throws SQLException {
+        assert permissions.isFrozen() : "The permissions are frozen.";
+        
+        final @Nonnull String SQL = "DELETE FROM " + agent.getEntity().getSite() + "agent_permission WHERE entity = " + agent.getEntity() + " AND agent = " + agent + " AND " + AgentPermissions.CONDITION;
+        try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
+            permissions.set(preparedStatement, 1);
+            final int[] counts = preparedStatement.executeBatch();
+            for (final int count : counts) if (count < 1) throw new SQLException("Could not find a particular permission.");
+        }
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Legacy Code –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
 //    /**
 //     * Returns whether the given context at the given identity exists.

@@ -1,6 +1,6 @@
 package ch.virtualid.pusher;
 
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.handler.ExternalAction;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
@@ -17,7 +17,7 @@ import javax.annotation.Nonnull;
  */
 public final class Pusher extends Thread {
     
-    @DoesNotCommit
+    @NonCommitting
     public static void send(@Nonnull ExternalAction action) throws SQLException {
         System.out.println("Push '" + action + "'."); // TODO: Write a real implementation!
     }

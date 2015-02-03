@@ -1,6 +1,6 @@
 package ch.virtualid.setup;
 
-import ch.virtualid.annotations.EndsCommitted;
+import ch.virtualid.annotations.Committing;
 import ch.virtualid.database.Database;
 import ch.virtualid.database.MySQLConfiguration;
 import ch.virtualid.database.PostgreSQLConfiguration;
@@ -24,7 +24,7 @@ import org.junit.Test;
 public class DatabaseSetup {
     
     @BeforeClass
-    @EndsCommitted
+    @Committing
     public static void setUpDatabase() throws SQLException, IOException, ClassNotFoundException {
         final int configuration = 0;
         switch (configuration) {
@@ -38,7 +38,7 @@ public class DatabaseSetup {
     }
     
     @Test
-    @EndsCommitted
+    @Committing
     public final void testDatabaseSetup() throws SQLException {
         if (getClass().equals(DatabaseSetup.class)) {
             try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery("SELECT 1")) {

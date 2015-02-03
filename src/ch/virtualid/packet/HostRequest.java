@@ -1,6 +1,6 @@
 package ch.virtualid.packet;
 
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.annotations.RawRecipient;
 import ch.virtualid.auxiliary.Time;
@@ -46,7 +46,7 @@ public final class HostRequest extends Request {
      * @require Method.areSimilar(methods) : "The methods are similar to each other.";
      * @require Server.hasHost(signer.getHostIdentifier()) : "The host of the signer is running on this server.";
      */
-    @DoesNotCommit
+    @NonCommitting
     public HostRequest(@Nonnull ReadonlyList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject, @Nonnull InternalIdentifier signer) throws SQLException, IOException, PacketException, ExternalException {
         this(methods, recipient, subject, signer, 0);
     }
@@ -60,7 +60,7 @@ public final class HostRequest extends Request {
      * @param signer the identifier of the signing host.
      * @param iteration how many times this request was resent.
      */
-    @DoesNotCommit
+    @NonCommitting
     private HostRequest(@Nonnull ReadonlyList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject, @Nonnull InternalIdentifier signer, int iteration) throws SQLException, IOException, PacketException, ExternalException {
         super(methods, recipient, getSymmetricKey(recipient, Time.TROPICAL_YEAR), subject, null, signer, iteration);
     }
@@ -88,7 +88,7 @@ public final class HostRequest extends Request {
     }
     
     @Override
-    @DoesNotCommit
+    @NonCommitting
     @Nonnull Response resend(@Nonnull FreezableList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject, int iteration, boolean verified) throws SQLException, IOException, PacketException, ExternalException {
         return new HostRequest(methods, recipient, subject, signer).send(verified);
     }

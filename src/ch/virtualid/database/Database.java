@@ -1,7 +1,7 @@
 package ch.virtualid.database;
 
-import ch.virtualid.annotations.DoesNotCommit;
-import ch.virtualid.annotations.EndsCommitted;
+import ch.virtualid.annotations.NonCommitting;
+import ch.virtualid.annotations.Committing;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.cache.Cache;
@@ -190,7 +190,7 @@ public final class Database implements Immutable {
      * 
      * @require directory.isDirectory() : "The directory is indeed a directory.";
      */
-    @DoesNotCommit
+    @NonCommitting
     public static void loadClasses(@Nonnull File directory, @Nonnull String prefix) throws ClassNotFoundException {
         assert directory.isDirectory() : "The directory is indeed a directory.";
         
@@ -212,7 +212,7 @@ public final class Database implements Immutable {
      * 
      * @param jarFile the jar file containing the classes.
      */
-    @DoesNotCommit
+    @NonCommitting
     public static void loadJarFile(@Nonnull JarFile jarFile) throws ClassNotFoundException {
         final @Nonnull Enumeration<JarEntry> entries = jarFile.entries();
         while (entries.hasMoreElements()) {
@@ -230,7 +230,7 @@ public final class Database implements Immutable {
      * (All the classes need to be loaded in the main thread because otherwise their
      * type initializations might be lost by a rollback of the database transaction.)
      */
-    @EndsCommitted
+    @Committing
     public static void loadClasses() {
         try {
             // Ensure that the semantic type is loaded before the syntactic type.
@@ -330,7 +330,7 @@ public final class Database implements Immutable {
      * @require isInitialized() : "The database is initialized.";
      */
     @Pure
-    @DoesNotCommit
+    @NonCommitting
     private static @Nonnull Connection getConnection() throws SQLException {
         assert isInitialized() : "The database is initialized.";
         
@@ -350,7 +350,7 @@ public final class Database implements Immutable {
      * 
      * @require isInitialized() : "The database is initialized.";
      */
-    @EndsCommitted
+    @Committing
     public static void commit() throws SQLException {
         getConnection().commit();
     }
@@ -361,7 +361,7 @@ public final class Database implements Immutable {
      * 
      * @require isInitialized() : "The database is initialized.";
      */
-    @EndsCommitted
+    @Committing
     public static void rollback() throws SQLException {
         getConnection().rollback();
     }
@@ -371,7 +371,7 @@ public final class Database implements Immutable {
      * 
      * @require isInitialized() : "The database is initialized.";
      */
-    @EndsCommitted
+    @Committing
     static void close() throws SQLException {
         getConnection().close();
     }
@@ -384,7 +384,7 @@ public final class Database implements Immutable {
      * 
      * @require isInitialized() : "The database is initialized.";
      */
-    @DoesNotCommit
+    @NonCommitting
     public static @Nullable Savepoint setSavepoint() throws SQLException {
         return getConfiguration().setSavepoint(getConnection());
     }
@@ -396,7 +396,7 @@ public final class Database implements Immutable {
      * 
      * @require isInitialized() : "The database is initialized.";
      */
-    @DoesNotCommit
+    @NonCommitting
     public static void rollback(@Nullable Savepoint savepoint) throws SQLException {
         getConfiguration().rollback(getConnection(), savepoint);
     }
@@ -409,7 +409,7 @@ public final class Database implements Immutable {
      * 
      * @require isInitialized() : "The database is initialized.";
      */
-    @DoesNotCommit
+    @NonCommitting
     public static @Nonnull Statement createStatement() throws SQLException {
         return getConnection().createStatement();
     }
@@ -423,7 +423,7 @@ public final class Database implements Immutable {
      * 
      * @require isInitialized() : "The database is initialized.";
      */
-    @DoesNotCommit
+    @NonCommitting
     public static @Nonnull PreparedStatement prepareStatement(@Nonnull String SQL) throws SQLException {
         return getConnection().prepareStatement(SQL);
     }
@@ -439,7 +439,7 @@ public final class Database implements Immutable {
      * 
      * @require isInitialized() : "The database is initialized.";
      */
-    @DoesNotCommit
+    @NonCommitting
     public static long executeInsert(@Nonnull Statement statement, @Nonnull String SQL) throws SQLException {
         return getConfiguration().executeInsert(statement, SQL);
     }
@@ -453,7 +453,7 @@ public final class Database implements Immutable {
      * 
      * @require isInitialized() : "The database is initialized.";
      */
-    @DoesNotCommit
+    @NonCommitting
     public static @Nonnull PreparedStatement prepareInsertStatement(@Nonnull String SQL) throws SQLException {
         return getConnection().prepareStatement(SQL, Statement.RETURN_GENERATED_KEYS);
     }
@@ -467,7 +467,7 @@ public final class Database implements Immutable {
      * 
      * @require isInitialized() : "The database is initialized.";
      */
-    @DoesNotCommit
+    @NonCommitting
     public static long getGeneratedKey(@Nonnull PreparedStatement preparedStatement) throws SQLException {
         try (@Nonnull ResultSet resultSet = preparedStatement.getGeneratedKeys()) {
             if (resultSet.next()) return resultSet.getLong(1);
@@ -486,7 +486,7 @@ public final class Database implements Immutable {
      * @require isInitialized() : "The database is initialized.";
      * @require columns.length > 0 : "At least one column is provided.";
      */
-    @DoesNotCommit
+    @NonCommitting
     public static void onInsertIgnore(@Nonnull Statement statement, @Nonnull String table, @Nonnull String... columns) throws SQLException {
         getConfiguration().onInsertIgnore(statement, table, columns);
     }
@@ -499,7 +499,7 @@ public final class Database implements Immutable {
      * 
      * @require isInitialized() : "The database is initialized.";
      */
-    @DoesNotCommit
+    @NonCommitting
     public static void onInsertNotIgnore(@Nonnull Statement statement, @Nonnull String table) throws SQLException {
         getConfiguration().onInsertNotIgnore(statement, table);
     }
@@ -517,7 +517,7 @@ public final class Database implements Immutable {
      * @require key > 0 : "The number of columns in the primary key is positive.";
      * @require columns.length >= key : "At least as many columns as in the primary key are provided.";
      */
-    @DoesNotCommit
+    @NonCommitting
     public static void onInsertUpdate(@Nonnull Statement statement, @Nonnull String table, int key, @Nonnull String... columns) throws SQLException {
         getConfiguration().onInsertUpdate(statement, table, key, columns);
     }
@@ -530,7 +530,7 @@ public final class Database implements Immutable {
      * 
      * @require isInitialized() : "The database is initialized.";
      */
-    @DoesNotCommit
+    @NonCommitting
     public static void onInsertNotUpdate(@Nonnull Statement statement, @Nonnull String table) throws SQLException {
         getConfiguration().onInsertNotUpdate(statement, table);
     }

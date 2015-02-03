@@ -1,7 +1,7 @@
 package ch.virtualid.agent;
 
 import ch.virtualid.annotations.Capturable;
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identity.SemanticType;
@@ -138,7 +138,7 @@ public interface ReadonlyAgentPermissions extends ReadonlyMap<SemanticType, Bool
      * @param preparedStatement the prepared statement whose parameters are to be set.
      * @param startIndex the start index of the parameters to set.
      */
-    @DoesNotCommit
+    @NonCommitting
     public void set(@Nonnull PreparedStatement preparedStatement, int startIndex) throws SQLException;
     
     /**
@@ -149,7 +149,7 @@ public interface ReadonlyAgentPermissions extends ReadonlyMap<SemanticType, Bool
      * 
      * @require areEmptyOrSingle() : "These permissions are empty or single.";
      */
-    @DoesNotCommit
+    @NonCommitting
     public void setEmptyOrSingle(@Nonnull PreparedStatement preparedStatement, int startIndex) throws SQLException;
     
 }

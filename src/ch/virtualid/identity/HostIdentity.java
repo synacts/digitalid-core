@@ -1,6 +1,6 @@
 package ch.virtualid.identity;
 
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.database.Database;
 import ch.virtualid.errors.InitializationError;
@@ -78,7 +78,7 @@ public final class HostIdentity extends IdentityClass implements InternalIdentit
     
     @Pure
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public boolean hasBeenMerged(@Nonnull SQLException exception) throws SQLException {
         Mapper.unmap(this);
         throw exception;

@@ -4,7 +4,7 @@ import ch.virtualid.agent.Agent;
 import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Client;
 import ch.virtualid.entity.Entity;
@@ -86,7 +86,7 @@ public abstract class ExternalAction extends Action {
     /**
      * Executes this action if an error occurred during pushing.
      */
-    @DoesNotCommit
+    @NonCommitting
     public abstract void executeOnFailure() throws SQLException;
     
     /**
@@ -117,7 +117,7 @@ public abstract class ExternalAction extends Action {
      * @return the agent that an agent needs to cover in order to see the audit of this external action when the pushing failed.
      */
     @Pure
-    @DoesNotCommit
+    @NonCommitting
     public @Nullable Agent getFailedAuditAgent() throws SQLException {
         return null;
     }

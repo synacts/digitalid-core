@@ -3,7 +3,7 @@ package ch.virtualid.module;
 import ch.virtualid.agent.Agent;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Client;
 import ch.virtualid.entity.NonHostEntity;
@@ -48,7 +48,7 @@ public interface BothModule extends HostModule, ClientModule {
      * @ensure return.getType().equals(getStateFormat()) : "The returned block has the indicated type.";
      */
     @Pure
-    @DoesNotCommit
+    @NonCommitting
     public @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadonlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws SQLException;
     
     /**
@@ -59,7 +59,7 @@ public interface BothModule extends HostModule, ClientModule {
      * 
      * @require block.getType().isBasedOn(getStateFormat()) : "The block is based on the indicated type.";
      */
-    @DoesNotCommit
+    @NonCommitting
     public void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException;
     
     /**
@@ -67,7 +67,7 @@ public interface BothModule extends HostModule, ClientModule {
      * 
      * @param entity the entity whose entries are to be removed.
      */
-    @DoesNotCommit
+    @NonCommitting
     public void removeState(@Nonnull NonHostEntity entity) throws SQLException;
     
 }

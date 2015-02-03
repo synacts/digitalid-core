@@ -2,7 +2,7 @@ package ch.virtualid.contact;
 
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.NonHostEntity;
@@ -90,7 +90,7 @@ public final class AccessRequest extends CoreServiceExternalAction {
      * 
      * @ensure hasSignature() : "This handler has a signature.";
      */
-    @DoesNotCommit
+    @NonCommitting
     private AccessRequest(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
@@ -151,7 +151,7 @@ public final class AccessRequest extends CoreServiceExternalAction {
     
     
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public @Nullable CoreServiceActionReply executeOnHost() throws PacketException, SQLException {
         final @Nonnull SignatureWrapper signature = getSignatureNotNull();
         if (signature instanceof CredentialsSignatureWrapper) {
@@ -171,13 +171,13 @@ public final class AccessRequest extends CoreServiceExternalAction {
     
     
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public void executeOnClient() throws SQLException {
         // TODO: Add this access request to a list of pending access requests.
     }
     
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public void executeOnFailure() throws SQLException {
         // TODO: Add this access request to a list of failed access requests.
     }
@@ -217,7 +217,7 @@ public final class AccessRequest extends CoreServiceExternalAction {
         
         @Pure
         @Override
-        @DoesNotCommit
+        @NonCommitting
         protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
             return new AccessRequest(entity, signature, recipient, block);
         }

@@ -5,7 +5,7 @@ import ch.virtualid.agent.OutgoingRole;
 import ch.virtualid.agent.RandomizedAgentPermissions;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.attribute.AttributeValue;
 import ch.virtualid.attribute.CertifiedAttributeValue;
@@ -222,7 +222,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
      * 
      * @ensure isVerified() : "This signature is verified.";
      */
-    @DoesNotCommit
+    @NonCommitting
     public CredentialsSignatureWrapper(@Nonnull SemanticType type, @Nullable Block element, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull ReadonlyList<Credential> credentials, @Nullable ReadonlyList<CertifiedAttributeValue> certificates, boolean lodged, @Nullable BigInteger value) throws SQLException, IOException, PacketException, ExternalException {
         super(type, element, subject, audit);
         
@@ -261,7 +261,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
      * 
      * @ensure isVerified() : "This signature is verified.";
      */
-    @DoesNotCommit
+    @NonCommitting
     public CredentialsSignatureWrapper(@Nonnull SemanticType type, @Nullable Blockable element, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull ReadonlyList<Credential> credentials, @Nullable ReadonlyList<CertifiedAttributeValue> certificates, boolean lodged, @Nullable BigInteger value) throws SQLException, IOException, PacketException, ExternalException {
         this(type, Block.toBlock(element), subject, audit, credentials, certificates, lodged, value);
     }
@@ -278,7 +278,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated syntactic type.";
      * @require credentialsSignature.getType().isBasedOn(SIGNATURE) : "The signature is based on the implementation type.";
      */
-    @DoesNotCommit
+    @NonCommitting
     CredentialsSignatureWrapper(final @Nonnull Block block, final @Nonnull Block credentialsSignature, boolean verified, @Nullable Entity entity) throws SQLException, IOException, PacketException, ExternalException {
         super(block, verified);
         
@@ -719,7 +719,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
     
     @Pure
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public void verify() throws SQLException, IOException, PacketException, ExternalException {
         assert isNotVerified() : "This signature is not verified.";
         
@@ -958,7 +958,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
     
     @Pure
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public @Nullable OutgoingRole getAgent(@Nonnull NonHostEntity entity) throws SQLException {
         final @Nonnull Credential credential = getCredentials().getNotNull(0);
         return credential.isRoleBased() ? AgentModule.getOutgoingRole(entity, credential.getRoleNotNull(), false) : null;
@@ -966,7 +966,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
     
     @Pure
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public @Nonnull OutgoingRole getAgentCheckedAndRestricted(@Nonnull NonHostEntity entity, @Nullable PublicKey publicKey) throws SQLException, PacketException {
         final @Nonnull Credential credential = getCredentials().getNotNull(0);
         if (credential.isRoleBased()) {

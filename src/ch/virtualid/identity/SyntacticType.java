@@ -1,6 +1,6 @@
 package ch.virtualid.identity;
 
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.cache.Cache;
@@ -90,7 +90,7 @@ public final class SyntacticType extends Type implements Immutable {
     
     
     @Override
-    @DoesNotCommit
+    @NonCommitting
     void load() throws SQLException, IOException, PacketException, ExternalException {
         assert isNotLoaded() : "The type declaration is not loaded.";
         

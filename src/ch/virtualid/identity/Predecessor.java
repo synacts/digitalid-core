@@ -1,6 +1,6 @@
 package ch.virtualid.identity;
 
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
@@ -75,7 +75,7 @@ public final class Predecessor implements Immutable, Blockable {
      * 
      * @param identifier the identifier of this predecessor.
      */
-    @DoesNotCommit
+    @NonCommitting
     public Predecessor(@Nonnull NonHostIdentifier identifier) throws SQLException {
         this(identifier, identifier instanceof InternalNonHostIdentifier ? Predecessors.get((InternalNonHostIdentifier) identifier) : new Predecessors().freeze());
     }
@@ -143,7 +143,7 @@ public final class Predecessor implements Immutable, Blockable {
      * 
      * @return the identity of this predecessor or null if none of its predecessors (including itself) is mapped.
      */
-    @DoesNotCommit
+    @NonCommitting
     @Nullable NonHostIdentity getIdentity() throws SQLException, IOException, PacketException, ExternalException {
         if (identifier.isMapped()) return identifier.getMappedIdentity();
         if (predecessors.getIdentities().isNotEmpty()) return identifier.getIdentity().toNonHostIdentity();

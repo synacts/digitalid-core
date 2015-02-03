@@ -1,6 +1,6 @@
 package ch.virtualid.attribute;
 
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
@@ -81,7 +81,7 @@ public final class UncertifiedAttributeValue extends AttributeValue implements I
     
     @Pure
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public void verify() throws SQLException, IOException, PacketException, ExternalException {
         signature.verify();
     }

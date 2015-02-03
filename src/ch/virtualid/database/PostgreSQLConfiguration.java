@@ -1,6 +1,6 @@
 package ch.virtualid.database;
 
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.io.Console;
@@ -68,7 +68,7 @@ public final class PostgreSQLConfiguration extends Configuration implements Immu
      * 
      * @require Database.isValid(name) : "The name is valid for a database.";
      */
-    @DoesNotCommit
+    @NonCommitting
     public PostgreSQLConfiguration(@Nonnull String name, boolean reset) throws SQLException, IOException {
         super(new Driver());
         
@@ -116,7 +116,7 @@ public final class PostgreSQLConfiguration extends Configuration implements Immu
     }
     
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public void dropDatabase() throws SQLException {
         Database.close();
         try (@Nonnull Connection connection = DriverManager.getConnection("jdbc:postgresql://" + server + ":" + port + "/", properties); @Nonnull Statement statement = connection.createStatement()) {
@@ -129,7 +129,7 @@ public final class PostgreSQLConfiguration extends Configuration implements Immu
      * 
      * @param reset whether the database is to be dropped first before creating it again.
      */
-    @DoesNotCommit
+    @NonCommitting
     public PostgreSQLConfiguration(boolean reset) throws SQLException, IOException {
         this("PostgreSQL", reset);
     }
@@ -231,13 +231,13 @@ public final class PostgreSQLConfiguration extends Configuration implements Immu
     
     
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public @Nonnull Savepoint setSavepoint(@Nonnull Connection connection) throws SQLException {
         return connection.setSavepoint();
     }
     
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public void rollback(@Nonnull Connection connection, @Nullable Savepoint savepoint) throws SQLException {
         connection.rollback(savepoint);
         connection.releaseSavepoint(savepoint);
@@ -245,7 +245,7 @@ public final class PostgreSQLConfiguration extends Configuration implements Immu
     
     
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public void onInsertIgnore(@Nonnull Statement statement, @Nonnull String table, @Nonnull String... columns) throws SQLException {
         assert columns.length > 0 : "At least one column is provided.";
         
@@ -269,14 +269,14 @@ public final class PostgreSQLConfiguration extends Configuration implements Immu
     }
     
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public void onInsertNotIgnore(@Nonnull Statement statement, @Nonnull String table) throws SQLException {
         statement.executeUpdate("DROP RULE IF EXISTS " + table + "_on_insert_ignore ON " + table);
     }
     
     
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public void onInsertUpdate(@Nonnull Statement statement, @Nonnull String table, int key, @Nonnull String... columns) throws SQLException {
         assert key > 0 : "The number of columns in the primary key is positive.";
         assert columns.length >= key : "At least as many columns as in the primary key are provided.";
@@ -306,7 +306,7 @@ public final class PostgreSQLConfiguration extends Configuration implements Immu
     }
     
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public void onInsertNotUpdate(@Nonnull Statement statement, @Nonnull String table) throws SQLException {
         statement.executeUpdate("DROP RULE IF EXISTS " + table + "_on_insert_update ON " + table);
     }

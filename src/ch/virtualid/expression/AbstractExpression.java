@@ -1,6 +1,6 @@
 package ch.virtualid.expression;
 
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.concept.NonHostConcept;
 import ch.virtualid.database.Database;
@@ -43,7 +43,7 @@ abstract class AbstractExpression extends NonHostConcept implements Immutable, B
      * @param entity the entity to which this abstract expression belongs.
      * @param string the string which is to be parsed for the expression.
      */
-    @DoesNotCommit
+    @NonCommitting
     AbstractExpression(@Nonnull NonHostEntity entity, @Nonnull String string) throws SQLException, IOException, PacketException, ExternalException {
         super(entity);
         
@@ -59,7 +59,7 @@ abstract class AbstractExpression extends NonHostConcept implements Immutable, B
      * 
      * @require block.getType().isBasedOn(StringWrapper.TYPE) : "The block is based on the string type.";
      */
-    @DoesNotCommit
+    @NonCommitting
     AbstractExpression(@Nonnull NonHostEntity entity, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         this(entity, new StringWrapper(block).getString());
     }
@@ -118,7 +118,7 @@ abstract class AbstractExpression extends NonHostConcept implements Immutable, B
     public static final @Nonnull String FORMAT = "TEXT NOT NULL COLLATE " + Database.getConfiguration().BINARY();
     
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public final void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
         preparedStatement.setString(parameterIndex, toString());
     }

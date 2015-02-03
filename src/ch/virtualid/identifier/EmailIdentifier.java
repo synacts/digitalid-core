@@ -1,6 +1,6 @@
 package ch.virtualid.identifier;
 
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.IdentityNotFoundException;
@@ -59,7 +59,7 @@ public final class EmailIdentifier extends ExternalIdentifier implements Immutab
     
     @Pure
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public @Nonnull Person getIdentity() throws SQLException, IOException, PacketException, ExternalException {
         if (!providerExists()) throw new IdentityNotFoundException(this);
         return Mapper.getIdentity(this).toPerson();

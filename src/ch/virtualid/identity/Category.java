@@ -1,6 +1,6 @@
 package ch.virtualid.identity;
 
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.database.Database;
 import ch.virtualid.errors.ShouldNeverHappenError;
@@ -243,7 +243,7 @@ public enum Category implements Blockable, Immutable, SQLizable {
      * @return the given column of the result set as an instance of this class.
      */
     @Pure
-    @DoesNotCommit
+    @NonCommitting
     public static @Nonnull Category get(@Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
         final @Nonnull byte value = resultSet.getByte(columnIndex);
         if (!isValid(value)) throw new SQLException("'" + value + "' is not a valid category.");
@@ -251,7 +251,7 @@ public enum Category implements Blockable, Immutable, SQLizable {
     }
     
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
         preparedStatement.setByte(parameterIndex, value);
     }

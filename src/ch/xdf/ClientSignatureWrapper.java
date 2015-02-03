@@ -2,7 +2,7 @@ package ch.xdf;
 
 import ch.virtualid.agent.AgentModule;
 import ch.virtualid.agent.ClientAgent;
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.client.Commitment;
@@ -107,7 +107,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper implements Im
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated syntactic type.";
      * @require clientSignature.getType().isBasedOn(SIGNATURE) : "The signature is based on the implementation type.";
      */
-    @DoesNotCommit
+    @NonCommitting
     ClientSignatureWrapper(@Nonnull Block block, @Nonnull Block clientSignature, boolean verified) throws SQLException, IOException, PacketException, ExternalException {
         super(block, verified);
         
@@ -175,14 +175,14 @@ public final class ClientSignatureWrapper extends SignatureWrapper implements Im
     
     @Pure
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public @Nullable ClientAgent getAgent(@Nonnull NonHostEntity entity) throws SQLException {
         return AgentModule.getClientAgent(entity, commitment);
     }
     
     @Pure
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public @Nonnull ClientAgent getAgentCheckedAndRestricted(@Nonnull NonHostEntity entity, @Nullable PublicKey publicKey) throws PacketException, SQLException {
         if (publicKey != null && !commitment.getPublicKey().equals(publicKey)) throw new PacketException(PacketError.KEYROTATION, "The client has to recommit its secret.");
         final @Nullable ClientAgent agent = AgentModule.getClientAgent(entity, commitment);

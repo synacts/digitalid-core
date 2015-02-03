@@ -1,6 +1,6 @@
 package ch.virtualid.packet;
 
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.annotations.RawRecipient;
 import ch.virtualid.auxiliary.Time;
@@ -88,7 +88,7 @@ public class Request extends Packet {
      * 
      * @ensure getSize() == 1 : "The size of this request is 1.";
      */
-    @DoesNotCommit
+    @NonCommitting
     public Request(@Nonnull HostIdentifier identifier) throws SQLException, IOException, PacketException, ExternalException {
         this(new FreezableArrayList<Method>(new AttributesQuery(null, identifier, new AttributeTypeSet(PublicKeyChain.TYPE).freeze(), true)).freeze(), identifier, null, identifier, null, null, 0);
     }
@@ -105,7 +105,7 @@ public class Request extends Packet {
      * @require methods.doesNotContainNull() : "The list of methods does not contain null.";
      * @require Method.areSimilar(methods) : "The methods are similar to each other.";
      */
-    @DoesNotCommit
+    @NonCommitting
     public Request(@Nonnull ReadonlyList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject) throws SQLException, IOException, PacketException, ExternalException {
         this(methods, recipient, new SymmetricKey(), subject, null, null, 0);
     }
@@ -121,7 +121,7 @@ public class Request extends Packet {
      * @param field an object that contains the signing parameter and is passed back with {@link #setField(java.lang.Object)}.
      * @param iteration how many times this request was resent.
      */
-    @DoesNotCommit
+    @NonCommitting
     Request(@Nonnull ReadonlyList<Method> methods, @Nonnull HostIdentifier recipient, @Nullable SymmetricKey symmetricKey, @Nonnull InternalIdentifier subject, @Nullable RequestAudit audit, @Nullable Object field, int iteration) throws SQLException, IOException, PacketException, ExternalException {
         super(methods, methods.size(), field, recipient, symmetricKey, subject, audit);
         
@@ -143,7 +143,7 @@ public class Request extends Packet {
      * 
      * @param inputStream the input stream to read the request from.
      */
-    @DoesNotCommit
+    @NonCommitting
     public Request(@Nonnull InputStream inputStream) throws SQLException, IOException, PacketException, ExternalException {
         super(inputStream, null, true);
         
@@ -176,7 +176,7 @@ public class Request extends Packet {
     @Pure
     @Override
     @RawRecipient
-    @DoesNotCommit
+    @NonCommitting
     @Nonnull SignatureWrapper getSignature(@Nullable CompressionWrapper compression, @Nonnull InternalIdentifier subject, @Nullable Audit audit) throws SQLException, IOException, PacketException, ExternalException {
         return new SignatureWrapper(Packet.SIGNATURE, compression, subject);
     }
@@ -273,7 +273,7 @@ public class Request extends Packet {
      * 
      * @return the response to the resent request.
      */
-    @DoesNotCommit
+    @NonCommitting
     @Nonnull Response resend(@Nonnull FreezableList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject, int iteration, boolean verified) throws SQLException, IOException, PacketException, ExternalException {
         return new Request(methods, recipient, new SymmetricKey(), subject, null, null, iteration).send(verified);
     }
@@ -287,7 +287,7 @@ public class Request extends Packet {
      * 
      * @ensure response.getSize() == getSize() : "The response has the same number of elements (otherwise a {@link PacketException} is thrown).";
      */
-    @DoesNotCommit
+    @NonCommitting
     public final @Nonnull Response send() throws SQLException, IOException, PacketException, ExternalException {
         return send(true);
     }
@@ -303,7 +303,7 @@ public class Request extends Packet {
      * 
      * @ensure response.getSize() == getSize() : "The response has the same number of elements (otherwise a {@link PacketException} is thrown).";
      */
-    @DoesNotCommit
+    @NonCommitting
     public final @Nonnull Response send(boolean verified) throws SQLException, IOException, PacketException, ExternalException {
         try (@Nonnull Socket socket = new Socket("vid." + getRecipient().getString(), Server.PORT)) {
             socket.setSoTimeout(1000000); // TODO: Remove two zeroes!

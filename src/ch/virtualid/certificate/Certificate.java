@@ -1,6 +1,6 @@
 package ch.virtualid.certificate;
 
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.concept.NonHostConcept;
 import ch.virtualid.entity.NonHostEntity;
@@ -54,7 +54,7 @@ public final class Certificate extends NonHostConcept {
      * 
      * @return whether the given issuer is authorized to certify the given content.
      */
-    @DoesNotCommit
+    @NonCommitting
     public static boolean isAuthorized(@Nonnull InternalNonHostIdentity issuer, @Nonnull Block content) throws SQLException, IOException, PacketException, ExternalException {
 //        long vid = Mapper.getVid(identifier);
 //        long type = Mapper.getVid(new SelfcontainedWrapper(value).getIdentifier());

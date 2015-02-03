@@ -1,6 +1,6 @@
 package ch.virtualid.agent;
 
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Commitment;
 import ch.virtualid.cryptography.Parameters;
@@ -106,7 +106,7 @@ public final class RandomizedAgentPermissions implements Immutable, Blockable {
      * 
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
-    @DoesNotCommit
+    @NonCommitting
     public RandomizedAgentPermissions(@Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         

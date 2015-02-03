@@ -13,10 +13,12 @@ import java.lang.annotation.Target;
  * This annotation indicates that a method does not {@link Database#commit() commit} the current transaction.
  * In order to being able to rollback the whole {@link Method method}, {@link Action actions} and {@link Query queries} should never commit.
  * 
+ * @see Committing
+ * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 1.0
  */
 @Documented
 @Target({ElementType.METHOD, ElementType.CONSTRUCTOR})
 @Retention(RetentionPolicy.SOURCE)
-public @interface DoesNotCommit {}
+public @interface NonCommitting {}

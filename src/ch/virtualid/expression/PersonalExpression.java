@@ -1,6 +1,6 @@
 package ch.virtualid.expression;
 
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.exceptions.external.ExternalException;
@@ -36,7 +36,7 @@ public final class PersonalExpression extends AbstractExpression implements Immu
      * @param entity the entity to which this personal expression belongs.
      * @param string the string which is to be parsed for the expression.
      */
-    @DoesNotCommit
+    @NonCommitting
     public PersonalExpression(@Nonnull NonHostEntity entity, @Nonnull String string) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, string);
     }
@@ -49,7 +49,7 @@ public final class PersonalExpression extends AbstractExpression implements Immu
      * 
      * @require block.getType().isBasedOn(StringWrapper.TYPE) : "The block is based on the string type.";
      */
-    @DoesNotCommit
+    @NonCommitting
     public PersonalExpression(@Nonnull NonHostEntity entity, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, block);
     }
@@ -77,7 +77,7 @@ public final class PersonalExpression extends AbstractExpression implements Immu
      * @return the given column of the result set as an instance of this class.
      */
     @Pure
-    @DoesNotCommit
+    @NonCommitting
     public static @Nonnull PersonalExpression get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
         try {
             return new PersonalExpression(entity, resultSet.getString(columnIndex));

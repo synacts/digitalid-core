@@ -1,6 +1,6 @@
 package ch.virtualid.attribute;
 
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.certificate.Certificate;
@@ -93,7 +93,7 @@ public final class CertifiedAttributeValue extends AttributeValue implements Imm
      * @require content.getType().isAttributeType() : "The type of the content denotes an attribute.";
      * @require signature.isSigned() : "The signature is signed.";
      */
-    @DoesNotCommit
+    @NonCommitting
     CertifiedAttributeValue(@Nonnull Block content, @Nonnull SignatureWrapper signature) throws SQLException, IOException, PacketException, ExternalException {
         super(content);
         
@@ -120,7 +120,7 @@ public final class CertifiedAttributeValue extends AttributeValue implements Imm
     
     @Pure
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public void verify() throws SQLException, IOException, PacketException, ExternalException {
         signature.verify();
         Certificate.isAuthorized(getIssuer(), getContent());

@@ -4,7 +4,7 @@ import ch.virtualid.agent.Agent;
 import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.cache.Cache;
 import ch.virtualid.cryptography.PublicKey;
@@ -60,7 +60,7 @@ public abstract class CoreServiceInternalQuery extends InternalQuery {
      * @ensure hasSignature() : "This handler has a signature.";
      * @ensure isOnHost() : "Queries are only decoded on hosts.";
      */
-    @DoesNotCommit
+    @NonCommitting
     protected CoreServiceInternalQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
@@ -87,11 +87,11 @@ public abstract class CoreServiceInternalQuery extends InternalQuery {
      * @require isOnHost() : "This method is called on a host.";
      * @require hasSignature() : "This handler has a signature.";
      */
-    @DoesNotCommit
+    @NonCommitting
     protected abstract @Nonnull CoreServiceQueryReply executeOnHost(@Nonnull Agent agent) throws SQLException;
     
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public @Nonnull CoreServiceQueryReply executeOnHost() throws PacketException, SQLException {
         final @Nonnull SignatureWrapper signature = getSignatureNotNull();
         if (isLodged() && signature instanceof CredentialsSignatureWrapper) ((CredentialsSignatureWrapper) signature).checkIsLogded();

@@ -1,6 +1,6 @@
 package ch.virtualid.identity;
 
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
@@ -99,7 +99,7 @@ public abstract class IdentityClass implements Identity, Immutable, Blockable, S
      * @require block.getType().isBasedOn(Identity.IDENTIFIER) : "The block is based on the identifier type.";
      */
     @Pure
-    @DoesNotCommit
+    @NonCommitting
     public static @Nonnull Identity create(@Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         return IdentifierClass.create(block).getIdentity();
     }
@@ -116,7 +116,7 @@ public abstract class IdentityClass implements Identity, Immutable, Blockable, S
      * @ensure !(result instanceof Type) || ((Type) result).isLoaded() : "If the result is a type, its declaration is loaded.";
      */
     @Pure
-    @DoesNotCommit
+    @NonCommitting
     public static @Nullable Identity get(@Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
         final long number = resultSet.getLong(columnIndex);
         if (resultSet.wasNull()) return null;
@@ -134,13 +134,13 @@ public abstract class IdentityClass implements Identity, Immutable, Blockable, S
      * @ensure !(result instanceof Type) || ((Type) result).isLoaded() : "If the result is a type, its declaration is loaded.";
      */
     @Pure
-    @DoesNotCommit
+    @NonCommitting
     public static @Nonnull Identity getNotNull(@Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
         return Mapper.getIdentity(resultSet.getLong(columnIndex));
     }
     
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public final void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
         preparedStatement.setLong(parameterIndex, number);
     }
@@ -152,7 +152,7 @@ public abstract class IdentityClass implements Identity, Immutable, Blockable, S
      * @param preparedStatement the prepared statement whose parameter is to be set.
      * @param parameterIndex the index of the parameter to set.
      */
-    @DoesNotCommit
+    @NonCommitting
     public static void set(@Nullable Identity identity, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
         if (identity == null) preparedStatement.setNull(parameterIndex, Types.BIGINT);
         else identity.set(preparedStatement, parameterIndex);

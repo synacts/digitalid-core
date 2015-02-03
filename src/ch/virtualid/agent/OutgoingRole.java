@@ -1,7 +1,7 @@
 package ch.virtualid.agent;
 
-import ch.virtualid.annotations.DoesNotCommit;
-import ch.virtualid.annotations.EndsCommitted;
+import ch.virtualid.annotations.NonCommitting;
+import ch.virtualid.annotations.Committing;
 import ch.virtualid.annotations.OnlyForActions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.concept.Aspect;
@@ -61,7 +61,7 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
      * 
      * @require isOnHost() : "This outgoing role is on a host.";
      */
-    @DoesNotCommit
+    @NonCommitting
     public void issue(@Nonnull ReadonlySet<Contact> contacts) throws SQLException {
         assert isOnHost() : "This outgoing role is on a host.";
         
@@ -77,7 +77,7 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
      * 
      * @require isOnHost() : "This outgoing role is on a host.";
      */
-    @DoesNotCommit
+    @NonCommitting
     public void issue() throws SQLException {
         issue(getContext().getAllContacts());
     }
@@ -91,7 +91,7 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
      * 
      * @require isOnHost() : "This outgoing role is on a host.";
      */
-    @DoesNotCommit
+    @NonCommitting
     public void revoke(@Nonnull ReadonlySet<Contact> contacts) throws SQLException {
         assert isOnHost() : "This outgoing role is on a host.";
         
@@ -107,7 +107,7 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
      * 
      * @require isOnHost() : "This outgoing role is on a host.";
      */
-    @DoesNotCommit
+    @NonCommitting
     public void revoke() throws SQLException {
         revoke(getContext().getAllContacts());
     }
@@ -129,7 +129,7 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
      * @ensure return.isRoleType() : "The returned relation is a role type.";
      */
     @Pure
-    @DoesNotCommit
+    @NonCommitting
     public @Nonnull SemanticType getRelation() throws SQLException {
         if (relation == null) relation = AgentModule.getRelation(this);
         return relation;
@@ -143,7 +143,7 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
      * @require isOnClient() : "This outgoing role is on a client.";
      * @require newRelation.isRoleType() : "The new relation is a role type.";
      */
-    @EndsCommitted
+    @Committing
     public void setRelation(@Nonnull SemanticType newRelation) throws SQLException {
         final @Nonnull SemanticType oldRelation = getRelation();
         if (!newRelation.equals(oldRelation)) {
@@ -160,7 +160,7 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
      * @require oldRelation.isRoleType() : "The old relation is a role type.";
      * @require newRelation.isRoleType() : "The new relation is a role type.";
      */
-    @DoesNotCommit
+    @NonCommitting
     @OnlyForActions
     public void replaceRelation(@Nonnull SemanticType oldRelation, @Nonnull SemanticType newRelation) throws SQLException {
         if (isOnHost()) revoke();
@@ -187,7 +187,7 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
      * @ensure return.getEntity().equals(getEntity()) : "The context belongs to the same entity.";
      */
     @Pure
-    @DoesNotCommit
+    @NonCommitting
     public @Nonnull Context getContext() throws SQLException {
         if (context == null) context = AgentModule.getContext(this);
         return context;
@@ -201,7 +201,7 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
      * @require isOnClient() : "This outgoing role is on a client.";
      * @require newContext.getEntity().equals(getEntity()) : "The new context belongs to the same entity.";
      */
-    @EndsCommitted
+    @Committing
     public void setContext(@Nonnull Context newContext) throws SQLException {
         final @Nonnull Context oldContext = getContext();
         if (!newContext.equals(oldContext)) {
@@ -218,7 +218,7 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
      * @require oldContext.getEntity().equals(getEntity()) : "The old context belongs to the same entity.";
      * @require newContext.getEntity().equals(getEntity()) : "The new context belongs to the same entity.";
      */
-    @DoesNotCommit
+    @NonCommitting
     @OnlyForActions
     public void replaceContext(@Nonnull Context oldContext, @Nonnull Context newContext) throws SQLException {
         AgentModule.replaceContext(this, oldContext, newContext);
@@ -256,7 +256,7 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
      * @require isRestrictable() : "This outgoing role can be restricted.";
      * @require credential.isRoleBased() : "The credential is role-based.";
      */
-    @DoesNotCommit
+    @NonCommitting
     public void restrictTo(@Nonnull Credential credential) throws SQLException {
         assert isRestrictable() : "This outgoing role can be restricted.";
         assert credential.isRoleBased() : "The credential is role-based.";
@@ -278,7 +278,7 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
      * @require credential.getPermissions() != null : "The permissions of the credential are not null.";
      * @require credential.getRestrictions() != null : "The restrictions of the credential are not null.";
      */
-    @DoesNotCommit
+    @NonCommitting
     public void checkCovers(@Nonnull Credential credential) throws SQLException, PacketException {
         final @Nullable ReadonlyAgentPermissions permissions = credential.getPermissions();
         assert permissions != null : "The permissions of the credential are not null.";
@@ -315,7 +315,7 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
      * @require relation.isRoleType() : "The relation is a role type.";
      * @require context.isOnClient() : "The context is on a client.";
      */
-    @EndsCommitted
+    @Committing
     public static @Nonnull OutgoingRole create(@Nonnull SemanticType relation, @Nonnull Context context) throws SQLException {
         final @Nonnull OutgoingRole outgoingRole = get(context.getRole(), new SecureRandom().nextLong(), false, false);
         Synchronizer.execute(new OutgoingRoleCreate(outgoingRole, relation, context));
@@ -331,7 +331,7 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
      * @require relation.isRoleType() : "The relation is a role type.";
      * @require context.getEntity().equals(getEntity()) : "The context belongs to the entity of this outgoing role.";
      */
-    @DoesNotCommit
+    @NonCommitting
     @OnlyForActions
     public void createForActions(@Nonnull SemanticType relation, @Nonnull Context context) throws SQLException {
         AgentModule.addOutgoingRole(this, relation, context);
@@ -421,7 +421,7 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
      * @return the given column of the result set as an instance of this class.
      */
     @Pure
-    @DoesNotCommit
+    @NonCommitting
     public static @Nonnull OutgoingRole get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int columnIndex, boolean removed, boolean restrictable) throws SQLException {
         return get(entity, resultSet.getLong(columnIndex), removed, restrictable);
     }

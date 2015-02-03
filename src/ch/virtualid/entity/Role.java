@@ -1,8 +1,8 @@
 package ch.virtualid.entity;
 
 import ch.virtualid.agent.Agent;
-import ch.virtualid.annotations.DoesNotCommit;
-import ch.virtualid.annotations.EndsCommitted;
+import ch.virtualid.annotations.NonCommitting;
+import ch.virtualid.annotations.Committing;
 import ch.virtualid.annotations.OnlyForActions;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Client;
@@ -197,10 +197,10 @@ public abstract class Role extends EntityClass implements NonHostEntity, Immutab
      * 
      * @param module the module whose state is to be reloaded for this role.
      * 
-     * @see DoesNotCommit
-     * @see EndsCommitted
+     * @see NonCommitting
+     * @see Committing
      */
-    @EndsCommitted
+    @Committing
     public final void reloadState(@Nonnull BothModule module) throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
         Synchronizer.reload(this, module);
         if (Database.isMultiAccess()) {
@@ -216,10 +216,10 @@ public abstract class Role extends EntityClass implements NonHostEntity, Immutab
      * 
      * @param service the service whose state is to be refreshed for this role.
      * 
-     * @see DoesNotCommit
-     * @see EndsCommitted
+     * @see NonCommitting
+     * @see Committing
      */
-    @EndsCommitted
+    @Committing
     public final void refreshState(@Nonnull Service service) throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
         Synchronizer.refresh(this, service);
         if (Database.isMultiAccess()) {
@@ -235,8 +235,8 @@ public abstract class Role extends EntityClass implements NonHostEntity, Immutab
      * 
      * @param service the service whose actions are to be completed.
      * 
-     * @see DoesNotCommit
-     * @see EndsCommitted
+     * @see NonCommitting
+     * @see Committing
      */
     public final void waitForCompletion(@Nonnull Service service) throws InterruptedException {
         SynchronizerModule.wait(this, service);
@@ -262,7 +262,7 @@ public abstract class Role extends EntityClass implements NonHostEntity, Immutab
      * @ensure return.doesNotContainDuplicates() : "The returned list does not contain duplicates.";
      */
     @Pure
-    @DoesNotCommit
+    @NonCommitting
     public @Nonnull ReadonlyList<NonNativeRole> getRoles() throws SQLException {
         if (roles == null) roles = RoleModule.getRoles(this);
         return roles;
@@ -277,7 +277,7 @@ public abstract class Role extends EntityClass implements NonHostEntity, Immutab
      * 
      * @require relation.isRoleType() : "The relation is a role type.";
      */
-    @DoesNotCommit
+    @NonCommitting
     @OnlyForActions
     public void addRole(@Nonnull InternalNonHostIdentity issuer, @Nonnull SemanticType relation, long agentNumber) throws SQLException {
         assert relation.isRoleType() : "The relation is a role type.";
@@ -297,7 +297,7 @@ public abstract class Role extends EntityClass implements NonHostEntity, Immutab
     /**
      * Removes this role.
      */
-    @DoesNotCommit
+    @NonCommitting
     @OnlyForActions
     public void remove() throws SQLException {
         RoleModule.remove(this);
@@ -317,7 +317,7 @@ public abstract class Role extends EntityClass implements NonHostEntity, Immutab
      * @return the given column of the result set as an instance of this class.
      */
     @Pure
-    @DoesNotCommit
+    @NonCommitting
     public static @Nullable Role get(@Nonnull Client client, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
         final long number = resultSet.getLong(columnIndex);
         if (resultSet.wasNull()) return null;
@@ -334,7 +334,7 @@ public abstract class Role extends EntityClass implements NonHostEntity, Immutab
      * @return the given column of the result set as an instance of this class.
      */
     @Pure
-    @DoesNotCommit
+    @NonCommitting
     public static @Nonnull Role getNotNull(@Nonnull Client client, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
         return RoleModule.load(client, resultSet.getLong(columnIndex));
     }

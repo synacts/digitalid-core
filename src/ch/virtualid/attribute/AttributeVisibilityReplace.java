@@ -2,7 +2,7 @@ package ch.virtualid.attribute;
 
 import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.NonHostEntity;
@@ -111,7 +111,7 @@ final class AttributeVisibilityReplace extends CoreServiceInternalAction {
      * 
      * @ensure hasSignature() : "This handler has a signature.";
      */
-    @DoesNotCommit
+    @NonCommitting
     private AttributeVisibilityReplace(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
@@ -151,7 +151,7 @@ final class AttributeVisibilityReplace extends CoreServiceInternalAction {
     
     
     @Override
-    @DoesNotCommit
+    @NonCommitting
     protected void executeOnBoth() throws SQLException {
         attribute.replaceVisibility(oldVisibility, newVisibility);
     }
@@ -211,7 +211,7 @@ final class AttributeVisibilityReplace extends CoreServiceInternalAction {
         
         @Pure
         @Override
-        @DoesNotCommit
+        @NonCommitting
         protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException  {
             return new AttributeVisibilityReplace(entity, signature, recipient, block);
         }

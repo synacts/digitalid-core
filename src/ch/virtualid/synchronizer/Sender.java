@@ -1,7 +1,7 @@
 package ch.virtualid.synchronizer;
 
-import ch.virtualid.annotations.DoesNotCommit;
-import ch.virtualid.annotations.EndsCommitted;
+import ch.virtualid.annotations.NonCommitting;
+import ch.virtualid.annotations.Committing;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.Role;
 import ch.virtualid.error.ErrorModule;
@@ -70,7 +70,7 @@ public final class Sender extends Thread {
      * Sends the methods of this sender.
      */
     @Override
-    @EndsCommitted
+    @Committing
     public void run() {
         final @Nonnull InternalAction reference = (InternalAction) methods.getNotNull(0);
         final @Nonnull Role role = reference.getRole();
@@ -190,11 +190,11 @@ public final class Sender extends Thread {
      * 
      * @see ClientRequest
      */
-    @DoesNotCommit
+    @NonCommitting
     public static @Nullable RequestAudit runAsynchronously(final @Nonnull InternalAction action, final @Nullable RequestAudit audit) throws SQLException, IOException, PacketException, ExternalException {
         new Thread() {
             @Override
-            @EndsCommitted
+            @Committing
             public void run() {
                 try {
                     action.executeOnClient(); // The action is executed as soon as the database entries are no longer locked.
@@ -209,7 +209,7 @@ public final class Sender extends Thread {
         final @Nonnull FutureTask<RequestAudit> task;
         task = new FutureTask<RequestAudit>(new Callable<RequestAudit>() {
             @Override
-            @EndsCommitted
+            @Committing
             public @Nullable RequestAudit call() throws Exception {
                 try {
                     final @Nonnull RequestAudit requestAudit = audit != null ? audit : new RequestAudit(SynchronizerModule.getLastTime(action.getRole(), action.getService()));

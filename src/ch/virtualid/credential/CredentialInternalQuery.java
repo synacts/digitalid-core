@@ -4,7 +4,7 @@ import ch.virtualid.agent.Agent;
 import ch.virtualid.agent.RandomizedAgentPermissions;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.cryptography.Element;
@@ -126,7 +126,7 @@ final class CredentialInternalQuery extends CoreServiceInternalQuery {
      * @ensure hasSignature() : "This handler has a signature.";
      * @ensure isOnHost() : "Queries are only decoded on hosts.";
      */
-    @DoesNotCommit
+    @NonCommitting
     private CredentialInternalQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
@@ -180,7 +180,7 @@ final class CredentialInternalQuery extends CoreServiceInternalQuery {
     
     
     @Override
-    @DoesNotCommit
+    @NonCommitting
     protected @Nonnull CredentialReply executeOnHost(@Nonnull Agent agent) throws SQLException {
         final @Nonnull Restrictions restrictions = agent.getRestrictions();
         final @Nonnull SignatureWrapper signature = getSignatureNotNull();
@@ -254,7 +254,7 @@ final class CredentialInternalQuery extends CoreServiceInternalQuery {
         
         @Pure
         @Override
-        @DoesNotCommit
+        @NonCommitting
         protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
             return new CredentialInternalQuery(entity, signature, recipient, block);
         }

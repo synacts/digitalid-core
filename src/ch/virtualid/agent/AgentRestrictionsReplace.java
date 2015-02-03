@@ -1,6 +1,6 @@
 package ch.virtualid.agent;
 
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.NonHostEntity;
@@ -99,7 +99,7 @@ final class AgentRestrictionsReplace extends CoreServiceInternalAction {
      * 
      * @ensure hasSignature() : "This handler has a signature.";
      */
-    @DoesNotCommit
+    @NonCommitting
     private AgentRestrictionsReplace(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
@@ -143,7 +143,7 @@ final class AgentRestrictionsReplace extends CoreServiceInternalAction {
     
     
     @Override
-    @DoesNotCommit
+    @NonCommitting
     protected void executeOnBoth() throws SQLException {
         agent.replaceRestrictions(oldRestrictions, newRestrictions);
     }
@@ -195,7 +195,7 @@ final class AgentRestrictionsReplace extends CoreServiceInternalAction {
         
         @Pure
         @Override
-        @DoesNotCommit
+        @NonCommitting
         protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException  {
             return new AgentRestrictionsReplace(entity, signature, recipient, block);
         }

@@ -3,7 +3,7 @@ package ch.virtualid.credential;
 import ch.virtualid.agent.RandomizedAgentPermissions;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.attribute.CertifiedAttributeValue;
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.cryptography.Element;
@@ -266,7 +266,7 @@ public final class ClientCredential extends Credential implements Immutable {
      * 
      * @ensure return.isActive() : "The returned credential is active.";
      */
-    @DoesNotCommit
+    @NonCommitting
     public static @Nonnull ClientCredential getRoleBased(@Nonnull NonNativeRole role, @Nonnull ReadonlyAgentPermissions permissions) throws SQLException, IOException, PacketException, ExternalException {
         assert role.getIdentity() instanceof InternalPerson : "The role belongs to an internal person.";
         assert permissions.isFrozen() : "The permissions are frozen.";
@@ -306,7 +306,7 @@ public final class ClientCredential extends Credential implements Immutable {
      * 
      * @ensure return.isActive() : "The returned credential is active.";
      */
-    @DoesNotCommit
+    @NonCommitting
     public static @Nonnull ClientCredential getIdentityBased(@Nonnull Role role, @Nonnull ReadonlyAgentPermissions permissions) throws SQLException, IOException, PacketException, ExternalException {
         assert role.getIdentity() instanceof InternalPerson : "The role belongs to an internal person.";
         assert permissions.isFrozen() : "The permissions are frozen.";
@@ -346,7 +346,7 @@ public final class ClientCredential extends Credential implements Immutable {
      * 
      * @ensure return.isActive() : "The returned credential is active.";
      */
-    @DoesNotCommit
+    @NonCommitting
     public static @Nonnull ClientCredential getAttributeBased(@Nonnull Role role, @Nonnull CertifiedAttributeValue value, @Nonnull ReadonlyAgentPermissions permissions) throws SQLException, IOException, PacketException, ExternalException {
         assert role.getIdentity() instanceof InternalPerson : "The role belongs to an internal person.";
         assert permissions.isFrozen() : "The permissions are frozen.";

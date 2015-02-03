@@ -1,6 +1,6 @@
 package ch.virtualid.database;
 
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.io.Console;
@@ -65,7 +65,7 @@ public final class MySQLConfiguration extends Configuration implements Immutable
      * 
      * @require Database.isValid(name) : "The name is valid for a database.";
      */
-    @DoesNotCommit
+    @NonCommitting
     public MySQLConfiguration(@Nonnull String name, boolean reset) throws SQLException, IOException {
         super(new Driver());
         
@@ -112,7 +112,7 @@ public final class MySQLConfiguration extends Configuration implements Immutable
     }
     
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public void dropDatabase() throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("DROP DATABASE IF EXISTS " + database);
@@ -124,7 +124,7 @@ public final class MySQLConfiguration extends Configuration implements Immutable
      * 
      * @param reset whether the database is to be dropped first before creating it again.
      */
-    @DoesNotCommit
+    @NonCommitting
     public MySQLConfiguration(boolean reset) throws SQLException, IOException {
         this("MySQL", reset);
     }

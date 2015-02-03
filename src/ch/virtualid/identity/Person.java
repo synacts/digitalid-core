@@ -1,6 +1,6 @@
 package ch.virtualid.identity;
 
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.identifier.InternalNonHostIdentifier;
 import ch.virtualid.interfaces.Immutable;
 import java.sql.SQLException;
@@ -44,7 +44,7 @@ public abstract class Person extends NonHostIdentityClass implements Immutable {
     abstract void setAddress(@Nonnull InternalNonHostIdentifier address);
     
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public final boolean hasBeenMerged(@Nonnull SQLException exception) throws SQLException {
         final @Nullable InternalNonHostIdentifier successor = Successor.get(getAddress());
         if (successor != null && successor.isMapped()) {

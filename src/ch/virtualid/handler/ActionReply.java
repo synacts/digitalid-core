@@ -4,7 +4,7 @@ import ch.virtualid.agent.Agent;
 import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Account;
 import ch.virtualid.entity.NonHostEntity;
@@ -70,7 +70,7 @@ public abstract class ActionReply extends Reply implements Auditable {
      * @require getEntityNotNull().equals(action.getEntityNotNull()) : "The entities of the reply and the action are the same.";
      * @require ((HostSignatureWrapper) getSignatureNotNull()).getSigner().equals(action.getRecipient()) : "The reply is signed by the action's recipient.";
      */
-    @DoesNotCommit
+    @NonCommitting
     public abstract void executeByPusher(@Nonnull ExternalAction action) throws PacketException, SQLException;
     
     /**
@@ -80,7 +80,7 @@ public abstract class ActionReply extends Reply implements Auditable {
      * 
      * @require isOnClient() : "This method is called on a client.";
      */
-    @DoesNotCommit
+    @NonCommitting
     public abstract void executeBySynchronizer() throws SQLException;
     
     

@@ -1,6 +1,6 @@
 package ch.virtualid.identifier;
 
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.IdentityNotFoundException;
@@ -86,12 +86,12 @@ public abstract class InternalIdentifier extends IdentifierClass implements Immu
     
     @Pure
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public abstract @Nonnull InternalIdentity getMappedIdentity() throws SQLException;
     
     @Pure
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public abstract @Nonnull InternalIdentity getIdentity() throws SQLException, IOException, PacketException, ExternalException;
     
     
@@ -101,7 +101,7 @@ public abstract class InternalIdentifier extends IdentifierClass implements Immu
      * @return whether an identity with this internal identifier exists.
      */
     @Pure
-    @DoesNotCommit
+    @NonCommitting
     public final boolean exists() throws SQLException, IOException, PacketException, ExternalException {
         try {
             Mapper.getIdentity(this);
@@ -117,7 +117,7 @@ public abstract class InternalIdentifier extends IdentifierClass implements Immu
      * @return whether an identity with this internal identifier does not exist.
      */
     @Pure
-    @DoesNotCommit
+    @NonCommitting
     public final boolean doesNotExist() throws SQLException, IOException, PacketException, ExternalException {
         return !exists();
     }

@@ -1,6 +1,6 @@
 package ch.virtualid.agent;
 
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.contact.Context;
 import ch.virtualid.entity.Entity;
@@ -100,7 +100,7 @@ final class OutgoingRoleContextReplace extends CoreServiceInternalAction {
      * 
      * @ensure hasSignature() : "This handler has a signature.";
      */
-    @DoesNotCommit
+    @NonCommitting
     private OutgoingRoleContextReplace(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
@@ -144,7 +144,7 @@ final class OutgoingRoleContextReplace extends CoreServiceInternalAction {
     
     
     @Override
-    @DoesNotCommit
+    @NonCommitting
     protected void executeOnBoth() throws SQLException {
         outgoingRole.replaceContext(oldContext, newContext);
     }
@@ -204,7 +204,7 @@ final class OutgoingRoleContextReplace extends CoreServiceInternalAction {
         
         @Pure
         @Override
-        @DoesNotCommit
+        @NonCommitting
         protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException  {
             return new OutgoingRoleContextReplace(entity, signature, recipient, block);
         }

@@ -1,6 +1,6 @@
 package ch.virtualid.interfaces;
 
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -44,7 +44,7 @@ public interface SQLizable {
      * @param preparedStatement the prepared statement whose parameter is to be set.
      * @param parameterIndex the index of the parameter to set.
      */
-    @DoesNotCommit
+    @NonCommitting
     public void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException;
     
     /**

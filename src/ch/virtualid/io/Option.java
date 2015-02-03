@@ -1,6 +1,6 @@
 package ch.virtualid.io;
 
-import ch.virtualid.annotations.EndsCommitted;
+import ch.virtualid.annotations.Committing;
 import ch.virtualid.exceptions.io.EscapeOptionException;
 import javax.annotation.Nonnull;
 
@@ -38,7 +38,7 @@ public abstract class Option {
     /**
      * Executes this option.
      */
-    @EndsCommitted
+    @Committing
     public abstract void execute() throws EscapeOptionException;
     
 }

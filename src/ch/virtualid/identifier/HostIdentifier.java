@@ -1,6 +1,6 @@
 package ch.virtualid.identifier;
 
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.Site;
@@ -57,7 +57,7 @@ public final class HostIdentifier extends InternalIdentifier implements Immutabl
     
     @Pure
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public @Nonnull HostIdentity getMappedIdentity() throws SQLException {
         assert isMapped() : "This identifier is mapped.";
         
@@ -68,7 +68,7 @@ public final class HostIdentifier extends InternalIdentifier implements Immutabl
     
     @Pure
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public @Nonnull HostIdentity getIdentity() throws SQLException, IOException, PacketException, ExternalException {
         return Mapper.getIdentity(this).toHostIdentity();
     }

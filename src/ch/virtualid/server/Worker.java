@@ -3,7 +3,7 @@ package ch.virtualid.server;
 import ch.virtualid.agent.Agent;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
-import ch.virtualid.annotations.EndsCommitted;
+import ch.virtualid.annotations.Committing;
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.credential.Credential;
 import ch.virtualid.database.Database;
@@ -65,7 +65,7 @@ public final class Worker implements Runnable {
      * Asynchronous method to handle the incoming request.
      */
     @Override
-    @EndsCommitted
+    @Committing
     public void run() {
         try {
             final @Nonnull Time start = new Time();

@@ -1,6 +1,6 @@
 package ch.virtualid.packet;
 
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.cryptography.InitializationVector;
 import ch.virtualid.database.Database;
@@ -43,7 +43,7 @@ public final class Replay {
      * 
      * @param encryption the encryption to check for a replay attack.
      */
-    @DoesNotCommit
+    @NonCommitting
     public static void check(@Nonnull EncryptionWrapper encryption) throws SQLException, PacketException {
         final @Nonnull Time time = encryption.getTime();
         final @Nullable InitializationVector initializationVector = encryption.getInitializationVector();

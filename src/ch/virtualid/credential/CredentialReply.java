@@ -2,7 +2,7 @@ package ch.virtualid.credential;
 
 import ch.virtualid.agent.RandomizedAgentPermissions;
 import ch.virtualid.agent.Restrictions;
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.cache.Cache;
@@ -124,7 +124,7 @@ final class CredentialReply extends CoreServiceQueryReply {
      * @ensure hasSignature() : "This handler has a signature.";
      * @ensure !isOnHost() : "Query replies are never decoded on hosts.";
      */
-    @DoesNotCommit
+    @NonCommitting
     private CredentialReply(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, number);
         
@@ -166,7 +166,7 @@ final class CredentialReply extends CoreServiceQueryReply {
      * 
      * @require hasSignature() : "This handler has a signature.";
      */
-    @DoesNotCommit
+    @NonCommitting
     @Nonnull ClientCredential getInternalCredential(@Nonnull RandomizedAgentPermissions randomizedPermissions, @Nullable SemanticType role, @Nonnull BigInteger b, @Nonnull Exponent u) throws SQLException, IOException, PacketException, ExternalException {
         assert hasSignature() : "This handler has a signature.";
         
@@ -190,7 +190,7 @@ final class CredentialReply extends CoreServiceQueryReply {
      * 
      * @require hasSignature() : "This handler has a signature.";
      */
-    @DoesNotCommit
+    @NonCommitting
     @Nonnull ClientCredential getExternalCredential(@Nonnull RandomizedAgentPermissions randomizedPermissions, @Nonnull Block attributeContent, @Nonnull BigInteger b, @Nonnull Exponent u, @Nonnull Exponent v) throws SQLException, IOException, PacketException, ExternalException {
         assert hasSignature() : "This handler has a signature.";
         
@@ -240,7 +240,7 @@ final class CredentialReply extends CoreServiceQueryReply {
         
         @Pure
         @Override
-        @DoesNotCommit
+        @NonCommitting
         protected @Nonnull Reply create(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
             return new CredentialReply(entity, signature, number, block);
         }

@@ -1,6 +1,6 @@
 package ch.virtualid.cryptography;
 
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.database.Database;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
@@ -107,7 +107,7 @@ public final class InitializationVector extends IvParameterSpec implements Immut
      * @return the given column of the result set as an instance of this class.
      */
     @Pure
-    @DoesNotCommit
+    @NonCommitting
     public static @Nonnull InitializationVector get(@Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
         return new InitializationVector(resultSet.getBytes(columnIndex));
     }
@@ -119,7 +119,7 @@ public final class InitializationVector extends IvParameterSpec implements Immut
      * @param parameterIndex the index of the parameter to set.
      */
     @Override
-    @DoesNotCommit
+    @NonCommitting
     public void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
         preparedStatement.setBytes(parameterIndex, getIV());
     }

@@ -1,6 +1,6 @@
 package ch.virtualid.database;
 
-import ch.virtualid.annotations.EndsCommitted;
+import ch.virtualid.annotations.Committing;
 import ch.virtualid.annotations.Pure;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -21,7 +21,7 @@ public final class PostgreSQLTest extends DatabaseTest {
     }
     
     @BeforeClass
-    @EndsCommitted
+    @Committing
     public static void configureDatabase() throws SQLException, IOException {
         Database.initialize(new PostgreSQLConfiguration(true), false, true);
         createTables();

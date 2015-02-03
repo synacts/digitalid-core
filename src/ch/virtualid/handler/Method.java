@@ -4,7 +4,7 @@ import ch.virtualid.agent.Agent;
 import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
-import ch.virtualid.annotations.DoesNotCommit;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.attribute.Attribute;
 import ch.virtualid.attribute.AttributeValue;
@@ -176,7 +176,7 @@ public abstract class Method extends Handler {
      * 
      * @ensure matches(return) : "This method matches the returned reply.";
      */
-    @DoesNotCommit
+    @NonCommitting
     public abstract @Nullable Reply executeOnHost() throws PacketException, SQLException;
     
     /**
@@ -221,7 +221,7 @@ public abstract class Method extends Handler {
      * @ensure return.getSize() == 1 : "The response contains one element.";
      * @ensure return.hasRequest() : "The returned response has a request.";
      */
-    @DoesNotCommit
+    @NonCommitting
     public @Nonnull Response send() throws SQLException, IOException, PacketException, ExternalException {
         final @Nullable RequestAudit requestAudit = RequestAudit.get(this);
         final @Nonnull Response response;
@@ -245,7 +245,7 @@ public abstract class Method extends Handler {
      * 
      * @ensure matches(return) : "This method matches the returned reply.";
      */
-    @DoesNotCommit
+    @NonCommitting
     @SuppressWarnings("unchecked")
     public final @Nonnull <T extends Reply> T sendNotNull() throws SQLException, IOException, PacketException, ExternalException {
         assert !matches(null) : "This method does not match null.";
@@ -314,7 +314,7 @@ public abstract class Method extends Handler {
      * @ensure return.getSize() == methods.size() : "The returned response and the given methods have the same size.";
      * @ensure return.hasRequest() : "The returned response has a request.";
      */
-    @DoesNotCommit
+    @NonCommitting
     public static @Nonnull Response send(@Nonnull ReadonlyList<Method> methods, @Nullable RequestAudit audit) throws SQLException, IOException, PacketException, ExternalException {
         assert areSimilar(methods) : "The methods are similar to each other.";
         
@@ -433,7 +433,7 @@ public abstract class Method extends Handler {
          * @ensure return.hasSignature() : "The returned method has a signature.";
          */
         @Pure
-        @DoesNotCommit
+        @NonCommitting
         protected abstract @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException;
         
     }
@@ -472,7 +472,7 @@ public abstract class Method extends Handler {
      * @ensure return.hasSignature() : "The returned method has a signature.";
      */
     @Pure
-    @DoesNotCommit
+    @NonCommitting
     public static @Nonnull Method get(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         final @Nullable Method.Factory factory = factories.get(block.getType());
         if (factory == null) throw new PacketException(PacketError.METHOD, "No method could be found for the type " + block.getType().getAddress() + ".");
