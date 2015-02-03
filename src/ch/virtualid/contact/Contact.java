@@ -16,6 +16,7 @@ import ch.virtualid.identity.ExternalPerson;
 import ch.virtualid.identity.Identity;
 import ch.virtualid.identity.IdentityClass;
 import ch.virtualid.identity.InternalPerson;
+import ch.virtualid.identity.Mapper;
 import ch.virtualid.identity.Person;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
@@ -216,6 +217,16 @@ public final class Contact extends NonHostConcept implements Immutable, Blockabl
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– SQLizable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Stores the data type used to reference instances of this class.
+     */
+    public static final @Nonnull String FORMAT = Mapper.FORMAT;
+    
+    /**
+     * Stores the foreign key constraint used to reference instances of this class.
+     */
+    public static final @Nonnull String REFERENCE = Mapper.REFERENCE;
     
     /**
      * Returns the given column of the result set as an instance of this class.

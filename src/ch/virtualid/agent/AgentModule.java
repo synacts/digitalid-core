@@ -1,7 +1,9 @@
 package ch.virtualid.agent;
 
 import ch.virtualid.annotations.Capturable;
+import ch.virtualid.annotations.Frozen;
 import ch.virtualid.annotations.NonCommitting;
+import ch.virtualid.annotations.NonFrozen;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Image;
 import ch.virtualid.client.Client;
@@ -791,12 +793,10 @@ public final class AgentModule implements BothModule {
      * @param agent the agent whose permissions are to be returned.
      * 
      * @return the permissions of the given agent.
-     * 
-     * @ensure return.isNotFrozen() : "The permissions are not frozen.";
      */
     @Pure
     @NonCommitting
-    static @Capturable @Nonnull AgentPermissions getPermissions(@Nonnull Agent agent) throws SQLException {
+    static @Capturable @Nonnull @NonFrozen AgentPermissions getPermissions(@Nonnull Agent agent) throws SQLException {
         final @Nonnull String SQL = "SELECT " + AgentPermissions.COLUMNS + " FROM " + agent.getEntity().getSite() + "agent_permission WHERE entity = " + agent.getEntity() + " AND agent = " + agent;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
             return AgentPermissions.get(resultSet, 1);
@@ -808,13 +808,9 @@ public final class AgentModule implements BothModule {
      * 
      * @param agent the agent to which the permissions are to be added.
      * @param permissions the permissions to be added to the given agent.
-     * 
-     * @require permissions.isFrozen() : "The permissions are frozen.";
      */
     @NonCommitting
-    static void addPermissions(@Nonnull Agent agent, @Nonnull ReadonlyAgentPermissions permissions) throws SQLException {
-        assert permissions.isFrozen() : "The permissions are frozen.";
-        
+    static void addPermissions(@Nonnull Agent agent, @Nonnull @Frozen ReadonlyAgentPermissions permissions) throws SQLException {
         final @Nonnull String SQL = "INSERT INTO " + agent.getEntity().getSite() + "agent_permission (entity, agent, " + AgentPermissions.COLUMNS + ") VALUES (" + agent.getEntity() + ", " + agent + ", ?, ?)";
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
             permissions.set(preparedStatement, 1);
@@ -828,13 +824,9 @@ public final class AgentModule implements BothModule {
      * 
      * @param agent the agent from which the permissions are to be removed.
      * @param permissions the permissions to be removed from the given agent.
-     * 
-     * @require permissions.isFrozen() : "The permissions are frozen.";
      */
     @NonCommitting
-    static void removePermissions(@Nonnull Agent agent, @Nonnull ReadonlyAgentPermissions permissions) throws SQLException {
-        assert permissions.isFrozen() : "The permissions are frozen.";
-        
+    static void removePermissions(@Nonnull Agent agent, @Nonnull @Frozen ReadonlyAgentPermissions permissions) throws SQLException {
         final @Nonnull String SQL = "DELETE FROM " + agent.getEntity().getSite() + "agent_permission WHERE entity = " + agent.getEntity() + " AND agent = " + agent + " AND " + AgentPermissions.CONDITION;
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
             permissions.set(preparedStatement, 1);

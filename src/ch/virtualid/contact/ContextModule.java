@@ -1,10 +1,10 @@
 package ch.virtualid.contact;
 
 import ch.virtualid.agent.Agent;
-import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Capturable;
+import ch.virtualid.annotations.Frozen;
 import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.NonFrozen;
 import ch.virtualid.annotations.Pure;
@@ -22,9 +22,7 @@ import ch.virtualid.service.CoreService;
 import ch.virtualid.service.Service;
 import ch.virtualid.util.FreezableLinkedList;
 import ch.virtualid.util.FreezableList;
-import ch.virtualid.util.FreezableSet;
 import ch.virtualid.util.ReadonlyList;
-import ch.virtualid.util.ReadonlySet;
 import ch.xdf.Block;
 import ch.xdf.ListWrapper;
 import ch.xdf.TupleWrapper;
@@ -85,12 +83,12 @@ public final class ContextModule implements BothModule {
     @NonCommitting
     public void createTables(@Nonnull Site site) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "context_preference (entity " + EntityClass.FORMAT + " NOT NULL, context " + Context.FORMAT + " NOT NULL, type " + Mapper.FORMAT + " NOT NULL, PRIMARY KEY (entity, context, type), FOREIGN KEY (entity, context) " + Context.getReference(site) + ", FOREIGN KEY (type) " + site.getEntityReference() + ")");
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "context_permission (entity " + EntityClass.FORMAT + " NOT NULL, context " + Context.FORMAT + " NOT NULL, type " + Mapper.FORMAT + " NOT NULL, PRIMARY KEY (entity, context, type), FOREIGN KEY (entity, context) " + Context.getReference(site) + ", FOREIGN KEY (type) " + site.getEntityReference() + ")");
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "context_authentication (entity " + EntityClass.FORMAT + " NOT NULL, context " + Context.FORMAT + " NOT NULL, type " + Mapper.FORMAT + " NOT NULL, PRIMARY KEY (entity, context, type), FOREIGN KEY (entity, context) " + Context.getReference(site) + ", FOREIGN KEY (type) " + site.getEntityReference() + ")");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "context_preference (entity " + EntityClass.FORMAT + " NOT NULL, context " + Context.FORMAT + " NOT NULL, type " + Mapper.FORMAT + " NOT NULL, PRIMARY KEY (entity, context, type), FOREIGN KEY (entity, context) " + Context.getReference(site) + ", FOREIGN KEY (type) " + Mapper.REFERENCE + ")");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "context_permission (entity " + EntityClass.FORMAT + " NOT NULL, context " + Context.FORMAT + " NOT NULL, type " + Mapper.FORMAT + " NOT NULL, PRIMARY KEY (entity, context, type), FOREIGN KEY (entity, context) " + Context.getReference(site) + ", FOREIGN KEY (type) " + Mapper.REFERENCE + ")");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "context_authentication (entity " + EntityClass.FORMAT + " NOT NULL, context " + Context.FORMAT + " NOT NULL, type " + Mapper.FORMAT + " NOT NULL, PRIMARY KEY (entity, context, type), FOREIGN KEY (entity, context) " + Context.getReference(site) + ", FOREIGN KEY (type) " + Mapper.REFERENCE + ")");
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "context_subcontext (entity " + EntityClass.FORMAT + " NOT NULL, context " + Context.FORMAT + " NOT NULL, subcontext " + Context.FORMAT + " NOT NULL, sequence SMALLINT, PRIMARY KEY (entity, context, subcontext), FOREIGN KEY (entity, context) " + Context.getReference(site) + ", FOREIGN KEY (entity, subcontext) " + Context.getReference(site) + ")");
             // TODO: Drop the sequence number and include a counter for how many times a subcontext is contained in a context, which is raised and lowered accordingly. (Zero means it's not a subcontext and a separate boolean indicates whether it's a direct subcontext.)
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "context_contact (entity " + EntityClass.FORMAT + " NOT NULL, context " + Context.FORMAT + " NOT NULL, contact " + Mapper.FORMAT + " NOT NULL, PRIMARY KEY (entity, context, contact), FOREIGN KEY (entity, context) " + Context.getReference(site) + ", FOREIGN KEY (contact) " + Mapper.REFERENCE + ")");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "context_contact (entity " + EntityClass.FORMAT + " NOT NULL, context " + Context.FORMAT + " NOT NULL, contact " + Contact.FORMAT + " NOT NULL, PRIMARY KEY (entity, context, contact), FOREIGN KEY (entity, context) " + Context.getReference(site) + ", FOREIGN KEY (contact) " + Contact.REFERENCE + ")");
             Mapper.addReference(site + "context_contact", "contact", "entity", "context", "contact");
         }
     }
@@ -224,57 +222,52 @@ public final class ContextModule implements BothModule {
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Contacts –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Returns the permissions of the given agent.
+     * Returns the contacts of the given context.
      * 
-     * @param agent the agent whose permissions are to be returned.
+     * @param context the context whose contacts are to be returned.
      * 
-     * @return the permissions of the given agent.
+     * @return the contacts of the given context.
      */
     @Pure
     @NonCommitting
-    static @Capturable @Nonnull @NonFrozen FreezableSet<Contact> getContacts(@Nonnull Context context) throws SQLException {
-        final @Nonnull String SQL = "SELECT " + AgentPermissions.COLUMNS + " FROM " + agent.getEntity().getSite() + "agent_permission WHERE entity = " + agent.getEntity() + " AND agent = " + agent;
+    static @Capturable @Nonnull @NonFrozen Contacts getContacts(@Nonnull Context context) throws SQLException {
+        final @Nonnull NonHostEntity entity = context.getEntity();
+        final @Nonnull String SQL = "SELECT contact FROM " + entity.getSite() + "context_contact WHERE entity = " + entity + " AND context = " + context;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
-            return AgentPermissions.get(resultSet, 1);
+            return Contacts.get(entity, resultSet, 1);
         }
     }
     
     /**
-     * Adds the given permissions to the given agent.
+     * Adds the given contacts to the given context.
      * 
-     * @param agent the agent to which the permissions are to be added.
-     * @param permissions the permissions to be added to the given agent.
-     * 
-     * @require permissions.isFrozen() : "The permissions are frozen.";
+     * @param context the context to which the contacts are to be added.
+     * @param contacts the contacts to be added to the given context.
      */
     @NonCommitting
-    static void addContacts(@Nonnull Context context, @Nonnull ReadonlySet<Contact> contacts) throws SQLException {
-        assert permissions.isFrozen() : "The permissions are frozen.";
-        
-        final @Nonnull String SQL = "INSERT INTO " + agent.getEntity().getSite() + "agent_permission (entity, agent, " + AgentPermissions.COLUMNS + ") VALUES (" + agent.getEntity() + ", " + agent + ", ?, ?)";
+    static void addContacts(@Nonnull Context context, @Nonnull @Frozen ReadonlyContacts contacts) throws SQLException {
+        final @Nonnull NonHostEntity entity = context.getEntity();
+        final @Nonnull String SQL = "INSERT INTO " + entity.getSite() + "context_contact (entity, context, contact) VALUES (" + entity + ", " + context + ", ?)";
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
-            permissions.set(preparedStatement, 1);
+            contacts.set(preparedStatement, 1);
             preparedStatement.executeBatch();
         }
     }
     
     /**
-     * Removes the given permissions from the given agent.
+     * Removes the given contacts from the given context.
      * 
-     * @param agent the agent from which the permissions are to be removed.
-     * @param permissions the permissions to be removed from the given agent.
-     * 
-     * @require permissions.isFrozen() : "The permissions are frozen.";
+     * @param context the context from which the contacts are to be removed.
+     * @param contacts the contacts to be removed from the given context.
      */
     @NonCommitting
-    static void removeContacts(@Nonnull Context context, @Nonnull ReadonlySet<Contact> contacts) throws SQLException {
-        assert permissions.isFrozen() : "The permissions are frozen.";
-        
-        final @Nonnull String SQL = "DELETE FROM " + agent.getEntity().getSite() + "agent_permission WHERE entity = " + agent.getEntity() + " AND agent = " + agent + " AND " + AgentPermissions.CONDITION;
+    static void removeContacts(@Nonnull Context context, @Nonnull @Frozen ReadonlyContacts contacts) throws SQLException {
+        final @Nonnull NonHostEntity entity = context.getEntity();
+        final @Nonnull String SQL = "DELETE FROM " + entity.getSite() + "context_contact WHERE entity = " + entity + " AND context = " + context + " AND contact = ?";
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
-            permissions.set(preparedStatement, 1);
+            contacts.set(preparedStatement, 1);
             final int[] counts = preparedStatement.executeBatch();
-            for (final int count : counts) if (count < 1) throw new SQLException("Could not find a particular permission.");
+            for (final int count : counts) if (count < 1) throw new SQLException("Could not find a contact.");
         }
     }
     

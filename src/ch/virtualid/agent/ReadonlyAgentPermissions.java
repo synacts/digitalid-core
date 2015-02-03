@@ -6,6 +6,7 @@ import ch.virtualid.annotations.Pure;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
+import ch.virtualid.interfaces.SQLizable;
 import ch.virtualid.util.ReadonlyMap;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -21,7 +22,7 @@ import javax.annotation.Nonnull;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 1.0
  */
-public interface ReadonlyAgentPermissions extends ReadonlyMap<SemanticType, Boolean>, Blockable {
+public interface ReadonlyAgentPermissions extends ReadonlyMap<SemanticType, Boolean>, Blockable, SQLizable {
     
     /**
      * Returns whether these agent permissions are valid.
@@ -131,15 +132,6 @@ public interface ReadonlyAgentPermissions extends ReadonlyMap<SemanticType, Bool
     @Pure
     public @Nonnull String writeTypesToString();
     
-    
-    /**
-     * Sets the parameters at the given start index of the prepared statement to this object.
-     * 
-     * @param preparedStatement the prepared statement whose parameters are to be set.
-     * @param startIndex the start index of the parameters to set.
-     */
-    @NonCommitting
-    public void set(@Nonnull PreparedStatement preparedStatement, int startIndex) throws SQLException;
     
     /**
      * Sets the parameters at the given start index of the prepared statement to this object.

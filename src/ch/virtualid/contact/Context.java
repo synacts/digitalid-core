@@ -1,9 +1,12 @@
 package ch.virtualid.contact;
 
 import ch.virtualid.annotations.Capturable;
-import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Committing;
+import ch.virtualid.annotations.Frozen;
+import ch.virtualid.annotations.NonCommitting;
+import ch.virtualid.annotations.NonFrozen;
 import ch.virtualid.annotations.OnlyForActions;
+import ch.virtualid.annotations.OnlyForClients;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.concept.Aspect;
 import ch.virtualid.concept.Instance;
@@ -19,10 +22,9 @@ import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
+import ch.virtualid.synchronizer.Synchronizer;
 import ch.virtualid.util.ConcurrentHashMap;
 import ch.virtualid.util.ConcurrentMap;
-import ch.virtualid.util.FreezableSet;
-import ch.virtualid.util.ReadonlySet;
 import ch.xdf.Block;
 import ch.xdf.Int64Wrapper;
 import java.security.SecureRandom;
@@ -424,22 +426,76 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
     
     /**
      * Stores the contacts of this context or null if not yet loaded.
-     * 
-     * @invariant contacts == null || contacts.isNotFrozen() : "The contacts are null or not frozen.";
      */
-    private @Nullable FreezableSet<Contact> contacts;
+    private @Nullable @NonFrozen Contacts contacts;
     
     /**
      * Returns the contacts of this context.
      * 
      * @return the contacts of this context.
-     * 
-     * @ensure return.isNotFrozen() : "The contacts are not frozen.";
      */
     @NonCommitting
-    public @Nonnull ReadonlySet<Contact> getContacts() throws SQLException {
+    public @Nonnull @NonFrozen ReadonlyContacts getContacts() throws SQLException {
         if (contacts == null) contacts = ContextModule.getContacts(this);
         return contacts;
+    }
+    
+    /**
+     * Adds the given contacts to this context.
+     * 
+     * @param contacts the contacts to be added to this context.
+     */
+    @Committing
+    @OnlyForClients
+    public void addContacts(@Nonnull @Frozen ReadonlyContacts contacts) throws SQLException {
+        if (!contacts.isEmpty()) Synchronizer.execute(new ContactsAdd(this, contacts));
+    }
+    
+    /**
+     * Adds the given contacts to this context.
+     * 
+     * @param newContacts the contacts to be added to this context.
+     */
+    @NonCommitting
+    @OnlyForActions
+    void addContactsForActions(@Nonnull @Frozen ReadonlyContacts newContacts) throws SQLException {
+        ContextModule.addContacts(this, newContacts);
+        if (contacts != null) contacts.addAll(newContacts);
+        notify(CONTACTS);
+    }
+    
+    /**
+     * Removes the given contacts from this context.
+     * 
+     * @param contacts the contacts to be removed from this context.
+     */
+    @Committing
+    @OnlyForClients
+    public void removeContacts(@Nonnull @Frozen ReadonlyContacts contacts) throws SQLException {
+        if (!contacts.isEmpty()) Synchronizer.execute(new ContactsRemove(this, contacts));
+    }
+    
+    /**
+     * Removes the given contacts from this context.
+     * 
+     * @param oldContacts the contacts to be removed from this context.
+     */
+    @NonCommitting
+    @OnlyForActions
+    void removeContactsForActions(@Nonnull @Frozen ReadonlyContacts oldContacts) throws SQLException {
+        ContextModule.removeContacts(this, oldContacts);
+        if (contacts != null) contacts.removeAll(oldContacts);
+        notify(CONTACTS);
+    }
+    
+    /**
+     * Returns a set with all the contacts of this context (i.e. including the contacts from subcontexts).
+     * 
+     * @return a set with all the contacts of this context (i.e. including the contacts from subcontexts).
+     */
+    @NonCommitting
+    public @Nonnull @Capturable @NonFrozen Contacts getAllContacts() throws SQLException {
+        return getContacts().clone(); // TODO: Make a real aggregation.
     }
     
     /**
@@ -451,37 +507,7 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
      */
     @NonCommitting
     public boolean contains(@Nonnull Contact contact) throws SQLException {
-        throw new SQLException();
-    }
-    
-    /**
-     * Adds the given contacts to this context.
-     * 
-     * @param contacts the contacts to be added to this context.
-     */
-    @Committing
-    public void addContacts(@Nonnull ReadonlySet<Contact> contacts) throws SQLException {
-        throw new SQLException();
-    }
-    
-    /**
-     * Removes the given contacts from this context.
-     * 
-     * @param contacts the contacts to be removed from this context.
-     */
-    @Committing
-    public void removeContacts(@Nonnull ReadonlySet<Contact> contacts) throws SQLException {
-        throw new SQLException();
-    }
-    
-    /**
-     * Returns a set with all the contacts of this context (i.e. the contacts from subcontexts are included as well).
-     * 
-     * @return a set with all the contacts of this context (i.e. the contacts from subcontexts are included as well).
-     */
-    @NonCommitting
-    public @Nonnull @Capturable FreezableSet<Contact> getAllContacts() throws SQLException {
-        throw new SQLException();
+        return getAllContacts().contains(contact);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Creation –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -525,9 +551,10 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
     /**
      * Reset this context.
      */
-    private void reset() {
+    public void reset() {
         this.name = null;
         this.permissions = null;
+        this.contacts = null;
         // TODO: Add the other fields once declared.
         notify(RESET);
     }

@@ -2,9 +2,12 @@ package ch.virtualid.agent;
 
 import static ch.virtualid.agent.Agent.get;
 import ch.virtualid.annotations.Capturable;
-import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Committing;
+import ch.virtualid.annotations.Frozen;
+import ch.virtualid.annotations.NonCommitting;
+import ch.virtualid.annotations.NonFrozen;
 import ch.virtualid.annotations.OnlyForActions;
+import ch.virtualid.annotations.OnlyForClients;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.concept.Aspect;
 import ch.virtualid.concept.NonHostConcept;
@@ -210,21 +213,17 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
     
     /**
      * Stores the permissions of this agent or null if not yet loaded.
-     * 
-     * @invariant permissions == null || permissions.isNotFrozen() : "The permissions are null or not frozen.";
      */
-    protected @Nullable AgentPermissions permissions;
+    protected @Nullable @NonFrozen AgentPermissions permissions;
     
     /**
      * Returns the permissions of this agent.
      * 
      * @return the permissions of this agent.
-     * 
-     * @ensure return.isNotFrozen() : "The permissions are not frozen.";
      */
     @Pure
     @NonCommitting
-    public final @Nonnull ReadonlyAgentPermissions getPermissions() throws SQLException {
+    public final @Nonnull @NonFrozen ReadonlyAgentPermissions getPermissions() throws SQLException {
         if (permissions == null) permissions = AgentModule.getPermissions(this);
         return permissions;
     }
@@ -236,12 +235,10 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
      * make sure to {@link #removePermissions(ch.virtualid.agent.ReadonlyAgentPermissions) remove} them first.
      * 
      * @param permissions the permissions to be added to this agent.
-     * 
-     * @require isOnClient() : "This agent is on a client.";
-     * @require permissions.isFrozen() : "The permissions are frozen.";
      */
     @Committing
-    public final void addPermissions(@Nonnull ReadonlyAgentPermissions permissions) throws SQLException {
+    @OnlyForClients
+    public final void addPermissions(@Nonnull @Frozen ReadonlyAgentPermissions permissions) throws SQLException {
         if (!permissions.isEmpty()) Synchronizer.execute(new AgentPermissionsAdd(this, permissions));
     }
     
@@ -249,12 +246,10 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
      * Adds the given permissions to this agent.
      * 
      * @param newPermissions the permissions to be added to this agent.
-     * 
-     * @require newPermissions.isFrozen() : "The new permissions are frozen.";
      */
     @NonCommitting
     @OnlyForActions
-    final void addPermissionsForActions(@Nonnull ReadonlyAgentPermissions newPermissions) throws SQLException {
+    final void addPermissionsForActions(@Nonnull @Frozen ReadonlyAgentPermissions newPermissions) throws SQLException {
         AgentModule.addPermissions(this, newPermissions);
         if (permissions != null) permissions.putAll(newPermissions);
         notify(PERMISSIONS);
@@ -264,12 +259,10 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
      * Removes the given permissions from this agent.
      * 
      * @param permissions the permissions to be removed from this agent.
-     * 
-     * @require isOnClient() : "This agent is on a client.";
-     * @require permissions.isFrozen() : "The permissions are frozen.";
      */
     @Committing
-    public final void removePermissions(@Nonnull ReadonlyAgentPermissions permissions) throws SQLException {
+    @OnlyForClients
+    public final void removePermissions(@Nonnull @Frozen ReadonlyAgentPermissions permissions) throws SQLException {
         if (!permissions.isEmpty()) Synchronizer.execute(new AgentPermissionsRemove(this, permissions));
     }
     
@@ -277,12 +270,10 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
      * Removes the given permissions from this agent.
      * 
      * @param oldPermissions the permissions to be removed from this agent.
-     * 
-     * @require oldPermissions.isFrozen() : "The old permissions are frozen.";
      */
     @NonCommitting
     @OnlyForActions
-    final void removePermissionsForActions(@Nonnull ReadonlyAgentPermissions oldPermissions) throws SQLException {
+    final void removePermissionsForActions(@Nonnull @Frozen ReadonlyAgentPermissions oldPermissions) throws SQLException {
         AgentModule.removePermissions(this, oldPermissions);
         if (permissions != null) permissions.removeAll(oldPermissions);
         notify(PERMISSIONS);

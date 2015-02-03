@@ -8,14 +8,15 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * This annotation indicates that a field, a parameter or a local variable {@link Freezable#isFrozen() is frozen}.
+ * This annotation indicates that a field or a parameter {@link Freezable#isFrozen() is frozen}.
  * 
+ * @see NonFrozen
  * @see Freezable
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 1.0
  */
 @Documented
-@Target({ElementType.FIELD, ElementType.PARAMETER, ElementType.LOCAL_VARIABLE, ElementType.METHOD, ElementType.CONSTRUCTOR})
+@Target({ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD, ElementType.CONSTRUCTOR})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Frozen {}

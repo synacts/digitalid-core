@@ -13,7 +13,7 @@ import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identifier.InternalNonHostIdentifier;
 import ch.virtualid.identity.Category;
 import ch.virtualid.identity.Identity;
-import ch.virtualid.identity.InternalNonHostIdentity;
+import ch.virtualid.identity.NaturalPerson;
 import ch.virtualid.service.CoreService;
 import ch.xdf.Block;
 import java.io.IOException;
@@ -46,10 +46,10 @@ public class IdentitySetup extends ServerSetup {
         return role;
     }
     
-    private static @Nonnull InternalNonHostIdentity subject;
+    private static @Nonnull NaturalPerson subject;
     
     @Pure
-    protected static @Nonnull InternalNonHostIdentity getSubject() {
+    protected static @Nonnull NaturalPerson getSubject() {
         return subject;
     }
     
@@ -67,7 +67,7 @@ public class IdentitySetup extends ServerSetup {
             client = new Client("tester", "Test Client", Image.CLIENT, AgentPermissions.GENERAL_WRITE);
             final @Nonnull InternalNonHostIdentifier identifier = new InternalNonHostIdentifier("person@example.com");
             role = client.openAccount(identifier, Category.NATURAL_PERSON);
-            subject = identifier.getIdentity();
+            subject = identifier.getIdentity().toNaturalPerson();
             Database.commit();
         } catch (@Nonnull InterruptedException | SQLException | IOException | PacketException | ExternalException exception) {
             exception.printStackTrace();
