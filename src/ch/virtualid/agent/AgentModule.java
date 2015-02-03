@@ -58,6 +58,8 @@ import javax.annotation.Nullable;
  */
 public final class AgentModule implements BothModule {
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Module Initialization –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
     static { ContextModule.initialize(); }
     
     /**
@@ -70,6 +72,8 @@ public final class AgentModule implements BothModule {
     public @Nonnull Service getService() {
         return CoreService.SERVICE;
     }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Table Creation and Deletion –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Creates the table which is referenced for the given site.
@@ -121,6 +125,7 @@ public final class AgentModule implements BothModule {
         }
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Module Export and Import –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the semantic type {@code entry.agent.agent.module@virtualid.ch}.
@@ -457,6 +462,7 @@ public final class AgentModule implements BothModule {
         }
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– State Getter and Setter –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the semantic type {@code entry.agent.agents.state@virtualid.ch}.
@@ -738,6 +744,7 @@ public final class AgentModule implements BothModule {
         }
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Agent –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Adds the given agent.
@@ -776,6 +783,7 @@ public final class AgentModule implements BothModule {
         }
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Permissions –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns the permissions of the given agent.
@@ -836,6 +844,7 @@ public final class AgentModule implements BothModule {
         redeterminePermissionsOrder(agent);
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Permissions Order –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Redetermines which agents have stronger and weaker permissions than the given agent or, if that one is null, all agents at the given entity.
@@ -865,6 +874,7 @@ public final class AgentModule implements BothModule {
         redeterminePermissionsOrder(agent.getEntity(), agent);
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Restrictions –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns the restrictions of the given agent.
@@ -939,6 +949,7 @@ public final class AgentModule implements BothModule {
         redetermineRestrictionsOrder(agent);
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Restrictions Order –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Redetermines which agents have stronger and weaker restrictions than the given agent or, if that one is null, all agents at the given entity.
@@ -981,6 +992,7 @@ public final class AgentModule implements BothModule {
         redetermineRestrictionsOrder(entity, null);
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Covering –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns the agents that are weaker than the given agent.
@@ -1049,6 +1061,7 @@ public final class AgentModule implements BothModule {
         }
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Client Agent –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Adds the client agent with the given parameters to the database.
@@ -1108,6 +1121,7 @@ public final class AgentModule implements BothModule {
         }
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Commitment –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns the commitment of the given client agent.
@@ -1143,6 +1157,7 @@ public final class AgentModule implements BothModule {
         }
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Name –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns the name of the given client agent.
@@ -1189,6 +1204,7 @@ public final class AgentModule implements BothModule {
         }
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Icon –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns the icon of the given client agent.
@@ -1235,6 +1251,7 @@ public final class AgentModule implements BothModule {
         }
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Outgoing Role –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Adds the outgoing role with the given parameters to the database.
@@ -1285,6 +1302,7 @@ public final class AgentModule implements BothModule {
         }
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Relation –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns the relation of the given outgoing role.
@@ -1328,6 +1346,7 @@ public final class AgentModule implements BothModule {
         }
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Context –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns the context of the given outgoing role.
@@ -1370,6 +1389,7 @@ public final class AgentModule implements BothModule {
         redetermineRestrictionsOrder(outgoingRole);
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Incoming Role –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Adds the incoming role with the given issuer, relation and agent number to the given entity.

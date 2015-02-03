@@ -37,12 +37,15 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * This class models the context for contacts.
+ * This class models the contexts for {@link Contact contacts}.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 0.4
  */
 public final class Context extends NonHostConcept implements Immutable, Blockable, SQLizable {
+    
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Aspects –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the aspect of the name being changed at the observed context.
@@ -90,24 +93,7 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
     public static final @Nonnull Aspect RESET = new Aspect(Context.class, "reset");
     
     
-    /**
-     * Stores the data type used to reference instances of this class.
-     */
-    public static final @Nonnull String FORMAT = "BIGINT";
-    
-    /**
-     * Returns the foreign key constraint used to reference instances of this class.
-     * 
-     * @param site the site at which the foreign key constraint is declared.
-     * 
-     * @return the foreign key constraint used to reference instances of this class.
-     */
-    @DoesNotCommit
-    public static @Nonnull String getReference(@Nonnull Site site) throws SQLException {
-        ContextModule.createReferenceTable(site);
-        return "REFERENCES " + site + "context_name (entity, context) ON DELETE CASCADE";
-    }
-    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the semantic type {@code context@virtualid.ch}.
@@ -119,62 +105,13 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
      */
     public static final @Nonnull SemanticType FLAT = SemanticType.create("flat.context@virtualid.ch");    
     
-    /**
-     * Stores the number of the root context.
-     */
-    public static final long ROOT = 0L;
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Number –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the number that denotes the context.
      */
     private final long number;
-    
-    /**
-     * Creates a new context with the given entity and number.
-     * 
-     * @param entity the entity to which the context belongs.
-     * @param number the number that denotes the context.
-     */
-    private Context(@Nonnull NonHostEntity entity, long number) {
-        super(entity);
-        
-        this.number = number;
-    }
-    
-    /**
-     * Creates a new context at the given role.
-     * 
-     * @param role the role to which the context belongs.
-     */
-    public static @Nonnull Context create(@Nonnull Role role) {
-        final @Nonnull Context context = get(role, new SecureRandom().nextLong());
-//        Synchronizer.execute(new ContextCreate(context));
-        return context;
-    }
-    
-    /**
-     * Creates this context in the database.
-     */
-    @DoesNotCommit
-    @OnlyForActions
-    public void createForActions() throws SQLException {
-        ContextModule.create(this);
-        notify(CREATED);
-    }
-    
-    @Pure
-    @Override
-    public @Nonnull SemanticType getType() {
-        return TYPE;
-    }
-    
-    @Pure
-    @Override
-    public @Nonnull Block toBlock() {
-        return new Int64Wrapper(TYPE, number).toBlock();
-    }
-    
     
     /**
      * Returns the number that denotes this context.
@@ -186,6 +123,13 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
         return number;
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Root –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Stores the number of the root context.
+     */
+    public static final long ROOT = 0L;
+    
     /**
      * Returns whether this context is the root.
      * 
@@ -196,17 +140,7 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
         return number == ROOT;
     }
     
-    
-    /**
-     * Reset this context.
-     */
-    private void reset() {
-        this.name = null;
-        this.permissions = null;
-        // TODO: Add the other fields once decalred.
-        notify(RESET);
-    }
-    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Name –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the name of this context.
@@ -282,6 +216,11 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
         notify(NAME);
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Icon –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Preferences –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Permissions –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the permissions of this context.
@@ -361,6 +300,7 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
         notify(PERMISSIONS);
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Authentications –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns the authentications of this context.
@@ -392,6 +332,7 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
         
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Subcontexts –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns a list of the subcontexts in the specified sequence.
@@ -452,6 +393,7 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
         throw new SQLException();
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Supercontexts –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns a set with the subcontexts of this context.
@@ -478,6 +420,7 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
         return context.isSupercontextOf(this);
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Contacts –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns a set with the contacts of this context.
@@ -531,6 +474,30 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
         throw new SQLException();
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Creation –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Creates a new context at the given role.
+     * 
+     * @param role the role to which the context belongs.
+     */
+    public static @Nonnull Context create(@Nonnull Role role) {
+        final @Nonnull Context context = get(role, new SecureRandom().nextLong());
+//        Synchronizer.execute(new ContextCreate(context));
+        return context;
+    }
+    
+    /**
+     * Creates this context in the database.
+     */
+    @DoesNotCommit
+    @OnlyForActions
+    public void createForActions() throws SQLException {
+        ContextModule.create(this);
+        notify(CREATED);
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Indexing –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Caches contexts given their entity and number.
@@ -543,6 +510,43 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
                 @Override public void notify(@Nonnull Aspect aspect, @Nonnull Instance instance) { index.remove(instance); }
             }, Entity.DELETED);
         }
+    }
+    
+    /**
+     * Reset this context.
+     */
+    private void reset() {
+        this.name = null;
+        this.permissions = null;
+        // TODO: Add the other fields once declared.
+        notify(RESET);
+    }
+    
+    /**
+     * Resets the contexts of the given entity after having reloaded the contexts module.
+     * 
+     * @param entity the entity whose contexts are to be reset.
+     */
+    public static void reset(@Nonnull NonHostEntity entity) {
+        final @Nullable ConcurrentMap<Long, Context> map = index.get(entity);
+        if (map != null) {
+            final @Nonnull Collection<Context> contexts = map.values();
+            for (final @Nonnull Context context : contexts) context.reset();
+        }
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructors –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Creates a new context with the given entity and number.
+     * 
+     * @param entity the entity to which the context belongs.
+     * @param number the number that denotes the context.
+     */
+    private Context(@Nonnull NonHostEntity entity, long number) {
+        super(entity);
+        
+        this.number = number;
     }
     
     /**
@@ -589,6 +593,20 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
         try { return get(entity, Long.parseLong(string)); } catch (@Nonnull NumberFormatException exception) { throw new InvalidEncodingException("Could not parse the given string.", exception); }
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Blockable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    @Pure
+    @Override
+    public @Nonnull SemanticType getType() {
+        return TYPE;
+    }
+    
+    @Pure
+    @Override
+    public @Nonnull Block toBlock() {
+        return new Int64Wrapper(TYPE, number).toBlock();
+    }
+    
     /**
      * Returns the context with the number given by the block.
      * 
@@ -602,6 +620,26 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         return get(entity, new Int64Wrapper(block).getValue());
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– SQLizable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Stores the data type used to reference instances of this class.
+     */
+    public static final @Nonnull String FORMAT = "BIGINT";
+    
+    /**
+     * Returns the foreign key constraint used to reference instances of this class.
+     * 
+     * @param site the site at which the foreign key constraint is declared.
+     * 
+     * @return the foreign key constraint used to reference instances of this class.
+     */
+    @DoesNotCommit
+    public static @Nonnull String getReference(@Nonnull Site site) throws SQLException {
+        ContextModule.createReferenceTable(site);
+        return "REFERENCES " + site + "context_name (entity, context) ON DELETE CASCADE";
     }
     
     /**
@@ -655,20 +693,7 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
         else context.set(preparedStatement, parameterIndex);
     }
     
-    
-    /**
-     * Resets the contexts of the given entity after having reloaded the contexts module.
-     * 
-     * @param entity the entity whose contexts are to be reset.
-     */
-    public static void reset(@Nonnull NonHostEntity entity) {
-        final @Nullable ConcurrentMap<Long, Context> map = index.get(entity);
-        if (map != null) {
-            final @Nonnull Collection<Context> contexts = map.values();
-            for (final @Nonnull Context context : contexts) context.reset();
-        }
-    }
-    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override

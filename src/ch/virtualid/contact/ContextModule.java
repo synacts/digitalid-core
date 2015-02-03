@@ -43,6 +43,8 @@ import javax.annotation.Nullable;
  */
 public final class ContextModule implements BothModule {
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Module Initialization –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
     /**
      * Initializes this class.
      */
@@ -58,6 +60,8 @@ public final class ContextModule implements BothModule {
     public @Nonnull Service getService() {
         return CoreService.SERVICE;
     }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Table Creation and Deletion –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Creates the table which is referenced for the given site.
@@ -80,7 +84,7 @@ public final class ContextModule implements BothModule {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "context_authentication (entity " + EntityClass.FORMAT + " NOT NULL, context " + Context.FORMAT + " NOT NULL, type " + Mapper.FORMAT + " NOT NULL, PRIMARY KEY (entity, context, type), FOREIGN KEY (entity, context) " + Context.getReference(site) + ", FOREIGN KEY (type) " + site.getEntityReference() + ")");
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "context_subcontext (entity " + EntityClass.FORMAT + " NOT NULL, context " + Context.FORMAT + " NOT NULL, subcontext " + Context.FORMAT + " NOT NULL, sequence SMALLINT, PRIMARY KEY (entity, context, subcontext), FOREIGN KEY (entity, context) " + Context.getReference(site) + ", FOREIGN KEY (entity, subcontext) " + Context.getReference(site) + ")");
             // TODO: Drop the sequence number and include a counter for how many times a subcontext is contained in a context, which is raised and lowered accordingly. (Zero means it's not a subcontext and a separate boolean indicates whether it's a direct subcontext.)
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "context_contact (entity " + EntityClass.FORMAT + " NOT NULL, context " + Context.FORMAT + " NOT NULL, contact " + Mapper.FORMAT + " NOT NULL, PRIMARY KEY (entity, context, contact), FOREIGN KEY (entity, context) " + Context.getReference(site) + ", FOREIGN KEY (contact) " + site.getEntityReference() + ")");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "context_contact (entity " + EntityClass.FORMAT + " NOT NULL, context " + Context.FORMAT + " NOT NULL, contact " + Mapper.FORMAT + " NOT NULL, PRIMARY KEY (entity, context, contact), FOREIGN KEY (entity, context) " + Context.getReference(site) + ", FOREIGN KEY (contact) " + Mapper.REFERENCE + ")");
             Mapper.addReference(site + "context_contact", "contact", "entity", "context", "contact");
         }
     }
@@ -99,6 +103,7 @@ public final class ContextModule implements BothModule {
         }
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Module Export and Import –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the semantic type {@code entry.contexts.module@virtualid.ch}.
@@ -138,6 +143,7 @@ public final class ContextModule implements BothModule {
         }
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– State Getter and Setter –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the semantic type {@code entry.contexts.state@virtualid.ch}.
@@ -186,6 +192,7 @@ public final class ContextModule implements BothModule {
         }
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Creation –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Creates the given context.

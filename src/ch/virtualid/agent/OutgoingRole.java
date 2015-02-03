@@ -38,6 +38,9 @@ import javax.annotation.Nullable;
  */
 public final class OutgoingRole extends Agent implements Immutable, Blockable, SQLizable {
     
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Aspects –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
     /**
      * Stores the aspect of the relation being changed at the observed outgoing role.
      */
@@ -49,39 +52,7 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
     public static final @Nonnull Aspect CONTEXT = new Aspect(OutgoingRole.class, "context changed");
     
     
-    /**
-     * Stores the relation between the issuing and the receiving identity.
-     * 
-     * @invariant relation.isRoleType() : "The relation is a role type.";
-     */
-    private @Nullable SemanticType relation;
-    
-    /**
-     * Stores the context to which this outgoing role is assigned.
-     * 
-     * @invariant context.getEntity().equals(getEntity()) : "The context belongs to the same entity.";
-     */
-    private @Nullable Context context;
-    
-    /**
-     * Stores whether this outgoing role can be restricted.
-     */
-    private final boolean restrictable;
-    
-    /**
-     * Creates a new outgoing role with the given entity and number.
-     * 
-     * @param entity the entity to which this outgoing role belongs.
-     * @param number the number that references this outgoing role.
-     * @param removed whether this outgoing role has been removed.
-     * @param restrictable whether the outgoing role can be restricted.
-     */
-    private OutgoingRole(@Nonnull NonHostEntity entity, long number, boolean removed, boolean restrictable) {
-        super(entity, number, removed);
-        
-        this.restrictable = restrictable;
-    }
-    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Issuance –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Issues this outgoing role to the given contacts.
@@ -102,6 +73,18 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
     }
     
     /**
+     * Issues this outgoing role to the contacts of the context.
+     * 
+     * @require isOnHost() : "This outgoing role is on a host.";
+     */
+    @DoesNotCommit
+    public void issue() throws SQLException {
+        issue(getContext().getAllContacts());
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Revocation –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
      * Revokes this outgoing role from the given contacts.
      * 
      * @param contacts the contacts to revoke this outgoing role from.
@@ -120,16 +103,6 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
     }
     
     /**
-     * Issues this outgoing role to the contacts of the context.
-     * 
-     * @require isOnHost() : "This outgoing role is on a host.";
-     */
-    @DoesNotCommit
-    public void issue() throws SQLException {
-        issue(getContext().getAllContacts());
-    }
-    
-    /**
      * Revokes this outgoing role from the contacts of the context.
      * 
      * @require isOnHost() : "This outgoing role is on a host.";
@@ -139,42 +112,14 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
         revoke(getContext().getAllContacts());
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Relation –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Creates a new outgoing role with the given context.
+     * Stores the relation between the issuing and the receiving identity.
      * 
-     * @param relation the relation between the issuing and the receiving identity.
-     * @param context the context to which the outgoing role is assigned.
-     * 
-     * @require relation.isRoleType() : "The relation is a role type.";
-     * @require context.isOnClient() : "The context is on a client.";
+     * @invariant relation.isRoleType() : "The relation is a role type.";
      */
-    @EndsCommitted
-    public static @Nonnull OutgoingRole create(@Nonnull SemanticType relation, @Nonnull Context context) throws SQLException {
-        final @Nonnull OutgoingRole outgoingRole = get(context.getRole(), new SecureRandom().nextLong(), false, false);
-        Synchronizer.execute(new OutgoingRoleCreate(outgoingRole, relation, context));
-        return outgoingRole;
-    }
-    
-    /**
-     * Creates this outgoing role in the database.
-     * 
-     * @param relation the relation between the issuing and the receiving identity.
-     * @param context the context to which the outgoing role is assigned.
-     * 
-     * @require relation.isRoleType() : "The relation is a role type.";
-     * @require context.getEntity().equals(getEntity()) : "The context belongs to the entity of this outgoing role.";
-     */
-    @DoesNotCommit
-    @OnlyForActions
-    public void createForActions(@Nonnull SemanticType relation, @Nonnull Context context) throws SQLException {
-        AgentModule.addOutgoingRole(this, relation, context);
-        this.relation = relation;
-        this.context = context;
-        if (isOnHost()) issue();
-        notify(Agent.CREATED);
-    }
-    
+    private @Nullable SemanticType relation;
     
     /**
      * Returns the relation between the issuing and the receiving identity.
@@ -225,6 +170,14 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
         notify(RELATION);
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Context –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Stores the context to which this outgoing role is assigned.
+     * 
+     * @invariant context.getEntity().equals(getEntity()) : "The context belongs to the same entity.";
+     */
+    private @Nullable Context context;
     
     /**
      * Returns the context to which this outgoing role is assigned.
@@ -279,106 +232,12 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
         notify(CONTEXT);
     }
     
-    
-    @Override
-    public void reset() {
-        this.relation = null;
-        this.context = null;
-        super.reset();
-    }
-    
-    
-    @Pure
-    @Override
-    public boolean isClient() {
-        return false;
-    }
-    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Restrictable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Caches outgoing roles given their entity and number.
+     * Stores whether this outgoing role can be restricted.
      */
-    private static final @Nonnull ConcurrentMap<NonHostEntity, ConcurrentMap<Long, OutgoingRole>> index = new ConcurrentHashMap<NonHostEntity, ConcurrentMap<Long, OutgoingRole>>();
-    
-    static {
-        if (Database.isSingleAccess()) {
-            Instance.observeAspects(new Observer() {
-                @Override public void notify(@Nonnull Aspect aspect, @Nonnull Instance instance) { index.remove(instance); }
-            }, Entity.DELETED);
-        }
-    }
-    
-    /**
-     * Returns a (locally cached) outgoing role that might not (yet) exist in the database.
-     * 
-     * @param entity the entity to which the outgoing role belongs.
-     * @param number the number that denotes the outgoing role.
-     * @param removed whether the outgoing role has been removed.
-     * @param restrictable whether the outgoing role can be restricted.
-     * 
-     * @return a new or existing outgoing role with the given entity and number.
-     */
-    @Pure
-    public static @Nonnull OutgoingRole get(@Nonnull NonHostEntity entity, long number, boolean removed, boolean restrictable) {
-        if (!restrictable && Database.isSingleAccess()) {
-            @Nullable ConcurrentMap<Long, OutgoingRole> map = index.get(entity);
-            if (map == null) map = index.putIfAbsentElseReturnPresent(entity, new ConcurrentHashMap<Long, OutgoingRole>());
-            @Nullable OutgoingRole outgoingRole = map.get(number);
-            if (outgoingRole == null) outgoingRole = map.putIfAbsentElseReturnPresent(number, new OutgoingRole(entity, number, removed, restrictable));
-            return outgoingRole;
-        } else {
-            return new OutgoingRole(entity, number, removed, restrictable);
-        }
-    }
-    
-    /**
-     * Returns the given column of the result set as an instance of this class.
-     * 
-     * @param entity the entity to which the outgoing role belongs.
-     * @param resultSet the result set to retrieve the data from.
-     * @param columnIndex the index of the column containing the data.
-     * @param removed whether the outgoing role has been removed.
-     * @param restrictable whether the outgoing role can be restricted.
-     * 
-     * @return the given column of the result set as an instance of this class.
-     */
-    @Pure
-    @DoesNotCommit
-    public static @Nonnull OutgoingRole get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int columnIndex, boolean removed, boolean restrictable) throws SQLException {
-        return get(entity, resultSet.getLong(columnIndex), removed, restrictable);
-    }
-    
-    /**
-     * Resets the outgoing roles of the given entity after having reloaded the agents module.
-     * 
-     * @param entity the entity whose outgoing roles are to be reset.
-     */
-    public static void reset(@Nonnull NonHostEntity entity) {
-        if (Database.isSingleAccess()) {
-            final @Nullable ConcurrentMap<Long, OutgoingRole> map = index.get(entity);
-            if (map != null) for (final @Nonnull OutgoingRole outgoingRole : map.values()) outgoingRole.reset();
-        }
-    }
-    
-    
-    /**
-     * Checks whether this outgoing role covers the given credential and throws a {@link PacketException} if not.
-     * 
-     * @param credential the credential that needs to be covered.
-     * 
-     * @require credential.getPermissions() != null : "The permissions of the credential are not null.";
-     * @require credential.getRestrictions() != null : "The restrictions of the credential are not null.";
-     */
-    @DoesNotCommit
-    public void checkCovers(@Nonnull Credential credential) throws SQLException, PacketException {
-        final @Nullable ReadonlyAgentPermissions permissions = credential.getPermissions();
-        assert permissions != null : "The permissions of the credential are not null.";
-        final @Nullable Restrictions restrictions = credential.getRestrictions();
-        assert restrictions != null : "The restrictions of the credential are not null.";
-        
-        getPermissions().checkCover(permissions);
-        getRestrictions().checkCover(restrictions);
-    }
+    private final boolean restrictable;
     
     /**
      * Returns whether this outgoing role can be restricted.
@@ -409,6 +268,162 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
         if (restrictions == null) getRestrictions();
         assert restrictions != null;
         restrictions = restrictions.restrictTo(credential.getRestrictionsNotNull());
+    }
+    
+    /**
+     * Checks whether this outgoing role covers the given credential and throws a {@link PacketException} if not.
+     * 
+     * @param credential the credential that needs to be covered.
+     * 
+     * @require credential.getPermissions() != null : "The permissions of the credential are not null.";
+     * @require credential.getRestrictions() != null : "The restrictions of the credential are not null.";
+     */
+    @DoesNotCommit
+    public void checkCovers(@Nonnull Credential credential) throws SQLException, PacketException {
+        final @Nullable ReadonlyAgentPermissions permissions = credential.getPermissions();
+        assert permissions != null : "The permissions of the credential are not null.";
+        final @Nullable Restrictions restrictions = credential.getRestrictions();
+        assert restrictions != null : "The restrictions of the credential are not null.";
+        
+        getPermissions().checkCover(permissions);
+        getRestrictions().checkCover(restrictions);
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Agent –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    @Override
+    public void reset() {
+        this.relation = null;
+        this.context = null;
+        super.reset();
+    }
+    
+    @Pure
+    @Override
+    public boolean isClient() {
+        return false;
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Creation –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Creates a new outgoing role with the given context.
+     * 
+     * @param relation the relation between the issuing and the receiving identity.
+     * @param context the context to which the outgoing role is assigned.
+     * 
+     * @require relation.isRoleType() : "The relation is a role type.";
+     * @require context.isOnClient() : "The context is on a client.";
+     */
+    @EndsCommitted
+    public static @Nonnull OutgoingRole create(@Nonnull SemanticType relation, @Nonnull Context context) throws SQLException {
+        final @Nonnull OutgoingRole outgoingRole = get(context.getRole(), new SecureRandom().nextLong(), false, false);
+        Synchronizer.execute(new OutgoingRoleCreate(outgoingRole, relation, context));
+        return outgoingRole;
+    }
+    
+    /**
+     * Creates this outgoing role in the database.
+     * 
+     * @param relation the relation between the issuing and the receiving identity.
+     * @param context the context to which the outgoing role is assigned.
+     * 
+     * @require relation.isRoleType() : "The relation is a role type.";
+     * @require context.getEntity().equals(getEntity()) : "The context belongs to the entity of this outgoing role.";
+     */
+    @DoesNotCommit
+    @OnlyForActions
+    public void createForActions(@Nonnull SemanticType relation, @Nonnull Context context) throws SQLException {
+        AgentModule.addOutgoingRole(this, relation, context);
+        this.relation = relation;
+        this.context = context;
+        if (isOnHost()) issue();
+        notify(Agent.CREATED);
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Indexing –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Caches outgoing roles given their entity and number.
+     */
+    private static final @Nonnull ConcurrentMap<NonHostEntity, ConcurrentMap<Long, OutgoingRole>> index = new ConcurrentHashMap<NonHostEntity, ConcurrentMap<Long, OutgoingRole>>();
+    
+    static {
+        if (Database.isSingleAccess()) {
+            Instance.observeAspects(new Observer() {
+                @Override public void notify(@Nonnull Aspect aspect, @Nonnull Instance instance) { index.remove(instance); }
+            }, Entity.DELETED);
+        }
+    }
+    
+    /**
+     * Resets the outgoing roles of the given entity after having reloaded the agents module.
+     * 
+     * @param entity the entity whose outgoing roles are to be reset.
+     */
+    public static void reset(@Nonnull NonHostEntity entity) {
+        if (Database.isSingleAccess()) {
+            final @Nullable ConcurrentMap<Long, OutgoingRole> map = index.get(entity);
+            if (map != null) for (final @Nonnull OutgoingRole outgoingRole : map.values()) outgoingRole.reset();
+        }
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructors –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Creates a new outgoing role with the given entity and number.
+     * 
+     * @param entity the entity to which this outgoing role belongs.
+     * @param number the number that references this outgoing role.
+     * @param removed whether this outgoing role has been removed.
+     * @param restrictable whether the outgoing role can be restricted.
+     */
+    private OutgoingRole(@Nonnull NonHostEntity entity, long number, boolean removed, boolean restrictable) {
+        super(entity, number, removed);
+        
+        this.restrictable = restrictable;
+    }
+    
+    /**
+     * Returns a (locally cached) outgoing role that might not (yet) exist in the database.
+     * 
+     * @param entity the entity to which the outgoing role belongs.
+     * @param number the number that denotes the outgoing role.
+     * @param removed whether the outgoing role has been removed.
+     * @param restrictable whether the outgoing role can be restricted.
+     * 
+     * @return a new or existing outgoing role with the given entity and number.
+     */
+    @Pure
+    public static @Nonnull OutgoingRole get(@Nonnull NonHostEntity entity, long number, boolean removed, boolean restrictable) {
+        if (!restrictable && Database.isSingleAccess()) {
+            @Nullable ConcurrentMap<Long, OutgoingRole> map = index.get(entity);
+            if (map == null) map = index.putIfAbsentElseReturnPresent(entity, new ConcurrentHashMap<Long, OutgoingRole>());
+            @Nullable OutgoingRole outgoingRole = map.get(number);
+            if (outgoingRole == null) outgoingRole = map.putIfAbsentElseReturnPresent(number, new OutgoingRole(entity, number, removed, restrictable));
+            return outgoingRole;
+        } else {
+            return new OutgoingRole(entity, number, removed, restrictable);
+        }
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– SQLizable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Returns the given column of the result set as an instance of this class.
+     * 
+     * @param entity the entity to which the outgoing role belongs.
+     * @param resultSet the result set to retrieve the data from.
+     * @param columnIndex the index of the column containing the data.
+     * @param removed whether the outgoing role has been removed.
+     * @param restrictable whether the outgoing role can be restricted.
+     * 
+     * @return the given column of the result set as an instance of this class.
+     */
+    @Pure
+    @DoesNotCommit
+    public static @Nonnull OutgoingRole get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int columnIndex, boolean removed, boolean restrictable) throws SQLException {
+        return get(entity, resultSet.getLong(columnIndex), removed, restrictable);
     }
     
 }

@@ -6,7 +6,7 @@ package ch.virtualid.contact;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 0.0
  */
-//public class ContactsAdd {
+final class ContactsAdd {
 //    
 //    public ContactsAdd() {
 //        
@@ -40,4 +40,4 @@ package ch.virtualid.contact;
 //        
 //    }
 //    
-//}
+}

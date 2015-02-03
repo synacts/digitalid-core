@@ -33,6 +33,8 @@ import javax.annotation.Nullable;
  */
 public final class ContactModule implements BothModule {
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Module Initialization –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
     /**
      * Stores an instance of this module.
      */
@@ -43,6 +45,8 @@ public final class ContactModule implements BothModule {
     public @Nonnull Service getService() {
         return CoreService.SERVICE;
     }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Table Creation and Deletion –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Override
     @DoesNotCommit
@@ -66,6 +70,7 @@ public final class ContactModule implements BothModule {
         }
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Module Export and Import –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the semantic type {@code entry.contacts.module@virtualid.ch}.
@@ -105,6 +110,7 @@ public final class ContactModule implements BothModule {
         }
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– State Getter and Setter –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the semantic type {@code entry.contacts.state@virtualid.ch}.

@@ -40,41 +40,21 @@ import javax.annotation.Nullable;
  */
 public final class Contact extends NonHostConcept implements Immutable, Blockable, SQLizable {
     
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
     /**
      * Stores the semantic type {@code contact@virtualid.ch}.
      */
     public static final @Nonnull SemanticType TYPE = SemanticType.create("contact@virtualid.ch").load(Person.IDENTIFIER);
     
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Person –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
     /**
      * Stores the person of this contact.
      */
     private final @Nonnull Person person;
-    
-    /**
-     * Creates a new contact with the given entity and person.
-     * 
-     * @param entity the entity to which this contact belongs.
-     * @param person the person that is a contact of the entity.
-     */
-    private Contact(@Nonnull NonHostEntity entity, @Nonnull Person person) {
-        super(entity);
-        
-        this.person = person;
-    }
-    
-    @Pure
-    @Override
-    public @Nonnull SemanticType getType() {
-        return TYPE;
-    }
-    
-    @Pure
-    @Override
-    public @Nonnull Block toBlock() {
-        return person.toBlock(TYPE);
-    }
-    
     
     /**
      * Returns the person of this contact.
@@ -129,6 +109,7 @@ public final class Contact extends NonHostConcept implements Immutable, Blockabl
         return (ExternalPerson) person;
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Permissions –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns the permissions of this contact.
@@ -139,6 +120,8 @@ public final class Contact extends NonHostConcept implements Immutable, Blockabl
     public @Nonnull ReadonlyContactPermissions getPermissions() throws SQLException {
         return ContactPermissions.NONE; // TODO
     }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Authentications –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns the authentications of this contact.
@@ -152,6 +135,7 @@ public final class Contact extends NonHostConcept implements Immutable, Blockabl
     
     // TODO: Include methods to aggregate the permissions and authentications over the contexts.
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Indexing –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Caches contacts given their entity and person.
@@ -164,6 +148,20 @@ public final class Contact extends NonHostConcept implements Immutable, Blockabl
                 @Override public void notify(@Nonnull Aspect aspect, @Nonnull Instance instance) { index.remove(instance); }
             }, Entity.DELETED);
         }
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructors –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Creates a new contact with the given entity and person.
+     * 
+     * @param entity the entity to which this contact belongs.
+     * @param person the person that is a contact of the entity.
+     */
+    private Contact(@Nonnull NonHostEntity entity, @Nonnull Person person) {
+        super(entity);
+        
+        this.person = person;
     }
     
     /**
@@ -187,6 +185,20 @@ public final class Contact extends NonHostConcept implements Immutable, Blockabl
         }
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Blockable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    @Pure
+    @Override
+    public @Nonnull SemanticType getType() {
+        return TYPE;
+    }
+    
+    @Pure
+    @Override
+    public @Nonnull Block toBlock() {
+        return person.toBlock(TYPE);
+    }
+    
     /**
      * Returns the contact with the person given by the block.
      * 
@@ -202,6 +214,8 @@ public final class Contact extends NonHostConcept implements Immutable, Blockabl
         
         return get(entity, IdentifierClass.create(block).getIdentity().toPerson());
     }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– SQLizable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns the given column of the result set as an instance of this class.
@@ -257,6 +271,7 @@ public final class Contact extends NonHostConcept implements Immutable, Blockabl
         else contact.set(preparedStatement, parameterIndex);
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override

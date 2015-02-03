@@ -39,10 +39,15 @@ import javax.annotation.Nullable;
  * @see ClientAgent
  * @see OutgoingRole
  * 
+ * @see AgentModule
+ * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 1.0
  */
 public abstract class Agent extends NonHostConcept implements Immutable, Blockable, SQLizable {
+    
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Aspects –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the aspect of the observed agent being created in the database.
@@ -72,6 +77,8 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
     public static final @Nonnull Aspect RESTRICTIONS = new Aspect(Agent.class, "restrictions changed");
     
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
     /**
      * Stores the semantic type {@code number.agent@virtualid.ch}.
      */
@@ -93,45 +100,12 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
     public static final @Nonnull SemanticType TYPE = SemanticType.create("agent@virtualid.ch").load(TupleWrapper.TYPE, NUMBER, CLIENT, REMOVED);
     
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Number –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
     /**
      * Stores the number that references this agent in the database.
      */
     private final long number;
-    
-    /**
-     * Stores whether this agent has been removed.
-     */
-    private boolean removed;
-    
-    /**
-     * Stores the permissions of this agent or null if not yet loaded.
-     * 
-     * @invariant permissions == null || permissions.isNotFrozen() : "The permissions are null or not frozen.";
-     */
-    protected @Nullable AgentPermissions permissions;
-    
-    /**
-     * Stores the restrictions of this agent or null if not yet loaded.
-     * 
-     * @invariant restrictions == null || restrictions.match(this) : "The restrictions are null or match this agent.";
-     */
-    protected @Nullable Restrictions restrictions;
-    
-    
-    /**
-     * Creates a new agent with the given entity and number.
-     * 
-     * @param entity the entity to which this agent belongs.
-     * @param number the number that references this agent.
-     * @param removed whether this agent has been removed.
-     */
-    Agent(@Nonnull NonHostEntity entity, long number, boolean removed) {
-        super(entity);
-        
-        this.number = number;
-        this.removed = removed;
-    }
-    
     
     /**
      * Returns the number that references this agent.
@@ -143,6 +117,12 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
         return number;
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Removed –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Stores whether this agent has been removed.
+     */
+    private boolean removed;
     
     /**
      * Returns whether this agent is removed.
@@ -226,6 +206,14 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
         notify(CREATED);
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Permissions –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Stores the permissions of this agent or null if not yet loaded.
+     * 
+     * @invariant permissions == null || permissions.isNotFrozen() : "The permissions are null or not frozen.";
+     */
+    protected @Nullable AgentPermissions permissions;
     
     /**
      * Returns the permissions of this agent.
@@ -300,6 +288,14 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
         notify(PERMISSIONS);
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Restrictions –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Stores the restrictions of this agent or null if not yet loaded.
+     * 
+     * @invariant restrictions == null || restrictions.match(this) : "The restrictions are null or match this agent.";
+     */
+    protected @Nullable Restrictions restrictions;
     
     /**
      * Returns the restrictions of this agent.
@@ -348,6 +344,7 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
         notify(RESTRICTIONS);
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Abstract –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Resets this agent.
@@ -358,6 +355,15 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
         notify(RESET);
     }
     
+    /**
+     * Returns whether this agent is a client.
+     * 
+     * @return whether this agent is a client.
+     */
+    @Pure
+    public abstract boolean isClient();
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Covering –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns the agents that are weaker than this agent.
@@ -413,15 +419,36 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
         if (!covers(agent)) throw new PacketException(PacketError.AUTHORIZATION, "This agent does not cover the other agent.");
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructors –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Returns whether this agent is a client.
+     * Creates a new agent with the given entity and number.
      * 
-     * @return whether this agent is a client.
+     * @param entity the entity to which this agent belongs.
+     * @param number the number that references this agent.
+     * @param removed whether this agent has been removed.
+     */
+    Agent(@Nonnull NonHostEntity entity, long number, boolean removed) {
+        super(entity);
+        
+        this.number = number;
+        this.removed = removed;
+    }
+    
+    /**
+     * Returns the agent with the given number at the given entity.
+     * 
+     * @param entity the entity to which the agent belongs.
+     * @param number the number that denotes the new agent.
+     * @param client whether the agent is a client agent.
+     * @param removed whether the agent has been removed.
      */
     @Pure
-    public abstract boolean isClient();
+    public static @Nonnull Agent get(@Nonnull NonHostEntity entity, long number, boolean client, boolean removed) {
+        return client ? ClientAgent.get(entity, number, removed) : OutgoingRole.get(entity, number, removed, false);
+    }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Blockable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
@@ -437,20 +464,6 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
         elements.set(1, new BooleanWrapper(CLIENT, isClient()).toBlock());
         elements.set(2, new BooleanWrapper(REMOVED, isRemoved()).toBlock());
         return new TupleWrapper(TYPE, elements.freeze()).toBlock();
-    }
-    
-    
-    /**
-     * Returns the agent with the given number at the given entity.
-     * 
-     * @param entity the entity to which the agent belongs.
-     * @param number the number that denotes the new agent.
-     * @param client whether the agent is a client agent.
-     * @param removed whether the agent has been removed.
-     */
-    @Pure
-    public static @Nonnull Agent get(@Nonnull NonHostEntity entity, long number, boolean client, boolean removed) {
-        return client ? ClientAgent.get(entity, number, removed) : OutgoingRole.get(entity, number, removed, false);
     }
     
     /**
@@ -474,6 +487,7 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
         return get(entity, number, client, removed);
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– SQLizable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the data type used to store instances of this class in the database.
@@ -552,6 +566,7 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
         else agent.set(preparedStatement, parameterIndex);
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Casting –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns this agent as a {@link ClientAgent}.
@@ -579,6 +594,7 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
         throw new InvalidEncodingException("This agent cannot be cast to OutgoingRole.");
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override

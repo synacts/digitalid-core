@@ -32,6 +32,9 @@ import javax.annotation.Nullable;
  */
 public final class ClientAgent extends Agent implements Immutable, Blockable, SQLizable {
     
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Aspects –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
     /**
      * Stores the aspect of the commitment being changed at the observed client agent.
      */
@@ -48,36 +51,12 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
     public static final @Nonnull Aspect ICON = new Aspect(ClientAgent.class, "icon changed");
     
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Commitment –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
     /**
      * Stores the commitment of this client agent.
      */
     private @Nullable Commitment commitment;
-    
-    /**
-     * Stores the name of this client agent.
-     * 
-     * @invariant Client.isValid(name) : "The name is valid.";
-     */
-    private @Nullable String name;
-    
-    /**
-     * Stores the icon of this client agent.
-     * 
-     * @invariant Client.isValid(icon) : "The icon is valid.";
-     */
-    private @Nullable Image icon;
-    
-    /**
-     * Creates a new client agent with the given entity and number.
-     * 
-     * @param entity the entity to which this client agent belongs.
-     * @param number the number that references this client agent.
-     * @param removed whether this client agent has been removed.
-     */
-    private ClientAgent(@Nonnull NonHostEntity entity, long number, boolean removed) {
-        super(entity, number, removed);
-    }
-    
     
     /**
      * Returns the commitment of this client agent.
@@ -119,6 +98,14 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
         notify(COMMITMENT);
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Name –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Stores the name of this client agent.
+     * 
+     * @invariant Client.isValid(name) : "The name is valid.";
+     */
+    private @Nullable String name;
     
     /**
      * Returns the name of this client agent.
@@ -166,6 +153,14 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
         notify(NAME);
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Icon –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Stores the icon of this client agent.
+     * 
+     * @invariant Client.isValid(icon) : "The icon is valid.";
+     */
+    private @Nullable Image icon;
     
     /**
      * Returns the icon of this client agent.
@@ -213,6 +208,7 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
         notify(ICON);
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Agent –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Override
     public void reset() {
@@ -222,13 +218,13 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
         super.reset();
     }
     
-    
     @Pure
     @Override
     public boolean isClient() {
         return true;
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Creation –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Creates this client agent in the database.
@@ -255,6 +251,7 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
         notify(Agent.CREATED);
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Indexing –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Caches client agents given their entity and number.
@@ -267,6 +264,31 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
                 @Override public void notify(@Nonnull Aspect aspect, @Nonnull Instance instance) { index.remove(instance); }
             }, Entity.DELETED);
         }
+    }
+    
+    /**
+     * Resets the client agents of the given entity after having reloaded the agents module.
+     * 
+     * @param entity the entity whose client agents are to be reset.
+     */
+    public static void reset(@Nonnull NonHostEntity entity) {
+        if (Database.isSingleAccess()) {
+            final @Nullable ConcurrentMap<Long, ClientAgent> map = index.get(entity);
+            if (map != null) for (final @Nonnull ClientAgent clientAgent : map.values()) clientAgent.reset();
+        }
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructors –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Creates a new client agent with the given entity and number.
+     * 
+     * @param entity the entity to which this client agent belongs.
+     * @param number the number that references this client agent.
+     * @param removed whether this client agent has been removed.
+     */
+    private ClientAgent(@Nonnull NonHostEntity entity, long number, boolean removed) {
+        super(entity, number, removed);
     }
     
     /**
@@ -291,6 +313,8 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
         }
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– SQLizable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
     /**
      * Returns the given column of the result set as an instance of this class.
      * 
@@ -305,18 +329,6 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
     @DoesNotCommit
     public static @Nonnull ClientAgent get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int columnIndex, boolean removed) throws SQLException {
         return get(entity, resultSet.getLong(columnIndex), removed);
-    }
-    
-    /**
-     * Resets the client agents of the given entity after having reloaded the agents module.
-     * 
-     * @param entity the entity whose client agents are to be reset.
-     */
-    public static void reset(@Nonnull NonHostEntity entity) {
-        if (Database.isSingleAccess()) {
-            final @Nullable ConcurrentMap<Long, ClientAgent> map = index.get(entity);
-            if (map != null) for (final @Nonnull ClientAgent clientAgent : map.values()) clientAgent.reset();
-        }
     }
     
 }
