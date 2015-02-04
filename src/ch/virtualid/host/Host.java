@@ -120,12 +120,13 @@ public final class Host extends Site {
         }
         
         CoreService.SERVICE.createTables(this);
+        Server.addHost(this);
         
         final @Nonnull HostAccount account = HostAccount.get(this, identity);
         final @Nonnull Attribute attribute = Attribute.get(account, PublicKeyChain.TYPE);
         if (attribute.getValue() == null) {
             final @Nonnull AttributeValue value;
-            if (Server.hasHost(HostIdentifier.VIRTUALID)) {
+            if (Server.hasHost(HostIdentifier.VIRTUALID) || identifier.equals(HostIdentifier.VIRTUALID)) {
                 // If the new host is running on the same server as virtualid.ch, certify its public key immediately.
                 value = new CertifiedAttributeValue(publicKeyChain, identity, PublicKeyChain.TYPE);
             } else {
@@ -139,8 +140,6 @@ public final class Host extends Site {
         
         // TODO: What are the right permissions to pass here? Probably an aggregation of all the services.
         this.client = new Client("_" + identifier.asHostName(), identifier.getString(), Image.HOST, AgentPermissions.GENERAL_WRITE);
-        
-        Server.addHost(this);
     }
     
     /**

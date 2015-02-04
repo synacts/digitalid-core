@@ -20,7 +20,7 @@ import ch.virtualid.host.Host;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identifier.IdentifierClass;
 import ch.virtualid.identity.IdentityClass;
-import ch.virtualid.identity.InternalNonHostIdentity;
+import ch.virtualid.identity.InternalPerson;
 import ch.virtualid.identity.Mapper;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.SQLizable;
@@ -193,7 +193,7 @@ public abstract class Service implements BothModule, SQLizable {
      */
     @Pure
     @NonCommitting
-    public @Nonnull HostIdentifier getRecipient(@Nullable Role role, @Nonnull InternalNonHostIdentity subject) throws SQLException, IOException, PacketException, ExternalException {
+    public @Nonnull HostIdentifier getRecipient(@Nullable Role role, @Nonnull InternalPerson subject) throws SQLException, IOException, PacketException, ExternalException {
         return IdentifierClass.create(Cache.getFreshAttributeContent(subject, role, getType(), false)).toHostIdentifier();
     }
     

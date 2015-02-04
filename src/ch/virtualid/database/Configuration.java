@@ -161,6 +161,30 @@ public abstract class Configuration implements Immutable {
     
     
     /**
+     * Returns the syntax for creating an index inside a table declaration.
+     * 
+     * @param columns the columns for which the index is to be created.
+     * 
+     * @return the syntax for creating an index inside a table declaration.
+     * 
+     * @require columns.length > 0 : "The length of the columns is positive.";
+     */
+    @Pure
+    public abstract @Nonnull String INDEX(@Nonnull String... columns);
+    
+    /**
+     * Creates an index outside a table declaration or does nothing.
+     * 
+     * @param statement the statement on which the creation is executed.
+     * @param table the table on whose columns the index is to be created.
+     * @param columns the columns for which the index is to be created.
+     * 
+     * @require columns.length > 0 : "The length of the columns is positive.";
+     */
+    public abstract void createIndex(@Nonnull Statement statement, @Nonnull String table, @Nonnull String... columns) throws SQLException;
+    
+    
+    /**
      * Returns whether binary streams are supported.
      * 
      * @return the syntax for retrieving the current time in milliseconds.

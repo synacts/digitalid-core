@@ -3,8 +3,9 @@ package ch.virtualid.client;
 import ch.virtualid.agent.ClientAgent;
 import ch.virtualid.agent.ClientAgentAccredit;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
-import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Committing;
+import ch.virtualid.annotations.NonCommitting;
+import ch.virtualid.annotations.NonFrozen;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Image;
 import ch.virtualid.auxiliary.Time;
@@ -157,14 +158,14 @@ public class Client extends Site implements Observer {
      * 
      * @invariant isValid(name) : "The name is valid.";
      */
-    private final @Nonnull String name;
+    private @Nonnull String name;
     
     /**
      * Stores the icon of this client.
      * 
      * @invariant isValid(icon) : "The icon is valid.";
      */
-    private final @Nonnull Image icon;
+    private @Nonnull Image icon;
     
     /**
      * Stores the preferred permissions of this client.
@@ -250,6 +251,19 @@ public class Client extends Site implements Observer {
     }
     
     /**
+     * Sets the name of this client.
+     * 
+     * @param name the name of this client.
+     * 
+     * @require isValid(name) : "The name is valid.";
+     */
+    public final void setName(@Nonnull String name) {
+        assert isValid(name) : "The name is valid.";
+        
+        this.name = name;
+    }
+    
+    /**
      * Returns the icon of this client.
      * 
      * @return the icon of this client.
@@ -259,6 +273,19 @@ public class Client extends Site implements Observer {
     @Pure
     public final @Nonnull Image getIcon() {
         return icon;
+    }
+    
+    /**
+     * Sets the icon of this client.
+     * 
+     * @param icon the icon of this client.
+     * 
+     * @require isValid(icon) : "The icon is valid.";
+     */
+    public final void setIcon(@Nonnull Image icon) {
+        assert isValid(icon) : "The icon is valid.";
+        
+        this.icon = icon;
     }
     
     /**
@@ -334,24 +361,22 @@ public class Client extends Site implements Observer {
     /**
      * Stores the roles of this client.
      * 
-     * @invariant roles == null || roles.isNotFrozen() : "The roles are not frozen.";
      * @invariant roles == null || roles.doesNotContainNull() : "The roles do not contain null.";
      * @invariant roles == null || roles.doesNotContainDuplicates() : "The roles do not contain duplicates.";
      */
-    private @Nullable FreezableList<NativeRole> roles;
+    private @Nullable @NonFrozen FreezableList<NativeRole> roles;
     
     /**
      * Returns the roles of this client.
      * 
      * @return the roles of this client.
      * 
-     * @ensure return.isNotFrozen() : "The returned list is not frozen.";
      * @ensure return.doesNotContainNull() : "The returned list does not contain null.";
      * @ensure return.doesNotContainDuplicates() : "The returned list does not contain duplicates.";
      */
     @Pure
     @NonCommitting
-    public final @Nonnull ReadonlyList<NativeRole> getRoles() throws SQLException {
+    public final @Nonnull @NonFrozen ReadonlyList<NativeRole> getRoles() throws SQLException {
         if (Database.isMultiAccess()) return RoleModule.getRoles(this);
         if (roles == null) roles = RoleModule.getRoles(this);
         return roles;

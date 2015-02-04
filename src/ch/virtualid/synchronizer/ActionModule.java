@@ -74,7 +74,8 @@ public final class ActionModule implements BothModule {
     @NonCommitting
     public void createTables(final @Nonnull Site site) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "action (entity " + EntityClass.FORMAT + " NOT NULL, service " + Mapper.FORMAT + " NOT NULL, time " + Time.FORMAT + " NOT NULL, " + AgentPermissions.FORMAT_NULL + ", " + Restrictions.FORMAT + ", agent " + Agent.FORMAT + ", recipient " + IdentifierClass.FORMAT + " NOT NULL, action " + Block.FORMAT + " NOT NULL, PRIMARY KEY (entity, service, time), INDEX(time), FOREIGN KEY (entity) " + site.getEntityReference() + ", FOREIGN KEY (service) " + Mapper.REFERENCE + ", " + AgentPermissions.REFERENCE + ", " + Restrictions.getForeignKeys(site) + ", FOREIGN KEY (entity, agent) " + Agent.getReference(site) + ")");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "action (entity " + EntityClass.FORMAT + " NOT NULL, service " + Mapper.FORMAT + " NOT NULL, time " + Time.FORMAT + " NOT NULL, " + AgentPermissions.FORMAT_NULL + ", " + Restrictions.FORMAT + ", agent " + Agent.FORMAT + ", recipient " + IdentifierClass.FORMAT + " NOT NULL, action " + Block.FORMAT + " NOT NULL, PRIMARY KEY (entity, service, time), FOREIGN KEY (entity) " + site.getEntityReference() + ", FOREIGN KEY (service) " + Mapper.REFERENCE + Database.getConfiguration().INDEX("time") + ", " + AgentPermissions.REFERENCE + ", " + Restrictions.getForeignKeys(site) + ", FOREIGN KEY (entity, agent) " + Agent.getReference(site) + ")");
+            Database.getConfiguration().createIndex(statement, site + "action", "time");
             Mapper.addReference(site + "action", "contact");
             if (site instanceof Host) Mapper.addReference(site + "action", "entity", "entity", "service", "time");
             Database.addRegularPurging(site + "action", Time.TROPICAL_YEAR);

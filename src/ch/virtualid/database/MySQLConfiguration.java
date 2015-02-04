@@ -224,4 +224,24 @@ public final class MySQLConfiguration extends Configuration implements Immutable
         return "UNIX_TIMESTAMP(SYSDATE()) * 1000 + MICROSECOND(SYSDATE(3)) DIV 1000";
     }
     
+    
+    @Pure
+    @Override
+    public @Nonnull String INDEX(@Nonnull String... columns) {
+        assert columns.length > 0 : "The length of the columns is positive.";
+        
+        final @Nonnull StringBuilder string = new StringBuilder(", INDEX(");
+        for (final @Nonnull String column : columns) {
+            if (string.length() != 8) string.append(", ");
+            string.append(column);
+        }
+        return string.append(")").toString();
+    }
+    
+    @Pure
+    @Override
+    public void createIndex(@Nonnull Statement statement, @Nonnull String table, @Nonnull String... columns) {
+        assert columns.length > 0 : "The length of the columns is positive.";
+    }
+    
 }

@@ -23,7 +23,7 @@ public final class PostgreSQLTest extends DatabaseTest {
     @BeforeClass
     @Committing
     public static void configureDatabase() throws SQLException, IOException {
-        Database.initialize(new PostgreSQLConfiguration(true), false, true);
+        Database.initialize(new PostgreSQLConfiguration(true), false, false);
         createTables();
     }
     

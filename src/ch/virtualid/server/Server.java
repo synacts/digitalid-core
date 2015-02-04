@@ -1,6 +1,7 @@
 package ch.virtualid.server;
 
 import ch.virtualid.annotations.Committing;
+import ch.virtualid.cache.Cache;
 import ch.virtualid.database.Configuration;
 import ch.virtualid.database.Database;
 import ch.virtualid.database.MySQLConfiguration;
@@ -11,6 +12,7 @@ import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.host.Host;
 import ch.virtualid.identifier.HostIdentifier;
+import ch.virtualid.identity.HostIdentity;
 import ch.virtualid.io.Console;
 import ch.virtualid.io.Directory;
 import ch.virtualid.synchronizer.Synchronizer;
@@ -34,7 +36,7 @@ public final class Server {
     /**
      * The version of the Virtual ID implementation.
      */
-    public static final @Nonnull String VERSION = "0.91 (21 January 2015)";
+    public static final @Nonnull String VERSION = "0.92 (3 February 2015)";
     
     /**
      * The authors of the Virtual ID implementation.
@@ -164,14 +166,13 @@ public final class Server {
         
         listener.start();
         
-        // TODO: Uncomment the following lines:
-//        try {
-//            Cache.getPublicKeyChain(HostIdentity.VIRTUALID);
-//            Database.commit();
-//        } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
-//            try { Database.rollback(); } catch (@Nonnull SQLException exc) { throw new InitializationError("Could not rollback.", exc); }
-//            throw new InitializationError("Could not retrieve the public key chain of 'virtualid.ch'.", exception);
-//        }
+        try {
+            Cache.getPublicKeyChain(HostIdentity.VIRTUALID);
+            Database.commit();
+        } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
+            try { Database.rollback(); } catch (@Nonnull SQLException exc) { throw new InitializationError("Could not rollback.", exc); }
+            throw new InitializationError("Could not retrieve the public key chain of 'virtualid.ch'.", exception);
+        }
     }
     
     /**

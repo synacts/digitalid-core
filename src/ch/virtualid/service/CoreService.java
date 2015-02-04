@@ -4,7 +4,7 @@ import ch.virtualid.annotations.Pure;
 import ch.virtualid.entity.Role;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identity.Identity;
-import ch.virtualid.identity.InternalNonHostIdentity;
+import ch.virtualid.identity.InternalPerson;
 import ch.virtualid.identity.SemanticType;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -52,7 +52,7 @@ public final class CoreService extends Service {
     
     @Pure
     @Override
-    public @Nonnull HostIdentifier getRecipient(@Nullable Role role, @Nonnull InternalNonHostIdentity subject) {
+    public @Nonnull HostIdentifier getRecipient(@Nullable Role role, @Nonnull InternalPerson subject) {
         return subject.getAddress().getHostIdentifier();
     }
     

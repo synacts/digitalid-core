@@ -230,6 +230,30 @@ public final class PostgreSQLConfiguration extends Configuration implements Immu
     }
     
     
+    @Pure
+    @Override
+    public @Nonnull String INDEX(@Nonnull String... columns) {
+        assert columns.length > 0 : "The length of the columns is positive.";
+        
+        return "";
+    }
+    
+    @Pure
+    @Override
+    @SuppressWarnings("StringEquality")
+    public void createIndex(@Nonnull Statement statement, @Nonnull String table, @Nonnull String... columns) throws SQLException {
+        assert columns.length > 0 : "The length of the columns is positive.";
+        
+        final @Nonnull StringBuilder string = new StringBuilder("CREATE INDEX ").append(table).append("_index ON ").append(table).append(" (");
+        for (final @Nonnull String column : columns) {
+            if (column != columns[0]) string.append(", ");
+            string.append(column);
+        }
+        System.out.println(string.append(")").toString());
+        statement.executeUpdate(string.append(")").toString());
+    }
+    
+    
     @Override
     @NonCommitting
     public @Nonnull Savepoint setSavepoint(@Nonnull Connection connection) throws SQLException {

@@ -1,14 +1,9 @@
 package ch.virtualid.database;
 
-import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Committing;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
-import ch.virtualid.identity.SemanticType;
-import ch.virtualid.util.ReadonlyArray;
 import ch.xdf.Block;
-import ch.xdf.StringWrapper;
-import ch.xdf.TupleWrapper;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -209,6 +204,7 @@ public class DatabaseTest {
         }
     }
     
+    /*
     @Test
     @NonCommitting
     public void _11_testHandlingBlocks() throws SQLException, InvalidEncodingException {
@@ -236,6 +232,7 @@ public class DatabaseTest {
             }
         }
     }
+    */
     
     @Test
     @NonCommitting
@@ -255,6 +252,22 @@ public class DatabaseTest {
             try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery("SELECT a FROM test_batch WHERE b = 99")) {
                 Assert.assertTrue(resultSet.next());
                 Assert.assertEquals(3l, resultSet.getLong(1));
+            }
+        }
+    }
+    
+    @Test
+    @NonCommitting
+    public void _13_testIndexCreation() throws SQLException {
+        if (isSubclass()) {
+            try (@Nonnull Statement statement = Database.createStatement()) {
+                System.out.println("CREATE TABLE IF NOT EXISTS test_index (time BIGINT NOT NULL" + Database.getConfiguration().INDEX("time") + ")");
+                statement.executeUpdate("CREATE TABLE IF NOT EXISTS test_index (time BIGINT NOT NULL" + Database.getConfiguration().INDEX("time") + ")");
+                Database.getConfiguration().createIndex(statement, "test_index", "time");
+                Database.commit();
+            } catch (@Nonnull SQLException exception) {
+                exception.printStackTrace();
+                throw exception;
             }
         }
     }
