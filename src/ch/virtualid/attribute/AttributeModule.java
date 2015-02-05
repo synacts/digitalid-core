@@ -163,7 +163,7 @@ public final class AttributeModule implements BothModule {
         final @Nonnull ReadonlyArray<Block> tables = new TupleWrapper(block).getElementsNotNull(2);
         final @Nonnull String prefix = "INSERT INTO " + host;
         
-        try (@Nonnull PreparedStatement preparedStatement = Database.prepareInsertStatement(prefix + "attribute_value (entity, type, published, value) VALUES (?, ?, ?, ?)")) {
+        try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(prefix + "attribute_value (entity, type, published, value) VALUES (?, ?, ?, ?)")) {
             final @Nonnull ReadonlyList<Block> entries = new ListWrapper(tables.getNotNull(0)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(4);
@@ -176,7 +176,7 @@ public final class AttributeModule implements BothModule {
             preparedStatement.executeBatch();
         }
         
-        try (@Nonnull PreparedStatement preparedStatement = Database.prepareInsertStatement(prefix + "attribute_visibility (entity, type, visibility) VALUES (?, ?, ?)")) {
+        try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(prefix + "attribute_visibility (entity, type, visibility) VALUES (?, ?, ?)")) {
             final @Nonnull ReadonlyList<Block> entries = new ListWrapper(tables.getNotNull(1)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(3);
@@ -232,7 +232,7 @@ public final class AttributeModule implements BothModule {
         final @Nonnull FreezableArray<Block> tables = new FreezableArray<Block>(2);
         try (@Nonnull Statement statement = Database.createStatement()) {
             
-            try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT DISTINCT type, published, value FROM " + site + "attribute_value WHERE entity = " + entity + (permissions.canRead(AgentPermissions.GENERAL) ? "" : " AND type IN " + permissions.allTypesToString()))) {
+            try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT type, published, value FROM " + site + "attribute_value WHERE entity = " + entity + (permissions.canRead(AgentPermissions.GENERAL) ? "" : " AND type IN " + permissions.allTypesToString()))) {
                 final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
                 while (resultSet.next()) {
                     final @Nonnull Identity type = IdentityClass.getNotNull(resultSet, 1);
@@ -243,7 +243,7 @@ public final class AttributeModule implements BothModule {
                 tables.set(0, new ListWrapper(VALUE_STATE_TABLE, entries.freeze()).toBlock());
             }
             
-            try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT DISTINCT type, visibility FROM " + site + "attribute_visibility WHERE entity = " + entity + (permissions.canWrite(AgentPermissions.GENERAL) ? "" : " AND type IN " + permissions.writeTypesToString()))) {
+            try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT type, visibility FROM " + site + "attribute_visibility WHERE entity = " + entity + (permissions.canWrite(AgentPermissions.GENERAL) ? "" : " AND type IN " + permissions.writeTypesToString()))) {
                 final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
                 while (resultSet.next()) {
                     final @Nonnull Identity type = IdentityClass.getNotNull(resultSet, 1);
@@ -271,7 +271,7 @@ public final class AttributeModule implements BothModule {
         final @Nonnull ReadonlyArray<Block> tables = new TupleWrapper(block).getElementsNotNull(2);
         final @Nonnull String prefix = "INSERT" + Database.getConfiguration().IGNORE() + " INTO " + site;
         
-        try (@Nonnull PreparedStatement preparedStatement = Database.prepareInsertStatement(prefix + "attribute_value (entity, type, published, value) VALUES (?, ?, ?, ?)")) {
+        try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(prefix + "attribute_value (entity, type, published, value) VALUES (?, ?, ?, ?)")) {
             entity.set(preparedStatement, 1);
             final @Nonnull ReadonlyList<Block> entries = new ListWrapper(tables.getNotNull(0)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
@@ -284,7 +284,7 @@ public final class AttributeModule implements BothModule {
             preparedStatement.executeBatch();
         }
         
-        try (@Nonnull PreparedStatement preparedStatement = Database.prepareInsertStatement(prefix + "attribute_visibility (entity, type, visibility) VALUES (?, ?, ?)")) {
+        try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(prefix + "attribute_visibility (entity, type, visibility) VALUES (?, ?, ?)")) {
             entity.set(preparedStatement, 1);
             final @Nonnull ReadonlyList<Block> entries = new ListWrapper(tables.getNotNull(1)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {

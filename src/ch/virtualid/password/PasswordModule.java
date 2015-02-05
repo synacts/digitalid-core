@@ -113,7 +113,7 @@ public final class PasswordModule implements BothModule {
         assert block.getType().isBasedOn(getModuleFormat()) : "The block is based on the format of this module.";
         
         final @Nonnull String SQL = "INSERT INTO " + host + "password (entity, password) VALUES (?, ?)";
-        try (@Nonnull PreparedStatement preparedStatement = Database.prepareInsertStatement(SQL)) {
+        try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
             final @Nonnull ReadonlyList<Block> entries = new ListWrapper(block).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(2);

@@ -360,7 +360,7 @@ public final class AgentModule implements BothModule {
         final @Nonnull ReadonlyArray<Block> tables = new TupleWrapper(block).getElementsNotNull(8);
         final @Nonnull String prefix = "INSERT INTO " + host;
         
-        try (@Nonnull PreparedStatement preparedStatement = Database.prepareInsertStatement(prefix + "agent (entity, agent, client, removed) VALUES (?, ?, ?, ?)")) {
+        try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(prefix + "agent (entity, agent, client, removed) VALUES (?, ?, ?, ?)")) {
             final @Nonnull ReadonlyList<Block> entries = new ListWrapper(tables.getNotNull(0)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(4);
@@ -373,7 +373,7 @@ public final class AgentModule implements BothModule {
             preparedStatement.executeBatch();
         }
         
-        try (@Nonnull PreparedStatement preparedStatement = Database.prepareInsertStatement(prefix + "agent_permission (entity, agent, " + AgentPermissions.COLUMNS + ") VALUES (?, ?, ?, ?)")) {
+        try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(prefix + "agent_permission (entity, agent, " + AgentPermissions.COLUMNS + ") VALUES (?, ?, ?, ?)")) {
             final @Nonnull ReadonlyList<Block> entries = new ListWrapper(tables.getNotNull(1)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(3);
@@ -385,7 +385,7 @@ public final class AgentModule implements BothModule {
             preparedStatement.executeBatch();
         }
         
-        try (@Nonnull PreparedStatement preparedStatement = Database.prepareInsertStatement(prefix + "agent_permission_order (entity, stronger, weaker) VALUES (?, ?, ?)")) {
+        try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(prefix + "agent_permission_order (entity, stronger, weaker) VALUES (?, ?, ?)")) {
             final @Nonnull ReadonlyList<Block> entries = new ListWrapper(tables.getNotNull(2)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(3);
@@ -397,7 +397,7 @@ public final class AgentModule implements BothModule {
             preparedStatement.executeBatch();
         }
         
-        try (@Nonnull PreparedStatement preparedStatement = Database.prepareInsertStatement(prefix + "agent_restrictions (entity, agent, " + Restrictions.COLUMNS + ") VALUES (?, ?, ?, ?, ?, ?, ?)")) {
+        try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(prefix + "agent_restrictions (entity, agent, " + Restrictions.COLUMNS + ") VALUES (?, ?, ?, ?, ?, ?, ?)")) {
             final @Nonnull ReadonlyList<Block> entries = new ListWrapper(tables.getNotNull(3)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(3);
@@ -410,7 +410,7 @@ public final class AgentModule implements BothModule {
             preparedStatement.executeBatch();
         }
         
-        try (@Nonnull PreparedStatement preparedStatement = Database.prepareInsertStatement(prefix + "agent_restrictions_ord (entity, stronger, weaker) VALUES (?, ?, ?)")) {
+        try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(prefix + "agent_restrictions_ord (entity, stronger, weaker) VALUES (?, ?, ?)")) {
             final @Nonnull ReadonlyList<Block> entries = new ListWrapper(tables.getNotNull(4)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(3);
@@ -422,7 +422,7 @@ public final class AgentModule implements BothModule {
             preparedStatement.executeBatch();
         }
         
-        try (@Nonnull PreparedStatement preparedStatement = Database.prepareInsertStatement(prefix + "client_agent (entity, agent, " + Commitment.COLUMNS + ", name, icon) VALUES (?, ?, ?, ?, ?, ?, ?)")) {
+        try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(prefix + "client_agent (entity, agent, " + Commitment.COLUMNS + ", name, icon) VALUES (?, ?, ?, ?, ?, ?, ?)")) {
             final @Nonnull ReadonlyList<Block> entries = new ListWrapper(tables.getNotNull(5)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(5);
@@ -436,7 +436,7 @@ public final class AgentModule implements BothModule {
             preparedStatement.executeBatch();
         }
         
-        try (@Nonnull PreparedStatement preparedStatement = Database.prepareInsertStatement(prefix + "outgoing_role (entity, agent, relation, context) VALUES (?, ?, ?, ?)")) {
+        try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(prefix + "outgoing_role (entity, agent, relation, context) VALUES (?, ?, ?, ?)")) {
             final @Nonnull ReadonlyList<Block> entries = new ListWrapper(tables.getNotNull(6)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(4);
@@ -450,7 +450,7 @@ public final class AgentModule implements BothModule {
             preparedStatement.executeBatch();
         }
         
-        try (@Nonnull PreparedStatement preparedStatement = Database.prepareInsertStatement(prefix + "incoming_role (entity, issuer, relation, agent) VALUES (?, ?, ?, ?)")) {
+        try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(prefix + "incoming_role (entity, issuer, relation, agent) VALUES (?, ?, ?, ?)")) {
             final @Nonnull ReadonlyList<Block> entries = new ListWrapper(tables.getNotNull(7)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(4);
@@ -635,7 +635,7 @@ public final class AgentModule implements BothModule {
         final @Nonnull ReadonlyArray<Block> tables = new TupleWrapper(block).getElementsNotNull(6);
         final @Nonnull String prefix = "INSERT" + Database.getConfiguration().IGNORE() + " INTO " + site;
         
-        try (@Nonnull PreparedStatement preparedStatement = Database.prepareInsertStatement(prefix + "agent (entity, agent, client, removed) VALUES (?, ?, ?, ?)")) {
+        try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(prefix + "agent (entity, agent, client, removed) VALUES (?, ?, ?, ?)")) {
             entity.set(preparedStatement, 1);
             final @Nonnull ReadonlyList<Block> entries = new ListWrapper(tables.getNotNull(0)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
@@ -648,7 +648,7 @@ public final class AgentModule implements BothModule {
             preparedStatement.executeBatch();
         }
         
-        try (@Nonnull PreparedStatement preparedStatement = Database.prepareInsertStatement(prefix + "agent_permission (entity, agent, " + AgentPermissions.COLUMNS + ") VALUES (?, ?, ?, ?)")) {
+        try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(prefix + "agent_permission (entity, agent, " + AgentPermissions.COLUMNS + ") VALUES (?, ?, ?, ?)")) {
             entity.set(preparedStatement, 1);
             final @Nonnull ReadonlyList<Block> entries = new ListWrapper(tables.getNotNull(1)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
@@ -660,7 +660,7 @@ public final class AgentModule implements BothModule {
             preparedStatement.executeBatch();
         }
         
-        try (@Nonnull PreparedStatement preparedStatement = Database.prepareInsertStatement(prefix + "agent_restrictions (entity, agent, " + Restrictions.COLUMNS + ") VALUES (?, ?, ?, ?, ?, ?, ?)")) {
+        try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(prefix + "agent_restrictions (entity, agent, " + Restrictions.COLUMNS + ") VALUES (?, ?, ?, ?, ?, ?, ?)")) {
             entity.set(preparedStatement, 1);
             final @Nonnull ReadonlyList<Block> entries = new ListWrapper(tables.getNotNull(2)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
@@ -672,7 +672,7 @@ public final class AgentModule implements BothModule {
             preparedStatement.executeBatch();
         }
         
-        try (@Nonnull PreparedStatement preparedStatement = Database.prepareInsertStatement(prefix + "client_agent (entity, agent, " + Commitment.COLUMNS + ", name, icon) VALUES (?, ?, ?, ?, ?, ?, ?)")) {
+        try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(prefix + "client_agent (entity, agent, " + Commitment.COLUMNS + ", name, icon) VALUES (?, ?, ?, ?, ?, ?, ?)")) {
             entity.set(preparedStatement, 1);
             final @Nonnull ReadonlyList<Block> entries = new ListWrapper(tables.getNotNull(3)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
@@ -686,7 +686,7 @@ public final class AgentModule implements BothModule {
             preparedStatement.executeBatch();
         }
         
-        try (@Nonnull PreparedStatement preparedStatement = Database.prepareInsertStatement(prefix + "outgoing_role (entity, agent, relation, context) VALUES (?, ?, ?, ?)")) {
+        try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(prefix + "outgoing_role (entity, agent, relation, context) VALUES (?, ?, ?, ?)")) {
             entity.set(preparedStatement, 1);
             final @Nonnull ReadonlyList<Block> entries = new ListWrapper(tables.getNotNull(4)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
@@ -699,7 +699,7 @@ public final class AgentModule implements BothModule {
             preparedStatement.executeBatch();
         }
         
-        try (@Nonnull PreparedStatement preparedStatement = Database.prepareInsertStatement(prefix + "incoming_role (entity, issuer, relation, agent) VALUES (?, ?, ?, ?)")) {
+        try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(prefix + "incoming_role (entity, issuer, relation, agent) VALUES (?, ?, ?, ?)")) {
             entity.set(preparedStatement, 1);
             final @Nonnull ReadonlyList<Block> entries = new ListWrapper(tables.getNotNull(5)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {

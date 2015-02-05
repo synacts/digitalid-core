@@ -549,7 +549,7 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
     }
     
     /**
-     * Reset this context.
+     * Resets this context.
      */
     public void reset() {
         this.name = null;
@@ -560,7 +560,7 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
     }
     
     /**
-     * Resets the contexts of the given entity after having reloaded the contexts module.
+     * Resets the contexts of the given entity after having reloaded the context module.
      * 
      * @param entity the entity whose contexts are to be reset.
      */

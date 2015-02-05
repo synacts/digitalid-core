@@ -239,7 +239,7 @@ public class DatabaseTest {
     public void _12_testBatchInsertWithPreparedStatement() throws SQLException {
         if (isSubclass()) {
             final @Nonnull String SQL = "INSERT INTO test_batch (a, b) VALUES (?, ?)";
-            try (@Nonnull PreparedStatement preparedStatement = Database.prepareInsertStatement(SQL)) {
+            try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
                 preparedStatement.setLong(1, 3l);
                 // MySQL and SQLite have the same bad performance when batched as with direct updates.
                 for (int i = 0; i < 1000; i++) {
