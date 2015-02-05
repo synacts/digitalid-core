@@ -159,6 +159,14 @@ public abstract class Configuration implements Immutable {
     @Pure
     public abstract @Nonnull String CURRENT_TIME();
     
+    /**
+     * Returns the syntax for storing a boolean value.
+     * 
+     * @return the syntax for storing a boolean value.
+     */
+    @Pure
+    public abstract @Nonnull String BOOLEAN(boolean value);
+    
     
     /**
      * Returns the syntax for creating an index inside a table declaration.

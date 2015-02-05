@@ -29,9 +29,7 @@ public final class Replay {
         assert Database.isMainThread() : "This method block is called in the main thread.";
         
         try (@Nonnull Statement statement = Database.createStatement()) {
-            System.out.println("CREATE TABLE IF NOT EXISTS general_replay (vector " + InitializationVector.FORMAT + " NOT NULL PRIMARY KEY, time " + Time.FORMAT + " NOT NULL" + Database.getConfiguration().INDEX("time") + ")");
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS general_replay (vector " + InitializationVector.FORMAT + " NOT NULL PRIMARY KEY, time " + Time.FORMAT + " NOT NULL" + Database.getConfiguration().INDEX("time") + ")");
-            Database.commit();
             Database.getConfiguration().createIndex(statement, "general_replay", "time");
         } catch (@Nonnull SQLException exception) {
             exception.printStackTrace();

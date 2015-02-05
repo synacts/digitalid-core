@@ -53,6 +53,8 @@ import javax.annotation.Nullable;
  */
 public final class AttributeModule implements BothModule {
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Module Initialization –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
     /**
      * Stores an instance of this module.
      */
@@ -63,6 +65,8 @@ public final class AttributeModule implements BothModule {
     public @Nonnull Service getService() {
         return CoreService.SERVICE;
     }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Table Creation and Deletion –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Override
     @NonCommitting
@@ -82,6 +86,7 @@ public final class AttributeModule implements BothModule {
         }
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Module Export and Import –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the semantic type {@code entry.value.attribute.module@virtualid.ch}.
@@ -184,6 +189,7 @@ public final class AttributeModule implements BothModule {
         }
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– State Getter and Setter –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the semantic type {@code entry.value.attributes.state@virtualid.ch}.
@@ -308,6 +314,7 @@ public final class AttributeModule implements BothModule {
         }
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Attribute Retrieval –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns all the attributes of the given entity.
@@ -321,7 +328,7 @@ public final class AttributeModule implements BothModule {
     @Pure
     @NonCommitting
     static @Capturable @Nonnull FreezableSet<Attribute> getAll(@Nonnull Entity entity) throws SQLException {
-        final @Nonnull String SQL = "SELECT type FROM " + entity.getSite() + "attribute_value WHERE entity = " + entity;
+        final @Nonnull String SQL = "SELECT DISTINCT type FROM " + entity.getSite() + "attribute_value WHERE entity = " + entity;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
             final @Nonnull FreezableSet<Attribute> attributes = new FreezableLinkedHashSet<Attribute>();
             while (resultSet.next()) attributes.add(Attribute.get(entity, IdentityClass.getNotNull(resultSet, 1).toSemanticType().checkIsAttributeFor(entity)));
@@ -331,6 +338,7 @@ public final class AttributeModule implements BothModule {
         }
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Attribute Value –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns the value of the given attribute or null if no value is found.
@@ -345,7 +353,7 @@ public final class AttributeModule implements BothModule {
     @Pure
     @NonCommitting
     static @Nullable AttributeValue getValue(@Nonnull Attribute attribute, boolean published) throws SQLException {
-        final @Nonnull String SQL = "SELECT value FROM " + attribute.getEntity().getSite() + "attribute_value WHERE entity = " + attribute.getEntity() + " AND type = " + attribute.getType() + " AND published = " + published;
+        final @Nonnull String SQL = "SELECT value FROM " + attribute.getEntity().getSite() + "attribute_value WHERE entity = " + attribute.getEntity() + " AND type = " + attribute.getType() + " AND published = " + Database.toBoolean(published);
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
             if (resultSet.next()) return AttributeValue.get(resultSet, 1).checkMatches(attribute);
             else return null;
@@ -426,6 +434,7 @@ public final class AttributeModule implements BothModule {
         }
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Attribute Visibility –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns the visibility of the given attribute or null if no visibility is found.

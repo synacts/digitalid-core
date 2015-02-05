@@ -4,6 +4,7 @@ import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.contact.Contact;
 import ch.virtualid.contact.Context;
+import ch.virtualid.database.Database;
 import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.entity.Site;
 import ch.virtualid.exceptions.external.ExternalException;
@@ -508,7 +509,7 @@ public final class Restrictions implements Immutable, Blockable, SQLizable {
     @Pure
     @Override
     public @Nonnull String toString() {
-        return client + ", " + role + ", " + writing + ", " + context + ", " + contact;
+        return Database.toBoolean(client) + ", " + Database.toBoolean(role) + ", " + Database.toBoolean(writing) + ", " + context + ", " + contact;
     }
     
     /**
@@ -518,7 +519,7 @@ public final class Restrictions implements Immutable, Blockable, SQLizable {
      */
     @Pure
     public @Nonnull String toUpdateValues() {
-        return "client = " + client + ", role = " + role + ", context_writing = " + writing + ", context = " + context + ", contact = " + contact;
+        return "client = " + Database.toBoolean(client) + ", role = " + Database.toBoolean(role) + ", context_writing = " + Database.toBoolean(writing) + ", context = " + context + ", contact = " + contact;
     }
     
     /**
@@ -528,7 +529,7 @@ public final class Restrictions implements Immutable, Blockable, SQLizable {
      */
     @Pure
     public @Nonnull String toUpdateCondition() {
-        return "client = " + client + " AND role = " + role + " AND context_writing = " + writing + " AND context " + (context == null ? "IS NULL" : "= " + context) + " AND contact " + (contact == null ? "IS NULL" : "= " + contact);
+        return "client = " + Database.toBoolean(client) + " AND role = " + Database.toBoolean(role) + " AND context_writing = " + Database.toBoolean(writing) + " AND context " + (context == null ? "IS NULL" : "= " + context) + " AND contact " + (contact == null ? "IS NULL" : "= " + contact);
     }
     
 }

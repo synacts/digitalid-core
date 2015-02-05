@@ -160,6 +160,12 @@ public final class SQLiteConfiguration extends Configuration implements Immutabl
         return "CAST((JULIANDAY('NOW') - 2440587.5)*86400000 AS INTEGER)";
     }
     
+    @Pure
+    @Override
+    public @Nonnull String BOOLEAN(boolean value) {
+        return value ? "1" : "0";
+    }
+    
     
     @Pure
     @Override
@@ -180,7 +186,6 @@ public final class SQLiteConfiguration extends Configuration implements Immutabl
             if (column != columns[0]) string.append(", ");
             string.append(column);
         }
-        System.out.println(string.append(")").toString());
         statement.executeUpdate(string.append(")").toString());
     }
     

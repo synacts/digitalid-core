@@ -255,7 +255,8 @@ public abstract class IdentifierClass implements Identifier, Immutable, Blockabl
     @Pure
     @Override
     public final @Nonnull String toString() {
-        return "\"" + string + "\"";
+        return "'" + string + "'";
+//        return "\"" + string + "\""; // TODO: Can PostgreSQL be set up to work with real quotes?
     }
     
 }

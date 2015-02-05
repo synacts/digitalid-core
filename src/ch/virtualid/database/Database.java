@@ -1,7 +1,7 @@
 package ch.virtualid.database;
 
-import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Committing;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.cache.Cache;
@@ -533,6 +533,17 @@ public final class Database implements Immutable {
     @NonCommitting
     public static void onInsertNotUpdate(@Nonnull Statement statement, @Nonnull String table) throws SQLException {
         getConfiguration().onInsertNotUpdate(statement, table);
+    }
+    
+    
+    /**
+     * Returns the syntax for storing a boolean value.
+     * 
+     * @return the syntax for storing a boolean value.
+     */
+    @Pure
+    public static @Nonnull String toBoolean(boolean value) {
+        return getConfiguration().BOOLEAN(value);
     }
     
 }

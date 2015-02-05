@@ -261,7 +261,6 @@ public class DatabaseTest {
     public void _13_testIndexCreation() throws SQLException {
         if (isSubclass()) {
             try (@Nonnull Statement statement = Database.createStatement()) {
-                System.out.println("CREATE TABLE IF NOT EXISTS test_index (time BIGINT NOT NULL" + Database.getConfiguration().INDEX("time") + ")");
                 statement.executeUpdate("CREATE TABLE IF NOT EXISTS test_index (time BIGINT NOT NULL" + Database.getConfiguration().INDEX("time") + ")");
                 Database.getConfiguration().createIndex(statement, "test_index", "time");
                 Database.commit();

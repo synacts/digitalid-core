@@ -22,7 +22,7 @@ public final class SQLiteTest extends DatabaseTest {
     @BeforeClass
     @Committing
     public static void configureDatabase() throws SQLException {
-        Database.initialize(new SQLiteConfiguration(true), false, true);
+        Database.initialize(new SQLiteConfiguration(true), false, false);
         createTables();
     }
     

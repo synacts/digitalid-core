@@ -224,6 +224,12 @@ public final class MySQLConfiguration extends Configuration implements Immutable
         return "UNIX_TIMESTAMP(SYSDATE()) * 1000 + MICROSECOND(SYSDATE(3)) DIV 1000";
     }
     
+    @Pure
+    @Override
+    public @Nonnull String BOOLEAN(boolean value) {
+        return Boolean.toString(value);
+    }
+    
     
     @Pure
     @Override

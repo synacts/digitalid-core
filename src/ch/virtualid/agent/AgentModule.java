@@ -755,7 +755,7 @@ public final class AgentModule implements BothModule {
      */
     private static void addAgent(@Nonnull Agent agent) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
-            statement.executeUpdate("INSERT INTO " + agent.getEntity().getSite() + "agent (entity, agent, client, removed) VALUES (" + agent.getEntity() + ", " + agent + ", " + agent.isClient() + ", " + agent.isRemoved() + ")");
+            statement.executeUpdate("INSERT INTO " + agent.getEntity().getSite() + "agent (entity, agent, client, removed) VALUES (" + agent.getEntity() + ", " + agent + ", " + Database.toBoolean(agent.isClient()) + ", " + Database.toBoolean(agent.isRemoved()) + ")");
         }
     }
     
@@ -767,7 +767,7 @@ public final class AgentModule implements BothModule {
     @NonCommitting
     static void removeAgent(@Nonnull Agent agent) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
-            final @Nonnull String SQL = "UPDATE " + agent.getEntity().getSite() + "agent SET removed = TRUE WHERE entity = " + agent.getEntity() + " AND agent = " + agent + " AND removed = FALSE";
+            final @Nonnull String SQL = "UPDATE " + agent.getEntity().getSite() + "agent SET removed = " + Database.toBoolean(true) + " WHERE entity = " + agent.getEntity() + " AND agent = " + agent + " AND removed = " + Database.toBoolean(false);
             if (statement.executeUpdate(SQL) == 0) throw new SQLException("The agent with the number " + agent + " of " + agent.getEntity().getIdentity().getAddress() + " could not be removed.");
         }
     }
@@ -780,7 +780,7 @@ public final class AgentModule implements BothModule {
     @NonCommitting
     static void unremoveAgent(@Nonnull Agent agent) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
-            final @Nonnull String SQL = "UPDATE " + agent.getEntity().getSite() + "agent SET removed = FALSE WHERE entity = " + agent.getEntity() + " AND agent = " + agent + " AND removed = TRUE";
+            final @Nonnull String SQL = "UPDATE " + agent.getEntity().getSite() + "agent SET removed = " + Database.toBoolean(false) + " WHERE entity = " + agent.getEntity() + " AND agent = " + agent + " AND removed = " + Database.toBoolean(true);
             if (statement.executeUpdate(SQL) == 0) throw new SQLException("The agent with the number " + agent + " of " + agent.getEntity().getIdentity().getAddress() + " could not be unremoved.");
         }
     }

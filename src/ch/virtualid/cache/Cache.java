@@ -1,7 +1,7 @@
 package ch.virtualid.cache;
 
-import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Committing;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.attribute.AttributeValue;
 import ch.virtualid.attribute.CertifiedAttributeValue;
@@ -56,6 +56,8 @@ import org.javatuples.Pair;
  */
 public final class Cache {
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Initialization –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
     static {
         assert Database.isMainThread() : "This static block is called in the main thread.";
         
@@ -101,6 +103,8 @@ public final class Cache {
             throw new InitializationError("Could not initialize the cache.", exception);
         }
     }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Database Access –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Invalidates all the cached attribute values of the given identity.
@@ -189,6 +193,7 @@ public final class Cache {
         }
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Attribute Retrieval –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns the expiration time of the given attribute value.
@@ -421,6 +426,7 @@ public final class Cache {
         return getPublicKeyChain(identifier.getIdentity()).getKey(time);
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Host Lookup –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Establishes the identity of the given host identifier by checking its existence and requesting its public key chain.

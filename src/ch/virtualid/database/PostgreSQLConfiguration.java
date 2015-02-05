@@ -229,6 +229,12 @@ public final class PostgreSQLConfiguration extends Configuration implements Immu
         return "ROUND(EXTRACT(EPOCH FROM CLOCK_TIMESTAMP()) * 1000)";
     }
     
+    @Pure
+    @Override
+    public @Nonnull String BOOLEAN(boolean value) {
+        return Boolean.toString(value);
+    }
+    
     
     @Pure
     @Override
@@ -244,13 +250,15 @@ public final class PostgreSQLConfiguration extends Configuration implements Immu
     public void createIndex(@Nonnull Statement statement, @Nonnull String table, @Nonnull String... columns) throws SQLException {
         assert columns.length > 0 : "The length of the columns is positive.";
         
-        final @Nonnull StringBuilder string = new StringBuilder("CREATE INDEX ").append(table).append("_index ON ").append(table).append(" (");
+        final @Nonnull StringBuilder string = new StringBuilder("DO $$ DECLARE counter INTEGER; BEGIN ");
+        string.append("SELECT COUNT(*) INTO counter FROM pg_indexes WHERE schemaname = 'public' AND tablename = '").append(table).append("' AND indexname = '").append(table).append("_index").append("';");
+        string.append("IF counter = 0 THEN EXECUTE 'CREATE INDEX ").append(table).append("_index ON ").append(table).append(" (");
         for (final @Nonnull String column : columns) {
             if (column != columns[0]) string.append(", ");
             string.append(column);
         }
-        System.out.println(string.append(")").toString());
-        statement.executeUpdate(string.append(")").toString());
+        string.append(")'; END IF; END; $$");
+        statement.execute(string.toString());
     }
     
     
