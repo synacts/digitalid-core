@@ -1,6 +1,7 @@
 package ch.virtualid.server;
 
 import ch.virtualid.annotations.Committing;
+import ch.virtualid.auxiliary.Time;
 import ch.virtualid.cache.Cache;
 import ch.virtualid.database.Configuration;
 import ch.virtualid.database.Database;
@@ -13,12 +14,15 @@ import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.host.Host;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identity.HostIdentity;
+import ch.virtualid.identity.SemanticType;
 import ch.virtualid.io.Console;
 import ch.virtualid.io.Directory;
+import ch.virtualid.io.Loader;
 import ch.virtualid.synchronizer.Synchronizer;
 import ch.virtualid.util.FreezableLinkedHashMap;
 import ch.virtualid.util.FreezableMap;
 import ch.virtualid.util.ReadonlyCollection;
+import ch.xdf.SignatureWrapper;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -134,8 +138,7 @@ public final class Server {
         for (final @Nonnull File file : files) {
             if (file.isFile() && file.getName().endsWith(".jar")) {
                 try {
-                    Database.loadJarFile(new JarFile(file));
-                    Database.commit();
+                    Loader.loadJarFile(new JarFile(file));
                 } catch (@Nonnull IOException | ClassNotFoundException | SQLException exception) {
                     try { Database.rollback(); } catch (@Nonnull SQLException exc) { throw new InitializationError("Could not rollback.", exc); }
                     throw new InitializationError("Could not load the service in the file '" + file.getName() + "'.", exception);
@@ -146,12 +149,31 @@ public final class Server {
     
     
     /**
+     * Initializes all the classes of Virtual ID and the given libraries.
+     * 
+     * @param mainClasses the main classes of the libraries to be loaded.
+     */
+    @Committing
+    public static void initialize(@Nonnull Class<?>... mainClasses) {
+        Loader.loadClasses(Server.class, SemanticType.class, SignatureWrapper.class);
+        Database.addRegularPurging("general_reply", Time.TWO_YEARS);
+        Database.startPurging();
+        Cache.initialize();
+        
+        for (final @Nonnull Class<?> mainClass : mainClasses) {
+            Loader.loadClasses(mainClass);
+        }
+    }
+    
+    /**
      * Starts the server with the configured and given hosts.
      * 
      * @param arguments the identifiers of hosts to be created when starting up.
      */
     @Committing
     public static void start(@Nonnull String... arguments) {
+        initialize();
+        
         loadServices();
         loadHosts();
         
@@ -180,6 +202,8 @@ public final class Server {
      */
     public static void stop() {
         listener.shutDown();
+        Database.stopPurging();
+        Synchronizer.shutDown();
         hosts.clear();
     }
     
@@ -187,9 +211,7 @@ public final class Server {
      * Shuts down the server after having handled all pending requests.
      */
     public static void shutDown() {
-        Database.shutDown();
-        listener.shutDown();
-        Synchronizer.shutDown();
+        Server.stop();
         System.exit(0);
     }
     
@@ -225,8 +247,8 @@ public final class Server {
         } catch (@Nonnull SQLException | IOException exception) {
             throw new InitializationError("Could not load the database configuration.", exception);
         }
-        Database.initialize(configuration, false, true);
-        start(arguments);
+        Database.initialize(configuration, false);
+        Server.start(arguments);
         Options.start();
     }
     

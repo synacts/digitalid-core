@@ -1,6 +1,5 @@
 package ch.virtualid.setup;
 
-import ch.virtualid.database.Database;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.server.Server;
 import javax.annotation.Nonnull;
@@ -25,9 +24,8 @@ public class ServerSetup extends DatabaseSetup {
     
     @BeforeClass
     public static void setUpServer() {
-        Database.loadClasses();
+        Server.start("example.com");
         recipient = new HostIdentifier("example.com");
-        Server.start(recipient.getString());
     }
     
     @AfterClass

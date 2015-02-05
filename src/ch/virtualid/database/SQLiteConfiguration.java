@@ -37,13 +37,13 @@ public final class SQLiteConfiguration extends Configuration implements Immutabl
      * @param name the name of the database file (without the suffix).
      * @param reset whether the database is to be dropped first before creating it again.
      * 
-     * @require Database.isValid(name) : "The name is valid for a database.";
+     * @require Configuration.isValid(name) : "The name is valid for a database.";
      */
     @NonCommitting
     public SQLiteConfiguration(@Nonnull String name, boolean reset) throws SQLException {
         super(new JDBC());
         
-        assert Database.isValid(name) : "The name is valid for a database.";
+        assert Configuration.isValid(name) : "The name is valid for a database.";
         
         this.name = name;
         if (reset) dropDatabase();

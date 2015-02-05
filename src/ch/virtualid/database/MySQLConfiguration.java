@@ -63,13 +63,13 @@ public final class MySQLConfiguration extends Configuration implements Immutable
      * @param name the name of the database configuration file (without the suffix).
      * @param reset whether the database is to be dropped first before creating it again.
      * 
-     * @require Database.isValid(name) : "The name is valid for a database.";
+     * @require Configuration.isValid(name) : "The name is valid for a database.";
      */
     @NonCommitting
     public MySQLConfiguration(@Nonnull String name, boolean reset) throws SQLException, IOException {
         super(new Driver());
         
-        assert Database.isValid(name) : "The name is valid for a database.";
+        assert Configuration.isValid(name) : "The name is valid for a database.";
         
         final @Nonnull File file = new File(Directory.DATA.getPath() + Directory.SEPARATOR + name + ".conf");
         if (file.exists()) {

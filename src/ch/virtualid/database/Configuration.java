@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.sql.Savepoint;
 import java.sql.Statement;
 import java.util.Properties;
+import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -28,6 +29,26 @@ import javax.annotation.Nullable;
  */
 public abstract class Configuration implements Immutable {
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Validity –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * The pattern that valid database names have to match.
+     */
+    private static final @Nonnull Pattern pattern = Pattern.compile("[a-z0-9_]+", Pattern.CASE_INSENSITIVE);
+    
+    /**
+     * Returns whether the given name is valid for a database.
+     * 
+     * @param name the database name to check for validity.
+     * 
+     * @return whether the given name is valid for a database.
+     */
+    public static boolean isValid(@Nonnull String name) {
+        return name.length() <= 40 && pattern.matcher(name).matches();
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
     /**
      * Creates a new configuration with the given driver.
      * 
@@ -37,6 +58,8 @@ public abstract class Configuration implements Immutable {
     protected Configuration(@Nonnull Driver driver) throws SQLException {
         DriverManager.registerDriver(driver);
     }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Database –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns the database URL of this configuration.
@@ -62,6 +85,8 @@ public abstract class Configuration implements Immutable {
     @NonCommitting
     public abstract void dropDatabase() throws SQLException;
     
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Syntax –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns the syntax for defining an auto-incrementing primary key.
@@ -168,6 +193,8 @@ public abstract class Configuration implements Immutable {
     public abstract @Nonnull String BOOLEAN(boolean value);
     
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Index –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
     /**
      * Returns the syntax for creating an index inside a table declaration.
      * 
@@ -192,6 +219,8 @@ public abstract class Configuration implements Immutable {
     public abstract void createIndex(@Nonnull Statement statement, @Nonnull String table, @Nonnull String... columns) throws SQLException;
     
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Supports –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
     /**
      * Returns whether binary streams are supported.
      * 
@@ -202,6 +231,7 @@ public abstract class Configuration implements Immutable {
         return true;
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Insertions –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Executes the given insertion and returns the generated key.
@@ -220,6 +250,7 @@ public abstract class Configuration implements Immutable {
         }
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Savepoints –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns a savepoint for the given connection or null if not supported or required.
@@ -243,6 +274,8 @@ public abstract class Configuration implements Immutable {
     void rollback(@Nonnull Connection connection, @Nullable Savepoint savepoint) throws SQLException {}
     
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Ignoring –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
     /**
      * Creates a rule to ignore duplicate insertions.
      * 
@@ -264,6 +297,8 @@ public abstract class Configuration implements Immutable {
     @NonCommitting
     void onInsertNotIgnore(@Nonnull Statement statement, @Nonnull String table) throws SQLException {}
     
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Updating –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Creates a rule to update duplicate insertions.

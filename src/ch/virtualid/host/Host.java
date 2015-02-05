@@ -121,6 +121,7 @@ public final class Host extends Site {
         
         CoreService.SERVICE.createTables(this);
         Server.addHost(this);
+        Database.commit();
         
         final @Nonnull HostAccount account = HostAccount.get(this, identity);
         final @Nonnull Attribute attribute = Attribute.get(account, PublicKeyChain.TYPE);
