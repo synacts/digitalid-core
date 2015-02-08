@@ -5,6 +5,7 @@ import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.NonCommitting;
+import ch.virtualid.annotations.OnlyForHosts;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.attribute.Attribute;
 import ch.virtualid.attribute.AttributeValue;
@@ -171,11 +172,11 @@ public abstract class Method extends Handler {
      * 
      * @throws PacketException if the authorization is not sufficient.
      * 
-     * @require isOnHost() : "This method is called on a host.";
      * @require hasSignature() : "This handler has a signature.";
      * 
      * @ensure matches(return) : "This method matches the returned reply.";
      */
+    @OnlyForHosts
     @NonCommitting
     public abstract @Nullable Reply executeOnHost() throws PacketException, SQLException;
     

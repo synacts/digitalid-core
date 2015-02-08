@@ -2,6 +2,8 @@ package ch.virtualid.handler;
 
 import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.NonCommitting;
+import ch.virtualid.annotations.OnlyForClients;
+import ch.virtualid.annotations.OnlyForHosts;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Client;
 import ch.virtualid.entity.Entity;
@@ -41,6 +43,7 @@ public abstract class InternalAction extends Action implements InternalMethod {
      * @param role the role to which this handler belongs.
      * @param recipient the recipient of this method.
      */
+    @OnlyForClients
     protected InternalAction(@Nonnull Role role, @Nonnull HostIdentifier recipient) {
         super(role, role.getIdentity().getAddress(), recipient);
     }
@@ -95,13 +98,14 @@ public abstract class InternalAction extends Action implements InternalMethod {
      * 
      * @throws PacketException if the authorization is not sufficient.
      * 
-     * @require isOnHost() : "This method is called on a host.";
      * @require hasSignature() : "This handler has a signature.";
      */
+    @OnlyForHosts
     @NonCommitting
     protected abstract void executeOnHostInternalAction() throws PacketException, SQLException;
     
     @Override
+    @OnlyForHosts
     @NonCommitting
     public final @Nullable ActionReply executeOnHost() throws PacketException, SQLException {
         executeOnHostInternalAction();
@@ -132,18 +136,16 @@ public abstract class InternalAction extends Action implements InternalMethod {
      * Returns the reverse of this action or null if this action cannot be reversed.
      * 
      * @return the reverse of this action or null if this action cannot be reversed.
-     * 
-     * @require isOnClient() : "This method is called on a client.";
      */
     @Pure
-    public abstract @Nullable InternalAction getReverse();
+    @OnlyForClients
+    public abstract @Nullable InternalAction getReverse() throws SQLException;
     
     /**
      * Reverses this internal action on the client if this action can be reversed.
-     * 
-     * @require isOnClient() : "This method is called on a client.";
      */
     @NonCommitting
+    @OnlyForClients
     public final void reverseOnClient() throws SQLException {
         assert isOnClient() : "This method is called on a client.";
         

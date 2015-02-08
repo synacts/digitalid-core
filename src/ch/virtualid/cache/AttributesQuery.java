@@ -177,7 +177,7 @@ public final class AttributesQuery extends CoreServiceExternalQuery {
             }
         }
         
-        return new AttributesReply(getSubject(), attributeValues.freeze());
+        return new AttributesReply(account, attributeValues.freeze());
     }
     
     @Pure

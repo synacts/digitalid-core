@@ -1,11 +1,12 @@
 package ch.virtualid.handler;
 
+import ch.virtualid.annotations.OnlyForHosts;
 import ch.virtualid.entity.Account;
 import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
-import ch.virtualid.service.CoreServiceQueryReply;
-import ch.virtualid.identity.IdentityReply;
 import ch.virtualid.identifier.InternalIdentifier;
+import ch.virtualid.identity.IdentityReply;
+import ch.virtualid.service.CoreServiceQueryReply;
 import ch.xdf.HostSignatureWrapper;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -26,6 +27,7 @@ public abstract class QueryReply extends Reply {
      * 
      * @param account the account to which this query reply belongs.
      */
+    @OnlyForHosts
     protected QueryReply(@Nonnull Account account) {
         super(account, account.getIdentity().getAddress());
     }

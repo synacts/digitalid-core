@@ -1,6 +1,7 @@
 package ch.virtualid.handler;
 
 import ch.virtualid.annotations.NonCommitting;
+import ch.virtualid.annotations.OnlyForHosts;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.database.Database;
@@ -56,6 +57,7 @@ public abstract class Reply extends Handler implements SQLizable {
      * @param account the account to which this reply belongs.
      * @param subject the subject of this handler.
      */
+    @OnlyForHosts
     protected Reply(@Nullable Account account, @Nonnull InternalIdentifier subject) {
         super(account, subject);
         

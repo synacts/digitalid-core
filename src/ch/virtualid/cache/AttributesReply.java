@@ -1,18 +1,19 @@
 package ch.virtualid.cache;
 
 import ch.virtualid.annotations.NonCommitting;
+import ch.virtualid.annotations.OnlyForHosts;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.attribute.AttributeValue;
 import ch.virtualid.attribute.CertifiedAttributeValue;
 import ch.virtualid.attribute.UncertifiedAttributeValue;
 import ch.virtualid.auxiliary.Time;
+import ch.virtualid.entity.Account;
 import ch.virtualid.entity.NonHostEntity;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.external.InvalidSignatureException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Reply;
-import ch.virtualid.identifier.InternalIdentifier;
 import ch.virtualid.identity.InternalIdentity;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.service.CoreServiceQueryReply;
@@ -70,16 +71,17 @@ public final class AttributesReply extends CoreServiceQueryReply {
     /**
      * Creates an attributes reply for the queried attribute values of given subject.
      * 
-     * @param subject the subject of this handler.
+     * @param account the account to which this query reply belongs.
      * @param attributeValues the attribute values of this reply.
      * 
      * @require attributeValues.isFrozen() : "The attribute values are frozen.";
      * @require attributeValues.isNotEmpty() : "The attribute values are not empty.";
      * @require areVerified(attributeValues) : "All the attribute values which are not null are verified.";
      */
+    @OnlyForHosts
     @NonCommitting
-    AttributesReply(@Nonnull InternalIdentifier subject, @Nonnull ReadonlyList<AttributeValue> attributeValues) throws SQLException, PacketException {
-        super(subject);
+    AttributesReply(@Nonnull Account account, @Nonnull ReadonlyList<AttributeValue> attributeValues) {
+        super(account);
         
         assert attributeValues.isFrozen() : "The attribute values are frozen.";
         assert attributeValues.isNotEmpty() : "The attribute values are not empty.";
