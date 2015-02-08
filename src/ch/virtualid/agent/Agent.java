@@ -23,7 +23,7 @@ import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
 import ch.virtualid.synchronizer.Synchronizer;
 import ch.virtualid.util.FreezableArray;
-import ch.virtualid.util.FreezableSet;
+import ch.virtualid.util.FreezableList;
 import ch.virtualid.util.ReadonlyArray;
 import ch.xdf.Block;
 import ch.xdf.BooleanWrapper;
@@ -361,11 +361,11 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
      * 
      * @return the agents that are weaker than this agent.
      * 
-     * @ensure return.isNotFrozen() : "The set is not frozen.";
+     * @ensure return.isNotFrozen() : "The list is not frozen.";
      */
     @Pure
     @NonCommitting
-    public final @Capturable @Nonnull FreezableSet<Agent> getWeakerAgents() throws SQLException {
+    public final @Capturable @Nonnull FreezableList<Agent> getWeakerAgents() throws SQLException {
         return AgentModule.getWeakerAgents(this);
     }
     

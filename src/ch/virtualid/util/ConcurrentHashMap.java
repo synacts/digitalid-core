@@ -1,5 +1,7 @@
 package ch.virtualid.util;
 
+import ch.virtualid.annotations.Capturable;
+import ch.virtualid.annotations.Pure;
 import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -53,6 +55,12 @@ public class ConcurrentHashMap<K, V> extends java.util.concurrent.ConcurrentHash
         @Nullable V previous = putIfAbsent(key, value);
         if (previous == null) return value;
         else return previous;
+    }
+    
+    @Pure
+    @Override
+    public @Capturable @Nonnull ConcurrentHashMap<K, V> clone() {
+        return new ConcurrentHashMap<K, V>(this);
     }
     
 }

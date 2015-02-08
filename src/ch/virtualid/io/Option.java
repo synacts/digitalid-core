@@ -1,6 +1,7 @@
 package ch.virtualid.io;
 
 import ch.virtualid.annotations.Committing;
+import ch.virtualid.annotations.Pure;
 import ch.virtualid.exceptions.io.EscapeOptionException;
 import javax.annotation.Nonnull;
 
@@ -31,6 +32,7 @@ public abstract class Option {
      * 
      * @return the description of this option.
      */
+    @Pure
     public final @Nonnull String getDescription() {
         return description;
     }

@@ -31,10 +31,8 @@ import ch.virtualid.module.BothModule;
 import ch.virtualid.service.CoreService;
 import ch.virtualid.service.Service;
 import ch.virtualid.util.FreezableArray;
-import ch.virtualid.util.FreezableLinkedHashSet;
 import ch.virtualid.util.FreezableLinkedList;
 import ch.virtualid.util.FreezableList;
-import ch.virtualid.util.FreezableSet;
 import ch.virtualid.util.ReadonlyArray;
 import ch.virtualid.util.ReadonlyList;
 import ch.xdf.Block;
@@ -993,16 +991,16 @@ public final class AgentModule implements BothModule {
      * 
      * @return the agents that are weaker than the given agent.
      * 
-     * @ensure return.isNotFrozen() : "The set is not frozen.";
+     * @ensure return.isNotFrozen() : "The list is not frozen.";
      */
     @Pure
     @NonCommitting
-    static @Capturable @Nonnull FreezableSet<Agent> getWeakerAgents(@Nonnull Agent agent) throws SQLException {
+    static @Capturable @Nonnull FreezableList<Agent> getWeakerAgents(@Nonnull Agent agent) throws SQLException {
         final @Nonnull NonHostEntity entity = agent.getEntity();
         final @Nonnull Site site = entity.getSite();
         final @Nonnull String SQL = "SELECT agent, client, removed FROM " + site + "agent_permission_order po, " + site + "agent_restrictions_ord ro, " + site + "agent ag WHERE po.entity = " + entity + " AND po.stronger = " + agent + " AND ro.entity = " + entity + " AND ro.stronger = " + agent + " AND ag.entity = " + entity + " AND po.weaker = ag.agent AND ro.weaker = ag.agent";
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
-            final @Nonnull FreezableSet<Agent> agents = new FreezableLinkedHashSet<Agent>();
+            final @Nonnull FreezableList<Agent> agents = new FreezableLinkedList<Agent>();
             while (resultSet.next()) agents.add(Agent.get(entity, resultSet, 1, 2, 3));
             return agents;
         }
