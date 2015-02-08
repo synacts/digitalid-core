@@ -1,5 +1,6 @@
 package ch.virtualid.annotations;
 
+import ch.virtualid.database.Database;
 import ch.virtualid.handler.Action;
 import ch.virtualid.handler.Method;
 import ch.virtualid.handler.Query;
