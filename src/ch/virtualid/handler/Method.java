@@ -27,6 +27,7 @@ import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identifier.InternalIdentifier;
 import ch.virtualid.identity.Identity;
+import ch.virtualid.identity.IdentityQuery;
 import ch.virtualid.identity.Person;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.packet.ClientRequest;
@@ -331,11 +332,15 @@ public abstract class Method extends Handler {
         
         if (reference instanceof ExternalQuery) {
             final @Nonnull ReadonlyAuthentications authentications;
-            final @Nonnull Identity identity = subject.getIdentity();
-            if (entity != null && entity instanceof Role && identity instanceof Person) {
-                authentications = Contact.get((Role) entity, (Person) identity).getAuthentications();
-            } else {
+            if (reference instanceof IdentityQuery) {
                 authentications = Authentications.NONE;
+            } else {
+                final @Nonnull Identity identity = subject.getIdentity();
+                if (entity != null && entity instanceof Role && identity instanceof Person) {
+                    authentications = Contact.get((Role) entity, (Person) identity).getAuthentications();
+                } else {
+                    authentications = Authentications.NONE;
+                }
             }
             
             if (authentications.isEmpty()) {

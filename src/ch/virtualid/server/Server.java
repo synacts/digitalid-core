@@ -56,7 +56,7 @@ public final class Server {
     /**
      * References the thread that listens on the socket.
      */
-    private static final @Nonnull Listener listener = new Listener(PORT);
+    private static @Nonnull Listener listener;
     
     /**
      * Maps the identifiers of the hosts that are running on this server to their instances.
@@ -186,6 +186,7 @@ public final class Server {
             }
         }
         
+        listener = new Listener(PORT);
         listener.start();
         
         try {

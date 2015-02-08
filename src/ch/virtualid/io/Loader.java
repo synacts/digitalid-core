@@ -6,7 +6,10 @@ import ch.virtualid.database.Database;
 import ch.virtualid.errors.InitializationError;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.sql.SQLException;
 import java.util.Enumeration;
 import java.util.jar.JarEntry;
@@ -58,14 +61,15 @@ public final class Loader {
      * @param jarFile the jar file containing the classes.
      */
     @NonCommitting
-    public static void loadJarFile(@Nonnull JarFile jarFile) throws ClassNotFoundException, SQLException {
+    public static void loadJarFile(@Nonnull JarFile jarFile) throws ClassNotFoundException, SQLException, MalformedURLException {
+        final @Nonnull URLClassLoader urlClassLoader = new URLClassLoader(new URL[]{ new File(jarFile.getName()).toURI().toURL() }, Loader.class.getClassLoader());
         final @Nonnull Enumeration<JarEntry> entries = jarFile.entries();
         while (entries.hasMoreElements()) {
             final @Nonnull String entryName = entries.nextElement().getName();
             if (entryName.endsWith(".class")) {
                 final @Nonnull String className = entryName.substring(0, entryName.length() - 6).replace("/", ".");
                 LOGGER.log(Level.INFORMATION, "Initialize class: " + className);
-                Class.forName(className);
+                Class.forName(className, true, urlClassLoader);
             }
         }
         Database.commit();
