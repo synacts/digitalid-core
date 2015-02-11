@@ -11,7 +11,7 @@ public final class Parameters {
     /**
      * The bit-length of the prime factors.
      */
-    public static final int FACTOR = 256; // TODO: 1024;
+    public static final int FACTOR = 1024;
     
     /**
      * The bit-length of the hash function and certain random values.
@@ -46,7 +46,7 @@ public final class Parameters {
     /**
      * The bit-length of the verifiable encryption modulus divided by 2.
      */
-    public static final int VERIFIABLE_ENCRYPTION = 256; // TODO: 1024;
+    public static final int VERIFIABLE_ENCRYPTION = 1024;
     
     /**
      * The bit-length of the symmetric encryption key.

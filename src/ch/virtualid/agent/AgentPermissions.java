@@ -4,6 +4,7 @@ import ch.virtualid.annotations.Capturable;
 import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
+import ch.virtualid.database.Database;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.exceptions.packet.PacketError;
@@ -399,27 +400,42 @@ public final class AgentPermissions extends FreezableLinkedHashMap<SemanticType,
     @Pure
     @Override
     public @Nonnull String allTypesToString() {
-        final @Nonnull StringBuilder string = new StringBuilder("(");
-        for (final @Nonnull SemanticType type : keySet()) {
-            if (string.length() != 1) string.append(", ");
-            string.append(type);
+        if (!canRead(GENERAL)) {
+            final @Nonnull StringBuilder string = new StringBuilder(" AND ");
+            if (isNotEmpty()) {
+                string.append("type IN (");
+                for (final @Nonnull SemanticType type : keySet()) {
+                    if (string.length() != 14) string.append(", ");
+                    string.append(type);
+                }
+                string.append(")");
+            } else {
+                string.append(Database.toBoolean(false));
+            }
+            return string.toString();
+        } else {
+            return "";
         }
-        string.append(")");
-        return string.toString();
     }
     
     @Pure
     @Override
     public @Nonnull String writeTypesToString() {
-        final @Nonnull StringBuilder string = new StringBuilder("(");
-        for (final @Nonnull SemanticType type : keySet()) {
-            if (get(type)) {
-                if (string.length() != 1) string.append(", ");
-                string.append(type);
+        if (!canWrite(GENERAL)) {
+            final @Nonnull StringBuilder string = new StringBuilder("(");
+            for (final @Nonnull SemanticType type : keySet()) {
+                if (get(type)) {
+                    if (string.length() != 1) string.append(", ");
+                    string.append(type);
+                }
             }
+            string.append(")");
+            final @Nonnull String list = string.toString();
+            if (!list.equals("()")) return " AND type IN " + list;
+            else return " AND " + Database.toBoolean(false);
+        } else {
+            return "";
         }
-        string.append(")");
-        return string.toString();
     }
     
     

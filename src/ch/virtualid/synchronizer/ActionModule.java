@@ -210,12 +210,7 @@ public final class ActionModule implements BothModule {
         final @Nonnull Site site = entity.getSite();
         final @Nonnull StringBuilder SQL = new StringBuilder("(SELECT ").append(Database.getConfiguration().GREATEST()).append("(COALESCE(MAX(time), 0), ").append(Database.getConfiguration().CURRENT_TIME()).append("), NULL FROM ").append(site).append("action) UNION ");
         SQL.append("(SELECT time, action FROM ").append(site).append("action a WHERE entity = ").append(entity).append(" AND service = ").append(service.getType()).append(" AND time > ").append(lastTime);
-        
-        SQL.append(" AND (type_writing IS NULL OR NOT type_writing");
-        if (!permissions.canRead(AgentPermissions.GENERAL)) SQL.append(" AND type_writing IN ").append(permissions.allTypesToString());
-        SQL.append(" OR type_writing");
-        if (!permissions.canWrite(AgentPermissions.GENERAL)) SQL.append(" AND type_writing IN ").append(permissions.writeTypesToString());
-        SQL.append(")");
+        SQL.append(" AND (type_writing IS NULL OR NOT type_writing").append(permissions.allTypesToString()).append(" OR type_writing").append(permissions.writeTypesToString()).append(")");
         
         if (!restrictions.isClient()) SQL.append(" AND NOT client");
         if (!restrictions.isRole()) SQL.append(" AND NOT role");

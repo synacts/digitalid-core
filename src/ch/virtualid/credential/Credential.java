@@ -531,7 +531,7 @@ public abstract class Credential implements Immutable {
             string.append(")");
         } else {
             if (role != null) string.append(", Role: ").append(role.getAddress().getString());
-            if (restrictions != null) string.append(", Restrictions: ").append(restrictions);
+            if (restrictions != null) string.append(", Restrictions: ").append(restrictions.toFormattedString());
         }
         string.append(")");
         return string.toString();

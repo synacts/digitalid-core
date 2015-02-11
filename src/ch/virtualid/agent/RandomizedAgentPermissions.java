@@ -2,7 +2,6 @@ package ch.virtualid.agent;
 
 import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
-import ch.virtualid.client.Commitment;
 import ch.virtualid.cryptography.Parameters;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
@@ -195,7 +194,7 @@ public final class RandomizedAgentPermissions implements Immutable, Blockable {
     @Override
     public boolean equals(@Nullable Object object) {
         if (object == this) return true;
-        if (object == null || !(object instanceof Commitment)) return false;
+        if (object == null || !(object instanceof RandomizedAgentPermissions)) return false;
         final @Nonnull RandomizedAgentPermissions other = (RandomizedAgentPermissions) object;
         return this.hash.equals(other.hash) && Objects.equals(this.salt, other.salt) && Objects.equals(this.permissions, other.permissions);
     }
