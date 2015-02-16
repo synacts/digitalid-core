@@ -5,7 +5,7 @@ import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
-import ch.virtualid.util.FreezableArray;
+import ch.virtualid.collections.FreezableArray;
 import ch.xdf.Block;
 import ch.xdf.IntegerWrapper;
 import ch.xdf.TupleWrapper;
@@ -21,7 +21,7 @@ import javax.annotation.Nullable;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 1.0
  */
-public final class Group implements Immutable, Blockable {
+public final class Group implements Immutable, Blockable { // TODO: Make it abstract and implement the known or unknown group.
     
     /**
      * Stores the semantic type {@code modulus.group@virtualid.ch}.

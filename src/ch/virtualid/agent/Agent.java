@@ -22,9 +22,9 @@ import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
 import ch.virtualid.synchronizer.Synchronizer;
-import ch.virtualid.util.FreezableArray;
-import ch.virtualid.util.FreezableList;
-import ch.virtualid.util.ReadonlyArray;
+import ch.virtualid.collections.FreezableArray;
+import ch.virtualid.collections.FreezableList;
+import ch.virtualid.collections.ReadonlyArray;
 import ch.xdf.Block;
 import ch.xdf.BooleanWrapper;
 import ch.xdf.Int64Wrapper;
@@ -307,10 +307,10 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
      * 
      * @param newRestrictions the new restrictions of this agent.
      * 
-     * @require isOnClient() : "This agent is on a client.";
      * @require newRestrictions.match(this) : "The new restrictions match this agent.";
      */
     @Committing
+    @OnlyForClients
     public final void setRestrictions(@Nonnull Restrictions newRestrictions) throws SQLException {
         final @Nonnull Restrictions oldRestrictions = getRestrictions();
         if (!newRestrictions.equals(oldRestrictions)) {

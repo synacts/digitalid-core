@@ -8,7 +8,7 @@ import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Reply;
 import ch.virtualid.identifier.InternalNonHostIdentifier;
 import ch.virtualid.interfaces.Blockable;
-import ch.virtualid.util.ReadonlyList;
+import ch.virtualid.collections.ReadonlyList;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;

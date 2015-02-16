@@ -4,7 +4,7 @@ import ch.virtualid.annotations.Capturable;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.SQLizable;
-import ch.virtualid.util.ReadonlySet;
+import ch.virtualid.collections.ReadonlySet;
 import javax.annotation.Nonnull;
 
 /**

@@ -5,7 +5,7 @@ import ch.virtualid.annotations.Capturable;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
-import ch.virtualid.util.ReadonlySet;
+import ch.virtualid.collections.ReadonlySet;
 import javax.annotation.Nonnull;
 
 /**

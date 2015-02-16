@@ -34,8 +34,8 @@ import ch.virtualid.packet.ClientRequest;
 import ch.virtualid.packet.Response;
 import ch.virtualid.service.CoreService;
 import ch.virtualid.service.Service;
-import ch.virtualid.util.FreezableArrayList;
-import ch.virtualid.util.ReadonlyArray;
+import ch.virtualid.collections.FreezableArrayList;
+import ch.virtualid.collections.ReadonlyArray;
 import ch.xdf.Block;
 import ch.xdf.ClientSignatureWrapper;
 import ch.xdf.Int64Wrapper;
@@ -43,9 +43,9 @@ import ch.xdf.SignatureWrapper;
 import ch.xdf.StringWrapper;
 import ch.xdf.TupleWrapper;
 import java.io.IOException;
-import java.security.SecureRandom;
 import java.sql.SQLException;
 import java.util.Objects;
+import java.util.Random;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -118,7 +118,7 @@ public final class AccountOpen extends Action {
         assert category.isInternalNonHostIdentity() : "The category denotes an internal non-host identity.";
         
         this.category = category;
-        this.agentNumber = new SecureRandom().nextLong();
+        this.agentNumber = new Random().nextLong();
         this.commitment = client.getCommitment(subject);
         this.secret = client.getSecret();
         this.name = client.getName();

@@ -16,7 +16,7 @@ import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
-import ch.virtualid.util.FreezableArray;
+import ch.virtualid.collections.FreezableArray;
 import ch.xdf.Block;
 import ch.xdf.BooleanWrapper;
 import ch.xdf.TupleWrapper;

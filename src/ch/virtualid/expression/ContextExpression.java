@@ -8,7 +8,7 @@ import ch.virtualid.contact.Context;
 import ch.virtualid.entity.NonHostEntity;
 import static ch.virtualid.expression.Expression.operators;
 import ch.virtualid.interfaces.Immutable;
-import ch.virtualid.util.FreezableSet;
+import ch.virtualid.collections.FreezableSet;
 import ch.xdf.Block;
 import ch.xdf.CredentialsSignatureWrapper;
 import java.sql.SQLException;

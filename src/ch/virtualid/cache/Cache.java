@@ -30,7 +30,7 @@ import ch.virtualid.identity.SemanticType;
 import ch.virtualid.io.Directory;
 import ch.virtualid.packet.Request;
 import ch.virtualid.packet.Response;
-import ch.virtualid.util.ReadonlyList;
+import ch.virtualid.collections.ReadonlyList;
 import ch.xdf.Block;
 import ch.xdf.SelfcontainedWrapper;
 import java.io.File;

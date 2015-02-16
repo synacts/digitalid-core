@@ -1,9 +1,12 @@
 package ch.virtualid.agent;
 
-import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Committing;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.OnlyForActions;
 import ch.virtualid.annotations.Pure;
+import ch.virtualid.collections.ConcurrentHashMap;
+import ch.virtualid.collections.ConcurrentMap;
+import ch.virtualid.collections.ReadonlySet;
 import ch.virtualid.concept.Aspect;
 import ch.virtualid.concept.Instance;
 import ch.virtualid.concept.Observer;
@@ -21,12 +24,9 @@ import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
 import ch.virtualid.pusher.Pusher;
 import ch.virtualid.synchronizer.Synchronizer;
-import ch.virtualid.util.ConcurrentHashMap;
-import ch.virtualid.util.ConcurrentMap;
-import ch.virtualid.util.ReadonlySet;
-import java.security.SecureRandom;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Random;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -317,7 +317,7 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
      */
     @Committing
     public static @Nonnull OutgoingRole create(@Nonnull SemanticType relation, @Nonnull Context context) throws SQLException {
-        final @Nonnull OutgoingRole outgoingRole = get(context.getRole(), new SecureRandom().nextLong(), false, false);
+        final @Nonnull OutgoingRole outgoingRole = get(context.getRole(), new Random().nextLong(), false, false);
         Synchronizer.execute(new OutgoingRoleCreate(outgoingRole, relation, context));
         return outgoingRole;
     }

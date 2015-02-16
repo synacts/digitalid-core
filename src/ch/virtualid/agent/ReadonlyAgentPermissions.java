@@ -7,7 +7,7 @@ import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.SQLizable;
-import ch.virtualid.util.ReadonlyMap;
+import ch.virtualid.collections.ReadonlyMap;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;

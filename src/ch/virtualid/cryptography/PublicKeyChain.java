@@ -7,7 +7,7 @@ import ch.virtualid.identity.Category;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
-import ch.virtualid.util.ReadonlyList;
+import ch.virtualid.collections.ReadonlyList;
 import ch.xdf.Block;
 import ch.xdf.ListWrapper;
 import ch.xdf.TupleWrapper;

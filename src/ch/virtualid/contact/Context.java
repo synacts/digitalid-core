@@ -23,17 +23,17 @@ import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
 import ch.virtualid.synchronizer.Synchronizer;
-import ch.virtualid.util.ConcurrentHashMap;
-import ch.virtualid.util.ConcurrentMap;
+import ch.virtualid.collections.ConcurrentHashMap;
+import ch.virtualid.collections.ConcurrentMap;
 import ch.xdf.Block;
 import ch.xdf.Int64Wrapper;
-import java.security.SecureRandom;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.Collection;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -518,7 +518,7 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
      * @param role the role to which the context belongs.
      */
     public static @Nonnull Context create(@Nonnull Role role) {
-        final @Nonnull Context context = get(role, new SecureRandom().nextLong());
+        final @Nonnull Context context = get(role, new Random().nextLong());
 //        Synchronizer.execute(new ContextCreate(context));
         return context;
     }

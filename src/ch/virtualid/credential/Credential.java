@@ -19,7 +19,7 @@ import ch.virtualid.identity.InternalPerson;
 import ch.virtualid.identity.NonHostIdentity;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Immutable;
-import ch.virtualid.util.FreezableArray;
+import ch.virtualid.collections.FreezableArray;
 import ch.xdf.Block;
 import ch.xdf.HashWrapper;
 import ch.xdf.SelfcontainedWrapper;

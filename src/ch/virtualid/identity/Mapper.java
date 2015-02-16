@@ -25,7 +25,7 @@ import ch.virtualid.identifier.NonHostIdentifier;
 import ch.virtualid.io.Level;
 import ch.virtualid.io.Logger;
 import ch.virtualid.server.Server;
-import ch.virtualid.util.ReadonlyList;
+import ch.virtualid.collections.ReadonlyList;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;

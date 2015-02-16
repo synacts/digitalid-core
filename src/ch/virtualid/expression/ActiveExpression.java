@@ -11,7 +11,7 @@ import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.interfaces.SQLizable;
-import ch.virtualid.util.FreezableSet;
+import ch.virtualid.collections.FreezableSet;
 import ch.xdf.Block;
 import ch.xdf.StringWrapper;
 import java.io.IOException;

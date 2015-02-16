@@ -21,7 +21,7 @@ import ch.virtualid.identity.SyntacticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.server.Server;
-import ch.virtualid.util.FreezableArray;
+import ch.virtualid.collections.FreezableArray;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.sql.SQLException;

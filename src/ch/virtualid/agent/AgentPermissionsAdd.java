@@ -11,7 +11,7 @@ import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.BothModule;
 import ch.virtualid.service.CoreServiceInternalAction;
-import ch.virtualid.util.ReadonlyArray;
+import ch.virtualid.collections.ReadonlyArray;
 import ch.xdf.Block;
 import ch.xdf.SignatureWrapper;
 import ch.xdf.TupleWrapper;

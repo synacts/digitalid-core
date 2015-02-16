@@ -1,5 +1,7 @@
 package ch.virtualid.concept;
 
+import ch.virtualid.annotations.OnlyForClients;
+import ch.virtualid.annotations.OnlyForHosts;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.Account;
@@ -51,23 +53,19 @@ public abstract class Concept extends Instance {
      * Returns the account to which this concept belongs.
      * 
      * @return the account to which this concept belongs.
-     * 
-     * @require isOnHost() : "This concept is on a host.";
      */
     @Pure
+    @OnlyForHosts
     public abstract @Nonnull Account getAccount();
     
     /**
      * Returns the role to which this concept belongs.
      * 
      * @return the role to which this concept belongs.
-     * 
-     * @require isOnClient() : "This concept is on a client.";
      */
     @Pure
+    @OnlyForClients
     public final @Nonnull Role getRole() {
-        assert isOnClient() : "This concept is on a client.";
-        
         return (Role) getEntity();
     }
     

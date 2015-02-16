@@ -16,7 +16,7 @@ import ch.virtualid.identity.SemanticType;
 import ch.virtualid.module.BothModule;
 import ch.virtualid.service.CoreServiceActionReply;
 import ch.virtualid.service.CoreServiceExternalAction;
-import ch.virtualid.util.ReadonlyArray;
+import ch.virtualid.collections.ReadonlyArray;
 import ch.xdf.Block;
 import ch.xdf.HostSignatureWrapper;
 import ch.xdf.Int64Wrapper;

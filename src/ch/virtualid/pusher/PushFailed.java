@@ -23,8 +23,8 @@ import ch.virtualid.module.BothModule;
 import ch.virtualid.packet.Packet;
 import ch.virtualid.packet.Response;
 import ch.virtualid.service.Service;
-import ch.virtualid.util.FreezableArray;
-import ch.virtualid.util.ReadonlyArray;
+import ch.virtualid.collections.FreezableArray;
+import ch.virtualid.collections.ReadonlyArray;
 import ch.xdf.Block;
 import ch.xdf.EncryptionWrapper;
 import ch.xdf.Int64Wrapper;
@@ -32,8 +32,8 @@ import ch.xdf.SelfcontainedWrapper;
 import ch.xdf.SignatureWrapper;
 import ch.xdf.TupleWrapper;
 import java.io.IOException;
-import java.security.SecureRandom;
 import java.sql.SQLException;
+import java.util.Random;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -98,7 +98,7 @@ public final class PushFailed extends ExternalAction {
         
         assert account.getIdentity().equals(action.getEntityNotNull().getIdentity()) : "The account and the action's entity have the same identity.";
         
-        this.number = new SecureRandom().nextLong();
+        this.number = new Random().nextLong();
         this.action = action;
     }
     

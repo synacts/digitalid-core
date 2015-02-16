@@ -2,7 +2,7 @@ package ch.virtualid.cryptography;
 
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.interfaces.Immutable;
-import ch.virtualid.util.FreezableArray;
+import ch.virtualid.collections.FreezableArray;
 import ch.xdf.Block;
 import ch.xdf.TupleWrapper;
 import java.math.BigInteger;

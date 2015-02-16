@@ -2,8 +2,8 @@ package ch.virtualid.io;
 
 import ch.virtualid.errors.ShouldNeverHappenError;
 import ch.virtualid.exceptions.io.EscapeOptionException;
-import ch.virtualid.util.FreezableLinkedList;
-import ch.virtualid.util.FreezableList;
+import ch.virtualid.collections.FreezableLinkedList;
+import ch.virtualid.collections.FreezableList;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;

@@ -7,9 +7,9 @@ import ch.virtualid.identity.SemanticType;
 import ch.virtualid.identity.SyntacticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
-import ch.virtualid.util.FreezableArrayList;
-import ch.virtualid.util.FreezableList;
-import ch.virtualid.util.ReadonlyList;
+import ch.virtualid.collections.FreezableArrayList;
+import ch.virtualid.collections.FreezableList;
+import ch.virtualid.collections.ReadonlyList;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 

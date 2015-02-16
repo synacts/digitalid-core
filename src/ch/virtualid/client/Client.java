@@ -39,10 +39,10 @@ import ch.virtualid.io.Directory;
 import ch.virtualid.service.CoreService;
 import ch.virtualid.synchronizer.Synchronizer;
 import ch.virtualid.synchronizer.SynchronizerModule;
-import ch.virtualid.util.FreezableArrayList;
-import ch.virtualid.util.FreezableLinkedList;
-import ch.virtualid.util.FreezableList;
-import ch.virtualid.util.ReadonlyList;
+import ch.virtualid.collections.FreezableArrayList;
+import ch.virtualid.collections.FreezableLinkedList;
+import ch.virtualid.collections.FreezableList;
+import ch.virtualid.collections.ReadonlyList;
 import ch.xdf.Block;
 import ch.xdf.SelfcontainedWrapper;
 import ch.xdf.StringWrapper;
@@ -53,6 +53,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.sql.SQLException;
+import java.util.Random;
 import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -419,7 +420,7 @@ public class Client extends Site implements Observer {
      */
     @Committing
     public final @Nonnull NativeRole accredit(@Nonnull InternalNonHostIdentity identity, @Nonnull String password) throws SQLException, IOException, PacketException, ExternalException {
-        final @Nonnull NativeRole role = addRole(identity, new SecureRandom().nextLong());
+        final @Nonnull NativeRole role = addRole(identity, new Random().nextLong());
         Database.commit();
         try {
             final @Nonnull ClientAgentAccredit action = new ClientAgentAccredit(role, password);
