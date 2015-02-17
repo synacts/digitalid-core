@@ -57,7 +57,7 @@ public final class Authentications extends AttributeTypeSet implements ReadonlyA
      * 
      * @require type.isAttributeType() : "The type is an attribute type.";
      * 
-     * @ensure areSingle() : "The new authentications are single.";
+     * @ensure isSingle() : "The new authentications are single.";
      */
     public Authentications(@Nonnull SemanticType type) {
         super(type);

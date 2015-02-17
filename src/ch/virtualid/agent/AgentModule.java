@@ -377,7 +377,7 @@ public final class AgentModule implements BothModule {
                 final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(3);
                 IdentityClass.create(elements.getNotNull(0)).toInternalNonHostIdentity().set(preparedStatement, 1);
                 preparedStatement.setLong(2, new Int64Wrapper(elements.getNotNull(1)).getValue());
-                new AgentPermissions(elements.getNotNull(2)).checkAreSingle().setEmptyOrSingle(preparedStatement, 3);
+                new AgentPermissions(elements.getNotNull(2)).checkIsSingle().setEmptyOrSingle(preparedStatement, 3);
                 preparedStatement.addBatch();
             }
             preparedStatement.executeBatch();
@@ -652,7 +652,7 @@ public final class AgentModule implements BothModule {
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(2);
                 preparedStatement.setLong(2, new Int64Wrapper(elements.getNotNull(0)).getValue());
-                new AgentPermissions(elements.getNotNull(1)).checkAreSingle().setEmptyOrSingle(preparedStatement, 3);
+                new AgentPermissions(elements.getNotNull(1)).checkIsSingle().setEmptyOrSingle(preparedStatement, 3);
                 preparedStatement.addBatch();
             }
             preparedStatement.executeBatch();

@@ -1,6 +1,7 @@
 package ch.virtualid.collections;
 
 import ch.virtualid.annotations.Capturable;
+import ch.virtualid.annotations.NonFrozenRecipient;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.interfaces.Freezable;
 import ch.virtualid.interfaces.Immutable;
@@ -46,13 +47,13 @@ class BackedFreezableCollection<E> implements FreezableCollection<E> {
     
     @Pure
     @Override
-    public final boolean isFrozen() {
+    public boolean isFrozen() {
         return freezable.isFrozen();
     }
     
     @Pure
     @Override
-    public final boolean isNotFrozen() {
+    public boolean isNotFrozen() {
         return freezable.isNotFrozen();
     }
     
@@ -92,6 +93,18 @@ class BackedFreezableCollection<E> implements FreezableCollection<E> {
     @Override
     public boolean isNotEmpty() {
         return !collection.isEmpty();
+    }
+    
+    @Pure
+    @Override
+    public boolean isSingle() {
+        return size() == 1;
+    }
+    
+    @Pure
+    @Override
+    public boolean isNotSingle() {
+        return size() != 1;
     }
     
     @Pure
@@ -146,60 +159,48 @@ class BackedFreezableCollection<E> implements FreezableCollection<E> {
     }
     
     
-    /**
-     * @require isNotFrozen() : "This object is not frozen.";
-     */
     @Override
+    @NonFrozenRecipient
     public boolean add(@Nullable E element) {
         assert isNotFrozen() : "This object is not frozen.";
         
         return collection.add(element);
     }
     
-    /**
-     * @require isNotFrozen() : "This object is not frozen.";
-     */
     @Override
+    @NonFrozenRecipient
     public boolean addAll(@Nonnull Collection<? extends E> c) {
         assert isNotFrozen() : "This object is not frozen.";
         
         return collection.addAll(c);
     }
     
-    /**
-     * @require isNotFrozen() : "This object is not frozen.";
-     */
     @Override
+    @NonFrozenRecipient
     public boolean remove(@Nullable Object object) {
         assert isNotFrozen() : "This object is not frozen.";
         
         return collection.remove(object);
     }
     
-    /**
-     * @require isNotFrozen() : "This object is not frozen.";
-     */
     @Override
+    @NonFrozenRecipient
     public boolean removeAll(@Nonnull Collection<?> c) {
         assert isNotFrozen() : "This object is not frozen.";
         
         return collection.removeAll(c);
     }
     
-    /**
-     * @require isNotFrozen() : "This object is not frozen.";
-     */
     @Override
+    @NonFrozenRecipient
     public boolean retainAll(@Nonnull Collection<?> c) {
         assert isNotFrozen() : "This object is not frozen.";
         
         return collection.retainAll(c);
     }
     
-    /**
-     * @require isNotFrozen() : "This object is not frozen.";
-     */
     @Override
+    @NonFrozenRecipient
     public void clear() {
         assert isNotFrozen() : "This object is not frozen.";
         

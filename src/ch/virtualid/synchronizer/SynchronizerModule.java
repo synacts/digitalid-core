@@ -2,9 +2,14 @@ package ch.virtualid.synchronizer;
 
 import ch.virtualid.annotations.Committing;
 import ch.virtualid.annotations.NonCommitting;
+import ch.virtualid.annotations.NonFrozen;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.client.Client;
+import ch.virtualid.collections.FreezableLinkedList;
+import ch.virtualid.collections.FreezableList;
+import ch.virtualid.collections.ReadonlyCollection;
+import ch.virtualid.collections.ReadonlyList;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.EntityClass;
 import ch.virtualid.entity.Role;
@@ -21,10 +26,8 @@ import ch.virtualid.packet.Packet;
 import ch.virtualid.service.CoreService;
 import ch.virtualid.service.Service;
 import static ch.virtualid.synchronizer.Synchronizer.suspend;
-import ch.virtualid.collections.FreezableLinkedList;
-import ch.virtualid.collections.FreezableList;
-import ch.virtualid.collections.ReadonlyCollection;
-import ch.virtualid.collections.ReadonlyList;
+import ch.virtualid.tuples.FreezablePair;
+import ch.virtualid.tuples.ReadonlyPair;
 import ch.xdf.Block;
 import ch.xdf.SelfcontainedWrapper;
 import ch.xdf.SignatureWrapper;
@@ -40,7 +43,6 @@ import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import org.javatuples.Pair;
 
 /**
  * This class provides database access to the client synchronization.
@@ -155,18 +157,16 @@ public final class SynchronizerModule implements ClientModule {
      * Returns a list of similar methods from the pending actions and suspends the corresponding service.
      * 
      * @return a list of similar methods from the pending actions whose service was not suspended.
-     * 
-     * @ensure return.isNotFrozen() : "The returned list of methods is not frozen.";
      */
-    static @Nonnull FreezableList<Method> getMethods() {
+    static @Nonnull @NonFrozen FreezableList<Method> getMethods() {
         final @Nonnull FreezableList<Method> methods = new FreezableLinkedList<Method>();
-        final @Nonnull Set<Pair<Role, Service>> ignored = new HashSet<Pair<Role, Service>>();
+        final @Nonnull Set<ReadonlyPair<Role, Service>> ignored = new HashSet<ReadonlyPair<Role, Service>>();
         final @Nonnull Iterator<InternalAction> iterator = pendingActions.iterator();
         while (iterator.hasNext()) {
             final @Nonnull InternalAction reference =  iterator.next();
             final @Nonnull Role role = reference.getRole();
             final @Nonnull Service service = reference.getService();
-            final @Nonnull Pair<Role, Service> pair = new Pair<Role, Service>(role, service);
+            final @Nonnull ReadonlyPair<Role, Service> pair = new FreezablePair<Role, Service>(role, service).freeze();
             if (!ignored.contains(pair) && suspend(role, service)) {
                 methods.add(reference);
                 if (!reference.isSimilarTo(reference)) return methods;

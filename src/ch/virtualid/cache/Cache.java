@@ -1,11 +1,13 @@
 package ch.virtualid.cache;
 
 import ch.virtualid.annotations.Committing;
+import ch.virtualid.annotations.Frozen;
 import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.attribute.AttributeValue;
 import ch.virtualid.attribute.CertifiedAttributeValue;
 import ch.virtualid.auxiliary.Time;
+import ch.virtualid.collections.ReadonlyList;
 import ch.virtualid.contact.AttributeTypeSet;
 import ch.virtualid.cryptography.PublicKey;
 import ch.virtualid.cryptography.PublicKeyChain;
@@ -30,7 +32,8 @@ import ch.virtualid.identity.SemanticType;
 import ch.virtualid.io.Directory;
 import ch.virtualid.packet.Request;
 import ch.virtualid.packet.Response;
-import ch.virtualid.collections.ReadonlyList;
+import ch.virtualid.tuples.FreezablePair;
+import ch.virtualid.tuples.ReadonlyPair;
 import ch.xdf.Block;
 import ch.xdf.SelfcontainedWrapper;
 import java.io.File;
@@ -46,7 +49,6 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import org.javatuples.Pair;
 
 /**
  * This class caches the {@link AttributeValue attribute values} of {@link Identity identities} for the attribute-specific {@link SemanticType#getCachingPeriod() caching period}.
@@ -82,7 +84,7 @@ public final class Cache {
         assert Database.isMainThread() : "This method is called in the main thread.";
         
         try {
-            if (!getCachedAttributeValue(HostIdentity.VIRTUALID, null, Time.MIN, PublicKeyChain.TYPE).getValue0()) {
+            if (!getCachedAttributeValue(HostIdentity.VIRTUALID, null, Time.MIN, PublicKeyChain.TYPE).getElement0()) {
                 // Unless it is the root server, the program should have been delivered with the public key chain certificate of 'virtualid.ch'.
                 final @Nullable InputStream inputStream = Cache.class.getResourceAsStream("/ch/virtualid/resources/virtualid.ch.certificate.xdf");
                 final @Nonnull AttributeValue value;
@@ -135,11 +137,11 @@ public final class Cache {
      * @ensure return.getValue1() == null || return.getValue1().getContent().getType().equals(type) : "The content of the returned attribute value is null or matches the given type.";
      */
     @NonCommitting
-    private static @Nonnull Pair<Boolean, AttributeValue> getCachedAttributeValue(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull Time time, @Nonnull SemanticType type) throws SQLException, IOException, PacketException, ExternalException {
+    private static @Nonnull @Frozen ReadonlyPair<Boolean, AttributeValue> getCachedAttributeValue(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull Time time, @Nonnull SemanticType type) throws SQLException, IOException, PacketException, ExternalException {
         assert time.isNonNegative() : "The given time is non-negative.";
         assert type.isAttributeFor(identity.getCategory()) : "The type can be used as an attribute for the category of the given identity.";
         
-        if (time.equals(Time.MAX)) return new Pair<Boolean, AttributeValue>(false, null);
+        if (time.equals(Time.MAX)) return new FreezablePair<Boolean, AttributeValue>(false, null).freeze();
         final @Nonnull String query = "SELECT found, value FROM general_cache WHERE identity = " + identity + " AND (role = " + HostIdentity.VIRTUALID + (role != null ? " OR role = " + role.getIdentity() : "") + ") AND type = " + type + " AND time >= " + time;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(query)) {
             boolean found = false;
@@ -151,7 +153,7 @@ public final class Cache {
                     break;
                 }
             }
-            return new Pair<Boolean, AttributeValue>(found, value);
+            return new FreezablePair<Boolean, AttributeValue>(found, value).freeze();
         }
     }
     
@@ -244,9 +246,9 @@ public final class Cache {
         final @Nonnull AttributeTypeSet typesToRetrieve = new AttributeTypeSet();
         final @Nonnull List<Integer> indexesToStore = new LinkedList<Integer>();
         for (int i = 0; i < types.length; i++) {
-            final @Nonnull Pair<Boolean, AttributeValue> cache = getCachedAttributeValue(identity, role, time, types[i]);
-            if (cache.getValue0()) {
-                attributeValues[i] = cache.getValue1();
+            final @Nonnull @Frozen ReadonlyPair<Boolean, AttributeValue> cache = getCachedAttributeValue(identity, role, time, types[i]);
+            if (cache.getElement0()) {
+                attributeValues[i] = cache.getElement1();
             } else {
                 typesToRetrieve.add(types[i]);
                 indexesToStore.add(i);

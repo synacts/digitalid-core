@@ -4,7 +4,9 @@ import ch.virtualid.annotations.Capturable;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.interfaces.Freezable;
 import ch.virtualid.interfaces.FreezableObject;
+import java.util.Objects;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * This class models a {@link Freezable freezable} pair.
@@ -45,6 +47,7 @@ public class FreezablePair<E0, E1> extends FreezableObject implements ReadonlyPa
         this.element1 = pair.getElement1();
     }
     
+    
     @Pure
     @Override
     public final E0 getElement0() {
@@ -56,6 +59,7 @@ public class FreezablePair<E0, E1> extends FreezableObject implements ReadonlyPa
     public final E1 getElement1() {
         return element1;
     }
+    
     
     /**
      * Sets the first element of this tuple.
@@ -83,6 +87,7 @@ public class FreezablePair<E0, E1> extends FreezableObject implements ReadonlyPa
         this.element1 = element1;
     }
     
+    
     @Override
     public @Nonnull ReadonlyPair<E0, E1> freeze() {
         super.freeze();
@@ -93,6 +98,33 @@ public class FreezablePair<E0, E1> extends FreezableObject implements ReadonlyPa
     @Override
     public @Capturable @Nonnull FreezablePair<E0, E1> clone() {
         return new FreezablePair<E0, E1>(this);
+    }
+    
+    
+    @Pure
+    @Override
+    @SuppressWarnings("rawtypes")
+    public boolean equals(@Nullable Object object) {
+        if (object == this) return true;
+        if (object == null) return false;
+        if (!(object instanceof FreezablePair)) return object.equals(this);
+        final @Nonnull FreezablePair other = (FreezablePair) object;
+        return Objects.equals(this.element0, other.element0) && Objects.equals(this.element1, other.element1);
+    }
+    
+    @Pure
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 83 * hash + Objects.hashCode(element0);
+        hash = 83 * hash + Objects.hashCode(element1);
+        return hash;
+    }
+    
+    @Pure
+    @Override
+    public @Nonnull String toString() {
+        return element0 + ", " + element1;
     }
     
 }

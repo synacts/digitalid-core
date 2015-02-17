@@ -1,15 +1,22 @@
 package ch.virtualid.annotations;
 
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.util.Collection;
+
 /**
- * Description.
+ * This annotation indicates that a {@link Collection collection} {@link Collection#isEmpty() is empty}.
+ * 
+ * @see NonEmpty
+ * @see EmptyOrSingle
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 0.0
+ * @version 1.0
  */
-public class Empty {
-    
-    public Empty() {
-        
-    }
-    
-}
+@Documented
+@Target({ElementType.FIELD, ElementType.PARAMETER, ElementType.LOCAL_VARIABLE, ElementType.METHOD, ElementType.CONSTRUCTOR})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Empty {}

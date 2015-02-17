@@ -3,6 +3,9 @@ package ch.virtualid.packet;
 import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.annotations.RawRecipient;
+import ch.virtualid.collections.FreezableArrayList;
+import ch.virtualid.collections.FreezableList;
+import ch.virtualid.collections.ReadonlyList;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.handler.Reply;
@@ -10,9 +13,8 @@ import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identifier.InternalIdentifier;
 import ch.virtualid.synchronizer.Audit;
 import ch.virtualid.synchronizer.ResponseAudit;
-import ch.virtualid.collections.FreezableArrayList;
-import ch.virtualid.collections.FreezableList;
-import ch.virtualid.collections.ReadonlyList;
+import ch.virtualid.tuples.FreezablePair;
+import ch.virtualid.tuples.ReadonlyPair;
 import ch.xdf.Block;
 import ch.xdf.CompressionWrapper;
 import ch.xdf.HostSignatureWrapper;
@@ -21,7 +23,6 @@ import java.io.InputStream;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import org.javatuples.Pair;
 
 /**
  * This class decrypts, verifies and decompresses responses on the client-side.
@@ -69,7 +70,7 @@ public final class Response extends Packet {
      */
     @NonCommitting
     public Response(@Nullable Request request, @Nonnull PacketException exception) throws SQLException, IOException, PacketException, ExternalException {
-        super(new Pair<ReadonlyList<Reply>, ReadonlyList<PacketException>>(new FreezableArrayList<Reply>(1).freeze(), new FreezableArrayList<PacketException>(exception).freeze()), 1, null, null, request == null ? null : request.getEncryption().getSymmetricKey(), null, null);
+        super(new FreezablePair<ReadonlyList<Reply>, ReadonlyList<PacketException>>(new FreezableArrayList<Reply>(1).freeze(), new FreezableArrayList<PacketException>(exception).freeze()).freeze(), 1, null, null, request == null ? null : request.getEncryption().getSymmetricKey(), null, null);
         
         this.request = request;
     }
@@ -92,7 +93,7 @@ public final class Response extends Packet {
      */
     @NonCommitting
     public Response(@Nonnull Request request, @Nonnull ReadonlyList<Reply> replies, @Nonnull ReadonlyList<PacketException> exceptions, @Nullable ResponseAudit audit) throws SQLException, IOException, PacketException, ExternalException {
-        super(new Pair<ReadonlyList<Reply>, ReadonlyList<PacketException>>(replies, exceptions), replies.size(), request.getRecipient(), null, request.getEncryption().getSymmetricKey(), request.getSubject(), audit);
+        super(new FreezablePair<ReadonlyList<Reply>, ReadonlyList<PacketException>>(replies, exceptions).freeze(), replies.size(), request.getRecipient(), null, request.getEncryption().getSymmetricKey(), request.getSubject(), audit);
         
         assert replies.isFrozen() : "The list of replies is frozen.";
         assert replies.isNotEmpty() : "The list of replies is not empty.";
@@ -170,9 +171,9 @@ public final class Response extends Packet {
     @RawRecipient
     @SuppressWarnings("unchecked")
     void setList(@Nonnull Object object) {
-        final @Nonnull Pair<ReadonlyList<Reply>, ReadonlyList<PacketException>> pair = (Pair<ReadonlyList<Reply>, ReadonlyList<PacketException>>) object;
-        this.replies = (FreezableList<Reply>) pair.getValue0();
-        this.exceptions = (FreezableList<PacketException>) pair.getValue1();
+        final @Nonnull ReadonlyPair<ReadonlyList<Reply>, ReadonlyList<PacketException>> pair = (ReadonlyPair<ReadonlyList<Reply>, ReadonlyList<PacketException>>) object;
+        this.replies = (FreezableList<Reply>) pair.getElement0();
+        this.exceptions = (FreezableList<PacketException>) pair.getElement1();
     }
     
     @Override

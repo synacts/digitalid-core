@@ -1,18 +1,19 @@
 package ch.virtualid.contact;
 
 import ch.virtualid.agent.AgentPermissions;
+import ch.virtualid.annotations.AttributeType;
 import ch.virtualid.annotations.Capturable;
 import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
+import ch.virtualid.collections.FreezableArrayList;
+import ch.virtualid.collections.FreezableLinkedHashSet;
+import ch.virtualid.collections.FreezableList;
+import ch.virtualid.collections.ReadonlyList;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identity.IdentityClass;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
-import ch.virtualid.collections.FreezableArrayList;
-import ch.virtualid.collections.FreezableLinkedHashSet;
-import ch.virtualid.collections.FreezableList;
-import ch.virtualid.collections.ReadonlyList;
 import ch.xdf.Block;
 import ch.xdf.ListWrapper;
 import java.io.IOException;
@@ -48,7 +49,7 @@ public class AttributeTypeSet extends FreezableLinkedHashSet<SemanticType> imple
      * 
      * @require type.isAttributeType() : "The type is an attribute type.";
      * 
-     * @ensure areSingle() : "The new attribute type set contains a single element.";
+     * @ensure isSingle() : "The new attribute type set contains a single element.";
      */
     public AttributeTypeSet(@Nonnull SemanticType type) {
         assert type.isAttributeType() : "The type is an attribute type.";
@@ -110,18 +111,8 @@ public class AttributeTypeSet extends FreezableLinkedHashSet<SemanticType> imple
     }
     
     
-    @Pure
     @Override
-    public final boolean areSingle() {
-        return size() == 1;
-    }
-    
-    
-    /**
-     * @require type.isAttributeType() : "The type is an attribute type.";
-     */
-    @Override
-    public final boolean add(@Nonnull SemanticType type) {
+    public final boolean add(@Nonnull @AttributeType SemanticType type) {
         assert type.isAttributeType() : "The type is an attribute type.";
         
         return super.add(type);

@@ -3,7 +3,9 @@ package ch.virtualid.tuples;
 import ch.virtualid.annotations.Capturable;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.interfaces.Freezable;
+import java.util.Objects;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * This class models a {@link Freezable freezable} quartet.
@@ -43,6 +45,7 @@ public class FreezableQuartet<E0, E1, E2, E3> extends FreezableTriplet<E0, E1, E
         this.element3 = quartet.getElement3();
     }
     
+    
     @Pure
     @Override
     public final E3 getElement3() {
@@ -56,11 +59,12 @@ public class FreezableQuartet<E0, E1, E2, E3> extends FreezableTriplet<E0, E1, E
      * 
      * @require isNotFrozen() : "This object is not frozen.";
      */
-    public final void setElement3(E3 element2) {
+    public final void setElement3(E3 element3) {
         assert isNotFrozen() : "This object is not frozen.";
         
         this.element3 = element3;
     }
+    
     
     @Override
     public @Nonnull ReadonlyQuartet<E0, E1, E2, E3> freeze() {
@@ -72,6 +76,30 @@ public class FreezableQuartet<E0, E1, E2, E3> extends FreezableTriplet<E0, E1, E
     @Override
     public @Capturable @Nonnull FreezableQuartet<E0, E1, E2, E3> clone() {
         return new FreezableQuartet<E0, E1, E2, E3>(this);
+    }
+    
+    
+    @Pure
+    @Override
+    @SuppressWarnings("rawtypes")
+    public boolean equals(@Nullable Object object) {
+        if (object == this) return true;
+        if (object == null) return false;
+        if (!(object instanceof FreezableQuartet)) return object.equals(this);
+        final @Nonnull FreezableQuartet other = (FreezableQuartet) object;
+        return super.equals(object) && Objects.equals(this.element3, other.element3);
+    }
+    
+    @Pure
+    @Override
+    public int hashCode() {
+        return 83 * super.hashCode() + Objects.hashCode(element3);
+    }
+    
+    @Pure
+    @Override
+    public @Nonnull String toString() {
+        return super.toString() + ", " + element3;
     }
     
 }

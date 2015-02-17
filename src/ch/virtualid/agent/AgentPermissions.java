@@ -100,7 +100,7 @@ public final class AgentPermissions extends FreezableLinkedHashMap<SemanticType,
      * 
      * @require type.isAttributeType() : "The type is an attribute type.";
      * 
-     * @ensure areSingle() : "The new agent permissions are single.";
+     * @ensure isSingle() : "The new agent permissions are single.";
      */
     public AgentPermissions(@Nonnull SemanticType type, @Nonnull Boolean writing) {
         assert type.isAttributeType() : "The type is an attribute type.";
@@ -184,7 +184,7 @@ public final class AgentPermissions extends FreezableLinkedHashMap<SemanticType,
     
     @Pure
     @Override
-    public boolean areSingle() {
+    public boolean isSingle() {
         return size() == 1;
     }
     
@@ -196,8 +196,8 @@ public final class AgentPermissions extends FreezableLinkedHashMap<SemanticType,
      * @throws InvalidEncodingException if this is not the case.
      */
     @Pure
-    public @Nonnull AgentPermissions checkAreSingle() throws InvalidEncodingException {
-        if (!areSingle()) throw new InvalidEncodingException("These permissions are not single.");
+    public @Nonnull AgentPermissions checkIsSingle() throws InvalidEncodingException {
+        if (!isSingle()) throw new InvalidEncodingException("These permissions are not single.");
         return this;
     }
     

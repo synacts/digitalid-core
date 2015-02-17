@@ -1,15 +1,22 @@
 package ch.virtualid.annotations;
 
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.util.Collection;
+
 /**
- * Description.
+ * This annotation indicates that the elements of a {@link Collection collection} are {@link NonNullable non-nullable}.
+ * (This annotation is only necessary until the source code can be transitioned to Java 1.8 with its type annotations).
+ * 
+ * @see ElementsNullable
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
- * @version 0.0
+ * @version 1.0
  */
-public class ElementsNonNullable {
-    
-    public ElementsNonNullable() {
-        
-    }
-    
-}
+@Documented
+@Target({ElementType.FIELD, ElementType.PARAMETER, ElementType.LOCAL_VARIABLE, ElementType.METHOD, ElementType.CONSTRUCTOR})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface ElementsNonNullable {}

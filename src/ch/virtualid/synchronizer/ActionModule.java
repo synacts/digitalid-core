@@ -146,7 +146,7 @@ public final class ActionModule implements BothModule {
                 identity.set(preparedStatement, 1);
                 IdentityClass.create(tuple.getElementNotNull(1)).toSemanticType().set(preparedStatement, 2);
                 new Time(tuple.getElementNotNull(2)).set(preparedStatement, 3);
-                new AgentPermissions(tuple.getElementNotNull(3)).checkAreSingle().setEmptyOrSingle(preparedStatement, 4);
+                new AgentPermissions(tuple.getElementNotNull(3)).checkIsSingle().setEmptyOrSingle(preparedStatement, 4);
                 new Restrictions(NonHostAccount.get(host, identity), tuple.getElementNotNull(4)).set(preparedStatement, 6); // The entity is wrong for services but it does not matter. (Correct would be Roles.getRole(host.getClient(), identity.toInternalPerson()).)
                 if (tuple.isElementNull(5)) preparedStatement.setLong(11, new Int64Wrapper(tuple.getElementNotNull(5)).getValue());
                 else preparedStatement.setNull(11, Types.BIGINT);

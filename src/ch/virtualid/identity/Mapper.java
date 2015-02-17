@@ -5,6 +5,7 @@ import ch.virtualid.annotations.Pure;
 import ch.virtualid.cache.Cache;
 import ch.virtualid.client.AccountInitialize;
 import ch.virtualid.client.AccountOpen;
+import ch.virtualid.collections.ReadonlyList;
 import ch.virtualid.database.Database;
 import ch.virtualid.errors.InitializationError;
 import ch.virtualid.errors.ShouldNeverHappenError;
@@ -25,7 +26,8 @@ import ch.virtualid.identifier.NonHostIdentifier;
 import ch.virtualid.io.Level;
 import ch.virtualid.io.Logger;
 import ch.virtualid.server.Server;
-import ch.virtualid.collections.ReadonlyList;
+import ch.virtualid.tuples.FreezableTriplet;
+import ch.virtualid.tuples.ReadonlyTriplet;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -36,7 +38,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import org.javatuples.Triplet;
 
 /**
  * The mapper maps between {@link Identifier identifiers} and {@link Identity identities}.
@@ -71,7 +72,7 @@ public final class Mapper {
     /**
      * Stores the registered triplets of tables, columns and unique constraint that reference a person.
      */
-    private static final @Nonnull Set<Triplet<String, String, String[]>> references = new LinkedHashSet<Triplet<String, String, String[]>>();
+    private static final @Nonnull Set<ReadonlyTriplet<String, String, String[]>> references = new LinkedHashSet<ReadonlyTriplet<String, String, String[]>>();
     
     /**
      * Adds the given table, columns and unique constraint to the list of registered references.
@@ -81,7 +82,7 @@ public final class Mapper {
      * @param uniques the names of all the columns in the same unique constraint or nothing.
      */
     public static void addReference(@Nonnull String table, @Nonnull String column, @Nonnull String... uniques) {
-        references.add(new Triplet<String, String, String[]>(table, column, uniques));
+        references.add(new FreezableTriplet<String, String, String[]>(table, column, uniques).freeze());
     }
     
     /**
@@ -92,7 +93,7 @@ public final class Mapper {
      * @param uniques the names of all the columns in the same unique constraint or nothing.
      */
     public static void removeReference(@Nonnull String table, @Nonnull String column, @Nonnull String... uniques) {
-        references.remove(new Triplet<String, String, String[]>(table, column, uniques));
+        references.remove(new FreezableTriplet<String, String, String[]>(table, column, uniques).freeze());
     }
     
     /**
@@ -105,11 +106,11 @@ public final class Mapper {
     @NonCommitting
     private static void updateReferences(@Nonnull Statement statement, long oldNumber, long newNumber) throws SQLException {
         final @Nonnull String IGNORE = Database.getConfiguration().IGNORE();
-        for (final @Nonnull Triplet<String, String, String[]> reference : references) {
-            final @Nonnull String table = reference.getValue0();
-            final @Nonnull String column = reference.getValue1();
+        for (final @Nonnull ReadonlyTriplet<String, String, String[]> reference : references) {
+            final @Nonnull String table = reference.getElement0();
+            final @Nonnull String column = reference.getElement1();
             if (IGNORE.isEmpty()) {
-                final @Nonnull String[] uniques = reference.getValue2();
+                final @Nonnull String[] uniques = reference.getElement2();
                 if (uniques.length > 0) {
                     final @Nonnull StringBuilder SQL = new StringBuilder("DELETE FROM ").append(table).append(" AS a WHERE ").append(column).append(" = ").append(oldNumber);
                     SQL.append(" AND WHERE EXISTS (SELECT 1 FROM ").append(table).append(" AS b WHERE ");

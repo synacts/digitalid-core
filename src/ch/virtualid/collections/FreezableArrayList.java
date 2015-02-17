@@ -1,6 +1,7 @@
 package ch.virtualid.collections;
 
 import ch.virtualid.annotations.Capturable;
+import ch.virtualid.annotations.NonFrozenRecipient;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.interfaces.Freezable;
 import ch.virtualid.interfaces.Immutable;
@@ -31,13 +32,13 @@ public class FreezableArrayList<E> extends ArrayList<E> implements FreezableList
     
     @Pure
     @Override
-    public final boolean isFrozen() {
+    public boolean isFrozen() {
         return frozen;
     }
     
     @Pure
     @Override
-    public final boolean isNotFrozen() {
+    public boolean isNotFrozen() {
         return !frozen;
     }
     
@@ -106,6 +107,18 @@ public class FreezableArrayList<E> extends ArrayList<E> implements FreezableList
         return !super.isEmpty();
     }
     
+    @Pure
+    @Override
+    public boolean isSingle() {
+        return size() == 1;
+    }
+    
+    @Pure
+    @Override
+    public boolean isNotSingle() {
+        return size() != 1;
+    }
+    
     
     @Pure
     @Override
@@ -129,100 +142,80 @@ public class FreezableArrayList<E> extends ArrayList<E> implements FreezableList
     }
     
     
-    /**
-     * @require isNotFrozen() : "This object is not frozen.";
-     */
     @Override
+    @NonFrozenRecipient
     public @Nullable E set(int index, @Nullable E element) {
         assert isNotFrozen() : "This object is not frozen.";
         
         return super.set(index, element);
     }
     
-    /**
-     * @require isNotFrozen() : "This object is not frozen.";
-     */
     @Override
+    @NonFrozenRecipient
     public boolean add(@Nullable E element) {
         assert isNotFrozen() : "This object is not frozen.";
         
         return super.add(element);
     }
     
-    /**
-     * @require isNotFrozen() : "This object is not frozen.";
-     */
     @Override
+    @NonFrozenRecipient
     public void add(int index, @Nullable E element) {
         assert isNotFrozen() : "This object is not frozen.";
         
         super.add(index, element);
     }
     
-    /**
-     * @require isNotFrozen() : "This object is not frozen.";
-     */
     @Override
+    @NonFrozenRecipient
     public @Nullable E remove(int index) {
         assert isNotFrozen() : "This object is not frozen.";
         
         return super.remove(index);
     }
     
-    /**
-     * @require isNotFrozen() : "This object is not frozen.";
-     */
     @Override
+    @NonFrozenRecipient
     public boolean remove(@Nullable Object object) {
         assert isNotFrozen() : "This object is not frozen.";
         
         return super.remove(object);
     }
     
-    /**
-     * @require isNotFrozen() : "This object is not frozen.";
-     */
     @Override
+    @NonFrozenRecipient
     public void clear() {
         assert isNotFrozen() : "This object is not frozen.";
         
         super.clear();
     }
     
-    /**
-     * @require isNotFrozen() : "This object is not frozen.";
-     */
     @Override
+    @NonFrozenRecipient
     public boolean addAll(@Nonnull Collection<? extends E> collection) {
         assert isNotFrozen() : "This object is not frozen.";
         
         return super.addAll(collection);
     }
     
-    /**
-     * @require isNotFrozen() : "This object is not frozen.";
-     */
     @Override
+    @NonFrozenRecipient
     protected void removeRange(int fromIndex, int toIndex) {
         assert isNotFrozen() : "This object is not frozen.";
         
         super.removeRange(fromIndex, toIndex);
     }
     
-    /**
-     * @require isNotFrozen() : "This object is not frozen.";
-     */
     @Override
+    @NonFrozenRecipient
     public boolean removeAll(@Nonnull Collection<?> collection) {
         assert isNotFrozen() : "This object is not frozen.";
         
         return super.removeAll(collection);
     }
     
-    /**
-     * @require isNotFrozen() : "This object is not frozen.";
-     */
     @Override
+    @NonFrozenRecipient
     public boolean retainAll(@Nonnull Collection<?> collection) {
         assert isNotFrozen() : "This object is not frozen.";
         

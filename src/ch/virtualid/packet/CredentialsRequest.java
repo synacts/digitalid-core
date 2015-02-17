@@ -4,6 +4,8 @@ import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.annotations.RawRecipient;
 import ch.virtualid.attribute.CertifiedAttributeValue;
+import ch.virtualid.collections.FreezableList;
+import ch.virtualid.collections.ReadonlyList;
 import ch.virtualid.credential.Credential;
 import ch.virtualid.cryptography.SymmetricKey;
 import ch.virtualid.exceptions.external.ExternalException;
@@ -13,8 +15,8 @@ import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.identifier.InternalIdentifier;
 import ch.virtualid.synchronizer.Audit;
 import ch.virtualid.synchronizer.RequestAudit;
-import ch.virtualid.collections.FreezableList;
-import ch.virtualid.collections.ReadonlyList;
+import ch.virtualid.tuples.FreezableQuartet;
+import ch.virtualid.tuples.ReadonlyQuartet;
 import ch.xdf.CompressionWrapper;
 import ch.xdf.CredentialsSignatureWrapper;
 import java.io.IOException;
@@ -22,7 +24,6 @@ import java.math.BigInteger;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import org.javatuples.Quartet;
 
 /**
  * This class compresses, signs and encrypts requests with credentials.
@@ -100,7 +101,7 @@ public final class CredentialsRequest extends Request {
      */
     @NonCommitting
     private CredentialsRequest(@Nonnull ReadonlyList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject, @Nullable RequestAudit audit, @Nonnull ReadonlyList<Credential> credentials, @Nullable ReadonlyList<CertifiedAttributeValue> certificates, boolean lodged, @Nullable BigInteger value, int iteration) throws SQLException, IOException, PacketException, ExternalException {
-        super(methods, recipient, new SymmetricKey(), subject, audit, new Quartet<ReadonlyList<Credential>, ReadonlyList<CertifiedAttributeValue>, Boolean, BigInteger>(credentials, certificates, lodged, value), iteration);
+        super(methods, recipient, new SymmetricKey(), subject, audit, new FreezableQuartet<ReadonlyList<Credential>, ReadonlyList<CertifiedAttributeValue>, Boolean, BigInteger>(credentials, certificates, lodged, value).freeze(), iteration);
     }
     
     
@@ -109,11 +110,11 @@ public final class CredentialsRequest extends Request {
     @SuppressWarnings("unchecked")
     void setField(@Nullable Object field) {
         assert field != null : "See the constructor above.";
-        final @Nonnull Quartet<ReadonlyList<Credential>, ReadonlyList<CertifiedAttributeValue>, Boolean, BigInteger> quartet = (Quartet<ReadonlyList<Credential>, ReadonlyList<CertifiedAttributeValue>, Boolean, BigInteger>) field;
-        this.credentials = quartet.getValue0();
-        this.certificates = quartet.getValue1();
-        this.lodged = quartet.getValue2();
-        this.value = quartet.getValue3();
+        final @Nonnull ReadonlyQuartet<ReadonlyList<Credential>, ReadonlyList<CertifiedAttributeValue>, Boolean, BigInteger> quartet = (ReadonlyQuartet<ReadonlyList<Credential>, ReadonlyList<CertifiedAttributeValue>, Boolean, BigInteger>) field;
+        this.credentials = quartet.getElement0();
+        this.certificates = quartet.getElement1();
+        this.lodged = quartet.getElement2();
+        this.value = quartet.getElement3();
     }
     
     @Pure

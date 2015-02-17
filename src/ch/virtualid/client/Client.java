@@ -10,6 +10,10 @@ import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Image;
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.cache.Cache;
+import ch.virtualid.collections.FreezableArrayList;
+import ch.virtualid.collections.FreezableLinkedList;
+import ch.virtualid.collections.FreezableList;
+import ch.virtualid.collections.ReadonlyList;
 import ch.virtualid.concept.Aspect;
 import ch.virtualid.concept.Instance;
 import ch.virtualid.concept.Observer;
@@ -39,10 +43,8 @@ import ch.virtualid.io.Directory;
 import ch.virtualid.service.CoreService;
 import ch.virtualid.synchronizer.Synchronizer;
 import ch.virtualid.synchronizer.SynchronizerModule;
-import ch.virtualid.collections.FreezableArrayList;
-import ch.virtualid.collections.FreezableLinkedList;
-import ch.virtualid.collections.FreezableList;
-import ch.virtualid.collections.ReadonlyList;
+import ch.virtualid.tuples.FreezablePair;
+import ch.virtualid.tuples.ReadonlyPair;
 import ch.xdf.Block;
 import ch.xdf.SelfcontainedWrapper;
 import ch.xdf.StringWrapper;
@@ -57,7 +59,6 @@ import java.util.Random;
 import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import org.javatuples.Pair;
 
 /**
  * A client is configured with an identifier and a secret.
@@ -467,7 +468,7 @@ public class Client extends Site implements Observer {
         accountOpen.initialize(newRole);
         Database.commit();
         
-        final @Nonnull FreezableList<Pair<Predecessor, Block>> states = new FreezableArrayList<Pair<Predecessor, Block>>(roles.size() + identifiers.size());
+        final @Nonnull FreezableList<ReadonlyPair<Predecessor, Block>> states = new FreezableArrayList<ReadonlyPair<Predecessor, Block>>(roles.size() + identifiers.size());
         
         for (final @Nonnull NativeRole role : roles) {
             if (role.getIdentity().getCategory() != category) throw new PacketException(PacketError.INTERNAL, "A role is of the wrong category.");
@@ -475,7 +476,7 @@ public class Client extends Site implements Observer {
             final @Nonnull ClientAgent clientAgent = role.getAgent();
             final @Nonnull Block state = CoreService.SERVICE.getState(role, clientAgent.getPermissions(), clientAgent.getRestrictions(), clientAgent);
             final @Nonnull Predecessor predecessor = new Predecessor(role.getIdentity().getAddress());
-            states.add(new Pair<Predecessor, Block>(predecessor, state));
+            states.add(new FreezablePair<Predecessor, Block>(predecessor, state).freeze());
             Synchronizer.execute(new AccountClose(role, subject));
             role.remove();
             Database.commit();
@@ -487,7 +488,7 @@ public class Client extends Site implements Observer {
         
         for (final @Nonnull ExternalIdentifier identifier : identifiers) {
             // TODO: Wait until the relocation from 'virtualid.ch' can be verified.
-            states.add(new Pair<Predecessor, Block>(new Predecessor(identifier), null));
+            states.add(new FreezablePair<Predecessor, Block>(new Predecessor(identifier), null).freeze());
         }
         
         final @Nonnull AccountInitialize accountInitialize = new AccountInitialize(newRole, states.freeze());

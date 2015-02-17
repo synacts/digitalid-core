@@ -1,18 +1,21 @@
 package ch.virtualid.cryptography;
 
+import ch.virtualid.annotations.ElementsNonNullable;
+import ch.virtualid.annotations.Frozen;
+import ch.virtualid.annotations.NonEmpty;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
+import ch.virtualid.collections.ReadonlyList;
 import ch.virtualid.exceptions.external.InvalidEncodingException;
 import ch.virtualid.identity.Category;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
-import ch.virtualid.collections.ReadonlyList;
+import ch.virtualid.tuples.ReadonlyPair;
 import ch.xdf.Block;
 import ch.xdf.ListWrapper;
 import ch.xdf.TupleWrapper;
 import javax.annotation.Nonnull;
-import org.javatuples.Pair;
 
 /**
  * This class models a {@link KeyChain key chain} of {@link PublicKey public keys}.
@@ -50,12 +53,9 @@ public final class PublicKeyChain extends KeyChain<PublicKey> implements Immutab
      * 
      * @param items the items of the new key chain.
      * 
-     * @require !items.isEmpty() : "The list is not empty.";
-     * @require items.isFrozen() : "The list is frozen.";
-     * @require items.doesNotContainNull() : "The list does not contain null.";
      * @require items.isStrictlyDescending() : "The list is strictly descending.";
      */
-    public PublicKeyChain(@Nonnull ReadonlyList<Pair<Time, PublicKey>> items) {
+    public PublicKeyChain(@Nonnull @Frozen @NonEmpty @ElementsNonNullable ReadonlyList<ReadonlyPair<Time, PublicKey>> items) {
         super(items);
     }
     
@@ -91,7 +91,7 @@ public final class PublicKeyChain extends KeyChain<PublicKey> implements Immutab
     
     @Pure
     @Override
-    protected @Nonnull KeyChain<PublicKey> createKeyChain(@Nonnull ReadonlyList<Pair<Time, PublicKey>> items) {
+    protected @Nonnull KeyChain<PublicKey> createKeyChain(@Nonnull ReadonlyList<ReadonlyPair<Time, PublicKey>> items) {
         return new PublicKeyChain(items);
     }
     

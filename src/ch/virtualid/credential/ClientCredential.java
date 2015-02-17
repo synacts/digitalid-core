@@ -3,9 +3,15 @@ package ch.virtualid.credential;
 import ch.virtualid.agent.RandomizedAgentPermissions;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
+import ch.virtualid.annotations.Active;
+import ch.virtualid.annotations.Frozen;
 import ch.virtualid.annotations.NonCommitting;
+import ch.virtualid.annotations.NonEmpty;
+import ch.virtualid.annotations.OfInternalPerson;
 import ch.virtualid.attribute.CertifiedAttributeValue;
 import ch.virtualid.auxiliary.Time;
+import ch.virtualid.collections.ConcurrentHashMap;
+import ch.virtualid.collections.ConcurrentMap;
 import ch.virtualid.cryptography.Element;
 import ch.virtualid.cryptography.Exponent;
 import ch.virtualid.cryptography.Parameters;
@@ -20,8 +26,7 @@ import ch.virtualid.identity.InternalNonHostIdentity;
 import ch.virtualid.identity.InternalPerson;
 import ch.virtualid.identity.SemanticType;
 import ch.virtualid.interfaces.Immutable;
-import ch.virtualid.collections.ConcurrentHashMap;
-import ch.virtualid.collections.ConcurrentMap;
+import ch.virtualid.tuples.ReadonlyPair;
 import ch.xdf.Block;
 import java.io.IOException;
 import java.math.BigInteger;
@@ -29,7 +34,6 @@ import java.security.SecureRandom;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import org.javatuples.Pair;
 
 /**
  * This class models credentials on the client-side.
@@ -259,19 +263,9 @@ public final class ClientCredential extends Credential implements Immutable {
      * @param permissions the permissions which are to be contained.
      * 
      * @return a role-based credential for the given role and permissions.
-     * 
-     * @require role.getIdentity() instanceof InternalPerson : "The role belongs to an internal person.";
-     * @require permissions.isFrozen() : "The permissions are frozen.";
-     * @require permissions.isNotEmpty() : "The permissions are not empty.";
-     * 
-     * @ensure return.isActive() : "The returned credential is active.";
      */
     @NonCommitting
-    public static @Nonnull ClientCredential getRoleBased(@Nonnull NonNativeRole role, @Nonnull ReadonlyAgentPermissions permissions) throws SQLException, IOException, PacketException, ExternalException {
-        assert role.getIdentity() instanceof InternalPerson : "The role belongs to an internal person.";
-        assert permissions.isFrozen() : "The permissions are frozen.";
-        assert permissions.isNotEmpty() : "The permissions are not empty.";
-        
+    public static @Nonnull @Active ClientCredential getRoleBased(@Nonnull @OfInternalPerson NonNativeRole role, @Nonnull @Frozen @NonEmpty ReadonlyAgentPermissions permissions) throws SQLException, IOException, PacketException, ExternalException {
         @Nullable ConcurrentMap<ReadonlyAgentPermissions, ClientCredential> map = roleBasedCredentials.get(role);
         if (map == null) map = roleBasedCredentials.putIfAbsentElseReturnPresent(role, new ConcurrentHashMap<ReadonlyAgentPermissions, ClientCredential>());
         @Nullable ClientCredential credential = map.get(permissions);
@@ -299,19 +293,9 @@ public final class ClientCredential extends Credential implements Immutable {
      * @param permissions the permissions which are to be contained.
      * 
      * @return an identity-based credential for the given role and permissions.
-     * 
-     * @require role.getIdentity() instanceof InternalPerson : "The role belongs to an internal person.";
-     * @require permissions.isFrozen() : "The permissions are frozen.";
-     * @require permissions.isNotEmpty() : "The permissions are not empty.";
-     * 
-     * @ensure return.isActive() : "The returned credential is active.";
      */
     @NonCommitting
-    public static @Nonnull ClientCredential getIdentityBased(@Nonnull Role role, @Nonnull ReadonlyAgentPermissions permissions) throws SQLException, IOException, PacketException, ExternalException {
-        assert role.getIdentity() instanceof InternalPerson : "The role belongs to an internal person.";
-        assert permissions.isFrozen() : "The permissions are frozen.";
-        assert permissions.isNotEmpty() : "The permissions are not empty.";
-        
+    public static @Nonnull @Active ClientCredential getIdentityBased(@Nonnull @OfInternalPerson Role role, @Nonnull @Frozen @NonEmpty ReadonlyAgentPermissions permissions) throws SQLException, IOException, PacketException, ExternalException {
         @Nullable ConcurrentMap<ReadonlyAgentPermissions, ClientCredential> map = identityBasedCredentials.get(role);
         if (map == null) map = identityBasedCredentials.putIfAbsentElseReturnPresent(role, new ConcurrentHashMap<ReadonlyAgentPermissions, ClientCredential>());
         @Nullable ClientCredential credential = map.get(permissions);
@@ -329,7 +313,7 @@ public final class ClientCredential extends Credential implements Immutable {
     /**
      * Caches the attribute-based client credentials given their role, value and permissions.
      */
-    private static final @Nonnull ConcurrentMap<Role, ConcurrentMap<Pair<CertifiedAttributeValue, ReadonlyAgentPermissions>, ClientCredential>> attributeBasedCredentials = new ConcurrentHashMap<Role, ConcurrentMap<Pair<CertifiedAttributeValue, ReadonlyAgentPermissions>, ClientCredential>>();
+    private static final @Nonnull ConcurrentMap<Role, ConcurrentMap<ReadonlyPair<CertifiedAttributeValue, ReadonlyAgentPermissions>, ClientCredential>> attributeBasedCredentials = new ConcurrentHashMap<Role, ConcurrentMap<ReadonlyPair<CertifiedAttributeValue, ReadonlyAgentPermissions>, ClientCredential>>();
     
     /**
      * Returns an attribute-based credential for the given role, value and permissions.
@@ -339,19 +323,9 @@ public final class ClientCredential extends Credential implements Immutable {
      * @param permissions the permissions which are to be contained.
      * 
      * @return an attribute-based credential for the given role, value and permissions.
-     * 
-     * @require role.getIdentity() instanceof InternalPerson : "The role belongs to an internal person.";
-     * @require permissions.isFrozen() : "The permissions are frozen.";
-     * @require permissions.isNotEmpty() : "The permissions are not empty.";
-     * 
-     * @ensure return.isActive() : "The returned credential is active.";
      */
     @NonCommitting
-    public static @Nonnull ClientCredential getAttributeBased(@Nonnull Role role, @Nonnull CertifiedAttributeValue value, @Nonnull ReadonlyAgentPermissions permissions) throws SQLException, IOException, PacketException, ExternalException {
-        assert role.getIdentity() instanceof InternalPerson : "The role belongs to an internal person.";
-        assert permissions.isFrozen() : "The permissions are frozen.";
-        assert permissions.isNotEmpty() : "The permissions are not empty.";
-        
+    public static @Nonnull @Active ClientCredential getAttributeBased(@Nonnull @OfInternalPerson Role role, @Nonnull CertifiedAttributeValue value, @Nonnull @Frozen @NonEmpty ReadonlyAgentPermissions permissions) throws SQLException, IOException, PacketException, ExternalException {
         // TODO: Shortening with CredentialExternalQuery.
         throw new UnsupportedOperationException("Credentials for attribute-based access control are not yet supported!");
     }

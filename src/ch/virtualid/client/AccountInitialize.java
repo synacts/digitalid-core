@@ -3,8 +3,13 @@ package ch.virtualid.client;
 import ch.virtualid.agent.AgentPermissions;
 import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
+import ch.virtualid.annotations.ElementsNonNullable;
+import ch.virtualid.annotations.Frozen;
 import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
+import ch.virtualid.collections.FreezableArrayList;
+import ch.virtualid.collections.FreezableList;
+import ch.virtualid.collections.ReadonlyList;
 import ch.virtualid.cryptography.PublicKey;
 import ch.virtualid.entity.Entity;
 import ch.virtualid.entity.NativeRole;
@@ -29,9 +34,8 @@ import ch.virtualid.module.BothModule;
 import ch.virtualid.password.PasswordModule;
 import ch.virtualid.service.CoreService;
 import ch.virtualid.service.CoreServiceInternalAction;
-import ch.virtualid.collections.FreezableArrayList;
-import ch.virtualid.collections.FreezableList;
-import ch.virtualid.collections.ReadonlyList;
+import ch.virtualid.tuples.FreezablePair;
+import ch.virtualid.tuples.ReadonlyPair;
 import ch.xdf.Block;
 import ch.xdf.ListWrapper;
 import ch.xdf.SignatureWrapper;
@@ -40,7 +44,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import org.javatuples.Pair;
 
 /**
  * Initializes a new account with the given states.
@@ -63,27 +66,18 @@ public final class AccountInitialize extends CoreServiceInternalAction {
     
     /**
      * Stores the states to merge into the new account.
-     * 
-     * @invariant states.isFrozen() : "The list of states is frozen.";
-     * @invariant states.doesNotContainNull() : "The list of states does not contain null.";
      */
-    private final @Nonnull ReadonlyList<Pair<Predecessor, Block>> states;
+    private final @Nonnull @Frozen @ElementsNonNullable ReadonlyList<ReadonlyPair<Predecessor, Block>> states;
     
     /**
      * Creates an action to initialize a new account.
      * 
      * @param role the role to which this handler belongs.
      * @param states the states to merge into the new account.
-     * 
-     * @require states.isFrozen() : "The list of states is frozen.";
-     * @require states.doesNotContainNull() : "The list of states does not contain null.";
      */
     @NonCommitting
-    AccountInitialize(@Nonnull NativeRole role, @Nonnull ReadonlyList<Pair<Predecessor, Block>> states) throws SQLException, IOException, PacketException, ExternalException {
+    AccountInitialize(@Nonnull NativeRole role, @Nonnull @Frozen @ElementsNonNullable ReadonlyList<ReadonlyPair<Predecessor, Block>> states) throws SQLException, IOException, PacketException, ExternalException {
         super(role);
-        
-        assert states.isFrozen() : "The list of states is frozen.";
-        assert states.doesNotContainNull() : "The list of states does not contain null.";
         
         this.states = states;
     }
@@ -112,7 +106,7 @@ public final class AccountInitialize extends CoreServiceInternalAction {
         final @Nonnull ReadonlyList<Block> elements = new ListWrapper(block).getElementsNotNull();
         if (elements.size() > 1 && !category.isInternalPerson()) throw new InvalidDeclarationException("Only internal persons may have more than one predecessor.", subject, null);
         
-        final @Nonnull FreezableList<Pair<Predecessor, Block>> states = new FreezableArrayList<Pair<Predecessor, Block>>(elements.size());
+        final @Nonnull FreezableList<ReadonlyPair<Predecessor, Block>> states = new FreezableArrayList<ReadonlyPair<Predecessor, Block>>(elements.size());
         for (final @Nonnull Block element : elements) {
             final @Nonnull TupleWrapper tuple = new TupleWrapper(element);
             final @Nonnull Predecessor predecessor = new Predecessor(tuple.getElementNotNull(0));
@@ -126,7 +120,7 @@ public final class AccountInitialize extends CoreServiceInternalAction {
                 if (predecessor.getPredecessors().isNotEmpty()) throw new InvalidDeclarationException(message + " is an external person and may not have any predecessors.", subject, null);
             }
             if (!Successor.getReloaded(identifier).equals(subject)) throw new InvalidDeclarationException(message + " does not link back.", subject, null);
-            states.add(new Pair<Predecessor, Block>(predecessor, tuple.getElement(1)));
+            states.add(new FreezablePair<Predecessor, Block>(predecessor, tuple.getElement(1)).freeze());
         }
         this.states = states.freeze();
     }
@@ -135,8 +129,8 @@ public final class AccountInitialize extends CoreServiceInternalAction {
     @Override
     public @Nonnull Block toBlock() {
         final @Nonnull FreezableList<Block> elements = new FreezableArrayList<Block>(states.size());
-        for (final @Nonnull Pair<Predecessor, Block> state : states) {
-            elements.add(new TupleWrapper(STATE, state.getValue0().toBlock(), state.getValue1()).toBlock());
+        for (final @Nonnull ReadonlyPair<Predecessor, Block> state : states) {
+            elements.add(new TupleWrapper(STATE, state.getElement0().toBlock(), state.getElement1()).toBlock());
         }
         return new ListWrapper(TYPE, elements.freeze()).toBlock();
     }
@@ -176,10 +170,10 @@ public final class AccountInitialize extends CoreServiceInternalAction {
             @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
             final @Nonnull Predecessors predecessors = new Predecessors(states.size());
             final @Nonnull FreezableList<NonHostIdentity> identities = new FreezableArrayList<NonHostIdentity>(states.size());
-            for (final @Nonnull Pair<Predecessor, Block> state : states) {
-                final @Nonnull Predecessor predecessor = state.getValue0();
+            for (final @Nonnull ReadonlyPair<Predecessor, Block> state : states) {
+                final @Nonnull Predecessor predecessor = state.getElement0();
                 identities.add(predecessor.getIdentifier().getIdentity().toNonHostIdentity());
-                CoreService.SERVICE.addState(entity, state.getValue1());
+                CoreService.SERVICE.addState(entity, state.getElement1());
                 predecessors.add(predecessor);
             }
             Mapper.mergeIdentities(identities.freeze(), entity.getIdentity());

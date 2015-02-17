@@ -41,6 +41,22 @@ public interface ReadonlyCollection<E> extends ReadonlyIterable<E> {
     public boolean isNotEmpty();
     
     /**
+     * Returns whether this collection contains a single element.
+     * 
+     * @return whether this collection contains a single element.
+     */
+    @Pure
+    public boolean isSingle();
+    
+    /**
+     * Returns whether this collection contains not a single element.
+     * 
+     * @return whether this collection contains not a single element.
+     */
+    @Pure
+    public boolean isNotSingle();
+    
+    /**
      * @see Collection#contains(java.lang.Object)
      */
     @Pure

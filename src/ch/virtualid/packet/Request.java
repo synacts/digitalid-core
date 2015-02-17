@@ -6,6 +6,11 @@ import ch.virtualid.annotations.RawRecipient;
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.cache.AttributesQuery;
 import ch.virtualid.cache.Cache;
+import ch.virtualid.collections.ConcurrentHashMap;
+import ch.virtualid.collections.ConcurrentMap;
+import ch.virtualid.collections.FreezableArrayList;
+import ch.virtualid.collections.FreezableList;
+import ch.virtualid.collections.ReadonlyList;
 import ch.virtualid.contact.AttributeTypeSet;
 import ch.virtualid.cryptography.PublicKeyChain;
 import ch.virtualid.cryptography.SymmetricKey;
@@ -26,11 +31,8 @@ import ch.virtualid.server.Server;
 import ch.virtualid.service.CoreService;
 import ch.virtualid.synchronizer.Audit;
 import ch.virtualid.synchronizer.RequestAudit;
-import ch.virtualid.collections.ConcurrentHashMap;
-import ch.virtualid.collections.ConcurrentMap;
-import ch.virtualid.collections.FreezableArrayList;
-import ch.virtualid.collections.FreezableList;
-import ch.virtualid.collections.ReadonlyList;
+import ch.virtualid.tuples.FreezablePair;
+import ch.virtualid.tuples.ReadonlyPair;
 import ch.xdf.Block;
 import ch.xdf.CompressionWrapper;
 import ch.xdf.SignatureWrapper;
@@ -40,7 +42,6 @@ import java.net.Socket;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import org.javatuples.Pair;
 
 /**
  * This class compresses, signs and encrypts requests.
@@ -337,7 +338,7 @@ public class Request extends Packet {
     /**
      * Stores a cached symmetric key for every recipient.
      */
-    private static final @Nonnull ConcurrentMap<HostIdentifier, Pair<Time, SymmetricKey>> symmetricKeys = new ConcurrentHashMap<HostIdentifier, Pair<Time, SymmetricKey>>();
+    private static final @Nonnull ConcurrentMap<HostIdentifier, ReadonlyPair<Time, SymmetricKey>> symmetricKeys = new ConcurrentHashMap<HostIdentifier, ReadonlyPair<Time, SymmetricKey>>();
     
     /**
      * Stores whether the symmetric keys are cached.
@@ -375,12 +376,12 @@ public class Request extends Packet {
     protected static @Nonnull SymmetricKey getSymmetricKey(@Nonnull HostIdentifier recipient, @Nonnull Time rotation) {
         if (cachingKeys) {
             final @Nonnull Time time = new Time();
-            @Nullable Pair<Time, SymmetricKey> value = symmetricKeys.get(recipient);
-            if (value == null || value.getValue0().isLessThan(time.subtract(rotation))) {
-                value = new Pair<Time, SymmetricKey>(time, new SymmetricKey());
+            @Nullable ReadonlyPair<Time, SymmetricKey> value = symmetricKeys.get(recipient);
+            if (value == null || value.getElement0().isLessThan(time.subtract(rotation))) {
+                value = new FreezablePair<Time, SymmetricKey>(time, new SymmetricKey()).freeze();
                 symmetricKeys.put(recipient, value);
             }
-            return value.getValue1();
+            return value.getElement1();
         } else {
             return new SymmetricKey();
         }

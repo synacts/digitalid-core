@@ -1,11 +1,10 @@
 package ch.virtualid.cryptography;
 
+import ch.virtualid.annotations.ElementsNonNullable;
+import ch.virtualid.annotations.Frozen;
+import ch.virtualid.annotations.NonEmpty;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
-import ch.virtualid.exceptions.external.InvalidEncodingException;
-import ch.virtualid.identity.SemanticType;
-import ch.virtualid.interfaces.Blockable;
-import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.collections.FreezableArray;
 import ch.virtualid.collections.FreezableArrayList;
 import ch.virtualid.collections.FreezableIterator;
@@ -13,11 +12,16 @@ import ch.virtualid.collections.FreezableLinkedList;
 import ch.virtualid.collections.FreezableList;
 import ch.virtualid.collections.ReadonlyArray;
 import ch.virtualid.collections.ReadonlyList;
+import ch.virtualid.exceptions.external.InvalidEncodingException;
+import ch.virtualid.identity.SemanticType;
+import ch.virtualid.interfaces.Blockable;
+import ch.virtualid.interfaces.Immutable;
+import ch.virtualid.tuples.FreezablePair;
+import ch.virtualid.tuples.ReadonlyPair;
 import ch.xdf.Block;
 import ch.xdf.ListWrapper;
 import ch.xdf.TupleWrapper;
 import javax.annotation.Nonnull;
-import org.javatuples.Pair;
 
 /**
  * A key chain contains several items to support the rotation of host keys.
@@ -33,12 +37,9 @@ abstract class KeyChain<Key extends Blockable> implements Immutable, Blockable {
     /**
      * Stores the items of this key chain in chronological order with the newest one first.
      * 
-     * @invariant !items.isEmpty() : "The list is not empty.";
-     * @invariant items.isFrozen() : "The list is frozen.";
-     * @invariant items.doesNotContainNull() : "The list does not contain null.";
      * @invariant items.isStrictlyDescending() : "The list is strictly descending.";
      */
-    private final @Nonnull ReadonlyList<Pair<Time, Key>> items;
+    private final @Nonnull @Frozen @NonEmpty @ElementsNonNullable ReadonlyList<ReadonlyPair<Time, Key>> items;
     
     /**
      * Creates a new key chain with the given time and key.
@@ -51,8 +52,8 @@ abstract class KeyChain<Key extends Blockable> implements Immutable, Blockable {
     protected KeyChain(@Nonnull Time time, @Nonnull Key key) {
         assert time.isLessThanOrEqualTo(new Time()) : "The time lies in the past.";
         
-        final @Nonnull FreezableLinkedList<Pair<Time, Key>> items = new FreezableLinkedList<Pair<Time, Key>>();
-        items.add(new Pair<Time, Key>(time, key));
+        final @Nonnull FreezableLinkedList<ReadonlyPair<Time, Key>> items = new FreezableLinkedList<ReadonlyPair<Time, Key>>();
+        items.add(new FreezablePair<Time, Key>(time, key).freeze());
         this.items = items.freeze();
     }
     
@@ -61,12 +62,9 @@ abstract class KeyChain<Key extends Blockable> implements Immutable, Blockable {
      * 
      * @param items the items of the new key chain.
      * 
-     * @require !items.isEmpty() : "The list is not empty.";
-     * @require items.isFrozen() : "The list is frozen.";
-     * @require items.doesNotContainNull() : "The list does not contain null.";
      * @require items.isStrictlyDescending() : "The list is strictly descending.";
      */
-    protected KeyChain(@Nonnull ReadonlyList<Pair<Time, Key>> items) {
+    protected KeyChain(@Nonnull@Frozen @NonEmpty @ElementsNonNullable ReadonlyList<ReadonlyPair<Time, Key>> items) {
         this.items = items;
     }
     
@@ -82,13 +80,13 @@ abstract class KeyChain<Key extends Blockable> implements Immutable, Blockable {
         
         final @Nonnull ReadonlyList<Block> elements = new ListWrapper(block).getElementsNotNull();
         if (elements.isEmpty()) throw new InvalidEncodingException("The list of elements may not be empty.");
-        final @Nonnull FreezableLinkedList<Pair<Time, Key>> items = new FreezableLinkedList<Pair<Time, Key>>();
+        final @Nonnull FreezableLinkedList<ReadonlyPair<Time, Key>> items = new FreezableLinkedList<ReadonlyPair<Time, Key>>();
         
         for (final @Nonnull Block element : elements) {
             final @Nonnull ReadonlyArray<Block> pair = new TupleWrapper(element).getElementsNotNull(2);
             final @Nonnull Time time = new Time(pair.getNotNull(0));
             final @Nonnull Key key = createKey(pair.getNotNull(1));
-            items.add(new Pair<Time, Key>(time, key));
+            items.add(new FreezablePair<Time, Key>(time, key).freeze());
         }
         
         if (!items.isStrictlyDescending()) throw new InvalidEncodingException("The time has to be strictly decreasing.");
@@ -99,10 +97,10 @@ abstract class KeyChain<Key extends Blockable> implements Immutable, Blockable {
     @Override
     public final @Nonnull Block toBlock() {
         final @Nonnull FreezableArrayList<Block> elements = new FreezableArrayList<Block>(items.size());
-        for (final @Nonnull Pair<Time, Key> item : items) {
+        for (final @Nonnull ReadonlyPair<Time, Key> item : items) {
             final @Nonnull FreezableArray<Block> pair = new FreezableArray<Block>(2);
-            pair.set(0, item.getValue0().toBlock());
-            pair.set(1, item.getValue1().toBlock());
+            pair.set(0, item.getElement0().toBlock());
+            pair.set(1, item.getElement1().toBlock());
             elements.add(new TupleWrapper(getItemType(), pair.freeze()).toBlock());
         }
         return new ListWrapper(getType(), elements.freeze()).toBlock();
@@ -114,13 +112,10 @@ abstract class KeyChain<Key extends Blockable> implements Immutable, Blockable {
      * 
      * @return the items of this key chain in chronological order with the newest one first.
      * 
-     * @ensure !items.isEmpty() : "The list is not empty.";
-     * @ensure items.isFrozen() : "The list is frozen.";
-     * @ensure items.doesNotContainNull() : "The list does not contain null.";
      * @ensure items.isStrictlyDescending() : "The list is strictly descending.";
      */
     @Pure
-    public final @Nonnull ReadonlyList<Pair<Time, Key>> getItems() {
+    public final @Nonnull @Frozen @NonEmpty @ElementsNonNullable ReadonlyList<ReadonlyPair<Time, Key>> getItems() {
         return items;
     }
     
@@ -135,8 +130,8 @@ abstract class KeyChain<Key extends Blockable> implements Immutable, Blockable {
      */
     @Pure
     public final @Nonnull Key getKey(@Nonnull Time time) throws InvalidEncodingException {
-        for (final @Nonnull Pair<Time, Key> item : items) {
-            if (time.isGreaterThanOrEqualTo(item.getValue0())) return item.getValue1();
+        for (final @Nonnull ReadonlyPair<Time, Key> item : items) {
+            if (time.isGreaterThanOrEqualTo(item.getElement0())) return item.getElement1();
         }
         throw new InvalidEncodingException("There is no key for the given time.");
     }
@@ -148,7 +143,7 @@ abstract class KeyChain<Key extends Blockable> implements Immutable, Blockable {
      */
     @Pure
     public final @Nonnull Time getNewestTime() {
-        return items.getNotNull(0).getValue0();
+        return items.getNotNull(0).getElement0();
     }
     
     /**
@@ -164,14 +159,14 @@ abstract class KeyChain<Key extends Blockable> implements Immutable, Blockable {
         assert time.isGreaterThan(getNewestTime()) : "The time is greater than the newest time of this key chain.";
         assert time.isGreaterThan(new Time().add(Time.TROPICAL_YEAR)) : "The time lies at least one year in the future.";
         
-        final @Nonnull FreezableList<Pair<Time, Key>> copy = items.clone();
-        final @Nonnull Pair<Time, Key> pair = new Pair<Time, Key>(time, key);
+        final @Nonnull FreezableList<ReadonlyPair<Time, Key>> copy = items.clone();
+        final @Nonnull ReadonlyPair<Time, Key> pair = new FreezablePair<Time, Key>(time, key).freeze();
         copy.add(0, pair);
         
         final @Nonnull Time cutoff = Time.TWO_YEARS.ago();
-        final @Nonnull FreezableIterator<Pair<Time, Key>> iterator = copy.iterator();
+        final @Nonnull FreezableIterator<ReadonlyPair<Time, Key>> iterator = copy.iterator();
         while (iterator.hasNext()) {
-            if (iterator.next().getValue0().isLessThan(cutoff)) {
+            if (iterator.next().getElement0().isLessThan(cutoff)) {
                 while (iterator.hasNext()) {
                     iterator.next();
                     iterator.remove();
@@ -208,12 +203,9 @@ abstract class KeyChain<Key extends Blockable> implements Immutable, Blockable {
      * 
      * @return a new key chain with the given items.
      * 
-     * @require !items.isEmpty() : "The list is not empty.";
-     * @require items.isFrozen() : "The list is frozen.";
-     * @require items.doesNotContainNull() : "The list does not contain null.";
      * @require items.isStrictlyDescending() : "The list is strictly descending.";
      */
     @Pure
-    protected abstract @Nonnull KeyChain<Key> createKeyChain(@Nonnull ReadonlyList<Pair<Time, Key>> items);
+    protected abstract @Nonnull KeyChain<Key> createKeyChain(@Nonnull @Frozen @NonEmpty @ElementsNonNullable ReadonlyList<ReadonlyPair<Time, Key>> items);
     
 }

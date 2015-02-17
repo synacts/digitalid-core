@@ -1,16 +1,14 @@
 package ch.virtualid.annotations;
 
+import ch.virtualid.credential.Credential;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.util.Collection;
 
 /**
- * This annotation indicates that a {@link Collection collection} is {@link Empty empty} or {@link Single single}.
- * 
- * @see NonEmptyOrSingle
+ * This annotation indicates that a {@link Credential credential} is {@link Credential#isActive() active}.
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 1.0
@@ -18,4 +16,4 @@ import java.util.Collection;
 @Documented
 @Target({ElementType.FIELD, ElementType.PARAMETER, ElementType.LOCAL_VARIABLE, ElementType.METHOD, ElementType.CONSTRUCTOR})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface EmptyOrSingle {}
+public @interface Active {}

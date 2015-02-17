@@ -44,7 +44,7 @@ public final class ContactPermissions extends AttributeTypeSet implements Readon
      * 
      * @require type.isAttributeType() : "The type is an attribute type.";
      * 
-     * @ensure areSingle() : "The new contact permissions are single.";
+     * @ensure isSingle() : "The new contact permissions are single.";
      */
     public ContactPermissions(@Nonnull SemanticType type) {
         super(type);

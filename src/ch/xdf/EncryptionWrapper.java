@@ -1,10 +1,11 @@
 package ch.xdf;
 
-import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Exposed;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.cache.Cache;
+import ch.virtualid.collections.FreezableArray;
 import ch.virtualid.cryptography.Element;
 import ch.virtualid.cryptography.InitializationVector;
 import ch.virtualid.cryptography.PrivateKey;
@@ -21,7 +22,8 @@ import ch.virtualid.identity.SyntacticType;
 import ch.virtualid.interfaces.Blockable;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.server.Server;
-import ch.virtualid.collections.FreezableArray;
+import ch.virtualid.tuples.FreezablePair;
+import ch.virtualid.tuples.ReadonlyPair;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.sql.SQLException;
@@ -29,7 +31,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import org.javatuples.Pair;
 
 /**
  * Wraps a block with the syntactic type {@code encryption@xdf.ch} for encoding and decoding.
@@ -65,7 +66,7 @@ public final class EncryptionWrapper extends BlockWrapper implements Immutable {
     /**
      * Caches the encrypted key for a given pair of public key and symmetric key.
      */
-    private static final @Nonnull Map<Pair<PublicKey, SymmetricKey>, Block> encryptions = new ConcurrentHashMap<Pair<PublicKey, SymmetricKey>, Block>();
+    private static final @Nonnull Map<ReadonlyPair<PublicKey, SymmetricKey>, Block> encryptions = new ConcurrentHashMap<ReadonlyPair<PublicKey, SymmetricKey>, Block>();
     
     /**
      * Encrypts the given symmetric key for the given public key.
@@ -76,7 +77,7 @@ public final class EncryptionWrapper extends BlockWrapper implements Immutable {
      * @return a block containing the given symmetric key encrypted for the given public key.
      */
     private static @Nonnull Block encrypt(@Nonnull PublicKey publicKey, @Nonnull SymmetricKey symmetricKey) {
-        final @Nonnull Pair<PublicKey, SymmetricKey> pair = new Pair<PublicKey, SymmetricKey>(publicKey, symmetricKey);
+        final @Nonnull ReadonlyPair<PublicKey, SymmetricKey> pair = new FreezablePair<PublicKey, SymmetricKey>(publicKey, symmetricKey).freeze();
         @Nullable Block key = encryptions.get(pair);
         if (key == null) {
             key = publicKey.getCompositeGroup().getElement(symmetricKey.getValue()).pow(publicKey.getE()).toBlock().setType(KEY);
@@ -88,7 +89,7 @@ public final class EncryptionWrapper extends BlockWrapper implements Immutable {
     /**
      * Caches the symmetric key for a given pair of private key and encrypted key.
      */
-    private static final @Nonnull Map<Pair<PrivateKey, Block>, SymmetricKey> decryptions = new ConcurrentHashMap<Pair<PrivateKey, Block>, SymmetricKey>();
+    private static final @Nonnull Map<ReadonlyPair<PrivateKey, Block>, SymmetricKey> decryptions = new ConcurrentHashMap<ReadonlyPair<PrivateKey, Block>, SymmetricKey>();
     
     /**
      * Decrypts the given key with the given private key.
@@ -99,7 +100,7 @@ public final class EncryptionWrapper extends BlockWrapper implements Immutable {
      * @return the symmetric key with the decrypted value of the given encrypted key.
      */
     private static @Nonnull SymmetricKey decrypt(@Nonnull PrivateKey privateKey, @Nonnull Block key) throws InvalidEncodingException {
-        final @Nonnull Pair<PrivateKey, Block> pair = new Pair<PrivateKey, Block>(privateKey, key);
+        final @Nonnull ReadonlyPair<PrivateKey, Block> pair = new FreezablePair<PrivateKey, Block>(privateKey, key).freeze();
         @Nullable SymmetricKey symmetricKey = decryptions.get(pair);
         if (symmetricKey == null) {
             final @Nonnull BigInteger value = new IntegerWrapper(key).getValue();

@@ -8,9 +8,9 @@ import java.lang.annotation.Target;
 import java.util.Collection;
 
 /**
- * This annotation indicates that a {@link Collection collection} is {@link Empty empty} or {@link Single single}.
+ * This annotation indicates that a {@link Collection collection} is {@link NonEmpty non-empty} and {@link NonSingle non-single}.
  * 
- * @see NonEmptyOrSingle
+ * @see EmptyOrSingle
  * 
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 1.0
@@ -18,4 +18,4 @@ import java.util.Collection;
 @Documented
 @Target({ElementType.FIELD, ElementType.PARAMETER, ElementType.LOCAL_VARIABLE, ElementType.METHOD, ElementType.CONSTRUCTOR})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface EmptyOrSingle {}
+public @interface NonEmptyOrSingle {}

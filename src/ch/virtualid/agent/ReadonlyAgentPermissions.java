@@ -38,7 +38,7 @@ public interface ReadonlyAgentPermissions extends ReadonlyMap<SemanticType, Bool
      * @return whether these agent permissions contain a single permission.
      */
     @Pure
-    public boolean areSingle();
+    public boolean isSingle();
     
     /**
      * Returns whether these agent permissions are empty or contain a single permission.

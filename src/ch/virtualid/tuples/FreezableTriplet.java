@@ -3,7 +3,9 @@ package ch.virtualid.tuples;
 import ch.virtualid.annotations.Capturable;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.interfaces.Freezable;
+import java.util.Objects;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * This class models a {@link Freezable freezable} triplet.
@@ -42,6 +44,7 @@ public class FreezableTriplet<E0, E1, E2> extends FreezablePair<E0, E1> implemen
         this.element2 = triplet.getElement2();
     }
     
+    
     @Pure
     @Override
     public final E2 getElement2() {
@@ -61,6 +64,7 @@ public class FreezableTriplet<E0, E1, E2> extends FreezablePair<E0, E1> implemen
         this.element2 = element2;
     }
     
+    
     @Override
     public @Nonnull ReadonlyTriplet<E0, E1, E2> freeze() {
         super.freeze();
@@ -71,6 +75,30 @@ public class FreezableTriplet<E0, E1, E2> extends FreezablePair<E0, E1> implemen
     @Override
     public @Capturable @Nonnull FreezableTriplet<E0, E1, E2> clone() {
         return new FreezableTriplet<E0, E1, E2>(this);
+    }
+    
+    
+    @Pure
+    @Override
+    @SuppressWarnings("rawtypes")
+    public boolean equals(@Nullable Object object) {
+        if (object == this) return true;
+        if (object == null) return false;
+        if (!(object instanceof FreezableTriplet)) return object.equals(this);
+        final @Nonnull FreezableTriplet other = (FreezableTriplet) object;
+        return super.equals(object) && Objects.equals(this.element2, other.element2);
+    }
+    
+    @Pure
+    @Override
+    public int hashCode() {
+        return 83 * super.hashCode() + Objects.hashCode(element2);
+    }
+    
+    @Pure
+    @Override
+    public @Nonnull String toString() {
+        return super.toString() + ", " + element2;
     }
     
 }
