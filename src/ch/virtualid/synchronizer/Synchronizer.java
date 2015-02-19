@@ -2,7 +2,16 @@ package ch.virtualid.synchronizer;
 
 import ch.virtualid.annotations.Committing;
 import ch.virtualid.auxiliary.Time;
+import ch.virtualid.collections.ConcurrentHashMap;
+import ch.virtualid.collections.ConcurrentHashSet;
+import ch.virtualid.collections.ConcurrentMap;
+import ch.virtualid.collections.ConcurrentSet;
+import ch.virtualid.collections.FreezableArrayList;
+import ch.virtualid.collections.FreezableHashSet;
+import ch.virtualid.collections.ReadonlyList;
+import ch.virtualid.collections.ReadonlySet;
 import ch.virtualid.database.Database;
+import ch.virtualid.database.SQLiteConfiguration;
 import ch.virtualid.entity.Role;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
@@ -13,14 +22,6 @@ import ch.virtualid.io.Logger;
 import ch.virtualid.module.BothModule;
 import ch.virtualid.packet.Response;
 import ch.virtualid.service.Service;
-import ch.virtualid.collections.ConcurrentHashMap;
-import ch.virtualid.collections.ConcurrentHashSet;
-import ch.virtualid.collections.ConcurrentMap;
-import ch.virtualid.collections.ConcurrentSet;
-import ch.virtualid.collections.FreezableArrayList;
-import ch.virtualid.collections.FreezableHashSet;
-import ch.virtualid.collections.ReadonlyList;
-import ch.virtualid.collections.ReadonlySet;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -243,6 +244,7 @@ public final class Synchronizer extends Thread {
      * Sends the pending actions.
      */
     @Override
+    @SuppressWarnings("CallToThreadRun")
     public void run() {
         while (active) {
             try {
@@ -252,15 +254,19 @@ public final class Synchronizer extends Thread {
                     
                     final @Nonnull ReadonlyList<Method> methods = SynchronizerModule.getMethods().freeze();
                     if (methods.isNotEmpty()) {
-                        try {
-                            threadPoolExecutor.execute(new Sender(methods));
-                            resetBackoffInterval();
-                        } catch (@Nonnull RejectedExecutionException exception) {
-                            final @Nonnull Method reference = methods.getNotNull(0);
-                            resume(reference.getRole(), reference.getService());
-                            LOGGER.log(Level.WARNING, "Could not add a new sender", exception);
-                            sleep(backoff);
-                            backoff *= 2;
+                        if (Database.getConfiguration() instanceof SQLiteConfiguration) {
+                            new Sender(methods).run();
+                        } else {
+                            try {
+                                threadPoolExecutor.execute(new Sender(methods));
+                                resetBackoffInterval();
+                            } catch (@Nonnull RejectedExecutionException exception) {
+                                final @Nonnull Method reference = methods.getNotNull(0);
+                                resume(reference.getRole(), reference.getService());
+                                LOGGER.log(Level.WARNING, "Could not add a new sender", exception);
+                                sleep(backoff);
+                                backoff *= 2;
+                            }
                         }
                     } else {
                         sleep(backoff);

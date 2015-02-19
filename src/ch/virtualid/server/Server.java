@@ -3,6 +3,9 @@ package ch.virtualid.server;
 import ch.virtualid.annotations.Committing;
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.cache.Cache;
+import ch.virtualid.collections.FreezableLinkedHashMap;
+import ch.virtualid.collections.FreezableMap;
+import ch.virtualid.collections.ReadonlyCollection;
 import ch.virtualid.database.Configuration;
 import ch.virtualid.database.Database;
 import ch.virtualid.database.MySQLConfiguration;
@@ -19,9 +22,6 @@ import ch.virtualid.io.Console;
 import ch.virtualid.io.Directory;
 import ch.virtualid.io.Loader;
 import ch.virtualid.synchronizer.Synchronizer;
-import ch.virtualid.collections.FreezableLinkedHashMap;
-import ch.virtualid.collections.FreezableMap;
-import ch.virtualid.collections.ReadonlyCollection;
 import ch.xdf.SignatureWrapper;
 import java.io.File;
 import java.io.IOException;
@@ -40,7 +40,7 @@ public final class Server {
     /**
      * The version of the Virtual ID implementation.
      */
-    public static final @Nonnull String VERSION = "0.92 (3 February 2015)";
+    public static final @Nonnull String VERSION = "0.93 (18 February 2015)";
     
     /**
      * The authors of the Virtual ID implementation.

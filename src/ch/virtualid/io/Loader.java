@@ -66,7 +66,7 @@ public final class Loader {
         final @Nonnull Enumeration<JarEntry> entries = jarFile.entries();
         while (entries.hasMoreElements()) {
             final @Nonnull String entryName = entries.nextElement().getName();
-            if (entryName.endsWith(".class")) {
+            if (entryName.startsWith("ch/") && entryName.endsWith(".class")) {
                 final @Nonnull String className = entryName.substring(0, entryName.length() - 6).replace("/", ".");
                 LOGGER.log(Level.INFORMATION, "Initialize class: " + className);
                 Class.forName(className, true, urlClassLoader);

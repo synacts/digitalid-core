@@ -1,7 +1,12 @@
 package ch.virtualid.synchronizer;
 
-import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Committing;
+import ch.virtualid.annotations.ElementsNonNullable;
+import ch.virtualid.annotations.Frozen;
+import ch.virtualid.annotations.NonCommitting;
+import ch.virtualid.annotations.NonEmpty;
+import ch.virtualid.collections.FreezableArrayList;
+import ch.virtualid.collections.ReadonlyList;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.Role;
 import ch.virtualid.error.ErrorModule;
@@ -14,8 +19,6 @@ import ch.virtualid.io.Level;
 import ch.virtualid.packet.ClientRequest;
 import ch.virtualid.packet.Response;
 import ch.virtualid.service.Service;
-import ch.virtualid.collections.FreezableArrayList;
-import ch.virtualid.collections.ReadonlyList;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.concurrent.Callable;
@@ -37,29 +40,20 @@ public final class Sender extends Thread {
     /**
      * Stores the methods which are sent by this sender.
      * 
-     * @invariant methods.isFrozen() : "The list of methods is frozen.";
-     * @invariant methods.isNotEmpty() : "The list of methods is not empty.";
-     * @invariant methods.doesNotContainNull() : "The list of methods does not contain null.";
      * @invariant Method.areSimilar(methods) : "The methods are similar to each other.";
      * @invariant for (Method method : methods) method instanceof InternalAction : "The methods are internal actions.";
      */
-    private final @Nonnull ReadonlyList<Method> methods;
+    private final @Nonnull @Frozen @NonEmpty @ElementsNonNullable ReadonlyList<Method> methods;
     
     /**
      * Creates a new sender with the given methods.
      * 
      * @param methods the methods which are to be sent.
      * 
-     * @require methods.isFrozen() : "The list of methods is frozen.";
-     * @require methods.isNotEmpty() : "The list of methods is not empty.";
-     * @require methods.doesNotContainNull() : "The list of methods does not contain null.";
      * @require Method.areSimilar(methods) : "The methods are similar to each other.";
      * @require for (Method method : methods) method instanceof InternalAction : "The methods are internal actions.";
      */
-    Sender(@Nonnull ReadonlyList<Method> methods) {
-        assert methods.isFrozen() : "The list of methods is frozen.";
-        assert methods.isNotEmpty() : "The list of methods is not empty.";
-        assert methods.doesNotContainNull() : "The list of methods does not contain null.";
+    Sender(@Nonnull @Frozen @NonEmpty @ElementsNonNullable ReadonlyList<Method> methods) {
         assert Method.areSimilar(methods) : "The methods are similar to each other.";
         for (final @Nonnull Method method : methods) assert method instanceof InternalAction : "The methods are internal actions.";
         
