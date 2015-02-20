@@ -15,5 +15,5 @@ import java.lang.annotation.Target;
  */
 @Documented
 @Target(ElementType.METHOD)
-@Retention(RetentionPolicy.SOURCE)
+@Retention(RetentionPolicy.CLASS)
 public @interface OnlyForActions {}

@@ -15,5 +15,5 @@ import java.lang.annotation.Target;
  */
 @Documented
 @Target(ElementType.PARAMETER)
-@Retention(RetentionPolicy.RUNTIME)
+@Retention(RetentionPolicy.CLASS)
 public @interface Captured {}

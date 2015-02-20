@@ -1,6 +1,9 @@
 package ch.virtualid.server;
 
 import ch.virtualid.annotations.Committing;
+import ch.virtualid.collections.FreezableArrayList;
+import ch.virtualid.collections.ReadonlyCollection;
+import ch.virtualid.collections.ReadonlyList;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.io.EscapeOptionException;
 import ch.virtualid.exceptions.packet.PacketException;
@@ -9,9 +12,6 @@ import ch.virtualid.identifier.HostIdentifier;
 import ch.virtualid.io.Console;
 import ch.virtualid.io.Option;
 import ch.virtualid.service.Service;
-import ch.virtualid.collections.FreezableArrayList;
-import ch.virtualid.collections.ReadonlyCollection;
-import ch.virtualid.collections.ReadonlyList;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Collection;
@@ -90,7 +90,6 @@ final class Options {
         ExitServer() { super("Exit the server."); }
         
         @Override
-        @Committing
         public void execute() {
             // TODO: Remove the true on the following line!
             if (true || Console.readBoolean("Are you sure you want to shut down the server? Yes/No: ")) {

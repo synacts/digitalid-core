@@ -21,5 +21,5 @@ import java.lang.annotation.Target;
  */
 @Documented
 @Target({ElementType.METHOD, ElementType.CONSTRUCTOR})
-@Retention(RetentionPolicy.SOURCE)
+@Retention(RetentionPolicy.CLASS)
 public @interface NonCommitting {}

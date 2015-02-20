@@ -143,7 +143,6 @@ public final class Mapper {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS general_identifier (identifier " + IdentifierClass.FORMAT + " NOT NULL, identity " + Mapper.FORMAT + " NOT NULL, PRIMARY KEY (identifier), FOREIGN KEY (identity) " + Mapper.REFERENCE + ")");
             addReference("general_identifier", "identity");
         } catch (@Nonnull SQLException exception) {
-            try { Database.rollback(); } catch (@Nonnull SQLException exc) { throw new InitializationError("Could not rollback.", exc); }
             throw new InitializationError("The database tables of the mapper could not be created.", exception);
         }
     }
@@ -420,7 +419,6 @@ public final class Mapper {
             identifiers.put(identifier, type);
             return type;
         } catch (@Nonnull SQLException | InvalidEncodingException exception) {
-            try { Database.rollback(); } catch (@Nonnull SQLException exc) { throw new InitializationError("Could not rollback.", exc); }
             throw new InitializationError("The syntactic type with the identifier " + identifier + " could not be mapped.", exception);
         }
     }
@@ -443,7 +441,6 @@ public final class Mapper {
             identifiers.put(identifier, type);
             return type;
         } catch (@Nonnull SQLException | InvalidEncodingException exception) {
-            try { Database.rollback(); } catch (@Nonnull SQLException exc) { throw new InitializationError("Could not rollback.", exc); }
             throw new InitializationError("The semantic type with the identifier " + identifier + " could not be mapped.", exception);
         }
     }

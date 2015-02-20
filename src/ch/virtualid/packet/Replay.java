@@ -32,8 +32,6 @@ public final class Replay {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS general_replay (vector " + InitializationVector.FORMAT + " NOT NULL PRIMARY KEY, time " + Time.FORMAT + " NOT NULL" + Database.getConfiguration().INDEX("time") + ")");
             Database.getConfiguration().createIndex(statement, "general_replay", "time");
         } catch (@Nonnull SQLException exception) {
-            exception.printStackTrace();
-            try { Database.rollback(); } catch (@Nonnull SQLException exc) { throw new InitializationError("Could not rollback.", exc); }
             throw new InitializationError("The database table of the replay checker could not be created.", exception);
         }
         

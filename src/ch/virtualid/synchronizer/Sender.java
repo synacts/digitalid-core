@@ -156,17 +156,14 @@ public final class Sender extends Thread {
             }
         } catch (@Nonnull InterruptedException | SQLException | PacketException | ExternalException exception) {
             Synchronizer.LOGGER.log(Level.WARNING, "Could not commit or reload", exception);
-            try {
-                Database.rollback();
-            } catch (@Nonnull SQLException exc) {
-                Synchronizer.LOGGER.log(Level.WARNING, "Could not rollback", exc);
-            }
+            Database.rollback();
         } finally {
             try {
                 SynchronizerModule.remove(methods);
                 Database.commit();
             } catch (@Nonnull SQLException exception) {
                 Synchronizer.LOGGER.log(Level.WARNING, "Could not remove the methods", exception);
+                Database.rollback();
             }
             
             Synchronizer.resume(role, service);
@@ -195,7 +192,7 @@ public final class Sender extends Thread {
                     Database.commit();
                 } catch (@Nonnull SQLException exception) {
                     Synchronizer.LOGGER.log(Level.ERROR, "Could not send the action asynchronously", exception);
-                    try { Database.rollback(); } catch (@Nonnull SQLException exc) { Synchronizer.LOGGER.log(Level.WARNING, "Could not rollback", exc); }
+                    Database.rollback();
                 }
             }
         }.start();

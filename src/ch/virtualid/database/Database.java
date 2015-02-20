@@ -4,13 +4,13 @@ import ch.virtualid.annotations.Committing;
 import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
+import ch.virtualid.collections.ConcurrentHashMap;
+import ch.virtualid.collections.ConcurrentMap;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.io.Level;
 import ch.virtualid.io.Logger;
 import ch.virtualid.server.Server;
 import ch.virtualid.server.Worker;
-import ch.virtualid.collections.ConcurrentHashMap;
-import ch.virtualid.collections.ConcurrentMap;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -206,8 +206,12 @@ public final class Database implements Immutable {
      * @require isInitialized() : "The database is initialized.";
      */
     @Committing
-    public static void rollback() throws SQLException {
-        getConnection().rollback();
+    public static void rollback() {
+        try {
+            getConnection().rollback();
+        } catch (@Nonnull SQLException exception) {
+            LOGGER.log(Level.ERROR, "Could not roll back", exception);
+        }
     }
     
     /**
@@ -442,11 +446,7 @@ public final class Database implements Immutable {
                     }
                 } catch (@Nonnull SQLException exception) {
                     LOGGER.log(Level.WARNING, "Could not prune a table", exception);
-                    try {
-                        rollback();
-                    } catch (@Nonnull SQLException exc) {
-                        LOGGER.log(Level.WARNING, "Could not rollback", exc);
-                    }
+                    rollback();
                 }
             }
         }, Time.MINUTE.getValue(), Time.HOUR.getValue());

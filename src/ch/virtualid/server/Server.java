@@ -121,7 +121,6 @@ public final class Server {
                     final @Nonnull HostIdentifier identifier = new HostIdentifier(file.getName().substring(0, file.getName().length() - 12));
                     if (!new File(Directory.HOSTS.getPath() + Directory.SEPARATOR + identifier.getString() + ".tables.xdf").exists()) new Host(identifier);
                 } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
-                    try { Database.rollback(); } catch (@Nonnull SQLException exc) { throw new InitializationError("Could not rollback.", exc); }
                     throw new InitializationError("Could not load the host configured in the file '" + file.getName() + "'.", exception);
                 }
             }
@@ -140,7 +139,6 @@ public final class Server {
                 try {
                     Loader.loadJarFile(new JarFile(file));
                 } catch (@Nonnull IOException | ClassNotFoundException | SQLException exception) {
-                    try { Database.rollback(); } catch (@Nonnull SQLException exc) { throw new InitializationError("Could not rollback.", exc); }
                     throw new InitializationError("Could not load the service in the file '" + file.getName() + "'.", exception);
                 }
             }
@@ -181,7 +179,6 @@ public final class Server {
             try {
                 new Host(new HostIdentifier(argument));
             } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
-                try { Database.rollback(); } catch (@Nonnull SQLException exc) { throw new InitializationError("Could not rollback.", exc); }
                 throw new InitializationError("Could not create the host '" + argument + "'.", exception);
             }
         }
@@ -193,7 +190,6 @@ public final class Server {
             Cache.getPublicKeyChain(HostIdentity.VIRTUALID);
             Database.commit();
         } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
-            try { Database.rollback(); } catch (@Nonnull SQLException exc) { throw new InitializationError("Could not rollback.", exc); }
             throw new InitializationError("Could not retrieve the public key chain of 'virtualid.ch'.", exception);
         }
     }

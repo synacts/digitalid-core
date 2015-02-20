@@ -69,7 +69,6 @@ public final class Cache {
             Mapper.addReference("general_cache", "identity", "identity", "role", "type", "found");
             Mapper.addReference("general_cache", "role", "identity", "role", "type", "found");
         } catch (@Nonnull SQLException exception) {
-            try { Database.rollback(); } catch (@Nonnull SQLException exc) { throw new InitializationError("Could not rollback.", exc); }
             throw new InitializationError("Could not initialize the cache.", exception);
         }
     }
@@ -101,7 +100,6 @@ public final class Cache {
                 Database.commit();
             }
         } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
-            try { Database.rollback(); } catch (@Nonnull SQLException exc) { throw new InitializationError("Could not rollback.", exc); }
             throw new InitializationError("Could not initialize the cache.", exception);
         }
     }

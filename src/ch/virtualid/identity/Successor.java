@@ -35,7 +35,6 @@ public final class Successor {
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS general_successor (identifier " + IdentifierClass.FORMAT + " NOT NULL, successor " + IdentifierClass.FORMAT + " NOT NULL, reply " + Reply.FORMAT + ", PRIMARY KEY (identifier), FOREIGN KEY (reply) " + Reply.REFERENCE + ")");
         } catch (@Nonnull SQLException exception) {
-            try { Database.rollback(); } catch (@Nonnull SQLException exc) { throw new InitializationError("Could not rollback.", exc); }
             throw new InitializationError("The database tables of the predecessors could not be created.", exception);
         }
     }

@@ -17,5 +17,5 @@ import java.lang.annotation.Target;
  */
 @Documented
 @Target(ElementType.METHOD)
-@Retention(RetentionPolicy.RUNTIME)
+@Retention(RetentionPolicy.CLASS)
 public @interface NonFrozenRecipient {}

@@ -3,6 +3,9 @@ package ch.virtualid.identity;
 import ch.virtualid.annotations.Capturable;
 import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
+import ch.virtualid.collections.FreezableArrayList;
+import ch.virtualid.collections.FreezableList;
+import ch.virtualid.collections.ReadonlyList;
 import ch.virtualid.database.Database;
 import ch.virtualid.errors.InitializationError;
 import ch.virtualid.exceptions.external.ExternalException;
@@ -12,9 +15,6 @@ import ch.virtualid.handler.Reply;
 import ch.virtualid.identifier.IdentifierClass;
 import ch.virtualid.identifier.InternalNonHostIdentifier;
 import ch.virtualid.interfaces.Blockable;
-import ch.virtualid.collections.FreezableArrayList;
-import ch.virtualid.collections.FreezableList;
-import ch.virtualid.collections.ReadonlyList;
 import ch.xdf.Block;
 import ch.xdf.ListWrapper;
 import java.io.IOException;
@@ -173,7 +173,6 @@ public final class Predecessors extends FreezableArrayList<Predecessor> implemen
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS general_predecessors (identifier " + IdentifierClass.FORMAT + " NOT NULL, predecessors " + Block.FORMAT + " NOT NULL, reply " + Reply.FORMAT + ", PRIMARY KEY (identifier), FOREIGN KEY (reply) " + Reply.REFERENCE + ")");
             Database.onInsertIgnore(statement, "general_predecessors", "identifier");
         } catch (@Nonnull SQLException exception) {
-            try { Database.rollback(); } catch (@Nonnull SQLException exc) { throw new InitializationError("Could not rollback.", exc); }
             throw new InitializationError("The database tables of the predecessors could not be created.", exception);
         }
     }

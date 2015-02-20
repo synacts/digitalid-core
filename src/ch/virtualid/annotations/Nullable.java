@@ -20,5 +20,5 @@ import java.lang.annotation.Target;
 @Deprecated
 @Documented
 @Target({ElementType.FIELD, ElementType.PARAMETER, ElementType.LOCAL_VARIABLE, ElementType.METHOD})
-@Retention(RetentionPolicy.RUNTIME)
+@Retention(RetentionPolicy.CLASS)
 public @interface Nullable {}

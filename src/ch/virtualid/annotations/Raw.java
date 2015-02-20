@@ -17,5 +17,5 @@ import javax.annotation.Nonnull;
  */
 @Documented
 @Target({ElementType.PARAMETER, ElementType.LOCAL_VARIABLE})
-@Retention(RetentionPolicy.RUNTIME)
+@Retention(RetentionPolicy.CLASS)
 public @interface Raw {}

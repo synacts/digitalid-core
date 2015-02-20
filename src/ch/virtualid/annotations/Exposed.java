@@ -18,5 +18,5 @@ import java.lang.annotation.Target;
  */
 @Documented
 @Target({ElementType.PARAMETER, ElementType.LOCAL_VARIABLE})
-@Retention(RetentionPolicy.RUNTIME)
+@Retention(RetentionPolicy.CLASS)
 public @interface Exposed {}

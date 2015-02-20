@@ -3,6 +3,14 @@ package ch.virtualid.synchronizer;
 import ch.virtualid.annotations.Committing;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
+import ch.virtualid.collections.FreezableArray;
+import ch.virtualid.collections.FreezableArrayList;
+import ch.virtualid.collections.FreezableHashSet;
+import ch.virtualid.collections.FreezableLinkedList;
+import ch.virtualid.collections.FreezableList;
+import ch.virtualid.collections.FreezableSet;
+import ch.virtualid.collections.ReadonlyList;
+import ch.virtualid.collections.ReadonlySet;
 import ch.virtualid.database.Database;
 import ch.virtualid.entity.Role;
 import ch.virtualid.exceptions.external.ExternalException;
@@ -18,14 +26,6 @@ import ch.virtualid.module.BothModule;
 import ch.virtualid.packet.Packet;
 import ch.virtualid.packet.Response;
 import ch.virtualid.service.Service;
-import ch.virtualid.collections.FreezableArray;
-import ch.virtualid.collections.FreezableArrayList;
-import ch.virtualid.collections.FreezableHashSet;
-import ch.virtualid.collections.FreezableLinkedList;
-import ch.virtualid.collections.FreezableList;
-import ch.virtualid.collections.FreezableSet;
-import ch.virtualid.collections.ReadonlyList;
-import ch.virtualid.collections.ReadonlySet;
 import ch.xdf.Block;
 import ch.xdf.CompressionWrapper;
 import ch.xdf.ListWrapper;
@@ -174,8 +174,8 @@ public final class ResponseAudit extends Audit implements Immutable, Blockable {
                         SynchronizerModule.redoReversedActions(reversedActions);
                     } catch (@Nonnull SQLException e) {
                         Synchronizer.LOGGER.log(Level.WARNING, "Could not execute on the client after having reversed the interfering actions", e);
-                        Database.rollback();
                         suspendedModules.add(module);
+                        Database.rollback();
                     }
                 }
             }
@@ -220,11 +220,7 @@ public final class ResponseAudit extends Audit implements Immutable, Blockable {
                     execute(role, service, method.getRecipient(), new FreezableArrayList<Method>(method).freeze(), emptyModuleSet);
                 } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
                     Synchronizer.LOGGER.log(Level.WARNING, "Could not execute the audit of '" + method + "' asynchronously", exception);
-                    try {
-                        Database.rollback();
-                    } catch (@Nonnull SQLException e) {
-                        Synchronizer.LOGGER.log(Level.WARNING, "Could not rollback", e);
-                    }
+                    Database.rollback();
                 }
                 
                 Synchronizer.resume(role, service);

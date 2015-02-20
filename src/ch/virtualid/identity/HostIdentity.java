@@ -36,7 +36,6 @@ public final class HostIdentity extends IdentityClass implements InternalIdentit
         try {
             return Mapper.mapHostIdentity(identifier);
         } catch (@Nonnull SQLException exception) {
-            try { Database.rollback(); } catch (@Nonnull SQLException exc) { throw new InitializationError("Could not rollback.", exc); }
             throw new InitializationError("The host identity with the identifier " + identifier + " could not be mapped.", exception);
         }
     }
