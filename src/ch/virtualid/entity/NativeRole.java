@@ -1,10 +1,12 @@
 package ch.virtualid.entity;
 
 import ch.virtualid.agent.ClientAgent;
-import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Committing;
+import ch.virtualid.annotations.NonCommitting;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.client.Client;
+import ch.virtualid.collections.ConcurrentHashMap;
+import ch.virtualid.collections.ConcurrentMap;
 import ch.virtualid.concept.Aspect;
 import ch.virtualid.concept.Instance;
 import ch.virtualid.concept.Observer;
@@ -16,8 +18,6 @@ import ch.virtualid.exceptions.packet.PacketException;
 import ch.virtualid.identity.InternalNonHostIdentity;
 import ch.virtualid.interfaces.Immutable;
 import ch.virtualid.service.CoreService;
-import ch.virtualid.collections.ConcurrentHashMap;
-import ch.virtualid.collections.ConcurrentMap;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
@@ -47,7 +47,7 @@ public final class NativeRole extends Role implements Immutable {
     private NativeRole(@Nonnull Client client, long number, @Nonnull InternalNonHostIdentity issuer, long agentNumber) {
         super(client, number, issuer);
         
-        this.clientAgent = ClientAgent.get(this, agentNumber, false);
+        this.clientAgent = ClientAgent.get(this, agentNumber, true);
     }
     
     

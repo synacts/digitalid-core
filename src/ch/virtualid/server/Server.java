@@ -40,7 +40,7 @@ public final class Server {
     /**
      * The version of the Virtual ID implementation.
      */
-    public static final @Nonnull String VERSION = "0.93 (18 February 2015)";
+    public static final @Nonnull String VERSION = "0.93 (21 February 2015)";
     
     /**
      * The authors of the Virtual ID implementation.
@@ -110,18 +110,29 @@ public final class Server {
     }
     
     /**
-     * Loads all hosts with a configuration but without a tables file in the hosts directory.
+     * Loads all hosts with cryptographic keys but without a tables file in the hosts directory.
      */
     @Committing
     private static void loadHosts() {
+        // TODO: Remove this special case when the certification mechanism is implemented.
+        final @Nonnull File virtualid = new File(Directory.HOSTS.getPath() + Directory.SEPARATOR + "virtualid.ch.private.xdf");
+        if (virtualid.exists() && virtualid.isFile()) {
+            try {
+                if (!new File(Directory.HOSTS.getPath() + Directory.SEPARATOR + HostIdentifier.VIRTUALID.getString() + ".tables.xdf").exists()) new Host(HostIdentifier.VIRTUALID);
+            } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
+                throw new InitializationError("Could not load the host configured in the file '" + virtualid.getName() + "'.", exception);
+            }
+        }
+        
         final @Nonnull File[] files = Directory.HOSTS.listFiles();
         for (final @Nonnull File file : files) {
-            if (!file.isDirectory() && file.getName().endsWith(".private.xdf")) {
+            final @Nonnull String name = file.getName();
+            if (file.isFile() && name.endsWith(".private.xdf") && !name.equals("virtualid.ch.private.xdf")) { // TODO: Remove the special case eventually.
                 try {
-                    final @Nonnull HostIdentifier identifier = new HostIdentifier(file.getName().substring(0, file.getName().length() - 12));
+                    final @Nonnull HostIdentifier identifier = new HostIdentifier(name.substring(0, name.length() - 12));
                     if (!new File(Directory.HOSTS.getPath() + Directory.SEPARATOR + identifier.getString() + ".tables.xdf").exists()) new Host(identifier);
                 } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
-                    throw new InitializationError("Could not load the host configured in the file '" + file.getName() + "'.", exception);
+                    throw new InitializationError("Could not load the host configured in the file '" + name + "'.", exception);
                 }
             }
         }

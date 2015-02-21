@@ -11,6 +11,10 @@ import ch.virtualid.attribute.Attribute;
 import ch.virtualid.attribute.AttributeValue;
 import ch.virtualid.attribute.CertifiedAttributeValue;
 import ch.virtualid.auxiliary.Time;
+import ch.virtualid.collections.FreezableArrayList;
+import ch.virtualid.collections.FreezableList;
+import ch.virtualid.collections.ReadonlyIterator;
+import ch.virtualid.collections.ReadonlyList;
 import ch.virtualid.contact.Authentications;
 import ch.virtualid.contact.Contact;
 import ch.virtualid.contact.ReadonlyAuthentications;
@@ -37,10 +41,6 @@ import ch.virtualid.packet.Request;
 import ch.virtualid.packet.Response;
 import ch.virtualid.service.CoreService;
 import ch.virtualid.synchronizer.RequestAudit;
-import ch.virtualid.collections.FreezableArrayList;
-import ch.virtualid.collections.FreezableList;
-import ch.virtualid.collections.ReadonlyIterator;
-import ch.virtualid.collections.ReadonlyList;
 import ch.xdf.Block;
 import ch.xdf.SignatureWrapper;
 import java.io.IOException;
@@ -564,6 +564,15 @@ public abstract class Method extends Handler {
         throw new InvalidEncodingException("The method with the type " + getType().getAddress() + " is not an external query.");
     }
     
+    
+    @Pure
+    @Override
+    public final @Nonnull String toString() {
+        final @Nonnull StringBuilder string = new StringBuilder(getClass().getSimpleName());
+        string.append(" by ").append(hasEntity() ? getEntityNotNull().getIdentity().getAddress() : "null");
+        string.append(" for ").append(getSubject()).append(" (").append(getDescription()).append(")");
+        return string.toString();
+    }
     
     @Pure
     @Override

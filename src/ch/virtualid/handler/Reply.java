@@ -28,6 +28,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -92,6 +93,12 @@ public abstract class Reply extends Handler implements SQLizable {
         
         assert number != null : "This follows from the constructor.";
         return number;
+    }
+    
+    @Pure
+    @Override
+    public @Nonnull String toString() {
+        return Objects.toString(number);
     }
     
     

@@ -270,16 +270,6 @@ public abstract class Handler implements Immutable, Blockable {
     public abstract @Nonnull String getDescription();
     
     
-    @Pure
-    @Override
-    public final @Nonnull String toString() {
-        final @Nonnull StringBuilder string = new StringBuilder(getClass().getSimpleName());
-        string.append(" by ").append(entity != null ? entity.getIdentity().getAddress() : "null");
-        string.append(" for ").append(subject).append(" (").append(getDescription()).append(")");
-        return string.toString();
-    }
-    
-    
     /**
      * Returns whether the given object is equal to this handler.
      * This method does not override {@link Object#equals(java.lang.Object)}
