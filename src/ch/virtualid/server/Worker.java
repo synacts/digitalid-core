@@ -5,6 +5,8 @@ import ch.virtualid.agent.ReadonlyAgentPermissions;
 import ch.virtualid.agent.Restrictions;
 import ch.virtualid.annotations.Committing;
 import ch.virtualid.auxiliary.Time;
+import ch.virtualid.collections.FreezableArrayList;
+import ch.virtualid.collections.FreezableList;
 import ch.virtualid.credential.Credential;
 import ch.virtualid.database.Database;
 import ch.virtualid.exceptions.external.ExternalException;
@@ -24,8 +26,6 @@ import ch.virtualid.service.Service;
 import ch.virtualid.synchronizer.ActionModule;
 import ch.virtualid.synchronizer.RequestAudit;
 import ch.virtualid.synchronizer.ResponseAudit;
-import ch.virtualid.collections.FreezableArrayList;
-import ch.virtualid.collections.FreezableList;
 import java.io.IOException;
 import java.net.Socket;
 import java.sql.SQLException;
@@ -75,6 +75,7 @@ public final class Worker implements Runnable {
             @Nullable Request request = null;
             @Nonnull Response response;
             try {
+                Database.lock();
                 try {
                     request = new Request(socket.getInputStream());
                     final @Nonnull Method reference = request.getMethod(0);
@@ -91,7 +92,7 @@ public final class Worker implements Runnable {
                         exceptions.add(null);
                         try {
                             final @Nonnull Method method = request.getMethod(i);
-//                            System.out.println("- " + method.getClass().getSimpleName()); System.out.flush(); // TODO: Remove eventually.
+                            System.out.println("- " + method.getClass().getSimpleName()); System.out.flush(); // TODO: Remove eventually.
                             replies.set(i, method.executeOnHost());
                             if (method instanceof Action) ActionModule.audit((Action) method);
                             Database.commit();
@@ -100,7 +101,7 @@ public final class Worker implements Runnable {
                             exceptions.set(i, new PacketException(PacketError.INTERNAL, "An SQLException occurred.", exception));
                             Database.rollback();
                         } catch (@Nonnull PacketException exception) {
-                            exception.printStackTrace(); // TODO: Remove eventually.
+                            if (exception.getError() != PacketError.IDENTIFIER) exception.printStackTrace(); // TODO: Remove eventually.
                             exceptions.set(i, exception);
                             Database.rollback();
                         }
@@ -147,6 +148,8 @@ public final class Worker implements Runnable {
                 response = new Response(request, exception.isRemote() ? new PacketException(PacketError.EXTERNAL, "An external error occurred.", exception) : exception);
                 error = exception.getError();
                 Database.rollback();
+            } finally {
+                Database.unlock();
             }
             
             // The database transaction is intentionally committed before returning the response so that slow or malicious clients cannot block the database.

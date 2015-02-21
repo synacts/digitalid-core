@@ -1,8 +1,8 @@
 package ch.virtualid.synchronizer;
 
 import ch.virtualid.annotations.Committing;
+import ch.virtualid.annotations.Frozen;
 import ch.virtualid.annotations.NonCommitting;
-import ch.virtualid.annotations.NonFrozen;
 import ch.virtualid.annotations.Pure;
 import ch.virtualid.auxiliary.Time;
 import ch.virtualid.client.Client;
@@ -158,7 +158,7 @@ public final class SynchronizerModule implements ClientModule {
      * 
      * @return a list of similar methods from the pending actions whose service was not suspended.
      */
-    static @Nonnull @NonFrozen FreezableList<Method> getMethods() {
+    static @Nonnull @Frozen ReadonlyList<Method> getMethods() {
         final @Nonnull FreezableList<Method> methods = new FreezableLinkedList<Method>();
         final @Nonnull Set<ReadonlyPair<Role, Service>> ignored = new HashSet<ReadonlyPair<Role, Service>>();
         final @Nonnull Iterator<InternalAction> iterator = pendingActions.iterator();
@@ -169,19 +169,19 @@ public final class SynchronizerModule implements ClientModule {
             final @Nonnull ReadonlyPair<Role, Service> pair = new FreezablePair<Role, Service>(role, service).freeze();
             if (!ignored.contains(pair) && suspend(role, service)) {
                 methods.add(reference);
-                if (!reference.isSimilarTo(reference)) return methods;
+                if (!reference.isSimilarTo(reference)) return methods.freeze();
                 while (iterator.hasNext()) {
                     final @Nonnull InternalAction pendingAction =  iterator.next();
                     if (pendingAction.getRole().equals(role) && pendingAction.getService().equals(service)) {
                         if (pendingAction.isSimilarTo(reference) && reference.isSimilarTo(pendingAction)) methods.add(pendingAction);
-                        else return methods;
+                        else return methods.freeze();
                     }
                 }
             } else {
                 ignored.add(pair);
             }
         }
-        return methods;
+        return methods.freeze();
     }
     
     /**

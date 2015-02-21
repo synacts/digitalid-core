@@ -323,4 +323,17 @@ public abstract class Configuration implements Immutable {
     @NonCommitting
     void onInsertNotUpdate(@Nonnull Statement statement, @Nonnull String table) throws SQLException {}
     
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Locking –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Locks the database if its access should be serialized.
+     */
+    void lock() {}
+    
+    /**
+     * Unlocks the database if its access has been serialized.
+     */
+    void unlock() {}
+    
 }

@@ -400,6 +400,26 @@ public final class Database implements Immutable {
         getConfiguration().onInsertNotUpdate(statement, table);
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Locking –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Locks the database if its access should be serialized.
+     * 
+     * @require isInitialized() : "The database is initialized.";
+     */
+    public static void lock() {
+        getConfiguration().lock();
+    }
+    
+    /**
+     * Unlocks the database if its access has been serialized.
+     * 
+     * @require isInitialized() : "The database is initialized.";
+     */
+    public static void unlock() {
+        getConfiguration().unlock();
+    }
+    
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Purging –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
@@ -439,6 +459,7 @@ public final class Database implements Immutable {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
+                Database.lock();
                 try (@Nonnull Statement statement = createStatement()) {
                     for (final @Nonnull Map.Entry<String, Time> entry : tables.entrySet()) {
                         statement.executeUpdate("DELETE FROM " + entry.getKey() + " WHERE time < " + entry.getValue().ago());
@@ -447,6 +468,8 @@ public final class Database implements Immutable {
                 } catch (@Nonnull SQLException exception) {
                     LOGGER.log(Level.WARNING, "Could not prune a table", exception);
                     rollback();
+                } finally {
+                    Database.unlock();
                 }
             }
         }, Time.MINUTE.getValue(), Time.HOUR.getValue());

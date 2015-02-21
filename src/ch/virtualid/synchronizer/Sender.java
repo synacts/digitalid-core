@@ -71,11 +71,19 @@ public final class Sender extends Thread {
         final @Nonnull Service service = reference.getService();
         
         try {
-            final @Nonnull RequestAudit requestAudit = new RequestAudit(SynchronizerModule.getLastTime(role, service));
+            final @Nonnull RequestAudit requestAudit;
+            try {
+                Database.lock();
+                requestAudit = new RequestAudit(SynchronizerModule.getLastTime(role, service));
+                if (Database.isSingleAccess()) Database.commit();
+            } finally {
+                Database.unlock();
+            }
             
             long backoff = 1000l;
             while (backoff > 0l) {
                 try {
+                    Database.lock();
                     final @Nonnull Response response;
                     try {
                         response = Method.send(methods, requestAudit);
@@ -150,8 +158,12 @@ public final class Sender extends Thread {
                     backoff = 0l;
                 } catch (@Nonnull IOException exception) {
                     System.out.println("IOException in Sender: " + exception); // TODO: Remove eventually.
-                    sleep(backoff);
+                    Database.unlock();
+                    try { sleep(backoff); }
+                    finally { Database.lock(); }
                     backoff *= 2;
+                } finally {
+                    Database.unlock();
                 }
             }
         } catch (@Nonnull InterruptedException | SQLException | PacketException | ExternalException exception) {
@@ -159,11 +171,14 @@ public final class Sender extends Thread {
             Database.rollback();
         } finally {
             try {
+                Database.lock();
                 SynchronizerModule.remove(methods);
                 Database.commit();
             } catch (@Nonnull SQLException exception) {
                 Synchronizer.LOGGER.log(Level.WARNING, "Could not remove the methods", exception);
                 Database.rollback();
+            } finally {
+                Database.unlock();
             }
             
             Synchronizer.resume(role, service);
@@ -183,16 +198,21 @@ public final class Sender extends Thread {
      */
     @NonCommitting
     public static @Nullable RequestAudit runAsynchronously(final @Nonnull InternalAction action, final @Nullable RequestAudit audit) throws SQLException, IOException, PacketException, ExternalException {
+        // TODO: This will almost certainly not work with the locking mechanism of SQLite.
+        
         new Thread() {
             @Override
             @Committing
             public void run() {
                 try {
+                    Database.lock();
                     action.executeOnClient(); // The action is executed as soon as the database entries are no longer locked.
                     Database.commit();
                 } catch (@Nonnull SQLException exception) {
                     Synchronizer.LOGGER.log(Level.ERROR, "Could not send the action asynchronously", exception);
                     Database.rollback();
+                } finally {
+                    Database.unlock();
                 }
             }
         }.start();
@@ -203,6 +223,7 @@ public final class Sender extends Thread {
             @Committing
             public @Nullable RequestAudit call() throws Exception {
                 try {
+                    Database.lock();
                     final @Nonnull RequestAudit requestAudit = audit != null ? audit : new RequestAudit(SynchronizerModule.getLastTime(action.getRole(), action.getService()));
                     final @Nonnull ReadonlyList<Method> methods = new FreezableArrayList<Method>(action).freeze();
                     final @Nonnull Response response = Method.send(methods, requestAudit);
@@ -213,6 +234,8 @@ public final class Sender extends Thread {
                 } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
                     Database.rollback();
                     throw exception;
+                } finally {
+                    Database.unlock();
                 }
             }
         });

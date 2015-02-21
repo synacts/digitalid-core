@@ -11,7 +11,6 @@ import ch.virtualid.collections.FreezableHashSet;
 import ch.virtualid.collections.ReadonlyList;
 import ch.virtualid.collections.ReadonlySet;
 import ch.virtualid.database.Database;
-import ch.virtualid.database.SQLiteConfiguration;
 import ch.virtualid.entity.Role;
 import ch.virtualid.exceptions.external.ExternalException;
 import ch.virtualid.exceptions.packet.PacketException;
@@ -163,8 +162,10 @@ public final class Synchronizer extends Thread {
         final @Nonnull Service service = module.getService();
         synchronized (set) { while (!set.add(service)) set.wait(); }
         try {
+            Database.lock();
             reloadSuspended(role, module);
         } finally {
+            Database.unlock();
             resume(role, service);
         }
     }
@@ -180,11 +181,13 @@ public final class Synchronizer extends Thread {
     public static void refresh(@Nonnull Role role, @Nonnull Service service) throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
         if (suspend(role, service)) {
             try {
+                Database.lock();
                 final @Nonnull AuditQuery auditQuery = new AuditQuery(role, service);
                 final @Nonnull RequestAudit requestAudit = new RequestAudit(SynchronizerModule.getLastTime(role, service));
                 final @Nonnull Response response = Method.send(new FreezableArrayList<Method>(auditQuery).freeze(), requestAudit);
                 response.getAuditNotNull().execute(role, service, auditQuery.getRecipient(), ResponseAudit.emptyMethodList, ResponseAudit.emptyModuleSet);
             } finally {
+                Database.unlock();
                 resume(role, service);
             }
         } else {
@@ -252,21 +255,17 @@ public final class Synchronizer extends Thread {
                 if (action != null) {
                     SynchronizerModule.pendingActions.addFirst(action);
                     
-                    final @Nonnull ReadonlyList<Method> methods = SynchronizerModule.getMethods().freeze();
+                    final @Nonnull ReadonlyList<Method> methods = SynchronizerModule.getMethods();
                     if (methods.isNotEmpty()) {
-                        if (Database.getConfiguration() instanceof SQLiteConfiguration) {
-                            new Sender(methods).run();
-                        } else {
-                            try {
-                                threadPoolExecutor.execute(new Sender(methods));
-                                resetBackoffInterval();
-                            } catch (@Nonnull RejectedExecutionException exception) {
-                                final @Nonnull Method reference = methods.getNotNull(0);
-                                resume(reference.getRole(), reference.getService());
-                                LOGGER.log(Level.WARNING, "Could not add a new sender", exception);
-                                sleep(backoff);
-                                backoff *= 2;
-                            }
+                        try {
+                            threadPoolExecutor.execute(new Sender(methods));
+                            resetBackoffInterval();
+                        } catch (@Nonnull RejectedExecutionException exception) {
+                            final @Nonnull Method reference = methods.getNotNull(0);
+                            resume(reference.getRole(), reference.getService());
+                            LOGGER.log(Level.WARNING, "Could not add a new sender", exception);
+                            sleep(backoff);
+                            backoff *= 2;
                         }
                     } else {
                         sleep(backoff);

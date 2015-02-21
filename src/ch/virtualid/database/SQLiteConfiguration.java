@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
+import java.util.concurrent.locks.ReentrantLock;
 import javax.annotation.Nonnull;
 import org.sqlite.JDBC;
 import org.sqlite.SQLiteConfig;
@@ -205,6 +206,23 @@ public final class SQLiteConfiguration extends Configuration implements Immutabl
             if (resultSet.next()) return resultSet.getLong(1);
             else throw new SQLException("The given SQL statement did not generate any keys.");
         }
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Locking –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Stores a reentrant lock to serialize database access.
+     */
+    private final @Nonnull ReentrantLock lock = new ReentrantLock(true);
+    
+    @Override
+    void lock() {
+        lock.lock();
+    }
+    
+    @Override
+    void unlock() {
+        lock.unlock();
     }
     
 }

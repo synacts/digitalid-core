@@ -217,10 +217,13 @@ public final class ResponseAudit extends Audit implements Immutable, Blockable {
                 final @Nonnull Service service = method.getService();
                 
                 try {
+                    Database.lock();
                     execute(role, service, method.getRecipient(), new FreezableArrayList<Method>(method).freeze(), emptyModuleSet);
                 } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
                     Synchronizer.LOGGER.log(Level.WARNING, "Could not execute the audit of '" + method + "' asynchronously", exception);
                     Database.rollback();
+                } finally {
+                    Database.unlock();
                 }
                 
                 Synchronizer.resume(role, service);
