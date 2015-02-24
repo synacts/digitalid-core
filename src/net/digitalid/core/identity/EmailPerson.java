@@ -1,0 +1,38 @@
+package net.digitalid.core.identity;
+
+import javax.annotation.Nonnull;
+import net.digitalid.core.annotations.Pure;
+import net.digitalid.core.identifier.EmailIdentifier;
+import net.digitalid.core.interfaces.Immutable;
+
+/**
+ * This class models an email person.
+ * 
+ * @author Kaspar Etter (kaspar.etter@digitalid.net)
+ * @version 1.0
+ */
+public final class EmailPerson extends ExternalPerson implements Immutable {
+    
+    /**
+     * Stores the semantic type {@code email.person@core.digitalid.net}.
+     */
+    public static final @Nonnull SemanticType IDENTIFIER = SemanticType.create("email.person@core.digitalid.net").load(ExternalPerson.IDENTIFIER);
+    
+    
+    /**
+     * Creates a new email person with the given number and address.
+     * 
+     * @param number the number that represents this identity.
+     * @param address the address of this email person.
+     */
+    EmailPerson(long number, @Nonnull EmailIdentifier address) {
+        super(number, address);
+    }
+    
+    @Pure
+    @Override
+    public @Nonnull Category getCategory() {
+        return Category.EMAIL_PERSON;
+    }
+    
+}

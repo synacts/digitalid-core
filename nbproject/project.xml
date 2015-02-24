@@ -6,7 +6,7 @@
             <extension file="build-native.xml" id="j2sedeploy"/>
         </buildExtensions>
         <data xmlns="http://www.netbeans.org/ns/j2se-project/3">
-            <name>VirtualID</name>
+            <name>DigitalID</name>
             <explicit-platform explicit-source-supported="true"/>
             <source-roots>
                 <root id="src.dir"/>
@@ -27,6 +27,7 @@
             <word>Blunschy</word>
             <word>ch</word>
             <word>credential's</word>
+            <word>DigitalID</word>
             <word>Dominik</word>
             <word>downcasting</word>
             <word>ETH</word>
@@ -86,7 +87,7 @@
             <word>util</word>
             <word>value's</word>
             <word>vid</word>
-            <word>VirtualID</word>
+            <word>DigitalID</word>
             <word>wb</word>
             <word>wi</word>
             <word>x'</word>
