@@ -6,7 +6,6 @@ import java.sql.SQLException;
 import java.sql.Types;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import static net.digitalid.core.agent.Agent.get;
 import net.digitalid.core.annotations.Capturable;
 import net.digitalid.core.annotations.Committing;
 import net.digitalid.core.annotations.Frozen;
@@ -340,7 +339,8 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
     /**
      * Resets this agent.
      */
-    public void reset() {
+    public void reset() throws SQLException {
+        this.removed = AgentModule.isRemoved(this);
         this.permissions = null;
         this.restrictions = null;
         notify(RESET);

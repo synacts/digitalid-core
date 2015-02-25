@@ -211,7 +211,7 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Agent –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Override
-    public void reset() {
+    public void reset() throws SQLException {
         this.commitment = null;
         this.name = null;
         this.icon = null;
@@ -271,7 +271,7 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
      * 
      * @param entity the entity whose client agents are to be reset.
      */
-    public static void reset(@Nonnull NonHostEntity entity) {
+    public static void reset(@Nonnull NonHostEntity entity) throws SQLException {
         if (Database.isSingleAccess()) {
             final @Nullable ConcurrentMap<Long, ClientAgent> map = index.get(entity);
             if (map != null) for (final @Nonnull ClientAgent clientAgent : map.values()) clientAgent.reset();
@@ -287,7 +287,7 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
      * @param number the number that references this client agent.
      * @param removed whether this client agent has been removed.
      */
-    private ClientAgent(@Nonnull NonHostEntity entity, long number, boolean removed) {
+    ClientAgent(@Nonnull NonHostEntity entity, long number, boolean removed) {
         super(entity, number, removed);
     }
     

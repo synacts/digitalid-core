@@ -8,7 +8,6 @@ import net.digitalid.core.collections.FreezableLinkedHashSet;
 import net.digitalid.core.collections.FreezableSet;
 import net.digitalid.core.contact.Contact;
 import net.digitalid.core.entity.NonHostEntity;
-import static net.digitalid.core.expression.Expression.operators;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.interfaces.Immutable;
 import net.digitalid.core.wrappers.Block;

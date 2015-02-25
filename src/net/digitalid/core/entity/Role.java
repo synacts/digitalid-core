@@ -18,7 +18,6 @@ import net.digitalid.core.concept.Instance;
 import net.digitalid.core.concept.Observer;
 import net.digitalid.core.credential.ClientCredential;
 import net.digitalid.core.database.Database;
-import static net.digitalid.core.entity.Entity.DELETED;
 import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.identity.InternalNonHostIdentity;

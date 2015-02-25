@@ -292,7 +292,7 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Agent –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Override
-    public void reset() {
+    public void reset() throws SQLException {
         this.relation = null;
         this.context = null;
         super.reset();
@@ -361,7 +361,7 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
      * 
      * @param entity the entity whose outgoing roles are to be reset.
      */
-    public static void reset(@Nonnull NonHostEntity entity) {
+    public static void reset(@Nonnull NonHostEntity entity) throws SQLException {
         if (Database.isSingleAccess()) {
             final @Nullable ConcurrentMap<Long, OutgoingRole> map = index.get(entity);
             if (map != null) for (final @Nonnull OutgoingRole outgoingRole : map.values()) outgoingRole.reset();

@@ -5,7 +5,7 @@ import javax.annotation.Nullable;
 import net.digitalid.core.cryptography.SymmetricKey;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.setup.ServerSetup;
-import static org.junit.Assert.assertEquals;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -34,17 +34,17 @@ public final class EncryptionWrapperTest extends ServerSetup {
                     @Nonnull Block cipherBlock = new EncryptionWrapper(TYPE, block, getRecipient(), symmetricKey).toBlock();
 //                    System.out.println("–> From client to host: " + cipherBlock);
                     @Nonnull EncryptionWrapper encryption = new EncryptionWrapper(cipherBlock, null);
-                    assertEquals(block, encryption.getElement());
-                    assertEquals(getRecipient(), encryption.getRecipient());
-                    assertEquals(symmetricKey, encryption.getSymmetricKey());
+                    Assert.assertEquals(block, encryption.getElement());
+                    Assert.assertEquals(getRecipient(), encryption.getRecipient());
+                    Assert.assertEquals(symmetricKey, encryption.getSymmetricKey());
                     
                     // From host to client:
                     cipherBlock = new EncryptionWrapper(TYPE, block, null, symmetricKey).toBlock();
 //                    System.out.println("–> From host to client:" + cipherBlock);
                     encryption = new EncryptionWrapper(cipherBlock, symmetricKey);
-                    assertEquals(block, encryption.getElement());
-                    assertEquals(null, encryption.getRecipient());
-                    assertEquals(symmetricKey, encryption.getSymmetricKey());
+                    Assert.assertEquals(block, encryption.getElement());
+                    Assert.assertEquals(null, encryption.getRecipient());
+                    Assert.assertEquals(symmetricKey, encryption.getSymmetricKey());
                 }
             }
         }

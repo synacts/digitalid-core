@@ -747,6 +747,23 @@ public final class AgentModule implements BothModule {
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Agent –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
+     * Returns whether the given agent is removed.
+     * 
+     * @param agent the agent of interest.
+     * 
+     * @return whether the given agent is removed.
+     */
+    @Pure
+    @NonCommitting
+    static boolean isRemoved(@Nonnull Agent agent) throws SQLException {
+        final @Nonnull String SQL = "SELECT removed FROM " + agent.getEntity().getSite() + "agent WHERE entity = " + agent.getEntity() + " AND agent = " + agent;
+        try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
+            if (resultSet.next()) return resultSet.getBoolean(1);
+            else throw new SQLException("The given agent could not be found.");
+        }
+    }
+    
+    /**
      * Adds the given agent.
      * 
      * @param agent the agent to be added.

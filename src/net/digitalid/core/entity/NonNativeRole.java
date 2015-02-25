@@ -13,7 +13,6 @@ import net.digitalid.core.concept.Aspect;
 import net.digitalid.core.concept.Instance;
 import net.digitalid.core.concept.Observer;
 import net.digitalid.core.database.Database;
-import static net.digitalid.core.entity.Entity.CREATED;
 import net.digitalid.core.identity.InternalNonHostIdentity;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.interfaces.Immutable;

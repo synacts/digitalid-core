@@ -15,7 +15,6 @@ import net.digitalid.core.concept.Aspect;
 import net.digitalid.core.concept.Instance;
 import net.digitalid.core.concept.Observer;
 import net.digitalid.core.database.Database;
-import static net.digitalid.core.entity.Entity.CREATED;
 import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.packet.PacketError;
 import net.digitalid.core.exceptions.packet.PacketException;
@@ -47,7 +46,7 @@ public final class NativeRole extends Role implements Immutable {
     private NativeRole(@Nonnull Client client, long number, @Nonnull InternalNonHostIdentity issuer, long agentNumber) {
         super(client, number, issuer);
         
-        this.clientAgent = ClientAgent.get(this, agentNumber, true);
+        this.clientAgent = ClientAgent.get(this, agentNumber, false);
     }
     
     

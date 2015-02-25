@@ -3,8 +3,7 @@ package net.digitalid.core.cryptography;
 import javax.annotation.Nonnull;
 import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.setup.DatabaseSetup;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -23,7 +22,7 @@ public final class KeyPairTest extends DatabaseSetup {
         final @Nonnull PublicKey publicKey = keyPair.getPublicKey();
         System.out.println("\nKey Pair Generation: " + time.ago().getValue() + " ms\n");
         
-        assertTrue(publicKey.verifySubgroupProof());
+        Assert.assertTrue(publicKey.verifySubgroupProof());
         
         for (int i = 0; i < 10; i++) {
             final @Nonnull Element m = publicKey.getCompositeGroup().getRandomElement();
@@ -31,10 +30,10 @@ public final class KeyPairTest extends DatabaseSetup {
             final @Nonnull Element c = m.pow(publicKey.getE());
             System.out.println("Encryption (only algorithm): " + time.ago().getValue() + " ms");
             time = new Time();
-            assertEquals(c.pow(privateKey.getD()), m);
+            Assert.assertEquals(c.pow(privateKey.getD()), m);
             System.out.println("Decryption (slow algorithm): " + time.ago().getValue() + " ms");
             time = new Time();
-            assertEquals(privateKey.powD(c), m);
+            Assert.assertEquals(privateKey.powD(c), m);
             System.out.println("Decryption (fast algorithm): " + time.ago().getValue() + " ms\n");
         }
     }

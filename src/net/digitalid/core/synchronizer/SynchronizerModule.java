@@ -37,7 +37,6 @@ import net.digitalid.core.module.ClientModule;
 import net.digitalid.core.packet.Packet;
 import net.digitalid.core.service.CoreService;
 import net.digitalid.core.service.Service;
-import static net.digitalid.core.synchronizer.Synchronizer.suspend;
 import net.digitalid.core.tuples.FreezablePair;
 import net.digitalid.core.tuples.ReadonlyPair;
 import net.digitalid.core.wrappers.Block;
@@ -167,7 +166,7 @@ public final class SynchronizerModule implements ClientModule {
             final @Nonnull Role role = reference.getRole();
             final @Nonnull Service service = reference.getService();
             final @Nonnull ReadonlyPair<Role, Service> pair = new FreezablePair<Role, Service>(role, service).freeze();
-            if (!ignored.contains(pair) && suspend(role, service)) {
+            if (!ignored.contains(pair) && Synchronizer.suspend(role, service)) {
                 methods.add(reference);
                 if (!reference.isSimilarTo(reference)) return methods.freeze();
                 while (iterator.hasNext()) {

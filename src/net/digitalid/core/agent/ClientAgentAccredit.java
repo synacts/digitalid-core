@@ -102,7 +102,7 @@ public final class ClientAgentAccredit extends CoreServiceInternalAction {
         assert Password.isValid(password) : "The password is valid.";
         
         final @Nonnull Client client = role.getClient();
-        this.clientAgent = ClientAgent.get(role, role.getAgent().getNumber(), true);
+        this.clientAgent = new ClientAgent(role, role.getAgent().getNumber(), true);
         this.permissions = client.getPreferredPermissions();
         this.commitment = client.getCommitment(role.getIdentity().getAddress());
         this.name = client.getName();
