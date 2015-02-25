@@ -1,6 +1,6 @@
 #!/bin/sh
 
-rm -Rf ~/File\ Service/External/*
+sudo rm -Rf ~/File\ Service/External/*
 rm -Rf ~/.DigitalID/Logs/*
 rm -Rf ~/.DigitalID/Data/FileService.db
 rm -Rf ~/.DigitalID/Data/FilesMirrored.db

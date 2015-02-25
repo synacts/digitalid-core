@@ -8,6 +8,7 @@ import net.digitalid.core.annotations.Committing;
 import net.digitalid.core.collections.FreezableArrayList;
 import net.digitalid.core.collections.ReadonlyCollection;
 import net.digitalid.core.collections.ReadonlyList;
+import net.digitalid.core.database.Database;
 import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.io.EscapeOptionException;
 import net.digitalid.core.exceptions.packet.PacketException;
@@ -62,13 +63,13 @@ final class Options {
         final @Nonnull ReadonlyList<Host> hosts = new FreezableArrayList<Host>((Collection<? extends Host>) Server.getHosts()).freeze();
         if (hosts.isNotEmpty()) {
             Console.write("Please select one of the following hosts:");
-            Console.write("- 0: Escape");
+            Console.write("- 0: [Escape]");
             int i = 1;
             for (final @Nonnull Host host : hosts) {
                 Console.write("- " + (i++) + ": " + host.getIdentifier());
             }
             Console.write();
-            final int input = Console.readInt("Choice: ") - 1;
+            final int input = Console.readNumber("Choice: ", 0) - 1;
             Console.write();
             if (input >= 0 && input < hosts.size()) {
                 return hosts.getNotNull(input);
@@ -92,7 +93,7 @@ final class Options {
         @Override
         public void execute() {
             // TODO: Remove the true on the following line!
-            if (true || Console.readBoolean("Are you sure you want to shut down the server? Yes/No: ")) {
+            if (true || Console.readBoolean("Are you sure you want to shut down the server? Yes or no (the default is no): ", false)) {
                 Console.write("The server is shutting down...");
                 Console.write();
                 Server.shutDown();
@@ -111,7 +112,7 @@ final class Options {
         @Override
         @Committing
         public void execute() {
-            Console.write("Version: " + Server.VERSION);
+            Console.write("Version: " + Server.VERSION + "(" + Server.DATE + ")");
             Console.write("Authors: " + Server.AUTHORS);
         }
         
@@ -146,16 +147,17 @@ final class Options {
         @Override
         @Committing
         public void execute() {
-            if (Console.readBoolean("Are you sure you want to add a new host? Yes/No: ")) {
-                @Nonnull String string = Console.readString("Please enter the identifier of the new host: ");
+            if (Console.readBoolean("Are you sure you want to add a new host? Yes or no (the default is no): ", false)) {
+                @Nonnull String string = Console.readString("Please enter the identifier of the new host: ", null);
                 while (!HostIdentifier.isValid(string)) {
-                    string = Console.readString("Bad input! Please enter a valid host identifier: ");
+                    string = Console.readString("Bad input! Please enter a valid host identifier: ", null);
                 }
                 final @Nonnull HostIdentifier identifier = new HostIdentifier(string);
                 try {
                     new Host(identifier);
                 } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
-                    Console.write("Could not create the host " + identifier + " (" + exception + ")."); // TODO: Rollback the transaction?
+                    Console.write("Could not create the host " + identifier + " (" + exception + ").");
+                    Database.rollback();
                 }
             }
         }
@@ -172,7 +174,7 @@ final class Options {
         @Override
         @Committing
         public void execute() {
-            Console.write("To be done."); // TODO
+            Console.write("To be implemented."); // TODO
         }
         
     }
@@ -187,7 +189,7 @@ final class Options {
         @Override
         @Committing
         public void execute() {
-            Console.write("To be done."); // TODO
+            Console.write("To be implemented."); // TODO
         }
         
     }
@@ -238,7 +240,7 @@ final class Options {
         @Override
         @Committing
         public void execute() {
-            Console.write("To be done."); // TODO
+            Console.write("To be implemented."); // TODO
         }
         
     }
@@ -253,7 +255,7 @@ final class Options {
         @Override
         @Committing
         public void execute() {
-            Console.write("To be done."); // TODO
+            Console.write("To be implemented."); // TODO
         }
         
     }
@@ -268,7 +270,7 @@ final class Options {
         @Override
         @Committing
         public void execute() {
-            Console.write("To be done."); // TODO
+            Console.write("To be implemented."); // TODO
         }
         
     }
@@ -283,7 +285,7 @@ final class Options {
         @Override
         @Committing
         public void execute() {
-            Console.write("To be done."); // TODO
+            Console.write("To be implemented."); // TODO
         }
         
     }
@@ -298,7 +300,7 @@ final class Options {
         @Override
         @Committing
         public void execute() {
-            Console.write("To be done."); // TODO
+            Console.write("To be implemented."); // TODO
         }
         
     }
@@ -313,7 +315,7 @@ final class Options {
         @Override
         @Committing
         public void execute() {
-            Console.write("To be done."); // TODO
+            Console.write("To be implemented."); // TODO
         }
         
     }
@@ -328,7 +330,7 @@ final class Options {
         @Override
         @Committing
         public void execute() {
-            Console.write("To be done."); // TODO
+            Console.write("To be implemented."); // TODO
         }
         
     }
@@ -343,7 +345,7 @@ final class Options {
         @Override
         @Committing
         public void execute() {
-            Console.write("To be done."); // TODO
+            Console.write("To be implemented."); // TODO
         }
         
     }
@@ -358,7 +360,7 @@ final class Options {
         @Override
         @Committing
         public void execute() {
-            Console.write("To be done."); // TODO
+            Console.write("To be implemented."); // TODO
         }
         
     }

@@ -38,17 +38,22 @@ import net.digitalid.core.wrappers.SignatureWrapper;
 public final class Server {
     
     /**
-     * The version of the Digital ID implementation.
+     * Stores the version of the Digital ID implementation.
      */
-    public static final @Nonnull String VERSION = "0.6.0 (24 February 2015)";
+    public static final @Nonnull String VERSION = "0.6.0";
     
     /**
-     * The authors of the Digital ID implementation.
+     * Stores the date of the Digital ID implementation.
+     */
+    public static final @Nonnull String DATE = "25 February 2015";
+    
+    /**
+     * Stores the authors of the Digital ID implementation.
      */
     public static final @Nonnull String AUTHORS = "Kaspar Etter (kaspar.etter@digitalid.net)";
     
     /**
-     * The server listens on the given port number.
+     * Stores the server listens on the given port number.
      */
     public static final int PORT = 1988;
     
@@ -238,11 +243,11 @@ public final class Server {
             else {
                 Console.write();
                 Console.write("Please select one of the following databases:");
-                Console.write("- 1: MySQL");
+                Console.write("- 1: MySQL (default)");
                 Console.write("- 2: PostgreSQL");
                 Console.write("- 3: SQLite");
                 Console.write();
-                final int input = Console.readInt("Choice: ");
+                final int input = Console.readNumber("Choice: ", 1);
                 if (input == 1) configuration = new MySQLConfiguration(false);
                 else if (input == 2) configuration = new PostgreSQLConfiguration(false);
                 else if (input == 3) configuration = new SQLiteConfiguration(false);

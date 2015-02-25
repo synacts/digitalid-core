@@ -84,11 +84,11 @@ public final class MySQLConfiguration extends Configuration implements Immutable
         } else {
             Console.write();
             Console.write("The MySQL database is not yet configured. Please provide the following information:");
-            server = Console.readString("- Server (e.g. \"localhost\"): ");
-            port = Console.readString("- Port (the default is 3306): ");
-            database = Console.readString("- Database (e.g. \"digitalid\"): ");
-            user = Console.readString("- User (e.g. \"root\"): ");
-            password = Console.readString("- Password: ");
+            server = Console.readString("- Server (the default is \"localhost\"): ", "localhost");
+            port = Console.readString("- Port (the default is 3306): ", "3306");
+            database = Console.readString("- Database (the default is \"digitalid\"): ", "digitalid");
+            user = Console.readString("- User (the default is \"root\"): ", "root");
+            password = Console.readString("- Password (the default is empty): ", null);
             
             properties.setProperty("Server", server);
             properties.setProperty("Port", port);
