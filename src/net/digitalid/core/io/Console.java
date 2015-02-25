@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.annotations.ElementsNonNullable;
+import net.digitalid.core.annotations.NonNullableElements;
 import net.digitalid.core.collections.FreezableLinkedList;
 import net.digitalid.core.collections.FreezableList;
 import net.digitalid.core.errors.ShouldNeverHappenError;
@@ -162,7 +162,7 @@ public final class Console {
     /**
      * Stores the available options for the user.
      */
-    private static final @Nonnull @ElementsNonNullable FreezableList<Option> options = new FreezableLinkedList<Option>();
+    private static final @Nonnull @NonNullableElements FreezableList<Option> options = new FreezableLinkedList<Option>();
     
     /**
      * Adds the given option to the list of options.

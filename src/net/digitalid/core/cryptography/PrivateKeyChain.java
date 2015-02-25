@@ -1,7 +1,7 @@
 package net.digitalid.core.cryptography;
 
 import javax.annotation.Nonnull;
-import net.digitalid.core.annotations.ElementsNonNullable;
+import net.digitalid.core.annotations.NonNullableElements;
 import net.digitalid.core.annotations.Frozen;
 import net.digitalid.core.annotations.NonEmpty;
 import net.digitalid.core.annotations.Pure;
@@ -54,7 +54,7 @@ public final class PrivateKeyChain extends KeyChain<PrivateKey> implements Immut
      * 
      * @require items.isStrictlyDescending() : "The list is strictly descending.";
      */
-    public PrivateKeyChain(@Nonnull @Frozen @NonEmpty @ElementsNonNullable ReadonlyList<ReadonlyPair<Time, PrivateKey>> items) {
+    public PrivateKeyChain(@Nonnull @Frozen @NonEmpty @NonNullableElements ReadonlyList<ReadonlyPair<Time, PrivateKey>> items) {
         super(items);
     }
     

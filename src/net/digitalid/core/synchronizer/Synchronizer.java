@@ -9,6 +9,8 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Committing;
+import net.digitalid.core.annotations.Locked;
+import net.digitalid.core.annotations.NonLocked;
 import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.collections.ConcurrentHashMap;
 import net.digitalid.core.collections.ConcurrentHashSet;
@@ -53,6 +55,7 @@ public final class Synchronizer extends Thread {
      * 
      * @require action.isOnClient() : "The internal action is on a client.";
      */
+    @Locked
     @Committing
     public static void execute(@Nonnull InternalAction action) throws SQLException {
         assert action.isOnClient() : "The internal action is on a client.";
@@ -128,6 +131,7 @@ public final class Synchronizer extends Thread {
      * 
      * @require isSuspended(role, module.getService()) : "The service is suspended.";
      */
+    @Locked
     @Committing
     static void reloadSuspended(@Nonnull Role role, @Nonnull BothModule module) throws SQLException, IOException, PacketException, ExternalException {
         final @Nonnull Service service = module.getService();
@@ -155,8 +159,11 @@ public final class Synchronizer extends Thread {
      * @param role the role for which the module is to be reloaded.
      * @param module the module which is to be reloaded for the given role.
      */
+    @NonLocked
     @Committing
     public static void reload(@Nonnull Role role, @Nonnull BothModule module) throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
+        assert !Database.isLocked() : "The database is not locked.";
+        
         @Nullable ConcurrentSet<Service> set = suspendedServices.get(role);
         if (set == null) set = suspendedServices.putIfAbsentElseReturnPresent(role, new ConcurrentHashSet<Service>());
         final @Nonnull Service service = module.getService();
@@ -177,8 +184,11 @@ public final class Synchronizer extends Thread {
      * @param role the role for which the service is to be refreshed.
      * @param service the service which is to be refreshed for the given role.
      */
+    @NonLocked
     @Committing
     public static void refresh(@Nonnull Role role, @Nonnull Service service) throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
+        assert !Database.isLocked() : "The database is not locked.";
+        
         if (suspend(role, service)) {
             try {
                 Database.lock();

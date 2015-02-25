@@ -7,7 +7,9 @@ import java.sql.Statement;
 import java.util.Properties;
 import java.util.concurrent.locks.ReentrantLock;
 import javax.annotation.Nonnull;
+import net.digitalid.core.annotations.Locked;
 import net.digitalid.core.annotations.NonCommitting;
+import net.digitalid.core.annotations.NonLocked;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.interfaces.Immutable;
 import net.digitalid.core.io.Directory;
@@ -40,6 +42,7 @@ public final class SQLiteConfiguration extends Configuration implements Immutabl
      * 
      * @require Configuration.isValid(name) : "The name is valid for a database.";
      */
+    @NonLocked
     @NonCommitting
     public SQLiteConfiguration(@Nonnull String name, boolean reset) throws SQLException {
         super(new JDBC());
@@ -51,6 +54,7 @@ public final class SQLiteConfiguration extends Configuration implements Immutabl
         new SQLiteConfig().setSharedCache(true);
     }
     
+    @Locked
     @Override
     public void dropDatabase() {
         new File(Directory.DATA.getPath() + Directory.SEPARATOR + name + ".db").delete();
@@ -61,6 +65,7 @@ public final class SQLiteConfiguration extends Configuration implements Immutabl
      * 
      * @param reset whether the database is to be dropped first before creating it again.
      */
+    @NonLocked
     @NonCommitting
     public SQLiteConfiguration(boolean reset) throws SQLException {
         this("SQLite", reset);
@@ -177,6 +182,7 @@ public final class SQLiteConfiguration extends Configuration implements Immutabl
     }
     
     @Pure
+    @Locked
     @Override
     @SuppressWarnings("StringEquality")
     public void createIndex(@Nonnull Statement statement, @Nonnull String table, @Nonnull String... columns) throws SQLException {
@@ -198,6 +204,7 @@ public final class SQLiteConfiguration extends Configuration implements Immutabl
     }
     
     
+    @Locked
     @Override
     @NonCommitting
     long executeInsert(@Nonnull Statement statement, @Nonnull String SQL) throws SQLException {
@@ -223,6 +230,11 @@ public final class SQLiteConfiguration extends Configuration implements Immutabl
     @Override
     void unlock() {
         lock.unlock();
+    }
+    
+    @Override
+    boolean isLocked() {
+        return lock.isHeldByCurrentThread();
     }
     
 }

@@ -6,6 +6,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.Collection;
+import net.digitalid.core.collections.FreezableCollection;
 
 /**
  * This annotation indicates that a {@link Collection collection} {@link Collection#isEmpty() is empty}.
@@ -17,6 +18,7 @@ import java.util.Collection;
  * @version 1.0
  */
 @Documented
-@Target({ElementType.FIELD, ElementType.PARAMETER, ElementType.LOCAL_VARIABLE, ElementType.METHOD, ElementType.CONSTRUCTOR})
 @Retention(RetentionPolicy.CLASS)
+@TargetType({Collection.class, FreezableCollection.class})
+@Target({ElementType.FIELD, ElementType.PARAMETER, ElementType.LOCAL_VARIABLE, ElementType.METHOD, ElementType.CONSTRUCTOR})
 public @interface Empty {}

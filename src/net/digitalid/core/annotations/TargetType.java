@@ -5,18 +5,17 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import net.digitalid.core.identity.Type;
+import javax.annotation.Nonnull;
 
 /**
- * This annotation indicates that a method should only be invoked on a {@link Type#isLoaded() loaded} {@link Type type}.
- * 
- * @see NonLoadedRecipient
+ * This meta-annotation indicates to which types of values the annotated annotation can be applied.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
 @Documented
-@TargetType(Type.class)
-@Target(ElementType.METHOD)
 @Retention(RetentionPolicy.CLASS)
-public @interface LoadedRecipient {}
+@Target(ElementType.ANNOTATION_TYPE)
+public @interface TargetType {
+    @Nonnull Class<?>[] value();
+}

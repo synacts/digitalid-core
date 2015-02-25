@@ -8,7 +8,7 @@ import java.util.concurrent.FutureTask;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Committing;
-import net.digitalid.core.annotations.ElementsNonNullable;
+import net.digitalid.core.annotations.NonNullableElements;
 import net.digitalid.core.annotations.Frozen;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.NonEmpty;
@@ -43,7 +43,7 @@ public final class Sender extends Thread {
      * @invariant Method.areSimilar(methods) : "The methods are similar to each other.";
      * @invariant for (Method method : methods) method instanceof InternalAction : "The methods are internal actions.";
      */
-    private final @Nonnull @Frozen @NonEmpty @ElementsNonNullable ReadonlyList<Method> methods;
+    private final @Nonnull @Frozen @NonEmpty @NonNullableElements ReadonlyList<Method> methods;
     
     /**
      * Creates a new sender with the given methods.
@@ -53,7 +53,7 @@ public final class Sender extends Thread {
      * @require Method.areSimilar(methods) : "The methods are similar to each other.";
      * @require for (Method method : methods) method instanceof InternalAction : "The methods are internal actions.";
      */
-    Sender(@Nonnull @Frozen @NonEmpty @ElementsNonNullable ReadonlyList<Method> methods) {
+    Sender(@Nonnull @Frozen @NonEmpty @NonNullableElements ReadonlyList<Method> methods) {
         assert Method.areSimilar(methods) : "The methods are similar to each other.";
         for (final @Nonnull Method method : methods) assert method instanceof InternalAction : "The methods are internal actions.";
         

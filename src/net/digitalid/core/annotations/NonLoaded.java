@@ -1,17 +1,23 @@
 package net.digitalid.core.annotations;
 
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import net.digitalid.core.credential.Credential;
+import net.digitalid.core.identity.Type;
+
 /**
- * Description.
+ * This annotation indicates that a {@link Type type} is {@link Type#isNotLoaded() not loaded}.
  * 
- * TODO: For types.
+ * @see Loaded
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 0.0
+ * @version 1.0
  */
-public class NonLoaded {
-    
-    public NonLoaded() {
-        
-    }
-    
-}
+@Documented
+@TargetType(Credential.class)
+@Retention(RetentionPolicy.CLASS)
+@Target({ElementType.FIELD, ElementType.PARAMETER, ElementType.LOCAL_VARIABLE, ElementType.METHOD, ElementType.CONSTRUCTOR})
+public @interface NonLoaded {}

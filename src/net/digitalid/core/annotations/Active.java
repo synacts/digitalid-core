@@ -14,6 +14,7 @@ import net.digitalid.core.credential.Credential;
  * @version 1.0
  */
 @Documented
-@Target({ElementType.FIELD, ElementType.PARAMETER, ElementType.LOCAL_VARIABLE, ElementType.METHOD, ElementType.CONSTRUCTOR})
+@TargetType(Credential.class)
 @Retention(RetentionPolicy.CLASS)
+@Target({ElementType.FIELD, ElementType.PARAMETER, ElementType.LOCAL_VARIABLE, ElementType.METHOD, ElementType.CONSTRUCTOR})
 public @interface Active {}

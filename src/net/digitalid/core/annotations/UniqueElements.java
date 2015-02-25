@@ -5,16 +5,17 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import net.digitalid.core.identity.SemanticType;
+import java.util.Collection;
+import net.digitalid.core.collections.FreezableCollection;
 
 /**
- * This annotation indicates that a {@link SemanticType semantic type} denotes an {@link SemanticType#isAttributeType() attribute type}.
+ * This annotation indicates that a {@link Collection collection} does not contain {@link FreezableCollection#doesNotContainDuplicates() duplicates}.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
 @Documented
-@TargetType(SemanticType.class)
 @Retention(RetentionPolicy.CLASS)
+@TargetType({Collection.class, FreezableCollection.class})
 @Target({ElementType.FIELD, ElementType.PARAMETER, ElementType.LOCAL_VARIABLE, ElementType.METHOD, ElementType.CONSTRUCTOR})
-public @interface AttributeType {}
+public @interface UniqueElements {}

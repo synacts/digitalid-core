@@ -15,6 +15,7 @@ import net.digitalid.core.agent.ClientAgent;
 import net.digitalid.core.agent.ClientAgentAccredit;
 import net.digitalid.core.agent.ReadonlyAgentPermissions;
 import net.digitalid.core.annotations.Committing;
+import net.digitalid.core.annotations.Locked;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.NonFrozen;
 import net.digitalid.core.annotations.Pure;
@@ -189,6 +190,7 @@ public class Client extends Site implements Observer {
      * @require isValid(icon) : "The icon is valid.";
      * @require preferredPermissions.isFrozen() : "The preferred permissions are frozen.";
      */
+    @Locked
     @Committing
     public Client(@Nonnull String identifier, @Nonnull String name, @Nonnull Image icon, @Nonnull ReadonlyAgentPermissions preferredPermissions) throws SQLException, IOException, PacketException, ExternalException {
         super(identifier);

@@ -6,6 +6,9 @@ import java.sql.SQLException;
 import java.util.jar.JarFile;
 import javax.annotation.Nonnull;
 import net.digitalid.core.annotations.Committing;
+import net.digitalid.core.annotations.Locked;
+import net.digitalid.core.annotations.NonCommitting;
+import net.digitalid.core.annotations.NonLocked;
 import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.cache.Cache;
 import net.digitalid.core.collections.FreezableLinkedHashMap;
@@ -117,6 +120,7 @@ public final class Server {
     /**
      * Loads all hosts with cryptographic keys but without a tables file in the hosts directory.
      */
+    @Locked
     @Committing
     private static void loadHosts() {
         // TODO: Remove this special case when the certification mechanism is implemented.
@@ -147,7 +151,8 @@ public final class Server {
     /**
      * Loads all services with their code in the services directory.
      */
-    @Committing
+    @Locked
+    @NonCommitting
     public static void loadServices() {
         final @Nonnull File[] files = Directory.SERVICES.listFiles();
         for (final @Nonnull File file : files) {
@@ -167,6 +172,7 @@ public final class Server {
      * 
      * @param mainClasses the main classes of the libraries to be loaded.
      */
+    @NonLocked
     @Committing
     public static void initialize(@Nonnull Class<?>... mainClasses) {
         Loader.loadClasses(Server.class, SemanticType.class, SignatureWrapper.class);
@@ -184,29 +190,33 @@ public final class Server {
      * 
      * @param arguments the identifiers of hosts to be created when starting up.
      */
+    @NonLocked
     @Committing
     public static void start(@Nonnull String... arguments) {
         initialize();
         
-        loadServices();
-        loadHosts();
-        
-        for (final @Nonnull String argument : arguments) {
-            try {
-                new Host(new HostIdentifier(argument));
-            } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
-                throw new InitializationError("Could not create the host '" + argument + "'.", exception);
-            }
-        }
-        
-        listener = new Listener(PORT);
-        listener.start();
-        
         try {
+            Database.lock();
+            loadServices();
+            loadHosts();
+            
+            for (final @Nonnull String argument : arguments) {
+                try {
+                    new Host(new HostIdentifier(argument));
+                } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
+                    throw new InitializationError("Could not create the host '" + argument + "'.", exception);
+                }
+            }
+            
+            listener = new Listener(PORT);
+            listener.start();
+            
             Cache.getPublicKeyChain(HostIdentity.DIGITALID);
             Database.commit();
         } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
             throw new InitializationError("Could not retrieve the public key chain of 'digitalid.net'.", exception);
+        } finally {
+            Database.unlock();
         }
     }
     
@@ -233,6 +243,7 @@ public final class Server {
      * 
      * @param arguments the command line arguments indicating the hosts to be created when starting up.
      */
+    @NonLocked
     @Committing
     public static void main(@Nonnull String[] arguments) {
         final @Nonnull Configuration configuration;

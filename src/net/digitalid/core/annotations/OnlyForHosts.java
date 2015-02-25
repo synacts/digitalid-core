@@ -10,10 +10,12 @@ import net.digitalid.core.host.Host;
 /**
  * This annotation indicates that a method should only be called by {@link Host hosts}.
  * 
+ * @see OnlyForClients
+ * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
 @Documented
-@Target({ElementType.METHOD, ElementType.CONSTRUCTOR})
 @Retention(RetentionPolicy.CLASS)
+@Target({ElementType.METHOD, ElementType.CONSTRUCTOR})
 public @interface OnlyForHosts {}

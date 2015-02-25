@@ -15,7 +15,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Committing;
 import net.digitalid.core.annotations.Frozen;
+import net.digitalid.core.annotations.Locked;
 import net.digitalid.core.annotations.NonCommitting;
+import net.digitalid.core.annotations.NonLocked;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.attribute.AttributeValue;
 import net.digitalid.core.attribute.CertifiedAttributeValue;
@@ -78,11 +80,14 @@ public final class Cache {
      * 
      * @require Database.isMainThread() : "This method is called in the main thread.";
      */
+    @NonLocked
     @Committing
     public static void initialize() {
         assert Database.isMainThread() : "This method is called in the main thread.";
+        assert !Database.isLocked() : "The database is not locked.";
         
         try {
+            Database.lock();
             if (!getCachedAttributeValue(HostIdentity.DIGITALID, null, Time.MIN, PublicKeyChain.TYPE).getElement0()) {
                 // Unless it is the root server, the program should have been delivered with the public key chain certificate of 'core.digitalid.net'.
                 final @Nullable InputStream inputStream = Cache.class.getResourceAsStream("/net/digitalid/core/resources/core.digitalid.net.certificate.xdf");
@@ -101,6 +106,8 @@ public final class Cache {
             }
         } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
             throw new InitializationError("Could not initialize the cache.", exception);
+        } finally {
+            Database.unlock();
         }
     }
     
@@ -111,6 +118,7 @@ public final class Cache {
      * 
      * @param identity the identity whose cached attribute values are to be invalidated.
      */
+    @Locked
     @NonCommitting
     public static void invalidateCachedAttributeValues(@Nonnull InternalNonHostIdentity identity) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
@@ -134,6 +142,7 @@ public final class Cache {
      * 
      * @ensure return.getValue1() == null || return.getValue1().getContent().getType().equals(type) : "The content of the returned attribute value is null or matches the given type.";
      */
+    @Locked
     @NonCommitting
     private static @Nonnull @Frozen ReadonlyPair<Boolean, AttributeValue> getCachedAttributeValue(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull Time time, @Nonnull SemanticType type) throws SQLException, IOException, PacketException, ExternalException {
         assert time.isNonNegative() : "The given time is non-negative.";
@@ -171,6 +180,7 @@ public final class Cache {
      * 
      * @ensure value == null || value.getContent().getType().equals(type) : "The content of the given attribute value is null or matches the given type.";
      */
+    @Locked
     @NonCommitting
     private static void setCachedAttributeValue(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull Time time, @Nonnull SemanticType type, @Nullable AttributeValue value, @Nullable Reply reply) throws SQLException, InvalidEncodingException {
         assert time.isNonNegative() : "The given time is non-negative.";
@@ -233,6 +243,7 @@ public final class Cache {
      * @ensure for (i = 0; i < return.length; i++) return[i] == null || return[i].getContent().getType().equals(types[i])) : "Each returned attribute value is either null or matches the corresponding type.";
      */
     @Pure
+    @Locked
     @NonCommitting
     public static @Nonnull AttributeValue[] getAttributeValues(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull Time time, @Nonnull SemanticType... types) throws SQLException, IOException, PacketException, ExternalException {
         assert time.isNonNegative() : "The given time is non-negative.";
@@ -298,6 +309,7 @@ public final class Cache {
      * @ensure return.getContent().getType().equals(type)) : "The returned attribute value matches the given type.";
      */
     @Pure
+    @Locked
     @NonCommitting
     public static @Nonnull AttributeValue getAttributeValue(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull Time time, @Nonnull SemanticType type) throws SQLException, IOException, PacketException, ExternalException {
         final @Nonnull AttributeValue[] attributeValues = getAttributeValues(identity, role, time, type);
@@ -325,6 +337,7 @@ public final class Cache {
      * @ensure return.getType().equals(type) : "The returned content has the given type.";
      */
     @Pure
+    @Locked
     @NonCommitting
     public static @Nonnull Block getAttributeContent(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull Time time, @Nonnull SemanticType type, boolean certified) throws SQLException, IOException, PacketException, ExternalException {
         final @Nonnull AttributeValue value = getAttributeValue(identity, role, time, type);
@@ -350,6 +363,7 @@ public final class Cache {
      * @ensure return.getType().equals(type) : "The returned content has the given type.";
      */
     @Pure
+    @Locked
     @NonCommitting
     public static @Nonnull Block getFreshAttributeContent(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull SemanticType type, boolean certified) throws SQLException, IOException, PacketException, ExternalException {
         return getAttributeContent(identity, role, new Time(), type, certified);
@@ -373,6 +387,7 @@ public final class Cache {
      * @ensure return.getType().equals(type) : "The returned content has the given type.";
      */
     @Pure
+    @Locked
     @NonCommitting
     public static @Nonnull Block getReloadedAttributeContent(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull SemanticType type, boolean certified) throws SQLException, IOException, PacketException, ExternalException {
         return getAttributeContent(identity, role, Time.MAX, type, certified);
@@ -394,6 +409,7 @@ public final class Cache {
      * @ensure return.getType().equals(type) : "The returned content has the given type.";
      */
     @Pure
+    @Locked
     @NonCommitting
     public static @Nonnull Block getStaleAttributeContent(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull SemanticType type) throws SQLException, IOException, PacketException, ExternalException {
         return getAttributeContent(identity, role, Time.MIN, type, false);
@@ -407,6 +423,7 @@ public final class Cache {
      * @return the public of key chain the given identity.
      */
     @Pure
+    @Locked
     @NonCommitting
     public static @Nonnull PublicKeyChain getPublicKeyChain(@Nonnull HostIdentity identity) throws SQLException, IOException, PacketException, ExternalException {
         return new PublicKeyChain(getFreshAttributeContent(identity, null, PublicKeyChain.TYPE, true));
@@ -421,6 +438,7 @@ public final class Cache {
      * @return the public key of the given host identifier at the given time.
      */
     @Pure
+    @Locked
     @NonCommitting
     public static @Nonnull PublicKey getPublicKey(@Nonnull HostIdentifier identifier, @Nonnull Time time) throws SQLException, IOException, PacketException, ExternalException {
         return getPublicKeyChain(identifier.getIdentity()).getKey(time);
@@ -438,6 +456,7 @@ public final class Cache {
      * 
      * @require identifier.isNotMapped() : "The identifier is not mapped.";
      */
+    @Locked
     @NonCommitting
     public static @Nonnull HostIdentity establishHostIdentity(@Nonnull HostIdentifier identifier) throws SQLException, IOException, PacketException, ExternalException {
         assert identifier.isNotMapped() : "The identifier is not mapped.";

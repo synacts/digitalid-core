@@ -5,6 +5,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import net.digitalid.core.wrappers.Block;
 
 /**
  * This annotation indicates that a method should only be invoked on {@link Exposed exposed} objects.
@@ -13,6 +14,7 @@ import java.lang.annotation.Target;
  * @version 1.0
  */
 @Documented
+@TargetType(Block.class)
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.CLASS)
 public @interface ExposedRecipient {}

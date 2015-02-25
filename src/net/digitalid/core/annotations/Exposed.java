@@ -17,6 +17,7 @@ import net.digitalid.core.wrappers.Block;
  * @version 1.0
  */
 @Documented
-@Target({ElementType.PARAMETER, ElementType.LOCAL_VARIABLE})
+@TargetType(Block.class)
 @Retention(RetentionPolicy.CLASS)
+@Target({ElementType.PARAMETER, ElementType.LOCAL_VARIABLE})
 public @interface Exposed {}

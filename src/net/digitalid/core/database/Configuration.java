@@ -11,7 +11,9 @@ import java.util.Properties;
 import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.core.annotations.Locked;
 import net.digitalid.core.annotations.NonCommitting;
+import net.digitalid.core.annotations.NonLocked;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.interfaces.Immutable;
 
@@ -54,6 +56,7 @@ public abstract class Configuration implements Immutable {
      * 
      * @param driver the JDBC driver of this configuration.
      */
+    @NonLocked
     @NonCommitting
     protected Configuration(@Nonnull Driver driver) throws SQLException {
         DriverManager.registerDriver(driver);
@@ -82,6 +85,7 @@ public abstract class Configuration implements Immutable {
     /**
      * Drops the configured database.
      */
+    @Locked
     @NonCommitting
     public abstract void dropDatabase() throws SQLException;
     
@@ -216,6 +220,7 @@ public abstract class Configuration implements Immutable {
      * 
      * @require columns.length > 0 : "The length of the columns is positive.";
      */
+    @Locked
     public abstract void createIndex(@Nonnull Statement statement, @Nonnull String table, @Nonnull String... columns) throws SQLException;
     
     
@@ -241,6 +246,7 @@ public abstract class Configuration implements Immutable {
      * 
      * @return the key generated for the inserted entry.
      */
+    @Locked
     @NonCommitting
     long executeInsert(@Nonnull Statement statement, @Nonnull String SQL) throws SQLException {
         statement.executeUpdate(SQL, Statement.RETURN_GENERATED_KEYS);
@@ -259,6 +265,7 @@ public abstract class Configuration implements Immutable {
      * 
      * @return a savepoint for the given connection or null if not supported or required.
      */
+    @Locked
     @NonCommitting
     @Nullable Savepoint setSavepoint(@Nonnull Connection connection) throws SQLException {
         return null;
@@ -270,6 +277,7 @@ public abstract class Configuration implements Immutable {
      * @param connection the connection which is to be rolled back and whose savepoint is to be released.
      * @param savepoint the savepoint to roll the connection back to or null if not supported or required.
      */
+    @Locked
     @NonCommitting
     void rollback(@Nonnull Connection connection, @Nullable Savepoint savepoint) throws SQLException {}
     
@@ -285,6 +293,7 @@ public abstract class Configuration implements Immutable {
      * 
      * @require columns.length > 0 : "At least one column is provided.";
      */
+    @Locked
     @NonCommitting
     void onInsertIgnore(@Nonnull Statement statement, @Nonnull String table, @Nonnull String... columns) throws SQLException {}
     
@@ -294,6 +303,7 @@ public abstract class Configuration implements Immutable {
      * @param statement a statement to drop the rule with.
      * @param table the table from which the rule is dropped.
      */
+    @Locked
     @NonCommitting
     void onInsertNotIgnore(@Nonnull Statement statement, @Nonnull String table) throws SQLException {}
     
@@ -311,6 +321,7 @@ public abstract class Configuration implements Immutable {
      * @require key > 0 : "The number of columns in the primary key is positive.";
      * @require columns.length >= key : "At least as many columns as in the primary key are provided.";
      */
+    @Locked
     @NonCommitting
     void onInsertUpdate(@Nonnull Statement statement, @Nonnull String table, int key, @Nonnull String... columns) throws SQLException {}
     
@@ -320,6 +331,7 @@ public abstract class Configuration implements Immutable {
      * @param statement a statement to drop the rule with.
      * @param table the table from which the rule is dropped.
      */
+    @Locked
     @NonCommitting
     void onInsertNotUpdate(@Nonnull Statement statement, @Nonnull String table) throws SQLException {}
     
@@ -327,13 +339,36 @@ public abstract class Configuration implements Immutable {
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Locking –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
+     * Stores a lock counter that is associated with the current thread.
+     * This variable is needed for databases that do not require locking.
+     */
+    private static final @Nonnull ThreadLocal<Integer> lockCounter = new ThreadLocal<Integer>() {
+        @Override protected @Nullable Integer initialValue() { return 0; }
+    };
+    
+    /**
      * Locks the database if its access should be serialized.
      */
-    void lock() {}
+    void lock() {
+        lockCounter.set(lockCounter.get() + 1);
+    }
     
     /**
      * Unlocks the database if its access has been serialized.
      */
-    void unlock() {}
+    void unlock() {
+        int value = lockCounter.get();
+        assert value > 0 : "The lock was released more often than it was acquired.";
+        lockCounter.set(value - 1);
+    }
+    
+    /**
+     * Returns whether the database is locked by the current thread.
+     * 
+     * @return whether the database is locked by the current thread.
+     */
+    boolean isLocked() {
+        return lockCounter.get() > 0;
+    }
     
 }

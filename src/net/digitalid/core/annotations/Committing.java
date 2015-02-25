@@ -17,6 +17,6 @@ import net.digitalid.core.database.Database;
  * @version 1.0
  */
 @Documented
-@Target({ElementType.METHOD, ElementType.CONSTRUCTOR})
 @Retention(RetentionPolicy.CLASS)
+@Target({ElementType.METHOD, ElementType.CONSTRUCTOR})
 public @interface Committing {}

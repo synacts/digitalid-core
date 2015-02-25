@@ -1,15 +1,20 @@
 package net.digitalid.core.annotations;
 
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import net.digitalid.core.identity.SemanticType;
+
 /**
- * Description.
+ * This annotation indicates that a {@link SemanticType semantic type} denotes a {@link SemanticType#isRoleType() role type}.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 0.0
+ * @version 1.0
  */
-public class RoleType {
-    
-    public RoleType() {
-        
-    }
-    
-}
+@Documented
+@TargetType(SemanticType.class)
+@Retention(RetentionPolicy.CLASS)
+@Target({ElementType.FIELD, ElementType.PARAMETER, ElementType.LOCAL_VARIABLE, ElementType.METHOD, ElementType.CONSTRUCTOR})
+public @interface RoleType {}

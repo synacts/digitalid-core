@@ -8,8 +8,12 @@ import javax.annotation.Nullable;
 import net.digitalid.core.agent.Agent;
 import net.digitalid.core.annotations.Committing;
 import net.digitalid.core.annotations.NonCommitting;
+import net.digitalid.core.annotations.NonFrozen;
+import net.digitalid.core.annotations.NonLocked;
+import net.digitalid.core.annotations.NonNullableElements;
 import net.digitalid.core.annotations.OnlyForActions;
 import net.digitalid.core.annotations.Pure;
+import net.digitalid.core.annotations.UniqueElements;
 import net.digitalid.core.client.Client;
 import net.digitalid.core.collections.FreezableList;
 import net.digitalid.core.collections.ReadonlyList;
@@ -191,14 +195,10 @@ public abstract class Role extends EntityClass implements NonHostEntity, Immutab
     
     /**
      * Reloads the state of the given module for this role.
-     * <p>
-     * <em>Important:</em> This method should be called in a committed state!
      * 
      * @param module the module whose state is to be reloaded for this role.
-     * 
-     * @see NonCommitting
-     * @see Committing
      */
+    @NonLocked
     @Committing
     public final void reloadState(@Nonnull BothModule module) throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
         Synchronizer.reload(this, module);
@@ -210,14 +210,10 @@ public abstract class Role extends EntityClass implements NonHostEntity, Immutab
     
     /**
      * Refreshes the state of the given service for this role.
-     * <p>
-     * <em>Important:</em> This method should be called in a committed state!
      * 
      * @param service the service whose state is to be refreshed for this role.
-     * 
-     * @see NonCommitting
-     * @see Committing
      */
+    @NonLocked
     @Committing
     public final void refreshState(@Nonnull Service service) throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
         Synchronizer.refresh(this, service);
@@ -229,13 +225,8 @@ public abstract class Role extends EntityClass implements NonHostEntity, Immutab
     
     /**
      * Waits until all actions of the given service are completed.
-     * <p>
-     * <em>Important:</em> This method should be called in a committed state!
      * 
      * @param service the service whose actions are to be completed.
-     * 
-     * @see NonCommitting
-     * @see Committing
      */
     public final void waitForCompletion(@Nonnull Service service) throws InterruptedException {
         SynchronizerModule.wait(this, service);
@@ -244,25 +235,17 @@ public abstract class Role extends EntityClass implements NonHostEntity, Immutab
     
     /**
      * Stores the roles of this role.
-     * 
-     * @invariant roles == null || roles.isNotFrozen() : "The roles are not frozen.";
-     * @invariant roles == null || roles.doesNotContainNull() : "The roles do not contain null.";
-     * @invariant roles == null || roles.doesNotContainDuplicates() : "The roles do not contain duplicates.";
      */
-    private @Nullable FreezableList<NonNativeRole> roles;
+    private @Nullable @NonFrozen @NonNullableElements @UniqueElements FreezableList<NonNativeRole> roles;
     
     /**
      * Returns the roles of this role.
      * 
      * @return the roles of this role.
-     * 
-     * @ensure return.isNotFrozen() : "The returned list is not frozen.";
-     * @ensure return.doesNotContainNull() : "The returned list does not contain null.";
-     * @ensure return.doesNotContainDuplicates() : "The returned list does not contain duplicates.";
      */
     @Pure
     @NonCommitting
-    public @Nonnull ReadonlyList<NonNativeRole> getRoles() throws SQLException {
+    public @Nonnull @NonFrozen @NonNullableElements @UniqueElements ReadonlyList<NonNativeRole> getRoles() throws SQLException {
         if (roles == null) roles = RoleModule.getRoles(this);
         return roles;
     }

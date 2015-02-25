@@ -14,6 +14,6 @@ import net.digitalid.core.handler.Action;
  * @version 1.0
  */
 @Documented
-@Target(ElementType.METHOD)
 @Retention(RetentionPolicy.CLASS)
+@Target({ElementType.METHOD, ElementType.CONSTRUCTOR})
 public @interface OnlyForActions {}

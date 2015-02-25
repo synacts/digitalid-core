@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import net.digitalid.core.agent.AgentPermissions;
 import net.digitalid.core.annotations.Committing;
+import net.digitalid.core.annotations.Locked;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.attribute.Attribute;
 import net.digitalid.core.attribute.AttributeValue;
@@ -90,6 +91,7 @@ public final class Host extends Site {
      * 
      * @param identifier the identifier of the new host.
      */
+    @Locked
     @Committing
     public Host(@Nonnull HostIdentifier identifier) throws SQLException, IOException, PacketException, ExternalException {
         super(identifier.asHostName());

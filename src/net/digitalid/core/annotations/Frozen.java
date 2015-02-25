@@ -6,6 +6,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import net.digitalid.core.interfaces.Freezable;
+import net.digitalid.core.interfaces.Readonly;
 
 /**
  * This annotation indicates that a field or a parameter {@link Freezable#isFrozen() is frozen}.
@@ -17,6 +18,7 @@ import net.digitalid.core.interfaces.Freezable;
  * @version 1.0
  */
 @Documented
-@Target({ElementType.FIELD, ElementType.PARAMETER, ElementType.LOCAL_VARIABLE, ElementType.METHOD, ElementType.CONSTRUCTOR})
+@TargetType(Readonly.class)
 @Retention(RetentionPolicy.CLASS)
+@Target({ElementType.FIELD, ElementType.PARAMETER, ElementType.LOCAL_VARIABLE, ElementType.METHOD, ElementType.CONSTRUCTOR})
 public @interface Frozen {}

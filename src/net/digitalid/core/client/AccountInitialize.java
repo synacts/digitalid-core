@@ -7,7 +7,7 @@ import javax.annotation.Nullable;
 import net.digitalid.core.agent.AgentPermissions;
 import net.digitalid.core.agent.ReadonlyAgentPermissions;
 import net.digitalid.core.agent.Restrictions;
-import net.digitalid.core.annotations.ElementsNonNullable;
+import net.digitalid.core.annotations.NonNullableElements;
 import net.digitalid.core.annotations.Frozen;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
@@ -67,7 +67,7 @@ public final class AccountInitialize extends CoreServiceInternalAction {
     /**
      * Stores the states to merge into the new account.
      */
-    private final @Nonnull @Frozen @ElementsNonNullable ReadonlyList<ReadonlyPair<Predecessor, Block>> states;
+    private final @Nonnull @Frozen @NonNullableElements ReadonlyList<ReadonlyPair<Predecessor, Block>> states;
     
     /**
      * Creates an action to initialize a new account.
@@ -76,7 +76,7 @@ public final class AccountInitialize extends CoreServiceInternalAction {
      * @param states the states to merge into the new account.
      */
     @NonCommitting
-    AccountInitialize(@Nonnull NativeRole role, @Nonnull @Frozen @ElementsNonNullable ReadonlyList<ReadonlyPair<Predecessor, Block>> states) throws SQLException, IOException, PacketException, ExternalException {
+    AccountInitialize(@Nonnull NativeRole role, @Nonnull @Frozen @NonNullableElements ReadonlyList<ReadonlyPair<Predecessor, Block>> states) throws SQLException, IOException, PacketException, ExternalException {
         super(role);
         
         this.states = states;

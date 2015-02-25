@@ -15,7 +15,9 @@ import java.sql.Statement;
 import java.util.Properties;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.core.annotations.Locked;
 import net.digitalid.core.annotations.NonCommitting;
+import net.digitalid.core.annotations.NonLocked;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.interfaces.Immutable;
 import net.digitalid.core.io.Console;
@@ -68,6 +70,7 @@ public final class PostgreSQLConfiguration extends Configuration implements Immu
      * 
      * @require Configuration.isValid(name) : "The name is valid for a database.";
      */
+    @NonLocked
     @NonCommitting
     public PostgreSQLConfiguration(@Nonnull String name, boolean reset) throws SQLException, IOException {
         super(new Driver());
@@ -115,6 +118,7 @@ public final class PostgreSQLConfiguration extends Configuration implements Immu
         }
     }
     
+    @Locked
     @Override
     @NonCommitting
     public void dropDatabase() throws SQLException {
@@ -129,6 +133,7 @@ public final class PostgreSQLConfiguration extends Configuration implements Immu
      * 
      * @param reset whether the database is to be dropped first before creating it again.
      */
+    @NonLocked
     @NonCommitting
     public PostgreSQLConfiguration(boolean reset) throws SQLException, IOException {
         this("PostgreSQL", reset);
@@ -245,6 +250,7 @@ public final class PostgreSQLConfiguration extends Configuration implements Immu
     }
     
     @Pure
+    @Locked
     @Override
     @SuppressWarnings("StringEquality")
     public void createIndex(@Nonnull Statement statement, @Nonnull String table, @Nonnull String... columns) throws SQLException {
@@ -262,12 +268,14 @@ public final class PostgreSQLConfiguration extends Configuration implements Immu
     }
     
     
+    @Locked
     @Override
     @NonCommitting
     public @Nonnull Savepoint setSavepoint(@Nonnull Connection connection) throws SQLException {
         return connection.setSavepoint();
     }
     
+    @Locked
     @Override
     @NonCommitting
     public void rollback(@Nonnull Connection connection, @Nullable Savepoint savepoint) throws SQLException {
@@ -276,6 +284,7 @@ public final class PostgreSQLConfiguration extends Configuration implements Immu
     }
     
     
+    @Locked
     @Override
     @NonCommitting
     public void onInsertIgnore(@Nonnull Statement statement, @Nonnull String table, @Nonnull String... columns) throws SQLException {
@@ -300,6 +309,7 @@ public final class PostgreSQLConfiguration extends Configuration implements Immu
         statement.executeUpdate(string.toString());
     }
     
+    @Locked
     @Override
     @NonCommitting
     public void onInsertNotIgnore(@Nonnull Statement statement, @Nonnull String table) throws SQLException {
@@ -307,6 +317,7 @@ public final class PostgreSQLConfiguration extends Configuration implements Immu
     }
     
     
+    @Locked
     @Override
     @NonCommitting
     public void onInsertUpdate(@Nonnull Statement statement, @Nonnull String table, int key, @Nonnull String... columns) throws SQLException {
@@ -337,6 +348,7 @@ public final class PostgreSQLConfiguration extends Configuration implements Immu
         statement.executeUpdate(string.toString());
     }
     
+    @Locked
     @Override
     @NonCommitting
     public void onInsertNotUpdate(@Nonnull Statement statement, @Nonnull String table) throws SQLException {

@@ -1,7 +1,7 @@
 package net.digitalid.core.cryptography;
 
 import javax.annotation.Nonnull;
-import net.digitalid.core.annotations.ElementsNonNullable;
+import net.digitalid.core.annotations.NonNullableElements;
 import net.digitalid.core.annotations.Frozen;
 import net.digitalid.core.annotations.NonEmpty;
 import net.digitalid.core.annotations.Pure;
@@ -39,7 +39,7 @@ abstract class KeyChain<Key extends Blockable> implements Immutable, Blockable {
      * 
      * @invariant items.isStrictlyDescending() : "The list is strictly descending.";
      */
-    private final @Nonnull @Frozen @NonEmpty @ElementsNonNullable ReadonlyList<ReadonlyPair<Time, Key>> items;
+    private final @Nonnull @Frozen @NonEmpty @NonNullableElements ReadonlyList<ReadonlyPair<Time, Key>> items;
     
     /**
      * Creates a new key chain with the given time and key.
@@ -64,7 +64,7 @@ abstract class KeyChain<Key extends Blockable> implements Immutable, Blockable {
      * 
      * @require items.isStrictlyDescending() : "The list is strictly descending.";
      */
-    protected KeyChain(@Nonnull@Frozen @NonEmpty @ElementsNonNullable ReadonlyList<ReadonlyPair<Time, Key>> items) {
+    protected KeyChain(@Nonnull@Frozen @NonEmpty @NonNullableElements ReadonlyList<ReadonlyPair<Time, Key>> items) {
         this.items = items;
     }
     
@@ -115,7 +115,7 @@ abstract class KeyChain<Key extends Blockable> implements Immutable, Blockable {
      * @ensure items.isStrictlyDescending() : "The list is strictly descending.";
      */
     @Pure
-    public final @Nonnull @Frozen @NonEmpty @ElementsNonNullable ReadonlyList<ReadonlyPair<Time, Key>> getItems() {
+    public final @Nonnull @Frozen @NonEmpty @NonNullableElements ReadonlyList<ReadonlyPair<Time, Key>> getItems() {
         return items;
     }
     
@@ -206,6 +206,6 @@ abstract class KeyChain<Key extends Blockable> implements Immutable, Blockable {
      * @require items.isStrictlyDescending() : "The list is strictly descending.";
      */
     @Pure
-    protected abstract @Nonnull KeyChain<Key> createKeyChain(@Nonnull @Frozen @NonEmpty @ElementsNonNullable ReadonlyList<ReadonlyPair<Time, Key>> items);
+    protected abstract @Nonnull KeyChain<Key> createKeyChain(@Nonnull @Frozen @NonEmpty @NonNullableElements ReadonlyList<ReadonlyPair<Time, Key>> items);
     
 }

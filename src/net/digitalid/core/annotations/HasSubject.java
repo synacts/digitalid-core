@@ -5,18 +5,16 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import net.digitalid.core.identity.Type;
+import net.digitalid.core.wrappers.SignatureWrapper;
 
 /**
- * This annotation indicates that a method should only be invoked on a {@link Type#isLoaded() loaded} {@link Type type}.
- * 
- * @see NonLoadedRecipient
+ * This annotation indicates that a {@link SignatureWrapper signature} has a {@link SignatureWrapper#hasSubject() subject}.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
 @Documented
-@TargetType(Type.class)
-@Target(ElementType.METHOD)
 @Retention(RetentionPolicy.CLASS)
-public @interface LoadedRecipient {}
+@TargetType(SignatureWrapper.class)
+@Target({ElementType.FIELD, ElementType.PARAMETER, ElementType.LOCAL_VARIABLE, ElementType.METHOD, ElementType.CONSTRUCTOR})
+public @interface HasSubject {}

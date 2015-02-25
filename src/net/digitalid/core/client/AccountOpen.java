@@ -11,6 +11,8 @@ import net.digitalid.core.agent.AgentPermissions;
 import net.digitalid.core.agent.ClientAgent;
 import net.digitalid.core.agent.ReadonlyAgentPermissions;
 import net.digitalid.core.agent.Restrictions;
+import net.digitalid.core.annotations.BasedOn;
+import net.digitalid.core.annotations.HasSubject;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.auxiliary.Image;
@@ -132,14 +134,9 @@ public final class AccountOpen extends Action {
      * @param signature the signature of this handler (or a dummy that just contains a subject).
      * @param recipient the recipient of this method.
      * @param block the content which is to be decoded.
-     * 
-     * @require signature.hasSubject() : "The signature has a subject.";
-     * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
-     * 
-     * @ensure hasSignature() : "This handler has a signature.";
      */
     @NonCommitting
-    private AccountOpen(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
+    private AccountOpen(@Nonnull Entity entity, @Nonnull @HasSubject SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull @BasedOn("open.account@core.digitalid.net") Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
         if (!getSubject().getHostIdentifier().equals(getRecipient())) throw new PacketException(PacketError.IDENTIFIER, "The host of the subject has to match the recipient for the action to open an account.");

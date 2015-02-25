@@ -16,6 +16,6 @@ import javax.annotation.Nonnull;
  * @version 1.0
  */
 @Documented
-@Target({ElementType.PARAMETER, ElementType.LOCAL_VARIABLE})
 @Retention(RetentionPolicy.CLASS)
+@Target({ElementType.PARAMETER, ElementType.LOCAL_VARIABLE})
 public @interface Raw {}

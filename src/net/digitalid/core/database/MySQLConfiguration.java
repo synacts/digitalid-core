@@ -13,7 +13,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
 import javax.annotation.Nonnull;
+import net.digitalid.core.annotations.Locked;
 import net.digitalid.core.annotations.NonCommitting;
+import net.digitalid.core.annotations.NonLocked;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.interfaces.Immutable;
 import net.digitalid.core.io.Console;
@@ -65,6 +67,7 @@ public final class MySQLConfiguration extends Configuration implements Immutable
      * 
      * @require Configuration.isValid(name) : "The name is valid for a database.";
      */
+    @NonLocked
     @NonCommitting
     public MySQLConfiguration(@Nonnull String name, boolean reset) throws SQLException, IOException {
         super(new Driver());
@@ -111,6 +114,7 @@ public final class MySQLConfiguration extends Configuration implements Immutable
         }
     }
     
+    @Locked
     @Override
     @NonCommitting
     public void dropDatabase() throws SQLException {
@@ -124,6 +128,7 @@ public final class MySQLConfiguration extends Configuration implements Immutable
      * 
      * @param reset whether the database is to be dropped first before creating it again.
      */
+    @NonLocked
     @NonCommitting
     public MySQLConfiguration(boolean reset) throws SQLException, IOException {
         this("MySQL", reset);

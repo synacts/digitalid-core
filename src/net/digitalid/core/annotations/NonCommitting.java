@@ -20,6 +20,6 @@ import net.digitalid.core.handler.Query;
  * @version 1.0
  */
 @Documented
-@Target({ElementType.METHOD, ElementType.CONSTRUCTOR})
 @Retention(RetentionPolicy.CLASS)
+@Target({ElementType.METHOD, ElementType.CONSTRUCTOR})
 public @interface NonCommitting {}
