@@ -14,6 +14,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Committing;
 import net.digitalid.core.annotations.Frozen;
+import net.digitalid.core.annotations.Locked;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.auxiliary.Time;
@@ -325,8 +326,9 @@ public final class SynchronizerModule implements ClientModule {
      * @return the time of the last audit.
      */
     @Pure
+    @Locked
     @NonCommitting
-    static @Nonnull Time getLastTime(@Nonnull Role role, @Nonnull Service service) throws SQLException {
+    public static @Nonnull Time getLastTime(@Nonnull Role role, @Nonnull Service service) throws SQLException {
         final @Nonnull String SQL = "SELECT time FROM " + role.getSite() + "synchronization_last WHERE entity = " + role + " AND service = " + service;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
             if (resultSet.next()) return Time.get(resultSet, 1);
@@ -341,6 +343,7 @@ public final class SynchronizerModule implements ClientModule {
      * @param service the desired service.
      * @param thisTime the time to be set.
      */
+    @Locked
     @NonCommitting
     static void setLastTime(@Nonnull Role role, @Nonnull Service service, @Nonnull Time thisTime) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {

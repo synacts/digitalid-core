@@ -65,7 +65,7 @@ public final class AgentModule implements BothModule {
     /**
      * Stores an instance of this module.
      */
-    static final AgentModule MODULE = new AgentModule();
+    public static final AgentModule MODULE = new AgentModule();
     
     @Pure
     @Override

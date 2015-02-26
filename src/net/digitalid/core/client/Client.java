@@ -412,7 +412,7 @@ public class Client extends Site implements Observer {
     
     /**
      * Accredits this client at the given identity.
-     * Loop on {@link NativeRole#isAccredited()} afterwards.
+     * Loop on {@link NativeRole#reloadOrRefreshState()} afterwards.
      * 
      * @param identity the identity at which this client is to be accredited.
      * @param password the password for accreditation at the given identity.

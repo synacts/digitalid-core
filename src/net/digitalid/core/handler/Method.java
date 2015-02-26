@@ -157,8 +157,6 @@ public abstract class Method extends Handler {
      * Returns the permissions required for this method.
      * 
      * @return the permissions required for this method.
-     * 
-     * @ensure return.isFrozen() : "The returned permissions are frozen.";
      */
     @Pure
     public @Nonnull ReadonlyAgentPermissions getRequiredPermissions() {

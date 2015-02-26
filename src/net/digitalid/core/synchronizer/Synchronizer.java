@@ -171,6 +171,9 @@ public final class Synchronizer extends Thread {
         try {
             Database.lock();
             reloadSuspended(role, module);
+        } catch (@Nonnull SQLException exception) {
+            Database.rollback();
+            throw exception;
         } finally {
             Database.unlock();
             resume(role, service);
@@ -196,6 +199,9 @@ public final class Synchronizer extends Thread {
                 final @Nonnull RequestAudit requestAudit = new RequestAudit(SynchronizerModule.getLastTime(role, service));
                 final @Nonnull Response response = Method.send(new FreezableArrayList<Method>(auditQuery).freeze(), requestAudit);
                 response.getAuditNotNull().execute(role, service, auditQuery.getRecipient(), ResponseAudit.emptyMethodList, ResponseAudit.emptyModuleSet);
+            } catch (@Nonnull SQLException exception) {
+                Database.rollback();
+                throw exception;
             } finally {
                 Database.unlock();
                 resume(role, service);
@@ -204,7 +210,6 @@ public final class Synchronizer extends Thread {
             @Nullable ConcurrentSet<Service> set = suspendedServices.get(role);
             if (set == null) set = suspendedServices.putIfAbsentElseReturnPresent(role, new ConcurrentHashSet<Service>());
             synchronized (set) { while (set.contains(service)) set.wait(); }
-            Database.commit();
         }
     }
     

@@ -4,7 +4,12 @@ import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.core.agent.AgentPermissions;
+import net.digitalid.core.agent.ReadonlyAgentPermissions;
+import net.digitalid.core.annotations.BasedOn;
+import net.digitalid.core.annotations.HasSubject;
 import net.digitalid.core.annotations.NonCommitting;
+import net.digitalid.core.annotations.OnlyForHosts;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.Role;
@@ -43,6 +48,11 @@ final class AuditQuery extends InternalQuery {
     private final @Nonnull Service service;
     
     /**
+     * Stores the permissions of the querying agent or none.
+     */
+    private final @Nonnull ReadonlyAgentPermissions permissions;
+    
+    /**
      * Creates an internal query for the audit of the given service.
      * 
      * @param role the role to which this handler belongs.
@@ -53,6 +63,7 @@ final class AuditQuery extends InternalQuery {
         super(role, service.getRecipient(role));
         
         this.service = service;
+        this.permissions = role.getAgent().getPermissions();
     }
     
     /**
@@ -62,18 +73,14 @@ final class AuditQuery extends InternalQuery {
      * @param signature the signature of this handler.
      * @param recipient the recipient of this method.
      * @param block the content which is to be decoded.
-     * 
-     * @require signature.hasSubject() : "The signature has a subject.";
-     * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
-     * 
-     * @ensure hasSignature() : "This handler has a signature.";
-     * @ensure isOnHost() : "Queries are only decoded on hosts.";
      */
+    @OnlyForHosts
     @NonCommitting
-    private AuditQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
+    private AuditQuery(@Nonnull Entity entity, @Nonnull @HasSubject SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull @BasedOn("query.audit@core.digitalid.net") Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity.toNonHostEntity(), signature, recipient);
         
         this.service = Service.getService(IdentityClass.create(block).toSemanticType());
+        this.permissions = AgentPermissions.NONE;
     }
     
     @Pure
@@ -93,6 +100,13 @@ final class AuditQuery extends InternalQuery {
     @Override
     public @Nonnull Service getService() {
         return service;
+    }
+    
+    
+    @Pure
+    @Override
+    public @Nonnull ReadonlyAgentPermissions getRequiredPermissions() {
+        return permissions;
     }
     
     

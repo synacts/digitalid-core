@@ -161,7 +161,6 @@ public final class ResponseAudit extends Audit implements Immutable, Blockable {
             final @Nonnull BothModule module = action.getModule();
             if (!suspendedModules.contains(module) && !ignoredModules.contains(module) && !methods.contains(action)) {
                 try {
-                    System.out.println("Execute the audited action: " + action); // TODO: Remove eventually!
                     action.executeOnClient();
                 } catch (@Nonnull SQLException exception) {
                     Synchronizer.LOGGER.log(Level.WARNING, "Could not execute an audited action on the client", exception);

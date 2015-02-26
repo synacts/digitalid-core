@@ -213,6 +213,7 @@ public final class AccountOpen extends Action {
     public void initialize(@Nonnull NonHostEntity entity) throws SQLException {
         final @Nonnull Context context = Context.getRoot(entity);
         context.createForActions();
+        context.replaceName("New Context", "Root Context");
         
         final @Nonnull ClientAgent clientAgent = ClientAgent.get(entity, agentNumber, false);
         final @Nonnull Restrictions restrictions = new Restrictions(true, true, true, context);

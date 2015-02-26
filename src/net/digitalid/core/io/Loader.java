@@ -67,8 +67,8 @@ public final class Loader {
         final @Nonnull Enumeration<JarEntry> entries = jarFile.entries();
         while (entries.hasMoreElements()) {
             final @Nonnull String entryName = entries.nextElement().getName();
-            if (entryName.startsWith("net/digitalid/") && entryName.endsWith(".class")) {
-                final @Nonnull String className = entryName.substring(0, entryName.length() - 6).replace("/", ".");
+            if (entryName.startsWith("net" + Directory.SEPARATOR + "digitalid" + Directory.SEPARATOR) && entryName.endsWith(".class")) {
+                final @Nonnull String className = entryName.substring(0, entryName.length() - 6).replace(Directory.SEPARATOR, ".");
                 LOGGER.log(Level.INFORMATION, "Initialize class: " + className);
                 Class.forName(className, true, urlClassLoader);
             }

@@ -90,7 +90,7 @@ public final class AgentTest extends IdentitySetup {
             getRole().refreshState(CoreService.SERVICE);
             getRole().getAgent().getWeakerAgent(role.getAgent().getNumber()).unremove();
             getRole().waitForCompletion(CoreService.SERVICE);
-            Assert.assertTrue(role.isAccredited());
+            Assert.assertTrue(role.reloadOrRefreshState(CoreService.SERVICE));
         } catch (@Nonnull InterruptedException | SQLException | IOException | PacketException | ExternalException exception) {
             exception.printStackTrace();
             Database.rollback();

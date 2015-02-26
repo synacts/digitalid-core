@@ -1,11 +1,9 @@
 package net.digitalid.core.entity;
 
-import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.agent.ClientAgent;
-import net.digitalid.core.annotations.Committing;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.client.Client;
@@ -15,12 +13,8 @@ import net.digitalid.core.concept.Aspect;
 import net.digitalid.core.concept.Instance;
 import net.digitalid.core.concept.Observer;
 import net.digitalid.core.database.Database;
-import net.digitalid.core.exceptions.external.ExternalException;
-import net.digitalid.core.exceptions.packet.PacketError;
-import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.identity.InternalNonHostIdentity;
 import net.digitalid.core.interfaces.Immutable;
-import net.digitalid.core.service.CoreService;
 
 /**
  * This class models a native role on the client-side.
@@ -54,24 +48,6 @@ public final class NativeRole extends Role implements Immutable {
     @Override
     public @Nonnull ClientAgent getAgent() {
         return clientAgent;
-    }
-    
-    
-    /**
-     * Returns whether this role is accredited.
-     * If it is, the current state is retrieved.
-     * 
-     * @return whether this role is accredited.
-     */
-    @Committing
-    public boolean isAccredited() throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
-        try {
-            reloadState(CoreService.SERVICE);
-            return true;
-        } catch (@Nonnull PacketException exception) {
-            if (exception.getError() == PacketError.AUDIT) return false;
-            else throw exception;
-        }
     }
     
     

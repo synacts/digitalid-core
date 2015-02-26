@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.agent.Agent;
+import net.digitalid.core.agent.AgentModule;
 import net.digitalid.core.annotations.Committing;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.NonFrozen;
@@ -14,6 +15,7 @@ import net.digitalid.core.annotations.NonNullableElements;
 import net.digitalid.core.annotations.OnlyForActions;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.annotations.UniqueElements;
+import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.client.Client;
 import net.digitalid.core.collections.FreezableList;
 import net.digitalid.core.collections.ReadonlyList;
@@ -23,12 +25,14 @@ import net.digitalid.core.concept.Observer;
 import net.digitalid.core.credential.ClientCredential;
 import net.digitalid.core.database.Database;
 import net.digitalid.core.exceptions.external.ExternalException;
+import net.digitalid.core.exceptions.packet.PacketError;
 import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.identity.InternalNonHostIdentity;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.interfaces.Immutable;
 import net.digitalid.core.interfaces.SQLizable;
 import net.digitalid.core.module.BothModule;
+import net.digitalid.core.service.CoreService;
 import net.digitalid.core.service.Service;
 import net.digitalid.core.synchronizer.Synchronizer;
 import net.digitalid.core.synchronizer.SynchronizerModule;
@@ -202,7 +206,7 @@ public abstract class Role extends EntityClass implements NonHostEntity, Immutab
     @Committing
     public final void reloadState(@Nonnull BothModule module) throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
         Synchronizer.reload(this, module);
-        if (Database.isMultiAccess()) {
+        if (Database.isMultiAccess() && (module.equals(CoreService.SERVICE) || module.equals(AgentModule.MODULE))) {
             getAgent().reset();
             this.roles = null;
         }
@@ -217,11 +221,48 @@ public abstract class Role extends EntityClass implements NonHostEntity, Immutab
     @Committing
     public final void refreshState(@Nonnull Service service) throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
         Synchronizer.refresh(this, service);
-        if (Database.isMultiAccess()) {
+        if (Database.isMultiAccess() && service.equals(CoreService.SERVICE)) {
             getAgent().reset();
             this.roles = null;
         }
     }
+    
+    /**
+     * Reloads or refreshes the state of the given services for this role.
+     * 
+     * @param services the services whose state is to be reloaded or refreshed for this role.
+     * 
+     * @return whether this role is accredited for the given services.
+     */
+    @NonLocked
+    @Committing
+    public boolean reloadOrRefreshState(@Nonnull Service... services) throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
+        final @Nonnull Time[] times = new Time[services.length];
+        try {
+            Database.lock();
+            for (int i = 0; i < services.length; i++) {
+                times[i] = SynchronizerModule.getLastTime(this, services[i]);
+            }
+            Database.commit();
+        } catch (@Nonnull SQLException exception) {
+            Database.rollback();
+        } finally {
+            Database.unlock();
+        }
+        
+        final @Nonnull Time cutoff = Time.WEEK.ago();
+        for (int i = 0; i < services.length; i++) {
+            try {
+                if (times[i].isLessThan(cutoff)) reloadState(services[i]);
+                else refreshState(services[i]);
+            } catch (@Nonnull PacketException exception) {
+                if (exception.getError() == PacketError.AUDIT) return false;
+                else throw exception;
+            }
+        }
+        return true;
+    }
+    
     
     /**
      * Waits until all actions of the given service are completed.

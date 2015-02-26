@@ -185,7 +185,7 @@ public final class ClientAgentAccredit extends CoreServiceInternalAction {
     @Override
     @NonCommitting
     protected void executeOnBoth() throws SQLException {
-        clientAgent.createForActions(permissions, new Restrictions(true, false, false, Context.getRoot(getNonHostEntity())), commitment, name, icon);
+        clientAgent.createForActions(permissions, new Restrictions(true, true, true, Context.getRoot(getNonHostEntity())), commitment, name, icon);
     }
     
     @Override

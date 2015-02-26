@@ -1,5 +1,6 @@
 package net.digitalid.core.contact;
 
+import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,22 +16,30 @@ import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.NonFrozen;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.auxiliary.Image;
+import net.digitalid.core.collections.FreezableArray;
 import net.digitalid.core.collections.FreezableLinkedList;
 import net.digitalid.core.collections.FreezableList;
+import net.digitalid.core.collections.ReadonlyArray;
 import net.digitalid.core.collections.ReadonlyList;
 import net.digitalid.core.database.Database;
 import net.digitalid.core.entity.EntityClass;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.entity.Site;
+import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.host.Host;
+import net.digitalid.core.identity.Identity;
+import net.digitalid.core.identity.IdentityClass;
 import net.digitalid.core.identity.Mapper;
+import net.digitalid.core.identity.Person;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.module.BothModule;
 import net.digitalid.core.service.CoreService;
 import net.digitalid.core.service.Service;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.ListWrapper;
+import net.digitalid.core.wrappers.StringWrapper;
 import net.digitalid.core.wrappers.TupleWrapper;
 
 /**
@@ -110,14 +119,14 @@ public final class ContextModule implements BothModule {
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Module Export and Import –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Stores the semantic type {@code entry.contexts.module@core.digitalid.net}.
+     * Stores the semantic type {@code entry.context.module@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType MODULE_ENTRY = SemanticType.create("entry.contexts.module@core.digitalid.net").load(TupleWrapper.TYPE, net.digitalid.core.identity.SemanticType.UNKNOWN);
+    private static final @Nonnull SemanticType MODULE_ENTRY = SemanticType.create("entry.context.module@core.digitalid.net").load(TupleWrapper.TYPE, net.digitalid.core.identity.SemanticType.UNKNOWN);
     
     /**
-     * Stores the semantic type {@code contexts.module@core.digitalid.net}.
+     * Stores the semantic type {@code context.module@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType MODULE_FORMAT = SemanticType.create("contexts.module@core.digitalid.net").load(ListWrapper.TYPE, MODULE_ENTRY);
+    private static final @Nonnull SemanticType MODULE_FORMAT = SemanticType.create("context.module@core.digitalid.net").load(ListWrapper.TYPE, MODULE_ENTRY);
     
     @Pure
     @Override
@@ -150,49 +159,127 @@ public final class ContextModule implements BothModule {
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– State Getter and Setter –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Stores the semantic type {@code entry.contexts.state@core.digitalid.net}.
+     * Stores the semantic type {@code entry.name.context.state@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType STATE_ENTRY = SemanticType.create("entry.contexts.state@core.digitalid.net").load(TupleWrapper.TYPE, net.digitalid.core.identity.SemanticType.UNKNOWN);
+    private static final @Nonnull SemanticType NAME_STATE_ENTRY = SemanticType.create("entry.name.context.state@core.digitalid.net").load(TupleWrapper.TYPE, Context.TYPE, Context.NAME_TYPE, Context.ICON_TYPE);
     
     /**
-     * Stores the semantic type {@code contexts.state@core.digitalid.net}.
+     * Stores the semantic type {@code table.name.context.state@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType STATE = SemanticType.create("contexts.state@core.digitalid.net").load(ListWrapper.TYPE, STATE_ENTRY);
+    private static final @Nonnull SemanticType NAME_STATE_TABLE = SemanticType.create("table.name.context.state@core.digitalid.net").load(ListWrapper.TYPE, NAME_STATE_ENTRY);
+    
+    
+    /**
+     * Stores the semantic type {@code entry.contact.context.state@core.digitalid.net}.
+     */
+    private static final @Nonnull SemanticType CONTACT_STATE_ENTRY = SemanticType.create("entry.contact.context.state@core.digitalid.net").load(TupleWrapper.TYPE, Context.TYPE, Person.IDENTIFIER);
+    
+    /**
+     * Stores the semantic type {@code table.contact.context.state@core.digitalid.net}.
+     */
+    private static final @Nonnull SemanticType CONTACT_STATE_TABLE = SemanticType.create("table.contact.context.state@core.digitalid.net").load(ListWrapper.TYPE, CONTACT_STATE_ENTRY);
+    
+    
+    /**
+     * Stores the semantic type {@code context.state@core.digitalid.net}.
+     */
+    private static final @Nonnull SemanticType STATE_FORMAT = SemanticType.create("context.state@core.digitalid.net").load(TupleWrapper.TYPE, NAME_STATE_TABLE, CONTACT_STATE_TABLE);
     
     @Pure
     @Override
     public @Nonnull SemanticType getStateFormat() {
-        return STATE;
+        return STATE_FORMAT;
     }
     
     @Pure
     @Override
     @NonCommitting
     public @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadonlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws SQLException {
-        final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
+        // TODO: Extend this implementation and make sure the state is restricted according to the restrictions.
+        // TODO: This might be a little bit complicated as the context for which the client is authorized needs to be aggregated.
+        final @Nonnull Site site = entity.getSite();
+        final @Nonnull FreezableArray<Block> tables = new FreezableArray<Block>(2);
         try (@Nonnull Statement statement = Database.createStatement()) {
-            // TODO: Retrieve the entries of the given entity from the database table(s).
-            // This might be a little bit complicated as the context for which the client is authorized needs to be aggregated.
+            
+            try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT context, name, icon FROM " + site + "context_name WHERE entity = " + entity)) {
+                final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
+                while (resultSet.next()) {
+                    final @Nonnull Context context = Context.getNotNull(entity, resultSet, 1);
+                    final @Nonnull String name = resultSet.getString(2);
+                    final @Nonnull Image icon = Image.get(resultSet, 3);
+                    entries.add(new TupleWrapper(NAME_STATE_ENTRY, context, new StringWrapper(Context.NAME_TYPE, name), icon.toBlock().setType(Context.ICON_TYPE).toBlockable()).toBlock());
+                }
+                tables.set(0, new ListWrapper(NAME_STATE_TABLE, entries.freeze()).toBlock());
+            }
+            
+            try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT context, contact FROM " + site + "context_contact WHERE entity = " + entity)) {
+                final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
+                while (resultSet.next()) {
+                    final @Nonnull Context context = Context.getNotNull(entity, resultSet, 1);
+                    final @Nonnull Identity person = IdentityClass.getNotNull(resultSet, 2);
+                    entries.add(new TupleWrapper(CONTACT_STATE_ENTRY, context, person.toBlockable(Person.IDENTIFIER)).toBlock());
+                }
+                tables.set(1, new ListWrapper(CONTACT_STATE_TABLE, entries.freeze()).toBlock());
+            }
+            
         }
-        return new ListWrapper(STATE, entries.freeze()).toBlock();
+        return new TupleWrapper(STATE_FORMAT, tables.freeze()).toBlock();
     }
     
     @Override
     @NonCommitting
-    public void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws SQLException, InvalidEncodingException {
+    public void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         assert block.getType().isBasedOn(getStateFormat()) : "The block is based on the indicated type.";
         
-        final @Nonnull ReadonlyList<Block> entries = new ListWrapper(block).getElementsNotNull();
-        for (final @Nonnull Block entry : entries) {
-            // TODO: Add the entries of the given entity to the database table(s).
+        final @Nonnull Site site = entity.getSite();
+        try (@Nonnull Statement statement = Database.createStatement()) {
+            Database.onInsertIgnore(statement, site + "context_name", "entity", "context");
+            Database.onInsertIgnore(statement, site + "context_contact", "entity", "context", "contact");
         }
+        
+        final @Nonnull ReadonlyArray<Block> tables = new TupleWrapper(block).getElementsNotNull(2);
+        final @Nonnull String prefix = "INSERT" + Database.getConfiguration().IGNORE() + " INTO " + site;
+        
+        try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(prefix + "context_name (entity, context, name, icon) VALUES (?, ?, ?, ?)")) {
+            entity.set(preparedStatement, 1);
+            final @Nonnull ReadonlyList<Block> entries = new ListWrapper(tables.getNotNull(0)).getElementsNotNull();
+            for (final @Nonnull Block entry : entries) {
+                final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(3);
+                Context.get(entity, elements.getNotNull(0)).set(preparedStatement, 2);
+                preparedStatement.setString(3, new StringWrapper(elements.getNotNull(1)).getString());
+                new Image(elements.getNotNull(2)).set(preparedStatement, 4);
+                preparedStatement.addBatch();
+            }
+            preparedStatement.executeBatch();
+        }
+        
+        try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(prefix + "context_contact (entity, context, contact) VALUES (?, ?, ?)")) {
+            entity.set(preparedStatement, 1);
+            final @Nonnull ReadonlyList<Block> entries = new ListWrapper(tables.getNotNull(1)).getElementsNotNull();
+            for (final @Nonnull Block entry : entries) {
+                final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(2);
+                Context.get(entity, elements.getNotNull(0)).set(preparedStatement, 2);
+                IdentityClass.create(elements.getNotNull(1)).toPerson().set(preparedStatement, 3);
+                preparedStatement.addBatch();
+            }
+            preparedStatement.executeBatch();
+        }
+        
+        try (@Nonnull Statement statement = Database.createStatement()) {
+            Database.onInsertNotIgnore(statement, site + "context_name");
+            Database.onInsertNotIgnore(statement, site + "context_contact");
+        }
+        
+        Context.reset(entity);
     }
     
     @Override
     @NonCommitting
     public void removeState(@Nonnull NonHostEntity entity) throws SQLException {
+        final @Nonnull Site site = entity.getSite();
         try (@Nonnull Statement statement = Database.createStatement()) {
-            // TODO: Remove the entries of the given entity from the database table(s).
+            statement.executeUpdate("DELETE FROM " + site + "context_contact WHERE entity = " + entity);
+            statement.executeUpdate("DELETE FROM " + site + "context_name WHERE entity = " + entity);
         }
     }
     
