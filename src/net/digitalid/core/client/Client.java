@@ -15,10 +15,12 @@ import net.digitalid.core.agent.ClientAgent;
 import net.digitalid.core.agent.ClientAgentAccredit;
 import net.digitalid.core.agent.ReadonlyAgentPermissions;
 import net.digitalid.core.annotations.Committing;
+import net.digitalid.core.annotations.Frozen;
 import net.digitalid.core.annotations.Locked;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.NonFrozen;
 import net.digitalid.core.annotations.Pure;
+import net.digitalid.core.annotations.Validated;
 import net.digitalid.core.auxiliary.Image;
 import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.cache.Cache;
@@ -184,15 +186,10 @@ public class Client extends Site implements Observer {
      * @param name the name of the new client.
      * @param icon the icon of the new client.
      * @param preferredPermissions the preferred permissions of the new client.
-     * 
-     * @require isValidIdentifier(identifier) : "The identifier is valid.";
-     * @require isValid(name) : "The name is valid.";
-     * @require isValid(icon) : "The icon is valid.";
-     * @require preferredPermissions.isFrozen() : "The preferred permissions are frozen.";
      */
     @Locked
     @Committing
-    public Client(@Nonnull String identifier, @Nonnull String name, @Nonnull Image icon, @Nonnull ReadonlyAgentPermissions preferredPermissions) throws SQLException, IOException, PacketException, ExternalException {
+    public Client(@Nonnull @Validated String identifier, @Nonnull @Validated String name, @Nonnull @Validated Image icon, @Nonnull @Frozen ReadonlyAgentPermissions preferredPermissions) throws SQLException, IOException, PacketException, ExternalException {
         super(identifier);
         
         assert isValidIdentifier(identifier) : "The identifier is valid.";

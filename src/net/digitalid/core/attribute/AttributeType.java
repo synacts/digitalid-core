@@ -32,11 +32,31 @@ public final class AttributeType {
     /**
      * Stores the semantic type {@code email@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType EMAIL = SemanticType.create("email@core.digitalid.net").load(new Category[] {Category.NATURAL_PERSON, Category.ARTIFICIAL_PERSON}, Time.HALF_DAY, StringWrapper.TYPE);
+    public static final @Nonnull SemanticType EMAIL = SemanticType.create("email@core.digitalid.net").load(new Category[] {Category.NATURAL_PERSON, Category.ARTIFICIAL_PERSON}, Time.WEEK, StringWrapper.TYPE);
     
     /**
      * Stores the semantic type {@code phone@core.digitalid.net}.
      */
     public static final @Nonnull SemanticType PHONE = SemanticType.create("phone@core.digitalid.net").load(new Category[] {Category.NATURAL_PERSON, Category.ARTIFICIAL_PERSON}, Time.HALF_DAY, StringWrapper.TYPE);
+    
+    /**
+     * Stores the semantic type {@code skype@core.digitalid.net}.
+     */
+    public static final @Nonnull SemanticType SKYPE = SemanticType.create("skype@core.digitalid.net").load(new Category[] {Category.NATURAL_PERSON, Category.ARTIFICIAL_PERSON}, Time.HALF_DAY, StringWrapper.TYPE);
+    
+    /**
+     * Stores the semantic type {@code address@core.digitalid.net}.
+     */
+    public static final @Nonnull SemanticType ADDRESS = SemanticType.create("address@core.digitalid.net").load(new Category[] {Category.NATURAL_PERSON, Category.ARTIFICIAL_PERSON}, Time.WEEK, StringWrapper.TYPE);
+    
+    /**
+     * Stores the semantic type {@code website@core.digitalid.net}.
+     */
+    public static final @Nonnull SemanticType WEBSITE = SemanticType.create("website@core.digitalid.net").load(new Category[] {Category.NATURAL_PERSON, Category.ARTIFICIAL_PERSON}, Time.WEEK, StringWrapper.TYPE);
+    
+    /**
+     * Stores the semantic type {@code birthday@core.digitalid.net}.
+     */
+    public static final @Nonnull SemanticType BIRTHDAY = SemanticType.create("birthday@core.digitalid.net").load(new Category[] {Category.NATURAL_PERSON}, Time.TROPICAL_YEAR, StringWrapper.TYPE);
     
 }

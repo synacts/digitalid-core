@@ -1,0 +1,70 @@
+[After restarting the now authorized Jason Client.]
+Execute the option: Exception in thread "Thread-3" java.lang.NullPointerException
+	at java.io.FileOutputStream.write(FileOutputStream.java:302)
+	at net.digitalid.file.FileWrapper.writeTo(FileWrapper.java:309)
+	at net.digitalid.file.FileUpdater.run(FileUpdater.java:181)
+	
+	
+[After starting it a second time.]	
+Execute the option: java.sql.SQLException: The file wrapper of the file concept with the name 'Text.txt' of the entity 'jay@digitalid.net' could not be replaced.
+	at net.digitalid.file.FileModule.replaceFileWrapper(FileModule.java:320)
+	at net.digitalid.file.FileConcept.replaceFileWrapper(FileConcept.java:147)
+	at net.digitalid.file.FileReplace.executeOnBoth(FileReplace.java:136)
+	at net.digitalid.file.FileServiceInternalAction.executeOnClient(FileServiceInternalAction.java:93)
+	at net.digitalid.core.synchronizer.Synchronizer.execute(Synchronizer.java:63)
+	at net.digitalid.file.FileConcept.setFileWrapper(FileConcept.java:126)
+	at net.digitalid.file.FileUpdater.run(FileUpdater.java:163)
+
+
+[After having authorized Jason at my identity.]
+Execute the option: PacketException thrown by net.digitalid.core.packet.Packet.<init>(Packet.java:300): (Audit) An audit was requested but none was received.
+	at net.digitalid.core.packet.Packet.<init>(Packet.java:300)
+	at net.digitalid.core.packet.Response.<init>(Response.java:119)
+	at net.digitalid.core.packet.Request.send(Request.java:312)
+	at net.digitalid.core.packet.Request.send(Request.java:293)
+	at net.digitalid.core.handler.Method.send(Method.java:404)
+	at net.digitalid.core.synchronizer.Synchronizer.refresh(Synchronizer.java:200)
+	at net.digitalid.core.entity.Role.refreshState(Role.java:223)
+	at net.digitalid.file.FileUpdater.run(FileUpdater.java:236)
+
+
+[From my local Synchronizer.log file.]
+2015-02-27 at 10:30:04 Warning in version 0.6.0: Could not execute the audit of 'CredentialInternalQuery by 'kaspar.etter@digitalid.net' for 'kaspar.etter@digitalid.net' (Requests an identity- or role-based credential.)' asynchronously due to SQLException thrown by org.sqlite.core.NativeDB.throwex(NativeDB.java:397): database is locked
+
+
+[From my local Packets.log file.]
+2015-02-27 at 10:30:01 Warning in version 0.6.0: A problem occurred due to PacketException thrown by net.digitalid.core.exceptions.packet.PacketException.create(PacketException.java:107): (Signature) A host responded with a packet error. [PacketException thrown by net.digitalid.core.packet.Packet.<init>(Packet.java:207): (Signature) One of the signatures is no longer active. [InactiveSignatureException thrown by net.digitalid.core.wrappers.CredentialsSignatureWrapper.checkRecency(CredentialsSignatureWrapper.java:496): One of the credentials is older than an hour.]]
+
+
+[From the screen of the server.]
+com.mysql.jdbc.exceptions.jdbc4.MySQLTransactionRollbackException: Deadlock found when trying to get lock; try restarting transaction
+        at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+        at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:57)
+        at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)
+        at java.lang.reflect.Constructor.newInstance(Constructor.java:526)
+        at com.mysql.jdbc.Util.handleNewInstance(Util.java:377)
+        at com.mysql.jdbc.Util.getInstance(Util.java:360)
+        at com.mysql.jdbc.SQLError.createSQLException(SQLError.java:985)
+        at com.mysql.jdbc.MysqlIO.checkErrorPacket(MysqlIO.java:3887)
+        at com.mysql.jdbc.MysqlIO.checkErrorPacket(MysqlIO.java:3823)
+        at com.mysql.jdbc.MysqlIO.sendCommand(MysqlIO.java:2435)
+        at com.mysql.jdbc.MysqlIO.sqlQueryDirect(MysqlIO.java:2582)
+        at com.mysql.jdbc.ConnectionImpl.execSQL(ConnectionImpl.java:2526)
+        at com.mysql.jdbc.ConnectionImpl.execSQL(ConnectionImpl.java:2484)
+        at com.mysql.jdbc.StatementImpl.executeQuery(StatementImpl.java:1446)
+        at net.digitalid.core.synchronizer.ActionModule.getAudit(ActionModule.java:234)
+        at net.digitalid.core.server.Worker.run(Worker.java:129)
+        at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+        at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:615)
+        at java.lang.Thread.run(Thread.java:745)
+
+PacketException thrown by net.digitalid.core.packet.Packet.<init>(Packet.java:207): (Signature) One of the signatures is no longer active. [InactiveSignatureException thrown by net.digitalid.core.wrappers.CredentialsSignatureWrapper.checkRecency(CredentialsSignatureWrapper.java:496): One of the credentials is older than an hour.]
+        at net.digitalid.core.packet.Packet.<init>(Packet.java:207)
+        at net.digitalid.core.packet.Request.<init>(Request.java:149)
+        at net.digitalid.core.server.Worker.run(Worker.java:80)
+        at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+        at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:615)
+        at java.lang.Thread.run(Thread.java:745)
+Caused by: InactiveSignatureException thrown by net.digitalid.core.wrappers.CredentialsSignatureWrapper.checkRecency(CredentialsSignatureWrapper.java:496): One of the credentials is older than an hour.
+        at net.digitalid.core.wrappers.CredentialsSignatureWrapper.checkRecency(CredentialsSignatureWrapper.java:496)
+        ... 6 more

@@ -13,6 +13,7 @@ import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Capturable;
 import net.digitalid.core.annotations.Committing;
 import net.digitalid.core.annotations.Frozen;
+import net.digitalid.core.annotations.Locked;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.NonFrozen;
 import net.digitalid.core.annotations.OnlyForActions;
@@ -451,6 +452,7 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
      * 
      * @return the contacts of this context.
      */
+    @Locked
     @NonCommitting
     public @Nonnull @NonFrozen ReadonlyContacts getContacts() throws SQLException {
         if (contacts == null) contacts = ContextModule.getContacts(this);
