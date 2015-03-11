@@ -8,10 +8,10 @@ import java.util.concurrent.FutureTask;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Committing;
-import net.digitalid.core.annotations.NonNullableElements;
 import net.digitalid.core.annotations.Frozen;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.NonEmpty;
+import net.digitalid.core.annotations.NonNullableElements;
 import net.digitalid.core.collections.FreezableArrayList;
 import net.digitalid.core.collections.ReadonlyList;
 import net.digitalid.core.database.Database;
@@ -198,7 +198,7 @@ public final class Sender extends Thread {
      */
     @NonCommitting
     public static @Nullable RequestAudit runAsynchronously(final @Nonnull InternalAction action, final @Nullable RequestAudit audit) throws SQLException, IOException, PacketException, ExternalException {
-        // TODO: This will almost certainly not work with the locking mechanism of SQLite.
+        // TODO: This will almost certainly not work with the locking mechanism of SQLite. The problem could propably be solved with savepoints and partial rollbacks, however.
         
         new Thread() {
             @Override
