@@ -24,8 +24,8 @@ public class ServerSetup extends DatabaseSetup {
     
     @BeforeClass
     public static void setUpServer() {
-        Server.start("example.com");
-        recipient = new HostIdentifier("example.com");
+        Server.start("test.digitalid.net");
+        recipient = new HostIdentifier("test.digitalid.net");
     }
     
     @AfterClass

@@ -17,8 +17,8 @@ public final class CompressionWrapperTest extends DatabaseSetup {
     
     @Test
     public void testWrapping() throws InvalidEncodingException {
-        final @Nonnull SemanticType STRING = SemanticType.create("string@syntacts.com").load(StringWrapper.TYPE);
-        final @Nonnull SemanticType TYPE = SemanticType.create("compression@syntacts.com").load(CompressionWrapper.TYPE, STRING);
+        final @Nonnull SemanticType STRING = SemanticType.create("string@test.digitalid.net").load(StringWrapper.TYPE);
+        final @Nonnull SemanticType TYPE = SemanticType.create("compression@test.digitalid.net").load(CompressionWrapper.TYPE, STRING);
         final @Nonnull Block[] blocks = new Block[] {new StringWrapper(STRING, "").toBlock(), new StringWrapper(STRING, "This is a short string.").toBlock(), new StringWrapper(STRING, "This is a longer string in order to test different block lengths.").toBlock()};
         final @Nonnull byte[] algorithms = new byte[] {CompressionWrapper.NONE, CompressionWrapper.ZLIB};
         for (final @Nonnull Block block : blocks) {

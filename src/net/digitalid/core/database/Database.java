@@ -437,6 +437,11 @@ public final class Database implements Immutable {
      * @require isInitialized() : "The database is initialized.";
      */
     public static void unlock() {
+        // TODO: Remove the following lines eventually.
+//        if (getConfiguration() instanceof SQLiteConfiguration && ((SQLiteConfiguration) getConfiguration()).journalExists()) {
+//            System.out.println("\nA database journal exists! The connection might not have been committed properly.");
+//            new Exception().printStackTrace();
+//        }
         getConfiguration().unlock();
     }
     

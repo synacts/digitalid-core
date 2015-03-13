@@ -130,6 +130,7 @@ public final class ListWrapper extends BlockWrapper implements Immutable {
             if (elementLength == 0) {
                 list.add(null);
             } else {
+                if (offset + elementLength > block.getLength()) throw new InvalidEncodingException("The subblock may not exceed the given block.");
                 list.add(new Block(parameter, block, offset, elementLength));
                 offset += elementLength;
             }

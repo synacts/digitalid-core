@@ -21,7 +21,7 @@ public final class SignatureWrapperTest extends ServerSetup {
      */
     @Test
     public void testWrapping() throws Exception {
-        final @Nonnull SemanticType TYPE = SemanticType.create("boolean@syntacts.com").load(BooleanWrapper.TYPE);
+        final @Nonnull SemanticType TYPE = SemanticType.create("boolean@test.digitalid.net").load(BooleanWrapper.TYPE);
         
 //        Block[] blocks = new Block[] {Block.EMPTY, new StringWrapper("String").toBlock()};
 //        for (Block block : blocks) {

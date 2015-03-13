@@ -18,8 +18,8 @@ public final class EncryptionWrapperTest extends ServerSetup {
     
     @Test
     public void testWrapping() throws Exception {
-        final @Nonnull SemanticType STRING = SemanticType.create("string@syntacts.com").load(StringWrapper.TYPE);
-        final @Nonnull SemanticType TYPE = SemanticType.create("encryption@syntacts.com").load(EncryptionWrapper.TYPE, STRING);
+        final @Nonnull SemanticType STRING = SemanticType.create("string@test.digitalid.net").load(StringWrapper.TYPE);
+        final @Nonnull SemanticType TYPE = SemanticType.create("encryption@test.digitalid.net").load(EncryptionWrapper.TYPE, STRING);
         
         final @Nonnull Block[] blocks = new Block[] {null, new StringWrapper(STRING, "This is a secret message.").toBlock()};
         final @Nullable SymmetricKey[] symmetricKeys = new SymmetricKey[] {null, new SymmetricKey()};

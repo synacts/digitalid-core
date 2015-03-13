@@ -18,7 +18,7 @@ public final class Int8WrapperTest extends DatabaseSetup {
     
     @Test
     public void testWrapping() throws InvalidEncodingException {
-        final @Nonnull SemanticType TYPE = SemanticType.create("int8@syntacts.com").load(Int8Wrapper.TYPE);
+        final @Nonnull SemanticType TYPE = SemanticType.create("int8@test.digitalid.net").load(Int8Wrapper.TYPE);
         final @Nonnull Random random = new Random();
         for (int i = 0; i < 10; i++) {
             final byte value = (byte) random.nextInt();

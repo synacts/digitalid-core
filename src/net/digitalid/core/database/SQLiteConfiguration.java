@@ -76,8 +76,19 @@ public final class SQLiteConfiguration extends Configuration implements Immutabl
      * 
      * @return whether a SQLite database exists.
      */
+    @Pure
     public static boolean exists() {
         return new File(Directory.DATA.getPath() + Directory.SEPARATOR + "SQLite.db").exists();
+    }
+    
+    /**
+     * Returns whether a SQLite journal exists.
+     * 
+     * @return whether a SQLite journal exists.
+     */
+    @Pure
+    public boolean journalExists() {
+        return new File(Directory.DATA.getPath() + Directory.SEPARATOR + name + ".db-journal").exists();
     }
     
     

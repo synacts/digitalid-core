@@ -17,7 +17,7 @@ public final class DataWrapperTest extends DatabaseSetup {
 
     @Test
     public void testWrapping() throws InvalidEncodingException {
-        final @Nonnull SemanticType TYPE = SemanticType.create("data@syntacts.com").load(DataWrapper.TYPE);
+        final @Nonnull SemanticType TYPE = SemanticType.create("data@test.digitalid.net").load(DataWrapper.TYPE);
         final @Nonnull byte[][] datas = new byte[][] {"".getBytes(), "This is a short string.".getBytes(), "This is a longer string in order to test different string lengths.".getBytes()};
         for (final @Nonnull byte[] data : datas) {
             Assert.assertArrayEquals(data, new DataWrapper(new DataWrapper(TYPE, data).toBlock()).getData());

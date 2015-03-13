@@ -17,7 +17,7 @@ public final class IntvarWrapperTest extends DatabaseSetup {
     
     @Test
     public void testWrapping() throws InvalidEncodingException {
-        final @Nonnull SemanticType TYPE = SemanticType.create("intvar@syntacts.com").load(IntvarWrapper.TYPE);
+        final @Nonnull SemanticType TYPE = SemanticType.create("intvar@test.digitalid.net").load(IntvarWrapper.TYPE);
         long value = 0;
         while (Long.numberOfLeadingZeros(value) >= 2) {
             Assert.assertEquals(value, new IntvarWrapper(new IntvarWrapper(TYPE, value).toBlock()).getValue());

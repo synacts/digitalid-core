@@ -57,9 +57,9 @@ public final class Attribute extends GeneralConcept implements Immutable {
     
     
     /**
-     * Stores the semantic type {@code published.value.attribute@core.digitalid.net}.
+     * Stores the semantic type {@code published.attribute@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType PUBLISHED = SemanticType.create("published.value.attribute@core.digitalid.net").load(BooleanWrapper.TYPE);
+    public static final @Nonnull SemanticType PUBLISHED = SemanticType.create("published.attribute@core.digitalid.net").load(BooleanWrapper.TYPE);
     
     
     /**

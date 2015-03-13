@@ -65,7 +65,7 @@ public class IdentitySetup extends ServerSetup {
         print("setUpIdentity");
         try {
             client = new Client("tester", "Test Client", Image.CLIENT, AgentPermissions.GENERAL_WRITE);
-            final @Nonnull InternalNonHostIdentifier identifier = new InternalNonHostIdentifier("person@example.com");
+            final @Nonnull InternalNonHostIdentifier identifier = new InternalNonHostIdentifier("person@test.digitalid.net");
             role = client.openAccount(identifier, Category.NATURAL_PERSON);
             subject = identifier.getIdentity().toNaturalPerson();
             Database.commit();

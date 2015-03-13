@@ -17,7 +17,6 @@ import net.digitalid.core.interfaces.Blockable;
 import net.digitalid.core.interfaces.Immutable;
 import net.digitalid.core.interfaces.SQLizable;
 import net.digitalid.core.wrappers.Block;
-import net.digitalid.core.wrappers.BooleanWrapper;
 import net.digitalid.core.wrappers.ListWrapper;
 import net.digitalid.core.wrappers.SelfcontainedWrapper;
 import net.digitalid.core.wrappers.SignatureWrapper;
@@ -33,11 +32,6 @@ import net.digitalid.core.wrappers.SignatureWrapper;
  * @version 1.0
  */
 public abstract class AttributeValue implements Immutable, Blockable, SQLizable {
-    
-    /**
-     * Stores the semantic type {@code published.attribute@core.digitalid.net}.
-     */
-    public static final @Nonnull SemanticType PUBLISHED = SemanticType.create("published.attribute@core.digitalid.net").load(BooleanWrapper.TYPE);
     
     /**
      * Stores the semantic type {@code content.attribute@core.digitalid.net}.
@@ -107,7 +101,7 @@ public abstract class AttributeValue implements Immutable, Blockable, SQLizable 
     @Pure
     @Override
     public final @Nonnull Block toBlock() {
-        return getSignature().toBlock();
+        return new Block(TYPE, getSignature().toBlock());
     }
     
     
@@ -298,7 +292,7 @@ public abstract class AttributeValue implements Immutable, Blockable, SQLizable 
         if (object == this) return true;
         if (object == null || !(object instanceof AttributeValue)) return false;
         final @Nonnull AttributeValue other = (AttributeValue) object;
-        return this.getSignature().equals(other.getSignature());
+        return this.toBlock().equals(other.toBlock());
     }
     
     @Pure

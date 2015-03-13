@@ -131,6 +131,7 @@ public final class TupleWrapper extends BlockWrapper implements Immutable {
             int elementLength = (int) IntvarWrapper.decodeValue(block, offset, intvarLength);
             offset += intvarLength;
             if (elementLength > 0) {
+                if (offset + elementLength > block.getLength()) throw new InvalidEncodingException("The subblock may not exceed the given block.");
                 array.set(i, new Block(parameters.getNotNull(i), block, offset, elementLength));
                 offset += elementLength;
             }

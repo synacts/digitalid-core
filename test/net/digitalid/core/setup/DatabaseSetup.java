@@ -33,8 +33,13 @@ public class DatabaseSetup {
             case 2: Database.initialize(new SQLiteConfiguration(true), false); break;
             default: throw new SQLException("No such configuration available.");
         }
-        Class.forName(SemanticType.class.getName());
-        Database.commit();
+        try {
+            Database.lock();
+            Class.forName(SemanticType.class.getName());
+            Database.commit();
+        } finally {
+            Database.unlock();
+        }
     }
     
     @Test

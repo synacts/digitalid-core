@@ -47,7 +47,7 @@ import net.digitalid.core.interfaces.SQLizable;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public final class Block implements Immutable, SQLizable {
+public final class Block implements Immutable, SQLizable, Cloneable {
     
     /**
      * Returns the blockable instance as a block or null if the instance is null.
@@ -163,7 +163,7 @@ public final class Block implements Immutable, SQLizable {
      * 
      * @ensure isEncoded() : "This block is encoded.";
      */
-    public Block(@Nonnull SemanticType type, @Nonnull Block block) throws InvalidEncodingException {
+    public Block(@Nonnull SemanticType type, @Nonnull Block block) {
         this(type, block.ensureEncoded(), 0, block.getLength());
     }
     
@@ -179,16 +179,16 @@ public final class Block implements Immutable, SQLizable {
      * @require block.isEncoded() : "The given block is encoded.";
      * @require offset >= 0 : "The offset is not negative.";
      * @require length > 0 : "The length is positive.";
+     * @require offset + length <= block.getLength() : "The section fits into the given block.";
      * 
      * @ensure isEncoded() : "This block is encoded.";
      */
-    public Block(@Nonnull SemanticType type, @Nonnull Block block, int offset, int length) throws InvalidEncodingException {
+    public Block(@Nonnull SemanticType type, @Nonnull Block block, int offset, int length) {
         assert type.isLoaded() : "The type declaration is loaded.";
         assert block.isEncoded() : "The given block is encoded.";
         assert offset >= 0 : "The offset is not negative.";
         assert length > 0 : "The length is positive.";
-        
-        if (offset + length > block.getLength()) throw new InvalidEncodingException("The new block may not exceed the given block.");
+        assert offset + length <= block.getLength() : "The section fits into the given block.";
         
         this.type = type;
         this.bytes = block.bytes;
@@ -726,6 +726,12 @@ public final class Block implements Immutable, SQLizable {
         
         if (block == null) preparedStatement.setNull(parameterIndex, Types.BLOB);
         else block.set(preparedStatement, parameterIndex);
+    }
+    
+    @Pure
+    @Override
+    public @Nonnull Block clone() {
+        return new Block(type, this);
     }
     
     @Pure

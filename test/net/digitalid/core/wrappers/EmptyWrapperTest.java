@@ -16,7 +16,7 @@ public class EmptyWrapperTest extends DatabaseSetup {
     
     @Test
     public void testWrapping() throws InvalidEncodingException {
-        final @Nonnull SemanticType TYPE = SemanticType.create("empty@syntacts.com").load(EmptyWrapper.TYPE);
+        final @Nonnull SemanticType TYPE = SemanticType.create("empty@test.digitalid.net").load(EmptyWrapper.TYPE);
         new EmptyWrapper(new EmptyWrapper(TYPE).toBlock());
     }
     

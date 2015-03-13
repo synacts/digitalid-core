@@ -90,7 +90,7 @@ public final class AttributeModule implements BothModule {
     /**
      * Stores the semantic type {@code entry.value.attribute.module@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType VALUE_MODULE_ENTRY = SemanticType.create("entry.value.attribute.module@core.digitalid.net").load(TupleWrapper.TYPE, Identity.IDENTIFIER, SemanticType.ATTRIBUTE_IDENTIFIER, AttributeValue.PUBLISHED, AttributeValue.TYPE);
+    private static final @Nonnull SemanticType VALUE_MODULE_ENTRY = SemanticType.create("entry.value.attribute.module@core.digitalid.net").load(TupleWrapper.TYPE, Identity.IDENTIFIER, SemanticType.ATTRIBUTE_IDENTIFIER, Attribute.PUBLISHED, AttributeValue.TYPE);
     
     /**
      * Stores the semantic type {@code table.value.attribute.module@core.digitalid.net}.
@@ -134,7 +134,7 @@ public final class AttributeModule implements BothModule {
                     final @Nonnull Identity type = IdentityClass.getNotNull(resultSet, 2);
                     final boolean published = resultSet.getBoolean(3);
                     final @Nonnull Block value = Block.getNotNull(AttributeValue.TYPE, resultSet, 4);
-                    entries.add(new TupleWrapper(VALUE_MODULE_ENTRY, identity, type.toBlockable(SemanticType.ATTRIBUTE_IDENTIFIER), new BooleanWrapper(AttributeValue.PUBLISHED, published), value.toBlockable()).toBlock());
+                    entries.add(new TupleWrapper(VALUE_MODULE_ENTRY, identity, type.toBlockable(SemanticType.ATTRIBUTE_IDENTIFIER), new BooleanWrapper(Attribute.PUBLISHED, published), value.toBlockable()).toBlock());
                 }
                 tables.set(0, new ListWrapper(VALUE_MODULE_TABLE, entries.freeze()).toBlock());
             }
@@ -193,7 +193,7 @@ public final class AttributeModule implements BothModule {
     /**
      * Stores the semantic type {@code entry.value.attribute.state@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType VALUE_STATE_ENTRY = SemanticType.create("entry.value.attribute.state@core.digitalid.net").load(TupleWrapper.TYPE, SemanticType.ATTRIBUTE_IDENTIFIER, AttributeValue.PUBLISHED, AttributeValue.TYPE);
+    private static final @Nonnull SemanticType VALUE_STATE_ENTRY = SemanticType.create("entry.value.attribute.state@core.digitalid.net").load(TupleWrapper.TYPE, SemanticType.ATTRIBUTE_IDENTIFIER, Attribute.PUBLISHED, AttributeValue.TYPE);
     
     /**
      * Stores the semantic type {@code table.value.attribute.state@core.digitalid.net}.
@@ -237,7 +237,7 @@ public final class AttributeModule implements BothModule {
                     final @Nonnull Identity type = IdentityClass.getNotNull(resultSet, 1);
                     final boolean published = resultSet.getBoolean(2);
                     final @Nonnull Block value = Block.getNotNull(AttributeValue.TYPE, resultSet, 3);
-                    entries.add(new TupleWrapper(VALUE_STATE_ENTRY, type.toBlockable(SemanticType.ATTRIBUTE_IDENTIFIER), new BooleanWrapper(AttributeValue.PUBLISHED, published), value.toBlockable()).toBlock());
+                    entries.add(new TupleWrapper(VALUE_STATE_ENTRY, type.toBlockable(SemanticType.ATTRIBUTE_IDENTIFIER), new BooleanWrapper(Attribute.PUBLISHED, published), value.toBlockable()).toBlock());
                 }
                 tables.set(0, new ListWrapper(VALUE_STATE_TABLE, entries.freeze()).toBlock());
             }

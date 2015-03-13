@@ -57,7 +57,7 @@ public class DatabaseTest {
     public void _01_testKeyInsertWithStatement() throws SQLException {
         if (isSubclass()) {
             try (@Nonnull Statement statement = Database.createStatement()) {
-                Assert.assertEquals(1L, Database.executeInsert(statement, "INSERT INTO test_identity (category, address) VALUES (1, 'a@syntacts.com')"));
+                Assert.assertEquals(1L, Database.executeInsert(statement, "INSERT INTO test_identity (category, address) VALUES (1, 'a@test.digitalid.net')"));
             }
         }
     }
@@ -69,7 +69,7 @@ public class DatabaseTest {
             final @Nonnull String SQL = "INSERT INTO test_identity (category, address) VALUES (?, ?)";
             try (@Nonnull PreparedStatement preparedStatement = Database.prepareInsertStatement(SQL)) {
                 preparedStatement.setByte(1, (byte) 2);
-                preparedStatement.setString(2, "b@syntacts.com");
+                preparedStatement.setString(2, "b@test.digitalid.net");
                 preparedStatement.executeUpdate();
                 Assert.assertEquals(2L, Database.getGeneratedKey(preparedStatement));
             }
@@ -81,7 +81,7 @@ public class DatabaseTest {
     public void _03_testInsertWithForeignKeyConstraint() throws SQLException {
         if (isSubclass()) {
             try (@Nonnull Statement statement = Database.createStatement()) {
-                statement.executeUpdate("INSERT INTO test_identifier (identifier, identity, value) VALUES ('a@syntacts.com', 1, 3)");
+                statement.executeUpdate("INSERT INTO test_identifier (identifier, identity, value) VALUES ('a@test.digitalid.net', 1, 3)");
             }
         }
     }
@@ -91,17 +91,17 @@ public class DatabaseTest {
     public void _04_testLocalRollbackWithSavepoint() throws SQLException {
         if (isSubclass()) {
             try (@Nonnull Statement statement = Database.createStatement()) {
-                statement.executeUpdate("INSERT INTO test_identifier (identifier, identity, value) VALUES ('b@syntacts.com', 2, 4)");
+                statement.executeUpdate("INSERT INTO test_identifier (identifier, identity, value) VALUES ('b@test.digitalid.net', 2, 4)");
                 
                 final @Nullable Savepoint savepoint = Database.setSavepoint();
                 try {
-                    statement.executeUpdate("INSERT INTO test_identifier (identifier, identity, value) VALUES ('a@syntacts.com', 1, 5)");
+                    statement.executeUpdate("INSERT INTO test_identifier (identifier, identity, value) VALUES ('a@test.digitalid.net', 1, 5)");
                     Assert.fail("An SQLException should have been thrown because a duplicate key was inserted.");
                 } catch (SQLException exception) {
                     Database.rollback(savepoint);
                 }
                 
-                final @Nonnull ResultSet resultSet = statement.executeQuery("SELECT identity FROM test_identifier WHERE identifier = 'b@syntacts.com'");
+                final @Nonnull ResultSet resultSet = statement.executeQuery("SELECT identity FROM test_identifier WHERE identifier = 'b@test.digitalid.net'");
                 Assert.assertTrue(resultSet.next());
                 Assert.assertEquals(2L, resultSet.getLong(1));
             }
@@ -112,13 +112,13 @@ public class DatabaseTest {
     @NonCommitting
     public void _05_testOnInsertIgnore() throws SQLException {
         if (isSubclass()) {
-            final @Nonnull String SQL = "INSERT" + Database.getConfiguration().IGNORE() + " INTO test_identifier (identifier, identity, value) VALUES ('a@syntacts.com', 1, 6)";
+            final @Nonnull String SQL = "INSERT" + Database.getConfiguration().IGNORE() + " INTO test_identifier (identifier, identity, value) VALUES ('a@test.digitalid.net', 1, 6)";
             try (@Nonnull Statement statement = Database.createStatement()) {
                 Database.onInsertIgnore(statement, "test_identifier", "identifier");
                 Assert.assertEquals(0, statement.executeUpdate(SQL));
                 Database.onInsertNotIgnore(statement, "test_identifier");
                 
-                final @Nonnull ResultSet resultSet = statement.executeQuery("SELECT value FROM test_identifier WHERE identifier = 'a@syntacts.com'");
+                final @Nonnull ResultSet resultSet = statement.executeQuery("SELECT value FROM test_identifier WHERE identifier = 'a@test.digitalid.net'");
                 Assert.assertTrue(resultSet.next());
                 Assert.assertEquals(3L, resultSet.getLong(1));
             }
@@ -129,13 +129,13 @@ public class DatabaseTest {
     @NonCommitting
     public void _06_testOnInsertUpdate() throws SQLException {
         if (isSubclass()) {
-            final @Nonnull String SQL = Database.getConfiguration().REPLACE() + " INTO test_identifier (identifier, identity, value) VALUES ('a@syntacts.com', 1, 7)";
+            final @Nonnull String SQL = Database.getConfiguration().REPLACE() + " INTO test_identifier (identifier, identity, value) VALUES ('a@test.digitalid.net', 1, 7)";
             try (@Nonnull Statement statement = Database.createStatement()) {
                 Database.onInsertUpdate(statement, "test_identifier", 1, "identifier", "identity", "value");
                 statement.executeUpdate(SQL);
                 Database.onInsertNotUpdate(statement, "test_identifier");
                 
-                final @Nonnull ResultSet resultSet = statement.executeQuery("SELECT value FROM test_identifier WHERE identifier = 'a@syntacts.com'");
+                final @Nonnull ResultSet resultSet = statement.executeQuery("SELECT value FROM test_identifier WHERE identifier = 'a@test.digitalid.net'");
                 Assert.assertTrue(resultSet.next());
                 Assert.assertEquals(7L, resultSet.getLong(1));
             }
@@ -146,7 +146,7 @@ public class DatabaseTest {
     @NonCommitting
     public void _07_testSimpleJoin() throws SQLException {
         if (isSubclass()) {
-            final @Nonnull String SQL = "SELECT test_identity.category FROM test_identifier JOIN test_identity ON test_identifier.identity = test_identity.identity WHERE identifier = 'a@syntacts.com'";
+            final @Nonnull String SQL = "SELECT test_identity.category FROM test_identifier JOIN test_identity ON test_identifier.identity = test_identity.identity WHERE identifier = 'a@test.digitalid.net'";
             try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
                 Assert.assertTrue(resultSet.next());
                 Assert.assertEquals(1L, resultSet.getLong(1));
@@ -160,7 +160,7 @@ public class DatabaseTest {
         if (isSubclass()) {
             final @Nonnull String SQL = "SELECT identity FROM test_identity WHERE address = ";
             try (@Nonnull Statement statement1 = Database.createStatement(); @Nonnull Statement statement2 = Database.createStatement()) {
-                try (@Nonnull ResultSet resultSet1 = statement1.executeQuery(SQL + "'a@syntacts.com'"); @Nonnull ResultSet resultSet2 = statement2.executeQuery(SQL + "'b@syntacts.com'")) {
+                try (@Nonnull ResultSet resultSet1 = statement1.executeQuery(SQL + "'a@test.digitalid.net'"); @Nonnull ResultSet resultSet2 = statement2.executeQuery(SQL + "'b@test.digitalid.net'")) {
                     Assert.assertTrue(resultSet1.next());
                     Assert.assertEquals(1L, resultSet1.getLong(1));
                     Assert.assertTrue(resultSet2.next());
@@ -175,11 +175,11 @@ public class DatabaseTest {
     public void _09_testParallelUpdates() throws SQLException {
         if (isSubclass()) {
             try (@Nonnull Statement statement1 = Database.createStatement(); @Nonnull Statement statement2 = Database.createStatement()){
-                statement1.executeUpdate("UPDATE test_identity SET category = 3 WHERE address = 'a@syntacts.com'");
-                final @Nonnull ResultSet resultSet1 = statement1.executeQuery("SELECT category FROM test_identity WHERE address = 'a@syntacts.com'");
+                statement1.executeUpdate("UPDATE test_identity SET category = 3 WHERE address = 'a@test.digitalid.net'");
+                final @Nonnull ResultSet resultSet1 = statement1.executeQuery("SELECT category FROM test_identity WHERE address = 'a@test.digitalid.net'");
                 
-                statement2.executeUpdate("UPDATE test_identity SET category = 4 WHERE address = 'b@syntacts.com'");
-                final @Nonnull ResultSet resultSet2 = statement2.executeQuery("SELECT category FROM test_identity WHERE address = 'b@syntacts.com'");
+                statement2.executeUpdate("UPDATE test_identity SET category = 4 WHERE address = 'b@test.digitalid.net'");
+                final @Nonnull ResultSet resultSet2 = statement2.executeQuery("SELECT category FROM test_identity WHERE address = 'b@test.digitalid.net'");
                 
                 Assert.assertTrue(resultSet1.next());
                 Assert.assertEquals(3, resultSet1.getByte(1));
@@ -209,9 +209,9 @@ public class DatabaseTest {
     @NonCommitting
     public void _11_testHandlingBlocks() throws SQLException, InvalidEncodingException {
         if (isSubclass()) {
-            final @Nonnull SemanticType STRING1 = SemanticType.create("string1.tuple@syntacts.com").load(StringWrapper.TYPE);
-            final @Nonnull SemanticType STRING2 = SemanticType.create("string2.tuple@syntacts.com").load(StringWrapper.TYPE);
-            final @Nonnull SemanticType TUPLE = SemanticType.create("tuple@syntacts.com").load(TupleWrapper.TYPE, STRING1, STRING2);
+            final @Nonnull SemanticType STRING1 = SemanticType.create("string1.tuple@test.digitalid.net").load(StringWrapper.TYPE);
+            final @Nonnull SemanticType STRING2 = SemanticType.create("string2.tuple@test.digitalid.net").load(StringWrapper.TYPE);
+            final @Nonnull SemanticType TUPLE = SemanticType.create("tuple@test.digitalid.net").load(TupleWrapper.TYPE, STRING1, STRING2);
             
             final @Nonnull String string1 = "Hello";
             final @Nonnull String string2 = "World";

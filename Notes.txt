@@ -49,3 +49,4 @@ Required changes:
 – Remove all the dispensable methods like isNotFrozen, isNotEmpty, etc.
 – Name all the freezable classes so (e.g. FreezableContacts instead of just Contacts).
 – Make the indexing of instances part of the concept (or even instance) class (because roles need it as well)? Might be difficult due to all the special rules. [Introduce a class Indexable between Instance and its subclasses?]
+– Replace all the public constructors with get() methods.

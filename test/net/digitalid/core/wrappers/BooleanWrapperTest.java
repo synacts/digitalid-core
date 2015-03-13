@@ -17,7 +17,7 @@ public final class BooleanWrapperTest extends DatabaseSetup {
     
     @Test
     public void testWrapping() throws InvalidEncodingException {
-        final @Nonnull SemanticType TYPE = SemanticType.create("boolean@syntacts.com").load(BooleanWrapper.TYPE);
+        final @Nonnull SemanticType TYPE = SemanticType.create("boolean@test.digitalid.net").load(BooleanWrapper.TYPE);
         final boolean[] values = new boolean[] {true, false};
         for (final boolean value : values) {
             Assert.assertEquals(value, new BooleanWrapper(new BooleanWrapper(TYPE, value).toBlock()).getValue());
