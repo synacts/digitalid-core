@@ -68,3 +68,74 @@ PacketException thrown by net.digitalid.core.packet.Packet.<init>(Packet.java:20
 Caused by: InactiveSignatureException thrown by net.digitalid.core.wrappers.CredentialsSignatureWrapper.checkRecency(CredentialsSignatureWrapper.java:496): One of the credentials is older than an hour.
         at net.digitalid.core.wrappers.CredentialsSignatureWrapper.checkRecency(CredentialsSignatureWrapper.java:496)
         ... 6 more
+
+
+[2015-03-14 From the screen command on the server.]
+com.mysql.jdbc.exceptions.jdbc4.MySQLTransactionRollbackException: Deadlock found when trying to get lock; try restarting transaction
+        at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+        at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:57)
+        at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)
+        at java.lang.reflect.Constructor.newInstance(Constructor.java:526)
+        at com.mysql.jdbc.Util.handleNewInstance(Util.java:377)
+        at com.mysql.jdbc.Util.getInstance(Util.java:360)
+        at com.mysql.jdbc.SQLError.createSQLException(SQLError.java:985)
+        at com.mysql.jdbc.MysqlIO.checkErrorPacket(MysqlIO.java:3887)
+        at com.mysql.jdbc.MysqlIO.checkErrorPacket(MysqlIO.java:3823)
+        at com.mysql.jdbc.MysqlIO.sendCommand(MysqlIO.java:2435)
+        at com.mysql.jdbc.MysqlIO.sqlQueryDirect(MysqlIO.java:2582)
+        at com.mysql.jdbc.ConnectionImpl.execSQL(ConnectionImpl.java:2526)
+        at com.mysql.jdbc.ConnectionImpl.execSQL(ConnectionImpl.java:2484)
+        at com.mysql.jdbc.StatementImpl.executeQuery(StatementImpl.java:1446)
+        at net.digitalid.core.synchronizer.ActionModule.getAudit(ActionModule.java:234)
+        at net.digitalid.core.server.Worker.run(Worker.java:129)
+        at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+        at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:615)
+        at java.lang.Thread.run(Thread.java:745)
+PacketException thrown by net.digitalid.core.server.Worker.run(Worker.java:138): (Internal) An SQLException occurred. [MySQLTransactionRollbackException thrown by sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method): Deadlock found when trying to get lock; try restarting transaction]
+        at net.digitalid.core.server.Worker.run(Worker.java:138)
+        at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+        at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:615)
+        at java.lang.Thread.run(Thread.java:745)
+Caused by: com.mysql.jdbc.exceptions.jdbc4.MySQLTransactionRollbackException: Deadlock found when trying to get lock; try restarting transaction
+        at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+        at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:57)
+        at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)
+        at java.lang.reflect.Constructor.newInstance(Constructor.java:526)
+        at com.mysql.jdbc.Util.handleNewInstance(Util.java:377)
+        at com.mysql.jdbc.Util.getInstance(Util.java:360)
+        at com.mysql.jdbc.SQLError.createSQLException(SQLError.java:985)
+        at com.mysql.jdbc.MysqlIO.checkErrorPacket(MysqlIO.java:3887)
+        at com.mysql.jdbc.MysqlIO.checkErrorPacket(MysqlIO.java:3823)
+        at com.mysql.jdbc.MysqlIO.sendCommand(MysqlIO.java:2435)
+        at com.mysql.jdbc.MysqlIO.sqlQueryDirect(MysqlIO.java:2582)
+        at com.mysql.jdbc.ConnectionImpl.execSQL(ConnectionImpl.java:2526)
+        at com.mysql.jdbc.ConnectionImpl.execSQL(ConnectionImpl.java:2484)
+        at com.mysql.jdbc.StatementImpl.executeQuery(StatementImpl.java:1446)
+        at net.digitalid.core.synchronizer.ActionModule.getAudit(ActionModule.java:234)
+        at net.digitalid.core.server.Worker.run(Worker.java:129)
+        ... 3 more
+
+Caused by: com.mysql.jdbc.exceptions.jdbc4.CommunicationsException: The last packet successfully received from the server was 54,282,580 milliseconds ago.  The last packet sent successfully to the server was 54,282,614 milliseconds ago. is longer than the server configured value of 'wait_timeout'. You should consider either expiring and/or testing connection validity before use in your application, increasing the server configured values for client timeouts, or using the Connector/J connection property 'autoReconnect=true' to avoid this problem.
+        at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+        at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:57)
+        at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)
+        at java.lang.reflect.Constructor.newInstance(Constructor.java:526)
+        at com.mysql.jdbc.Util.handleNewInstance(Util.java:377)
+        at com.mysql.jdbc.SQLError.createCommunicationsException(SQLError.java:1036)
+        at com.mysql.jdbc.MysqlIO.send(MysqlIO.java:3661)
+        at com.mysql.jdbc.MysqlIO.sendCommand(MysqlIO.java:2417)
+        at com.mysql.jdbc.MysqlIO.sqlQueryDirect(MysqlIO.java:2582)
+        at com.mysql.jdbc.ConnectionImpl.execSQL(ConnectionImpl.java:2526)
+        at com.mysql.jdbc.ConnectionImpl.execSQL(ConnectionImpl.java:2484)
+        at com.mysql.jdbc.StatementImpl.executeQuery(StatementImpl.java:1446)
+        at com.mysql.jdbc.ConnectionImpl.isReadOnly(ConnectionImpl.java:3601)
+        ... 11 more
+Caused by: java.net.SocketException: Broken pipe
+        at java.net.SocketOutputStream.socketWrite0(Native Method)
+        at java.net.SocketOutputStream.socketWrite(SocketOutputStream.java:113)
+        at java.net.SocketOutputStream.write(SocketOutputStream.java:159)
+        at java.io.BufferedOutputStream.flushBuffer(BufferedOutputStream.java:82)
+        at java.io.BufferedOutputStream.flush(BufferedOutputStream.java:140)
+        at com.mysql.jdbc.MysqlIO.send(MysqlIO.java:3643)
+        ... 17 more
+
