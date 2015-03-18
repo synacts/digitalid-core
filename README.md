@@ -48,7 +48,7 @@ Digital ID is a protocol that constitutes an identity layer for the Internet and
 
 ## Bundles
 
-The reference implementation is available for [downlaod](https://www.digitalid.net/downloads/) in three different bundles:
+The reference implementation is available for [download](https://www.digitalid.net/downloads/) in three different bundles:
 - **[DigitalID.jar](https://www.digitalid.net/downloads/DigitalID.jar)** (1 MB): Contains only the class files of the core protocol. The libraries have to be provided separately.
 - **[DigitalID-Server.jar](https://www.digitalid.net/downloads/DigitalID-Server.jar)** (7 MB): Includes all the libraries that are required to run the implementation as a server. (Besides non-null annotations and custom taglets, this bundle contains the [MySQL](http://www.mysql.com), [PostgreSQL](http://www.postgresql.org) and [SQLite](http://www.sqlite.org) [JDBC](http://www.oracle.com/technetwork/java/overview-141217.html) drivers.)
 - **[DigitalID-Client.jar](https://www.digitalid.net/downloads/DigitalID-Client.jar)** (5 MB): Includes all the libraries that are required for the development of applications. (This bundle contains non-null annotations, custom taglets and the [SQLite](http://www.sqlite.org) [JDBC](http://www.oracle.com/technetwork/java/overview-141217.html) driver.)
@@ -257,7 +257,7 @@ Contacts are references to other digital identities and can be handled efficient
 
 #### Clients and Roles
 
-Being just a protocol without a user interface, Digital ID can only be accessed by [clients](#architecture). You accredit clients to manage your identity and to assume your identity towards other identities. Their authorization can be restricted regarding the contexts and attributes that they can read and request from contacts. You can also authorize other digital identites to act in a similarly restricted role on your behalf, which is especially useful in case of artificial persons.
+Being just a protocol without a user interface, Digital ID can only be accessed by [clients](#architecture). You accredit clients to manage your identity and to assume your identity towards other identities. Their authorization can be restricted regarding the contexts and attributes that they can read and request from contacts. You can also authorize other digital identities to act in a similarly restricted role on your behalf, which is especially useful in case of artificial persons.
 
 ### Protocol
 
@@ -285,7 +285,7 @@ You find the [Javadoc](http://en.wikipedia.org/wiki/Javadoc) of all public class
 
 The current version of the Digital ID reference implementation is 0.6. The following features are planned for future releases:
 - **0.7**: Make the library more consistent and easy to use. Implement a uniform mechanism to change and observe properties of concepts, which includes modifications to the database modules. Improve the error handling and logging.
-- **0.8**: Implement the action pusher (which is required for access requests and role issuances) and the certificaton module (so that the public keys of other hosts can be certified). Also support the shortening of credentials.
+- **0.8**: Implement the action pusher (which is required for access requests and role issuances) and the certification module (so that the public keys of other hosts can be certified). Also support the shortening of credentials.
 - **0.9**: Implement the contacts and contexts modules, including their authentications and permissions. Support context-based access requests and role issuances, including an own database module to handle the read receipts.
 - **1.0**: Implement the tokens, errors and members modules. Implement the remaining console options. Do extensive integration testing of various features like relocation, merging, exporting and importing of hosts, etc.
 
@@ -296,7 +296,7 @@ The reference implementation was written by:
 
 ## Contact
 
-Don not hesitate to contact us at:
+Do not hesitate to contact us at:
 - Information: info@digitalid.net
 - Support: help@digitalid.net
 
