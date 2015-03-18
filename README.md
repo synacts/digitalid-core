@@ -26,9 +26,11 @@
   - [Attributes and Certificates](#attributes-and-certificates)
   - [Contacts and Contexts](#contacts-and-contexts)
   - [Clients and Roles](#clients-and-roles)
-- [Architecture](#architecture)
-- [Cryptography](#cryptography)
-- [Synchronization](#synchronization)
+- [Protocol](#protocol)
+  - [Architecture](#architecture)
+  - [Cryptography](#cryptography)
+  - [Synchronization](#synchronization)
+- [Services](#services)
 
 **[Documentation](#documentation)**
 
@@ -243,27 +245,37 @@ The following sections give you a short overview of the most important concepts 
 
 #### Digital Identities
 
-Users – natural and artificial persons alike – choose a trusted server to host their digital identity. Every digital identity has a globally dereferenceable identifier that consists of the host address and a user name. The host stores for each virtual identity its attributes and certificates, contacts and contexts, clients and roles.
+Users – natural and artificial persons alike – choose a trusted server to host their digital identity. Every digital identity has a globally dereferenceable identifier that consists of a user name and the host address, which are combined by an '@' like email addresses (e.g. user@example.com). The host stores for each digital identity its [attributes and certificates](#attributes-and-certificates), [contacts and contexts](#contacts-and-contexts), and [clients and roles](#clients-and-roles).
 
 #### Attributes and Certificates
 
-Attributes are name-value pairs that are associated with a VID. Each attribute has an access policy that determines its visibility towards other virtual identities. The attribute type specifies the format and the semantics of the given value.
-Authorities can confirm the correctness of attributes. This does not only increase their credibility, but certificates can also be used for attribute-based access control.
+Attributes are name-value pairs that are associated with a digital identity. Each attribute has an access policy that determines its visibility towards other digital identities. The attribute type specifies the format and the semantics of the given value but also the attribute-specific caching period. Authorities can confirm the correctness of an attribute by issuing a certificate. This does not only increase the credibility of the attribute, but certificates can also be used for attribute-based access control in the form of [credentials](#cryptography).
 
 #### Contacts and Contexts
 
-Contacts are references to other VIDs and can be handled efficiently by means of hierarchical contexts. The contact relation is asymmetric and private (i.e. without notification).
+Contacts are references to other digital identities and can be handled efficiently by means of hierarchical contexts. The contact relation is asymmetric and private (i.e. the other person is not notified unless this is desired). Contexts can be used to address several contacts at once but also to simplify access control for resources like attributes. You also specify on a context-level how requests to its contacts should be authenticated (i.e. whether to sign it with your identity, one or several attribute credentials or not at all).
 
 #### Clients and Roles
 
-Being just a protocol without a user interface, Virtual ID can only be accessed by clients. You accredit clients to manage your VID and to assume your VID towards others VIDs. Their authorization can be restricted regarding the contexts and attributes that they can read or request from contacts.
-You can authorize other VIDs to act in a limited role on your behalf, which is especially useful in case of artificial persons.
+Being just a protocol without a user interface, Digital ID can only be accessed by [clients](#architecture). You accredit clients to manage your identity and to assume your identity towards other identities. Their authorization can be restricted regarding the contexts and attributes that they can read and request from contacts. You can also authorize other digital identites to act in a similarly restricted role on your behalf, which is especially useful in case of artificial persons.
 
-### Architecture
+### Protocol
 
-### Cryptography
+#### Architecture
 
-### Synchronization
+The architecture of Digital ID is quite similar to email, it also follows a decentralized [client-server model](https://en.wikipedia.org/wiki/Client–server_model). The same server can accommodate several hosts, each being denoted by a different [domain name](#domain-name). The recipient of a request is always a host, which returns a response to the requester before the [TCP](https://en.wikipedia.org/wiki/Transmission_Control_Protocol) connection is being closed.
+
+#### Cryptography
+
+Every host has a public key that has to be certified. [Patria Digitalis](http://www.pd.coop) is responsible for the administration of this public key infrastructure. Hosts sign certificates and responses with 1536-bit [RSA](https://en.wikipedia.org/wiki/RSA_(cryptosystem)) (this value will be increased to 2048-bit before public deployment). All communication is encrypted with 192-bit [AES](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard), whereby the AES symmetric key is encrypted with the RSA public key of the host. Clients commit to their 256-bit secret and sign the requests to the host at which they are accredited using the [Schnorr scheme](https://en.wikipedia.org/wiki/Schnorr_signature). A client can request an [anonymous credential](https://en.wikipedia.org/wiki/Digital_credential#Anonymous) from its host based on the [Camenisch-Lysyanskaya system](https://eprint.iacr.org/2001/019.pdf), which can be used for unlinkable authentication.
+
+#### Synchronization
+
+Each client has to make sure that it stays in synchronization with the state of the digital identity for which it is accredited. In order to retrieve the current *state*, it sends a *query* to its host and gets a *reply* in return. Afterwards, the *state* is modified through *actions*, which are *audited* by the host. A client can then request the audit of all actions since its last contact with the host and execute those on the local state as well. As clients can be [restricted](#clients-and-roles), the host returns only the actions whose effects are visible for the client, of course.
+
+### Services
+
+In its essence, Digital ID is just a distributed address book that functions as a lookup layer for clients. (Think of it as a Domain Name System for personal information.) Anyone can extend Digital ID by specifying new attribute types that link to independent services. A host that provides such a service can be fully integrated into the system by being accredited as a client at the user’s digital identity. The functionality of Digital ID’s core is deliberately kept to a minimum, since – unlike other services – it can no longer be replaced later on.
 
 ## Documentation
 
@@ -271,7 +283,7 @@ You find the [Javadoc](http://en.wikipedia.org/wiki/Javadoc) of all public class
 
 ## Roadmap
 
-The current version of the Digital ID reference implementation is 0.6. The following features are planned for major future releases:
+The current version of the Digital ID reference implementation is 0.6. The following features are planned for future releases:
 - **0.7**: Make the library more consistent and easy to use. Implement a uniform mechanism to change and observe properties of concepts, which includes modifications to the database modules. Improve the error handling and logging.
 - **0.8**: Implement the action pusher (which is required for access requests and role issuances) and the certificaton module (so that the public keys of other hosts can be certified). Also support the shortening of credentials.
 - **0.9**: Implement the contacts and contexts modules, including their authentications and permissions. Support context-based access requests and role issuances, including an own database module to handle the read receipts.
