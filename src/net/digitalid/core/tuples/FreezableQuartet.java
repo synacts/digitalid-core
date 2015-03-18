@@ -26,7 +26,7 @@ public class FreezableQuartet<E0, E1, E2, E3> extends FreezableTriplet<E0, E1, E
      * @param element0 the first element of this tuple.
      * @param element1 the second element of this tuple.
      * @param element2 the third element of this tuple.
-     * @param element2 the fourth element of this tuple.
+     * @param element3 the fourth element of this tuple.
      */
     public FreezableQuartet(E0 element0, E1 element1, E2 element2, E3 element3) {
         super(element0, element1, element2);

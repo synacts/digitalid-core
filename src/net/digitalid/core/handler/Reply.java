@@ -34,7 +34,7 @@ import net.digitalid.core.wrappers.SelfcontainedWrapper;
 import net.digitalid.core.wrappers.SignatureWrapper;
 
 /**
- * This class models replies to {@link Method methods} and {@link #store(ch.xdf.HostSignatureWrapper) stores} them in the {@link Database database}.
+ * This class models replies to {@link Method methods} and stores them in the {@link Database database}.
  * All replies have to extend this class and {@link #add(net.digitalid.core.identity.SemanticType, net.digitalid.core.handler.Reply.Factory) register} themselves as handlers.
  * 
  * @invariant !hasSignature() || getSignature() instanceof HostSignatureWrapper : "If this reply has a signature, it is signed by a host.";

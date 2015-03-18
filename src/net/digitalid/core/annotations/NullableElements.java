@@ -11,7 +11,7 @@ import java.util.Collection;
  * This annotation indicates that the elements of a {@link Collection collection} are {@link Nullable nullable}.
  * (This annotation is only necessary until the source code can be transitioned to Java 1.8 with its type annotations).
  * 
- * @see ElementsNonNullable
+ * @see NonNullableElements
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0

@@ -409,7 +409,7 @@ public class Client extends Site implements Observer {
     
     /**
      * Accredits this client at the given identity.
-     * Loop on {@link NativeRole#reloadOrRefreshState()} afterwards.
+     * Loop on {@link Role#reloadOrRefreshState(net.digitalid.core.service.Service...)} afterwards.
      * 
      * @param identity the identity at which this client is to be accredited.
      * @param password the password for accreditation at the given identity.

@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
  * can be transitioned to Java 1.8 with type annotations).
  * 
  * @see NonNullable
- * @see ElementsNullable
+ * @see NullableElements
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
