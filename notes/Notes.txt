@@ -25,7 +25,7 @@ ReadOnlyIndexedProperty with @Nonnull getValue(key) and @Nonnull getValues() –
 Also ReadOnlyOrderedProperty for things like subcontexts? Depends on their implementation
 
 => ReadOnly...Property and ...Property are the same classes with the change methods only having package-level visibility so that the generic internal action can access them.
-=> No! But this trick might make sense for the ...ConceptProperty classes and the @OnlyForActions method.
+=> No! But this trick might make sense for the ...ConceptProperty classes and the @OnlyForActions method. (This annotation might no longer be necessary afterwards.)
 
 => ExtensiblePropertyInternalAction, etc. as names for the generic actions?
 
@@ -35,6 +35,8 @@ Instance with notifyOnDeletion(Observer)
 Table class with reference to its module, a name and the type of the stored value, an instance of which is created statically and creates the necessary semantic types for the value change.
 The table has to provide factory methods to create the value both from SQL and from a block (needed for decoding the value change internal action).
 Differentiate between extensible tables (that also extend the primary key) and replaceable tables. The latter for both nullable and non-nullabe values.
+
+Include the time when a property was changed or a value was added in the database?
 
 Required changes:
 – Make the Concepts class Blockable.
@@ -49,4 +51,6 @@ Required changes:
 – Remove all the dispensable methods like isNotFrozen, isNotEmpty, etc.
 – Name all the freezable classes so (e.g. FreezableContacts instead of just Contacts).
 – Make the indexing of instances part of the concept (or even instance) class (because roles need it as well)? Might be difficult due to all the special rules. [Introduce a class Indexable between Instance and its subclasses?]
-– Replace all the public constructors with get() methods.
+– Replace all the public constructors with get() methods (or rather getNullable() and getNonNullable() methods).
+– In case of the wrappers, introduce methods like encodeNullable(), encodeNonNullable(), decodeNullable() and decodeNonNullable?
+– In case of SQLizable, only use a static method set()? Or rather setNullable() and setNonNullable() though the information is lost anyway?

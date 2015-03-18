@@ -1,5 +1,37 @@
 # Digital ID Reference Implementation
 
+## Contents
+
+**[Abstract](#abstract)**
+**[Bundles](#bundles)**
+**[Usage](#usage)**
+- [Server](#server)
+  - [Requirements](#requirements)
+  - [Setup](#setup)
+- [Library](#library)
+  - [Classpath Setup](#classpath-setup)
+  - [Role Creation](#role-creation)
+  - [Concept Retrieval](#concept-retrieval)
+  - [Attribute Caching](#attribute-caching)
+  - [Block Wrapping](#block-wrapping)
+  - [Event Listening](#event-listening)
+  - [Database Locking](#database-locking)
+  - [Other Annotations](#other-annotations)
+**[Overview](#overview)**
+- [Concepts](#concepts)
+  - [Digital Identities](#digital-identities)
+  - [Attributes and Certificates](#attributes-and-certificates)
+  - [Contacts and Contexts](#contacts-and-contexts)
+  - [Clients and Roles](#clients-and-roles)
+- [Architecture](#architecture)
+- [Cryptography](#cryptography)
+- [Synchronization](#synchronization)
+**[Documentation](#documentation)**
+**[Roadmap](#roadmap)**
+**[Authors](#authors)**
+**[Contact](#contact)**
+**[License](#license)**
+
 ## Abstract
 
 Digital ID is a protocol that constitutes an identity layer for the Internet and a semantic alternative to the World Wide Web. It allows you to prove your identity towards others and to look up attributes of others in a decentralized manner. Being freely extensible with services, Digital ID aims to supersede proprietary platforms by establishing a framework of open standards.
@@ -90,37 +122,110 @@ All you have to do to deinstall Digital ID, is to delete the folder `~/.DigitalI
 
 ### Library
 
-#### Setup
+#### Classpath Setup
 
 In order to use the Digital ID reference implementation as a library, download [DigitalID-Client.jar](https://www.digitalid.net/downloads/DigitalID-Client.jar) and add it to the classpath of your favorite [IDE](https://en.wikipedia.org/wiki/Integrated_development_environment).
 
-#### Roles
+#### Role Creation
 
 All the actions and queries are performed on [roles](#clients-and-roles). It is easy to create a new [identity](#digital-identities) and get the so-called native role for it:
 
 ```java
-final @Nonnull NativeRole role = Main.getClient().openAccount(identifier, Category.NATURAL_PERSON);
+final @Nonnull Client client = new Client("client_identifier", "Client Name", Image.CLIENT, AgentPermissions.GENERAL_WRITE);
+final @Nonnull InternalNonHostIdentifier identifier = new InternalNonHostIdentifier("user@example.com");
+final @Nonnull NativeRole role = client.openAccount(identifier, Category.NATURAL_PERSON);
 ```
 
-#### Concepts
-
-
-
-#### Locking
-
-Due to concurrency of the synchronization process, ...
-
-#### Annotations
-
-#### Event Handling
-
-Currently, you can observe concepts for certain aspects and be notified when a value changes:
+Instead of creating a new identity, you can also request accreditation for an existing identity:
 
 ```java
-Code
+final @Nonnull Client client = new Client("client_identifier", "Client Name", Image.CLIENT, AgentPermissions.GENERAL_WRITE);
+final @Nonnull InternalNonHostIdentifier identifier = new InternalNonHostIdentifier("user@example.com");
+final @Nonnull InternalNonHostIdentity identity = identifier.getIdentity();
+final @Nonnull NativeRole role = client.accredit(identity, "password");
+```
+
+#### Concept Retrieval
+
+Once you have such a role, it is easy to retrieve a [concept](#concepts) of that role like an [attribute](#attributes-and-certificates) or a [context](#contacts-and-contexts):
+
+```java
+final @Nonnull Attribute attribute = Attribute.get(role, AttributeType.NAME);
+final @Nonnull Context context = Context.getRoot(role); // Subcontexts are not yet supported.
+```
+
+#### Attribute Caching
+
+The [attributes](#attributes-and-certificates) of other [identities](#digital-identities) are cached locally and can be retrieved as follows:
+
+```java
+final @Nonnull InternalNonHostIdentifier identifier = new InternalNonHostIdentifier("friend@example.com");
+final @Nonnull Block block = Cache.getFreshAttributeContent(identifier.getIdentity(), role, AttributeType.NAME, false);
+```
+
+#### Block Wrapping
+
+Digital ID uses an own encoding which is called the Extensible Data Format (XDF). Values are wrapped into blocks and can be unwrapped as follows:
+
+```java
+final @Nonnull String string = new StringWrapper(block).getString(); // Decoding
+final @Nonnull Block block = new StringWrapper(AttributeType.NAME, string).toBlock(); // Encoding
+```
+
+Please note that the syntax might change in a [future release](#roadmap).
+
+#### Event Listening
+
+Currently, you can observe [concepts](#concepts) for certain aspects and be notified when a value changes:
+
+```java
+attribute.observe(this, Attribute.VALUE, Attribute.VISIBILITY, Attribute.RESET); // Adding this object as a listener
+attribute.unobserve(this, Attribute.VALUE, Attribute.VISIBILITY, Attribute.RESET); // Removing this object as a listener
+```
+
+In order for this to work, the class of this object needs to implement the Observer interface as follows:
+
+```java
+class Example implements Observer {
+    @Override
+    public void notify(@Nonnull Aspect aspect, @Nonnull Instance instance) {
+		if (aspect == Attribute.VALUE || aspect == Attribute.RESET) {
+            // Do with the instance whose value changed or was reset whatever you want here.
+        }
+    }
+}
 ```
 
 However, this mechanism will be replaced by a [JavaFX-like](http://docs.oracle.com/javafx/2/binding/jfxpub-binding.htm) property paradigm in a [future release](#roadmap).
+
+#### Database Locking
+
+As the [synchronization](#synchronization) of actions is handled concurrently by separate threads and the locking of SQLite is very primitive, it needs to be done in the client code. Make sure that you **always** acquire the lock before accessing the database as follows:
+
+```java
+try {
+    Database.lock();
+    // Access the database.
+	Database.commit();
+} catch (@Nonnull SQLException exception) {
+    // Handle the error here.
+    Database.rollback();
+} finally {
+    Database.unlock();
+}
+```
+
+Whether the database is accessed by a method or its called methods is indicated by the annotations `@Committing` and `@NonCommitting`. As their names suggest, they also declare whether the current transaction is committed by the method or not, which might not be desirable if the whole transaction should be rolled back on failure. Moreover, a method that is declared to be `@Committing` guarantees that the transaction is in a committed (or rolled back) state when the method is left without throwing an exception. If the last method in the try-block is committing, then the explicit commit at its end can be omitted.
+
+Furthermore, methods usually indicate whether they expect the database to be locked already (with `@Locked`) or whether this may not be the case in order to prevent deadlocks (with `@NonLocked`). In all other cases (i.e. where the method is `@Committing` or `@NonCommitting` but does not require a certain locking state), the method handles the locking itself. (Please note that the lock is re-entrant for the thread that currently holds it so it does not matter whether the lock is already held or not.)
+
+#### Other Annotations
+
+You find dozens more annotations in the package `net.digitalid.core.annotations`, which should largely be self-explanatory with their corresponding [documentation](#documentation). A design pattern that is used so extensively throughout the code so that it is worth to be mentioned here is `Freezable`. Objects that implement this interface can be changed until you `freeze()` them. From that point onwards they are immutable and can be shared among objects and threads without running into consistency problems. As you would expect by now, there are annotations to indicate whether the object denoted by a variable or parameter is `@Frozen` or `@NonFrozen`. Independent of their freezing state, such objects can be exposed through a `Readonly` interface (that only includes the methods that are `@Pure`).
+
+#### Code Debugging
+
+The reference implementation loosely follows the [design by contract](https://en.wikipedia.org/wiki/Design_by_contract) methodology. You can have the contracts checked by enabling assertions with `java -enableassertions -jar DigitalID-Client.jar ...` or `java -ea -jar DigitalID-Client.jar ...` for short, which is highly recommended during debugging.
 
 ## Overview
 
@@ -140,6 +245,8 @@ What you need to know.
 
 ### Cryptography
 
+### Synchronization
+
 ## Documentation
 
 Where to find more detailed instructions: www.digitalid.net
@@ -150,13 +257,15 @@ Which features will be released in which version.
 
 ## Authors
 
+The reference implementation was written by:
 - Kaspar Etter (kaspar.etter@digitalid.net)
 
 ## Contact
 
+Don not hesitate to contact us at:
 - Information: info@digitalid.net
 - Support: help@digitalid.net
 
 ## License
 
-All rights reserved. The code will be available under an open-source/commercial double-license later on.
+All rights reserved. The code will be published under an open-source/commercial double-license later on.
