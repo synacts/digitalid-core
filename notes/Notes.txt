@@ -51,6 +51,6 @@ Required changes:
 – Remove all the dispensable methods like isNotFrozen, isNotEmpty, etc.
 – Name all the freezable classes so (e.g. FreezableContacts instead of just Contacts).
 – Make the indexing of instances part of the concept (or even instance) class (because roles need it as well)? Might be difficult due to all the special rules. [Introduce a class Indexable between Instance and its subclasses?]
-– Replace all the public constructors with get() methods (or rather getNullable() and getNonNullable() methods).
-– In case of the wrappers, introduce methods like encodeNullable(), encodeNonNullable(), decodeNullable() and decodeNonNullable?
+– Replace all the public constructors with static get() methods (or rather getNullable() and getNonNullable() methods).
+– In case of the wrappers, introduce static methods like encodeNullable(), encodeNonNullable(), decodeNullable() and decodeNonNullable?
 – In case of SQLizable, only use a static method set()? Or rather setNullable() and setNonNullable() though the information is lost anyway?

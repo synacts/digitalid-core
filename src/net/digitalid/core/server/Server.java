@@ -48,7 +48,7 @@ public final class Server {
     /**
      * Stores the date of the Digital ID implementation.
      */
-    public static final @Nonnull String DATE = "25 February 2015";
+    public static final @Nonnull String DATE = "18 March 2015";
     
     /**
      * Stores the authors of the Digital ID implementation.

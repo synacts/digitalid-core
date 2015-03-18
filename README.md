@@ -3,7 +3,9 @@
 ## Contents
 
 **[Abstract](#abstract)**
+
 **[Bundles](#bundles)**
+
 **[Usage](#usage)**
 - [Server](#server)
   - [Requirements](#requirements)
@@ -17,6 +19,7 @@
   - [Event Listening](#event-listening)
   - [Database Locking](#database-locking)
   - [Other Annotations](#other-annotations)
+
 **[Overview](#overview)**
 - [Concepts](#concepts)
   - [Digital Identities](#digital-identities)
@@ -26,10 +29,15 @@
 - [Architecture](#architecture)
 - [Cryptography](#cryptography)
 - [Synchronization](#synchronization)
+
 **[Documentation](#documentation)**
+
 **[Roadmap](#roadmap)**
+
 **[Authors](#authors)**
+
 **[Contact](#contact)**
+
 **[License](#license)**
 
 ## Abstract
@@ -229,17 +237,27 @@ The reference implementation loosely follows the [design by contract](https://en
 
 ## Overview
 
-What you need to know.
+The following sections give you a short overview of the most important concepts and principles of Digital ID.
 
 ### Concepts
 
 #### Digital Identities
 
+Users – natural and artificial persons alike – choose a trusted server to host their digital identity. Every digital identity has a globally dereferenceable identifier that consists of the host address and a user name. The host stores for each virtual identity its attributes and certificates, contacts and contexts, clients and roles.
+
 #### Attributes and Certificates
+
+Attributes are name-value pairs that are associated with a VID. Each attribute has an access policy that determines its visibility towards other virtual identities. The attribute type specifies the format and the semantics of the given value.
+Authorities can confirm the correctness of attributes. This does not only increase their credibility, but certificates can also be used for attribute-based access control.
 
 #### Contacts and Contexts
 
+Contacts are references to other VIDs and can be handled efficiently by means of hierarchical contexts. The contact relation is asymmetric and private (i.e. without notification).
+
 #### Clients and Roles
+
+Being just a protocol without a user interface, Virtual ID can only be accessed by clients. You accredit clients to manage your VID and to assume your VID towards others VIDs. Their authorization can be restricted regarding the contexts and attributes that they can read or request from contacts.
+You can authorize other VIDs to act in a limited role on your behalf, which is especially useful in case of artificial persons.
 
 ### Architecture
 
@@ -249,11 +267,15 @@ What you need to know.
 
 ## Documentation
 
-Where to find more detailed instructions: www.digitalid.net
+You find the [Javadoc](http://en.wikipedia.org/wiki/Javadoc) of all public classes and methods at www.digitalid.net/documentation/.
 
 ## Roadmap
 
-Which features will be released in which version.
+The current version of the Digital ID reference implementation is 0.6. The following features are planned for major future releases:
+- **0.7**: Make the library more consistent and easy to use. Implement a uniform mechanism to change and observe properties of concepts, which includes modifications to the database modules. Improve the error handling and logging.
+- **0.8**: Implement the action pusher (which is required for access requests and role issuances) and the certificaton module (so that the public keys of other hosts can be certified). Also support the shortening of credentials.
+- **0.9**: Implement the contacts and contexts modules, including their authentications and permissions. Support context-based access requests and role issuances, including an own database module to handle the read receipts.
+- **1.0**: Implement the tokens, errors and members modules. Implement the remaining console options. Do extensive integration testing of various features like relocation, merging, exporting and importing of hosts, etc.
 
 ## Authors
 
