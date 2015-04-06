@@ -429,6 +429,8 @@ public final class Database implements Immutable {
      */
     public static void lock() {
         getConfiguration().lock();
+        
+        try { if (!getConnection().isValid(1)) Database.connection.remove(); } catch (@Nonnull SQLException exception) {}
     }
     
     /**
