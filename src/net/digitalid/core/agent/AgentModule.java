@@ -250,11 +250,11 @@ public final class AgentModule implements BothModule {
     @Override
     @NonCommitting
     public @Nonnull Block exportModule(@Nonnull Host host) throws SQLException {
-        final @Nonnull FreezableArray<Block> tables = new FreezableArray<Block>(8);
+        final @Nonnull FreezableArray<Block> tables = new FreezableArray<>(8);
         try (@Nonnull Statement statement = Database.createStatement()) {
             
             try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT entity, agent, client, removed FROM " + host + "agent")) {
-                final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
+                final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<>();
                 while (resultSet.next()) {
                     final @Nonnull Identity identity = IdentityClass.getNotNull(resultSet, 1);
                     final long number = resultSet.getLong(2);
@@ -266,7 +266,7 @@ public final class AgentModule implements BothModule {
             }
             
             try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT entity, agent, " + AgentPermissions.COLUMNS + " FROM " + host + "agent_permission")) {
-                final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
+                final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<>();
                 while (resultSet.next()) {
                     final @Nonnull Identity identity = IdentityClass.getNotNull(resultSet, 1);
                     final long number = resultSet.getLong(2);
@@ -277,7 +277,7 @@ public final class AgentModule implements BothModule {
             }
             
             try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT entity, stronger, weaker FROM " + host + "agent_permission_order")) {
-                final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
+                final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<>();
                 while (resultSet.next()) {
                     final @Nonnull Identity identity = IdentityClass.getNotNull(resultSet, 1);
                     final long stronger = resultSet.getLong(2);
@@ -288,7 +288,7 @@ public final class AgentModule implements BothModule {
             }
             
             try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT entity, agent, " + Restrictions.COLUMNS + " FROM " + host + "agent_restrictions")) {
-                final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
+                final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<>();
                 while (resultSet.next()) {
                     final @Nonnull NonHostAccount account = NonHostAccount.getNotNull(host, resultSet, 1);
                     final long number = resultSet.getLong(2);
@@ -299,7 +299,7 @@ public final class AgentModule implements BothModule {
             }
             
             try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT entity, stronger, weaker FROM " + host + "agent_restrictions_ord")) {
-                final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
+                final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<>();
                 while (resultSet.next()) {
                     final @Nonnull Identity identity = IdentityClass.getNotNull(resultSet, 1);
                     final long stronger = resultSet.getLong(2);
@@ -310,7 +310,7 @@ public final class AgentModule implements BothModule {
             }
             
             try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT entity, agent, " + Commitment.COLUMNS + ", name, icon FROM " + host + "client")) {
-                final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
+                final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<>();
                 while (resultSet.next()) {
                     final @Nonnull Identity identity = IdentityClass.getNotNull(resultSet, 1);
                     final long number = resultSet.getLong(2);
@@ -323,7 +323,7 @@ public final class AgentModule implements BothModule {
             }
             
             try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT entity, agent, relation, context FROM " + host + "outgoing_role")) {
-                final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
+                final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<>();
                 while (resultSet.next()) {
                     final @Nonnull NonHostAccount account = NonHostAccount.getNotNull(host, resultSet, 1);
                     final long number = resultSet.getLong(2);
@@ -335,7 +335,7 @@ public final class AgentModule implements BothModule {
             }
             
             try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT entity, issuer, relation, agent FROM " + host + "incoming_role")) {
-                final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
+                final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<>();
                 while (resultSet.next()) {
                     final @Nonnull Identity identity = IdentityClass.getNotNull(resultSet, 1);
                     final @Nonnull Identity issuer = IdentityClass.getNotNull(resultSet, 2);
@@ -551,11 +551,11 @@ public final class AgentModule implements BothModule {
         final @Nonnull String from = " FROM " + site + "agent_permission_order po, " + site + "agent_restrictions_ord ro, " + site;
         final @Nonnull String where = " t WHERE po.entity = " + entity + " AND po.stronger = " + agent + " AND ro.entity = " + entity + " AND ro.stronger = " + agent + " AND t.entity = " + entity + " AND po.weaker = t.agent AND ro.weaker = t.agent";
         
-        final @Nonnull FreezableArray<Block> tables = new FreezableArray<Block>(6);
+        final @Nonnull FreezableArray<Block> tables = new FreezableArray<>(6);
         try (@Nonnull Statement statement = Database.createStatement()) {
             
             try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT agent, client, removed" + from + "agent" + where)) {
-                final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
+                final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<>();
                 while (resultSet.next()) {
                     final long number = resultSet.getLong(1);
                     final boolean client = resultSet.getBoolean(2);
@@ -566,19 +566,19 @@ public final class AgentModule implements BothModule {
             }
             
             try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT agent, " + AgentPermissions.COLUMNS + from + "agent_permission" + where)) {
-                final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
+                final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<>();
                 while (resultSet.next()) entries.add(new TupleWrapper(AGENT_PERMISSION_STATE_ENTRY, new Int64Wrapper(Agent.NUMBER, resultSet.getLong(1)), AgentPermissions.getEmptyOrSingle(resultSet, 2)).toBlock());
                 tables.set(1, new ListWrapper(AGENT_PERMISSION_STATE_TABLE, entries.freeze()).toBlock());
             }
             
             try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT agent, " + Restrictions.COLUMNS + from + "agent_restrictions" + where)) {
-                final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
+                final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<>();
                 while (resultSet.next()) entries.add(new TupleWrapper(AGENT_RESTRICTIONS_STATE_ENTRY, new Int64Wrapper(Agent.NUMBER, resultSet.getLong(1)), Restrictions.get(entity, resultSet, 2)).toBlock());
                 tables.set(2, new ListWrapper(AGENT_RESTRICTIONS_STATE_TABLE, entries.freeze()).toBlock());
             }
             
             try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT agent, " + Commitment.COLUMNS + ", name, icon" + from + "client_agent" + where)) {
-                final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
+                final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<>();
                 while (resultSet.next()) {
                     final long number = resultSet.getLong(1);
                     final @Nonnull Commitment commitment = Commitment.get(resultSet, 2);
@@ -590,7 +590,7 @@ public final class AgentModule implements BothModule {
             }
             
             try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT agent, relation, context" + from + "outgoing_role" + where)) {
-                final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
+                final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<>();
                 while (resultSet.next()) {
                     final long number = resultSet.getLong(1);
                     final @Nonnull Identity relation = IdentityClass.getNotNull(resultSet, 2);
@@ -601,7 +601,7 @@ public final class AgentModule implements BothModule {
             }
             
             try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT issuer, relation, agent FROM " + site + "incoming_role WHERE entity = " + entity + " AND " + restrictions.isRole())) {
-                final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
+                final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<>();
                 while (resultSet.next()) {
                     final @Nonnull Identity issuer = IdentityClass.getNotNull(resultSet, 1);
                     final @Nonnull Identity relation = IdentityClass.getNotNull(resultSet, 2);
@@ -1017,7 +1017,7 @@ public final class AgentModule implements BothModule {
         final @Nonnull Site site = entity.getSite();
         final @Nonnull String SQL = "SELECT agent, client, removed FROM " + site + "agent_permission_order po, " + site + "agent_restrictions_ord ro, " + site + "agent ag WHERE po.entity = " + entity + " AND po.stronger = " + agent + " AND ro.entity = " + entity + " AND ro.stronger = " + agent + " AND ag.entity = " + entity + " AND po.weaker = ag.agent AND ro.weaker = ag.agent";
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
-            final @Nonnull FreezableList<Agent> agents = new FreezableLinkedList<Agent>();
+            final @Nonnull FreezableList<Agent> agents = new FreezableLinkedList<>();
             while (resultSet.next()) agents.add(Agent.get(entity, resultSet, 1, 2, 3));
             return agents;
         }
@@ -1449,7 +1449,7 @@ public final class AgentModule implements BothModule {
     @NonCommitting
     static void resetIncomingRoles(@Nonnull Role role) throws SQLException {
         final @Nonnull ReadonlyList<NonNativeRole> roles = role.getRoles();
-        final @Nonnull HashSet<NonNativeRole> foundRoles = new HashSet<NonNativeRole>();
+        final @Nonnull HashSet<NonNativeRole> foundRoles = new HashSet<>();
         final @Nonnull String SQL = "SELECT issuer, relation, agent FROM " + role.getSite() + "incoming_role WHERE entity = " + role;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
             while (resultSet.next()) {

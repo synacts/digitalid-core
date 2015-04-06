@@ -97,7 +97,7 @@ public final class Predecessors extends FreezableArrayList<Predecessor> implemen
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        final @Nonnull FreezableList<Block> predecessors = new FreezableArrayList<Block>(size());
+        final @Nonnull FreezableList<Block> predecessors = new FreezableArrayList<>(size());
         for (final @Nonnull Predecessor predecessor : this) {
             predecessors.add(predecessor.toBlock());
         }
@@ -122,7 +122,7 @@ public final class Predecessors extends FreezableArrayList<Predecessor> implemen
     @Override
     @NonCommitting
     public @Nonnull ReadonlyList<NonHostIdentity> getIdentities() throws SQLException, IOException, PacketException, ExternalException {
-        final @Nonnull FreezableList<NonHostIdentity> identities = new FreezableArrayList<NonHostIdentity>(size());
+        final @Nonnull FreezableList<NonHostIdentity> identities = new FreezableArrayList<>(size());
         for (final @Nonnull Predecessor predecessor : this) {
             final @Nullable NonHostIdentity identity = predecessor.getIdentity();
             if (identity != null) identities.add(identity);

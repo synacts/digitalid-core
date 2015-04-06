@@ -77,7 +77,7 @@ public final class KeyPair implements Immutable {
         final @Nonnull Exponent ro = compositeGroup.getRandomExponent();
         final @Nonnull Element to = ab.pow(ro);
         
-        final @Nonnull FreezableArray<Block> elements = new FreezableArray<Block>(tu.toBlock().setType(PublicKey.TU), ti.toBlock().setType(PublicKey.TI), tv.toBlock().setType(PublicKey.TV), to.toBlock().setType(PublicKey.TO));
+        final @Nonnull FreezableArray<Block> elements = new FreezableArray<>(tu.toBlock().setType(PublicKey.TU), ti.toBlock().setType(PublicKey.TI), tv.toBlock().setType(PublicKey.TV), to.toBlock().setType(PublicKey.TO));
         final @Nonnull Exponent t = new Exponent(new TupleWrapper(PublicKey.TUPLE, elements.freeze()).toBlock().getHash());
         
         final @Nonnull Exponent su = ru.subtract(t.multiply(eu));

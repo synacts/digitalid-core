@@ -186,7 +186,7 @@ public class Request extends Packet {
     @Override
     @RawRecipient
     final void initialize(int size) {
-        this.methods = new FreezableArrayList<Method>(size);
+        this.methods = new FreezableArrayList<>(size);
         for (int i = 0; i < size; i++) methods.add(null);
     }
     
@@ -338,7 +338,7 @@ public class Request extends Packet {
     /**
      * Stores a cached symmetric key for every recipient.
      */
-    private static final @Nonnull ConcurrentMap<HostIdentifier, ReadonlyPair<Time, SymmetricKey>> symmetricKeys = new ConcurrentHashMap<HostIdentifier, ReadonlyPair<Time, SymmetricKey>>();
+    private static final @Nonnull ConcurrentMap<HostIdentifier, ReadonlyPair<Time, SymmetricKey>> symmetricKeys = new ConcurrentHashMap<>();
     
     /**
      * Stores whether the symmetric keys are cached.
@@ -378,7 +378,7 @@ public class Request extends Packet {
             final @Nonnull Time time = new Time();
             @Nullable ReadonlyPair<Time, SymmetricKey> value = symmetricKeys.get(recipient);
             if (value == null || value.getElement0().isLessThan(time.subtract(rotation))) {
-                value = new FreezablePair<Time, SymmetricKey>(time, new SymmetricKey()).freeze();
+                value = new FreezablePair<>(time, new SymmetricKey()).freeze();
                 symmetricKeys.put(recipient, value);
             }
             return value.getElement1();

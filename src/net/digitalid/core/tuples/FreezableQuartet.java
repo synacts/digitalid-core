@@ -75,7 +75,7 @@ public class FreezableQuartet<E0, E1, E2, E3> extends FreezableTriplet<E0, E1, E
     @Pure
     @Override
     public @Capturable @Nonnull FreezableQuartet<E0, E1, E2, E3> clone() {
-        return new FreezableQuartet<E0, E1, E2, E3>(this);
+        return new FreezableQuartet<>(this);
     }
     
     

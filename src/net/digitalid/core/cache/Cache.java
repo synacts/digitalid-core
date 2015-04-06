@@ -160,7 +160,7 @@ public final class Cache {
                     break;
                 }
             }
-            return new FreezablePair<Boolean, AttributeValue>(found, value).freeze();
+            return new FreezablePair<>(found, value).freeze();
         }
     }
     
@@ -253,7 +253,7 @@ public final class Cache {
         
         final @Nonnull AttributeValue[] attributeValues = new AttributeValue[types.length];
         final @Nonnull AttributeTypeSet typesToRetrieve = new AttributeTypeSet();
-        final @Nonnull List<Integer> indexesToStore = new LinkedList<Integer>();
+        final @Nonnull List<Integer> indexesToStore = new LinkedList<>();
         for (int i = 0; i < types.length; i++) {
             final @Nonnull @Frozen ReadonlyPair<Boolean, AttributeValue> cache = getCachedAttributeValue(identity, role, time, types[i]);
             if (cache.getElement0()) {

@@ -144,7 +144,7 @@ public abstract class Packet implements Immutable {
         this.size = size;
         this.audit = audit;
         
-        final @Nonnull FreezableList<Block> signatures = new FreezableArrayList<Block>(size);
+        final @Nonnull FreezableList<Block> signatures = new FreezableArrayList<>(size);
         for (int i = 0; i < size; i++) {
             final @Nullable Block block = getBlock(i);
             final @Nullable SelfcontainedWrapper content = block == null ? null : new SelfcontainedWrapper(CONTENT, block);

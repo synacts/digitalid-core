@@ -72,7 +72,7 @@ public final class Mapper {
     /**
      * Stores the registered triplets of tables, columns and unique constraint that reference a person.
      */
-    private static final @Nonnull Set<ReadonlyTriplet<String, String, String[]>> references = new LinkedHashSet<ReadonlyTriplet<String, String, String[]>>();
+    private static final @Nonnull Set<ReadonlyTriplet<String, String, String[]>> references = new LinkedHashSet<>();
     
     /**
      * Adds the given table, columns and unique constraint to the list of registered references.
@@ -82,7 +82,7 @@ public final class Mapper {
      * @param uniques the names of all the columns in the same unique constraint or nothing.
      */
     public static void addReference(@Nonnull String table, @Nonnull String column, @Nonnull String... uniques) {
-        references.add(new FreezableTriplet<String, String, String[]>(table, column, uniques).freeze());
+        references.add(new FreezableTriplet<>(table, column, uniques).freeze());
     }
     
     /**
@@ -93,7 +93,7 @@ public final class Mapper {
      * @param uniques the names of all the columns in the same unique constraint or nothing.
      */
     public static void removeReference(@Nonnull String table, @Nonnull String column, @Nonnull String... uniques) {
-        references.remove(new FreezableTriplet<String, String, String[]>(table, column, uniques).freeze());
+        references.remove(new FreezableTriplet<>(table, column, uniques).freeze());
     }
     
     /**
@@ -189,12 +189,12 @@ public final class Mapper {
     /**
      * Maps numbers onto identities by caching the corresponding entries from the database.
      */
-    private static final @Nonnull Map<Long, Identity> numbers = new ConcurrentHashMap<Long, Identity>();
+    private static final @Nonnull Map<Long, Identity> numbers = new ConcurrentHashMap<>();
     
     /**
      * Maps identifiers onto identities by caching the corresponding entries from the database.
      */
-    private static final @Nonnull Map<Identifier, Identity> identifiers = new ConcurrentHashMap<Identifier, Identity>();
+    private static final @Nonnull Map<Identifier, Identity> identifiers = new ConcurrentHashMap<>();
     
     /**
      * Clears the local maps of the mapper.

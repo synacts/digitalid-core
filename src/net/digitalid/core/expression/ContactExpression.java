@@ -61,7 +61,7 @@ final class ContactExpression extends Expression implements Immutable {
     @Nonnull @Capturable FreezableSet<Contact> getContacts() {
         assert isActive() : "This expression is active.";
         
-        return new FreezableLinkedHashSet<Contact>(contact);
+        return new FreezableLinkedHashSet<>(contact);
     }
     
     @Pure

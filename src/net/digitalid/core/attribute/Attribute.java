@@ -333,7 +333,7 @@ public final class Attribute extends GeneralConcept implements Immutable {
     /**
      * Caches attributes given their entity and number.
      */
-    private static final @Nonnull ConcurrentMap<Entity, ConcurrentMap<SemanticType, Attribute>> index = new ConcurrentHashMap<Entity, ConcurrentMap<SemanticType, Attribute>>();
+    private static final @Nonnull ConcurrentMap<Entity, ConcurrentMap<SemanticType, Attribute>> index = new ConcurrentHashMap<>();
     
     static {
         if (Database.isSingleAccess()) {

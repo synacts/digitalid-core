@@ -29,7 +29,7 @@ public class ConcurrentHashSet<E> extends AbstractSet<E> implements ConcurrentSe
      * @see ConcurrentHashMap#ConcurrentHashMap(int, float, int)
      */
     public ConcurrentHashSet(int initialCapacity, float loadFactor, int concurrencyLevel) {
-        this.map = new ConcurrentHashMap<E, Boolean>(initialCapacity, loadFactor, concurrencyLevel);
+        this.map = new ConcurrentHashMap<>(initialCapacity, loadFactor, concurrencyLevel);
         this.set = map.keySet();
     }
     
@@ -37,7 +37,7 @@ public class ConcurrentHashSet<E> extends AbstractSet<E> implements ConcurrentSe
      * @see ConcurrentHashMap#ConcurrentHashMap(int, float)
      */
     public ConcurrentHashSet(int initialCapacity, float loadFactor) {
-        this.map = new ConcurrentHashMap<E, Boolean>(initialCapacity, loadFactor);
+        this.map = new ConcurrentHashMap<>(initialCapacity, loadFactor);
         this.set = map.keySet();
     }
     
@@ -45,7 +45,7 @@ public class ConcurrentHashSet<E> extends AbstractSet<E> implements ConcurrentSe
      * @see ConcurrentHashMap#ConcurrentHashMap(int)
      */
     public ConcurrentHashSet(int initialCapacity) {
-        this.map = new ConcurrentHashMap<E, Boolean>(initialCapacity);
+        this.map = new ConcurrentHashMap<>(initialCapacity);
         this.set = map.keySet();
     }
     
@@ -53,7 +53,7 @@ public class ConcurrentHashSet<E> extends AbstractSet<E> implements ConcurrentSe
      * @see ConcurrentHashMap#ConcurrentHashMap()
      */
     public ConcurrentHashSet() {
-        this.map = new ConcurrentHashMap<E, Boolean>();
+        this.map = new ConcurrentHashMap<>();
         this.set = map.keySet();
     }
     
@@ -61,7 +61,7 @@ public class ConcurrentHashSet<E> extends AbstractSet<E> implements ConcurrentSe
      * @see ConcurrentHashMap#ConcurrentHashMap(java.util.Map)
      */
     public ConcurrentHashSet(@Nonnull Set<? extends E> set) {
-        this.map = new ConcurrentHashMap<E, Boolean>(set.size());
+        this.map = new ConcurrentHashMap<>(set.size());
         this.set = map.keySet();
         addAll(set);
     }

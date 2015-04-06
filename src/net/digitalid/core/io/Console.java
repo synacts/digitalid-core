@@ -162,7 +162,7 @@ public final class Console {
     /**
      * Stores the available options for the user.
      */
-    private static final @Nonnull @NonNullableElements FreezableList<Option> options = new FreezableLinkedList<Option>();
+    private static final @Nonnull @NonNullableElements FreezableList<Option> options = new FreezableLinkedList<>();
     
     /**
      * Adds the given option to the list of options.

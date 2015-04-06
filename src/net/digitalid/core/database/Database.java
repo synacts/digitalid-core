@@ -466,7 +466,7 @@ public final class Database implements Immutable {
     /**
      * Stores the tables which are to be purged regularly.
      */
-    private static final @Nonnull ConcurrentMap<String, Time> tables = new ConcurrentHashMap<String, Time>();
+    private static final @Nonnull ConcurrentMap<String, Time> tables = new ConcurrentHashMap<>();
     
     /**
      * Adds the given table to the list for regular purging.

@@ -101,7 +101,7 @@ public final class CredentialsRequest extends Request {
      */
     @NonCommitting
     private CredentialsRequest(@Nonnull ReadonlyList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject, @Nullable RequestAudit audit, @Nonnull ReadonlyList<Credential> credentials, @Nullable ReadonlyList<CertifiedAttributeValue> certificates, boolean lodged, @Nullable BigInteger value, int iteration) throws SQLException, IOException, PacketException, ExternalException {
-        super(methods, recipient, new SymmetricKey(), subject, audit, new FreezableQuartet<ReadonlyList<Credential>, ReadonlyList<CertifiedAttributeValue>, Boolean, BigInteger>(credentials, certificates, lodged, value).freeze(), iteration);
+        super(methods, recipient, new SymmetricKey(), subject, audit, new FreezableQuartet<>(credentials, certificates, lodged, value).freeze(), iteration);
     }
     
     

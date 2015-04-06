@@ -76,7 +76,7 @@ public final class MemberModule implements HostModule {
     @Override
     @NonCommitting
     public @Nonnull Block exportModule(@Nonnull Host host) throws SQLException {
-        final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
+        final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<>();
         try (@Nonnull Statement statement = Database.createStatement()) {
             // TODO: Retrieve all the entries from the database table(s).
         }

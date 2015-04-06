@@ -1,56 +1,7 @@
-A better and more standardized value encapsulation mechanism would require:
-– a reference to the concept it belongs to (maybe even with a generic type parameter)
-– the value once loaded (and the type of the value as a generic type parameter)
-– a reference to the database module/methods to load and change the value (or make this generic as well; usually either a column within a row or aggregating several rows)
-– a way to observe changes made to the property or its reset
+Synchronization Modes:
+– Passive
+– Active
+  – Pull
+  – Push
 
-Observable<O> class with addObserver and removeObserver from which the other properties inherit [make the methods shorter, i.e. get() instead of getValue(), set(value), replaced(...), added(...), etc.]
-
-NullableReadOnlyReplaceableProperty with @Nullable getValue() with notifyOnChange(Observer) and unnotifyOnChange(Observer) –> NullableReplaceablePropertyObserver: valueReplaced(property, oldValue, newValue)
-+– NullableReplaceableProperty with setValue(@Nullable value)
-   +– NullableReplaceableConceptProperty with loading, resetting and synchronizing [resetting checks whether there are any observers and if there are, reloads the values and issues a notification only in case of a change]
-
-NonNullableReadOnlyReplaceableProperty with @Nonnull getValue() –> NonNullableReplaceablePropertyObserver: valueReplaced(property, oldValue, newValue)
-+– NonNullableReplaceableProperty with setValue(@Nonnull value)
-   +– NonNullableReplaceableConceptProperty with loading, resetting and synchronizing
-
-ReadOnlyExtensibleProperty with @Nonnull getValue() –> ExtensiblePropertyObserver: elementsAdded(property, newElements), elementsRemoved(property, oldElements)
-+– ExtensibleProperty with addElements(@Nonnull @Frozen elements), removeElements(@Nonnull @Frozen elements) [the value is based on a FreezableCollection]
-   +– ExtensibleConceptProperty with loading, resetting and synchronizing [implementing the notifications on resetting might be more difficult here; issue the added and removed elements separately?]
-
-ReadOnlyIndexedProperty with @Nonnull getValue(key) and @Nonnull getValues() –> IndexedPropertyObserver: valueAdded(property, newValue), valueRemoved(property, oldValue)
-+– IndexedProperty with addValue(@Nonnull value) and removeValue(@Nonnull value) (the constructors requires a function that maps from value to key) [used for the hosts in the Server class and modules in the Service class]
-   +– IndexedConceptProperty with loading, resetting and synchronizing
-
-Also ReadOnlyOrderedProperty for things like subcontexts? Depends on their implementation
-
-=> ReadOnly...Property and ...Property are the same classes with the change methods only having package-level visibility so that the generic internal action can access them.
-=> No! But this trick might make sense for the ...ConceptProperty classes and the @OnlyForActions method. (This annotation might no longer be necessary afterwards.)
-
-=> ExtensiblePropertyInternalAction, etc. as names for the generic actions?
-
-InstanceObserver: instanceDeleted(instance)
-Instance with notifyOnDeletion(Observer)
-
-Table class with reference to its module, a name and the type of the stored value, an instance of which is created statically and creates the necessary semantic types for the value change.
-The table has to provide factory methods to create the value both from SQL and from a block (needed for decoding the value change internal action).
-Differentiate between extensible tables (that also extend the primary key) and replaceable tables. The latter for both nullable and non-nullabe values.
-
-Include the time when a property was changed or a value was added in the database?
-
-Required changes:
-– Make the Concepts class Blockable.
-– Rename the Readonly classes to ReadOnly classes.
-– Delete the HostConcept and rename GeneralConcept to it. No, rather merge GeneralConcept into Concept and remove both classes.
-– Delete the Aspect and the Observer (as it is now) class.
-– Create a net.digitalid.core.properties package and add the classes.
-– Each concept needs a factory class that is registered at the Concept class with its semantic type.
-– Each concept has to provide getRequiredPermissions, getRequiredRestrictions, getAudit..., etc. methods. => Make a subclass CoreConcept and require a getRequiredAgent only there.
-– Provide a base class for bindings that inherits from Observable<O>? http://docs.oracle.com/javafx/2/api/javafx/beans/binding/Binding.html
-– Make the construction of objects more consistent, i.e. always with a static getNullable and getNonNullable (or get and getNotNull?) for the value, block and SQL.
-– Remove all the dispensable methods like isNotFrozen, isNotEmpty, etc.
-– Name all the freezable classes so (e.g. FreezableContacts instead of just Contacts).
-– Make the indexing of instances part of the concept (or even instance) class (because roles need it as well)? Might be difficult due to all the special rules. [Introduce a class Indexable between Instance and its subclasses?]
-– Replace all the public constructors with static get() methods (or rather getNullable() and getNonNullable() methods).
-– In case of the wrappers, introduce static methods like encodeNullable(), encodeNonNullable(), decodeNullable() and decodeNonNullable?
-– In case of SQLizable, only use a static method set()? Or rather setNullable() and setNonNullable() though the information is lost anyway?
+Can be set by the application code per role and service.

@@ -66,7 +66,7 @@ public final class EncryptionWrapper extends BlockWrapper implements Immutable {
     /**
      * Caches the encrypted key for a given pair of public key and symmetric key.
      */
-    private static final @Nonnull Map<ReadonlyPair<PublicKey, SymmetricKey>, Block> encryptions = new ConcurrentHashMap<ReadonlyPair<PublicKey, SymmetricKey>, Block>();
+    private static final @Nonnull Map<ReadonlyPair<PublicKey, SymmetricKey>, Block> encryptions = new ConcurrentHashMap<>();
     
     /**
      * Encrypts the given symmetric key for the given public key.
@@ -77,7 +77,7 @@ public final class EncryptionWrapper extends BlockWrapper implements Immutable {
      * @return a block containing the given symmetric key encrypted for the given public key.
      */
     private static @Nonnull Block encrypt(@Nonnull PublicKey publicKey, @Nonnull SymmetricKey symmetricKey) {
-        final @Nonnull ReadonlyPair<PublicKey, SymmetricKey> pair = new FreezablePair<PublicKey, SymmetricKey>(publicKey, symmetricKey).freeze();
+        final @Nonnull ReadonlyPair<PublicKey, SymmetricKey> pair = new FreezablePair<>(publicKey, symmetricKey).freeze();
         @Nullable Block key = encryptions.get(pair);
         if (key == null) {
             key = publicKey.getCompositeGroup().getElement(symmetricKey.getValue()).pow(publicKey.getE()).toBlock().setType(KEY);
@@ -89,7 +89,7 @@ public final class EncryptionWrapper extends BlockWrapper implements Immutable {
     /**
      * Caches the symmetric key for a given pair of private key and encrypted key.
      */
-    private static final @Nonnull Map<ReadonlyPair<PrivateKey, Block>, SymmetricKey> decryptions = new ConcurrentHashMap<ReadonlyPair<PrivateKey, Block>, SymmetricKey>();
+    private static final @Nonnull Map<ReadonlyPair<PrivateKey, Block>, SymmetricKey> decryptions = new ConcurrentHashMap<>();
     
     /**
      * Decrypts the given key with the given private key.
@@ -100,7 +100,7 @@ public final class EncryptionWrapper extends BlockWrapper implements Immutable {
      * @return the symmetric key with the decrypted value of the given encrypted key.
      */
     private static @Nonnull SymmetricKey decrypt(@Nonnull PrivateKey privateKey, @Nonnull Block key) throws InvalidEncodingException {
-        final @Nonnull ReadonlyPair<PrivateKey, Block> pair = new FreezablePair<PrivateKey, Block>(privateKey, key).freeze();
+        final @Nonnull ReadonlyPair<PrivateKey, Block> pair = new FreezablePair<>(privateKey, key).freeze();
         @Nullable SymmetricKey symmetricKey = decryptions.get(pair);
         if (symmetricKey == null) {
             final @Nonnull BigInteger value = new IntegerWrapper(key).getValue();
@@ -339,7 +339,7 @@ public final class EncryptionWrapper extends BlockWrapper implements Immutable {
     @Pure
     private @Nonnull Block getCache() {
         if (cache == null) {
-            @Nonnull FreezableArray<Block> elements = new FreezableArray<Block>(5);
+            @Nonnull FreezableArray<Block> elements = new FreezableArray<>(5);
             elements.set(0, time.toBlock());
             elements.set(1, Block.toBlock(RECIPIENT, recipient));
             

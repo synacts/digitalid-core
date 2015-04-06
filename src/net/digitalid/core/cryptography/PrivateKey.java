@@ -188,7 +188,7 @@ public final class PrivateKey implements Immutable, Blockable {
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        final @Nonnull FreezableArray<Block> elements = new FreezableArray<Block>(6);
+        final @Nonnull FreezableArray<Block> elements = new FreezableArray<>(6);
         elements.set(0, compositeGroup.toBlock().setType(COMPOSITE_GROUP));
         elements.set(1, new IntegerWrapper(P, p).toBlock());
         elements.set(2, new IntegerWrapper(Q, q).toBlock());

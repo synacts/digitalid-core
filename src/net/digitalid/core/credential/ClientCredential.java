@@ -254,7 +254,7 @@ public final class ClientCredential extends Credential implements Immutable {
     /**
      * Caches the role-based client credentials given their role and permissions.
      */
-    private static final @Nonnull ConcurrentMap<NonNativeRole, ConcurrentMap<ReadonlyAgentPermissions, ClientCredential>> roleBasedCredentials = new ConcurrentHashMap<NonNativeRole, ConcurrentMap<ReadonlyAgentPermissions, ClientCredential>>();
+    private static final @Nonnull ConcurrentMap<NonNativeRole, ConcurrentMap<ReadonlyAgentPermissions, ClientCredential>> roleBasedCredentials = new ConcurrentHashMap<>();
     
     /**
      * Returns a role-based credential for the given role and permissions.
@@ -284,7 +284,7 @@ public final class ClientCredential extends Credential implements Immutable {
     /**
      * Caches the identity-based client credentials given their role and permissions.
      */
-    private static final @Nonnull ConcurrentMap<Role, ConcurrentMap<ReadonlyAgentPermissions, ClientCredential>> identityBasedCredentials = new ConcurrentHashMap<Role, ConcurrentMap<ReadonlyAgentPermissions, ClientCredential>>();
+    private static final @Nonnull ConcurrentMap<Role, ConcurrentMap<ReadonlyAgentPermissions, ClientCredential>> identityBasedCredentials = new ConcurrentHashMap<>();
     
     /**
      * Returns an identity-based credential for the given role and permissions.
@@ -313,7 +313,7 @@ public final class ClientCredential extends Credential implements Immutable {
     /**
      * Caches the attribute-based client credentials given their role, value and permissions.
      */
-    private static final @Nonnull ConcurrentMap<Role, ConcurrentMap<ReadonlyPair<CertifiedAttributeValue, ReadonlyAgentPermissions>, ClientCredential>> attributeBasedCredentials = new ConcurrentHashMap<Role, ConcurrentMap<ReadonlyPair<CertifiedAttributeValue, ReadonlyAgentPermissions>, ClientCredential>>();
+    private static final @Nonnull ConcurrentMap<Role, ConcurrentMap<ReadonlyPair<CertifiedAttributeValue, ReadonlyAgentPermissions>, ClientCredential>> attributeBasedCredentials = new ConcurrentHashMap<>();
     
     /**
      * Returns an attribute-based credential for the given role, value and permissions.

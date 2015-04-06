@@ -153,7 +153,7 @@ public final class Password extends NonHostConcept {
     /**
      * Caches passwords given their entity.
      */
-    private static final @Nonnull ConcurrentMap<NonHostEntity, Password> index = new ConcurrentHashMap<NonHostEntity, Password>();
+    private static final @Nonnull ConcurrentMap<NonHostEntity, Password> index = new ConcurrentHashMap<>();
     
     static {
         if (Database.isSingleAccess()) {

@@ -124,11 +124,11 @@ public final class AttributeModule implements BothModule {
     @Override
     @NonCommitting
     public @Nonnull Block exportModule(@Nonnull Host host) throws SQLException {
-        final @Nonnull FreezableArray<Block> tables = new FreezableArray<Block>(2);
+        final @Nonnull FreezableArray<Block> tables = new FreezableArray<>(2);
         try (@Nonnull Statement statement = Database.createStatement()) {
             
             try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT entity, type, published, value FROM " + host + "attribute_value")) {
-                final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
+                final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<>();
                 while (resultSet.next()) {
                     final @Nonnull Identity identity = IdentityClass.getNotNull(resultSet, 1);
                     final @Nonnull Identity type = IdentityClass.getNotNull(resultSet, 2);
@@ -140,7 +140,7 @@ public final class AttributeModule implements BothModule {
             }
             
             try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT entity, type, visibility FROM " + host + "attribute_visibility")) {
-                final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
+                final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<>();
                 while (resultSet.next()) {
                     final @Nonnull Identity identity = IdentityClass.getNotNull(resultSet, 1);
                     final @Nonnull Identity type = IdentityClass.getNotNull(resultSet, 2);
@@ -228,11 +228,11 @@ public final class AttributeModule implements BothModule {
     @NonCommitting
     public @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadonlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws SQLException {
         final @Nonnull Site site = entity.getSite();
-        final @Nonnull FreezableArray<Block> tables = new FreezableArray<Block>(2);
+        final @Nonnull FreezableArray<Block> tables = new FreezableArray<>(2);
         try (@Nonnull Statement statement = Database.createStatement()) {
             
             try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT type, published, value FROM " + site + "attribute_value WHERE entity = " + entity + permissions.allTypesToString())) {
-                final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
+                final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<>();
                 while (resultSet.next()) {
                     final @Nonnull Identity type = IdentityClass.getNotNull(resultSet, 1);
                     final boolean published = resultSet.getBoolean(2);
@@ -243,7 +243,7 @@ public final class AttributeModule implements BothModule {
             }
             
             try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT type, visibility FROM " + site + "attribute_visibility WHERE entity = " + entity + permissions.writeTypesToString())) {
-                final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
+                final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<>();
                 while (resultSet.next()) {
                     final @Nonnull Identity type = IdentityClass.getNotNull(resultSet, 1);
                     final @Nonnull String visibility = resultSet.getString(2);
@@ -329,7 +329,7 @@ public final class AttributeModule implements BothModule {
     static @Capturable @Nonnull FreezableSet<Attribute> getAll(@Nonnull Entity entity) throws SQLException {
         final @Nonnull String SQL = "SELECT DISTINCT type FROM " + entity.getSite() + "attribute_value WHERE entity = " + entity;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
-            final @Nonnull FreezableSet<Attribute> attributes = new FreezableLinkedHashSet<Attribute>();
+            final @Nonnull FreezableSet<Attribute> attributes = new FreezableLinkedHashSet<>();
             while (resultSet.next()) attributes.add(Attribute.get(entity, IdentityClass.getNotNull(resultSet, 1).toSemanticType().checkIsAttributeFor(entity)));
             return attributes;
         } catch (@Nonnull InvalidEncodingException exception) {

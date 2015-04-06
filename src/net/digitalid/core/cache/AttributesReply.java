@@ -107,7 +107,7 @@ public final class AttributesReply extends CoreServiceQueryReply {
         
         final @Nonnull InternalIdentity subject = getSubject().getIdentity();
         final @Nonnull ReadonlyList<Block> elements = new ListWrapper(block).getElements();
-        final @Nonnull FreezableList<AttributeValue> attributeValues = new FreezableArrayList<AttributeValue>(elements.size());
+        final @Nonnull FreezableList<AttributeValue> attributeValues = new FreezableArrayList<>(elements.size());
         final @Nonnull Time time = new Time();
         for (final @Nullable Block element : elements) {
             if (element != null) {
@@ -134,7 +134,7 @@ public final class AttributesReply extends CoreServiceQueryReply {
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        final @Nonnull FreezableList<Block> elements = new FreezableArrayList<Block>(attributeValues.size());
+        final @Nonnull FreezableList<Block> elements = new FreezableArrayList<>(attributeValues.size());
         for (final @Nullable AttributeValue attributeValue : attributeValues) {
             elements.add(Block.toBlock(AttributeValue.TYPE, attributeValue));
         }

@@ -94,7 +94,7 @@ public abstract class Credential implements Immutable {
         assert issuance.isPositive() && issuance.isMultipleOf(Time.HALF_HOUR) : "The issuance time is positive and a multiple of half an hour.";
         assert role == null || role.isRoleType() : "The role is either null or a role type.";
         
-        final @Nonnull FreezableArray<Block> elements = new FreezableArray<Block>(5);
+        final @Nonnull FreezableArray<Block> elements = new FreezableArray<>(5);
         elements.set(0, issuer.toBlock(ISSUER));
         elements.set(1, issuance.toBlock().setType(ISSUANCE));
         elements.set(2, new HashWrapper(HASH, randomizedPermissions.getHash()).toBlock());

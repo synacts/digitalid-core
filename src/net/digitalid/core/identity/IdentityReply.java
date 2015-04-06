@@ -102,7 +102,7 @@ public final class IdentityReply extends CoreServiceQueryReply {
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        final @Nonnull FreezableArray<Block> elements = new FreezableArray<Block>(3);
+        final @Nonnull FreezableArray<Block> elements = new FreezableArray<>(3);
         elements.set(0, category.toBlock());
         elements.set(1, predecessors.toBlock());
         elements.set(2, Block.toBlock(SUCCESSOR, successor));

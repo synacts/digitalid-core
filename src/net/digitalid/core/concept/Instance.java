@@ -31,7 +31,7 @@ public abstract class Instance {
         for (final @Nonnull Aspect aspect : aspects) {
             @Nullable Set<Observer> observers = map.get(aspect);
             if (observers == null) {
-                observers = new LinkedHashSet<Observer>();
+                observers = new LinkedHashSet<>();
                 map.put(aspect, observers);
             }
             observers.add(observer);
@@ -78,7 +78,7 @@ public abstract class Instance {
     /**
      * Stores the observers that observe an aspect independently of a particular instance.
      */
-    private static final @Nonnull Map<Aspect, Set<Observer>> aspectObservers = new HashMap<Aspect, Set<Observer>>();
+    private static final @Nonnull Map<Aspect, Set<Observer>> aspectObservers = new HashMap<>();
     
     /**
      * Observes the given aspects independently of a particular instance so that the given observer is notified on change.
@@ -130,7 +130,7 @@ public abstract class Instance {
         assert Database.isSingleAccess() : "The database is in single-access mode.";
         for (final @Nonnull Aspect aspect : aspects) assert aspect.getClazz().isInstance(this) : "This is an instance of the aspect's class.";
         
-        if (instanceObservers == null) instanceObservers = new HashMap<Aspect, Set<Observer>>();
+        if (instanceObservers == null) instanceObservers = new HashMap<>();
         observe(instanceObservers, observer, aspects);
     }
     

@@ -139,3 +139,44 @@ Caused by: java.net.SocketException: Broken pipe
         at com.mysql.jdbc.MysqlIO.send(MysqlIO.java:3643)
         ... 17 more
 
+[2015-04-06 on the client-side]
+Exception in Application start method
+java.lang.reflect.InvocationTargetException
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:497)
+	at com.sun.javafx.application.LauncherImpl.launchApplicationWithArgs(LauncherImpl.java:389)
+	at com.sun.javafx.application.LauncherImpl.launchApplication(LauncherImpl.java:328)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:497)
+	at sun.launcher.LauncherHelper$FXHelper.main(LauncherHelper.java:767)
+Caused by: java.lang.RuntimeException: Exception in Application start method
+	at com.sun.javafx.application.LauncherImpl.launchApplication1(LauncherImpl.java:917)
+	at com.sun.javafx.application.LauncherImpl.lambda$launchApplication$152(LauncherImpl.java:182)
+	at com.sun.javafx.application.LauncherImpl$$Lambda$51/897697267.run(Unknown Source)
+	at java.lang.Thread.run(Thread.java:745)
+Caused by: PacketException thrown by net.digitalid.core.exceptions.packet.PacketException.create(PacketException.java:107): (Replay) A host responded with a packet error. [PacketException thrown by net.digitalid.core.packet.Replay.check(Replay.java:61): (Replay) The encryption has been replayed. [SQLException thrown by com.mysql.jdbc.SQLError.createSQLException(SQLError.java:996): Could not retrieve transation read-only status server [CommunicationsException thrown by sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method): The last packet successfully received from the server was 57,267,464 milliseconds ago.  The last packet sent successfully to the server was 57,267,495 milliseconds ago. is longer than the server configured value of 'wait_timeout'. You should consider either expiring and/or testing connection validity before use in your application, increasing the server configured values for client timeouts, or using the Connector/J connection property 'autoReconnect=true' to avoid this problem. [SocketException thrown by java.net.SocketOutputStream.socketWrite0(Native Method): Broken pipe]]]]
+	at net.digitalid.core.exceptions.packet.PacketException.create(PacketException.java:107)
+	at net.digitalid.core.packet.Packet.<init>(Packet.java:246)
+	at net.digitalid.core.packet.Response.<init>(Response.java:119)
+	at net.digitalid.core.packet.Request.send(Request.java:312)
+	at net.digitalid.core.packet.Request.send(Request.java:293)
+	at net.digitalid.core.handler.Method.send(Method.java:404)
+	at net.digitalid.core.synchronizer.Synchronizer.refresh(Synchronizer.java:200)
+	at net.digitalid.core.entity.Role.refreshState(Role.java:223)
+	at net.digitalid.core.entity.Role.reloadOrRefreshState(Role.java:257)
+	at me.synapps.contacts.Main.start(Main.java:325)
+	at com.sun.javafx.application.LauncherImpl.lambda$launchApplication1$159(LauncherImpl.java:863)
+	at com.sun.javafx.application.LauncherImpl$$Lambda$54/1234381203.run(Unknown Source)
+	at com.sun.javafx.application.PlatformImpl.lambda$runAndWait$172(PlatformImpl.java:326)
+	at com.sun.javafx.application.PlatformImpl$$Lambda$47/355629945.run(Unknown Source)
+	at com.sun.javafx.application.PlatformImpl.lambda$null$170(PlatformImpl.java:295)
+	at com.sun.javafx.application.PlatformImpl$$Lambda$49/453908573.run(Unknown Source)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at com.sun.javafx.application.PlatformImpl.lambda$runLater$171(PlatformImpl.java:294)
+	at com.sun.javafx.application.PlatformImpl$$Lambda$48/1915503092.run(Unknown Source)
+	at com.sun.glass.ui.InvokeLaterDispatcher$Future.run(InvokeLaterDispatcher.java:95)
+Exception running application me.synapps.contacts.Main

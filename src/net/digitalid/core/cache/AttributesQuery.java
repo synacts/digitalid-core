@@ -134,7 +134,7 @@ public final class AttributesQuery extends CoreServiceExternalQuery {
     @Override
     @NonCommitting
     public @Nonnull AttributesReply executeOnHost() throws PacketException, SQLException {
-        final @Nonnull FreezableList<AttributeValue> attributeValues = new FreezableArrayList<AttributeValue>(attributeTypes.size());
+        final @Nonnull FreezableList<AttributeValue> attributeValues = new FreezableArrayList<>(attributeTypes.size());
         
         final @Nonnull Account account = getAccount();
         final @Nonnull SignatureWrapper signature = getSignatureNotNull();

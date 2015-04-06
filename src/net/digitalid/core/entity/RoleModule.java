@@ -143,7 +143,7 @@ public final class RoleModule {
         final @Nonnull Client client = role.getClient();
         final @Nonnull String SQL = "SELECT role, issuer, relation, agent FROM " + client + "role WHERE recipient = " + role;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
-            final @Nonnull FreezableList<NonNativeRole> roles = new FreezableLinkedList<NonNativeRole>();
+            final @Nonnull FreezableList<NonNativeRole> roles = new FreezableLinkedList<>();
             while (resultSet.next()) {
                 final long number = resultSet.getLong(1);
                 final @Nonnull InternalNonHostIdentity issuer = IdentityClass.getNotNull(resultSet, 2).toInternalNonHostIdentity();
@@ -173,7 +173,7 @@ public final class RoleModule {
     public static @Capturable @Nonnull FreezableList<NativeRole> getRoles(@Nonnull Client client) throws SQLException {
         final @Nonnull String SQL = "SELECT role, issuer, agent FROM " + client + "role WHERE recipient IS NULL";
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
-            final @Nonnull FreezableList<NativeRole> roles = new FreezableLinkedList<NativeRole>();
+            final @Nonnull FreezableList<NativeRole> roles = new FreezableLinkedList<>();
             while (resultSet.next()) {
                 final long number = resultSet.getLong(1);
                 final @Nonnull InternalNonHostIdentity issuer = IdentityClass.getNotNull(resultSet, 2).toInternalNonHostIdentity();

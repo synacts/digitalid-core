@@ -114,7 +114,7 @@ final class PasswordValueReplace extends CoreServiceInternalAction {
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        final @Nonnull FreezableArray<Block> elements = new FreezableArray<Block>(2);
+        final @Nonnull FreezableArray<Block> elements = new FreezableArray<>(2);
         elements.set(0, new StringWrapper(OLD_VALUE, oldValue).toBlock());
         elements.set(1, new StringWrapper(NEW_VALUE, newValue).toBlock());
         return new TupleWrapper(TYPE, elements.freeze()).toBlock();

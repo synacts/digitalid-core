@@ -77,7 +77,7 @@ public final class Contacts extends FreezableLinkedHashSet<Contact> implements R
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        final @Nonnull FreezableList<Block> elements = new FreezableArrayList<Block>(size());
+        final @Nonnull FreezableList<Block> elements = new FreezableArrayList<>(size());
         for (final @Nonnull Contact contact : this) elements.add(contact.toBlock());
         return new ListWrapper(TYPE, elements.freeze()).toBlock();
     }

@@ -115,7 +115,7 @@ public class FreezableLinkedHashSet<E> extends LinkedHashSet<E> implements Freez
     @Pure
     @Override
     public @Nonnull FreezableIterator<E> iterator() {
-        return new FreezableIterableIterator<E>(this, super.iterator());
+        return new FreezableIterableIterator<>(this, super.iterator());
     }
     
     
@@ -212,14 +212,14 @@ public class FreezableLinkedHashSet<E> extends LinkedHashSet<E> implements Freez
     @Pure
     @Override
     public @Capturable @Nonnull FreezableLinkedHashSet<E> clone() {
-        return new FreezableLinkedHashSet<E>(this);
+        return new FreezableLinkedHashSet<>(this);
     }
     
     @Pure
     @Override
     @SuppressWarnings("unchecked")
     public @Capturable @Nonnull FreezableArray<E> toFreezableArray() {
-        return new FreezableArray<E>(toArray((E[]) new Object[size()]));
+        return new FreezableArray<>(toArray((E[]) new Object[size()]));
     }
     
 }

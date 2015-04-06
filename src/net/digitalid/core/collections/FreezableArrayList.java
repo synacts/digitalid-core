@@ -225,25 +225,25 @@ public class FreezableArrayList<E> extends ArrayList<E> implements FreezableList
     @Pure
     @Override
     public @Nonnull FreezableListIterator<E> listIterator(int index) {
-        return new FreezableListIterator<E>(this, super.listIterator(index));
+        return new FreezableListIterator<>(this, super.listIterator(index));
     }
     
     @Pure
     @Override
     public @Nonnull FreezableListIterator<E> listIterator() {
-        return new FreezableListIterator<E>(this, super.listIterator());
+        return new FreezableListIterator<>(this, super.listIterator());
     }
     
     @Pure
     @Override
     public @Nonnull FreezableIterator<E> iterator() {
-        return new FreezableIterableIterator<E>(this, super.iterator());
+        return new FreezableIterableIterator<>(this, super.iterator());
     }
     
     @Pure
     @Override
     public @Nonnull FreezableList<E> subList(int fromIndex, int toIndex) {
-        return new BackedFreezableList<E>(this, super.subList(fromIndex, toIndex));
+        return new BackedFreezableList<>(this, super.subList(fromIndex, toIndex));
     }
     
     
@@ -259,7 +259,7 @@ public class FreezableArrayList<E> extends ArrayList<E> implements FreezableList
     @Pure
     @Override
     public boolean doesNotContainDuplicates() {
-        final @Nonnull HashSet<E> set = new HashSet<E>(size());
+        final @Nonnull HashSet<E> set = new HashSet<>(size());
         for (final @Nullable E element : this) {
             if (set.contains(element)) return false;
             else set.add(element);
@@ -320,14 +320,14 @@ public class FreezableArrayList<E> extends ArrayList<E> implements FreezableList
     @Pure
     @Override
     public @Capturable @Nonnull FreezableArrayList<E> clone() {
-        return new FreezableArrayList<E>(this);
+        return new FreezableArrayList<>(this);
     }
     
     @Pure
     @Override
     @SuppressWarnings("unchecked")
     public @Capturable @Nonnull FreezableArray<E> toFreezableArray() {
-        return new FreezableArray<E>(toArray((E[]) new Object[size()]));
+        return new FreezableArray<>(toArray((E[]) new Object[size()]));
     }
     
 }

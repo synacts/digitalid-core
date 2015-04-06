@@ -123,7 +123,7 @@ public class FreezableArrayIterator<E> implements ReadonlyArrayIterator<E>, Free
     @Pure
     @Override
     public @Capturable @Nonnull FreezableArrayIterator<E> clone() {
-        return new FreezableArrayIterator<E>(array.clone());
+        return new FreezableArrayIterator<>(array.clone());
     }
     
 }

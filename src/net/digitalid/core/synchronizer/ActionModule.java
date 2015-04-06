@@ -116,7 +116,7 @@ public final class ActionModule implements BothModule {
     public @Nonnull Block exportModule(@Nonnull Host host) throws SQLException {
         final @Nonnull String SQL = "SELECT entity, service, time, " + Restrictions.COLUMNS + ", " + AgentPermissions.COLUMNS + ", agent, recipient, action FROM " + host + "action";
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
-            final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
+            final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<>();
             while (resultSet.next()) {
                 final @Nonnull NonHostAccount account = NonHostAccount.getNotNull(host, resultSet, 1);
                 final @Nonnull Identity service = IdentityClass.getNotNull(resultSet, 2);
@@ -234,7 +234,7 @@ public final class ActionModule implements BothModule {
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL.toString())) {
             if (resultSet.next()) {
                 final @Nonnull Time thisTime = Time.get(resultSet, 1);
-                final @Nonnull FreezableList<Block> trail = new FreezableLinkedList<Block>();
+                final @Nonnull FreezableList<Block> trail = new FreezableLinkedList<>();
                 while (resultSet.next()) {
                     trail.add(Block.getNotNull(Packet.SIGNATURE, resultSet, 2));
                 }

@@ -27,12 +27,12 @@ public final class TupleWrapperTest extends DatabaseSetup {
         final @Nonnull Block string = new StringWrapper(STRING, "This is a short string.").toBlock();
         final @Nonnull Block int32 = new Int32Wrapper(INT32, 123456789).toBlock();
         
-        final @Nonnull FreezableList<ReadonlyArray<Block>> listOfElements = new FreezableLinkedList<ReadonlyArray<Block>>();
-        listOfElements.add(new FreezableArray<Block>(string, int32).freeze());
-        listOfElements.add(new FreezableArray<Block>(null, int32).freeze());
-        listOfElements.add(new FreezableArray<Block>(string, null).freeze());
+        final @Nonnull FreezableList<ReadonlyArray<Block>> listOfElements = new FreezableLinkedList<>();
+        listOfElements.add(new FreezableArray<>(string, int32).freeze());
+        listOfElements.add(new FreezableArray<>(null, int32).freeze());
+        listOfElements.add(new FreezableArray<>(string, null).freeze());
         listOfElements.add(new FreezableArray<Block>(null, null).freeze());
-        listOfElements.add(new FreezableArray<Block>(string).freeze());
+        listOfElements.add(new FreezableArray<>(string).freeze());
         
         for (final @Nonnull ReadonlyArray<Block> elements : listOfElements) {
             if (elements.size() == 2) Assert.assertEquals(elements, new TupleWrapper(new TupleWrapper(TYPE, elements).toBlock()).getElements());

@@ -97,7 +97,7 @@ public class FreezablePair<E0, E1> extends FreezableObject implements ReadonlyPa
     @Pure
     @Override
     public @Capturable @Nonnull FreezablePair<E0, E1> clone() {
-        return new FreezablePair<E0, E1>(this);
+        return new FreezablePair<>(this);
     }
     
     

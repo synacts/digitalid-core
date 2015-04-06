@@ -557,7 +557,7 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
     /**
      * Caches contexts given their entity and number.
      */
-    private static final @Nonnull ConcurrentMap<NonHostEntity, ConcurrentMap<Long, Context>> index = new ConcurrentHashMap<NonHostEntity, ConcurrentMap<Long, Context>>();
+    private static final @Nonnull ConcurrentMap<NonHostEntity, ConcurrentMap<Long, Context>> index = new ConcurrentHashMap<>();
     
     static {
         if (Database.isSingleAccess()) {

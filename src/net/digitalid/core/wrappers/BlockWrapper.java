@@ -3,6 +3,8 @@ package net.digitalid.core.wrappers;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Exposed;
+import net.digitalid.core.annotations.Loaded;
+import net.digitalid.core.annotations.Positive;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.identity.SyntacticType;
@@ -27,10 +29,9 @@ public abstract class BlockWrapper implements Blockable, Immutable {
      * 
      * @param type the semantic type of the new block.
      * 
-     * @require type.isLoaded() : "The type declaration is loaded.";
      * @require type.isBasedOn(getSyntacticType()) : "The given type is based on the indicated syntactic type.";
      */
-    protected BlockWrapper(@Nonnull SemanticType type) {
+    protected BlockWrapper(@Nonnull @Loaded SemanticType type) {
         assert type.isBasedOn(getSyntacticType()) : "The given type is based on the indicated syntactic type.";
         
         block = new Block(type, this);
@@ -67,22 +68,18 @@ public abstract class BlockWrapper implements Blockable, Immutable {
      * Returns the syntactic type that corresponds to this class.
      * 
      * @return the syntactic type that corresponds to this class.
-     * 
-     * @ensure return.isLoaded() : "The type declaration is loaded.";
      */
     @Pure
-    public abstract @Nonnull SyntacticType getSyntacticType();
+    public abstract @Nonnull @Loaded SyntacticType getSyntacticType();
     
     /**
      * Determines the length of the wrapped block.
      * This method is needed for lazy encoding.
      * 
      * @return the length of the wrapped block.
-     * 
-     * @ensure determineLength() > 0 : "The length is positive (i.e. the block is not empty).";
      */
     @Pure
-    protected abstract int determineLength();
+    protected abstract @Positive int determineLength();
     
     /**
      * Encodes the data into the wrapped block.

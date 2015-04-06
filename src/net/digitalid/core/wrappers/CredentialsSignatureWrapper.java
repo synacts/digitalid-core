@@ -313,7 +313,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
         
         // Credentials
         @Nonnull ReadonlyList<Block> list = new ListWrapper(tuple.getElementNotNull(4)).getElementsNotNull();
-        final @Nonnull FreezableList<Credential> credentials = new FreezableArrayList<Credential>(list.size());
+        final @Nonnull FreezableList<Credential> credentials = new FreezableArrayList<>(list.size());
         boolean lodged = false;
         for (final @Nonnull Block element : list) {
             final @Nonnull TupleWrapper subtuple = new TupleWrapper(element);
@@ -328,7 +328,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
         // Certificates
         if (tuple.isElementNotNull(5)) {
             list = new ListWrapper(tuple.getElementNotNull(5)).getElementsNotNull();
-            final @Nonnull FreezableList<CertifiedAttributeValue> certificates = new FreezableArrayList<CertifiedAttributeValue>(list.size());
+            final @Nonnull FreezableList<CertifiedAttributeValue> certificates = new FreezableArrayList<>(list.size());
             for (final @Nonnull Block element : list) certificates.add(AttributeValue.get(element, verified).toCertifiedAttributeValue());
             this.certificates = certificates.freeze();
         } else {
@@ -742,7 +742,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
         }
         
         final @Nonnull ReadonlyList<Block> list = new ListWrapper(signature.getElementNotNull(4)).getElementsNotNull();
-        final @Nonnull FreezableList<Block> ts = new FreezableArrayList<Block>(list.size());
+        final @Nonnull FreezableList<Block> ts = new FreezableArrayList<>(list.size());
         for (int i = 0; i < list.size(); i++) {
             final @Nonnull PublicKey publicKey = credentials.getNotNull(i).getPublicKey();
             final @Nonnull Exponent o = credentials.getNotNull(i).getO();
@@ -775,7 +775,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
             
             shownElement = shownElement.inverse().multiply(publicKey.getAo().pow(o));
             
-            final @Nonnull FreezableArray<Block> array = new FreezableArray<Block>(3);
+            final @Nonnull FreezableArray<Block> array = new FreezableArray<>(3);
             array.set(0, hiddenElement.multiply(shownElement.pow(t)).toBlock());
             
             if (lodged && si != null) {
@@ -852,7 +852,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
         final @Nonnull Exponent[] rrwis = new Exponent[size];
         final @Nonnull Exponent[] rrwbs = new Exponent[size];
         
-        final @Nonnull FreezableList<Block> ts = new FreezableArrayList<Block>(size);
+        final @Nonnull FreezableList<Block> ts = new FreezableArrayList<>(size);
         for (int i = 0; i < size; i++) {
             assert credentials.getNotNull(i) instanceof ClientCredential : "All credentials have to be client credentials, which was already checked in the constructor.";
             randomizedCredentials[i] = ((ClientCredential) credentials.getNotNull(i)).getRandomizedCredential();
@@ -869,7 +869,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
             
             if (rv != null) element = element.multiply(publicKey.getAv().pow(rv));
             
-            final @Nonnull FreezableArray<Block> array = new FreezableArray<Block>(3);
+            final @Nonnull FreezableArray<Block> array = new FreezableArray<>(3);
             array.set(0, randomizedCredentials[i].getC().pow(res[i]).multiply(publicKey.getAb().pow(rbs[i])).multiply(publicKey.getAu().pow(ru)).multiply(element).toBlock());
             
             if (lodged && !randomizedCredentials[i].isOneTime()) {
@@ -906,7 +906,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
         
         final @Nonnull Exponent t = new Exponent(elements.getNotNull(0).getHash().xor(new ListWrapper(ARRAYS, ts.freeze()).toBlock().getHash()).xor(tf));
         
-        final @Nonnull FreezableArray<Block> signature = new FreezableArray<Block>(8);
+        final @Nonnull FreezableArray<Block> signature = new FreezableArray<>(8);
         signature.set(0, t.toBlock().setType(T));
         signature.set(1, ru.subtract(t.multiply(u)).toBlock().setType(SU));
         if (rv != null) {
@@ -915,9 +915,9 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
             signature.set(2, mainCredential.getRestrictionsNotNull().toBlock());
         }
         
-        final @Nonnull FreezableList<Block> list = new FreezableArrayList<Block>(size);
+        final @Nonnull FreezableList<Block> list = new FreezableArrayList<>(size);
         for (int i = 0; i < size; i++) {
-            final @Nonnull FreezableArray<Block> credential = new FreezableArray<Block>(8);
+            final @Nonnull FreezableArray<Block> credential = new FreezableArray<>(8);
             credential.set(0, randomizedCredentials[i].getExposed());
             if (value == null || mainCredential.isRoleBased()) {
                 credential.set(1, randomizedCredentials[i].getRandomizedPermissions().toBlock());
@@ -941,7 +941,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
         signature.set(4, new ListWrapper(CREDENTIALS, list.freeze()).toBlock());
         
         if (certificates != null) {
-            final @Nonnull FreezableList<Block> certificateList = new FreezableArrayList<Block>(certificates.size());
+            final @Nonnull FreezableList<Block> certificateList = new FreezableArrayList<>(certificates.size());
             for (final @Nonnull CertifiedAttributeValue certificate : certificates) certificateList.add(certificate.toBlock());
             signature.set(5, new ListWrapper(AttributeValue.LIST, certificateList.freeze()).toBlock());
         }

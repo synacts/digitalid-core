@@ -467,7 +467,7 @@ public class Client extends Site implements Observer {
         accountOpen.initialize(newRole);
         Database.commit();
         
-        final @Nonnull FreezableList<ReadonlyPair<Predecessor, Block>> states = new FreezableArrayList<ReadonlyPair<Predecessor, Block>>(roles.size() + identifiers.size());
+        final @Nonnull FreezableList<ReadonlyPair<Predecessor, Block>> states = new FreezableArrayList<>(roles.size() + identifiers.size());
         
         for (final @Nonnull NativeRole role : roles) {
             if (role.getIdentity().getCategory() != category) throw new PacketException(PacketError.INTERNAL, "A role is of the wrong category.");
@@ -475,7 +475,7 @@ public class Client extends Site implements Observer {
             final @Nonnull ClientAgent clientAgent = role.getAgent();
             final @Nonnull Block state = CoreService.SERVICE.getState(role, clientAgent.getPermissions(), clientAgent.getRestrictions(), clientAgent);
             final @Nonnull Predecessor predecessor = new Predecessor(role.getIdentity().getAddress());
-            states.add(new FreezablePair<Predecessor, Block>(predecessor, state).freeze());
+            states.add(new FreezablePair<>(predecessor, state).freeze());
             Synchronizer.execute(new AccountClose(role, subject));
             role.remove();
             Database.commit();

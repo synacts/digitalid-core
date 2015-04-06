@@ -74,7 +74,7 @@ public class FreezableTriplet<E0, E1, E2> extends FreezablePair<E0, E1> implemen
     @Pure
     @Override
     public @Capturable @Nonnull FreezableTriplet<E0, E1, E2> clone() {
-        return new FreezableTriplet<E0, E1, E2>(this);
+        return new FreezableTriplet<>(this);
     }
     
     

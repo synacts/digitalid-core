@@ -81,7 +81,7 @@ final class AccessModule implements BothModule {
     @Override
     @NonCommitting
     public @Nonnull Block exportModule(@Nonnull Host host) throws SQLException {
-        final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
+        final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<>();
         try (@Nonnull Statement statement = Database.createStatement()) {
             // TODO: Retrieve all the entries from the database table(s).
         }
@@ -120,7 +120,7 @@ final class AccessModule implements BothModule {
     @Override
     @NonCommitting
     public @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadonlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws SQLException {
-        final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
+        final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<>();
         try (@Nonnull Statement statement = Database.createStatement()) {
             // TODO: Retrieve the entries of the given entity from the database table(s).
         }

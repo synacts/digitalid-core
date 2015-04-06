@@ -54,7 +54,7 @@ public final class NativeRole extends Role implements Immutable {
     /**
      * Caches the native roles given their client and number.
      */
-    private static final @Nonnull ConcurrentMap<Client, ConcurrentMap<Long, NativeRole>> index = new ConcurrentHashMap<Client, ConcurrentMap<Long, NativeRole>>();
+    private static final @Nonnull ConcurrentMap<Client, ConcurrentMap<Long, NativeRole>> index = new ConcurrentHashMap<>();
     
     static {
         if (Database.isSingleAccess()) {

@@ -450,7 +450,7 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
     @Pure
     @Override
     public final @Nonnull Block toBlock() {
-        final @Nonnull FreezableArray<Block> elements = new FreezableArray<Block>(3);
+        final @Nonnull FreezableArray<Block> elements = new FreezableArray<>(3);
         elements.set(0, new Int64Wrapper(NUMBER, getNumber()).toBlock());
         elements.set(1, new BooleanWrapper(CLIENT, isClient()).toBlock());
         elements.set(2, new BooleanWrapper(REMOVED, isRemoved()).toBlock());

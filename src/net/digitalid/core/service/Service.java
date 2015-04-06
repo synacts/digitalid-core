@@ -58,7 +58,7 @@ public abstract class Service implements BothModule, SQLizable {
     /**
      * Maps the services that are installed on this server from their type.
      */
-    private static final @Nonnull FreezableMap<SemanticType, Service> services = new FreezableLinkedHashMap<SemanticType, Service>();
+    private static final @Nonnull FreezableMap<SemanticType, Service> services = new FreezableLinkedHashMap<>();
     
     /**
      * Returns a list of the services installed on this server.
@@ -88,7 +88,7 @@ public abstract class Service implements BothModule, SQLizable {
     /**
      * Maps the modules that exist on this server from their state format.
      */
-    private static final @Nonnull FreezableMap<SemanticType, BothModule> modules = new FreezableLinkedHashMap<SemanticType, BothModule>();
+    private static final @Nonnull FreezableMap<SemanticType, BothModule> modules = new FreezableLinkedHashMap<>();
     
     /**
      * Returns the module whose state format matches the given type.
@@ -201,17 +201,17 @@ public abstract class Service implements BothModule, SQLizable {
     /**
      * Maps the modules that are used on hosts from their module format.
      */
-    private final @Nonnull FreezableMap<SemanticType, HostModule> hostModules = new FreezableLinkedHashMap<SemanticType, HostModule>();
+    private final @Nonnull FreezableMap<SemanticType, HostModule> hostModules = new FreezableLinkedHashMap<>();
     
     /**
      * Stores the modules of this service that are used on clients.
      */
-    private final @Nonnull FreezableList<Module> clientModules = new FreezableLinkedList<Module>();
+    private final @Nonnull FreezableList<Module> clientModules = new FreezableLinkedList<>();
     
     /**
      * Maps the modules that are used on both hosts and clients from their state format.
      */
-    private final @Nonnull FreezableMap<SemanticType, BothModule> bothModules = new FreezableLinkedHashMap<SemanticType, BothModule>();
+    private final @Nonnull FreezableMap<SemanticType, BothModule> bothModules = new FreezableLinkedHashMap<>();
     
     /**
      * Returns the modules that are used on both hosts and clients of this service.
@@ -295,7 +295,7 @@ public abstract class Service implements BothModule, SQLizable {
     @Override
     @NonCommitting
     public final @Nonnull Block exportModule(@Nonnull Host host) throws SQLException {
-        final @Nonnull FreezableList<Block> elements = new FreezableArrayList<Block>(hostModules.size());
+        final @Nonnull FreezableList<Block> elements = new FreezableArrayList<>(hostModules.size());
         for (final @Nonnull HostModule hostModule : hostModules.values()) {
             elements.add(new SelfcontainedWrapper(MODULE, hostModule.exportModule(host)).toBlock());
         }
@@ -338,7 +338,7 @@ public abstract class Service implements BothModule, SQLizable {
     @Override
     @NonCommitting
     public final @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadonlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws SQLException {
-        final @Nonnull FreezableList<Block> elements = new FreezableArrayList<Block>(bothModules.size());
+        final @Nonnull FreezableList<Block> elements = new FreezableArrayList<>(bothModules.size());
         for (final @Nonnull BothModule bothModule : bothModules.values()) {
             elements.add(new SelfcontainedWrapper(STATE, bothModule.getState(entity, permissions, restrictions, agent)).toBlock());
         }

@@ -226,7 +226,7 @@ public abstract class Method extends Handler {
         final @Nullable RequestAudit requestAudit = RequestAudit.get(this);
         final @Nonnull Response response;
         try {
-            response = Method.send(new FreezableArrayList<Method>(this).freeze(), requestAudit);
+            response = Method.send(new FreezableArrayList<>(this).freeze(), requestAudit);
         } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
             if (requestAudit != null) RequestAudit.release(this);
             throw exception;
@@ -353,7 +353,7 @@ public abstract class Method extends Handler {
                 if (authentications.contains(Authentications.IDENTITY_BASED_TYPE)) {
                     final @Nonnull ClientCredential credential = ClientCredential.getIdentityBased(role, permissions);
                     credentials = new FreezableArrayList<Credential>(credential);
-                    certificates = new FreezableArrayList<CertifiedAttributeValue>(authentications.size() - 1);
+                    certificates = new FreezableArrayList<>(authentications.size() - 1);
                     for (final @Nonnull SemanticType type : authentications) {
                         if (!type.equals(Authentications.IDENTITY_BASED_TYPE)) {
                             final @Nullable AttributeValue attributeValue = Attribute.get(entity, type).getValue();
@@ -365,7 +365,7 @@ public abstract class Method extends Handler {
                     }
                     certificates.freeze();
                 } else {
-                    credentials = new FreezableArrayList<Credential>(authentications.size());
+                    credentials = new FreezableArrayList<>(authentications.size());
                     for (final @Nonnull SemanticType type : authentications) {
                         final @Nullable AttributeValue attributeValue = Attribute.get(entity, type).getValue();
                         if (attributeValue != null && attributeValue.isCertified()) {
@@ -446,7 +446,7 @@ public abstract class Method extends Handler {
     /**
      * Maps method types to the factory that creates handlers for that type.
      */
-    private static final @Nonnull Map<SemanticType, Factory> factories = new ConcurrentHashMap<SemanticType, Factory>();
+    private static final @Nonnull Map<SemanticType, Factory> factories = new ConcurrentHashMap<>();
     
     /**
      * Adds the given factory that creates handlers for the given type.

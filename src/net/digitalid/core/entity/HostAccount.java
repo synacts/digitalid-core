@@ -54,7 +54,7 @@ public final class HostAccount extends Account implements HostEntity, Immutable,
     /**
      * Caches host accounts given their host and identity.
      */
-    private static final @Nonnull ConcurrentMap<Host, ConcurrentMap<HostIdentity, HostAccount>> index = new ConcurrentHashMap<Host, ConcurrentMap<HostIdentity, HostAccount>>();
+    private static final @Nonnull ConcurrentMap<Host, ConcurrentMap<HostIdentity, HostAccount>> index = new ConcurrentHashMap<>();
     
     static {
         if (Database.isSingleAccess()) {

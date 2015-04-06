@@ -60,7 +60,7 @@ public class ConcurrentHashMap<K, V> extends java.util.concurrent.ConcurrentHash
     @Pure
     @Override
     public @Capturable @Nonnull ConcurrentHashMap<K, V> clone() {
-        return new ConcurrentHashMap<K, V>(this);
+        return new ConcurrentHashMap<>(this);
     }
     
 }

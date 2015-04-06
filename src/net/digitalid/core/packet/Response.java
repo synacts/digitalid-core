@@ -70,7 +70,7 @@ public final class Response extends Packet {
      */
     @NonCommitting
     public Response(@Nullable Request request, @Nonnull PacketException exception) throws SQLException, IOException, PacketException, ExternalException {
-        super(new FreezablePair<ReadonlyList<Reply>, ReadonlyList<PacketException>>(new FreezableArrayList<Reply>(1).freeze(), new FreezableArrayList<PacketException>(exception).freeze()).freeze(), 1, null, null, request == null ? null : request.getEncryption().getSymmetricKey(), null, null);
+        super(new FreezablePair<>(new FreezableArrayList<Reply>(1).freeze(), new FreezableArrayList<>(exception).freeze()).freeze(), 1, null, null, request == null ? null : request.getEncryption().getSymmetricKey(), null, null);
         
         this.request = request;
     }
@@ -93,7 +93,7 @@ public final class Response extends Packet {
      */
     @NonCommitting
     public Response(@Nonnull Request request, @Nonnull ReadonlyList<Reply> replies, @Nonnull ReadonlyList<PacketException> exceptions, @Nullable ResponseAudit audit) throws SQLException, IOException, PacketException, ExternalException {
-        super(new FreezablePair<ReadonlyList<Reply>, ReadonlyList<PacketException>>(replies, exceptions).freeze(), replies.size(), request.getRecipient(), null, request.getEncryption().getSymmetricKey(), request.getSubject(), audit);
+        super(new FreezablePair<>(replies, exceptions).freeze(), replies.size(), request.getRecipient(), null, request.getEncryption().getSymmetricKey(), request.getSubject(), audit);
         
         assert replies.isFrozen() : "The list of replies is frozen.";
         assert replies.isNotEmpty() : "The list of replies is not empty.";
@@ -203,8 +203,8 @@ public final class Response extends Packet {
     @Override
     @RawRecipient
     void initialize(int size) {
-        this.replies = new FreezableArrayList<Reply>(size);
-        this.exceptions = new FreezableArrayList<PacketException>(size);
+        this.replies = new FreezableArrayList<>(size);
+        this.exceptions = new FreezableArrayList<>(size);
         for (int i = 0; i < size; i++) {
             replies.add(null);
             exceptions.add(null);

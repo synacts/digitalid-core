@@ -26,9 +26,9 @@ public final class ListWrapperTest extends DatabaseSetup {
         final @Nonnull Block block2 = new StringWrapper(STRING, "This is a longer second block in order to test different block lengths.").toBlock();
         final @Nonnull Block block3 = new StringWrapper(STRING, "This is an even longer third block in order to test the wrapping of more than two blocks.").toBlock();
         
-        final @Nonnull FreezableList<ReadonlyList<Block>> listOfElements = new FreezableLinkedList<ReadonlyList<Block>>();
+        final @Nonnull FreezableList<ReadonlyList<Block>> listOfElements = new FreezableLinkedList<>();
         {
-            @Nonnull FreezableList<Block> elements = new FreezableLinkedList<Block>();
+            @Nonnull FreezableList<Block> elements = new FreezableLinkedList<>();
             listOfElements.add(elements.freeze()); 
             elements = elements.clone();
             elements.add(block1);

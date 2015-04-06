@@ -84,8 +84,8 @@ public final class Worker implements Runnable {
                     final @Nullable Agent agent = requestAudit != null && service.equals(CoreService.SERVICE) ? reference.getSignatureNotNull().getAgentCheckedAndRestricted(reference.getNonHostAccount(), null) : null;
                     
                     final int size = request.getSize();
-                    final @Nonnull FreezableList<Reply> replies = new FreezableArrayList<Reply>(size);
-                    final @Nonnull FreezableList<PacketException> exceptions = new FreezableArrayList<PacketException>(size);
+                    final @Nonnull FreezableList<Reply> replies = new FreezableArrayList<>(size);
+                    final @Nonnull FreezableList<PacketException> exceptions = new FreezableArrayList<>(size);
                     
                     for (int i = 0; i < size; i++) {
                         replies.add(null);

@@ -101,7 +101,7 @@ final class BinaryExpression extends Expression implements Immutable {
             case '+': return leftContacts.add(rightContacts);
             case '-': return leftContacts.subtract(rightContacts);
             case '*': return leftContacts.intersect(rightContacts);
-            default: return new FreezableLinkedHashSet<Contact>();
+            default: return new FreezableLinkedHashSet<>();
         }
     }
     

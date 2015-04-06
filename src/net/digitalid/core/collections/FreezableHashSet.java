@@ -115,7 +115,7 @@ public class FreezableHashSet<E> extends HashSet<E> implements FreezableSet<E> {
     @Pure
     @Override
     public @Nonnull FreezableIterator<E> iterator() {
-        return new FreezableIterableIterator<E>(this, super.iterator());
+        return new FreezableIterableIterator<>(this, super.iterator());
     }
     
     
@@ -212,14 +212,14 @@ public class FreezableHashSet<E> extends HashSet<E> implements FreezableSet<E> {
     @Pure
     @Override
     public @Capturable @Nonnull FreezableHashSet<E> clone() {
-        return new FreezableHashSet<E>(this);
+        return new FreezableHashSet<>(this);
     }
     
     @Pure
     @Override
     @SuppressWarnings("unchecked")
     public @Capturable @Nonnull FreezableArray<E> toFreezableArray() {
-        return new FreezableArray<E>(toArray((E[]) new Object[size()]));
+        return new FreezableArray<>(toArray((E[]) new Object[size()]));
     }
     
 }

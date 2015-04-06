@@ -346,7 +346,7 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
     /**
      * Caches outgoing roles given their entity and number.
      */
-    private static final @Nonnull ConcurrentMap<NonHostEntity, ConcurrentMap<Long, OutgoingRole>> index = new ConcurrentHashMap<NonHostEntity, ConcurrentMap<Long, OutgoingRole>>();
+    private static final @Nonnull ConcurrentMap<NonHostEntity, ConcurrentMap<Long, OutgoingRole>> index = new ConcurrentHashMap<>();
     
     static {
         if (Database.isSingleAccess()) {

@@ -160,7 +160,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper implements Im
         assert elements.isNotFrozen() : "The elements are not frozen.";
         assert elements.isNotNull(0) : "The first element is not null.";
         
-        final @Nonnull FreezableArray<Block> subelements = new FreezableArray<Block>(3);
+        final @Nonnull FreezableArray<Block> subelements = new FreezableArray<>(3);
         final @Nonnull SecretCommitment commitment = (SecretCommitment) this.commitment;
         subelements.set(0, commitment.toBlock());
         final @Nonnull Exponent r = commitment.getPublicKey().getCompositeGroup().getRandomExponent(Parameters.RANDOM_EXPONENT);

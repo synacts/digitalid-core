@@ -97,7 +97,7 @@ public final class PasswordModule implements BothModule {
     public @Nonnull Block exportModule(@Nonnull Host host) throws SQLException {
         final @Nonnull String SQL = "SELECT entity, password FROM " + host + "password";
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
-            final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
+            final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<>();
             while (resultSet.next()) {
                 final @Nonnull Account account = Account.getNotNull(host, resultSet, 1);
                 final @Nonnull String password = resultSet.getString(2);

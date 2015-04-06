@@ -135,7 +135,7 @@ public final class PushFailed extends ExternalAction {
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        final @Nonnull FreezableArray<Block> elements = new FreezableArray<Block>(4);
+        final @Nonnull FreezableArray<Block> elements = new FreezableArray<>(4);
         elements.set(0, new Int64Wrapper(NUMBER, number).toBlock());
         elements.set(1, action.getSubject().toBlock().setType(SUBJECT));
         elements.set(2, action.getRecipient().toBlock().setType(RECIPIENT));

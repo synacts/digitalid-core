@@ -131,7 +131,7 @@ public abstract class Reply extends Handler implements SQLizable {
     /**
      * Maps reply types to the factory that creates handlers for that type.
      */
-    private static final @Nonnull Map<SemanticType, Factory> factories = new ConcurrentHashMap<SemanticType, Factory>();
+    private static final @Nonnull Map<SemanticType, Factory> factories = new ConcurrentHashMap<>();
     
     /**
      * Adds the given factory that creates handlers for the given type.

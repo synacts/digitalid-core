@@ -256,7 +256,7 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
     /**
      * Caches client agents given their entity and number.
      */
-    private static final @Nonnull ConcurrentMap<NonHostEntity, ConcurrentMap<Long, ClientAgent>> index = new ConcurrentHashMap<NonHostEntity, ConcurrentMap<Long, ClientAgent>>();
+    private static final @Nonnull ConcurrentMap<NonHostEntity, ConcurrentMap<Long, ClientAgent>> index = new ConcurrentHashMap<>();
     
     static {
         if (Database.isSingleAccess()) {

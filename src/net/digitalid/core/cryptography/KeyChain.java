@@ -52,8 +52,8 @@ abstract class KeyChain<Key extends Blockable> implements Immutable, Blockable {
     protected KeyChain(@Nonnull Time time, @Nonnull Key key) {
         assert time.isLessThanOrEqualTo(new Time()) : "The time lies in the past.";
         
-        final @Nonnull FreezableLinkedList<ReadonlyPair<Time, Key>> items = new FreezableLinkedList<ReadonlyPair<Time, Key>>();
-        items.add(new FreezablePair<Time, Key>(time, key).freeze());
+        final @Nonnull FreezableLinkedList<ReadonlyPair<Time, Key>> items = new FreezableLinkedList<>();
+        items.add(new FreezablePair<>(time, key).freeze());
         this.items = items.freeze();
     }
     
@@ -80,13 +80,13 @@ abstract class KeyChain<Key extends Blockable> implements Immutable, Blockable {
         
         final @Nonnull ReadonlyList<Block> elements = new ListWrapper(block).getElementsNotNull();
         if (elements.isEmpty()) throw new InvalidEncodingException("The list of elements may not be empty.");
-        final @Nonnull FreezableLinkedList<ReadonlyPair<Time, Key>> items = new FreezableLinkedList<ReadonlyPair<Time, Key>>();
+        final @Nonnull FreezableLinkedList<ReadonlyPair<Time, Key>> items = new FreezableLinkedList<>();
         
         for (final @Nonnull Block element : elements) {
             final @Nonnull ReadonlyArray<Block> pair = new TupleWrapper(element).getElementsNotNull(2);
             final @Nonnull Time time = new Time(pair.getNotNull(0));
             final @Nonnull Key key = createKey(pair.getNotNull(1));
-            items.add(new FreezablePair<Time, Key>(time, key).freeze());
+            items.add(new FreezablePair<>(time, key).freeze());
         }
         
         if (!items.isStrictlyDescending()) throw new InvalidEncodingException("The time has to be strictly decreasing.");
@@ -96,9 +96,9 @@ abstract class KeyChain<Key extends Blockable> implements Immutable, Blockable {
     @Pure
     @Override
     public final @Nonnull Block toBlock() {
-        final @Nonnull FreezableArrayList<Block> elements = new FreezableArrayList<Block>(items.size());
+        final @Nonnull FreezableArrayList<Block> elements = new FreezableArrayList<>(items.size());
         for (final @Nonnull ReadonlyPair<Time, Key> item : items) {
-            final @Nonnull FreezableArray<Block> pair = new FreezableArray<Block>(2);
+            final @Nonnull FreezableArray<Block> pair = new FreezableArray<>(2);
             pair.set(0, item.getElement0().toBlock());
             pair.set(1, item.getElement1().toBlock());
             elements.add(new TupleWrapper(getItemType(), pair.freeze()).toBlock());
@@ -160,7 +160,7 @@ abstract class KeyChain<Key extends Blockable> implements Immutable, Blockable {
         assert time.isGreaterThan(new Time().add(Time.TROPICAL_YEAR)) : "The time lies at least one year in the future.";
         
         final @Nonnull FreezableList<ReadonlyPair<Time, Key>> copy = items.clone();
-        final @Nonnull ReadonlyPair<Time, Key> pair = new FreezablePair<Time, Key>(time, key).freeze();
+        final @Nonnull ReadonlyPair<Time, Key> pair = new FreezablePair<>(time, key).freeze();
         copy.add(0, pair);
         
         final @Nonnull Time cutoff = Time.TWO_YEARS.ago();

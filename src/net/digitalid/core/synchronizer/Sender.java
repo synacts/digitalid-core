@@ -218,7 +218,7 @@ public final class Sender extends Thread {
         }.start();
         
         final @Nonnull FutureTask<RequestAudit> task;
-        task = new FutureTask<RequestAudit>(new Callable<RequestAudit>() {
+        task = new FutureTask<>(new Callable<RequestAudit>() {
             @Override
             @Committing
             public @Nullable RequestAudit call() throws Exception {

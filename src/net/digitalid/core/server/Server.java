@@ -69,7 +69,7 @@ public final class Server {
     /**
      * Maps the identifiers of the hosts that are running on this server to their instances.
      */
-    private static final @Nonnull FreezableMap<HostIdentifier, Host> hosts = new FreezableLinkedHashMap<HostIdentifier, Host>();
+    private static final @Nonnull FreezableMap<HostIdentifier, Host> hosts = new FreezableLinkedHashMap<>();
     
     /**
      * Returns whether the host with the given identifier is running on this server.

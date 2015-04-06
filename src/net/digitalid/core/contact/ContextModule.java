@@ -138,7 +138,7 @@ public final class ContextModule implements BothModule {
     @Override
     @NonCommitting
     public @Nonnull Block exportModule(@Nonnull Host host) throws SQLException {
-        final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
+        final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<>();
         try (@Nonnull Statement statement = Database.createStatement()) {
             // TODO: Retrieve all the entries from the database table(s).
         }
@@ -198,11 +198,11 @@ public final class ContextModule implements BothModule {
         // TODO: Extend this implementation and make sure the state is restricted according to the restrictions.
         // TODO: This might be a little bit complicated as the context for which the client is authorized needs to be aggregated.
         final @Nonnull Site site = entity.getSite();
-        final @Nonnull FreezableArray<Block> tables = new FreezableArray<Block>(2);
+        final @Nonnull FreezableArray<Block> tables = new FreezableArray<>(2);
         try (@Nonnull Statement statement = Database.createStatement()) {
             
             try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT context, name, icon FROM " + site + "context_name WHERE entity = " + entity)) {
-                final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
+                final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<>();
                 while (resultSet.next()) {
                     final @Nonnull Context context = Context.getNotNull(entity, resultSet, 1);
                     final @Nonnull String name = resultSet.getString(2);
@@ -213,7 +213,7 @@ public final class ContextModule implements BothModule {
             }
             
             try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT context, contact FROM " + site + "context_contact WHERE entity = " + entity)) {
-                final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
+                final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<>();
                 while (resultSet.next()) {
                     final @Nonnull Context context = Context.getNotNull(entity, resultSet, 1);
                     final @Nonnull Identity person = IdentityClass.getNotNull(resultSet, 2);

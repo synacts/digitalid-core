@@ -85,7 +85,7 @@ public final class TupleWrapper extends BlockWrapper implements Immutable {
      * @require basedOnParameters(type, elements) : "Each element is either null or based on the corresponding parameter of the given type.";
      */
     public TupleWrapper(@Nonnull SemanticType type, @Nonnull Block... elements) {
-        this(type, new FreezableArray<Block>(elements).freeze());
+        this(type, new FreezableArray<>(elements).freeze());
     }
     
     /**
@@ -101,7 +101,7 @@ public final class TupleWrapper extends BlockWrapper implements Immutable {
     public TupleWrapper(@Nonnull SemanticType type, @Nonnull Blockable... elements) {
         super(type);
         
-        final @Nonnull FreezableArray<Block> array = new FreezableArray<Block>(elements.length);
+        final @Nonnull FreezableArray<Block> array = new FreezableArray<>(elements.length);
         for (int i = 0; i < elements.length; i++) array.set(i, Block.toBlock(elements[i]));
         this.elements = array.freeze();
         
@@ -120,7 +120,7 @@ public final class TupleWrapper extends BlockWrapper implements Immutable {
         
         final @Nonnull ReadonlyList<SemanticType> parameters = block.getType().getParameters();
         final int size = parameters.size();
-        final @Nonnull FreezableArray<Block> array = new FreezableArray<Block>(size);
+        final @Nonnull FreezableArray<Block> array = new FreezableArray<>(size);
         
         int offset = 0;
         final int length = block.getLength();

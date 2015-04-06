@@ -446,13 +446,13 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
     @Pure
     final @Nonnull Block getCache() {
         if (cache == null) {
-            final @Nonnull FreezableArray<Block> subelements = new FreezableArray<Block>(4);
+            final @Nonnull FreezableArray<Block> subelements = new FreezableArray<>(4);
             subelements.set(0, Block.toBlock(SUBJECT, subject));
             subelements.set(1, Block.toBlock(time));
             subelements.set(2, element);
             subelements.set(3, Block.toBlock(audit));
             
-            final @Nonnull FreezableArray<Block> elements = new FreezableArray<Block>(4);
+            final @Nonnull FreezableArray<Block> elements = new FreezableArray<>(4);
             final @Nonnull Block block = new TupleWrapper(CONTENT, subelements.freeze()).toBlock();
             elements.set(0, block);
             

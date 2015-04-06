@@ -90,7 +90,7 @@ public abstract class Audit implements Immutable, Blockable {
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        final @Nonnull FreezableArray<Block> elements = new FreezableArray<Block>(3);
+        final @Nonnull FreezableArray<Block> elements = new FreezableArray<>(3);
         elements.set(0, lastTime.toBlock().setType(LAST_TIME));
         return new TupleWrapper(TYPE, elements.freeze()).toBlock();
     }

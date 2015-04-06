@@ -118,7 +118,7 @@ public class FreezableArray<E> extends FreezableObject implements ReadonlyArray<
     @Pure
     @Override
     public @Nonnull FreezableArrayIterator<E> iterator() {
-        return new FreezableArrayIterator<E>(this);
+        return new FreezableArrayIterator<>(this);
     }
     
     
@@ -134,7 +134,7 @@ public class FreezableArray<E> extends FreezableObject implements ReadonlyArray<
     @Pure
     @Override
     public boolean doesNotContainDuplicates() {
-        final @Nonnull HashSet<E> set = new HashSet<E>(size());
+        final @Nonnull HashSet<E> set = new HashSet<>(size());
         for (final @Nullable E element : this) {
             if (set.contains(element)) return false;
             else set.add(element);
@@ -162,13 +162,13 @@ public class FreezableArray<E> extends FreezableObject implements ReadonlyArray<
     @Pure
     @Override
     public @Capturable @Nonnull FreezableArray<E> clone() {
-        return new FreezableArray<E>(array.clone());
+        return new FreezableArray<>(array.clone());
     }
     
     @Pure
     @Override
     public @Capturable @Nonnull FreezableList<E> toFreezableList() {
-        final @Nonnull FreezableList<E> freezableList = new FreezableArrayList<E>(array.length);
+        final @Nonnull FreezableList<E> freezableList = new FreezableArrayList<>(array.length);
         for (final @Nullable E element : array) freezableList.add(element);
         return freezableList;
     }

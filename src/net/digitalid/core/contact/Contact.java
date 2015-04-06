@@ -141,7 +141,7 @@ public final class Contact extends NonHostConcept implements Immutable, Blockabl
     /**
      * Caches contacts given their entity and person.
      */
-    private static final @Nonnull ConcurrentMap<NonHostEntity, ConcurrentMap<Person, Contact>> index = new ConcurrentHashMap<NonHostEntity, ConcurrentMap<Person, Contact>>();
+    private static final @Nonnull ConcurrentMap<NonHostEntity, ConcurrentMap<Person, Contact>> index = new ConcurrentHashMap<>();
     
     static {
         if (Database.isSingleAccess()) {

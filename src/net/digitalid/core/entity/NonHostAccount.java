@@ -54,7 +54,7 @@ public final class NonHostAccount extends Account implements NonHostEntity, Immu
     /**
      * Caches non-host accounts given their host and identity.
      */
-    private static final @Nonnull ConcurrentMap<Host, ConcurrentMap<InternalNonHostIdentity, NonHostAccount>> index = new ConcurrentHashMap<Host, ConcurrentMap<InternalNonHostIdentity, NonHostAccount>>();
+    private static final @Nonnull ConcurrentMap<Host, ConcurrentMap<InternalNonHostIdentity, NonHostAccount>> index = new ConcurrentHashMap<>();
     
     static {
         if (Database.isSingleAccess()) {

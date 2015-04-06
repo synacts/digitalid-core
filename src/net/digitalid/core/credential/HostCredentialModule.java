@@ -112,7 +112,7 @@ public final class HostCredentialModule implements HostModule {
     public @Nonnull Block exportModule(@Nonnull Host host) throws SQLException {
         final @Nonnull String SQL = "SELECT time, entity, e, i, v, signature FROM " + host + "credential";
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
-            final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<Block>();
+            final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<>();
             while (resultSet.next()) {
                 final @Nonnull Time time = Time.get(resultSet, 1);
                 final @Nonnull Identity identity = IdentityClass.getNotNull(resultSet, 2);

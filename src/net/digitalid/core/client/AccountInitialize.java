@@ -106,7 +106,7 @@ public final class AccountInitialize extends CoreServiceInternalAction {
         final @Nonnull ReadonlyList<Block> elements = new ListWrapper(block).getElementsNotNull();
         if (elements.size() > 1 && !category.isInternalPerson()) throw new InvalidDeclarationException("Only internal persons may have more than one predecessor.", subject, null);
         
-        final @Nonnull FreezableList<ReadonlyPair<Predecessor, Block>> states = new FreezableArrayList<ReadonlyPair<Predecessor, Block>>(elements.size());
+        final @Nonnull FreezableList<ReadonlyPair<Predecessor, Block>> states = new FreezableArrayList<>(elements.size());
         for (final @Nonnull Block element : elements) {
             final @Nonnull TupleWrapper tuple = new TupleWrapper(element);
             final @Nonnull Predecessor predecessor = new Predecessor(tuple.getElementNotNull(0));
@@ -120,7 +120,7 @@ public final class AccountInitialize extends CoreServiceInternalAction {
                 if (predecessor.getPredecessors().isNotEmpty()) throw new InvalidDeclarationException(message + " is an external person and may not have any predecessors.", subject, null);
             }
             if (!Successor.getReloaded(identifier).equals(subject)) throw new InvalidDeclarationException(message + " does not link back.", subject, null);
-            states.add(new FreezablePair<Predecessor, Block>(predecessor, tuple.getElement(1)).freeze());
+            states.add(new FreezablePair<>(predecessor, tuple.getElement(1)).freeze());
         }
         this.states = states.freeze();
     }
@@ -128,7 +128,7 @@ public final class AccountInitialize extends CoreServiceInternalAction {
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        final @Nonnull FreezableList<Block> elements = new FreezableArrayList<Block>(states.size());
+        final @Nonnull FreezableList<Block> elements = new FreezableArrayList<>(states.size());
         for (final @Nonnull ReadonlyPair<Predecessor, Block> state : states) {
             elements.add(new TupleWrapper(STATE, state.getElement0().toBlock(), state.getElement1()).toBlock());
         }
@@ -169,7 +169,7 @@ public final class AccountInitialize extends CoreServiceInternalAction {
         try {
             @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
             final @Nonnull Predecessors predecessors = new Predecessors(states.size());
-            final @Nonnull FreezableList<NonHostIdentity> identities = new FreezableArrayList<NonHostIdentity>(states.size());
+            final @Nonnull FreezableList<NonHostIdentity> identities = new FreezableArrayList<>(states.size());
             for (final @Nonnull ReadonlyPair<Predecessor, Block> state : states) {
                 final @Nonnull Predecessor predecessor = state.getElement0();
                 identities.add(predecessor.getIdentifier().getIdentity().toNonHostIdentity());

@@ -70,7 +70,7 @@ public final class Synchronizer extends Thread {
     /**
      * Stores the services that are currently suspended because a sender is using it.
      */
-    private static final @Nonnull ConcurrentMap<Role, ConcurrentSet<Service>> suspendedServices = new ConcurrentHashMap<Role, ConcurrentSet<Service>>();
+    private static final @Nonnull ConcurrentMap<Role, ConcurrentSet<Service>> suspendedServices = new ConcurrentHashMap<>();
     
     /**
      * Returns whether the given service is suspended for the given role.
@@ -147,7 +147,7 @@ public final class Synchronizer extends Thread {
         final @Nullable InternalAction lastAction = SynchronizerModule.pendingActions.peekLast();
         Database.commit();
         
-        final @Nonnull ReadonlySet<BothModule> modules = new FreezableHashSet<BothModule>(module).freeze();
+        final @Nonnull ReadonlySet<BothModule> modules = new FreezableHashSet<>(module).freeze();
         SynchronizerModule.redoPendingActions(role, module.equals(service) ? service.getBothModules() : modules, lastAction);
         if (!module.equals(service)) response.getAuditNotNull().execute(role, service, response.getRequest().getRecipient(), ResponseAudit.emptyMethodList, modules);
     }

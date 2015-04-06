@@ -100,19 +100,19 @@ public class FreezableLinkedHashMap<K,V> extends LinkedHashMap<K,V> implements F
     @Pure
     @Override
     public @Nonnull FreezableSet<K> keySet() {
-        return new BackedFreezableSet<K>(this, super.keySet());
+        return new BackedFreezableSet<>(this, super.keySet());
     }
     
     @Pure
     @Override
     public @Nonnull FreezableCollection<V> values() {
-        return new BackedFreezableCollection<V>(this, super.values());
+        return new BackedFreezableCollection<>(this, super.values());
     }
     
     @Pure
     @Override
     public @Nonnull FreezableSet<Map.Entry<K,V>> entrySet() {
-        return new BackedFreezableSet<Map.Entry<K,V>>(this, super.entrySet());
+        return new BackedFreezableSet<>(this, super.entrySet());
     }
     
     
@@ -160,7 +160,7 @@ public class FreezableLinkedHashMap<K,V> extends LinkedHashMap<K,V> implements F
     @Pure
     @Override
     public @Capturable @Nonnull FreezableLinkedHashMap<K,V> clone() {
-        return new FreezableLinkedHashMap<K,V>(this);
+        return new FreezableLinkedHashMap<>(this);
     }
     
 }

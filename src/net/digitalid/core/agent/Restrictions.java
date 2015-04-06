@@ -210,7 +210,7 @@ public final class Restrictions implements Immutable, Blockable, SQLizable {
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        final @Nonnull FreezableArray<Block> elements = new FreezableArray<Block>(5);
+        final @Nonnull FreezableArray<Block> elements = new FreezableArray<>(5);
         elements.set(0, new BooleanWrapper(CLIENT_TYPE, client).toBlock());
         elements.set(1, new BooleanWrapper(ROLE_TYPE, role).toBlock());
         elements.set(2, new BooleanWrapper(WRITING_TYPE, writing).toBlock());

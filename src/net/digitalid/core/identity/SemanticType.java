@@ -163,7 +163,7 @@ public final class SemanticType extends Type implements Immutable {
         Cache.getAttributeValues(this, null, Time.MIN, CATEGORIES, CACHING, SYNTACTIC_BASE, PARAMETERS, SEMANTIC_BASE);
         
         final @Nonnull ReadonlyList<Block> elements = new ListWrapper(Cache.getStaleAttributeContent(this, null, CATEGORIES)).getElementsNotNull();
-        final @Nonnull FreezableList<Category> categories = new FreezableArrayList<Category>(elements.size());
+        final @Nonnull FreezableList<Category> categories = new FreezableArrayList<>(elements.size());
         for (final @Nonnull Block element : elements) categories.add(Category.get(element));
         if (categories.doesNotContainDuplicates()) throw new InvalidEncodingException("The list of categories may not contain duplicates.");
         this.categories = categories.freeze();
@@ -184,7 +184,7 @@ public final class SemanticType extends Type implements Immutable {
         } catch (@Nonnull AttributeNotFoundException exception) {
             this.syntacticBase = IdentifierClass.create(Cache.getStaleAttributeContent(this, null, SYNTACTIC_BASE)).getIdentity().toSyntacticType();
             final @Nonnull ReadonlyList<Block> list = new ListWrapper(Cache.getStaleAttributeContent(this, null, PARAMETERS)).getElementsNotNull();
-            final @Nonnull FreezableList<SemanticType> parameters = new FreezableArrayList<SemanticType>(list.size());
+            final @Nonnull FreezableList<SemanticType> parameters = new FreezableArrayList<>(list.size());
             for (final @Nonnull Block element : elements) parameters.add(Mapper.getIdentity(IdentifierClass.create(element)).toSemanticType());
             if (parameters.doesNotContainDuplicates()) throw new InvalidEncodingException("The list of parameters may not contain duplicates.");
             if (!(syntacticBase.getNumberOfParameters() == -1 && parameters.size() > 0 || syntacticBase.getNumberOfParameters() == parameters.size())) throw new InvalidEncodingException("The number of required parameters must either be variable or match the given parameters.");
@@ -276,7 +276,7 @@ public final class SemanticType extends Type implements Immutable {
      * @ensure isLoaded() : "The type declaration has been loaded.";
      */
     public @Nonnull SemanticType load(@Nonnull Category[] categories, @Nullable Time cachingPeriod, @Nonnull SyntacticType syntacticBase, @Nonnull SemanticType... parameters) {
-        return load(new FreezableArray<Category>(categories).toFreezableList().freeze(), cachingPeriod, syntacticBase, new FreezableArray<SemanticType>(parameters).toFreezableList().freeze());
+        return load(new FreezableArray<>(categories).toFreezableList().freeze(), cachingPeriod, syntacticBase, new FreezableArray<>(parameters).toFreezableList().freeze());
     }
     
     /**
@@ -298,7 +298,7 @@ public final class SemanticType extends Type implements Immutable {
      * @ensure isLoaded() : "The type declaration has been loaded.";
      */
     public @Nonnull SemanticType load(@Nonnull SyntacticType syntacticBase, @Nonnull SemanticType... parameters) {
-        return load(Category.NONE, null, syntacticBase, new FreezableArray<SemanticType>(parameters).toFreezableList().freeze());
+        return load(Category.NONE, null, syntacticBase, new FreezableArray<>(parameters).toFreezableList().freeze());
     }
     
     /**
@@ -373,7 +373,7 @@ public final class SemanticType extends Type implements Immutable {
      * @ensure isLoaded() : "The type declaration has been loaded.";
      */
     public @Nonnull SemanticType load(@Nonnull Category[] categories, @Nullable Time cachingPeriod, @Nonnull SemanticType semanticBase) {
-        return load(new FreezableArray<Category>(categories).toFreezableList().freeze(), cachingPeriod, semanticBase);
+        return load(new FreezableArray<>(categories).toFreezableList().freeze(), cachingPeriod, semanticBase);
     }
     
     /**

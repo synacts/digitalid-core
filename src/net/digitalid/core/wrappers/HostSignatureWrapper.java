@@ -172,7 +172,7 @@ public final class HostSignatureWrapper extends SignatureWrapper implements Immu
         assert elements.isNotFrozen() : "The elements are not frozen.";
         assert elements.isNotNull(0) : "The first element is not null.";
         
-        final @Nonnull FreezableArray<Block> subelements = new FreezableArray<Block>(2);
+        final @Nonnull FreezableArray<Block> subelements = new FreezableArray<>(2);
         subelements.set(0, signer.toBlock().setType(SIGNER));
         try {
             final @Nonnull PrivateKey privateKey = Server.getHost(signer.getHostIdentifier()).getPrivateKeyChain().getKey(getTimeNotNull());

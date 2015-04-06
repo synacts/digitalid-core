@@ -98,7 +98,7 @@ public final class Group implements Immutable, Blockable { // TODO: Make it abst
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        final @Nonnull FreezableArray<Block> elements = new FreezableArray<Block>(2);
+        final @Nonnull FreezableArray<Block> elements = new FreezableArray<>(2);
         elements.set(0, new IntegerWrapper(MODULUS, modulus).toBlock());
         elements.set(1, order == null ? null : new IntegerWrapper(ORDER, order).toBlock());
         return new TupleWrapper(TYPE, elements.freeze()).toBlock();

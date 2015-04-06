@@ -90,19 +90,19 @@ class BackedFreezableList<E> extends BackedFreezableCollection<E> implements Fre
     @Pure
     @Override
     public @Nonnull FreezableListIterator<E> listIterator() {
-        return new FreezableListIterator<E>(this, list.listIterator());
+        return new FreezableListIterator<>(this, list.listIterator());
     }
     
     @Pure
     @Override
     public @Nonnull FreezableListIterator<E> listIterator(int index) {
-        return new FreezableListIterator<E>(this, list.listIterator(index));
+        return new FreezableListIterator<>(this, list.listIterator(index));
     }
     
     @Pure
     @Override
     public @Nonnull FreezableList<E> subList(int fromIndex, int toIndex) {
-        return new BackedFreezableList<E>(this, list.subList(fromIndex, toIndex));
+        return new BackedFreezableList<>(this, list.subList(fromIndex, toIndex));
     }
 
     
@@ -159,7 +159,7 @@ class BackedFreezableList<E> extends BackedFreezableCollection<E> implements Fre
     @Pure
     @Override
     public boolean doesNotContainDuplicates() {
-        final @Nonnull HashSet<E> set = new HashSet<E>(size());
+        final @Nonnull HashSet<E> set = new HashSet<>(size());
         for (final @Nullable E element : this) {
             if (set.contains(element)) return false;
             else set.add(element);
@@ -220,7 +220,7 @@ class BackedFreezableList<E> extends BackedFreezableCollection<E> implements Fre
     @Pure
     @Override
     public @Capturable @Nonnull FreezableList<E> clone() {
-        return new FreezableArrayList<E>(list);
+        return new FreezableArrayList<>(list);
     }
     
 }

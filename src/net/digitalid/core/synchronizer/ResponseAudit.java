@@ -84,7 +84,7 @@ public final class ResponseAudit extends Audit implements Immutable, Blockable {
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        final @Nonnull FreezableArray<Block> elements = new FreezableArray<Block>(3);
+        final @Nonnull FreezableArray<Block> elements = new FreezableArray<>(3);
         elements.set(0, getLastTime().toBlock().setType(Audit.LAST_TIME));
         elements.set(1, thisTime.toBlock().setType(Audit.THIS_TIME));
         elements.set(2, new ListWrapper(Audit.TRAIL, trail).toBlock());
@@ -145,7 +145,7 @@ public final class ResponseAudit extends Audit implements Immutable, Blockable {
      */
     @Committing
     void execute(@Nonnull Role role, @Nonnull Service service, @Nonnull HostIdentifier recipient, @Nonnull ReadonlyList<Method> methods, @Nonnull ReadonlySet<BothModule> ignoredModules) throws SQLException, IOException, PacketException, ExternalException {
-        final @Nonnull FreezableSet<BothModule> suspendedModules = new FreezableHashSet<BothModule>();
+        final @Nonnull FreezableSet<BothModule> suspendedModules = new FreezableHashSet<>();
         for (@Nonnull Block block : trail) {
             final @Nonnull SignatureWrapper signature = SignatureWrapper.decodeWithoutVerifying(block, true, role);
             final @Nonnull CompressionWrapper compression = new CompressionWrapper(signature.getElementNotNull());
@@ -189,7 +189,7 @@ public final class ResponseAudit extends Audit implements Immutable, Blockable {
         
         suspendedModules.removeAll((FreezableSet<BothModule>) ignoredModules);
         if (suspendedModules.freeze().isNotEmpty()) {
-            final @Nonnull FreezableList<Method> queries = new FreezableArrayList<Method>(suspendedModules.size());
+            final @Nonnull FreezableList<Method> queries = new FreezableArrayList<>(suspendedModules.size());
             for (final @Nonnull BothModule module : suspendedModules) queries.add(new StateQuery(role, module));
             final @Nonnull Response response = Method.send(queries.freeze(), new RequestAudit(SynchronizerModule.getLastTime(role, service)));
             for (int i = 0; i < response.getSize(); i++) {
@@ -218,7 +218,7 @@ public final class ResponseAudit extends Audit implements Immutable, Blockable {
                 
                 try {
                     Database.lock();
-                    execute(role, service, method.getRecipient(), new FreezableArrayList<Method>(method).freeze(), emptyModuleSet);
+                    execute(role, service, method.getRecipient(), new FreezableArrayList<>(method).freeze(), emptyModuleSet);
                 } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
                     Synchronizer.LOGGER.log(Level.WARNING, "Could not execute the audit of '" + method + "' asynchronously", exception);
                     Database.rollback();

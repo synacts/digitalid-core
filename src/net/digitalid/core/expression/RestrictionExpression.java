@@ -95,7 +95,7 @@ final class RestrictionExpression extends Expression implements Immutable {
     @Nonnull @Capturable FreezableSet<Contact> getContacts() {
         assert isActive() : "This expression is active.";
         
-        return new FreezableLinkedHashSet<Contact>();
+        return new FreezableLinkedHashSet<>();
     }
     
     @Pure

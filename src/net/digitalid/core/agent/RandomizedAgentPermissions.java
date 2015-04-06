@@ -124,7 +124,7 @@ public final class RandomizedAgentPermissions implements Immutable, Blockable {
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        final @Nonnull FreezableArray<Block> elements = new FreezableArray<Block>(2);
+        final @Nonnull FreezableArray<Block> elements = new FreezableArray<>(2);
         elements.set(0, salt == null ? null : new HashWrapper(SALT, salt).toBlock());
         elements.set(1, Block.toBlock(PERMISSIONS, permissions));
         return new TupleWrapper(TYPE, elements.freeze()).toBlock();

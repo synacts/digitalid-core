@@ -134,7 +134,7 @@ class BackedFreezableCollection<E> implements FreezableCollection<E> {
     @Pure
     @Override
     public @Nonnull FreezableIterator<E> iterator() {
-        return new FreezableIterableIterator<E>(this, collection.iterator());
+        return new FreezableIterableIterator<>(this, collection.iterator());
     }
     
     
@@ -150,7 +150,7 @@ class BackedFreezableCollection<E> implements FreezableCollection<E> {
     @Pure
     @Override
     public boolean doesNotContainDuplicates() {
-        final @Nonnull HashSet<E> set = new HashSet<E>(size());
+        final @Nonnull HashSet<E> set = new HashSet<>(size());
         for (final @Nullable E element : this) {
             if (set.contains(element)) return false;
             else set.add(element);
@@ -211,14 +211,14 @@ class BackedFreezableCollection<E> implements FreezableCollection<E> {
     @Pure
     @Override
     public @Capturable @Nonnull FreezableCollection<E> clone() {
-        return new FreezableArrayList<E>(collection);
+        return new FreezableArrayList<>(collection);
     }
     
     @Pure
     @Override
     @SuppressWarnings("unchecked")
     public @Capturable @Nonnull FreezableArray<E> toFreezableArray() {
-        return new FreezableArray<E>(toArray((E[]) new Object[size()]));
+        return new FreezableArray<>(toArray((E[]) new Object[size()]));
     }
     
 }

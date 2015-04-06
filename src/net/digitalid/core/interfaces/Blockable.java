@@ -34,4 +34,10 @@ public interface Blockable {
     @Pure
     public @Nonnull Block toBlock();
     
+    
+    // TODO
+    public static class Factory {
+        
+    }
+    
 }

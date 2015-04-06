@@ -83,7 +83,7 @@ public final class ListWrapper extends BlockWrapper implements Immutable {
      * @require basedOnParameter(type, elements) : "Each element is either null or based on the parameter of the given type.";
      */
     public ListWrapper(@Nonnull SemanticType type, @Nonnull Block... elements) {
-        this(type, new FreezableArrayList<Block>(elements).freeze());
+        this(type, new FreezableArrayList<>(elements).freeze());
     }
     
     /**
@@ -99,7 +99,7 @@ public final class ListWrapper extends BlockWrapper implements Immutable {
     public ListWrapper(@Nonnull SemanticType type, @Nonnull Blockable... elements) {
         super(type);
         
-        final @Nonnull FreezableList<Block> list = new FreezableArrayList<Block>(elements.length);
+        final @Nonnull FreezableList<Block> list = new FreezableArrayList<>(elements.length);
         for (final @Nullable Blockable blockable : elements) list.add(Block.toBlock(blockable));
         this.elements = list.freeze();
         
@@ -121,7 +121,7 @@ public final class ListWrapper extends BlockWrapper implements Immutable {
         int offset = IntvarWrapper.decodeLength(block, 0);
         final int size = (int) IntvarWrapper.decodeValue(block, 0, offset);
         
-        final @Nonnull FreezableList<Block> list = new FreezableArrayList<Block>(size);
+        final @Nonnull FreezableList<Block> list = new FreezableArrayList<>(size);
         
         for (int i = 0; i < size; i++) {
             final int intvarLength = IntvarWrapper.decodeLength(block, offset);

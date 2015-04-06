@@ -128,7 +128,7 @@ public final class PushReturned extends ExternalAction {
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        final @Nonnull FreezableArray<Block> elements = new FreezableArray<Block>(2);
+        final @Nonnull FreezableArray<Block> elements = new FreezableArray<>(2);
         elements.set(0, new BooleanWrapper(VALID, valid).toBlock());
         elements.set(1, reply.getSignatureNotNull().toBlock().setType(TYPE));
         return new TupleWrapper(TYPE, elements.freeze()).toBlock();

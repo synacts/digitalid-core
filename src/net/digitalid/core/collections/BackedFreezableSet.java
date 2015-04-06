@@ -72,7 +72,7 @@ class BackedFreezableSet<E> extends BackedFreezableCollection<E> implements Free
     @Pure
     @Override
     public @Capturable @Nonnull FreezableSet<E> clone() {
-        return new FreezableHashSet<E>(set);
+        return new FreezableHashSet<>(set);
     }
     
 }

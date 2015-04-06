@@ -90,7 +90,7 @@ public final class SynchronizerModule implements ClientModule {
     /**
      * Stores the pending actions of the synchronizer.
      */
-    static final @Nonnull BlockingDeque<InternalAction> pendingActions = new LinkedBlockingDeque<InternalAction>();
+    static final @Nonnull BlockingDeque<InternalAction> pendingActions = new LinkedBlockingDeque<>();
     
     /**
      * Loads the pending actions of the given client from the database.
@@ -159,14 +159,14 @@ public final class SynchronizerModule implements ClientModule {
      * @return a list of similar methods from the pending actions whose service was not suspended.
      */
     static @Nonnull @Frozen ReadonlyList<Method> getMethods() {
-        final @Nonnull FreezableList<Method> methods = new FreezableLinkedList<Method>();
-        final @Nonnull Set<ReadonlyPair<Role, Service>> ignored = new HashSet<ReadonlyPair<Role, Service>>();
+        final @Nonnull FreezableList<Method> methods = new FreezableLinkedList<>();
+        final @Nonnull Set<ReadonlyPair<Role, Service>> ignored = new HashSet<>();
         final @Nonnull Iterator<InternalAction> iterator = pendingActions.iterator();
         while (iterator.hasNext()) {
             final @Nonnull InternalAction reference =  iterator.next();
             final @Nonnull Role role = reference.getRole();
             final @Nonnull Service service = reference.getService();
-            final @Nonnull ReadonlyPair<Role, Service> pair = new FreezablePair<Role, Service>(role, service).freeze();
+            final @Nonnull ReadonlyPair<Role, Service> pair = new FreezablePair<>(role, service).freeze();
             if (!ignored.contains(pair) && Synchronizer.suspend(role, service)) {
                 methods.add(reference);
                 if (!reference.isSimilarTo(reference)) return methods.freeze();
@@ -284,7 +284,7 @@ public final class SynchronizerModule implements ClientModule {
     static @Nonnull ReadonlyList<InternalAction> reverseInterferingActions(@Nonnull Action failedAction) throws SQLException {
         final @Nonnull Role role = failedAction.getRole();
         final @Nonnull Service service = failedAction.getService();
-        final @Nonnull FreezableList<InternalAction> reversedActions = new FreezableLinkedList<InternalAction>();
+        final @Nonnull FreezableList<InternalAction> reversedActions = new FreezableLinkedList<>();
         final @Nonnull Iterator<InternalAction> iterator = pendingActions.descendingIterator();
         while (iterator.hasNext()) {
             final @Nonnull InternalAction pendingAction = iterator.next();

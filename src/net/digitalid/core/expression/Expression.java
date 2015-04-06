@@ -142,7 +142,7 @@ abstract class Expression extends NonHostConcept implements Immutable {
     /**
      * Stores the characters for addition and subtraction.
      */
-    static final @Nonnull ReadonlyList<Character> addition = new FreezableArrayList<Character>('+', '-').freeze();
+    static final @Nonnull ReadonlyList<Character> addition = new FreezableArrayList<>('+', '-').freeze();
     
     /**
      * Stores the character for multiplication.
@@ -152,12 +152,12 @@ abstract class Expression extends NonHostConcept implements Immutable {
     /**
      * Stores the characters for all binary operators.
      */
-    static final @Nonnull ReadonlyList<Character> operators = new FreezableArrayList<Character>('+', '-', '*').freeze();
+    static final @Nonnull ReadonlyList<Character> operators = new FreezableArrayList<>('+', '-', '*').freeze();
     
     /**
      * Stores the symbols for restriction.
      */
-    static final @Nonnull ReadonlyList<String> symbols = new FreezableArrayList<String>("=", "≠", "<", ">", "≤", "≥", "/", "!/", "|", "!|", "\\", "!\\").freeze();
+    static final @Nonnull ReadonlyList<String> symbols = new FreezableArrayList<>("=", "≠", "<", ">", "≤", "≥", "/", "!/", "|", "!|", "\\", "!\\").freeze();
     
     /**
      * Returns the last index of one of the given characters in the given string considering quotation marks and parentheses.

@@ -349,7 +349,7 @@ public final class PublicKey implements Immutable, Blockable {
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        final @Nonnull FreezableArray<Block> elements = new FreezableArray<Block>(16);
+        final @Nonnull FreezableArray<Block> elements = new FreezableArray<>(16);
         elements.set(0, compositeGroup.toBlock().setType(COMPOSITE_GROUP));
         elements.set(1, e.toBlock().setType(E));
         elements.set(2, ab.toBlock().setType(AB));
@@ -381,7 +381,7 @@ public final class PublicKey implements Immutable, Blockable {
         final @Nonnull Element tv = ab.pow(sv).multiply(av.pow(t));
         final @Nonnull Element to = ab.pow(so).multiply(ao.pow(t));
         
-        final @Nonnull FreezableArray<Block> elements = new FreezableArray<Block>(tu.toBlock().setType(TU), ti.toBlock().setType(TI), tv.toBlock().setType(TV), to.toBlock().setType(TO));
+        final @Nonnull FreezableArray<Block> elements = new FreezableArray<>(tu.toBlock().setType(TU), ti.toBlock().setType(TI), tv.toBlock().setType(TV), to.toBlock().setType(TO));
         return t.getValue().equals(new TupleWrapper(TUPLE, elements.freeze()).toBlock().getHash());
     }
     
@@ -562,7 +562,7 @@ public final class PublicKey implements Immutable, Blockable {
      */
     @Pure
     public @Nonnull Block getVerifiableEncryption(@Nonnull Exponent m, @Nonnull Exponent r) {
-        final @Nonnull FreezableArray<Block> elements = new FreezableArray<Block>(2);
+        final @Nonnull FreezableArray<Block> elements = new FreezableArray<>(2);
         elements.set(0, y.pow(r).multiply(zPlus1.pow(m)).toBlock().setType(W1));
         elements.set(1, g.pow(r).toBlock().setType(W2));
         return new TupleWrapper(VERIFIABLE_ENCRYPTION, elements.freeze()).toBlock();
