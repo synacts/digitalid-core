@@ -36,12 +36,6 @@ public final class PacketException extends Exception implements Blockable {
     
     
     /**
-     * Stores the logger for packet exceptions.
-     */
-    private static final @Nonnull Logger LOGGER = new Logger("Packets.log");
-    
-    
-    /**
      * Stores the error of this exception.
      */
     private final @Nonnull PacketError error;
@@ -85,7 +79,7 @@ public final class PacketException extends Exception implements Blockable {
         
         this.error = error;
         this.remote = remote;
-        LOGGER.log(Level.WARNING, "A problem occurred", this);
+        Logger.log(Level.WARNING, "PacketException", "A packet exception occurred.", this);
     }
     
     /**
@@ -141,13 +135,6 @@ public final class PacketException extends Exception implements Blockable {
     @Pure
     public boolean isRemote() {
         return remote;
-    }
-    
-    
-    @Pure
-    @Override
-    public @Nonnull String toString() {
-        return Logger.getMessage(this);
     }
     
 }

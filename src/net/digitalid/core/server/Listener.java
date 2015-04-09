@@ -22,11 +22,6 @@ import net.digitalid.core.packet.Request;
 public final class Listener extends Thread {
     
     /**
-     * Stores the logger of the listener.
-     */
-    private static final @Nonnull Logger LOGGER = new Logger("Listener.log");
-    
-    /**
      * Stores the server socket to accept incoming requests.
      */
     private final @Nonnull ServerSocket serverSocket;
@@ -60,13 +55,13 @@ public final class Listener extends Thread {
                 socket.setSoTimeout(1000000); // TODO: Remove two zeroes!
                 try {
                     threadPoolExecutor.execute(new Worker(socket));
-                    LOGGER.log(Level.INFORMATION, "Connection accepted from " + socket.getInetAddress());
+                    Logger.log(Level.INFORMATION, "Listener", "Connection accepted from " + socket.getInetAddress() + ".");
                 } catch (@Nonnull RejectedExecutionException exception) {
-                    LOGGER.log(Level.WARNING, "Could not add a new worker", exception);
+                    Logger.log(Level.WARNING, "Listener", "Could not add a new worker.", exception);
                     socket.close();
                 }
             } catch (@Nonnull IOException exception) {
-                if (!serverSocket.isClosed()) LOGGER.log(Level.WARNING, "Could not accept or close a socket", exception);
+                if (!serverSocket.isClosed()) Logger.log(Level.WARNING, "Listener", "Could not accept or close a socket.", exception);
             }
         }
     }
@@ -80,7 +75,7 @@ public final class Listener extends Thread {
             threadPoolExecutor.shutdown();
             threadPoolExecutor.awaitTermination(5L, TimeUnit.SECONDS);
         } catch (@Nonnull IOException | InterruptedException exception) {
-            LOGGER.log(Level.WARNING, "Could not shut down the listener", exception);
+            Logger.log(Level.WARNING, "Listener", "Could not shut down the listener.", exception);
         }
     }
     

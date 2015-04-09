@@ -14,24 +14,34 @@ import net.digitalid.core.annotations.Pure;
 public enum Level {
     
     /**
+     * The level for verbose.
+     */
+    VERBOSE(0),
+    
+    /**
+     * The level for debugging.
+     */
+    DEBUGGING(1),
+    
+    /**
      * The level for information.
      */
-    INFORMATION(0),
+    INFORMATION(2),
     
     /**
      * The level for warnings.
      */
-    WARNING(1),
+    WARNING(3),
     
     /**
      * The level for errors.
      */
-    ERROR(2),
+    ERROR(4),
     
     /**
      * The level for off.
      */
-    OFF(3);
+    OFF(5);
     
     /**
      * Stores the byte representation of this level.

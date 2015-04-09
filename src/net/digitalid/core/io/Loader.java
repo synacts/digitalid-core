@@ -26,11 +26,6 @@ import net.digitalid.core.errors.InitializationError;
 public final class Loader {
     
     /**
-     * Stores the logger of the loader.
-     */
-    private static final @Nonnull Logger LOGGER = new Logger("Loader.log");
-    
-    /**
      * Loads all classes in the given directory.
      * 
      * @param directory the directory containing the classes.
@@ -46,7 +41,7 @@ public final class Loader {
                 loadClasses(file, prefix + fileName + ".");
             } else if (fileName.endsWith(".class")) {
                 final @Nonnull String className = prefix + fileName.substring(0, fileName.length() - 6);
-                LOGGER.log(Level.INFORMATION, "Initialize class: " + className);
+                Logger.log(Level.VERBOSE, "Loader", "Initialize class: " + className);
                 Class.forName(className);
             }
         }
@@ -65,10 +60,10 @@ public final class Loader {
         final @Nonnull Enumeration<JarEntry> entries = jarFile.entries();
         while (entries.hasMoreElements()) {
             final @Nonnull String entryName = entries.nextElement().getName();
-            LOGGER.log(Level.INFORMATION, "Entry found: " + entryName);
+            Logger.log(Level.VERBOSE, "Loader", "Entry found: " + entryName);
             if (entryName.startsWith("net/digitalid/") && entryName.endsWith(".class")) {
                 final @Nonnull String className = entryName.substring(0, entryName.length() - 6).replace("/", ".");
-                LOGGER.log(Level.INFORMATION, "Initialize class: " + className);
+                Logger.log(Level.VERBOSE, "Loader", "Initialize class: " + className);
                 Class.forName(className, true, urlClassLoader);
             }
         }
@@ -94,7 +89,7 @@ public final class Loader {
             }
             
             final @Nonnull File root = new File(mainClass.getProtectionDomain().getCodeSource().getLocation().toURI());
-            LOGGER.log(Level.INFORMATION, "Root of classes: " + root);
+            Logger.log(Level.DEBUGGING, "Loader", "Root of classes: " + root);
             
             if (root.getName().endsWith(".jar")) {
                 loadJarFile(new JarFile(root));
@@ -102,7 +97,7 @@ public final class Loader {
                 loadClasses(root, "");
             }
             
-            LOGGER.log(Level.INFORMATION, "All classes have been loaded.");
+            Logger.log(Level.DEBUGGING, "Loader", "All classes have been loaded.");
         } catch (@Nonnull URISyntaxException | IOException | ClassNotFoundException | SQLException exception) {
             throw new InitializationError("Could not load all classes.", exception);
         } finally {

@@ -43,11 +43,6 @@ import net.digitalid.core.synchronizer.ResponseAudit;
 public final class Worker implements Runnable {
     
     /**
-     * Stores the logger of the worker.
-     */
-    private static final @Nonnull Logger LOGGER = new Logger("Worker.log");
-    
-    /**
      * Stores the socket which this worker is connected to.
      */
     private final @Nonnull Socket socket;
@@ -156,14 +151,14 @@ public final class Worker implements Runnable {
             response.write(socket.getOutputStream());
             
             final @Nonnull Time end = new Time();
-            LOGGER.log(Level.INFORMATION, "Request from '" + socket.getInetAddress() + "' handled in " + end.subtract(start).getValue() + " ms" + (subject != null ? " about " + subject : "") + (error != null ? " with error " + error : "") + ".");
+            Logger.log(Level.INFORMATION, "Worker", "Request from '" + socket.getInetAddress() + "' handled in " + end.subtract(start).getValue() + " ms" + (subject != null ? " about " + subject : "") + (error != null ? " with error " + error : "") + ".");
         } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
-            LOGGER.log(Level.WARNING, "Could not send a response", exception);
+            Logger.log(Level.WARNING, "Worker", "Could not send a response.", exception);
         } finally {
             try {
                 if (!socket.isClosed()) socket.close();
             } catch (@Nonnull IOException exception) {
-                LOGGER.log(Level.WARNING, "Could not close the socket", exception);
+                Logger.log(Level.WARNING, "Worker", "Could not close the socket.", exception);
             }
         }
         

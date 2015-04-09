@@ -41,11 +41,6 @@ import net.digitalid.core.service.Service;
 public final class Synchronizer extends Thread {
     
     /**
-     * Stores the logger of the synchronizer.
-     */
-    static final @Nonnull Logger LOGGER = new Logger("Synchronizer.log");
-    
-    /**
      * Executes the given action on the client and queues it for delivery.
      * In case the given action is not similar to itself, it is executed
      * only <em>after</em> being sent to the host. If the send method is
@@ -242,7 +237,7 @@ public final class Synchronizer extends Thread {
             threadPoolExecutor.shutdown();
             threadPoolExecutor.awaitTermination(5L, TimeUnit.SECONDS);
         } catch (@Nonnull InterruptedException exception) {
-            LOGGER.log(Level.WARNING, "Could not shut down the synchronizer", exception);
+            Logger.log(Level.WARNING, "Synchronizer", "Could not shut down the synchronizer.", exception);
         }
     }
     
@@ -278,7 +273,7 @@ public final class Synchronizer extends Thread {
                         } catch (@Nonnull RejectedExecutionException exception) {
                             final @Nonnull Method reference = methods.getNotNull(0);
                             resume(reference.getRole(), reference.getService());
-                            LOGGER.log(Level.WARNING, "Could not add a new sender", exception);
+                            Logger.log(Level.WARNING, "Synchronizer", "Could not add a new sender.", exception);
                             sleep(backoff);
                             backoff *= 2;
                         }
@@ -288,7 +283,7 @@ public final class Synchronizer extends Thread {
                     }
                 }
             } catch (@Nonnull InterruptedException exception) {
-                LOGGER.log(Level.WARNING, "Could not wait for the next pending action", exception);
+                Logger.log(Level.WARNING, "Synchronizer", "Could not wait for the next pending action.", exception);
             }
         }
     }

@@ -26,6 +26,7 @@ import net.digitalid.core.identifier.HostIdentifier;
 import net.digitalid.core.interfaces.Blockable;
 import net.digitalid.core.interfaces.Immutable;
 import net.digitalid.core.io.Level;
+import net.digitalid.core.io.Logger;
 import net.digitalid.core.module.BothModule;
 import net.digitalid.core.packet.Packet;
 import net.digitalid.core.packet.Response;
@@ -163,7 +164,7 @@ public final class ResponseAudit extends Audit implements Immutable, Blockable {
                 try {
                     action.executeOnClient();
                 } catch (@Nonnull SQLException exception) {
-                    Synchronizer.LOGGER.log(Level.WARNING, "Could not execute an audited action on the client", exception);
+                    Logger.log(Level.WARNING, "ResponseAudit", "Could not execute an audited action on the client.", exception);
                     Database.rollback();
                     
                     try {
@@ -173,7 +174,7 @@ public final class ResponseAudit extends Audit implements Immutable, Blockable {
                         Database.commit();
                         SynchronizerModule.redoReversedActions(reversedActions);
                     } catch (@Nonnull SQLException e) {
-                        Synchronizer.LOGGER.log(Level.WARNING, "Could not execute on the client after having reversed the interfering actions", e);
+                        Logger.log(Level.WARNING, "ResponseAudit", "Could not execute on the client after having reversed the interfering actions.", e);
                         suspendedModules.add(module);
                         Database.rollback();
                     }
@@ -220,7 +221,7 @@ public final class ResponseAudit extends Audit implements Immutable, Blockable {
                     Database.lock();
                     execute(role, service, method.getRecipient(), new FreezableArrayList<>(method).freeze(), emptyModuleSet);
                 } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
-                    Synchronizer.LOGGER.log(Level.WARNING, "Could not execute the audit of '" + method + "' asynchronously", exception);
+                    Logger.log(Level.WARNING, "ResponseAudit", "Could not execute the audit of '" + method + "' asynchronously.", exception);
                     Database.rollback();
                 } finally {
                     Database.unlock();

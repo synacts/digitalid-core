@@ -38,13 +38,6 @@ import net.digitalid.core.server.Worker;
  */
 public final class Database implements Immutable {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Logger –––––––––––––––––––––––––––––––––––––––––––––––––– */
-    
-    /**
-     * Stores the logger of the database.
-     */
-    private static final @Nonnull Logger LOGGER = new Logger("Database.log");
-    
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Configuration –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
@@ -183,7 +176,7 @@ public final class Database implements Immutable {
         final @Nullable Connection connection = Database.connection.get();
         if (connection == null) {
             Database.connection.remove();
-            LOGGER.log(Level.WARNING, "Could not connect to the database.");
+            Logger.log(Level.WARNING, "Database", "Could not connect to the database.");
             throw new SQLException("Could not connect to the database.");
         }
         return connection;
@@ -219,7 +212,7 @@ public final class Database implements Immutable {
         try {
             getConnection().rollback();
         } catch (@Nonnull SQLException exception) {
-            LOGGER.log(Level.ERROR, "Could not roll back", exception);
+            Logger.log(Level.ERROR, "Database", "Could not roll back.", exception);
         }
     }
     
@@ -504,7 +497,7 @@ public final class Database implements Immutable {
                         commit();
                     }
                 } catch (@Nonnull SQLException exception) {
-                    LOGGER.log(Level.WARNING, "Could not prune a table", exception);
+                    Logger.log(Level.WARNING, "Database", "Could not prune a table.", exception);
                     rollback();
                 } finally {
                     Database.unlock();

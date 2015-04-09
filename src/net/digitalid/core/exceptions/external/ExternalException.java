@@ -2,7 +2,6 @@ package net.digitalid.core.exceptions.external;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.interfaces.Immutable;
 import net.digitalid.core.io.Level;
 import net.digitalid.core.io.Logger;
@@ -22,12 +21,6 @@ import net.digitalid.core.io.Logger;
  * @version 1.0
  */
 public abstract class ExternalException extends Exception implements Immutable {
-    
-    /**
-     * Stores the logger for external exceptions.
-     */
-    private static final @Nonnull Logger LOGGER = new Logger("Exceptions.log");
-    
     
     /**
      * Creates a new external exception with the given message.
@@ -56,13 +49,7 @@ public abstract class ExternalException extends Exception implements Immutable {
     protected ExternalException(@Nullable String message, @Nullable Throwable cause) {
         super(message == null ? "An external exception occurred." : message, cause);
         
-        LOGGER.log(Level.WARNING, "An external exception occurred", this);
-    }
-    
-    @Pure
-    @Override
-    public @Nonnull String toString() {
-        return Logger.getMessage(this);
+        Logger.log(Level.WARNING, "ExternalException", "An external exception occurred.", this);
     }
     
 }
