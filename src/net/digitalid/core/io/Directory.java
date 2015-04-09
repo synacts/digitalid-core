@@ -3,6 +3,8 @@ package net.digitalid.core.io;
 import java.io.File;
 import java.io.FilenameFilter;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import net.digitalid.core.annotations.Initialized;
 import net.digitalid.core.annotations.IsDirectory;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.errors.InitializationError;
@@ -13,51 +15,115 @@ import net.digitalid.core.errors.InitializationError;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public final class Directory {
+public class Directory {
     
     /**
-     * Stores the file separator of the current operating system.
+     * References the default directory to store all other directories.
      */
-    public static final @Nonnull String SEPARATOR = System.getProperty("file.separator");
+    public static final @Nonnull @IsDirectory File DEFAULT = new File(System.getProperty("user.home") + File.separator + ".DigitalID");
     
     /**
-     * Reference to the root directory of all files that are used by this implementation.
+     * Stores the directory that contains all other directories.
      */
-    public static final @Nonnull @IsDirectory File ROOT = new File(System.getProperty("user.home") + SEPARATOR + ".DigitalID");
+    private static @Nullable @IsDirectory File root;
     
     /**
-     * Reference to the directory that contains the configuration of the database and its data.
+     * Initializes this class with the given root directory.
+     * 
+     * @param root the directory that contains all other directories.
      */
-    public static final @Nonnull @IsDirectory File DATA = new File(ROOT.getPath() +  SEPARATOR + "Data");
-    
-    /**
-     * Reference to the clients directory that contains the configuration of each local client.
-     */
-    public static final @Nonnull @IsDirectory File CLIENTS = new File(ROOT.getPath() +  SEPARATOR + "Clients");
-    
-    /**
-     * Reference to the hosts directory that contains the configuration of each local host.
-     */
-    public static final @Nonnull @IsDirectory File HOSTS = new File(ROOT.getPath() +  SEPARATOR + "Hosts");
-    
-    /**
-     * Reference to the log directory that contains the various log files.
-     */
-    public static final @Nonnull @IsDirectory File LOGS = new File(ROOT.getPath() +  SEPARATOR + "Logs");
-    
-    /**
-     * Reference to the services directory that contains the code of all installed services.
-     */
-    public static final @Nonnull @IsDirectory File SERVICES = new File(ROOT.getPath() +  SEPARATOR + "Services");
-    
-    /**
-     * Ensures that all referenced directories do exist.
-     */
-    static {
-        for (@Nonnull @IsDirectory File directory : new File[] {ROOT, DATA, CLIENTS, HOSTS, LOGS, SERVICES}) {
-            if (!directory.exists() && !directory.mkdirs()) throw new InitializationError("Could not make the directory '" + directory.getPath() + "'.");
-        }
+    public static void initialize(@Nonnull @IsDirectory File root) {
+        Directory.root = root;
     }
+    
+    /**
+     * Returns whether this class is initialized.
+     * 
+     * @return whether this class is initialized.
+     */
+    public static boolean isInitialized() {
+        return root != null;
+    }
+    
+    
+    /**
+     * Creates the directory with the given name in the root directory.
+     * 
+     * @param name the name of the directory which is to be created.
+     * 
+     * @return the newly created directory with the given name.
+     * 
+     * @ensure return.exists() : "The returned directory exists.";
+     */
+    @Initialized
+    private static @Nonnull @IsDirectory File createDirectory(@Nonnull String name) {
+        assert root != null : "This class is initialized.";
+        
+        final @Nonnull File directory = new File(root.getPath() + File.separator + "Logs");
+        if (!directory.exists() && !directory.mkdirs()) throw new InitializationError("Could not create the directory '" + directory.getPath() + "'.");
+        return directory;
+    }
+    
+    /**
+     * Returns the directory that contains the log files.
+     * 
+     * @return the directory that contains the log files.
+     * 
+     * @ensure return.exists() : "The returned directory exists.";
+     */
+    @Initialized
+    public static @Nonnull @IsDirectory File getLogsDirectory() {
+        return createDirectory("Logs");
+    }
+    
+    /**
+     * Returns the directory that contains the configuration or the data of the database.
+     * 
+     * @return the directory that contains the configuration or the data of the database.
+     * 
+     * @ensure return.exists() : "The returned directory exists.";
+     */
+    @Initialized
+    public static @Nonnull @IsDirectory File getDataDirectory() {
+        return createDirectory("Data");
+    }
+    
+    /**
+     * Returns the directory that contains the secret key of each local client.
+     * 
+     * @return the directory that contains the secret key of each local client.
+     * 
+     * @ensure return.exists() : "The returned directory exists.";
+     */
+    @Initialized
+    public static @Nonnull @IsDirectory File getClientsDirectory() {
+        return createDirectory("Clients");
+    }
+    
+    /**
+     * Returns the directory that contains the key pairs of each local host.
+     * 
+     * @return the directory that contains the key pairs of each local host.
+     * 
+     * @ensure return.exists() : "The returned directory exists.";
+     */
+    @Initialized
+    public static @Nonnull @IsDirectory File getHostsDirectory() {
+        return createDirectory("Hosts");
+    }
+    
+    /**
+     * Returns the directory that contains the code of all installed services.
+     * 
+     * @return the directory that contains the code of all installed services.
+     * 
+     * @ensure return.exists() : "The returned directory exists.";
+     */
+    @Initialized
+    public static @Nonnull @IsDirectory File getServicesDirectory() {
+        return createDirectory("Services");
+    }
+    
     
     /**
      * Stores a filter to ignore hidden files.
@@ -75,6 +141,7 @@ public final class Directory {
     public static @Nonnull File[] listFiles(@Nonnull @IsDirectory File directory) {
         return directory.listFiles(ignoreHiddenFilesFilter);
     }
+    
     
     /**
      * Deletes the given file or directory and returns whether it was successful.
@@ -109,6 +176,7 @@ public final class Directory {
     }
     
 }
+
 
 /**
  * This class implements a filter to ignore hidden files.

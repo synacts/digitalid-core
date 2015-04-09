@@ -7,7 +7,6 @@ import java.util.jar.JarFile;
 import javax.annotation.Nonnull;
 import net.digitalid.core.annotations.Committing;
 import net.digitalid.core.annotations.Locked;
-import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.NonLocked;
 import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.cache.Cache;
@@ -43,12 +42,12 @@ public final class Server {
     /**
      * Stores the version of the Digital ID implementation.
      */
-    public static final @Nonnull String VERSION = "0.6.0";
+    public static final @Nonnull String VERSION = "0.6.1";
     
     /**
      * Stores the date of the Digital ID implementation.
      */
-    public static final @Nonnull String DATE = "18 March 2015";
+    public static final @Nonnull String DATE = "6 April 2015";
     
     /**
      * Stores the authors of the Digital ID implementation.
@@ -124,22 +123,22 @@ public final class Server {
     @Committing
     private static void loadHosts() {
         // TODO: Remove this special case when the certification mechanism is implemented.
-        final @Nonnull File digitalid = new File(Directory.HOSTS.getPath() + Directory.SEPARATOR + HostIdentifier.DIGITALID.getString() + ".private.xdf");
+        final @Nonnull File digitalid = new File(Directory.getHostsDirectory().getPath() + File.separator + HostIdentifier.DIGITALID.getString() + ".private.xdf");
         if (digitalid.exists() && digitalid.isFile()) {
             try {
-                if (!new File(Directory.HOSTS.getPath() + Directory.SEPARATOR + HostIdentifier.DIGITALID.getString() + ".tables.xdf").exists()) new Host(HostIdentifier.DIGITALID);
+                if (!new File(Directory.getHostsDirectory().getPath() + File.separator + HostIdentifier.DIGITALID.getString() + ".tables.xdf").exists()) new Host(HostIdentifier.DIGITALID);
             } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
                 throw new InitializationError("Could not load the host configured in the file '" + digitalid.getName() + "'.", exception);
             }
         }
         
-        final @Nonnull File[] files = Directory.HOSTS.listFiles();
+        final @Nonnull File[] files = Directory.getHostsDirectory().listFiles();
         for (final @Nonnull File file : files) {
             final @Nonnull String name = file.getName();
             if (file.isFile() && name.endsWith(".private.xdf") && !name.equals(HostIdentifier.DIGITALID.getString() + ".private.xdf")) { // TODO: Remove the special case eventually.
                 try {
                     final @Nonnull HostIdentifier identifier = new HostIdentifier(name.substring(0, name.length() - 12));
-                    if (!new File(Directory.HOSTS.getPath() + Directory.SEPARATOR + identifier.getString() + ".tables.xdf").exists()) new Host(identifier);
+                    if (!new File(Directory.getHostsDirectory().getPath() + File.separator + identifier.getString() + ".tables.xdf").exists()) new Host(identifier);
                 } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
                     throw new InitializationError("Could not load the host configured in the file '" + name + "'.", exception);
                 }
@@ -152,9 +151,9 @@ public final class Server {
      * Loads all services with their code in the services directory.
      */
     @Locked
-    @NonCommitting
+    @Committing
     public static void loadServices() {
-        final @Nonnull File[] files = Directory.SERVICES.listFiles();
+        final @Nonnull File[] files = Directory.getServicesDirectory().listFiles();
         for (final @Nonnull File file : files) {
             if (file.isFile() && file.getName().endsWith(".jar")) {
                 try {
@@ -172,7 +171,6 @@ public final class Server {
      * 
      * @param mainClasses the main classes of the libraries to be loaded.
      */
-    @NonLocked
     @Committing
     public static void initialize(@Nonnull Class<?>... mainClasses) {
         Loader.loadClasses(Server.class, SemanticType.class, SignatureWrapper.class);
@@ -190,7 +188,6 @@ public final class Server {
      * 
      * @param arguments the identifiers of hosts to be created when starting up.
      */
-    @NonLocked
     @Committing
     public static void start(@Nonnull String... arguments) {
         initialize();

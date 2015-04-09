@@ -57,7 +57,8 @@ public final class SQLiteConfiguration extends Configuration implements Immutabl
     @Locked
     @Override
     public void dropDatabase() {
-        new File(Directory.DATA.getPath() + Directory.SEPARATOR + name + ".db").delete();
+        new File(Directory.getDataDirectory().getPath() + File.separator + name + ".db").delete();
+        new File(Directory.getDataDirectory().getPath() + File.separator + name + ".db-journal").delete();
     }
     
     /**
@@ -78,7 +79,7 @@ public final class SQLiteConfiguration extends Configuration implements Immutabl
      */
     @Pure
     public static boolean exists() {
-        return new File(Directory.DATA.getPath() + Directory.SEPARATOR + "SQLite.db").exists();
+        return new File(Directory.getDataDirectory().getPath() + File.separator + "SQLite.db").exists();
     }
     
     /**
@@ -88,14 +89,14 @@ public final class SQLiteConfiguration extends Configuration implements Immutabl
      */
     @Pure
     public boolean journalExists() {
-        return new File(Directory.DATA.getPath() + Directory.SEPARATOR + name + ".db-journal").exists();
+        return new File(Directory.getDataDirectory().getPath() + File.separator + name + ".db-journal").exists();
     }
     
     
     @Pure
     @Override
     protected @Nonnull String getURL() {
-        return "jdbc:sqlite:" + Directory.DATA.getPath() + Directory.SEPARATOR + name + ".db";
+        return "jdbc:sqlite:" + Directory.getDataDirectory().getPath() + File.separator + name + ".db";
     }
     
     @Pure

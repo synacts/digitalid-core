@@ -14,8 +14,6 @@ import javax.annotation.Nonnull;
 import net.digitalid.core.annotations.Committing;
 import net.digitalid.core.annotations.IsDirectory;
 import net.digitalid.core.annotations.Locked;
-import net.digitalid.core.annotations.NonCommitting;
-import net.digitalid.core.annotations.NonLocked;
 import net.digitalid.core.database.Database;
 import net.digitalid.core.errors.InitializationError;
 
@@ -39,7 +37,7 @@ public final class Loader {
      * @param prefix the path to the given directory as class prefix.
      */
     @Locked
-    @NonCommitting
+    @Committing
     private static void loadClasses(@Nonnull @IsDirectory File directory, @Nonnull String prefix) throws ClassNotFoundException, SQLException {
         final @Nonnull File[] files = directory.listFiles();
         for (final @Nonnull File file : files) {
@@ -61,7 +59,7 @@ public final class Loader {
      * @param jarFile the jar file containing the classes.
      */
     @Locked
-    @NonCommitting
+    @Committing
     public static void loadJarFile(@Nonnull JarFile jarFile) throws ClassNotFoundException, SQLException, MalformedURLException {
         final @Nonnull URLClassLoader urlClassLoader = new URLClassLoader(new URL[]{ new File(jarFile.getName()).toURI().toURL() }, Loader.class.getClassLoader());
         final @Nonnull Enumeration<JarEntry> entries = jarFile.entries();
@@ -85,7 +83,6 @@ public final class Loader {
      * @param mainClass the main class which is used to determine the code source.
      * @param preponedClasses the classes that are to be loaded before the others.
      */
-    @NonLocked
     @Committing
     public static void loadClasses(@Nonnull Class<?> mainClass, @Nonnull Class<?>... preponedClasses) {
         assert !Database.isLocked() : "The database is not locked.";

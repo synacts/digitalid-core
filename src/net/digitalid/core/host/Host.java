@@ -99,7 +99,7 @@ public final class Host extends Site {
         this.identifier = identifier;
         this.identity = Mapper.mapHostIdentity(identifier);
         
-        final @Nonnull String path = Directory.HOSTS.getPath() + Directory.SEPARATOR + identifier.getString();
+        final @Nonnull String path = Directory.getHostsDirectory().getPath() + File.separator + identifier.getString();
         final @Nonnull File privateKeyFile = new File(path + ".private.xdf");
         final @Nonnull File publicKeyFile = new File(path + ".public.xdf");
         

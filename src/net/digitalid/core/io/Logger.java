@@ -75,7 +75,7 @@ public final class Logger {
      */
     public Logger(@Nonnull String name) {
         try {
-            this.out = new PrintStream(new FileOutputStream(Directory.LOGS.getPath() +  Directory.SEPARATOR + name, true));
+            this.out = new PrintStream(new FileOutputStream(Directory.getLogsDirectory().getPath() +  File.separator + name, true));
         } catch (FileNotFoundException exception) {
             throw new ShouldNeverHappenError("Could not open the log file '" + name + "'.", exception);
         }

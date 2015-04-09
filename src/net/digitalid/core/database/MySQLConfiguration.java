@@ -74,7 +74,7 @@ public final class MySQLConfiguration extends Configuration implements Immutable
         
         assert Configuration.isValid(name) : "The name is valid for a database.";
         
-        final @Nonnull File file = new File(Directory.DATA.getPath() + Directory.SEPARATOR + name + ".conf");
+        final @Nonnull File file = new File(Directory.getDataDirectory().getPath() + File.separator + name + ".conf");
         if (file.exists()) {
             try (@Nonnull FileInputStream stream = new FileInputStream(file); @Nonnull InputStreamReader reader = new InputStreamReader(stream, "UTF-8")) {
                 properties.load(reader);
@@ -140,7 +140,7 @@ public final class MySQLConfiguration extends Configuration implements Immutable
      * @return whether a MySQL configuration exists.
      */
     public static boolean exists() {
-        return new File(Directory.DATA.getPath() + Directory.SEPARATOR + "MySQL.conf").exists();
+        return new File(Directory.getDataDirectory().getPath() + File.separator + "MySQL.conf").exists();
     }
     
     

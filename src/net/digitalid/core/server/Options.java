@@ -112,7 +112,7 @@ final class Options {
         @Override
         @Committing
         public void execute() {
-            Console.write("Version: " + Server.VERSION + "(" + Server.DATE + ")");
+            Console.write("Version: " + Server.VERSION + " (" + Server.DATE + ")");
             Console.write("Authors: " + Server.AUTHORS);
         }
         

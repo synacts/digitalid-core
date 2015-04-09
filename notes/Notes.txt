@@ -5,3 +5,9 @@ Synchronization Modes:
   – Push
 
 Can be set by the application code per role and service.
+
+
+Regular Expressions:
+\[(.+?)\] -> .getNotNull($1)
+\[(.+?)\] = (.+?); -> .set($1, $2);
+.set\((.+?), (.+?)\); -> \[$1\] = $2;

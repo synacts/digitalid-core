@@ -51,6 +51,8 @@ public final class CertificateModule implements BothModule {
 //        try (@Nonnull Statement statement = Database.createStatement()) {
 //            statement.executeUpdate("CREATE TABLE IF NOT EXISTS certificate (issuer BIGINT NOT NULL, recipient BIGINT NOT NULL, type BIGINT NOT NULL, value LONGBLOB NOT NULL, issuance BIGINT, PRIMARY KEY (issuer, recipient, type), FOREIGN KEY (issuer) REFERENCES general_identity (identity), FOREIGN KEY (recipient) REFERENCES general_identity (identity), FOREIGN KEY (type) REFERENCES general_identity (identity))");
 //        }
+        
+        // TODO: Split into certificate_value and certificate_issuance? The latter is not needed on the client-side!
 //        
 //        Mapper.addReference("certificate", "recipient");
     }

@@ -202,7 +202,7 @@ public class Client extends Site implements Observer {
         this.icon = icon;
         this.preferredPermissions = preferredPermissions;
         
-        final @Nonnull File file = new File(Directory.CLIENTS.getPath() +  Directory.SEPARATOR + identifier + ".client.xdf");
+        final @Nonnull File file = new File(Directory.getClientsDirectory().getPath() +  File.separator + identifier + ".client.xdf");
         if (file.exists()) {
             this.secret = new Exponent(new SelfcontainedWrapper(new FileInputStream(file), true).getElement().checkType(SECRET));
         } else {
@@ -354,7 +354,7 @@ public class Client extends Site implements Observer {
         }
         
         this.secret = newSecret;
-        final @Nonnull File file = new File(Directory.CLIENTS.getPath() +  Directory.SEPARATOR + identifier + ".client.xdf");
+        final @Nonnull File file = new File(Directory.getClientsDirectory().getPath() +  File.separator + identifier + ".client.xdf");
         new SelfcontainedWrapper(SelfcontainedWrapper.DEFAULT, secret.toBlock().setType(SECRET)).write(new FileOutputStream(file), true);
     }
     

@@ -98,7 +98,7 @@ public final class Cache {
                     // Since the public key chain of 'core.digitalid.net' is not available, the host 'core.digitalid.net' is created on this server.
                     final @Nonnull Host host = new Host(HostIdentifier.DIGITALID);
                     value = new CertifiedAttributeValue(host.getPublicKeyChain(), HostIdentity.DIGITALID, PublicKeyChain.TYPE);
-                    final @Nonnull File certificateFile = new File(Directory.HOSTS.getPath() + Directory.SEPARATOR + "core.digitalid.net.certificate.xdf");
+                    final @Nonnull File certificateFile = new File(Directory.getHostsDirectory().getPath() + File.separator + "core.digitalid.net.certificate.xdf");
                     new SelfcontainedWrapper(SelfcontainedWrapper.DEFAULT, value).write(new FileOutputStream(certificateFile), true);
                 }
                 setCachedAttributeValue(HostIdentity.DIGITALID, null, Time.MIN, PublicKeyChain.TYPE, value, null);

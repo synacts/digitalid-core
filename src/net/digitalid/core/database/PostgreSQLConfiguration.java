@@ -77,7 +77,7 @@ public final class PostgreSQLConfiguration extends Configuration implements Immu
         
         assert Configuration.isValid(name) : "The name is valid for a database.";
         
-        final @Nonnull File file = new File(Directory.DATA.getPath() + Directory.SEPARATOR + name + ".conf");
+        final @Nonnull File file = new File(Directory.getDataDirectory().getPath() + File.separator + name + ".conf");
         if (file.exists()) {
             try (@Nonnull FileInputStream stream = new FileInputStream(file); @Nonnull InputStreamReader reader = new InputStreamReader(stream, "UTF-8")) {
                 properties.load(reader);
@@ -145,7 +145,7 @@ public final class PostgreSQLConfiguration extends Configuration implements Immu
      * @return whether a PostgreSQL configuration exists.
      */
     public static boolean exists() {
-        return new File(Directory.DATA.getPath() + Directory.SEPARATOR + "PostgreSQL.conf").exists();
+        return new File(Directory.getDataDirectory().getPath() + File.separator + "PostgreSQL.conf").exists();
     }
     
     

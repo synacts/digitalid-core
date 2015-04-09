@@ -18,8 +18,8 @@ public final class ServerTest extends ServerSetup {
     @Test
     public void testServer() throws Exception {
         // Files
-        Directory.empty(Directory.CLIENTS);
-        Directory.empty(Directory.HOSTS);
+        Directory.empty(Directory.getClientsDirectory());
+        Directory.empty(Directory.getHostsDirectory());
         
         // Server
         Server.start("test.digitalid.net");
