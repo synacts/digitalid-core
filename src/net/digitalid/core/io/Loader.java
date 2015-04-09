@@ -14,8 +14,13 @@ import javax.annotation.Nonnull;
 import net.digitalid.core.annotations.Committing;
 import net.digitalid.core.annotations.IsDirectory;
 import net.digitalid.core.annotations.Locked;
+import net.digitalid.core.auxiliary.Time;
+import net.digitalid.core.cache.Cache;
 import net.digitalid.core.database.Database;
 import net.digitalid.core.errors.InitializationError;
+import net.digitalid.core.identity.SemanticType;
+import net.digitalid.core.server.Server;
+import net.digitalid.core.wrappers.SignatureWrapper;
 
 /**
  * This class loads other classes in other domains.
@@ -79,9 +84,7 @@ public final class Loader {
      * @param preponedClasses the classes that are to be loaded before the others.
      */
     @Committing
-    public static void loadClasses(@Nonnull Class<?> mainClass, @Nonnull Class<?>... preponedClasses) {
-        assert !Database.isLocked() : "The database is not locked.";
-        
+    private static void loadClasses(@Nonnull Class<?> mainClass, @Nonnull Class<?>... preponedClasses) {
         try {
             Database.lock();
             for (final @Nonnull Class<?> preponedClass : preponedClasses) {
@@ -102,6 +105,23 @@ public final class Loader {
             throw new InitializationError("Could not load all classes.", exception);
         } finally {
             Database.unlock();
+        }
+    }
+    
+    /**
+     * Initializes all the classes of Digital ID and the given libraries.
+     * 
+     * @param mainClasses the main classes of the libraries to be loaded.
+     */
+    @Committing
+    public static void initialize(@Nonnull Class<?>... mainClasses) {
+        Loader.loadClasses(Server.class, SemanticType.class, SignatureWrapper.class);
+        Database.addRegularPurging("general_reply", Time.TWO_YEARS);
+        Database.startPurging();
+        Cache.initialize();
+        
+        for (final @Nonnull Class<?> mainClass : mainClasses) {
+            Loader.loadClasses(mainClass);
         }
     }
     

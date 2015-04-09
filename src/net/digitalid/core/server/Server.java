@@ -8,7 +8,6 @@ import javax.annotation.Nonnull;
 import net.digitalid.core.annotations.Committing;
 import net.digitalid.core.annotations.Locked;
 import net.digitalid.core.annotations.NonLocked;
-import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.cache.Cache;
 import net.digitalid.core.collections.FreezableLinkedHashMap;
 import net.digitalid.core.collections.FreezableMap;
@@ -24,12 +23,13 @@ import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.host.Host;
 import net.digitalid.core.identifier.HostIdentifier;
 import net.digitalid.core.identity.HostIdentity;
-import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.io.Console;
+import net.digitalid.core.io.DefaultLogger;
 import net.digitalid.core.io.Directory;
+import net.digitalid.core.io.Level;
 import net.digitalid.core.io.Loader;
+import net.digitalid.core.io.Logger;
 import net.digitalid.core.synchronizer.Synchronizer;
-import net.digitalid.core.wrappers.SignatureWrapper;
 
 /**
  * The server runs the configured hosts.
@@ -167,31 +167,12 @@ public final class Server {
     
     
     /**
-     * Initializes all the classes of Digital ID and the given libraries.
-     * 
-     * @param mainClasses the main classes of the libraries to be loaded.
-     */
-    @Committing
-    public static void initialize(@Nonnull Class<?>... mainClasses) {
-        Loader.loadClasses(Server.class, SemanticType.class, SignatureWrapper.class);
-        Database.addRegularPurging("general_reply", Time.TWO_YEARS);
-        Database.startPurging();
-        Cache.initialize();
-        
-        for (final @Nonnull Class<?> mainClass : mainClasses) {
-            Loader.loadClasses(mainClass);
-        }
-    }
-    
-    /**
      * Starts the server with the configured and given hosts.
      * 
      * @param arguments the identifiers of hosts to be created when starting up.
      */
     @Committing
     public static void start(@Nonnull String... arguments) {
-        initialize();
-        
         try {
             Database.lock();
             loadServices();
@@ -243,6 +224,9 @@ public final class Server {
     @NonLocked
     @Committing
     public static void main(@Nonnull String[] arguments) {
+        Directory.initialize(Directory.DEFAULT);
+        Logger.initialize(new DefaultLogger(Level.VERBOSE, "Server"));
+        
         final @Nonnull Configuration configuration;
         try {
             if (MySQLConfiguration.exists()) configuration = new MySQLConfiguration(false);
@@ -268,7 +252,10 @@ public final class Server {
         } catch (@Nonnull SQLException | IOException exception) {
             throw new InitializationError("Could not load the database configuration.", exception);
         }
+        
         Database.initialize(configuration, false);
+        Loader.initialize();
+        
         Server.start(arguments);
         Options.start();
     }
