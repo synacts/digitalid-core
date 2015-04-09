@@ -13,13 +13,15 @@ import java.util.TimerTask;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Committing;
+import net.digitalid.core.annotations.Initialized;
 import net.digitalid.core.annotations.Locked;
 import net.digitalid.core.annotations.NonCommitting;
+import net.digitalid.core.annotations.NonEmpty;
+import net.digitalid.core.annotations.Positive;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.collections.ConcurrentHashMap;
 import net.digitalid.core.collections.ConcurrentMap;
-import net.digitalid.core.interfaces.Immutable;
 import net.digitalid.core.io.Level;
 import net.digitalid.core.io.Logger;
 import net.digitalid.core.server.Server;
@@ -36,7 +38,7 @@ import net.digitalid.core.server.Worker;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public final class Database implements Immutable {
+public final class Database {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Configuration –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -52,14 +54,12 @@ public final class Database implements Immutable {
      * permanently because it may change during testing!
      * 
      * @return the configuration of the database.
-     * 
-     * @require isInitialized() : "The database is initialized.";
      */
     @Pure
+    @Initialized
     public static @Nonnull Configuration getConfiguration() {
-        assert isInitialized() : "The database is initialized.";
+        assert configuration != null : "The database is initialized.";
         
-        assert configuration != null;
         return configuration;
     }
     
@@ -131,6 +131,15 @@ public final class Database implements Immutable {
     }
     
     /**
+     * Initializes the database with the given configuration.
+     * 
+     * @param configuration the configuration of the database.
+     */
+    public static void initialize(@Nonnull Configuration configuration) {
+        initialize(configuration, true);
+    }
+    
+    /**
      * Returns whether the database has been initialized.
      * 
      * @return whether the database has been initialized.
@@ -163,14 +172,12 @@ public final class Database implements Immutable {
      * <em>Important:</em> Do not commit or close the connection as it will be reused later on!
      * 
      * @return the open connection to the database that is associated with the current thread.
-     * 
-     * @require isInitialized() : "The database is initialized.";
      */
     @Pure
     @Locked
+    @Initialized
     @NonCommitting
     private static @Nonnull Connection getConnection() throws SQLException {
-        assert isInitialized() : "The database is initialized.";
         assert isLocked() : "The database is locked.";
         
         final @Nullable Connection connection = Database.connection.get();
@@ -187,11 +194,10 @@ public final class Database implements Immutable {
     /**
      * Commits all changes of the current thread since the last commit or rollback.
      * (On the {@link Server}, this method should only be called by the {@link Worker}.)
-     * 
-     * @require isInitialized() : "The database is initialized.";
      */
     @Locked
     @Committing
+    @Initialized
     public static void commit() throws SQLException {
         assert isLocked() : "The database is locked.";
         
@@ -201,11 +207,10 @@ public final class Database implements Immutable {
     /**
      * Rolls back all changes of the current thread since the last commit or rollback.
      * (On the {@link Server}, this method should only be called by the {@link Worker}.)
-     * 
-     * @require isInitialized() : "The database is initialized.";
      */
     @Locked
     @Committing
+    @Initialized
     public static void rollback() {
         assert isLocked() : "The database is locked.";
         
@@ -218,10 +223,9 @@ public final class Database implements Immutable {
     
     /**
      * Closes the connection of the current thread.
-     * 
-     * @require isInitialized() : "The database is initialized.";
      */
     @Committing
+    @Initialized
     static void close() throws SQLException {
         getConnection().close();
     }
@@ -232,10 +236,9 @@ public final class Database implements Immutable {
      * Returns a savepoint for the connection of the current thread or null if not supported or required.
      * 
      * @return a savepoint for the connection of the current thread or null if not supported or required.
-     * 
-     * @require isInitialized() : "The database is initialized.";
      */
     @Locked
+    @Initialized
     @NonCommitting
     public static @Nullable Savepoint setSavepoint() throws SQLException {
         return getConfiguration().setSavepoint(getConnection());
@@ -245,10 +248,9 @@ public final class Database implements Immutable {
      * Rolls back the connection of the current thread to the given savepoint and releases the savepoint afterwards.
      * 
      * @param savepoint the savepoint to roll the connection back to or null if not supported or required.
-     * 
-     * @require isInitialized() : "The database is initialized.";
      */
     @Locked
+    @Initialized
     @NonCommitting
     public static void rollback(@Nullable Savepoint savepoint) throws SQLException {
         getConfiguration().rollback(getConnection(), savepoint);
@@ -260,10 +262,9 @@ public final class Database implements Immutable {
      * Creates a new statement on the connection of the current thread.
      * 
      * @return a new statement on the connection of the current thread.
-     * 
-     * @require isInitialized() : "The database is initialized.";
      */
     @Locked
+    @Initialized
     @NonCommitting
     public static @Nonnull Statement createStatement() throws SQLException {
         return getConnection().createStatement();
@@ -275,10 +276,9 @@ public final class Database implements Immutable {
      * @param SQL the statement which is to be prepared for later use.
      * 
      * @return a new statement on the connection of the current thread.
-     * 
-     * @require isInitialized() : "The database is initialized.";
      */
     @Locked
+    @Initialized
     @NonCommitting
     public static @Nonnull PreparedStatement prepareStatement(@Nonnull String SQL) throws SQLException {
         return getConnection().prepareStatement(SQL);
@@ -289,9 +289,12 @@ public final class Database implements Immutable {
     /**
      * Returns the syntax for storing a boolean value.
      * 
+     * @param value the value which is to be stored.
+     * 
      * @return the syntax for storing a boolean value.
      */
     @Pure
+    @Initialized
     public static @Nonnull String toBoolean(boolean value) {
         return getConfiguration().BOOLEAN(value);
     }
@@ -305,10 +308,9 @@ public final class Database implements Immutable {
      * @param SQL an SQL statement that inserts an entry.
      * 
      * @return the key generated for the inserted entry.
-     * 
-     * @require isInitialized() : "The database is initialized.";
      */
     @Locked
+    @Initialized
     @NonCommitting
     public static long executeInsert(@Nonnull Statement statement, @Nonnull String SQL) throws SQLException {
         return getConfiguration().executeInsert(statement, SQL);
@@ -320,10 +322,9 @@ public final class Database implements Immutable {
      * @param SQL the insert statement which is to be prepared for returning the generated keys.
      * 
      * @return a prepared statement that can be used to insert values and retrieve their key.
-     * 
-     * @require isInitialized() : "The database is initialized.";
      */
     @Locked
+    @Initialized
     @NonCommitting
     public static @Nonnull PreparedStatement prepareInsertStatement(@Nonnull String SQL) throws SQLException {
         return getConnection().prepareStatement(SQL, Statement.RETURN_GENERATED_KEYS);
@@ -335,10 +336,9 @@ public final class Database implements Immutable {
      * @param preparedStatement an executed prepared statement that has generated a key.
      * 
      * @return the key generated by the given prepared statement.
-     * 
-     * @require isInitialized() : "The database is initialized.";
      */
     @Locked
+    @Initialized
     @NonCommitting
     public static long getGeneratedKey(@Nonnull PreparedStatement preparedStatement) throws SQLException {
         try (@Nonnull ResultSet resultSet = preparedStatement.getGeneratedKeys()) {
@@ -355,13 +355,11 @@ public final class Database implements Immutable {
      * @param statement a statement to create the rule with.
      * @param table the table to which the rule is applied.
      * @param columns the columns of the primary key.
-     * 
-     * @require isInitialized() : "The database is initialized.";
-     * @require columns.length > 0 : "At least one column is provided.";
      */
     @Locked
+    @Initialized
     @NonCommitting
-    public static void onInsertIgnore(@Nonnull Statement statement, @Nonnull String table, @Nonnull String... columns) throws SQLException {
+    public static void onInsertIgnore(@Nonnull Statement statement, @Nonnull String table, @Nonnull @NonEmpty String... columns) throws SQLException {
         getConfiguration().onInsertIgnore(statement, table, columns);
     }
     
@@ -370,10 +368,9 @@ public final class Database implements Immutable {
      * 
      * @param statement a statement to drop the rule with.
      * @param table the table from which the rule is dropped.
-     * 
-     * @require isInitialized() : "The database is initialized.";
      */
     @Locked
+    @Initialized
     @NonCommitting
     public static void onInsertNotIgnore(@Nonnull Statement statement, @Nonnull String table) throws SQLException {
         getConfiguration().onInsertNotIgnore(statement, table);
@@ -389,13 +386,12 @@ public final class Database implements Immutable {
      * @param key the number of columns in the primary key.
      * @param columns the columns which are inserted starting with the columns of the primary key.
      * 
-     * @require isInitialized() : "The database is initialized.";
-     * @require key > 0 : "The number of columns in the primary key is positive.";
      * @require columns.length >= key : "At least as many columns as in the primary key are provided.";
      */
     @Locked
+    @Initialized
     @NonCommitting
-    public static void onInsertUpdate(@Nonnull Statement statement, @Nonnull String table, int key, @Nonnull String... columns) throws SQLException {
+    public static void onInsertUpdate(@Nonnull Statement statement, @Nonnull String table, @Positive int key, @Nonnull String... columns) throws SQLException {
         getConfiguration().onInsertUpdate(statement, table, key, columns);
     }
     
@@ -404,10 +400,9 @@ public final class Database implements Immutable {
      * 
      * @param statement a statement to drop the rule with.
      * @param table the table from which the rule is dropped.
-     * 
-     * @require isInitialized() : "The database is initialized.";
      */
     @Locked
+    @Initialized
     @NonCommitting
     public static void onInsertNotUpdate(@Nonnull Statement statement, @Nonnull String table) throws SQLException {
         getConfiguration().onInsertNotUpdate(statement, table);
@@ -417,9 +412,8 @@ public final class Database implements Immutable {
     
     /**
      * Locks the database if its access should be serialized.
-     * 
-     * @require isInitialized() : "The database is initialized.";
      */
+    @Initialized
     public static void lock() {
         getConfiguration().lock();
         
@@ -428,9 +422,8 @@ public final class Database implements Immutable {
     
     /**
      * Unlocks the database if its access has been serialized.
-     * 
-     * @require isInitialized() : "The database is initialized.";
      */
+    @Initialized
     public static void unlock() {
         // TODO: Remove the following lines eventually.
 //        if (getConfiguration() instanceof SQLiteConfiguration && ((SQLiteConfiguration) getConfiguration()).journalExists()) {
@@ -444,9 +437,8 @@ public final class Database implements Immutable {
      * Returns whether the database is locked by the current thread.
      * 
      * @return whether the database is locked by the current thread.
-     * 
-     * @require isInitialized() : "The database is initialized.";
      */
+    @Initialized
     public static boolean isLocked() {
         return getConfiguration().isLocked();
     }

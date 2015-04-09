@@ -7,11 +7,11 @@ import java.sql.Statement;
 import java.util.Properties;
 import java.util.concurrent.locks.ReentrantLock;
 import javax.annotation.Nonnull;
+import net.digitalid.core.annotations.Committing;
 import net.digitalid.core.annotations.Locked;
 import net.digitalid.core.annotations.NonCommitting;
-import net.digitalid.core.annotations.NonLocked;
 import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.interfaces.Immutable;
+import net.digitalid.core.annotations.Validated;
 import net.digitalid.core.io.Directory;
 import org.sqlite.JDBC;
 import org.sqlite.SQLiteConfig;
@@ -22,55 +22,9 @@ import org.sqlite.SQLiteConfig;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public final class SQLiteConfiguration extends Configuration implements Immutable {
+public final class SQLiteConfiguration extends Configuration {
     
-    /**
-     * Stores the name of the database.
-     */
-    private final @Nonnull String name;
-    
-    /**
-     * Stores the user and the password as properties.
-     */
-    private final @Nonnull Properties properties = new Properties();
-    
-    /**
-     * Creates a new SQLite configuration for the database with the given name.
-     * 
-     * @param name the name of the database file (without the suffix).
-     * @param reset whether the database is to be dropped first before creating it again.
-     * 
-     * @require Configuration.isValid(name) : "The name is valid for a database.";
-     */
-    @NonLocked
-    @NonCommitting
-    public SQLiteConfiguration(@Nonnull String name, boolean reset) throws SQLException {
-        super(new JDBC());
-        
-        assert Configuration.isValid(name) : "The name is valid for a database.";
-        
-        this.name = name;
-        if (reset) dropDatabase();
-        new SQLiteConfig().setSharedCache(true);
-    }
-    
-    @Locked
-    @Override
-    public void dropDatabase() {
-        new File(Directory.getDataDirectory().getPath() + File.separator + name + ".db").delete();
-        new File(Directory.getDataDirectory().getPath() + File.separator + name + ".db-journal").delete();
-    }
-    
-    /**
-     * Creates a new SQLite configuration for the database with the given name.
-     * 
-     * @param reset whether the database is to be dropped first before creating it again.
-     */
-    @NonLocked
-    @NonCommitting
-    public SQLiteConfiguration(boolean reset) throws SQLException {
-        this("SQLite", reset);
-    }
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Existence –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns whether a SQLite database exists.
@@ -92,6 +46,64 @@ public final class SQLiteConfiguration extends Configuration implements Immutabl
         return new File(Directory.getDataDirectory().getPath() + File.separator + name + ".db-journal").exists();
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructors –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Stores the name of the database.
+     */
+    private final @Nonnull String name;
+    
+    /**
+     * Stores the user and the password as properties.
+     */
+    private final @Nonnull Properties properties = new Properties();
+    
+    /**
+     * Creates a new SQLite configuration for the database with the given name.
+     * 
+     * @param name the name of the database file (without the suffix).
+     * @param reset whether the database is to be dropped first before creating it again.
+     * 
+     * @require Configuration.isValid(name) : "The name is valid for a database.";
+     */
+    @Committing
+    public SQLiteConfiguration(@Nonnull @Validated String name, boolean reset) throws SQLException {
+        super(new JDBC());
+        
+        assert Configuration.isValid(name) : "The name is valid for a database.";
+        
+        this.name = name;
+        if (reset) {
+            Database.lock();
+            dropDatabase();
+            Database.unlock();
+        }
+        new SQLiteConfig().setSharedCache(true);
+    }
+    
+    /**
+     * Creates a new SQLite configuration for the database with the given name.
+     * 
+     * @param name the name of the database file (without the suffix).
+     * 
+     * @require Configuration.isValid(name) : "The name is valid for a database.";
+     */
+    @Committing
+    public SQLiteConfiguration(@Nonnull @Validated String name) throws SQLException {
+        this(name, false);
+    }
+    
+    /**
+     * Creates a new SQLite configuration for the database with the default name.
+     * 
+     * @param reset whether the database is to be dropped first before creating it again.
+     */
+    @Committing
+    public SQLiteConfiguration(boolean reset) throws SQLException {
+        this("SQLite", reset);
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Database –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
@@ -105,6 +117,16 @@ public final class SQLiteConfiguration extends Configuration implements Immutabl
         return properties;
     }
     
+    @Locked
+    @Override
+    public void dropDatabase() {
+        assert Database.isLocked() : "The database is locked.";
+        
+        new File(Directory.getDataDirectory().getPath() + File.separator + name + ".db").delete();
+        new File(Directory.getDataDirectory().getPath() + File.separator + name + ".db-journal").delete();
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Syntax –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
@@ -184,6 +206,7 @@ public final class SQLiteConfiguration extends Configuration implements Immutabl
         return value ? "1" : "0";
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Index –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
@@ -208,6 +231,7 @@ public final class SQLiteConfiguration extends Configuration implements Immutabl
         statement.executeUpdate(string.append(")").toString());
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Supports –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
@@ -215,11 +239,12 @@ public final class SQLiteConfiguration extends Configuration implements Immutabl
         return false;
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Insertions –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Locked
     @Override
     @NonCommitting
-    long executeInsert(@Nonnull Statement statement, @Nonnull String SQL) throws SQLException {
+    protected long executeInsert(@Nonnull Statement statement, @Nonnull String SQL) throws SQLException {
         statement.executeUpdate(SQL);
         try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT last_insert_rowid()")) {
             if (resultSet.next()) return resultSet.getLong(1);
@@ -235,17 +260,18 @@ public final class SQLiteConfiguration extends Configuration implements Immutabl
     private final @Nonnull ReentrantLock lock = new ReentrantLock(true);
     
     @Override
-    void lock() {
+    protected void lock() {
         lock.lock();
     }
     
     @Override
-    void unlock() {
+    protected void unlock() {
         lock.unlock();
     }
     
+    @Pure
     @Override
-    boolean isLocked() {
+    protected boolean isLocked() {
         return lock.isHeldByCurrentThread();
     }
     

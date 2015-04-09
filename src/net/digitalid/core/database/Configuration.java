@@ -11,9 +11,11 @@ import java.util.Properties;
 import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.core.annotations.Committing;
 import net.digitalid.core.annotations.Locked;
 import net.digitalid.core.annotations.NonCommitting;
-import net.digitalid.core.annotations.NonLocked;
+import net.digitalid.core.annotations.NonEmpty;
+import net.digitalid.core.annotations.Positive;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.interfaces.Immutable;
 
@@ -45,6 +47,7 @@ public abstract class Configuration implements Immutable {
      * 
      * @return whether the given name is valid for a database.
      */
+    @Pure
     public static boolean isValid(@Nonnull String name) {
         return name.length() <= 40 && pattern.matcher(name).matches();
     }
@@ -56,8 +59,7 @@ public abstract class Configuration implements Immutable {
      * 
      * @param driver the JDBC driver of this configuration.
      */
-    @NonLocked
-    @NonCommitting
+    @Committing
     protected Configuration(@Nonnull Driver driver) throws SQLException {
         DriverManager.registerDriver(driver);
     }
@@ -86,7 +88,7 @@ public abstract class Configuration implements Immutable {
      * Drops the configured database.
      */
     @Locked
-    @NonCommitting
+    @Committing
     public abstract void dropDatabase() throws SQLException;
     
     
@@ -205,11 +207,9 @@ public abstract class Configuration implements Immutable {
      * @param columns the columns for which the index is to be created.
      * 
      * @return the syntax for creating an index inside a table declaration.
-     * 
-     * @require columns.length > 0 : "The length of the columns is positive.";
      */
     @Pure
-    public abstract @Nonnull String INDEX(@Nonnull String... columns);
+    public abstract @Nonnull String INDEX(@Nonnull @NonEmpty String... columns);
     
     /**
      * Creates an index outside a table declaration or does nothing.
@@ -217,11 +217,10 @@ public abstract class Configuration implements Immutable {
      * @param statement the statement on which the creation is executed.
      * @param table the table on whose columns the index is to be created.
      * @param columns the columns for which the index is to be created.
-     * 
-     * @require columns.length > 0 : "The length of the columns is positive.";
      */
     @Locked
-    public abstract void createIndex(@Nonnull Statement statement, @Nonnull String table, @Nonnull String... columns) throws SQLException;
+    @NonCommitting
+    public abstract void createIndex(@Nonnull Statement statement, @Nonnull String table, @Nonnull @NonEmpty String... columns) throws SQLException;
     
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Supports –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -248,7 +247,7 @@ public abstract class Configuration implements Immutable {
      */
     @Locked
     @NonCommitting
-    long executeInsert(@Nonnull Statement statement, @Nonnull String SQL) throws SQLException {
+    protected long executeInsert(@Nonnull Statement statement, @Nonnull String SQL) throws SQLException {
         statement.executeUpdate(SQL, Statement.RETURN_GENERATED_KEYS);
         try (@Nonnull ResultSet resultSet = statement.getGeneratedKeys()) {
             if (resultSet.next()) return resultSet.getLong(1);
@@ -267,7 +266,7 @@ public abstract class Configuration implements Immutable {
      */
     @Locked
     @NonCommitting
-    @Nullable Savepoint setSavepoint(@Nonnull Connection connection) throws SQLException {
+    protected @Nullable Savepoint setSavepoint(@Nonnull Connection connection) throws SQLException {
         return null;
     }
     
@@ -279,7 +278,7 @@ public abstract class Configuration implements Immutable {
      */
     @Locked
     @NonCommitting
-    void rollback(@Nonnull Connection connection, @Nullable Savepoint savepoint) throws SQLException {}
+    protected void rollback(@Nonnull Connection connection, @Nullable Savepoint savepoint) throws SQLException {}
     
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Ignoring –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -290,12 +289,10 @@ public abstract class Configuration implements Immutable {
      * @param statement a statement to create the rule with.
      * @param table the table to which the rule is applied.
      * @param columns the columns of the primary key.
-     * 
-     * @require columns.length > 0 : "At least one column is provided.";
      */
     @Locked
     @NonCommitting
-    void onInsertIgnore(@Nonnull Statement statement, @Nonnull String table, @Nonnull String... columns) throws SQLException {}
+    protected void onInsertIgnore(@Nonnull Statement statement, @Nonnull String table, @Nonnull @NonEmpty String... columns) throws SQLException {}
     
     /**
      * Drops the rule to ignore duplicate insertions.
@@ -305,7 +302,7 @@ public abstract class Configuration implements Immutable {
      */
     @Locked
     @NonCommitting
-    void onInsertNotIgnore(@Nonnull Statement statement, @Nonnull String table) throws SQLException {}
+    protected void onInsertNotIgnore(@Nonnull Statement statement, @Nonnull String table) throws SQLException {}
     
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Updating –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -318,12 +315,11 @@ public abstract class Configuration implements Immutable {
      * @param key the number of columns in the primary key.
      * @param columns the columns which are inserted starting with the columns of the primary key.
      * 
-     * @require key > 0 : "The number of columns in the primary key is positive.";
      * @require columns.length >= key : "At least as many columns as in the primary key are provided.";
      */
     @Locked
     @NonCommitting
-    void onInsertUpdate(@Nonnull Statement statement, @Nonnull String table, int key, @Nonnull String... columns) throws SQLException {}
+    protected void onInsertUpdate(@Nonnull Statement statement, @Nonnull String table, @Positive int key, @Nonnull String... columns) throws SQLException {}
     
     /**
      * Drops the rule to update duplicate insertions.
@@ -333,7 +329,7 @@ public abstract class Configuration implements Immutable {
      */
     @Locked
     @NonCommitting
-    void onInsertNotUpdate(@Nonnull Statement statement, @Nonnull String table) throws SQLException {}
+    protected void onInsertNotUpdate(@Nonnull Statement statement, @Nonnull String table) throws SQLException {}
     
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Locking –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -349,14 +345,14 @@ public abstract class Configuration implements Immutable {
     /**
      * Locks the database if its access should be serialized.
      */
-    void lock() {
+    protected void lock() {
         lockCounter.set(lockCounter.get() + 1);
     }
     
     /**
      * Unlocks the database if its access has been serialized.
      */
-    void unlock() {
+    protected void unlock() {
         int value = lockCounter.get();
         assert value > 0 : "The lock was released more often than it was acquired.";
         lockCounter.set(value - 1);
@@ -367,7 +363,8 @@ public abstract class Configuration implements Immutable {
      * 
      * @return whether the database is locked by the current thread.
      */
-    boolean isLocked() {
+    @Pure
+    protected boolean isLocked() {
         return lockCounter.get() > 0;
     }
     

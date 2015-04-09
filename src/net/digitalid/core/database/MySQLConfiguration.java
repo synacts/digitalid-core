@@ -13,11 +13,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
 import javax.annotation.Nonnull;
+import net.digitalid.core.annotations.Committing;
 import net.digitalid.core.annotations.Locked;
-import net.digitalid.core.annotations.NonCommitting;
-import net.digitalid.core.annotations.NonLocked;
 import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.interfaces.Immutable;
+import net.digitalid.core.annotations.Validated;
 import net.digitalid.core.io.Console;
 import net.digitalid.core.io.Directory;
 
@@ -27,7 +26,21 @@ import net.digitalid.core.io.Directory;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public final class MySQLConfiguration extends Configuration implements Immutable {
+public final class MySQLConfiguration extends Configuration {
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Existence –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Returns whether a MySQL configuration exists.
+     * 
+     * @return whether a MySQL configuration exists.
+     */
+    @Pure
+    public static boolean exists() {
+        return new File(Directory.getDataDirectory().getPath() + File.separator + "MySQL.conf").exists();
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructors –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the server address of the database.
@@ -67,8 +80,7 @@ public final class MySQLConfiguration extends Configuration implements Immutable
      * 
      * @require Configuration.isValid(name) : "The name is valid for a database.";
      */
-    @NonLocked
-    @NonCommitting
+    @Committing
     public MySQLConfiguration(@Nonnull String name, boolean reset) throws SQLException, IOException {
         super(new Driver());
         
@@ -114,13 +126,16 @@ public final class MySQLConfiguration extends Configuration implements Immutable
         }
     }
     
-    @Locked
-    @Override
-    @NonCommitting
-    public void dropDatabase() throws SQLException {
-        try (@Nonnull Statement statement = Database.createStatement()) {
-            statement.executeUpdate("DROP DATABASE IF EXISTS " + database);
-        }
+    /**
+     * Creates a new MySQL configuration by reading the properties from the indicated file or from the user's input.
+     * 
+     * @param name the name of the database configuration file (without the suffix).
+     * 
+     * @require Configuration.isValid(name) : "The name is valid for a database.";
+     */
+    @Committing
+    public MySQLConfiguration(@Nonnull @Validated String name) throws SQLException, IOException {
+        this(name, false);
     }
     
     /**
@@ -128,21 +143,12 @@ public final class MySQLConfiguration extends Configuration implements Immutable
      * 
      * @param reset whether the database is to be dropped first before creating it again.
      */
-    @NonLocked
-    @NonCommitting
+    @Committing
     public MySQLConfiguration(boolean reset) throws SQLException, IOException {
         this("MySQL", reset);
     }
     
-    /**
-     * Returns whether a MySQL configuration exists.
-     * 
-     * @return whether a MySQL configuration exists.
-     */
-    public static boolean exists() {
-        return new File(Directory.getDataDirectory().getPath() + File.separator + "MySQL.conf").exists();
-    }
-    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Database –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
@@ -156,6 +162,17 @@ public final class MySQLConfiguration extends Configuration implements Immutable
         return properties;
     }
     
+    @Locked
+    @Override
+    @Committing
+    public void dropDatabase() throws SQLException {
+        try (@Nonnull Statement statement = Database.createStatement()) {
+            statement.executeUpdate("DROP DATABASE IF EXISTS " + database);
+        }
+        Database.commit();
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Syntax –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
@@ -235,6 +252,7 @@ public final class MySQLConfiguration extends Configuration implements Immutable
         return Boolean.toString(value);
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Index –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override

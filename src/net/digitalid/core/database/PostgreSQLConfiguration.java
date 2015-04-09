@@ -15,11 +15,11 @@ import java.sql.Statement;
 import java.util.Properties;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.core.annotations.Committing;
 import net.digitalid.core.annotations.Locked;
 import net.digitalid.core.annotations.NonCommitting;
-import net.digitalid.core.annotations.NonLocked;
 import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.interfaces.Immutable;
+import net.digitalid.core.annotations.Validated;
 import net.digitalid.core.io.Console;
 import net.digitalid.core.io.Directory;
 import org.postgresql.Driver;
@@ -30,7 +30,20 @@ import org.postgresql.Driver;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public final class PostgreSQLConfiguration extends Configuration implements Immutable {
+public final class PostgreSQLConfiguration extends Configuration {
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Existence –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Returns whether a PostgreSQL configuration exists.
+     * 
+     * @return whether a PostgreSQL configuration exists.
+     */
+    public static boolean exists() {
+        return new File(Directory.getDataDirectory().getPath() + File.separator + "PostgreSQL.conf").exists();
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructors –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the server address of the database.
@@ -70,9 +83,8 @@ public final class PostgreSQLConfiguration extends Configuration implements Immu
      * 
      * @require Configuration.isValid(name) : "The name is valid for a database.";
      */
-    @NonLocked
-    @NonCommitting
-    public PostgreSQLConfiguration(@Nonnull String name, boolean reset) throws SQLException, IOException {
+    @Committing
+    public PostgreSQLConfiguration(@Nonnull @Validated String name, boolean reset) throws SQLException, IOException {
         super(new Driver());
         
         assert Configuration.isValid(name) : "The name is valid for a database.";
@@ -118,14 +130,16 @@ public final class PostgreSQLConfiguration extends Configuration implements Immu
         }
     }
     
-    @Locked
-    @Override
-    @NonCommitting
-    public void dropDatabase() throws SQLException {
-        Database.close();
-        try (@Nonnull Connection connection = DriverManager.getConnection("jdbc:postgresql://" + server + ":" + port + "/", properties); @Nonnull Statement statement = connection.createStatement()) {
-            statement.executeUpdate("DROP DATABASE IF EXISTS " + database);
-        }
+    /**
+     * Creates a new PostgreSQL configuration by reading the properties from the indicated file or from the user's input.
+     * 
+     * @param name the name of the database configuration file (without the suffix).
+     * 
+     * @require Configuration.isValid(name) : "The name is valid for a database.";
+     */
+    @Committing
+    public PostgreSQLConfiguration(@Nonnull @Validated String name) throws SQLException, IOException {
+        this(name, false);
     }
     
     /**
@@ -133,21 +147,12 @@ public final class PostgreSQLConfiguration extends Configuration implements Immu
      * 
      * @param reset whether the database is to be dropped first before creating it again.
      */
-    @NonLocked
-    @NonCommitting
+    @Committing
     public PostgreSQLConfiguration(boolean reset) throws SQLException, IOException {
         this("PostgreSQL", reset);
     }
     
-    /**
-     * Returns whether a PostgreSQL configuration exists.
-     * 
-     * @return whether a PostgreSQL configuration exists.
-     */
-    public static boolean exists() {
-        return new File(Directory.getDataDirectory().getPath() + File.separator + "PostgreSQL.conf").exists();
-    }
-    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Database –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
@@ -161,6 +166,18 @@ public final class PostgreSQLConfiguration extends Configuration implements Immu
         return properties;
     }
     
+    @Locked
+    @Override
+    @Committing
+    public void dropDatabase() throws SQLException {
+        Database.close();
+        try (@Nonnull Connection connection = DriverManager.getConnection("jdbc:postgresql://" + server + ":" + port + "/", properties); @Nonnull Statement statement = connection.createStatement()) {
+            statement.executeUpdate("DROP DATABASE IF EXISTS " + database);
+        }
+        Database.commit();
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Syntax –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
@@ -240,6 +257,7 @@ public final class PostgreSQLConfiguration extends Configuration implements Immu
         return Boolean.toString(value);
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Index –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
@@ -249,9 +267,9 @@ public final class PostgreSQLConfiguration extends Configuration implements Immu
         return "";
     }
     
-    @Pure
     @Locked
     @Override
+    @NonCommitting
     @SuppressWarnings("StringEquality")
     public void createIndex(@Nonnull Statement statement, @Nonnull String table, @Nonnull String... columns) throws SQLException {
         assert columns.length > 0 : "The length of the columns is positive.";
@@ -267,27 +285,29 @@ public final class PostgreSQLConfiguration extends Configuration implements Immu
         statement.execute(string.toString());
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Savepoints –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Locked
     @Override
     @NonCommitting
-    public @Nonnull Savepoint setSavepoint(@Nonnull Connection connection) throws SQLException {
+    protected @Nonnull Savepoint setSavepoint(@Nonnull Connection connection) throws SQLException {
         return connection.setSavepoint();
     }
     
     @Locked
     @Override
     @NonCommitting
-    public void rollback(@Nonnull Connection connection, @Nullable Savepoint savepoint) throws SQLException {
+    protected void rollback(@Nonnull Connection connection, @Nullable Savepoint savepoint) throws SQLException {
         connection.rollback(savepoint);
         connection.releaseSavepoint(savepoint);
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Ignoring –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Locked
     @Override
     @NonCommitting
-    public void onInsertIgnore(@Nonnull Statement statement, @Nonnull String table, @Nonnull String... columns) throws SQLException {
+    protected void onInsertIgnore(@Nonnull Statement statement, @Nonnull String table, @Nonnull String... columns) throws SQLException {
         assert columns.length > 0 : "At least one column is provided.";
         
         final @Nonnull StringBuilder string = new StringBuilder("CREATE OR REPLACE RULE ").append(table).append("_on_insert_ignore ");
@@ -312,15 +332,16 @@ public final class PostgreSQLConfiguration extends Configuration implements Immu
     @Locked
     @Override
     @NonCommitting
-    public void onInsertNotIgnore(@Nonnull Statement statement, @Nonnull String table) throws SQLException {
+    protected void onInsertNotIgnore(@Nonnull Statement statement, @Nonnull String table) throws SQLException {
         statement.executeUpdate("DROP RULE IF EXISTS " + table + "_on_insert_ignore ON " + table);
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Updating –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Locked
     @Override
     @NonCommitting
-    public void onInsertUpdate(@Nonnull Statement statement, @Nonnull String table, int key, @Nonnull String... columns) throws SQLException {
+    protected void onInsertUpdate(@Nonnull Statement statement, @Nonnull String table, int key, @Nonnull String... columns) throws SQLException {
         assert key > 0 : "The number of columns in the primary key is positive.";
         assert columns.length >= key : "At least as many columns as in the primary key are provided.";
         
@@ -351,7 +372,7 @@ public final class PostgreSQLConfiguration extends Configuration implements Immu
     @Locked
     @Override
     @NonCommitting
-    public void onInsertNotUpdate(@Nonnull Statement statement, @Nonnull String table) throws SQLException {
+    protected void onInsertNotUpdate(@Nonnull Statement statement, @Nonnull String table) throws SQLException {
         statement.executeUpdate("DROP RULE IF EXISTS " + table + "_on_insert_update ON " + table);
     }
     
