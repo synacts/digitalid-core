@@ -59,7 +59,7 @@ public class Directory {
     private static @Nonnull @IsDirectory File createDirectory(@Nonnull String name) {
         assert root != null : "This class is initialized.";
         
-        final @Nonnull File directory = new File(root.getPath() + File.separator + "Logs");
+        final @Nonnull File directory = new File(root.getPath() + File.separator + name);
         if (!directory.exists() && !directory.mkdirs()) throw new InitializationError("Could not create the directory '" + directory.getPath() + "'.");
         return directory;
     }
