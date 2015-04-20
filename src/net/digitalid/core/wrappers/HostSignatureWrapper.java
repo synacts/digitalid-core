@@ -28,6 +28,8 @@ import net.digitalid.core.identity.InternalIdentity;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.interfaces.Blockable;
 import net.digitalid.core.interfaces.Immutable;
+import net.digitalid.core.io.Level;
+import net.digitalid.core.io.Logger;
 import net.digitalid.core.server.Server;
 import net.digitalid.core.synchronizer.Audit;
 
@@ -149,6 +151,8 @@ public final class HostSignatureWrapper extends SignatureWrapper implements Immu
     public void verify() throws SQLException, IOException, PacketException, ExternalException {
         assert isNotVerified() : "This signature is not verified.";
         
+        final @Nonnull Time start = new Time();
+        
         if (getTimeNotNull().isLessThan(Time.TWO_YEARS.ago())) throw new InvalidSignatureException("The host signature is out of date.");
         
         final @Nonnull TupleWrapper tuple = new TupleWrapper(getCache());
@@ -164,6 +168,9 @@ public final class HostSignatureWrapper extends SignatureWrapper implements Immu
         final @Nonnull ReadonlyArray<Block> subelements = new TupleWrapper(tuple.getElementNotNull(1)).getElementsNotNull(2);
         if (!publicKey.getCompositeGroup().getElement(subelements.getNotNull(1)).pow(publicKey.getE()).getValue().equals(hash)) throw new InvalidSignatureException("The host signature is not valid.");
         
+        final @Nonnull Time end = new Time();
+        Logger.log(Level.VERBOSE, "HostSignatureWrapper", "Signature verified in " + end.subtract(start).getValue() + " ms.");
+        
         setVerified();
     }
     
@@ -171,6 +178,8 @@ public final class HostSignatureWrapper extends SignatureWrapper implements Immu
     void sign(@Nonnull FreezableArray<Block> elements) {
         assert elements.isNotFrozen() : "The elements are not frozen.";
         assert elements.isNotNull(0) : "The first element is not null.";
+        
+        final @Nonnull Time start = new Time();
         
         final @Nonnull FreezableArray<Block> subelements = new FreezableArray<>(2);
         subelements.set(0, signer.toBlock().setType(SIGNER));
@@ -181,6 +190,9 @@ public final class HostSignatureWrapper extends SignatureWrapper implements Immu
             throw new ShouldNeverHappenError("There should always be a key for the current time.", exception);
         }
         elements.set(1, new TupleWrapper(SIGNATURE, subelements.freeze()).toBlock());
+        
+        final @Nonnull Time end = new Time();
+        Logger.log(Level.VERBOSE, "HostSignatureWrapper", "Element signed in " + end.subtract(start).getValue() + " ms.");
     }
     
 }

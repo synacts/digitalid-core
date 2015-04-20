@@ -128,6 +128,8 @@ public final class Database {
         Database.singleAccess = singleAccess;
         mainThread.set(true);
         connection.remove();
+        
+        Logger.log(Level.INFORMATION, "Database", "The database has been initialized for " + (singleAccess ? "single" : "multi") + "-access with a " + configuration.getClass().getSimpleName() + ".");
     }
     
     /**
@@ -152,7 +154,7 @@ public final class Database {
     /**
      * Stores the open connection to the database that is associated with the current thread.
      */
-    private static final @Nonnull ThreadLocal<Connection> connection = new ThreadLocal<Connection>() {
+    static final @Nonnull ThreadLocal<Connection> connection = new ThreadLocal<Connection>() {
         @Override protected @Nullable Connection initialValue() {
             assert configuration != null : "The database is initialized.";
             try {
@@ -177,7 +179,7 @@ public final class Database {
     @Locked
     @Initialized
     @NonCommitting
-    private static @Nonnull Connection getConnection() throws SQLException {
+    static @Nonnull Connection getConnection() throws SQLException {
         assert isLocked() : "The database is locked.";
         
         final @Nullable Connection connection = Database.connection.get();
@@ -414,10 +416,8 @@ public final class Database {
      * Locks the database if its access should be serialized.
      */
     @Initialized
-    public static void lock() {
+    public static void lock() throws SQLException {
         getConfiguration().lock();
-        
-        try { if (!getConnection().isValid(1)) Database.connection.remove(); } catch (@Nonnull SQLException exception) {}
     }
     
     /**
@@ -482,11 +482,13 @@ public final class Database {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                Database.lock();
-                try (@Nonnull Statement statement = createStatement()) {
-                    for (final @Nonnull Map.Entry<String, Time> entry : tables.entrySet()) {
-                        statement.executeUpdate("DELETE FROM " + entry.getKey() + " WHERE time < " + entry.getValue().ago());
-                        commit();
+                try {
+                    Database.lock();
+                    try (@Nonnull Statement statement = createStatement()) {
+                        for (final @Nonnull Map.Entry<String, Time> entry : tables.entrySet()) {
+                            statement.executeUpdate("DELETE FROM " + entry.getKey() + " WHERE time < " + entry.getValue().ago());
+                            commit();
+                        }
                     }
                 } catch (@Nonnull SQLException exception) {
                     Logger.log(Level.WARNING, "Database", "Could not prune a table.", exception);

@@ -8,12 +8,15 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Exposed;
 import net.digitalid.core.annotations.Pure;
+import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.errors.ShouldNeverHappenError;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.identity.SyntacticType;
 import net.digitalid.core.interfaces.Blockable;
 import net.digitalid.core.interfaces.Immutable;
+import net.digitalid.core.io.Level;
+import net.digitalid.core.io.Logger;
 
 /**
  * Wraps a block with the syntactic type {@code compression@core.digitalid.net} for encoding and decoding.
@@ -106,9 +109,12 @@ public final class CompressionWrapper extends BlockWrapper implements Immutable 
                 this.element = new Block(parameter, block, 1, block.getLength() - 1);
             } else if (algorithm == ZLIB) {
                 try {
+                    final @Nonnull Time start = new Time();
                     @Nonnull ByteArrayOutputStream uncompressed = new ByteArrayOutputStream(2 * block.getLength());
                     block.writeTo(1, new InflaterOutputStream(uncompressed), true);
                     this.element = new Block(parameter, uncompressed.toByteArray());
+                    final @Nonnull Time end = new Time();
+                    Logger.log(Level.VERBOSE, "CompressionWrapper", "Element with " + element.getLength() + " bytes uncompressed in " + end.subtract(start).getValue() + " ms.");
                 } catch (IOException exception) {
                     throw new InvalidEncodingException("The given block could not be decompressed.", exception);
                 }
@@ -185,8 +191,11 @@ public final class CompressionWrapper extends BlockWrapper implements Immutable 
         
         if (cache == null) {
             try {
+                final @Nonnull Time start = new Time();
                 cache = new ByteArrayOutputStream(element.getLength());
                 element.writeTo(new DeflaterOutputStream(cache), true);
+                final @Nonnull Time end = new Time();
+                Logger.log(Level.VERBOSE, "CompressionWrapper", "Element with " + element.getLength() + " bytes compressed in " + end.subtract(start).getValue() + " ms.");
             } catch (@Nonnull IOException exception) {
                 throw new ShouldNeverHappenError("The given element could not be compressed.", exception);
             }

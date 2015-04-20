@@ -3,7 +3,7 @@
 sudo rm -Rf ~/File\ Service\ Local/External/*
 sudo rm -Rf ~/File\ Service\ Mirror/External/*
 sudo rm -Rf ~/File\ Service\ Terminal/External/*
-rm -Rf ~/.DigitalID/Logs/*
+# rm -Rf ~/.DigitalID/Logs/*
 rm -Rf ~/.DigitalID/Data/Local.db
 rm -Rf ~/.DigitalID/Data/Local.db-journal
 rm -Rf ~/.DigitalID/Data/Mirror.db

@@ -28,6 +28,8 @@ import net.digitalid.core.identifier.InternalIdentifier;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.interfaces.Blockable;
 import net.digitalid.core.interfaces.Immutable;
+import net.digitalid.core.io.Level;
+import net.digitalid.core.io.Logger;
 import net.digitalid.core.synchronizer.Audit;
 
 /**
@@ -140,6 +142,8 @@ public final class ClientSignatureWrapper extends SignatureWrapper implements Im
     public void verify() throws InvalidEncodingException, InvalidSignatureException {
         assert isNotVerified() : "This signature is not verified.";
         
+        final @Nonnull Time start = new Time();
+        
         if (getTimeNotNull().isLessThan(Time.TROPICAL_YEAR.ago())) throw new InvalidSignatureException("The client signature is out of date.");
         
         final @Nonnull TupleWrapper tuple = new TupleWrapper(getCache());
@@ -152,6 +156,9 @@ public final class ClientSignatureWrapper extends SignatureWrapper implements Im
         final @Nonnull Element value = commitment.getPublicKey().getAu().pow(s).multiply(commitment.getValue().pow(h));
         if (!t.equals(value.toBlock().getHash()) || s.getBitLength() > Parameters.RANDOM_EXPONENT) throw new InvalidSignatureException("The client signature is invalid.");
         
+        final @Nonnull Time end = new Time();
+        Logger.log(Level.VERBOSE, "ClientSignatureWrapper", "Signature verified in " + end.subtract(start).getValue() + " ms.");
+        
         setVerified();
     }
     
@@ -159,6 +166,8 @@ public final class ClientSignatureWrapper extends SignatureWrapper implements Im
     void sign(@Nonnull FreezableArray<Block> elements) {
         assert elements.isNotFrozen() : "The elements are not frozen.";
         assert elements.isNotNull(0) : "The first element is not null.";
+        
+        final @Nonnull Time start = new Time();
         
         final @Nonnull FreezableArray<Block> subelements = new FreezableArray<>(3);
         final @Nonnull SecretCommitment commitment = (SecretCommitment) this.commitment;
@@ -170,6 +179,9 @@ public final class ClientSignatureWrapper extends SignatureWrapper implements Im
         final @Nonnull Exponent s = r.subtract(commitment.getSecret().multiply(h));
         subelements.set(2, s.toBlock());
         elements.set(2, new TupleWrapper(SIGNATURE, subelements.freeze()).toBlock());
+        
+        final @Nonnull Time end = new Time();
+        Logger.log(Level.VERBOSE, "ClientSignatureWrapper", "Element signed in " + end.subtract(start).getValue() + " ms.");
     }
     
     

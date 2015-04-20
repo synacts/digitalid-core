@@ -18,6 +18,8 @@ import net.digitalid.core.annotations.NonEmpty;
 import net.digitalid.core.annotations.Positive;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.interfaces.Immutable;
+import net.digitalid.core.io.Level;
+import net.digitalid.core.io.Logger;
 
 /**
  * This class is used to configure various databases.
@@ -345,8 +347,13 @@ public abstract class Configuration implements Immutable {
     /**
      * Locks the database if its access should be serialized.
      */
-    protected void lock() {
+    protected void lock() throws SQLException {
         lockCounter.set(lockCounter.get() + 1);
+        
+        if (!Database.getConnection().isValid(1)) {
+            Logger.log(Level.WARNING, "Configuration", "The connection is no longer valid and is thus replaced.");
+            Database.connection.remove();
+        }
     }
     
     /**

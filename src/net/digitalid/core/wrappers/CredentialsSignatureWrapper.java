@@ -51,6 +51,8 @@ import net.digitalid.core.identity.Person;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.interfaces.Blockable;
 import net.digitalid.core.interfaces.Immutable;
+import net.digitalid.core.io.Level;
+import net.digitalid.core.io.Logger;
 import net.digitalid.core.synchronizer.Audit;
 
 /**
@@ -723,6 +725,8 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
     public void verify() throws SQLException, IOException, PacketException, ExternalException {
         assert isNotVerified() : "This signature is not verified.";
         
+        final @Nonnull Time start = new Time();
+        
         if (getTimeNotNull().isLessThan(Time.TROPICAL_YEAR.ago())) throw new InvalidSignatureException("The credentials signature is out of date.");
         
         final @Nonnull TupleWrapper tuple = new TupleWrapper(getCache());
@@ -819,6 +823,9 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
             }
         }
         
+        final @Nonnull Time end = new Time();
+        Logger.log(Level.VERBOSE, "CredentialsSignatureWrapper", "Signature verified in " + end.subtract(start).getValue() + " ms.");
+        
         setVerified();
     }
     
@@ -826,6 +833,8 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
     void sign(@Nonnull FreezableArray<Block> elements) {
         assert elements.isNotFrozen() : "The elements are not frozen.";
         assert elements.isNotNull(0) : "The first element is not null.";
+        
+        final @Nonnull Time start = new Time();
         
         assert credentials.get(0) instanceof ClientCredential : "The first credential is a client credential (like all others).";
         final @Nonnull ClientCredential mainCredential = (ClientCredential) credentials.getNotNull(0);
@@ -953,6 +962,9 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
         }
         
         elements.set(3, new TupleWrapper(SIGNATURE, signature.freeze()).toBlock());
+        
+        final @Nonnull Time end = new Time();
+        Logger.log(Level.VERBOSE, "CredentialsSignatureWrapper", "Element signed in " + end.subtract(start).getValue() + " ms.");
     }
     
     

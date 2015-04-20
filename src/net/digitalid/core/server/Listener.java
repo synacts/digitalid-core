@@ -55,7 +55,7 @@ public final class Listener extends Thread {
                 socket.setSoTimeout(1000000); // TODO: Remove two zeroes!
                 try {
                     threadPoolExecutor.execute(new Worker(socket));
-                    Logger.log(Level.INFORMATION, "Listener", "Connection accepted from " + socket.getInetAddress() + ".");
+                    Logger.log(Level.VERBOSE, "Listener", "Connection accepted from '" + socket.getInetAddress().toString().substring(1) + "'.");
                 } catch (@Nonnull RejectedExecutionException exception) {
                     Logger.log(Level.WARNING, "Listener", "Could not add a new worker.", exception);
                     socket.close();

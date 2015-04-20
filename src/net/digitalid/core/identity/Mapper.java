@@ -206,7 +206,7 @@ public final class Mapper {
     public static void unmap(@Nonnull Identity identity) {
         numbers.remove(identity.getNumber());
         identifiers.remove(identity.getAddress());
-        Logger.log(Level.INFORMATION, "Mapper", "The identity of " + identity.getAddress() + " was unmapped.");
+        Logger.log(Level.DEBUGGING, "Mapper", "The identity of " + identity.getAddress() + " was unmapped.");
     }
     
     /**
@@ -371,7 +371,7 @@ public final class Mapper {
             try (@Nonnull Statement statement = Database.createStatement()) {
                 final long key = Database.executeInsert(statement, "INSERT INTO general_identity (category, address, reply) VALUES (" + category + ", " + identifier + ", " + reply + ")");
                 statement.executeUpdate("INSERT INTO general_identifier (identifier, identity) VALUES (" + identifier + ", " + key + ")");
-                Logger.log(Level.INFORMATION, "Mapper", "The identity with the identifier " + identifier + " was succesfully mapped.");
+                Logger.log(Level.DEBUGGING, "Mapper", "The identity with the identifier " + identifier + " was succesfully mapped.");
                 // The identity is not added to the map since the transaction might be rolled back later on.
                 return createIdentity(category, key, identifier);
             }
@@ -469,7 +469,7 @@ public final class Mapper {
                     updateReferences(statement, oldNumber, newNumber);
                     statement.executeUpdate("UPDATE general_identifier SET identity = " + newNumber + " WHERE identity = " + oldNumber);
                     statement.executeUpdate("DELETE FROM general_identity WHERE identity = " + oldNumber);
-                    Logger.log(Level.INFORMATION, "Mapper", "The identity of " + identity.getAddress() + " was succesfully merged into " + newIdentity.getAddress() + ".");
+                    Logger.log(Level.DEBUGGING, "Mapper", "The identity of " + identity.getAddress() + " was succesfully merged into " + newIdentity.getAddress() + ".");
                     unmap(identity);
                 }
             }
@@ -528,7 +528,7 @@ public final class Mapper {
                 statement.executeUpdate("UPDATE general_identity SET address = " + identifier + " WHERE identity = " + identity);
             }
             unmap(identity);
-            Logger.log(Level.INFORMATION, "Mapper", "The identity of " + identity.getAddress() + " was succesfully relocated to " + identifier + ".");
+            Logger.log(Level.DEBUGGING, "Mapper", "The identity of " + identity.getAddress() + " was succesfully relocated to " + identifier + ".");
             
         // Create a new identity and merge existing predecessors into this new identity.
         } else {
@@ -536,7 +536,7 @@ public final class Mapper {
             if (identities.size() > 1 && !category.isInternalPerson()) throw new InvalidDeclarationException("Only internal persons may have more than one predecessor.", identifier, reply);
             mergeIdentities(identities, identity);
         }
-        Logger.log(Level.INFORMATION, "Mapper", "The identity of " + identifier + " was succesfully established.");
+        Logger.log(Level.DEBUGGING, "Mapper", "The identity of " + identifier + " was succesfully established.");
         
         // Store the successor of the given identifier into the database if available.
         final @Nullable InternalNonHostIdentifier successor = reply.getSuccessor();

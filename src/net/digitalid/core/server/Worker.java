@@ -21,7 +21,7 @@ import net.digitalid.core.handler.Action;
 import net.digitalid.core.handler.InternalMethod;
 import net.digitalid.core.handler.Method;
 import net.digitalid.core.handler.Reply;
-import net.digitalid.core.identifier.Identifier;
+import net.digitalid.core.identifier.InternalIdentifier;
 import net.digitalid.core.io.Level;
 import net.digitalid.core.io.Logger;
 import net.digitalid.core.packet.Request;
@@ -31,6 +31,10 @@ import net.digitalid.core.service.Service;
 import net.digitalid.core.synchronizer.ActionModule;
 import net.digitalid.core.synchronizer.RequestAudit;
 import net.digitalid.core.synchronizer.ResponseAudit;
+import net.digitalid.core.wrappers.ClientSignatureWrapper;
+import net.digitalid.core.wrappers.CredentialsSignatureWrapper;
+import net.digitalid.core.wrappers.HostSignatureWrapper;
+import net.digitalid.core.wrappers.SignatureWrapper;
 
 /**
  * A worker processes incoming requests asynchronously.
@@ -64,8 +68,11 @@ public final class Worker implements Runnable {
     public void run() {
         try {
             final @Nonnull Time start = new Time();
-            @Nullable Identifier subject = null;
+            @Nullable InternalIdentifier subject = null;
+            @Nullable InternalIdentifier signer = null;
             @Nullable PacketError error = null;
+            @Nullable Service service = null;
+            int size = 0;
             
             @Nullable Request request = null;
             @Nonnull Response response;
@@ -73,37 +80,47 @@ public final class Worker implements Runnable {
                 Database.lock();
                 try {
                     request = new Request(socket.getInputStream());
-                    final @Nonnull Method reference = request.getMethod(0);
-                    final @Nonnull Service service = reference.getService();
-                    final @Nullable RequestAudit requestAudit = request.getAudit();
-                    final @Nullable Agent agent = requestAudit != null && service.equals(CoreService.SERVICE) ? reference.getSignatureNotNull().getAgentCheckedAndRestricted(reference.getNonHostAccount(), null) : null;
+                    Logger.log(Level.VERBOSE, "Worker", "Request decoded in " + new Time().subtract(start).getValue() + " ms.");
                     
-                    final int size = request.getSize();
+                    final @Nonnull Method reference = request.getMethod(0);
+                    final @Nonnull SignatureWrapper signature = reference.getSignatureNotNull();
+                    
+                    service = reference.getService();
+                    subject = reference.getSubject();
+                    if (signature instanceof HostSignatureWrapper) signer = ((HostSignatureWrapper) signature).getSigner();
+                    else if (signature instanceof ClientSignatureWrapper) signer = subject;
+                    else if (signature instanceof CredentialsSignatureWrapper) signer = ((CredentialsSignatureWrapper) signature).getCredentials().getNotNull(0).getIssuer().getAddress();
+                    
+                    final @Nullable RequestAudit requestAudit = request.getAudit();
+                    final @Nullable Agent agent = requestAudit != null && service.equals(CoreService.SERVICE) ? signature.getAgentCheckedAndRestricted(reference.getNonHostAccount(), null) : null;
+                    
+                    size = request.getSize();
                     final @Nonnull FreezableList<Reply> replies = new FreezableArrayList<>(size);
                     final @Nonnull FreezableList<PacketException> exceptions = new FreezableArrayList<>(size);
                     
                     for (int i = 0; i < size; i++) {
                         replies.add(null);
                         exceptions.add(null);
+                        final @Nonnull Time methodStart = new Time();
+                        final @Nonnull Method method = request.getMethod(i);
                         try {
-                            final @Nonnull Method method = request.getMethod(i);
-//                            System.out.println("- " + method.getClass().getSimpleName()); System.out.flush(); // TODO: Remove eventually.
                             replies.set(i, method.executeOnHost());
                             if (method instanceof Action) ActionModule.audit((Action) method);
                             Database.commit();
                         } catch (@Nonnull SQLException exception) {
-                            exception.printStackTrace(); // TODO: Remove eventually.
                             exceptions.set(i, new PacketException(PacketError.INTERNAL, "An SQLException occurred.", exception));
                             Database.rollback();
                         } catch (@Nonnull PacketException exception) {
-                            if (exception.getError() != PacketError.IDENTIFIER) exception.printStackTrace(); // TODO: Remove eventually.
                             exceptions.set(i, exception);
                             Database.rollback();
                         }
+                        final @Nonnull Time methodEnd = new Time();
+                        Logger.log(Level.DEBUGGING, "Worker", method.getClass().getSimpleName() + " handled in " + methodEnd.subtract(methodStart).getValue() + " ms.");
                     }
                     
                     final @Nullable ResponseAudit responseAudit;
                     if (requestAudit != null) {
+                        final @Nonnull Time auditStart = new Time();
                         if (!(reference instanceof InternalMethod)) throw new PacketException(PacketError.AUTHORIZATION, "An audit may only be requested by internal methods.");
                         final @Nullable ReadonlyAgentPermissions permissions;
                         @Nullable Restrictions restrictions;
@@ -116,30 +133,28 @@ public final class Worker implements Runnable {
                                 restrictions = Restrictions.MIN;
                             }
                         } else {
-                            final @Nonnull Credential credential = reference.getSignatureNotNull().toCredentialsSignatureWrapper().getCredentials().getNotNull(0);
+                            final @Nonnull Credential credential = signature.toCredentialsSignatureWrapper().getCredentials().getNotNull(0);
                             permissions = credential.getPermissions();
                             restrictions = credential.getRestrictions();
                             if (permissions == null || restrictions == null) throw new PacketException(PacketError.AUTHORIZATION, "If an audit is requested, neither the permissions nor the restrictions may be null.");
                         }
                         responseAudit = ActionModule.getAudit(reference.getNonHostAccount(), service, requestAudit.getLastTime(), permissions, restrictions, agent);
                         Database.commit();
+                        final @Nonnull Time auditEnd = new Time();
+                        Logger.log(Level.DEBUGGING, "Worker", "Audit retrieved in " + auditEnd.subtract(auditStart).getValue() + " ms.");
                     } else {
                         responseAudit = null;
                     }
                     
                     response = new Response(request, replies.freeze(), exceptions.freeze(), responseAudit);
                 } catch (@Nonnull SQLException exception) {
-                    exception.printStackTrace(); // TODO: Remove eventually.
                     throw new PacketException(PacketError.INTERNAL, "An SQLException occurred.", exception);
                 } catch (@Nonnull IOException exception) {
-                    exception.printStackTrace(); // TODO: Remove eventually.
                     throw new PacketException(PacketError.EXTERNAL, "An IOException occurred.", exception);
                 } catch (@Nonnull ExternalException exception) {
-                    exception.printStackTrace(); // TODO: Remove eventually.
                     throw new PacketException(PacketError.EXTERNAL, "An ExternalException occurred.", exception);
                 }
             } catch (@Nonnull PacketException exception) {
-                exception.printStackTrace(); // TODO: Remove eventually.
                 response = new Response(request, exception.isRemote() ? new PacketException(PacketError.EXTERNAL, "An external error occurred.", exception) : exception);
                 error = exception.getError();
                 Database.rollback();
@@ -151,7 +166,7 @@ public final class Worker implements Runnable {
             response.write(socket.getOutputStream());
             
             final @Nonnull Time end = new Time();
-            Logger.log(Level.INFORMATION, "Worker", "Request from '" + socket.getInetAddress() + "' handled in " + end.subtract(start).getValue() + " ms" + (subject != null ? " about " + subject : "") + (error != null ? " with error " + error : "") + ".");
+            Logger.log(Level.INFORMATION, "Worker", "Request" + (subject != null ? " to " + subject : "") + (signer != null ? " from " + signer : "") + (size > 0 ? " with " + size + " method" + (size > 1 ? "s" : "") : "") + (service != null ? " of the " + service.getName() : "") + " handled in " + end.subtract(start).getValue() + " ms" + (error != null ? " with error " + error.getName() : "") + ".");
         } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
             Logger.log(Level.WARNING, "Worker", "Could not send a response.", exception);
         } finally {

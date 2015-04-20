@@ -9,6 +9,8 @@ import net.digitalid.core.annotations.Initialized;
  * <p>
  * <em>Warning:</em> Logging from different processes to the same file may fail!
  * 
+ * @see DefaultLogger
+ * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */

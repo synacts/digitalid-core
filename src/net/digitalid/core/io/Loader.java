@@ -46,7 +46,7 @@ public final class Loader {
                 loadClasses(file, prefix + fileName + ".");
             } else if (fileName.endsWith(".class")) {
                 final @Nonnull String className = prefix + fileName.substring(0, fileName.length() - 6);
-                Logger.log(Level.VERBOSE, "Loader", "Initialize class: " + className);
+                Logger.log(Level.DEBUGGING, "Loader", "Initialize class: " + className);
                 Class.forName(className);
             }
         }
@@ -68,7 +68,7 @@ public final class Loader {
             Logger.log(Level.VERBOSE, "Loader", "Entry found: " + entryName);
             if (entryName.startsWith("net/digitalid/") && entryName.endsWith(".class")) {
                 final @Nonnull String className = entryName.substring(0, entryName.length() - 6).replace("/", ".");
-                Logger.log(Level.VERBOSE, "Loader", "Initialize class: " + className);
+                Logger.log(Level.DEBUGGING, "Loader", "Initialize class: " + className);
                 Class.forName(className, true, urlClassLoader);
             }
         }

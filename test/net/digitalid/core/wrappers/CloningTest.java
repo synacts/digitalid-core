@@ -1,5 +1,6 @@
 package net.digitalid.core.wrappers;
 
+import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import net.digitalid.core.attribute.AttributeType;
 import net.digitalid.core.database.Database;
@@ -17,7 +18,7 @@ import org.junit.Test;
 public final class CloningTest extends DatabaseSetup {
     
     @Test
-    public void testCloning() throws InvalidEncodingException {
+    public void testCloning() throws InvalidEncodingException, SQLException {
         try {
             Database.lock();
             final @Nonnull String[] strings = new String[] {"", "äöüéè", "This is a short string.", "This is a longer string in order to test different string lengths."};

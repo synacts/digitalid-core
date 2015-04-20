@@ -225,7 +225,7 @@ public final class Server {
     @Committing
     public static void main(@Nonnull String[] arguments) {
         Directory.initialize(Directory.DEFAULT);
-        Logger.initialize(new DefaultLogger(Level.VERBOSE, "Server"));
+        Logger.initialize(new DefaultLogger(Level.DEBUGGING, "Server"));
         
         final @Nonnull Configuration configuration;
         try {
