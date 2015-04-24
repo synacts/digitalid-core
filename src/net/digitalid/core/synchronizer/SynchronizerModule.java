@@ -33,6 +33,8 @@ import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.handler.Action;
 import net.digitalid.core.handler.InternalAction;
 import net.digitalid.core.handler.Method;
+import net.digitalid.core.io.Level;
+import net.digitalid.core.io.Logger;
 import net.digitalid.core.module.BothModule;
 import net.digitalid.core.module.ClientModule;
 import net.digitalid.core.packet.Packet;
@@ -215,10 +217,11 @@ public final class SynchronizerModule implements ClientModule {
     @NonCommitting
     static void remove(@Nonnull InternalAction action) throws SQLException {
         final @Nonnull Role role = action.getRole();
-        final @Nonnull String SQL = "DELETE FROM " + role.getSite() + "synchronization_action WHERE entity = " + role + " AND service = " + action.getService() + " AND action = ?";
+        final @Nonnull String SQL = "DELETE FROM " + role.getSite() + "synchronization_action WHERE time IN (SELECT time FROM " + role.getSite() + "synchronization_action WHERE entity = " + role + " AND service = " + action.getService() + " AND action = ? ORDER BY time LIMIT 1)";
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
             new SelfcontainedWrapper(Packet.CONTENT, action).toBlock().set(preparedStatement, 1);
-            if (preparedStatement.executeUpdate() != 1) throw new SQLException("Could not find the action to be removed from the pending actions.");
+            final int count = preparedStatement.executeUpdate();
+            if (count != 1) throw new SQLException("Could not find the action to be removed from the pending actions. (The count is " + count + " instead of 1.)");
         }
         pendingActions.remove(action);
         synchronized (pendingActions) { pendingActions.notifyAll(); }
@@ -241,14 +244,14 @@ public final class SynchronizerModule implements ClientModule {
         assert Method.areSimilar(methods) : "The methods are similar to each other.";
         
         final @Nonnull Role role = methods.getNotNull(0).getRole();
-        final @Nonnull String SQL = "DELETE FROM " + role.getSite() + "synchronization_action WHERE entity = " + role + " AND service = " + methods.getNotNull(0).getService() + " AND action = ?";
+        final @Nonnull String SQL = "DELETE FROM " + role.getSite() + "synchronization_action WHERE time IN (SELECT time FROM " + role.getSite() + "synchronization_action WHERE entity = " + role + " AND service = " + methods.getNotNull(0).getService() + " AND action = ? ORDER BY time LIMIT 1)";
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
             for (final @Nonnull Method method : methods) {
                 new SelfcontainedWrapper(Packet.CONTENT, method).toBlock().set(preparedStatement, 1);
                 preparedStatement.addBatch();
             }
             final int[] counts = preparedStatement.executeBatch();
-            for (final int count : counts) if (count != 1) throw new SQLException("Could not find an action to be removed from the pending actions.");
+            for (final int count : counts) if (count != 1) throw new SQLException("Could not find an action to be removed from the pending actions. (The count is " + count + " instead of 1.)");
         }
         for (final @Nonnull Method method : methods) pendingActions.remove(method); // The pending actions may contain duplicates which may not be removed.
         synchronized (pendingActions) { pendingActions.notifyAll(); }
@@ -264,12 +267,21 @@ public final class SynchronizerModule implements ClientModule {
      */
     @Committing
     static void redoPendingActions(@Nonnull Role role, @Nonnull ReadonlyCollection<BothModule> modules, @Nullable InternalAction lastAction) throws SQLException {
-        for (final @Nonnull InternalAction action : pendingActions) {
-            if (action.getRole().equals(role) && modules.contains(action.getModule())) {
-                action.executeOnClient();
-                Database.commit();
+        for (final @Nonnull InternalAction pendingAction : pendingActions) {
+            if (pendingAction.getRole().equals(role) && modules.contains(pendingAction.getModule())) {
+                try {
+                    Logger.log(Level.DEBUGGING, "SynchronizerModule", "Reexecute after reloading a module the pending action " + pendingAction + ".");
+                    pendingAction.executeOnClient();
+                    Database.commit();
+                } catch (@Nonnull SQLException exception) {
+                    Logger.log(Level.WARNING, "SynchronizerModule", "Could not reexecute after reloading a module the pending action " + pendingAction + ".", exception);
+                    Database.rollback();
+                    ErrorModule.add("Could not reexecute after reloading a module", pendingAction);
+                    remove(pendingAction);
+                    Database.commit();
+                }
             }
-            if (action == lastAction) break;
+            if (pendingAction == lastAction) break;
         }
     }
     
@@ -289,6 +301,7 @@ public final class SynchronizerModule implements ClientModule {
         while (iterator.hasNext()) {
             final @Nonnull InternalAction pendingAction = iterator.next();
             if (pendingAction.getRole().equals(role) && pendingAction.getService().equals(service) && pendingAction.interferesWith(failedAction)) {
+                Logger.log(Level.DEBUGGING, "SynchronizerModule", "Reverse the potentially interfering action " + pendingAction + ".");
                 pendingAction.reverseOnClient();
                 reversedActions.add(pendingAction);
             }
@@ -305,11 +318,13 @@ public final class SynchronizerModule implements ClientModule {
     static void redoReversedActions(@Nonnull ReadonlyList<InternalAction> reversedActions) throws SQLException {
         for (@Nonnull InternalAction reversedAction : reversedActions) {
             try {
+                Logger.log(Level.DEBUGGING, "SynchronizerModule", "Reexecute the reversed action " + reversedAction + ".");
                 reversedAction.executeOnClient();
                 Database.commit();
-            } catch (@Nonnull SQLException e) {
+            } catch (@Nonnull SQLException exception) {
+                Logger.log(Level.WARNING, "SynchronizerModule", "Could not reexecute the reversed action " + reversedAction + ".", exception);
                 Database.rollback();
-                ErrorModule.add("Could not redo", reversedAction);
+                ErrorModule.add("Could not reexecute after reversion", reversedAction);
                 remove(reversedAction);
                 Database.commit();
             }

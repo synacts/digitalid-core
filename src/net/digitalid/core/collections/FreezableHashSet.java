@@ -222,4 +222,16 @@ public class FreezableHashSet<E> extends HashSet<E> implements FreezableSet<E> {
         return new FreezableArray<>(toArray((E[]) new Object[size()]));
     }
     
+    
+    @Pure
+    @Override
+    public @Nonnull String toString() {
+        final @Nonnull StringBuilder string = new StringBuilder("{");
+        for (final @Nullable E element : this) {
+            if (string.length() > 1) string.append(", ");
+            string.append(element);
+        }
+        return string.append("}").toString();
+    }
+    
 }

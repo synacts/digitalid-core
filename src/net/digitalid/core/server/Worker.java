@@ -72,7 +72,8 @@ public final class Worker implements Runnable {
             @Nullable InternalIdentifier signer = null;
             @Nullable PacketError error = null;
             @Nullable Service service = null;
-            int size = 0;
+            @Nullable RequestAudit requestAudit = null;
+            @Nonnull StringBuilder methods = new StringBuilder("Request");
             
             @Nullable Request request = null;
             @Nonnull Response response;
@@ -91,10 +92,10 @@ public final class Worker implements Runnable {
                     else if (signature instanceof ClientSignatureWrapper) signer = subject;
                     else if (signature instanceof CredentialsSignatureWrapper) signer = ((CredentialsSignatureWrapper) signature).getCredentials().getNotNull(0).getIssuer().getAddress();
                     
-                    final @Nullable RequestAudit requestAudit = request.getAudit();
+                    requestAudit = request.getAudit();
                     final @Nullable Agent agent = requestAudit != null && service.equals(CoreService.SERVICE) ? signature.getAgentCheckedAndRestricted(reference.getNonHostAccount(), null) : null;
                     
-                    size = request.getSize();
+                    final int size = request.getSize();
                     final @Nonnull FreezableList<Reply> replies = new FreezableArrayList<>(size);
                     final @Nonnull FreezableList<PacketException> exceptions = new FreezableArrayList<>(size);
                     
@@ -103,6 +104,15 @@ public final class Worker implements Runnable {
                         exceptions.add(null);
                         final @Nonnull Time methodStart = new Time();
                         final @Nonnull Method method = request.getMethod(i);
+                        
+                        if (i == 0) {
+                            methods = new StringBuilder(method.getClass().getSimpleName());
+                        } else {
+                            if (i + 1 == size) methods.append(" and ");
+                            else methods.append(", ");
+                            methods.append(method.getClass().getSimpleName());
+                        }
+                        
                         try {
                             replies.set(i, method.executeOnHost());
                             if (method instanceof Action) ActionModule.audit((Action) method);
@@ -114,6 +124,7 @@ public final class Worker implements Runnable {
                             exceptions.set(i, exception);
                             Database.rollback();
                         }
+                        
                         final @Nonnull Time methodEnd = new Time();
                         Logger.log(Level.DEBUGGING, "Worker", method.getClass().getSimpleName() + " handled in " + methodEnd.subtract(methodStart).getValue() + " ms.");
                     }
@@ -165,8 +176,7 @@ public final class Worker implements Runnable {
             // The database transaction is intentionally committed before returning the response so that slow or malicious clients cannot block the database.
             response.write(socket.getOutputStream());
             
-            final @Nonnull Time end = new Time();
-            Logger.log(Level.INFORMATION, "Worker", "Request" + (subject != null ? " to " + subject : "") + (signer != null ? " from " + signer : "") + (size > 0 ? " with " + size + " method" + (size > 1 ? "s" : "") : "") + (service != null ? " of the " + service.getName() : "") + " handled in " + end.subtract(start).getValue() + " ms" + (error != null ? " with error " + error.getName() : "") + ".");
+            Logger.log(Level.INFORMATION, "Worker", methods + (requestAudit != null ? " with audit" : "") + (service != null ? " of the " + service.getName() : "") + (subject != null ? " to " + subject : "") + (signer != null ? " by " + signer : "") + " handled in " + start.ago().getValue() + " ms" + (error != null ? " with the error " + error.getName() : "") + ".");
         } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
             Logger.log(Level.WARNING, "Worker", "Could not send a response.", exception);
         } finally {

@@ -34,7 +34,7 @@ public final class RequestAudit extends Audit implements Immutable, Blockable {
     @Pure
     @Override
     public @Nonnull String toString() {
-        return "Request audit from " + getLastTime().asDate();
+        return "request audit from " + getLastTime().asDate();
     }
     
     

@@ -178,11 +178,10 @@ public class FreezableArray<E> extends FreezableObject implements ReadonlyArray<
     public @Nonnull String toString() {
         final @Nonnull StringBuilder string = new StringBuilder("[");
         for (final @Nullable E element : array) {
-            if (string.length() != 1) string.append(", ");
-            string.append(element == null ? "null" : element.toString());
+            if (string.length() > 1) string.append(", ");
+            string.append(element);
         }
-        string.append("]");
-        return string.toString();
+        return string.append("]").toString();
     }
     
 }

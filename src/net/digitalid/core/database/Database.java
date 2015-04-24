@@ -425,11 +425,9 @@ public final class Database {
      */
     @Initialized
     public static void unlock() {
-        // TODO: Remove the following lines eventually.
-//        if (getConfiguration() instanceof SQLiteConfiguration && ((SQLiteConfiguration) getConfiguration()).journalExists()) {
-//            System.out.println("\nA database journal exists! The connection might not have been committed properly.");
-//            new Exception().printStackTrace();
-//        }
+        if (getConfiguration() instanceof SQLiteConfiguration && ((SQLiteConfiguration) getConfiguration()).journalExists()) {
+            Logger.log(Level.WARNING, "Database", "A database journal exists! The connection might not have been committed properly.", new Exception());
+        }
         getConfiguration().unlock();
     }
     

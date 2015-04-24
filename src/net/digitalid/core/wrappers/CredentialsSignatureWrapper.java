@@ -823,8 +823,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
             }
         }
         
-        final @Nonnull Time end = new Time();
-        Logger.log(Level.VERBOSE, "CredentialsSignatureWrapper", "Signature verified in " + end.subtract(start).getValue() + " ms.");
+        Logger.log(Level.VERBOSE, "CredentialsSignatureWrapper", "Signature verified in " + start.ago().getValue() + " ms.");
         
         setVerified();
     }
@@ -963,8 +962,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
         
         elements.set(3, new TupleWrapper(SIGNATURE, signature.freeze()).toBlock());
         
-        final @Nonnull Time end = new Time();
-        Logger.log(Level.VERBOSE, "CredentialsSignatureWrapper", "Element signed in " + end.subtract(start).getValue() + " ms.");
+        Logger.log(Level.VERBOSE, "CredentialsSignatureWrapper", "Element signed in " + start.ago().getValue() + " ms.");
     }
     
     

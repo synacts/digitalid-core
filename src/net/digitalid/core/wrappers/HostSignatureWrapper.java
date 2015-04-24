@@ -168,8 +168,7 @@ public final class HostSignatureWrapper extends SignatureWrapper implements Immu
         final @Nonnull ReadonlyArray<Block> subelements = new TupleWrapper(tuple.getElementNotNull(1)).getElementsNotNull(2);
         if (!publicKey.getCompositeGroup().getElement(subelements.getNotNull(1)).pow(publicKey.getE()).getValue().equals(hash)) throw new InvalidSignatureException("The host signature is not valid.");
         
-        final @Nonnull Time end = new Time();
-        Logger.log(Level.VERBOSE, "HostSignatureWrapper", "Signature verified in " + end.subtract(start).getValue() + " ms.");
+        Logger.log(Level.VERBOSE, "HostSignatureWrapper", "Signature verified in " + start.ago().getValue() + " ms.");
         
         setVerified();
     }
@@ -191,8 +190,7 @@ public final class HostSignatureWrapper extends SignatureWrapper implements Immu
         }
         elements.set(1, new TupleWrapper(SIGNATURE, subelements.freeze()).toBlock());
         
-        final @Nonnull Time end = new Time();
-        Logger.log(Level.VERBOSE, "HostSignatureWrapper", "Element signed in " + end.subtract(start).getValue() + " ms.");
+        Logger.log(Level.VERBOSE, "HostSignatureWrapper", "Element signed in " + start.ago().getValue() + " ms.");
     }
     
 }

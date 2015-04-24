@@ -9,6 +9,7 @@ import net.digitalid.core.annotations.Committing;
 import net.digitalid.core.annotations.Locked;
 import net.digitalid.core.annotations.NonLocked;
 import net.digitalid.core.cache.Cache;
+import net.digitalid.core.client.Client;
 import net.digitalid.core.collections.FreezableLinkedHashMap;
 import net.digitalid.core.collections.FreezableMap;
 import net.digitalid.core.collections.ReadonlyCollection;
@@ -29,7 +30,6 @@ import net.digitalid.core.io.Directory;
 import net.digitalid.core.io.Level;
 import net.digitalid.core.io.Loader;
 import net.digitalid.core.io.Logger;
-import net.digitalid.core.synchronizer.Synchronizer;
 
 /**
  * The server runs the configured hosts.
@@ -199,12 +199,11 @@ public final class Server {
     }
     
     /**
-     * Stops the server without shutting down (which is important for testing purposes).
+     * Stops the background threads of the server without shutting down (which is important for testing purposes).
      */
     public static void stop() {
         listener.shutDown();
-        Database.stopPurging();
-        Synchronizer.shutDown();
+        Client.stop();
         hosts.clear();
     }
     
@@ -224,8 +223,10 @@ public final class Server {
     @NonLocked
     @Committing
     public static void main(@Nonnull String[] arguments) {
+        Thread.currentThread().setName("Main");
+        
         Directory.initialize(Directory.DEFAULT);
-        Logger.initialize(new DefaultLogger(Level.DEBUGGING, "Server"));
+        Logger.initialize(new DefaultLogger(Level.INFORMATION, "Server"));
         
         final @Nonnull Configuration configuration;
         try {

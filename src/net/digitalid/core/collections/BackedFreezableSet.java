@@ -2,6 +2,7 @@ package net.digitalid.core.collections;
 
 import java.util.Set;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Capturable;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.interfaces.Freezable;
@@ -73,6 +74,18 @@ class BackedFreezableSet<E> extends BackedFreezableCollection<E> implements Free
     @Override
     public @Capturable @Nonnull FreezableSet<E> clone() {
         return new FreezableHashSet<>(set);
+    }
+    
+    
+    @Pure
+    @Override
+    public @Nonnull String toString() {
+        final @Nonnull StringBuilder string = new StringBuilder("{");
+        for (final @Nullable E element : this) {
+            if (string.length() > 1) string.append(", ");
+            string.append(element);
+        }
+        return string.append("}").toString();
     }
     
 }

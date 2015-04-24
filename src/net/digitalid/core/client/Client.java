@@ -55,6 +55,7 @@ import net.digitalid.core.identity.Predecessor;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.io.Directory;
 import net.digitalid.core.service.CoreService;
+import net.digitalid.core.synchronizer.ResponseAudit;
 import net.digitalid.core.synchronizer.Synchronizer;
 import net.digitalid.core.synchronizer.SynchronizerModule;
 import net.digitalid.core.tuples.FreezablePair;
@@ -72,6 +73,16 @@ import net.digitalid.core.wrappers.StringWrapper;
  * @version 1.0
  */
 public class Client extends Site implements Observer {
+    
+    /**
+     * Stops the background threads of the client without shutting down.
+     */
+    public static void stop() {
+        Database.stopPurging();
+        Synchronizer.shutDown();
+        ResponseAudit.shutDown();
+    }
+    
     
     /**
      * Stores the aspect of a new role being added to the observed client.

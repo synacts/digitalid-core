@@ -8,3 +8,32 @@ PacketException thrown by net.digitalid.core.packet.Packet.<init>(Packet.java:20
 Caused by: InactiveSignatureException thrown by net.digitalid.core.wrappers.CredentialsSignatureWrapper.checkRecency(CredentialsSignatureWrapper.java:496): One of the credentials is older than an hour.
         at net.digitalid.core.wrappers.CredentialsSignatureWrapper.checkRecency(CredentialsSignatureWrapper.java:496)
         ... 6 more
+
+
+
+2015-04-21 at 23:14:24.343 in 0.6.1 (Warning) [PacketException]: A packet exception occurred.
+
+net.digitalid.core.exceptions.packet.PacketException: (Internal) An SQLException occurred.
+	at net.digitalid.core.server.Worker.run(Worker.java:121)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:615)
+	at java.lang.Thread.run(Thread.java:745)
+Caused by: com.mysql.jdbc.PacketTooBigException: Packet for query is too large (16670002 > 4194304). You can change this value on the server by setting the max_allowed_packet' variable.
+	at com.mysql.jdbc.MysqlIO.send(MysqlIO.java:3592)
+	at com.mysql.jdbc.MysqlIO.sendCommand(MysqlIO.java:2417)
+	at com.mysql.jdbc.MysqlIO.sqlQueryDirect(MysqlIO.java:2582)
+	at com.mysql.jdbc.ConnectionImpl.execSQL(ConnectionImpl.java:2530)
+	at com.mysql.jdbc.PreparedStatement.executeInternal(PreparedStatement.java:1907)
+	at com.mysql.jdbc.PreparedStatement.executeUpdate(PreparedStatement.java:2141)
+	at com.mysql.jdbc.PreparedStatement.executeUpdate(PreparedStatement.java:2077)
+	at com.mysql.jdbc.PreparedStatement.executeUpdate(PreparedStatement.java:2062)
+	at net.digitalid.file.FileModule.insertFileWrapper(FileModule.java:277)
+	at net.digitalid.file.FileConcept.replaceFileWrapper(FileConcept.java:145)
+	at net.digitalid.file.FileReplace.executeOnBoth(FileReplace.java:136)
+	at net.digitalid.file.FileServiceInternalAction.executeOnHostInternalAction(FileServiceInternalAction.java:87)
+	at net.digitalid.core.handler.InternalAction.executeOnHost(InternalAction.java:111)
+	at net.digitalid.core.handler.InternalAction.executeOnHost(InternalAction.java:38)
+	at net.digitalid.core.server.Worker.run(Worker.java:117)
+	... 3 more
+
+2015-04-21 at 23:14:24.403 in 0.6.1 (Information) [Worker]: FileReplace with audit of the File Service to 'me@kasparetter.com' from 'me@kasparetter.com' handled in 7108 ms.

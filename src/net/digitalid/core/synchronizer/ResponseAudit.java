@@ -2,6 +2,9 @@ package net.digitalid.core.synchronizer;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Committing;
@@ -31,6 +34,7 @@ import net.digitalid.core.module.BothModule;
 import net.digitalid.core.packet.Packet;
 import net.digitalid.core.packet.Response;
 import net.digitalid.core.service.Service;
+import net.digitalid.core.thread.NamedThreadFactory;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.CompressionWrapper;
 import net.digitalid.core.wrappers.ListWrapper;
@@ -162,27 +166,37 @@ public final class ResponseAudit extends Audit implements Immutable, Blockable {
             final @Nonnull BothModule module = action.getModule();
             if (!suspendedModules.contains(module) && !ignoredModules.contains(module) && !methods.contains(action)) {
                 try {
+                    Logger.log(Level.DEBUGGING, "ResponseAudit", "Execute on the client the audited action " + action + ".");
                     action.executeOnClient();
+                    ActionModule.audit(action);
+                    Database.commit();
                 } catch (@Nonnull SQLException exception) {
-                    Logger.log(Level.WARNING, "ResponseAudit", "Could not execute an audited action on the client.", exception);
+                    Logger.log(Level.WARNING, "ResponseAudit", "Could not execute on the client the audited action " + action + ".", exception);
                     Database.rollback();
                     
                     try {
                         final @Nonnull ReadonlyList<InternalAction> reversedActions = SynchronizerModule.reverseInterferingActions(action);
+                        Logger.log(Level.DEBUGGING, "ResponseAudit", "Execute on the client after having reversed the interfering actions the audited action " + action + ".");
                         action.executeOnClient();
                         ActionModule.audit(action);
                         Database.commit();
                         SynchronizerModule.redoReversedActions(reversedActions);
                     } catch (@Nonnull SQLException e) {
-                        Logger.log(Level.WARNING, "ResponseAudit", "Could not execute on the client after having reversed the interfering actions.", e);
+                        Logger.log(Level.WARNING, "ResponseAudit", "Could not execute on the client after having reversed the interfering actions the audited action " + action + ".", e);
                         suspendedModules.add(module);
                         Database.rollback();
                     }
                 }
+            } else {
+                try {
+                    Logger.log(Level.DEBUGGING, "ResponseAudit", "Add to the audit trail the ignored or already executed action " + action + ".");
+                    ActionModule.audit(action);
+                    Database.commit();
+                } catch (@Nonnull SQLException exception) {
+                    Logger.log(Level.WARNING, "ResponseAudit", "Could not add to the audit trail the ignored or already executed action " + action + ".", exception);
+                    Database.rollback();
+                }
             }
-            
-            ActionModule.audit(action);
-            Database.commit();
         }
         
         SynchronizerModule.setLastTime(role, service, thisTime);
@@ -205,12 +219,30 @@ public final class ResponseAudit extends Audit implements Immutable, Blockable {
     }
     
     /**
+     * The thread pool executor executes the audit asynchronously.
+     */
+    private static final @Nonnull ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(8, 16, 60, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(8), new NamedThreadFactory("Audit"), new ThreadPoolExecutor.CallerRunsPolicy());
+    
+    /**
+     * Shuts down the response audit executor after having finished the current audits.
+     */
+    public static void shutDown() {
+        try {
+            Logger.log(Level.VERBOSE, "ResponseAudit", "Shutting down the response audit executor.");
+            threadPoolExecutor.shutdown();
+            threadPoolExecutor.awaitTermination(1L, TimeUnit.MINUTES);
+        } catch (@Nonnull InterruptedException exception) {
+            Logger.log(Level.WARNING, "ResponseAudit", "Could not shut down the response audit executor.", exception);
+        }
+    }
+    
+    /**
      * Executes the trail of this audit asynchronously.
      * 
      * @param method the method that was sent.
      */
     public void executeAsynchronously(final @Nonnull Method method) {
-        new Thread(new Runnable() {
+        threadPoolExecutor.execute(new Runnable() {
             @Override
             @Committing
             public void run() {
@@ -219,9 +251,10 @@ public final class ResponseAudit extends Audit implements Immutable, Blockable {
                 
                 try {
                     Database.lock();
+                    Logger.log(Level.DEBUGGING, "ResponseAudit", "Execute asynchronously the audit of " + method + ".");
                     execute(role, service, method.getRecipient(), new FreezableArrayList<>(method).freeze(), emptyModuleSet);
                 } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
-                    Logger.log(Level.WARNING, "ResponseAudit", "Could not execute the audit of '" + method + "' asynchronously.", exception);
+                    Logger.log(Level.WARNING, "ResponseAudit", "Could not execute the audit of " + method + " asynchronously.", exception);
                     Database.rollback();
                 } finally {
                     Database.unlock();
@@ -229,7 +262,7 @@ public final class ResponseAudit extends Audit implements Immutable, Blockable {
                 
                 Synchronizer.resume(role, service);
             }
-        }).start();
+        });
     }
     
 }

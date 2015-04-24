@@ -223,4 +223,16 @@ class BackedFreezableList<E> extends BackedFreezableCollection<E> implements Fre
         return new FreezableArrayList<>(list);
     }
     
+    
+    @Pure
+    @Override
+    public @Nonnull String toString() {
+        final @Nonnull StringBuilder string = new StringBuilder("[");
+        for (final @Nullable E element : this) {
+            if (string.length() > 1) string.append(", ");
+            string.append(element);
+        }
+        return string.append("]").toString();
+    }
+    
 }

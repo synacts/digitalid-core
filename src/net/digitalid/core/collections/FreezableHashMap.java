@@ -132,6 +132,19 @@ public class FreezableHashMap<K,V> extends HashMap<K,V> implements FreezableMap<
      * @require isNotFrozen() : "This object is not frozen.";
      */
     @Override
+    public @Nonnull V putIfAbsentOrNullElseReturnPresent(@Nonnull K key, @Nonnull V value) {
+        assert isNotFrozen() : "This object is not frozen.";
+        
+        final @Nullable V oldValue = get(key);
+        if (oldValue != null) return oldValue;
+        put(key, value);
+        return value;
+    }
+    
+    /**
+     * @require isNotFrozen() : "This object is not frozen.";
+     */
+    @Override
     public @Nullable V remove(@Nullable Object object) {
         assert isNotFrozen() : "This object is not frozen.";
         
@@ -153,6 +166,18 @@ public class FreezableHashMap<K,V> extends HashMap<K,V> implements FreezableMap<
     @Override
     public @Capturable @Nonnull FreezableHashMap<K,V> clone() {
         return new FreezableHashMap<>(this);
+    }
+    
+    
+    @Pure
+    @Override
+    public @Nonnull String toString() {
+        final @Nonnull StringBuilder string = new StringBuilder("{");
+        for (final @Nonnull Entry<K, V> entry : entrySet()) {
+            if (string.length() > 1) string.append(", ");
+            string.append(entry.getKey()).append(": ").append(entry.getValue());
+        }
+        return string.append("}").toString();
     }
     
 }

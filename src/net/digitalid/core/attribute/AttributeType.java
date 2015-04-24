@@ -32,7 +32,7 @@ public final class AttributeType {
     /**
      * Stores the semantic type {@code email@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType EMAIL = SemanticType.create("email@core.digitalid.net").load(new Category[] {Category.NATURAL_PERSON, Category.ARTIFICIAL_PERSON}, Time.WEEK, StringWrapper.TYPE);
+    public static final @Nonnull SemanticType EMAIL = SemanticType.create("email@core.digitalid.net").load(new Category[] {Category.NATURAL_PERSON, Category.ARTIFICIAL_PERSON}, Time.HALF_DAY, StringWrapper.TYPE);
     
     /**
      * Stores the semantic type {@code phone@core.digitalid.net}.

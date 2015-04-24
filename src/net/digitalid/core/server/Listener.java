@@ -12,6 +12,7 @@ import net.digitalid.core.errors.InitializationError;
 import net.digitalid.core.io.Level;
 import net.digitalid.core.io.Logger;
 import net.digitalid.core.packet.Request;
+import net.digitalid.core.thread.NamedThreadFactory;
 
 /**
  * A listener accepts incoming {@link Request requests} and lets them handle by {@link Worker workers}.
@@ -29,7 +30,7 @@ public final class Listener extends Thread {
     /**
      * The thread pool executor runs the {@link Worker workers} that handle the incoming {@link Request requests}.
      */
-    private final @Nonnull ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(4, 16, 60, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(100), new ThreadPoolExecutor.AbortPolicy());
+    private final @Nonnull ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(8, 16, 60, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(32), new NamedThreadFactory("Worker"), new ThreadPoolExecutor.AbortPolicy());
     
     /**
      * Creates a new listener that accepts incoming requests on the given port.

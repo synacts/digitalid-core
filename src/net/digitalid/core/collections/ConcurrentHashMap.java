@@ -63,4 +63,16 @@ public class ConcurrentHashMap<K, V> extends java.util.concurrent.ConcurrentHash
         return new ConcurrentHashMap<>(this);
     }
     
+    
+    @Pure
+    @Override
+    public @Nonnull String toString() {
+        final @Nonnull StringBuilder string = new StringBuilder("{");
+        for (final @Nonnull Entry<K, V> entry : entrySet()) {
+            if (string.length() > 1) string.append(", ");
+            string.append(entry.getKey()).append(": ").append(entry.getValue());
+        }
+        return string.append("}").toString();
+    }
+    
 }

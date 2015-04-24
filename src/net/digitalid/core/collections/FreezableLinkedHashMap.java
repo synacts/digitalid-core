@@ -140,6 +140,19 @@ public class FreezableLinkedHashMap<K,V> extends LinkedHashMap<K,V> implements F
      * @require isNotFrozen() : "This object is not frozen.";
      */
     @Override
+    public @Nonnull V putIfAbsentOrNullElseReturnPresent(@Nonnull K key, @Nonnull V value) {
+        assert isNotFrozen() : "This object is not frozen.";
+        
+        final @Nullable V oldValue = get(key);
+        if (oldValue != null) return oldValue;
+        put(key, value);
+        return value;
+    }
+    
+    /**
+     * @require isNotFrozen() : "This object is not frozen.";
+     */
+    @Override
     public @Nullable V remove(@Nullable Object object) {
         assert isNotFrozen() : "This object is not frozen.";
         

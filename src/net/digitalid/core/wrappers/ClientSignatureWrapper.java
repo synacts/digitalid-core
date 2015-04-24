@@ -156,8 +156,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper implements Im
         final @Nonnull Element value = commitment.getPublicKey().getAu().pow(s).multiply(commitment.getValue().pow(h));
         if (!t.equals(value.toBlock().getHash()) || s.getBitLength() > Parameters.RANDOM_EXPONENT) throw new InvalidSignatureException("The client signature is invalid.");
         
-        final @Nonnull Time end = new Time();
-        Logger.log(Level.VERBOSE, "ClientSignatureWrapper", "Signature verified in " + end.subtract(start).getValue() + " ms.");
+        Logger.log(Level.VERBOSE, "ClientSignatureWrapper", "Signature verified in " + start.ago().getValue() + " ms.");
         
         setVerified();
     }
@@ -180,8 +179,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper implements Im
         subelements.set(2, s.toBlock());
         elements.set(2, new TupleWrapper(SIGNATURE, subelements.freeze()).toBlock());
         
-        final @Nonnull Time end = new Time();
-        Logger.log(Level.VERBOSE, "ClientSignatureWrapper", "Element signed in " + end.subtract(start).getValue() + " ms.");
+        Logger.log(Level.VERBOSE, "ClientSignatureWrapper", "Element signed in " + start.ago().getValue() + " ms.");
     }
     
     

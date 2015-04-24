@@ -79,7 +79,7 @@ public final class PacketException extends Exception implements Blockable {
         
         this.error = error;
         this.remote = remote;
-        Logger.log(Level.WARNING, "PacketException", "A packet exception occurred.", this);
+        if (!remote) Logger.log(Level.WARNING, "PacketException", "A packet exception occurred.", this);
     }
     
     /**
@@ -112,7 +112,7 @@ public final class PacketException extends Exception implements Blockable {
     public @Nonnull Block toBlock() {
         final @Nonnull FreezableArray<Block> elements = new FreezableArray<>(2);
         elements.set(0, error.toBlock());
-        elements.set(1, new StringWrapper(MESSAGE, toString()).toBlock());
+        elements.set(1, new StringWrapper(MESSAGE, getMessage()).toBlock());
         return new TupleWrapper(TYPE, elements.freeze()).toBlock();
     }
     

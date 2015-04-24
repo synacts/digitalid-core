@@ -237,6 +237,18 @@ public final class Time implements Immutable, Blockable, Comparable<Time>, SQLiz
     }
     
     /**
+     * Rounds this time to the given interval.
+     * 
+     * @param interval the interval to round to.
+     * 
+     * @return this time rounded to the given interval.
+     */
+    @Pure
+    public @Nonnull Time round(@Nonnull Time interval) {
+        return new Time((this.value + (this.value > 0 ? 1 : -1) * interval.value / 2) / interval.value * interval.value);
+    }
+    
+    /**
      * Rounds this time down to the given interval.
      * 
      * @param interval the interval to round down to.

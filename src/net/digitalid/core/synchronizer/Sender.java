@@ -82,15 +82,16 @@ public final class Sender extends Thread {
             }
             
             long backoff = 1000l;
-            while (backoff > 0l) {
+            while (true) {
                 try {
                     Database.lock();
                     final @Nonnull Response response;
                     try {
+                        Logger.log(Level.DEBUGGING, "Sender", "Send the methods " + methods + " with a " + requestAudit + ".");
                         response = Method.send(methods, requestAudit);
                         Database.commit();
                     } catch (@Nonnull SQLException | PacketException | ExternalException exception) {
-                        Logger.log(Level.WARNING, "Sender", "Could not send the methods.", exception);
+                        Logger.log(Level.WARNING, "Sender", "Could not send the methods " + methods + ".", exception);
                         Database.rollback();
                         for (final @Nonnull Method method : methods) ErrorModule.add("Could not send", (InternalAction) method);
                         Database.commit();
@@ -105,34 +106,36 @@ public final class Sender extends Thread {
                                 response.checkReply(i);
                                 
                                 try {
+                                    Logger.log(Level.DEBUGGING, "Sender", "Execute on success the action " + action + ".");
                                     action.executeOnSuccess();
                                     Database.commit();
                                 } catch (@Nonnull SQLException exception) {
-                                    Logger.log(Level.WARNING, "Sender", "Could not execute on success.", exception);
+                                    Logger.log(Level.WARNING, "Sender", "Could not execute on success the action " + action + ".", exception);
                                     Database.rollback();
-                                    
                                     ErrorModule.add("Could not execute on success", action);
                                     Database.commit();
                                 }
                             } catch (@Nonnull PacketException exception) {
-                                Logger.log(Level.WARNING, "Sender", "Could not execute on the host.", exception);
+                                Logger.log(Level.WARNING, "Sender", "Could not execute on the host the action " + action + ".", exception);
                                 ErrorModule.add("Could not execute on the host", action);
                                 Database.commit();
                                 
                                 try {
+                                    Logger.log(Level.DEBUGGING, "Sender", "Reverse on the client the action " + action + ".");
                                     action.reverseOnClient();
                                     Database.commit();
                                 } catch (@Nonnull SQLException exc) {
-                                    Logger.log(Level.WARNING, "Sender", "Could not reverse on the client before having reversed the interfering actions.", exc);
+                                    Logger.log(Level.WARNING, "Sender", "Could not reverse on the client before having reversed the interfering actions (" + action + ").", exc);
                                     Database.rollback();
                                     
                                     try {
                                         final @Nonnull ReadonlyList<InternalAction> reversedActions = SynchronizerModule.reverseInterferingActions(action);
+                                        Logger.log(Level.DEBUGGING, "Sender", "Reverse on the client after having reversed the interfering actions (" + action + ").");
                                         action.reverseOnClient();
                                         Database.commit();
                                         SynchronizerModule.redoReversedActions(reversedActions);
                                     } catch (@Nonnull SQLException e) {
-                                        Logger.log(Level.ERROR, "Sender", "Could not reverse on the client after having reversed the interfering actions.", e);
+                                        Logger.log(Level.ERROR, "Sender", "Could not reverse on the client after having reversed the interfering actions (" + action + ").", e);
                                         Database.rollback();
                                         Synchronizer.reloadSuspended(role, service);
                                         return;
@@ -143,12 +146,12 @@ public final class Sender extends Thread {
                     } else {
                         try {
                             response.checkReply(0);
+                            Logger.log(Level.DEBUGGING, "Sender", "Execute on the client the action " + reference + ".");
                             reference.executeOnClient();
                             Database.commit();
                         } catch (@Nonnull SQLException | PacketException exception) {
-                            Logger.log(Level.WARNING, "Sender", "Could not execute on the client.", exception);
+                            Logger.log(Level.WARNING, "Sender", "Could not execute on the client the action " + reference + ".", exception);
                             Database.rollback();
-                            
                             ErrorModule.add("Could not execute on the client", reference);
                             Database.commit();
                         }
@@ -156,9 +159,10 @@ public final class Sender extends Thread {
                     
                     response.getAuditNotNull().execute(role, service, reference.getRecipient(), methods, ResponseAudit.emptyModuleSet);
                     
-                    backoff = 0l;
+                    return;
                 } catch (@Nonnull IOException exception) {
-                    Logger.log(Level.WARNING, "Sender", "Could not send the methods.", exception);
+                    Logger.log(Level.WARNING, "Sender", "Could not send the methods " + methods + ".", exception);
+                    Logger.log(Level.DEBUGGING, "Sender", "Going to sleep for " + backoff + " ms.");
                     Database.unlock();
                     try { sleep(backoff); }
                     finally { Database.lock(); }
@@ -168,15 +172,16 @@ public final class Sender extends Thread {
                 }
             }
         } catch (@Nonnull InterruptedException | SQLException | PacketException | ExternalException exception) {
-            Logger.log(Level.WARNING, "Sender", "Could not commit or reload.", exception);
+            Logger.log(Level.WARNING, "Sender", "Could not commit the transaction or reload the state.", exception);
             Database.rollback();
         } finally {
             try {
                 Database.lock();
+                Logger.log(Level.DEBUGGING, "Sender", "Remove the methods " + methods + ".");
                 SynchronizerModule.remove(methods);
                 Database.commit();
             } catch (@Nonnull SQLException exception) {
-                Logger.log(Level.WARNING, "Sender", "Could not remove the methods.", exception);
+                Logger.log(Level.WARNING, "Sender", "Could not remove the methods " + methods + ".", exception);
                 Database.rollback();
             } finally {
                 Database.unlock();
@@ -201,7 +206,9 @@ public final class Sender extends Thread {
     public static @Nullable RequestAudit runAsynchronously(final @Nonnull InternalAction action, final @Nullable RequestAudit audit) throws SQLException, IOException, PacketException, ExternalException {
         // TODO: This will almost certainly not work with the locking mechanism of SQLite. The problem could propably be solved with savepoints and partial rollbacks, however.
         
-        new Thread() {
+        Logger.log(Level.ERROR, "Sender", "The sender should not yet be run asynchronously.");
+        
+        new Thread("Asynchronous-Sender") {
             @Override
             @Committing
             public void run() {

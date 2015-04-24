@@ -4,7 +4,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import javax.annotation.Nonnull;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
@@ -68,7 +67,7 @@ public final class ErrorModule implements ClientModule {
      */
     public static void add(@Nonnull String message, @Nonnull Action action) {
         // TODO: Make a real implementation.
-        System.err.println(formatter.get().format(new Date()) + message + " '" + action + "'.");
+//        Logger.log(Level.WARNING, "ErrorModule", message + " '" + action + "'.");
     }
     
     static { CoreService.SERVICE.add(MODULE); }

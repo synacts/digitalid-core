@@ -2,6 +2,7 @@ package net.digitalid.core.collections;
 
 import java.util.Map;
 import javax.annotation.Nonnull;
+import net.digitalid.core.annotations.NonFrozenRecipient;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.interfaces.Freezable;
 import net.digitalid.core.interfaces.Immutable;
@@ -38,5 +39,17 @@ public interface FreezableMap<K,V> extends ReadonlyMap<K,V>, Map<K,V>, Freezable
     @Pure
     @Override
     public FreezableSet<Map.Entry<K,V>> entrySet();
+    
+    /**
+     * Associates the given value with the given key, if the
+     * given key is not already associated with a value or null.
+     * 
+     * @param key the key to be associated with the given value.
+     * @param value the value to be associated with the given key.
+     * 
+     * @return the value that is now associated with the given key.
+     */
+    @NonFrozenRecipient
+    public @Nonnull V putIfAbsentOrNullElseReturnPresent(@Nonnull K key, @Nonnull V value);
     
 }

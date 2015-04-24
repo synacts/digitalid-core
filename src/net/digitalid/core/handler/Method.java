@@ -566,9 +566,9 @@ public abstract class Method extends Handler {
     @Pure
     @Override
     public final @Nonnull String toString() {
-        final @Nonnull StringBuilder string = new StringBuilder(getClass().getSimpleName());
-        string.append(" by ").append(hasEntity() ? getEntityNotNull().getIdentity().getAddress() : "null");
-        string.append(" for ").append(getSubject()).append(" (").append(getDescription()).append(")");
+        final @Nonnull StringBuilder string = new StringBuilder("\"").append(getClass().getSimpleName()).append(" to ").append(getSubject());
+        if (hasEntity()) string.append(" by ").append(getEntityNotNull().getIdentity().getAddress());
+        string.append(": ").append(getDescription()).append("\"");
         return string.toString();
     }
     

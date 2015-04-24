@@ -85,8 +85,7 @@ public final class EncryptionWrapper extends BlockWrapper implements Immutable {
             final @Nonnull Time start = new Time();
             key = publicKey.getCompositeGroup().getElement(symmetricKey.getValue()).pow(publicKey.getE()).toBlock().setType(KEY);
             encryptions.put(pair, key);
-            final @Nonnull Time end = new Time();
-            Logger.log(Level.VERBOSE, "EncryptionWrapper", "Symmetric key encrypted in " + end.subtract(start).getValue() + " ms.");
+            Logger.log(Level.VERBOSE, "EncryptionWrapper", "Symmetric key encrypted in " + start.ago().getValue() + " ms.");
         }
         return key;
     }
@@ -112,8 +111,7 @@ public final class EncryptionWrapper extends BlockWrapper implements Immutable {
             final @Nonnull BigInteger value = new IntegerWrapper(key).getValue();
             symmetricKey = new SymmetricKey(privateKey.powD(value).getValue());
             decryptions.put(pair, symmetricKey);
-            final @Nonnull Time end = new Time();
-            Logger.log(Level.VERBOSE, "EncryptionWrapper", "Symmetric key decrypted in " + end.subtract(start).getValue() + " ms.");
+            Logger.log(Level.VERBOSE, "EncryptionWrapper", "Symmetric key decrypted in " + start.ago().getValue() + " ms.");
         }
         return symmetricKey;
     }
@@ -244,8 +242,7 @@ public final class EncryptionWrapper extends BlockWrapper implements Immutable {
                 final @Nonnull Time start = new Time();
                 if (iv == null) throw new InvalidEncodingException("The initialization vector may not be null for decryption.");
                 this.element = element.decrypt(parameter, sk, iv);
-                final @Nonnull Time end = new Time();
-                Logger.log(Level.VERBOSE, "EncryptionWrapper", "Element with " + element.getLength() + " bytes decrypted in " + end.subtract(start).getValue() + " ms.");
+                Logger.log(Level.VERBOSE, "EncryptionWrapper", "Element with " + element.getLength() + " bytes decrypted in " + start.ago().getValue() + " ms.");
             } else {
                 this.element = element.setType(parameter);
             }
@@ -373,8 +370,7 @@ public final class EncryptionWrapper extends BlockWrapper implements Immutable {
                 } else {
                     final @Nonnull Time start = new Time();
                     elements.set(4, element.encrypt(SemanticType.UNKNOWN, symmetricKey, initializationVector));
-                    final @Nonnull Time end = new Time();
-                    Logger.log(Level.VERBOSE, "EncryptionWrapper", "Element with " + element.getLength() + " bytes encrypted in " + end.subtract(start).getValue() + " ms.");
+                    Logger.log(Level.VERBOSE, "EncryptionWrapper", "Element with " + element.getLength() + " bytes encrypted in " + start.ago().getValue() + " ms.");
                 }
             }
             

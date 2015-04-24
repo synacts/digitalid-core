@@ -28,6 +28,13 @@ public abstract class Logger {
      */
     public static void initialize(@Nonnull Logger logger) {
         Logger.logger = logger;
+        
+        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+            @Override
+            public void uncaughtException(@Nonnull Thread thread, @Nonnull Throwable throwable) {
+                Logger.log(Level.ERROR, "Logger", "The following exception caused this thread to terminate.", throwable);
+            }
+        });
     }
     
     /**

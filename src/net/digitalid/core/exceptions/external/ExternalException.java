@@ -3,8 +3,6 @@ package net.digitalid.core.exceptions.external;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.interfaces.Immutable;
-import net.digitalid.core.io.Level;
-import net.digitalid.core.io.Logger;
 
 /**
  * An external exception is caused by another party.
@@ -49,7 +47,7 @@ public abstract class ExternalException extends Exception implements Immutable {
     protected ExternalException(@Nullable String message, @Nullable Throwable cause) {
         super(message == null ? "An external exception occurred." : message, cause);
         
-        Logger.log(Level.WARNING, "ExternalException", "An external exception occurred.", this);
+//        Logger.log(Level.WARNING, "ExternalException", "An external exception occurred.", this);
     }
     
 }

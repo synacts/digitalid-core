@@ -113,8 +113,7 @@ public final class CompressionWrapper extends BlockWrapper implements Immutable 
                     @Nonnull ByteArrayOutputStream uncompressed = new ByteArrayOutputStream(2 * block.getLength());
                     block.writeTo(1, new InflaterOutputStream(uncompressed), true);
                     this.element = new Block(parameter, uncompressed.toByteArray());
-                    final @Nonnull Time end = new Time();
-                    Logger.log(Level.VERBOSE, "CompressionWrapper", "Element with " + element.getLength() + " bytes uncompressed in " + end.subtract(start).getValue() + " ms.");
+                    Logger.log(Level.VERBOSE, "CompressionWrapper", "Element with " + element.getLength() + " bytes uncompressed in " + start.ago().getValue() + " ms.");
                 } catch (IOException exception) {
                     throw new InvalidEncodingException("The given block could not be decompressed.", exception);
                 }
@@ -194,8 +193,7 @@ public final class CompressionWrapper extends BlockWrapper implements Immutable 
                 final @Nonnull Time start = new Time();
                 cache = new ByteArrayOutputStream(element.getLength());
                 element.writeTo(new DeflaterOutputStream(cache), true);
-                final @Nonnull Time end = new Time();
-                Logger.log(Level.VERBOSE, "CompressionWrapper", "Element with " + element.getLength() + " bytes compressed in " + end.subtract(start).getValue() + " ms.");
+                Logger.log(Level.VERBOSE, "CompressionWrapper", "Element with " + element.getLength() + " bytes compressed in " + start.ago().getValue() + " ms.");
             } catch (@Nonnull IOException exception) {
                 throw new ShouldNeverHappenError("The given element could not be compressed.", exception);
             }
