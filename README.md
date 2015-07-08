@@ -11,7 +11,8 @@
   - [Requirements](#requirements)
   - [Setup](#setup)
 - [Library](#library)
-  - [Classpath Setup](#classpath-setup)
+  - [Classpath](#classpath)
+  - [Initialization](#initialization)
   - [Role Creation](#role-creation)
   - [Concept Retrieval](#concept-retrieval)
   - [Attribute Caching](#attribute-caching)
@@ -19,6 +20,8 @@
   - [Event Listening](#event-listening)
   - [Database Locking](#database-locking)
   - [Other Annotations](#other-annotations)
+  - [Assertion Checking](#assertion-checking)
+  - [Android Development](#android-development)
 
 **[Overview](#overview)**
 - [Concepts](#concepts)
@@ -48,10 +51,10 @@ Digital ID is a protocol that constitutes an identity layer for the Internet and
 
 ## Bundles
 
-The reference implementation is available for [download](https://www.digitalid.net/downloads/) in three different bundles:
-- **[DigitalID.jar](https://www.digitalid.net/downloads/DigitalID.jar)** (1 MB): Contains only the class files of the core protocol. The libraries have to be provided separately.
-- **[DigitalID-Server.jar](https://www.digitalid.net/downloads/DigitalID-Server.jar)** (7 MB): Includes all the libraries that are required to run the implementation as a server. (Besides non-null annotations and custom taglets, this bundle contains the [MySQL](http://www.mysql.com), [PostgreSQL](http://www.postgresql.org) and [SQLite](http://www.sqlite.org) [JDBC](http://www.oracle.com/technetwork/java/overview-141217.html) drivers.)
-- **[DigitalID-Client.jar](https://www.digitalid.net/downloads/DigitalID-Client.jar)** (5 MB): Includes all the libraries that are required for the development of applications. (This bundle contains non-null annotations, custom taglets and the [SQLite](http://www.sqlite.org) [JDBC](http://www.oracle.com/technetwork/java/overview-141217.html) driver.)
+The reference implementation is available for [download](https://www.digitalid.net/libraries/) in three different bundles:
+- **[DigitalID.jar](https://www.digitalid.net/libraries/DigitalID.jar)** (1 MB): Contains only the class files of the core protocol. The libraries have to be provided separately.
+- **[DigitalID-Server.jar](https://www.digitalid.net/libraries/DigitalID-Server.jar)** (7 MB): Includes all the libraries that are required to run the implementation as a server. (Besides non-null annotations and custom taglets, this bundle contains the [MySQL](http://www.mysql.com), [PostgreSQL](http://www.postgresql.org) and [SQLite](http://www.sqlite.org) [JDBC](http://www.oracle.com/technetwork/java/overview-141217.html) drivers.)
+- **[DigitalID-Client.jar](https://www.digitalid.net/libraries/DigitalID-Client.jar)** (5 MB): Includes all the libraries that are required for the development of applications. (This bundle contains non-null annotations, custom taglets and the [SQLite](http://www.sqlite.org) [JDBC](http://www.oracle.com/technetwork/java/overview-141217.html) driver.)
 
 ## Usage
 
@@ -76,13 +79,13 @@ The server should be reachable on the [port number](https://en.wikipedia.org/wik
 ##### Database
 
 It is highly recommended that you use MySQL as the database on the server due to its superior locking capabilities.
-Additionally, PostgreSQL is not yet supported in the current version because of locking issues.
+(PostgreSQL is not yet supported in the current version because of locking issues.)
 
 #### Setup
 
 ##### Startup
 
-The server can be started from the [command line](https://en.wikipedia.org/wiki/Command-line_interface) with `java -jar DigitalID-Server.jar`, if you are in the right [working directory](https://en.wikipedia.org/wiki/Working_directory). If you start the server for the first time, you need to configure the database (see the last paragraph for recommendations).
+The server can be started from the [command line](https://en.wikipedia.org/wiki/Command-line_interface) with `java -jar DigitalID-Server.jar`, if you are in the right [working directory](https://en.wikipedia.org/wiki/Working_directory). If you start the server for the first time, you need to configure the database (see the previous paragraph for recommendations).
 
 ##### Handling
 
@@ -124,7 +127,7 @@ All Digital ID-related files are stored in an invisible folder in the user's hom
 
 ##### Certification
 
-Before clients can connect to your host, you need to have its public key certified by [Patria Digitalis](http://www.pd.coop). Please note that this process is not supported yet.
+Before clients can connect to your host, you need to have its public key certified by [Patria Digitalis](https://www.pd.coop). Please note that this process is not supported yet.
 
 ##### Deinstallation
 
@@ -132,9 +135,20 @@ All you have to do to deinstall Digital ID, is to delete the folder `~/.DigitalI
 
 ### Library
 
-#### Classpath Setup
+#### Classpath
 
-In order to use the Digital ID reference implementation as a library, download [DigitalID-Client.jar](https://www.digitalid.net/downloads/DigitalID-Client.jar) and add it to the classpath of your favorite [IDE](https://en.wikipedia.org/wiki/Integrated_development_environment).
+In order to use the Digital ID reference implementation as a library, download [DigitalID-Client.jar](https://www.digitalid.net/libraries/DigitalID-Client.jar) and add it to the classpath of your favorite [IDE](https://en.wikipedia.org/wiki/Integrated_development_environment).
+
+#### Initialization
+
+To increase the flexibility of the library, various modules need to be initialized *before* the library is first used:
+
+```java
+Directory.initialize(Directory.DEFAULT); // Pass the directory which is to be used to store files.
+Logger.initialize(new DefaultLogger(Level.INFORMATION, "client_identifier")); // Choose a suitable logging level.
+Database.initialize(new SQLiteConfiguration("client_identifier")); // Other configurations are also possible.
+Loader.initialize(); // Pass the main class of all services that need to be loaded (or leave the parameters empty).
+```
 
 #### Role Creation
 
@@ -152,7 +166,7 @@ Instead of creating a new identity, you can also request accreditation for an ex
 final @Nonnull Client client = new Client("client_identifier", "Client Name", Image.CLIENT, AgentPermissions.GENERAL_WRITE);
 final @Nonnull InternalNonHostIdentifier identifier = new InternalNonHostIdentifier("user@example.com");
 final @Nonnull InternalNonHostIdentity identity = identifier.getIdentity();
-final @Nonnull NativeRole role = client.accredit(identity, "password");
+final @Nonnull NativeRole role = client.accredit(identity, "secret");
 ```
 
 #### Concept Retrieval
@@ -233,9 +247,21 @@ Furthermore, methods usually indicate whether they expect the database to be loc
 
 You find dozens more annotations in the package `net.digitalid.core.annotations`, which should largely be self-explanatory with their corresponding [documentation](#documentation). A design pattern that is used so extensively throughout the code so that it is worth to be mentioned here is `Freezable`. Objects that implement this interface can be changed until you `freeze()` them. From that point onwards they are immutable and can be shared among objects and threads without running into consistency problems. As you would expect by now, there are annotations to indicate whether the object denoted by a variable or parameter is `@Frozen` or `@NonFrozen`. Independent of their freezing state, such objects can be exposed through a `Readonly` interface (that only includes the methods that are `@Pure`).
 
-#### Code Debugging
+#### Assertion Checking
 
-The reference implementation loosely follows the [design by contract](https://en.wikipedia.org/wiki/Design_by_contract) methodology. You can have the contracts checked by enabling assertions with `java -enableassertions -jar DigitalID-Client.jar ...` or `java -ea -jar DigitalID-Client.jar ...` for short, which is highly recommended during debugging.
+The reference implementation loosely follows the [design by contract](https://en.wikipedia.org/wiki/Design_by_contract) methodology. You can have the contracts checked by enabling assertions with `java -enableassertions -jar DigitalID-Client.jar ...` or `java -ea -jar DigitalID-Client.jar ...` for short, which is highly recommended during development.
+
+#### Android Development
+
+When developing an application for [Android](http://www.android.com), you need to consider the following aspects to avoid any issues.
+
+##### Android Initialization
+
+To initialize the library for Android, download [Android-General.jar](https://www.digitalid.net/libraries/Android-General.jar) and call `Android.initialize(context);` with the Android application context.
+
+##### Resource Loading
+
+Add `android.sourceSets.main.resources.srcDirs = ['src/main/java']` to your `app/build.gradle` script, otherwise the certificate of the root host cannot be loaded. (`Class.class.getResourceAsStream("/net/digitalid/core/resources/core.digitalid.net.certificate.xdf")` should not return `null`. If it does, the host `core.digitalid.net` is created on the local machine and you might get the exception that there is no key for a given time.)
 
 ## Overview
 
@@ -279,7 +305,7 @@ In its essence, Digital ID is just a distributed address book that functions as 
 
 ## Documentation
 
-You find the [Javadoc](http://en.wikipedia.org/wiki/Javadoc) of all public classes and methods at www.digitalid.net/documentation/.
+You find the [Javadoc](http://en.wikipedia.org/wiki/Javadoc) of all public classes and methods at [www.digitalid.net/documentation/](https://www.digitalid.net/documentation/).
 
 ## Roadmap
 
@@ -302,4 +328,4 @@ Do not hesitate to contact us at:
 
 ## License
 
-All rights reserved. The code will be published under an open-source/commercial double-license later on.
+All rights reserved. The code will be published under a [dual-license model](https://en.wikipedia.org/wiki/Multi-licensing) later on.
