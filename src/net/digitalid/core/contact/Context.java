@@ -19,7 +19,6 @@ import net.digitalid.core.annotations.NonFrozen;
 import net.digitalid.core.annotations.OnlyForActions;
 import net.digitalid.core.annotations.OnlyForClients;
 import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.auxiliary.Image;
 import net.digitalid.core.collections.ConcurrentHashMap;
 import net.digitalid.core.collections.ConcurrentMap;
 import net.digitalid.core.concept.Aspect;
@@ -56,11 +55,6 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
      * Stores the aspect of the name being changed at the observed context.
      */
     public static final @Nonnull Aspect NAME = new Aspect(Context.class, "name changed");
-    
-    /**
-     * Stores the aspect of the icon being changed at the observed context.
-     */
-    public static final @Nonnull Aspect ICON = new Aspect(Context.class, "icon changed");
     
     /**
      * Stores the aspect of the preferences being changed at the observed context.
@@ -119,11 +113,6 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
      * Stores the semantic type {@code name.context@core.digitalid.net}.
      */
     public static final @Nonnull SemanticType NAME_TYPE = SemanticType.create("name.context@core.digitalid.net").load(StringWrapper.TYPE);
-    
-    /**
-     * Stores the semantic type {@code icon.context@core.digitalid.net}.
-     */
-    public static final @Nonnull SemanticType ICON_TYPE = SemanticType.create("icon.context@core.digitalid.net").load(Image.TYPE);
     
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Number –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -235,8 +224,6 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
         name = newName;
         notify(NAME);
     }
-    
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Icon –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Preferences –––––––––––––––––––––––––––––––––––––––––––––––––– */
     

@@ -15,7 +15,6 @@ import net.digitalid.core.annotations.BasedOn;
 import net.digitalid.core.annotations.HasSubject;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.auxiliary.Image;
 import net.digitalid.core.collections.FreezableArrayList;
 import net.digitalid.core.collections.ReadonlyArray;
 import net.digitalid.core.contact.Context;
@@ -65,7 +64,7 @@ public final class AccountOpen extends Action {
     /**
      * Stores the semantic type {@code open.account@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("open.account@core.digitalid.net").load(TupleWrapper.TYPE, Category.TYPE, Agent.NUMBER, Client.NAME, Client.ICON);
+    public static final @Nonnull SemanticType TYPE = SemanticType.create("open.account@core.digitalid.net").load(TupleWrapper.TYPE, Category.TYPE, Agent.NUMBER, Client.NAME);
     
     
     /**
@@ -98,13 +97,6 @@ public final class AccountOpen extends Action {
     private final @Nonnull String name;
     
     /**
-     * Stores the icon of the client agent.
-     * 
-     * @invariant Client.isValid(icon) : "The icon is valid.";
-     */
-    private final @Nonnull Image icon;
-    
-    /**
      * Creates an action to open a new account.
      * 
      * @param subject the identifier of the new account.
@@ -124,7 +116,6 @@ public final class AccountOpen extends Action {
         this.commitment = client.getCommitment(subject);
         this.secret = client.getSecret();
         this.name = client.getName();
-        this.icon = client.getIcon();
     }
     
     /**
@@ -153,16 +144,13 @@ public final class AccountOpen extends Action {
         this.secret = null;
         
         this.name = new StringWrapper(elements.getNotNull(2)).getString();
-        if (!Client.isValid(name)) throw new InvalidEncodingException("The name is invalid.");
-        
-        this.icon = new Image(elements.getNotNull(3));
-        if (!Client.isValid(icon)) throw new InvalidEncodingException("The icon is invalid.");
+        if (!Client.isValid(name)) throw new InvalidEncodingException("The name '" + name + "' is invalid.");
     }
     
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        return new TupleWrapper(TYPE, category.toBlock(), new Int64Wrapper(Agent.NUMBER, agentNumber).toBlock(), new StringWrapper(Client.NAME, name).toBlock(), icon.toBlock().setType(Client.ICON)).toBlock();
+        return new TupleWrapper(TYPE, category.toBlock(), new Int64Wrapper(Agent.NUMBER, agentNumber).toBlock(), new StringWrapper(Client.NAME, name).toBlock()).toBlock();
     }
     
     @Pure
@@ -217,7 +205,7 @@ public final class AccountOpen extends Action {
         
         final @Nonnull ClientAgent clientAgent = ClientAgent.get(entity, agentNumber, false);
         final @Nonnull Restrictions restrictions = new Restrictions(true, true, true, context);
-        clientAgent.createForActions(AgentPermissions.GENERAL_WRITE, restrictions, commitment, name, icon);
+        clientAgent.createForActions(AgentPermissions.GENERAL_WRITE, restrictions, commitment, name);
     }
     
     @Override
@@ -279,7 +267,7 @@ public final class AccountOpen extends Action {
     public boolean equals(@Nullable Object object) {
         if (protectedEquals(object) && object instanceof AccountOpen) {
             final @Nonnull AccountOpen other = (AccountOpen) object;
-            return this.category == other.category && this.agentNumber == other.agentNumber && this.commitment.equals(other.commitment) && Objects.equals(this.secret, other.secret) && this.name.equals(other.name) && this.icon.equals(other.icon);
+            return this.category == other.category && this.agentNumber == other.agentNumber && this.commitment.equals(other.commitment) && Objects.equals(this.secret, other.secret) && this.name.equals(other.name);
         }
         return false;
     }
@@ -293,7 +281,6 @@ public final class AccountOpen extends Action {
         hash = 89 * hash + commitment.hashCode();
         hash = 89 * hash + Objects.hashCode(secret);
         hash = 89 * hash + name.hashCode();
-        hash = 89 * hash + icon.hashCode();
         return hash;
     }
     

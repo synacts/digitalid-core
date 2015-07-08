@@ -6,7 +6,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.auxiliary.Image;
 import net.digitalid.core.client.Client;
 import net.digitalid.core.client.Commitment;
 import net.digitalid.core.collections.FreezableArrayList;
@@ -44,7 +43,7 @@ public final class ClientAgentAccredit extends CoreServiceInternalAction {
     /**
      * Stores the semantic type {@code accredit.client.agent@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType TYPE = SemanticType.create("accredit.client.agent@core.digitalid.net").load(TupleWrapper.TYPE, Agent.TYPE, AgentPermissions.TYPE, Client.NAME, Client.ICON, Password.TYPE);
+    private static final @Nonnull SemanticType TYPE = SemanticType.create("accredit.client.agent@core.digitalid.net").load(TupleWrapper.TYPE, Agent.TYPE, AgentPermissions.TYPE, Client.NAME, Password.TYPE);
     
     
     /**
@@ -74,13 +73,6 @@ public final class ClientAgentAccredit extends CoreServiceInternalAction {
     private final @Nonnull String name;
     
     /**
-     * Stores the icon of the client agent.
-     * 
-     * @invariant Client.isValid(icon) : "The icon is valid.";
-     */
-    private final @Nonnull Image icon;
-    
-    /**
      * Stores the password of the subject.
      * 
      * @invariant Password.isValid(password) : "The password is valid.";
@@ -106,7 +98,6 @@ public final class ClientAgentAccredit extends CoreServiceInternalAction {
         this.permissions = client.getPreferredPermissions();
         this.commitment = client.getCommitment(role.getIdentity().getAddress());
         this.name = client.getName();
-        this.icon = client.getIcon();
         this.password = password;
     }
     
@@ -140,17 +131,14 @@ public final class ClientAgentAccredit extends CoreServiceInternalAction {
         this.name = new StringWrapper(elements.getNotNull(2)).getString();
         if (!Client.isValid(name)) throw new InvalidEncodingException("The name is invalid.");
         
-        this.icon = new Image(elements.getNotNull(3));
-        if (!Client.isValid(icon)) throw new InvalidEncodingException("The icon is invalid.");
-        
-        this.password = new StringWrapper(elements.getNotNull(4)).getString();
+        this.password = new StringWrapper(elements.getNotNull(3)).getString();
         if (!Password.isValid(password)) throw new InvalidEncodingException("The password is invalid.");
     }
     
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        return new TupleWrapper(TYPE, clientAgent.toBlock(), permissions.toBlock(), new StringWrapper(Client.NAME, name).toBlock(), icon.toBlock().setType(Client.ICON), new StringWrapper(Password.TYPE, password).toBlock()).toBlock();
+        return new TupleWrapper(TYPE, clientAgent.toBlock(), permissions.toBlock(), new StringWrapper(Client.NAME, name).toBlock(), new StringWrapper(Password.TYPE, password).toBlock()).toBlock();
     }
     
     @Pure
@@ -185,7 +173,7 @@ public final class ClientAgentAccredit extends CoreServiceInternalAction {
     @Override
     @NonCommitting
     protected void executeOnBoth() throws SQLException {
-        clientAgent.createForActions(permissions, new Restrictions(true, true, true, Context.getRoot(getNonHostEntity())), commitment, name, icon);
+        clientAgent.createForActions(permissions, new Restrictions(true, true, true, Context.getRoot(getNonHostEntity())), commitment, name);
     }
     
     @Override
@@ -213,7 +201,7 @@ public final class ClientAgentAccredit extends CoreServiceInternalAction {
     public boolean equals(@Nullable Object object) {
         if (protectedEquals(object) && object instanceof ClientAgentAccredit) {
             final @Nonnull ClientAgentAccredit other = (ClientAgentAccredit) object;
-            return this.clientAgent.equals(other.clientAgent) && this.permissions.equals(other.permissions) && this.commitment.equals(other.commitment) && this.name.equals(other.name) && this.icon.equals(other.icon) && this.password.equals(other.password);
+            return this.clientAgent.equals(other.clientAgent) && this.permissions.equals(other.permissions) && this.commitment.equals(other.commitment) && this.name.equals(other.name) && this.password.equals(other.password);
         }
         return false;
     }
@@ -226,7 +214,6 @@ public final class ClientAgentAccredit extends CoreServiceInternalAction {
         hash = 89 * hash + permissions.hashCode();
         hash = 89 * hash + commitment.hashCode();
         hash = 89 * hash + name.hashCode();
-        hash = 89 * hash + icon.hashCode();
         hash = 89 * hash + password.hashCode();
         return hash;
     }

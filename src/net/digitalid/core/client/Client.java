@@ -21,7 +21,6 @@ import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.NonFrozen;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.annotations.Validated;
-import net.digitalid.core.auxiliary.Image;
 import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.cache.Cache;
 import net.digitalid.core.collections.FreezableArrayList;
@@ -100,11 +99,6 @@ public class Client extends Site implements Observer {
      */
     public static final @Nonnull SemanticType NAME = SemanticType.create("name.client.agent@core.digitalid.net").load(StringWrapper.TYPE);
     
-    /**
-     * Stores the semantic type {@code icon.client.agent@core.digitalid.net}.
-     */
-    public static final @Nonnull SemanticType ICON = SemanticType.create("icon.client.agent@core.digitalid.net").load(Image.TYPE);
-    
     
     /**
      * The pattern that valid client identifiers have to match.
@@ -136,19 +130,6 @@ public class Client extends Site implements Observer {
         return name.length() <= 50;
     }
     
-    /**
-     * Returns whether the given icon is valid.
-     * A valid icon is a square of 256 pixels.
-     * 
-     * @param icon the icon to be checked.
-     * 
-     * @return whether the given name is valid.
-     */
-    @Pure
-    public static boolean isValid(@Nonnull Image icon) {
-        return icon.isSquare(256);
-    }
-    
     
     @Pure
     @Override
@@ -177,13 +158,6 @@ public class Client extends Site implements Observer {
     private @Nonnull String name;
     
     /**
-     * Stores the icon of this client.
-     * 
-     * @invariant isValid(icon) : "The icon is valid.";
-     */
-    private @Nonnull Image icon;
-    
-    /**
      * Stores the preferred permissions of this client.
      * 
      * @invariant preferredPermissions.isFrozen() : "The preferred permissions are frozen.";
@@ -195,22 +169,19 @@ public class Client extends Site implements Observer {
      * 
      * @param identifier the identifier of the new client.
      * @param name the name of the new client.
-     * @param icon the icon of the new client.
      * @param preferredPermissions the preferred permissions of the new client.
      */
     @Locked
     @Committing
-    public Client(@Nonnull @Validated String identifier, @Nonnull @Validated String name, @Nonnull @Validated Image icon, @Nonnull @Frozen ReadonlyAgentPermissions preferredPermissions) throws SQLException, IOException, PacketException, ExternalException {
+    public Client(@Nonnull @Validated String identifier, @Nonnull @Validated String name, @Nonnull @Frozen ReadonlyAgentPermissions preferredPermissions) throws SQLException, IOException, PacketException, ExternalException {
         super(identifier);
         
         assert isValidIdentifier(identifier) : "The identifier is valid.";
         assert isValid(name) : "The name is valid.";
-        assert isValid(icon) : "The icon is valid.";
         assert preferredPermissions.isFrozen() : "The preferred permissions are frozen.";
         
         this.identifier = identifier;
         this.name = name;
-        this.icon = icon;
         this.preferredPermissions = preferredPermissions;
         
         final @Nonnull File file = new File(Directory.getClientsDirectory().getPath() +  File.separator + identifier + ".client.xdf");
@@ -273,31 +244,6 @@ public class Client extends Site implements Observer {
         assert isValid(name) : "The name is valid.";
         
         this.name = name;
-    }
-    
-    /**
-     * Returns the icon of this client.
-     * 
-     * @return the icon of this client.
-     * 
-     * @ensure isValid(return) : "The returned icon is valid.";
-     */
-    @Pure
-    public final @Nonnull Image getIcon() {
-        return icon;
-    }
-    
-    /**
-     * Sets the icon of this client.
-     * 
-     * @param icon the icon of this client.
-     * 
-     * @require isValid(icon) : "The icon is valid.";
-     */
-    public final void setIcon(@Nonnull Image icon) {
-        assert isValid(icon) : "The icon is valid.";
-        
-        this.icon = icon;
     }
     
     /**

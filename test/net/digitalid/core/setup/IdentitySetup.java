@@ -7,7 +7,6 @@ import net.digitalid.core.agent.Agent;
 import net.digitalid.core.agent.AgentPermissions;
 import net.digitalid.core.annotations.Committing;
 import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.auxiliary.Image;
 import net.digitalid.core.client.Client;
 import net.digitalid.core.database.Database;
 import net.digitalid.core.entity.NativeRole;
@@ -64,7 +63,7 @@ public class IdentitySetup extends ServerSetup {
     public static void setUpIdentity() throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
         print("setUpIdentity");
         try {
-            client = new Client("tester", "Test Client", Image.CLIENT, AgentPermissions.GENERAL_WRITE);
+            client = new Client("tester", "Test Client", AgentPermissions.GENERAL_WRITE);
             final @Nonnull InternalNonHostIdentifier identifier = new InternalNonHostIdentifier("person@test.digitalid.net");
             role = client.openAccount(identifier, Category.NATURAL_PERSON);
             subject = identifier.getIdentity().toNaturalPerson();

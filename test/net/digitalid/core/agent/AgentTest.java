@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import net.digitalid.core.annotations.Committing;
 import net.digitalid.core.attribute.AttributeType;
-import net.digitalid.core.auxiliary.Image;
 import net.digitalid.core.client.Client;
 import net.digitalid.core.client.Commitment;
 import net.digitalid.core.contact.Context;
@@ -47,7 +46,7 @@ public final class AgentTest extends IdentitySetup {
             agentPermissions.put(AttributeType.SURNAME, true);
             agentPermissions.freeze();
             
-            client = new Client("object", "Object Client", Image.CLIENT, agentPermissions);
+            client = new Client("object", "Object Client", agentPermissions);
             role = client.accredit(getSubject(), "");
         } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
             exception.printStackTrace();
@@ -214,26 +213,8 @@ public final class AgentTest extends IdentitySetup {
     
     @Test
     @Committing
-    public void _07_testIconReplace() throws SQLException {
-        print("_07_testIconReplace");
-        try {
-            final @Nonnull Image newIcon = Image.CONTEXT;
-            final @Nonnull ClientAgent clientAgent = role.getAgent();
-            clientAgent.setIcon(newIcon);
-            clientAgent.reset(); // Not necessary but I want to test the database state.
-            Assert.assertEquals(newIcon, clientAgent.getIcon());
-            Database.commit();
-        } catch (@Nonnull SQLException exception) {
-            exception.printStackTrace();
-            Database.rollback();
-            throw exception;
-        }
-    }
-    
-    @Test
-    @Committing
-    public void _08_testWeakerAgents() throws SQLException {
-        print("_08_testWeakerAgents");
+    public void _07_testWeakerAgents() throws SQLException {
+        print("_07_testWeakerAgents");
         try {
             Assert.assertEquals(1, role.getAgent().getWeakerAgents().size());
             Assert.assertEquals(2, getRole().getAgent().getWeakerAgents().size());

@@ -37,3 +37,15 @@ Caused by: com.mysql.jdbc.PacketTooBigException: Packet for query is too large (
 	... 3 more
 
 2015-04-21 at 23:14:24.403 in 0.6.1 (Information) [Worker]: FileReplace with audit of the File Service to 'me@kasparetter.com' from 'me@kasparetter.com' handled in 7108 ms.
+
+
+2015-04-25 at 01:13:14.904 in 0.6.1 [Application] (Information) [Database]: The database has been initialized for single-access with a SQLiteConfiguration.
+2015-04-25 at 01:13:16.223 in 0.6.1 [Application] (Information) [FileUpdater]: The file updater has been initialized for the directory '/Users/etterka/File Service/'.
+2015-04-25 at 01:13:20.092 in 0.6.1 [FileUpdater] (Information) [FileUpdater]: Store the file 'Picture.jpg' in the repository because it does not yet exist there.
+2015-04-25 at 01:13:20.109 in 0.6.1 [FileUpdater] (Information) [FileUpdater]: Store the file 'Report.pdf' in the repository because it does not yet exist there.
+2015-04-25 at 01:13:20.513 in 0.6.1 [FileUpdater] (Information) [FileUpdater]: Store the file 'Text.txt' in the repository because it does not yet exist there.
+2015-04-25 at 01:13:37.957 in 0.6.1 [Application] (Information) [Database]: The database has been initialized for single-access with a SQLiteConfiguration.
+2015-04-25 at 01:13:39.148 in 0.6.1 [Application] (Information) [FileUpdater]: The file updater has been initialized for the directory '/Users/etterka/File Service/'.
+2015-04-25 at 01:13:42.421 in 0.6.1 [FileUpdater] (Information) [FileUpdater]: Store the file 'Picture.jpg' in the repository because it does not yet exist there.
+2015-04-25 at 01:13:42.433 in 0.6.1 [FileUpdater] (Information) [FileUpdater]: Store the file 'Report.pdf' in the repository because it does not yet exist there.
+2015-04-25 at 01:13:42.504 in 0.6.1 [FileUpdater] (Information) [FileUpdater]: Store the file 'Text.txt' in the repository because it does not yet exist there.

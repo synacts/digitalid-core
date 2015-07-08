@@ -8,7 +8,6 @@ import net.digitalid.core.annotations.Committing;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.OnlyForActions;
 import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.auxiliary.Image;
 import net.digitalid.core.client.Commitment;
 import net.digitalid.core.collections.ConcurrentHashMap;
 import net.digitalid.core.collections.ConcurrentMap;
@@ -44,11 +43,6 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
      * Stores the aspect of the name being changed at the observed client agent.
      */
     public static final @Nonnull Aspect NAME = new Aspect(ClientAgent.class, "name changed");
-    
-    /**
-     * Stores the aspect of the icon being changed at the observed client agent.
-     */
-    public static final @Nonnull Aspect ICON = new Aspect(ClientAgent.class, "icon changed");
     
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Commitment –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -153,68 +147,12 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
         notify(NAME);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Icon –––––––––––––––––––––––––––––––––––––––––––––––––– */
-    
-    /**
-     * Stores the icon of this client agent.
-     * 
-     * @invariant Client.isValid(icon) : "The icon is valid.";
-     */
-    private @Nullable Image icon;
-    
-    /**
-     * Returns the icon of this client agent.
-     * 
-     * @return the icon of this client agent.
-     * 
-     * @ensure Client.isValid(return) : "The returned icon is valid.";
-     */
-    @NonCommitting
-    public @Nonnull Image getIcon() throws SQLException {
-        if (icon == null) icon = AgentModule.getIcon(this);
-        return icon;
-    }
-    
-    /**
-     * Sets the icon of this client agent.
-     * 
-     * @param newIcon the new icon of this client agent.
-     * 
-     * @require isOnClient() : "This client agent is on a client.";
-     * @require Client.isValid(newIcon) : "The new icon is valid.";
-     */
-    @Committing
-    public void setIcon(@Nonnull Image newIcon) throws SQLException {
-        final @Nonnull Image oldIcon = getIcon();
-        if (!newIcon.equals(oldIcon)) {
-            Synchronizer.execute(new ClientAgentIconReplace(this, oldIcon, newIcon));
-        }
-    }
-    
-    /**
-     * Replaces the icon of this client agent.
-     * 
-     * @param oldIcon the old icon of this client agent.
-     * @param newIcon the new icon of this client agent.
-     * 
-     * @require Client.isValid(oldIcon) : "The old icon is valid.";
-     * @require Client.isValid(newIcon) : "The new icon is valid.";
-     */
-    @NonCommitting
-    @OnlyForActions
-    public void replaceIcon(@Nonnull Image oldIcon, @Nonnull Image newIcon) throws SQLException {
-        AgentModule.replaceIcon(this, oldIcon, newIcon);
-        icon = newIcon;
-        notify(ICON);
-    }
-    
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Agent –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Override
     public void reset() throws SQLException {
         this.commitment = null;
         this.name = null;
-        this.icon = null;
         super.reset();
     }
     
@@ -233,21 +171,18 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
      * @param restrictions the restrictions of the client agent.
      * @param commitment the commitment of the client agent.
      * @param name the name of the given client agent.
-     * @param icon the icon of the given client agent.
      * 
      * @require permissions.isFrozen() : "The permissions are frozen.";
      * @require Client.isValid(name) : "The name is valid.";
-     * @require Client.isValid(icon) : "The icon is valid.";
      */
     @NonCommitting
     @OnlyForActions
-    public void createForActions(@Nonnull ReadonlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nonnull Commitment commitment, @Nonnull String name, @Nonnull Image icon) throws SQLException {
-        AgentModule.addClientAgent(this, permissions, restrictions, commitment, name, icon);
+    public void createForActions(@Nonnull ReadonlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nonnull Commitment commitment, @Nonnull String name) throws SQLException {
+        AgentModule.addClientAgent(this, permissions, restrictions, commitment, name);
         this.permissions = permissions.clone();
         this.restrictions = restrictions;
         this.commitment = commitment;
         this.name = name;
-        this.icon = icon;
         notify(Agent.CREATED);
     }
     

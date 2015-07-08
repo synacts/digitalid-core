@@ -15,7 +15,6 @@ import net.digitalid.core.annotations.Frozen;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.NonFrozen;
 import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.auxiliary.Image;
 import net.digitalid.core.collections.FreezableArray;
 import net.digitalid.core.collections.FreezableLinkedList;
 import net.digitalid.core.collections.FreezableList;
@@ -86,7 +85,7 @@ public final class ContextModule implements BothModule {
     @NonCommitting
     public static void createReferenceTable(@Nonnull Site site) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "context_name (entity " + EntityClass.FORMAT + " NOT NULL, context " + Context.FORMAT + " NOT NULL, name VARCHAR(50) NOT NULL COLLATE " + Database.getConfiguration().BINARY() + ", icon " + Image.FORMAT + " NOT NULL, PRIMARY KEY (entity, context), FOREIGN KEY (entity) " + site.getEntityReference() + ")");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "context_name (entity " + EntityClass.FORMAT + " NOT NULL, context " + Context.FORMAT + " NOT NULL, name VARCHAR(50) NOT NULL COLLATE " + Database.getConfiguration().BINARY() + ", PRIMARY KEY (entity, context), FOREIGN KEY (entity) " + site.getEntityReference() + ")");
         }
     }
     
@@ -163,7 +162,7 @@ public final class ContextModule implements BothModule {
     /**
      * Stores the semantic type {@code entry.name.context.state@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType NAME_STATE_ENTRY = SemanticType.create("entry.name.context.state@core.digitalid.net").load(TupleWrapper.TYPE, Context.TYPE, Context.NAME_TYPE, Context.ICON_TYPE);
+    private static final @Nonnull SemanticType NAME_STATE_ENTRY = SemanticType.create("entry.name.context.state@core.digitalid.net").load(TupleWrapper.TYPE, Context.TYPE, Context.NAME_TYPE);
     
     /**
      * Stores the semantic type {@code table.name.context.state@core.digitalid.net}.
@@ -203,13 +202,12 @@ public final class ContextModule implements BothModule {
         final @Nonnull FreezableArray<Block> tables = new FreezableArray<>(2);
         try (@Nonnull Statement statement = Database.createStatement()) {
             
-            try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT context, name, icon FROM " + site + "context_name WHERE entity = " + entity)) {
+            try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT context, name FROM " + site + "context_name WHERE entity = " + entity)) {
                 final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<>();
                 while (resultSet.next()) {
                     final @Nonnull Context context = Context.getNotNull(entity, resultSet, 1);
                     final @Nonnull String name = resultSet.getString(2);
-                    final @Nonnull Image icon = Image.get(resultSet, 3);
-                    entries.add(new TupleWrapper(NAME_STATE_ENTRY, context, new StringWrapper(Context.NAME_TYPE, name), icon.toBlock().setType(Context.ICON_TYPE).toBlockable()).toBlock());
+                    entries.add(new TupleWrapper(NAME_STATE_ENTRY, context, new StringWrapper(Context.NAME_TYPE, name)).toBlock());
                 }
                 tables.set(0, new ListWrapper(NAME_STATE_TABLE, entries.freeze()).toBlock());
             }
@@ -242,14 +240,13 @@ public final class ContextModule implements BothModule {
         final @Nonnull ReadonlyArray<Block> tables = new TupleWrapper(block).getElementsNotNull(2);
         final @Nonnull String prefix = "INSERT" + Database.getConfiguration().IGNORE() + " INTO " + site;
         
-        try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(prefix + "context_name (entity, context, name, icon) VALUES (?, ?, ?, ?)")) {
+        try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(prefix + "context_name (entity, context, name) VALUES (?, ?, ?)")) {
             entity.set(preparedStatement, 1);
             final @Nonnull ReadonlyList<Block> entries = new ListWrapper(tables.getNotNull(0)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(3);
                 Context.get(entity, elements.getNotNull(0)).set(preparedStatement, 2);
                 preparedStatement.setString(3, new StringWrapper(elements.getNotNull(1)).getString());
-                new Image(elements.getNotNull(2)).set(preparedStatement, 4);
                 preparedStatement.addBatch();
             }
             preparedStatement.executeBatch();
@@ -294,12 +291,11 @@ public final class ContextModule implements BothModule {
      */
     @NonCommitting
     public static void create(@Nonnull Context context) throws SQLException {
-        final @Nonnull String SQL = "INSERT INTO " + context.getEntity().getSite() + "context_name (entity, context, name, icon) VALUES (?, ?, ?, ?)";
+        final @Nonnull String SQL = "INSERT INTO " + context.getEntity().getSite() + "context_name (entity, context, name) VALUES (?, ?, ?,)";
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
             context.getEntity().set(preparedStatement, 1);
             context.set(preparedStatement, 2);
             preparedStatement.setString(3, "New Context");
-            Image.CONTEXT.set(preparedStatement, 4);
             if (preparedStatement.executeUpdate() == 0) throw new SQLException("The context with the number " + context + " could not be created.");
         }
         // TODO: Do it correctly!

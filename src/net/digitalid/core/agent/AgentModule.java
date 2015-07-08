@@ -13,7 +13,6 @@ import net.digitalid.core.annotations.Frozen;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.NonFrozen;
 import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.auxiliary.Image;
 import net.digitalid.core.client.Client;
 import net.digitalid.core.client.Commitment;
 import net.digitalid.core.collections.FreezableArray;
@@ -98,7 +97,7 @@ public final class AgentModule implements BothModule {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "agent_restrictions_ord (entity " + EntityClass.FORMAT + " NOT NULL, stronger " + Agent.FORMAT + " NOT NULL, weaker " + Agent.FORMAT + " NOT NULL, PRIMARY KEY (entity, stronger, weaker), FOREIGN KEY (entity, stronger) " + Agent.getReference(site) + ", FOREIGN KEY (entity, weaker) " + Agent.getReference(site) + ")");
             Mapper.addReference(site + "agent_restrictions", "contact");
             
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "client_agent (entity " + EntityClass.FORMAT + " NOT NULL, agent " + Agent.FORMAT + " NOT NULL, " + Commitment.FORMAT + ", name VARCHAR(50) NOT NULL COLLATE " + Database.getConfiguration().BINARY() + ", icon " + Image.FORMAT + " NOT NULL, PRIMARY KEY (entity, agent), FOREIGN KEY (entity, agent) " + Agent.getReference(site) + ", " + Commitment.REFERENCE + ")");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "client_agent (entity " + EntityClass.FORMAT + " NOT NULL, agent " + Agent.FORMAT + " NOT NULL, " + Commitment.FORMAT + ", name VARCHAR(50) NOT NULL COLLATE " + Database.getConfiguration().BINARY() + ", PRIMARY KEY (entity, agent), FOREIGN KEY (entity, agent) " + Agent.getReference(site) + ", " + Commitment.REFERENCE + ")");
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "outgoing_role (entity " + EntityClass.FORMAT + " NOT NULL, agent " + Agent.FORMAT + " NOT NULL, relation " + Mapper.FORMAT + " NOT NULL, context " + Context.FORMAT + " NOT NULL, PRIMARY KEY (entity, agent), FOREIGN KEY (entity, agent) " + Agent.getReference(site) + ", FOREIGN KEY (relation) " + Mapper.REFERENCE + ", FOREIGN KEY (entity, context) " + Context.getReference(site) + ")");
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "incoming_role (entity " + EntityClass.FORMAT + " NOT NULL, issuer " + Mapper.FORMAT + " NOT NULL, relation " + Mapper.FORMAT + " NOT NULL, agent " + Agent.FORMAT + " NOT NULL, PRIMARY KEY (entity, issuer, relation), FOREIGN KEY (entity) " + site.getEntityReference() + ", FOREIGN KEY (issuer) " + Mapper.REFERENCE + ", FOREIGN KEY (relation) " + Mapper.REFERENCE + ")");
             Mapper.addReference(site + "incoming_role", "issuer", "entity", "issuer", "relation");
@@ -205,7 +204,7 @@ public final class AgentModule implements BothModule {
     /**
      * Stores the semantic type {@code entry.client.agent.module@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType CLIENT_MODULE_ENTRY = SemanticType.create("entry.client.agent.module@core.digitalid.net").load(TupleWrapper.TYPE, Identity.IDENTIFIER, Agent.NUMBER, Commitment.TYPE, Client.NAME, Client.ICON);
+    private static final @Nonnull SemanticType CLIENT_MODULE_ENTRY = SemanticType.create("entry.client.agent.module@core.digitalid.net").load(TupleWrapper.TYPE, Identity.IDENTIFIER, Agent.NUMBER, Commitment.TYPE, Client.NAME);
     
     /**
      * Stores the semantic type {@code table.client.agent.module@core.digitalid.net}.
@@ -309,15 +308,14 @@ public final class AgentModule implements BothModule {
                 tables.set(4, new ListWrapper(AGENT_RESTRICTIONS_ORDER_MODULE_TABLE, entries.freeze()).toBlock());
             }
             
-            try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT entity, agent, " + Commitment.COLUMNS + ", name, icon FROM " + host + "client")) {
+            try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT entity, agent, " + Commitment.COLUMNS + ", name FROM " + host + "client")) {
                 final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<>();
                 while (resultSet.next()) {
                     final @Nonnull Identity identity = IdentityClass.getNotNull(resultSet, 1);
                     final long number = resultSet.getLong(2);
                     final @Nonnull Commitment commitment = Commitment.get(resultSet, 3);
                     final @Nonnull String name = resultSet.getString(6);
-                    final @Nonnull Image icon = Image.get(resultSet, 7);
-                    entries.add(new TupleWrapper(CLIENT_MODULE_ENTRY, identity, new Int64Wrapper(Agent.NUMBER, number), commitment, new StringWrapper(Client.NAME, name), icon.toBlock().setType(Client.ICON).toBlockable()).toBlock());
+                    entries.add(new TupleWrapper(CLIENT_MODULE_ENTRY, identity, new Int64Wrapper(Agent.NUMBER, number), commitment, new StringWrapper(Client.NAME, name)).toBlock());
                 }
                 tables.set(5, new ListWrapper(CLIENT_MODULE_TABLE, entries.freeze()).toBlock());
             }
@@ -420,7 +418,7 @@ public final class AgentModule implements BothModule {
             preparedStatement.executeBatch();
         }
         
-        try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(prefix + "client_agent (entity, agent, " + Commitment.COLUMNS + ", name, icon) VALUES (?, ?, ?, ?, ?, ?, ?)")) {
+        try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(prefix + "client_agent (entity, agent, " + Commitment.COLUMNS + ", name) VALUES (?, ?, ?, ?, ?, ?)")) {
             final @Nonnull ReadonlyList<Block> entries = new ListWrapper(tables.getNotNull(5)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(5);
@@ -428,7 +426,6 @@ public final class AgentModule implements BothModule {
                 preparedStatement.setLong(2, new Int64Wrapper(elements.getNotNull(1)).getValue());
                 new Commitment(elements.getNotNull(2)).set(preparedStatement, 3);
                 preparedStatement.setString(6, new StringWrapper(elements.getNotNull(3)).getString());
-                new Image(elements.getNotNull(4)).set(preparedStatement, 7);
                 preparedStatement.addBatch();
             }
             preparedStatement.executeBatch();
@@ -500,7 +497,7 @@ public final class AgentModule implements BothModule {
     /**
      * Stores the semantic type {@code entry.client.agents.state@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType CLIENT_STATE_ENTRY = SemanticType.create("entry.client.agents.state@core.digitalid.net").load(TupleWrapper.TYPE, Agent.NUMBER, Commitment.TYPE, Client.NAME, Client.ICON);
+    private static final @Nonnull SemanticType CLIENT_STATE_ENTRY = SemanticType.create("entry.client.agents.state@core.digitalid.net").load(TupleWrapper.TYPE, Agent.NUMBER, Commitment.TYPE, Client.NAME);
     
     /**
      * Stores the semantic type {@code table.client.agents.state@core.digitalid.net}.
@@ -577,14 +574,13 @@ public final class AgentModule implements BothModule {
                 tables.set(2, new ListWrapper(AGENT_RESTRICTIONS_STATE_TABLE, entries.freeze()).toBlock());
             }
             
-            try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT agent, " + Commitment.COLUMNS + ", name, icon" + from + "client_agent" + where)) {
+            try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT agent, " + Commitment.COLUMNS + ", name" + from + "client_agent" + where)) {
                 final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<>();
                 while (resultSet.next()) {
                     final long number = resultSet.getLong(1);
                     final @Nonnull Commitment commitment = Commitment.get(resultSet, 2);
                     final @Nonnull String name = resultSet.getString(5);
-                    final @Nonnull Image icon = Image.get(resultSet, 6);
-                    entries.add(new TupleWrapper(CLIENT_STATE_ENTRY, new Int64Wrapper(Agent.NUMBER, number), commitment, new StringWrapper(Client.NAME, name), icon.toBlock().setType(Client.ICON).toBlockable()).toBlock());
+                    entries.add(new TupleWrapper(CLIENT_STATE_ENTRY, new Int64Wrapper(Agent.NUMBER, number), commitment, new StringWrapper(Client.NAME, name)).toBlock());
                 }
                 tables.set(3, new ListWrapper(CLIENT_STATE_TABLE, entries.freeze()).toBlock());
             }
@@ -670,7 +666,7 @@ public final class AgentModule implements BothModule {
             preparedStatement.executeBatch();
         }
         
-        try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(prefix + "client_agent (entity, agent, " + Commitment.COLUMNS + ", name, icon) VALUES (?, ?, ?, ?, ?, ?, ?)")) {
+        try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(prefix + "client_agent (entity, agent, " + Commitment.COLUMNS + ", name) VALUES (?, ?, ?, ?, ?, ?)")) {
             entity.set(preparedStatement, 1);
             final @Nonnull ReadonlyList<Block> entries = new ListWrapper(tables.getNotNull(3)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
@@ -678,7 +674,6 @@ public final class AgentModule implements BothModule {
                 preparedStatement.setLong(2, new Int64Wrapper(elements.getNotNull(0)).getValue());
                 new Commitment(elements.getNotNull(1)).set(preparedStatement, 3);
                 preparedStatement.setString(6, new StringWrapper(elements.getNotNull(2)).getString());
-                new Image(elements.getNotNull(3)).set(preparedStatement, 7);
                 preparedStatement.addBatch();
             }
             preparedStatement.executeBatch();
@@ -1078,30 +1073,26 @@ public final class AgentModule implements BothModule {
      * @param restrictions the restrictions of the client agent.
      * @param commitment the commitment of the client agent.
      * @param name the name of the given client agent.
-     * @param icon the icon of the given client agent.
      * 
      * @require permissions.isFrozen() : "The permissions are frozen.";
      * @require Client.isValid(name) : "The name is valid.";
-     * @require Client.isValid(icon) : "The icon is valid.";
      */
     @NonCommitting
-    static void addClientAgent(@Nonnull ClientAgent clientAgent, @Nonnull ReadonlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nonnull Commitment commitment, @Nonnull String name, @Nonnull Image icon) throws SQLException {
+    static void addClientAgent(@Nonnull ClientAgent clientAgent, @Nonnull ReadonlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nonnull Commitment commitment, @Nonnull String name) throws SQLException {
         assert permissions.isFrozen() : "The permissions are frozen.";
         assert Client.isValid(name) : "The name is valid.";
-        assert Client.isValid(icon) : "The icon is valid.";
         
         addAgent(clientAgent);
         setRestrictions(clientAgent, restrictions);
         addPermissions(clientAgent, permissions);
         
         final @Nonnull NonHostEntity entity = clientAgent.getEntity();
-        final @Nonnull String SQL = "INSERT INTO " + entity.getSite() + "client_agent (entity, agent, " + Commitment.COLUMNS + ", name, icon) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        final @Nonnull String SQL = "INSERT INTO " + entity.getSite() + "client_agent (entity, agent, " + Commitment.COLUMNS + ", name) VALUES (?, ?, ?, ?, ?, ?)";
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
             entity.set(preparedStatement, 1);
             clientAgent.set(preparedStatement, 2);
             commitment.set(preparedStatement, 3);
             preparedStatement.setString(6, name);
-            icon.set(preparedStatement, 7);
             preparedStatement.executeUpdate();
         }
     }
@@ -1208,53 +1199,6 @@ public final class AgentModule implements BothModule {
             preparedStatement.setString(1, newName);
             preparedStatement.setString(2, oldName);
             if (preparedStatement.executeUpdate() == 0) throw new SQLException("The name of the client agent with the number " + clientAgent + " could not be replaced.");
-        }
-    }
-    
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Icon –––––––––––––––––––––––––––––––––––––––––––––––––– */
-    
-    /**
-     * Returns the icon of the given client agent.
-     * 
-     * @param clientAgent the client agent whose icon is to be returned.
-     * 
-     * @ensure Client.isValid(return) : "The returned icon is valid.";
-     */
-    @Pure
-    @NonCommitting
-    static @Nonnull Image getIcon(@Nonnull ClientAgent clientAgent) throws SQLException {
-        final @Nonnull NonHostEntity entity = clientAgent.getEntity();
-        final @Nonnull String SQL = "SELECT icon FROM " + entity.getSite() + "client_agent WHERE entity = " + entity + " AND agent = " + clientAgent;
-        try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
-            if (resultSet.next()) {
-                final @Nonnull Image icon = Image.get(resultSet, 1);
-                if (!Client.isValid(icon)) throw new SQLException("The icon of the client agent with the number " + clientAgent + " is invalid.");
-                return icon;
-            } else throw new SQLException("The given client agent has no icon.");
-        }
-    }
-    
-    /**
-     * Replaces the icon of the given client agent.
-     * 
-     * @param clientAgent the client agent whose icon is to be replaced.
-     * @param oldIcon the old icon of the given client agent.
-     * @param newIcon the new icon of the given client agent.
-     * 
-     * @require Client.isValid(oldIcon) : "The old icon is valid.";
-     * @require Client.isValid(newIcon) : "The new icon is valid.";
-     */
-    @NonCommitting
-    static void replaceIcon(@Nonnull ClientAgent clientAgent, @Nonnull Image oldIcon, @Nonnull Image newIcon) throws SQLException {
-        assert Client.isValid(oldIcon) : "The old icon is valid.";
-        assert Client.isValid(newIcon) : "The new icon is valid.";
-        
-        final @Nonnull NonHostEntity entity = clientAgent.getEntity();
-        final @Nonnull String SQL = "UPDATE " + entity.getSite() + "client_agent SET icon = ? WHERE entity = " + entity + " AND agent = " + clientAgent + " AND icon = ?";
-        try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
-            newIcon.set(preparedStatement, 1);
-            oldIcon.set(preparedStatement, 2);
-            if (preparedStatement.executeUpdate() == 0) throw new SQLException("The icon of the client agent with the number " + clientAgent + " could not be replaced.");
         }
     }
     

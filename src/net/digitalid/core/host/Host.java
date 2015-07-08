@@ -14,7 +14,6 @@ import net.digitalid.core.attribute.Attribute;
 import net.digitalid.core.attribute.AttributeValue;
 import net.digitalid.core.attribute.CertifiedAttributeValue;
 import net.digitalid.core.attribute.UncertifiedAttributeValue;
-import net.digitalid.core.auxiliary.Image;
 import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.client.Client;
 import net.digitalid.core.cryptography.KeyPair;
@@ -142,7 +141,7 @@ public final class Host extends Site {
         Database.commit();
         
         // TODO: What are the right permissions to pass here? Probably an aggregation of all the services.
-        this.client = new Client("_" + identifier.asHostName(), identifier.getString(), Image.HOST, AgentPermissions.GENERAL_WRITE);
+        this.client = new Client("_" + identifier.asHostName(), identifier.getString(), AgentPermissions.GENERAL_WRITE);
     }
     
     /**

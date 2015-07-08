@@ -1,9 +1,9 @@
 package net.digitalid.core.cryptography;
 
 import javax.annotation.Nonnull;
-import net.digitalid.core.annotations.NonNullableElements;
 import net.digitalid.core.annotations.Frozen;
 import net.digitalid.core.annotations.NonEmpty;
+import net.digitalid.core.annotations.NonNullableElements;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.collections.FreezableArray;
@@ -133,7 +133,7 @@ abstract class KeyChain<Key extends Blockable> implements Immutable, Blockable {
         for (final @Nonnull ReadonlyPair<Time, Key> item : items) {
             if (time.isGreaterThanOrEqualTo(item.getElement0())) return item.getElement1();
         }
-        throw new InvalidEncodingException("There is no key for the given time.");
+        throw new InvalidEncodingException("There is no key for the given time (" + time + ") in this key chain " + this + ".");
     }
     
     /**
@@ -175,6 +175,12 @@ abstract class KeyChain<Key extends Blockable> implements Immutable, Blockable {
             }
         }
         return createKeyChain(copy.freeze());
+    }
+    
+    @Pure
+    @Override
+    public final @Nonnull String toString() {
+        return items.toString();
     }
     
     
