@@ -12,7 +12,7 @@ import net.digitalid.core.wrappers.StringWrapper;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public final class AttributeType {
+public final class AttributeTypes {
     
     /**
      * Stores the semantic type {@code name@core.digitalid.net}.

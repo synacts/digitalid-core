@@ -1,6 +1,8 @@
 package net.digitalid.core.database;
 
 import java.io.File;
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -115,6 +117,14 @@ public final class SQLiteConfiguration extends Configuration {
     @Override
     protected @Nonnull Properties getProperties() {
         return properties;
+    }
+    
+    @Pure
+    @Override
+    protected @Nonnull Connection getConnection() throws SQLException {
+        final @Nonnull Connection connection = DriverManager.getConnection(getURL(), getProperties());
+        connection.setAutoCommit(false);
+        return connection;
     }
     
     @Locked

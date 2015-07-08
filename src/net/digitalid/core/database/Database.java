@@ -1,7 +1,6 @@
 package net.digitalid.core.database;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -158,10 +157,7 @@ public final class Database {
         @Override protected @Nullable Connection initialValue() {
             assert configuration != null : "The database is initialized.";
             try {
-                final @Nonnull Connection connection = DriverManager.getConnection(configuration.getURL(), configuration.getProperties());
-                connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
-                connection.setAutoCommit(false);
-                return connection;
+                return configuration.getConnection();
             } catch (@Nonnull SQLException exception) {
                 return null;
             }
@@ -183,12 +179,12 @@ public final class Database {
         assert isLocked() : "The database is locked.";
         
         final @Nullable Connection connection = Database.connection.get();
-        if (connection == null) {
+        if (connection != null) return connection;
+        else {
             Database.connection.remove();
             Logger.log(Level.WARNING, "Database", "Could not connect to the database.");
             throw new SQLException("Could not connect to the database.");
         }
-        return connection;
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Transactions –––––––––––––––––––––––––––––––––––––––––––––––––– */

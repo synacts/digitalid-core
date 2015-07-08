@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import net.digitalid.core.annotations.Committing;
-import net.digitalid.core.attribute.AttributeType;
+import net.digitalid.core.attribute.AttributeTypes;
 import net.digitalid.core.client.Client;
 import net.digitalid.core.client.Commitment;
 import net.digitalid.core.contact.Context;
@@ -41,9 +41,9 @@ public final class AgentTest extends IdentitySetup {
         print("accreditClientAgent");
         try {
             final @Nonnull AgentPermissions agentPermissions = new AgentPermissions();
-            agentPermissions.put(AttributeType.NAME, true);
-            agentPermissions.put(AttributeType.PRENAME, true);
-            agentPermissions.put(AttributeType.SURNAME, true);
+            agentPermissions.put(AttributeTypes.NAME, true);
+            agentPermissions.put(AttributeTypes.PRENAME, true);
+            agentPermissions.put(AttributeTypes.SURNAME, true);
             agentPermissions.freeze();
             
             client = new Client("object", "Object Client", agentPermissions);
@@ -103,8 +103,8 @@ public final class AgentTest extends IdentitySetup {
         print("_02_testPermissionsAdd");
         try {
             final @Nonnull AgentPermissions agentPermissions = new AgentPermissions();
-            agentPermissions.put(AttributeType.EMAIL, true);
-            agentPermissions.put(AttributeType.PHONE, false);
+            agentPermissions.put(AttributeTypes.EMAIL, true);
+            agentPermissions.put(AttributeTypes.PHONE, false);
             agentPermissions.freeze();
             
             getRole().getAgent().getWeakerAgent(role.getAgent().getNumber()).addPermissions(agentPermissions);
@@ -114,9 +114,9 @@ public final class AgentTest extends IdentitySetup {
             final @Nonnull ReadonlyAgentPermissions permissions = role.getAgent().getPermissions();
             Database.commit();
             
-            Assert.assertTrue(permissions.canWrite(AttributeType.EMAIL));
-            Assert.assertTrue(permissions.canRead(AttributeType.PHONE));
-            Assert.assertFalse(permissions.canWrite(AttributeType.PHONE));
+            Assert.assertTrue(permissions.canWrite(AttributeTypes.EMAIL));
+            Assert.assertTrue(permissions.canRead(AttributeTypes.PHONE));
+            Assert.assertFalse(permissions.canWrite(AttributeTypes.PHONE));
         } catch (@Nonnull InterruptedException | SQLException | IOException | PacketException | ExternalException exception) {
             exception.printStackTrace();
             Database.rollback();
@@ -131,8 +131,8 @@ public final class AgentTest extends IdentitySetup {
         try {
             final @Nonnull ClientAgent clientAgent = role.getAgent();
             final @Nonnull AgentPermissions agentPermissions = new AgentPermissions();
-            agentPermissions.put(AttributeType.PRENAME, true);
-            agentPermissions.put(AttributeType.SURNAME, true);
+            agentPermissions.put(AttributeTypes.PRENAME, true);
+            agentPermissions.put(AttributeTypes.SURNAME, true);
             agentPermissions.freeze();
             
             clientAgent.removePermissions(agentPermissions);
@@ -141,8 +141,8 @@ public final class AgentTest extends IdentitySetup {
             final @Nonnull ReadonlyAgentPermissions permissions = clientAgent.getPermissions();
             Database.commit();
             
-            Assert.assertFalse(permissions.canWrite(AttributeType.PRENAME));
-            Assert.assertFalse(permissions.canWrite(AttributeType.SURNAME));
+            Assert.assertFalse(permissions.canWrite(AttributeTypes.PRENAME));
+            Assert.assertFalse(permissions.canWrite(AttributeTypes.SURNAME));
         } catch (@Nonnull SQLException exception) {
             exception.printStackTrace();
             Database.rollback();

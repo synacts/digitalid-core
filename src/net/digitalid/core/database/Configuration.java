@@ -87,6 +87,19 @@ public abstract class Configuration implements Immutable {
     protected abstract @Nonnull Properties getProperties();
     
     /**
+     * Returns a new connection to the database.
+     * 
+     * @return a new connection to the database.
+     */
+    @Pure
+    protected @Nonnull Connection getConnection() throws SQLException {
+        final @Nonnull Connection connection = DriverManager.getConnection(getURL(), getProperties());
+        connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+        connection.setAutoCommit(false);
+        return connection;
+    }
+    
+    /**
      * Drops the configured database.
      */
     @Locked
