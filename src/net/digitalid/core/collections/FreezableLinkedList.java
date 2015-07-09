@@ -43,7 +43,7 @@ public class FreezableLinkedList<E> extends LinkedList<E> implements FreezableLi
     }
     
     @Override
-    public @Nonnull ReadonlyList<E> freeze() {
+    public @Nonnull ReadOnlyList<E> freeze() {
         if (!frozen) {
             frozen = true;
             for (@Nullable E element : this) {

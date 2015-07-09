@@ -21,8 +21,8 @@ import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.client.Client;
 import net.digitalid.core.collections.FreezableLinkedList;
 import net.digitalid.core.collections.FreezableList;
-import net.digitalid.core.collections.ReadonlyCollection;
-import net.digitalid.core.collections.ReadonlyList;
+import net.digitalid.core.collections.ReadOnlyCollection;
+import net.digitalid.core.collections.ReadOnlyList;
 import net.digitalid.core.database.Database;
 import net.digitalid.core.entity.EntityClass;
 import net.digitalid.core.entity.Role;
@@ -41,7 +41,7 @@ import net.digitalid.core.packet.Packet;
 import net.digitalid.core.service.CoreService;
 import net.digitalid.core.service.Service;
 import net.digitalid.core.tuples.FreezablePair;
-import net.digitalid.core.tuples.ReadonlyPair;
+import net.digitalid.core.tuples.ReadOnlyPair;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.SelfcontainedWrapper;
 import net.digitalid.core.wrappers.SignatureWrapper;
@@ -160,15 +160,15 @@ public final class SynchronizerModule implements ClientModule {
      * 
      * @return a list of similar methods from the pending actions whose service was not suspended.
      */
-    static @Nonnull @Frozen ReadonlyList<Method> getMethods() {
+    static @Nonnull @Frozen ReadOnlyList<Method> getMethods() {
         final @Nonnull FreezableList<Method> methods = new FreezableLinkedList<>();
-        final @Nonnull Set<ReadonlyPair<Role, Service>> ignored = new HashSet<>();
+        final @Nonnull Set<ReadOnlyPair<Role, Service>> ignored = new HashSet<>();
         final @Nonnull Iterator<InternalAction> iterator = pendingActions.iterator();
         while (iterator.hasNext()) {
             final @Nonnull InternalAction reference =  iterator.next();
             final @Nonnull Role role = reference.getRole();
             final @Nonnull Service service = reference.getService();
-            final @Nonnull ReadonlyPair<Role, Service> pair = new FreezablePair<>(role, service).freeze();
+            final @Nonnull ReadOnlyPair<Role, Service> pair = new FreezablePair<>(role, service).freeze();
             if (!ignored.contains(pair) && Synchronizer.suspend(role, service)) {
                 methods.add(reference);
                 if (!reference.isSimilarTo(reference)) return methods.freeze();
@@ -238,7 +238,7 @@ public final class SynchronizerModule implements ClientModule {
      * @require methods.getNotNull(0).isOnClient() : "The first method is on a client.";
      */
     @NonCommitting
-    static void remove(@Nonnull ReadonlyList<Method> methods) throws SQLException {
+    static void remove(@Nonnull ReadOnlyList<Method> methods) throws SQLException {
         assert methods.isNotEmpty() : "The list of methods is not empty.";
         assert methods.doesNotContainNull() : "The list of methods does not contain null.";
         assert Method.areSimilar(methods) : "The methods are similar to each other.";
@@ -266,7 +266,7 @@ public final class SynchronizerModule implements ClientModule {
      * @param lastAction the last action that might have been affected by the reload.
      */
     @Committing
-    static void redoPendingActions(@Nonnull Role role, @Nonnull ReadonlyCollection<BothModule> modules, @Nullable InternalAction lastAction) throws SQLException {
+    static void redoPendingActions(@Nonnull Role role, @Nonnull ReadOnlyCollection<BothModule> modules, @Nullable InternalAction lastAction) throws SQLException {
         for (final @Nonnull InternalAction pendingAction : pendingActions) {
             if (pendingAction.getRole().equals(role) && modules.contains(pendingAction.getModule())) {
                 try {
@@ -293,7 +293,7 @@ public final class SynchronizerModule implements ClientModule {
      * @return a list of all the actions that interfere with the given failed action and were thus reversed.
      */
     @NonCommitting
-    static @Nonnull ReadonlyList<InternalAction> reverseInterferingActions(@Nonnull Action failedAction) throws SQLException {
+    static @Nonnull ReadOnlyList<InternalAction> reverseInterferingActions(@Nonnull Action failedAction) throws SQLException {
         final @Nonnull Role role = failedAction.getRole();
         final @Nonnull Service service = failedAction.getService();
         final @Nonnull FreezableList<InternalAction> reversedActions = new FreezableLinkedList<>();
@@ -315,7 +315,7 @@ public final class SynchronizerModule implements ClientModule {
      * @param reversedActions the actions that were reversed.
      */
     @Committing
-    static void redoReversedActions(@Nonnull ReadonlyList<InternalAction> reversedActions) throws SQLException {
+    static void redoReversedActions(@Nonnull ReadOnlyList<InternalAction> reversedActions) throws SQLException {
         for (@Nonnull InternalAction reversedAction : reversedActions) {
             try {
                 Logger.log(Level.DEBUGGING, "SynchronizerModule", "Reexecute the reversed action " + reversedAction + ".");

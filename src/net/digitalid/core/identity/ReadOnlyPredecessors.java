@@ -7,7 +7,7 @@ import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Capturable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.collections.ReadonlyList;
+import net.digitalid.core.collections.ReadOnlyList;
 import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.handler.Reply;
@@ -15,14 +15,14 @@ import net.digitalid.core.identifier.InternalNonHostIdentifier;
 import net.digitalid.core.interfaces.Blockable;
 
 /**
- * This interface provides readonly access to {@link Predecessors predecessors} and should <em>never</em> be cast away.
+ * This interface provides read-only access to {@link Predecessors predecessors} and should <em>never</em> be cast away.
  * 
  * @see Predecessors
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public interface ReadonlyPredecessors extends ReadonlyList<Predecessor>, Blockable {
+public interface ReadOnlyPredecessors extends ReadOnlyList<Predecessor>, Blockable {
 
     @Pure
     @Override
@@ -37,7 +37,7 @@ public interface ReadonlyPredecessors extends ReadonlyList<Predecessor>, Blockab
      * @ensure return.doesNotContainNull() : "The returned list does not contain null.";
      */
     @NonCommitting
-    public @Nonnull ReadonlyList<NonHostIdentity> getIdentities() throws SQLException, IOException, PacketException, ExternalException;
+    public @Nonnull ReadOnlyList<NonHostIdentity> getIdentities() throws SQLException, IOException, PacketException, ExternalException;
     
     /**
      * Sets these values as the predecessors of the given identifier.

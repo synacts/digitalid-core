@@ -20,7 +20,7 @@ import net.digitalid.core.interfaces.Immutable;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public class FreezableArray<E> extends FreezableObject implements ReadonlyArray<E>, FreezableIterable<E> {
+public class FreezableArray<E> extends FreezableObject implements ReadOnlyArray<E>, FreezableIterable<E> {
     
     /**
      * Stores the elements in an array.
@@ -49,7 +49,7 @@ public class FreezableArray<E> extends FreezableObject implements ReadonlyArray<
     
     
     @Override
-    public @Nonnull ReadonlyArray<E> freeze() {
+    public @Nonnull ReadOnlyArray<E> freeze() {
         if (isNotFrozen()) {
             super.freeze();
             for (final @Nullable E element : array) {

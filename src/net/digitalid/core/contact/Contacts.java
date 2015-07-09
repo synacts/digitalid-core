@@ -14,7 +14,7 @@ import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.collections.FreezableArrayList;
 import net.digitalid.core.collections.FreezableLinkedHashSet;
 import net.digitalid.core.collections.FreezableList;
-import net.digitalid.core.collections.ReadonlyList;
+import net.digitalid.core.collections.ReadOnlyList;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.packet.PacketException;
@@ -30,7 +30,7 @@ import net.digitalid.core.wrappers.ListWrapper;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public final class Contacts extends FreezableLinkedHashSet<Contact> implements ReadonlyContacts, Blockable, SQLizable {
+public final class Contacts extends FreezableLinkedHashSet<Contact> implements ReadOnlyContacts, Blockable, SQLizable {
     
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -62,7 +62,7 @@ public final class Contacts extends FreezableLinkedHashSet<Contact> implements R
      * 
      * @param contacts the contacts to be added.
      */
-    public @NonFrozen Contacts(@Nonnull ReadonlyContacts contacts) {
+    public @NonFrozen Contacts(@Nonnull ReadOnlyContacts contacts) {
         addAll(contacts);
     }
     
@@ -94,14 +94,14 @@ public final class Contacts extends FreezableLinkedHashSet<Contact> implements R
     public @NonFrozen Contacts(@Nonnull NonHostEntity entity, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
-        final @Nonnull ReadonlyList<Block> elements = new ListWrapper(block).getElementsNotNull();
+        final @Nonnull ReadOnlyList<Block> elements = new ListWrapper(block).getElementsNotNull();
         for (final @Nonnull Block element : elements) add(Contact.get(entity, element));
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Freezable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Override
-    public @Nonnull @Frozen ReadonlyContacts freeze() {
+    public @Nonnull @Frozen ReadOnlyContacts freeze() {
         super.freeze();
         return this;
     }
@@ -120,7 +120,7 @@ public final class Contacts extends FreezableLinkedHashSet<Contact> implements R
      * @param contacts the contacts to add to these contacts.
      */
     @NonFrozenRecipient
-    public void addAll(@Nonnull ReadonlyContacts contacts) {
+    public void addAll(@Nonnull ReadOnlyContacts contacts) {
         super.addAll((Contacts) contacts);
     }
     
@@ -130,7 +130,7 @@ public final class Contacts extends FreezableLinkedHashSet<Contact> implements R
      * @param contacts the contacts to remove from these contacts.
      */
     @NonFrozenRecipient
-    public void removeAll(@Nonnull ReadonlyContacts contacts) {
+    public void removeAll(@Nonnull ReadOnlyContacts contacts) {
         super.removeAll((Contacts) contacts);
     }
     

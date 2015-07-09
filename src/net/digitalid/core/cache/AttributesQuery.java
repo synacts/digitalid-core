@@ -4,18 +4,18 @@ import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.agent.ReadonlyAgentPermissions;
+import net.digitalid.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.attribute.Attribute;
 import net.digitalid.core.attribute.AttributeValue;
 import net.digitalid.core.collections.FreezableArrayList;
 import net.digitalid.core.collections.FreezableList;
-import net.digitalid.core.collections.ReadonlyArray;
+import net.digitalid.core.collections.ReadOnlyArray;
 import net.digitalid.core.contact.AttributeTypeSet;
 import net.digitalid.core.contact.Contact;
-import net.digitalid.core.contact.ReadonlyAttributeTypeSet;
-import net.digitalid.core.contact.ReadonlyContactPermissions;
+import net.digitalid.core.contact.ReadOnlyAttributeTypeSet;
+import net.digitalid.core.contact.ReadOnlyContactPermissions;
 import net.digitalid.core.entity.Account;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.Role;
@@ -58,7 +58,7 @@ public final class AttributesQuery extends CoreServiceExternalQuery {
      * @invariant attributeTypes.isFrozen() : "The attribute types are frozen.";
      * @invariant attributeTypes.isNotEmpty() : "The attribute types are not empty.";
      */
-    private final @Nonnull ReadonlyAttributeTypeSet attributeTypes;
+    private final @Nonnull ReadOnlyAttributeTypeSet attributeTypes;
     
     /**
      * Stores whether the published values are queried.
@@ -76,7 +76,7 @@ public final class AttributesQuery extends CoreServiceExternalQuery {
      * @require attributeTypes.isFrozen() : "The attribute types are frozen.";
      * @require attributeTypes.isNotEmpty() : "The attribute types are not empty.";
      */
-    public AttributesQuery(@Nullable Role role, @Nonnull InternalIdentifier subject, @Nonnull ReadonlyAttributeTypeSet attributeTypes, boolean published) {
+    public AttributesQuery(@Nullable Role role, @Nonnull InternalIdentifier subject, @Nonnull ReadOnlyAttributeTypeSet attributeTypes, boolean published) {
         super(role, subject);
         
         assert attributeTypes.isFrozen() : "The attribute types are frozen.";
@@ -105,7 +105,7 @@ public final class AttributesQuery extends CoreServiceExternalQuery {
     private AttributesQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException  {
         super(entity, signature, recipient);
         
-        final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(2);
+        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(2);
         this.attributeTypes = new AttributeTypeSet(elements.getNotNull(0)).freeze();
         if (attributeTypes.isEmpty()) throw new InvalidEncodingException("The attribute types may not be empty.");
         this.published = new BooleanWrapper(elements.getNotNull(1)).getValue();
@@ -126,7 +126,7 @@ public final class AttributesQuery extends CoreServiceExternalQuery {
     
     @Pure
     @Override
-    public @Nonnull ReadonlyAgentPermissions getRequiredPermissions() {
+    public @Nonnull ReadOnlyAgentPermissions getRequiredPermissions() {
         return attributeTypes.toAgentPermissions().freeze();
     }
     
@@ -142,7 +142,7 @@ public final class AttributesQuery extends CoreServiceExternalQuery {
         if (signature instanceof CredentialsSignatureWrapper && isInternalPerson) {
             final @Nonnull CredentialsSignatureWrapper credentialsSignature = (CredentialsSignatureWrapper) signature;
             
-            final @Nullable ReadonlyContactPermissions contactPermissions;
+            final @Nullable ReadOnlyContactPermissions contactPermissions;
             if (credentialsSignature.isIdentityBased() && !credentialsSignature.isRoleBased()) {
                 final @Nonnull InternalPerson issuer = credentialsSignature.getIssuer();
                 final @Nonnull Contact contact = Contact.get(getNonHostEntity(), issuer);

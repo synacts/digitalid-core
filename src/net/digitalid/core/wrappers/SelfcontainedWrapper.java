@@ -10,7 +10,7 @@ import net.digitalid.core.annotations.Exposed;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.collections.FreezableArray;
-import net.digitalid.core.collections.ReadonlyArray;
+import net.digitalid.core.collections.ReadOnlyArray;
 import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.exceptions.packet.PacketException;
@@ -133,7 +133,7 @@ public final class SelfcontainedWrapper extends BlockWrapper implements Immutabl
         super(block);
         
         this.tuple = new Block(IMPLEMENTATION, block);
-        final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(tuple).getElementsNotNull(2);
+        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(tuple).getElementsNotNull(2);
         final @Nonnull Identifier identifier = IdentifierClass.create(elements.getNotNull(0));
         this.element = elements.getNotNull(1);
         element.setType(identifier.getIdentity().toSemanticType());

@@ -13,7 +13,7 @@ import net.digitalid.core.attribute.UncertifiedAttributeValue;
 import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.collections.FreezableArrayList;
 import net.digitalid.core.collections.FreezableList;
-import net.digitalid.core.collections.ReadonlyList;
+import net.digitalid.core.collections.ReadOnlyList;
 import net.digitalid.core.entity.Account;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.exceptions.external.ExternalException;
@@ -51,7 +51,7 @@ public final class AttributesReply extends CoreServiceQueryReply {
      * 
      * @return whether all the attribute values which are not null are verified.
      */
-    static boolean areVerified(@Nonnull ReadonlyList<AttributeValue> attributeValues) {
+    static boolean areVerified(@Nonnull ReadOnlyList<AttributeValue> attributeValues) {
         for (final @Nullable AttributeValue attribute : attributeValues) {
             if (attribute != null && !attribute.isVerified()) return false;
         }
@@ -66,7 +66,7 @@ public final class AttributesReply extends CoreServiceQueryReply {
      * @invariant attributeValues.isNotEmpty() : "The attribute values are not empty.";
      * @invariant areVerified(attributeValues) : "All the attribute values which are not null are verified.";
      */
-    private final @Nonnull ReadonlyList<AttributeValue> attributeValues;
+    private final @Nonnull ReadOnlyList<AttributeValue> attributeValues;
     
     /**
      * Creates an attributes reply for the queried attribute values of given subject.
@@ -80,7 +80,7 @@ public final class AttributesReply extends CoreServiceQueryReply {
      */
     @OnlyForHosts
     @NonCommitting
-    AttributesReply(@Nonnull Account account, @Nonnull ReadonlyList<AttributeValue> attributeValues) {
+    AttributesReply(@Nonnull Account account, @Nonnull ReadOnlyList<AttributeValue> attributeValues) {
         super(account);
         
         assert attributeValues.isFrozen() : "The attribute values are frozen.";
@@ -106,7 +106,7 @@ public final class AttributesReply extends CoreServiceQueryReply {
         super(entity, signature, number);
         
         final @Nonnull InternalIdentity subject = getSubject().getIdentity();
-        final @Nonnull ReadonlyList<Block> elements = new ListWrapper(block).getElements();
+        final @Nonnull ReadOnlyList<Block> elements = new ListWrapper(block).getElements();
         final @Nonnull FreezableList<AttributeValue> attributeValues = new FreezableArrayList<>(elements.size());
         final @Nonnull Time time = new Time();
         for (final @Nullable Block element : elements) {
@@ -157,7 +157,7 @@ public final class AttributesReply extends CoreServiceQueryReply {
      * @ensure return.isNotEmpty() : "The attribute values are not empty.";
      * @ensure areVerified(return) : "All the attribute values which are not null are verified.";
      */
-    @Nonnull ReadonlyList<AttributeValue> getAttributeValues() {
+    @Nonnull ReadOnlyList<AttributeValue> getAttributeValues() {
         return attributeValues;
     }
     

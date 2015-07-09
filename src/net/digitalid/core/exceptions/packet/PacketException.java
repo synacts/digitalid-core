@@ -4,7 +4,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.collections.FreezableArray;
-import net.digitalid.core.collections.ReadonlyArray;
+import net.digitalid.core.collections.ReadOnlyArray;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.interfaces.Blockable;
@@ -95,7 +95,7 @@ public final class PacketException extends Exception implements Blockable {
     public static PacketException create(@Nonnull Block block) throws InvalidEncodingException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
-        final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(2);
+        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(2);
         final @Nonnull PacketError error = PacketError.get(elements.getNotNull(0));
         final @Nonnull String message = new StringWrapper(elements.getNotNull(1)).getString();
         return new PacketException(error, "A host responded with a packet error. [" + message + "]", null, true);

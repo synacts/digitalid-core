@@ -111,7 +111,7 @@ public final class AgentTest extends IdentitySetup {
             getRole().waitForCompletion(CoreService.SERVICE);
             
             role.refreshState(CoreService.SERVICE);
-            final @Nonnull ReadonlyAgentPermissions permissions = role.getAgent().getPermissions();
+            final @Nonnull ReadOnlyAgentPermissions permissions = role.getAgent().getPermissions();
             Database.commit();
             
             Assert.assertTrue(permissions.canWrite(AttributeTypes.EMAIL));
@@ -138,7 +138,7 @@ public final class AgentTest extends IdentitySetup {
             clientAgent.removePermissions(agentPermissions);
             
             clientAgent.reset(); // Not necessary but I want to test the database state.
-            final @Nonnull ReadonlyAgentPermissions permissions = clientAgent.getPermissions();
+            final @Nonnull ReadOnlyAgentPermissions permissions = clientAgent.getPermissions();
             Database.commit();
             
             Assert.assertFalse(permissions.canWrite(AttributeTypes.PRENAME));

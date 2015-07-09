@@ -13,7 +13,7 @@ import net.digitalid.core.client.Client;
 import net.digitalid.core.client.Commitment;
 import net.digitalid.core.client.SecretCommitment;
 import net.digitalid.core.collections.FreezableList;
-import net.digitalid.core.collections.ReadonlyList;
+import net.digitalid.core.collections.ReadOnlyList;
 import net.digitalid.core.entity.NativeRole;
 import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.packet.PacketError;
@@ -55,7 +55,7 @@ public final class ClientRequest extends Request {
      * @require methods.getNotNull(0).isOnClient() : "The methods are on a client.";
      */
     @NonCommitting
-    public ClientRequest(@Nonnull ReadonlyList<Method> methods, @Nonnull InternalIdentifier subject, @Nullable RequestAudit audit, @Nonnull SecretCommitment commitment) throws SQLException, IOException, PacketException, ExternalException {
+    public ClientRequest(@Nonnull ReadOnlyList<Method> methods, @Nonnull InternalIdentifier subject, @Nullable RequestAudit audit, @Nonnull SecretCommitment commitment) throws SQLException, IOException, PacketException, ExternalException {
         this(methods, subject, audit, commitment, 0);
     }
     
@@ -69,7 +69,7 @@ public final class ClientRequest extends Request {
      * @param iteration how many times this request was resent.
      */
     @NonCommitting
-    private ClientRequest(@Nonnull ReadonlyList<Method> methods, @Nonnull InternalIdentifier subject, @Nullable RequestAudit audit, @Nonnull SecretCommitment commitment, int iteration) throws SQLException, IOException, PacketException, ExternalException {
+    private ClientRequest(@Nonnull ReadOnlyList<Method> methods, @Nonnull InternalIdentifier subject, @Nullable RequestAudit audit, @Nonnull SecretCommitment commitment, int iteration) throws SQLException, IOException, PacketException, ExternalException {
         super(methods, subject.getHostIdentifier(), getSymmetricKey(subject.getHostIdentifier(), Time.HOUR), subject, audit, commitment, iteration);
     }
     

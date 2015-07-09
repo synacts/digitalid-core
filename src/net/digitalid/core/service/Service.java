@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.agent.Agent;
-import net.digitalid.core.agent.ReadonlyAgentPermissions;
+import net.digitalid.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.core.agent.Restrictions;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
@@ -20,8 +20,8 @@ import net.digitalid.core.collections.FreezableLinkedHashMap;
 import net.digitalid.core.collections.FreezableLinkedList;
 import net.digitalid.core.collections.FreezableList;
 import net.digitalid.core.collections.FreezableMap;
-import net.digitalid.core.collections.ReadonlyCollection;
-import net.digitalid.core.collections.ReadonlyList;
+import net.digitalid.core.collections.ReadOnlyCollection;
+import net.digitalid.core.collections.ReadOnlyList;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.entity.Role;
 import net.digitalid.core.entity.Site;
@@ -66,7 +66,7 @@ public abstract class Service implements BothModule, SQLizable {
      * @return a list of the services installed on this server.
      */
     @Pure
-    public static @Nonnull ReadonlyCollection<Service> getServices() {
+    public static @Nonnull ReadOnlyCollection<Service> getServices() {
         return services.values();
     }
     
@@ -219,7 +219,7 @@ public abstract class Service implements BothModule, SQLizable {
      * @return the modules that are used on both hosts and clients of this service.
      */
     @Pure
-    public final @Nonnull ReadonlyCollection<BothModule> getBothModules() {
+    public final @Nonnull ReadOnlyCollection<BothModule> getBothModules() {
         return bothModules.values();
     }
     
@@ -307,7 +307,7 @@ public abstract class Service implements BothModule, SQLizable {
     public final void importModule(@Nonnull Host host, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         assert block.getType().isBasedOn(getModuleFormat()) : "The block is based on the format of this module.";
         
-        final @Nonnull ReadonlyList<Block> elements = new ListWrapper(block).getElementsNotNull();
+        final @Nonnull ReadOnlyList<Block> elements = new ListWrapper(block).getElementsNotNull();
         for (final @Nonnull Block element : elements) {
             final @Nonnull Block module = new SelfcontainedWrapper(element).getElement();
             final @Nullable HostModule hostModule = hostModules.get(module.getType());
@@ -337,7 +337,7 @@ public abstract class Service implements BothModule, SQLizable {
     @Pure
     @Override
     @NonCommitting
-    public final @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadonlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws SQLException {
+    public final @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws SQLException {
         final @Nonnull FreezableList<Block> elements = new FreezableArrayList<>(bothModules.size());
         for (final @Nonnull BothModule bothModule : bothModules.values()) {
             elements.add(new SelfcontainedWrapper(STATE, bothModule.getState(entity, permissions, restrictions, agent)).toBlock());
@@ -350,7 +350,7 @@ public abstract class Service implements BothModule, SQLizable {
     public final void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         assert block.getType().isBasedOn(getStateFormat()) : "The block is based on the indicated type.";
         
-        final @Nonnull ReadonlyList<Block> elements = new ListWrapper(block).getElementsNotNull();
+        final @Nonnull ReadOnlyList<Block> elements = new ListWrapper(block).getElementsNotNull();
         for (final @Nonnull Block element : elements) {
             final @Nonnull Block state = new SelfcontainedWrapper(element).getElement();
             final @Nullable BothModule bothModule = bothModules.get(state.getType());

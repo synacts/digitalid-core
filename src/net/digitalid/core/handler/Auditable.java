@@ -3,7 +3,7 @@ package net.digitalid.core.handler;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.agent.Agent;
-import net.digitalid.core.agent.ReadonlyAgentPermissions;
+import net.digitalid.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.core.agent.Restrictions;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.synchronizer.Audit;
@@ -27,7 +27,7 @@ public interface Auditable {
      * @ensure return.areEmptyOrSingle() : "The returned permissions are empty or single.";
      */
     @Pure
-    public @Nonnull ReadonlyAgentPermissions getAuditPermissions();
+    public @Nonnull ReadOnlyAgentPermissions getAuditPermissions();
     
     /**
      * Returns the restrictions that an agent needs to cover in order to see the audit of this handler.

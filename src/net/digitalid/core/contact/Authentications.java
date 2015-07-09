@@ -21,7 +21,7 @@ import net.digitalid.core.wrappers.BooleanWrapper;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public final class Authentications extends AttributeTypeSet implements ReadonlyAuthentications, Blockable {
+public final class Authentications extends AttributeTypeSet implements ReadOnlyAuthentications, Blockable {
     
     /**
      * Stores the semantic type {@code authentication.contact@core.digitalid.net}.
@@ -37,12 +37,12 @@ public final class Authentications extends AttributeTypeSet implements ReadonlyA
     /**
      * Stores an empty set of authentications.
      */
-    public static final @Nonnull ReadonlyAuthentications NONE = new Authentications().freeze();
+    public static final @Nonnull ReadOnlyAuthentications NONE = new Authentications().freeze();
     
     /**
      * Stores an identity-based authentication.
      */
-    public static final @Nonnull ReadonlyAuthentications IDENTITY_BASED = new Authentications(IDENTITY_BASED_TYPE).freeze();
+    public static final @Nonnull ReadOnlyAuthentications IDENTITY_BASED = new Authentications(IDENTITY_BASED_TYPE).freeze();
     
     
     /**
@@ -68,7 +68,7 @@ public final class Authentications extends AttributeTypeSet implements ReadonlyA
      * 
      * @param authentications the authentications to add to the new authentications.
      */
-    public Authentications(@Nonnull ReadonlyAuthentications authentications) {
+    public Authentications(@Nonnull ReadOnlyAuthentications authentications) {
         super(authentications);
     }
     
@@ -92,7 +92,7 @@ public final class Authentications extends AttributeTypeSet implements ReadonlyA
     
     
     @Override
-    public @Nonnull ReadonlyAuthentications freeze() {
+    public @Nonnull ReadOnlyAuthentications freeze() {
         super.freeze();
         return this;
     }

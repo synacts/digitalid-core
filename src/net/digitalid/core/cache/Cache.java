@@ -21,7 +21,7 @@ import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.attribute.AttributeValue;
 import net.digitalid.core.attribute.CertifiedAttributeValue;
 import net.digitalid.core.auxiliary.Time;
-import net.digitalid.core.collections.ReadonlyList;
+import net.digitalid.core.collections.ReadOnlyList;
 import net.digitalid.core.contact.AttributeTypeSet;
 import net.digitalid.core.cryptography.PublicKey;
 import net.digitalid.core.cryptography.PublicKeyChain;
@@ -49,7 +49,7 @@ import net.digitalid.core.io.Logger;
 import net.digitalid.core.packet.Request;
 import net.digitalid.core.packet.Response;
 import net.digitalid.core.tuples.FreezablePair;
-import net.digitalid.core.tuples.ReadonlyPair;
+import net.digitalid.core.tuples.ReadOnlyPair;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.SelfcontainedWrapper;
 
@@ -145,7 +145,7 @@ public final class Cache {
      */
     @Locked
     @NonCommitting
-    private static @Nonnull @Frozen ReadonlyPair<Boolean, AttributeValue> getCachedAttributeValue(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull Time time, @Nonnull SemanticType type) throws SQLException, IOException, PacketException, ExternalException {
+    private static @Nonnull @Frozen ReadOnlyPair<Boolean, AttributeValue> getCachedAttributeValue(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull Time time, @Nonnull SemanticType type) throws SQLException, IOException, PacketException, ExternalException {
         assert time.isNonNegative() : "The given time is non-negative.";
         assert type.isAttributeFor(identity.getCategory()) : "The type can be used as an attribute for the category of the given identity.";
         
@@ -256,7 +256,7 @@ public final class Cache {
         final @Nonnull AttributeTypeSet typesToRetrieve = new AttributeTypeSet();
         final @Nonnull List<Integer> indexesToStore = new LinkedList<>();
         for (int i = 0; i < types.length; i++) {
-            final @Nonnull @Frozen ReadonlyPair<Boolean, AttributeValue> cache = getCachedAttributeValue(identity, role, time, types[i]);
+            final @Nonnull @Frozen ReadOnlyPair<Boolean, AttributeValue> cache = getCachedAttributeValue(identity, role, time, types[i]);
             if (cache.getElement0()) {
                 attributeValues[i] = cache.getElement1();
             } else {
@@ -275,7 +275,7 @@ public final class Cache {
             } else {
                 final @Nonnull Response response = new AttributesQuery(role, identity.getAddress(), typesToRetrieve.freeze(), true).send();
                 final @Nonnull AttributesReply reply = response.getReplyNotNull(0);
-                final @Nonnull ReadonlyList<AttributeValue> values = reply.getAttributeValues();
+                final @Nonnull ReadOnlyList<AttributeValue> values = reply.getAttributeValues();
                 if (values.size() != typesToRetrieve.size()) throw new InvalidEncodingException("The number of queried and replied attributes have to be the same.");
                 int i = 0;
                 for (final @Nonnull SemanticType type : typesToRetrieve) {

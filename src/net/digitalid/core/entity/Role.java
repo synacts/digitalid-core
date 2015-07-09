@@ -18,7 +18,7 @@ import net.digitalid.core.annotations.UniqueElements;
 import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.client.Client;
 import net.digitalid.core.collections.FreezableList;
-import net.digitalid.core.collections.ReadonlyList;
+import net.digitalid.core.collections.ReadOnlyList;
 import net.digitalid.core.concept.Aspect;
 import net.digitalid.core.concept.Instance;
 import net.digitalid.core.concept.Observer;
@@ -286,7 +286,7 @@ public abstract class Role extends EntityClass implements NonHostEntity, Immutab
      */
     @Pure
     @NonCommitting
-    public @Nonnull @NonFrozen @NonNullableElements @UniqueElements ReadonlyList<NonNativeRole> getRoles() throws SQLException {
+    public @Nonnull @NonFrozen @NonNullableElements @UniqueElements ReadOnlyList<NonNativeRole> getRoles() throws SQLException {
         if (roles == null) roles = RoleModule.getRoles(this);
         return roles;
     }

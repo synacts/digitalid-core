@@ -4,8 +4,8 @@ import javax.annotation.Nonnull;
 import net.digitalid.core.annotations.NonFrozen;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.collections.FreezableMap;
-import net.digitalid.core.collections.ReadonlyCollection;
-import net.digitalid.core.collections.ReadonlyMap;
+import net.digitalid.core.collections.ReadOnlyCollection;
+import net.digitalid.core.collections.ReadOnlyMap;
 
 /**
  * Description.
@@ -18,7 +18,7 @@ import net.digitalid.core.collections.ReadonlyMap;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 0.0
  */
-public class IndexedProperty<K, V, R extends ReadonlyMap<K, V>, F extends FreezableMap<K, V>> implements ReadOnlyIndexedProperty<K, V, R> {
+public class IndexedProperty<K, V, R extends ReadOnlyMap<K, V>, F extends FreezableMap<K, V>> implements ReadOnlyIndexedProperty<K, V, R> {
     
     public IndexedProperty(@Nonnull F map) {
         this.map = map;
@@ -34,7 +34,7 @@ public class IndexedProperty<K, V, R extends ReadonlyMap<K, V>, F extends Freeza
     
     @Pure
     @Override
-    public @Nonnull ReadonlyCollection<V> getAll() {
+    public @Nonnull ReadOnlyCollection<V> getAll() {
         return map.values();
     }
     

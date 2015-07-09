@@ -11,7 +11,7 @@ import net.digitalid.core.annotations.OnlyForActions;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.collections.ConcurrentHashMap;
 import net.digitalid.core.collections.ConcurrentMap;
-import net.digitalid.core.collections.ReadonlySet;
+import net.digitalid.core.collections.ReadOnlySet;
 import net.digitalid.core.concept.Aspect;
 import net.digitalid.core.concept.Instance;
 import net.digitalid.core.concept.Observer;
@@ -62,7 +62,7 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
      * @require isOnHost() : "This outgoing role is on a host.";
      */
     @NonCommitting
-    public void issue(@Nonnull ReadonlySet<Contact> contacts) throws SQLException {
+    public void issue(@Nonnull ReadOnlySet<Contact> contacts) throws SQLException {
         assert isOnHost() : "This outgoing role is on a host.";
         
         for (final @Nonnull Contact contact : contacts) {
@@ -92,7 +92,7 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
      * @require isOnHost() : "This outgoing role is on a host.";
      */
     @NonCommitting
-    public void revoke(@Nonnull ReadonlySet<Contact> contacts) throws SQLException {
+    public void revoke(@Nonnull ReadOnlySet<Contact> contacts) throws SQLException {
         assert isOnHost() : "This outgoing role is on a host.";
         
         for (final @Nonnull Contact contact : contacts) {
@@ -223,8 +223,8 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
     public void replaceContext(@Nonnull Context oldContext, @Nonnull Context newContext) throws SQLException {
         AgentModule.replaceContext(this, oldContext, newContext);
         if (isOnHost()) {
-            final @Nonnull ReadonlySet<Contact> oldContacts = oldContext.getAllContacts();
-            final @Nonnull ReadonlySet<Contact> newContacts = newContext.getAllContacts();
+            final @Nonnull ReadOnlySet<Contact> oldContacts = oldContext.getAllContacts();
+            final @Nonnull ReadOnlySet<Contact> newContacts = newContext.getAllContacts();
             revoke(oldContacts.subtract(newContacts));
             issue(newContacts.subtract(oldContacts));
         }
@@ -280,7 +280,7 @@ public final class OutgoingRole extends Agent implements Immutable, Blockable, S
      */
     @NonCommitting
     public void checkCovers(@Nonnull Credential credential) throws SQLException, PacketException {
-        final @Nullable ReadonlyAgentPermissions permissions = credential.getPermissions();
+        final @Nullable ReadOnlyAgentPermissions permissions = credential.getPermissions();
         assert permissions != null : "The permissions of the credential are not null.";
         final @Nullable Restrictions restrictions = credential.getRestrictions();
         assert restrictions != null : "The restrictions of the credential are not null.";

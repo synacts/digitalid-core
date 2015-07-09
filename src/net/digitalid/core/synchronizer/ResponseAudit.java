@@ -16,8 +16,8 @@ import net.digitalid.core.collections.FreezableHashSet;
 import net.digitalid.core.collections.FreezableLinkedList;
 import net.digitalid.core.collections.FreezableList;
 import net.digitalid.core.collections.FreezableSet;
-import net.digitalid.core.collections.ReadonlyList;
-import net.digitalid.core.collections.ReadonlySet;
+import net.digitalid.core.collections.ReadOnlyList;
+import net.digitalid.core.collections.ReadOnlySet;
 import net.digitalid.core.database.Database;
 import net.digitalid.core.entity.Role;
 import net.digitalid.core.exceptions.external.ExternalException;
@@ -62,7 +62,7 @@ public final class ResponseAudit extends Audit implements Immutable, Blockable {
      * @invariant trail.doesNotContainNull() : "The trail does not contain null.";
      * @invariant for (Block block : trail) block.getType().isBasedOn(Packet.SIGNATURE) : "Each block of the trail is based on the packet signature type.";
      */
-    private final @Nonnull ReadonlyList<Block> trail;
+    private final @Nonnull ReadOnlyList<Block> trail;
     
     /**
      * Creates a new audit with the given times and trail.
@@ -75,7 +75,7 @@ public final class ResponseAudit extends Audit implements Immutable, Blockable {
      * @require trail.doesNotContainNull() : "The trail does not contain null.";
      * @require for (Block block : trail) block.getType().isBasedOn(Packet.SIGNATURE) : "Each block of the trail is based on the packet signature type.";
      */
-    public ResponseAudit(@Nonnull Time lastTime, @Nonnull Time thisTime, @Nonnull ReadonlyList<Block> trail) {
+    public ResponseAudit(@Nonnull Time lastTime, @Nonnull Time thisTime, @Nonnull ReadOnlyList<Block> trail) {
         super(lastTime);
         
         assert trail.isFrozen() : "The trail is frozen.";
@@ -117,7 +117,7 @@ public final class ResponseAudit extends Audit implements Immutable, Blockable {
      * @ensure for (Block block : return) block.getType().isBasedOn(Packet.SIGNATURE) : "Each block of the returned trail is based on the packet signature type.";
      */
     @Pure
-    public @Nonnull ReadonlyList<Block> getTrail() {
+    public @Nonnull ReadOnlyList<Block> getTrail() {
         return trail;
     }
     
@@ -132,12 +132,12 @@ public final class ResponseAudit extends Audit implements Immutable, Blockable {
     /**
      * Stores an empty set of modules.
      */
-    static final @Nonnull ReadonlySet<BothModule> emptyModuleSet = new FreezableHashSet<BothModule>().freeze();
+    static final @Nonnull ReadOnlySet<BothModule> emptyModuleSet = new FreezableHashSet<BothModule>().freeze();
     
     /**
      * Stores an empty list of methods.
      */
-    static final @Nonnull ReadonlyList<Method> emptyMethodList = new FreezableLinkedList<Method>().freeze();
+    static final @Nonnull ReadOnlyList<Method> emptyMethodList = new FreezableLinkedList<Method>().freeze();
     
     /**
      * Executes the trail of this audit.
@@ -149,7 +149,7 @@ public final class ResponseAudit extends Audit implements Immutable, Blockable {
      * @param ignoredModules the modules that are ignored when executing the trail.
      */
     @Committing
-    void execute(@Nonnull Role role, @Nonnull Service service, @Nonnull HostIdentifier recipient, @Nonnull ReadonlyList<Method> methods, @Nonnull ReadonlySet<BothModule> ignoredModules) throws SQLException, IOException, PacketException, ExternalException {
+    void execute(@Nonnull Role role, @Nonnull Service service, @Nonnull HostIdentifier recipient, @Nonnull ReadOnlyList<Method> methods, @Nonnull ReadOnlySet<BothModule> ignoredModules) throws SQLException, IOException, PacketException, ExternalException {
         final @Nonnull FreezableSet<BothModule> suspendedModules = new FreezableHashSet<>();
         for (@Nonnull Block block : trail) {
             final @Nonnull SignatureWrapper signature = SignatureWrapper.decodeWithoutVerifying(block, true, role);
@@ -158,7 +158,7 @@ public final class ResponseAudit extends Audit implements Immutable, Blockable {
             final @Nonnull Action action = Method.get(role, signature, recipient, element).toAction();
             Database.commit();
             
-            final @Nonnull ReadonlyList<BothModule> suspendModules = action.suspendModules();
+            final @Nonnull ReadOnlyList<BothModule> suspendModules = action.suspendModules();
             if (suspendModules.isNotEmpty()) {
                 suspendedModules.addAll((FreezableList<BothModule>) suspendModules);
             }
@@ -175,7 +175,7 @@ public final class ResponseAudit extends Audit implements Immutable, Blockable {
                     Database.rollback();
                     
                     try {
-                        final @Nonnull ReadonlyList<InternalAction> reversedActions = SynchronizerModule.reverseInterferingActions(action);
+                        final @Nonnull ReadOnlyList<InternalAction> reversedActions = SynchronizerModule.reverseInterferingActions(action);
                         Logger.log(Level.DEBUGGING, "ResponseAudit", "Execute on the client after having reversed the interfering actions the audited action " + action + ".");
                         action.executeOnClient();
                         ActionModule.audit(action);

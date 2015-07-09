@@ -4,7 +4,7 @@ import javax.annotation.Nonnull;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.collections.FreezableArray;
-import net.digitalid.core.collections.ReadonlyList;
+import net.digitalid.core.collections.ReadOnlyList;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.interfaces.Blockable;
@@ -76,7 +76,7 @@ public abstract class Audit implements Immutable, Blockable {
             return new RequestAudit(lastTime);
         } else {
             final @Nonnull Time thisTime = new Time(tuple.getElementNotNull(1));
-            final @Nonnull ReadonlyList<Block> trail = new ListWrapper(tuple.getElementNotNull(2)).getElementsNotNull();
+            final @Nonnull ReadOnlyList<Block> trail = new ListWrapper(tuple.getElementNotNull(2)).getElementsNotNull();
             return new ResponseAudit(lastTime, thisTime, trail);
         }
     }

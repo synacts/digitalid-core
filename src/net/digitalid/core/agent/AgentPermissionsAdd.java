@@ -6,7 +6,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.collections.ReadonlyArray;
+import net.digitalid.core.collections.ReadOnlyArray;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.packet.PacketException;
@@ -44,7 +44,7 @@ final class AgentPermissionsAdd extends CoreServiceInternalAction {
      * 
      * @invariant permissions.isFrozen() : "The permissions are frozen.";
      */
-    private final @Nonnull ReadonlyAgentPermissions permissions;
+    private final @Nonnull ReadOnlyAgentPermissions permissions;
     
     /**
      * Creates an internal action to add the given permissions to the given agent.
@@ -55,7 +55,7 @@ final class AgentPermissionsAdd extends CoreServiceInternalAction {
      * @require agent.isOnClient() : "The agent is on a client.";
      * @require permissions.isFrozen() : "The permissions are frozen.";
      */
-    AgentPermissionsAdd(@Nonnull Agent agent, @Nonnull ReadonlyAgentPermissions permissions) {
+    AgentPermissionsAdd(@Nonnull Agent agent, @Nonnull ReadOnlyAgentPermissions permissions) {
         super(agent.getRole());
         
         assert permissions.isFrozen() : "The permissions are frozen.";
@@ -81,7 +81,7 @@ final class AgentPermissionsAdd extends CoreServiceInternalAction {
     private AgentPermissionsAdd(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
-        final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(2);
+        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(2);
         this.agent = Agent.get(entity.toNonHostEntity(), elements.getNotNull(0));
         this.permissions = new AgentPermissions(elements.getNotNull(1)).freeze();
     }
@@ -101,7 +101,7 @@ final class AgentPermissionsAdd extends CoreServiceInternalAction {
     
     @Pure
     @Override
-    public @Nonnull ReadonlyAgentPermissions getRequiredPermissions() {
+    public @Nonnull ReadOnlyAgentPermissions getRequiredPermissions() {
         return permissions;
     }
     

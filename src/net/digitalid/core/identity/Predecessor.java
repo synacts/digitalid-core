@@ -7,7 +7,7 @@ import javax.annotation.Nullable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.collections.FreezableArray;
-import net.digitalid.core.collections.ReadonlyArray;
+import net.digitalid.core.collections.ReadOnlyArray;
 import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.exceptions.packet.PacketException;
@@ -52,7 +52,7 @@ public final class Predecessor implements Immutable, Blockable {
      * 
      * @invariant predecessors.isFrozen() : "The predecessors are frozen.";
      */
-    private final @Nonnull ReadonlyPredecessors predecessors;
+    private final @Nonnull ReadOnlyPredecessors predecessors;
     
     /**
      * Creates a new predecessor with the given identifier and predecessors.
@@ -62,7 +62,7 @@ public final class Predecessor implements Immutable, Blockable {
      * 
      * @require predecessors.isFrozen() : "The predecessors are frozen.";
      */
-    public Predecessor(@Nonnull NonHostIdentifier identifier, @Nonnull ReadonlyPredecessors predecessors) {
+    public Predecessor(@Nonnull NonHostIdentifier identifier, @Nonnull ReadOnlyPredecessors predecessors) {
         assert predecessors.isFrozen() : "The predecessors are frozen.";
         
         this.identifier = identifier;
@@ -90,7 +90,7 @@ public final class Predecessor implements Immutable, Blockable {
     public Predecessor(@Nonnull Block block) throws InvalidEncodingException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
-        final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(2);
+        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(2);
         this.identifier = IdentifierClass.create(elements.getNotNull(0)).toNonHostIdentifier();
         this.predecessors = new Predecessors(elements.getNotNull(1)).freeze();
     }
@@ -133,7 +133,7 @@ public final class Predecessor implements Immutable, Blockable {
      * 
      * @ensure return.isFrozen() : "The predecessors are frozen.";
      */
-    public @Nonnull ReadonlyPredecessors getPredecessors() {
+    public @Nonnull ReadOnlyPredecessors getPredecessors() {
         return predecessors;
     }
     

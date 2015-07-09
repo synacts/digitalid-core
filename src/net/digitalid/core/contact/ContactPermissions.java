@@ -18,7 +18,7 @@ import net.digitalid.core.wrappers.Block;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public final class ContactPermissions extends AttributeTypeSet implements ReadonlyContactPermissions, Blockable {
+public final class ContactPermissions extends AttributeTypeSet implements ReadOnlyContactPermissions, Blockable {
     
     /**
      * Stores the semantic type {@code permission.contact@core.digitalid.net}.
@@ -29,7 +29,7 @@ public final class ContactPermissions extends AttributeTypeSet implements Readon
     /**
      * Stores an empty set of contact permissions.
      */
-    public static final @Nonnull ReadonlyContactPermissions NONE = new ContactPermissions().freeze();
+    public static final @Nonnull ReadOnlyContactPermissions NONE = new ContactPermissions().freeze();
     
     
     /**
@@ -55,7 +55,7 @@ public final class ContactPermissions extends AttributeTypeSet implements Readon
      * 
      * @param permissions the contact permissions to add to the new contact permissions.
      */
-    public ContactPermissions(@Nonnull ReadonlyContactPermissions permissions) {
+    public ContactPermissions(@Nonnull ReadOnlyContactPermissions permissions) {
         super(permissions);
     }
     
@@ -79,7 +79,7 @@ public final class ContactPermissions extends AttributeTypeSet implements Readon
     
     
     @Override
-    public @Nonnull ReadonlyContactPermissions freeze() {
+    public @Nonnull ReadOnlyContactPermissions freeze() {
         super.freeze();
         return this;
     }

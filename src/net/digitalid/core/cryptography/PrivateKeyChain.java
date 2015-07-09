@@ -6,12 +6,12 @@ import net.digitalid.core.annotations.Frozen;
 import net.digitalid.core.annotations.NonEmpty;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.auxiliary.Time;
-import net.digitalid.core.collections.ReadonlyList;
+import net.digitalid.core.collections.ReadOnlyList;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.interfaces.Blockable;
 import net.digitalid.core.interfaces.Immutable;
-import net.digitalid.core.tuples.ReadonlyPair;
+import net.digitalid.core.tuples.ReadOnlyPair;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.ListWrapper;
 import net.digitalid.core.wrappers.TupleWrapper;
@@ -54,7 +54,7 @@ public final class PrivateKeyChain extends KeyChain<PrivateKey> implements Immut
      * 
      * @require items.isStrictlyDescending() : "The list is strictly descending.";
      */
-    public PrivateKeyChain(@Nonnull @Frozen @NonEmpty @NonNullableElements ReadonlyList<ReadonlyPair<Time, PrivateKey>> items) {
+    public PrivateKeyChain(@Nonnull @Frozen @NonEmpty @NonNullableElements ReadOnlyList<ReadOnlyPair<Time, PrivateKey>> items) {
         super(items);
     }
     
@@ -90,7 +90,7 @@ public final class PrivateKeyChain extends KeyChain<PrivateKey> implements Immut
     
     @Pure
     @Override
-    protected @Nonnull KeyChain<PrivateKey> createKeyChain(@Nonnull ReadonlyList<ReadonlyPair<Time, PrivateKey>> items) {
+    protected @Nonnull KeyChain<PrivateKey> createKeyChain(@Nonnull ReadOnlyList<ReadOnlyPair<Time, PrivateKey>> items) {
         return new PrivateKeyChain(items);
     }
     

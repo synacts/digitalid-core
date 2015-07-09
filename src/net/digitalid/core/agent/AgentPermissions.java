@@ -16,8 +16,8 @@ import net.digitalid.core.collections.FreezableLinkedHashMap;
 import net.digitalid.core.collections.FreezableLinkedList;
 import net.digitalid.core.collections.FreezableList;
 import net.digitalid.core.collections.FreezableSet;
-import net.digitalid.core.collections.ReadonlyArray;
-import net.digitalid.core.collections.ReadonlyList;
+import net.digitalid.core.collections.ReadOnlyArray;
+import net.digitalid.core.collections.ReadOnlyList;
 import net.digitalid.core.database.Database;
 import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
@@ -43,7 +43,7 @@ import net.digitalid.core.wrappers.TupleWrapper;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public final class AgentPermissions extends FreezableLinkedHashMap<SemanticType, Boolean> implements ReadonlyAgentPermissions, Blockable, SQLizable {
+public final class AgentPermissions extends FreezableLinkedHashMap<SemanticType, Boolean> implements ReadOnlyAgentPermissions, Blockable, SQLizable {
     
     /**
      * Stores the semantic type {@code type.permission.agent@core.digitalid.net}.
@@ -74,17 +74,17 @@ public final class AgentPermissions extends FreezableLinkedHashMap<SemanticType,
     /**
      * Stores an empty set of agent permissions.
      */
-    public static final @Nonnull ReadonlyAgentPermissions NONE = new AgentPermissions().freeze();
+    public static final @Nonnull ReadOnlyAgentPermissions NONE = new AgentPermissions().freeze();
     
     /**
      * Stores a general read permission.
      */
-    public static final @Nonnull ReadonlyAgentPermissions GENERAL_READ = new AgentPermissions(GENERAL, false).freeze();
+    public static final @Nonnull ReadOnlyAgentPermissions GENERAL_READ = new AgentPermissions(GENERAL, false).freeze();
     
     /**
      * Stores a general write permission.
      */
-    public static final @Nonnull ReadonlyAgentPermissions GENERAL_WRITE = new AgentPermissions(GENERAL, true).freeze();
+    public static final @Nonnull ReadOnlyAgentPermissions GENERAL_WRITE = new AgentPermissions(GENERAL, true).freeze();
     
     
     /**
@@ -113,7 +113,7 @@ public final class AgentPermissions extends FreezableLinkedHashMap<SemanticType,
      * 
      * @param permissions the agent permissions to add to the new agent permissions.
      */
-    public AgentPermissions(@Nonnull ReadonlyAgentPermissions permissions) {
+    public AgentPermissions(@Nonnull ReadOnlyAgentPermissions permissions) {
         putAll(permissions);
     }
     
@@ -128,9 +128,9 @@ public final class AgentPermissions extends FreezableLinkedHashMap<SemanticType,
     public AgentPermissions(@Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
-        final @Nonnull ReadonlyList<Block> elements = new ListWrapper(block).getElementsNotNull();
+        final @Nonnull ReadOnlyList<Block> elements = new ListWrapper(block).getElementsNotNull();
         for (final @Nonnull Block element : elements) {
-            final @Nonnull ReadonlyArray<Block> subelements = new TupleWrapper(element).getElementsNotNull(2);
+            final @Nonnull ReadOnlyArray<Block> subelements = new TupleWrapper(element).getElementsNotNull(2);
             final @Nonnull SemanticType type = IdentityClass.create(subelements.getNotNull(0)).toSemanticType().checkIsAttributeType();
             put(type, new BooleanWrapper(subelements.getNotNull(1)).getValue());
         }
@@ -159,7 +159,7 @@ public final class AgentPermissions extends FreezableLinkedHashMap<SemanticType,
     
     
     @Override
-    public @Nonnull ReadonlyAgentPermissions freeze() {
+    public @Nonnull ReadOnlyAgentPermissions freeze() {
         super.freeze();
         return this;
     }
@@ -251,7 +251,7 @@ public final class AgentPermissions extends FreezableLinkedHashMap<SemanticType,
     
     @Pure
     @Override
-    public boolean cover(@Nonnull ReadonlyAgentPermissions permissions) {
+    public boolean cover(@Nonnull ReadOnlyAgentPermissions permissions) {
         final boolean generalPermission = containsKey(GENERAL);
         final boolean writingPermission = generalPermission ? get(GENERAL) : false;
         for (@Nonnull SemanticType type : permissions.keySet()) {
@@ -268,7 +268,7 @@ public final class AgentPermissions extends FreezableLinkedHashMap<SemanticType,
     
     @Pure
     @Override
-    public void checkCover(@Nonnull ReadonlyAgentPermissions permissions) throws PacketException {
+    public void checkCover(@Nonnull ReadOnlyAgentPermissions permissions) throws PacketException {
         if (!cover(permissions)) throw new PacketException(PacketError.AUTHORIZATION, "These agent permissions do not cover " + permissions + ".");
     }
     
@@ -280,7 +280,7 @@ public final class AgentPermissions extends FreezableLinkedHashMap<SemanticType,
      * 
      * @require isNotFrozen() : "This object is not frozen.";
      */
-    public void restrictTo(@Nonnull ReadonlyAgentPermissions permissions) {
+    public void restrictTo(@Nonnull ReadOnlyAgentPermissions permissions) {
         assert isNotFrozen() : "This object is not frozen.";
         
         if (containsKey(GENERAL)) {
@@ -357,7 +357,7 @@ public final class AgentPermissions extends FreezableLinkedHashMap<SemanticType,
      * 
      * @require isNotFrozen() : "This object is not frozen.";
      */
-    public void putAll(@Nonnull ReadonlyAgentPermissions permissions) {
+    public void putAll(@Nonnull ReadOnlyAgentPermissions permissions) {
         for (final @Nonnull SemanticType type : permissions.keySet()) {
             put(type, permissions.get(type));
         }
@@ -370,7 +370,7 @@ public final class AgentPermissions extends FreezableLinkedHashMap<SemanticType,
      * 
      * @require isNotFrozen() : "This object is not frozen.";
      */
-    public void removeAll(@Nonnull ReadonlyAgentPermissions permissions) {
+    public void removeAll(@Nonnull ReadOnlyAgentPermissions permissions) {
         for (final @Nonnull SemanticType type : permissions.keySet()) {
             remove(type);
         }

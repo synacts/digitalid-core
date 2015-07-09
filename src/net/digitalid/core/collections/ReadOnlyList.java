@@ -9,7 +9,7 @@ import net.digitalid.core.interfaces.Freezable;
 import net.digitalid.core.interfaces.Immutable;
 
 /**
- * This interface provides readonly access to {@link List lists} and should <em>never</em> be cast away (unless external code requires it).
+ * This interface provides read-only access to {@link List lists} and should <em>never</em> be cast away (unless external code requires it).
  * <p>
  * <em>Important:</em> Only use freezable or immutable types for the elements!
  * (The type is not restricted to {@link Freezable} or {@link Immutable} so that library types can also be used.)
@@ -19,7 +19,7 @@ import net.digitalid.core.interfaces.Immutable;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public interface ReadonlyList<E> extends ReadonlyCollection<E> {
+public interface ReadOnlyList<E> extends ReadOnlyCollection<E> {
     
     /**
      * @see List#get(int)
@@ -80,19 +80,19 @@ public interface ReadonlyList<E> extends ReadonlyCollection<E> {
      * @see List#listIterator()
      */
     @Pure
-    public @Nonnull ReadonlyListIterator<E> listIterator();
+    public @Nonnull ReadOnlyListIterator<E> listIterator();
     
     /**
      * @see List#listIterator(int)
      */
     @Pure
-    public @Nonnull ReadonlyListIterator<E> listIterator(int index);
+    public @Nonnull ReadOnlyListIterator<E> listIterator(int index);
     
     /**
      * @see List#subList(int, int)
      */
     @Pure
-    public @Nonnull ReadonlyList<E> subList(int fromIndex, int toIndex);
+    public @Nonnull ReadOnlyList<E> subList(int fromIndex, int toIndex);
     
     
     /**

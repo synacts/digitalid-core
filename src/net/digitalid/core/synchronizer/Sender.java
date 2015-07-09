@@ -13,7 +13,7 @@ import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.NonEmpty;
 import net.digitalid.core.annotations.NonNullableElements;
 import net.digitalid.core.collections.FreezableArrayList;
-import net.digitalid.core.collections.ReadonlyList;
+import net.digitalid.core.collections.ReadOnlyList;
 import net.digitalid.core.database.Database;
 import net.digitalid.core.entity.Role;
 import net.digitalid.core.error.ErrorModule;
@@ -44,7 +44,7 @@ public final class Sender extends Thread {
      * @invariant Method.areSimilar(methods) : "The methods are similar to each other.";
      * @invariant for (Method method : methods) method instanceof InternalAction : "The methods are internal actions.";
      */
-    private final @Nonnull @Frozen @NonEmpty @NonNullableElements ReadonlyList<Method> methods;
+    private final @Nonnull @Frozen @NonEmpty @NonNullableElements ReadOnlyList<Method> methods;
     
     /**
      * Creates a new sender with the given methods.
@@ -54,7 +54,7 @@ public final class Sender extends Thread {
      * @require Method.areSimilar(methods) : "The methods are similar to each other.";
      * @require for (Method method : methods) method instanceof InternalAction : "The methods are internal actions.";
      */
-    Sender(@Nonnull @Frozen @NonEmpty @NonNullableElements ReadonlyList<Method> methods) {
+    Sender(@Nonnull @Frozen @NonEmpty @NonNullableElements ReadOnlyList<Method> methods) {
         assert Method.areSimilar(methods) : "The methods are similar to each other.";
         for (final @Nonnull Method method : methods) assert method instanceof InternalAction : "The methods are internal actions.";
         
@@ -129,7 +129,7 @@ public final class Sender extends Thread {
                                     Database.rollback();
                                     
                                     try {
-                                        final @Nonnull ReadonlyList<InternalAction> reversedActions = SynchronizerModule.reverseInterferingActions(action);
+                                        final @Nonnull ReadOnlyList<InternalAction> reversedActions = SynchronizerModule.reverseInterferingActions(action);
                                         Logger.log(Level.DEBUGGING, "Sender", "Reverse on the client after having reversed the interfering actions (" + action + ").");
                                         action.reverseOnClient();
                                         Database.commit();
@@ -233,7 +233,7 @@ public final class Sender extends Thread {
                 try {
                     Database.lock();
                     final @Nonnull RequestAudit requestAudit = audit != null ? audit : new RequestAudit(SynchronizerModule.getLastTime(action.getRole(), action.getService()));
-                    final @Nonnull ReadonlyList<Method> methods = new FreezableArrayList<Method>(action).freeze();
+                    final @Nonnull ReadOnlyList<Method> methods = new FreezableArrayList<Method>(action).freeze();
                     final @Nonnull Response response = Method.send(methods, requestAudit);
                     response.checkReply(0);
                     final @Nonnull ResponseAudit responseAudit = response.getAuditNotNull();

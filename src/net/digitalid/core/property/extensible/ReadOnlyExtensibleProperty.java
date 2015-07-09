@@ -2,7 +2,7 @@ package net.digitalid.core.property.extensible;
 
 import javax.annotation.Nonnull;
 import net.digitalid.core.annotations.NonFrozen;
-import net.digitalid.core.collections.ReadonlyCollection;
+import net.digitalid.core.collections.ReadOnlyCollection;
 
 /**
  * Description.
@@ -10,7 +10,7 @@ import net.digitalid.core.collections.ReadonlyCollection;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 0.0
  */
-public interface ReadOnlyExtensibleProperty<E, R extends ReadonlyCollection<E>> {
+public interface ReadOnlyExtensibleProperty<E, R extends ReadOnlyCollection<E>> {
     
     public @Nonnull @NonFrozen R get();
     

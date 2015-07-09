@@ -8,7 +8,7 @@ import net.digitalid.core.interfaces.Freezable;
 import net.digitalid.core.interfaces.Immutable;
 
 /**
- * This interface provides readonly access to arrays and should <em>never</em> be cast away.
+ * This interface provides read-only access to arrays and should <em>never</em> be cast away.
  * <p>
  * <em>Important:</em> Only use freezable or immutable types for the elements!
  * (The type is not restricted to {@link Freezable} or {@link Immutable} so that library types can also be used.)
@@ -18,7 +18,7 @@ import net.digitalid.core.interfaces.Immutable;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public interface ReadonlyArray<E> extends ReadonlyIterable<E> {
+public interface ReadOnlyArray<E> extends ReadOnlyIterable<E> {
     
     /**
      * Returns the size of this array.
@@ -79,7 +79,7 @@ public interface ReadonlyArray<E> extends ReadonlyIterable<E> {
     
     @Pure
     @Override
-    public @Nonnull ReadonlyArrayIterator<E> iterator();
+    public @Nonnull ReadOnlyArrayIterator<E> iterator();
     
     
     /**

@@ -241,7 +241,7 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
      */
     @Pure
     @NonCommitting
-    public @Nonnull ReadonlyContactPermissions getPermissions() throws SQLException {
+    public @Nonnull ReadOnlyContactPermissions getPermissions() throws SQLException {
         if (permissions == null) {
             throw new SQLException();
 //            permissions = Contexts.getPermissions(this);
@@ -255,7 +255,7 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
      * @param permissions the permissions to be added to this context.
      */
     @Committing
-    public void addPermissions(@Nonnull ReadonlyContactPermissions permissions) throws SQLException {
+    public void addPermissions(@Nonnull ReadOnlyContactPermissions permissions) throws SQLException {
         if (!permissions.isEmpty()) {
 //            Synchronizer.execute(new ContextPermissionsAdd(this, permissions));
         }
@@ -270,7 +270,7 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
      */
     @NonCommitting
     @OnlyForActions
-    public void addPermissionsForActions(@Nonnull ReadonlyContactPermissions newPermissions) throws SQLException {
+    public void addPermissionsForActions(@Nonnull ReadOnlyContactPermissions newPermissions) throws SQLException {
         assert newPermissions.isNotEmpty() : "The new permissions are not empty.";
         
 //        Contexts.addPermissions(this, newPermissions);
@@ -284,7 +284,7 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
      * @param permissions the permissions to be removed from this context.
      */
     @Committing
-    public void removePermissions(@Nonnull ReadonlyContactPermissions permissions) throws SQLException {
+    public void removePermissions(@Nonnull ReadOnlyContactPermissions permissions) throws SQLException {
         if (!permissions.isEmpty()) {
 //            Synchronizer.execute(new ContextPermissionsRemove(this, permissions));
         }
@@ -299,7 +299,7 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
      */
     @NonCommitting
     @OnlyForActions
-    public void removePermissionsForActions(@Nonnull ReadonlyContactPermissions oldPermissions) throws SQLException {
+    public void removePermissionsForActions(@Nonnull ReadOnlyContactPermissions oldPermissions) throws SQLException {
         assert oldPermissions.isNotEmpty() : "The old permissions are not empty.";
         
 //        Contexts.removePermissions(this, oldPermissions);
@@ -315,7 +315,7 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
      * @return the authentications of this context.
      */
     @NonCommitting
-    public @Nonnull ReadonlyAuthentications getAuthentications() throws SQLException {
+    public @Nonnull ReadOnlyAuthentications getAuthentications() throws SQLException {
         throw new SQLException();
     }
     
@@ -325,7 +325,7 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
      * @param authentications the authentications to be added to this context.
      */
     @Committing
-    public void addAuthentications(@Nonnull ReadonlyAuthentications authentications) throws SQLException {
+    public void addAuthentications(@Nonnull ReadOnlyAuthentications authentications) throws SQLException {
         
     }
     
@@ -335,7 +335,7 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
      * @param authentications the authentications to be removed from this context.
      */
     @Committing
-    public void removeAuthentications(@Nonnull ReadonlyAuthentications authentications) throws SQLException {
+    public void removeAuthentications(@Nonnull ReadOnlyAuthentications authentications) throws SQLException {
         
     }
     
@@ -441,7 +441,7 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
      */
     @Locked
     @NonCommitting
-    public @Nonnull @NonFrozen ReadonlyContacts getContacts() throws SQLException {
+    public @Nonnull @NonFrozen ReadOnlyContacts getContacts() throws SQLException {
         if (contacts == null) contacts = ContextModule.getContacts(this);
         return contacts;
     }
@@ -453,7 +453,7 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
      */
     @Committing
     @OnlyForClients
-    public void addContacts(@Nonnull @Frozen ReadonlyContacts contacts) throws SQLException {
+    public void addContacts(@Nonnull @Frozen ReadOnlyContacts contacts) throws SQLException {
         if (!contacts.isEmpty()) Synchronizer.execute(new ContactsAdd(this, contacts));
     }
     
@@ -464,7 +464,7 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
      */
     @NonCommitting
     @OnlyForActions
-    void addContactsForActions(@Nonnull @Frozen ReadonlyContacts newContacts) throws SQLException {
+    void addContactsForActions(@Nonnull @Frozen ReadOnlyContacts newContacts) throws SQLException {
         ContextModule.addContacts(this, newContacts);
         if (contacts != null) contacts.addAll(newContacts);
         notify(CONTACTS);
@@ -477,7 +477,7 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
      */
     @Committing
     @OnlyForClients
-    public void removeContacts(@Nonnull @Frozen ReadonlyContacts contacts) throws SQLException {
+    public void removeContacts(@Nonnull @Frozen ReadOnlyContacts contacts) throws SQLException {
         if (!contacts.isEmpty()) Synchronizer.execute(new ContactsRemove(this, contacts));
     }
     
@@ -488,7 +488,7 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
      */
     @NonCommitting
     @OnlyForActions
-    void removeContactsForActions(@Nonnull @Frozen ReadonlyContacts oldContacts) throws SQLException {
+    void removeContactsForActions(@Nonnull @Frozen ReadOnlyContacts oldContacts) throws SQLException {
         ContextModule.removeContacts(this, oldContacts);
         if (contacts != null) contacts.removeAll(oldContacts);
         notify(CONTACTS);

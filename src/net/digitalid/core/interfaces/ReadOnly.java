@@ -5,15 +5,15 @@ import net.digitalid.core.annotations.Capturable;
 import net.digitalid.core.annotations.Pure;
 
 /**
- * Interfaces that extend this interface provide readonly access to their objects.
- * When a readonly object is {@link Object#clone() cloned}, its copy is of the corresponding {@link Freezable freezable} type and {@link #isNotFrozen() not frozen}.
+ * Interfaces that extend this interface provide read-only access to their objects.
+ * When a read-only object is {@link Object#clone() cloned}, its copy is of the corresponding {@link Freezable freezable} type and {@link #isNotFrozen() not frozen}.
  * 
  * @see Freezable
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public interface Readonly extends Cloneable {
+public interface ReadOnly extends Cloneable {
     
     /**
      * Returns whether this object is frozen and can thus no longer be modified.

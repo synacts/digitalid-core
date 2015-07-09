@@ -14,7 +14,7 @@ import net.digitalid.core.interfaces.FreezableObject;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 2.0
  */
-public class FreezablePair<E0, E1> extends FreezableObject implements ReadonlyPair<E0, E1> {
+public class FreezablePair<E0, E1> extends FreezableObject implements ReadOnlyPair<E0, E1> {
     
     /**
      * Stores the first element of this tuple.
@@ -42,7 +42,7 @@ public class FreezablePair<E0, E1> extends FreezableObject implements ReadonlyPa
      * 
      * @param pair the pair containing the elements.
      */
-    public FreezablePair(@Nonnull ReadonlyPair<E0, E1> pair) {
+    public FreezablePair(@Nonnull ReadOnlyPair<E0, E1> pair) {
         this.element0 = pair.getElement0();
         this.element1 = pair.getElement1();
     }
@@ -89,7 +89,7 @@ public class FreezablePair<E0, E1> extends FreezableObject implements ReadonlyPa
     
     
     @Override
-    public @Nonnull ReadonlyPair<E0, E1> freeze() {
+    public @Nonnull ReadOnlyPair<E0, E1> freeze() {
         super.freeze();
         return this;
     }

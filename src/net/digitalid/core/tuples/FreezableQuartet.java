@@ -13,7 +13,7 @@ import net.digitalid.core.interfaces.Freezable;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 2.0
  */
-public class FreezableQuartet<E0, E1, E2, E3> extends FreezableTriplet<E0, E1, E2> implements ReadonlyQuartet<E0, E1, E2, E3> {
+public class FreezableQuartet<E0, E1, E2, E3> extends FreezableTriplet<E0, E1, E2> implements ReadOnlyQuartet<E0, E1, E2, E3> {
     
     /**
      * Stores the fourth element of this tuple.
@@ -39,7 +39,7 @@ public class FreezableQuartet<E0, E1, E2, E3> extends FreezableTriplet<E0, E1, E
      * 
      * @param quartet the quartet containing the elements.
      */
-    public FreezableQuartet(@Nonnull ReadonlyQuartet<E0, E1, E2, E3> quartet) {
+    public FreezableQuartet(@Nonnull ReadOnlyQuartet<E0, E1, E2, E3> quartet) {
         super(quartet);
         
         this.element3 = quartet.getElement3();
@@ -67,7 +67,7 @@ public class FreezableQuartet<E0, E1, E2, E3> extends FreezableTriplet<E0, E1, E
     
     
     @Override
-    public @Nonnull ReadonlyQuartet<E0, E1, E2, E3> freeze() {
+    public @Nonnull ReadOnlyQuartet<E0, E1, E2, E3> freeze() {
         super.freeze();
         return this;
     }

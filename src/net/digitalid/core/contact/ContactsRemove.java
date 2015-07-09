@@ -9,7 +9,7 @@ import net.digitalid.core.annotations.Frozen;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.OnlyForClients;
 import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.collections.ReadonlyArray;
+import net.digitalid.core.collections.ReadOnlyArray;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.packet.PacketException;
@@ -45,7 +45,7 @@ final class ContactsRemove extends CoreServiceInternalAction {
     /**
      * Stores the contacts which are to be removed.
      */
-    private final @Nonnull @Frozen ReadonlyContacts contacts;
+    private final @Nonnull @Frozen ReadOnlyContacts contacts;
     
     /**
      * Creates an internal action to remove the given contacts from the given context.
@@ -54,7 +54,7 @@ final class ContactsRemove extends CoreServiceInternalAction {
      * @param contacts the contacts to be removed from the given context.
      */
     @OnlyForClients
-    ContactsRemove(@Nonnull Context context, @Nonnull @Frozen ReadonlyContacts contacts) {
+    ContactsRemove(@Nonnull Context context, @Nonnull @Frozen ReadOnlyContacts contacts) {
         super(context.getRole());
         
         this.context = context;
@@ -78,7 +78,7 @@ final class ContactsRemove extends CoreServiceInternalAction {
     private ContactsRemove(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
-        final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(2);
+        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(2);
         this.context = Context.get(entity.toNonHostEntity(), elements.getNotNull(0));
         this.contacts = new Contacts(entity.toNonHostEntity(), elements.getNotNull(1)).freeze();
     }

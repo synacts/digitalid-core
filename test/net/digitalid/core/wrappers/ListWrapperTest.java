@@ -3,7 +3,7 @@ package net.digitalid.core.wrappers;
 import javax.annotation.Nonnull;
 import net.digitalid.core.collections.FreezableLinkedList;
 import net.digitalid.core.collections.FreezableList;
-import net.digitalid.core.collections.ReadonlyList;
+import net.digitalid.core.collections.ReadOnlyList;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.setup.DatabaseSetup;
@@ -26,7 +26,7 @@ public final class ListWrapperTest extends DatabaseSetup {
         final @Nonnull Block block2 = new StringWrapper(STRING, "This is a longer second block in order to test different block lengths.").toBlock();
         final @Nonnull Block block3 = new StringWrapper(STRING, "This is an even longer third block in order to test the wrapping of more than two blocks.").toBlock();
         
-        final @Nonnull FreezableList<ReadonlyList<Block>> listOfElements = new FreezableLinkedList<>();
+        final @Nonnull FreezableList<ReadOnlyList<Block>> listOfElements = new FreezableLinkedList<>();
         {
             @Nonnull FreezableList<Block> elements = new FreezableLinkedList<>();
             listOfElements.add(elements.freeze()); 
@@ -44,7 +44,7 @@ public final class ListWrapperTest extends DatabaseSetup {
             listOfElements.add(elements.freeze());
         }
         
-        for (final @Nonnull ReadonlyList<Block> elements : listOfElements) {
+        for (final @Nonnull ReadOnlyList<Block> elements : listOfElements) {
             Assert.assertEquals(elements, new ListWrapper(new ListWrapper(TYPE, elements).toBlock()).getElements());
         }
     }

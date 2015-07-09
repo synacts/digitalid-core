@@ -7,7 +7,7 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.agent.RandomizedAgentPermissions;
-import net.digitalid.core.agent.ReadonlyAgentPermissions;
+import net.digitalid.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.core.agent.Restrictions;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
@@ -342,7 +342,7 @@ public abstract class Credential implements Immutable {
      * @ensure permissions.isFrozen() : "The permissions are frozen.";
      */
     @Pure
-    public final @Nullable ReadonlyAgentPermissions getPermissions() {
+    public final @Nullable ReadOnlyAgentPermissions getPermissions() {
         return randomizedPermissions.getPermissions();
     }
     
@@ -354,10 +354,10 @@ public abstract class Credential implements Immutable {
      * @require isRoleBased() : "This credential is role-based.";
      */
     @Pure
-    public final @Nonnull ReadonlyAgentPermissions getPermissionsNotNull() {
+    public final @Nonnull ReadOnlyAgentPermissions getPermissionsNotNull() {
         assert isRoleBased() : "This credential is role-based.";
         
-        final @Nullable ReadonlyAgentPermissions permissions = randomizedPermissions.getPermissions();
+        final @Nullable ReadOnlyAgentPermissions permissions = randomizedPermissions.getPermissions();
         assert permissions != null : "This follows from the class invariant.";
         return permissions;
     }

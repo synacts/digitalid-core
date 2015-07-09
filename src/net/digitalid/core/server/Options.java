@@ -6,8 +6,8 @@ import java.util.Collection;
 import javax.annotation.Nonnull;
 import net.digitalid.core.annotations.Committing;
 import net.digitalid.core.collections.FreezableArrayList;
-import net.digitalid.core.collections.ReadonlyCollection;
-import net.digitalid.core.collections.ReadonlyList;
+import net.digitalid.core.collections.ReadOnlyCollection;
+import net.digitalid.core.collections.ReadOnlyList;
 import net.digitalid.core.database.Database;
 import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.io.EscapeOptionException;
@@ -60,7 +60,7 @@ final class Options {
      * @return the selected host or a {@link EscapeOptionException} if the user escaped.
      */
     private @Nonnull Host selectHost() throws EscapeOptionException {
-        final @Nonnull ReadonlyList<Host> hosts = new FreezableArrayList<>((Collection<? extends Host>) Server.getHosts()).freeze();
+        final @Nonnull ReadOnlyList<Host> hosts = new FreezableArrayList<>((Collection<? extends Host>) Server.getHosts()).freeze();
         if (hosts.isNotEmpty()) {
             Console.write("Please select one of the following hosts:");
             Console.write("- 0: [Escape]");
@@ -204,7 +204,7 @@ final class Options {
         @Override
         @Committing
         public void execute() {
-            final @Nonnull ReadonlyCollection<Service> services = Service.getServices();
+            final @Nonnull ReadOnlyCollection<Service> services = Service.getServices();
             Console.write("The following services are installed on this server:");
             for (final @Nonnull Service service : services) {
                 Console.write("- " + service.getNameWithVersion());

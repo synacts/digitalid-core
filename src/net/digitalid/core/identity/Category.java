@@ -7,7 +7,7 @@ import javax.annotation.Nonnull;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.collections.FreezableArrayList;
-import net.digitalid.core.collections.ReadonlyList;
+import net.digitalid.core.collections.ReadOnlyList;
 import net.digitalid.core.database.Database;
 import net.digitalid.core.errors.ShouldNeverHappenError;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
@@ -65,7 +65,7 @@ public enum Category implements Blockable, Immutable, SQLizable {
      * Stores an empty list of categories that can be shared among semantic types.
      * (This declaration may not be in the semantic type class as the initialization would be too late.)
      */
-    public static final @Nonnull ReadonlyList<Category> NONE = new FreezableArrayList<Category>(0).freeze();
+    public static final @Nonnull ReadOnlyList<Category> NONE = new FreezableArrayList<Category>(0).freeze();
     
     
     /**

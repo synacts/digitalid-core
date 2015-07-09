@@ -5,12 +5,12 @@ import java.sql.SQLException;
 import java.util.Random;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.agent.ReadonlyAgentPermissions;
+import net.digitalid.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.core.agent.Restrictions;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.collections.FreezableArray;
-import net.digitalid.core.collections.ReadonlyArray;
+import net.digitalid.core.collections.ReadOnlyArray;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NonHostAccount;
 import net.digitalid.core.errors.ShouldNeverHappenError;
@@ -119,7 +119,7 @@ public final class PushFailed extends ExternalAction {
     private PushFailed(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
-        final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(4);
+        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(4);
         this.number = new Int64Wrapper(elements.getNotNull(0)).getValue();
         
         final @Nonnull InternalIdentifier _subject = IdentifierClass.create(elements.getNotNull(1)).toInternalIdentifier();
@@ -217,7 +217,7 @@ public final class PushFailed extends ExternalAction {
     
     @Pure
     @Override
-    public @Nonnull ReadonlyAgentPermissions getAuditPermissions() {
+    public @Nonnull ReadOnlyAgentPermissions getAuditPermissions() {
         return action.getFailedAuditPermissions();
     }
     

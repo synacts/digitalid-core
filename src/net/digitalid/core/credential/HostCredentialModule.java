@@ -12,7 +12,7 @@ import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.collections.FreezableLinkedList;
 import net.digitalid.core.collections.FreezableList;
-import net.digitalid.core.collections.ReadonlyList;
+import net.digitalid.core.collections.ReadOnlyList;
 import net.digitalid.core.cryptography.Exponent;
 import net.digitalid.core.database.Database;
 import net.digitalid.core.entity.EntityClass;
@@ -132,7 +132,7 @@ public final class HostCredentialModule implements HostModule {
         assert block.getType().isBasedOn(getModuleFormat()) : "The block is based on the format of this module.";
         
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement("INSERT INTO " + host + "credential (time, entity, e, i, v, signature) VALUES (?, ?, ?, ?, ?, ?)")) {
-            final @Nonnull ReadonlyList<Block> entries = new ListWrapper(block).getElementsNotNull();
+            final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(block).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull TupleWrapper tuple = new TupleWrapper(entry);
                 new Time(tuple.getElementNotNull(0)).set(preparedStatement, 1);

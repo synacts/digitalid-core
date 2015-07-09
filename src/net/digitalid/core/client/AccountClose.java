@@ -6,7 +6,7 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.agent.AgentPermissions;
-import net.digitalid.core.agent.ReadonlyAgentPermissions;
+import net.digitalid.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.core.agent.Restrictions;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
@@ -108,7 +108,7 @@ public final class AccountClose extends CoreServiceInternalAction {
     
     @Pure
     @Override
-    public @Nonnull ReadonlyAgentPermissions getRequiredPermissions() {
+    public @Nonnull ReadOnlyAgentPermissions getRequiredPermissions() {
         return AgentPermissions.GENERAL_WRITE;
     }
     
@@ -120,7 +120,7 @@ public final class AccountClose extends CoreServiceInternalAction {
     
     @Pure
     @Override
-    public @Nonnull ReadonlyAgentPermissions getAuditPermissions() {
+    public @Nonnull ReadOnlyAgentPermissions getAuditPermissions() {
         return AgentPermissions.GENERAL_WRITE;
     }
     

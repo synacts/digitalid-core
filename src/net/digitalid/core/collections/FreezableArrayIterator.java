@@ -21,7 +21,7 @@ import net.digitalid.core.interfaces.Immutable;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public class FreezableArrayIterator<E> implements ReadonlyArrayIterator<E>, FreezableIterator<E> {
+public class FreezableArrayIterator<E> implements ReadOnlyArrayIterator<E>, FreezableIterator<E> {
     
     /**
      * Stores a reference to the underlying array.
@@ -56,7 +56,7 @@ public class FreezableArrayIterator<E> implements ReadonlyArrayIterator<E>, Free
     }
     
     @Override
-    public ReadonlyArrayIterator<E> freeze() {
+    public ReadOnlyArrayIterator<E> freeze() {
         array.freeze();
         return this;
     }

@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.agent.AgentPermissions;
-import net.digitalid.core.agent.ReadonlyAgentPermissions;
+import net.digitalid.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.core.agent.Restrictions;
 import net.digitalid.core.annotations.NonNullableElements;
 import net.digitalid.core.annotations.Frozen;
@@ -13,7 +13,7 @@ import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.collections.FreezableArrayList;
 import net.digitalid.core.collections.FreezableList;
-import net.digitalid.core.collections.ReadonlyList;
+import net.digitalid.core.collections.ReadOnlyList;
 import net.digitalid.core.cryptography.PublicKey;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NativeRole;
@@ -39,7 +39,7 @@ import net.digitalid.core.password.PasswordModule;
 import net.digitalid.core.service.CoreService;
 import net.digitalid.core.service.CoreServiceInternalAction;
 import net.digitalid.core.tuples.FreezablePair;
-import net.digitalid.core.tuples.ReadonlyPair;
+import net.digitalid.core.tuples.ReadOnlyPair;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.ListWrapper;
 import net.digitalid.core.wrappers.SignatureWrapper;
@@ -67,7 +67,7 @@ public final class AccountInitialize extends CoreServiceInternalAction {
     /**
      * Stores the states to merge into the new account.
      */
-    private final @Nonnull @Frozen @NonNullableElements ReadonlyList<ReadonlyPair<Predecessor, Block>> states;
+    private final @Nonnull @Frozen @NonNullableElements ReadOnlyList<ReadOnlyPair<Predecessor, Block>> states;
     
     /**
      * Creates an action to initialize a new account.
@@ -76,7 +76,7 @@ public final class AccountInitialize extends CoreServiceInternalAction {
      * @param states the states to merge into the new account.
      */
     @NonCommitting
-    AccountInitialize(@Nonnull NativeRole role, @Nonnull @Frozen @NonNullableElements ReadonlyList<ReadonlyPair<Predecessor, Block>> states) throws SQLException, IOException, PacketException, ExternalException {
+    AccountInitialize(@Nonnull NativeRole role, @Nonnull @Frozen @NonNullableElements ReadOnlyList<ReadOnlyPair<Predecessor, Block>> states) throws SQLException, IOException, PacketException, ExternalException {
         super(role);
         
         this.states = states;
@@ -103,10 +103,10 @@ public final class AccountInitialize extends CoreServiceInternalAction {
         if (isOnHost() && Predecessors.exist(subject)) throw new PacketException(PacketError.METHOD, "The subject " + subject + " is already initialized.");
         
         final @Nonnull Category category = entity.getIdentity().getCategory();
-        final @Nonnull ReadonlyList<Block> elements = new ListWrapper(block).getElementsNotNull();
+        final @Nonnull ReadOnlyList<Block> elements = new ListWrapper(block).getElementsNotNull();
         if (elements.size() > 1 && !category.isInternalPerson()) throw new InvalidDeclarationException("Only internal persons may have more than one predecessor.", subject, null);
         
-        final @Nonnull FreezableList<ReadonlyPair<Predecessor, Block>> states = new FreezableArrayList<>(elements.size());
+        final @Nonnull FreezableList<ReadOnlyPair<Predecessor, Block>> states = new FreezableArrayList<>(elements.size());
         for (final @Nonnull Block element : elements) {
             final @Nonnull TupleWrapper tuple = new TupleWrapper(element);
             final @Nonnull Predecessor predecessor = new Predecessor(tuple.getElementNotNull(0));
@@ -129,7 +129,7 @@ public final class AccountInitialize extends CoreServiceInternalAction {
     @Override
     public @Nonnull Block toBlock() {
         final @Nonnull FreezableList<Block> elements = new FreezableArrayList<>(states.size());
-        for (final @Nonnull ReadonlyPair<Predecessor, Block> state : states) {
+        for (final @Nonnull ReadOnlyPair<Predecessor, Block> state : states) {
             elements.add(new TupleWrapper(STATE, state.getElement0().toBlock(), state.getElement1()).toBlock());
         }
         return new ListWrapper(TYPE, elements.freeze()).toBlock();
@@ -150,7 +150,7 @@ public final class AccountInitialize extends CoreServiceInternalAction {
     
     @Pure
     @Override
-    public @Nonnull ReadonlyAgentPermissions getAuditPermissions() {
+    public @Nonnull ReadOnlyAgentPermissions getAuditPermissions() {
         return AgentPermissions.GENERAL_WRITE;
     }
     
@@ -170,7 +170,7 @@ public final class AccountInitialize extends CoreServiceInternalAction {
             @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
             final @Nonnull Predecessors predecessors = new Predecessors(states.size());
             final @Nonnull FreezableList<NonHostIdentity> identities = new FreezableArrayList<>(states.size());
-            for (final @Nonnull ReadonlyPair<Predecessor, Block> state : states) {
+            for (final @Nonnull ReadOnlyPair<Predecessor, Block> state : states) {
                 final @Nonnull Predecessor predecessor = state.getElement0();
                 identities.add(predecessor.getIdentifier().getIdentity().toNonHostIdentity());
                 CoreService.SERVICE.addState(entity, state.getElement1());

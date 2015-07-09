@@ -7,7 +7,7 @@ import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.collections.FreezableLinkedList;
 import net.digitalid.core.collections.FreezableList;
-import net.digitalid.core.collections.ReadonlyList;
+import net.digitalid.core.collections.ReadOnlyList;
 import net.digitalid.core.database.Database;
 import net.digitalid.core.entity.Site;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
@@ -88,7 +88,7 @@ public final class TokenModule implements HostModule {
     public void importModule(@Nonnull Host host, @Nonnull Block block) throws SQLException, InvalidEncodingException {
         assert block.getType().isBasedOn(getModuleFormat()) : "The block is based on the format of this module.";
         
-        final @Nonnull ReadonlyList<Block> entries = new ListWrapper(block).getElementsNotNull();
+        final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(block).getElementsNotNull();
         for (final @Nonnull Block entry : entries) {
             // TODO: Add all entries to the database table(s).
         }

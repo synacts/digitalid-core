@@ -11,14 +11,14 @@ import net.digitalid.core.collections.FreezableArrayList;
 import net.digitalid.core.collections.FreezableIterator;
 import net.digitalid.core.collections.FreezableLinkedList;
 import net.digitalid.core.collections.FreezableList;
-import net.digitalid.core.collections.ReadonlyArray;
-import net.digitalid.core.collections.ReadonlyList;
+import net.digitalid.core.collections.ReadOnlyArray;
+import net.digitalid.core.collections.ReadOnlyList;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.interfaces.Blockable;
 import net.digitalid.core.interfaces.Immutable;
 import net.digitalid.core.tuples.FreezablePair;
-import net.digitalid.core.tuples.ReadonlyPair;
+import net.digitalid.core.tuples.ReadOnlyPair;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.ListWrapper;
 import net.digitalid.core.wrappers.TupleWrapper;
@@ -39,7 +39,7 @@ abstract class KeyChain<Key extends Blockable> implements Immutable, Blockable {
      * 
      * @invariant items.isStrictlyDescending() : "The list is strictly descending.";
      */
-    private final @Nonnull @Frozen @NonEmpty @NonNullableElements ReadonlyList<ReadonlyPair<Time, Key>> items;
+    private final @Nonnull @Frozen @NonEmpty @NonNullableElements ReadOnlyList<ReadOnlyPair<Time, Key>> items;
     
     /**
      * Creates a new key chain with the given time and key.
@@ -52,7 +52,7 @@ abstract class KeyChain<Key extends Blockable> implements Immutable, Blockable {
     protected KeyChain(@Nonnull Time time, @Nonnull Key key) {
         assert time.isLessThanOrEqualTo(new Time()) : "The time lies in the past.";
         
-        final @Nonnull FreezableLinkedList<ReadonlyPair<Time, Key>> items = new FreezableLinkedList<>();
+        final @Nonnull FreezableLinkedList<ReadOnlyPair<Time, Key>> items = new FreezableLinkedList<>();
         items.add(new FreezablePair<>(time, key).freeze());
         this.items = items.freeze();
     }
@@ -64,7 +64,7 @@ abstract class KeyChain<Key extends Blockable> implements Immutable, Blockable {
      * 
      * @require items.isStrictlyDescending() : "The list is strictly descending.";
      */
-    protected KeyChain(@Nonnull@Frozen @NonEmpty @NonNullableElements ReadonlyList<ReadonlyPair<Time, Key>> items) {
+    protected KeyChain(@Nonnull@Frozen @NonEmpty @NonNullableElements ReadOnlyList<ReadOnlyPair<Time, Key>> items) {
         this.items = items;
     }
     
@@ -78,12 +78,12 @@ abstract class KeyChain<Key extends Blockable> implements Immutable, Blockable {
     protected KeyChain(@Nonnull Block block) throws InvalidEncodingException {
         assert block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
         
-        final @Nonnull ReadonlyList<Block> elements = new ListWrapper(block).getElementsNotNull();
+        final @Nonnull ReadOnlyList<Block> elements = new ListWrapper(block).getElementsNotNull();
         if (elements.isEmpty()) throw new InvalidEncodingException("The list of elements may not be empty.");
-        final @Nonnull FreezableLinkedList<ReadonlyPair<Time, Key>> items = new FreezableLinkedList<>();
+        final @Nonnull FreezableLinkedList<ReadOnlyPair<Time, Key>> items = new FreezableLinkedList<>();
         
         for (final @Nonnull Block element : elements) {
-            final @Nonnull ReadonlyArray<Block> pair = new TupleWrapper(element).getElementsNotNull(2);
+            final @Nonnull ReadOnlyArray<Block> pair = new TupleWrapper(element).getElementsNotNull(2);
             final @Nonnull Time time = new Time(pair.getNotNull(0));
             final @Nonnull Key key = createKey(pair.getNotNull(1));
             items.add(new FreezablePair<>(time, key).freeze());
@@ -97,7 +97,7 @@ abstract class KeyChain<Key extends Blockable> implements Immutable, Blockable {
     @Override
     public final @Nonnull Block toBlock() {
         final @Nonnull FreezableArrayList<Block> elements = new FreezableArrayList<>(items.size());
-        for (final @Nonnull ReadonlyPair<Time, Key> item : items) {
+        for (final @Nonnull ReadOnlyPair<Time, Key> item : items) {
             final @Nonnull FreezableArray<Block> pair = new FreezableArray<>(2);
             pair.set(0, item.getElement0().toBlock());
             pair.set(1, item.getElement1().toBlock());
@@ -115,7 +115,7 @@ abstract class KeyChain<Key extends Blockable> implements Immutable, Blockable {
      * @ensure items.isStrictlyDescending() : "The list is strictly descending.";
      */
     @Pure
-    public final @Nonnull @Frozen @NonEmpty @NonNullableElements ReadonlyList<ReadonlyPair<Time, Key>> getItems() {
+    public final @Nonnull @Frozen @NonEmpty @NonNullableElements ReadOnlyList<ReadOnlyPair<Time, Key>> getItems() {
         return items;
     }
     
@@ -130,7 +130,7 @@ abstract class KeyChain<Key extends Blockable> implements Immutable, Blockable {
      */
     @Pure
     public final @Nonnull Key getKey(@Nonnull Time time) throws InvalidEncodingException {
-        for (final @Nonnull ReadonlyPair<Time, Key> item : items) {
+        for (final @Nonnull ReadOnlyPair<Time, Key> item : items) {
             if (time.isGreaterThanOrEqualTo(item.getElement0())) return item.getElement1();
         }
         throw new InvalidEncodingException("There is no key for the given time (" + time + ") in this key chain " + this + ".");
@@ -159,12 +159,12 @@ abstract class KeyChain<Key extends Blockable> implements Immutable, Blockable {
         assert time.isGreaterThan(getNewestTime()) : "The time is greater than the newest time of this key chain.";
         assert time.isGreaterThan(new Time().add(Time.TROPICAL_YEAR)) : "The time lies at least one year in the future.";
         
-        final @Nonnull FreezableList<ReadonlyPair<Time, Key>> copy = items.clone();
-        final @Nonnull ReadonlyPair<Time, Key> pair = new FreezablePair<>(time, key).freeze();
+        final @Nonnull FreezableList<ReadOnlyPair<Time, Key>> copy = items.clone();
+        final @Nonnull ReadOnlyPair<Time, Key> pair = new FreezablePair<>(time, key).freeze();
         copy.add(0, pair);
         
         final @Nonnull Time cutoff = Time.TWO_YEARS.ago();
-        final @Nonnull FreezableIterator<ReadonlyPair<Time, Key>> iterator = copy.iterator();
+        final @Nonnull FreezableIterator<ReadOnlyPair<Time, Key>> iterator = copy.iterator();
         while (iterator.hasNext()) {
             if (iterator.next().getElement0().isLessThan(cutoff)) {
                 while (iterator.hasNext()) {
@@ -212,6 +212,6 @@ abstract class KeyChain<Key extends Blockable> implements Immutable, Blockable {
      * @require items.isStrictlyDescending() : "The list is strictly descending.";
      */
     @Pure
-    protected abstract @Nonnull KeyChain<Key> createKeyChain(@Nonnull @Frozen @NonEmpty @NonNullableElements ReadonlyList<ReadonlyPair<Time, Key>> items);
+    protected abstract @Nonnull KeyChain<Key> createKeyChain(@Nonnull @Frozen @NonEmpty @NonNullableElements ReadOnlyList<ReadOnlyPair<Time, Key>> items);
     
 }

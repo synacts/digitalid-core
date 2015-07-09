@@ -8,7 +8,7 @@ import java.sql.Statement;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.agent.Agent;
-import net.digitalid.core.agent.ReadonlyAgentPermissions;
+import net.digitalid.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.core.agent.Restrictions;
 import net.digitalid.core.annotations.Capturable;
 import net.digitalid.core.annotations.Frozen;
@@ -18,8 +18,8 @@ import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.collections.FreezableArray;
 import net.digitalid.core.collections.FreezableLinkedList;
 import net.digitalid.core.collections.FreezableList;
-import net.digitalid.core.collections.ReadonlyArray;
-import net.digitalid.core.collections.ReadonlyList;
+import net.digitalid.core.collections.ReadOnlyArray;
+import net.digitalid.core.collections.ReadOnlyList;
 import net.digitalid.core.database.Database;
 import net.digitalid.core.entity.EntityClass;
 import net.digitalid.core.entity.NonHostEntity;
@@ -151,7 +151,7 @@ public final class ContextModule implements BothModule {
     public void importModule(@Nonnull Host host, @Nonnull Block block) throws SQLException, InvalidEncodingException {
         assert block.getType().isBasedOn(getModuleFormat()) : "The block is based on the format of this module.";
         
-        final @Nonnull ReadonlyList<Block> entries = new ListWrapper(block).getElementsNotNull();
+        final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(block).getElementsNotNull();
         for (final @Nonnull Block entry : entries) {
             // TODO: Add all entries to the database table(s).
         }
@@ -195,7 +195,7 @@ public final class ContextModule implements BothModule {
     @Pure
     @Override
     @NonCommitting
-    public @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadonlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws SQLException {
+    public @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws SQLException {
         // TODO: Extend this implementation and make sure the state is restricted according to the restrictions.
         // TODO: This might be a little bit complicated as the context for which the client is authorized needs to be aggregated.
         final @Nonnull Site site = entity.getSite();
@@ -237,14 +237,14 @@ public final class ContextModule implements BothModule {
             Database.onInsertIgnore(statement, site + "context_contact", "entity", "context", "contact");
         }
         
-        final @Nonnull ReadonlyArray<Block> tables = new TupleWrapper(block).getElementsNotNull(2);
+        final @Nonnull ReadOnlyArray<Block> tables = new TupleWrapper(block).getElementsNotNull(2);
         final @Nonnull String prefix = "INSERT" + Database.getConfiguration().IGNORE() + " INTO " + site;
         
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(prefix + "context_name (entity, context, name) VALUES (?, ?, ?)")) {
             entity.set(preparedStatement, 1);
-            final @Nonnull ReadonlyList<Block> entries = new ListWrapper(tables.getNotNull(0)).getElementsNotNull();
+            final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNotNull(0)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
-                final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(3);
+                final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(3);
                 Context.get(entity, elements.getNotNull(0)).set(preparedStatement, 2);
                 preparedStatement.setString(3, new StringWrapper(elements.getNotNull(1)).getString());
                 preparedStatement.addBatch();
@@ -254,9 +254,9 @@ public final class ContextModule implements BothModule {
         
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(prefix + "context_contact (entity, context, contact) VALUES (?, ?, ?)")) {
             entity.set(preparedStatement, 1);
-            final @Nonnull ReadonlyList<Block> entries = new ListWrapper(tables.getNotNull(1)).getElementsNotNull();
+            final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNotNull(1)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
-                final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(2);
+                final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(2);
                 Context.get(entity, elements.getNotNull(0)).set(preparedStatement, 2);
                 IdentityClass.create(elements.getNotNull(1)).toPerson().set(preparedStatement, 3);
                 preparedStatement.addBatch();
@@ -330,7 +330,7 @@ public final class ContextModule implements BothModule {
      * @param contacts the contacts to be added to the given context.
      */
     @NonCommitting
-    static void addContacts(@Nonnull Context context, @Nonnull @Frozen ReadonlyContacts contacts) throws SQLException {
+    static void addContacts(@Nonnull Context context, @Nonnull @Frozen ReadOnlyContacts contacts) throws SQLException {
         final @Nonnull NonHostEntity entity = context.getEntity();
         final @Nonnull String SQL = "INSERT INTO " + entity.getSite() + "context_contact (entity, context, contact) VALUES (" + entity + ", " + context + ", ?)";
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
@@ -346,7 +346,7 @@ public final class ContextModule implements BothModule {
      * @param contacts the contacts to be removed from the given context.
      */
     @NonCommitting
-    static void removeContacts(@Nonnull Context context, @Nonnull @Frozen ReadonlyContacts contacts) throws SQLException {
+    static void removeContacts(@Nonnull Context context, @Nonnull @Frozen ReadOnlyContacts contacts) throws SQLException {
         final @Nonnull NonHostEntity entity = context.getEntity();
         final @Nonnull String SQL = "DELETE FROM " + entity.getSite() + "context_contact WHERE entity = " + entity + " AND context = " + context + " AND contact = ?";
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {

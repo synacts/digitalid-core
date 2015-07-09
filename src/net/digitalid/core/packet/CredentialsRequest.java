@@ -10,7 +10,7 @@ import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.annotations.RawRecipient;
 import net.digitalid.core.attribute.CertifiedAttributeValue;
 import net.digitalid.core.collections.FreezableList;
-import net.digitalid.core.collections.ReadonlyList;
+import net.digitalid.core.collections.ReadOnlyList;
 import net.digitalid.core.credential.Credential;
 import net.digitalid.core.cryptography.SymmetricKey;
 import net.digitalid.core.exceptions.external.ExternalException;
@@ -21,7 +21,7 @@ import net.digitalid.core.identifier.InternalIdentifier;
 import net.digitalid.core.synchronizer.Audit;
 import net.digitalid.core.synchronizer.RequestAudit;
 import net.digitalid.core.tuples.FreezableQuartet;
-import net.digitalid.core.tuples.ReadonlyQuartet;
+import net.digitalid.core.tuples.ReadOnlyQuartet;
 import net.digitalid.core.wrappers.CompressionWrapper;
 import net.digitalid.core.wrappers.CredentialsSignatureWrapper;
 
@@ -39,7 +39,7 @@ public final class CredentialsRequest extends Request {
      * @invariant credentials.isFrozen() : "The credentials are frozen.";
      * @invariant CredentialsSignatureWrapper.credentialsAreValid(credentials) : "The credentials are valid.";
      */
-    private @Nonnull ReadonlyList<Credential> credentials;
+    private @Nonnull ReadOnlyList<Credential> credentials;
     
     /**
      * Stores the certificates that are appended to an identity-based authentication or null.
@@ -47,7 +47,7 @@ public final class CredentialsRequest extends Request {
      * @invariant certificates == null || certificates.isFrozen() : "The certificates are either null or frozen.";
      * @invariant CredentialsSignatureWrapper.certificatesAreValid(certificates, credentials) : "The certificates are valid (given the given credentials).";
      */
-    private @Nullable ReadonlyList<CertifiedAttributeValue> certificates;
+    private @Nullable ReadOnlyList<CertifiedAttributeValue> certificates;
     
     /**
      * Stores whether the hidden content of the credentials is verifiably encrypted to achieve liability.
@@ -82,7 +82,7 @@ public final class CredentialsRequest extends Request {
      * @require CredentialsSignatureWrapper.certificatesAreValid(certificates, credentials) : "The certificates are valid (given the given credentials).";
      */
     @NonCommitting
-    public CredentialsRequest(@Nonnull ReadonlyList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject, @Nullable RequestAudit audit, @Nonnull ReadonlyList<Credential> credentials, @Nullable ReadonlyList<CertifiedAttributeValue> certificates, boolean lodged, @Nullable BigInteger value) throws SQLException, IOException, PacketException, ExternalException {
+    public CredentialsRequest(@Nonnull ReadOnlyList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject, @Nullable RequestAudit audit, @Nonnull ReadOnlyList<Credential> credentials, @Nullable ReadOnlyList<CertifiedAttributeValue> certificates, boolean lodged, @Nullable BigInteger value) throws SQLException, IOException, PacketException, ExternalException {
         this(methods, recipient, subject, audit, credentials, certificates, lodged, value, 0);
     }
     
@@ -100,7 +100,7 @@ public final class CredentialsRequest extends Request {
      * @param iteration how many times this request was resent.
      */
     @NonCommitting
-    private CredentialsRequest(@Nonnull ReadonlyList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject, @Nullable RequestAudit audit, @Nonnull ReadonlyList<Credential> credentials, @Nullable ReadonlyList<CertifiedAttributeValue> certificates, boolean lodged, @Nullable BigInteger value, int iteration) throws SQLException, IOException, PacketException, ExternalException {
+    private CredentialsRequest(@Nonnull ReadOnlyList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject, @Nullable RequestAudit audit, @Nonnull ReadOnlyList<Credential> credentials, @Nullable ReadOnlyList<CertifiedAttributeValue> certificates, boolean lodged, @Nullable BigInteger value, int iteration) throws SQLException, IOException, PacketException, ExternalException {
         super(methods, recipient, new SymmetricKey(), subject, audit, new FreezableQuartet<>(credentials, certificates, lodged, value).freeze(), iteration);
     }
     
@@ -110,7 +110,7 @@ public final class CredentialsRequest extends Request {
     @SuppressWarnings("unchecked")
     void setField(@Nullable Object field) {
         assert field != null : "See the constructor above.";
-        final @Nonnull ReadonlyQuartet<ReadonlyList<Credential>, ReadonlyList<CertifiedAttributeValue>, Boolean, BigInteger> quartet = (ReadonlyQuartet<ReadonlyList<Credential>, ReadonlyList<CertifiedAttributeValue>, Boolean, BigInteger>) field;
+        final @Nonnull ReadOnlyQuartet<ReadOnlyList<Credential>, ReadOnlyList<CertifiedAttributeValue>, Boolean, BigInteger> quartet = (ReadOnlyQuartet<ReadOnlyList<Credential>, ReadOnlyList<CertifiedAttributeValue>, Boolean, BigInteger>) field;
         this.credentials = quartet.getElement0();
         this.certificates = quartet.getElement1();
         this.lodged = quartet.getElement2();

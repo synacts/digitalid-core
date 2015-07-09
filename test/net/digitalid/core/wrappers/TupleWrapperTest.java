@@ -4,7 +4,7 @@ import javax.annotation.Nonnull;
 import net.digitalid.core.collections.FreezableArray;
 import net.digitalid.core.collections.FreezableLinkedList;
 import net.digitalid.core.collections.FreezableList;
-import net.digitalid.core.collections.ReadonlyArray;
+import net.digitalid.core.collections.ReadOnlyArray;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.setup.DatabaseSetup;
@@ -27,14 +27,14 @@ public final class TupleWrapperTest extends DatabaseSetup {
         final @Nonnull Block string = new StringWrapper(STRING, "This is a short string.").toBlock();
         final @Nonnull Block int32 = new Int32Wrapper(INT32, 123456789).toBlock();
         
-        final @Nonnull FreezableList<ReadonlyArray<Block>> listOfElements = new FreezableLinkedList<>();
+        final @Nonnull FreezableList<ReadOnlyArray<Block>> listOfElements = new FreezableLinkedList<>();
         listOfElements.add(new FreezableArray<>(string, int32).freeze());
         listOfElements.add(new FreezableArray<>(null, int32).freeze());
         listOfElements.add(new FreezableArray<>(string, null).freeze());
         listOfElements.add(new FreezableArray<Block>(null, null).freeze());
         listOfElements.add(new FreezableArray<>(string).freeze());
         
-        for (final @Nonnull ReadonlyArray<Block> elements : listOfElements) {
+        for (final @Nonnull ReadOnlyArray<Block> elements : listOfElements) {
             if (elements.size() == 2) Assert.assertEquals(elements, new TupleWrapper(new TupleWrapper(TYPE, elements).toBlock()).getElements());
             else Assert.assertEquals(elements.getNotNull(0), new TupleWrapper(new TupleWrapper(TYPE, elements).toBlock()).getElementNotNull(0));
         }

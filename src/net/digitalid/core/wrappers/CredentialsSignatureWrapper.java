@@ -11,7 +11,7 @@ import javax.annotation.Nullable;
 import net.digitalid.core.agent.AgentModule;
 import net.digitalid.core.agent.OutgoingRole;
 import net.digitalid.core.agent.RandomizedAgentPermissions;
-import net.digitalid.core.agent.ReadonlyAgentPermissions;
+import net.digitalid.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.core.agent.Restrictions;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
@@ -22,8 +22,8 @@ import net.digitalid.core.cache.Cache;
 import net.digitalid.core.collections.FreezableArray;
 import net.digitalid.core.collections.FreezableArrayList;
 import net.digitalid.core.collections.FreezableList;
-import net.digitalid.core.collections.ReadonlyArray;
-import net.digitalid.core.collections.ReadonlyList;
+import net.digitalid.core.collections.ReadOnlyArray;
+import net.digitalid.core.collections.ReadOnlyList;
 import net.digitalid.core.contact.Contact;
 import net.digitalid.core.credential.ClientCredential;
 import net.digitalid.core.credential.Credential;
@@ -174,7 +174,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
      * @invariant credentials.isFrozen() : "The credentials are frozen.";
      * @invariant credentialsAreValid(credentials) : "The credentials are valid.";
      */
-    private final @Nonnull ReadonlyList<Credential> credentials;
+    private final @Nonnull ReadOnlyList<Credential> credentials;
     
     /**
      * Stores the certificates that are appended to an identity-based authentication with a single credential.
@@ -182,7 +182,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
      * @invariant certificates == null || certificates.isFrozen() : "The certificates are frozen.";
      * @invariant certificates == null || certificatesAreValid(certificates, credentials) : "The certificates are valid.";
      */
-    private final @Nullable ReadonlyList<CertifiedAttributeValue> certificates;
+    private final @Nullable ReadOnlyList<CertifiedAttributeValue> certificates;
     
     /**
      * Stores whether the hidden content of the credentials is verifiably encrypted to achieve liability.
@@ -225,7 +225,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
      * @ensure isVerified() : "This signature is verified.";
      */
     @NonCommitting
-    public CredentialsSignatureWrapper(@Nonnull SemanticType type, @Nullable Block element, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull ReadonlyList<Credential> credentials, @Nullable ReadonlyList<CertifiedAttributeValue> certificates, boolean lodged, @Nullable BigInteger value) throws SQLException, IOException, PacketException, ExternalException {
+    public CredentialsSignatureWrapper(@Nonnull SemanticType type, @Nullable Block element, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull ReadOnlyList<Credential> credentials, @Nullable ReadOnlyList<CertifiedAttributeValue> certificates, boolean lodged, @Nullable BigInteger value) throws SQLException, IOException, PacketException, ExternalException {
         super(type, element, subject, audit);
         
         assert credentials.isFrozen() : "The credentials are frozen.";
@@ -264,7 +264,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
      * @ensure isVerified() : "This signature is verified.";
      */
     @NonCommitting
-    public CredentialsSignatureWrapper(@Nonnull SemanticType type, @Nullable Blockable element, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull ReadonlyList<Credential> credentials, @Nullable ReadonlyList<CertifiedAttributeValue> certificates, boolean lodged, @Nullable BigInteger value) throws SQLException, IOException, PacketException, ExternalException {
+    public CredentialsSignatureWrapper(@Nonnull SemanticType type, @Nullable Blockable element, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull ReadOnlyList<Credential> credentials, @Nullable ReadOnlyList<CertifiedAttributeValue> certificates, boolean lodged, @Nullable BigInteger value) throws SQLException, IOException, PacketException, ExternalException {
         this(type, Block.toBlock(element), subject, audit, credentials, certificates, lodged, value);
     }
     
@@ -314,7 +314,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
         }
         
         // Credentials
-        @Nonnull ReadonlyList<Block> list = new ListWrapper(tuple.getElementNotNull(4)).getElementsNotNull();
+        @Nonnull ReadOnlyList<Block> list = new ListWrapper(tuple.getElementNotNull(4)).getElementsNotNull();
         final @Nonnull FreezableList<Credential> credentials = new FreezableArrayList<>(list.size());
         boolean lodged = false;
         for (final @Nonnull Block element : list) {
@@ -359,7 +359,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
      * @return whether the given credentials are valid.
      */
     @Pure
-    public static boolean credentialsAreValid(@Nonnull ReadonlyList<Credential> credentials) {
+    public static boolean credentialsAreValid(@Nonnull ReadOnlyList<Credential> credentials) {
         if (credentials.isEmpty()) return false;
         final @Nonnull Iterator<Credential> iterator = credentials.iterator();
         @Nullable Credential credential = iterator.next();
@@ -406,7 +406,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
      * 
      * @require validCredentials(credentials) : "The credentials have to be valid.";
      */
-    public static boolean certificatesAreValid(@Nullable ReadonlyList<CertifiedAttributeValue> certificates, @Nonnull ReadonlyList<Credential> credentials) {
+    public static boolean certificatesAreValid(@Nullable ReadOnlyList<CertifiedAttributeValue> certificates, @Nonnull ReadOnlyList<Credential> credentials) {
         assert credentialsAreValid(credentials) : "The credentials have to be valid.";
         
         if (certificates != null) {
@@ -431,7 +431,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
      * @ensure credentialsAreValid(return) : "The credentials are valid.";
      */
     @Pure
-    public @Nonnull ReadonlyList<Credential> getCredentials() {
+    public @Nonnull ReadOnlyList<Credential> getCredentials() {
         return credentials;
     }
     
@@ -444,7 +444,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
      * @ensure certificatesAreValid(return, getCredentials()) : "The certificates are valid.";
      */
     @Pure
-    public @Nullable ReadonlyList<CertifiedAttributeValue> getCertificates() {
+    public @Nullable ReadOnlyList<CertifiedAttributeValue> getCertificates() {
         return certificates;
     }
     
@@ -622,7 +622,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
         assert type.isAttributeType() : "The type is an attribute type.";
         
         for (final @Nonnull Credential credential : credentials) {
-            final @Nullable ReadonlyAgentPermissions permissions = credential.getPermissions();
+            final @Nullable ReadOnlyAgentPermissions permissions = credential.getPermissions();
             if (permissions == null || !permissions.canRead(type)) return false;
         }
         return true;
@@ -654,7 +654,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
         assert type.isAttributeType() : "The type is an attribute type.";
         
         for (final @Nonnull Credential credential : credentials) {
-            final @Nullable ReadonlyAgentPermissions permissions = credential.getPermissions();
+            final @Nullable ReadOnlyAgentPermissions permissions = credential.getPermissions();
             if (permissions == null || !permissions.canWrite(type)) return false;
         }
         return true;
@@ -680,9 +680,9 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
      * @return whether the permissions of each credential cover the given permissions.
      */
     @Pure
-    public boolean cover(@Nonnull ReadonlyAgentPermissions permissions) {
+    public boolean cover(@Nonnull ReadOnlyAgentPermissions permissions) {
         for (final @Nonnull Credential credential : credentials) {
-            final @Nullable ReadonlyAgentPermissions _permissions = credential.getPermissions();
+            final @Nullable ReadOnlyAgentPermissions _permissions = credential.getPermissions();
             if (_permissions == null || !_permissions.cover(permissions)) return false;
         }
         return true;
@@ -694,7 +694,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
      * @param permissions the permissions that need to be covered.
      */
     @Pure
-    public void checkCover(@Nonnull ReadonlyAgentPermissions permissions) throws PacketException {
+    public void checkCover(@Nonnull ReadOnlyAgentPermissions permissions) throws PacketException {
         if (!cover(permissions)) throw new PacketException(PacketError.AUTHORIZATION, "Not all credentials cover " + permissions + ".");
     }
     
@@ -745,7 +745,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
             v = new Exponent(signature.getElementNotNull(2).getHash());
         }
         
-        final @Nonnull ReadonlyList<Block> list = new ListWrapper(signature.getElementNotNull(4)).getElementsNotNull();
+        final @Nonnull ReadOnlyList<Block> list = new ListWrapper(signature.getElementNotNull(4)).getElementsNotNull();
         final @Nonnull FreezableList<Block> ts = new FreezableArrayList<>(list.size());
         for (int i = 0; i < list.size(); i++) {
             final @Nonnull PublicKey publicKey = credentials.getNotNull(i).getPublicKey();
@@ -783,7 +783,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper implemen
             array.set(0, hiddenElement.multiply(shownElement.pow(t)).toBlock());
             
             if (lodged && si != null) {
-                final @Nonnull ReadonlyArray<Block> encryptions = new TupleWrapper(credential.getElementNotNull(7)).getElementsNotNull(4);
+                final @Nonnull ReadOnlyArray<Block> encryptions = new TupleWrapper(credential.getElementNotNull(7)).getElementsNotNull(4);
                 final @Nonnull FreezableArray<Block> wis = new TupleWrapper(encryptions.getNotNull(0)).getElementsNotNull(2).clone();
                 final @Nonnull Exponent swi = new Exponent(encryptions.getNotNull(1));
                 if (swi.getBitLength() > Parameters.RANDOM_BLINDING_EXPONENT) throw new InvalidSignatureException("The credentials signature is invalid: The value swi is too big.");

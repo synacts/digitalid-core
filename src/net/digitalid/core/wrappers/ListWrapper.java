@@ -6,7 +6,7 @@ import net.digitalid.core.annotations.Exposed;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.collections.FreezableArrayList;
 import net.digitalid.core.collections.FreezableList;
-import net.digitalid.core.collections.ReadonlyList;
+import net.digitalid.core.collections.ReadOnlyList;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.identity.SyntacticType;
@@ -35,7 +35,7 @@ public final class ListWrapper extends BlockWrapper implements Immutable {
      * @return whether the given elements are based on the parameter of the given type.
      */
     @Pure
-    public static boolean basedOnParameter(@Nonnull SemanticType type, @Nonnull ReadonlyList<Block> elements) {
+    public static boolean basedOnParameter(@Nonnull SemanticType type, @Nonnull ReadOnlyList<Block> elements) {
         final @Nonnull SemanticType parameter = type.getParameters().getNotNull(0);
         for (final @Nullable Block element : elements) {
             if (element != null && !element.getType().isBasedOn(parameter)) return false;
@@ -50,7 +50,7 @@ public final class ListWrapper extends BlockWrapper implements Immutable {
      * @invariant elements.isFrozen() : "The elements are frozen.";
      * @invariant basedOnParameter(toBlock().getType(), elements) : "Each element is either null or based on the parameter of the block's type.";
      */
-    private final @Nonnull ReadonlyList<Block> elements;
+    private final @Nonnull ReadOnlyList<Block> elements;
     
     /**
      * Encodes the given elements into a new block of the given type.
@@ -63,7 +63,7 @@ public final class ListWrapper extends BlockWrapper implements Immutable {
      * @require basedOnParameter(type, elements) : "Each element is either null or based on the parameter of the given type.";
      * @require elements.isFrozen() : "The elements have to be frozen.";
      */
-    public ListWrapper(@Nonnull SemanticType type, @Nonnull ReadonlyList<Block> elements) {
+    public ListWrapper(@Nonnull SemanticType type, @Nonnull ReadOnlyList<Block> elements) {
         super(type);
         
         assert basedOnParameter(type, elements) : "Each element is either null or based on the parameter of the given type.";
@@ -150,7 +150,7 @@ public final class ListWrapper extends BlockWrapper implements Immutable {
      * @ensure basedOnParameter(toBlock().getType(), elements) : "Each element is either null or based on the parameter of the block's type.";
      */
     @Pure
-    public @Nonnull ReadonlyList<Block> getElements() {
+    public @Nonnull ReadOnlyList<Block> getElements() {
         return elements;
     }
     
@@ -166,8 +166,8 @@ public final class ListWrapper extends BlockWrapper implements Immutable {
      * @ensure basedOnParameters(toBlock().getType(), elements) : "Each element is based on the parameter of the block's type.";
      */
     @Pure
-    public @Nonnull ReadonlyList<Block> getElementsNotNull() throws InvalidEncodingException {
-        final @Nonnull ReadonlyList<Block> elements = getElements();
+    public @Nonnull ReadOnlyList<Block> getElementsNotNull() throws InvalidEncodingException {
+        final @Nonnull ReadOnlyList<Block> elements = getElements();
         
         if (!elements.doesNotContainNull()) throw new InvalidEncodingException("The list contains null.");
         

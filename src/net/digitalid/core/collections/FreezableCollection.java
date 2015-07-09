@@ -18,9 +18,9 @@ import net.digitalid.core.interfaces.Immutable;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public interface FreezableCollection<E> extends ReadonlyCollection<E>, Collection<E>, FreezableIterable<E> {
+public interface FreezableCollection<E> extends ReadOnlyCollection<E>, Collection<E>, FreezableIterable<E> {
     
     @Override
-    public @Nonnull ReadonlyCollection<E> freeze();
+    public @Nonnull ReadOnlyCollection<E> freeze();
     
 }

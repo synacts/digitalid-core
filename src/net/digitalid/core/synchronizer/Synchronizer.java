@@ -18,8 +18,8 @@ import net.digitalid.core.collections.ConcurrentMap;
 import net.digitalid.core.collections.ConcurrentSet;
 import net.digitalid.core.collections.FreezableArrayList;
 import net.digitalid.core.collections.FreezableHashSet;
-import net.digitalid.core.collections.ReadonlyList;
-import net.digitalid.core.collections.ReadonlySet;
+import net.digitalid.core.collections.ReadOnlyList;
+import net.digitalid.core.collections.ReadOnlySet;
 import net.digitalid.core.database.Database;
 import net.digitalid.core.entity.Role;
 import net.digitalid.core.exceptions.external.ExternalException;
@@ -149,7 +149,7 @@ public final class Synchronizer extends Thread {
         final @Nullable InternalAction lastAction = SynchronizerModule.pendingActions.peekLast();
         Database.commit();
         
-        final @Nonnull ReadonlySet<BothModule> modules = new FreezableHashSet<>(module).freeze();
+        final @Nonnull ReadOnlySet<BothModule> modules = new FreezableHashSet<>(module).freeze();
         SynchronizerModule.redoPendingActions(role, module.equals(service) ? service.getBothModules() : modules, lastAction);
         if (!module.equals(service)) response.getAuditNotNull().execute(role, service, response.getRequest().getRecipient(), ResponseAudit.emptyMethodList, modules);
     }
@@ -285,7 +285,7 @@ public final class Synchronizer extends Thread {
                 assert action != null : "Just to make sure that the action is indeed not null.";
                 SynchronizerModule.pendingActions.addFirst(action);
                 // TODO: Rewrite such that SynchronizerModule.getMethods() does the waiting.
-                final @Nonnull ReadonlyList<Method> methods = SynchronizerModule.getMethods();
+                final @Nonnull ReadOnlyList<Method> methods = SynchronizerModule.getMethods();
                 if (methods.isNotEmpty()) {
                     try {
                         Logger.log(Level.DEBUGGING, "Synchronizer", "Create a new sender for the methods " + methods + ".");

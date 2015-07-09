@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.agent.AgentPermissions;
-import net.digitalid.core.agent.ReadonlyAgentPermissions;
+import net.digitalid.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.core.annotations.BasedOn;
 import net.digitalid.core.annotations.HasSubject;
 import net.digitalid.core.annotations.NonCommitting;
@@ -50,7 +50,7 @@ final class AuditQuery extends InternalQuery {
     /**
      * Stores the permissions of the querying agent or none.
      */
-    private final @Nonnull ReadonlyAgentPermissions permissions;
+    private final @Nonnull ReadOnlyAgentPermissions permissions;
     
     /**
      * Creates an internal query for the audit of the given service.
@@ -105,7 +105,7 @@ final class AuditQuery extends InternalQuery {
     
     @Pure
     @Override
-    public @Nonnull ReadonlyAgentPermissions getRequiredPermissions() {
+    public @Nonnull ReadOnlyAgentPermissions getRequiredPermissions() {
         return permissions;
     }
     

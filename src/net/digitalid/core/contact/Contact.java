@@ -118,7 +118,7 @@ public final class Contact extends NonHostConcept implements Immutable, Blockabl
      * @return the permissions of this contact.
      */
     @NonCommitting
-    public @Nonnull ReadonlyContactPermissions getPermissions() throws SQLException {
+    public @Nonnull ReadOnlyContactPermissions getPermissions() throws SQLException {
         return ContactPermissions.NONE; // TODO
     }
     
@@ -130,7 +130,7 @@ public final class Contact extends NonHostConcept implements Immutable, Blockabl
      * @return the authentications of this contact.
      */
     @NonCommitting
-    public @Nonnull ReadonlyAuthentications getAuthentications() throws SQLException {
+    public @Nonnull ReadOnlyAuthentications getAuthentications() throws SQLException {
         return Authentications.IDENTITY_BASED; // TODO
     }
     

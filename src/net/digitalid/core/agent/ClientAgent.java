@@ -177,7 +177,7 @@ public final class ClientAgent extends Agent implements Immutable, Blockable, SQ
      */
     @NonCommitting
     @OnlyForActions
-    public void createForActions(@Nonnull ReadonlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nonnull Commitment commitment, @Nonnull String name) throws SQLException {
+    public void createForActions(@Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nonnull Commitment commitment, @Nonnull String name) throws SQLException {
         AgentModule.addClientAgent(this, permissions, restrictions, commitment, name);
         this.permissions = permissions.clone();
         this.restrictions = restrictions;

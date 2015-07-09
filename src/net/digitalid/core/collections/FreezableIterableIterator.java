@@ -58,7 +58,7 @@ class FreezableIterableIterator<E> implements FreezableIterator<E> {
     }
     
     @Override
-    public @Nonnull ReadonlyIterator<E> freeze() {
+    public @Nonnull ReadOnlyIterator<E> freeze() {
         iterable.freeze();
         return this;
     }

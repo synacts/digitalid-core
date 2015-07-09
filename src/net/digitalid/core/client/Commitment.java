@@ -12,7 +12,7 @@ import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.cache.Cache;
 import net.digitalid.core.collections.FreezableArray;
-import net.digitalid.core.collections.ReadonlyArray;
+import net.digitalid.core.collections.ReadOnlyArray;
 import net.digitalid.core.cryptography.Element;
 import net.digitalid.core.cryptography.Exponent;
 import net.digitalid.core.cryptography.PublicKey;
@@ -124,7 +124,7 @@ public class Commitment implements Immutable, Blockable, SQLizable {
     public Commitment(@Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
-        final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(3);
+        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(3);
         final @Nonnull HostIdentifier identifier = IdentifierClass.create(elements.getNotNull(0)).toHostIdentifier();
         this.host = identifier.getIdentity();
         this.time = new Time(elements.getNotNull(1));

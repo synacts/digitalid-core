@@ -15,7 +15,7 @@ import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.cache.Cache;
 import net.digitalid.core.client.AccountInitialize;
 import net.digitalid.core.client.AccountOpen;
-import net.digitalid.core.collections.ReadonlyList;
+import net.digitalid.core.collections.ReadOnlyList;
 import net.digitalid.core.database.Database;
 import net.digitalid.core.errors.InitializationError;
 import net.digitalid.core.errors.ShouldNeverHappenError;
@@ -37,7 +37,7 @@ import net.digitalid.core.io.Level;
 import net.digitalid.core.io.Logger;
 import net.digitalid.core.server.Server;
 import net.digitalid.core.tuples.FreezableTriplet;
-import net.digitalid.core.tuples.ReadonlyTriplet;
+import net.digitalid.core.tuples.ReadOnlyTriplet;
 
 /**
  * The mapper maps between {@link Identifier identifiers} and {@link Identity identities}.
@@ -72,7 +72,7 @@ public final class Mapper {
     /**
      * Stores the registered triplets of tables, columns and unique constraint that reference a person.
      */
-    private static final @Nonnull Set<ReadonlyTriplet<String, String, String[]>> references = new LinkedHashSet<>();
+    private static final @Nonnull Set<ReadOnlyTriplet<String, String, String[]>> references = new LinkedHashSet<>();
     
     /**
      * Adds the given table, columns and unique constraint to the list of registered references.
@@ -106,7 +106,7 @@ public final class Mapper {
     @NonCommitting
     private static void updateReferences(@Nonnull Statement statement, long oldNumber, long newNumber) throws SQLException {
         final @Nonnull String IGNORE = Database.getConfiguration().IGNORE();
-        for (final @Nonnull ReadonlyTriplet<String, String, String[]> reference : references) {
+        for (final @Nonnull ReadOnlyTriplet<String, String, String[]> reference : references) {
             final @Nonnull String table = reference.getElement0();
             final @Nonnull String column = reference.getElement1();
             if (IGNORE.isEmpty()) {
@@ -460,7 +460,7 @@ public final class Mapper {
      * @param newIdentity the new identity of the given identities.
      */
     @NonCommitting
-    public static void mergeIdentities(@Nonnull ReadonlyList<NonHostIdentity> identities, @Nonnull InternalNonHostIdentity newIdentity) throws SQLException {
+    public static void mergeIdentities(@Nonnull ReadOnlyList<NonHostIdentity> identities, @Nonnull InternalNonHostIdentity newIdentity) throws SQLException {
         final long newNumber = newIdentity.getNumber();
         try (@Nonnull Statement statement = Database.createStatement()) {
             for (final @Nonnull NonHostIdentity identity : identities) {
@@ -505,11 +505,11 @@ public final class Mapper {
         final @Nonnull Category category = reply.getCategory();
         
         // Store all the predecessors of the given identifier into the database.
-        final @Nonnull ReadonlyPredecessors predecessors = reply.getPredecessors();
+        final @Nonnull ReadOnlyPredecessors predecessors = reply.getPredecessors();
         predecessors.set(identifier, reply);
         
         // Check that all the claimed and mapped predecessors have the right category, the indicated predecessors and do link back.
-        final @Nonnull ReadonlyList<NonHostIdentity> identities = predecessors.getIdentities();
+        final @Nonnull ReadOnlyList<NonHostIdentity> identities = predecessors.getIdentities();
         for (final @Nonnull NonHostIdentity identity : identities) {
             final @Nonnull NonHostIdentifier address = identity.getAddress();
             final @Nonnull String message = "The claimed predecessor " + address + " of " + identifier;

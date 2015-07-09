@@ -12,7 +12,7 @@ import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.collections.FreezableArrayList;
 import net.digitalid.core.collections.FreezableList;
-import net.digitalid.core.collections.ReadonlyList;
+import net.digitalid.core.collections.ReadOnlyList;
 import net.digitalid.core.database.Database;
 import net.digitalid.core.errors.InitializationError;
 import net.digitalid.core.exceptions.external.ExternalException;
@@ -38,7 +38,7 @@ import net.digitalid.core.wrappers.ListWrapper;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public final class Predecessors extends FreezableArrayList<Predecessor> implements ReadonlyPredecessors, Blockable {
+public final class Predecessors extends FreezableArrayList<Predecessor> implements ReadOnlyPredecessors, Blockable {
     
     /**
      * Stores the semantic type {@code list.predecessor.identity@core.digitalid.net}.
@@ -66,7 +66,7 @@ public final class Predecessors extends FreezableArrayList<Predecessor> implemen
      * 
      * @param predecessors the predecessors to add to the new predecessors.
      */
-    public Predecessors(@Nonnull ReadonlyPredecessors predecessors) {
+    public Predecessors(@Nonnull ReadOnlyPredecessors predecessors) {
         for (final @Nonnull Predecessor predecessor : predecessors) {
             add(predecessor);
         }
@@ -82,7 +82,7 @@ public final class Predecessors extends FreezableArrayList<Predecessor> implemen
     public Predecessors(@Nonnull Block block) throws InvalidEncodingException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
-        final @Nonnull ReadonlyList<Block> predecessors = new ListWrapper(block).getElementsNotNull();
+        final @Nonnull ReadOnlyList<Block> predecessors = new ListWrapper(block).getElementsNotNull();
         for (final @Nonnull Block predecessor : predecessors) {
             add(new Predecessor(predecessor));
         }
@@ -106,7 +106,7 @@ public final class Predecessors extends FreezableArrayList<Predecessor> implemen
     
     
     @Override
-    public @Nonnull ReadonlyPredecessors freeze() {
+    public @Nonnull ReadOnlyPredecessors freeze() {
         super.freeze();
         return this;
     }
@@ -121,7 +121,7 @@ public final class Predecessors extends FreezableArrayList<Predecessor> implemen
     
     @Override
     @NonCommitting
-    public @Nonnull ReadonlyList<NonHostIdentity> getIdentities() throws SQLException, IOException, PacketException, ExternalException {
+    public @Nonnull ReadOnlyList<NonHostIdentity> getIdentities() throws SQLException, IOException, PacketException, ExternalException {
         final @Nonnull FreezableList<NonHostIdentity> identities = new FreezableArrayList<>(size());
         for (final @Nonnull Predecessor predecessor : this) {
             final @Nullable NonHostIdentity identity = predecessor.getIdentity();
@@ -205,7 +205,7 @@ public final class Predecessors extends FreezableArrayList<Predecessor> implemen
      * @ensure return.isFrozen() : "The returned predecessors are frozen.";
      */
     @NonCommitting
-    public static @Nonnull ReadonlyPredecessors get(@Nonnull InternalNonHostIdentifier identifier) throws SQLException {
+    public static @Nonnull ReadOnlyPredecessors get(@Nonnull InternalNonHostIdentifier identifier) throws SQLException {
         assert exist(identifier) : "The predecessors of the given identifier exist.";
         
         final @Nonnull String SQL = "SELECT predecessors FROM general_predecessors WHERE identifier = " + identifier;

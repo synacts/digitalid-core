@@ -9,14 +9,14 @@ import javax.annotation.Nullable;
 import net.digitalid.core.agent.Agent;
 import net.digitalid.core.agent.AgentPermissions;
 import net.digitalid.core.agent.ClientAgent;
-import net.digitalid.core.agent.ReadonlyAgentPermissions;
+import net.digitalid.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.core.agent.Restrictions;
 import net.digitalid.core.annotations.BasedOn;
 import net.digitalid.core.annotations.HasSubject;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.collections.FreezableArrayList;
-import net.digitalid.core.collections.ReadonlyArray;
+import net.digitalid.core.collections.ReadOnlyArray;
 import net.digitalid.core.contact.Context;
 import net.digitalid.core.cryptography.Exponent;
 import net.digitalid.core.entity.Entity;
@@ -132,7 +132,7 @@ public final class AccountOpen extends Action {
         
         if (!getSubject().getHostIdentifier().equals(getRecipient())) throw new PacketException(PacketError.IDENTIFIER, "The host of the subject has to match the recipient for the action to open an account.");
         
-        final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(3);
+        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(3);
         
         this.category = Category.get(elements.getNotNull(0));
         if (!category.isInternalNonHostIdentity()) throw new InvalidEncodingException("The category has to denote an internal non-host identity.");
@@ -181,7 +181,7 @@ public final class AccountOpen extends Action {
     
     @Pure
     @Override
-    public @Nonnull ReadonlyAgentPermissions getAuditPermissions() {
+    public @Nonnull ReadOnlyAgentPermissions getAuditPermissions() {
         return AgentPermissions.GENERAL_WRITE;
     }
     

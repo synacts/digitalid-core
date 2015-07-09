@@ -13,7 +13,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.agent.ClientAgent;
 import net.digitalid.core.agent.ClientAgentAccredit;
-import net.digitalid.core.agent.ReadonlyAgentPermissions;
+import net.digitalid.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.core.annotations.Committing;
 import net.digitalid.core.annotations.Frozen;
 import net.digitalid.core.annotations.Locked;
@@ -26,7 +26,7 @@ import net.digitalid.core.cache.Cache;
 import net.digitalid.core.collections.FreezableArrayList;
 import net.digitalid.core.collections.FreezableLinkedList;
 import net.digitalid.core.collections.FreezableList;
-import net.digitalid.core.collections.ReadonlyList;
+import net.digitalid.core.collections.ReadOnlyList;
 import net.digitalid.core.concept.Aspect;
 import net.digitalid.core.concept.Instance;
 import net.digitalid.core.concept.Observer;
@@ -58,7 +58,7 @@ import net.digitalid.core.synchronizer.ResponseAudit;
 import net.digitalid.core.synchronizer.Synchronizer;
 import net.digitalid.core.synchronizer.SynchronizerModule;
 import net.digitalid.core.tuples.FreezablePair;
-import net.digitalid.core.tuples.ReadonlyPair;
+import net.digitalid.core.tuples.ReadOnlyPair;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.SelfcontainedWrapper;
 import net.digitalid.core.wrappers.StringWrapper;
@@ -162,7 +162,7 @@ public class Client extends Site implements Observer {
      * 
      * @invariant preferredPermissions.isFrozen() : "The preferred permissions are frozen.";
      */
-    private final @Nonnull ReadonlyAgentPermissions preferredPermissions;
+    private final @Nonnull ReadOnlyAgentPermissions preferredPermissions;
     
     /**
      * Creates a new client with the given identifier.
@@ -173,7 +173,7 @@ public class Client extends Site implements Observer {
      */
     @Locked
     @Committing
-    public Client(@Nonnull @Validated String identifier, @Nonnull @Validated String name, @Nonnull @Frozen ReadonlyAgentPermissions preferredPermissions) throws SQLException, IOException, PacketException, ExternalException {
+    public Client(@Nonnull @Validated String identifier, @Nonnull @Validated String name, @Nonnull @Frozen ReadOnlyAgentPermissions preferredPermissions) throws SQLException, IOException, PacketException, ExternalException {
         super(identifier);
         
         assert isValidIdentifier(identifier) : "The identifier is valid.";
@@ -254,7 +254,7 @@ public class Client extends Site implements Observer {
      * @ensure return.isFrozen() : "The preferred permissions are frozen.";
      */
     @Pure
-    public final @Nonnull ReadonlyAgentPermissions getPreferredPermissions() {
+    public final @Nonnull ReadOnlyAgentPermissions getPreferredPermissions() {
         return preferredPermissions;
     }
     
@@ -298,7 +298,7 @@ public class Client extends Site implements Observer {
     @Committing
     public final void rotateSecret() throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
         final @Nonnull Exponent newSecret = new Exponent(new BigInteger(Parameters.HASH, new SecureRandom()));
-        final @Nonnull ReadonlyList<NativeRole> roles = getRoles();
+        final @Nonnull ReadOnlyList<NativeRole> roles = getRoles();
         Database.commit();
         
         for (final @Nonnull NativeRole role : roles) {
@@ -334,7 +334,7 @@ public class Client extends Site implements Observer {
      */
     @Pure
     @NonCommitting
-    public final @Nonnull @NonFrozen ReadonlyList<NativeRole> getRoles() throws SQLException {
+    public final @Nonnull @NonFrozen ReadOnlyList<NativeRole> getRoles() throws SQLException {
         if (Database.isMultiAccess()) return RoleModule.getRoles(this);
         if (roles == null) roles = RoleModule.getRoles(this);
         return roles;
@@ -412,7 +412,7 @@ public class Client extends Site implements Observer {
      * @require !category.isType() || roles.size() <= 1 && identifiers.isEmpty() : "If the category denotes a type, at most one role and no identifier may be given.";
      */
     @Committing
-    public final @Nonnull NativeRole openAccount(@Nonnull InternalNonHostIdentifier subject, @Nonnull Category category, @Nonnull ReadonlyList<NativeRole> roles, @Nonnull ReadonlyList<ExternalIdentifier> identifiers) throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
+    public final @Nonnull NativeRole openAccount(@Nonnull InternalNonHostIdentifier subject, @Nonnull Category category, @Nonnull ReadOnlyList<NativeRole> roles, @Nonnull ReadOnlyList<ExternalIdentifier> identifiers) throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
         assert subject.doesNotExist() : "The subject does not exist.";
         assert category.isInternalNonHostIdentity() : "The category denotes an internal non-host identity.";
         assert !category.isType() || roles.size() <= 1 && identifiers.isEmpty() : "If the category denotes a type, at most one role and no identifier may be given.";
@@ -424,7 +424,7 @@ public class Client extends Site implements Observer {
         accountOpen.initialize(newRole);
         Database.commit();
         
-        final @Nonnull FreezableList<ReadonlyPair<Predecessor, Block>> states = new FreezableArrayList<>(roles.size() + identifiers.size());
+        final @Nonnull FreezableList<ReadOnlyPair<Predecessor, Block>> states = new FreezableArrayList<>(roles.size() + identifiers.size());
         
         for (final @Nonnull NativeRole role : roles) {
             if (role.getIdentity().getCategory() != category) throw new PacketException(PacketError.INTERNAL, "A role is of the wrong category.");

@@ -6,14 +6,14 @@ import javax.annotation.Nonnull;
 import net.digitalid.core.annotations.Capturable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.collections.ReadonlyMap;
+import net.digitalid.core.collections.ReadOnlyMap;
 import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.interfaces.Blockable;
 import net.digitalid.core.interfaces.SQLizable;
 
 /**
- * This interface provides readonly access to {@link AgentPermissions agent permissions} and should <em>never</em> be cast away.
+ * This interface provides read-only access to {@link AgentPermissions agent permissions} and should <em>never</em> be cast away.
  * 
  * @invariant areValid() : "These agent permissions are always valid.";
  * 
@@ -22,7 +22,7 @@ import net.digitalid.core.interfaces.SQLizable;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public interface ReadonlyAgentPermissions extends ReadonlyMap<SemanticType, Boolean>, Blockable, SQLizable {
+public interface ReadOnlyAgentPermissions extends ReadOnlyMap<SemanticType, Boolean>, Blockable, SQLizable {
     
     /**
      * Returns whether these agent permissions are valid.
@@ -100,7 +100,7 @@ public interface ReadonlyAgentPermissions extends ReadonlyMap<SemanticType, Bool
      * @return whether these agent permissions cover the given agent permissions.
      */
     @Pure
-    public boolean cover(@Nonnull ReadonlyAgentPermissions permissions);
+    public boolean cover(@Nonnull ReadOnlyAgentPermissions permissions);
     
     /**
      * Checks that these agent permissions cover the given agent permissions and throws a {@link PacketException} if not.
@@ -108,7 +108,7 @@ public interface ReadonlyAgentPermissions extends ReadonlyMap<SemanticType, Bool
      * @param permissions the agent permissions that need to be covered.
      */
     @Pure
-    public void checkCover(@Nonnull ReadonlyAgentPermissions permissions) throws PacketException;
+    public void checkCover(@Nonnull ReadOnlyAgentPermissions permissions) throws PacketException;
     
     
     @Pure

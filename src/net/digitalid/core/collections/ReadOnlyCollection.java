@@ -8,7 +8,7 @@ import net.digitalid.core.interfaces.Freezable;
 import net.digitalid.core.interfaces.Immutable;
 
 /**
- * This interface provides readonly access to {@link Collection collections} and should <em>never</em> be cast away (unless external code requires it).
+ * This interface provides read-only access to {@link Collection collections} and should <em>never</em> be cast away (unless external code requires it).
  * <p>
  * <em>Important:</em> Only use freezable or immutable types for the elements!
  * (The type is not restricted to {@link Freezable} or {@link Immutable} so that library types can also be used.)
@@ -18,7 +18,7 @@ import net.digitalid.core.interfaces.Immutable;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public interface ReadonlyCollection<E> extends ReadonlyIterable<E> {
+public interface ReadOnlyCollection<E> extends ReadOnlyIterable<E> {
     
     /**
      * @see Collection#size()

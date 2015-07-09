@@ -38,7 +38,7 @@ public class FreezableHashMap<K,V> extends HashMap<K,V> implements FreezableMap<
     }
     
     @Override
-    public @Nonnull ReadonlyMap<K,V> freeze() {
+    public @Nonnull ReadOnlyMap<K,V> freeze() {
         if (!frozen) {
             frozen = true;
             // Assuming that the keys are already immutable.

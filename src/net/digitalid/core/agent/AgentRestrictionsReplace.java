@@ -6,7 +6,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.collections.ReadonlyArray;
+import net.digitalid.core.collections.ReadOnlyArray;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.exceptions.external.ExternalException;
@@ -104,7 +104,7 @@ final class AgentRestrictionsReplace extends CoreServiceInternalAction {
         super(entity, signature, recipient);
         
         final @Nonnull NonHostEntity nonHostEntity = entity.toNonHostEntity();
-        final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(3);
+        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(3);
         this.agent = Agent.get(nonHostEntity, elements.getNotNull(0));
         this.oldRestrictions = new Restrictions(nonHostEntity, elements.getNotNull(1)).checkMatch(agent);
         this.newRestrictions = new Restrictions(nonHostEntity, elements.getNotNull(2)).checkMatch(agent);

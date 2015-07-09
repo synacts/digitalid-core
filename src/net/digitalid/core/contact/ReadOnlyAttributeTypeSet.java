@@ -4,12 +4,12 @@ import javax.annotation.Nonnull;
 import net.digitalid.core.agent.AgentPermissions;
 import net.digitalid.core.annotations.Capturable;
 import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.collections.ReadonlySet;
+import net.digitalid.core.collections.ReadOnlySet;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.interfaces.Blockable;
 
 /**
- * This interface provides readonly access to {@link AttributeTypeSet attribute type sets} and should <em>never</em> be cast away.
+ * This interface provides read-only access to {@link AttributeTypeSet attribute type sets} and should <em>never</em> be cast away.
  * 
  * @see AttributeTypeSet
  * @see ReadonlyAuthentications
@@ -18,7 +18,7 @@ import net.digitalid.core.interfaces.Blockable;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public interface ReadonlyAttributeTypeSet extends ReadonlySet<SemanticType>, Blockable {
+public interface ReadOnlyAttributeTypeSet extends ReadOnlySet<SemanticType>, Blockable {
     
     /**
      * Returns this attribute type set as agent as agent permissions for reading.

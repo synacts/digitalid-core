@@ -9,7 +9,7 @@ import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.client.Client;
 import net.digitalid.core.client.Commitment;
 import net.digitalid.core.collections.FreezableArrayList;
-import net.digitalid.core.collections.ReadonlyArray;
+import net.digitalid.core.collections.ReadOnlyArray;
 import net.digitalid.core.contact.Context;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NativeRole;
@@ -58,7 +58,7 @@ public final class ClientAgentAccredit extends CoreServiceInternalAction {
      * 
      * @invariant permissions.isFrozen() : "The permissions are frozen.";
      */
-    private final @Nonnull ReadonlyAgentPermissions permissions;
+    private final @Nonnull ReadOnlyAgentPermissions permissions;
     
     /**
      * Stores the commitment of the client agent.
@@ -118,7 +118,7 @@ public final class ClientAgentAccredit extends CoreServiceInternalAction {
     private ClientAgentAccredit(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
-        final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(5);
+        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(5);
         
         this.clientAgent = Agent.get(entity.toNonHostEntity(), elements.getNotNull(0)).toClientAgent();
         if (clientAgent.isNotRemoved()) throw new InvalidEncodingException("The client agent has to be removed.");

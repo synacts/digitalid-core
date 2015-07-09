@@ -16,7 +16,7 @@ import net.digitalid.core.client.AccountInitialize;
 import net.digitalid.core.client.AccountOpen;
 import net.digitalid.core.collections.FreezableArrayList;
 import net.digitalid.core.collections.FreezableList;
-import net.digitalid.core.collections.ReadonlyList;
+import net.digitalid.core.collections.ReadOnlyList;
 import net.digitalid.core.cryptography.SymmetricKey;
 import net.digitalid.core.entity.Account;
 import net.digitalid.core.entity.Entity;
@@ -189,7 +189,7 @@ public abstract class Packet implements Immutable {
         if (isResponse != (recipient == null)) throw new PacketException(PacketError.ENCRYPTION, "The recipient of a request may not be null.", null, isResponse);
         final @Nullable HostAccount account = recipient == null ? null : Server.getHost(recipient).getAccount();
         
-        final @Nonnull ReadonlyList<Block> elements;
+        final @Nonnull ReadOnlyList<Block> elements;
         try { elements = new ListWrapper(encryption.getElementNotNull()).getElements(); } catch (InvalidEncodingException exception) { throw new PacketException(PacketError.ELEMENTS, "The elements could not be decoded.", exception, isResponse); }
         
         this.size = elements.size();

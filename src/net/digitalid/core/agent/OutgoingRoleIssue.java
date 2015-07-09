@@ -6,7 +6,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.collections.ReadonlyArray;
+import net.digitalid.core.collections.ReadOnlyArray;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.packet.PacketError;
@@ -98,7 +98,7 @@ final class OutgoingRoleIssue extends CoreServiceExternalAction {
             this.issuer = entity.getIdentity().toInternalNonHostIdentity();
         }
         
-        final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(2);
+        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(2);
         this.relation = IdentityClass.create(elements.getNotNull(0)).toSemanticType().checkIsRoleType();
         this.agentNumber = new Int64Wrapper(elements.getNotNull(1)).getValue();
     }

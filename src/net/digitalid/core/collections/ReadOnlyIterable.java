@@ -5,10 +5,10 @@ import net.digitalid.core.annotations.Capturable;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.interfaces.Freezable;
 import net.digitalid.core.interfaces.Immutable;
-import net.digitalid.core.interfaces.Readonly;
+import net.digitalid.core.interfaces.ReadOnly;
 
 /**
- * This interface provides readonly access to {@link Iterable iterables} and should not be lost by assigning its objects to a supertype.
+ * This interface provides read-only access to {@link Iterable iterables} and should not be lost by assigning its objects to a supertype.
  * <p>
  * <em>Important:</em> Only use freezable or immutable types for the elements!
  * (The type is not restricted to {@link Freezable} or {@link Immutable} so that library types can also be used.)
@@ -18,11 +18,11 @@ import net.digitalid.core.interfaces.Readonly;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public interface ReadonlyIterable<E> extends Iterable<E>, Readonly {
+public interface ReadOnlyIterable<E> extends Iterable<E>, ReadOnly {
     
     @Pure
     @Override
-    public @Nonnull ReadonlyIterator<E> iterator();
+    public @Nonnull ReadOnlyIterator<E> iterator();
     
     
     @Pure

@@ -54,7 +54,7 @@ public final class IdentityReply extends CoreServiceQueryReply {
      * 
      * @invariant predecessors.isFrozen() : "The predecessors are frozen.";
      */
-    private final @Nonnull ReadonlyPredecessors predecessors;
+    private final @Nonnull ReadOnlyPredecessors predecessors;
     
     /**
      * Stores the successor of the subject.
@@ -136,7 +136,7 @@ public final class IdentityReply extends CoreServiceQueryReply {
      * @ensure return.isFrozen() : "The predecessors are frozen.";
      */
     @Pure
-    @Nonnull ReadonlyPredecessors getPredecessors() {
+    @Nonnull ReadOnlyPredecessors getPredecessors() {
         return predecessors;
     }
     

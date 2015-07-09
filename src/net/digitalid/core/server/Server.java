@@ -12,7 +12,7 @@ import net.digitalid.core.cache.Cache;
 import net.digitalid.core.client.Client;
 import net.digitalid.core.collections.FreezableLinkedHashMap;
 import net.digitalid.core.collections.FreezableMap;
-import net.digitalid.core.collections.ReadonlyCollection;
+import net.digitalid.core.collections.ReadOnlyCollection;
 import net.digitalid.core.database.Configuration;
 import net.digitalid.core.database.Database;
 import net.digitalid.core.database.MySQLConfiguration;
@@ -103,7 +103,7 @@ public final class Server {
      * 
      * @ensure return.doesNotContainNull() : "The returned collection does not contain null.";
      */
-    public static @Nonnull ReadonlyCollection<Host> getHosts() {
+    public static @Nonnull ReadOnlyCollection<Host> getHosts() {
         return hosts.values();
     }
     

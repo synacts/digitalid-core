@@ -10,7 +10,7 @@ import javax.annotation.Nonnull;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public interface Freezable extends Readonly {
+public interface Freezable extends ReadOnly {
     
     /**
      * Freezes this object and thus makes it immutable.
@@ -20,6 +20,6 @@ public interface Freezable extends Readonly {
      * 
      * @ensure isFrozen() : "This object is now frozen.";
      */
-    public @Nonnull Readonly freeze();
+    public @Nonnull ReadOnly freeze();
     
 }

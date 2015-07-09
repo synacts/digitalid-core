@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.agent.Agent;
-import net.digitalid.core.agent.ReadonlyAgentPermissions;
+import net.digitalid.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.core.agent.Restrictions;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
@@ -114,7 +114,7 @@ final class StateQuery extends InternalQuery {
             return new StateReply(account, module.getState(account, agent.getPermissions(), agent.getRestrictions(), agent), service);
         } else {
             final @Nonnull Credential credential = getSignatureNotNull().toCredentialsSignatureWrapper().getCredentials().getNotNull(0);
-            final @Nullable ReadonlyAgentPermissions permissions = credential.getPermissions();
+            final @Nullable ReadOnlyAgentPermissions permissions = credential.getPermissions();
             final @Nullable Restrictions restrictions = credential.getRestrictions();
             if (permissions == null || restrictions == null) throw new PacketException(PacketError.AUTHORIZATION, "For state queries, neither the permissions nor the restrictions may be null.");
             return new StateReply(account, module.getState(account, permissions, restrictions, null), service);

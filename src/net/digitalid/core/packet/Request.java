@@ -16,7 +16,7 @@ import net.digitalid.core.collections.ConcurrentHashMap;
 import net.digitalid.core.collections.ConcurrentMap;
 import net.digitalid.core.collections.FreezableArrayList;
 import net.digitalid.core.collections.FreezableList;
-import net.digitalid.core.collections.ReadonlyList;
+import net.digitalid.core.collections.ReadOnlyList;
 import net.digitalid.core.contact.AttributeTypeSet;
 import net.digitalid.core.cryptography.PublicKeyChain;
 import net.digitalid.core.cryptography.SymmetricKey;
@@ -38,7 +38,7 @@ import net.digitalid.core.service.CoreService;
 import net.digitalid.core.synchronizer.Audit;
 import net.digitalid.core.synchronizer.RequestAudit;
 import net.digitalid.core.tuples.FreezablePair;
-import net.digitalid.core.tuples.ReadonlyPair;
+import net.digitalid.core.tuples.ReadOnlyPair;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.CompressionWrapper;
 import net.digitalid.core.wrappers.SignatureWrapper;
@@ -107,7 +107,7 @@ public class Request extends Packet {
      * @require Method.areSimilar(methods) : "The methods are similar to each other.";
      */
     @NonCommitting
-    public Request(@Nonnull ReadonlyList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject) throws SQLException, IOException, PacketException, ExternalException {
+    public Request(@Nonnull ReadOnlyList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject) throws SQLException, IOException, PacketException, ExternalException {
         this(methods, recipient, new SymmetricKey(), subject, null, null, 0);
     }
     
@@ -123,7 +123,7 @@ public class Request extends Packet {
      * @param iteration how many times this request was resent.
      */
     @NonCommitting
-    Request(@Nonnull ReadonlyList<Method> methods, @Nonnull HostIdentifier recipient, @Nullable SymmetricKey symmetricKey, @Nonnull InternalIdentifier subject, @Nullable RequestAudit audit, @Nullable Object field, int iteration) throws SQLException, IOException, PacketException, ExternalException {
+    Request(@Nonnull ReadOnlyList<Method> methods, @Nonnull HostIdentifier recipient, @Nullable SymmetricKey symmetricKey, @Nonnull InternalIdentifier subject, @Nullable RequestAudit audit, @Nullable Object field, int iteration) throws SQLException, IOException, PacketException, ExternalException {
         super(methods, methods.size(), field, recipient, symmetricKey, subject, audit);
         
         assert methods.isFrozen() : "The list of methods is frozen.";
@@ -338,7 +338,7 @@ public class Request extends Packet {
     /**
      * Stores a cached symmetric key for every recipient.
      */
-    private static final @Nonnull ConcurrentMap<HostIdentifier, ReadonlyPair<Time, SymmetricKey>> symmetricKeys = new ConcurrentHashMap<>();
+    private static final @Nonnull ConcurrentMap<HostIdentifier, ReadOnlyPair<Time, SymmetricKey>> symmetricKeys = new ConcurrentHashMap<>();
     
     /**
      * Stores whether the symmetric keys are cached.
@@ -376,7 +376,7 @@ public class Request extends Packet {
     protected static @Nonnull SymmetricKey getSymmetricKey(@Nonnull HostIdentifier recipient, @Nonnull Time rotation) {
         if (cachingKeys) {
             final @Nonnull Time time = new Time();
-            @Nullable ReadonlyPair<Time, SymmetricKey> value = symmetricKeys.get(recipient);
+            @Nullable ReadOnlyPair<Time, SymmetricKey> value = symmetricKeys.get(recipient);
             if (value == null || value.getElement0().isLessThan(time.subtract(rotation))) {
                 value = new FreezablePair<>(time, new SymmetricKey()).freeze();
                 symmetricKeys.put(recipient, value);

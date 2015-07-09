@@ -32,7 +32,7 @@ import net.digitalid.core.io.Level;
 import net.digitalid.core.io.Logger;
 import net.digitalid.core.server.Server;
 import net.digitalid.core.tuples.FreezablePair;
-import net.digitalid.core.tuples.ReadonlyPair;
+import net.digitalid.core.tuples.ReadOnlyPair;
 
 /**
  * Wraps a block with the syntactic type {@code encryption@core.digitalid.net} for encoding and decoding.
@@ -68,7 +68,7 @@ public final class EncryptionWrapper extends BlockWrapper implements Immutable {
     /**
      * Caches the encrypted key for a given pair of public key and symmetric key.
      */
-    private static final @Nonnull Map<ReadonlyPair<PublicKey, SymmetricKey>, Block> encryptions = new ConcurrentHashMap<>();
+    private static final @Nonnull Map<ReadOnlyPair<PublicKey, SymmetricKey>, Block> encryptions = new ConcurrentHashMap<>();
     
     /**
      * Encrypts the given symmetric key for the given public key.
@@ -79,7 +79,7 @@ public final class EncryptionWrapper extends BlockWrapper implements Immutable {
      * @return a block containing the given symmetric key encrypted for the given public key.
      */
     private static @Nonnull Block encrypt(@Nonnull PublicKey publicKey, @Nonnull SymmetricKey symmetricKey) {
-        final @Nonnull ReadonlyPair<PublicKey, SymmetricKey> pair = new FreezablePair<>(publicKey, symmetricKey).freeze();
+        final @Nonnull ReadOnlyPair<PublicKey, SymmetricKey> pair = new FreezablePair<>(publicKey, symmetricKey).freeze();
         @Nullable Block key = encryptions.get(pair);
         if (key == null) {
             final @Nonnull Time start = new Time();
@@ -93,7 +93,7 @@ public final class EncryptionWrapper extends BlockWrapper implements Immutable {
     /**
      * Caches the symmetric key for a given pair of private key and encrypted key.
      */
-    private static final @Nonnull Map<ReadonlyPair<PrivateKey, Block>, SymmetricKey> decryptions = new ConcurrentHashMap<>();
+    private static final @Nonnull Map<ReadOnlyPair<PrivateKey, Block>, SymmetricKey> decryptions = new ConcurrentHashMap<>();
     
     /**
      * Decrypts the given key with the given private key.
@@ -104,7 +104,7 @@ public final class EncryptionWrapper extends BlockWrapper implements Immutable {
      * @return the symmetric key with the decrypted value of the given encrypted key.
      */
     private static @Nonnull SymmetricKey decrypt(@Nonnull PrivateKey privateKey, @Nonnull Block key) throws InvalidEncodingException {
-        final @Nonnull ReadonlyPair<PrivateKey, Block> pair = new FreezablePair<>(privateKey, key).freeze();
+        final @Nonnull ReadOnlyPair<PrivateKey, Block> pair = new FreezablePair<>(privateKey, key).freeze();
         @Nullable SymmetricKey symmetricKey = decryptions.get(pair);
         if (symmetricKey == null) {
             final @Nonnull Time start = new Time();

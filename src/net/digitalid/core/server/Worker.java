@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.agent.Agent;
-import net.digitalid.core.agent.ReadonlyAgentPermissions;
+import net.digitalid.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.core.agent.Restrictions;
 import net.digitalid.core.annotations.Committing;
 import net.digitalid.core.auxiliary.Time;
@@ -133,7 +133,7 @@ public final class Worker implements Runnable {
                     if (requestAudit != null) {
                         final @Nonnull Time auditStart = new Time();
                         if (!(reference instanceof InternalMethod)) throw new PacketException(PacketError.AUTHORIZATION, "An audit may only be requested by internal methods.");
-                        final @Nullable ReadonlyAgentPermissions permissions;
+                        final @Nullable ReadOnlyAgentPermissions permissions;
                         @Nullable Restrictions restrictions;
                         if (service.equals(CoreService.SERVICE)) {
                             assert agent != null : "See above.";

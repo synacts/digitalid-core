@@ -42,7 +42,7 @@ class BackedFreezableList<E> extends BackedFreezableCollection<E> implements Fre
     }
     
     @Override
-    public @Nonnull ReadonlyList<E> freeze() {
+    public @Nonnull ReadOnlyList<E> freeze() {
         super.freeze();
         return this;
     }

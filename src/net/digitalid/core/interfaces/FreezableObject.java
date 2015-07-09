@@ -30,7 +30,7 @@ public class FreezableObject implements Freezable {
     }
     
     @Override
-    public @Nonnull Readonly freeze() {
+    public @Nonnull ReadOnly freeze() {
         frozen = true;
         return this;
     }

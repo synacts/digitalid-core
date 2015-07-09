@@ -21,7 +21,7 @@ import net.digitalid.core.interfaces.Immutable;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public class FreezableListIterator<E> extends FreezableIterableIterator<E> implements ReadonlyListIterator<E> {
+public class FreezableListIterator<E> extends FreezableIterableIterator<E> implements ReadOnlyListIterator<E> {
     
     /**
      * Stores a reference to the underlying iterator.
@@ -41,7 +41,7 @@ public class FreezableListIterator<E> extends FreezableIterableIterator<E> imple
     }
     
     @Override
-    public @Nonnull ReadonlyListIterator<E> freeze() {
+    public @Nonnull ReadOnlyListIterator<E> freeze() {
         super.freeze();
         return this;
     }

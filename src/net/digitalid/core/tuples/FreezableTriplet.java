@@ -13,7 +13,7 @@ import net.digitalid.core.interfaces.Freezable;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 2.0
  */
-public class FreezableTriplet<E0, E1, E2> extends FreezablePair<E0, E1> implements ReadonlyTriplet<E0, E1, E2> {
+public class FreezableTriplet<E0, E1, E2> extends FreezablePair<E0, E1> implements ReadOnlyTriplet<E0, E1, E2> {
     
     /**
      * Stores the third element of this tuple.
@@ -38,7 +38,7 @@ public class FreezableTriplet<E0, E1, E2> extends FreezablePair<E0, E1> implemen
      * 
      * @param triplet the triplet containing the elements.
      */
-    public FreezableTriplet(@Nonnull ReadonlyTriplet<E0, E1, E2> triplet) {
+    public FreezableTriplet(@Nonnull ReadOnlyTriplet<E0, E1, E2> triplet) {
         super(triplet);
         
         this.element2 = triplet.getElement2();
@@ -66,7 +66,7 @@ public class FreezableTriplet<E0, E1, E2> extends FreezablePair<E0, E1> implemen
     
     
     @Override
-    public @Nonnull ReadonlyTriplet<E0, E1, E2> freeze() {
+    public @Nonnull ReadOnlyTriplet<E0, E1, E2> freeze() {
         super.freeze();
         return this;
     }

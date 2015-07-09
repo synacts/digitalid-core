@@ -5,13 +5,13 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.agent.Agent;
 import net.digitalid.core.agent.AgentPermissions;
-import net.digitalid.core.agent.ReadonlyAgentPermissions;
+import net.digitalid.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.core.agent.Restrictions;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.client.AccountOpen;
 import net.digitalid.core.collections.FreezableLinkedList;
-import net.digitalid.core.collections.ReadonlyList;
+import net.digitalid.core.collections.ReadOnlyList;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.exceptions.packet.PacketException;
@@ -99,7 +99,7 @@ public abstract class Action extends Method implements Auditable {
     
     @Pure
     @Override
-    public @Nonnull ReadonlyAgentPermissions getAuditPermissions() {
+    public @Nonnull ReadOnlyAgentPermissions getAuditPermissions() {
         return AgentPermissions.NONE;
     }
     
@@ -127,7 +127,7 @@ public abstract class Action extends Method implements Auditable {
     /**
      * Stores an empty list of modules.
      */
-    private static final @Nonnull ReadonlyList<BothModule> emptyList = new FreezableLinkedList<BothModule>().freeze();
+    private static final @Nonnull ReadOnlyList<BothModule> emptyList = new FreezableLinkedList<BothModule>().freeze();
     
     /**
      * Returns the modules that need to be reloaded and are thus suspended.
@@ -135,7 +135,7 @@ public abstract class Action extends Method implements Auditable {
      * @return the modules that need to be reloaded and are thus suspended.
      */
     @Pure
-    public @Nonnull ReadonlyList<BothModule> suspendModules() {
+    public @Nonnull ReadOnlyList<BothModule> suspendModules() {
         return emptyList;
     }
     

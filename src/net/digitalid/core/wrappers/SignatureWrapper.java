@@ -11,7 +11,7 @@ import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.collections.FreezableArray;
-import net.digitalid.core.collections.ReadonlyArray;
+import net.digitalid.core.collections.ReadOnlyArray;
 import net.digitalid.core.cryptography.PublicKey;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NonHostEntity;
@@ -195,7 +195,7 @@ public class SignatureWrapper extends BlockWrapper implements Immutable {
     @Pure
     @NonCommitting
     public static @Nonnull SignatureWrapper decodeWithoutVerifying(@Nonnull Block block, boolean verified, @Nullable Entity entity) throws SQLException, IOException, PacketException, ExternalException {
-        final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(new Block(IMPLEMENTATION, block)).getElements(4);
+        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(new Block(IMPLEMENTATION, block)).getElements(4);
         final @Nullable Block hostSignature = elements.get(1);
         final @Nullable Block clientSignature = elements.get(2);
         final @Nullable Block credentialsSignature = elements.get(3);

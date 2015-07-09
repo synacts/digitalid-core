@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.agent.ReadonlyAgentPermissions;
+import net.digitalid.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.core.agent.Restrictions;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
@@ -52,7 +52,7 @@ public final class AccessRequest extends CoreServiceExternalAction {
      * @invariant permissions.isFrozen() : "The permissions are frozen.";
      * @invariant permissions.isNotEmpty() : "The permissions are not empty.";
      */
-    private final @Nonnull ReadonlyContactPermissions permissions;
+    private final @Nonnull ReadOnlyContactPermissions permissions;
     
     /**
      * Creates an external action to request the given permissions of the given subject.
@@ -67,7 +67,7 @@ public final class AccessRequest extends CoreServiceExternalAction {
      * @require permissions.isFrozen() : "The permissions are frozen.";
      * @require !permissions.isEmpty() : "The permissions are not empty.";
      */
-    AccessRequest(@Nonnull NonHostEntity entity, @Nonnull InternalPerson subject, @Nonnull ReadonlyContactPermissions permissions) {
+    AccessRequest(@Nonnull NonHostEntity entity, @Nonnull InternalPerson subject, @Nonnull ReadOnlyContactPermissions permissions) {
         super(entity, subject);
         
         assert permissions.isFrozen() : "The permissions are frozen.";
@@ -120,7 +120,7 @@ public final class AccessRequest extends CoreServiceExternalAction {
      * @ensure return.isFrozen() : "The permissions are frozen.";
      * @ensure return.isNotEmpty() : "The permissions are not empty.";
      */
-    public @Nonnull ReadonlyContactPermissions getPermissions() {
+    public @Nonnull ReadOnlyContactPermissions getPermissions() {
         return permissions;
     }
     
@@ -133,7 +133,7 @@ public final class AccessRequest extends CoreServiceExternalAction {
     
     @Pure
     @Override
-    public @Nonnull ReadonlyAgentPermissions getRequiredPermissions() {
+    public @Nonnull ReadOnlyAgentPermissions getRequiredPermissions() {
         return permissions.toAgentPermissions().freeze();
     }
     

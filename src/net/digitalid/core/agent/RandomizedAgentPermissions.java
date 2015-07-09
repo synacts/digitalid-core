@@ -10,7 +10,7 @@ import javax.annotation.Nullable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.collections.FreezableArray;
-import net.digitalid.core.collections.ReadonlyArray;
+import net.digitalid.core.collections.ReadOnlyArray;
 import net.digitalid.core.cryptography.Parameters;
 import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.packet.PacketException;
@@ -67,7 +67,7 @@ public final class RandomizedAgentPermissions implements Immutable, Blockable {
      * 
      * @invariant permissions.isFrozen() : "The permissions are frozen.";
      */
-    private final @Nullable ReadonlyAgentPermissions permissions;
+    private final @Nullable ReadOnlyAgentPermissions permissions;
     
     /**
      * Creates new randomized permissions with the given permissions.
@@ -76,7 +76,7 @@ public final class RandomizedAgentPermissions implements Immutable, Blockable {
      * 
      * @require permissions.isFrozen() : "The permissions are frozen.";
      */
-    public RandomizedAgentPermissions(@Nonnull ReadonlyAgentPermissions permissions) {
+    public RandomizedAgentPermissions(@Nonnull ReadOnlyAgentPermissions permissions) {
         assert permissions.isFrozen() : "The permissions are frozen.";
         
         this.permissions = permissions;
@@ -110,7 +110,7 @@ public final class RandomizedAgentPermissions implements Immutable, Blockable {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         this.hash = block.getHash();
-        final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(2);
+        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(2);
         this.salt = new HashWrapper(elements.getNotNull(0)).getValue();
         this.permissions = new AgentPermissions(elements.getNotNull(1)).freeze();
     }
@@ -149,7 +149,7 @@ public final class RandomizedAgentPermissions implements Immutable, Blockable {
      * @ensure permissions.isFrozen() : "The permissions are frozen.";
      */
     @Pure
-    public @Nullable ReadonlyAgentPermissions getPermissions() {
+    public @Nullable ReadOnlyAgentPermissions getPermissions() {
         return permissions;
     }
     
@@ -163,7 +163,7 @@ public final class RandomizedAgentPermissions implements Immutable, Blockable {
      * @ensure permissions.isFrozen() : "The permissions are frozen.";
      */
     @Pure
-    public @Nonnull ReadonlyAgentPermissions getPermissionsNotNull() {
+    public @Nonnull ReadOnlyAgentPermissions getPermissionsNotNull() {
         assert permissions != null : "The permissions are exposed.";
         
         return permissions;

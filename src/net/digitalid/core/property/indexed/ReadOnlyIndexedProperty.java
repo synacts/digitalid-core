@@ -1,8 +1,8 @@
 package net.digitalid.core.property.indexed;
 
 import javax.annotation.Nonnull;
-import net.digitalid.core.collections.ReadonlyCollection;
-import net.digitalid.core.collections.ReadonlyMap;
+import net.digitalid.core.collections.ReadOnlyCollection;
+import net.digitalid.core.collections.ReadOnlyMap;
 
 /**
  * Description.
@@ -10,11 +10,11 @@ import net.digitalid.core.collections.ReadonlyMap;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 0.0
  */
-public abstract interface ReadOnlyIndexedProperty<K, V, R extends ReadonlyMap<K, V>> {
+public abstract interface ReadOnlyIndexedProperty<K, V, R extends ReadOnlyMap<K, V>> {
     
     public abstract @Nonnull V get(@Nonnull K key);
     
-    public abstract @Nonnull ReadonlyCollection<V> getAll();
+    public abstract @Nonnull ReadOnlyCollection<V> getAll();
     
     public abstract @Nonnull R getMap();
     

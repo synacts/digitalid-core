@@ -13,7 +13,7 @@ import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.client.Commitment;
 import net.digitalid.core.client.SecretCommitment;
 import net.digitalid.core.collections.FreezableArray;
-import net.digitalid.core.collections.ReadonlyArray;
+import net.digitalid.core.collections.ReadOnlyArray;
 import net.digitalid.core.cryptography.Element;
 import net.digitalid.core.cryptography.Exponent;
 import net.digitalid.core.cryptography.Parameters;
@@ -115,7 +115,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper implements Im
         
         assert clientSignature.getType().isBasedOn(SIGNATURE) : "The signature is based on the implementation type.";
         
-        final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(clientSignature).getElementsNotNull(3);
+        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(clientSignature).getElementsNotNull(3);
         this.commitment = new Commitment(elements.getNotNull(0));
     }
     
@@ -149,7 +149,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper implements Im
         final @Nonnull TupleWrapper tuple = new TupleWrapper(getCache());
         final @Nonnull BigInteger hash = tuple.getElementNotNull(0).getHash();
         
-        final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(tuple.getElementNotNull(2)).getElementsNotNull(3);
+        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(tuple.getElementNotNull(2)).getElementsNotNull(3);
         final @Nonnull BigInteger t = new HashWrapper(elements.getNotNull(1)).getValue();
         final @Nonnull Exponent s = new Exponent(elements.getNotNull(2));
         final @Nonnull BigInteger h = t.xor(hash);

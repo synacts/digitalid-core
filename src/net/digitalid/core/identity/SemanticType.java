@@ -11,7 +11,7 @@ import net.digitalid.core.cache.Cache;
 import net.digitalid.core.collections.FreezableArray;
 import net.digitalid.core.collections.FreezableArrayList;
 import net.digitalid.core.collections.FreezableList;
-import net.digitalid.core.collections.ReadonlyList;
+import net.digitalid.core.collections.ReadOnlyList;
 import net.digitalid.core.contact.Context;
 import net.digitalid.core.database.Database;
 import net.digitalid.core.entity.Entity;
@@ -93,7 +93,7 @@ public final class SemanticType extends Type implements Immutable {
      * @invariant !isLoaded() || categories.doesNotContainNull() : "The categories do not contain null.";
      * @invariant !isLoaded() || categories.doesNotContainDuplicates() : "The categories do not contain duplicates.";
      */
-    private @Nullable ReadonlyList<Category> categories;
+    private @Nullable ReadOnlyList<Category> categories;
     
     /**
      * Stores the caching period of this semantic type when used as an attribute.
@@ -117,7 +117,7 @@ public final class SemanticType extends Type implements Immutable {
      * @invariant !isLoaded() || parameters.doesNotContainNull() : "The parameters do not contain null.";
      * @invariant !isLoaded() || parameters.doesNotContainDuplicates() : "The parameters do not contain duplicates.";
      */
-    private @Nullable ReadonlyList<SemanticType> parameters;
+    private @Nullable ReadOnlyList<SemanticType> parameters;
     
     /**
      * Stores the semantic base of this semantic type.
@@ -162,7 +162,7 @@ public final class SemanticType extends Type implements Immutable {
         
         Cache.getAttributeValues(this, null, Time.MIN, CATEGORIES, CACHING, SYNTACTIC_BASE, PARAMETERS, SEMANTIC_BASE);
         
-        final @Nonnull ReadonlyList<Block> elements = new ListWrapper(Cache.getStaleAttributeContent(this, null, CATEGORIES)).getElementsNotNull();
+        final @Nonnull ReadOnlyList<Block> elements = new ListWrapper(Cache.getStaleAttributeContent(this, null, CATEGORIES)).getElementsNotNull();
         final @Nonnull FreezableList<Category> categories = new FreezableArrayList<>(elements.size());
         for (final @Nonnull Block element : elements) categories.add(Category.get(element));
         if (categories.doesNotContainDuplicates()) throw new InvalidEncodingException("The list of categories may not contain duplicates.");
@@ -183,7 +183,7 @@ public final class SemanticType extends Type implements Immutable {
             setLoaded();
         } catch (@Nonnull AttributeNotFoundException exception) {
             this.syntacticBase = IdentifierClass.create(Cache.getStaleAttributeContent(this, null, SYNTACTIC_BASE)).getIdentity().toSyntacticType();
-            final @Nonnull ReadonlyList<Block> list = new ListWrapper(Cache.getStaleAttributeContent(this, null, PARAMETERS)).getElementsNotNull();
+            final @Nonnull ReadOnlyList<Block> list = new ListWrapper(Cache.getStaleAttributeContent(this, null, PARAMETERS)).getElementsNotNull();
             final @Nonnull FreezableList<SemanticType> parameters = new FreezableArrayList<>(list.size());
             for (final @Nonnull Block element : elements) parameters.add(Mapper.getIdentity(IdentifierClass.create(element)).toSemanticType());
             if (parameters.doesNotContainDuplicates()) throw new InvalidEncodingException("The list of parameters may not contain duplicates.");
@@ -222,7 +222,7 @@ public final class SemanticType extends Type implements Immutable {
      * 
      * @ensure isLoaded() : "The type declaration has been loaded.";
      */
-    public @Nonnull SemanticType load(@Nonnull ReadonlyList<Category> categories, @Nullable Time cachingPeriod, @Nonnull SyntacticType syntacticBase, @Nonnull ReadonlyList<SemanticType> parameters) {
+    public @Nonnull SemanticType load(@Nonnull ReadOnlyList<Category> categories, @Nullable Time cachingPeriod, @Nonnull SyntacticType syntacticBase, @Nonnull ReadOnlyList<SemanticType> parameters) {
         assert isNotLoaded() : "The type declaration is not loaded.";
         assert Database.isMainThread() : "This method may only be called in the main thread.";
         
@@ -325,7 +325,7 @@ public final class SemanticType extends Type implements Immutable {
      * 
      * @ensure isLoaded() : "The type declaration has been loaded.";
      */
-    public @Nonnull SemanticType load(@Nonnull ReadonlyList<Category> categories, @Nullable Time cachingPeriod, @Nonnull SemanticType semanticBase) {
+    public @Nonnull SemanticType load(@Nonnull ReadOnlyList<Category> categories, @Nullable Time cachingPeriod, @Nonnull SemanticType semanticBase) {
         assert isNotLoaded() : "The type declaration is not loaded.";
         assert Database.isMainThread() : "This method may only be called in the main thread.";
         
@@ -414,7 +414,7 @@ public final class SemanticType extends Type implements Immutable {
      * @ensure categories.doesNotContainDuplicates() : "The categories do not contain duplicates.";
      */
     @Pure
-    public @Nonnull ReadonlyList<Category> getCategories() {
+    public @Nonnull ReadOnlyList<Category> getCategories() {
         assert isLoaded() : "The type declaration is already loaded.";
         
         assert categories != null;
@@ -483,7 +483,7 @@ public final class SemanticType extends Type implements Immutable {
      * @ensure parameters.doesNotContainDuplicates() : "The parameters do not contain duplicates.";
      */
     @Pure
-    public @Nonnull ReadonlyList<SemanticType> getParameters() {
+    public @Nonnull ReadOnlyList<SemanticType> getParameters() {
         assert isLoaded() : "The type declaration is already loaded.";
         
         assert parameters != null;

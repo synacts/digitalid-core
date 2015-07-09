@@ -10,7 +10,7 @@ import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.cache.Cache;
 import net.digitalid.core.collections.FreezableArray;
-import net.digitalid.core.collections.ReadonlyArray;
+import net.digitalid.core.collections.ReadOnlyArray;
 import net.digitalid.core.cryptography.Element;
 import net.digitalid.core.cryptography.PrivateKey;
 import net.digitalid.core.cryptography.PublicKey;
@@ -165,7 +165,7 @@ public final class HostSignatureWrapper extends SignatureWrapper implements Immu
             publicKey = Cache.getPublicKey(signer.getHostIdentifier(), getTimeNotNull());
         }
         
-        final @Nonnull ReadonlyArray<Block> subelements = new TupleWrapper(tuple.getElementNotNull(1)).getElementsNotNull(2);
+        final @Nonnull ReadOnlyArray<Block> subelements = new TupleWrapper(tuple.getElementNotNull(1)).getElementsNotNull(2);
         if (!publicKey.getCompositeGroup().getElement(subelements.getNotNull(1)).pow(publicKey.getE()).getValue().equals(hash)) throw new InvalidSignatureException("The host signature is not valid.");
         
         Logger.log(Level.VERBOSE, "HostSignatureWrapper", "Signature verified in " + start.ago().getValue() + " ms.");

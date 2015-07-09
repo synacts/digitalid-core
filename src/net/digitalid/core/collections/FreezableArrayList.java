@@ -43,7 +43,7 @@ public class FreezableArrayList<E> extends ArrayList<E> implements FreezableList
     }
     
     @Override
-    public @Nonnull ReadonlyList<E> freeze() {
+    public @Nonnull ReadOnlyList<E> freeze() {
         if (!frozen) {
             frozen = true;
             for (final @Nullable E element : this) {

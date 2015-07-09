@@ -9,7 +9,7 @@ import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.collections.FreezableArrayList;
 import net.digitalid.core.collections.FreezableSet;
-import net.digitalid.core.collections.ReadonlyList;
+import net.digitalid.core.collections.ReadOnlyList;
 import net.digitalid.core.concept.NonHostConcept;
 import net.digitalid.core.contact.Contact;
 import net.digitalid.core.contact.Context;
@@ -142,22 +142,22 @@ abstract class Expression extends NonHostConcept implements Immutable {
     /**
      * Stores the characters for addition and subtraction.
      */
-    static final @Nonnull ReadonlyList<Character> addition = new FreezableArrayList<>('+', '-').freeze();
+    static final @Nonnull ReadOnlyList<Character> addition = new FreezableArrayList<>('+', '-').freeze();
     
     /**
      * Stores the character for multiplication.
      */
-    static final @Nonnull ReadonlyList<Character> multiplication = new FreezableArrayList<Character>('*').freeze();
+    static final @Nonnull ReadOnlyList<Character> multiplication = new FreezableArrayList<Character>('*').freeze();
     
     /**
      * Stores the characters for all binary operators.
      */
-    static final @Nonnull ReadonlyList<Character> operators = new FreezableArrayList<>('+', '-', '*').freeze();
+    static final @Nonnull ReadOnlyList<Character> operators = new FreezableArrayList<>('+', '-', '*').freeze();
     
     /**
      * Stores the symbols for restriction.
      */
-    static final @Nonnull ReadonlyList<String> symbols = new FreezableArrayList<>("=", "≠", "<", ">", "≤", "≥", "/", "!/", "|", "!|", "\\", "!\\").freeze();
+    static final @Nonnull ReadOnlyList<String> symbols = new FreezableArrayList<>("=", "≠", "<", ">", "≤", "≥", "/", "!/", "|", "!|", "\\", "!\\").freeze();
     
     /**
      * Returns the last index of one of the given characters in the given string considering quotation marks and parentheses.
@@ -168,7 +168,7 @@ abstract class Expression extends NonHostConcept implements Immutable {
      * @return the last index of one of the given characters in the given string considering quotation marks and parentheses.
      */
     @Pure
-    private static int lastIndexOf(@Nonnull String string, @Nonnull ReadonlyList<Character> characters) throws InvalidEncodingException {
+    private static int lastIndexOf(@Nonnull String string, @Nonnull ReadOnlyList<Character> characters) throws InvalidEncodingException {
         int parenthesesCounter = 0;
         boolean quotation = false;
         

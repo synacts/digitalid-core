@@ -20,10 +20,10 @@ import net.digitalid.core.interfaces.Immutable;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public interface FreezableMap<K,V> extends ReadonlyMap<K,V>, Map<K,V>, Freezable {
+public interface FreezableMap<K,V> extends ReadOnlyMap<K,V>, Map<K,V>, Freezable {
     
     @Override
-    public @Nonnull ReadonlyMap<K,V> freeze();
+    public @Nonnull ReadOnlyMap<K,V> freeze();
     
     @Pure
     @Override

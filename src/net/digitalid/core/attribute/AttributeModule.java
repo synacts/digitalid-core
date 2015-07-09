@@ -8,7 +8,7 @@ import java.sql.Statement;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.agent.Agent;
-import net.digitalid.core.agent.ReadonlyAgentPermissions;
+import net.digitalid.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.core.agent.Restrictions;
 import net.digitalid.core.annotations.Capturable;
 import net.digitalid.core.annotations.NonCommitting;
@@ -18,8 +18,8 @@ import net.digitalid.core.collections.FreezableLinkedHashSet;
 import net.digitalid.core.collections.FreezableLinkedList;
 import net.digitalid.core.collections.FreezableList;
 import net.digitalid.core.collections.FreezableSet;
-import net.digitalid.core.collections.ReadonlyArray;
-import net.digitalid.core.collections.ReadonlyList;
+import net.digitalid.core.collections.ReadOnlyArray;
+import net.digitalid.core.collections.ReadOnlyList;
 import net.digitalid.core.database.Database;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.EntityClass;
@@ -159,13 +159,13 @@ public final class AttributeModule implements BothModule {
     public void importModule(@Nonnull Host host, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         assert block.getType().isBasedOn(getModuleFormat()) : "The block is based on the format of this module.";
         
-        final @Nonnull ReadonlyArray<Block> tables = new TupleWrapper(block).getElementsNotNull(2);
+        final @Nonnull ReadOnlyArray<Block> tables = new TupleWrapper(block).getElementsNotNull(2);
         final @Nonnull String prefix = "INSERT INTO " + host;
         
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(prefix + "attribute_value (entity, type, published, value) VALUES (?, ?, ?, ?)")) {
-            final @Nonnull ReadonlyList<Block> entries = new ListWrapper(tables.getNotNull(0)).getElementsNotNull();
+            final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNotNull(0)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
-                final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(4);
+                final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(4);
                 IdentityClass.create(elements.getNotNull(0)).toInternalIdentity().set(preparedStatement, 1);
                 IdentityClass.create(elements.getNotNull(1)).toSemanticType().checkIsAttributeType().set(preparedStatement, 2);
                 preparedStatement.setBoolean(3, new BooleanWrapper(elements.getNotNull(2)).getValue());
@@ -176,9 +176,9 @@ public final class AttributeModule implements BothModule {
         }
         
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(prefix + "attribute_visibility (entity, type, visibility) VALUES (?, ?, ?)")) {
-            final @Nonnull ReadonlyList<Block> entries = new ListWrapper(tables.getNotNull(1)).getElementsNotNull();
+            final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNotNull(1)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
-                final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(3);
+                final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(3);
                 IdentityClass.create(elements.getNotNull(0)).toInternalIdentity().set(preparedStatement, 1);
                 IdentityClass.create(elements.getNotNull(1)).toSemanticType().checkIsAttributeType().set(preparedStatement, 2);
                 preparedStatement.setString(2, new StringWrapper(elements.getNotNull(2)).getString());
@@ -226,7 +226,7 @@ public final class AttributeModule implements BothModule {
     @Pure
     @Override
     @NonCommitting
-    public @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadonlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws SQLException {
+    public @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws SQLException {
         final @Nonnull Site site = entity.getSite();
         final @Nonnull FreezableArray<Block> tables = new FreezableArray<>(2);
         try (@Nonnull Statement statement = Database.createStatement()) {
@@ -267,14 +267,14 @@ public final class AttributeModule implements BothModule {
             Database.onInsertIgnore(statement, site + "attribute_visibility", "entity", "type");
         }
         
-        final @Nonnull ReadonlyArray<Block> tables = new TupleWrapper(block).getElementsNotNull(2);
+        final @Nonnull ReadOnlyArray<Block> tables = new TupleWrapper(block).getElementsNotNull(2);
         final @Nonnull String prefix = "INSERT" + Database.getConfiguration().IGNORE() + " INTO " + site;
         
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(prefix + "attribute_value (entity, type, published, value) VALUES (?, ?, ?, ?)")) {
             entity.set(preparedStatement, 1);
-            final @Nonnull ReadonlyList<Block> entries = new ListWrapper(tables.getNotNull(0)).getElementsNotNull();
+            final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNotNull(0)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
-                final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(3);
+                final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(3);
                 IdentityClass.create(elements.getNotNull(0)).toSemanticType().checkIsAttributeFor(entity).set(preparedStatement, 2);
                 preparedStatement.setBoolean(3, new BooleanWrapper(elements.getNotNull(1)).getValue());
                 elements.getNotNull(2).set(preparedStatement, 4);
@@ -285,9 +285,9 @@ public final class AttributeModule implements BothModule {
         
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(prefix + "attribute_visibility (entity, type, visibility) VALUES (?, ?, ?)")) {
             entity.set(preparedStatement, 1);
-            final @Nonnull ReadonlyList<Block> entries = new ListWrapper(tables.getNotNull(1)).getElementsNotNull();
+            final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNotNull(1)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
-                final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(2);
+                final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(2);
                 IdentityClass.create(elements.getNotNull(0)).toSemanticType().checkIsAttributeFor(entity).set(preparedStatement, 2);
                 preparedStatement.setString(3, new StringWrapper(elements.getNotNull(1)).getString());
                 preparedStatement.addBatch();

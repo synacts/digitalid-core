@@ -10,7 +10,7 @@ import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.annotations.RawRecipient;
 import net.digitalid.core.collections.FreezableArrayList;
 import net.digitalid.core.collections.FreezableList;
-import net.digitalid.core.collections.ReadonlyList;
+import net.digitalid.core.collections.ReadOnlyList;
 import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.handler.Reply;
@@ -19,7 +19,7 @@ import net.digitalid.core.identifier.InternalIdentifier;
 import net.digitalid.core.synchronizer.Audit;
 import net.digitalid.core.synchronizer.ResponseAudit;
 import net.digitalid.core.tuples.FreezablePair;
-import net.digitalid.core.tuples.ReadonlyPair;
+import net.digitalid.core.tuples.ReadOnlyPair;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.CompressionWrapper;
 import net.digitalid.core.wrappers.HostSignatureWrapper;
@@ -92,7 +92,7 @@ public final class Response extends Packet {
      * @ensure getSize() == request.getSize() : "The size of this response equals the size of the request.";
      */
     @NonCommitting
-    public Response(@Nonnull Request request, @Nonnull ReadonlyList<Reply> replies, @Nonnull ReadonlyList<PacketException> exceptions, @Nullable ResponseAudit audit) throws SQLException, IOException, PacketException, ExternalException {
+    public Response(@Nonnull Request request, @Nonnull ReadOnlyList<Reply> replies, @Nonnull ReadOnlyList<PacketException> exceptions, @Nullable ResponseAudit audit) throws SQLException, IOException, PacketException, ExternalException {
         super(new FreezablePair<>(replies, exceptions).freeze(), replies.size(), request.getRecipient(), null, request.getEncryption().getSymmetricKey(), request.getSubject(), audit);
         
         assert replies.isFrozen() : "The list of replies is frozen.";
@@ -171,7 +171,7 @@ public final class Response extends Packet {
     @RawRecipient
     @SuppressWarnings("unchecked")
     void setList(@Nonnull Object object) {
-        final @Nonnull ReadonlyPair<ReadonlyList<Reply>, ReadonlyList<PacketException>> pair = (ReadonlyPair<ReadonlyList<Reply>, ReadonlyList<PacketException>>) object;
+        final @Nonnull ReadOnlyPair<ReadOnlyList<Reply>, ReadOnlyList<PacketException>> pair = (ReadOnlyPair<ReadOnlyList<Reply>, ReadOnlyList<PacketException>>) object;
         this.replies = (FreezableList<Reply>) pair.getElement0();
         this.exceptions = (FreezableList<PacketException>) pair.getElement1();
     }

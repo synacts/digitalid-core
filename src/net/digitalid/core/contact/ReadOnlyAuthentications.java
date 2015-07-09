@@ -6,14 +6,14 @@ import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.interfaces.Blockable;
 
 /**
- * This interface provides readonly access to {@link Authentications authentications} and should <em>never</em> be cast away.
+ * This interface provides read-only access to {@link Authentications authentications} and should <em>never</em> be cast away.
  * 
  * @see Authentications
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public interface ReadonlyAuthentications extends ReadonlyAttributeTypeSet, Blockable {
+public interface ReadOnlyAuthentications extends ReadOnlyAttributeTypeSet, Blockable {
     
     @Pure
     @Override

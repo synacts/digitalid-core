@@ -7,7 +7,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.Collection;
 import net.digitalid.core.collections.FreezableCollection;
-import net.digitalid.core.collections.ReadonlyCollection;
+import net.digitalid.core.collections.ReadOnlyCollection;
 
 /**
  * This annotation indicates that a {@link Collection collection} contains not a {@link ReadonlyCollection#isNotSingle() single} element.

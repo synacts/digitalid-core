@@ -58,7 +58,7 @@ class BackedFreezableCollection<E> implements FreezableCollection<E> {
     }
     
     @Override
-    public @Nonnull ReadonlyCollection<E> freeze() {
+    public @Nonnull ReadOnlyCollection<E> freeze() {
         freezable.freeze();
         return this;
     }

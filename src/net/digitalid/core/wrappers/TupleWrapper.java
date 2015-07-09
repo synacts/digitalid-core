@@ -5,8 +5,8 @@ import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Exposed;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.collections.FreezableArray;
-import net.digitalid.core.collections.ReadonlyArray;
-import net.digitalid.core.collections.ReadonlyList;
+import net.digitalid.core.collections.ReadOnlyArray;
+import net.digitalid.core.collections.ReadOnlyList;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.identity.SyntacticType;
@@ -35,8 +35,8 @@ public final class TupleWrapper extends BlockWrapper implements Immutable {
      * @return whether the given elements are based on the corresponding parameter of the given type.
      */
     @Pure
-    public static boolean basedOnParameters(@Nonnull SemanticType type, @Nonnull ReadonlyArray<Block> elements) {
-        final @Nonnull ReadonlyList<SemanticType> parameters = type.getParameters();
+    public static boolean basedOnParameters(@Nonnull SemanticType type, @Nonnull ReadOnlyArray<Block> elements) {
+        final @Nonnull ReadOnlyList<SemanticType> parameters = type.getParameters();
         if (elements.size() == 0 || elements.size() > parameters.size()) return false;
         for (int i = 0; i < elements.size(); i++) {
             final @Nullable Block element = elements.get(i);
@@ -52,7 +52,7 @@ public final class TupleWrapper extends BlockWrapper implements Immutable {
      * @invariant elements.isFrozen() : "The elements are frozen.";
      * @invariant basedOnParameters(getType(), elements) : "Each element is either null or based on the corresponding parameter of the block's type.";
      */
-    private final @Nonnull ReadonlyArray<Block> elements;
+    private final @Nonnull ReadOnlyArray<Block> elements;
     
     /**
      * Encodes the given elements into a new block of the given type.
@@ -65,7 +65,7 @@ public final class TupleWrapper extends BlockWrapper implements Immutable {
      * @require basedOnParameters(type, elements) : "Each element is either null or based on the corresponding parameter of the given type.";
      * @require elements.isFrozen() : "The elements are frozen.";
      */
-    public TupleWrapper(@Nonnull SemanticType type, @Nonnull ReadonlyArray<Block> elements) {
+    public TupleWrapper(@Nonnull SemanticType type, @Nonnull ReadOnlyArray<Block> elements) {
         super(type);
         
         assert basedOnParameters(type, elements) : "Each element is either null or based on the corresponding parameter of the given type.";
@@ -118,7 +118,7 @@ public final class TupleWrapper extends BlockWrapper implements Immutable {
     public TupleWrapper(@Nonnull Block block) throws InvalidEncodingException {
         super(block);
         
-        final @Nonnull ReadonlyList<SemanticType> parameters = block.getType().getParameters();
+        final @Nonnull ReadOnlyList<SemanticType> parameters = block.getType().getParameters();
         final int size = parameters.size();
         final @Nonnull FreezableArray<Block> array = new FreezableArray<>(size);
         
@@ -150,7 +150,7 @@ public final class TupleWrapper extends BlockWrapper implements Immutable {
      * @ensure basedOnParameters(getType(), elements) : "Each element is either null or based on the corresponding parameter of the block's type.";
      */
     @Pure
-    public @Nonnull ReadonlyArray<Block> getElements() {
+    public @Nonnull ReadOnlyArray<Block> getElements() {
         return elements;
     }
     
@@ -170,7 +170,7 @@ public final class TupleWrapper extends BlockWrapper implements Immutable {
      * @ensure basedOnParameters(getType(), elements) : "Each element is either null or based on the corresponding parameter of the block's type.";
      */
     @Pure
-    public @Nonnull ReadonlyArray<Block> getElements(int length) throws InvalidEncodingException {
+    public @Nonnull ReadOnlyArray<Block> getElements(int length) throws InvalidEncodingException {
         assert length > 0 : "The length is positive.";
         
         if (elements.size() < length) throw new InvalidEncodingException("The tuple contains not enough elements.");
@@ -194,8 +194,8 @@ public final class TupleWrapper extends BlockWrapper implements Immutable {
      * @ensure basedOnParameters(getType(), elements) : "Each element is based on the corresponding parameter of the block's type.";
      */
     @Pure
-    public @Nonnull ReadonlyArray<Block> getElementsNotNull(int length) throws InvalidEncodingException {
-        final @Nonnull ReadonlyArray<Block> elements = getElements(length);
+    public @Nonnull ReadOnlyArray<Block> getElementsNotNull(int length) throws InvalidEncodingException {
+        final @Nonnull ReadOnlyArray<Block> elements = getElements(length);
         if (!elements.doesNotContainNull()) throw new InvalidEncodingException("The tuple contains null.");
         return elements;
     }
@@ -289,7 +289,7 @@ public final class TupleWrapper extends BlockWrapper implements Immutable {
      */
     @Pure
     public @Nullable Block getElement(@Nonnull SemanticType type) {
-        final @Nonnull ReadonlyList<SemanticType> parameters = toBlock().getType().getParameters();
+        final @Nonnull ReadOnlyList<SemanticType> parameters = toBlock().getType().getParameters();
         assert parameters.contains(type) : "The parameters of this tuple have to contain the given type.";
         
         final @Nullable Block element = elements.get(parameters.indexOf(type));

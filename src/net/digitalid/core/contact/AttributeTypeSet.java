@@ -11,7 +11,7 @@ import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.collections.FreezableArrayList;
 import net.digitalid.core.collections.FreezableLinkedHashSet;
 import net.digitalid.core.collections.FreezableList;
-import net.digitalid.core.collections.ReadonlyList;
+import net.digitalid.core.collections.ReadOnlyList;
 import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.identity.IdentityClass;
@@ -29,7 +29,7 @@ import net.digitalid.core.wrappers.ListWrapper;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public class AttributeTypeSet extends FreezableLinkedHashSet<SemanticType> implements ReadonlyAttributeTypeSet, Blockable {
+public class AttributeTypeSet extends FreezableLinkedHashSet<SemanticType> implements ReadOnlyAttributeTypeSet, Blockable {
     
     /**
      * Stores the semantic type {@code list.attribute.type@core.digitalid.net}.
@@ -62,7 +62,7 @@ public class AttributeTypeSet extends FreezableLinkedHashSet<SemanticType> imple
      * 
      * @param attributeSet the attribute type set to add to the new attribute type set.
      */
-    public AttributeTypeSet(@Nonnull ReadonlyAttributeTypeSet attributeSet) {
+    public AttributeTypeSet(@Nonnull ReadOnlyAttributeTypeSet attributeSet) {
         addAll(attributeSet);
     }
     
@@ -77,7 +77,7 @@ public class AttributeTypeSet extends FreezableLinkedHashSet<SemanticType> imple
     public AttributeTypeSet(@Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         assert block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
         
-        final @Nonnull ReadonlyList<Block> elements = new ListWrapper(block).getElementsNotNull();
+        final @Nonnull ReadOnlyList<Block> elements = new ListWrapper(block).getElementsNotNull();
         for (final @Nonnull Block element : elements) {
             final @Nonnull SemanticType type = IdentityClass.create(element).toSemanticType().checkIsAttributeType();
             add(type);
@@ -105,7 +105,7 @@ public class AttributeTypeSet extends FreezableLinkedHashSet<SemanticType> imple
     
     
     @Override
-    public @Nonnull ReadonlyAttributeTypeSet freeze() {
+    public @Nonnull ReadOnlyAttributeTypeSet freeze() {
         super.freeze();
         return this;
     }
@@ -125,7 +125,7 @@ public class AttributeTypeSet extends FreezableLinkedHashSet<SemanticType> imple
      * 
      * @require isNotFrozen() : "This object is not frozen.";
      */
-    public final void addAll(@Nonnull ReadonlyAttributeTypeSet attributeSet) {
+    public final void addAll(@Nonnull ReadOnlyAttributeTypeSet attributeSet) {
         for (final @Nonnull SemanticType type : attributeSet) {
             add(type);
         }

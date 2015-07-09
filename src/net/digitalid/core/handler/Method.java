@@ -10,7 +10,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.agent.Agent;
 import net.digitalid.core.agent.AgentPermissions;
-import net.digitalid.core.agent.ReadonlyAgentPermissions;
+import net.digitalid.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.core.agent.Restrictions;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.OnlyForHosts;
@@ -21,11 +21,11 @@ import net.digitalid.core.attribute.CertifiedAttributeValue;
 import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.collections.FreezableArrayList;
 import net.digitalid.core.collections.FreezableList;
-import net.digitalid.core.collections.ReadonlyIterator;
-import net.digitalid.core.collections.ReadonlyList;
+import net.digitalid.core.collections.ReadOnlyIterator;
+import net.digitalid.core.collections.ReadOnlyList;
 import net.digitalid.core.contact.Authentications;
 import net.digitalid.core.contact.Contact;
-import net.digitalid.core.contact.ReadonlyAuthentications;
+import net.digitalid.core.contact.ReadOnlyAuthentications;
 import net.digitalid.core.credential.ClientCredential;
 import net.digitalid.core.credential.Credential;
 import net.digitalid.core.entity.Account;
@@ -159,7 +159,7 @@ public abstract class Method extends Handler {
      * @return the permissions required for this method.
      */
     @Pure
-    public @Nonnull ReadonlyAgentPermissions getRequiredPermissions() {
+    public @Nonnull ReadOnlyAgentPermissions getRequiredPermissions() {
         return AgentPermissions.NONE;
     }
     
@@ -266,12 +266,12 @@ public abstract class Method extends Handler {
      * @require methods.doesNotContainNull() : "The list of methods does not contain null.";
      */
     @Pure
-    public static boolean areSimilar(@Nonnull ReadonlyList<? extends Method> methods) {
+    public static boolean areSimilar(@Nonnull ReadOnlyList<? extends Method> methods) {
         assert methods.isFrozen() : "The list of methods is frozen.";
         assert methods.isNotEmpty() : "The list of methods is not empty.";
         assert methods.doesNotContainNull() : "The list of methods does not contain null.";
         
-        final @Nonnull ReadonlyIterator<? extends Method> iterator = methods.iterator();
+        final @Nonnull ReadOnlyIterator<? extends Method> iterator = methods.iterator();
         final @Nonnull Method reference = iterator.next();
         while (iterator.hasNext()) {
             final @Nonnull Method method = iterator.next();
@@ -288,7 +288,7 @@ public abstract class Method extends Handler {
      * @return the permissions required for the given methods.
      */
     @Pure
-    private static ReadonlyAgentPermissions getRequiredPermissions(@Nonnull ReadonlyList<? extends Method> methods) {
+    private static ReadOnlyAgentPermissions getRequiredPermissions(@Nonnull ReadOnlyList<? extends Method> methods) {
         final @Nonnull AgentPermissions permissions = new AgentPermissions();
         for (@Nonnull Method method : methods) {
             permissions.putAll(method.getRequiredPermissions());
@@ -315,7 +315,7 @@ public abstract class Method extends Handler {
      * @ensure return.hasRequest() : "The returned response has a request.";
      */
     @NonCommitting
-    public static @Nonnull Response send(@Nonnull ReadonlyList<Method> methods, @Nullable RequestAudit audit) throws SQLException, IOException, PacketException, ExternalException {
+    public static @Nonnull Response send(@Nonnull ReadOnlyList<Method> methods, @Nullable RequestAudit audit) throws SQLException, IOException, PacketException, ExternalException {
         assert areSimilar(methods) : "The methods are similar to each other.";
         
         final @Nonnull Method reference = methods.getNotNull(0);
@@ -329,7 +329,7 @@ public abstract class Method extends Handler {
         if (reference.isOnClient() && reference.canOnlyBeSentByHosts()) throw new PacketException(PacketError.INTERNAL, "These methods cannot be sent by clients.");
         
         if (reference instanceof ExternalQuery) {
-            final @Nonnull ReadonlyAuthentications authentications;
+            final @Nonnull ReadOnlyAuthentications authentications;
             if (reference instanceof IdentityQuery) {
                 authentications = Authentications.NONE;
             } else {
@@ -349,7 +349,7 @@ public abstract class Method extends Handler {
                 final @Nonnull Time time = new Time();
                 final @Nonnull FreezableList<Credential> credentials;
                 final @Nullable FreezableList<CertifiedAttributeValue> certificates;
-                final @Nonnull ReadonlyAgentPermissions permissions = getRequiredPermissions(methods);
+                final @Nonnull ReadOnlyAgentPermissions permissions = getRequiredPermissions(methods);
                 if (authentications.contains(Authentications.IDENTITY_BASED_TYPE)) {
                     final @Nonnull ClientCredential credential = ClientCredential.getIdentityBased(role, permissions);
                     credentials = new FreezableArrayList<Credential>(credential);

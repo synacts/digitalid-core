@@ -16,7 +16,7 @@ import net.digitalid.core.annotations.OnlyForClients;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.collections.FreezableArray;
 import net.digitalid.core.collections.FreezableList;
-import net.digitalid.core.collections.ReadonlyArray;
+import net.digitalid.core.collections.ReadOnlyArray;
 import net.digitalid.core.concept.Aspect;
 import net.digitalid.core.concept.NonHostConcept;
 import net.digitalid.core.entity.NonHostEntity;
@@ -222,7 +222,7 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
      */
     @Pure
     @NonCommitting
-    public final @Nonnull @NonFrozen ReadonlyAgentPermissions getPermissions() throws SQLException {
+    public final @Nonnull @NonFrozen ReadOnlyAgentPermissions getPermissions() throws SQLException {
         if (permissions == null) permissions = AgentModule.getPermissions(this);
         return permissions;
     }
@@ -237,7 +237,7 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
      */
     @Committing
     @OnlyForClients
-    public final void addPermissions(@Nonnull @Frozen ReadonlyAgentPermissions permissions) throws SQLException {
+    public final void addPermissions(@Nonnull @Frozen ReadOnlyAgentPermissions permissions) throws SQLException {
         if (!permissions.isEmpty()) Synchronizer.execute(new AgentPermissionsAdd(this, permissions));
     }
     
@@ -248,7 +248,7 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
      */
     @NonCommitting
     @OnlyForActions
-    final void addPermissionsForActions(@Nonnull @Frozen ReadonlyAgentPermissions newPermissions) throws SQLException {
+    final void addPermissionsForActions(@Nonnull @Frozen ReadOnlyAgentPermissions newPermissions) throws SQLException {
         AgentModule.addPermissions(this, newPermissions);
         if (permissions != null) permissions.putAll(newPermissions);
         notify(PERMISSIONS);
@@ -261,7 +261,7 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
      */
     @Committing
     @OnlyForClients
-    public final void removePermissions(@Nonnull @Frozen ReadonlyAgentPermissions permissions) throws SQLException {
+    public final void removePermissions(@Nonnull @Frozen ReadOnlyAgentPermissions permissions) throws SQLException {
         if (!permissions.isEmpty()) Synchronizer.execute(new AgentPermissionsRemove(this, permissions));
     }
     
@@ -272,7 +272,7 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
      */
     @NonCommitting
     @OnlyForActions
-    final void removePermissionsForActions(@Nonnull @Frozen ReadonlyAgentPermissions oldPermissions) throws SQLException {
+    final void removePermissionsForActions(@Nonnull @Frozen ReadOnlyAgentPermissions oldPermissions) throws SQLException {
         AgentModule.removePermissions(this, oldPermissions);
         if (permissions != null) permissions.removeAll(oldPermissions);
         notify(PERMISSIONS);
@@ -471,7 +471,7 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
     public static @Nonnull Agent get(@Nonnull NonHostEntity entity, @Nonnull Block block) throws InvalidEncodingException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
-        final @Nonnull ReadonlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(3);
+        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(3);
         final long number = new Int64Wrapper(elements.getNotNull(0)).getValue();
         final boolean client = new BooleanWrapper(elements.getNotNull(1)).getValue();
         final boolean removed = new BooleanWrapper(elements.getNotNull(2)).getValue();
