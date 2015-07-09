@@ -77,7 +77,7 @@ public final class Predecessor implements Immutable, Blockable {
      */
     @NonCommitting
     public Predecessor(@Nonnull NonHostIdentifier identifier) throws SQLException {
-        this(identifier, identifier instanceof InternalNonHostIdentifier ? Predecessors.get((InternalNonHostIdentifier) identifier) : new Predecessors().freeze());
+        this(identifier, identifier instanceof InternalNonHostIdentifier ? FreezablePredecessors.get((InternalNonHostIdentifier) identifier) : new FreezablePredecessors().freeze());
     }
     
     /**
@@ -92,7 +92,7 @@ public final class Predecessor implements Immutable, Blockable {
         
         final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(2);
         this.identifier = IdentifierClass.create(elements.getNotNull(0)).toNonHostIdentifier();
-        this.predecessors = new Predecessors(elements.getNotNull(1)).freeze();
+        this.predecessors = new FreezablePredecessors(elements.getNotNull(1)).freeze();
     }
     
     @Pure

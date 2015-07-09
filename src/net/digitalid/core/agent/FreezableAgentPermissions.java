@@ -43,7 +43,7 @@ import net.digitalid.core.wrappers.TupleWrapper;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public final class AgentPermissions extends FreezableLinkedHashMap<SemanticType, Boolean> implements ReadOnlyAgentPermissions, Blockable, SQLizable {
+public final class FreezableAgentPermissions extends FreezableLinkedHashMap<SemanticType, Boolean> implements ReadOnlyAgentPermissions, Blockable, SQLizable {
     
     /**
      * Stores the semantic type {@code type.permission.agent@core.digitalid.net}.
@@ -74,23 +74,23 @@ public final class AgentPermissions extends FreezableLinkedHashMap<SemanticType,
     /**
      * Stores an empty set of agent permissions.
      */
-    public static final @Nonnull ReadOnlyAgentPermissions NONE = new AgentPermissions().freeze();
+    public static final @Nonnull ReadOnlyAgentPermissions NONE = new FreezableAgentPermissions().freeze();
     
     /**
      * Stores a general read permission.
      */
-    public static final @Nonnull ReadOnlyAgentPermissions GENERAL_READ = new AgentPermissions(GENERAL, false).freeze();
+    public static final @Nonnull ReadOnlyAgentPermissions GENERAL_READ = new FreezableAgentPermissions(GENERAL, false).freeze();
     
     /**
      * Stores a general write permission.
      */
-    public static final @Nonnull ReadOnlyAgentPermissions GENERAL_WRITE = new AgentPermissions(GENERAL, true).freeze();
+    public static final @Nonnull ReadOnlyAgentPermissions GENERAL_WRITE = new FreezableAgentPermissions(GENERAL, true).freeze();
     
     
     /**
      * Creates an empty map of agent permissions.
      */
-    public AgentPermissions() {}
+    public FreezableAgentPermissions() {}
     
     /**
      * Creates new agent permissions with the given type and access.
@@ -102,7 +102,7 @@ public final class AgentPermissions extends FreezableLinkedHashMap<SemanticType,
      * 
      * @ensure isSingle() : "The new agent permissions are single.";
      */
-    public AgentPermissions(@Nonnull SemanticType type, @Nonnull Boolean writing) {
+    public FreezableAgentPermissions(@Nonnull SemanticType type, @Nonnull Boolean writing) {
         assert type.isAttributeType() : "The type is an attribute type.";
         
         put(type, writing);
@@ -113,7 +113,7 @@ public final class AgentPermissions extends FreezableLinkedHashMap<SemanticType,
      * 
      * @param permissions the agent permissions to add to the new agent permissions.
      */
-    public AgentPermissions(@Nonnull ReadOnlyAgentPermissions permissions) {
+    public FreezableAgentPermissions(@Nonnull ReadOnlyAgentPermissions permissions) {
         putAll(permissions);
     }
     
@@ -125,7 +125,7 @@ public final class AgentPermissions extends FreezableLinkedHashMap<SemanticType,
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
     @NonCommitting
-    public AgentPermissions(@Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
+    public FreezableAgentPermissions(@Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         final @Nonnull ReadOnlyList<Block> elements = new ListWrapper(block).getElementsNotNull();
@@ -196,7 +196,7 @@ public final class AgentPermissions extends FreezableLinkedHashMap<SemanticType,
      * @throws InvalidEncodingException if this is not the case.
      */
     @Pure
-    public @Nonnull AgentPermissions checkIsSingle() throws InvalidEncodingException {
+    public @Nonnull FreezableAgentPermissions checkIsSingle() throws InvalidEncodingException {
         if (!isSingle()) throw new InvalidEncodingException("These permissions are not single.");
         return this;
     }
@@ -215,7 +215,7 @@ public final class AgentPermissions extends FreezableLinkedHashMap<SemanticType,
      * @throws InvalidEncodingException if this is not the case.
      */
     @Pure
-    public @Nonnull AgentPermissions checkAreEmptyOrSingle() throws InvalidEncodingException {
+    public @Nonnull FreezableAgentPermissions checkAreEmptyOrSingle() throws InvalidEncodingException {
         if (!areEmptyOrSingle()) throw new InvalidEncodingException("These permissions are not empty or single.");
         return this;
     }
@@ -379,8 +379,8 @@ public final class AgentPermissions extends FreezableLinkedHashMap<SemanticType,
     
     @Pure
     @Override
-    public @Capturable @Nonnull AgentPermissions clone() {
-        return new AgentPermissions(this);
+    public @Capturable @Nonnull FreezableAgentPermissions clone() {
+        return new FreezableAgentPermissions(this);
     }
     
     
@@ -476,9 +476,9 @@ public final class AgentPermissions extends FreezableLinkedHashMap<SemanticType,
      */
     @Pure
     @NonCommitting
-    public static @Capturable @Nonnull AgentPermissions get(@Nonnull ResultSet resultSet, int startIndex) throws SQLException {
+    public static @Capturable @Nonnull FreezableAgentPermissions get(@Nonnull ResultSet resultSet, int startIndex) throws SQLException {
         try {
-            final @Nonnull AgentPermissions permissions = new AgentPermissions();
+            final @Nonnull FreezableAgentPermissions permissions = new FreezableAgentPermissions();
             while (resultSet.next()) {
                 final @Nonnull SemanticType type = IdentityClass.getNotNull(resultSet, startIndex).toSemanticType().checkIsAttributeType();
                 final boolean writing = resultSet.getBoolean(startIndex + 1);
@@ -503,9 +503,9 @@ public final class AgentPermissions extends FreezableLinkedHashMap<SemanticType,
      */
     @Pure
     @NonCommitting
-    public static @Capturable @Nonnull AgentPermissions getEmptyOrSingle(@Nonnull ResultSet resultSet, int startIndex) throws SQLException {
+    public static @Capturable @Nonnull FreezableAgentPermissions getEmptyOrSingle(@Nonnull ResultSet resultSet, int startIndex) throws SQLException {
         try {
-            final @Nonnull AgentPermissions permissions = new AgentPermissions();
+            final @Nonnull FreezableAgentPermissions permissions = new FreezableAgentPermissions();
             final @Nullable Identity identity = IdentityClass.get(resultSet, startIndex);
             if (identity != null) permissions.put(identity.toSemanticType().checkIsAttributeType(), resultSet.getBoolean(startIndex + 1));
             return permissions;

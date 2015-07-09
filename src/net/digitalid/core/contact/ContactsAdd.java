@@ -24,7 +24,7 @@ import net.digitalid.core.wrappers.SignatureWrapper;
 import net.digitalid.core.wrappers.TupleWrapper;
 
 /**
- * Adds {@link Contacts contacts} to a {@link Context context}.
+ * Adds {@link FreezableContacts contacts} to a {@link Context context}.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
@@ -34,7 +34,7 @@ final class ContactsAdd extends CoreServiceInternalAction {
     /**
      * Stores the semantic type {@code add.contacts.context@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType TYPE = SemanticType.create("add.contacts.context@core.digitalid.net").load(TupleWrapper.TYPE, Context.TYPE, Contacts.TYPE);
+    private static final @Nonnull SemanticType TYPE = SemanticType.create("add.contacts.context@core.digitalid.net").load(TupleWrapper.TYPE, Context.TYPE, FreezableContacts.TYPE);
     
     
     /**
@@ -80,7 +80,7 @@ final class ContactsAdd extends CoreServiceInternalAction {
         
         final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(2);
         this.context = Context.get(entity.toNonHostEntity(), elements.getNotNull(0));
-        this.contacts = new Contacts(entity.toNonHostEntity(), elements.getNotNull(1)).freeze();
+        this.contacts = new FreezableContacts(entity.toNonHostEntity(), elements.getNotNull(1)).freeze();
     }
     
     @Pure

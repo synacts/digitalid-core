@@ -4,7 +4,7 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.agent.Agent;
-import net.digitalid.core.agent.AgentPermissions;
+import net.digitalid.core.agent.FreezableAgentPermissions;
 import net.digitalid.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.core.agent.Restrictions;
 import net.digitalid.core.annotations.NonCommitting;
@@ -87,7 +87,7 @@ public abstract class ActionReply extends Reply implements Auditable {
     @Pure
     @Override
     public @Nonnull ReadOnlyAgentPermissions getAuditPermissions() {
-        return AgentPermissions.NONE;
+        return FreezableAgentPermissions.NONE;
     }
     
     @Pure

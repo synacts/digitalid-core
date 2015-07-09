@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.agent.AgentPermissions;
+import net.digitalid.core.agent.FreezableAgentPermissions;
 import net.digitalid.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.core.annotations.BasedOn;
 import net.digitalid.core.annotations.HasSubject;
@@ -80,7 +80,7 @@ final class AuditQuery extends InternalQuery {
         super(entity.toNonHostEntity(), signature, recipient);
         
         this.service = Service.getService(IdentityClass.create(block).toSemanticType());
-        this.permissions = AgentPermissions.NONE;
+        this.permissions = FreezableAgentPermissions.NONE;
     }
     
     @Pure

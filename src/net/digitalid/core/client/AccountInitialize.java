@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.agent.AgentPermissions;
+import net.digitalid.core.agent.FreezableAgentPermissions;
 import net.digitalid.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.core.agent.Restrictions;
 import net.digitalid.core.annotations.NonNullableElements;
@@ -31,7 +31,7 @@ import net.digitalid.core.identity.Category;
 import net.digitalid.core.identity.Mapper;
 import net.digitalid.core.identity.NonHostIdentity;
 import net.digitalid.core.identity.Predecessor;
-import net.digitalid.core.identity.Predecessors;
+import net.digitalid.core.identity.FreezablePredecessors;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.identity.Successor;
 import net.digitalid.core.module.BothModule;
@@ -100,7 +100,7 @@ public final class AccountInitialize extends CoreServiceInternalAction {
         super(entity, signature, recipient);
         
         final @Nonnull InternalNonHostIdentifier subject = getSubject().toInternalNonHostIdentifier();
-        if (isOnHost() && Predecessors.exist(subject)) throw new PacketException(PacketError.METHOD, "The subject " + subject + " is already initialized.");
+        if (isOnHost() && FreezablePredecessors.exist(subject)) throw new PacketException(PacketError.METHOD, "The subject " + subject + " is already initialized.");
         
         final @Nonnull Category category = entity.getIdentity().getCategory();
         final @Nonnull ReadOnlyList<Block> elements = new ListWrapper(block).getElementsNotNull();
@@ -115,7 +115,7 @@ public final class AccountInitialize extends CoreServiceInternalAction {
             final @Nonnull String message = "The claimed predecessor " + identifier + " of " + subject;
             if (!(identity.getCategory().isExternalPerson() && category.isInternalPerson() || identity.getCategory() == category)) throw new InvalidDeclarationException(message + " has a wrong category.", subject, null);
             if (identifier instanceof InternalNonHostIdentifier) {
-                if (!Predecessors.get((InternalNonHostIdentifier) identifier).equals(predecessor.getPredecessors())) throw new InvalidDeclarationException(message + " has other predecessors.", subject, null);
+                if (!FreezablePredecessors.get((InternalNonHostIdentifier) identifier).equals(predecessor.getPredecessors())) throw new InvalidDeclarationException(message + " has other predecessors.", subject, null);
             } else {
                 if (predecessor.getPredecessors().isNotEmpty()) throw new InvalidDeclarationException(message + " is an external person and may not have any predecessors.", subject, null);
             }
@@ -151,7 +151,7 @@ public final class AccountInitialize extends CoreServiceInternalAction {
     @Pure
     @Override
     public @Nonnull ReadOnlyAgentPermissions getAuditPermissions() {
-        return AgentPermissions.GENERAL_WRITE;
+        return FreezableAgentPermissions.GENERAL_WRITE;
     }
     
     @Pure
@@ -168,7 +168,7 @@ public final class AccountInitialize extends CoreServiceInternalAction {
         
         try {
             @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
-            final @Nonnull Predecessors predecessors = new Predecessors(states.size());
+            final @Nonnull FreezablePredecessors predecessors = new FreezablePredecessors(states.size());
             final @Nonnull FreezableList<NonHostIdentity> identities = new FreezableArrayList<>(states.size());
             for (final @Nonnull ReadOnlyPair<Predecessor, Block> state : states) {
                 final @Nonnull Predecessor predecessor = state.getElement0();

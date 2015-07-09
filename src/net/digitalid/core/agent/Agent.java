@@ -213,7 +213,7 @@ public abstract class Agent extends NonHostConcept implements Immutable, Blockab
     /**
      * Stores the permissions of this agent or null if not yet loaded.
      */
-    protected @Nullable @NonFrozen AgentPermissions permissions;
+    protected @Nullable @NonFrozen FreezableAgentPermissions permissions;
     
     /**
      * Returns the permissions of this agent.

@@ -8,9 +8,9 @@ import net.digitalid.core.interfaces.Blockable;
 import net.digitalid.core.interfaces.SQLizable;
 
 /**
- * This interface provides read-only access to {@link Contacts contacts} and should <em>never</em> be cast away.
+ * This interface provides read-only access to {@link FreezableContacts contacts} and should <em>never</em> be cast away.
  * 
- * @see Contacts
+ * @see FreezableContacts
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 2.0
@@ -19,6 +19,6 @@ public interface ReadOnlyContacts extends ReadOnlySet<Contact>, Blockable, SQLiz
     
     @Pure
     @Override
-    public @Capturable @Nonnull Contacts clone();
+    public @Capturable @Nonnull FreezableContacts clone();
     
 }

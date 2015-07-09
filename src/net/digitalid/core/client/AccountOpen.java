@@ -7,7 +7,7 @@ import java.util.Random;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.agent.Agent;
-import net.digitalid.core.agent.AgentPermissions;
+import net.digitalid.core.agent.FreezableAgentPermissions;
 import net.digitalid.core.agent.ClientAgent;
 import net.digitalid.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.core.agent.Restrictions;
@@ -182,7 +182,7 @@ public final class AccountOpen extends Action {
     @Pure
     @Override
     public @Nonnull ReadOnlyAgentPermissions getAuditPermissions() {
-        return AgentPermissions.GENERAL_WRITE;
+        return FreezableAgentPermissions.GENERAL_WRITE;
     }
     
     @Pure
@@ -205,7 +205,7 @@ public final class AccountOpen extends Action {
         
         final @Nonnull ClientAgent clientAgent = ClientAgent.get(entity, agentNumber, false);
         final @Nonnull Restrictions restrictions = new Restrictions(true, true, true, context);
-        clientAgent.createForActions(AgentPermissions.GENERAL_WRITE, restrictions, commitment, name);
+        clientAgent.createForActions(FreezableAgentPermissions.GENERAL_WRITE, restrictions, commitment, name);
     }
     
     @Override

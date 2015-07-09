@@ -22,7 +22,7 @@ import net.digitalid.core.wrappers.HashWrapper;
 import net.digitalid.core.wrappers.TupleWrapper;
 
 /**
- * This class models the randomized {@link AgentPermissions permissions} of {@link OutgoingRole outgoing roles}.
+ * This class models the randomized {@link FreezableAgentPermissions permissions} of {@link OutgoingRole outgoing roles}.
  * 
  * @invariant (salt == null) == (permissions == null) : "The salt and the permissions are either both null or both non-null.";
  * 
@@ -39,7 +39,7 @@ public final class RandomizedAgentPermissions implements Immutable, Blockable {
     /**
      * Stores the semantic type {@code permissions.randomized.permission.agent@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType PERMISSIONS = SemanticType.create("permissions.randomized.permission.agent@core.digitalid.net").load(AgentPermissions.TYPE);
+    private static final @Nonnull SemanticType PERMISSIONS = SemanticType.create("permissions.randomized.permission.agent@core.digitalid.net").load(FreezableAgentPermissions.TYPE);
     
     /**
      * Stores the semantic type {@code randomized.permission.agent@core.digitalid.net}.
@@ -112,7 +112,7 @@ public final class RandomizedAgentPermissions implements Immutable, Blockable {
         this.hash = block.getHash();
         final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(2);
         this.salt = new HashWrapper(elements.getNotNull(0)).getValue();
-        this.permissions = new AgentPermissions(elements.getNotNull(1)).freeze();
+        this.permissions = new FreezableAgentPermissions(elements.getNotNull(1)).freeze();
     }
     
     @Pure

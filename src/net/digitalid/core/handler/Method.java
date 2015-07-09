@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.agent.Agent;
-import net.digitalid.core.agent.AgentPermissions;
+import net.digitalid.core.agent.FreezableAgentPermissions;
 import net.digitalid.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.core.agent.Restrictions;
 import net.digitalid.core.annotations.NonCommitting;
@@ -23,7 +23,7 @@ import net.digitalid.core.collections.FreezableArrayList;
 import net.digitalid.core.collections.FreezableList;
 import net.digitalid.core.collections.ReadOnlyIterator;
 import net.digitalid.core.collections.ReadOnlyList;
-import net.digitalid.core.contact.Authentications;
+import net.digitalid.core.contact.FreezableAuthentications;
 import net.digitalid.core.contact.Contact;
 import net.digitalid.core.contact.ReadOnlyAuthentications;
 import net.digitalid.core.credential.ClientCredential;
@@ -160,7 +160,7 @@ public abstract class Method extends Handler {
      */
     @Pure
     public @Nonnull ReadOnlyAgentPermissions getRequiredPermissions() {
-        return AgentPermissions.NONE;
+        return FreezableAgentPermissions.NONE;
     }
     
     
@@ -289,7 +289,7 @@ public abstract class Method extends Handler {
      */
     @Pure
     private static ReadOnlyAgentPermissions getRequiredPermissions(@Nonnull ReadOnlyList<? extends Method> methods) {
-        final @Nonnull AgentPermissions permissions = new AgentPermissions();
+        final @Nonnull FreezableAgentPermissions permissions = new FreezableAgentPermissions();
         for (@Nonnull Method method : methods) {
             permissions.putAll(method.getRequiredPermissions());
         }
@@ -331,13 +331,13 @@ public abstract class Method extends Handler {
         if (reference instanceof ExternalQuery) {
             final @Nonnull ReadOnlyAuthentications authentications;
             if (reference instanceof IdentityQuery) {
-                authentications = Authentications.NONE;
+                authentications = FreezableAuthentications.NONE;
             } else {
                 final @Nonnull Identity identity = subject.getIdentity();
                 if (entity != null && entity instanceof Role && identity instanceof Person) {
                     authentications = Contact.get((Role) entity, (Person) identity).getAuthentications();
                 } else {
-                    authentications = Authentications.NONE;
+                    authentications = FreezableAuthentications.NONE;
                 }
             }
             
@@ -350,12 +350,12 @@ public abstract class Method extends Handler {
                 final @Nonnull FreezableList<Credential> credentials;
                 final @Nullable FreezableList<CertifiedAttributeValue> certificates;
                 final @Nonnull ReadOnlyAgentPermissions permissions = getRequiredPermissions(methods);
-                if (authentications.contains(Authentications.IDENTITY_BASED_TYPE)) {
+                if (authentications.contains(FreezableAuthentications.IDENTITY_BASED_TYPE)) {
                     final @Nonnull ClientCredential credential = ClientCredential.getIdentityBased(role, permissions);
                     credentials = new FreezableArrayList<Credential>(credential);
                     certificates = new FreezableArrayList<>(authentications.size() - 1);
                     for (final @Nonnull SemanticType type : authentications) {
-                        if (!type.equals(Authentications.IDENTITY_BASED_TYPE)) {
+                        if (!type.equals(FreezableAuthentications.IDENTITY_BASED_TYPE)) {
                             final @Nullable AttributeValue attributeValue = Attribute.get(entity, type).getValue();
                             if (attributeValue != null && attributeValue.isCertified()) {
                                 final @Nonnull CertifiedAttributeValue certifiedAttributeValue = attributeValue.toCertifiedAttributeValue();

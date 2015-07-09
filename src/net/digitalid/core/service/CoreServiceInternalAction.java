@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.agent.Agent;
-import net.digitalid.core.agent.AgentPermissions;
+import net.digitalid.core.agent.FreezableAgentPermissions;
 import net.digitalid.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.core.agent.Restrictions;
 import net.digitalid.core.annotations.NonCommitting;
@@ -113,7 +113,7 @@ public abstract class CoreServiceInternalAction extends InternalAction {
         final @Nonnull Agent agent = signature.getAgentCheckedAndRestricted(getNonHostAccount(), getPublicKey());
         
         final @Nonnull ReadOnlyAgentPermissions permissions = getRequiredPermissions();
-        if (!permissions.equals(AgentPermissions.NONE)) agent.getPermissions().checkCover(permissions);
+        if (!permissions.equals(FreezableAgentPermissions.NONE)) agent.getPermissions().checkCover(permissions);
         
         final @Nonnull Restrictions restrictions = getRequiredRestrictions();
         if (!restrictions.equals(Restrictions.MIN)) agent.getRestrictions().checkCover(restrictions);

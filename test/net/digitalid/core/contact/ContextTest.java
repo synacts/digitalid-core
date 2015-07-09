@@ -50,7 +50,7 @@ public final class ContextTest extends IdentitySetup {
     public void _02_testAddContact() throws SQLException {
         print("_02_testAddContact");
         try {
-            context.addContacts(new Contacts(contact).freeze());
+            context.addContacts(new FreezableContacts(contact).freeze());
         } catch (@Nonnull SQLException exception) {
             exception.printStackTrace();
             Database.rollback();
@@ -77,7 +77,7 @@ public final class ContextTest extends IdentitySetup {
     public void _04_testRemoveContact() throws SQLException {
         print("_04_testRemoveContact");
         try {
-            context.removeContacts(new Contacts(contact).freeze());
+            context.removeContacts(new FreezableContacts(contact).freeze());
         } catch (@Nonnull SQLException exception) {
             exception.printStackTrace();
             Database.rollback();

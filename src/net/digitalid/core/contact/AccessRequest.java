@@ -38,7 +38,7 @@ public final class AccessRequest extends CoreServiceExternalAction {
     /**
      * Stores the semantic type {@code request.access@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("request.access@core.digitalid.net").load(ContactPermissions.TYPE);
+    public static final @Nonnull SemanticType TYPE = SemanticType.create("request.access@core.digitalid.net").load(FreezableContactPermissions.TYPE);
     
     
     /**
@@ -95,7 +95,7 @@ public final class AccessRequest extends CoreServiceExternalAction {
         super(entity, signature, recipient);
         
         this.person = entity.getIdentity().toInternalPerson();
-        this.permissions = new ContactPermissions(block).freeze();
+        this.permissions = new FreezableContactPermissions(block).freeze();
         if (permissions.isEmpty()) throw new InvalidEncodingException("The permissions may not be empty.");
     }
     

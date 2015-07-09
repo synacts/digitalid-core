@@ -18,24 +18,24 @@ import net.digitalid.core.wrappers.Block;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public final class ContactPermissions extends AttributeTypeSet implements ReadOnlyContactPermissions, Blockable {
+public final class FreezableContactPermissions extends FreezableAttributeTypeSet implements ReadOnlyContactPermissions, Blockable {
     
     /**
      * Stores the semantic type {@code permission.contact@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("permission.contact@core.digitalid.net").load(AttributeTypeSet.TYPE);
+    public static final @Nonnull SemanticType TYPE = SemanticType.create("permission.contact@core.digitalid.net").load(FreezableAttributeTypeSet.TYPE);
     
     
     /**
      * Stores an empty set of contact permissions.
      */
-    public static final @Nonnull ReadOnlyContactPermissions NONE = new ContactPermissions().freeze();
+    public static final @Nonnull ReadOnlyContactPermissions NONE = new FreezableContactPermissions().freeze();
     
     
     /**
      * Creates an empty set of contact permissions.
      */
-    public ContactPermissions() {}
+    public FreezableContactPermissions() {}
     
     /**
      * Creates new contact permissions with the given attribute type.
@@ -46,7 +46,7 @@ public final class ContactPermissions extends AttributeTypeSet implements ReadOn
      * 
      * @ensure isSingle() : "The new contact permissions are single.";
      */
-    public ContactPermissions(@Nonnull SemanticType type) {
+    public FreezableContactPermissions(@Nonnull SemanticType type) {
         super(type);
     }
     
@@ -55,7 +55,7 @@ public final class ContactPermissions extends AttributeTypeSet implements ReadOn
      * 
      * @param permissions the contact permissions to add to the new contact permissions.
      */
-    public ContactPermissions(@Nonnull ReadOnlyContactPermissions permissions) {
+    public FreezableContactPermissions(@Nonnull ReadOnlyContactPermissions permissions) {
         super(permissions);
     }
     
@@ -67,7 +67,7 @@ public final class ContactPermissions extends AttributeTypeSet implements ReadOn
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
     @NonCommitting
-    public ContactPermissions(@Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
+    public FreezableContactPermissions(@Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(block);
     }
     
@@ -87,8 +87,8 @@ public final class ContactPermissions extends AttributeTypeSet implements ReadOn
     
     @Pure
     @Override
-    public @Capturable @Nonnull ContactPermissions clone() {
-        return new ContactPermissions(this);
+    public @Capturable @Nonnull FreezableContactPermissions clone() {
+        return new FreezableContactPermissions(this);
     }
     
 }

@@ -6,9 +6,9 @@ import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.interfaces.Blockable;
 
 /**
- * This interface provides read-only access to {@link ContactPermissions contact permissions} and should <em>never</em> be cast away.
+ * This interface provides read-only access to {@link FreezableContactPermissions contact permissions} and should <em>never</em> be cast away.
  * 
- * @see ContactPermissions
+ * @see FreezableContactPermissions
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
@@ -17,6 +17,6 @@ public interface ReadOnlyContactPermissions extends ReadOnlyAttributeTypeSet, Bl
     
     @Pure
     @Override
-    public @Capturable @Nonnull ContactPermissions clone();
+    public @Capturable @Nonnull FreezableContactPermissions clone();
     
 }

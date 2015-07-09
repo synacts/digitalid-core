@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import net.digitalid.core.agent.Agent;
-import net.digitalid.core.agent.AgentPermissions;
+import net.digitalid.core.agent.FreezableAgentPermissions;
 import net.digitalid.core.annotations.Committing;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.client.Client;
@@ -63,7 +63,7 @@ public class IdentitySetup extends ServerSetup {
     public static void setUpIdentity() throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
         print("setUpIdentity");
         try {
-            client = new Client("tester", "Test Client", AgentPermissions.GENERAL_WRITE);
+            client = new Client("tester", "Test Client", FreezableAgentPermissions.GENERAL_WRITE);
             final @Nonnull InternalNonHostIdentifier identifier = new InternalNonHostIdentifier("person@test.digitalid.net");
             role = client.openAccount(identifier, Category.NATURAL_PERSON);
             subject = identifier.getIdentity().toNaturalPerson();

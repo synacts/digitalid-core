@@ -315,11 +315,11 @@ public final class ContextModule implements BothModule {
      */
     @Pure
     @NonCommitting
-    static @Capturable @Nonnull @NonFrozen Contacts getContacts(@Nonnull Context context) throws SQLException {
+    static @Capturable @Nonnull @NonFrozen FreezableContacts getContacts(@Nonnull Context context) throws SQLException {
         final @Nonnull NonHostEntity entity = context.getEntity();
         final @Nonnull String SQL = "SELECT contact FROM " + entity.getSite() + "context_contact WHERE entity = " + entity + " AND context = " + context;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
-            return Contacts.get(entity, resultSet, 1);
+            return FreezableContacts.get(entity, resultSet, 1);
         }
     }
     

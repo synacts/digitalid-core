@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.agent.AgentPermissions;
+import net.digitalid.core.agent.FreezableAgentPermissions;
 import net.digitalid.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
@@ -109,7 +109,7 @@ public final class CertificateIssue extends CoreServiceExternalAction {
     @Pure
     @Override
     public @Nonnull ReadOnlyAgentPermissions getAuditPermissions() {
-        return new AgentPermissions(certificate.getContent().getType(), false).freeze();
+        return new FreezableAgentPermissions(certificate.getContent().getType(), false).freeze();
     }
     
     

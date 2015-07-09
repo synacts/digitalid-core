@@ -21,7 +21,7 @@ import net.digitalid.core.wrappers.SignatureWrapper;
 import net.digitalid.core.wrappers.TupleWrapper;
 
 /**
- * Adds {@link AgentPermissions permissions} to an {@link Agent agent}.
+ * Adds {@link FreezableAgentPermissions permissions} to an {@link Agent agent}.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
@@ -31,7 +31,7 @@ final class AgentPermissionsAdd extends CoreServiceInternalAction {
     /**
      * Stores the semantic type {@code add.permissions.agent@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType TYPE = SemanticType.create("add.permissions.agent@core.digitalid.net").load(TupleWrapper.TYPE, Agent.TYPE, AgentPermissions.TYPE);
+    private static final @Nonnull SemanticType TYPE = SemanticType.create("add.permissions.agent@core.digitalid.net").load(TupleWrapper.TYPE, Agent.TYPE, FreezableAgentPermissions.TYPE);
     
     
     /**
@@ -83,7 +83,7 @@ final class AgentPermissionsAdd extends CoreServiceInternalAction {
         
         final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(2);
         this.agent = Agent.get(entity.toNonHostEntity(), elements.getNotNull(0));
-        this.permissions = new AgentPermissions(elements.getNotNull(1)).freeze();
+        this.permissions = new FreezableAgentPermissions(elements.getNotNull(1)).freeze();
     }
     
     @Pure

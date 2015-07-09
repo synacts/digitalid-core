@@ -232,7 +232,7 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
     /**
      * Stores the permissions of this context.
      */
-    private @Nullable ContactPermissions permissions;
+    private @Nullable FreezableContactPermissions permissions;
     
     /**
      * Returns the permissions of this context.
@@ -432,7 +432,7 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
     /**
      * Stores the contacts of this context or null if not yet loaded.
      */
-    private @Nullable @NonFrozen Contacts contacts;
+    private @Nullable @NonFrozen FreezableContacts contacts;
     
     /**
      * Returns the contacts of this context.
@@ -500,7 +500,7 @@ public final class Context extends NonHostConcept implements Immutable, Blockabl
      * @return a set with all the contacts of this context (i.e. including the contacts from subcontexts).
      */
     @NonCommitting
-    public @Nonnull @Capturable @NonFrozen Contacts getAllContacts() throws SQLException {
+    public @Nonnull @Capturable @NonFrozen FreezableContacts getAllContacts() throws SQLException {
         return getContacts().clone(); // TODO: Make a real aggregation.
     }
     

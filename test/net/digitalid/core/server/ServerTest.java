@@ -1,6 +1,6 @@
 package net.digitalid.core.server;
 
-import net.digitalid.core.agent.AgentPermissions;
+import net.digitalid.core.agent.FreezableAgentPermissions;
 import net.digitalid.core.client.Client;
 import net.digitalid.core.io.Directory;
 import net.digitalid.core.setup.ServerSetup;
@@ -22,7 +22,7 @@ public final class ServerTest extends ServerSetup {
         
         // Server
         Server.start("test.digitalid.net");
-        Client client = new Client("Tester", "Tester", AgentPermissions.GENERAL_WRITE);
+        Client client = new Client("Tester", "Tester", FreezableAgentPermissions.GENERAL_WRITE);
         
 //        // Hosting and Category
 //        Request.openAccount(client, "person@test.digitalid.net", client.getName(), Category.NATURAL_PERSON);

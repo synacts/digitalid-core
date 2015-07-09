@@ -22,7 +22,7 @@ import net.digitalid.core.attribute.AttributeValue;
 import net.digitalid.core.attribute.CertifiedAttributeValue;
 import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.collections.ReadOnlyList;
-import net.digitalid.core.contact.AttributeTypeSet;
+import net.digitalid.core.contact.FreezableAttributeTypeSet;
 import net.digitalid.core.cryptography.PublicKey;
 import net.digitalid.core.cryptography.PublicKeyChain;
 import net.digitalid.core.database.Database;
@@ -253,7 +253,7 @@ public final class Cache {
         for (final @Nullable SemanticType type : types) assert type != null && type.isAttributeFor(identity.getCategory()) : "Each type is not null and can be used as an attribute for the category of the given identity.";
         
         final @Nonnull AttributeValue[] attributeValues = new AttributeValue[types.length];
-        final @Nonnull AttributeTypeSet typesToRetrieve = new AttributeTypeSet();
+        final @Nonnull FreezableAttributeTypeSet typesToRetrieve = new FreezableAttributeTypeSet();
         final @Nonnull List<Integer> indexesToStore = new LinkedList<>();
         for (int i = 0; i < types.length; i++) {
             final @Nonnull @Frozen ReadOnlyPair<Boolean, AttributeValue> cache = getCachedAttributeValue(identity, role, time, types[i]);

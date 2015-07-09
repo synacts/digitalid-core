@@ -13,11 +13,11 @@ import net.digitalid.core.interfaces.Blockable;
 import net.digitalid.core.interfaces.SQLizable;
 
 /**
- * This interface provides read-only access to {@link AgentPermissions agent permissions} and should <em>never</em> be cast away.
+ * This interface provides read-only access to {@link FreezableAgentPermissions agent permissions} and should <em>never</em> be cast away.
  * 
  * @invariant areValid() : "These agent permissions are always valid.";
  * 
- * @see AgentPermissions
+ * @see FreezableAgentPermissions
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
@@ -113,7 +113,7 @@ public interface ReadOnlyAgentPermissions extends ReadOnlyMap<SemanticType, Bool
     
     @Pure
     @Override
-    public @Capturable @Nonnull AgentPermissions clone();
+    public @Capturable @Nonnull FreezableAgentPermissions clone();
     
     
     /**

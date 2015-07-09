@@ -3,7 +3,7 @@ package net.digitalid.core.contact;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
-import net.digitalid.core.agent.AgentPermissions;
+import net.digitalid.core.agent.FreezableAgentPermissions;
 import net.digitalid.core.annotations.AttributeType;
 import net.digitalid.core.annotations.Capturable;
 import net.digitalid.core.annotations.NonCommitting;
@@ -29,7 +29,7 @@ import net.digitalid.core.wrappers.ListWrapper;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public class AttributeTypeSet extends FreezableLinkedHashSet<SemanticType> implements ReadOnlyAttributeTypeSet, Blockable {
+public class FreezableAttributeTypeSet extends FreezableLinkedHashSet<SemanticType> implements ReadOnlyAttributeTypeSet, Blockable {
     
     /**
      * Stores the semantic type {@code list.attribute.type@core.digitalid.net}.
@@ -40,7 +40,7 @@ public class AttributeTypeSet extends FreezableLinkedHashSet<SemanticType> imple
     /**
      * Creates an empty set of attribute types.
      */
-    public AttributeTypeSet() {}
+    public FreezableAttributeTypeSet() {}
     
     /**
      * Creates a new attribute type set with the given attribute type.
@@ -51,7 +51,7 @@ public class AttributeTypeSet extends FreezableLinkedHashSet<SemanticType> imple
      * 
      * @ensure isSingle() : "The new attribute type set contains a single element.";
      */
-    public AttributeTypeSet(@Nonnull SemanticType type) {
+    public FreezableAttributeTypeSet(@Nonnull SemanticType type) {
         assert type.isAttributeType() : "The type is an attribute type.";
         
         add(type);
@@ -62,7 +62,7 @@ public class AttributeTypeSet extends FreezableLinkedHashSet<SemanticType> imple
      * 
      * @param attributeSet the attribute type set to add to the new attribute type set.
      */
-    public AttributeTypeSet(@Nonnull ReadOnlyAttributeTypeSet attributeSet) {
+    public FreezableAttributeTypeSet(@Nonnull ReadOnlyAttributeTypeSet attributeSet) {
         addAll(attributeSet);
     }
     
@@ -74,7 +74,7 @@ public class AttributeTypeSet extends FreezableLinkedHashSet<SemanticType> imple
      * @require block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
      */
     @NonCommitting
-    public AttributeTypeSet(@Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
+    public FreezableAttributeTypeSet(@Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         assert block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
         
         final @Nonnull ReadOnlyList<Block> elements = new ListWrapper(block).getElementsNotNull();
@@ -134,15 +134,15 @@ public class AttributeTypeSet extends FreezableLinkedHashSet<SemanticType> imple
     
     @Pure
     @Override
-    public @Capturable @Nonnull AttributeTypeSet clone() {
-        return new AttributeTypeSet(this);
+    public @Capturable @Nonnull FreezableAttributeTypeSet clone() {
+        return new FreezableAttributeTypeSet(this);
     }
     
     
     @Pure
     @Override
-    public final @Capturable @Nonnull AgentPermissions toAgentPermissions() {
-        final @Nonnull AgentPermissions permissions = new AgentPermissions();
+    public final @Capturable @Nonnull FreezableAgentPermissions toAgentPermissions() {
+        final @Nonnull FreezableAgentPermissions permissions = new FreezableAgentPermissions();
         for (final @Nonnull SemanticType type : this) {
             permissions.put(type, false);
         }

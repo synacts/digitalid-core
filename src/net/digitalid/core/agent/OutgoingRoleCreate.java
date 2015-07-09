@@ -119,7 +119,7 @@ final class OutgoingRoleCreate extends CoreServiceInternalAction {
     @Pure
     @Override
     public @Nonnull ReadOnlyAgentPermissions getRequiredPermissions() {
-        return new AgentPermissions(relation, true).freeze();
+        return new FreezableAgentPermissions(relation, true).freeze();
     }
     
     @Pure

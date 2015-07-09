@@ -17,7 +17,7 @@ import net.digitalid.core.collections.ConcurrentMap;
 import net.digitalid.core.collections.FreezableArrayList;
 import net.digitalid.core.collections.FreezableList;
 import net.digitalid.core.collections.ReadOnlyList;
-import net.digitalid.core.contact.AttributeTypeSet;
+import net.digitalid.core.contact.FreezableAttributeTypeSet;
 import net.digitalid.core.cryptography.PublicKeyChain;
 import net.digitalid.core.cryptography.SymmetricKey;
 import net.digitalid.core.entity.Role;
@@ -91,7 +91,7 @@ public class Request extends Packet {
      */
     @NonCommitting
     public Request(@Nonnull HostIdentifier identifier) throws SQLException, IOException, PacketException, ExternalException {
-        this(new FreezableArrayList<Method>(new AttributesQuery(null, identifier, new AttributeTypeSet(PublicKeyChain.TYPE).freeze(), true)).freeze(), identifier, null, identifier, null, null, 0);
+        this(new FreezableArrayList<Method>(new AttributesQuery(null, identifier, new FreezableAttributeTypeSet(PublicKeyChain.TYPE).freeze(), true)).freeze(), identifier, null, identifier, null, null, 0);
     }
     
     /**

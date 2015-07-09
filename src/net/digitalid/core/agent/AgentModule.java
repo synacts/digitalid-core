@@ -90,7 +90,7 @@ public final class AgentModule implements BothModule {
     @NonCommitting
     public void createTables(@Nonnull Site site) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "agent_permission (entity " + EntityClass.FORMAT + " NOT NULL, agent " + Agent.FORMAT + " NOT NULL, " + AgentPermissions.FORMAT_NOT_NULL + ", PRIMARY KEY (entity, agent, type), FOREIGN KEY (entity, agent) " + Agent.getReference(site) + ", " + AgentPermissions.REFERENCE + ")");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "agent_permission (entity " + EntityClass.FORMAT + " NOT NULL, agent " + Agent.FORMAT + " NOT NULL, " + FreezableAgentPermissions.FORMAT_NOT_NULL + ", PRIMARY KEY (entity, agent, type), FOREIGN KEY (entity, agent) " + Agent.getReference(site) + ", " + FreezableAgentPermissions.REFERENCE + ")");
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "agent_permission_order (entity " + EntityClass.FORMAT + " NOT NULL, stronger " + Agent.FORMAT + " NOT NULL, weaker " + Agent.FORMAT + " NOT NULL, PRIMARY KEY (entity, stronger, weaker), FOREIGN KEY (entity, stronger) " + Agent.getReference(site) + ", FOREIGN KEY (entity, weaker) " + Agent.getReference(site) + ")");
             
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "agent_restrictions (entity " + EntityClass.FORMAT + " NOT NULL, agent " + Agent.FORMAT + " NOT NULL, " + Restrictions.FORMAT + ", PRIMARY KEY (entity, agent), FOREIGN KEY (entity, agent) " + Agent.getReference(site) + ", " + Restrictions.getForeignKeys(site) + ")");
@@ -140,7 +140,7 @@ public final class AgentModule implements BothModule {
     /**
      * Stores the semantic type {@code entry.permission.agent.agent.module@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType AGENT_PERMISSION_MODULE_ENTRY = SemanticType.create("entry.permission.agent.agent.module@core.digitalid.net").load(TupleWrapper.TYPE, Identity.IDENTIFIER, Agent.NUMBER, AgentPermissions.TYPE);
+    private static final @Nonnull SemanticType AGENT_PERMISSION_MODULE_ENTRY = SemanticType.create("entry.permission.agent.agent.module@core.digitalid.net").load(TupleWrapper.TYPE, Identity.IDENTIFIER, Agent.NUMBER, FreezableAgentPermissions.TYPE);
     
     /**
      * Stores the semantic type {@code table.permission.agent.agent.module@core.digitalid.net}.
@@ -264,12 +264,12 @@ public final class AgentModule implements BothModule {
                 tables.set(0, new ListWrapper(AGENT_MODULE_TABLE, entries.freeze()).toBlock());
             }
             
-            try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT entity, agent, " + AgentPermissions.COLUMNS + " FROM " + host + "agent_permission")) {
+            try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT entity, agent, " + FreezableAgentPermissions.COLUMNS + " FROM " + host + "agent_permission")) {
                 final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<>();
                 while (resultSet.next()) {
                     final @Nonnull Identity identity = IdentityClass.getNotNull(resultSet, 1);
                     final long number = resultSet.getLong(2);
-                    final @Nonnull AgentPermissions permissions = AgentPermissions.getEmptyOrSingle(resultSet, 3);
+                    final @Nonnull FreezableAgentPermissions permissions = FreezableAgentPermissions.getEmptyOrSingle(resultSet, 3);
                     entries.add(new TupleWrapper(AGENT_PERMISSION_MODULE_ENTRY, identity, new Int64Wrapper(Agent.NUMBER, number), permissions).toBlock());
                 }
                 tables.set(1, new ListWrapper(AGENT_PERMISSION_MODULE_TABLE, entries.freeze()).toBlock());
@@ -369,13 +369,13 @@ public final class AgentModule implements BothModule {
             preparedStatement.executeBatch();
         }
         
-        try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(prefix + "agent_permission (entity, agent, " + AgentPermissions.COLUMNS + ") VALUES (?, ?, ?, ?)")) {
+        try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(prefix + "agent_permission (entity, agent, " + FreezableAgentPermissions.COLUMNS + ") VALUES (?, ?, ?, ?)")) {
             final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNotNull(1)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(3);
                 IdentityClass.create(elements.getNotNull(0)).toInternalNonHostIdentity().set(preparedStatement, 1);
                 preparedStatement.setLong(2, new Int64Wrapper(elements.getNotNull(1)).getValue());
-                new AgentPermissions(elements.getNotNull(2)).checkIsSingle().setEmptyOrSingle(preparedStatement, 3);
+                new FreezableAgentPermissions(elements.getNotNull(2)).checkIsSingle().setEmptyOrSingle(preparedStatement, 3);
                 preparedStatement.addBatch();
             }
             preparedStatement.executeBatch();
@@ -475,7 +475,7 @@ public final class AgentModule implements BothModule {
     /**
      * Stores the semantic type {@code entry.permission.agent.agents.state@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType AGENT_PERMISSION_STATE_ENTRY = SemanticType.create("entry.permission.agent.agents.state@core.digitalid.net").load(TupleWrapper.TYPE, Agent.NUMBER, AgentPermissions.TYPE);
+    private static final @Nonnull SemanticType AGENT_PERMISSION_STATE_ENTRY = SemanticType.create("entry.permission.agent.agents.state@core.digitalid.net").load(TupleWrapper.TYPE, Agent.NUMBER, FreezableAgentPermissions.TYPE);
     
     /**
      * Stores the semantic type {@code table.permission.agent.agents.state@core.digitalid.net}.
@@ -562,9 +562,9 @@ public final class AgentModule implements BothModule {
                 tables.set(0, new ListWrapper(AGENT_STATE_TABLE, entries.freeze()).toBlock());
             }
             
-            try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT agent, " + AgentPermissions.COLUMNS + from + "agent_permission" + where)) {
+            try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT agent, " + FreezableAgentPermissions.COLUMNS + from + "agent_permission" + where)) {
                 final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<>();
-                while (resultSet.next()) entries.add(new TupleWrapper(AGENT_PERMISSION_STATE_ENTRY, new Int64Wrapper(Agent.NUMBER, resultSet.getLong(1)), AgentPermissions.getEmptyOrSingle(resultSet, 2)).toBlock());
+                while (resultSet.next()) entries.add(new TupleWrapper(AGENT_PERMISSION_STATE_ENTRY, new Int64Wrapper(Agent.NUMBER, resultSet.getLong(1)), FreezableAgentPermissions.getEmptyOrSingle(resultSet, 2)).toBlock());
                 tables.set(1, new ListWrapper(AGENT_PERMISSION_STATE_TABLE, entries.freeze()).toBlock());
             }
             
@@ -642,13 +642,13 @@ public final class AgentModule implements BothModule {
             preparedStatement.executeBatch();
         }
         
-        try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(prefix + "agent_permission (entity, agent, " + AgentPermissions.COLUMNS + ") VALUES (?, ?, ?, ?)")) {
+        try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(prefix + "agent_permission (entity, agent, " + FreezableAgentPermissions.COLUMNS + ") VALUES (?, ?, ?, ?)")) {
             entity.set(preparedStatement, 1);
             final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNotNull(1)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(2);
                 preparedStatement.setLong(2, new Int64Wrapper(elements.getNotNull(0)).getValue());
-                new AgentPermissions(elements.getNotNull(1)).checkIsSingle().setEmptyOrSingle(preparedStatement, 3);
+                new FreezableAgentPermissions(elements.getNotNull(1)).checkIsSingle().setEmptyOrSingle(preparedStatement, 3);
                 preparedStatement.addBatch();
             }
             preparedStatement.executeBatch();
@@ -806,10 +806,10 @@ public final class AgentModule implements BothModule {
      */
     @Pure
     @NonCommitting
-    static @Capturable @Nonnull @NonFrozen AgentPermissions getPermissions(@Nonnull Agent agent) throws SQLException {
-        final @Nonnull String SQL = "SELECT " + AgentPermissions.COLUMNS + " FROM " + agent.getEntity().getSite() + "agent_permission WHERE entity = " + agent.getEntity() + " AND agent = " + agent;
+    static @Capturable @Nonnull @NonFrozen FreezableAgentPermissions getPermissions(@Nonnull Agent agent) throws SQLException {
+        final @Nonnull String SQL = "SELECT " + FreezableAgentPermissions.COLUMNS + " FROM " + agent.getEntity().getSite() + "agent_permission WHERE entity = " + agent.getEntity() + " AND agent = " + agent;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
-            return AgentPermissions.get(resultSet, 1);
+            return FreezableAgentPermissions.get(resultSet, 1);
         }
     }
     
@@ -821,7 +821,7 @@ public final class AgentModule implements BothModule {
      */
     @NonCommitting
     static void addPermissions(@Nonnull Agent agent, @Nonnull @Frozen ReadOnlyAgentPermissions permissions) throws SQLException {
-        final @Nonnull String SQL = "INSERT INTO " + agent.getEntity().getSite() + "agent_permission (entity, agent, " + AgentPermissions.COLUMNS + ") VALUES (" + agent.getEntity() + ", " + agent + ", ?, ?)";
+        final @Nonnull String SQL = "INSERT INTO " + agent.getEntity().getSite() + "agent_permission (entity, agent, " + FreezableAgentPermissions.COLUMNS + ") VALUES (" + agent.getEntity() + ", " + agent + ", ?, ?)";
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
             permissions.set(preparedStatement, 1);
             preparedStatement.executeBatch();
@@ -837,7 +837,7 @@ public final class AgentModule implements BothModule {
      */
     @NonCommitting
     static void removePermissions(@Nonnull Agent agent, @Nonnull @Frozen ReadOnlyAgentPermissions permissions) throws SQLException {
-        final @Nonnull String SQL = "DELETE FROM " + agent.getEntity().getSite() + "agent_permission WHERE entity = " + agent.getEntity() + " AND agent = " + agent + " AND " + AgentPermissions.CONDITION;
+        final @Nonnull String SQL = "DELETE FROM " + agent.getEntity().getSite() + "agent_permission WHERE entity = " + agent.getEntity() + " AND agent = " + agent + " AND " + FreezableAgentPermissions.CONDITION;
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
             permissions.set(preparedStatement, 1);
             final int[] counts = preparedStatement.executeBatch();
@@ -861,7 +861,7 @@ public final class AgentModule implements BothModule {
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("DELETE FROM " + site + "agent_permission_order WHERE entity = " + entity + (agent != null ? " AND (stronger = " + agent + " OR weaker = " + agent + ")": ""));
             statement.executeUpdate("INSERT INTO " + site + "agent_permission_order (entity, stronger, weaker) SELECT " + entity + ", ps.agent, pw.agent FROM " + site + "agent_permission pw, " + site + "agent_permission ps "
-                    + "WHERE pw.entity = " + entity + " AND ps.entity = " + entity + (agent != null ? " AND (pw.agent = " + agent + " OR ps.agent = " + agent + ")": "") + " AND (pw.type = ps.type OR ps.type = " + AgentPermissions.GENERAL +") AND (NOT pw.type_writing OR ps.type_writing) "
+                    + "WHERE pw.entity = " + entity + " AND ps.entity = " + entity + (agent != null ? " AND (pw.agent = " + agent + " OR ps.agent = " + agent + ")": "") + " AND (pw.type = ps.type OR ps.type = " + FreezableAgentPermissions.GENERAL +") AND (NOT pw.type_writing OR ps.type_writing) "
                     + "GROUP BY pw.agent, ps.agent HAVING COUNT(*) = (SELECT COUNT(*) FROM " + site + "agent_permission p WHERE p.entity = " + entity + " AND p.agent = pw.agent)");
         }
     }

@@ -6,7 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
-import net.digitalid.core.agent.AgentPermissions;
+import net.digitalid.core.agent.FreezableAgentPermissions;
 import net.digitalid.core.annotations.Committing;
 import net.digitalid.core.annotations.Locked;
 import net.digitalid.core.annotations.Pure;
@@ -141,7 +141,7 @@ public final class Host extends Site {
         Database.commit();
         
         // TODO: What are the right permissions to pass here? Probably an aggregation of all the services.
-        this.client = new Client("_" + identifier.asHostName(), identifier.getString(), AgentPermissions.GENERAL_WRITE);
+        this.client = new Client("_" + identifier.asHostName(), identifier.getString(), FreezableAgentPermissions.GENERAL_WRITE);
     }
     
     /**

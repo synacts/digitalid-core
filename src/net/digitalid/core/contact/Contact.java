@@ -34,7 +34,7 @@ import net.digitalid.core.interfaces.SQLizable;
 import net.digitalid.core.wrappers.Block;
 
 /**
- * Contacts have certain {@link ContactPermissions permissions} and {@link Authentications authentications}.
+ * Contacts have certain {@link FreezableContactPermissions permissions} and {@link FreezableAuthentications authentications}.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 0.6
@@ -119,7 +119,7 @@ public final class Contact extends NonHostConcept implements Immutable, Blockabl
      */
     @NonCommitting
     public @Nonnull ReadOnlyContactPermissions getPermissions() throws SQLException {
-        return ContactPermissions.NONE; // TODO
+        return FreezableContactPermissions.NONE; // TODO
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Authentications –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -131,7 +131,7 @@ public final class Contact extends NonHostConcept implements Immutable, Blockabl
      */
     @NonCommitting
     public @Nonnull ReadOnlyAuthentications getAuthentications() throws SQLException {
-        return Authentications.IDENTITY_BASED; // TODO
+        return FreezableAuthentications.IDENTITY_BASED; // TODO
     }
     
     // TODO: Include methods to aggregate the permissions and authentications over the contexts.

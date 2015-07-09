@@ -40,7 +40,7 @@ public final class AgentTest extends IdentitySetup {
     public static void accreditClientAgent() throws SQLException, IOException, PacketException, ExternalException {
         print("accreditClientAgent");
         try {
-            final @Nonnull AgentPermissions agentPermissions = new AgentPermissions();
+            final @Nonnull FreezableAgentPermissions agentPermissions = new FreezableAgentPermissions();
             agentPermissions.put(AttributeTypes.NAME, true);
             agentPermissions.put(AttributeTypes.PRENAME, true);
             agentPermissions.put(AttributeTypes.SURNAME, true);
@@ -102,7 +102,7 @@ public final class AgentTest extends IdentitySetup {
     public void _02_testPermissionsAdd() throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
         print("_02_testPermissionsAdd");
         try {
-            final @Nonnull AgentPermissions agentPermissions = new AgentPermissions();
+            final @Nonnull FreezableAgentPermissions agentPermissions = new FreezableAgentPermissions();
             agentPermissions.put(AttributeTypes.EMAIL, true);
             agentPermissions.put(AttributeTypes.PHONE, false);
             agentPermissions.freeze();
@@ -130,7 +130,7 @@ public final class AgentTest extends IdentitySetup {
         print("_03_testPermissionsRemove");
         try {
             final @Nonnull ClientAgent clientAgent = role.getAgent();
-            final @Nonnull AgentPermissions agentPermissions = new AgentPermissions();
+            final @Nonnull FreezableAgentPermissions agentPermissions = new FreezableAgentPermissions();
             agentPermissions.put(AttributeTypes.PRENAME, true);
             agentPermissions.put(AttributeTypes.SURNAME, true);
             agentPermissions.freeze();

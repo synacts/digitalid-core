@@ -15,9 +15,9 @@ import net.digitalid.core.identifier.InternalNonHostIdentifier;
 import net.digitalid.core.interfaces.Blockable;
 
 /**
- * This interface provides read-only access to {@link Predecessors predecessors} and should <em>never</em> be cast away.
+ * This interface provides read-only access to {@link FreezablePredecessors predecessors} and should <em>never</em> be cast away.
  * 
- * @see Predecessors
+ * @see FreezablePredecessors
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
@@ -26,7 +26,7 @@ public interface ReadOnlyPredecessors extends ReadOnlyList<Predecessor>, Blockab
 
     @Pure
     @Override
-    public @Capturable @Nonnull Predecessors clone();
+    public @Capturable @Nonnull FreezablePredecessors clone();
     
     /**
      * Returns the identities of the predecessors that are mapped.

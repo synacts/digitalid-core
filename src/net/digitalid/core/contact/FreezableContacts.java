@@ -30,7 +30,7 @@ import net.digitalid.core.wrappers.ListWrapper;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public final class Contacts extends FreezableLinkedHashSet<Contact> implements ReadOnlyContacts, Blockable, SQLizable {
+public final class FreezableContacts extends FreezableLinkedHashSet<Contact> implements ReadOnlyContacts, Blockable, SQLizable {
     
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -46,14 +46,14 @@ public final class Contacts extends FreezableLinkedHashSet<Contact> implements R
     /**
      * Creates an empty set of contacts.
      */
-    public @NonFrozen Contacts() {}
+    public @NonFrozen FreezableContacts() {}
     
     /**
      * Creates new set with the given contact.
      * 
      * @param contact the contact to be added.
      */
-    public @NonFrozen Contacts(@Nonnull Contact contact) {
+    public @NonFrozen FreezableContacts(@Nonnull Contact contact) {
         add(contact);
     }
     
@@ -62,7 +62,7 @@ public final class Contacts extends FreezableLinkedHashSet<Contact> implements R
      * 
      * @param contacts the contacts to be added.
      */
-    public @NonFrozen Contacts(@Nonnull ReadOnlyContacts contacts) {
+    public @NonFrozen FreezableContacts(@Nonnull ReadOnlyContacts contacts) {
         addAll(contacts);
     }
     
@@ -91,7 +91,7 @@ public final class Contacts extends FreezableLinkedHashSet<Contact> implements R
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
     @NonCommitting
-    public @NonFrozen Contacts(@Nonnull NonHostEntity entity, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
+    public @NonFrozen FreezableContacts(@Nonnull NonHostEntity entity, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         final @Nonnull ReadOnlyList<Block> elements = new ListWrapper(block).getElementsNotNull();
@@ -108,8 +108,8 @@ public final class Contacts extends FreezableLinkedHashSet<Contact> implements R
     
     @Pure
     @Override
-    public @Capturable @Nonnull @NonFrozen Contacts clone() {
-        return new Contacts(this);
+    public @Capturable @Nonnull @NonFrozen FreezableContacts clone() {
+        return new FreezableContacts(this);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Editing –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -121,7 +121,7 @@ public final class Contacts extends FreezableLinkedHashSet<Contact> implements R
      */
     @NonFrozenRecipient
     public void addAll(@Nonnull ReadOnlyContacts contacts) {
-        super.addAll((Contacts) contacts);
+        super.addAll((FreezableContacts) contacts);
     }
     
     /**
@@ -131,7 +131,7 @@ public final class Contacts extends FreezableLinkedHashSet<Contact> implements R
      */
     @NonFrozenRecipient
     public void removeAll(@Nonnull ReadOnlyContacts contacts) {
-        super.removeAll((Contacts) contacts);
+        super.removeAll((FreezableContacts) contacts);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– SQLizable –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -147,8 +147,8 @@ public final class Contacts extends FreezableLinkedHashSet<Contact> implements R
      */
     @Pure
     @NonCommitting
-    public static @Capturable @Nonnull @NonFrozen Contacts get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
-        final @Nonnull Contacts contacts = new Contacts();
+    public static @Capturable @Nonnull @NonFrozen FreezableContacts get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+        final @Nonnull FreezableContacts contacts = new FreezableContacts();
         while (resultSet.next()) contacts.add(Contact.getNotNull(entity, resultSet, columnIndex));
         return contacts;
      }

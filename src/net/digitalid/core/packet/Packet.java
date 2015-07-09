@@ -34,7 +34,7 @@ import net.digitalid.core.identifier.Identifier;
 import net.digitalid.core.identifier.InternalIdentifier;
 import net.digitalid.core.identifier.InternalNonHostIdentifier;
 import net.digitalid.core.identity.IdentityQuery;
-import net.digitalid.core.identity.Predecessors;
+import net.digitalid.core.identity.FreezablePredecessors;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.identity.Successor;
 import net.digitalid.core.interfaces.Immutable;
@@ -262,7 +262,7 @@ public abstract class Packet implements Immutable {
                             entity = Account.get(account.getHost(), subject.getIdentity());
                             if (subject instanceof InternalNonHostIdentifier) {
                                 final @Nonnull InternalNonHostIdentifier internalNonHostIdentifier = (InternalNonHostIdentifier) subject;
-                                if (!type.equals(AccountInitialize.TYPE) && !Predecessors.exist(internalNonHostIdentifier)) throw new PacketException(PacketError.IDENTIFIER, "The subject " + subject + " is not yet initialized.");
+                                if (!type.equals(AccountInitialize.TYPE) && !FreezablePredecessors.exist(internalNonHostIdentifier)) throw new PacketException(PacketError.IDENTIFIER, "The subject " + subject + " is not yet initialized.");
                                 final @Nullable InternalNonHostIdentifier successor = Successor.get(internalNonHostIdentifier);
                                 if (successor != null) throw new PacketException(PacketError.RELOCATION, "The subject " + subject + " has been relocated to " + successor + ".", null, isResponse);
                             }

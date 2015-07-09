@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.agent.AgentPermissions;
+import net.digitalid.core.agent.FreezableAgentPermissions;
 import net.digitalid.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
@@ -143,13 +143,13 @@ final class AttributeValueReplace extends CoreServiceInternalAction {
     @Pure
     @Override
     public @Nonnull ReadOnlyAgentPermissions getRequiredPermissions() {
-        return new AgentPermissions(attribute.getType(), true).freeze();
+        return new FreezableAgentPermissions(attribute.getType(), true).freeze();
     }
     
     @Pure
     @Override
     public @Nonnull ReadOnlyAgentPermissions getAuditPermissions() {
-        return new AgentPermissions(attribute.getType(), false).freeze();
+        return new FreezableAgentPermissions(attribute.getType(), false).freeze();
     }
     
     

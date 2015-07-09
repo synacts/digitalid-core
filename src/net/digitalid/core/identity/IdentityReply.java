@@ -39,7 +39,7 @@ public final class IdentityReply extends CoreServiceQueryReply {
     /**
      * Stores the semantic type {@code reply.identity@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("reply.identity@core.digitalid.net").load(TupleWrapper.TYPE, Category.TYPE, Predecessors.TYPE, SUCCESSOR);
+    public static final @Nonnull SemanticType TYPE = SemanticType.create("reply.identity@core.digitalid.net").load(TupleWrapper.TYPE, Category.TYPE, FreezablePredecessors.TYPE, SUCCESSOR);
     
     
     /**
@@ -73,8 +73,8 @@ public final class IdentityReply extends CoreServiceQueryReply {
         if (!subject.isMapped()) throw new PacketException(PacketError.IDENTIFIER, "The identity with the identifier " + subject + " does not exist on this host.");
         this.category = subject.getMappedIdentity().getCategory();
         if (!category.isInternalNonHostIdentity()) throw new SQLException("The category is " + category.name() + " instead of an internal non-host identity.");
-        if (!Predecessors.exist(subject)) throw new PacketException(PacketError.IDENTIFIER, "The identity with the identifier " + subject + " is not yet initialized.");
-        this.predecessors = Predecessors.get(subject);
+        if (!FreezablePredecessors.exist(subject)) throw new PacketException(PacketError.IDENTIFIER, "The identity with the identifier " + subject + " is not yet initialized.");
+        this.predecessors = FreezablePredecessors.get(subject);
         this.successor = Successor.get(subject);
     }
     
@@ -95,7 +95,7 @@ public final class IdentityReply extends CoreServiceQueryReply {
         final @Nonnull TupleWrapper tuple = new TupleWrapper(block);
         this.category = Category.get(tuple.getElementNotNull(0));
         if (!category.isInternalNonHostIdentity()) throw new InvalidEncodingException("The category is " + category.name() + " instead of an internal non-host identity.");
-        this.predecessors = new Predecessors(tuple.getElementNotNull(1)).freeze();
+        this.predecessors = new FreezablePredecessors(tuple.getElementNotNull(1)).freeze();
         this.successor = tuple.isElementNull(2) ? null : IdentifierClass.create(tuple.getElementNotNull(2)).toInternalNonHostIdentifier();
     }
     

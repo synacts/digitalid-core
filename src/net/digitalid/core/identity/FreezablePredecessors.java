@@ -38,7 +38,7 @@ import net.digitalid.core.wrappers.ListWrapper;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public final class Predecessors extends FreezableArrayList<Predecessor> implements ReadOnlyPredecessors, Blockable {
+public final class FreezablePredecessors extends FreezableArrayList<Predecessor> implements ReadOnlyPredecessors, Blockable {
     
     /**
      * Stores the semantic type {@code list.predecessor.identity@core.digitalid.net}.
@@ -50,14 +50,14 @@ public final class Predecessors extends FreezableArrayList<Predecessor> implemen
     /**
      * Creates an empty list of predecessors.
      */
-    public Predecessors() {}
+    public FreezablePredecessors() {}
     
     /**
      * Creates an empty list of predecessors with the given capacity.
      * 
      * @param initialCapacity the initial capacity of the list.
      */
-    public Predecessors(int initialCapacity) {
+    public FreezablePredecessors(int initialCapacity) {
         super(initialCapacity);
     }
     
@@ -66,7 +66,7 @@ public final class Predecessors extends FreezableArrayList<Predecessor> implemen
      * 
      * @param predecessors the predecessors to add to the new predecessors.
      */
-    public Predecessors(@Nonnull ReadOnlyPredecessors predecessors) {
+    public FreezablePredecessors(@Nonnull ReadOnlyPredecessors predecessors) {
         for (final @Nonnull Predecessor predecessor : predecessors) {
             add(predecessor);
         }
@@ -79,7 +79,7 @@ public final class Predecessors extends FreezableArrayList<Predecessor> implemen
      * 
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
-    public Predecessors(@Nonnull Block block) throws InvalidEncodingException {
+    public FreezablePredecessors(@Nonnull Block block) throws InvalidEncodingException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         final @Nonnull ReadOnlyList<Block> predecessors = new ListWrapper(block).getElementsNotNull();
@@ -114,8 +114,8 @@ public final class Predecessors extends FreezableArrayList<Predecessor> implemen
     
     @Pure
     @Override
-    public @Capturable @Nonnull Predecessors clone() {
-        return new Predecessors(this);
+    public @Capturable @Nonnull FreezablePredecessors clone() {
+        return new FreezablePredecessors(this);
     }
     
     
@@ -146,8 +146,8 @@ public final class Predecessors extends FreezableArrayList<Predecessor> implemen
     @Override
     public boolean equals(@Nullable Object object) {
         if (object == this) return true;
-        if (object == null || !(object instanceof Predecessors)) return false;
-        final @Nonnull Predecessors other = (Predecessors) object;
+        if (object == null || !(object instanceof FreezablePredecessors)) return false;
+        final @Nonnull FreezablePredecessors other = (FreezablePredecessors) object;
         
         final int size = this.size();
         if (size != other.size()) return false;
@@ -210,7 +210,7 @@ public final class Predecessors extends FreezableArrayList<Predecessor> implemen
         
         final @Nonnull String SQL = "SELECT predecessors FROM general_predecessors WHERE identifier = " + identifier;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
-            if (resultSet.next()) return new Predecessors(Block.getNotNull(TYPE, resultSet, 1)).freeze();
+            if (resultSet.next()) return new FreezablePredecessors(Block.getNotNull(TYPE, resultSet, 1)).freeze();
             else throw new SQLException("The identifier " + identifier + " has no predecessors.");
         } catch (@Nonnull InvalidEncodingException exception) {
             throw new SQLException("The predecessors of " + identifier + " have an invalid encoding.", exception);

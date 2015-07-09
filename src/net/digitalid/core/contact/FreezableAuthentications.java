@@ -21,12 +21,12 @@ import net.digitalid.core.wrappers.BooleanWrapper;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public final class Authentications extends AttributeTypeSet implements ReadOnlyAuthentications, Blockable {
+public final class FreezableAuthentications extends FreezableAttributeTypeSet implements ReadOnlyAuthentications, Blockable {
     
     /**
      * Stores the semantic type {@code authentication.contact@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("authentication.contact@core.digitalid.net").load(AttributeTypeSet.TYPE);
+    public static final @Nonnull SemanticType TYPE = SemanticType.create("authentication.contact@core.digitalid.net").load(FreezableAttributeTypeSet.TYPE);
     
     
     /**
@@ -37,18 +37,18 @@ public final class Authentications extends AttributeTypeSet implements ReadOnlyA
     /**
      * Stores an empty set of authentications.
      */
-    public static final @Nonnull ReadOnlyAuthentications NONE = new Authentications().freeze();
+    public static final @Nonnull ReadOnlyAuthentications NONE = new FreezableAuthentications().freeze();
     
     /**
      * Stores an identity-based authentication.
      */
-    public static final @Nonnull ReadOnlyAuthentications IDENTITY_BASED = new Authentications(IDENTITY_BASED_TYPE).freeze();
+    public static final @Nonnull ReadOnlyAuthentications IDENTITY_BASED = new FreezableAuthentications(IDENTITY_BASED_TYPE).freeze();
     
     
     /**
      * Creates an empty set of authentications.
      */
-    public Authentications() {}
+    public FreezableAuthentications() {}
     
     /**
      * Creates new authentications with the given attribute type.
@@ -59,7 +59,7 @@ public final class Authentications extends AttributeTypeSet implements ReadOnlyA
      * 
      * @ensure isSingle() : "The new authentications are single.";
      */
-    public Authentications(@Nonnull SemanticType type) {
+    public FreezableAuthentications(@Nonnull SemanticType type) {
         super(type);
     }
     
@@ -68,7 +68,7 @@ public final class Authentications extends AttributeTypeSet implements ReadOnlyA
      * 
      * @param authentications the authentications to add to the new authentications.
      */
-    public Authentications(@Nonnull ReadOnlyAuthentications authentications) {
+    public FreezableAuthentications(@Nonnull ReadOnlyAuthentications authentications) {
         super(authentications);
     }
     
@@ -80,7 +80,7 @@ public final class Authentications extends AttributeTypeSet implements ReadOnlyA
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
     @NonCommitting
-    public Authentications(@Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
+    public FreezableAuthentications(@Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(block);
     }
     
@@ -100,8 +100,8 @@ public final class Authentications extends AttributeTypeSet implements ReadOnlyA
     
     @Pure
     @Override
-    public @Capturable @Nonnull Authentications clone() {
-        return new Authentications(this);
+    public @Capturable @Nonnull FreezableAuthentications clone() {
+        return new FreezableAuthentications(this);
     }
     
 }

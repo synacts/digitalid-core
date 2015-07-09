@@ -1,7 +1,7 @@
 package net.digitalid.core.contact;
 
 import javax.annotation.Nonnull;
-import net.digitalid.core.agent.AgentPermissions;
+import net.digitalid.core.agent.FreezableAgentPermissions;
 import net.digitalid.core.annotations.Capturable;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.collections.ReadOnlySet;
@@ -9,9 +9,9 @@ import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.interfaces.Blockable;
 
 /**
- * This interface provides read-only access to {@link AttributeTypeSet attribute type sets} and should <em>never</em> be cast away.
+ * This interface provides read-only access to {@link FreezableAttributeTypeSet attribute type sets} and should <em>never</em> be cast away.
  * 
- * @see AttributeTypeSet
+ * @see FreezableAttributeTypeSet
  * @see ReadonlyAuthentications
  * @see ReadonlyContactPermissions
  * 
@@ -26,11 +26,11 @@ public interface ReadOnlyAttributeTypeSet extends ReadOnlySet<SemanticType>, Blo
      * @return this attribute type set as agent as agent permissions for reading.
      */
     @Pure
-    public @Capturable @Nonnull AgentPermissions toAgentPermissions();
+    public @Capturable @Nonnull FreezableAgentPermissions toAgentPermissions();
     
     
     @Pure
     @Override
-    public @Capturable @Nonnull AttributeTypeSet clone();
+    public @Capturable @Nonnull FreezableAttributeTypeSet clone();
     
 }
