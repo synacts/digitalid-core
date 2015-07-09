@@ -291,7 +291,7 @@ public final class ContextModule implements BothModule {
      */
     @NonCommitting
     public static void create(@Nonnull Context context) throws SQLException {
-        final @Nonnull String SQL = "INSERT INTO " + context.getEntity().getSite() + "context_name (entity, context, name) VALUES (?, ?, ?,)";
+        final @Nonnull String SQL = "INSERT INTO " + context.getEntity().getSite() + "context_name (entity, context, name) VALUES (?, ?, ?)";
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
             context.getEntity().set(preparedStatement, 1);
             context.set(preparedStatement, 2);
