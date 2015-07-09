@@ -3,9 +3,9 @@ package net.digitalid.core.identity;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.identifier.InternalNonHostIdentifier;
-import net.digitalid.core.interfaces.Immutable;
 
 /**
  * This class models a person.
@@ -18,7 +18,8 @@ import net.digitalid.core.interfaces.Immutable;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public abstract class Person extends NonHostIdentityClass implements Immutable {
+@Immutable
+public abstract class Person extends NonHostIdentityClass {
     
     /**
      * Stores the semantic type {@code person@core.digitalid.net}.

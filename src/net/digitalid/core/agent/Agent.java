@@ -9,6 +9,7 @@ import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Capturable;
 import net.digitalid.core.annotations.Committing;
 import net.digitalid.core.annotations.Frozen;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.NonFrozen;
 import net.digitalid.core.annotations.OnlyForActions;
@@ -27,7 +28,6 @@ import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.identity.Identity;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.interfaces.Blockable;
-import net.digitalid.core.interfaces.Immutable;
 import net.digitalid.core.interfaces.SQLizable;
 import net.digitalid.core.synchronizer.Synchronizer;
 import net.digitalid.core.wrappers.Block;
@@ -46,7 +46,8 @@ import net.digitalid.core.wrappers.TupleWrapper;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public abstract class Agent extends NonHostConcept implements Immutable, Blockable, SQLizable {
+@Immutable
+public abstract class Agent extends NonHostConcept implements Blockable, SQLizable {
     
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Aspects –––––––––––––––––––––––––––––––––––––––––––––––––– */

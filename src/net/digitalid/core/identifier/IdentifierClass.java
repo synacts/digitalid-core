@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.sql.Types;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.database.Database;
@@ -14,7 +15,6 @@ import net.digitalid.core.identity.Identity;
 import net.digitalid.core.identity.Mapper;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.interfaces.Blockable;
-import net.digitalid.core.interfaces.Immutable;
 import net.digitalid.core.interfaces.SQLizable;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.StringWrapper;
@@ -28,7 +28,8 @@ import net.digitalid.core.wrappers.StringWrapper;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public abstract class IdentifierClass implements Identifier, Immutable, Blockable, SQLizable {
+@Immutable
+public abstract class IdentifierClass implements Identifier, Blockable, SQLizable {
     
     /**
      * Returns whether the given string conforms to the criteria of this class.

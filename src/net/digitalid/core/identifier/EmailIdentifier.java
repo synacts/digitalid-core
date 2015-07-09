@@ -7,6 +7,7 @@ import javax.annotation.Nonnull;
 import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.InitialDirContext;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.exceptions.external.ExternalException;
@@ -15,7 +16,6 @@ import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.identity.Category;
 import net.digitalid.core.identity.Mapper;
 import net.digitalid.core.identity.Person;
-import net.digitalid.core.interfaces.Immutable;
 
 /**
  * This class models email identifiers.
@@ -23,7 +23,8 @@ import net.digitalid.core.interfaces.Immutable;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public final class EmailIdentifier extends ExternalIdentifier implements Immutable {
+@Immutable
+public final class EmailIdentifier extends ExternalIdentifier {
     
     /**
      * The pattern that valid email identifiers have to match.

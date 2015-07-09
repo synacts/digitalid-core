@@ -2,6 +2,7 @@ package net.digitalid.core.handler;
 
 import javax.annotation.Nonnull;
 import net.digitalid.core.agent.Restrictions;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Pure;
 
 /**
@@ -14,6 +15,7 @@ import net.digitalid.core.annotations.Pure;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
+@Immutable
 public interface InternalMethod {
     
     /**

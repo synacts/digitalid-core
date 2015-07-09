@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.auxiliary.Time;
@@ -21,7 +22,6 @@ import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.identifier.IdentifierClass;
 import net.digitalid.core.identifier.InternalNonHostIdentifier;
-import net.digitalid.core.interfaces.Immutable;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.DataWrapper;
 import net.digitalid.core.wrappers.ListWrapper;
@@ -35,7 +35,8 @@ import net.digitalid.core.wrappers.ListWrapper;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public final class SemanticType extends Type implements Immutable {
+@Immutable
+public final class SemanticType extends Type {
     
     /**
      * Stores the semantic type {@code semantic.type@core.digitalid.net}.

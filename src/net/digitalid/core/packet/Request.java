@@ -6,6 +6,7 @@ import java.net.Socket;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.annotations.RawRecipient;
@@ -56,6 +57,7 @@ import net.digitalid.core.wrappers.SignatureWrapper;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
+@Immutable
 public class Request extends Packet {
     
     /**

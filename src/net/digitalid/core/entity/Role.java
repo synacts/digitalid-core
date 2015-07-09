@@ -8,6 +8,7 @@ import javax.annotation.Nullable;
 import net.digitalid.core.agent.Agent;
 import net.digitalid.core.agent.AgentModule;
 import net.digitalid.core.annotations.Committing;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.NonFrozen;
 import net.digitalid.core.annotations.NonLocked;
@@ -29,7 +30,6 @@ import net.digitalid.core.exceptions.packet.PacketError;
 import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.identity.InternalNonHostIdentity;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.interfaces.Immutable;
 import net.digitalid.core.interfaces.SQLizable;
 import net.digitalid.core.module.BothModule;
 import net.digitalid.core.service.CoreService;
@@ -47,7 +47,8 @@ import net.digitalid.core.synchronizer.SynchronizerModule;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public abstract class Role extends EntityClass implements NonHostEntity, Immutable, SQLizable, Observer {
+@Immutable
+public abstract class Role extends EntityClass implements NonHostEntity, SQLizable, Observer {
     
     /**
      * Stores the aspect of a new role being added to the observed role.

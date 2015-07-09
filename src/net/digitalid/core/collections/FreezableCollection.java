@@ -3,7 +3,7 @@ package net.digitalid.core.collections;
 import java.util.Collection;
 import javax.annotation.Nonnull;
 import net.digitalid.core.interfaces.Freezable;
-import net.digitalid.core.interfaces.Immutable;
+import net.digitalid.core.annotations.Immutable;
 
 /**
  * This interface models a {@link Collection collection} that can be {@link Freezable frozen}.

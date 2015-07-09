@@ -6,13 +6,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.crypto.spec.IvParameterSpec;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.database.Database;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.interfaces.Blockable;
-import net.digitalid.core.interfaces.Immutable;
 import net.digitalid.core.interfaces.SQLizable;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.DataWrapper;
@@ -24,7 +24,8 @@ import net.digitalid.core.wrappers.EncryptionWrapper;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public final class InitializationVector extends IvParameterSpec implements Immutable, Blockable, SQLizable {
+@Immutable
+public final class InitializationVector extends IvParameterSpec implements Blockable, SQLizable {
     
     /**
      * Stores the semantic type {@code initialization.vector@core.digitalid.net}.

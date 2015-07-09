@@ -10,6 +10,7 @@ import java.util.Properties;
 import java.util.concurrent.locks.ReentrantLock;
 import javax.annotation.Nonnull;
 import net.digitalid.core.annotations.Committing;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Locked;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
@@ -24,6 +25,7 @@ import org.sqlite.SQLiteConfig;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
+@Immutable
 public final class SQLiteConfiguration extends Configuration {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Existence –––––––––––––––––––––––––––––––––––––––––––––––––– */

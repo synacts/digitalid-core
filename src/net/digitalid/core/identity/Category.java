@@ -4,6 +4,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.collections.FreezableArrayList;
@@ -12,7 +13,6 @@ import net.digitalid.core.database.Database;
 import net.digitalid.core.errors.ShouldNeverHappenError;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.interfaces.Blockable;
-import net.digitalid.core.interfaces.Immutable;
 import net.digitalid.core.interfaces.SQLizable;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.Int8Wrapper;
@@ -23,7 +23,8 @@ import net.digitalid.core.wrappers.Int8Wrapper;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public enum Category implements Blockable, Immutable, SQLizable {
+@Immutable
+public enum Category implements Blockable, SQLizable {
     
     /**
      * The category for a host.

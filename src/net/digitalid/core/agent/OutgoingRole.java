@@ -6,6 +6,7 @@ import java.util.Random;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Committing;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.OnlyForActions;
 import net.digitalid.core.annotations.Pure;
@@ -25,7 +26,6 @@ import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.identity.Identity;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.interfaces.Blockable;
-import net.digitalid.core.interfaces.Immutable;
 import net.digitalid.core.interfaces.SQLizable;
 import net.digitalid.core.pusher.Pusher;
 import net.digitalid.core.synchronizer.Synchronizer;
@@ -36,7 +36,8 @@ import net.digitalid.core.synchronizer.Synchronizer;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public final class OutgoingRole extends Agent implements Immutable, Blockable, SQLizable {
+@Immutable
+public final class OutgoingRole extends Agent implements Blockable, SQLizable {
     
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Aspects –––––––––––––––––––––––––––––––––––––––––––––––––– */

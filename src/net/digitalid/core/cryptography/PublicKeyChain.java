@@ -1,9 +1,10 @@
 package net.digitalid.core.cryptography;
 
 import javax.annotation.Nonnull;
-import net.digitalid.core.annotations.NonNullableElements;
 import net.digitalid.core.annotations.Frozen;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonEmpty;
+import net.digitalid.core.annotations.NonNullableElements;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.collections.ReadOnlyList;
@@ -11,7 +12,6 @@ import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.identity.Category;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.interfaces.Blockable;
-import net.digitalid.core.interfaces.Immutable;
 import net.digitalid.core.tuples.ReadOnlyPair;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.ListWrapper;
@@ -23,7 +23,8 @@ import net.digitalid.core.wrappers.TupleWrapper;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public final class PublicKeyChain extends KeyChain<PublicKey> implements Immutable, Blockable {
+@Immutable
+public final class PublicKeyChain extends KeyChain<PublicKey> implements Blockable {
     
     /**
      * Stores the semantic type {@code item.public.key.chain.host@core.digitalid.net}.

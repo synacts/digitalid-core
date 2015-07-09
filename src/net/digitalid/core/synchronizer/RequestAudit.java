@@ -3,6 +3,7 @@ package net.digitalid.core.synchronizer;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.auxiliary.Time;
@@ -10,7 +11,6 @@ import net.digitalid.core.entity.Role;
 import net.digitalid.core.handler.InternalMethod;
 import net.digitalid.core.handler.Method;
 import net.digitalid.core.interfaces.Blockable;
-import net.digitalid.core.interfaces.Immutable;
 import net.digitalid.core.service.Service;
 
 /**
@@ -19,7 +19,8 @@ import net.digitalid.core.service.Service;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public final class RequestAudit extends Audit implements Immutable, Blockable {
+@Immutable
+public final class RequestAudit extends Audit implements Blockable {
     
     /**
      * Creates a new audit with the given last time.

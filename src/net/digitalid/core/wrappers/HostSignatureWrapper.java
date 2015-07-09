@@ -5,6 +5,7 @@ import java.math.BigInteger;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.auxiliary.Time;
@@ -27,7 +28,6 @@ import net.digitalid.core.identity.HostIdentity;
 import net.digitalid.core.identity.InternalIdentity;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.interfaces.Blockable;
-import net.digitalid.core.interfaces.Immutable;
 import net.digitalid.core.io.Level;
 import net.digitalid.core.io.Logger;
 import net.digitalid.core.server.Server;
@@ -41,7 +41,8 @@ import net.digitalid.core.synchronizer.Audit;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public final class HostSignatureWrapper extends SignatureWrapper implements Immutable {
+@Immutable
+public final class HostSignatureWrapper extends SignatureWrapper {
     
     /**
      * Stores the semantic type {@code signer.host.signature@core.digitalid.net}.

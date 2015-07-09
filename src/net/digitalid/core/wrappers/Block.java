@@ -16,6 +16,7 @@ import net.digitalid.core.annotations.Capturable;
 import net.digitalid.core.annotations.Captured;
 import net.digitalid.core.annotations.Exposed;
 import net.digitalid.core.annotations.ExposedRecipient;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.NonExposedRecipient;
 import net.digitalid.core.annotations.Pure;
@@ -27,7 +28,6 @@ import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.interfaces.Blockable;
 import net.digitalid.core.interfaces.BlockableObject;
-import net.digitalid.core.interfaces.Immutable;
 import net.digitalid.core.interfaces.SQLizable;
 
 /**
@@ -47,7 +47,8 @@ import net.digitalid.core.interfaces.SQLizable;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public final class Block implements Immutable, SQLizable, Cloneable {
+@Immutable
+public final class Block implements SQLizable, Cloneable {
     
     /**
      * Returns the blockable instance as a block or null if the instance is null.

@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.agent.ClientAgentCommitmentReplace;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.annotations.RawRecipient;
@@ -33,6 +34,7 @@ import net.digitalid.core.wrappers.CompressionWrapper;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
+@Immutable
 public final class ClientRequest extends Request {
     
     /**

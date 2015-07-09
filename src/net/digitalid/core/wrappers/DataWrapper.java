@@ -7,11 +7,11 @@ import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Capturable;
 import net.digitalid.core.annotations.Captured;
 import net.digitalid.core.annotations.Exposed;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.identity.SyntacticType;
-import net.digitalid.core.interfaces.Immutable;
 
 /**
  * Wraps a block with the syntactic type {@code data@core.digitalid.net} for encoding and decoding.
@@ -19,7 +19,8 @@ import net.digitalid.core.interfaces.Immutable;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public final class DataWrapper extends BlockWrapper implements Immutable {
+@Immutable
+public final class DataWrapper extends BlockWrapper {
     
     /**
      * Stores the syntactic type {@code data@core.digitalid.net}.

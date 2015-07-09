@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Committing;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.collections.FreezableArray;
@@ -27,7 +28,6 @@ import net.digitalid.core.handler.InternalAction;
 import net.digitalid.core.handler.Method;
 import net.digitalid.core.identifier.HostIdentifier;
 import net.digitalid.core.interfaces.Blockable;
-import net.digitalid.core.interfaces.Immutable;
 import net.digitalid.core.io.Level;
 import net.digitalid.core.io.Logger;
 import net.digitalid.core.module.BothModule;
@@ -48,7 +48,8 @@ import net.digitalid.core.wrappers.TupleWrapper;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public final class ResponseAudit extends Audit implements Immutable, Blockable {
+@Immutable
+public final class ResponseAudit extends Audit implements Blockable {
     
     /**
      * Stores the time of this audit.

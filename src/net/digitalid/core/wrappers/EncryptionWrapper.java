@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Exposed;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.auxiliary.Time;
@@ -27,7 +28,6 @@ import net.digitalid.core.identity.HostIdentity;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.identity.SyntacticType;
 import net.digitalid.core.interfaces.Blockable;
-import net.digitalid.core.interfaces.Immutable;
 import net.digitalid.core.io.Level;
 import net.digitalid.core.io.Logger;
 import net.digitalid.core.server.Server;
@@ -42,7 +42,8 @@ import net.digitalid.core.tuples.ReadOnlyPair;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public final class EncryptionWrapper extends BlockWrapper implements Immutable {
+@Immutable
+public final class EncryptionWrapper extends BlockWrapper {
     
     /**
      * Stores the syntactic type {@code encryption@core.digitalid.net}.

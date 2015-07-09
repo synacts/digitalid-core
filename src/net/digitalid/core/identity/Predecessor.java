@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.collections.FreezableArray;
@@ -15,7 +16,6 @@ import net.digitalid.core.identifier.IdentifierClass;
 import net.digitalid.core.identifier.InternalNonHostIdentifier;
 import net.digitalid.core.identifier.NonHostIdentifier;
 import net.digitalid.core.interfaces.Blockable;
-import net.digitalid.core.interfaces.Immutable;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.ListWrapper;
 import net.digitalid.core.wrappers.TupleWrapper;
@@ -26,7 +26,8 @@ import net.digitalid.core.wrappers.TupleWrapper;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public final class Predecessor implements Immutable, Blockable {
+@Immutable
+public final class Predecessor implements Blockable {
     
     /**
      * Stores the semantic type {@code predecessor.identity@core.digitalid.net}.

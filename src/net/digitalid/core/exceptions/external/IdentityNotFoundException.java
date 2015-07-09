@@ -1,10 +1,10 @@
 package net.digitalid.core.exceptions.external;
 
 import javax.annotation.Nonnull;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.identifier.Identifier;
 import net.digitalid.core.identity.Identity;
-import net.digitalid.core.interfaces.Immutable;
 
 /**
  * This exception is thrown when an {@link Identity identity} cannot be found.
@@ -12,7 +12,8 @@ import net.digitalid.core.interfaces.Immutable;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public final class IdentityNotFoundException extends ExternalException implements Immutable {
+@Immutable
+public final class IdentityNotFoundException extends ExternalException {
     
     /**
      * Stores the identifier that could not be resolved.

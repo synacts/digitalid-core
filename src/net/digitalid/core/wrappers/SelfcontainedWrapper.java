@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Exposed;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.collections.FreezableArray;
@@ -19,7 +20,6 @@ import net.digitalid.core.identifier.IdentifierClass;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.identity.SyntacticType;
 import net.digitalid.core.interfaces.Blockable;
-import net.digitalid.core.interfaces.Immutable;
 import net.digitalid.core.wrappers.exceptions.UnexpectedEndOfFileException;
 import net.digitalid.core.wrappers.exceptions.UnsupportedBlockLengthException;
 
@@ -29,7 +29,8 @@ import net.digitalid.core.wrappers.exceptions.UnsupportedBlockLengthException;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public final class SelfcontainedWrapper extends BlockWrapper implements Immutable {
+@Immutable
+public final class SelfcontainedWrapper extends BlockWrapper {
     
     /**
      * Stores the syntactic type {@code selfcontained@core.digitalid.net}.

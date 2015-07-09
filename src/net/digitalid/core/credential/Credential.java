@@ -9,6 +9,7 @@ import javax.annotation.Nullable;
 import net.digitalid.core.agent.RandomizedAgentPermissions;
 import net.digitalid.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.core.agent.Restrictions;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.attribute.AttributeValue;
@@ -25,7 +26,6 @@ import net.digitalid.core.identity.InternalNonHostIdentity;
 import net.digitalid.core.identity.InternalPerson;
 import net.digitalid.core.identity.NonHostIdentity;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.interfaces.Immutable;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.HashWrapper;
 import net.digitalid.core.wrappers.SelfcontainedWrapper;
@@ -46,7 +46,8 @@ import net.digitalid.core.wrappers.TupleWrapper;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public abstract class Credential implements Immutable {
+@Immutable
+public abstract class Credential {
     
     /**
      * Stores the semantic type {@code issuer.exposed.credential@core.digitalid.net}.

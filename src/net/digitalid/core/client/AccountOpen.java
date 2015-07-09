@@ -7,12 +7,13 @@ import java.util.Random;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.agent.Agent;
-import net.digitalid.core.agent.FreezableAgentPermissions;
 import net.digitalid.core.agent.ClientAgent;
+import net.digitalid.core.agent.FreezableAgentPermissions;
 import net.digitalid.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.core.agent.Restrictions;
 import net.digitalid.core.annotations.BasedOn;
 import net.digitalid.core.annotations.HasSubject;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.collections.FreezableArrayList;
@@ -59,6 +60,7 @@ import net.digitalid.core.wrappers.TupleWrapper;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 0.9
  */
+@Immutable
 public final class AccountOpen extends Action {
     
     /**

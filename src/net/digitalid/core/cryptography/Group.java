@@ -5,12 +5,12 @@ import java.security.SecureRandom;
 import java.util.Random;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.collections.FreezableArray;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.interfaces.Blockable;
-import net.digitalid.core.interfaces.Immutable;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.IntegerWrapper;
 import net.digitalid.core.wrappers.TupleWrapper;
@@ -21,7 +21,8 @@ import net.digitalid.core.wrappers.TupleWrapper;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public final class Group implements Immutable, Blockable { // TODO: Make it abstract and implement the known or unknown group.
+@Immutable
+public final class Group implements Blockable { // TODO: Make it abstract and implement the known or unknown group.
     
     /**
      * Stores the semantic type {@code modulus.group@core.digitalid.net}.

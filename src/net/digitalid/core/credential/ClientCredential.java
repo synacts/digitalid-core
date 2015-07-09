@@ -11,6 +11,7 @@ import net.digitalid.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.core.agent.Restrictions;
 import net.digitalid.core.annotations.Active;
 import net.digitalid.core.annotations.Frozen;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.NonEmpty;
 import net.digitalid.core.annotations.OfInternalPerson;
@@ -31,7 +32,6 @@ import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.identity.InternalNonHostIdentity;
 import net.digitalid.core.identity.InternalPerson;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.interfaces.Immutable;
 import net.digitalid.core.tuples.ReadOnlyPair;
 import net.digitalid.core.wrappers.Block;
 
@@ -41,7 +41,8 @@ import net.digitalid.core.wrappers.Block;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 0.8
  */
-public final class ClientCredential extends Credential implements Immutable {
+@Immutable
+public final class ClientCredential extends Credential {
     
     /**
      * Stores the certifying base of this credential.

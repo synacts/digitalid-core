@@ -9,7 +9,7 @@ import net.digitalid.core.annotations.Capturable;
 import net.digitalid.core.annotations.NonFrozenRecipient;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.interfaces.Freezable;
-import net.digitalid.core.interfaces.Immutable;
+import net.digitalid.core.annotations.Immutable;
 
 /**
  * This class extends the {@link LinkedHashSet} and makes it {@link Freezable}.

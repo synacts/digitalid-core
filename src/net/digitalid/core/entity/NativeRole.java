@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.agent.ClientAgent;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.client.Client;
@@ -14,7 +15,6 @@ import net.digitalid.core.concept.Instance;
 import net.digitalid.core.concept.Observer;
 import net.digitalid.core.database.Database;
 import net.digitalid.core.identity.InternalNonHostIdentity;
-import net.digitalid.core.interfaces.Immutable;
 
 /**
  * This class models a native role on the client-side.
@@ -22,7 +22,8 @@ import net.digitalid.core.interfaces.Immutable;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public final class NativeRole extends Role implements Immutable {
+@Immutable
+public final class NativeRole extends Role {
     
     /**
      * Stores the client agent of this role.

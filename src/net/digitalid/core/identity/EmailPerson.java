@@ -1,9 +1,9 @@
 package net.digitalid.core.identity;
 
 import javax.annotation.Nonnull;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.identifier.EmailIdentifier;
-import net.digitalid.core.interfaces.Immutable;
 
 /**
  * This class models an email person.
@@ -11,7 +11,8 @@ import net.digitalid.core.interfaces.Immutable;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public final class EmailPerson extends ExternalPerson implements Immutable {
+@Immutable
+public final class EmailPerson extends ExternalPerson {
     
     /**
      * Stores the semantic type {@code email.person@core.digitalid.net}.

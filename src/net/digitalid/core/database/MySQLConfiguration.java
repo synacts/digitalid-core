@@ -14,6 +14,7 @@ import java.sql.Statement;
 import java.util.Properties;
 import javax.annotation.Nonnull;
 import net.digitalid.core.annotations.Committing;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Locked;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.annotations.Validated;
@@ -26,6 +27,7 @@ import net.digitalid.core.io.Directory;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
+@Immutable
 public final class MySQLConfiguration extends Configuration {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Existence –––––––––––––––––––––––––––––––––––––––––––––––––– */

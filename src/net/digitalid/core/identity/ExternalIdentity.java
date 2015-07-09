@@ -1,9 +1,9 @@
 package net.digitalid.core.identity;
 
 import javax.annotation.Nonnull;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.identifier.NonHostIdentifier;
-import net.digitalid.core.interfaces.Immutable;
 
 /**
  * This interface models an external identity.
@@ -13,7 +13,8 @@ import net.digitalid.core.interfaces.Immutable;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public interface ExternalIdentity extends Identity, Immutable {
+@Immutable
+public interface ExternalIdentity extends Identity {
     
     /**
      * Stores the semantic type {@code external@core.digitalid.net}.

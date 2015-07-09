@@ -1,9 +1,9 @@
 package net.digitalid.core.identity;
 
 import javax.annotation.Nonnull;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.identifier.MobileIdentifier;
-import net.digitalid.core.interfaces.Immutable;
 
 /**
  * This class models a mobile person.
@@ -11,7 +11,8 @@ import net.digitalid.core.interfaces.Immutable;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public final class MobilePerson extends ExternalPerson implements Immutable {
+@Immutable
+public final class MobilePerson extends ExternalPerson {
     
     /**
      * Stores the semantic type {@code mobile.person@core.digitalid.net}.

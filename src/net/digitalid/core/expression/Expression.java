@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Capturable;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.collections.FreezableArrayList;
@@ -21,7 +22,6 @@ import net.digitalid.core.identifier.IdentifierClass;
 import net.digitalid.core.identity.Identity;
 import net.digitalid.core.identity.Person;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.interfaces.Immutable;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.CredentialsSignatureWrapper;
 
@@ -38,7 +38,8 @@ import net.digitalid.core.wrappers.CredentialsSignatureWrapper;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-abstract class Expression extends NonHostConcept implements Immutable {
+@Immutable
+abstract class Expression extends NonHostConcept {
     
     /**
      * Creates a new expression with the given entity.

@@ -2,6 +2,7 @@ package net.digitalid.core.handler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.client.Client;
 import net.digitalid.core.entity.Entity;
@@ -21,6 +22,7 @@ import net.digitalid.core.wrappers.SignatureWrapper;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
+@Immutable
 public abstract class ExternalQuery extends Query {
     
     /**

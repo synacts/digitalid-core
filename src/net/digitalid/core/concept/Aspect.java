@@ -1,8 +1,8 @@
 package net.digitalid.core.concept;
 
 import javax.annotation.Nonnull;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.interfaces.Immutable;
 
 /**
  * This class models {@link Aspect aspects} of {@link Instance instances} that can be (@link Observer observed}.
@@ -10,7 +10,8 @@ import net.digitalid.core.interfaces.Immutable;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public final class Aspect implements Immutable {
+@Immutable
+public final class Aspect {
     
     /**
      * Stores the class to which this aspect belongs.

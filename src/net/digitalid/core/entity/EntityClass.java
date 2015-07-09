@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.sql.Types;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.client.Client;
@@ -13,7 +14,6 @@ import net.digitalid.core.concept.Instance;
 import net.digitalid.core.errors.ShouldNeverHappenError;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.host.Host;
-import net.digitalid.core.interfaces.Immutable;
 import net.digitalid.core.interfaces.SQLizable;
 
 /**
@@ -25,7 +25,8 @@ import net.digitalid.core.interfaces.SQLizable;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public abstract class EntityClass extends Instance implements Entity, Immutable, SQLizable {
+@Immutable
+public abstract class EntityClass extends Instance implements Entity, SQLizable {
     
     /**
      * Stores the data type used to reference instances of this class.

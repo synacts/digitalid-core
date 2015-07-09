@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.collections.ConcurrentHashMap;
@@ -16,7 +17,6 @@ import net.digitalid.core.host.Host;
 import net.digitalid.core.identity.HostIdentity;
 import net.digitalid.core.identity.Identity;
 import net.digitalid.core.identity.IdentityClass;
-import net.digitalid.core.interfaces.Immutable;
 import net.digitalid.core.interfaces.SQLizable;
 
 /**
@@ -25,7 +25,8 @@ import net.digitalid.core.interfaces.SQLizable;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public final class HostAccount extends Account implements HostEntity, Immutable, SQLizable {
+@Immutable
+public final class HostAccount extends Account implements HostEntity, SQLizable {
     
     /**
      * Stores the identity of this host account.

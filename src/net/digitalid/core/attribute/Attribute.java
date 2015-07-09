@@ -6,6 +6,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Capturable;
 import net.digitalid.core.annotations.Committing;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.OnlyForActions;
 import net.digitalid.core.annotations.Pure;
@@ -21,7 +22,6 @@ import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.expression.PassiveExpression;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.interfaces.Immutable;
 import net.digitalid.core.synchronizer.Synchronizer;
 import net.digitalid.core.wrappers.BooleanWrapper;
 
@@ -33,7 +33,8 @@ import net.digitalid.core.wrappers.BooleanWrapper;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public final class Attribute extends GeneralConcept implements Immutable {
+@Immutable
+public final class Attribute extends GeneralConcept {
     
     /**
      * Stores the aspect of a published attribute changing its value.

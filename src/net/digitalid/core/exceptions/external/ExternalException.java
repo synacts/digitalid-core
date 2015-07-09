@@ -2,7 +2,7 @@ package net.digitalid.core.exceptions.external;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.interfaces.Immutable;
+import net.digitalid.core.annotations.Immutable;
 
 /**
  * An external exception is caused by another party.
@@ -18,7 +18,8 @@ import net.digitalid.core.interfaces.Immutable;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public abstract class ExternalException extends Exception implements Immutable {
+@Immutable
+public abstract class ExternalException extends Exception {
     
     /**
      * Creates a new external exception with the given message.

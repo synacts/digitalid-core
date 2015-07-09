@@ -7,6 +7,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.agent.AgentModule;
 import net.digitalid.core.agent.ClientAgent;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.auxiliary.Time;
@@ -27,7 +28,6 @@ import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.identifier.InternalIdentifier;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.interfaces.Blockable;
-import net.digitalid.core.interfaces.Immutable;
 import net.digitalid.core.io.Level;
 import net.digitalid.core.io.Logger;
 import net.digitalid.core.synchronizer.Audit;
@@ -40,7 +40,8 @@ import net.digitalid.core.synchronizer.Audit;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public final class ClientSignatureWrapper extends SignatureWrapper implements Immutable {
+@Immutable
+public final class ClientSignatureWrapper extends SignatureWrapper {
     
     /**
      * Stores the semantic type {@code hash.client.signature@core.digitalid.net}.

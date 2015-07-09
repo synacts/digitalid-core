@@ -3,6 +3,7 @@ package net.digitalid.core.identifier;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.database.Database;
@@ -12,7 +13,6 @@ import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.identity.HostIdentity;
 import net.digitalid.core.identity.Identity;
 import net.digitalid.core.identity.Mapper;
-import net.digitalid.core.interfaces.Immutable;
 
 /**
  * This class models host identifiers.
@@ -20,7 +20,8 @@ import net.digitalid.core.interfaces.Immutable;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public final class HostIdentifier extends InternalIdentifier implements Immutable {
+@Immutable
+public final class HostIdentifier extends InternalIdentifier {
     
     /**
      * Stores the host identifier {@code core.digitalid.net}.

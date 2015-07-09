@@ -5,10 +5,10 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.agent.Restrictions;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.packet.PacketException;
-import net.digitalid.core.interfaces.Immutable;
 import net.digitalid.core.wrappers.Block;
 
 /**
@@ -17,7 +17,8 @@ import net.digitalid.core.wrappers.Block;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public final class HostCredential extends Credential implements Immutable {
+@Immutable
+public final class HostCredential extends Credential {
     
     /**
      * Creates a new credential from the given blocks for hosts.

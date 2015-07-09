@@ -3,6 +3,7 @@ package net.digitalid.core.identifier;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.errors.ShouldNeverHappenError;
@@ -12,7 +13,6 @@ import net.digitalid.core.identity.Category;
 import net.digitalid.core.identity.Identity;
 import net.digitalid.core.identity.Mapper;
 import net.digitalid.core.identity.Person;
-import net.digitalid.core.interfaces.Immutable;
 
 /**
  * This class models external identifiers.
@@ -23,7 +23,8 @@ import net.digitalid.core.interfaces.Immutable;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public abstract class ExternalIdentifier extends IdentifierClass implements NonHostIdentifier, Immutable {
+@Immutable
+public abstract class ExternalIdentifier extends IdentifierClass implements NonHostIdentifier {
     
     /**
      * Returns whether the given string conforms to the criteria of this class.

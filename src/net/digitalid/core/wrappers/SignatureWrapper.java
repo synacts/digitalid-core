@@ -7,6 +7,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.agent.Agent;
 import net.digitalid.core.annotations.Exposed;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.auxiliary.Time;
@@ -27,7 +28,6 @@ import net.digitalid.core.identity.InternalIdentity;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.identity.SyntacticType;
 import net.digitalid.core.interfaces.Blockable;
-import net.digitalid.core.interfaces.Immutable;
 import net.digitalid.core.synchronizer.Audit;
 
 /**
@@ -44,7 +44,8 @@ import net.digitalid.core.synchronizer.Audit;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public class SignatureWrapper extends BlockWrapper implements Immutable {
+@Immutable
+public class SignatureWrapper extends BlockWrapper {
     
     /**
      * Stores the syntactic type {@code signature@core.digitalid.net}.

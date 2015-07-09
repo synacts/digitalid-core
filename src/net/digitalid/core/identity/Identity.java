@@ -2,12 +2,12 @@ package net.digitalid.core.identity;
 
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.identifier.Identifier;
 import net.digitalid.core.interfaces.Blockable;
-import net.digitalid.core.interfaces.Immutable;
 import net.digitalid.core.interfaces.SQLizable;
 import net.digitalid.core.wrappers.Block;
 
@@ -21,7 +21,8 @@ import net.digitalid.core.wrappers.Block;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public interface Identity extends Immutable, Blockable, SQLizable {
+@Immutable
+public interface Identity extends Blockable, SQLizable {
     
     /**
      * Stores the semantic type {@code @core.digitalid.net}.

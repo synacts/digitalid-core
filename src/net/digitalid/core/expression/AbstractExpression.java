@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.concept.NonHostConcept;
@@ -14,7 +15,6 @@ import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.interfaces.Blockable;
-import net.digitalid.core.interfaces.Immutable;
 import net.digitalid.core.interfaces.SQLizable;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.StringWrapper;
@@ -30,7 +30,8 @@ import net.digitalid.core.wrappers.StringWrapper;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-abstract class AbstractExpression extends NonHostConcept implements Immutable, Blockable, SQLizable {
+@Immutable
+abstract class AbstractExpression extends NonHostConcept implements Blockable, SQLizable {
     
     /**
      * Stores the expression of this abstract expression.

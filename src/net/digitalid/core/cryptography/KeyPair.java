@@ -4,9 +4,9 @@ import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.Random;
 import javax.annotation.Nonnull;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.collections.FreezableArray;
-import net.digitalid.core.interfaces.Immutable;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.TupleWrapper;
 
@@ -16,7 +16,8 @@ import net.digitalid.core.wrappers.TupleWrapper;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public final class KeyPair implements Immutable {
+@Immutable
+public final class KeyPair {
     
     /**
      * Stores the private key of this key pair.

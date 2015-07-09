@@ -3,6 +3,7 @@ package net.digitalid.core.identity;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.auxiliary.Time;
@@ -12,7 +13,6 @@ import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.identifier.InternalNonHostIdentifier;
-import net.digitalid.core.interfaces.Immutable;
 import net.digitalid.core.wrappers.Int8Wrapper;
 import net.digitalid.core.wrappers.StringWrapper;
 
@@ -22,7 +22,8 @@ import net.digitalid.core.wrappers.StringWrapper;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public final class SyntacticType extends Type implements Immutable {
+@Immutable
+public final class SyntacticType extends Type {
     
     /**
      * Stores the semantic type {@code @core.digitalid.net}.

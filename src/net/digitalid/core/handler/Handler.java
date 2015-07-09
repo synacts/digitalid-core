@@ -3,6 +3,7 @@ package net.digitalid.core.handler;
 import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.entity.Account;
 import net.digitalid.core.entity.Entity;
@@ -12,7 +13,6 @@ import net.digitalid.core.entity.Role;
 import net.digitalid.core.identifier.InternalIdentifier;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.interfaces.Blockable;
-import net.digitalid.core.interfaces.Immutable;
 import net.digitalid.core.service.Service;
 import net.digitalid.core.wrappers.SignatureWrapper;
 
@@ -25,7 +25,8 @@ import net.digitalid.core.wrappers.SignatureWrapper;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public abstract class Handler implements Immutable, Blockable {
+@Immutable
+public abstract class Handler implements Blockable {
     
     /**
      * Stores the entity to which this handler belongs or null if it is impersonal.

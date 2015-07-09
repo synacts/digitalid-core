@@ -1,11 +1,11 @@
 package net.digitalid.core.identity;
 
 import javax.annotation.Nonnull;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.identifier.ExternalIdentifier;
 import net.digitalid.core.identifier.InternalNonHostIdentifier;
 import net.digitalid.core.identifier.NonHostIdentifier;
-import net.digitalid.core.interfaces.Immutable;
 
 /**
  * This class models an external person.
@@ -16,7 +16,8 @@ import net.digitalid.core.interfaces.Immutable;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public abstract class ExternalPerson extends Person implements ExternalIdentity, Immutable {
+@Immutable
+public abstract class ExternalPerson extends Person implements ExternalIdentity {
     
     /**
      * Stores the semantic type {@code external.person@core.digitalid.net}.

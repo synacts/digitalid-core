@@ -12,6 +12,7 @@ import net.digitalid.core.agent.Agent;
 import net.digitalid.core.agent.FreezableAgentPermissions;
 import net.digitalid.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.core.agent.Restrictions;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.OnlyForHosts;
 import net.digitalid.core.annotations.Pure;
@@ -23,8 +24,8 @@ import net.digitalid.core.collections.FreezableArrayList;
 import net.digitalid.core.collections.FreezableList;
 import net.digitalid.core.collections.ReadOnlyIterator;
 import net.digitalid.core.collections.ReadOnlyList;
-import net.digitalid.core.contact.FreezableAuthentications;
 import net.digitalid.core.contact.Contact;
+import net.digitalid.core.contact.FreezableAuthentications;
 import net.digitalid.core.contact.ReadOnlyAuthentications;
 import net.digitalid.core.credential.ClientCredential;
 import net.digitalid.core.credential.Credential;
@@ -62,6 +63,7 @@ import net.digitalid.core.wrappers.SignatureWrapper;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
+@Immutable
 public abstract class Method extends Handler {
     
     /**

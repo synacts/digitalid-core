@@ -5,7 +5,7 @@ import javax.annotation.Nonnull;
 import net.digitalid.core.annotations.NonFrozenRecipient;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.interfaces.Freezable;
-import net.digitalid.core.interfaces.Immutable;
+import net.digitalid.core.annotations.Immutable;
 
 /**
  * This interface models a {@link Map map} that can be {@link Freezable frozen}.

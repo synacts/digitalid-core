@@ -1,10 +1,10 @@
 package net.digitalid.core.exceptions.external;
 
 import javax.annotation.Nonnull;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.identity.InternalIdentity;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.interfaces.Immutable;
 
 /**
  * This exception is thrown when something cannot be found.
@@ -15,7 +15,8 @@ import net.digitalid.core.interfaces.Immutable;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public abstract class SomethingNotFoundException extends ExternalException implements Immutable {
+@Immutable
+public abstract class SomethingNotFoundException extends ExternalException {
     
     /**
      * Stores the identity whose something could not be found.

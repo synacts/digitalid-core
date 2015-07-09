@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.sql.Types;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.exceptions.external.ExternalException;
@@ -14,7 +15,6 @@ import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.identifier.IdentifierClass;
 import net.digitalid.core.interfaces.Blockable;
-import net.digitalid.core.interfaces.Immutable;
 import net.digitalid.core.interfaces.SQLizable;
 import net.digitalid.core.wrappers.Block;
 
@@ -30,7 +30,8 @@ import net.digitalid.core.wrappers.Block;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public abstract class IdentityClass implements Identity, Immutable, Blockable, SQLizable {
+@Immutable
+public abstract class IdentityClass implements Identity, Blockable, SQLizable {
     
     /**
      * Stores the internal number that represents and indexes this identity.

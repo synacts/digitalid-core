@@ -1,6 +1,7 @@
 package net.digitalid.core.client;
 
 import javax.annotation.Nonnull;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.cryptography.Element;
@@ -10,7 +11,6 @@ import net.digitalid.core.exceptions.packet.PacketError;
 import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.identity.HostIdentity;
 import net.digitalid.core.interfaces.Blockable;
-import net.digitalid.core.interfaces.Immutable;
 import net.digitalid.core.wrappers.ClientSignatureWrapper;
 
 /**
@@ -23,7 +23,8 @@ import net.digitalid.core.wrappers.ClientSignatureWrapper;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public final class SecretCommitment extends Commitment implements Immutable, Blockable {
+@Immutable
+public final class SecretCommitment extends Commitment implements Blockable {
     
     /**
      * Stores the secret of this commitment.

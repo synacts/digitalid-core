@@ -1,6 +1,7 @@
 package net.digitalid.core.errors;
 
 import javax.annotation.Nonnull;
+import net.digitalid.core.annotations.Immutable;
 
 /**
  * This error is thrown when an error occurs which should never happen.
@@ -8,6 +9,7 @@ import javax.annotation.Nonnull;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
+@Immutable
 public final class ShouldNeverHappenError extends FatalError {
     
     /**

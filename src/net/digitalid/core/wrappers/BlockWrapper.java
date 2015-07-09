@@ -3,13 +3,13 @@ package net.digitalid.core.wrappers;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Exposed;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Loaded;
 import net.digitalid.core.annotations.Positive;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.identity.SyntacticType;
 import net.digitalid.core.interfaces.Blockable;
-import net.digitalid.core.interfaces.Immutable;
 
 /**
  * Blocks are wrapped by separate objects for modular decoding and encoding.
@@ -17,7 +17,8 @@ import net.digitalid.core.interfaces.Immutable;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public abstract class BlockWrapper implements Blockable, Immutable {
+@Immutable
+public abstract class BlockWrapper implements Blockable {
     
     /**
      * References the wrapped block.

@@ -3,6 +3,7 @@ package net.digitalid.core.identifier;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.exceptions.external.ExternalException;
@@ -11,7 +12,6 @@ import net.digitalid.core.identity.Identity;
 import net.digitalid.core.identity.InternalNonHostIdentity;
 import net.digitalid.core.identity.Mapper;
 import net.digitalid.core.identity.Type;
-import net.digitalid.core.interfaces.Immutable;
 
 /**
  * This class models internal non-host identifiers.
@@ -19,7 +19,8 @@ import net.digitalid.core.interfaces.Immutable;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public final class InternalNonHostIdentifier extends InternalIdentifier implements NonHostIdentifier, Immutable {
+@Immutable
+public final class InternalNonHostIdentifier extends InternalIdentifier implements NonHostIdentifier {
     
     /**
      * Returns whether the given string is a valid non-host identifier.

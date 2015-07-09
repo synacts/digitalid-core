@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import net.digitalid.core.annotations.Capturable;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.collections.FreezableSet;
@@ -14,7 +15,6 @@ import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.interfaces.Blockable;
-import net.digitalid.core.interfaces.Immutable;
 import net.digitalid.core.interfaces.SQLizable;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.StringWrapper;
@@ -25,7 +25,8 @@ import net.digitalid.core.wrappers.StringWrapper;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public final class ActiveExpression extends AbstractExpression implements Immutable, Blockable, SQLizable {
+@Immutable
+public final class ActiveExpression extends AbstractExpression implements Blockable, SQLizable {
     
     /**
      * Stores the semantic type {@code active.expression@core.digitalid.net}.

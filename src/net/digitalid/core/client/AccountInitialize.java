@@ -7,9 +7,10 @@ import javax.annotation.Nullable;
 import net.digitalid.core.agent.FreezableAgentPermissions;
 import net.digitalid.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.core.agent.Restrictions;
-import net.digitalid.core.annotations.NonNullableElements;
 import net.digitalid.core.annotations.Frozen;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
+import net.digitalid.core.annotations.NonNullableElements;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.collections.FreezableArrayList;
 import net.digitalid.core.collections.FreezableList;
@@ -28,10 +29,10 @@ import net.digitalid.core.identifier.HostIdentifier;
 import net.digitalid.core.identifier.InternalNonHostIdentifier;
 import net.digitalid.core.identifier.NonHostIdentifier;
 import net.digitalid.core.identity.Category;
+import net.digitalid.core.identity.FreezablePredecessors;
 import net.digitalid.core.identity.Mapper;
 import net.digitalid.core.identity.NonHostIdentity;
 import net.digitalid.core.identity.Predecessor;
-import net.digitalid.core.identity.FreezablePredecessors;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.identity.Successor;
 import net.digitalid.core.module.BothModule;
@@ -51,6 +52,7 @@ import net.digitalid.core.wrappers.TupleWrapper;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
+@Immutable
 public final class AccountInitialize extends CoreServiceInternalAction {
     
     /**

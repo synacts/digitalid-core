@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.annotations.RawRecipient;
@@ -33,11 +34,10 @@ import net.digitalid.core.identifier.HostIdentifier;
 import net.digitalid.core.identifier.Identifier;
 import net.digitalid.core.identifier.InternalIdentifier;
 import net.digitalid.core.identifier.InternalNonHostIdentifier;
-import net.digitalid.core.identity.IdentityQuery;
 import net.digitalid.core.identity.FreezablePredecessors;
+import net.digitalid.core.identity.IdentityQuery;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.identity.Successor;
-import net.digitalid.core.interfaces.Immutable;
 import net.digitalid.core.server.Server;
 import net.digitalid.core.synchronizer.Audit;
 import net.digitalid.core.synchronizer.RequestAudit;
@@ -59,7 +59,8 @@ import net.digitalid.core.wrappers.SignatureWrapper;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public abstract class Packet implements Immutable {
+@Immutable
+public abstract class Packet {
     
     /**
      * Stores the semantic type {@code content.packet@core.digitalid.net}.

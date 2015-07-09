@@ -3,12 +3,12 @@ package net.digitalid.core.expression;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Capturable;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.collections.FreezableLinkedHashSet;
 import net.digitalid.core.collections.FreezableSet;
 import net.digitalid.core.contact.Contact;
 import net.digitalid.core.entity.NonHostEntity;
-import net.digitalid.core.interfaces.Immutable;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.CredentialsSignatureWrapper;
 
@@ -18,7 +18,8 @@ import net.digitalid.core.wrappers.CredentialsSignatureWrapper;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-final class EmptyExpression extends Expression implements Immutable {
+@Immutable
+final class EmptyExpression extends Expression {
     
     /**
      * Creates a new empty expression.

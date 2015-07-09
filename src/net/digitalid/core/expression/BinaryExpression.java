@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Capturable;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.collections.FreezableLinkedHashSet;
@@ -14,7 +15,6 @@ import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.errors.ShouldNeverHappenError;
 import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.packet.PacketException;
-import net.digitalid.core.interfaces.Immutable;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.CredentialsSignatureWrapper;
 
@@ -24,7 +24,8 @@ import net.digitalid.core.wrappers.CredentialsSignatureWrapper;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-final class BinaryExpression extends Expression implements Immutable {
+@Immutable
+final class BinaryExpression extends Expression {
     
     /**
      * Stores the left child of this binary expression.

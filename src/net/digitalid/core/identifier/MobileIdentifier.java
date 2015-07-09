@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.exceptions.external.ExternalException;
@@ -11,7 +12,6 @@ import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.identity.Category;
 import net.digitalid.core.identity.Mapper;
 import net.digitalid.core.identity.Person;
-import net.digitalid.core.interfaces.Immutable;
 
 /**
  * This class models mobile identifiers.
@@ -19,7 +19,8 @@ import net.digitalid.core.interfaces.Immutable;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public final class MobileIdentifier extends ExternalIdentifier implements Immutable {
+@Immutable
+public final class MobileIdentifier extends ExternalIdentifier {
     
     /**
      * The pattern that valid mobile identifiers have to match.

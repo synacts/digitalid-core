@@ -6,6 +6,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.agent.Restrictions;
 import net.digitalid.core.annotations.Frozen;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.OnlyForClients;
 import net.digitalid.core.annotations.Pure;
@@ -29,6 +30,7 @@ import net.digitalid.core.wrappers.TupleWrapper;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
+@Immutable
 final class ContactsAdd extends CoreServiceInternalAction {
     
     /**

@@ -1,10 +1,14 @@
-package net.digitalid.core.interfaces;
+package net.digitalid.core.annotations;
 
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import net.digitalid.core.identity.Person;
 
 /**
- * Classes that implement this interface guarantee that their objects are immutable.
- * Since this interface does not specify any methods, it is for indication purposes only.
+ * This annotation indicates that the objects of the annotated class are immutable.
  * <p>
  * An object is considered immutable, if its representation (usually the data that is included in its {@link Blockable block}) is fixed.
  * Other objects that are not fully part of its representation but can nonetheless be reached through its fields may still be mutable.
@@ -20,4 +24,7 @@ import net.digitalid.core.identity.Person;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public interface Immutable {}
+@Documented
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.CLASS)
+public @interface Immutable {}

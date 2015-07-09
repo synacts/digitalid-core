@@ -1,6 +1,7 @@
 package net.digitalid.core.entity;
 
 import javax.annotation.Nonnull;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.concept.Aspect;
 import net.digitalid.core.concept.Concept;
@@ -8,7 +9,6 @@ import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.handler.Handler;
 import net.digitalid.core.identity.Identity;
 import net.digitalid.core.identity.InternalIdentity;
-import net.digitalid.core.interfaces.Immutable;
 import net.digitalid.core.interfaces.SQLizable;
 
 /**
@@ -21,7 +21,8 @@ import net.digitalid.core.interfaces.SQLizable;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public interface Entity extends Immutable, SQLizable {
+@Immutable
+public interface Entity extends SQLizable {
     
     /**
      * Stores the aspect of the observed entity being created.

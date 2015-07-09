@@ -1,11 +1,14 @@
 package net.digitalid.core.cryptography;
 
+import net.digitalid.core.annotations.Immutable;
+
 /**
  * This class specifies the cryptographic parameters.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
+@Immutable
 public final class Parameters {
     
     /**

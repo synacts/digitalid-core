@@ -1,7 +1,7 @@
 package net.digitalid.core.exceptions.external;
 
 import javax.annotation.Nonnull;
-import net.digitalid.core.interfaces.Immutable;
+import net.digitalid.core.annotations.Immutable;
 
 /**
  * This exception is thrown when a block has an invalid encoding.
@@ -9,7 +9,8 @@ import net.digitalid.core.interfaces.Immutable;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public final class InvalidEncodingException extends ExternalException implements Immutable {
+@Immutable
+public final class InvalidEncodingException extends ExternalException {
     
     /**
      * Creates a new invalid encoding exception with the given message.

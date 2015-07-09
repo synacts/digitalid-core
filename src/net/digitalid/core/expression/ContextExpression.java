@@ -4,13 +4,13 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Capturable;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.collections.FreezableSet;
 import net.digitalid.core.contact.Contact;
 import net.digitalid.core.contact.Context;
 import net.digitalid.core.entity.NonHostEntity;
-import net.digitalid.core.interfaces.Immutable;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.CredentialsSignatureWrapper;
 
@@ -20,7 +20,8 @@ import net.digitalid.core.wrappers.CredentialsSignatureWrapper;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-final class ContextExpression extends Expression implements Immutable {
+@Immutable
+final class ContextExpression extends Expression {
     
     /**
      * Stores the context of this expression.

@@ -7,6 +7,7 @@ import java.util.zip.InflaterOutputStream;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Exposed;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.errors.ShouldNeverHappenError;
@@ -14,7 +15,6 @@ import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.identity.SyntacticType;
 import net.digitalid.core.interfaces.Blockable;
-import net.digitalid.core.interfaces.Immutable;
 import net.digitalid.core.io.Level;
 import net.digitalid.core.io.Logger;
 
@@ -24,7 +24,8 @@ import net.digitalid.core.io.Logger;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public final class CompressionWrapper extends BlockWrapper implements Immutable {
+@Immutable
+public final class CompressionWrapper extends BlockWrapper {
     
     /**
      * Stores the syntactic type {@code compression@core.digitalid.net}.

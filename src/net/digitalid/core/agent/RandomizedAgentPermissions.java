@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.collections.FreezableArray;
@@ -16,7 +17,6 @@ import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.interfaces.Blockable;
-import net.digitalid.core.interfaces.Immutable;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.HashWrapper;
 import net.digitalid.core.wrappers.TupleWrapper;
@@ -29,7 +29,8 @@ import net.digitalid.core.wrappers.TupleWrapper;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public final class RandomizedAgentPermissions implements Immutable, Blockable {
+@Immutable
+public final class RandomizedAgentPermissions implements Blockable {
     
     /**
      * Stores the semantic type {@code salt.randomized.permission.agent@core.digitalid.net}.

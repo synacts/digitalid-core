@@ -1,6 +1,7 @@
 package net.digitalid.core.synchronizer;
 
 import javax.annotation.Nonnull;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.collections.FreezableArray;
@@ -8,7 +9,6 @@ import net.digitalid.core.collections.ReadOnlyList;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.interfaces.Blockable;
-import net.digitalid.core.interfaces.Immutable;
 import net.digitalid.core.packet.Packet;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.ListWrapper;
@@ -23,7 +23,8 @@ import net.digitalid.core.wrappers.TupleWrapper;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public abstract class Audit implements Immutable, Blockable {
+@Immutable
+public abstract class Audit implements Blockable {
     
     /**
      * Stores the semantic type {@code last.time.audit@core.digitalid.net}.

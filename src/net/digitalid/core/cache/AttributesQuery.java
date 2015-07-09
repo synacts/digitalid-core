@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.agent.ReadOnlyAgentPermissions;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.attribute.Attribute;
@@ -12,8 +13,8 @@ import net.digitalid.core.attribute.AttributeValue;
 import net.digitalid.core.collections.FreezableArrayList;
 import net.digitalid.core.collections.FreezableList;
 import net.digitalid.core.collections.ReadOnlyArray;
-import net.digitalid.core.contact.FreezableAttributeTypeSet;
 import net.digitalid.core.contact.Contact;
+import net.digitalid.core.contact.FreezableAttributeTypeSet;
 import net.digitalid.core.contact.ReadOnlyAttributeTypeSet;
 import net.digitalid.core.contact.ReadOnlyContactPermissions;
 import net.digitalid.core.entity.Account;
@@ -44,6 +45,7 @@ import net.digitalid.core.wrappers.TupleWrapper;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
+@Immutable
 public final class AttributesQuery extends CoreServiceExternalQuery {
     
     /**

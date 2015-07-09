@@ -3,6 +3,7 @@ package net.digitalid.core.identifier;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.exceptions.external.ExternalException;
@@ -10,7 +11,6 @@ import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.identity.Identity;
 import net.digitalid.core.interfaces.Blockable;
-import net.digitalid.core.interfaces.Immutable;
 import net.digitalid.core.interfaces.SQLizable;
 
 /**
@@ -22,7 +22,8 @@ import net.digitalid.core.interfaces.SQLizable;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public interface Identifier extends Immutable, Blockable, SQLizable {
+@Immutable
+public interface Identifier extends Blockable, SQLizable {
     
     /**
      * Returns the string of this identifier.

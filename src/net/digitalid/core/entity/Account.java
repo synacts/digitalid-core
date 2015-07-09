@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.errors.ShouldNeverHappenError;
@@ -13,7 +14,6 @@ import net.digitalid.core.identity.Identity;
 import net.digitalid.core.identity.IdentityClass;
 import net.digitalid.core.identity.InternalIdentity;
 import net.digitalid.core.identity.InternalNonHostIdentity;
-import net.digitalid.core.interfaces.Immutable;
 import net.digitalid.core.interfaces.SQLizable;
 
 /**
@@ -25,7 +25,8 @@ import net.digitalid.core.interfaces.SQLizable;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public abstract class Account extends EntityClass implements Immutable, SQLizable {
+@Immutable
+public abstract class Account extends EntityClass implements SQLizable {
     
     /**
      * Stores the host of this account.

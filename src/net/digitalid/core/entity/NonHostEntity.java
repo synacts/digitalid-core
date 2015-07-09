@@ -1,9 +1,9 @@
 package net.digitalid.core.entity;
 
 import javax.annotation.Nonnull;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.identity.InternalNonHostIdentity;
-import net.digitalid.core.interfaces.Immutable;
 import net.digitalid.core.interfaces.SQLizable;
 
 /**
@@ -15,7 +15,8 @@ import net.digitalid.core.interfaces.SQLizable;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public interface NonHostEntity extends Entity, Immutable, SQLizable {
+@Immutable
+public interface NonHostEntity extends Entity, SQLizable {
     
     @Pure
     @Override

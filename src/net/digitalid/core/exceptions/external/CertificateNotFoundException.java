@@ -1,9 +1,9 @@
 package net.digitalid.core.exceptions.external;
 
 import javax.annotation.Nonnull;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.identity.InternalIdentity;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.interfaces.Immutable;
 
 /**
  * This exception is thrown when a certificate cannot be found.
@@ -11,7 +11,8 @@ import net.digitalid.core.interfaces.Immutable;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public final class CertificateNotFoundException extends SomethingNotFoundException implements Immutable {
+@Immutable
+public final class CertificateNotFoundException extends SomethingNotFoundException {
     
     /**
      * Creates a new certificate not found exception with the given identity and type.

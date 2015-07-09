@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.auxiliary.Time;
@@ -25,7 +26,6 @@ import net.digitalid.core.identity.IdentityClass;
 import net.digitalid.core.identity.Mapper;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.interfaces.Blockable;
-import net.digitalid.core.interfaces.Immutable;
 import net.digitalid.core.interfaces.SQLizable;
 import net.digitalid.core.server.Server;
 import net.digitalid.core.wrappers.Block;
@@ -40,7 +40,8 @@ import net.digitalid.core.wrappers.TupleWrapper;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public class Commitment implements Immutable, Blockable, SQLizable {
+@Immutable
+public class Commitment implements Blockable, SQLizable {
     
     /**
      * Stores the semantic type {@code host.commitment.client@core.digitalid.net}.

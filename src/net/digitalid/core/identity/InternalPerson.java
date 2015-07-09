@@ -1,9 +1,9 @@
 package net.digitalid.core.identity;
 
 import javax.annotation.Nonnull;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.identifier.InternalNonHostIdentifier;
-import net.digitalid.core.interfaces.Immutable;
 
 /**
  * This class models an internal person.
@@ -14,7 +14,8 @@ import net.digitalid.core.interfaces.Immutable;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public abstract class InternalPerson extends Person implements InternalNonHostIdentity, Immutable {
+@Immutable
+public abstract class InternalPerson extends Person implements InternalNonHostIdentity {
     
     /**
      * Stores the semantic type {@code internal.person@core.digitalid.net}.

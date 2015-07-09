@@ -13,6 +13,7 @@ import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Capturable;
 import net.digitalid.core.annotations.Committing;
 import net.digitalid.core.annotations.Frozen;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Locked;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.NonFrozen;
@@ -33,7 +34,6 @@ import net.digitalid.core.entity.Site;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.interfaces.Blockable;
-import net.digitalid.core.interfaces.Immutable;
 import net.digitalid.core.interfaces.SQLizable;
 import net.digitalid.core.synchronizer.Synchronizer;
 import net.digitalid.core.wrappers.Block;
@@ -46,7 +46,8 @@ import net.digitalid.core.wrappers.StringWrapper;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 0.4
  */
-public final class Context extends NonHostConcept implements Immutable, Blockable, SQLizable {
+@Immutable
+public final class Context extends NonHostConcept implements Blockable, SQLizable {
     
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Aspects –––––––––––––––––––––––––––––––––––––––––––––––––– */

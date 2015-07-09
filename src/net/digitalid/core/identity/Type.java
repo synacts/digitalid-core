@@ -3,12 +3,12 @@ package net.digitalid.core.identity;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.identifier.InternalNonHostIdentifier;
-import net.digitalid.core.interfaces.Immutable;
 
 /**
  * This class models a type.
@@ -19,7 +19,8 @@ import net.digitalid.core.interfaces.Immutable;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public abstract class Type extends NonHostIdentityClass implements InternalNonHostIdentity, Immutable {
+@Immutable
+public abstract class Type extends NonHostIdentityClass implements InternalNonHostIdentity {
     
     /**
      * Stores the semantic type {@code type@core.digitalid.net}.

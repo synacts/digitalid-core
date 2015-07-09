@@ -1,6 +1,7 @@
 package net.digitalid.core.interfaces;
 
 import javax.annotation.Nonnull;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.wrappers.Block;
@@ -11,7 +12,8 @@ import net.digitalid.core.wrappers.Block;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public final class BlockableObject implements Blockable, Immutable {
+@Immutable
+public final class BlockableObject implements Blockable {
     
     /**
      * Stores the block of this object.

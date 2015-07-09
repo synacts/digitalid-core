@@ -1,9 +1,9 @@
 package net.digitalid.core.identity;
 
 import javax.annotation.Nonnull;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.identifier.InternalIdentifier;
-import net.digitalid.core.interfaces.Immutable;
 
 /**
  * This interface models an internal identity.
@@ -14,7 +14,8 @@ import net.digitalid.core.interfaces.Immutable;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public interface InternalIdentity extends Identity, Immutable {
+@Immutable
+public interface InternalIdentity extends Identity {
     
     /**
      * Stores the semantic type {@code internal@core.digitalid.net}.
