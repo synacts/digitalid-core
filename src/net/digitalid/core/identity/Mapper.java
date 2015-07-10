@@ -12,6 +12,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
+import net.digitalid.core.annotations.Stateless;
 import net.digitalid.core.cache.Cache;
 import net.digitalid.core.client.AccountInitialize;
 import net.digitalid.core.client.AccountOpen;
@@ -50,6 +51,7 @@ import net.digitalid.core.tuples.ReadOnlyTriplet;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
+@Stateless
 public final class Mapper {
     
     /**

@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import javax.annotation.Nonnull;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
+import net.digitalid.core.annotations.Stateless;
 import net.digitalid.core.database.Database;
 import net.digitalid.core.entity.Site;
 import net.digitalid.core.handler.Action;
@@ -20,6 +21,7 @@ import net.digitalid.core.service.Service;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 0.0
  */
+@Stateless
 public final class ErrorModule implements ClientModule {
     
     /**

@@ -13,6 +13,7 @@ import net.digitalid.core.annotations.Frozen;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.NonFrozen;
 import net.digitalid.core.annotations.Pure;
+import net.digitalid.core.annotations.Stateless;
 import net.digitalid.core.client.Client;
 import net.digitalid.core.client.Commitment;
 import net.digitalid.core.collections.FreezableArray;
@@ -55,6 +56,7 @@ import net.digitalid.core.wrappers.TupleWrapper;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
+@Stateless
 public final class AgentModule implements BothModule {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Module Initialization –––––––––––––––––––––––––––––––––––––––––––––––––– */

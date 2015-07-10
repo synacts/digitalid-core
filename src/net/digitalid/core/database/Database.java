@@ -18,6 +18,7 @@ import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.NonEmpty;
 import net.digitalid.core.annotations.Positive;
 import net.digitalid.core.annotations.Pure;
+import net.digitalid.core.annotations.Stateless;
 import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.collections.ConcurrentHashMap;
 import net.digitalid.core.collections.ConcurrentMap;
@@ -37,6 +38,7 @@ import net.digitalid.core.server.Worker;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
+@Stateless
 public final class Database {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Configuration –––––––––––––––––––––––––––––––––––––––––––––––––– */

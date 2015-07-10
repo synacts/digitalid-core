@@ -18,6 +18,7 @@ import net.digitalid.core.annotations.Frozen;
 import net.digitalid.core.annotations.Locked;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
+import net.digitalid.core.annotations.Stateless;
 import net.digitalid.core.attribute.AttributeValue;
 import net.digitalid.core.attribute.CertifiedAttributeValue;
 import net.digitalid.core.auxiliary.Time;
@@ -59,6 +60,7 @@ import net.digitalid.core.wrappers.SelfcontainedWrapper;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
+@Stateless
 public final class Cache {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Initialization –––––––––––––––––––––––––––––––––––––––––––––––––– */

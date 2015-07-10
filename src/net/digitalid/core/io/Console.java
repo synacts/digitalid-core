@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.NonNullableElements;
+import net.digitalid.core.annotations.Stateless;
 import net.digitalid.core.collections.FreezableLinkedList;
 import net.digitalid.core.collections.FreezableList;
 import net.digitalid.core.errors.ShouldNeverHappenError;
@@ -19,6 +20,7 @@ import net.digitalid.core.exceptions.io.EscapeOptionException;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
+@Stateless
 public final class Console {
     
     /**

@@ -9,6 +9,7 @@ import net.digitalid.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.core.agent.Restrictions;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
+import net.digitalid.core.annotations.Stateless;
 import net.digitalid.core.collections.FreezableLinkedList;
 import net.digitalid.core.collections.FreezableList;
 import net.digitalid.core.collections.ReadOnlyList;
@@ -31,6 +32,7 @@ import net.digitalid.core.wrappers.TupleWrapper;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 0.0
  */
+@Stateless
 final class AccessModule implements BothModule {
     
     /**

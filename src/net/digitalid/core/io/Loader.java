@@ -16,6 +16,7 @@ import javax.annotation.Nonnull;
 import net.digitalid.core.annotations.Committing;
 import net.digitalid.core.annotations.IsDirectory;
 import net.digitalid.core.annotations.Locked;
+import net.digitalid.core.annotations.Stateless;
 import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.cache.Cache;
 import net.digitalid.core.database.Database;
@@ -30,6 +31,7 @@ import net.digitalid.core.wrappers.SignatureWrapper;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
+@Stateless
 public final class Loader {
     
     /**

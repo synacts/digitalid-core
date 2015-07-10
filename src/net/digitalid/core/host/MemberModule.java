@@ -5,6 +5,7 @@ import java.sql.Statement;
 import javax.annotation.Nonnull;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
+import net.digitalid.core.annotations.Stateless;
 import net.digitalid.core.collections.FreezableLinkedList;
 import net.digitalid.core.collections.FreezableList;
 import net.digitalid.core.collections.ReadOnlyList;
@@ -26,6 +27,7 @@ import net.digitalid.core.wrappers.TupleWrapper;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 0.0
  */
+@Stateless
 public final class MemberModule implements HostModule {
     
     /**

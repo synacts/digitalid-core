@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.core.annotations.Stateless;
 
 /**
  * This class makes it easier to execute commands.
@@ -12,6 +13,7 @@ import javax.annotation.Nullable;
  * @author Kaspar Etter (kaspar.etter@virtualid.ch)
  * @version 1.0
  */
+@Stateless
 public final class Executor {
     
     /**

@@ -8,6 +8,7 @@ import javax.annotation.Nonnull;
 import net.digitalid.core.annotations.Committing;
 import net.digitalid.core.annotations.Locked;
 import net.digitalid.core.annotations.NonLocked;
+import net.digitalid.core.annotations.Stateless;
 import net.digitalid.core.cache.Cache;
 import net.digitalid.core.client.Client;
 import net.digitalid.core.collections.FreezableLinkedHashMap;
@@ -37,6 +38,7 @@ import net.digitalid.core.io.Logger;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
+@Stateless
 public final class Server {
     
     /**

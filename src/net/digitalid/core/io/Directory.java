@@ -7,6 +7,7 @@ import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Initialized;
 import net.digitalid.core.annotations.IsDirectory;
 import net.digitalid.core.annotations.Pure;
+import net.digitalid.core.annotations.Stateless;
 import net.digitalid.core.errors.InitializationError;
 
 /**
@@ -15,7 +16,8 @@ import net.digitalid.core.errors.InitializationError;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public class Directory {
+@Stateless
+public final class Directory {
     
     /**
      * References the default directory to store all other directories.

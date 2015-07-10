@@ -15,6 +15,7 @@ import net.digitalid.core.annotations.Frozen;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.NonFrozen;
 import net.digitalid.core.annotations.Pure;
+import net.digitalid.core.annotations.Stateless;
 import net.digitalid.core.collections.FreezableArray;
 import net.digitalid.core.collections.FreezableLinkedList;
 import net.digitalid.core.collections.FreezableList;
@@ -55,6 +56,7 @@ import net.digitalid.core.wrappers.TupleWrapper;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 0.1
  */
+@Stateless
 public final class ContextModule implements BothModule {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Module Initialization –––––––––––––––––––––––––––––––––––––––––––––––––– */
