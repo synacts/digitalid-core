@@ -10,7 +10,6 @@ import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.entity.Role;
 import net.digitalid.core.handler.InternalMethod;
 import net.digitalid.core.handler.Method;
-import net.digitalid.core.interfaces.Blockable;
 import net.digitalid.core.service.Service;
 
 /**
@@ -20,7 +19,7 @@ import net.digitalid.core.service.Service;
  * @version 1.0
  */
 @Immutable
-public final class RequestAudit extends Audit implements Blockable {
+public final class RequestAudit extends Audit {
     
     /**
      * Creates a new audit with the given last time.

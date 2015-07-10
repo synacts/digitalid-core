@@ -11,7 +11,6 @@ import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.identity.Category;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.interfaces.Blockable;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.BooleanWrapper;
 
@@ -21,7 +20,7 @@ import net.digitalid.core.wrappers.BooleanWrapper;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public final class FreezableAuthentications extends FreezableAttributeTypeSet implements ReadOnlyAuthentications, Blockable {
+public final class FreezableAuthentications extends FreezableAttributeTypeSet implements ReadOnlyAuthentications {
     
     /**
      * Stores the semantic type {@code authentication.contact@core.digitalid.net}.

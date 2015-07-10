@@ -11,7 +11,6 @@ import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.interfaces.Blockable;
 import net.digitalid.core.interfaces.SQLizable;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.IntegerWrapper;
@@ -23,7 +22,7 @@ import net.digitalid.core.wrappers.IntegerWrapper;
  * @version 1.0
  */
 @Immutable
-public final class Exponent extends Number implements Blockable, SQLizable {
+public final class Exponent extends Number implements SQLizable {
     
     /**
      * Stores the semantic type {@code exponent.group@core.digitalid.net}.

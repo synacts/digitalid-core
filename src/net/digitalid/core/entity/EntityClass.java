@@ -14,7 +14,6 @@ import net.digitalid.core.concept.Instance;
 import net.digitalid.core.errors.ShouldNeverHappenError;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.host.Host;
-import net.digitalid.core.interfaces.SQLizable;
 
 /**
  * This class implements methods of the {@link Entity} interface.
@@ -26,7 +25,7 @@ import net.digitalid.core.interfaces.SQLizable;
  * @version 1.0
  */
 @Immutable
-public abstract class EntityClass extends Instance implements Entity, SQLizable {
+public abstract class EntityClass extends Instance implements Entity {
     
     /**
      * Stores the data type used to reference instances of this class.

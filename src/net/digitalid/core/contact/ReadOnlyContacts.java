@@ -15,7 +15,7 @@ import net.digitalid.core.interfaces.SQLizable;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 2.0
  */
-public interface ReadOnlyContacts extends ReadOnlySet<Contact>, Blockable, SQLizable{
+public interface ReadOnlyContacts extends ReadOnlySet<Contact>, Blockable, SQLizable {
     
     @Pure
     @Override

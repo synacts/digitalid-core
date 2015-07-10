@@ -19,8 +19,6 @@ import net.digitalid.core.database.Database;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.identity.Identity;
-import net.digitalid.core.interfaces.Blockable;
-import net.digitalid.core.interfaces.SQLizable;
 import net.digitalid.core.synchronizer.Synchronizer;
 
 /**
@@ -30,7 +28,7 @@ import net.digitalid.core.synchronizer.Synchronizer;
  * @version 1.0
  */
 @Immutable
-public final class ClientAgent extends Agent implements Blockable, SQLizable {
+public final class ClientAgent extends Agent {
     
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Aspects –––––––––––––––––––––––––––––––––––––––––––––––––– */

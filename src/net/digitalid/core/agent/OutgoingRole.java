@@ -25,8 +25,6 @@ import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.identity.Identity;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.interfaces.Blockable;
-import net.digitalid.core.interfaces.SQLizable;
 import net.digitalid.core.pusher.Pusher;
 import net.digitalid.core.synchronizer.Synchronizer;
 
@@ -37,7 +35,7 @@ import net.digitalid.core.synchronizer.Synchronizer;
  * @version 1.0
  */
 @Immutable
-public final class OutgoingRole extends Agent implements Blockable, SQLizable {
+public final class OutgoingRole extends Agent {
     
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Aspects –––––––––––––––––––––––––––––––––––––––––––––––––– */

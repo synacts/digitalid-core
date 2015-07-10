@@ -17,7 +17,6 @@ import net.digitalid.core.host.Host;
 import net.digitalid.core.identity.HostIdentity;
 import net.digitalid.core.identity.Identity;
 import net.digitalid.core.identity.IdentityClass;
-import net.digitalid.core.interfaces.SQLizable;
 
 /**
  * This class models a host account.
@@ -26,7 +25,7 @@ import net.digitalid.core.interfaces.SQLizable;
  * @version 1.0
  */
 @Immutable
-public final class HostAccount extends Account implements HostEntity, SQLizable {
+public final class HostAccount extends Account implements HostEntity {
     
     /**
      * Stores the identity of this host account.

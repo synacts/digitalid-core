@@ -17,7 +17,6 @@ import net.digitalid.core.host.Host;
 import net.digitalid.core.identity.Identity;
 import net.digitalid.core.identity.IdentityClass;
 import net.digitalid.core.identity.InternalNonHostIdentity;
-import net.digitalid.core.interfaces.SQLizable;
 
 /**
  * This class models a non-host account.
@@ -26,7 +25,7 @@ import net.digitalid.core.interfaces.SQLizable;
  * @version 1.0
  */
 @Immutable
-public final class NonHostAccount extends Account implements NonHostEntity, SQLizable {
+public final class NonHostAccount extends Account implements NonHostEntity {
     
     /**
      * Stores the identity of this non-host account.

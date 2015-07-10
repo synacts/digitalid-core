@@ -14,8 +14,6 @@ import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.interfaces.Blockable;
-import net.digitalid.core.interfaces.SQLizable;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.StringWrapper;
 
@@ -26,7 +24,7 @@ import net.digitalid.core.wrappers.StringWrapper;
  * @version 1.0
  */
 @Immutable
-public final class ActiveExpression extends AbstractExpression implements Blockable, SQLizable {
+public final class ActiveExpression extends AbstractExpression {
     
     /**
      * Stores the semantic type {@code active.expression@core.digitalid.net}.

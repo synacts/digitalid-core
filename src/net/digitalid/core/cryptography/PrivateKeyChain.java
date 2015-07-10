@@ -10,7 +10,6 @@ import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.collections.ReadOnlyList;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.interfaces.Blockable;
 import net.digitalid.core.tuples.ReadOnlyPair;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.ListWrapper;
@@ -23,7 +22,7 @@ import net.digitalid.core.wrappers.TupleWrapper;
  * @version 1.0
  */
 @Immutable
-public final class PrivateKeyChain extends KeyChain<PrivateKey> implements Blockable {
+public final class PrivateKeyChain extends KeyChain<PrivateKey> {
     
     /**
      * Stores the semantic type {@code item.private.key.chain.host@core.digitalid.net}.

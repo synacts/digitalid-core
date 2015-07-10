@@ -258,7 +258,7 @@ public final class IntvarWrapper extends BlockWrapper {
         assert value >= 0 : "The value is not negative.";
         assert value <= MAX_VALUE : "The first two bits have to be zero.";
         
-        for (int i = length - 1; i >= 1; i--){  
+        for (int i = length - 1; i >= 1; i--) {  
             block.setByte(offset + i, (byte) value);
             value >>>= 8;
         }

@@ -9,7 +9,6 @@ import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.interfaces.Blockable;
-import net.digitalid.core.interfaces.SQLizable;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.SelfcontainedWrapper;
 import net.digitalid.core.wrappers.SignatureWrapper;
@@ -21,7 +20,7 @@ import net.digitalid.core.wrappers.SignatureWrapper;
  * @version 1.0
  */
 @Immutable
-public final class UncertifiedAttributeValue extends AttributeValue implements Blockable, SQLizable {
+public final class UncertifiedAttributeValue extends AttributeValue {
     
     /**
      * Stores the signature of this uncertified attribute value.

@@ -27,7 +27,6 @@ import net.digitalid.core.handler.Action;
 import net.digitalid.core.handler.InternalAction;
 import net.digitalid.core.handler.Method;
 import net.digitalid.core.identifier.HostIdentifier;
-import net.digitalid.core.interfaces.Blockable;
 import net.digitalid.core.io.Level;
 import net.digitalid.core.io.Logger;
 import net.digitalid.core.module.BothModule;
@@ -49,7 +48,7 @@ import net.digitalid.core.wrappers.TupleWrapper;
  * @version 1.0
  */
 @Immutable
-public final class ResponseAudit extends Audit implements Blockable {
+public final class ResponseAudit extends Audit {
     
     /**
      * Stores the time of this audit.

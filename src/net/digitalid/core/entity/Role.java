@@ -30,7 +30,6 @@ import net.digitalid.core.exceptions.packet.PacketError;
 import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.identity.InternalNonHostIdentity;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.interfaces.SQLizable;
 import net.digitalid.core.module.BothModule;
 import net.digitalid.core.service.CoreService;
 import net.digitalid.core.service.Service;
@@ -48,7 +47,7 @@ import net.digitalid.core.synchronizer.SynchronizerModule;
  * @version 1.0
  */
 @Immutable
-public abstract class Role extends EntityClass implements NonHostEntity, SQLizable, Observer {
+public abstract class Role extends EntityClass implements NonHostEntity, Observer {
     
     /**
      * Stores the aspect of a new role being added to the observed role.

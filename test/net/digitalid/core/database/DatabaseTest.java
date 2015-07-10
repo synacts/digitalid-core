@@ -174,7 +174,7 @@ public class DatabaseTest {
     @NonCommitting
     public void _09_testParallelUpdates() throws SQLException {
         if (isSubclass()) {
-            try (@Nonnull Statement statement1 = Database.createStatement(); @Nonnull Statement statement2 = Database.createStatement()){
+            try (@Nonnull Statement statement1 = Database.createStatement(); @Nonnull Statement statement2 = Database.createStatement()) {
                 statement1.executeUpdate("UPDATE test_identity SET category = 3 WHERE address = 'a@test.digitalid.net'");
                 final @Nonnull ResultSet resultSet1 = statement1.executeQuery("SELECT category FROM test_identity WHERE address = 'a@test.digitalid.net'");
                 

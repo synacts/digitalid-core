@@ -15,7 +15,6 @@ import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.identifier.IdentifierClass;
 import net.digitalid.core.interfaces.Blockable;
-import net.digitalid.core.interfaces.SQLizable;
 import net.digitalid.core.wrappers.Block;
 
 /**
@@ -31,7 +30,7 @@ import net.digitalid.core.wrappers.Block;
  * @version 1.0
  */
 @Immutable
-public abstract class IdentityClass implements Identity, Blockable, SQLizable {
+public abstract class IdentityClass implements Identity {
     
     /**
      * Stores the internal number that represents and indexes this identity.

@@ -14,8 +14,6 @@ import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.identity.Identity;
 import net.digitalid.core.identity.Mapper;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.interfaces.Blockable;
-import net.digitalid.core.interfaces.SQLizable;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.StringWrapper;
 
@@ -29,7 +27,7 @@ import net.digitalid.core.wrappers.StringWrapper;
  * @version 1.0
  */
 @Immutable
-public abstract class IdentifierClass implements Identifier, Blockable, SQLizable {
+public abstract class IdentifierClass implements Identifier {
     
     /**
      * Returns whether the given string conforms to the criteria of this class.

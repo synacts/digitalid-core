@@ -5,7 +5,6 @@ import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.host.Host;
 import net.digitalid.core.identity.HostIdentity;
-import net.digitalid.core.interfaces.SQLizable;
 
 /**
  * This interface models a host entity.
@@ -16,7 +15,7 @@ import net.digitalid.core.interfaces.SQLizable;
  * @version 1.0
  */
 @Immutable
-public interface HostEntity extends Entity, SQLizable {
+public interface HostEntity extends Entity {
     
     /**
      * Returns the host of this entity.

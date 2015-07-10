@@ -21,7 +21,6 @@ import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.handler.Reply;
 import net.digitalid.core.identifier.IdentifierClass;
 import net.digitalid.core.identifier.InternalNonHostIdentifier;
-import net.digitalid.core.interfaces.Blockable;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.ListWrapper;
 
@@ -38,7 +37,7 @@ import net.digitalid.core.wrappers.ListWrapper;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public final class FreezablePredecessors extends FreezableArrayList<Predecessor> implements ReadOnlyPredecessors, Blockable {
+public final class FreezablePredecessors extends FreezableArrayList<Predecessor> implements ReadOnlyPredecessors {
     
     /**
      * Stores the semantic type {@code list.predecessor.identity@core.digitalid.net}.

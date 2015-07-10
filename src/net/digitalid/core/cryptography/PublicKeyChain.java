@@ -11,7 +11,6 @@ import net.digitalid.core.collections.ReadOnlyList;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.identity.Category;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.interfaces.Blockable;
 import net.digitalid.core.tuples.ReadOnlyPair;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.ListWrapper;
@@ -24,7 +23,7 @@ import net.digitalid.core.wrappers.TupleWrapper;
  * @version 1.0
  */
 @Immutable
-public final class PublicKeyChain extends KeyChain<PublicKey> implements Blockable {
+public final class PublicKeyChain extends KeyChain<PublicKey> {
     
     /**
      * Stores the semantic type {@code item.public.key.chain.host@core.digitalid.net}.

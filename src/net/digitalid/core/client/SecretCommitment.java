@@ -10,7 +10,6 @@ import net.digitalid.core.cryptography.PublicKey;
 import net.digitalid.core.exceptions.packet.PacketError;
 import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.identity.HostIdentity;
-import net.digitalid.core.interfaces.Blockable;
 import net.digitalid.core.wrappers.ClientSignatureWrapper;
 
 /**
@@ -24,7 +23,7 @@ import net.digitalid.core.wrappers.ClientSignatureWrapper;
  * @version 1.0
  */
 @Immutable
-public final class SecretCommitment extends Commitment implements Blockable {
+public final class SecretCommitment extends Commitment {
     
     /**
      * Stores the secret of this commitment.

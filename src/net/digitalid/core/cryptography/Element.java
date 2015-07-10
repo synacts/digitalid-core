@@ -6,7 +6,6 @@ import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.interfaces.Blockable;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.IntegerWrapper;
 
@@ -19,7 +18,7 @@ import net.digitalid.core.wrappers.IntegerWrapper;
  * @version 1.0
  */
 @Immutable
-public final class Element extends Number implements Blockable {
+public final class Element extends Number {
     
     /**
      * Stores the semantic type {@code element.group@core.digitalid.net}.

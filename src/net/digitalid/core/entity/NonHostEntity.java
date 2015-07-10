@@ -4,7 +4,6 @@ import javax.annotation.Nonnull;
 import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.identity.InternalNonHostIdentity;
-import net.digitalid.core.interfaces.SQLizable;
 
 /**
  * This interface models a non-host entity.
@@ -16,7 +15,7 @@ import net.digitalid.core.interfaces.SQLizable;
  * @version 1.0
  */
 @Immutable
-public interface NonHostEntity extends Entity, SQLizable {
+public interface NonHostEntity extends Entity {
     
     @Pure
     @Override
