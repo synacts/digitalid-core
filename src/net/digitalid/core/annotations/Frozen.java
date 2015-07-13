@@ -5,8 +5,8 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import net.digitalid.core.interfaces.Freezable;
-import net.digitalid.core.interfaces.ReadOnly;
+import net.digitalid.core.collections.Freezable;
+import net.digitalid.core.collections.ReadOnly;
 
 /**
  * This annotation indicates that a field or a parameter {@link Freezable#isFrozen() is frozen}.

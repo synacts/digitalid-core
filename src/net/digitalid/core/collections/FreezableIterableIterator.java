@@ -6,7 +6,6 @@ import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Capturable;
 import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.interfaces.Freezable;
 
 /**
  * This interface models an {@link Iterator iterator} that can be {@link Freezable frozen}.

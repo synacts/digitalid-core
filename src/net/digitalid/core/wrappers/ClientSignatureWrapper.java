@@ -28,7 +28,6 @@ import net.digitalid.core.exceptions.packet.PacketError;
 import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.identifier.InternalIdentifier;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.interfaces.Blockable;
 import net.digitalid.core.io.Level;
 import net.digitalid.core.io.Logger;
 import net.digitalid.core.synchronizer.Audit;

@@ -5,7 +5,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import net.digitalid.core.interfaces.Freezable;
+import net.digitalid.core.collections.Freezable;
 
 /**
  * This annotation indicates that a method should only be invoked on {@link NonFrozen non-frozen} objects.

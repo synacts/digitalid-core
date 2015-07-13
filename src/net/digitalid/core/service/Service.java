@@ -36,7 +36,7 @@ import net.digitalid.core.identity.IdentityClass;
 import net.digitalid.core.identity.InternalPerson;
 import net.digitalid.core.identity.Mapper;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.interfaces.SQLizable;
+import net.digitalid.core.database.SQLizable;
 import net.digitalid.core.module.BothModule;
 import net.digitalid.core.module.ClientModule;
 import net.digitalid.core.module.HostModule;

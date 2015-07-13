@@ -6,7 +6,7 @@ import net.digitalid.core.annotations.Capturable;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.collections.ReadOnlySet;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.interfaces.Blockable;
+import net.digitalid.core.wrappers.Blockable;
 
 /**
  * This interface provides read-only access to {@link FreezableAttributeTypeSet attribute type sets} and should <em>never</em> be cast away.

@@ -11,7 +11,7 @@ import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.interfaces.SQLizable;
+import net.digitalid.core.database.SQLizable;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.IntegerWrapper;
 

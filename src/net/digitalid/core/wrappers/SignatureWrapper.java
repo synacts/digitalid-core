@@ -28,7 +28,6 @@ import net.digitalid.core.identifier.InternalIdentifier;
 import net.digitalid.core.identity.InternalIdentity;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.identity.SyntacticType;
-import net.digitalid.core.interfaces.Blockable;
 import net.digitalid.core.synchronizer.Audit;
 
 /**

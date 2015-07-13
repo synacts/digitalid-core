@@ -1,4 +1,4 @@
-package net.digitalid.core.interfaces;
+package net.digitalid.core.collections;
 
 import javax.annotation.Nonnull;
 

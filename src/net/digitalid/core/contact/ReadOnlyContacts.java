@@ -4,8 +4,8 @@ import javax.annotation.Nonnull;
 import net.digitalid.core.annotations.Capturable;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.collections.ReadOnlySet;
-import net.digitalid.core.interfaces.Blockable;
-import net.digitalid.core.interfaces.SQLizable;
+import net.digitalid.core.wrappers.Blockable;
+import net.digitalid.core.database.SQLizable;
 
 /**
  * This interface provides read-only access to {@link FreezableContacts contacts} and should <em>never</em> be cast away.

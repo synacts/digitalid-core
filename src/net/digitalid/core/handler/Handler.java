@@ -12,7 +12,7 @@ import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.entity.Role;
 import net.digitalid.core.identifier.InternalIdentifier;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.interfaces.Blockable;
+import net.digitalid.core.wrappers.Blockable;
 import net.digitalid.core.service.Service;
 import net.digitalid.core.wrappers.SignatureWrapper;
 

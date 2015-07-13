@@ -7,7 +7,6 @@ import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Capturable;
 import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.interfaces.Freezable;
 
 /**
  * This class extends the {@link HashMap} and makes it {@link Freezable}.

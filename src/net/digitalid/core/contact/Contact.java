@@ -29,8 +29,8 @@ import net.digitalid.core.identity.InternalPerson;
 import net.digitalid.core.identity.Mapper;
 import net.digitalid.core.identity.Person;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.interfaces.Blockable;
-import net.digitalid.core.interfaces.SQLizable;
+import net.digitalid.core.wrappers.Blockable;
+import net.digitalid.core.database.SQLizable;
 import net.digitalid.core.wrappers.Block;
 
 /**

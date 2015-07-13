@@ -10,8 +10,6 @@ import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonFrozenRecipient;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.annotations.ValidIndex;
-import net.digitalid.core.interfaces.Freezable;
-import net.digitalid.core.interfaces.FreezableObject;
 
 /**
  * This class models {@link Freezable freezable} arrays.

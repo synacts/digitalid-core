@@ -9,8 +9,8 @@ import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.collections.ReadOnlyMap;
 import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.interfaces.Blockable;
-import net.digitalid.core.interfaces.SQLizable;
+import net.digitalid.core.wrappers.Blockable;
+import net.digitalid.core.database.SQLizable;
 
 /**
  * This interface provides read-only access to {@link FreezableAgentPermissions agent permissions} and should <em>never</em> be cast away.

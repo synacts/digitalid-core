@@ -16,7 +16,7 @@ import net.digitalid.core.cryptography.Parameters;
 import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.interfaces.Blockable;
+import net.digitalid.core.wrappers.Blockable;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.HashWrapper;
 import net.digitalid.core.wrappers.TupleWrapper;

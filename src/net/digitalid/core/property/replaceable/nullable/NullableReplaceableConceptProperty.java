@@ -3,8 +3,8 @@ package net.digitalid.core.property.replaceable.nullable;
 import javax.annotation.Nonnull;
 import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.concept.Concept;
-import net.digitalid.core.interfaces.Blockable;
-import net.digitalid.core.interfaces.SQLizable;
+import net.digitalid.core.wrappers.Blockable;
+import net.digitalid.core.database.SQLizable;
 import net.digitalid.core.property.ConceptProperty;
 
 /**

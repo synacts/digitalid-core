@@ -13,7 +13,6 @@ import net.digitalid.core.collections.ReadOnlyList;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.identity.SyntacticType;
-import net.digitalid.core.interfaces.Blockable;
 
 /**
  * Wraps a block with the syntactic type {@code list@core.digitalid.net} for encoding and decoding.

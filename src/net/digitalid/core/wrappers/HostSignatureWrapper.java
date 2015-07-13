@@ -28,7 +28,6 @@ import net.digitalid.core.identifier.InternalIdentifier;
 import net.digitalid.core.identity.HostIdentity;
 import net.digitalid.core.identity.InternalIdentity;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.interfaces.Blockable;
 import net.digitalid.core.io.Level;
 import net.digitalid.core.io.Logger;
 import net.digitalid.core.server.Server;

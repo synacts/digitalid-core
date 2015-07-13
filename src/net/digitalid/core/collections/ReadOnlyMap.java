@@ -5,8 +5,6 @@ import javax.annotation.Nonnull;
 import net.digitalid.core.annotations.Capturable;
 import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.interfaces.Freezable;
-import net.digitalid.core.interfaces.ReadOnly;
 
 /**
  * This interface provides read-only access to {@link Map maps} and should <em>never</em> be cast away (unless external code requires it).

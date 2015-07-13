@@ -26,7 +26,7 @@ import net.digitalid.core.exceptions.packet.PacketError;
 import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.identifier.InternalIdentifier;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.interfaces.SQLizable;
+import net.digitalid.core.database.SQLizable;
 import net.digitalid.core.packet.Packet;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.CompressionWrapper;

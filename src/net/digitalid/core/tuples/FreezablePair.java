@@ -5,8 +5,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Capturable;
 import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.interfaces.Freezable;
-import net.digitalid.core.interfaces.FreezableObject;
+import net.digitalid.core.collections.Freezable;
+import net.digitalid.core.collections.FreezableObject;
 
 /**
  * This class models a {@link Freezable freezable} pair.

@@ -3,9 +3,7 @@ package net.digitalid.core.collections;
 import javax.annotation.Nonnull;
 import net.digitalid.core.annotations.Capturable;
 import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.interfaces.Freezable;
 import net.digitalid.core.annotations.Immutable;
-import net.digitalid.core.interfaces.ReadOnly;
 
 /**
  * This interface provides read-only access to {@link Iterable iterables} and should not be lost by assigning its objects to a supertype.

@@ -7,7 +7,6 @@ import net.digitalid.core.annotations.Capturable;
 import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.annotations.ValidIndex;
-import net.digitalid.core.interfaces.Freezable;
 
 /**
  * This interface provides read-only access to {@link List lists} and should <em>never</em> be cast away (unless external code requires it).

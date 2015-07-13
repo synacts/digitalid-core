@@ -14,7 +14,6 @@ import net.digitalid.core.errors.ShouldNeverHappenError;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.identity.SyntacticType;
-import net.digitalid.core.interfaces.Blockable;
 import net.digitalid.core.io.Level;
 import net.digitalid.core.io.Logger;
 

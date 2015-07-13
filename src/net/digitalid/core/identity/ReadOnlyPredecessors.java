@@ -12,7 +12,7 @@ import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.handler.Reply;
 import net.digitalid.core.identifier.InternalNonHostIdentifier;
-import net.digitalid.core.interfaces.Blockable;
+import net.digitalid.core.wrappers.Blockable;
 
 /**
  * This interface provides read-only access to {@link FreezablePredecessors predecessors} and should <em>never</em> be cast away.

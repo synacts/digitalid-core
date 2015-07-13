@@ -9,7 +9,6 @@ import net.digitalid.core.annotations.Positive;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.identity.SyntacticType;
-import net.digitalid.core.interfaces.Blockable;
 
 /**
  * Blocks are wrapped by separate objects for modular decoding and encoding.

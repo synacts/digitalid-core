@@ -15,7 +15,7 @@ import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.identifier.IdentifierClass;
 import net.digitalid.core.identifier.InternalNonHostIdentifier;
 import net.digitalid.core.identifier.NonHostIdentifier;
-import net.digitalid.core.interfaces.Blockable;
+import net.digitalid.core.wrappers.Blockable;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.ListWrapper;
 import net.digitalid.core.wrappers.TupleWrapper;

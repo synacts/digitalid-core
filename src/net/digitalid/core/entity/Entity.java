@@ -9,7 +9,7 @@ import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.handler.Handler;
 import net.digitalid.core.identity.Identity;
 import net.digitalid.core.identity.InternalIdentity;
-import net.digitalid.core.interfaces.SQLizable;
+import net.digitalid.core.database.SQLizable;
 
 /**
  * An entity captures the {@link Site site} and the {@link Identity identity} of a {@link Concept concept} or {@link Handler handler}.

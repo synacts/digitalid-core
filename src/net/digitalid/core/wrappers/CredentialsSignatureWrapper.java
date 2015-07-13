@@ -51,7 +51,6 @@ import net.digitalid.core.identity.InternalNonHostIdentity;
 import net.digitalid.core.identity.InternalPerson;
 import net.digitalid.core.identity.Person;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.interfaces.Blockable;
 import net.digitalid.core.io.Level;
 import net.digitalid.core.io.Logger;
 import net.digitalid.core.synchronizer.Audit;

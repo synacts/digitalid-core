@@ -12,8 +12,8 @@ import net.digitalid.core.collections.ReadOnlyList;
 import net.digitalid.core.database.Database;
 import net.digitalid.core.errors.ShouldNeverHappenError;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.core.interfaces.Blockable;
-import net.digitalid.core.interfaces.SQLizable;
+import net.digitalid.core.wrappers.Blockable;
+import net.digitalid.core.database.SQLizable;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.Int8Wrapper;
 

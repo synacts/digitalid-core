@@ -27,9 +27,7 @@ import net.digitalid.core.database.Database;
 import net.digitalid.core.errors.ShouldNeverHappenError;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.interfaces.Blockable;
-import net.digitalid.core.interfaces.BlockableObject;
-import net.digitalid.core.interfaces.SQLizable;
+import net.digitalid.core.database.SQLizable;
 
 /**
  * A block is a sequence of bytes that is encoded according to some syntactic type.

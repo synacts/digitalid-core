@@ -2,7 +2,6 @@ package net.digitalid.core.collections;
 
 import java.util.Iterator;
 import javax.annotation.Nonnull;
-import net.digitalid.core.interfaces.Freezable;
 import net.digitalid.core.annotations.Immutable;
 
 /**

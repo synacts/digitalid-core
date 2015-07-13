@@ -14,7 +14,7 @@ import net.digitalid.core.exceptions.external.InvalidSignatureException;
 import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.identity.InternalIdentity;
 import net.digitalid.core.identity.InternalNonHostIdentity;
-import net.digitalid.core.interfaces.Blockable;
+import net.digitalid.core.wrappers.Blockable;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.HostSignatureWrapper;
 import net.digitalid.core.wrappers.SelfcontainedWrapper;

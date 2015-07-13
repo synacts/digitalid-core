@@ -3,7 +3,7 @@ package net.digitalid.core.tuples;
 import javax.annotation.Nonnull;
 import net.digitalid.core.annotations.Capturable;
 import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.interfaces.ReadOnly;
+import net.digitalid.core.collections.ReadOnly;
 
 /**
  * This interface models a {@link ReadOnly read-only} pair.

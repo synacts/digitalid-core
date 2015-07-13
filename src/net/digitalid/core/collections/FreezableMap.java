@@ -4,7 +4,6 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import net.digitalid.core.annotations.NonFrozenRecipient;
 import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.interfaces.Freezable;
 import net.digitalid.core.annotations.Immutable;
 
 /**

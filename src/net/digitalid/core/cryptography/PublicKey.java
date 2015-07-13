@@ -8,7 +8,7 @@ import net.digitalid.core.collections.FreezableArray;
 import net.digitalid.core.collections.ReadOnlyArray;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.interfaces.Blockable;
+import net.digitalid.core.wrappers.Blockable;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.TupleWrapper;
 
