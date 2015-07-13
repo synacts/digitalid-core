@@ -51,7 +51,7 @@ public final class ClientRequest extends Request {
      * @param commitment the commitment containing the client secret.
      * 
      * @require methods.isFrozen() : "The list of methods is frozen.";
-     * @require methods.isNotEmpty() : "The list of methods is not empty.";
+     * @require !methods.isEmpty() : "The list of methods is not empty.";
      * @require methods.doesNotContainNull() : "The list of methods does not contain null.";
      * @require Method.areSimilar(methods) : "The methods are similar to each other.";
      * @require methods.getNotNull(0).isOnClient() : "The methods are on a client.";

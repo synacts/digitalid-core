@@ -3,7 +3,9 @@ package net.digitalid.core.wrappers;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Exposed;
+import net.digitalid.core.annotations.Frozen;
 import net.digitalid.core.annotations.Immutable;
+import net.digitalid.core.annotations.NonNullableElements;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.collections.FreezableArrayList;
 import net.digitalid.core.collections.FreezableList;
@@ -48,10 +50,9 @@ public final class ListWrapper extends BlockWrapper {
     /**
      * Stores the elements of this list wrapper.
      * 
-     * @invariant elements.isFrozen() : "The elements are frozen.";
      * @invariant basedOnParameter(toBlock().getType(), elements) : "Each element is either null or based on the parameter of the block's type.";
      */
-    private final @Nonnull ReadOnlyList<Block> elements;
+    private final @Nonnull @Frozen ReadOnlyList<Block> elements;
     
     /**
      * Encodes the given elements into a new block of the given type.
@@ -147,11 +148,10 @@ public final class ListWrapper extends BlockWrapper {
      * 
      * @return the elements of the wrapped block.
      * 
-     * @ensure elements.isFrozen() : "The elements are frozen.";
      * @ensure basedOnParameter(toBlock().getType(), elements) : "Each element is either null or based on the parameter of the block's type.";
      */
     @Pure
-    public @Nonnull ReadOnlyList<Block> getElements() {
+    public @Nonnull @Frozen ReadOnlyList<Block> getElements() {
         return elements;
     }
     
@@ -162,15 +162,13 @@ public final class ListWrapper extends BlockWrapper {
      * 
      * @throws InvalidEncodingException if the elements contain null.
      * 
-     * @ensure elements.isFrozen() : "The elements are frozen.";
-     * @ensure elements.doesNotContainNull() : "The elements do not contain null.";
      * @ensure basedOnParameters(toBlock().getType(), elements) : "Each element is based on the parameter of the block's type.";
      */
     @Pure
-    public @Nonnull ReadOnlyList<Block> getElementsNotNull() throws InvalidEncodingException {
+    public @Nonnull @Frozen @NonNullableElements ReadOnlyList<Block> getElementsNotNull() throws InvalidEncodingException {
         final @Nonnull ReadOnlyList<Block> elements = getElements();
         
-        if (!elements.doesNotContainNull()) throw new InvalidEncodingException("The list contains null.");
+        if (elements.containsNull()) throw new InvalidEncodingException("The list contains null.");
         
         return elements;
     }

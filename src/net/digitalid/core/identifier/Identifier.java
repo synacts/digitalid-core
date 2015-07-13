@@ -46,15 +46,6 @@ public interface Identifier extends Blockable, SQLizable {
     public boolean isMapped() throws SQLException;
     
     /**
-     * Returns whether this identifier is not mapped.
-     * 
-     * @return whether this identifier is not mapped.
-     */
-    @Pure
-    @NonCommitting
-    public boolean isNotMapped() throws SQLException;
-    
-    /**
      * Returns the mapped identity of this identifier.
      * 
      * @return the mapped identity of this identifier.

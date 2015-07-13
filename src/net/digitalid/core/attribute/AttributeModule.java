@@ -324,7 +324,7 @@ public final class AttributeModule implements BothModule {
      * 
      * @return all the attributes of the given entity.
      * 
-     * @ensure return.isNotFrozen() : "The returned attributes are not frozen.";
+     * @ensure return.!isFrozen() : "The returned attributes are not frozen.";
      */
     @Pure
     @NonCommitting

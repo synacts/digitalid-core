@@ -16,7 +16,6 @@ import net.digitalid.core.identity.Type;
  * @version 1.0
  */
 @Documented
-@TargetType(Type.class)
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.CLASS)
 public @interface LoadedRecipient {}

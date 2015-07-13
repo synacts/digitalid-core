@@ -20,6 +20,7 @@ import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.NonExposedRecipient;
 import net.digitalid.core.annotations.Pure;
+import net.digitalid.core.annotations.ValidIndex;
 import net.digitalid.core.cryptography.InitializationVector;
 import net.digitalid.core.cryptography.SymmetricKey;
 import net.digitalid.core.database.Database;
@@ -34,7 +35,7 @@ import net.digitalid.core.interfaces.SQLizable;
  * A block is a sequence of bytes that is encoded according to some syntactic type.
  * In order to prevent unnecessary copying, this sequence is given by a byte array,
  * where an offset and a length is used to reference just a part of the array.
- * If a block is annotated as {@link Exposed exposed}, it {@link #isEncoding()}.
+ * If a block is annotated as {@link Exposed exposed}, it {@link #isEncoding() is encoding}.
  * <p>
  * <em>Important:</em> Only share {@link #isEncoded() encoded} blocks between threads!
  * 
@@ -282,14 +283,13 @@ public final class Block implements SQLizable, Cloneable {
      * 
      * @return the byte at the given index of this block.
      * 
-     * @require isNotEncoding() : "This method is not called during encoding.";
-     * @require index >= 0 && index < getLength() : "The index is valid.";
+     * @require !isEncoding() : "This method is not called during encoding.";
      * 
      * @ensure isEncoded() : "This block is encoded.";
      */
     @NonExposedRecipient
-    public @Nonnull byte getByte(int index) {
-        assert isNotEncoding() : "This method is not called during encoding.";
+    public @Nonnull byte getByte(@ValidIndex int index) {
+        assert !isEncoding() : "This method is not called during encoding.";
         assert index >= 0 && index < getLength() : "The index is valid.";
         
         ensureEncoded();
@@ -340,7 +340,7 @@ public final class Block implements SQLizable, Cloneable {
      * 
      * @return the given length of bytes from the given offset of this block.
      * 
-     * @require isNotEncoding() : "This method is not called during encoding.";
+     * @require !isEncoding() : "This method is not called during encoding.";
      * @require offset >= 0 : "The offset is non-negative.";
      * @require length >= 0 : "The length is non-negative.";
      * @require offset + length <= getLength() : "The offset and length are within this block.";
@@ -350,7 +350,7 @@ public final class Block implements SQLizable, Cloneable {
      */
     @NonExposedRecipient
     public @Capturable @Nonnull byte[] getBytes(int offset, int length) {
-        assert isNotEncoding() : "This method is not called during encoding.";
+        assert !isEncoding() : "This method is not called during encoding.";
         assert offset >= 0 : "The offset is non-negative.";
         assert length >= 0 : "The length is non-negative.";
         assert offset + length <= getLength() : "The offset and length are within this block.";
@@ -369,10 +369,9 @@ public final class Block implements SQLizable, Cloneable {
      * @param value the new value of the byte at the given index.
      * 
      * @require isEncoding() : "This method may only be called during encoding.";
-     * @require index >= 0 && index < getLength() : "The index is valid.";
      */
     @ExposedRecipient
-    public void setByte(int index, byte value) {
+    public void setByte(@ValidIndex int index, byte value) {
         assert isEncoding() : "This method may only be called during encoding.";
         assert index >= 0 && index < getLength() : "The index is valid.";
         
@@ -464,43 +463,17 @@ public final class Block implements SQLizable, Cloneable {
     }
     
     /**
-     * Returns whether this block is not encoded.
-     * 
-     * @return whether this block is not encoded.
-     * 
-     * @ensure return != isEncoded() : "A block is either encoded or not encoded.";
-     */
-    @Pure
-    public boolean isNotEncoded() {
-        return !encoded;
-    }
-    
-    /**
      * Returns whether this block is in the process of being encoded.
      * <p>
      * <em>Important:</em> If a parameter or local variable is not annotated as {@link Exposed exposed}, it is assumed that such a block is <em>not</em> in the process of being encoded.
      * 
      * @return whether this block is in the process of being encoded.
      * 
-     * @ensure return == isAllocated() && isNotEncoded() : "If this block is in the process of being encoded, it is already allocated but not yet encoded.";
+     * @ensure return == isAllocated() && !isEncoded() : "If this block is in the process of being encoded, it is already allocated but not yet encoded.";
      */
     @Pure
     public boolean isEncoding() {
-        return isAllocated() && isNotEncoded();
-    }
-    
-    /**
-     * Returns whether this block is not in the process of being encoded.
-     * <p>
-     * <em>Important:</em> If a parameter or local variable is not annotated as {@link Exposed exposed}, it is assumed that such a block is <em>not</em> in the process of being encoded.
-     * 
-     * @return whether this block is not in the process of being encoded.
-     * 
-     * @ensure return != isEncoding() : "A block is either in the process of being encoded or not.";
-     */
-    @Pure
-    public boolean isNotEncoding() {
-        return !isEncoding();
+        return isAllocated() && !isEncoded();
     }
     
     /**
@@ -508,16 +481,16 @@ public final class Block implements SQLizable, Cloneable {
      * 
      * @return this block.
      * 
-     * @require isNotEncoding() : "This method is not called during encoding.";
+     * @require !isEncoding() : "This method is not called during encoding.";
      * 
      * @ensure isEncoded() : "This block is encoded.";
      */
     @Pure
     @NonExposedRecipient
     public @Nonnull Block ensureEncoded() {
-        assert isNotEncoding() : "This method is not called during encoding.";
+        assert !isEncoding() : "This method is not called during encoding.";
         
-        if (isNotEncoded()) encode();
+        if (!isEncoded()) encode();
         return this;
     }
     
@@ -544,8 +517,6 @@ public final class Block implements SQLizable, Cloneable {
      * 
      * @return the SHA-256 hash of this block.
      * 
-     * @require isNotEncoding() : "This method is not called during encoding.";
-     * 
      * @ensure isEncoded() : "This block is encoded.";
      * @ensure return.signum() >= 0 : "The result is positive.";
      * @ensure return.bitLength() <= Parameters.HASH : "The length of the result is at most Parameters.HASH.";
@@ -553,7 +524,7 @@ public final class Block implements SQLizable, Cloneable {
     @Pure
     @NonExposedRecipient
     public @Nonnull BigInteger getHash() {
-        assert isNotEncoding() : "This method is not called during encoding.";
+        assert !isEncoding() : "This method is not called during encoding.";
         
         ensureEncoded();
         try {
@@ -593,7 +564,6 @@ public final class Block implements SQLizable, Cloneable {
      * @require length > 0 : "The length is positive.";
      * @require offset + length <= block.getLength() : "The indicated section may not exceed the given block.";
      * @require getLength() == length : "This block has to have the same length as the designated section.";
-     * @require isNotEncoding() : "This block is not in the process of being encoded.";
      */
     @NonExposedRecipient
     public void writeTo(@Exposed @Nonnull Block block, int offset, int length) {
@@ -602,7 +572,7 @@ public final class Block implements SQLizable, Cloneable {
         assert length > 0 : "The length is positive.";
         assert offset + length <= block.getLength() : "The indicated section may not exceed the given block.";
         assert getLength() == length : "This block has to have the same length as the designated section.";
-        assert isNotEncoding() : "This block is not in the process of being encoded.";
+        assert !isEncoding() : "This block is not in the process of being encoded.";
         
         if (isEncoded()) {
             System.arraycopy(this.bytes, this.offset, block.bytes, block.offset + offset, length);
@@ -703,7 +673,7 @@ public final class Block implements SQLizable, Cloneable {
     @NonCommitting
     @NonExposedRecipient
     public void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
-        assert isNotEncoding() : "This method is not called during encoding.";
+        assert !isEncoding() : "This method is not called during encoding.";
         
         if (Database.getConfiguration().supportsBinaryStream()) {
             preparedStatement.setBinaryStream(parameterIndex, getInputStream(), getLength());
@@ -719,11 +689,11 @@ public final class Block implements SQLizable, Cloneable {
      * @param preparedStatement the prepared statement whose parameter is to be set.
      * @param parameterIndex the index of the parameter to set.
      * 
-     * @require block == null || block.isNotEncoding() : "The block is either null or not encoding.";
+     * @require block == null || !block.isEncoding() : "The block is either null or not encoding.";
      */
     @NonCommitting
     public static void set(@Nullable Block block, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
-        assert block == null || block.isNotEncoding() : "The block is either null or not encoding.";
+        assert block == null || !block.isEncoding(): "The block is either null or not encoding.";
         
         if (block == null) preparedStatement.setNull(parameterIndex, Types.BLOB);
         else block.set(preparedStatement, parameterIndex);
@@ -739,7 +709,7 @@ public final class Block implements SQLizable, Cloneable {
     @Override
     @NonExposedRecipient
     public @Nonnull String toString() {
-        assert isNotEncoding() : "This method is not called during encoding.";
+        assert !isEncoding() : "This method is not called during encoding.";
         
         ensureEncoded();
         // See: 8.4.1. in http://www.postgresql.org/docs/9.0/static/datatype-binary.html
@@ -761,13 +731,11 @@ public final class Block implements SQLizable, Cloneable {
      * @param initializationVector the initialization vector for the encryption.
      * 
      * @return a new block containing the encryption of this block.
-     * 
-     * @require isNotEncoding() : "This method is not called during encoding.";
      */
     @Pure
     @NonExposedRecipient
     @Nonnull Block encrypt(@Nonnull SemanticType type, @Nonnull SymmetricKey symmetricKey, @Nonnull InitializationVector initializationVector) {
-        assert isNotEncoding() : "This method is not called during encoding.";
+        assert !isEncoding() : "This method is not called during encoding.";
         
         ensureEncoded();
         assert bytes != null : "The byte array is allocated.";
@@ -782,13 +750,11 @@ public final class Block implements SQLizable, Cloneable {
      * @param initializationVector the initialization vector for the decryption.
      * 
      * @return a new block containing the decryption of this block.
-     * 
-     * @require isNotEncoding() : "This method is not called during encoding.";
      */
     @Pure
     @NonExposedRecipient
     @Nonnull Block decrypt(@Nonnull SemanticType type, @Nonnull SymmetricKey symmetricKey, @Nonnull InitializationVector initializationVector) throws InvalidEncodingException {
-        assert isNotEncoding() : "This method is not called during encoding.";
+        assert !isEncoding() : "This method is not called during encoding.";
         
         ensureEncoded();
         assert bytes != null : "The byte array is allocated.";
@@ -801,8 +767,6 @@ public final class Block implements SQLizable, Cloneable {
      * 
      * @param outputStream the output stream to writeTo to.
      * @param close whether the output stream shall be closed.
-     * 
-     * @require isNotEncoding() : "This method is not called during encoding.";
      */
     @NonExposedRecipient
     public void writeTo(@Nonnull OutputStream outputStream, boolean close) throws IOException {
@@ -815,12 +779,9 @@ public final class Block implements SQLizable, Cloneable {
      * @param offset the offset of the bytes to write.
      * @param outputStream the output stream to write to.
      * @param close whether the output stream shall be closed.
-     * 
-     * @require isNotEncoding() : "This method is not called during encoding.";
-     * @require offset >= 0 && offset < getLength() : "The offset is valid.";
      */
     @NonExposedRecipient
-    public void writeTo(int offset, @Nonnull OutputStream outputStream, boolean close) throws IOException {
+    public void writeTo(@ValidIndex int offset, @Nonnull OutputStream outputStream, boolean close) throws IOException {
         writeTo(offset, getLength() - offset, outputStream, close);
     }
     
@@ -832,14 +793,13 @@ public final class Block implements SQLizable, Cloneable {
      * @param outputStream the output stream to write to.
      * @param close whether the output stream shall be closed.
      * 
-     * @require isNotEncoding() : "This method is not called during encoding.";
      * @require offset >= 0 : "The offset is non-negative.";
      * @require length > 0 : "The length is positive.";
      * @require offset + length <= getLength() : "The offset and length are within this block.";
      */
     @NonExposedRecipient
     public void writeTo(int offset, int length, @Nonnull OutputStream outputStream, boolean close) throws IOException {
-        assert isNotEncoding() : "This method is not called during encoding.";
+        assert !isEncoding() : "This method is not called during encoding.";
         assert offset >= 0 : "The offset is non-negative.";
         assert length > 0 : "The length is positive.";
         assert offset + length <= getLength() : "The offset and length are within this block.";
@@ -891,7 +851,6 @@ public final class Block implements SQLizable, Cloneable {
      * 
      * @return an input stream to read the given length directly from this block at the given offset.
      * 
-     * @require isNotEncoding() : "This method is not called during encoding.";
      * @require offset >= 0 : "The offset is non-negative.";
      * @require length > 0 : "The length is positive.";
      * @require offset + length <= getLength() : "The offset and length are within this block.";
@@ -899,7 +858,7 @@ public final class Block implements SQLizable, Cloneable {
     @Pure
     @NonExposedRecipient
     public @Nonnull InputStream getInputStream(int offset, int length) {
-        assert isNotEncoding() : "This method is not called during encoding.";
+        assert !isEncoding() : "This method is not called during encoding.";
         assert offset >= 0 : "The offset is non-negative.";
         assert length > 0 : "The length is positive.";
         assert offset + length <= getLength() : "The offset and length are within this block.";

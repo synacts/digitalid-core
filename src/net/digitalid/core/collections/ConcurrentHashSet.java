@@ -82,12 +82,6 @@ public class ConcurrentHashSet<E> extends AbstractSet<E> implements ConcurrentSe
     
     @Pure
     @Override
-    public boolean isNotEmpty() {
-        return !map.isEmpty();
-    }
-    
-    @Pure
-    @Override
     public boolean contains(@Nonnull Object object) {
         return map.containsKey(object);
     }

@@ -57,10 +57,10 @@ public class FreezableQuartet<E0, E1, E2, E3> extends FreezableTriplet<E0, E1, E
      * 
      * @param element3 the element to be set.
      * 
-     * @require isNotFrozen() : "This object is not frozen.";
+     * @require !isFrozen() : "This object is not frozen.";
      */
     public final void setElement3(E3 element3) {
-        assert isNotFrozen() : "This object is not frozen.";
+        assert !isFrozen() : "This object is not frozen.";
         
         this.element3 = element3;
     }

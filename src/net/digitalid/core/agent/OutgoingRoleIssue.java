@@ -142,7 +142,7 @@ final class OutgoingRoleIssue extends CoreServiceExternalAction {
     @Override
     @NonCommitting
     public @Nullable CoreServiceActionReply executeOnHost() throws PacketException, SQLException {
-        if (getSignatureNotNull().isNotSigned()) throw new PacketException(PacketError.AUTHORIZATION, "The issuance of a role has to be signed.");
+        if (!getSignatureNotNull().isSigned()) throw new PacketException(PacketError.AUTHORIZATION, "The issuance of a role has to be signed.");
         executeOnBoth();
         return null;
     }

@@ -286,7 +286,7 @@ public final class Synchronizer extends Thread {
                 SynchronizerModule.pendingActions.addFirst(action);
                 // TODO: Rewrite such that SynchronizerModule.getMethods() does the waiting.
                 final @Nonnull ReadOnlyList<Method> methods = SynchronizerModule.getMethods();
-                if (methods.isNotEmpty()) {
+                if (!methods.isEmpty()) {
                     try {
                         Logger.log(Level.DEBUGGING, "Synchronizer", "Create a new sender for the methods " + methods + ".");
                         threadPoolExecutor.execute(new Sender(methods));

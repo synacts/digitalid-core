@@ -8,7 +8,9 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Committing;
+import net.digitalid.core.annotations.Frozen;
 import net.digitalid.core.annotations.Immutable;
+import net.digitalid.core.annotations.NonNullableElements;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.collections.FreezableArray;
@@ -58,11 +60,9 @@ public final class ResponseAudit extends Audit {
     /**
      * Stores the trail of this audit.
      * 
-     * @invariant trail.isFrozen() : "The trail is frozen.";
-     * @invariant trail.doesNotContainNull() : "The trail does not contain null.";
      * @invariant for (Block block : trail) block.getType().isBasedOn(Packet.SIGNATURE) : "Each block of the trail is based on the packet signature type.";
      */
-    private final @Nonnull ReadOnlyList<Block> trail;
+    private final @Nonnull @Frozen @NonNullableElements ReadOnlyList<Block> trail;
     
     /**
      * Creates a new audit with the given times and trail.
@@ -71,15 +71,13 @@ public final class ResponseAudit extends Audit {
      * @param thisTime the time of this audit.
      * @param trail the trail of this audit.
      * 
-     * @require trail.isFrozen() : "The trail is frozen.";
-     * @require trail.doesNotContainNull() : "The trail does not contain null.";
      * @require for (Block block : trail) block.getType().isBasedOn(Packet.SIGNATURE) : "Each block of the trail is based on the packet signature type.";
      */
-    public ResponseAudit(@Nonnull Time lastTime, @Nonnull Time thisTime, @Nonnull ReadOnlyList<Block> trail) {
+    public ResponseAudit(@Nonnull Time lastTime, @Nonnull Time thisTime, @Nonnull @Frozen @NonNullableElements ReadOnlyList<Block> trail) {
         super(lastTime);
         
         assert trail.isFrozen() : "The trail is frozen.";
-        assert trail.doesNotContainNull() : "The trail does not contain null.";
+        assert !trail.containsNull() : "The trail does not contain null.";
         for (final @Nonnull Block block : trail) assert block.getType().isBasedOn(Packet.SIGNATURE) : "Each block of the trail is based on the packet signature type.";
         
         this.thisTime = thisTime;
@@ -112,12 +110,10 @@ public final class ResponseAudit extends Audit {
      * 
      * @return the trail of this audit.
      * 
-     * @ensure trail.isFrozen() : "The trail is frozen.";
-     * @ensure trail.doesNotContainNull() : "The trail does not contain null.";
      * @ensure for (Block block : return) block.getType().isBasedOn(Packet.SIGNATURE) : "Each block of the returned trail is based on the packet signature type.";
      */
     @Pure
-    public @Nonnull ReadOnlyList<Block> getTrail() {
+    public @Nonnull @Frozen @NonNullableElements ReadOnlyList<Block> getTrail() {
         return trail;
     }
     
@@ -159,7 +155,7 @@ public final class ResponseAudit extends Audit {
             Database.commit();
             
             final @Nonnull ReadOnlyList<BothModule> suspendModules = action.suspendModules();
-            if (suspendModules.isNotEmpty()) {
+            if (!suspendModules.isEmpty()) {
                 suspendedModules.addAll((FreezableList<BothModule>) suspendModules);
             }
             
@@ -203,7 +199,7 @@ public final class ResponseAudit extends Audit {
         Database.commit();
         
         suspendedModules.removeAll((FreezableSet<BothModule>) ignoredModules);
-        if (suspendedModules.freeze().isNotEmpty()) {
+        if (!suspendedModules.freeze().isEmpty()) {
             final @Nonnull FreezableList<Method> queries = new FreezableArrayList<>(suspendedModules.size());
             for (final @Nonnull BothModule module : suspendedModules) queries.add(new StateQuery(role, module));
             final @Nonnull Response response = Method.send(queries.freeze(), new RequestAudit(SynchronizerModule.getLastTime(role, service)));

@@ -5,10 +5,13 @@ import java.io.InputStream;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.core.annotations.Frozen;
 import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
+import net.digitalid.core.annotations.NonEmpty;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.annotations.RawRecipient;
+import net.digitalid.core.annotations.ValidIndex;
 import net.digitalid.core.collections.FreezableArrayList;
 import net.digitalid.core.collections.FreezableList;
 import net.digitalid.core.collections.ReadOnlyList;
@@ -38,19 +41,13 @@ public final class Response extends Packet {
     
     /**
      * Stores the replies of this response.
-     * 
-     * @invariant replies.isFrozen() : "The replies are frozen.";
-     * @invariant replies.isNotEmpty() : "The replies are not empty.";
      */
-    private @Nonnull FreezableList<Reply> replies;
+    private @Nonnull @Frozen @NonEmpty FreezableList<Reply> replies;
     
     /**
      * Stores the exceptions of this response.
-     * 
-     * @invariant exceptions.isFrozen() : "The exceptions are frozen.";
-     * @invariant exceptions.isNotEmpty() : "The exceptions are not empty.";
      */
-    private @Nonnull FreezableList<PacketException> exceptions;
+    private @Nonnull @Frozen @NonEmpty FreezableList<PacketException> exceptions;
     
     /**
      * Stores the signer of this response.
@@ -85,20 +82,17 @@ public final class Response extends Packet {
      * @param exceptions the exceptions to the methods of the corresponding request.
      * @param audit the audit since the last audit or null if no audit is appended.
      * 
-     * @require replies.isFrozen() : "The list of replies is frozen.";
-     * @require replies.isNotEmpty() : "The list of replies is not empty.";
-     * @require exceptions.isFrozen() : "The list of exceptions is frozen.";
      * @require replies.size() == exceptions.size() : "The number of replies and exceptions are the same.";
      * 
      * @ensure hasRequest() : "This response has a request.";
      * @ensure getSize() == request.getSize() : "The size of this response equals the size of the request.";
      */
     @NonCommitting
-    public Response(@Nonnull Request request, @Nonnull ReadOnlyList<Reply> replies, @Nonnull ReadOnlyList<PacketException> exceptions, @Nullable ResponseAudit audit) throws SQLException, IOException, PacketException, ExternalException {
+    public Response(@Nonnull Request request, @Nonnull @Frozen @NonEmpty ReadOnlyList<Reply> replies, @Nonnull @Frozen @NonEmpty ReadOnlyList<PacketException> exceptions, @Nullable ResponseAudit audit) throws SQLException, IOException, PacketException, ExternalException {
         super(new FreezablePair<>(replies, exceptions).freeze(), replies.size(), request.getRecipient(), null, request.getEncryption().getSymmetricKey(), request.getSubject(), audit);
         
         assert replies.isFrozen() : "The list of replies is frozen.";
-        assert replies.isNotEmpty() : "The list of replies is not empty.";
+        assert !replies.isEmpty() : "The list of replies is not empty.";
         assert exceptions.isFrozen() : "The list of exceptions is frozen.";
         assert replies.size() == exceptions.size() : "The number of replies and exceptions are the same.";
         
@@ -188,8 +182,8 @@ public final class Response extends Packet {
     @Override
     @RawRecipient
     @Nullable Block getBlock(int index) {
-        if (exceptions.isNotNull(index)) return exceptions.getNotNull(index).toBlock();
-        if (replies.isNotNull(index)) return replies.getNotNull(index).toBlock();
+        if (!exceptions.isNull(index)) return exceptions.getNotNull(index).toBlock();
+        if (!replies.isNull(index)) return replies.getNotNull(index).toBlock();
         return null;
     }
     
@@ -227,12 +221,10 @@ public final class Response extends Packet {
      * @param index the index of the reply which is to be checked.
      * 
      * @throws PacketException if the responding host encountered a packet error.
-     * 
-     * @require index >= 0 && index < getSize() : "The index is valid.";
      */
     @Pure
-    public void checkReply(int index) throws PacketException {
-        if (exceptions.isNotNull(index)) throw exceptions.getNotNull(index);
+    public void checkReply(@ValidIndex int index) throws PacketException {
+        if (!exceptions.isNull(index)) throw exceptions.getNotNull(index);
     }
     
     /**
@@ -243,11 +235,9 @@ public final class Response extends Packet {
      * @return the reply at the given position in this response or null if there was none.
      * 
      * @throws PacketException if the responding host encountered a packet error.
-     * 
-     * @require index >= 0 && index < getSize() : "The index is valid.";
      */
     @Pure
-    public @Nullable Reply getReply(int index) throws PacketException {
+    public @Nullable Reply getReply(@ValidIndex int index) throws PacketException {
         checkReply(index);
         return replies.get(index);
     }
@@ -261,12 +251,11 @@ public final class Response extends Packet {
      * 
      * @throws PacketException if the responding host encountered a packet error.
      * 
-     * @require index >= 0 && index < getSize() : "The index is valid.";
      * @require getReply(index) != null : "The reply at the given position is not null.";
      */
     @Pure
     @SuppressWarnings("unchecked")
-    public @Nonnull <T extends Reply> T getReplyNotNull(int index) throws PacketException {
+    public @Nonnull <T extends Reply> T getReplyNotNull(@ValidIndex int index) throws PacketException {
         final @Nullable Reply reply = getReply(index);
         assert reply != null : "The reply is not null.";
         return (T) reply;
@@ -277,11 +266,9 @@ public final class Response extends Packet {
      * 
      * @param index the index of the reply which is to be set.
      * @param reply the reply which is to set at the index.
-     * 
-     * @require index >= 0 && index < getSize() : "The index is valid.";
      */
     @RawRecipient
-    void setReply(int index, @Nonnull Reply reply) {
+    void setReply(@ValidIndex int index, @Nonnull Reply reply) {
         replies.set(index, reply);
     }
     
@@ -290,11 +277,9 @@ public final class Response extends Packet {
      * 
      * @param index the index of the exception which is to be set.
      * @param exception the exception which is to set at the index.
-     * 
-     * @require index >= 0 && index < getSize() : "The index is valid.";
      */
     @RawRecipient
-    void setException(int index, @Nonnull PacketException exception) {
+    void setException(@ValidIndex int index, @Nonnull PacketException exception) {
         exceptions.set(index, exception);
     }
     

@@ -61,7 +61,7 @@ final class Options {
      */
     private static @Nonnull Host selectHost() throws EscapeOptionException {
         final @Nonnull ReadOnlyList<Host> hosts = new FreezableArrayList<>((Collection<? extends Host>) Server.getHosts()).freeze();
-        if (hosts.isNotEmpty()) {
+        if (!hosts.isEmpty()) {
             Console.write("Please select one of the following hosts:");
             Console.write("- 0: [Escape]");
             int i = 1;

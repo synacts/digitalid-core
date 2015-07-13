@@ -86,15 +86,6 @@ public abstract class Type extends NonHostIdentityClass implements InternalNonHo
     }
     
     /**
-     * Returns whether the type declaration is not loaded.
-     * 
-     * @return whether the type declaration is not loaded.
-     */
-    public final boolean isNotLoaded() {
-        return !loaded;
-    }
-    
-    /**
      * Sets the type declaration to already being loaded.
      * 
      * @ensure isLoaded() : "The type declaration is loaded.";

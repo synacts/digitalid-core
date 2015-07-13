@@ -170,7 +170,7 @@ public final class ContactModule implements BothModule {
 //     * @param contact the contact whose preferences are to be returned.
 //     * @return the preferences of the given contact at the given identity.
 //     */
-//    @DoesNotCommit
+//    @NonCommitting
 //    static @Nonnull Set<SemanticType> getContactPreferences(@Nonnull NonHostIdentity identity, @Nonnull Person contact) throws SQLException {
 //        @Nonnull Set<SemanticType> preferences = getTypes(connection, identity, "contact_preference", "contact = " + contact);
 //        if (preferences.isEmpty() && contact.hasBeenMerged()) return getContactPreferences(connection, identity, contact);
@@ -184,7 +184,7 @@ public final class ContactModule implements BothModule {
 //     * @param contact the contact whose preferences are to be set.
 //     * @param preferences the preferences to be set for the given contact.
 //     */
-//    @DoesNotCommit
+//    @NonCommitting
 //    static void setContactPreferences(@Nonnull NonHostIdentity identity, @Nonnull Person contact, @Nonnull Set<SemanticType> preferences) throws SQLException {
 //        try (@Nonnull Statement statement = connection.createStatement()) {
 //            int updated = statement.executeUpdate("DELETE FROM contact_preference WHERE identity = " + identity + " AND contact = " + contact);
@@ -205,7 +205,7 @@ public final class ContactModule implements BothModule {
 //     * @param inherited whether the permissions of the supercontexts are inherited.
 //     * @return the permissions of the given contact at the given identity.
 //     */
-//    @DoesNotCommit
+//    @NonCommitting
 //    static @Nonnull Set<SemanticType> getContactPermissions(@Nonnull NonHostIdentity identity, @Nonnull Person contact, boolean inherited) throws SQLException {
 //        @Nonnull Set<SemanticType> permissions = getTypes(connection, identity, "contact_permission", "contact = " + contact);
 //        if (permissions.isEmpty() && contact.hasBeenMerged()) return getContactPermissions(connection, identity, contact, inherited);
@@ -225,7 +225,7 @@ public final class ContactModule implements BothModule {
 //     * @param contact the contact whose permissions are extended.
 //     * @param permissions the permissions to be added to the given contact.
 //     */
-//    @DoesNotCommit
+//    @NonCommitting
 //    static void addContactPermissions(@Nonnull NonHostIdentity identity, @Nonnull Person contact, @Nonnull Set<SemanticType> permissions) throws SQLException {
 //        try {
 //            addTypes(connection, identity, "contact_permission", "contact", contact.getNumber(), permissions);
@@ -242,7 +242,7 @@ public final class ContactModule implements BothModule {
 //     * @param contact the contact whose permissions are reduced.
 //     * @param permissions the permissions to be removed from the given contact.
 //     */
-//    @DoesNotCommit
+//    @NonCommitting
 //    static void removeContactPermissions(@Nonnull NonHostIdentity identity, @Nonnull Person contact, @Nonnull Set<SemanticType> permissions) throws SQLException {
 //        int removed = removeTypes(connection, identity, "contact_permission", "contact", contact.getNumber(), permissions);
 //        if (removed == 0 && !permissions.isEmpty() && contact.hasBeenMerged()) removeTypes(connection, identity, "contact_permission", "contact", contact.getNumber(), permissions);
@@ -256,7 +256,7 @@ public final class ContactModule implements BothModule {
 //     * @param inherited whether the authentications of the supercontexts are inherited.
 //     * @return the authentications of the given contact at the given identity.
 //     */
-//    @DoesNotCommit
+//    @NonCommitting
 //    static @Nonnull Set<SemanticType> getContactAuthentications(@Nonnull NonHostIdentity identity, @Nonnull Person contact, boolean inherited) throws SQLException {
 //        @Nonnull Set<SemanticType> authentications = getTypes(connection, identity, "contact_authentication", "contact = " + contact);
 //        if (authentications.isEmpty() && contact.hasBeenMerged()) return getContactAuthentications(connection, identity, contact, inherited);
@@ -276,7 +276,7 @@ public final class ContactModule implements BothModule {
 //     * @param contact the contact whose authentications are extended.
 //     * @param authentications the authentications to be added to the given contact.
 //     */
-//    @DoesNotCommit
+//    @NonCommitting
 //    static void addContactAuthentications(@Nonnull NonHostIdentity identity, @Nonnull Person contact, @Nonnull Set<SemanticType> authentications) throws SQLException {
 //        try {
 //            addTypes(connection, identity, "contact_authentication", "contact", contact.getNumber(), authentications);
@@ -293,7 +293,7 @@ public final class ContactModule implements BothModule {
 //     * @param contact the contact whose authentications are reduced.
 //     * @param authentications the authentications to be removed from the given contact.
 //     */
-//    @DoesNotCommit
+//    @NonCommitting
 //    static void removeContactAuthentications(@Nonnull NonHostIdentity identity, @Nonnull Person contact, @Nonnull Set<SemanticType> authentications) throws SQLException {
 //        int removed = removeTypes(connection, identity, "contact_authentication", "contact", contact.getNumber(), authentications);
 //        if (removed == 0 && contact.hasBeenMerged()) removeTypes(connection, identity, "contact_authentication", "contact", contact.getNumber(), authentications);

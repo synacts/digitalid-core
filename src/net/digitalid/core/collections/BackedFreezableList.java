@@ -7,9 +7,9 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Capturable;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.interfaces.Freezable;
-import net.digitalid.core.annotations.Immutable;
 
 /**
  * This class implements a {@link Set set} that can be {@link Freezable frozen}.
@@ -62,12 +62,6 @@ class BackedFreezableList<E> extends BackedFreezableCollection<E> implements Fre
     
     @Pure
     @Override
-    public boolean isNotNull(int index) {
-        return get(index) != null;
-    }
-    
-    @Pure
-    @Override
     public @Nonnull E getNotNull(int index) {
         final @Nullable E element = get(index);
         assert element != null : "The element at the given index is not null.";
@@ -107,41 +101,41 @@ class BackedFreezableList<E> extends BackedFreezableCollection<E> implements Fre
 
     
     /**
-     * @require isNotFrozen() : "This object is not frozen.";
+     * @require !isFrozen() : "This object is not frozen.";
      */
     @Override
     public @Nullable E set(int index, @Nullable E element) {
-        assert isNotFrozen() : "This object is not frozen.";
+        assert !isFrozen() : "This object is not frozen.";
         
         return list.set(index, element);
     }
     
     /**
-     * @require isNotFrozen() : "This object is not frozen.";
+     * @require !isFrozen() : "This object is not frozen.";
      */
     @Override
     public void add(int index, @Nullable E element) {
-        assert isNotFrozen() : "This object is not frozen.";
+        assert !isFrozen() : "This object is not frozen.";
         
         list.add(index, element);
     }
     
     /**
-     * @require isNotFrozen() : "This object is not frozen.";
+     * @require !isFrozen() : "This object is not frozen.";
      */
     @Override
     public E remove(int index) {
-        assert isNotFrozen() : "This object is not frozen.";
+        assert !isFrozen() : "This object is not frozen.";
         
         return list.remove(index);
     }
     
     /**
-     * @require isNotFrozen() : "This object is not frozen.";
+     * @require !isFrozen() : "This object is not frozen.";
      */
     @Override
     public boolean addAll(int index, @Nonnull Collection<? extends E> collection) {
-        assert isNotFrozen() : "This object is not frozen.";
+        assert !isFrozen() : "This object is not frozen.";
         
         return list.addAll(index, collection);
     }
@@ -149,22 +143,22 @@ class BackedFreezableList<E> extends BackedFreezableCollection<E> implements Fre
     
     @Pure
     @Override
-    public boolean doesNotContainNull() {
+    public boolean containsNull() {
         for (final @Nullable Object element : this) {
-            if (element == null) return false;
+            if (element == null) return true;
         }
-        return true;
+        return false;
     }
     
     @Pure
     @Override
-    public boolean doesNotContainDuplicates() {
+    public boolean containsDuplicates() {
         final @Nonnull HashSet<E> set = new HashSet<>(size());
         for (final @Nullable E element : this) {
-            if (set.contains(element)) return false;
+            if (set.contains(element)) return true;
             else set.add(element);
         }
-        return true;
+        return false;
     }
     
     

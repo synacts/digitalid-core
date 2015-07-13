@@ -122,7 +122,7 @@ public class FreezableAttributeTypeSet extends FreezableLinkedHashSet<SemanticTy
      * 
      * @param attributeSet the attribute type set to add to this attribute type set.
      * 
-     * @require isNotFrozen() : "This object is not frozen.";
+     * @require !isFrozen() : "This object is not frozen.";
      */
     public final void addAll(@Nonnull ReadOnlyAttributeTypeSet attributeSet) {
         for (final @Nonnull SemanticType type : attributeSet) {

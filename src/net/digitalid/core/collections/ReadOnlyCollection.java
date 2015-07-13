@@ -3,9 +3,9 @@ package net.digitalid.core.collections;
 import java.util.Collection;
 import javax.annotation.Nonnull;
 import net.digitalid.core.annotations.Capturable;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.interfaces.Freezable;
-import net.digitalid.core.annotations.Immutable;
 
 /**
  * This interface provides read-only access to {@link Collection collections} and should <em>never</em> be cast away (unless external code requires it).
@@ -33,28 +33,12 @@ public interface ReadOnlyCollection<E> extends ReadOnlyIterable<E> {
     public boolean isEmpty();
     
     /**
-     * Returns whether this collection is not empty.
-     * 
-     * @return whether this collection is not empty.
-     */
-    @Pure
-    public boolean isNotEmpty();
-    
-    /**
      * Returns whether this collection contains a single element.
      * 
      * @return whether this collection contains a single element.
      */
     @Pure
     public boolean isSingle();
-    
-    /**
-     * Returns whether this collection contains not a single element.
-     * 
-     * @return whether this collection contains not a single element.
-     */
-    @Pure
-    public boolean isNotSingle();
     
     /**
      * @see Collection#contains(java.lang.Object)
@@ -82,20 +66,20 @@ public interface ReadOnlyCollection<E> extends ReadOnlyIterable<E> {
     
     
     /**
-     * Returns whether this collection does not contain an element which is null.
+     * Returns whether this collection contains an element which is null.
      * 
-     * @return {@code true} if this collection does not contain null, {@code false} otherwise.
+     * @return {@code true} if this collection contains null, {@code false} otherwise.
      */
     @Pure
-    public boolean doesNotContainNull();
+    public boolean containsNull();
     
     /**
-     * Returns whether this collection does not contain duplicates (including null values).
+     * Returns whether this collection contains duplicates (including null values).
      * 
-     * @return {@code true} if this collection does not contain duplicates, {@code false} otherwise.
+     * @return {@code true} if this collection contains duplicates, {@code false} otherwise.
      */
     @Pure
-    public boolean doesNotContainDuplicates();
+    public boolean containsDuplicates();
     
     
     @Pure

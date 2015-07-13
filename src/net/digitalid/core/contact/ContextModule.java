@@ -367,7 +367,7 @@ public final class ContextModule implements BothModule {
 //     * @param context the context whose existence is to be checked.
 //     * @return whether the given context at the given identity exists.
 //     */
-//    @DoesNotCommit
+//    @NonCommitting
 //    static boolean contextExists(@Nonnull NonHostIdentity identity, @Nonnull Context context) throws SQLException {
 //        @Nonnull String query = "SELECT EXISTS(SELECT * FROM context_name WHERE identity = " + identity + " AND context = " + context + ")";
 //        try (@Nonnull Statement statement = connection.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(query)) {
@@ -384,7 +384,7 @@ public final class ContextModule implements BothModule {
 //     * @return the subcontexts of the given context at the given identity.
 //     * @require contextExists(connection, identity, context) : "The given context has to exist.";
 //     */
-//    @DoesNotCommit
+//    @NonCommitting
 //    static @Nonnull Set<Pair<Context, String>> getSubcontexts(@Nonnull NonHostIdentity identity, @Nonnull Context context) throws SQLException {
 //        assert contextExists(connection, identity, context) : "The given context has to exist.";
 //        
@@ -406,7 +406,7 @@ public final class ContextModule implements BothModule {
 //     * @return the name of the given context at the given identity.
 //     * @require contextExists(connection, identity, context) : "The given context has to exist.";
 //     */
-//    @DoesNotCommit
+//    @NonCommitting
 //    static @Nonnull String getContextName(@Nonnull NonHostIdentity identity, @Nonnull Context context) throws SQLException {
 //        assert contextExists(connection, identity, context) : "The given context has to exist.";
 //        
@@ -426,7 +426,7 @@ public final class ContextModule implements BothModule {
 //     * @require contextExists(connection, identity, context.getSupercontext()) : "The supercontext of the given context has to exist.";
 //     * @require name.length() <= 50 : "The context name may have at most 50 characters.";
 //     */
-//    @DoesNotCommit
+//    @NonCommitting
 //    static void setContextName(@Nonnull NonHostIdentity identity, @Nonnull Context context, @Nonnull String name) throws SQLException {
 //        assert contextExists(connection, identity, context.getSupercontext()) : "The supercontext of the given context has to exist.";
 //        assert name.length() <= 50 : "The context name may have at most 50 characters.";
@@ -468,7 +468,7 @@ public final class ContextModule implements BothModule {
 //     * @param condition a condition to filter the rows of the given database table.
 //     * @return the types from the given table with the given condition of the given identity.
 //     */
-//    @DoesNotCommit
+//    @NonCommitting
 //    private static @Nonnull Set<SemanticType> getTypes(@Nonnull NonHostIdentity identity, @Nonnull String table, @Nonnull String condition) throws SQLException {
 //        @Nonnull String query = "SELECT general_identity.identity, general_identity.category, general_identity.address FROM " + table + " JOIN general_identity ON " + table + ".type = general_identity.identity WHERE " + table + ".identity = " + identity + " AND " + table + "." + condition;
 //        try (@Nonnull Statement statement = connection.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(query)) {
@@ -494,7 +494,7 @@ public final class ContextModule implements BothModule {
 //     * @param value the value to fill into the given column for every added type.
 //     * @param types the types to be added to the given table of the given identity.
 //     */
-//    @DoesNotCommit
+//    @NonCommitting
 //    private static void addTypes(@Nonnull NonHostIdentity identity, @Nonnull String table, @Nonnull String column, long value, @Nonnull Set<SemanticType> types) throws SQLException {
 //        @Nonnull String statement = "INSERT " + Database.IGNORE + " INTO " + table + " (identity, " + column + ", type) VALUES (?, ?, ?)";
 //        try (@Nonnull PreparedStatement preparedStatement = connection.prepareStatement(statement)) {
@@ -525,7 +525,7 @@ public final class ContextModule implements BothModule {
 //     * @param types the types to be removed from the given table of the given identity.
 //     * @return the number of rows deleted from the database.
 //     */
-//    @DoesNotCommit
+//    @NonCommitting
 //    private static int removeTypes(@Nonnull NonHostIdentity identity, @Nonnull String table, @Nonnull String column, long value, @Nonnull Set<SemanticType> types) throws SQLException {
 //        @Nonnull String statement = "DELETE FROM " + table + " WHERE identity = ? AND " + column + " = ? AND type = ?";
 //        try (@Nonnull PreparedStatement preparedStatement = connection.prepareStatement(statement)) {
@@ -560,7 +560,7 @@ public final class ContextModule implements BothModule {
 //     * @return the permissions of the given context at the given identity.
 //     * @require contextExists(connection, identity, context) : "The given context has to exist.";
 //     */
-//    @DoesNotCommit
+//    @NonCommitting
 //    static @Nonnull Set<SemanticType> getContextPermissions(@Nonnull NonHostIdentity identity, @Nonnull Context context, boolean inherited) throws SQLException {
 //        assert contextExists(connection, identity, context) : "The given context has to exist.";
 //        
@@ -575,7 +575,7 @@ public final class ContextModule implements BothModule {
 //     * @param permissions the permissions to be added to the given context.
 //     * @require contextExists(connection, identity, context) : "The given context has to exist.";
 //     */
-//    @DoesNotCommit
+//    @NonCommitting
 //    static void addContextPermissions(@Nonnull NonHostIdentity identity, @Nonnull Context context, @Nonnull Set<SemanticType> permissions) throws SQLException {
 //        assert contextExists(connection, identity, context) : "The given context has to exist.";
 //        
@@ -590,7 +590,7 @@ public final class ContextModule implements BothModule {
 //     * @param permissions the permissions to be removed from the given context.
 //     * @require contextExists(connection, identity, context) : "The given context has to exist.";
 //     */
-//    @DoesNotCommit
+//    @NonCommitting
 //    static void removeContextPermissions(@Nonnull NonHostIdentity identity, @Nonnull Context context, @Nonnull Set<SemanticType> permissions) throws SQLException {
 //        assert contextExists(connection, identity, context) : "The given context has to exist.";
 //        
@@ -606,7 +606,7 @@ public final class ContextModule implements BothModule {
 //     * @return the authentications of the given context at the given identity.
 //     * @require contextExists(connection, identity, context) : "The given context has to exist.";
 //     */
-//    @DoesNotCommit
+//    @NonCommitting
 //    static @Nonnull Set<SemanticType> getContextAuthentications(@Nonnull NonHostIdentity identity, @Nonnull Context context, boolean inherited) throws SQLException {
 //        assert contextExists(connection, identity, context) : "The given context has to exist.";
 //        
@@ -621,7 +621,7 @@ public final class ContextModule implements BothModule {
 //     * @param authentications the authentications to be added to the given context.
 //     * @require contextExists(connection, identity, context) : "The given context has to exist.";
 //     */
-//    @DoesNotCommit
+//    @NonCommitting
 //    static void addContextAuthentications(@Nonnull NonHostIdentity identity, @Nonnull Context context, @Nonnull Set<SemanticType> authentications) throws SQLException {
 //        assert contextExists(connection, identity, context) : "The given context has to exist.";
 //        
@@ -636,7 +636,7 @@ public final class ContextModule implements BothModule {
 //     * @param authentications the authentications to be removed from the given context.
 //     * @require contextExists(connection, identity, context) : "The given context has to exist.";
 //     */
-//    @DoesNotCommit
+//    @NonCommitting
 //    static void removeContextAuthentications(@Nonnull NonHostIdentity identity, @Nonnull Context context, @Nonnull Set<SemanticType> authentications) throws SQLException {
 //        assert contextExists(connection, identity, context) : "The given context has to exist.";
 //        
@@ -650,7 +650,7 @@ public final class ContextModule implements BothModule {
 //     * @param context the context to be removed.
 //     * @require contextExists(connection, identity, context) : "The given context has to exist.";
 //     */
-//    @DoesNotCommit
+//    @NonCommitting
 //    static void removeContext(@Nonnull NonHostIdentity identity, @Nonnull Context context) throws SQLException {
 //        assert contextExists(connection, identity, context) : "The given context has to exist.";
 //        
@@ -678,7 +678,7 @@ public final class ContextModule implements BothModule {
 //     * @return the contacts in the given context at the given identity.
 //     * @require contextExists(connection, identity, context) : "The given context has to exist.";
 //     */
-//    @DoesNotCommit
+//    @NonCommitting
 //    static @Nonnull Set<Person> getContacts(@Nonnull NonHostIdentity identity, @Nonnull Context context, boolean recursive) throws SQLException {
 //        assert contextExists(connection, identity, context) : "The given context has to exist.";
 //        
@@ -704,7 +704,7 @@ public final class ContextModule implements BothModule {
 //     * @param context the context to which the contacts are to be added.
 //     * @param contacts the contacts to add to the given context.
 //     */
-//    @DoesNotCommit
+//    @NonCommitting
 //    static void addContacts(@Nonnull NonHostIdentity identity, @Nonnull Context context, @Nonnull Set<Person> contacts) throws SQLException {
 //        assert contextExists(connection, identity, context) : "The given context has to exist.";
 //        
@@ -735,7 +735,7 @@ public final class ContextModule implements BothModule {
 //     * @param contacts the contacts to be removed from the given context.
 //     * @require contextExists(connection, identity, context) : "The given context has to exist.";
 //     */
-//    @DoesNotCommit
+//    @NonCommitting
 //    static void removeContacts(@Nonnull NonHostIdentity identity, @Nonnull Context context, @Nonnull Set<Person> contacts) throws SQLException {
 //        assert contextExists(connection, identity, context) : "The given context has to exist.";
 //        
@@ -779,7 +779,7 @@ public final class ContextModule implements BothModule {
 //     * @param contact the contact whose contexts are to be returned.
 //     * @return the contexts of the given contact at the given identity.
 //     */
-//    @DoesNotCommit
+//    @NonCommitting
 //    static @Nonnull Set<Context> getContexts(@Nonnull NonHostIdentity identity, @Nonnull Person contact) throws SQLException {
 //        @Nonnull String query = "SELECT context FROM context_contact WHERE identity = " + identity + " AND contact = " + contact;
 //        try (@Nonnull Statement statement = connection.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(query)) {
@@ -800,7 +800,7 @@ public final class ContextModule implements BothModule {
 //     * @param context the context which is to be checked.
 //     * @return whether the given contact is in the given context of the given identity.
 //     */
-//    @DoesNotCommit
+//    @NonCommitting
 //    public static boolean isInContext(@Nonnull NonHostIdentity identity, @Nonnull Person contact, @Nonnull Context context) throws SQLException {
 //        @Nonnull String query = "SELECT EXISTS (SELECT * FROM context_contact WHERE identity = " + identity + " AND context & " + context.getMask() + " = " + context + " AND contact = " + contact;
 //        try (@Nonnull Statement statement = connection.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(query)) {

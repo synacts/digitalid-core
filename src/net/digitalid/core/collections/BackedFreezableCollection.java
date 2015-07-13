@@ -5,10 +5,10 @@ import java.util.HashSet;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Capturable;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonFrozenRecipient;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.interfaces.Freezable;
-import net.digitalid.core.annotations.Immutable;
 
 /**
  * This class implements a {@link Collection collection} that can be {@link Freezable frozen}.
@@ -51,12 +51,6 @@ class BackedFreezableCollection<E> implements FreezableCollection<E> {
         return freezable.isFrozen();
     }
     
-    @Pure
-    @Override
-    public boolean isNotFrozen() {
-        return freezable.isNotFrozen();
-    }
-    
     @Override
     public @Nonnull ReadOnlyCollection<E> freeze() {
         freezable.freeze();
@@ -91,20 +85,8 @@ class BackedFreezableCollection<E> implements FreezableCollection<E> {
     
     @Pure
     @Override
-    public boolean isNotEmpty() {
-        return !collection.isEmpty();
-    }
-    
-    @Pure
-    @Override
     public boolean isSingle() {
         return size() == 1;
-    }
-    
-    @Pure
-    @Override
-    public boolean isNotSingle() {
-        return size() != 1;
     }
     
     @Pure
@@ -140,29 +122,29 @@ class BackedFreezableCollection<E> implements FreezableCollection<E> {
     
     @Pure
     @Override
-    public boolean doesNotContainNull() {
+    public boolean containsNull() {
         for (final @Nullable E element : this) {
-            if (element == null) return false;
+            if (element == null) return true;
         }
-        return true;
+        return false;
     }
     
     @Pure
     @Override
-    public boolean doesNotContainDuplicates() {
+    public boolean containsDuplicates() {
         final @Nonnull HashSet<E> set = new HashSet<>(size());
         for (final @Nullable E element : this) {
-            if (set.contains(element)) return false;
+            if (set.contains(element)) return true;
             else set.add(element);
         }
-        return true;
+        return false;
     }
     
     
     @Override
     @NonFrozenRecipient
     public boolean add(@Nullable E element) {
-        assert isNotFrozen() : "This object is not frozen.";
+        assert !isFrozen() : "This object is not frozen.";
         
         return collection.add(element);
     }
@@ -170,7 +152,7 @@ class BackedFreezableCollection<E> implements FreezableCollection<E> {
     @Override
     @NonFrozenRecipient
     public boolean addAll(@Nonnull Collection<? extends E> c) {
-        assert isNotFrozen() : "This object is not frozen.";
+        assert !isFrozen() : "This object is not frozen.";
         
         return collection.addAll(c);
     }
@@ -178,7 +160,7 @@ class BackedFreezableCollection<E> implements FreezableCollection<E> {
     @Override
     @NonFrozenRecipient
     public boolean remove(@Nullable Object object) {
-        assert isNotFrozen() : "This object is not frozen.";
+        assert !isFrozen() : "This object is not frozen.";
         
         return collection.remove(object);
     }
@@ -186,7 +168,7 @@ class BackedFreezableCollection<E> implements FreezableCollection<E> {
     @Override
     @NonFrozenRecipient
     public boolean removeAll(@Nonnull Collection<?> c) {
-        assert isNotFrozen() : "This object is not frozen.";
+        assert !isFrozen() : "This object is not frozen.";
         
         return collection.removeAll(c);
     }
@@ -194,7 +176,7 @@ class BackedFreezableCollection<E> implements FreezableCollection<E> {
     @Override
     @NonFrozenRecipient
     public boolean retainAll(@Nonnull Collection<?> c) {
-        assert isNotFrozen() : "This object is not frozen.";
+        assert !isFrozen() : "This object is not frozen.";
         
         return collection.retainAll(c);
     }
@@ -202,7 +184,7 @@ class BackedFreezableCollection<E> implements FreezableCollection<E> {
     @Override
     @NonFrozenRecipient
     public void clear() {
-        assert isNotFrozen() : "This object is not frozen.";
+        assert !isFrozen() : "This object is not frozen.";
         
         collection.clear();
     }

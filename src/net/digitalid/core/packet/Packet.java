@@ -8,8 +8,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
+import net.digitalid.core.annotations.Positive;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.annotations.RawRecipient;
+import net.digitalid.core.annotations.ValidIndex;
 import net.digitalid.core.cache.AttributesQuery;
 import net.digitalid.core.cache.AttributesReply;
 import net.digitalid.core.certificate.CertificateIssue;
@@ -202,7 +204,7 @@ public abstract class Packet {
         @Nullable Audit audit = null;
         @Nullable SignatureWrapper reference = null;
         for (int i = 0; i < size; i++) {
-            if (elements.isNotNull(i)) {
+            if (!elements.isNull(i)) {
                 final @Nonnull SignatureWrapper signature;
                 try { signature = verified ? SignatureWrapper.decode(elements.getNotNull(i), account) : SignatureWrapper.decodeWithoutVerifying(elements.getNotNull(i), false, account); } catch (InvalidEncodingException | InvalidSignatureException exception) { throw new PacketException(PacketError.SIGNATURE, "A signature is invalid.", exception, isResponse); }
                 try { signature.checkRecency(); } catch (InactiveSignatureException exception) { throw new PacketException(PacketError.SIGNATURE, "One of the signatures is no longer active.", exception, isResponse); }
@@ -210,7 +212,7 @@ public abstract class Packet {
                 final @Nullable Audit _audit = signature.getAudit();
                 if (_audit != null) {
                     audit = isResponse ? _audit.toResponseAudit() : _audit.toRequestAudit();
-                    if (signature.isNotSigned()) throw new PacketException(PacketError.SIGNATURE, "A packet that contains an audit has to be signed.");
+                    if (!signature.isSigned()) throw new PacketException(PacketError.SIGNATURE, "A packet that contains an audit has to be signed.");
                 }
                 
                 final @Nullable Block element = signature.getElement();
@@ -336,11 +338,9 @@ public abstract class Packet {
      * Returns the number of handlers and exceptions.
      * 
      * @return the number of handlers and exceptions.
-     * 
-     * @ensure return > 0 : "The size is always positive.";
      */
     @Pure
-    public final int getSize() {
+    public final @Positive int getSize() {
         return size;
     }
     
@@ -376,12 +376,10 @@ public abstract class Packet {
      * @param index the index of the block which is to be returned.
      * 
      * @return the handler or exception at the given position as a block.
-     * 
-     * @require index >= 0 && index < getSize() : "The index is valid.";
      */
     @Pure
     @RawRecipient
-    abstract @Nullable Block getBlock(int index);
+    abstract @Nullable Block getBlock(@ValidIndex int index);
     
     /**
      * Returns the signature of the given compression and audit.

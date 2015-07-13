@@ -133,7 +133,7 @@ public final class RoleModule {
      * 
      * @return the non-native roles of the given role.
      * 
-     * @ensure return.isNotFrozen() : "The returned list is not frozen.";
+     * @ensure return.!isFrozen() : "The returned list is not frozen.";
      * @ensure return.doesNotContainNull() : "The returned list does not contain null.";
      * @ensure return.doesNotContainDuplicates() : "The returned list does not contain duplicates.";
      */
@@ -164,7 +164,7 @@ public final class RoleModule {
      * 
      * @return the native roles of the given client.
      * 
-     * @ensure return.isNotFrozen() : "The returned list is not frozen.";
+     * @ensure return.!isFrozen() : "The returned list is not frozen.";
      * @ensure return.doesNotContainNull() : "The returned list does not contain null.";
      * @ensure return.doesNotContainDuplicates() : "The returned list does not contain duplicates.";
      */

@@ -6,10 +6,12 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Capturable;
 import net.digitalid.core.annotations.Captured;
+import net.digitalid.core.annotations.Immutable;
+import net.digitalid.core.annotations.NonFrozenRecipient;
 import net.digitalid.core.annotations.Pure;
+import net.digitalid.core.annotations.ValidIndex;
 import net.digitalid.core.interfaces.Freezable;
 import net.digitalid.core.interfaces.FreezableObject;
-import net.digitalid.core.annotations.Immutable;
 
 /**
  * This class models {@link Freezable freezable} arrays.
@@ -50,7 +52,7 @@ public class FreezableArray<E> extends FreezableObject implements ReadOnlyArray<
     
     @Override
     public @Nonnull ReadOnlyArray<E> freeze() {
-        if (isNotFrozen()) {
+        if (!isFrozen()) {
             super.freeze();
             for (final @Nullable E element : array) {
                 if (element instanceof Freezable) {
@@ -86,12 +88,6 @@ public class FreezableArray<E> extends FreezableObject implements ReadOnlyArray<
     
     @Pure
     @Override
-    public boolean isNotNull(int index) {
-        return get(index) != null;
-    }
-    
-    @Pure
-    @Override
     public @Nonnull E getNotNull(int index) {
         @Nullable E element = get(index);
         assert element != null : "The element at the given index is not null.";
@@ -104,12 +100,10 @@ public class FreezableArray<E> extends FreezableObject implements ReadOnlyArray<
      * 
      * @param index the index of the element to be set.
      * @param element the new value to replace the element with.
-     * 
-     * @require isNotFrozen() : "This object is not frozen.";
-     * @require index >= 0 && index < size() : "The index is valid.";
      */
-    public void set(int index, @Nullable E element) {
-        assert isNotFrozen() : "This object is not frozen.";
+    @NonFrozenRecipient
+    public void set(@ValidIndex int index, @Nullable E element) {
+        assert !isFrozen() : "This object is not frozen.";
         assert index >= 0 && index < size() : "The index is valid.";
         
         array[index] = element;
@@ -124,22 +118,22 @@ public class FreezableArray<E> extends FreezableObject implements ReadOnlyArray<
     
     @Pure
     @Override
-    public boolean doesNotContainNull() {
+    public boolean containsNull() {
         for (final @Nullable E element : this) {
-            if (element == null) return false;
+            if (element == null) return true;
         }
-        return true;
+        return false;
     }
     
     @Pure
     @Override
-    public boolean doesNotContainDuplicates() {
+    public boolean containsDuplicates() {
         final @Nonnull HashSet<E> set = new HashSet<>(size());
         for (final @Nullable E element : this) {
-            if (set.contains(element)) return false;
+            if (set.contains(element)) return true;
             else set.add(element);
         }
-        return true;
+        return false;
     }
     
     

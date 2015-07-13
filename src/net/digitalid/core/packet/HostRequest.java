@@ -43,7 +43,7 @@ public final class HostRequest extends Request {
      * @param signer the identifier of the signing host.
      * 
      * @require methods.isFrozen() : "The list of methods is frozen.";
-     * @require methods.isNotEmpty() : "The list of methods is not empty.";
+     * @require !methods.isEmpty() : "The list of methods is not empty.";
      * @require methods.doesNotContainNull() : "The list of methods does not contain null.";
      * @require Method.areSimilar(methods) : "The methods are similar to each other.";
      * @require Server.hasHost(signer.getHostIdentifier()) : "The host of the signer is running on this server.";

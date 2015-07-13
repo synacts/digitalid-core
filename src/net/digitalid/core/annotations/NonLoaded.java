@@ -5,7 +5,6 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import net.digitalid.core.credential.Credential;
 import net.digitalid.core.identity.Type;
 
 /**
@@ -17,7 +16,7 @@ import net.digitalid.core.identity.Type;
  * @version 1.0
  */
 @Documented
-@TargetType(Credential.class)
+@TargetType(Type.class)
 @Retention(RetentionPolicy.CLASS)
 @Target({ElementType.FIELD, ElementType.PARAMETER, ElementType.LOCAL_VARIABLE, ElementType.METHOD, ElementType.CONSTRUCTOR})
 public @interface NonLoaded {}

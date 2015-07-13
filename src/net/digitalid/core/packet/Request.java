@@ -6,10 +6,14 @@ import java.net.Socket;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.core.annotations.Frozen;
 import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
+import net.digitalid.core.annotations.NonEmpty;
+import net.digitalid.core.annotations.NonNullableElements;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.annotations.RawRecipient;
+import net.digitalid.core.annotations.ValidIndex;
 import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.cache.AttributesQuery;
 import net.digitalid.core.cache.Cache;
@@ -63,11 +67,9 @@ public class Request extends Packet {
     /**
      * Stores the methods of this request.
      * 
-     * @invariant methods.isFrozen() : "The list of methods is frozen.";
-     * @invariant methods.isNotEmpty() : "The list of methods is not empty.";
      * @invariant Method.areSimilar(methods) : "All methods are similar and not null.";
      */
-    private @Nonnull FreezableList<Method> methods;
+    private @Nonnull @Frozen @NonNullableElements @NonEmpty FreezableList<Method> methods;
     
     /**
      * Stores the recipient of this request.
@@ -103,13 +105,10 @@ public class Request extends Packet {
      * @param recipient the recipient of this request.
      * @param subject the subject of this request.
      * 
-     * @require methods.isFrozen() : "The list of methods is frozen.";
-     * @require methods.isNotEmpty() : "The list of methods is not empty.";
-     * @require methods.doesNotContainNull() : "The list of methods does not contain null.";
      * @require Method.areSimilar(methods) : "The methods are similar to each other.";
      */
     @NonCommitting
-    public Request(@Nonnull ReadOnlyList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject) throws SQLException, IOException, PacketException, ExternalException {
+    public Request(@Nonnull @Frozen @NonEmpty @NonNullableElements ReadOnlyList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject) throws SQLException, IOException, PacketException, ExternalException {
         this(methods, recipient, new SymmetricKey(), subject, null, null, 0);
     }
     
@@ -129,8 +128,8 @@ public class Request extends Packet {
         super(methods, methods.size(), field, recipient, symmetricKey, subject, audit);
         
         assert methods.isFrozen() : "The list of methods is frozen.";
-        assert methods.isNotEmpty() : "The list of methods is not empty.";
-        assert methods.doesNotContainNull() : "The list of methods does not contain null.";
+        assert !methods.isEmpty() : "The list of methods is not empty.";
+        assert !methods.containsNull() : "The list of methods does not contain null.";
         assert Method.areSimilar(methods) : "The methods are similar to each other.";
         
         if (iteration == 5) throw new PacketException(PacketError.EXTERNAL, "The resending of a request was triggered five times.");
@@ -205,11 +204,9 @@ public class Request extends Packet {
      * @param index the index of the method which is to be returned.
      * 
      * @return the method at the given position in this request.
-     * 
-     * @require index >= 0 && index < getSize() : "The index is valid.";
      */
     @Pure
-    public final @Nonnull Method getMethod(int index) {
+    public final @Nonnull Method getMethod(@ValidIndex int index) {
         return methods.getNotNull(index);
     }
     
@@ -218,11 +215,9 @@ public class Request extends Packet {
      * 
      * @param index the index of the method which is to be set.
      * @param method the method which is to set at the index.
-     * 
-     * @require index >= 0 && index < getSize() : "The index is valid.";
      */
     @RawRecipient
-    final void setMethod(int index, @Nonnull Method method) {
+    final void setMethod(@ValidIndex int index, @Nonnull Method method) {
         methods.set(index, method);
     }
     

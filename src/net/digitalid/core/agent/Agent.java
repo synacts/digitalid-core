@@ -140,18 +140,6 @@ public abstract class Agent extends NonHostConcept implements Blockable, SQLizab
     }
     
     /**
-     * Returns whether this agent is not removed.
-     * <p>
-     * <em>Important:</em> If the agent comes from a block, this information is not to be trusted!
-     * 
-     * @return whether this agent is not removed.
-     */
-    @Pure
-    public final boolean isNotRemoved() {
-        return !removed;
-    }
-    
-    /**
      * Checks that this agent is not removed and throws a {@link PacketException} otherwise.
      */
     @Pure
@@ -162,12 +150,12 @@ public abstract class Agent extends NonHostConcept implements Blockable, SQLizab
     /**
      * Removes this agent from the database by marking it as being removed.
      * 
-     * @require isOnClient() : "This agent is on a client.";
-     * @require isNotRemoved() : "This agent is not removed.";
+     * @require !isRemoved() : "This agent is not removed.";
      */
     @Committing
+    @OnlyForClients
     public final void remove() throws SQLException {
-        assert isNotRemoved() : "This agent is not removed.";
+        assert !isRemoved() : "This agent is not removed.";
         
         Synchronizer.execute(new AgentRemove(this));
     }
@@ -362,7 +350,7 @@ public abstract class Agent extends NonHostConcept implements Blockable, SQLizab
      * 
      * @return the agents that are weaker than this agent.
      * 
-     * @ensure return.isNotFrozen() : "The list is not frozen.";
+     * @ensure return.!isFrozen() : "The list is not frozen.";
      */
     @Pure
     @NonCommitting

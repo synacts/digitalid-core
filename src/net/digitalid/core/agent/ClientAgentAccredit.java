@@ -123,7 +123,7 @@ public final class ClientAgentAccredit extends CoreServiceInternalAction {
         final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(5);
         
         this.clientAgent = Agent.get(entity.toNonHostEntity(), elements.getNotNull(0)).toClientAgent();
-        if (clientAgent.isNotRemoved()) throw new InvalidEncodingException("The client agent has to be removed.");
+        if (!clientAgent.isRemoved()) throw new InvalidEncodingException("The client agent has to be removed.");
         
         this.permissions = new FreezableAgentPermissions(elements.getNotNull(1)).freeze();
         

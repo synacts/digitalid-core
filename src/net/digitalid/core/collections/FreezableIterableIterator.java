@@ -4,9 +4,9 @@ import java.util.Iterator;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Capturable;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.interfaces.Freezable;
-import net.digitalid.core.annotations.Immutable;
 
 /**
  * This interface models an {@link Iterator iterator} that can be {@link Freezable frozen}.
@@ -51,12 +51,6 @@ class FreezableIterableIterator<E> implements FreezableIterator<E> {
         return iterable.isFrozen();
     }
     
-    @Pure
-    @Override
-    public final boolean isNotFrozen() {
-        return iterable.isNotFrozen();
-    }
-    
     @Override
     public @Nonnull ReadOnlyIterator<E> freeze() {
         iterable.freeze();
@@ -77,11 +71,11 @@ class FreezableIterableIterator<E> implements FreezableIterator<E> {
     
     
     /**
-     * @require isNotFrozen() : "This object is not frozen.";
+     * @require !isFrozen() : "This object is not frozen.";
      */
     @Override
     public void remove() {
-        assert isNotFrozen() : "This object is not frozen.";
+        assert !isFrozen() : "This object is not frozen.";
         
         iterator.remove();
     }

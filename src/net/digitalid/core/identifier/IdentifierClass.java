@@ -135,13 +135,6 @@ public abstract class IdentifierClass implements Identifier {
         return Mapper.isMapped(this);
     }
     
-    @Pure
-    @Override
-    @NonCommitting
-    public final boolean isNotMapped() throws SQLException {
-        return Mapper.isNotMapped(this);
-    }
-    
     
     @Pure
     @Override

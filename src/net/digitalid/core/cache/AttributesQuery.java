@@ -58,7 +58,7 @@ public final class AttributesQuery extends CoreServiceExternalQuery {
      * Stores the attribute types that are queried.
      * 
      * @invariant attributeTypes.isFrozen() : "The attribute types are frozen.";
-     * @invariant attributeTypes.isNotEmpty() : "The attribute types are not empty.";
+     * @invariant !attributeTypes.isEmpty() : "The attribute types are not empty.";
      */
     private final @Nonnull ReadOnlyAttributeTypeSet attributeTypes;
     
@@ -76,13 +76,13 @@ public final class AttributesQuery extends CoreServiceExternalQuery {
      * @param published whether the published values are queried.
      * 
      * @require attributeTypes.isFrozen() : "The attribute types are frozen.";
-     * @require attributeTypes.isNotEmpty() : "The attribute types are not empty.";
+     * @require !attributeTypes.isEmpty() : "The attribute types are not empty.";
      */
     public AttributesQuery(@Nullable Role role, @Nonnull InternalIdentifier subject, @Nonnull ReadOnlyAttributeTypeSet attributeTypes, boolean published) {
         super(role, subject);
         
         assert attributeTypes.isFrozen() : "The attribute types are frozen.";
-        assert attributeTypes.isNotEmpty() : "The attribute types are not empty.";
+        assert !attributeTypes.isEmpty() : "The attribute types are not empty.";
         
         this.attributeTypes = attributeTypes;
         this.published = published;

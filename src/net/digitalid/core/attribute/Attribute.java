@@ -374,7 +374,7 @@ public final class Attribute extends GeneralConcept {
      * 
      * @return all the attributes of the given entity.
      * 
-     * @ensure return.isNotFrozen() : "The returned attributes are not frozen.";
+     * @ensure return.!isFrozen() : "The returned attributes are not frozen.";
      */
     @NonCommitting
     public static @Capturable @Nonnull FreezableSet<Attribute> getAll(@Nonnull Entity entity) throws SQLException {

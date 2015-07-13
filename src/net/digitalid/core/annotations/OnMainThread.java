@@ -5,18 +5,15 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import net.digitalid.core.identity.Type;
+import net.digitalid.core.database.Database;
 
 /**
- * This annotation indicates that a {@link Type type} is {@link Type#isLoaded() loaded}.
- * 
- * @see NonLoaded
+ * This annotation indicates that a method should only be invoked on the {@link Database#isMainThread() main thread}.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
 @Documented
-@TargetType(Type.class)
+@Target(ElementType.METHOD)
 @Retention(RetentionPolicy.CLASS)
-@Target({ElementType.FIELD, ElementType.PARAMETER, ElementType.LOCAL_VARIABLE, ElementType.METHOD, ElementType.CONSTRUCTOR})
-public @interface Loaded {}
+public @interface OnMainThread {}

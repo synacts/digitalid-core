@@ -15,6 +15,7 @@ import net.digitalid.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.core.agent.Restrictions;
 import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
+import net.digitalid.core.annotations.NonFrozen;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.attribute.AttributeValue;
 import net.digitalid.core.attribute.CertifiedAttributeValue;
@@ -724,7 +725,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
     @Override
     @NonCommitting
     public void verify() throws SQLException, IOException, PacketException, ExternalException {
-        assert isNotVerified() : "This signature is not verified.";
+        assert !isVerified() : "This signature is not verified.";
         
         final @Nonnull Time start = new Time();
         
@@ -830,10 +831,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
     }
     
     @Override
-    void sign(@Nonnull FreezableArray<Block> elements) {
-        assert elements.isNotFrozen() : "The elements are not frozen.";
-        assert elements.isNotNull(0) : "The first element is not null.";
-        
+    void sign(@Nonnull @NonFrozen FreezableArray<Block> elements) {
         final @Nonnull Time start = new Time();
         
         assert credentials.get(0) instanceof ClientCredential : "The first credential is a client credential (like all others).";

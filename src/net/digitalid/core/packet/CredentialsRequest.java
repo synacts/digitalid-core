@@ -74,7 +74,7 @@ public final class CredentialsRequest extends Request {
      * @param value the value b' or null if the credentials are not to be shortened.
      * 
      * @require methods.isFrozen() : "The list of methods is frozen.";
-     * @require methods.isNotEmpty() : "The list of methods is not empty.";
+     * @require !methods.isEmpty() : "The list of methods is not empty.";
      * @require methods.doesNotContainNull() : "The list of methods does not contain null.";
      * @require Method.areSimilar(methods) : "The methods are similar to each other.";
      * 

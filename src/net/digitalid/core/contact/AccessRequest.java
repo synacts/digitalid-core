@@ -52,7 +52,7 @@ public final class AccessRequest extends CoreServiceExternalAction {
      * Stores the permissions of this access request.
      * 
      * @invariant permissions.isFrozen() : "The permissions are frozen.";
-     * @invariant permissions.isNotEmpty() : "The permissions are not empty.";
+     * @invariant !permissions.isEmpty() : "The permissions are not empty.";
      */
     private final @Nonnull ReadOnlyContactPermissions permissions;
     
@@ -73,7 +73,7 @@ public final class AccessRequest extends CoreServiceExternalAction {
         super(entity, subject);
         
         assert permissions.isFrozen() : "The permissions are frozen.";
-        assert permissions.isNotEmpty() : "The permissions are not empty.";
+        assert !permissions.isEmpty() : "The permissions are not empty.";
         
         this.person = subject;
         this.permissions = permissions;
@@ -120,7 +120,7 @@ public final class AccessRequest extends CoreServiceExternalAction {
      * @return the permissions of this access request.
      * 
      * @ensure return.isFrozen() : "The permissions are frozen.";
-     * @ensure return.isNotEmpty() : "The permissions are not empty.";
+     * @ensure !return.isEmpty() : "The permissions are not empty.";
      */
     public @Nonnull ReadOnlyContactPermissions getPermissions() {
         return permissions;

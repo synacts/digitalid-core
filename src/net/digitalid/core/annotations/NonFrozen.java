@@ -9,7 +9,7 @@ import net.digitalid.core.interfaces.Freezable;
 import net.digitalid.core.interfaces.ReadOnly;
 
 /**
- * This annotation indicates that a field or a parameter {@link Freezable#isNotFrozen() is not frozen}.
+ * This annotation indicates that a field or a parameter {@link Freezable#!isFrozen() is not frozen}.
  * 
  * @see Frozen
  * @see Freezable

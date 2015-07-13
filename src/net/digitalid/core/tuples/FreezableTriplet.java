@@ -56,10 +56,10 @@ public class FreezableTriplet<E0, E1, E2> extends FreezablePair<E0, E1> implemen
      * 
      * @param element2 the element to be set.
      * 
-     * @require isNotFrozen() : "This object is not frozen.";
+     * @require !isFrozen() : "This object is not frozen.";
      */
     public final void setElement2(E2 element2) {
-        assert isNotFrozen() : "This object is not frozen.";
+        assert !isFrozen() : "This object is not frozen.";
         
         this.element2 = element2;
     }

@@ -23,12 +23,6 @@ public class FreezableObject implements Freezable {
         return frozen;
     }
     
-    @Pure
-    @Override
-    public final boolean isNotFrozen() {
-        return !frozen;
-    }
-    
     @Override
     public @Nonnull ReadOnly freeze() {
         frozen = true;

@@ -119,7 +119,7 @@ public final class AccountInitialize extends CoreServiceInternalAction {
             if (identifier instanceof InternalNonHostIdentifier) {
                 if (!FreezablePredecessors.get((InternalNonHostIdentifier) identifier).equals(predecessor.getPredecessors())) throw new InvalidDeclarationException(message + " has other predecessors.", subject, null);
             } else {
-                if (predecessor.getPredecessors().isNotEmpty()) throw new InvalidDeclarationException(message + " is an external person and may not have any predecessors.", subject, null);
+                if (!predecessor.getPredecessors().isEmpty()) throw new InvalidDeclarationException(message + " is an external person and may not have any predecessors.", subject, null);
             }
             if (!Successor.getReloaded(identifier).equals(subject)) throw new InvalidDeclarationException(message + " does not link back.", subject, null);
             states.add(new FreezablePair<>(predecessor, tuple.getElement(1)).freeze());

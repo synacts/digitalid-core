@@ -16,6 +16,8 @@ import net.digitalid.core.annotations.Committing;
 import net.digitalid.core.annotations.Frozen;
 import net.digitalid.core.annotations.Locked;
 import net.digitalid.core.annotations.NonCommitting;
+import net.digitalid.core.annotations.NonEmpty;
+import net.digitalid.core.annotations.NonNullableElements;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.annotations.Stateless;
 import net.digitalid.core.auxiliary.Time;
@@ -234,15 +236,13 @@ public final class SynchronizerModule implements ClientModule {
      * 
      * @param methods the methods to be removed from the pending actions.
      * 
-     * @require methods.isNotEmpty() : "The list of methods is not empty.";
-     * @require methods.doesNotContainNull() : "The list of methods does not contain null.";
      * @require Method.areSimilar(methods) : "The methods are similar to each other.";
      * @require methods.getNotNull(0).isOnClient() : "The first method is on a client.";
      */
     @NonCommitting
-    static void remove(@Nonnull ReadOnlyList<Method> methods) throws SQLException {
-        assert methods.isNotEmpty() : "The list of methods is not empty.";
-        assert methods.doesNotContainNull() : "The list of methods does not contain null.";
+    static void remove(@Nonnull @NonEmpty @NonNullableElements ReadOnlyList<Method> methods) throws SQLException {
+        assert !methods.isEmpty() : "The list of methods is not empty.";
+        assert !methods.containsNull() : "The list of methods does not contain null.";
         assert Method.areSimilar(methods) : "The methods are similar to each other.";
         
         final @Nonnull Role role = methods.getNotNull(0).getRole();

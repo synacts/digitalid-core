@@ -6,10 +6,10 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Capturable;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonFrozenRecipient;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.interfaces.Freezable;
-import net.digitalid.core.annotations.Immutable;
 
 /**
  * This class extends the {@link HashSet} and makes it {@link Freezable}.
@@ -31,12 +31,6 @@ public class FreezableHashSet<E> extends HashSet<E> implements FreezableSet<E> {
     @Override
     public boolean isFrozen() {
         return frozen;
-    }
-    
-    @Pure
-    @Override
-    public boolean isNotFrozen() {
-        return !frozen;
     }
     
     @Override
@@ -96,20 +90,8 @@ public class FreezableHashSet<E> extends HashSet<E> implements FreezableSet<E> {
     
     @Pure
     @Override
-    public boolean isNotEmpty() {
-        return !super.isEmpty();
-    }
-    
-    @Pure
-    @Override
     public boolean isSingle() {
         return size() == 1;
-    }
-    
-    @Pure
-    @Override
-    public boolean isNotSingle() {
-        return size() != 1;
     }
     
     @Pure
@@ -121,24 +103,24 @@ public class FreezableHashSet<E> extends HashSet<E> implements FreezableSet<E> {
     
     @Pure
     @Override
-    public boolean doesNotContainNull() {
+    public boolean containsNull() {
         for (final @Nullable E element : this) {
-            if (element == null) return false;
+            if (element == null) return true;
         }
-        return true;
+        return false;
     }
     
     @Pure
     @Override
-    public boolean doesNotContainDuplicates() {
-        return true;
+    public boolean containsDuplicates() {
+        return false;
     }
     
     
     @Override
     @NonFrozenRecipient
     public boolean add(@Nullable E element) {
-        assert isNotFrozen() : "This object is not frozen.";
+        assert !isFrozen() : "This object is not frozen.";
         
         return super.add(element);
     }
@@ -146,7 +128,7 @@ public class FreezableHashSet<E> extends HashSet<E> implements FreezableSet<E> {
     @Override
     @NonFrozenRecipient
     public boolean addAll(@Nonnull Collection<? extends E> c) {
-        assert isNotFrozen() : "This object is not frozen.";
+        assert !isFrozen() : "This object is not frozen.";
         
         return super.addAll(c);
     }
@@ -154,7 +136,7 @@ public class FreezableHashSet<E> extends HashSet<E> implements FreezableSet<E> {
     @Override
     @NonFrozenRecipient
     public boolean remove(@Nullable Object object) {
-        assert isNotFrozen() : "This object is not frozen.";
+        assert !isFrozen() : "This object is not frozen.";
         
         return super.remove(object);
     }
@@ -162,7 +144,7 @@ public class FreezableHashSet<E> extends HashSet<E> implements FreezableSet<E> {
     @Override
     @NonFrozenRecipient
     public boolean removeAll(@Nonnull Collection<?> c) {
-        assert isNotFrozen() : "This object is not frozen.";
+        assert !isFrozen() : "This object is not frozen.";
         
         return super.removeAll(c);
     }
@@ -170,7 +152,7 @@ public class FreezableHashSet<E> extends HashSet<E> implements FreezableSet<E> {
     @Override
     @NonFrozenRecipient
     public boolean retainAll(@Nonnull Collection<?> c) {
-        assert isNotFrozen() : "This object is not frozen.";
+        assert !isFrozen() : "This object is not frozen.";
         
         return super.retainAll(c);
     }
@@ -178,7 +160,7 @@ public class FreezableHashSet<E> extends HashSet<E> implements FreezableSet<E> {
     @Override
     @NonFrozenRecipient
     public void clear() {
-        assert isNotFrozen() : "This object is not frozen.";
+        assert !isFrozen() : "This object is not frozen.";
         
         super.clear();
     }

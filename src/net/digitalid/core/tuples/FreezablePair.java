@@ -66,10 +66,10 @@ public class FreezablePair<E0, E1> extends FreezableObject implements ReadOnlyPa
      * 
      * @param element0 the element to be set.
      * 
-     * @require isNotFrozen() : "This object is not frozen.";
+     * @require !isFrozen() : "This object is not frozen.";
      */
     public final void setElement0(E0 element0) {
-        assert isNotFrozen() : "This object is not frozen.";
+        assert !isFrozen() : "This object is not frozen.";
         
         this.element0 = element0;
     }
@@ -79,10 +79,10 @@ public class FreezablePair<E0, E1> extends FreezableObject implements ReadOnlyPa
      * 
      * @param element1 the element to be set.
      * 
-     * @require isNotFrozen() : "This object is not frozen.";
+     * @require !isFrozen() : "This object is not frozen.";
      */
     public final void setElement1(E1 element1) {
-        assert isNotFrozen() : "This object is not frozen.";
+        assert !isFrozen() : "This object is not frozen.";
         
         this.element1 = element1;
     }

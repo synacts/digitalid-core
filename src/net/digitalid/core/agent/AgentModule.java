@@ -1005,7 +1005,7 @@ public final class AgentModule implements BothModule {
      * 
      * @return the agents that are weaker than the given agent.
      * 
-     * @ensure return.isNotFrozen() : "The list is not frozen.";
+     * @ensure return.!isFrozen() : "The list is not frozen.";
      */
     @Pure
     @NonCommitting

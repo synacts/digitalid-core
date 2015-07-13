@@ -4,7 +4,12 @@ import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import net.digitalid.core.annotations.Immutable;
+import net.digitalid.core.annotations.Loaded;
+import net.digitalid.core.annotations.LoadedRecipient;
 import net.digitalid.core.annotations.NonCommitting;
+import net.digitalid.core.annotations.NonLoaded;
+import net.digitalid.core.annotations.NonLoadedRecipient;
+import net.digitalid.core.annotations.OnMainThread;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.cache.Cache;
@@ -68,10 +73,8 @@ public final class SyntacticType extends Type {
      * 
      * @param number the number that represents this identity.
      * @param address the current address of this identity.
-     * 
-     * @ensure !isLoaded() : "The type declaration has not yet been loaded.";
      */
-    SyntacticType(long number, @Nonnull InternalNonHostIdentifier address) {
+    @NonLoaded SyntacticType(long number, @Nonnull InternalNonHostIdentifier address) {
         super(number, address);
     }
     
@@ -80,12 +83,10 @@ public final class SyntacticType extends Type {
      * 
      * @param identifier the identifier of the new syntactic type.
      * 
-     * @require Database.isMainThread() : "This method may only be called in the main thread.";
      * @require InternalNonHostIdentifier.isValid(identifier) : "The string is a valid internal non-host identifier.";
-     * 
-     * @ensure !isLoaded() : "The type declaration has not yet been loaded.";
      */
-    public static @Nonnull SyntacticType create(@Nonnull String identifier) {
+    @OnMainThread
+    public static @Nonnull @NonLoaded SyntacticType create(@Nonnull String identifier) {
         return Mapper.mapSyntacticType(new InternalNonHostIdentifier(identifier));
     }
     
@@ -93,7 +94,7 @@ public final class SyntacticType extends Type {
     @Override
     @NonCommitting
     void load() throws SQLException, IOException, PacketException, ExternalException {
-        assert isNotLoaded() : "The type declaration is not loaded.";
+        assert !isLoaded() : "The type declaration is not loaded.";
         
         this.numberOfParameters = new Int8Wrapper(Cache.getStaleAttributeContent(this, null, PARAMETERS)).getValue();
         if (numberOfParameters < -1) throw new InvalidEncodingException("The number of parameters has to be at least -1.");
@@ -105,16 +106,13 @@ public final class SyntacticType extends Type {
      * 
      * @param numberOfParameters the number of generic parameters.
      * 
-     * @require isNotLoaded() : "The type declaration is not loaded.";
-     * @require Database.isMainThread() : "This method may only be called in the main thread.";
-     * 
      * @require numberOfParameters >= -1 : "The number of parameters is at least -1.";
      * @require numberOfParameters <= 127 : "The number of parameters is at most 127.";
-     * 
-     * @ensure isLoaded() : "The type declaration has been loaded.";
      */
-    public @Nonnull SyntacticType load(int numberOfParameters) {
-        assert isNotLoaded() : "The type declaration is not loaded.";
+    @OnMainThread
+    @NonLoadedRecipient
+    public @Nonnull @Loaded SyntacticType load(int numberOfParameters) {
+        assert !isLoaded() : "The type declaration is not loaded.";
         assert Database.isMainThread() : "This method may only be called in the main thread.";
         
         assert numberOfParameters >= -1 : "The number of parameters is at least -1.";
@@ -140,11 +138,10 @@ public final class SyntacticType extends Type {
      * 
      * @return the number of generic parameters of this syntactic type.
      * 
-     * @require isLoaded() : "The type declaration is already loaded.";
-     * 
      * @ensure numberOfParameters >= -1 : "The number of parameters is at least -1.";
      */
     @Pure
+    @LoadedRecipient
     public byte getNumberOfParameters() {
         assert isLoaded() : "The type declaration is already loaded.";
         

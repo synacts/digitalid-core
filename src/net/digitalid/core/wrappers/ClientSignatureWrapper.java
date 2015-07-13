@@ -9,6 +9,7 @@ import net.digitalid.core.agent.AgentModule;
 import net.digitalid.core.agent.ClientAgent;
 import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
+import net.digitalid.core.annotations.NonFrozen;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.client.Commitment;
@@ -141,7 +142,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper {
     @Pure
     @Override
     public void verify() throws InvalidEncodingException, InvalidSignatureException {
-        assert isNotVerified() : "This signature is not verified.";
+        assert !isVerified() : "This signature is not verified.";
         
         final @Nonnull Time start = new Time();
         
@@ -163,10 +164,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper {
     }
     
     @Override
-    void sign(@Nonnull FreezableArray<Block> elements) {
-        assert elements.isNotFrozen() : "The elements are not frozen.";
-        assert elements.isNotNull(0) : "The first element is not null.";
-        
+    void sign(@Nonnull @NonFrozen FreezableArray<Block> elements) {
         final @Nonnull Time start = new Time();
         
         final @Nonnull FreezableArray<Block> subelements = new FreezableArray<>(3);

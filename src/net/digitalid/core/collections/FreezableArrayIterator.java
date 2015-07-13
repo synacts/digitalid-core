@@ -4,9 +4,9 @@ import java.util.NoSuchElementException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Capturable;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.interfaces.Freezable;
-import net.digitalid.core.annotations.Immutable;
 
 /**
  * This interface models an array iterator that can be {@link Freezable frozen}.
@@ -47,12 +47,6 @@ public class FreezableArrayIterator<E> implements ReadOnlyArrayIterator<E>, Free
     @Override
     public final boolean isFrozen() {
         return array.isFrozen();
-    }
-    
-    @Pure
-    @Override
-    public final boolean isNotFrozen() {
-        return array.isNotFrozen();
     }
     
     @Override
@@ -101,20 +95,20 @@ public class FreezableArrayIterator<E> implements ReadOnlyArrayIterator<E>, Free
     
     
     /**
-     * @require isNotFrozen() : "This object is not frozen.";
+     * @require !isFrozen() : "This object is not frozen.";
      */
     public void set(@Nullable E element) {
-        assert isNotFrozen() : "This object is not frozen.";
+        assert !isFrozen() : "This object is not frozen.";
         
         array.set(index, element);
     }
     
     /**
-     * @require isNotFrozen() : "This object is not frozen.";
+     * @require !isFrozen() : "This object is not frozen.";
      */
     @Override
     public void remove() {
-        assert isNotFrozen() : "This object is not frozen.";
+        assert !isFrozen() : "This object is not frozen.";
         
         array.set(index, null);
     }

@@ -276,10 +276,10 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
      * 
      * @param permissions the agent permissions with which to restrict these agent permissions.
      * 
-     * @require isNotFrozen() : "This object is not frozen.";
+     * @require !isFrozen() : "This object is not frozen.";
      */
     public void restrictTo(@Nonnull ReadOnlyAgentPermissions permissions) {
-        assert isNotFrozen() : "This object is not frozen.";
+        assert !isFrozen() : "This object is not frozen.";
         
         if (containsKey(GENERAL)) {
             if (get(GENERAL)) {
@@ -325,7 +325,7 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
      * @return the previous value associated with <tt>key</tt> or
      *         <tt>null</tt> if there was no mapping for <tt>key</tt>.
      * 
-     * @require isNotFrozen() : "This object is not frozen.";
+     * @require !isFrozen() : "This object is not frozen.";
      * @require type.isAttributeType() : "The type is an attribute type.";
      */
     @Override
@@ -353,7 +353,7 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
      * 
      * @param permissions the permissions to add to these permissions.
      * 
-     * @require isNotFrozen() : "This object is not frozen.";
+     * @require !isFrozen() : "This object is not frozen.";
      */
     public void putAll(@Nonnull ReadOnlyAgentPermissions permissions) {
         for (final @Nonnull SemanticType type : permissions.keySet()) {
@@ -366,7 +366,7 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
      * 
      * @param permissions the permissions to remove from these permissions.
      * 
-     * @require isNotFrozen() : "This object is not frozen.";
+     * @require !isFrozen() : "This object is not frozen.";
      */
     public void removeAll(@Nonnull ReadOnlyAgentPermissions permissions) {
         for (final @Nonnull SemanticType type : permissions.keySet()) {
@@ -400,7 +400,7 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
     public @Nonnull String allTypesToString() {
         if (!canRead(GENERAL)) {
             final @Nonnull StringBuilder string = new StringBuilder(" AND ");
-            if (isNotEmpty()) {
+            if (!isEmpty()) {
                 string.append("type IN (");
                 for (final @Nonnull SemanticType type : keySet()) {
                     if (string.length() != 14) string.append(", ");
@@ -470,7 +470,7 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
      * 
      * @return the given columns of the result set as an instance of this class.
      * 
-     * @ensure return.isNotFrozen() : "The permissions are not frozen.";
+     * @ensure return.!isFrozen() : "The permissions are not frozen.";
      */
     @Pure
     @NonCommitting
@@ -496,7 +496,7 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
      * 
      * @return the given columns of the result set as an instance of this class.
      * 
-     * @ensure return.isNotFrozen() : "The permissions are not frozen.";
+     * @ensure return.!isFrozen() : "The permissions are not frozen.";
      * @ensure return.areEmptyOrSingle() : "The returned permissions are empty or single.";
      */
     @Pure

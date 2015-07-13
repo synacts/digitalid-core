@@ -35,7 +35,7 @@ public interface SQLizable {
      * @return the given column of the result set as an instance of this class.
      */
 //    @Pure
-//    @DoesNotCommit
+//    @NonCommitting
 //    public static @Nonnull SQLizable get(@Nonnull ResultSet resultSet, int columnIndex) throws SQLException;
     
     /**
@@ -54,7 +54,7 @@ public interface SQLizable {
      * @param preparedStatement the prepared statement whose parameter is to be set.
      * @param parameterIndex the index of the parameter to set.
      */
-//    @DoesNotCommit
+//    @NonCommitting
 //    public static void set(@Nullable Reply reply, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
 //        if (reply == null) preparedStatement.setNull(parameterIndex, Types.BIGINT);
 //        else reply.set(preparedStatement, parameterIndex);

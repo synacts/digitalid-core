@@ -407,13 +407,13 @@ public class Client extends Site implements Observer {
      * 
      * @return the native role of this client at the newly created account.
      * 
-     * @require subject.doesNotExist() : "The subject does not exist.";
+     * @require !subject.exists() : "The subject does not exist.";
      * @require category.isInternalNonHostIdentity() : "The category denotes an internal non-host identity.";
      * @require !category.isType() || roles.size() <= 1 && identifiers.isEmpty() : "If the category denotes a type, at most one role and no identifier may be given.";
      */
     @Committing
     public final @Nonnull NativeRole openAccount(@Nonnull InternalNonHostIdentifier subject, @Nonnull Category category, @Nonnull ReadOnlyList<NativeRole> roles, @Nonnull ReadOnlyList<ExternalIdentifier> identifiers) throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
-        assert subject.doesNotExist() : "The subject does not exist.";
+        assert !subject.exists() : "The subject does not exist.";
         assert category.isInternalNonHostIdentity() : "The category denotes an internal non-host identity.";
         assert !category.isType() || roles.size() <= 1 && identifiers.isEmpty() : "If the category denotes a type, at most one role and no identifier may be given.";
         

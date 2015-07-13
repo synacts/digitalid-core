@@ -72,21 +72,21 @@ public class FreezableListIterator<E> extends FreezableIterableIterator<E> imple
     
     
     /**
-     * @require isNotFrozen() : "This object is not frozen.";
+     * @require !isFrozen() : "This object is not frozen.";
      */
     @Override
     public void set(@Nullable E element) {
-        assert isNotFrozen() : "This object is not frozen.";
+        assert !isFrozen() : "This object is not frozen.";
         
         iterator.set(element);
     }
     
     /**
-     * @require isNotFrozen() : "This object is not frozen.";
+     * @require !isFrozen() : "This object is not frozen.";
      */
     @Override
     public void add(@Nullable E element) {
-        assert isNotFrozen() : "This object is not frozen.";
+        assert !isFrozen() : "This object is not frozen.";
         
         iterator.add(element);
     }

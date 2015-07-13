@@ -112,17 +112,6 @@ public abstract class InternalIdentifier extends IdentifierClass {
         }
     }
     
-    /**
-     * Returns whether an identity with this internal identifier does not exist.
-     * 
-     * @return whether an identity with this internal identifier does not exist.
-     */
-    @Pure
-    @NonCommitting
-    public final boolean doesNotExist() throws SQLException, IOException, PacketException, ExternalException {
-        return !exists();
-    }
-    
     
     /**
      * Returns the host part of this internal identifier.

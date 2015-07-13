@@ -3,9 +3,9 @@ package net.digitalid.core.collections;
 import java.util.Map;
 import javax.annotation.Nonnull;
 import net.digitalid.core.annotations.Capturable;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.interfaces.Freezable;
-import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.interfaces.ReadOnly;
 
 /**
@@ -33,14 +33,6 @@ public interface ReadOnlyMap<K,V> extends ReadOnly {
      */
     @Pure
     public boolean isEmpty();
-    
-    /**
-     * Returns whether this map is not empty.
-     * 
-     * @return whether this map is not empty.
-     */
-    @Pure
-    public boolean isNotEmpty();
     
     /**
      * @see Map#containsKey(java.lang.Object)

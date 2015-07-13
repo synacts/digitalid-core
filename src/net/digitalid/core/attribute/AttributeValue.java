@@ -207,16 +207,6 @@ public abstract class AttributeValue implements Blockable, SQLizable {
         return getSignature().isVerified();
     }
     
-    /**
-     * Returns whether the signature of this attribute value is not verified.
-     * 
-     * @return whether the signature of this attribute value is not verified.
-     */
-    @Pure
-    public final boolean isNotVerified() {
-        return getSignature().isNotVerified();
-    }
-    
     
     /**
      * Stores the data type used to store instances of this class in the database.

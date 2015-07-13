@@ -11,6 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.NonCommitting;
+import net.digitalid.core.annotations.NonMapped;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.annotations.Stateless;
 import net.digitalid.core.cache.Cache;
@@ -322,18 +323,6 @@ public final class Mapper {
     }
     
     /**
-     * Returns whether the given identifier is not mapped.
-     * 
-     * @param identifier the identifier of interest.
-     * 
-     * @return whether the given identifier is not mapped.
-     */
-    @NonCommitting
-    public static boolean isNotMapped(@Nonnull Identifier identifier) throws SQLException {
-        return !isMapped(identifier);
-    }
-    
-    /**
      * Returns the mapped identity of the given identifier.
      * 
      * @param identifier the identifier whose identity is to be returned.
@@ -488,12 +477,10 @@ public final class Mapper {
      * @return the newly established identity of the given identifier.
      * 
      * @throws IdentityNotFoundException if no identity with the given identifier was found.
-     * 
-     * @require isNotMapped(identifier) : "The identifier is not mapped.";
      */
     @NonCommitting
-    private static @Nonnull InternalNonHostIdentity establishInternalNonHostIdentity(@Nonnull InternalNonHostIdentifier identifier) throws SQLException, IOException, PacketException, ExternalException {
-        assert isNotMapped(identifier) : "The identifier is not mapped.";
+    private static @Nonnull InternalNonHostIdentity establishInternalNonHostIdentity(@Nonnull @NonMapped InternalNonHostIdentifier identifier) throws SQLException, IOException, PacketException, ExternalException {
+        assert !isMapped(identifier) : "The identifier is not mapped.";
         
         if (Server.hasHost(identifier.getHostIdentifier())) throw new IdentityNotFoundException(identifier);
         
@@ -557,12 +544,10 @@ public final class Mapper {
      * @param identifier the identifier whose identity is to be established.
      * 
      * @return the newly established identity of the given identifier.
-     * 
-     * @require isNotMapped(identifier) : "The identifier is not mapped.";
      */
     @NonCommitting
-    private static @Nonnull Person establishExternalIdentity(@Nonnull ExternalIdentifier identifier) throws SQLException, IOException, PacketException, ExternalException {
-        assert isNotMapped(identifier) : "The identifier is not mapped.";
+    private static @Nonnull Person establishExternalIdentity(@Nonnull @NonMapped ExternalIdentifier identifier) throws SQLException, IOException, PacketException, ExternalException {
+        assert !isMapped(identifier) : "The identifier is not mapped.";
         
         final @Nonnull Person person = mapExternalIdentity(identifier);
         try {

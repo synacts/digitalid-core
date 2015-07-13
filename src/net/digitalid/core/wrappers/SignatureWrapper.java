@@ -9,6 +9,7 @@ import net.digitalid.core.agent.Agent;
 import net.digitalid.core.annotations.Exposed;
 import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
+import net.digitalid.core.annotations.NonFrozen;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.collections.FreezableArray;
@@ -244,16 +245,6 @@ public class SignatureWrapper extends BlockWrapper {
         return this instanceof HostSignatureWrapper || this instanceof ClientSignatureWrapper || this instanceof CredentialsSignatureWrapper;
     }
     
-    /**
-     * Returns whether the element is not signed.
-     * 
-     * @return whether the element is not signed.
-     */
-    @Pure
-    public final boolean isNotSigned() {
-        return !isSigned();
-    }
-    
     
     /**
      * Returns the element of the wrapped block.
@@ -388,16 +379,6 @@ public class SignatureWrapper extends BlockWrapper {
     }
     
     /**
-     * Returns whether this signature is not verified.
-     * 
-     * @return whether this signature is not verified.
-     */
-    @Pure
-    public final boolean isNotVerified() {
-        return !verified;
-    }
-    
-    /**
      * Sets this signature to verified.
      */
     final void setVerified() {
@@ -409,14 +390,14 @@ public class SignatureWrapper extends BlockWrapper {
      * 
      * @throws InvalidSignatureException if this signature is not valid.
      * 
-     * @require isNotVerified() : "This signature is not verified.";
+     * @require !isVerified() : "This signature is not verified.";
      * 
      * @ensure isVerified() : "This signature is verified.";
      */
     @Pure
     @NonCommitting
     public void verify() throws SQLException, IOException, PacketException, ExternalException {
-        assert isNotVerified() : "This signature is not verified.";
+        assert !isVerified() : "This signature is not verified.";
         
         setVerified();
     }
@@ -426,10 +407,9 @@ public class SignatureWrapper extends BlockWrapper {
      * 
      * @param elements the elements of the wrapped block with the indexes 1 to 3 reserved for the signatures.
      * 
-     * @require elements.isNotFrozen() : "The elements are not frozen.";
-     * @require elements.isNotNull(0) : "The first element is not null.";
+     * @require !elements.isNull(0) : "The first element is not null.";
      */
-    void sign(@Nonnull FreezableArray<Block> elements) {}
+    void sign(@Nonnull @NonFrozen FreezableArray<Block> elements) {}
     
     
     /**

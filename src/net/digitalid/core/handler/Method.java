@@ -12,8 +12,11 @@ import net.digitalid.core.agent.Agent;
 import net.digitalid.core.agent.FreezableAgentPermissions;
 import net.digitalid.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.core.agent.Restrictions;
+import net.digitalid.core.annotations.Frozen;
 import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
+import net.digitalid.core.annotations.NonEmpty;
+import net.digitalid.core.annotations.NonNullableElements;
 import net.digitalid.core.annotations.OnlyForHosts;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.attribute.Attribute;
@@ -262,16 +265,12 @@ public abstract class Method extends Handler {
      * @param methods the methods to check for similarity.
      * 
      * @return whether the given methods are similar to each other.
-     * 
-     * @require methods.isFrozen() : "The list of methods is frozen.";
-     * @require methods.isNotEmpty() : "The list of methods is not empty.";
-     * @require methods.doesNotContainNull() : "The list of methods does not contain null.";
      */
     @Pure
-    public static boolean areSimilar(@Nonnull ReadOnlyList<? extends Method> methods) {
+    public static boolean areSimilar(@Nonnull @Frozen @NonEmpty @NonNullableElements ReadOnlyList<? extends Method> methods) {
         assert methods.isFrozen() : "The list of methods is frozen.";
-        assert methods.isNotEmpty() : "The list of methods is not empty.";
-        assert methods.doesNotContainNull() : "The list of methods does not contain null.";
+        assert !methods.isEmpty() : "The list of methods is not empty.";
+        assert !methods.containsNull() : "The list of methods does not contain null.";
         
         final @Nonnull ReadOnlyIterator<? extends Method> iterator = methods.iterator();
         final @Nonnull Method reference = iterator.next();
@@ -309,7 +308,7 @@ public abstract class Method extends Handler {
      * @throws FailedRequestException if the blocks of the methods could not be sent.
      * 
      * @require methods.isFrozen() : "The list of methods is frozen.";
-     * @require methods.isNotEmpty() : "The list of methods is not empty.";
+     * @require !methods.isEmpty() : "The list of methods is not empty.";
      * @require methods.doesNotContainNull() : "The list of methods does not contain null.";
      * @require areSimilar(methods) : "The methods are similar to each other.";
      * 

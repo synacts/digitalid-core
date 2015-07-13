@@ -8,10 +8,10 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Capturable;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonFrozenRecipient;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.interfaces.Freezable;
-import net.digitalid.core.annotations.Immutable;
 
 /**
  * This class extends the {@link ArrayList} and makes it {@link Freezable}.
@@ -34,12 +34,6 @@ public class FreezableArrayList<E> extends ArrayList<E> implements FreezableList
     @Override
     public boolean isFrozen() {
         return frozen;
-    }
-    
-    @Pure
-    @Override
-    public boolean isNotFrozen() {
-        return !frozen;
     }
     
     @Override
@@ -103,20 +97,8 @@ public class FreezableArrayList<E> extends ArrayList<E> implements FreezableList
     
     @Pure
     @Override
-    public boolean isNotEmpty() {
-        return !super.isEmpty();
-    }
-    
-    @Pure
-    @Override
     public boolean isSingle() {
         return size() == 1;
-    }
-    
-    @Pure
-    @Override
-    public boolean isNotSingle() {
-        return size() != 1;
     }
     
     
@@ -124,12 +106,6 @@ public class FreezableArrayList<E> extends ArrayList<E> implements FreezableList
     @Override
     public boolean isNull(int index) {
         return get(index) == null;
-    }
-    
-    @Pure
-    @Override
-    public boolean isNotNull(int index) {
-        return get(index) != null;
     }
     
     @Pure
@@ -145,7 +121,7 @@ public class FreezableArrayList<E> extends ArrayList<E> implements FreezableList
     @Override
     @NonFrozenRecipient
     public @Nullable E set(int index, @Nullable E element) {
-        assert isNotFrozen() : "This object is not frozen.";
+        assert !isFrozen() : "This object is not frozen.";
         
         return super.set(index, element);
     }
@@ -153,7 +129,7 @@ public class FreezableArrayList<E> extends ArrayList<E> implements FreezableList
     @Override
     @NonFrozenRecipient
     public boolean add(@Nullable E element) {
-        assert isNotFrozen() : "This object is not frozen.";
+        assert !isFrozen() : "This object is not frozen.";
         
         return super.add(element);
     }
@@ -161,7 +137,7 @@ public class FreezableArrayList<E> extends ArrayList<E> implements FreezableList
     @Override
     @NonFrozenRecipient
     public void add(int index, @Nullable E element) {
-        assert isNotFrozen() : "This object is not frozen.";
+        assert !isFrozen() : "This object is not frozen.";
         
         super.add(index, element);
     }
@@ -169,7 +145,7 @@ public class FreezableArrayList<E> extends ArrayList<E> implements FreezableList
     @Override
     @NonFrozenRecipient
     public @Nullable E remove(int index) {
-        assert isNotFrozen() : "This object is not frozen.";
+        assert !isFrozen() : "This object is not frozen.";
         
         return super.remove(index);
     }
@@ -177,7 +153,7 @@ public class FreezableArrayList<E> extends ArrayList<E> implements FreezableList
     @Override
     @NonFrozenRecipient
     public boolean remove(@Nullable Object object) {
-        assert isNotFrozen() : "This object is not frozen.";
+        assert !isFrozen() : "This object is not frozen.";
         
         return super.remove(object);
     }
@@ -185,7 +161,7 @@ public class FreezableArrayList<E> extends ArrayList<E> implements FreezableList
     @Override
     @NonFrozenRecipient
     public void clear() {
-        assert isNotFrozen() : "This object is not frozen.";
+        assert !isFrozen() : "This object is not frozen.";
         
         super.clear();
     }
@@ -193,7 +169,7 @@ public class FreezableArrayList<E> extends ArrayList<E> implements FreezableList
     @Override
     @NonFrozenRecipient
     public boolean addAll(@Nonnull Collection<? extends E> collection) {
-        assert isNotFrozen() : "This object is not frozen.";
+        assert !isFrozen() : "This object is not frozen.";
         
         return super.addAll(collection);
     }
@@ -201,7 +177,7 @@ public class FreezableArrayList<E> extends ArrayList<E> implements FreezableList
     @Override
     @NonFrozenRecipient
     protected void removeRange(int fromIndex, int toIndex) {
-        assert isNotFrozen() : "This object is not frozen.";
+        assert !isFrozen() : "This object is not frozen.";
         
         super.removeRange(fromIndex, toIndex);
     }
@@ -209,7 +185,7 @@ public class FreezableArrayList<E> extends ArrayList<E> implements FreezableList
     @Override
     @NonFrozenRecipient
     public boolean removeAll(@Nonnull Collection<?> collection) {
-        assert isNotFrozen() : "This object is not frozen.";
+        assert !isFrozen() : "This object is not frozen.";
         
         return super.removeAll(collection);
     }
@@ -217,7 +193,7 @@ public class FreezableArrayList<E> extends ArrayList<E> implements FreezableList
     @Override
     @NonFrozenRecipient
     public boolean retainAll(@Nonnull Collection<?> collection) {
-        assert isNotFrozen() : "This object is not frozen.";
+        assert !isFrozen() : "This object is not frozen.";
         
         return super.retainAll(collection);
     }
@@ -249,22 +225,22 @@ public class FreezableArrayList<E> extends ArrayList<E> implements FreezableList
     
     @Pure
     @Override
-    public boolean doesNotContainNull() {
+    public boolean containsNull() {
         for (final @Nullable E element : this) {
-            if (element == null) return false;
+            if (element == null) return true;
         }
-        return true;
+        return false;
     }
     
     @Pure
     @Override
-    public boolean doesNotContainDuplicates() {
+    public boolean containsDuplicates() {
         final @Nonnull HashSet<E> set = new HashSet<>(size());
         for (final @Nullable E element : this) {
-            if (set.contains(element)) return false;
+            if (set.contains(element)) return true;
             else set.add(element);
         }
-        return true;
+        return false;
     }
     
     

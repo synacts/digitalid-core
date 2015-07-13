@@ -3,7 +3,10 @@ package net.digitalid.core.wrappers;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Exposed;
+import net.digitalid.core.annotations.Frozen;
 import net.digitalid.core.annotations.Immutable;
+import net.digitalid.core.annotations.NonNegative;
+import net.digitalid.core.annotations.NonNullableElements;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.collections.FreezableArray;
 import net.digitalid.core.collections.ReadOnlyArray;
@@ -50,10 +53,9 @@ public final class TupleWrapper extends BlockWrapper {
     /**
      * Stores the elements of this tuple wrapper.
      * 
-     * @invariant elements.isFrozen() : "The elements are frozen.";
      * @invariant basedOnParameters(getType(), elements) : "Each element is either null or based on the corresponding parameter of the block's type.";
      */
-    private final @Nonnull ReadOnlyArray<Block> elements;
+    private final @Nonnull @Frozen ReadOnlyArray<Block> elements;
     
     /**
      * Encodes the given elements into a new block of the given type.
@@ -189,15 +191,13 @@ public final class TupleWrapper extends BlockWrapper {
      * 
      * @require length > 0 : "The length is positive.";
      * 
-     * @ensure elements.isFrozen() : "The elements are frozen.";
-     * @ensure elements.doesNotContainNull() : "The elements do not contain null.";
      * @ensure elements.size() >= length : "The number of elements is at least the given length.";
      * @ensure basedOnParameters(getType(), elements) : "Each element is based on the corresponding parameter of the block's type.";
      */
     @Pure
-    public @Nonnull ReadOnlyArray<Block> getElementsNotNull(int length) throws InvalidEncodingException {
+    public @Nonnull @Frozen @NonNullableElements ReadOnlyArray<Block> getElementsNotNull(int length) throws InvalidEncodingException {
         final @Nonnull ReadOnlyArray<Block> elements = getElements(length);
-        if (!elements.doesNotContainNull()) throw new InvalidEncodingException("The tuple contains null.");
+        if (elements.containsNull()) throw new InvalidEncodingException("The tuple contains null.");
         return elements;
     }
     
@@ -209,11 +209,9 @@ public final class TupleWrapper extends BlockWrapper {
      * @return whether the element at the given index is null.
      * 
      * @throws InvalidEncodingException if the number of elements is less than or equal to the given index.
-     * 
-     * @require index >= 0 : "The index is non-negative.";
      */
     @Pure
-    public boolean isElementNull(int index) throws InvalidEncodingException {
+    public boolean isElementNull(@NonNegative int index) throws InvalidEncodingException {
         assert index >= 0 : "The index is non-negative.";
         
         if (index >= elements.size()) throw new InvalidEncodingException("The tuple contains not enough elements.");
@@ -228,11 +226,9 @@ public final class TupleWrapper extends BlockWrapper {
      * @return whether the element at the given index is not null.
      * 
      * @throws InvalidEncodingException if the number of elements is less than or equal to the given index.
-     * 
-     * @require index >= 0 : "The index is non-negative.";
      */
     @Pure
-    public boolean isElementNotNull(int index) throws InvalidEncodingException {
+    public boolean isElementNotNull(@NonNegative int index) throws InvalidEncodingException {
         return !isElementNull(index);
     }
     
@@ -245,12 +241,10 @@ public final class TupleWrapper extends BlockWrapper {
      * 
      * @throws InvalidEncodingException if the number of elements is less than or equal to the given index.
      * 
-     * @require index >= 0 : "The index is non-negative.";
-     * 
      * @ensure element == null || element.getType().isBasedOn(getType().getParameters().getNotNull(index)) : "The element is either null or based on the corresponding parameter of the block's type.";
      */
     @Pure
-    public @Nullable Block getElement(int index) throws InvalidEncodingException {
+    public @Nullable Block getElement(@NonNegative int index) throws InvalidEncodingException {
         assert index >= 0 : "The index is non-negative.";
         
         if (index >= elements.size()) throw new InvalidEncodingException("The tuple contains not enough elements.");
@@ -266,12 +260,10 @@ public final class TupleWrapper extends BlockWrapper {
      * 
      * @throws InvalidEncodingException if the number of elements is less than or equal to the given index or the accessed element is null.
      * 
-     * @require index >= 0 : "The index is non-negative.";
-     * 
      * @ensure element.getType().isBasedOn(getType().getParameters().getNotNull(index)) : "The element is based on the corresponding parameter of the block's type.";
      */
     @Pure
-    public @Nonnull Block getElementNotNull(int index) throws InvalidEncodingException {
+    public @Nonnull Block getElementNotNull(@NonNegative int index) throws InvalidEncodingException {
         final @Nullable Block element = getElement(index);
         if (element == null) throw new InvalidEncodingException("The element at the given index is null.");
         return element;

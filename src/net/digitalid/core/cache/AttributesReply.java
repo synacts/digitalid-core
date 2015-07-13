@@ -65,7 +65,7 @@ public final class AttributesReply extends CoreServiceQueryReply {
      * Stores the attribute values of this reply.
      * 
      * @invariant attributeValues.isFrozen() : "The attribute values are frozen.";
-     * @invariant attributeValues.isNotEmpty() : "The attribute values are not empty.";
+     * @invariant !attributeValues.isEmpty() : "The attribute values are not empty.";
      * @invariant areVerified(attributeValues) : "All the attribute values which are not null are verified.";
      */
     private final @Nonnull ReadOnlyList<AttributeValue> attributeValues;
@@ -77,7 +77,7 @@ public final class AttributesReply extends CoreServiceQueryReply {
      * @param attributeValues the attribute values of this reply.
      * 
      * @require attributeValues.isFrozen() : "The attribute values are frozen.";
-     * @require attributeValues.isNotEmpty() : "The attribute values are not empty.";
+     * @require !attributeValues.isEmpty() : "The attribute values are not empty.";
      * @require areVerified(attributeValues) : "All the attribute values which are not null are verified.";
      */
     @OnlyForHosts
@@ -86,7 +86,7 @@ public final class AttributesReply extends CoreServiceQueryReply {
         super(account);
         
         assert attributeValues.isFrozen() : "The attribute values are frozen.";
-        assert attributeValues.isNotEmpty() : "The attribute values are not empty.";
+        assert !attributeValues.isEmpty() : "The attribute values are not empty.";
         assert areVerified(attributeValues) : "All the attribute values which are not null are verified.";
         
         this.attributeValues = attributeValues;
@@ -156,7 +156,7 @@ public final class AttributesReply extends CoreServiceQueryReply {
      * @return the attribute values of this reply.
      * 
      * @ensure return.isFrozen() : "The attribute values are frozen.";
-     * @ensure return.isNotEmpty() : "The attribute values are not empty.";
+     * @ensure !return.isEmpty() : "The attribute values are not empty.";
      * @ensure areVerified(return) : "All the attribute values which are not null are verified.";
      */
     @Nonnull ReadOnlyList<AttributeValue> getAttributeValues() {

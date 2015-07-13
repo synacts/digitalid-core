@@ -4,9 +4,10 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Capturable;
-import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.interfaces.Freezable;
 import net.digitalid.core.annotations.Immutable;
+import net.digitalid.core.annotations.Pure;
+import net.digitalid.core.annotations.ValidIndex;
+import net.digitalid.core.interfaces.Freezable;
 
 /**
  * This interface provides read-only access to {@link List lists} and should <em>never</em> be cast away (unless external code requires it).
@@ -33,23 +34,9 @@ public interface ReadOnlyList<E> extends ReadOnlyCollection<E> {
      * @param index the index of the element to be checked.
      * 
      * @return whether the element at the given index is null.
-     * 
-     * @require index >= 0 && index < size() : "The index is valid.";
      */
     @Pure
-    public boolean isNull(int index);
-    
-    /**
-     * Returns whether the element at the given index is not null.
-     * 
-     * @param index the index of the element to be checked.
-     * 
-     * @return whether the element at the given index is not null.
-     * 
-     * @require index >= 0 && index < size() : "The index is valid.";
-     */
-    @Pure
-    public boolean isNotNull(int index);
+    public boolean isNull(@ValidIndex int index);
     
     /**
      * Returns the element at the given index.
@@ -58,11 +45,10 @@ public interface ReadOnlyList<E> extends ReadOnlyCollection<E> {
      * 
      * @return the element at the given index.
      * 
-     * @require index >= 0 && index < size() : "The index is valid.";
      * @require isNotNull(index) : "The element at the given index is not null.";
      */
     @Pure
-    public @Nonnull E getNotNull(int index);
+    public @Nonnull E getNotNull(@ValidIndex int index);
     
     /**
      * @see List#indexOf(java.lang.Object)

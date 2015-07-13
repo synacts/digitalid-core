@@ -3,9 +3,10 @@ package net.digitalid.core.collections;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Capturable;
-import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.interfaces.Freezable;
 import net.digitalid.core.annotations.Immutable;
+import net.digitalid.core.annotations.Pure;
+import net.digitalid.core.annotations.ValidIndex;
+import net.digitalid.core.interfaces.Freezable;
 
 /**
  * This interface provides read-only access to arrays and should <em>never</em> be cast away.
@@ -34,11 +35,9 @@ public interface ReadOnlyArray<E> extends ReadOnlyIterable<E> {
      * @param index the index of the element to be returned.
      * 
      * @return the element at the given index.
-     * 
-     * @require index >= 0 && index < size() : "The index is valid.";
      */
     @Pure
-    public @Nullable E get(int index);
+    public @Nullable E get(@ValidIndex int index);
     
     /**
      * Returns whether the element at the given index is null.
@@ -46,23 +45,9 @@ public interface ReadOnlyArray<E> extends ReadOnlyIterable<E> {
      * @param index the index of the element to be checked.
      * 
      * @return whether the element at the given index is null.
-     * 
-     * @require index >= 0 && index < size() : "The index is valid.";
      */
     @Pure
-    public boolean isNull(int index);
-    
-    /**
-     * Returns whether the element at the given index is not null.
-     * 
-     * @param index the index of the element to be checked.
-     * 
-     * @return whether the element at the given index is not null.
-     * 
-     * @require index >= 0 && index < size() : "The index is valid.";
-     */
-    @Pure
-    public boolean isNotNull(int index);
+    public boolean isNull(@ValidIndex int index);
     
     /**
      * Returns the element at the given index.
@@ -71,11 +56,10 @@ public interface ReadOnlyArray<E> extends ReadOnlyIterable<E> {
      * 
      * @return the element at the given index.
      * 
-     * @require index >= 0 && index < size() : "The index is valid.";
      * @require isNotNull(index) : "The element at the given index is not null.";
      */
     @Pure
-    public @Nonnull E getNotNull(int index);
+    public @Nonnull E getNotNull(@ValidIndex int index);
     
     @Pure
     @Override
@@ -83,21 +67,21 @@ public interface ReadOnlyArray<E> extends ReadOnlyIterable<E> {
     
     
     /**
-     * Returns whether this array does not contain an element which is null.
+     * Returns whether this array contains an element which is null.
      * If it does not, {@link #get(int)} is guaranteed to return not null for every valid index.
      * 
-     * @return {@code true} if this array does not contain null, {@code false} otherwise.
+     * @return {@code true} if this array contains null, {@code false} otherwise.
      */
     @Pure
-    public boolean doesNotContainNull();
+    public boolean containsNull();
     
     /**
-     * Returns whether this array does not contain duplicates (including null values).
+     * Returns whether this array contains duplicates (including null values).
      * 
-     * @return {@code true} if this array does not contain duplicates, {@code false} otherwise.
+     * @return {@code true} if this array contains duplicates, {@code false} otherwise.
      */
     @Pure
-    public boolean doesNotContainDuplicates();
+    public boolean containsDuplicates();
     
     
     @Pure

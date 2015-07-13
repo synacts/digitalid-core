@@ -267,12 +267,12 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
      * 
      * @param newPermissions the permissions to be added to this context.
      * 
-     * @require newPermissions.isNotEmpty() : "The new permissions are not empty.";
+     * @require !newPermissions.isEmpty() : "The new permissions are not empty.";
      */
     @NonCommitting
     @OnlyForActions
     public void addPermissionsForActions(@Nonnull ReadOnlyContactPermissions newPermissions) throws SQLException {
-        assert newPermissions.isNotEmpty() : "The new permissions are not empty.";
+        assert !newPermissions.isEmpty() : "The new permissions are not empty.";
         
 //        Contexts.addPermissions(this, newPermissions);
         if (permissions != null) permissions.addAll(newPermissions);
@@ -296,12 +296,12 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
      * 
      * @param oldPermissions the permissions to be removed from this context.
      * 
-     * @require oldPermissions.isNotEmpty() : "The old permissions are not empty.";
+     * @require !oldPermissions.isEmpty() : "The old permissions are not empty.";
      */
     @NonCommitting
     @OnlyForActions
     public void removePermissionsForActions(@Nonnull ReadOnlyContactPermissions oldPermissions) throws SQLException {
-        assert oldPermissions.isNotEmpty() : "The old permissions are not empty.";
+        assert !oldPermissions.isEmpty() : "The old permissions are not empty.";
         
 //        Contexts.removePermissions(this, oldPermissions);
         if (permissions != null) permissions.removeAll(permissions);

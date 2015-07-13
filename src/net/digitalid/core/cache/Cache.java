@@ -17,6 +17,7 @@ import net.digitalid.core.annotations.Committing;
 import net.digitalid.core.annotations.Frozen;
 import net.digitalid.core.annotations.Locked;
 import net.digitalid.core.annotations.NonCommitting;
+import net.digitalid.core.annotations.NonMapped;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.annotations.Stateless;
 import net.digitalid.core.attribute.AttributeValue;
@@ -457,12 +458,12 @@ public final class Cache {
      * 
      * @return the newly established identity of the given host identifier.
      * 
-     * @require identifier.isNotMapped() : "The identifier is not mapped.";
+     * @require !identifier.isMapped() : "The identifier is not mapped.";
      */
     @Locked
     @NonCommitting
-    public static @Nonnull HostIdentity establishHostIdentity(@Nonnull HostIdentifier identifier) throws SQLException, IOException, PacketException, ExternalException {
-        assert identifier.isNotMapped() : "The identifier is not mapped.";
+    public static @Nonnull HostIdentity establishHostIdentity(@Nonnull @NonMapped HostIdentifier identifier) throws SQLException, IOException, PacketException, ExternalException {
+        assert !identifier.isMapped() : "The identifier is not mapped.";
         
         final @Nonnull HostIdentity identity = Mapper.mapHostIdentity(identifier);
         final @Nonnull Response response;
