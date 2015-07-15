@@ -7,7 +7,7 @@ import net.digitalid.core.property.ConceptProperty;
 /**
  * Description.
  * 
- * @author Kaspar Etter (kaspar.etter@virtualid.ch)
+ * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 0.0
  */
 public class NonNullableReplaceableConceptProperty<V> extends NonNullableReplaceableProperty<V> implements ConceptProperty {

@@ -8,7 +8,7 @@ import net.digitalid.core.property.PropertyObserver;
 /**
  * Description.
  * 
- * @author Kaspar Etter (kaspar.etter@virtualid.ch)
+ * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 0.0
  */
 public interface ExtensiblePropertyObserver<E, R extends ReadOnlyCollection<E>> extends PropertyObserver {

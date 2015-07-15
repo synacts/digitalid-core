@@ -7,7 +7,7 @@ import net.digitalid.core.annotations.Pure;
 /**
  * Description.
  * 
- * @author Kaspar Etter (kaspar.etter@virtualid.ch)
+ * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 0.0
  */
 @Immutable

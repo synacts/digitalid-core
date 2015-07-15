@@ -277,6 +277,8 @@ public final class Mapper {
     private static boolean loadIdentity(@Nonnull Identifier identifier) throws SQLException {
         assert !identifiers.containsKey(identifier) : "The given identifier is not yet loaded.";
         
+        Logger.log(Level.VERBOSE, "Mapper", "Try to load the identifier " + identifier + " from the database.");
+        
         final @Nonnull String SQL = "SELECT general_identity.category, general_identity.identity, general_identity.address FROM general_identifier INNER JOIN general_identity ON general_identifier.identity = general_identity.identity WHERE general_identifier.identifier = " + identifier;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
             if (resultSet.next()) {

@@ -7,7 +7,7 @@ import javax.annotation.Nonnull;
 /**
  * This class allows the created threads to be named.
  * 
- * @author Kaspar Etter (kaspar.etter@virtualid.ch)
+ * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
 public class NamedThreadFactory implements ThreadFactory {

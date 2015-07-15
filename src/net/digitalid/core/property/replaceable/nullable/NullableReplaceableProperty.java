@@ -7,7 +7,7 @@ import javax.annotation.Nullable;
 /**
  * Description.
  * 
- * @author Kaspar Etter (kaspar.etter@virtualid.ch)
+ * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 0.0
  */
 public class NullableReplaceableProperty<V> extends ReadOnlyNullableReplaceableProperty<V> {

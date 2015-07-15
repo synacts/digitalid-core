@@ -4,7 +4,6 @@ import javax.annotation.Nonnull;
 import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.wrappers.Block;
 
 /**
  * This class implements the bare blockable mechanism.

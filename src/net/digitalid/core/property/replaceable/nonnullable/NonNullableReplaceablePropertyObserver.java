@@ -6,7 +6,7 @@ import net.digitalid.core.property.PropertyObserver;
 /**
  * Description.
  * 
- * @author Kaspar Etter (kaspar.etter@virtualid.ch)
+ * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 0.0
  */
 public interface NonNullableReplaceablePropertyObserver<V> extends PropertyObserver {

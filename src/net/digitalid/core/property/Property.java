@@ -10,7 +10,7 @@ import javax.annotation.Nullable;
  * 
  * TODO: Also ReadOnlyOrderedProperty for things like subcontexts? Depends on their implementation.
  * 
- * @author Kaspar Etter (kaspar.etter@virtualid.ch)
+ * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 0.0
  */
 public abstract class Property<O extends PropertyObserver> {

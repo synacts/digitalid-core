@@ -15,7 +15,7 @@ import net.digitalid.core.server.Server;
 /**
  * This class implements a logger that logs the messages to a file.
  * 
- * @author Kaspar Etter (kaspar.etter@virtualid.ch)
+ * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
 public final class DefaultLogger extends Logger {

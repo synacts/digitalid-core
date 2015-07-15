@@ -10,7 +10,7 @@ import net.digitalid.core.annotations.Stateless;
 /**
  * This class makes it easier to execute commands.
  * 
- * @author Kaspar Etter (kaspar.etter@virtualid.ch)
+ * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
 @Stateless

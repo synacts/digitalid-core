@@ -6,7 +6,7 @@ import net.digitalid.core.property.Property;
 /**
  * Description.
  * 
- * @author Kaspar Etter (kaspar.etter@virtualid.ch)
+ * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 0.0
  */
 public abstract class ReadOnlyNonNullableReplaceableProperty<V> extends Property<NonNullableReplaceablePropertyObserver<V>> {

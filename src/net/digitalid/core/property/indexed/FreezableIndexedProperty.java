@@ -15,7 +15,7 @@ import net.digitalid.core.collections.ReadOnlyMap;
  * 
  * [used for the hosts in the Server class and modules in the Service class]
  * 
- * @author Kaspar Etter (kaspar.etter@virtualid.ch)
+ * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 0.0
  */
 public class FreezableIndexedProperty<K, V, R extends ReadOnlyMap<K, V>, F extends FreezableMap<K, V>> implements ReadOnlyIndexedProperty<K, V, R> {

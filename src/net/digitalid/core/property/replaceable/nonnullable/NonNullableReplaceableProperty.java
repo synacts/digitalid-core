@@ -5,7 +5,7 @@ import javax.annotation.Nonnull;
 /**
  * Description.
  * 
- * @author Kaspar Etter (kaspar.etter@virtualid.ch)
+ * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 0.0
  */
 public class NonNullableReplaceableProperty<V> extends ReadOnlyNonNullableReplaceableProperty<V> {
