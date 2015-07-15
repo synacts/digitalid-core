@@ -15,8 +15,8 @@ import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.identifier.IdentifierClass;
 import net.digitalid.core.identifier.InternalNonHostIdentifier;
 import net.digitalid.core.identifier.NonHostIdentifier;
-import net.digitalid.core.wrappers.Blockable;
 import net.digitalid.core.wrappers.Block;
+import net.digitalid.core.wrappers.Blockable;
 import net.digitalid.core.wrappers.ListWrapper;
 import net.digitalid.core.wrappers.TupleWrapper;
 
@@ -144,6 +144,7 @@ public final class Predecessor implements Blockable {
      * 
      * @return the identity of this predecessor or null if none of its predecessors (including itself) is mapped.
      */
+    @Pure
     @NonCommitting
     @Nullable NonHostIdentity getIdentity() throws SQLException, IOException, PacketException, ExternalException {
         if (identifier.isMapped()) return identifier.getMappedIdentity();

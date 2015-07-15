@@ -8,7 +8,9 @@ import java.sql.Statement;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Capturable;
+import net.digitalid.core.annotations.Frozen;
 import net.digitalid.core.annotations.NonCommitting;
+import net.digitalid.core.annotations.NonNullableElements;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.collections.FreezableArrayList;
 import net.digitalid.core.collections.FreezableList;
@@ -118,9 +120,10 @@ public final class FreezablePredecessors extends FreezableArrayList<Predecessor>
     }
     
     
+    @Pure
     @Override
     @NonCommitting
-    public @Nonnull ReadOnlyList<NonHostIdentity> getIdentities() throws SQLException, IOException, PacketException, ExternalException {
+    public @Nonnull @Frozen @NonNullableElements ReadOnlyList<NonHostIdentity> getIdentities() throws SQLException, IOException, PacketException, ExternalException {
         final @Nonnull FreezableList<NonHostIdentity> identities = new FreezableArrayList<>(size());
         for (final @Nonnull Predecessor predecessor : this) {
             final @Nullable NonHostIdentity identity = predecessor.getIdentity();
@@ -200,11 +203,10 @@ public final class FreezablePredecessors extends FreezableArrayList<Predecessor>
      * @return the predecessors of the given identifier as stored in the database.
      * 
      * @require exist(identifier) : "The predecessors of the given identifier exist.";
-     * 
-     * @ensure return.isFrozen() : "The returned predecessors are frozen.";
      */
+    @Pure
     @NonCommitting
-    public static @Nonnull ReadOnlyPredecessors get(@Nonnull InternalNonHostIdentifier identifier) throws SQLException {
+    public static @Nonnull @Frozen ReadOnlyPredecessors get(@Nonnull InternalNonHostIdentifier identifier) throws SQLException {
         assert exist(identifier) : "The predecessors of the given identifier exist.";
         
         final @Nonnull String SQL = "SELECT predecessors FROM general_predecessors WHERE identifier = " + identifier;
@@ -216,6 +218,7 @@ public final class FreezablePredecessors extends FreezableArrayList<Predecessor>
         }
     }
     
+    @Pure
     @Override
     @NonCommitting
     public void set(@Nonnull InternalNonHostIdentifier identifier, @Nullable Reply reply) throws SQLException {

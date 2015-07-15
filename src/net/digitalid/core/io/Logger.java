@@ -3,6 +3,7 @@ package net.digitalid.core.io;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Initialized;
+import net.digitalid.core.annotations.Pure;
 
 /**
  * The logger logs messages of various {@link Level levels}.
@@ -42,6 +43,7 @@ public abstract class Logger {
      * 
      * @return whether this class is initialized.
      */
+    @Pure
     public static boolean isInitialized() {
         return logger != null;
     }

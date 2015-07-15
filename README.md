@@ -169,6 +169,16 @@ final @Nonnull InternalNonHostIdentity identity = identifier.getIdentity();
 final @Nonnull NativeRole role = client.accredit(identity, "secret");
 ```
 
+Afterwards, you have to wait until this client is authorized by another client. You can check whether this already happened by calling:
+
+```java
+if (role.reloadOrRefreshState(CoreService.SERVICE)) { // Also updates this client to the current state.
+	Logger.log(Level.INFORMATION, "Initialization", "This client has been authorized by another client.");
+} else {
+	Logger.log(Level.WARNING, "Initialization", "This client first needs to be authorized by another client.");
+}
+```
+
 #### Concept Retrieval
 
 Once you have such a role, it is easy to retrieve a [concept](#concepts) of that role like an [attribute](#attributes-and-certificates) or a [context](#contacts-and-contexts):

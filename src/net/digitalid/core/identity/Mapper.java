@@ -492,10 +492,12 @@ public final class Mapper {
             if (exception.getError() == PacketError.IDENTIFIER) throw new IdentityNotFoundException(identifier); else throw exception;
         }
         final @Nonnull Category category = reply.getCategory();
+        Logger.log(Level.VERBOSE, "Mapper", "The category of " + identifier + " is '" + category.name() + "'.");
         
         // Store all the predecessors of the given identifier into the database.
         final @Nonnull ReadOnlyPredecessors predecessors = reply.getPredecessors();
         predecessors.set(identifier, reply);
+        Logger.log(Level.VERBOSE, "Mapper", "The " + identifier + " has the following predecessors: " + predecessors + ".");
         
         // Check that all the claimed and mapped predecessors have the right category, the indicated predecessors and do link back.
         final @Nonnull ReadOnlyList<NonHostIdentity> identities = predecessors.getIdentities();
@@ -531,6 +533,7 @@ public final class Mapper {
         final @Nullable InternalNonHostIdentifier successor = reply.getSuccessor();
         if (successor != null) {
             Successor.set(identifier, successor, reply);
+            Logger.log(Level.VERBOSE, "Mapper", "The successor of " + identifier + " is " + successor + ".");
             if (!successor.getIdentity().equals(identifier.getIdentity())) throw new InvalidDeclarationException("The claimed successor " + successor + " of " + identifier + " does not link back.", identifier, reply);
             return successor.getIdentity();
         } else {
@@ -545,6 +548,7 @@ public final class Mapper {
      * 
      * @return the newly established identity of the given identifier.
      */
+    @Pure
     @NonCommitting
     private static @Nonnull Person establishExternalIdentity(@Nonnull @NonMapped ExternalIdentifier identifier) throws SQLException, IOException, PacketException, ExternalException {
         assert !isMapped(identifier) : "The identifier is not mapped.";
@@ -569,16 +573,21 @@ public final class Mapper {
      * 
      * @return the identity of the given identifier.
      */
+    @Pure
     @NonCommitting
     public static @Nonnull Identity getIdentity(@Nonnull Identifier identifier) throws SQLException, IOException, PacketException, ExternalException {
         if (isMapped(identifier)) {
+            Logger.log(Level.VERBOSE, "Mapper", "The identifier " + identifier + " is already mapped.");
             return identifiers.get(identifier);
         } else {
             if (identifier instanceof HostIdentifier) {
+                Logger.log(Level.VERBOSE, "Mapper", "The host identifier " + identifier + " needs to be established.");
                 return Cache.establishHostIdentity((HostIdentifier) identifier);
             } else if (identifier instanceof InternalNonHostIdentifier) {
+                Logger.log(Level.VERBOSE, "Mapper", "The internal non-host identifier " + identifier + " needs to be established.");
                 return establishInternalNonHostIdentity((InternalNonHostIdentifier) identifier);
             } else { assert identifier instanceof ExternalIdentifier;
+                Logger.log(Level.VERBOSE, "Mapper", "The external identifier " + identifier + " needs to be established.");
                 return establishExternalIdentity((ExternalIdentifier) identifier);
             }
         }
