@@ -246,7 +246,7 @@ public final class ContextModule implements BothModule {
             entity.set(preparedStatement, 1);
             final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNotNull(0)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
-                final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(3);
+                final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(2);
                 Context.get(entity, elements.getNotNull(0)).set(preparedStatement, 2);
                 preparedStatement.setString(3, new StringWrapper(elements.getNotNull(1)).getString());
                 preparedStatement.addBatch();

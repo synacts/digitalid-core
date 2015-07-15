@@ -423,7 +423,7 @@ public final class AgentModule implements BothModule {
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(prefix + "client_agent (entity, agent, " + Commitment.COLUMNS + ", name) VALUES (?, ?, ?, ?, ?, ?)")) {
             final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNotNull(5)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
-                final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(5);
+                final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(4);
                 IdentityClass.create(elements.getNotNull(0)).toInternalNonHostIdentity().set(preparedStatement, 1);
                 preparedStatement.setLong(2, new Int64Wrapper(elements.getNotNull(1)).getValue());
                 new Commitment(elements.getNotNull(2)).set(preparedStatement, 3);
@@ -672,7 +672,7 @@ public final class AgentModule implements BothModule {
             entity.set(preparedStatement, 1);
             final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNotNull(3)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
-                final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(4);
+                final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(3);
                 preparedStatement.setLong(2, new Int64Wrapper(elements.getNotNull(0)).getValue());
                 new Commitment(elements.getNotNull(1)).set(preparedStatement, 3);
                 preparedStatement.setString(6, new StringWrapper(elements.getNotNull(2)).getString());
