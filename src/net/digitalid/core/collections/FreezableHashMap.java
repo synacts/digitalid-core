@@ -6,6 +6,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Capturable;
 import net.digitalid.core.annotations.Immutable;
+import net.digitalid.core.annotations.NonFrozenRecipient;
 import net.digitalid.core.annotations.Pure;
 
 /**
@@ -95,30 +96,24 @@ public class FreezableHashMap<K,V> extends HashMap<K,V> implements FreezableMap<
     }
     
     
-    /**
-     * @require !isFrozen() : "This object is not frozen.";
-     */
     @Override
+    @NonFrozenRecipient
     public @Nullable V put(@Nullable K key, @Nullable V value) {
         assert !isFrozen() : "This object is not frozen.";
         
         return super.put(key, value);
     }
     
-    /**
-     * @require !isFrozen() : "This object is not frozen.";
-     */
     @Override
+    @NonFrozenRecipient
     public void putAll(@Nonnull Map<? extends K,? extends V> map) {
         assert !isFrozen() : "This object is not frozen.";
         
         super.putAll(map);
     }
     
-    /**
-     * @require !isFrozen() : "This object is not frozen.";
-     */
     @Override
+    @NonFrozenRecipient
     public @Nonnull V putIfAbsentOrNullElseReturnPresent(@Nonnull K key, @Nonnull V value) {
         assert !isFrozen() : "This object is not frozen.";
         
@@ -128,20 +123,16 @@ public class FreezableHashMap<K,V> extends HashMap<K,V> implements FreezableMap<
         return value;
     }
     
-    /**
-     * @require !isFrozen() : "This object is not frozen.";
-     */
     @Override
+    @NonFrozenRecipient
     public @Nullable V remove(@Nullable Object object) {
         assert !isFrozen() : "This object is not frozen.";
         
         return super.remove(object);
     }
     
-    /**
-     * @require !isFrozen() : "This object is not frozen.";
-     */
     @Override
+    @NonFrozenRecipient
     public void clear() {
         assert !isFrozen() : "This object is not frozen.";
         
@@ -159,12 +150,7 @@ public class FreezableHashMap<K,V> extends HashMap<K,V> implements FreezableMap<
     @Pure
     @Override
     public @Nonnull String toString() {
-        final @Nonnull StringBuilder string = new StringBuilder("{");
-        for (final @Nonnull Entry<K, V> entry : entrySet()) {
-            if (string.length() > 1) string.append(", ");
-            string.append(entry.getKey()).append(": ").append(entry.getValue());
-        }
-        return string.append("}").toString();
+        return IterableConverter.toString(entrySet(), new ElementConverter<Entry<K, V>>() { @Pure @Override public String toString(@Nullable Entry<K, V> entry) { return entry == null ? "null" : entry.getKey() + ": " + entry.getValue(); } }, Brackets.CURLY);
     }
     
 }

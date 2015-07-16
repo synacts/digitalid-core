@@ -67,12 +67,7 @@ public class ConcurrentHashMap<K, V> extends java.util.concurrent.ConcurrentHash
     @Pure
     @Override
     public @Nonnull String toString() {
-        final @Nonnull StringBuilder string = new StringBuilder("{");
-        for (final @Nonnull Entry<K, V> entry : entrySet()) {
-            if (string.length() > 1) string.append(", ");
-            string.append(entry.getKey()).append(": ").append(entry.getValue());
-        }
-        return string.append("}").toString();
+        return IterableConverter.toString(entrySet(), new ElementConverter<Entry<K, V>>() { @Pure @Override public String toString(@Nullable Entry<K, V> entry) { return entry == null ? "null" : entry.getKey() + ": " + entry.getValue(); } }, Brackets.CURLY);
     }
     
 }

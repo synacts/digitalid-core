@@ -4,8 +4,9 @@ import java.util.ListIterator;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Capturable;
-import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.annotations.Immutable;
+import net.digitalid.core.annotations.NonFrozenRecipient;
+import net.digitalid.core.annotations.Pure;
 
 /**
  * This interface models a {@link ListIterator list iterator} that can be {@link Freezable frozen}.
@@ -70,20 +71,16 @@ public class FreezableListIterator<E> extends FreezableIterableIterator<E> imple
     }
     
     
-    /**
-     * @require !isFrozen() : "This object is not frozen.";
-     */
     @Override
+    @NonFrozenRecipient
     public void set(@Nullable E element) {
         assert !isFrozen() : "This object is not frozen.";
         
         iterator.set(element);
     }
     
-    /**
-     * @require !isFrozen() : "This object is not frozen.";
-     */
     @Override
+    @NonFrozenRecipient
     public void add(@Nullable E element) {
         assert !isFrozen() : "This object is not frozen.";
         

@@ -17,6 +17,9 @@ import net.digitalid.core.annotations.Pure;
  * <em>Important:</em> Only use freezable or immutable types for the elements!
  * (The type is not restricted to {@link Freezable} or {@link Immutable} so that library types can also be used.)
  * 
+ * @see BackedFreezableSet
+ * @see BackedFreezableList
+ * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */

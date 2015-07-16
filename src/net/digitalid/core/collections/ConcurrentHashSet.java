@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Pure;
 
 /**
@@ -151,12 +150,7 @@ public class ConcurrentHashSet<E> extends AbstractSet<E> implements ConcurrentSe
     @Pure
     @Override
     public @Nonnull String toString() {
-        final @Nonnull StringBuilder string = new StringBuilder("{");
-        for (final @Nullable E element : this) {
-            if (string.length() > 1) string.append(", ");
-            string.append(element);
-        }
-        return string.append("}").toString();
+        return IterableConverter.toString(this, Brackets.CURLY);
     }
     
 }

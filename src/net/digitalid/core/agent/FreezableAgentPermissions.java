@@ -7,15 +7,24 @@ import java.sql.SQLException;
 import java.sql.Types;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.core.annotations.AttributeType;
 import net.digitalid.core.annotations.Capturable;
+import net.digitalid.core.annotations.EmptyOrSingle;
+import net.digitalid.core.annotations.EmptyOrSingleRecipient;
 import net.digitalid.core.annotations.NonCommitting;
+import net.digitalid.core.annotations.NonFrozen;
+import net.digitalid.core.annotations.NonFrozenRecipient;
 import net.digitalid.core.annotations.Pure;
+import net.digitalid.core.annotations.Single;
 import net.digitalid.core.auxiliary.Time;
+import net.digitalid.core.collections.Brackets;
+import net.digitalid.core.collections.ElementConverter;
 import net.digitalid.core.collections.FreezableArray;
 import net.digitalid.core.collections.FreezableLinkedHashMap;
 import net.digitalid.core.collections.FreezableLinkedList;
 import net.digitalid.core.collections.FreezableList;
 import net.digitalid.core.collections.FreezableSet;
+import net.digitalid.core.collections.IterableConverter;
 import net.digitalid.core.collections.ReadOnlyArray;
 import net.digitalid.core.collections.ReadOnlyList;
 import net.digitalid.core.database.Database;
@@ -95,12 +104,8 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
      * 
      * @param type the attribute type of the agent permission.
      * @param writing the access to the given attribute type.
-     * 
-     * @require type.isAttributeType() : "The type is an attribute type.";
-     * 
-     * @ensure isSingle() : "The new agent permissions are single.";
      */
-    public FreezableAgentPermissions(@Nonnull SemanticType type, @Nonnull Boolean writing) {
+    public @Single FreezableAgentPermissions(@Nonnull @AttributeType SemanticType type, @Nonnull Boolean writing) {
         assert type.isAttributeType() : "The type is an attribute type.";
         
         put(type, writing);
@@ -275,9 +280,8 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
      * Restricts these agent permissions to the given agent permissions.
      * 
      * @param permissions the agent permissions with which to restrict these agent permissions.
-     * 
-     * @require !isFrozen() : "This object is not frozen.";
      */
+    @NonFrozenRecipient
     public void restrictTo(@Nonnull ReadOnlyAgentPermissions permissions) {
         assert !isFrozen() : "This object is not frozen.";
         
@@ -324,12 +328,10 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
      * 
      * @return the previous value associated with <tt>key</tt> or
      *         <tt>null</tt> if there was no mapping for <tt>key</tt>.
-     * 
-     * @require !isFrozen() : "This object is not frozen.";
-     * @require type.isAttributeType() : "The type is an attribute type.";
      */
     @Override
-    public @Nullable Boolean put(@Nonnull SemanticType type, @Nonnull Boolean writing) {
+    @NonFrozenRecipient
+    public @Nullable Boolean put(@Nonnull @AttributeType SemanticType type, @Nonnull Boolean writing) {
         assert type.isAttributeType() : "The type is an attribute type.";
         
         boolean put;
@@ -352,9 +354,8 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
      * Only those agent permissions are added that are not yet covered.
      * 
      * @param permissions the permissions to add to these permissions.
-     * 
-     * @require !isFrozen() : "This object is not frozen.";
      */
+    @NonFrozenRecipient
     public void putAll(@Nonnull ReadOnlyAgentPermissions permissions) {
         for (final @Nonnull SemanticType type : permissions.keySet()) {
             put(type, permissions.get(type));
@@ -365,9 +366,8 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
      * Removes the given permissions from these permissions.
      * 
      * @param permissions the permissions to remove from these permissions.
-     * 
-     * @require !isFrozen() : "This object is not frozen.";
      */
+    @NonFrozenRecipient
     public void removeAll(@Nonnull ReadOnlyAgentPermissions permissions) {
         for (final @Nonnull SemanticType type : permissions.keySet()) {
             remove(type);
@@ -381,17 +381,10 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
         return new FreezableAgentPermissions(this);
     }
     
-    
     @Pure
     @Override
     public @Nonnull String toString() {
-        final @Nonnull StringBuilder string = new StringBuilder("[");
-        for (final @Nonnull SemanticType type : keySet()) {
-            if (string.length() != 1) string.append(", ");
-            string.append(type.getAddress().getString()).append(": ").append(get(type) ? "write" : "read");
-        }
-        string.append("]");
-        return string.toString();
+        return IterableConverter.toString(keySet(), new ElementConverter<SemanticType>() { @Pure @Override public String toString(@Nullable SemanticType type) { return type == null ? "null" : type.getAddress().getString() + ": " + (get(type) ? "write" : "read"); } }, Brackets.SQUARE);
     }
     
     
@@ -469,12 +462,10 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
      * @param startIndex the start index of the columns containing the data.
      * 
      * @return the given columns of the result set as an instance of this class.
-     * 
-     * @ensure return.!isFrozen() : "The permissions are not frozen.";
      */
     @Pure
     @NonCommitting
-    public static @Capturable @Nonnull FreezableAgentPermissions get(@Nonnull ResultSet resultSet, int startIndex) throws SQLException {
+    public static @Capturable @Nonnull @NonFrozen FreezableAgentPermissions get(@Nonnull ResultSet resultSet, int startIndex) throws SQLException {
         try {
             final @Nonnull FreezableAgentPermissions permissions = new FreezableAgentPermissions();
             while (resultSet.next()) {
@@ -495,13 +486,10 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
      * @param startIndex the start index of the columns containing the data.
      * 
      * @return the given columns of the result set as an instance of this class.
-     * 
-     * @ensure return.!isFrozen() : "The permissions are not frozen.";
-     * @ensure return.areEmptyOrSingle() : "The returned permissions are empty or single.";
      */
     @Pure
     @NonCommitting
-    public static @Capturable @Nonnull FreezableAgentPermissions getEmptyOrSingle(@Nonnull ResultSet resultSet, int startIndex) throws SQLException {
+    public static @Capturable @Nonnull @NonFrozen @EmptyOrSingle FreezableAgentPermissions getEmptyOrSingle(@Nonnull ResultSet resultSet, int startIndex) throws SQLException {
         try {
             final @Nonnull FreezableAgentPermissions permissions = new FreezableAgentPermissions();
             final @Nullable Identity identity = IdentityClass.get(resultSet, startIndex);
@@ -533,11 +521,10 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
      * 
      * @param preparedStatement the prepared statement whose parameters are to be set.
      * @param startIndex the start index of the parameters to set.
-     * 
-     * @require areEmptyOrSingle() : "These permissions are empty or single.";
      */
     @Override
     @NonCommitting
+    @EmptyOrSingleRecipient
     public void setEmptyOrSingle(@Nonnull PreparedStatement preparedStatement, int startIndex) throws SQLException {
         assert areEmptyOrSingle() : "These permissions are empty or single.";
         

@@ -5,15 +5,19 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Capturable;
 import net.digitalid.core.annotations.Frozen;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.NonFrozen;
 import net.digitalid.core.annotations.NonFrozenRecipient;
 import net.digitalid.core.annotations.Pure;
+import net.digitalid.core.collections.Brackets;
+import net.digitalid.core.collections.ElementConverter;
 import net.digitalid.core.collections.FreezableArrayList;
 import net.digitalid.core.collections.FreezableLinkedHashSet;
 import net.digitalid.core.collections.FreezableList;
+import net.digitalid.core.collections.IterableConverter;
 import net.digitalid.core.collections.ReadOnlyList;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.exceptions.external.ExternalException;
@@ -168,16 +172,15 @@ public final class FreezableContacts extends FreezableLinkedHashSet<Contact> imp
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
+    /**
+     * Stores the converter that converts a contact to the desired string.
+     */
+    private static final @Nonnull ElementConverter<Contact> converter = new ElementConverter<Contact>() { @Pure @Override public String toString(@Nullable Contact contact) { return contact == null ? "null" : contact.getPerson().getAddress().toString(); } };
+    
     @Pure
     @Override
     public @Nonnull String toString() {
-        final @Nonnull StringBuilder string = new StringBuilder("[");
-        for (final @Nonnull Contact contact : this) {
-            if (string.length() != 1) string.append(", ");
-            string.append(contact.getPerson().getAddress());
-        }
-        string.append("]");
-        return string.toString();
+        return IterableConverter.toString(this, converter, Brackets.CURLY);
     }
     
 }

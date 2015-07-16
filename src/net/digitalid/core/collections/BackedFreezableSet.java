@@ -2,10 +2,9 @@ package net.digitalid.core.collections;
 
 import java.util.Set;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Capturable;
-import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.annotations.Immutable;
+import net.digitalid.core.annotations.Pure;
 
 /**
  * This class implements a {@link Set set} that can be {@link Freezable frozen}.
@@ -79,12 +78,7 @@ class BackedFreezableSet<E> extends BackedFreezableCollection<E> implements Free
     @Pure
     @Override
     public @Nonnull String toString() {
-        final @Nonnull StringBuilder string = new StringBuilder("{");
-        for (final @Nullable E element : this) {
-            if (string.length() > 1) string.append(", ");
-            string.append(element);
-        }
-        return string.append("}").toString();
+        return IterableConverter.toString(this, Brackets.CURLY);
     }
     
 }

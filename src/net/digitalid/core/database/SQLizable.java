@@ -11,7 +11,9 @@ import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.NonNullableElements;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.annotations.Validated;
+import net.digitalid.core.collections.ElementConverter;
 import net.digitalid.core.collections.FreezableArray;
+import net.digitalid.core.collections.IterableConverter;
 import net.digitalid.core.collections.ReadOnlyArray;
 
 /**
@@ -69,15 +71,10 @@ public interface SQLizable {
         }
         
         @Pure
-        public @Nonnull String getDeclaration(@Nonnull @Validated String prefix) {
+        public @Nonnull String getDeclaration(final @Nonnull @Validated String prefix) {
             // TODO: Make a precondition for the value of the prefix.
             
-            final @Nonnull StringBuilder string = new StringBuilder();
-            for (final @Nonnull Column column : columns) {
-                if (string.length() > 0) string.append(", ");
-                string.append(prefix).append(column.toString());
-            }
-            return string.toString();
+            return IterableConverter.toString(columns, new ElementConverter<Column>() { @Pure @Override public String toString(@Nullable Column column) { return prefix + String.valueOf(column); } });
         }
         
         @Pure

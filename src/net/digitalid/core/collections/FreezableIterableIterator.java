@@ -5,6 +5,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Capturable;
 import net.digitalid.core.annotations.Immutable;
+import net.digitalid.core.annotations.NonFrozenRecipient;
 import net.digitalid.core.annotations.Pure;
 
 /**
@@ -69,10 +70,8 @@ class FreezableIterableIterator<E> implements FreezableIterator<E> {
     }
     
     
-    /**
-     * @require !isFrozen() : "This object is not frozen.";
-     */
     @Override
+    @NonFrozenRecipient
     public void remove() {
         assert !isFrozen() : "This object is not frozen.";
         

@@ -6,6 +6,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Capturable;
 import net.digitalid.core.annotations.Immutable;
+import net.digitalid.core.annotations.NonFrozenRecipient;
 import net.digitalid.core.annotations.Pure;
 
 /**
@@ -103,30 +104,24 @@ public class FreezableLinkedHashMap<K,V> extends LinkedHashMap<K,V> implements F
     }
     
     
-    /**
-     * @require !isFrozen() : "This object is not frozen.";
-     */
     @Override
+    @NonFrozenRecipient
     public @Nullable V put(@Nullable K key, @Nullable V value) {
         assert !isFrozen() : "This object is not frozen.";
         
         return super.put(key, value);
     }
     
-    /**
-     * @require !isFrozen() : "This object is not frozen.";
-     */
     @Override
+    @NonFrozenRecipient
     public void putAll(@Nonnull Map<? extends K,? extends V> map) {
         assert !isFrozen() : "This object is not frozen.";
         
         super.putAll(map);
     }
     
-    /**
-     * @require !isFrozen() : "This object is not frozen.";
-     */
     @Override
+    @NonFrozenRecipient
     public @Nonnull V putIfAbsentOrNullElseReturnPresent(@Nonnull K key, @Nonnull V value) {
         assert !isFrozen() : "This object is not frozen.";
         
@@ -136,20 +131,16 @@ public class FreezableLinkedHashMap<K,V> extends LinkedHashMap<K,V> implements F
         return value;
     }
     
-    /**
-     * @require !isFrozen() : "This object is not frozen.";
-     */
     @Override
+    @NonFrozenRecipient
     public @Nullable V remove(@Nullable Object object) {
         assert !isFrozen() : "This object is not frozen.";
         
         return super.remove(object);
     }
     
-    /**
-     * @require !isFrozen() : "This object is not frozen.";
-     */
     @Override
+    @NonFrozenRecipient
     public void clear() {
         assert !isFrozen() : "This object is not frozen.";
         

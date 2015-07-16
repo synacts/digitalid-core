@@ -4,6 +4,7 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Capturable;
+import net.digitalid.core.annotations.NonFrozenRecipient;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.collections.Freezable;
 import net.digitalid.core.collections.FreezableObject;
@@ -65,9 +66,8 @@ public class FreezablePair<E0, E1> extends FreezableObject implements ReadOnlyPa
      * Sets the first element of this tuple.
      * 
      * @param element0 the element to be set.
-     * 
-     * @require !isFrozen() : "This object is not frozen.";
      */
+    @NonFrozenRecipient
     public final void setElement0(E0 element0) {
         assert !isFrozen() : "This object is not frozen.";
         
@@ -78,9 +78,8 @@ public class FreezablePair<E0, E1> extends FreezableObject implements ReadOnlyPa
      * Sets the second element of this tuple.
      * 
      * @param element1 the element to be set.
-     * 
-     * @require !isFrozen() : "This object is not frozen.";
      */
+    @NonFrozenRecipient
     public final void setElement1(E1 element1) {
         assert !isFrozen() : "This object is not frozen.";
         

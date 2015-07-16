@@ -5,6 +5,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Capturable;
 import net.digitalid.core.annotations.Immutable;
+import net.digitalid.core.annotations.NonFrozenRecipient;
 import net.digitalid.core.annotations.Pure;
 
 /**
@@ -93,19 +94,8 @@ public class FreezableArrayIterator<E> implements ReadOnlyArrayIterator<E>, Free
     }
     
     
-    /**
-     * @require !isFrozen() : "This object is not frozen.";
-     */
-    public void set(@Nullable E element) {
-        assert !isFrozen() : "This object is not frozen.";
-        
-        array.set(index, element);
-    }
-    
-    /**
-     * @require !isFrozen() : "This object is not frozen.";
-     */
     @Override
+    @NonFrozenRecipient
     public void remove() {
         assert !isFrozen() : "This object is not frozen.";
         

@@ -3,14 +3,20 @@ package net.digitalid.core.contact;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import net.digitalid.core.agent.FreezableAgentPermissions;
 import net.digitalid.core.annotations.AttributeType;
 import net.digitalid.core.annotations.Capturable;
 import net.digitalid.core.annotations.NonCommitting;
+import net.digitalid.core.annotations.NonFrozenRecipient;
 import net.digitalid.core.annotations.Pure;
+import net.digitalid.core.annotations.Single;
+import net.digitalid.core.collections.Brackets;
+import net.digitalid.core.collections.ElementConverter;
 import net.digitalid.core.collections.FreezableArrayList;
 import net.digitalid.core.collections.FreezableLinkedHashSet;
 import net.digitalid.core.collections.FreezableList;
+import net.digitalid.core.collections.IterableConverter;
 import net.digitalid.core.collections.ReadOnlyList;
 import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.packet.PacketException;
@@ -45,12 +51,8 @@ public class FreezableAttributeTypeSet extends FreezableLinkedHashSet<SemanticTy
      * Creates a new attribute type set with the given attribute type.
      * 
      * @param type the attribute type to add to the new set.
-     * 
-     * @require type.isAttributeType() : "The type is an attribute type.";
-     * 
-     * @ensure isSingle() : "The new attribute type set contains a single element.";
      */
-    public FreezableAttributeTypeSet(@Nonnull SemanticType type) {
+    public @Single FreezableAttributeTypeSet(@Nonnull @AttributeType SemanticType type) {
         assert type.isAttributeType() : "The type is an attribute type.";
         
         add(type);
@@ -121,9 +123,8 @@ public class FreezableAttributeTypeSet extends FreezableLinkedHashSet<SemanticTy
      * Adds the given attribute type set to this attribute type set.
      * 
      * @param attributeSet the attribute type set to add to this attribute type set.
-     * 
-     * @require !isFrozen() : "This object is not frozen.";
      */
+    @NonFrozenRecipient
     public final void addAll(@Nonnull ReadOnlyAttributeTypeSet attributeSet) {
         for (final @Nonnull SemanticType type : attributeSet) {
             add(type);
@@ -149,16 +150,15 @@ public class FreezableAttributeTypeSet extends FreezableLinkedHashSet<SemanticTy
     }
     
     
+    /**
+     * Stores the converter that converts a type to the desired string.
+     */
+    private static final @Nonnull ElementConverter<SemanticType> converter = new ElementConverter<SemanticType>() { @Pure @Override public String toString(@Nullable SemanticType type) { return type == null ? "null" : type.getAddress().getString(); } };
+    
     @Pure
     @Override
-    public final @Nonnull String toString() {
-        final @Nonnull StringBuilder string = new StringBuilder("{");
-        for (final @Nonnull SemanticType type : this) {
-            if (string.length() != 1) string.append(", ");
-            string.append(type.getAddress().getString());
-        }
-        string.append("}");
-        return string.toString();
+    public @Nonnull String toString() {
+        return IterableConverter.toString(this, converter, Brackets.CURLY);
     }
     
 }

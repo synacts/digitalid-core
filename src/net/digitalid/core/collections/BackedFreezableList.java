@@ -8,6 +8,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Capturable;
 import net.digitalid.core.annotations.Immutable;
+import net.digitalid.core.annotations.NonFrozenRecipient;
 import net.digitalid.core.annotations.Pure;
 
 /**
@@ -99,40 +100,32 @@ class BackedFreezableList<E> extends BackedFreezableCollection<E> implements Fre
     }
 
     
-    /**
-     * @require !isFrozen() : "This object is not frozen.";
-     */
     @Override
+    @NonFrozenRecipient
     public @Nullable E set(int index, @Nullable E element) {
         assert !isFrozen() : "This object is not frozen.";
         
         return list.set(index, element);
     }
     
-    /**
-     * @require !isFrozen() : "This object is not frozen.";
-     */
     @Override
+    @NonFrozenRecipient
     public void add(int index, @Nullable E element) {
         assert !isFrozen() : "This object is not frozen.";
         
         list.add(index, element);
     }
     
-    /**
-     * @require !isFrozen() : "This object is not frozen.";
-     */
     @Override
+    @NonFrozenRecipient
     public E remove(int index) {
         assert !isFrozen() : "This object is not frozen.";
         
         return list.remove(index);
     }
     
-    /**
-     * @require !isFrozen() : "This object is not frozen.";
-     */
     @Override
+    @NonFrozenRecipient
     public boolean addAll(int index, @Nonnull Collection<? extends E> collection) {
         assert !isFrozen() : "This object is not frozen.";
         
@@ -220,12 +213,7 @@ class BackedFreezableList<E> extends BackedFreezableCollection<E> implements Fre
     @Pure
     @Override
     public @Nonnull String toString() {
-        final @Nonnull StringBuilder string = new StringBuilder("[");
-        for (final @Nullable E element : this) {
-            if (string.length() > 1) string.append(", ");
-            string.append(element);
-        }
-        return string.append("]").toString();
+        return IterableConverter.toString(this, Brackets.SQUARE);
     }
     
 }

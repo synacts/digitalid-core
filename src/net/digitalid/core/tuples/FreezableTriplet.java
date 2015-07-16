@@ -4,6 +4,7 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Capturable;
+import net.digitalid.core.annotations.NonFrozenRecipient;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.collections.Freezable;
 
@@ -55,9 +56,8 @@ public class FreezableTriplet<E0, E1, E2> extends FreezablePair<E0, E1> implemen
      * Sets the third element of this tuple.
      * 
      * @param element2 the element to be set.
-     * 
-     * @require !isFrozen() : "This object is not frozen.";
      */
+    @NonFrozenRecipient
     public final void setElement2(E2 element2) {
         assert !isFrozen() : "This object is not frozen.";
         

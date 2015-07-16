@@ -135,17 +135,6 @@ public final class FreezablePredecessors extends FreezableArrayList<Predecessor>
     
     @Pure
     @Override
-    public @Nonnull String toString() {
-        final @Nonnull StringBuilder string = new StringBuilder("[");
-        for (final @Nonnull Predecessor predecessor : this) {
-            if (string.length() > 1) string.append(", ");
-            string.append(predecessor);
-        }
-        return string.append("]").toString();
-    }
-    
-    @Pure
-    @Override
     public boolean equals(@Nullable Object object) {
         if (object == this) return true;
         if (object == null || !(object instanceof FreezablePredecessors)) return false;
