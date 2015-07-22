@@ -3,6 +3,7 @@ package net.digitalid.core.property.replaceable.nullable;
 import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.core.property.ValueValidator;
 
 /**
  * Description.
@@ -11,6 +12,15 @@ import javax.annotation.Nullable;
  * @version 0.0
  */
 public class NullableReplaceableProperty<V> extends ReadOnlyNullableReplaceableProperty<V> {
+    
+    /**
+     * Creates a new nullable replaceable property with the given validator.
+     * 
+     * @param validator the validator used to validate the value of this property.
+     */
+    NullableReplaceableProperty(@Nonnull ValueValidator<? super V> validator) {
+        super(validator);
+    }
     
     private @Nullable V value;
     

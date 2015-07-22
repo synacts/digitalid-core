@@ -10,11 +10,11 @@ import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
+import net.digitalid.core.database.SQLizable;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.wrappers.Blockable;
-import net.digitalid.core.database.SQLizable;
 import net.digitalid.core.wrappers.Block;
+import net.digitalid.core.wrappers.Blockable;
 import net.digitalid.core.wrappers.Int64Wrapper;
 
 /**
@@ -25,7 +25,7 @@ import net.digitalid.core.wrappers.Int64Wrapper;
  * @version 1.0
  */
 @Immutable
-public final class Time implements Blockable, Comparable<Time>, SQLizable {
+public final class Time implements Blockable, Comparable<Time>, SQLizable /*, SingleColumnStorable<Time> */ {
     
     /**
      * Stores the semantic type {@code time@core.digitalid.net}.
@@ -544,6 +544,30 @@ public final class Time implements Blockable, Comparable<Time>, SQLizable {
         return (int) (value ^ (value >>> 32));
     }
     
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    // TODO: Implement the factory!
+    
+    /*
+    private static final class PrivateFactory extends Factory<Time> {
+        
+        @Pure
+        @Override
+        public @Nonnull Block encodeNonNullable(@Nonnull Time time) {
+            return new Int64Wrapper(TYPE, time.value).toBlock();
+        }
+        
+    }
+    
+    public static final @Nonnull Factory<Time> FACTORY = new PrivateFactory();
+    
+    @Pure
+    @Override
+    public @Nonnull Factory<Time> getFactory() {
+        return FACTORY;
+    }
+    */
     
     /**
      * Stores the data type used to store instances of this class in the database.

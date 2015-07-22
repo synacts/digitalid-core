@@ -6,9 +6,9 @@ package net.digitalid.core.property.replaceable.nonnullable;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 0.0
  */
-public class NonNullableReplaceablePropertyTable {
+public class NonNullableReplaceableConceptPropertyInternalAction {
     
-    public NonNullableReplaceablePropertyTable() {
+    public NonNullableReplaceableConceptPropertyInternalAction() {
         
     }
     

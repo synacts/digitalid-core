@@ -1,11 +1,12 @@
 package net.digitalid.core.property.replaceable.nullable;
 
 import javax.annotation.Nonnull;
+import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.concept.Concept;
-import net.digitalid.core.wrappers.Blockable;
-import net.digitalid.core.database.SQLizable;
 import net.digitalid.core.property.ConceptProperty;
+import net.digitalid.core.property.ValueValidator;
+import net.digitalid.core.property.replaceable.nonnullable.NonNullableReplaceableConceptPropertyTable;
 
 /**
  * Description.
@@ -13,14 +14,33 @@ import net.digitalid.core.property.ConceptProperty;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 0.0
  */
-public class NullableReplaceableConceptProperty<V extends Blockable & SQLizable> extends NullableReplaceableProperty<V> implements ConceptProperty {
+public class NullableReplaceableConceptProperty<V, C extends Concept> extends NullableReplaceableProperty<V> implements ConceptProperty<C> {
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Concept –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Stores the concept to which this property belongs.
+     */
+    private final @Nonnull C concept;
+    
+    @Pure
+    @Override
+    public @Nonnull C getConcept() {
+        return concept;
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Table –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    // TODO: Introduce a reference to the database module/methods to load and change the value (or make this generic as well; usually either a column within a row or aggregating several rows)
+    private final @Nonnull NonNullableReplaceableConceptPropertyTable<V> table; // TODO: Change to nullable table.
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
-    private final @Nonnull Concept concept;
-    
-    protected NullableReplaceableConceptProperty(@Nonnull Concept concept) {
+    private NullableReplaceableConceptProperty(@Nonnull ValueValidator<? super V> validator, @Nonnull C concept, @Nonnull NonNullableReplaceableConceptPropertyTable<V> table) {
+        super(validator);
+        
         this.concept = concept;
+        this.table = table;
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Loading –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -34,11 +54,6 @@ public class NullableReplaceableConceptProperty<V extends Blockable & SQLizable>
     // TODO: Give the @OnlyForActions method only package-level visibility. (This annotation might no longer be necessary afterwards.)
     
     // TODO: Also store the time of the last modification.
-    
-    @Override
-    public Concept getConcept() {
-        throw new UnsupportedOperationException("getConcept in NullableReplaceableConceptProperty is not supported yet.");
-    }
     
     @Override
     public Time getTime() {

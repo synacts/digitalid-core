@@ -106,8 +106,8 @@ public final class Cache {
                     Logger.log(Level.WARNING, "Cache", "The public key chain of the root host was not found and thus 'core.digitalid.net' was created on this machine.");
                 }
                 setCachedAttributeValue(HostIdentity.DIGITALID, null, Time.MIN, PublicKeyChain.TYPE, value, null);
-                Database.commit();
             }
+            Database.commit();
         } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
             throw new InitializationError("Could not initialize the cache.", exception);
         } finally {

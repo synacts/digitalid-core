@@ -2,11 +2,12 @@ package net.digitalid.core.collections;
 
 import javax.annotation.Nonnull;
 import net.digitalid.core.annotations.Capturable;
+import net.digitalid.core.annotations.NonFrozen;
 import net.digitalid.core.annotations.Pure;
 
 /**
  * Interfaces that extend this interface provide read-only access to their objects.
- * When a read-only object is {@link Object#clone() cloned}, its copy is of the corresponding {@link Freezable freezable} type and {@link #!isFrozen() not frozen}.
+ * When a read-only object is {@link Object#clone() cloned}, its copy is of the corresponding {@link Freezable freezable} type and not {@link #isFrozen() frozen}.
  * 
  * @see Freezable
  * 
@@ -26,10 +27,7 @@ public interface ReadOnly extends Cloneable {
     public boolean isFrozen();
     
     
-    /**
-     * @ensure clone.!isFrozen() : "The clone is not frozen.";
-     */
     @Pure
-    public @Capturable @Nonnull Freezable clone();
+    public @Capturable @Nonnull @NonFrozen Freezable clone();
     
 }

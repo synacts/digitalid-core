@@ -41,7 +41,7 @@ public abstract class Configuration {
     /**
      * The pattern that valid database names have to match.
      */
-    private static final @Nonnull Pattern pattern = Pattern.compile("[a-z0-9_]+", Pattern.CASE_INSENSITIVE);
+    private static final @Nonnull Pattern PATTERN = Pattern.compile("[a-z0-9_]+", Pattern.CASE_INSENSITIVE);
     
     /**
      * Returns whether the given name is valid for a database.
@@ -52,8 +52,23 @@ public abstract class Configuration {
      */
     @Pure
     public static boolean isValid(@Nonnull String name) {
-        return name.length() <= 40 && pattern.matcher(name).matches();
+        return name.length() <= 40 && PATTERN.matcher(name).matches();
     }
+    
+    /**
+     * The pattern that valid client identifiers have to match.
+     */
+//    private static final @Nonnull Pattern PATTERNB = Pattern.compile("[a-z_][a-z0-9_$]+", Pattern.CASE_INSENSITIVE);
+    
+    // TODO: Introduce a pattern for database identifiers.
+    
+    /**
+     * Returns the pattern for database identifiers.
+     * 
+     * @return the pattern for database identifiers.
+     */
+//    @Pure
+//    public abstract @Nonnull Pattern getPattern();
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -107,6 +122,19 @@ public abstract class Configuration {
     @Committing
     public abstract void dropDatabase() throws SQLException;
     
+    /**
+     * Returns the open connection to the database that is associated with the current thread.
+     * <p>
+     * <em>Important:</em> Do not commit or close the connection as it will be reused later on!
+     * 
+     * @return the open connection to the database that is associated with the current thread.
+     */
+    @Pure
+    @Locked
+    @NonCommitting
+    protected final static @Nonnull Connection getCurrentConnection() throws SQLException {
+        return Database.getConnection();
+    }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Syntax –––––––––––––––––––––––––––––––––––––––––––––––––– */
     

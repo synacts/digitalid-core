@@ -1,6 +1,6 @@
 package net.digitalid.core.property.replaceable.nullable;
 
-import net.digitalid.core.property.PropertyTable;
+import net.digitalid.core.property.ConceptPropertyTable;
 
 /**
  * Description.
@@ -8,7 +8,7 @@ import net.digitalid.core.property.PropertyTable;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 0.0
  */
-public class NullableReplaceablePropertyTable extends PropertyTable {
+public class NullableReplaceablePropertyTable extends ConceptPropertyTable {
     
     public NullableReplaceablePropertyTable() {
         

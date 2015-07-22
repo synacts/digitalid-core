@@ -3,7 +3,6 @@ package net.digitalid.core.wrappers;
 import javax.annotation.Nonnull;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.wrappers.Block;
 
 /**
  * Classes that support the encoding of their objects as a {@link Block} can indicate this by implementing this interface.
@@ -12,6 +11,7 @@ import net.digitalid.core.wrappers.Block;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
+@Deprecated
 public interface Blockable {
     
     /**
@@ -33,11 +33,5 @@ public interface Blockable {
      */
     @Pure
     public @Nonnull Block toBlock();
-    
-    
-    // TODO
-    public static class Factory {
-        
-    }
     
 }

@@ -6,9 +6,9 @@ package net.digitalid.core.property;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 0.0
  */
-public class PropertyInternalAction {
+public class ConceptPropertyInternalAction {
     
-    public PropertyInternalAction() {
+    public ConceptPropertyInternalAction() {
         
     }
     

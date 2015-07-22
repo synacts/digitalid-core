@@ -24,10 +24,11 @@ import net.digitalid.core.annotations.ValidIndex;
 import net.digitalid.core.cryptography.InitializationVector;
 import net.digitalid.core.cryptography.SymmetricKey;
 import net.digitalid.core.database.Database;
+import net.digitalid.core.database.SQLizable;
 import net.digitalid.core.errors.ShouldNeverHappenError;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.database.SQLizable;
+import net.digitalid.core.storable.Storable;
 
 /**
  * A block is a sequence of bytes that is encoded according to some syntactic type.
@@ -48,6 +49,12 @@ import net.digitalid.core.database.SQLizable;
  */
 @Immutable
 public final class Block implements SQLizable, Cloneable {
+    
+    // TODO: Javadoc and nullable version
+    @Pure
+    public static @Nonnull <V extends Storable<V>> Block fromNonNullable(@Nonnull V storable) {
+        return storable.getFactory().encodeNonNullable(storable);
+    }
     
     /**
      * Returns the blockable instance as a block or null if the instance is null.

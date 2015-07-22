@@ -9,9 +9,11 @@ package net.digitalid.core.property;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 0.0
  */
-public abstract class PropertyTable {
+public abstract class ConceptPropertyTable {
     
-    public PropertyTable() {
+    // TODO: isValid() with at most 22 characters
+    
+    public ConceptPropertyTable() {
         
     }
     

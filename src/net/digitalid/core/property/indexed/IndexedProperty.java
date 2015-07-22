@@ -18,9 +18,9 @@ import net.digitalid.core.collections.ReadOnlyMap;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 0.0
  */
-public class FreezableIndexedProperty<K, V, R extends ReadOnlyMap<K, V>, F extends FreezableMap<K, V>> implements ReadOnlyIndexedProperty<K, V, R> {
+public class IndexedProperty<K, V, R extends ReadOnlyMap<K, V>, F extends FreezableMap<K, V>> implements ReadOnlyIndexedProperty<K, V, R> {
     
-    public FreezableIndexedProperty(@Nonnull F map) {
+    public IndexedProperty(@Nonnull F map) {
         this.map = map;
     }
     

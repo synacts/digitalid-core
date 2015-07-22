@@ -17,12 +17,12 @@ import net.digitalid.core.identity.SyntacticType;
  * @version 1.0
  */
 @Immutable
-public abstract class BlockWrapper implements Blockable {
+public abstract class BlockWrapper implements Blockable { // TODO: Rename to Wrapper and introduce subclasses ValueWrapper<V>, ElementWrapper and ElementsWrapper?
     
     /**
      * References the wrapped block.
      */
-    private final @Nonnull Block block;
+    private final @Nonnull Block block; // TODO: Remove the reference to the block and introduce a reference to the semantic type instead.
     
     /**
      * Creates and wraps a new block for lazy encoding.

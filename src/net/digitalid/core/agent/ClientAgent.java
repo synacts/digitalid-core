@@ -85,6 +85,7 @@ public final class ClientAgent extends Agent {
      */
     @NonCommitting
     @OnlyForActions
+    @SuppressWarnings("deprecation")
     public void replaceCommitment(@Nonnull Commitment oldCommitment, @Nonnull Commitment newCommitment) throws SQLException {
         AgentModule.replaceCommitment(this, oldCommitment, newCommitment);
         commitment = newCommitment;
@@ -92,6 +93,11 @@ public final class ClientAgent extends Agent {
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Name –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+//    private static final @Nonnull NonNullableReplaceableConceptPropertyTable<String> nameTable = NonNullableReplaceableConceptPropertyTable<String>.get();
+    
+    // TODO: Rename and remove the rest.
+//    private @Nonnull NonNullableReplaceableConceptProperty<String, ClientAgent> nameProperty = NonNullableReplaceableConceptProperty<String, ClientAgent>.get(agentModule, this, "name", "replace.name.client.agent@core.digitalid.net", validator);
     
     /**
      * Stores the name of this client agent.

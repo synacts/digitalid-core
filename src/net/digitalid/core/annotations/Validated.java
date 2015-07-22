@@ -5,11 +5,13 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import net.digitalid.core.property.ValueValidator;
 
 /**
  * This annotation indicates that a value is validated.
  * 
  * @see NonValidated
+ * @see ValueValidator
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
