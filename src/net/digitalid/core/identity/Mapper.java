@@ -36,6 +36,7 @@ import net.digitalid.core.identifier.IdentifierClass;
 import net.digitalid.core.identifier.InternalNonHostIdentifier;
 import net.digitalid.core.identifier.NonHostIdentifier;
 import net.digitalid.core.io.Level;
+import net.digitalid.core.io.Log;
 import net.digitalid.core.io.Logger;
 import net.digitalid.core.server.Server;
 import net.digitalid.core.tuples.FreezableTriplet;
@@ -209,7 +210,7 @@ public final class Mapper {
     public static void unmap(@Nonnull Identity identity) {
         numbers.remove(identity.getNumber());
         identifiers.remove(identity.getAddress());
-        Logger.log(Level.DEBUGGING, "Mapper", "The identity of " + identity.getAddress() + " was unmapped.");
+        Log.debugging("The identity of " + identity.getAddress() + " was unmapped.");
     }
     
     /**
@@ -277,7 +278,7 @@ public final class Mapper {
     private static boolean loadIdentity(@Nonnull Identifier identifier) throws SQLException {
         assert !identifiers.containsKey(identifier) : "The given identifier is not yet loaded.";
         
-        Logger.log(Level.VERBOSE, "Mapper", "Try to load the identifier " + identifier + " from the database.");
+        Log.verbose("Try to load the identifier " + identifier + " from the database.");
         
         final @Nonnull String SQL = "SELECT general_identity.category, general_identity.identity, general_identity.address FROM general_identifier INNER JOIN general_identity ON general_identifier.identity = general_identity.identity WHERE general_identifier.identifier = " + identifier;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
@@ -364,7 +365,7 @@ public final class Mapper {
             try (@Nonnull Statement statement = Database.createStatement()) {
                 final long key = Database.executeInsert(statement, "INSERT INTO general_identity (category, address, reply) VALUES (" + category + ", " + identifier + ", " + reply + ")");
                 statement.executeUpdate("INSERT INTO general_identifier (identifier, identity) VALUES (" + identifier + ", " + key + ")");
-                Logger.log(Level.DEBUGGING, "Mapper", "The identity with the identifier " + identifier + " was succesfully mapped.");
+                Log.debugging("The identity with the identifier " + identifier + " was succesfully mapped.");
                 // The identity is not added to the map since the transaction might be rolled back later on.
                 return createIdentity(category, key, identifier);
             }
@@ -462,7 +463,7 @@ public final class Mapper {
                     updateReferences(statement, oldNumber, newNumber);
                     statement.executeUpdate("UPDATE general_identifier SET identity = " + newNumber + " WHERE identity = " + oldNumber);
                     statement.executeUpdate("DELETE FROM general_identity WHERE identity = " + oldNumber);
-                    Logger.log(Level.DEBUGGING, "Mapper", "The identity of " + identity.getAddress() + " was succesfully merged into " + newIdentity.getAddress() + ".");
+                    Log.debugging("The identity of " + identity.getAddress() + " was succesfully merged into " + newIdentity.getAddress() + ".");
                     unmap(identity);
                 }
             }
@@ -494,12 +495,12 @@ public final class Mapper {
             if (exception.getError() == PacketError.IDENTIFIER) throw new IdentityNotFoundException(identifier); else throw exception;
         }
         final @Nonnull Category category = reply.getCategory();
-        Logger.log(Level.VERBOSE, "Mapper", "The category of " + identifier + " is '" + category.name() + "'.");
+        Log.verbose("The category of " + identifier + " is '" + category.name() + "'.");
         
         // Store all the predecessors of the given identifier into the database.
         final @Nonnull ReadOnlyPredecessors predecessors = reply.getPredecessors();
         predecessors.set(identifier, reply);
-        Logger.log(Level.VERBOSE, "Mapper", "The " + identifier + " has the following predecessors: " + predecessors + ".");
+        Log.verbose("The " + identifier + " has the following predecessors: " + predecessors + ".");
         
         // Check that all the claimed and mapped predecessors have the right category, the indicated predecessors and do link back.
         final @Nonnull ReadOnlyList<NonHostIdentity> identities = predecessors.getIdentities();
@@ -521,7 +522,7 @@ public final class Mapper {
                 statement.executeUpdate("UPDATE general_identity SET address = " + identifier + " WHERE identity = " + identity);
             }
             unmap(identity);
-            Logger.log(Level.DEBUGGING, "Mapper", "The identity of " + identity.getAddress() + " was succesfully relocated to " + identifier + ".");
+            Log.debugging("The identity of " + identity.getAddress() + " was succesfully relocated to " + identifier + ".");
             
         // Create a new identity and merge existing predecessors into this new identity.
         } else {
@@ -529,13 +530,13 @@ public final class Mapper {
             if (identities.size() > 1 && !category.isInternalPerson()) throw new InvalidDeclarationException("Only internal persons may have more than one predecessor.", identifier, reply);
             mergeIdentities(identities, identity);
         }
-        Logger.log(Level.DEBUGGING, "Mapper", "The identity of " + identifier + " was succesfully established.");
+        Log.debugging("The identity of " + identifier + " was succesfully established.");
         
         // Store the successor of the given identifier into the database if available.
         final @Nullable InternalNonHostIdentifier successor = reply.getSuccessor();
         if (successor != null) {
             Successor.set(identifier, successor, reply);
-            Logger.log(Level.VERBOSE, "Mapper", "The successor of " + identifier + " is " + successor + ".");
+            Log.verbose("The successor of " + identifier + " is " + successor + ".");
             if (!successor.getIdentity().equals(identifier.getIdentity())) throw new InvalidDeclarationException("The claimed successor " + successor + " of " + identifier + " does not link back.", identifier, reply);
             return successor.getIdentity();
         } else {
@@ -579,17 +580,17 @@ public final class Mapper {
     @NonCommitting
     public static @Nonnull Identity getIdentity(@Nonnull Identifier identifier) throws SQLException, IOException, PacketException, ExternalException {
         if (isMapped(identifier)) {
-            Logger.log(Level.VERBOSE, "Mapper", "The identifier " + identifier + " is already mapped.");
+            Log.verbose("The identifier " + identifier + " is already mapped.");
             return identifiers.get(identifier);
         } else {
             if (identifier instanceof HostIdentifier) {
-                Logger.log(Level.VERBOSE, "Mapper", "The host identifier " + identifier + " needs to be established.");
+                Log.verbose("The host identifier " + identifier + " needs to be established.");
                 return Cache.establishHostIdentity((HostIdentifier) identifier);
             } else if (identifier instanceof InternalNonHostIdentifier) {
-                Logger.log(Level.VERBOSE, "Mapper", "The internal non-host identifier " + identifier + " needs to be established.");
+                Log.verbose("The internal non-host identifier " + identifier + " needs to be established.");
                 return establishInternalNonHostIdentity((InternalNonHostIdentifier) identifier);
             } else { assert identifier instanceof ExternalIdentifier;
-                Logger.log(Level.VERBOSE, "Mapper", "The external identifier " + identifier + " needs to be established.");
+                Log.verbose("The external identifier " + identifier + " needs to be established.");
                 return establishExternalIdentity((ExternalIdentifier) identifier);
             }
         }

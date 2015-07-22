@@ -9,8 +9,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import javax.annotation.Nonnull;
 import net.digitalid.core.errors.InitializationError;
-import net.digitalid.core.io.Level;
-import net.digitalid.core.io.Logger;
+import net.digitalid.core.io.Log;
 import net.digitalid.core.packet.Request;
 import net.digitalid.core.thread.NamedThreadFactory;
 
@@ -56,13 +55,13 @@ public final class Listener extends Thread {
                 socket.setSoTimeout(1000000); // TODO: Remove two zeroes!
                 try {
                     threadPoolExecutor.execute(new Worker(socket));
-                    Logger.log(Level.VERBOSE, "Listener", "Connection accepted from '" + socket.getInetAddress().toString().substring(1) + "'.");
+                    Log.verbose("Connection accepted from '" + socket.getInetAddress().toString().substring(1) + "'.");
                 } catch (@Nonnull RejectedExecutionException exception) {
-                    Logger.log(Level.WARNING, "Listener", "Could not add a new worker.", exception);
+                    Log.warning("Could not add a new worker.", exception);
                     socket.close();
                 }
             } catch (@Nonnull IOException exception) {
-                if (!serverSocket.isClosed()) Logger.log(Level.WARNING, "Listener", "Could not accept or close a socket.", exception);
+                if (!serverSocket.isClosed()) Log.warning("Could not accept or close a socket.", exception);
             }
         }
     }
@@ -76,7 +75,7 @@ public final class Listener extends Thread {
             threadPoolExecutor.shutdown();
             threadPoolExecutor.awaitTermination(5L, TimeUnit.SECONDS);
         } catch (@Nonnull IOException | InterruptedException exception) {
-            Logger.log(Level.WARNING, "Listener", "Could not shut down the listener.", exception);
+            Log.warning("Could not shut down the listener.", exception);
         }
     }
     

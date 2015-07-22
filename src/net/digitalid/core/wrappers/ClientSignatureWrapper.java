@@ -28,8 +28,7 @@ import net.digitalid.core.exceptions.packet.PacketError;
 import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.identifier.InternalIdentifier;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.io.Level;
-import net.digitalid.core.io.Logger;
+import net.digitalid.core.io.Log;
 import net.digitalid.core.synchronizer.Audit;
 
 /**
@@ -157,7 +156,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper {
         final @Nonnull Element value = commitment.getPublicKey().getAu().pow(s).multiply(commitment.getValue().pow(h));
         if (!t.equals(value.toBlock().getHash()) || s.getBitLength() > Parameters.RANDOM_EXPONENT) throw new InvalidSignatureException("The client signature is invalid.");
         
-        Logger.log(Level.VERBOSE, "ClientSignatureWrapper", "Signature verified in " + start.ago().getValue() + " ms.");
+        Log.verbose("Signature verified in " + start.ago().getValue() + " ms.");
         
         setVerified();
     }
@@ -177,7 +176,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper {
         subelements.set(2, s.toBlock());
         elements.set(2, new TupleWrapper(SIGNATURE, subelements.freeze()).toBlock());
         
-        Logger.log(Level.VERBOSE, "ClientSignatureWrapper", "Element signed in " + start.ago().getValue() + " ms.");
+        Log.verbose("Element signed in " + start.ago().getValue() + " ms.");
     }
     
     

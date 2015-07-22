@@ -37,6 +37,7 @@ import net.digitalid.core.handler.Action;
 import net.digitalid.core.handler.InternalAction;
 import net.digitalid.core.handler.Method;
 import net.digitalid.core.io.Level;
+import net.digitalid.core.io.Log;
 import net.digitalid.core.io.Logger;
 import net.digitalid.core.module.BothModule;
 import net.digitalid.core.module.ClientModule;
@@ -272,11 +273,11 @@ public final class SynchronizerModule implements ClientModule {
         for (final @Nonnull InternalAction pendingAction : pendingActions) {
             if (pendingAction.getRole().equals(role) && modules.contains(pendingAction.getModule())) {
                 try {
-                    Logger.log(Level.DEBUGGING, "SynchronizerModule", "Reexecute after reloading a module the pending action " + pendingAction + ".");
+                    Log.debugging("Reexecute after reloading a module the pending action " + pendingAction + ".");
                     pendingAction.executeOnClient();
                     Database.commit();
                 } catch (@Nonnull SQLException exception) {
-                    Logger.log(Level.WARNING, "SynchronizerModule", "Could not reexecute after reloading a module the pending action " + pendingAction + ".", exception);
+                    Log.warning("Could not reexecute after reloading a module the pending action " + pendingAction + ".", exception);
                     Database.rollback();
                     ErrorModule.add("Could not reexecute after reloading a module", pendingAction);
                     remove(pendingAction);
@@ -303,7 +304,7 @@ public final class SynchronizerModule implements ClientModule {
         while (iterator.hasNext()) {
             final @Nonnull InternalAction pendingAction = iterator.next();
             if (pendingAction.getRole().equals(role) && pendingAction.getService().equals(service) && pendingAction.interferesWith(failedAction)) {
-                Logger.log(Level.DEBUGGING, "SynchronizerModule", "Reverse the potentially interfering action " + pendingAction + ".");
+                Log.debugging("Reverse the potentially interfering action " + pendingAction + ".");
                 pendingAction.reverseOnClient();
                 reversedActions.add(pendingAction);
             }
@@ -320,11 +321,11 @@ public final class SynchronizerModule implements ClientModule {
     static void redoReversedActions(@Nonnull ReadOnlyList<InternalAction> reversedActions) throws SQLException {
         for (@Nonnull InternalAction reversedAction : reversedActions) {
             try {
-                Logger.log(Level.DEBUGGING, "SynchronizerModule", "Reexecute the reversed action " + reversedAction + ".");
+                Log.debugging("Reexecute the reversed action " + reversedAction + ".");
                 reversedAction.executeOnClient();
                 Database.commit();
             } catch (@Nonnull SQLException exception) {
-                Logger.log(Level.WARNING, "SynchronizerModule", "Could not reexecute the reversed action " + reversedAction + ".", exception);
+                Log.warning("Could not reexecute the reversed action " + reversedAction + ".", exception);
                 Database.rollback();
                 ErrorModule.add("Could not reexecute after reversion", reversedAction);
                 remove(reversedAction);

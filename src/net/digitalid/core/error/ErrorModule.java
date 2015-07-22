@@ -69,7 +69,7 @@ public final class ErrorModule implements ClientModule {
      */
     public static void add(@Nonnull String message, @Nonnull Action action) {
         // TODO: Make a real implementation.
-//        Logger.log(Level.WARNING, "ErrorModule", message + " '" + action + "'.");
+//        Log.warning(message + " '" + action + "'.");
     }
     
     static { CoreService.SERVICE.add(MODULE); }

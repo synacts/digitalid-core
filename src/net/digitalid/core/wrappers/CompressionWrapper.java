@@ -14,8 +14,7 @@ import net.digitalid.core.errors.ShouldNeverHappenError;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.identity.SyntacticType;
-import net.digitalid.core.io.Level;
-import net.digitalid.core.io.Logger;
+import net.digitalid.core.io.Log;
 
 /**
  * Wraps a block with the syntactic type {@code compression@core.digitalid.net} for encoding and decoding.
@@ -113,7 +112,7 @@ public final class CompressionWrapper extends BlockWrapper {
                     @Nonnull ByteArrayOutputStream uncompressed = new ByteArrayOutputStream(2 * block.getLength());
                     block.writeTo(1, new InflaterOutputStream(uncompressed), true);
                     this.element = new Block(parameter, uncompressed.toByteArray());
-                    Logger.log(Level.VERBOSE, "CompressionWrapper", "Element with " + element.getLength() + " bytes uncompressed in " + start.ago().getValue() + " ms.");
+                    Log.verbose("Element with " + element.getLength() + " bytes uncompressed in " + start.ago().getValue() + " ms.");
                 } catch (IOException exception) {
                     throw new InvalidEncodingException("The given block could not be decompressed.", exception);
                 }
@@ -193,7 +192,7 @@ public final class CompressionWrapper extends BlockWrapper {
                 final @Nonnull Time start = new Time();
                 cache = new ByteArrayOutputStream(element.getLength());
                 element.writeTo(new DeflaterOutputStream(cache), true);
-                Logger.log(Level.VERBOSE, "CompressionWrapper", "Element with " + element.getLength() + " bytes compressed in " + start.ago().getValue() + " ms.");
+                Log.verbose("Element with " + element.getLength() + " bytes compressed in " + start.ago().getValue() + " ms.");
             } catch (@Nonnull IOException exception) {
                 throw new ShouldNeverHappenError("The given element could not be compressed.", exception);
             }

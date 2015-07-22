@@ -30,6 +30,7 @@ import net.digitalid.core.handler.InternalAction;
 import net.digitalid.core.handler.Method;
 import net.digitalid.core.identifier.HostIdentifier;
 import net.digitalid.core.io.Level;
+import net.digitalid.core.io.Log;
 import net.digitalid.core.io.Logger;
 import net.digitalid.core.module.BothModule;
 import net.digitalid.core.packet.Packet;
@@ -162,34 +163,34 @@ public final class ResponseAudit extends Audit {
             final @Nonnull BothModule module = action.getModule();
             if (!suspendedModules.contains(module) && !ignoredModules.contains(module) && !methods.contains(action)) {
                 try {
-                    Logger.log(Level.DEBUGGING, "ResponseAudit", "Execute on the client the audited action " + action + ".");
+                    Log.debugging("Execute on the client the audited action " + action + ".");
                     action.executeOnClient();
                     ActionModule.audit(action);
                     Database.commit();
                 } catch (@Nonnull SQLException exception) {
-                    Logger.log(Level.WARNING, "ResponseAudit", "Could not execute on the client the audited action " + action + ".", exception);
+                    Log.warning("Could not execute on the client the audited action " + action + ".", exception);
                     Database.rollback();
                     
                     try {
                         final @Nonnull ReadOnlyList<InternalAction> reversedActions = SynchronizerModule.reverseInterferingActions(action);
-                        Logger.log(Level.DEBUGGING, "ResponseAudit", "Execute on the client after having reversed the interfering actions the audited action " + action + ".");
+                        Log.debugging("Execute on the client after having reversed the interfering actions the audited action " + action + ".");
                         action.executeOnClient();
                         ActionModule.audit(action);
                         Database.commit();
                         SynchronizerModule.redoReversedActions(reversedActions);
                     } catch (@Nonnull SQLException e) {
-                        Logger.log(Level.WARNING, "ResponseAudit", "Could not execute on the client after having reversed the interfering actions the audited action " + action + ".", e);
+                        Log.warning("Could not execute on the client after having reversed the interfering actions the audited action " + action + ".", e);
                         suspendedModules.add(module);
                         Database.rollback();
                     }
                 }
             } else {
                 try {
-                    Logger.log(Level.DEBUGGING, "ResponseAudit", "Add to the audit trail the ignored or already executed action " + action + ".");
+                    Log.debugging("Add to the audit trail the ignored or already executed action " + action + ".");
                     ActionModule.audit(action);
                     Database.commit();
                 } catch (@Nonnull SQLException exception) {
-                    Logger.log(Level.WARNING, "ResponseAudit", "Could not add to the audit trail the ignored or already executed action " + action + ".", exception);
+                    Log.warning("Could not add to the audit trail the ignored or already executed action " + action + ".", exception);
                     Database.rollback();
                 }
             }
@@ -224,11 +225,11 @@ public final class ResponseAudit extends Audit {
      */
     public static void shutDown() {
         try {
-            Logger.log(Level.VERBOSE, "ResponseAudit", "Shutting down the response audit executor.");
+            Log.verbose("Shutting down the response audit executor.");
             threadPoolExecutor.shutdown();
             threadPoolExecutor.awaitTermination(1L, TimeUnit.MINUTES);
         } catch (@Nonnull InterruptedException exception) {
-            Logger.log(Level.WARNING, "ResponseAudit", "Could not shut down the response audit executor.", exception);
+            Log.warning("Could not shut down the response audit executor.", exception);
         }
     }
     
@@ -247,10 +248,10 @@ public final class ResponseAudit extends Audit {
                 
                 try {
                     Database.lock();
-                    Logger.log(Level.DEBUGGING, "ResponseAudit", "Execute asynchronously the audit of " + method + ".");
+                    Log.debugging("Execute asynchronously the audit of " + method + ".");
                     execute(role, service, method.getRecipient(), new FreezableArrayList<>(method).freeze(), emptyModuleSet);
                 } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
-                    Logger.log(Level.WARNING, "ResponseAudit", "Could not execute the audit of " + method + " asynchronously.", exception);
+                    Log.warning("Could not execute the audit of " + method + " asynchronously.", exception);
                     Database.rollback();
                 } finally {
                     Database.unlock();

@@ -44,12 +44,12 @@ public final class Server {
     /**
      * Stores the version of the Digital ID implementation.
      */
-    public static final @Nonnull String VERSION = "0.6.1";
+    public static final @Nonnull String VERSION = "0.6.2";
     
     /**
      * Stores the date of the Digital ID implementation.
      */
-    public static final @Nonnull String DATE = "6 April 2015";
+    public static final @Nonnull String DATE = "22 July 2015";
     
     /**
      * Stores the authors of the Digital ID implementation.

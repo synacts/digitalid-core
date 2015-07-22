@@ -51,8 +51,7 @@ import net.digitalid.core.identity.InternalNonHostIdentity;
 import net.digitalid.core.identity.InternalPerson;
 import net.digitalid.core.identity.Person;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.io.Level;
-import net.digitalid.core.io.Logger;
+import net.digitalid.core.io.Log;
 import net.digitalid.core.synchronizer.Audit;
 
 /**
@@ -824,7 +823,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
             }
         }
         
-        Logger.log(Level.VERBOSE, "CredentialsSignatureWrapper", "Signature verified in " + start.ago().getValue() + " ms.");
+        Log.verbose("Signature verified in " + start.ago().getValue() + " ms.");
         
         setVerified();
     }
@@ -960,7 +959,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
         
         elements.set(3, new TupleWrapper(SIGNATURE, signature.freeze()).toBlock());
         
-        Logger.log(Level.VERBOSE, "CredentialsSignatureWrapper", "Element signed in " + start.ago().getValue() + " ms.");
+        Log.verbose("Element signed in " + start.ago().getValue() + " ms.");
     }
     
     

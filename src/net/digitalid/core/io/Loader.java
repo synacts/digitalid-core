@@ -50,7 +50,7 @@ public final class Loader {
                 loadClasses(file, prefix + fileName + ".");
             } else if (fileName.endsWith(".class")) {
                 final @Nonnull String className = prefix + fileName.substring(0, fileName.length() - 6);
-                Logger.log(Level.DEBUGGING, "Loader", "Initialize the class '" + className + "'.");
+                Log.debugging("Initialize the class '" + className + "'.");
                 Class.forName(className);
             }
         }
@@ -69,10 +69,10 @@ public final class Loader {
         final @Nonnull Enumeration<JarEntry> entries = jarFile.entries();
         while (entries.hasMoreElements()) {
             final @Nonnull String entryName = entries.nextElement().getName();
-            Logger.log(Level.VERBOSE, "Loader", "Found the entry '" + entryName + "'.");
+            Log.verbose("Found the entry '" + entryName + "'.");
             if (entryName.startsWith("net/digitalid/") && entryName.endsWith(".class")) {
                 final @Nonnull String className = entryName.substring(0, entryName.length() - 6).replace("/", ".");
-                Logger.log(Level.DEBUGGING, "Loader", "Initialize the class '" + className + "'.");
+                Log.debugging("Initialize the class '" + className + "'.");
                 Class.forName(className, true, urlClassLoader);
             }
         }
@@ -97,15 +97,15 @@ public final class Loader {
         try {
             Database.lock();
             for (final @Nonnull Class<?> preponedClass : preponedClasses) {
-                Logger.log(Level.DEBUGGING, "Loader", "Initialize the preponed class '" + preponedClass.getName() + "'.");
+                Log.debugging("Initialize the preponed class '" + preponedClass.getName() + "'.");
                 Class.forName(preponedClass.getName());
             }
             
             final @Nonnull File root = new File(mainClass.getProtectionDomain().getCodeSource().getLocation().toURI());
-            Logger.log(Level.DEBUGGING, "Loader", "The root of classes for " + mainClass.getSimpleName() + " is '" + root + "'.");
+            Log.debugging("The root of classes for " + mainClass.getSimpleName() + " is '" + root + "'.");
             
             if (roots.contains(root)) {
-                Logger.log(Level.DEBUGGING, "Loader", "The classes in '" + root + "' have already been loaded.");
+                Log.debugging("The classes in '" + root + "' have already been loaded.");
             } else {
                 if (root.getName().endsWith(".jar")) {
                     loadJarFile(new JarFile(root));
@@ -113,7 +113,7 @@ public final class Loader {
                     loadClasses(root, "");
                 }
                 roots.add(root);
-                Logger.log(Level.DEBUGGING, "Loader", "All classes in '" + root + "' have been loaded.");
+                Log.debugging("All classes in '" + root + "' have been loaded.");
             }
         } catch (@Nonnull URISyntaxException | IOException | ClassNotFoundException | SQLException exception) {
             throw new InitializationError("Could not load all classes.", exception);

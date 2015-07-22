@@ -173,9 +173,9 @@ Afterwards, you have to wait until this client is authorized by another client. 
 
 ```java
 if (role.reloadOrRefreshState(CoreService.SERVICE)) { // Also updates this client to the current state.
-	Logger.log(Level.INFORMATION, "Initialization", "This client has been authorized by another client.");
+	Log.information("This client has been authorized by another client.");
 } else {
-	Logger.log(Level.WARNING, "Initialization", "This client first needs to be authorized by another client.");
+	Log.warning("This client first needs to be authorized by another client.");
 }
 ```
 

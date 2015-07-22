@@ -4,8 +4,7 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.handler.ExternalAction;
-import net.digitalid.core.io.Level;
-import net.digitalid.core.io.Logger;
+import net.digitalid.core.io.Log;
 
 /**
  * Pushes the external actions to their recipients (and retries on failure).
@@ -21,7 +20,7 @@ public final class Pusher extends Thread {
     
     @NonCommitting
     public static void send(@Nonnull ExternalAction action) throws SQLException {
-        Logger.log(Level.ERROR, "Push", "The action '" + action + "' should have been pushed but this is not implemented yet."); // TODO: Write a real implementation!
+        Log.error("The action '" + action + "' should have been pushed but this is not implemented yet."); // TODO: Write a real implementation!
     }
     
     // TODO: Make sure that failed pushs are signed and audited but not transmitted.

@@ -48,7 +48,7 @@ public abstract class ExternalException extends Exception {
     protected ExternalException(@Nullable String message, @Nullable Throwable cause) {
         super(message == null ? "An external exception occurred." : message, cause);
         
-//        Logger.log(Level.WARNING, "ExternalException", "An external exception occurred.", this);
+//        Log.warning("An external exception occurred.", this);
     }
     
 }

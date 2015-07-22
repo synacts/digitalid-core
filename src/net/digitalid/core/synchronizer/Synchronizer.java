@@ -27,6 +27,7 @@ import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.handler.InternalAction;
 import net.digitalid.core.handler.Method;
 import net.digitalid.core.io.Level;
+import net.digitalid.core.io.Log;
 import net.digitalid.core.io.Logger;
 import net.digitalid.core.module.BothModule;
 import net.digitalid.core.packet.Response;
@@ -57,7 +58,7 @@ public final class Synchronizer extends Thread {
         assert action.isOnClient() : "The internal action is on a client.";
         
         if (action.isSimilarTo(action)) {
-            Logger.log(Level.DEBUGGING, "Synchronizer", "Execute and queue on the client the action " + action + ".");
+            Log.debugging("Execute and queue on the client the action " + action + ".");
             action.executeOnClient();
         }
         SynchronizerModule.add(action);
@@ -99,8 +100,8 @@ public final class Synchronizer extends Thread {
         @Nullable ConcurrentSet<Service> set = suspendedServices.get(role);
         if (set == null) set = suspendedServices.putIfAbsentElseReturnPresent(role, new ConcurrentHashSet<Service>());
         final boolean result = set.add(service);
-        if (result) Logger.log(Level.DEBUGGING, "Synchronizer", "The " + service.getName() + " of " + role.getIdentity().getAddress() + " is suspended.");
-        else Logger.log(Level.DEBUGGING, "Synchronizer", "The " + service.getName() + " of " + role.getIdentity().getAddress() + " was suspended by another thread.");
+        if (result) Log.debugging("The " + service.getName() + " of " + role.getIdentity().getAddress() + " is suspended.");
+        else Log.debugging("The " + service.getName() + " of " + role.getIdentity().getAddress() + " was suspended by another thread.");
         return result;
     }
     
@@ -117,9 +118,9 @@ public final class Synchronizer extends Thread {
     static void resume(@Nonnull Role role, @Nonnull Service service) {
         assert isSuspended(role, service) : "The given service is suspended.";
         
-        Logger.log(Level.DEBUGGING, "Synchronizer", "The " + service.getName() + " of " + role.getIdentity().getAddress() + " is resumed.");
+        Log.debugging("The " + service.getName() + " of " + role.getIdentity().getAddress() + " is resumed.");
         final @Nonnull ConcurrentSet<Service> set = suspendedServices.get(role);
-        if (!set.remove(service)) Logger.log(Level.ERROR, "Synchronizer", "The " + service.getName() + " of " + role.getIdentity().getAddress() + " was resumed by another thread.");
+        if (!set.remove(service)) Log.error("The " + service.getName() + " of " + role.getIdentity().getAddress() + " was resumed by another thread.");
         synchronized (set) { set.notifyAll(); }
     }
     
@@ -139,10 +140,10 @@ public final class Synchronizer extends Thread {
         
         @Nonnull Time lastTime = SynchronizerModule.getLastTime(role, service); // Read from the database in order to synchronize with other processes.
         if (module.equals(service)) lastTime = Time.MAX;
-        Logger.log(Level.DEBUGGING, "Synchronizer", "Send a state query for the " + module.getClass().getSimpleName() + " of " + role.getIdentity().getAddress() + " with a request audit from " + lastTime.asDate() + ".");
+        Log.debugging("Send a state query for the " + module.getClass().getSimpleName() + " of " + role.getIdentity().getAddress() + " with a request audit from " + lastTime.asDate() + ".");
         final @Nonnull Response response = Method.send(new FreezableArrayList<Method>(new StateQuery(role, module)).freeze(), new RequestAudit(lastTime));
         final @Nonnull StateReply reply = response.getReplyNotNull(0);
-        Logger.log(Level.DEBUGGING, "Synchronizer", "Update the state of the " + module.getClass().getSimpleName() + " of " + role.getIdentity().getAddress() + ".");
+        Log.debugging("Update the state of the " + module.getClass().getSimpleName() + " of " + role.getIdentity().getAddress() + ".");
         reply.updateState();
         
         if (module.equals(service)) SynchronizerModule.setLastTime(role, service, response.getAuditNotNull().getThisTime());
@@ -169,9 +170,9 @@ public final class Synchronizer extends Thread {
         @Nullable ConcurrentSet<Service> set = suspendedServices.get(role);
         if (set == null) set = suspendedServices.putIfAbsentElseReturnPresent(role, new ConcurrentHashSet<Service>());
         final @Nonnull Service service = module.getService();
-        Logger.log(Level.DEBUGGING, "Synchronizer", "Wait for the suspension of the " + service.getName() + " of " + role.getIdentity().getAddress() + " to reload the " + module.getClass().getSimpleName() + ".");
+        Log.debugging("Wait for the suspension of the " + service.getName() + " of " + role.getIdentity().getAddress() + " to reload the " + module.getClass().getSimpleName() + ".");
         synchronized (set) { while (!set.add(service)) set.wait(); }
-        Logger.log(Level.DEBUGGING, "Synchronizer", "The " + service.getName() + " of " + role.getIdentity().getAddress() + " is suspended.");
+        Log.debugging("The " + service.getName() + " of " + role.getIdentity().getAddress() + " is suspended.");
         try {
             Database.lock();
             reloadSuspended(role, module);
@@ -201,7 +202,7 @@ public final class Synchronizer extends Thread {
                 Database.lock();
                 final @Nonnull AuditQuery auditQuery = new AuditQuery(role, service);
                 final @Nonnull RequestAudit requestAudit = new RequestAudit(SynchronizerModule.getLastTime(role, service));
-                Logger.log(Level.DEBUGGING, "Synchronizer", "Send an audit query for the " + service.getName() + " of " + role.getIdentity().getAddress() + " with a " + requestAudit + ".");
+                Log.debugging("Send an audit query for the " + service.getName() + " of " + role.getIdentity().getAddress() + " with a " + requestAudit + ".");
                 final @Nonnull Response response = Method.send(new FreezableArrayList<Method>(auditQuery).freeze(), requestAudit);
                 response.getAuditNotNull().execute(role, service, auditQuery.getRecipient(), ResponseAudit.emptyMethodList, ResponseAudit.emptyModuleSet);
             } catch (@Nonnull SQLException exception) {
@@ -214,7 +215,7 @@ public final class Synchronizer extends Thread {
         } else {
             @Nullable ConcurrentSet<Service> set = suspendedServices.get(role);
             if (set == null) set = suspendedServices.putIfAbsentElseReturnPresent(role, new ConcurrentHashSet<Service>());
-            Logger.log(Level.DEBUGGING, "Synchronizer", "Wait for the resumption of the " + service.getName() + " of " + role.getIdentity().getAddress() + ".");
+            Log.debugging("Wait for the resumption of the " + service.getName() + " of " + role.getIdentity().getAddress() + ".");
             synchronized (set) { while (set.contains(service)) set.wait(); }
         }
     }
@@ -251,13 +252,13 @@ public final class Synchronizer extends Thread {
         active = false;
         
         try {
-            Logger.log(Level.VERBOSE, "Synchronizer", "Shutting down the synchronizer.");
+            Log.verbose("Shutting down the synchronizer.");
             synchronizer.interrupt();
             synchronizer.join();
             threadPoolExecutor.shutdown();
             threadPoolExecutor.awaitTermination(1L, TimeUnit.MINUTES);
         } catch (@Nonnull InterruptedException exception) {
-            Logger.log(Level.WARNING, "Synchronizer", "Could not shut down the synchronizer.", exception);
+            Log.warning("Could not shut down the synchronizer.", exception);
         }
     }
     
@@ -280,7 +281,7 @@ public final class Synchronizer extends Thread {
     public void run() {
         while (active) {
             try {
-                Logger.log(Level.VERBOSE, "Synchronizer", "Wait for the next pending action.");
+                Log.verbose("Wait for the next pending action.");
                 final @Nullable InternalAction action = SynchronizerModule.pendingActions.take();
                 assert action != null : "Just to make sure that the action is indeed not null.";
                 SynchronizerModule.pendingActions.addFirst(action);
@@ -288,24 +289,24 @@ public final class Synchronizer extends Thread {
                 final @Nonnull ReadOnlyList<Method> methods = SynchronizerModule.getMethods();
                 if (!methods.isEmpty()) {
                     try {
-                        Logger.log(Level.DEBUGGING, "Synchronizer", "Create a new sender for the methods " + methods + ".");
+                        Log.debugging("Create a new sender for the methods " + methods + ".");
                         threadPoolExecutor.execute(new Sender(methods));
                         resetBackoffInterval();
                     } catch (@Nonnull RejectedExecutionException exception) {
                         final @Nonnull Method reference = methods.getNotNull(0);
                         resume(reference.getRole(), reference.getService());
-                        Logger.log(Level.WARNING, "Synchronizer", "Could not add a new sender.", exception);
-                        Logger.log(Level.DEBUGGING, "Synchronizer", "Sleep for " + backoff + " ms.");
+                        Log.warning("Could not add a new sender.", exception);
+                        Log.debugging("Sleep for " + backoff + " ms.");
                         sleep(backoff);
                         backoff *= 2;
                     }
                 } else {
-                    Logger.log(Level.DEBUGGING, "Synchronizer", "Sleep for " + backoff + " ms.");
+                    Log.debugging("Sleep for " + backoff + " ms.");
                     sleep(backoff);
                     backoff *= 2;
                 }
             } catch (@Nonnull InterruptedException exception) {
-                Logger.log(Level.DEBUGGING, "Synchronizer", "Could not wait for the next pending action.", exception);
+                Log.debugging("Could not wait for the next pending action.", exception);
             }
         }
     }

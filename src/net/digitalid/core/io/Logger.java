@@ -33,7 +33,7 @@ public abstract class Logger {
         Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
             @Override
             public void uncaughtException(@Nonnull Thread thread, @Nonnull Throwable throwable) {
-                Logger.log(Level.ERROR, "Logger", "The following exception caused this thread to terminate.", throwable);
+                Log.error("The following exception caused this thread to terminate.", throwable);
             }
         });
     }

@@ -22,8 +22,7 @@ import net.digitalid.core.annotations.Stateless;
 import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.collections.ConcurrentHashMap;
 import net.digitalid.core.collections.ConcurrentMap;
-import net.digitalid.core.io.Level;
-import net.digitalid.core.io.Logger;
+import net.digitalid.core.io.Log;
 import net.digitalid.core.server.Server;
 import net.digitalid.core.server.Worker;
 
@@ -130,7 +129,7 @@ public final class Database {
         mainThread.set(true);
         connection.remove();
         
-        Logger.log(Level.INFORMATION, "Database", "The database has been initialized for " + (singleAccess ? "single" : "multi") + "-access with a " + configuration.getClass().getSimpleName() + ".");
+        Log.information("The database has been initialized for " + (singleAccess ? "single" : "multi") + "-access with a " + configuration.getClass().getSimpleName() + ".");
     }
     
     /**
@@ -184,7 +183,7 @@ public final class Database {
         if (connection != null) return connection;
         else {
             Database.connection.remove();
-            Logger.log(Level.WARNING, "Database", "Could not connect to the database.");
+            Log.warning("Could not connect to the database.");
             throw new SQLException("Could not connect to the database.");
         }
     }
@@ -217,7 +216,7 @@ public final class Database {
         try {
             getConnection().rollback();
         } catch (@Nonnull SQLException exception) {
-            Logger.log(Level.ERROR, "Database", "Could not roll back.", exception);
+            Log.error("Could not roll back.", exception);
         }
     }
     
@@ -424,7 +423,7 @@ public final class Database {
     @Initialized
     public static void unlock() {
         if (getConfiguration() instanceof SQLiteConfiguration && ((SQLiteConfiguration) getConfiguration()).journalExists()) {
-            Logger.log(Level.WARNING, "Database", "A database journal exists! The connection might not have been committed properly.", new Exception());
+            Log.warning("A database journal exists! The connection might not have been committed properly.", new Exception());
         }
         getConfiguration().unlock();
     }
@@ -487,7 +486,7 @@ public final class Database {
                         }
                     }
                 } catch (@Nonnull SQLException exception) {
-                    Logger.log(Level.WARNING, "Database", "Could not prune a table.", exception);
+                    Log.warning("Could not prune a table.", exception);
                     rollback();
                 } finally {
                     Database.unlock();

@@ -28,8 +28,7 @@ import net.digitalid.core.identifier.InternalIdentifier;
 import net.digitalid.core.identity.HostIdentity;
 import net.digitalid.core.identity.InternalIdentity;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.io.Level;
-import net.digitalid.core.io.Logger;
+import net.digitalid.core.io.Log;
 import net.digitalid.core.server.Server;
 import net.digitalid.core.synchronizer.Audit;
 
@@ -169,7 +168,7 @@ public final class HostSignatureWrapper extends SignatureWrapper {
         final @Nonnull ReadOnlyArray<Block> subelements = new TupleWrapper(tuple.getElementNotNull(1)).getElementsNotNull(2);
         if (!publicKey.getCompositeGroup().getElement(subelements.getNotNull(1)).pow(publicKey.getE()).getValue().equals(hash)) throw new InvalidSignatureException("The host signature is not valid.");
         
-        Logger.log(Level.VERBOSE, "HostSignatureWrapper", "Signature verified in " + start.ago().getValue() + " ms.");
+        Log.verbose("Signature verified in " + start.ago().getValue() + " ms.");
         
         setVerified();
     }
@@ -188,7 +187,7 @@ public final class HostSignatureWrapper extends SignatureWrapper {
         }
         elements.set(1, new TupleWrapper(SIGNATURE, subelements.freeze()).toBlock());
         
-        Logger.log(Level.VERBOSE, "HostSignatureWrapper", "Element signed in " + start.ago().getValue() + " ms.");
+        Log.verbose("Element signed in " + start.ago().getValue() + " ms.");
     }
     
 }

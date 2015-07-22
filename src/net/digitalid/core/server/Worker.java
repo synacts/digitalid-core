@@ -23,6 +23,7 @@ import net.digitalid.core.handler.Method;
 import net.digitalid.core.handler.Reply;
 import net.digitalid.core.identifier.InternalIdentifier;
 import net.digitalid.core.io.Level;
+import net.digitalid.core.io.Log;
 import net.digitalid.core.io.Logger;
 import net.digitalid.core.packet.Request;
 import net.digitalid.core.packet.Response;
@@ -81,7 +82,7 @@ public final class Worker implements Runnable {
                 Database.lock();
                 try {
                     request = new Request(socket.getInputStream());
-                    Logger.log(Level.VERBOSE, "Worker", "Request decoded in " + new Time().subtract(start).getValue() + " ms.");
+                    Log.verbose("Request decoded in " + new Time().subtract(start).getValue() + " ms.");
                     
                     final @Nonnull Method reference = request.getMethod(0);
                     final @Nonnull SignatureWrapper signature = reference.getSignatureNotNull();
@@ -126,7 +127,7 @@ public final class Worker implements Runnable {
                         }
                         
                         final @Nonnull Time methodEnd = new Time();
-                        Logger.log(Level.DEBUGGING, "Worker", method.getClass().getSimpleName() + " handled in " + methodEnd.subtract(methodStart).getValue() + " ms.");
+                        Log.debugging(method.getClass().getSimpleName() + " handled in " + methodEnd.subtract(methodStart).getValue() + " ms.");
                     }
                     
                     final @Nullable ResponseAudit responseAudit;
@@ -152,7 +153,7 @@ public final class Worker implements Runnable {
                         responseAudit = ActionModule.getAudit(reference.getNonHostAccount(), service, requestAudit.getLastTime(), permissions, restrictions, agent);
                         Database.commit();
                         final @Nonnull Time auditEnd = new Time();
-                        Logger.log(Level.DEBUGGING, "Worker", "Audit retrieved in " + auditEnd.subtract(auditStart).getValue() + " ms.");
+                        Log.debugging("Audit retrieved in " + auditEnd.subtract(auditStart).getValue() + " ms.");
                     } else {
                         responseAudit = null;
                     }
@@ -176,14 +177,14 @@ public final class Worker implements Runnable {
             // The database transaction is intentionally committed before returning the response so that slow or malicious clients cannot block the database.
             response.write(socket.getOutputStream());
             
-            Logger.log(Level.INFORMATION, "Worker", methods + (requestAudit != null ? " with audit" : "") + (service != null ? " of the " + service.getName() : "") + (subject != null ? " to " + subject : "") + (signer != null ? " by " + signer : "") + " handled in " + start.ago().getValue() + " ms" + (error != null ? " with the error " + error.getName() : "") + ".");
+            Log.information(methods + (requestAudit != null ? " with audit" : "") + (service != null ? " of the " + service.getName() : "") + (subject != null ? " to " + subject : "") + (signer != null ? " by " + signer : "") + " handled in " + start.ago().getValue() + " ms" + (error != null ? " with the error " + error.getName() : "") + ".");
         } catch (@Nonnull SQLException | IOException | PacketException | ExternalException exception) {
-            Logger.log(Level.WARNING, "Worker", "Could not send a response.", exception);
+            Log.warning("Could not send a response.", exception);
         } finally {
             try {
                 if (!socket.isClosed()) socket.close();
             } catch (@Nonnull IOException exception) {
-                Logger.log(Level.WARNING, "Worker", "Could not close the socket.", exception);
+                Log.warning("Could not close the socket.", exception);
             }
         }
         

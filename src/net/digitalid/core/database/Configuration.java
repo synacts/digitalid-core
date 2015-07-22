@@ -18,8 +18,7 @@ import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.NonEmpty;
 import net.digitalid.core.annotations.Positive;
 import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.io.Level;
-import net.digitalid.core.io.Logger;
+import net.digitalid.core.io.Log;
 
 /**
  * This class is used to configure various databases.
@@ -382,7 +381,7 @@ public abstract class Configuration {
      * Stores a lock counter that is associated with the current thread.
      * This variable is needed for databases that do not require locking.
      */
-    private static final @Nonnull ThreadLocal<Integer> lockCounter = new ThreadLocal<Integer>() {
+    protected static final @Nonnull ThreadLocal<Integer> lockCounter = new ThreadLocal<Integer>() {
         @Override protected @Nullable Integer initialValue() { return 0; }
     };
     
@@ -393,7 +392,7 @@ public abstract class Configuration {
         lockCounter.set(lockCounter.get() + 1);
         
         if (!Database.getConnection().isValid(1)) {
-            Logger.log(Level.WARNING, "Configuration", "The connection is no longer valid and is thus replaced.");
+            Log.warning("The connection is no longer valid and is thus replaced.");
             Database.connection.remove();
         }
     }

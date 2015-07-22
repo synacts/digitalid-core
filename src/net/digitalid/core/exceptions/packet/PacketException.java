@@ -8,10 +8,9 @@ import net.digitalid.core.collections.FreezableArray;
 import net.digitalid.core.collections.ReadOnlyArray;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.wrappers.Blockable;
-import net.digitalid.core.io.Level;
-import net.digitalid.core.io.Logger;
+import net.digitalid.core.io.Log;
 import net.digitalid.core.wrappers.Block;
+import net.digitalid.core.wrappers.Blockable;
 import net.digitalid.core.wrappers.StringWrapper;
 import net.digitalid.core.wrappers.TupleWrapper;
 
@@ -81,7 +80,7 @@ public final class PacketException extends Exception implements Blockable {
         
         this.error = error;
         this.remote = remote;
-        if (!remote) Logger.log(Level.WARNING, "PacketException", "A packet exception occurred.", this);
+        if (!remote) Log.warning("A packet exception occurred.", this);
     }
     
     /**

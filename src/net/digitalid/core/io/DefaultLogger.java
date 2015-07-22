@@ -89,7 +89,7 @@ public final class DefaultLogger extends Logger {
         if (level.getValue() >= this.level.getValue()) {
             final @Nonnull Date date = new Date();
             if (date.getDate() != this.date.getDate()) rotate();
-            out.println(time.get().format(date) + " in " + Server.VERSION + " [" + Thread.currentThread().getName() + "] (" + level + ") [" + tag + "]: " + message);
+            out.println(time.get().format(date) + " in " + Server.VERSION + " [" + Thread.currentThread().getName() + "] (" + level + ") <" + tag + ">: " + message);
             if (throwable != null) {
                 out.println();
                 throwable.printStackTrace(out);

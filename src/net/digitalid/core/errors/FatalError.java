@@ -3,8 +3,7 @@ package net.digitalid.core.errors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Immutable;
-import net.digitalid.core.io.Level;
-import net.digitalid.core.io.Logger;
+import net.digitalid.core.io.Log;
 
 /**
  * This exception is thrown when a fatal error occurs.
@@ -45,7 +44,7 @@ public abstract class FatalError extends Error {
     protected FatalError(@Nullable String message, @Nullable Throwable cause) {
         super(message == null ? "A fatal error occurred." : message, cause);
         
-        Logger.log(Level.ERROR, "FatalError", "A fatal error occurred.", this);
+        Log.error("A fatal error occurred.", this);
     }
     
 }

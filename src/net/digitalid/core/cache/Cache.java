@@ -46,8 +46,7 @@ import net.digitalid.core.identity.InternalNonHostIdentity;
 import net.digitalid.core.identity.Mapper;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.io.Directory;
-import net.digitalid.core.io.Level;
-import net.digitalid.core.io.Logger;
+import net.digitalid.core.io.Log;
 import net.digitalid.core.packet.Request;
 import net.digitalid.core.packet.Response;
 import net.digitalid.core.tuples.FreezablePair;
@@ -96,14 +95,14 @@ public final class Cache {
                 final @Nonnull AttributeValue value;
                 if (inputStream != null) {
                     value = AttributeValue.get(new SelfcontainedWrapper(inputStream, true).getElement().checkType(AttributeValue.TYPE), true);
-                    Logger.log(Level.INFORMATION, "Cache", "The public key chain of the root host was loaded from the provided resources.");
+                    Log.information("The public key chain of the root host was loaded from the provided resources.");
                 } else {
                     // Since the public key chain of 'core.digitalid.net' is not available, the host 'core.digitalid.net' is created on this server.
                     final @Nonnull Host host = new Host(HostIdentifier.DIGITALID);
                     value = new CertifiedAttributeValue(host.getPublicKeyChain(), HostIdentity.DIGITALID, PublicKeyChain.TYPE);
                     final @Nonnull File certificateFile = new File(Directory.getHostsDirectory().getPath() + File.separator + "core.digitalid.net.certificate.xdf");
                     new SelfcontainedWrapper(SelfcontainedWrapper.DEFAULT, value).write(new FileOutputStream(certificateFile), true);
-                    Logger.log(Level.WARNING, "Cache", "The public key chain of the root host was not found and thus 'core.digitalid.net' was created on this machine.");
+                    Log.warning("The public key chain of the root host was not found and thus 'core.digitalid.net' was created on this machine.");
                 }
                 setCachedAttributeValue(HostIdentity.DIGITALID, null, Time.MIN, PublicKeyChain.TYPE, value, null);
             }
