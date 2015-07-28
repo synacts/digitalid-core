@@ -82,8 +82,8 @@ final class ClientAgentNameReplace extends CoreServiceInternalAction {
     ClientAgentNameReplace(@Nonnull ClientAgent clientAgent, @Nonnull String oldName, @Nonnull String newName) {
         super(clientAgent.getRole());
         
-        assert Client.isValid(oldName) : "The old name is valid.";
-        assert Client.isValid(newName) : "The new name is valid.";
+        assert Client.isValidName(oldName) : "The old name is valid.";
+        assert Client.isValidName(newName) : "The new name is valid.";
         
         this.clientAgent = clientAgent;
         this.oldName = oldName;
@@ -108,11 +108,11 @@ final class ClientAgentNameReplace extends CoreServiceInternalAction {
         super(entity, signature, recipient);
         
         final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(3);
-        this.clientAgent = Agent.get(entity.toNonHostEntity(), elements.getNotNull(0)).toClientAgent();
-        this.oldName = new StringWrapper(elements.getNotNull(1)).getString();
-        if (!Client.isValid(oldName)) throw new InvalidEncodingException("The old name is invalid.");
-        this.newName = new StringWrapper(elements.getNotNull(2)).getString();
-        if (!Client.isValid(newName)) throw new InvalidEncodingException("The new name is invalid.");
+        this.clientAgent = Agent.get(entity.toNonHostEntity(), elements.getNonNullable(0)).toClientAgent();
+        this.oldName = new StringWrapper(elements.getNonNullable(1)).getString();
+        if (!Client.isValidName(oldName)) throw new InvalidEncodingException("The old name is invalid.");
+        this.newName = new StringWrapper(elements.getNonNullable(2)).getString();
+        if (!Client.isValidName(newName)) throw new InvalidEncodingException("The new name is invalid.");
     }
     
     @Pure

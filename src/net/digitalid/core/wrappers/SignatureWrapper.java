@@ -197,9 +197,9 @@ public class SignatureWrapper extends BlockWrapper {
     @NonCommitting
     public static @Nonnull SignatureWrapper decodeWithoutVerifying(@Nonnull Block block, boolean verified, @Nullable Entity entity) throws SQLException, IOException, PacketException, ExternalException {
         final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(new Block(IMPLEMENTATION, block)).getElements(4);
-        final @Nullable Block hostSignature = elements.get(1);
-        final @Nullable Block clientSignature = elements.get(2);
-        final @Nullable Block credentialsSignature = elements.get(3);
+        final @Nullable Block hostSignature = elements.getNullable(1);
+        final @Nullable Block clientSignature = elements.getNullable(2);
+        final @Nullable Block credentialsSignature = elements.getNullable(3);
         
         if (hostSignature != null && clientSignature == null && credentialsSignature == null) return new HostSignatureWrapper(block, hostSignature, verified);
         if (hostSignature == null && clientSignature != null && credentialsSignature == null) return new ClientSignatureWrapper(block, clientSignature, verified);

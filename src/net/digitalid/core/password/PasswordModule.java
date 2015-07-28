@@ -119,8 +119,8 @@ public final class PasswordModule implements BothModule {
             final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(block).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(2);
-                preparedStatement.setLong(1, IdentifierClass.create(elements.getNotNull(0)).getIdentity().toInternalNonHostIdentity().getNumber());
-                preparedStatement.setString(2, new StringWrapper(elements.getNotNull(1)).getString());
+                preparedStatement.setLong(1, IdentifierClass.create(elements.getNonNullable(0)).getIdentity().toInternalNonHostIdentity().getNumber());
+                preparedStatement.setString(2, new StringWrapper(elements.getNonNullable(1)).getString());
                 preparedStatement.addBatch();
             }
             preparedStatement.executeBatch();

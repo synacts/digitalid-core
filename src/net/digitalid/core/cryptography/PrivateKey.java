@@ -158,12 +158,12 @@ public final class PrivateKey implements Blockable {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(5);
-        this.compositeGroup = new Group(elements.getNotNull(0));
-        this.p = new IntegerWrapper(elements.getNotNull(1)).getValue();
-        this.q = new IntegerWrapper(elements.getNotNull(2)).getValue();
-        this.d = new Exponent(elements.getNotNull(3));
-        this.squareGroup = new Group(elements.getNotNull(4));
-        this.x = new Exponent(elements.getNotNull(5));
+        this.compositeGroup = new Group(elements.getNonNullable(0));
+        this.p = new IntegerWrapper(elements.getNonNullable(1)).getValue();
+        this.q = new IntegerWrapper(elements.getNonNullable(2)).getValue();
+        this.d = new Exponent(elements.getNonNullable(3));
+        this.squareGroup = new Group(elements.getNonNullable(4));
+        this.x = new Exponent(elements.getNonNullable(5));
         
         if (compositeGroup.hasNoOrder()) throw new InvalidEncodingException("The order of the composite group may not be unknown.");
         if (squareGroup.hasNoOrder()) throw new InvalidEncodingException("The order of the square group may not be unknown.");

@@ -97,8 +97,8 @@ public final class PacketException extends Exception implements Blockable {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(2);
-        final @Nonnull PacketError error = PacketError.get(elements.getNotNull(0));
-        final @Nonnull String message = new StringWrapper(elements.getNotNull(1)).getString();
+        final @Nonnull PacketError error = PacketError.get(elements.getNonNullable(0));
+        final @Nonnull String message = new StringWrapper(elements.getNonNullable(1)).getString();
         return new PacketException(error, "A host responded with a packet error. [" + message + "]", null, true);
     }
     

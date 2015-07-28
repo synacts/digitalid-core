@@ -8,7 +8,6 @@ import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.sql.SQLException;
 import java.util.Random;
-import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.agent.ClientAgent;
@@ -36,7 +35,6 @@ import net.digitalid.core.cryptography.Exponent;
 import net.digitalid.core.cryptography.Parameters;
 import net.digitalid.core.cryptography.PublicKey;
 import net.digitalid.core.database.Database;
-import net.digitalid.core.database.SQLiteConfiguration;
 import net.digitalid.core.entity.NativeRole;
 import net.digitalid.core.entity.Role;
 import net.digitalid.core.entity.RoleModule;
@@ -101,11 +99,6 @@ public class Client extends Site implements Observer {
     
     
     /**
-     * The pattern that valid client identifiers have to match.
-     */
-    private static final @Nonnull Pattern PATTERN = Pattern.compile("[a-z_][a-z0-9_$]+", Pattern.CASE_INSENSITIVE);
-    
-    /**
      * Returns whether the given identifier is valid for clients.
      * 
      * @param identifier the client identifier to check for validity.
@@ -113,9 +106,8 @@ public class Client extends Site implements Observer {
      * @return whether the given identifier is valid for clients.
      */
     public static boolean isValidIdentifier(@Nonnull String identifier) {
-        return identifier.length() <= 40 && PATTERN.matcher(identifier).matches() && !identifier.equals("general") && !(Database.getConfiguration() instanceof SQLiteConfiguration && identifier.contains("$"));
+        return identifier.length() <= 40 && !identifier.equals("general") && Database.getConfiguration().isValidIdentifier(identifier);
     }
-    
     
     /**
      * Returns whether the given name is valid.
@@ -126,7 +118,7 @@ public class Client extends Site implements Observer {
      * @return whether the given name is valid.
      */
     @Pure
-    public static boolean isValid(@Nonnull String name) {
+    public static boolean isValidName(@Nonnull String name) {
         return name.length() <= 50;
     }
     
@@ -177,7 +169,7 @@ public class Client extends Site implements Observer {
         super(identifier);
         
         assert isValidIdentifier(identifier) : "The identifier is valid.";
-        assert isValid(name) : "The name is valid.";
+        assert isValidName(name) : "The name is valid.";
         assert preferredPermissions.isFrozen() : "The preferred permissions are frozen.";
         
         this.identifier = identifier;
@@ -241,7 +233,7 @@ public class Client extends Site implements Observer {
      * @require isValid(name) : "The name is valid.";
      */
     public final void setName(@Nonnull String name) {
-        assert isValid(name) : "The name is valid.";
+        assert isValidName(name) : "The name is valid.";
         
         this.name = name;
     }

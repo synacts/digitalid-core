@@ -318,22 +318,22 @@ public final class PublicKey implements Blockable {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(16);
-        this.compositeGroup = new Group(elements.getNotNull(0));
-        this.e = new Exponent(elements.getNotNull(1));
-        this.ab = compositeGroup.getElement(elements.getNotNull(2));
-        this.au = compositeGroup.getElement(elements.getNotNull(3));
-        this.ai = compositeGroup.getElement(elements.getNotNull(4));
-        this.av = compositeGroup.getElement(elements.getNotNull(5));
-        this.ao = compositeGroup.getElement(elements.getNotNull(6));
-        this.t = new Exponent(elements.getNotNull(7));
-        this.su = new Exponent(elements.getNotNull(8));
-        this.si = new Exponent(elements.getNotNull(9));
-        this.sv = new Exponent(elements.getNotNull(10));
-        this.so = new Exponent(elements.getNotNull(11));
-        this.squareGroup = new Group(elements.getNotNull(12));
-        this.g = squareGroup.getElement(elements.getNotNull(13));
-        this.y = squareGroup.getElement(elements.getNotNull(14));
-        this.zPlus1 = squareGroup.getElement(elements.getNotNull(15));
+        this.compositeGroup = new Group(elements.getNonNullable(0));
+        this.e = new Exponent(elements.getNonNullable(1));
+        this.ab = compositeGroup.getElement(elements.getNonNullable(2));
+        this.au = compositeGroup.getElement(elements.getNonNullable(3));
+        this.ai = compositeGroup.getElement(elements.getNonNullable(4));
+        this.av = compositeGroup.getElement(elements.getNonNullable(5));
+        this.ao = compositeGroup.getElement(elements.getNonNullable(6));
+        this.t = new Exponent(elements.getNonNullable(7));
+        this.su = new Exponent(elements.getNonNullable(8));
+        this.si = new Exponent(elements.getNonNullable(9));
+        this.sv = new Exponent(elements.getNonNullable(10));
+        this.so = new Exponent(elements.getNonNullable(11));
+        this.squareGroup = new Group(elements.getNonNullable(12));
+        this.g = squareGroup.getElement(elements.getNonNullable(13));
+        this.y = squareGroup.getElement(elements.getNonNullable(14));
+        this.zPlus1 = squareGroup.getElement(elements.getNonNullable(15));
         
         if (compositeGroup.hasOrder()) throw new InvalidEncodingException("The order of the composite group may not be known.");
         if (squareGroup.hasOrder()) throw new InvalidEncodingException("The order of the square group may not be known.");

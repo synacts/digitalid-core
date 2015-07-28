@@ -116,7 +116,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper {
         assert clientSignature.getType().isBasedOn(SIGNATURE) : "The signature is based on the implementation type.";
         
         final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(clientSignature).getElementsNotNull(3);
-        this.commitment = new Commitment(elements.getNotNull(0));
+        this.commitment = new Commitment(elements.getNonNullable(0));
     }
     
     
@@ -150,8 +150,8 @@ public final class ClientSignatureWrapper extends SignatureWrapper {
         final @Nonnull BigInteger hash = tuple.getElementNotNull(0).getHash();
         
         final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(tuple.getElementNotNull(2)).getElementsNotNull(3);
-        final @Nonnull BigInteger t = new HashWrapper(elements.getNotNull(1)).getValue();
-        final @Nonnull Exponent s = new Exponent(elements.getNotNull(2));
+        final @Nonnull BigInteger t = new HashWrapper(elements.getNonNullable(1)).getValue();
+        final @Nonnull Exponent s = new Exponent(elements.getNonNullable(2));
         final @Nonnull BigInteger h = t.xor(hash);
         final @Nonnull Element value = commitment.getPublicKey().getAu().pow(s).multiply(commitment.getValue().pow(h));
         if (!t.equals(value.toBlock().getHash()) || s.getBitLength() > Parameters.RANDOM_EXPONENT) throw new InvalidSignatureException("The client signature is invalid.");
@@ -171,7 +171,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper {
         final @Nonnull Exponent r = commitment.getPublicKey().getCompositeGroup().getRandomExponent(Parameters.RANDOM_EXPONENT);
         final @Nonnull BigInteger t = commitment.getPublicKey().getAu().pow(r).toBlock().getHash();
         subelements.set(1, new HashWrapper(HASH, t).toBlock());
-        final @Nonnull Exponent h = new Exponent(t.xor(elements.getNotNull(0).getHash()));
+        final @Nonnull Exponent h = new Exponent(t.xor(elements.getNonNullable(0).getHash()));
         final @Nonnull Exponent s = r.subtract(commitment.getSecret().multiply(h));
         subelements.set(2, s.toBlock());
         elements.set(2, new TupleWrapper(SIGNATURE, subelements.freeze()).toBlock());

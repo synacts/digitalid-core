@@ -122,11 +122,11 @@ public final class PushFailed extends ExternalAction {
         super(entity, signature, recipient);
         
         final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(4);
-        this.number = new Int64Wrapper(elements.getNotNull(0)).getValue();
+        this.number = new Int64Wrapper(elements.getNonNullable(0)).getValue();
         
-        final @Nonnull InternalIdentifier _subject = IdentifierClass.create(elements.getNotNull(1)).toInternalIdentifier();
-        final @Nonnull HostIdentifier _recipient = IdentifierClass.create(elements.getNotNull(2)).toHostIdentifier();
-        final @Nonnull Block _block = new SelfcontainedWrapper(elements.getNotNull(3)).getElement();
+        final @Nonnull InternalIdentifier _subject = IdentifierClass.create(elements.getNonNullable(1)).toInternalIdentifier();
+        final @Nonnull HostIdentifier _recipient = IdentifierClass.create(elements.getNonNullable(2)).toHostIdentifier();
+        final @Nonnull Block _block = new SelfcontainedWrapper(elements.getNonNullable(3)).getElement();
         try {
             this.action = (ExternalAction) Method.get(entity, new SignatureWrapper(Packet.SIGNATURE, (Block) null, _subject), _recipient, _block);
         } catch (@Nonnull PacketException | ClassCastException exception) {

@@ -13,6 +13,7 @@ import java.sql.SQLException;
 import java.sql.Savepoint;
 import java.sql.Statement;
 import java.util.Properties;
+import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Committing;
@@ -89,7 +90,7 @@ public final class PostgreSQLConfiguration extends Configuration {
     public PostgreSQLConfiguration(@Nonnull @Validated String name, boolean reset) throws SQLException, IOException {
         super(new Driver());
         
-        assert Configuration.isValid(name) : "The name is valid for a database.";
+        assert Configuration.isValidName(name) : "The name is valid for a database.";
         
         final @Nonnull File file = new File(Directory.getDataDirectory().getPath() + File.separator + name + ".conf");
         if (file.exists()) {
@@ -180,6 +181,17 @@ public final class PostgreSQLConfiguration extends Configuration {
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Syntax –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * The pattern that valid database identifiers have to match.
+     */
+    private static final @Nonnull Pattern PATTERN = Pattern.compile("[a-z_][a-z0-9_$]*", Pattern.CASE_INSENSITIVE);
+    
+    @Pure
+    @Override
+    public boolean isValidIdentifier(@Nonnull String identifier) {
+        return identifier.length() <= 63 && PATTERN.matcher(identifier).matches();
+    }
     
     @Pure
     @Override

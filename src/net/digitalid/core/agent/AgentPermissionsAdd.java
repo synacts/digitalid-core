@@ -84,8 +84,8 @@ final class AgentPermissionsAdd extends CoreServiceInternalAction {
         super(entity, signature, recipient);
         
         final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(2);
-        this.agent = Agent.get(entity.toNonHostEntity(), elements.getNotNull(0));
-        this.permissions = new FreezableAgentPermissions(elements.getNotNull(1)).freeze();
+        this.agent = Agent.get(entity.toNonHostEntity(), elements.getNonNullable(0));
+        this.permissions = new FreezableAgentPermissions(elements.getNonNullable(1)).freeze();
     }
     
     @Pure

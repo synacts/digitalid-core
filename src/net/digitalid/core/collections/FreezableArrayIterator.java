@@ -65,7 +65,7 @@ public class FreezableArrayIterator<E> implements ReadOnlyArrayIterator<E>, Free
     @Override
     public @Nullable E next() {
         if (!hasNext()) throw new NoSuchElementException();
-        return array.get(index++);
+        return array.getNullable(index++);
     }
     
     
@@ -78,7 +78,7 @@ public class FreezableArrayIterator<E> implements ReadOnlyArrayIterator<E>, Free
     @Override
     public @Nullable E previous() {
         if (!hasPrevious()) throw new NoSuchElementException();
-        return array.get(--index);
+        return array.getNullable(--index);
     }
     
     @Pure

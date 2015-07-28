@@ -98,9 +98,9 @@ public final class ClientAgentCommitmentReplace extends CoreServiceInternalActio
         super(entity, signature, recipient);
         
         final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(3);
-        this.clientAgent = Agent.get(entity.toNonHostEntity(), elements.getNotNull(0)).toClientAgent();
-        this.oldCommitment = new Commitment(elements.getNotNull(1));
-        this.newCommitment = new Commitment(elements.getNotNull(2));
+        this.clientAgent = Agent.get(entity.toNonHostEntity(), elements.getNonNullable(0)).toClientAgent();
+        this.oldCommitment = new Commitment(elements.getNonNullable(1));
+        this.newCommitment = new Commitment(elements.getNonNullable(2));
     }
     
     @Pure

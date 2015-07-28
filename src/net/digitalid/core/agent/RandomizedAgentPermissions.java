@@ -112,8 +112,8 @@ public final class RandomizedAgentPermissions implements Blockable {
         
         this.hash = block.getHash();
         final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(2);
-        this.salt = new HashWrapper(elements.getNotNull(0)).getValue();
-        this.permissions = new FreezableAgentPermissions(elements.getNotNull(1)).freeze();
+        this.salt = new HashWrapper(elements.getNonNullable(0)).getValue();
+        this.permissions = new FreezableAgentPermissions(elements.getNonNullable(1)).freeze();
     }
     
     @Pure

@@ -461,9 +461,9 @@ public abstract class Agent extends NonHostConcept implements Blockable, SQLizab
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(3);
-        final long number = new Int64Wrapper(elements.getNotNull(0)).getValue();
-        final boolean client = new BooleanWrapper(elements.getNotNull(1)).getValue();
-        final boolean removed = new BooleanWrapper(elements.getNotNull(2)).getValue();
+        final long number = new Int64Wrapper(elements.getNonNullable(0)).getValue();
+        final boolean client = new BooleanWrapper(elements.getNonNullable(1)).getValue();
+        final boolean removed = new BooleanWrapper(elements.getNonNullable(2)).getValue();
         return get(entity, number, client, removed);
     }
     

@@ -17,7 +17,7 @@ import net.digitalid.core.concept.Concept;
 import net.digitalid.core.database.Database;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.property.ConceptPropertyTable;
-import net.digitalid.core.storable.Factory;
+import net.digitalid.core.storable.NonHostConceptFactory;
 import net.digitalid.core.tuples.FreezablePair;
 
 /**
@@ -43,9 +43,9 @@ import net.digitalid.core.tuples.FreezablePair;
  */
 public class NonNullableReplaceableConceptPropertyTable<V> extends ConceptPropertyTable {
     
-    private final @Nonnull Factory<V> factory; // TODO: Move to super-class?
+    private final @Nonnull NonHostConceptFactory<V> factory; // TODO: Move to super-class?
     
-    public NonNullableReplaceableConceptPropertyTable(@Nonnull Factory<V> factory) {
+    public NonNullableReplaceableConceptPropertyTable(@Nonnull NonHostConceptFactory<V> factory) {
         this.factory = factory;
     }
     
@@ -73,7 +73,7 @@ public class NonNullableReplaceableConceptPropertyTable<V> extends ConceptProper
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
             if (resultSet.next()) {
                 final @Nonnull String name = resultSet.getString(1);
-                if (!Client.isValid(name)) throw new SQLException("The name of the client agent with the number " + clientAgent + " is invalid.");
+                if (!Client.isValidName(name)) throw new SQLException("The name of the client agent with the number " + clientAgent + " is invalid.");
                 return name;
             } else throw new SQLException("The given client agent has no name.");
         }
@@ -91,8 +91,8 @@ public class NonNullableReplaceableConceptPropertyTable<V> extends ConceptProper
      */
     @NonCommitting
     static void replaceName(@Nonnull ClientAgent clientAgent, @Nonnull String oldName, @Nonnull String newName) throws SQLException {
-        assert Client.isValid(oldName) : "The old name is valid.";
-        assert Client.isValid(newName) : "The new name is valid.";
+        assert Client.isValidName(oldName) : "The old name is valid.";
+        assert Client.isValidName(newName) : "The new name is valid.";
         
         final @Nonnull NonHostEntity entity = clientAgent.getEntity();
         final @Nonnull String SQL = "UPDATE " + entity.getSite() + "client_agent SET name = ? WHERE entity = " + entity + " AND agent = " + clientAgent + " AND name = ?";

@@ -72,7 +72,7 @@ public class FreezableArray<E> extends FreezableObject implements ReadOnlyArray<
     
     @Pure
     @Override
-    public @Nullable E get(int index) {
+    public @Nullable E getNullable(int index) {
         assert index >= 0 && index < size() : "The index is valid.";
         
         return array[index];
@@ -81,13 +81,13 @@ public class FreezableArray<E> extends FreezableObject implements ReadOnlyArray<
     @Pure
     @Override
     public boolean isNull(int index) {
-        return get(index) == null;
+        return getNullable(index) == null;
     }
     
     @Pure
     @Override
-    public @Nonnull E getNotNull(int index) {
-        @Nullable E element = get(index);
+    public @Nonnull E getNonNullable(int index) {
+        @Nullable E element = getNullable(index);
         assert element != null : "The element at the given index is not null.";
         
         return element;

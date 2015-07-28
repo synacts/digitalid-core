@@ -9,7 +9,7 @@ import net.digitalid.core.annotations.Pure;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public interface SingleColumnStorable<V> extends Storable<V> {
+public interface SingleColumnStorable<O> extends Storable<O> {
     
     /**
      * Returns the string that represents this object in the database.

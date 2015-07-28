@@ -134,8 +134,8 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
         final @Nonnull ReadOnlyList<Block> elements = new ListWrapper(block).getElementsNotNull();
         for (final @Nonnull Block element : elements) {
             final @Nonnull ReadOnlyArray<Block> subelements = new TupleWrapper(element).getElementsNotNull(2);
-            final @Nonnull SemanticType type = IdentityClass.create(subelements.getNotNull(0)).toSemanticType().checkIsAttributeType();
-            put(type, new BooleanWrapper(subelements.getNotNull(1)).getValue());
+            final @Nonnull SemanticType type = IdentityClass.create(subelements.getNonNullable(0)).toSemanticType().checkIsAttributeType();
+            put(type, new BooleanWrapper(subelements.getNonNullable(1)).getValue());
         }
         
         if (!areValid()) throw new InvalidEncodingException("The agent permissions in the given block are not valid.");

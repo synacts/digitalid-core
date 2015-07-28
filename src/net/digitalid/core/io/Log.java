@@ -14,6 +14,9 @@ import net.digitalid.core.annotations.Stateless;
 @Stateless
 public final class Log {
     
+    /**
+     * Stores the index of the caller in the stack trace, which is different on Android.
+     */
     private static final int INDEX = System.getProperty("java.vendor").equals("The Android Project") ? 4 : 3;
     
     /**

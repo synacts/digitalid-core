@@ -36,7 +36,7 @@ public interface ReadOnlyArray<E> extends ReadOnlyIterable<E> {
      * @return the element at the given index.
      */
     @Pure
-    public @Nullable E get(@ValidIndex int index);
+    public @Nullable E getNullable(@ValidIndex int index);
     
     /**
      * Returns whether the element at the given index is null.
@@ -58,7 +58,7 @@ public interface ReadOnlyArray<E> extends ReadOnlyIterable<E> {
      * @require isNotNull(index) : "The element at the given index is not null.";
      */
     @Pure
-    public @Nonnull E getNotNull(@ValidIndex int index);
+    public @Nonnull E getNonNullable(@ValidIndex int index);
     
     @Pure
     @Override
@@ -67,7 +67,7 @@ public interface ReadOnlyArray<E> extends ReadOnlyIterable<E> {
     
     /**
      * Returns whether this array contains an element which is null.
-     * If it does not, {@link #get(int)} is guaranteed to return not null for every valid index.
+     * If it does not, {@link #getNullable(int)} is guaranteed to return not null for every valid index.
      * 
      * @return {@code true} if this array contains null, {@code false} otherwise.
      */

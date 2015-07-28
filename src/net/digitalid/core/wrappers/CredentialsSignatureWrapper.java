@@ -784,18 +784,18 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
             
             if (lodged && si != null) {
                 final @Nonnull ReadOnlyArray<Block> encryptions = new TupleWrapper(credential.getElementNotNull(7)).getElementsNotNull(4);
-                final @Nonnull FreezableArray<Block> wis = new TupleWrapper(encryptions.getNotNull(0)).getElementsNotNull(2).clone();
-                final @Nonnull Exponent swi = new Exponent(encryptions.getNotNull(1));
+                final @Nonnull FreezableArray<Block> wis = new TupleWrapper(encryptions.getNonNullable(0)).getElementsNotNull(2).clone();
+                final @Nonnull Exponent swi = new Exponent(encryptions.getNonNullable(1));
                 if (swi.getBitLength() > Parameters.RANDOM_BLINDING_EXPONENT) throw new InvalidSignatureException("The credentials signature is invalid: The value swi is too big.");
-                final @Nonnull FreezableArray<Block> wbs = new TupleWrapper(encryptions.getNotNull(2)).getElementsNotNull(2).clone();
-                final @Nonnull Exponent swb = new Exponent(encryptions.getNotNull(3));
+                final @Nonnull FreezableArray<Block> wbs = new TupleWrapper(encryptions.getNonNullable(2)).getElementsNotNull(2).clone();
+                final @Nonnull Exponent swb = new Exponent(encryptions.getNonNullable(3));
                 if (swb.getBitLength() > Parameters.RANDOM_BLINDING_EXPONENT) throw new InvalidSignatureException("The credentials signature is invalid: The value swb is too big.");
                 
-                wis.set(0, publicKey.getY().pow(swi).multiply(publicKey.getZPlus1().pow(si)).multiply(publicKey.getSquareGroup().getElement(wis.getNotNull(0)).pow(t)).toBlock().setType(PublicKey.W1));
-                wis.set(1, publicKey.getG().pow(swi).multiply(publicKey.getSquareGroup().getElement(wis.getNotNull(1)).pow(t)).toBlock().setType(PublicKey.W2));
+                wis.set(0, publicKey.getY().pow(swi).multiply(publicKey.getZPlus1().pow(si)).multiply(publicKey.getSquareGroup().getElement(wis.getNonNullable(0)).pow(t)).toBlock().setType(PublicKey.W1));
+                wis.set(1, publicKey.getG().pow(swi).multiply(publicKey.getSquareGroup().getElement(wis.getNonNullable(1)).pow(t)).toBlock().setType(PublicKey.W2));
                 
-                wbs.set(0, publicKey.getY().pow(swb).multiply(publicKey.getZPlus1().pow(sb)).multiply(publicKey.getSquareGroup().getElement(wbs.getNotNull(0)).pow(t)).toBlock().setType(PublicKey.W1));
-                wbs.set(1, publicKey.getG().pow(swb).multiply(publicKey.getSquareGroup().getElement(wbs.getNotNull(1)).pow(t)).toBlock().setType(PublicKey.W2));
+                wbs.set(0, publicKey.getY().pow(swb).multiply(publicKey.getZPlus1().pow(sb)).multiply(publicKey.getSquareGroup().getElement(wbs.getNonNullable(0)).pow(t)).toBlock().setType(PublicKey.W1));
+                wbs.set(1, publicKey.getG().pow(swb).multiply(publicKey.getSquareGroup().getElement(wbs.getNonNullable(1)).pow(t)).toBlock().setType(PublicKey.W2));
                 
                 array.set(1, new TupleWrapper(TWI, wis.freeze()).toBlock());
                 array.set(2, new TupleWrapper(TWB, wbs.freeze()).toBlock());
@@ -909,7 +909,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
             if (rv != null) f = f.multiply(publicKey.getAv().pow(v));
         }
         
-        final @Nonnull Exponent t = new Exponent(elements.getNotNull(0).getHash().xor(new ListWrapper(ARRAYS, ts.freeze()).toBlock().getHash()).xor(tf));
+        final @Nonnull Exponent t = new Exponent(elements.getNonNullable(0).getHash().xor(new ListWrapper(ARRAYS, ts.freeze()).toBlock().getHash()).xor(tf));
         
         final @Nonnull FreezableArray<Block> signature = new FreezableArray<>(8);
         signature.set(0, t.toBlock().setType(T));

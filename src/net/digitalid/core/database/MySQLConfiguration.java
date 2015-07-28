@@ -12,6 +12,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
+import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import net.digitalid.core.annotations.Committing;
 import net.digitalid.core.annotations.Immutable;
@@ -86,7 +87,7 @@ public final class MySQLConfiguration extends Configuration {
     public MySQLConfiguration(@Nonnull String name, boolean reset) throws SQLException, IOException {
         super(new Driver());
         
-        assert Configuration.isValid(name) : "The name is valid for a database.";
+        assert Configuration.isValidName(name) : "The name is valid for a database.";
         
         final @Nonnull File file = new File(Directory.getDataDirectory().getPath() + File.separator + name + ".conf");
         if (file.exists()) {
@@ -175,6 +176,18 @@ public final class MySQLConfiguration extends Configuration {
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Syntax –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * The pattern that valid database identifiers have to match.
+     * Identifiers may in principle begin with a digit but unless quoted may not consist solely of digits.
+     */
+    private static final @Nonnull Pattern PATTERN = Pattern.compile("[a-z_][a-z0-9_$]*", Pattern.CASE_INSENSITIVE);
+    
+    @Pure
+    @Override
+    public boolean isValidIdentifier(@Nonnull String identifier) {
+        return identifier.length() <= 64 && PATTERN.matcher(identifier).matches();
+    }
     
     @Pure
     @Override

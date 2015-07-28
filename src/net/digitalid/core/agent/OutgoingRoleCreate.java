@@ -100,9 +100,9 @@ final class OutgoingRoleCreate extends CoreServiceInternalAction {
         
         final @Nonnull NonHostEntity nonHostEntity = entity.toNonHostEntity();
         final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(3);
-        this.outgoingRole = Agent.get(nonHostEntity, elements.getNotNull(0)).toOutgoingRole();
-        this.relation = IdentityClass.create(elements.getNotNull(1)).toSemanticType().checkIsRoleType();
-        this.context = Context.get(nonHostEntity, elements.getNotNull(2));
+        this.outgoingRole = Agent.get(nonHostEntity, elements.getNonNullable(0)).toOutgoingRole();
+        this.relation = IdentityClass.create(elements.getNonNullable(1)).toSemanticType().checkIsRoleType();
+        this.context = Context.get(nonHostEntity, elements.getNonNullable(2));
     }
     
     @Pure

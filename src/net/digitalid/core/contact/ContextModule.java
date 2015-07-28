@@ -244,11 +244,11 @@ public final class ContextModule implements BothModule {
         
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(prefix + "context_name (entity, context, name) VALUES (?, ?, ?)")) {
             entity.set(preparedStatement, 1);
-            final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNotNull(0)).getElementsNotNull();
+            final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNonNullable(0)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(2);
-                Context.get(entity, elements.getNotNull(0)).set(preparedStatement, 2);
-                preparedStatement.setString(3, new StringWrapper(elements.getNotNull(1)).getString());
+                Context.get(entity, elements.getNonNullable(0)).set(preparedStatement, 2);
+                preparedStatement.setString(3, new StringWrapper(elements.getNonNullable(1)).getString());
                 preparedStatement.addBatch();
             }
             preparedStatement.executeBatch();
@@ -256,11 +256,11 @@ public final class ContextModule implements BothModule {
         
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(prefix + "context_contact (entity, context, contact) VALUES (?, ?, ?)")) {
             entity.set(preparedStatement, 1);
-            final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNotNull(1)).getElementsNotNull();
+            final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNonNullable(1)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(2);
-                Context.get(entity, elements.getNotNull(0)).set(preparedStatement, 2);
-                IdentityClass.create(elements.getNotNull(1)).toPerson().set(preparedStatement, 3);
+                Context.get(entity, elements.getNonNullable(0)).set(preparedStatement, 2);
+                IdentityClass.create(elements.getNonNullable(1)).toPerson().set(preparedStatement, 3);
                 preparedStatement.addBatch();
             }
             preparedStatement.executeBatch();

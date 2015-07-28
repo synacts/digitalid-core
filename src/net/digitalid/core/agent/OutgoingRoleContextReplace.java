@@ -108,9 +108,9 @@ final class OutgoingRoleContextReplace extends CoreServiceInternalAction {
         
         final @Nonnull NonHostEntity nonHostEntity = entity.toNonHostEntity();
         final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(3);
-        this.outgoingRole = Agent.get(nonHostEntity, elements.getNotNull(0)).toOutgoingRole();
-        this.oldContext = Context.get(nonHostEntity, elements.getNotNull(1));
-        this.newContext = Context.get(nonHostEntity, elements.getNotNull(2));
+        this.outgoingRole = Agent.get(nonHostEntity, elements.getNonNullable(0)).toOutgoingRole();
+        this.oldContext = Context.get(nonHostEntity, elements.getNonNullable(1));
+        this.newContext = Context.get(nonHostEntity, elements.getNonNullable(2));
     }
     
     @Pure

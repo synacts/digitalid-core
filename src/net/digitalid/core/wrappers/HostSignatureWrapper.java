@@ -166,7 +166,7 @@ public final class HostSignatureWrapper extends SignatureWrapper {
         }
         
         final @Nonnull ReadOnlyArray<Block> subelements = new TupleWrapper(tuple.getElementNotNull(1)).getElementsNotNull(2);
-        if (!publicKey.getCompositeGroup().getElement(subelements.getNotNull(1)).pow(publicKey.getE()).getValue().equals(hash)) throw new InvalidSignatureException("The host signature is not valid.");
+        if (!publicKey.getCompositeGroup().getElement(subelements.getNonNullable(1)).pow(publicKey.getE()).getValue().equals(hash)) throw new InvalidSignatureException("The host signature is not valid.");
         
         Log.verbose("Signature verified in " + start.ago().getValue() + " ms.");
         
@@ -181,7 +181,7 @@ public final class HostSignatureWrapper extends SignatureWrapper {
         subelements.set(0, signer.toBlock().setType(SIGNER));
         try {
             final @Nonnull PrivateKey privateKey = Server.getHost(signer.getHostIdentifier()).getPrivateKeyChain().getKey(getTimeNotNull());
-            subelements.set(1, privateKey.powD(elements.getNotNull(0).getHash()).toBlock().setType(VALUE));
+            subelements.set(1, privateKey.powD(elements.getNonNullable(0).getHash()).toBlock().setType(VALUE));
         } catch (@Nonnull InvalidEncodingException exception) {
             throw new ShouldNeverHappenError("There should always be a key for the current time.", exception);
         }

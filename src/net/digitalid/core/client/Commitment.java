@@ -126,11 +126,11 @@ public class Commitment implements Blockable, SQLizable {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(3);
-        final @Nonnull HostIdentifier identifier = IdentifierClass.create(elements.getNotNull(0)).toHostIdentifier();
+        final @Nonnull HostIdentifier identifier = IdentifierClass.create(elements.getNonNullable(0)).toHostIdentifier();
         this.host = identifier.getIdentity();
-        this.time = new Time(elements.getNotNull(1));
+        this.time = new Time(elements.getNonNullable(1));
         this.publicKey = (Server.hasHost(identifier) ? Server.getHost(identifier).getPublicKeyChain() : Cache.getPublicKeyChain(host)).getKey(time);
-        this.value = publicKey.getCompositeGroup().getElement(new IntegerWrapper(elements.getNotNull(2)).getValue());
+        this.value = publicKey.getCompositeGroup().getElement(new IntegerWrapper(elements.getNonNullable(2)).getValue());
     }
     
     @Pure

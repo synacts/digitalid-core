@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import net.digitalid.core.annotations.Committing;
 import net.digitalid.core.annotations.Immutable;
@@ -74,7 +75,7 @@ public final class SQLiteConfiguration extends Configuration {
     public SQLiteConfiguration(@Nonnull @Validated String name, boolean reset) throws SQLException {
         super(new JDBC());
         
-        assert Configuration.isValid(name) : "The name is valid for a database.";
+        assert Configuration.isValidName(name) : "The name is valid for a database.";
         
         this.name = name;
         if (reset) {
@@ -139,6 +140,17 @@ public final class SQLiteConfiguration extends Configuration {
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Syntax –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * The pattern that valid database identifiers have to match.
+     */
+    private static final @Nonnull Pattern PATTERN = Pattern.compile("[a-z_][a-z0-9_]*", Pattern.CASE_INSENSITIVE);
+    
+    @Pure
+    @Override
+    public boolean isValidIdentifier(@Nonnull String identifier) {
+        return PATTERN.matcher(identifier).matches();
+    }
     
     @Pure
     @Override

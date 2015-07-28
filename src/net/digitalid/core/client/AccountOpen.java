@@ -136,17 +136,17 @@ public final class AccountOpen extends Action {
         
         final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(3);
         
-        this.category = Category.get(elements.getNotNull(0));
+        this.category = Category.get(elements.getNonNullable(0));
         if (!category.isInternalNonHostIdentity()) throw new InvalidEncodingException("The category has to denote an internal non-host identity.");
         
-        this.agentNumber = new Int64Wrapper(elements.getNotNull(1)).getValue();
+        this.agentNumber = new Int64Wrapper(elements.getNonNullable(1)).getValue();
         
         if (!(signature instanceof ClientSignatureWrapper)) throw new InvalidEncodingException("The action to open an account has to be signed by a client.");
         this.commitment = ((ClientSignatureWrapper) signature).getCommitment();
         this.secret = null;
         
-        this.name = new StringWrapper(elements.getNotNull(2)).getString();
-        if (!Client.isValid(name)) throw new InvalidEncodingException("The name '" + name + "' is invalid.");
+        this.name = new StringWrapper(elements.getNonNullable(2)).getString();
+        if (!Client.isValidName(name)) throw new InvalidEncodingException("The name '" + name + "' is invalid.");
     }
     
     @Pure

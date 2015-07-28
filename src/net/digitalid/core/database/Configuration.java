@@ -50,24 +50,9 @@ public abstract class Configuration {
      * @return whether the given name is valid for a database.
      */
     @Pure
-    public static boolean isValid(@Nonnull String name) {
+    public static boolean isValidName(@Nonnull String name) {
         return name.length() <= 40 && PATTERN.matcher(name).matches();
     }
-    
-    /**
-     * The pattern that valid client identifiers have to match.
-     */
-//    private static final @Nonnull Pattern PATTERNB = Pattern.compile("[a-z_][a-z0-9_$]+", Pattern.CASE_INSENSITIVE);
-    
-    // TODO: Introduce a pattern for database identifiers.
-    
-    /**
-     * Returns the pattern for database identifiers.
-     * 
-     * @return the pattern for database identifiers.
-     */
-//    @Pure
-//    public abstract @Nonnull Pattern getPattern();
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -136,6 +121,16 @@ public abstract class Configuration {
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Syntax –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Returns whether the given identifier is valid.
+     * 
+     * @param identifier the string to be checked.
+     * 
+     * @return whether the given identifier is valid.
+     */
+    @Pure
+    public abstract boolean isValidIdentifier(@Nonnull String identifier);
     
     /**
      * Returns the syntax for defining an auto-incrementing primary key.

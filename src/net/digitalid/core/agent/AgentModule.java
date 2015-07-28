@@ -359,102 +359,102 @@ public final class AgentModule implements BothModule {
         final @Nonnull String prefix = "INSERT INTO " + host;
         
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(prefix + "agent (entity, agent, client, removed) VALUES (?, ?, ?, ?)")) {
-            final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNotNull(0)).getElementsNotNull();
+            final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNonNullable(0)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(4);
-                IdentityClass.create(elements.getNotNull(0)).toInternalNonHostIdentity().set(preparedStatement, 1);
-                preparedStatement.setLong(2, new Int64Wrapper(elements.getNotNull(1)).getValue());
-                preparedStatement.setBoolean(3, new BooleanWrapper(elements.getNotNull(2)).getValue());
-                preparedStatement.setBoolean(4, new BooleanWrapper(elements.getNotNull(3)).getValue());
+                IdentityClass.create(elements.getNonNullable(0)).toInternalNonHostIdentity().set(preparedStatement, 1);
+                preparedStatement.setLong(2, new Int64Wrapper(elements.getNonNullable(1)).getValue());
+                preparedStatement.setBoolean(3, new BooleanWrapper(elements.getNonNullable(2)).getValue());
+                preparedStatement.setBoolean(4, new BooleanWrapper(elements.getNonNullable(3)).getValue());
                 preparedStatement.addBatch();
             }
             preparedStatement.executeBatch();
         }
         
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(prefix + "agent_permission (entity, agent, " + FreezableAgentPermissions.COLUMNS + ") VALUES (?, ?, ?, ?)")) {
-            final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNotNull(1)).getElementsNotNull();
+            final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNonNullable(1)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(3);
-                IdentityClass.create(elements.getNotNull(0)).toInternalNonHostIdentity().set(preparedStatement, 1);
-                preparedStatement.setLong(2, new Int64Wrapper(elements.getNotNull(1)).getValue());
-                new FreezableAgentPermissions(elements.getNotNull(2)).checkIsSingle().setEmptyOrSingle(preparedStatement, 3);
+                IdentityClass.create(elements.getNonNullable(0)).toInternalNonHostIdentity().set(preparedStatement, 1);
+                preparedStatement.setLong(2, new Int64Wrapper(elements.getNonNullable(1)).getValue());
+                new FreezableAgentPermissions(elements.getNonNullable(2)).checkIsSingle().setEmptyOrSingle(preparedStatement, 3);
                 preparedStatement.addBatch();
             }
             preparedStatement.executeBatch();
         }
         
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(prefix + "agent_permission_order (entity, stronger, weaker) VALUES (?, ?, ?)")) {
-            final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNotNull(2)).getElementsNotNull();
+            final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNonNullable(2)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(3);
-                IdentityClass.create(elements.getNotNull(0)).toInternalNonHostIdentity().set(preparedStatement, 1);
-                preparedStatement.setLong(2, new Int64Wrapper(elements.getNotNull(1)).getValue());
-                preparedStatement.setLong(3, new Int64Wrapper(elements.getNotNull(2)).getValue());
+                IdentityClass.create(elements.getNonNullable(0)).toInternalNonHostIdentity().set(preparedStatement, 1);
+                preparedStatement.setLong(2, new Int64Wrapper(elements.getNonNullable(1)).getValue());
+                preparedStatement.setLong(3, new Int64Wrapper(elements.getNonNullable(2)).getValue());
                 preparedStatement.addBatch();
             }
             preparedStatement.executeBatch();
         }
         
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(prefix + "agent_restrictions (entity, agent, " + Restrictions.COLUMNS + ") VALUES (?, ?, ?, ?, ?, ?, ?)")) {
-            final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNotNull(3)).getElementsNotNull();
+            final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNonNullable(3)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(3);
-                final @Nonnull InternalNonHostIdentity identity = IdentityClass.create(elements.getNotNull(0)).toInternalNonHostIdentity();
+                final @Nonnull InternalNonHostIdentity identity = IdentityClass.create(elements.getNonNullable(0)).toInternalNonHostIdentity();
                 identity.set(preparedStatement, 1);
-                preparedStatement.setLong(2, new Int64Wrapper(elements.getNotNull(1)).getValue());
-                new Restrictions(NonHostAccount.get(host, identity), elements.getNotNull(2)).set(preparedStatement, 3);
+                preparedStatement.setLong(2, new Int64Wrapper(elements.getNonNullable(1)).getValue());
+                new Restrictions(NonHostAccount.get(host, identity), elements.getNonNullable(2)).set(preparedStatement, 3);
                 preparedStatement.addBatch();
             }
             preparedStatement.executeBatch();
         }
         
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(prefix + "agent_restrictions_ord (entity, stronger, weaker) VALUES (?, ?, ?)")) {
-            final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNotNull(4)).getElementsNotNull();
+            final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNonNullable(4)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(3);
-                IdentityClass.create(elements.getNotNull(0)).toInternalNonHostIdentity().set(preparedStatement, 1);
-                preparedStatement.setLong(2, new Int64Wrapper(elements.getNotNull(1)).getValue());
-                preparedStatement.setLong(3, new Int64Wrapper(elements.getNotNull(2)).getValue());
+                IdentityClass.create(elements.getNonNullable(0)).toInternalNonHostIdentity().set(preparedStatement, 1);
+                preparedStatement.setLong(2, new Int64Wrapper(elements.getNonNullable(1)).getValue());
+                preparedStatement.setLong(3, new Int64Wrapper(elements.getNonNullable(2)).getValue());
                 preparedStatement.addBatch();
             }
             preparedStatement.executeBatch();
         }
         
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(prefix + "client_agent (entity, agent, " + Commitment.COLUMNS + ", name) VALUES (?, ?, ?, ?, ?, ?)")) {
-            final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNotNull(5)).getElementsNotNull();
+            final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNonNullable(5)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(4);
-                IdentityClass.create(elements.getNotNull(0)).toInternalNonHostIdentity().set(preparedStatement, 1);
-                preparedStatement.setLong(2, new Int64Wrapper(elements.getNotNull(1)).getValue());
-                new Commitment(elements.getNotNull(2)).set(preparedStatement, 3);
-                preparedStatement.setString(6, new StringWrapper(elements.getNotNull(3)).getString());
+                IdentityClass.create(elements.getNonNullable(0)).toInternalNonHostIdentity().set(preparedStatement, 1);
+                preparedStatement.setLong(2, new Int64Wrapper(elements.getNonNullable(1)).getValue());
+                new Commitment(elements.getNonNullable(2)).set(preparedStatement, 3);
+                preparedStatement.setString(6, new StringWrapper(elements.getNonNullable(3)).getString());
                 preparedStatement.addBatch();
             }
             preparedStatement.executeBatch();
         }
         
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(prefix + "outgoing_role (entity, agent, relation, context) VALUES (?, ?, ?, ?)")) {
-            final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNotNull(6)).getElementsNotNull();
+            final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNonNullable(6)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(4);
-                final @Nonnull InternalNonHostIdentity identity = IdentityClass.create(elements.getNotNull(0)).toInternalNonHostIdentity();
+                final @Nonnull InternalNonHostIdentity identity = IdentityClass.create(elements.getNonNullable(0)).toInternalNonHostIdentity();
                 identity.set(preparedStatement, 1);
-                preparedStatement.setLong(2, new Int64Wrapper(elements.getNotNull(1)).getValue());
-                IdentityClass.create(elements.getNotNull(2)).toSemanticType().checkIsRoleType().set(preparedStatement, 3);
-                Context.get(NonHostAccount.get(host, identity), elements.getNotNull(3)).set(preparedStatement, 4);
+                preparedStatement.setLong(2, new Int64Wrapper(elements.getNonNullable(1)).getValue());
+                IdentityClass.create(elements.getNonNullable(2)).toSemanticType().checkIsRoleType().set(preparedStatement, 3);
+                Context.get(NonHostAccount.get(host, identity), elements.getNonNullable(3)).set(preparedStatement, 4);
                 preparedStatement.addBatch();
             }
             preparedStatement.executeBatch();
         }
         
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(prefix + "incoming_role (entity, issuer, relation, agent) VALUES (?, ?, ?, ?)")) {
-            final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNotNull(7)).getElementsNotNull();
+            final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNonNullable(7)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(4);
-                IdentityClass.create(elements.getNotNull(0)).toInternalNonHostIdentity().set(preparedStatement, 1);
-                IdentityClass.create(elements.getNotNull(1)).toInternalNonHostIdentity().set(preparedStatement, 2);
-                IdentityClass.create(elements.getNotNull(2)).toSemanticType().checkIsRoleType().set(preparedStatement, 3);
-                preparedStatement.setLong(4, new Int64Wrapper(elements.getNotNull(3)).getValue());
+                IdentityClass.create(elements.getNonNullable(0)).toInternalNonHostIdentity().set(preparedStatement, 1);
+                IdentityClass.create(elements.getNonNullable(1)).toInternalNonHostIdentity().set(preparedStatement, 2);
+                IdentityClass.create(elements.getNonNullable(2)).toSemanticType().checkIsRoleType().set(preparedStatement, 3);
+                preparedStatement.setLong(4, new Int64Wrapper(elements.getNonNullable(3)).getValue());
                 preparedStatement.addBatch();
             }
             preparedStatement.executeBatch();
@@ -633,12 +633,12 @@ public final class AgentModule implements BothModule {
         
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(prefix + "agent (entity, agent, client, removed) VALUES (?, ?, ?, ?)")) {
             entity.set(preparedStatement, 1);
-            final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNotNull(0)).getElementsNotNull();
+            final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNonNullable(0)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(3);
-                preparedStatement.setLong(2, new Int64Wrapper(elements.getNotNull(0)).getValue());
-                preparedStatement.setBoolean(3, new BooleanWrapper(elements.getNotNull(1)).getValue());
-                preparedStatement.setBoolean(4, new BooleanWrapper(elements.getNotNull(2)).getValue());
+                preparedStatement.setLong(2, new Int64Wrapper(elements.getNonNullable(0)).getValue());
+                preparedStatement.setBoolean(3, new BooleanWrapper(elements.getNonNullable(1)).getValue());
+                preparedStatement.setBoolean(4, new BooleanWrapper(elements.getNonNullable(2)).getValue());
                 preparedStatement.addBatch();
             }
             preparedStatement.executeBatch();
@@ -646,11 +646,11 @@ public final class AgentModule implements BothModule {
         
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(prefix + "agent_permission (entity, agent, " + FreezableAgentPermissions.COLUMNS + ") VALUES (?, ?, ?, ?)")) {
             entity.set(preparedStatement, 1);
-            final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNotNull(1)).getElementsNotNull();
+            final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNonNullable(1)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(2);
-                preparedStatement.setLong(2, new Int64Wrapper(elements.getNotNull(0)).getValue());
-                new FreezableAgentPermissions(elements.getNotNull(1)).checkIsSingle().setEmptyOrSingle(preparedStatement, 3);
+                preparedStatement.setLong(2, new Int64Wrapper(elements.getNonNullable(0)).getValue());
+                new FreezableAgentPermissions(elements.getNonNullable(1)).checkIsSingle().setEmptyOrSingle(preparedStatement, 3);
                 preparedStatement.addBatch();
             }
             preparedStatement.executeBatch();
@@ -658,11 +658,11 @@ public final class AgentModule implements BothModule {
         
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(prefix + "agent_restrictions (entity, agent, " + Restrictions.COLUMNS + ") VALUES (?, ?, ?, ?, ?, ?, ?)")) {
             entity.set(preparedStatement, 1);
-            final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNotNull(2)).getElementsNotNull();
+            final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNonNullable(2)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(2);
-                preparedStatement.setLong(2, new Int64Wrapper(elements.getNotNull(0)).getValue());
-                new Restrictions(entity, elements.getNotNull(1)).set(preparedStatement, 3);
+                preparedStatement.setLong(2, new Int64Wrapper(elements.getNonNullable(0)).getValue());
+                new Restrictions(entity, elements.getNonNullable(1)).set(preparedStatement, 3);
                 preparedStatement.addBatch();
             }
             preparedStatement.executeBatch();
@@ -670,12 +670,12 @@ public final class AgentModule implements BothModule {
         
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(prefix + "client_agent (entity, agent, " + Commitment.COLUMNS + ", name) VALUES (?, ?, ?, ?, ?, ?)")) {
             entity.set(preparedStatement, 1);
-            final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNotNull(3)).getElementsNotNull();
+            final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNonNullable(3)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(3);
-                preparedStatement.setLong(2, new Int64Wrapper(elements.getNotNull(0)).getValue());
-                new Commitment(elements.getNotNull(1)).set(preparedStatement, 3);
-                preparedStatement.setString(6, new StringWrapper(elements.getNotNull(2)).getString());
+                preparedStatement.setLong(2, new Int64Wrapper(elements.getNonNullable(0)).getValue());
+                new Commitment(elements.getNonNullable(1)).set(preparedStatement, 3);
+                preparedStatement.setString(6, new StringWrapper(elements.getNonNullable(2)).getString());
                 preparedStatement.addBatch();
             }
             preparedStatement.executeBatch();
@@ -683,12 +683,12 @@ public final class AgentModule implements BothModule {
         
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(prefix + "outgoing_role (entity, agent, relation, context) VALUES (?, ?, ?, ?)")) {
             entity.set(preparedStatement, 1);
-            final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNotNull(4)).getElementsNotNull();
+            final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNonNullable(4)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(3);
-                preparedStatement.setLong(2, new Int64Wrapper(elements.getNotNull(0)).getValue());
-                IdentityClass.create(elements.getNotNull(1)).toSemanticType().checkIsRoleType().set(preparedStatement, 3);
-                Context.get(entity, elements.getNotNull(2)).set(preparedStatement, 4);
+                preparedStatement.setLong(2, new Int64Wrapper(elements.getNonNullable(0)).getValue());
+                IdentityClass.create(elements.getNonNullable(1)).toSemanticType().checkIsRoleType().set(preparedStatement, 3);
+                Context.get(entity, elements.getNonNullable(2)).set(preparedStatement, 4);
                 preparedStatement.addBatch();
             }
             preparedStatement.executeBatch();
@@ -696,12 +696,12 @@ public final class AgentModule implements BothModule {
         
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(prefix + "incoming_role (entity, issuer, relation, agent) VALUES (?, ?, ?, ?)")) {
             entity.set(preparedStatement, 1);
-            final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNotNull(5)).getElementsNotNull();
+            final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNonNullable(5)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(3);
-                IdentityClass.create(elements.getNotNull(0)).toInternalNonHostIdentity().set(preparedStatement, 2);
-                IdentityClass.create(elements.getNotNull(1)).toSemanticType().checkIsRoleType().set(preparedStatement, 3);
-                preparedStatement.setLong(4, new Int64Wrapper(elements.getNotNull(2)).getValue());
+                IdentityClass.create(elements.getNonNullable(0)).toInternalNonHostIdentity().set(preparedStatement, 2);
+                IdentityClass.create(elements.getNonNullable(1)).toSemanticType().checkIsRoleType().set(preparedStatement, 3);
+                preparedStatement.setLong(4, new Int64Wrapper(elements.getNonNullable(2)).getValue());
                 preparedStatement.addBatch();
             }
             preparedStatement.executeBatch();
@@ -1082,7 +1082,7 @@ public final class AgentModule implements BothModule {
     @NonCommitting
     static void addClientAgent(@Nonnull ClientAgent clientAgent, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nonnull Commitment commitment, @Nonnull String name) throws SQLException {
         assert permissions.isFrozen() : "The permissions are frozen.";
-        assert Client.isValid(name) : "The name is valid.";
+        assert Client.isValidName(name) : "The name is valid.";
         
         addAgent(clientAgent);
         setRestrictions(clientAgent, restrictions);
@@ -1174,7 +1174,7 @@ public final class AgentModule implements BothModule {
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
             if (resultSet.next()) {
                 final @Nonnull String name = resultSet.getString(1);
-                if (!Client.isValid(name)) throw new SQLException("The name of the client agent with the number " + clientAgent + " is invalid.");
+                if (!Client.isValidName(name)) throw new SQLException("The name of the client agent with the number " + clientAgent + " is invalid.");
                 return name;
             } else throw new SQLException("The given client agent has no name.");
         }
@@ -1192,8 +1192,8 @@ public final class AgentModule implements BothModule {
      */
     @NonCommitting
     static void replaceName(@Nonnull ClientAgent clientAgent, @Nonnull String oldName, @Nonnull String newName) throws SQLException {
-        assert Client.isValid(oldName) : "The old name is valid.";
-        assert Client.isValid(newName) : "The new name is valid.";
+        assert Client.isValidName(oldName) : "The old name is valid.";
+        assert Client.isValidName(newName) : "The new name is valid.";
         
         final @Nonnull NonHostEntity entity = clientAgent.getEntity();
         final @Nonnull String SQL = "UPDATE " + entity.getSite() + "client_agent SET name = ? WHERE entity = " + entity + " AND agent = " + clientAgent + " AND name = ?";

@@ -81,8 +81,8 @@ final class ContactsAdd extends CoreServiceInternalAction {
         super(entity, signature, recipient);
         
         final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(2);
-        this.context = Context.get(entity.toNonHostEntity(), elements.getNotNull(0));
-        this.contacts = new FreezableContacts(entity.toNonHostEntity(), elements.getNotNull(1)).freeze();
+        this.context = Context.get(entity.toNonHostEntity(), elements.getNonNullable(0));
+        this.contacts = new FreezableContacts(entity.toNonHostEntity(), elements.getNonNullable(1)).freeze();
     }
     
     @Pure

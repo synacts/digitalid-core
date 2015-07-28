@@ -106,9 +106,9 @@ final class OutgoingRoleRelationReplace extends CoreServiceInternalAction {
         super(entity, signature, recipient);
         
         final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(3);
-        this.outgoingRole = Agent.get(entity.toNonHostEntity(), elements.getNotNull(0)).toOutgoingRole();
-        this.oldRelation = IdentityClass.create(elements.getNotNull(1)).toSemanticType().checkIsRoleType();
-        this.newRelation = IdentityClass.create(elements.getNotNull(2)).toSemanticType().checkIsRoleType();
+        this.outgoingRole = Agent.get(entity.toNonHostEntity(), elements.getNonNullable(0)).toOutgoingRole();
+        this.oldRelation = IdentityClass.create(elements.getNonNullable(1)).toSemanticType().checkIsRoleType();
+        this.newRelation = IdentityClass.create(elements.getNonNullable(2)).toSemanticType().checkIsRoleType();
     }
     
     @Pure

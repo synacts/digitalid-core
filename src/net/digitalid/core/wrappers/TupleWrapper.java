@@ -42,7 +42,7 @@ public final class TupleWrapper extends BlockWrapper {
         final @Nonnull ReadOnlyList<SemanticType> parameters = type.getParameters();
         if (elements.size() == 0 || elements.size() > parameters.size()) return false;
         for (int i = 0; i < elements.size(); i++) {
-            final @Nullable Block element = elements.get(i);
+            final @Nullable Block element = elements.getNullable(i);
             if (element != null && !element.getType().isBasedOn(parameters.getNotNull(i))) return false;
         }
         return true;
@@ -214,7 +214,7 @@ public final class TupleWrapper extends BlockWrapper {
         assert index >= 0 : "The index is non-negative.";
         
         if (index >= elements.size()) throw new InvalidEncodingException("The tuple contains not enough elements.");
-        return elements.get(index) == null;
+        return elements.getNullable(index) == null;
     }
     
     /**
@@ -247,7 +247,7 @@ public final class TupleWrapper extends BlockWrapper {
         assert index >= 0 : "The index is non-negative.";
         
         if (index >= elements.size()) throw new InvalidEncodingException("The tuple contains not enough elements.");
-        return elements.get(index);
+        return elements.getNullable(index);
     }
     
     /**
@@ -284,7 +284,7 @@ public final class TupleWrapper extends BlockWrapper {
         final @Nonnull ReadOnlyList<SemanticType> parameters = toBlock().getType().getParameters();
         assert parameters.contains(type) : "The parameters of this tuple have to contain the given type.";
         
-        final @Nullable Block element = elements.get(parameters.indexOf(type));
+        final @Nullable Block element = elements.getNullable(parameters.indexOf(type));
         
         assert element == null || element.getType().isBasedOn(type) : "The returned block is either null or based on the given type.";
         
