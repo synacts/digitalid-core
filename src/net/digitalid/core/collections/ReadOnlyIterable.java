@@ -2,8 +2,9 @@ package net.digitalid.core.collections;
 
 import javax.annotation.Nonnull;
 import net.digitalid.core.annotations.Capturable;
-import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.annotations.Immutable;
+import net.digitalid.core.annotations.NonFrozen;
+import net.digitalid.core.annotations.Pure;
 
 /**
  * This interface provides read-only access to {@link Iterable iterables} and should not be lost by assigning its objects to a supertype.
@@ -18,13 +19,16 @@ import net.digitalid.core.annotations.Immutable;
  */
 public interface ReadOnlyIterable<E> extends Iterable<E>, ReadOnly {
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Iterable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
     @Pure
     @Override
     public @Nonnull ReadOnlyIterator<E> iterator();
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Cloneable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
-    public @Capturable @Nonnull FreezableIterable<E> clone();
+    public @Capturable @Nonnull @NonFrozen FreezableIterable<E> clone();
     
 }

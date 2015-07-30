@@ -270,7 +270,7 @@ public final class Cache {
         if (typesToRetrieve.size() > 0) {
             if (typesToRetrieve.contains(PublicKeyChain.TYPE)) {
                 final @Nonnull AttributesReply reply = new Request(identity.getAddress().getHostIdentifier()).send(false).getReplyNotNull(0);
-                final @Nullable AttributeValue value = reply.getAttributeValues().get(0);
+                final @Nullable AttributeValue value = reply.getAttributeValues().getNullable(0);
                 setCachedAttributeValue(identity, null, getExpiration(PublicKeyChain.TYPE, value, reply), PublicKeyChain.TYPE, value, reply);
                 reply.getSignatureNotNull().verify();
                 attributeValues[0] = value;
@@ -281,7 +281,7 @@ public final class Cache {
                 if (values.size() != typesToRetrieve.size()) throw new InvalidEncodingException("The number of queried and replied attributes have to be the same.");
                 int i = 0;
                 for (final @Nonnull SemanticType type : typesToRetrieve) {
-                    final @Nullable AttributeValue value = values.get(i);
+                    final @Nullable AttributeValue value = values.getNullable(i);
                     setCachedAttributeValue(identity, response.getRequest().isSigned() ? role : null, getExpiration(type, value, reply), type, value, reply);
                     attributeValues[indexesToStore.get(i)] = value;
                     i++;
@@ -472,7 +472,7 @@ public final class Cache {
             throw new IdentityNotFoundException(identifier);
         }
         final @Nonnull AttributesReply reply = response.getReplyNotNull(0);
-        final @Nullable AttributeValue value = reply.getAttributeValues().get(0);
+        final @Nullable AttributeValue value = reply.getAttributeValues().getNullable(0);
         if (value == null) throw new AttributeNotFoundException(identity, PublicKeyChain.TYPE);
         if (!value.isCertified()) throw new CertificateNotFoundException(identity, PublicKeyChain.TYPE);
         setCachedAttributeValue(identity, null, getExpiration(PublicKeyChain.TYPE, value, reply), PublicKeyChain.TYPE, value, reply);

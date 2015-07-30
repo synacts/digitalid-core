@@ -4,7 +4,9 @@ import java.util.ListIterator;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Capturable;
+import net.digitalid.core.annotations.Frozen;
 import net.digitalid.core.annotations.Immutable;
+import net.digitalid.core.annotations.NonFrozen;
 import net.digitalid.core.annotations.NonFrozenRecipient;
 import net.digitalid.core.annotations.Pure;
 
@@ -23,10 +25,14 @@ import net.digitalid.core.annotations.Pure;
  */
 public class FreezableListIterator<E> extends FreezableIterableIterator<E> implements ReadOnlyListIterator<E> {
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Field –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
     /**
      * Stores a reference to the underlying iterator.
      */
     private final @Nonnull ListIterator<E> iterator;
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Creates a new freezable list iterator.
@@ -34,18 +40,21 @@ public class FreezableListIterator<E> extends FreezableIterableIterator<E> imple
      * @param iterable a reference to the underlying iterable.
      * @param iterator a reference to the underlying iterator.
      */
-    protected FreezableListIterator(@Nonnull FreezableList<E> iterable, @Nonnull ListIterator<E> iterator) {
+    FreezableListIterator(@Nonnull FreezableList<E> iterable, @Nonnull ListIterator<E> iterator) {
         super(iterable, iterator);
         
         this.iterator = iterator;
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Freezable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
     @Override
-    public @Nonnull ReadOnlyListIterator<E> freeze() {
+    public @Nonnull @Frozen ReadOnlyListIterator<E> freeze() {
         super.freeze();
         return this;
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– ListIterator –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
@@ -70,6 +79,7 @@ public class FreezableListIterator<E> extends FreezableIterableIterator<E> imple
         return iterator.previousIndex();
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Operations –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Override
     @NonFrozenRecipient
@@ -87,10 +97,11 @@ public class FreezableListIterator<E> extends FreezableIterableIterator<E> imple
         iterator.add(element);
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Cloneable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
-    public @Capturable @Nonnull FreezableListIterator<E> clone() {
+    public @Capturable @Nonnull @NonFrozen FreezableListIterator<E> clone() {
         @Nonnull FreezableList<E> list = (FreezableList<E>) iterable;
         return list.clone().listIterator();
     }

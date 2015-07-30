@@ -1,7 +1,9 @@
 package net.digitalid.core.tuples;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Capturable;
+import net.digitalid.core.annotations.NonFrozen;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.collections.ReadOnly;
 
@@ -15,17 +17,20 @@ import net.digitalid.core.collections.ReadOnly;
  */
 public interface ReadOnlyQuartet<E0, E1, E2, E3> extends ReadOnlyTriplet<E0, E1, E2> {
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Getter –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
     /**
      * Returns the third element of this tuple.
      * 
      * @return the third element of this tuple.
      */
     @Pure
-    public E3 getElement3();
+    public @Nullable E3 getElement3();
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Cloneable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
-    public @Capturable @Nonnull FreezableQuartet<E0, E1, E2, E3> clone();
+    public @Capturable @Nonnull @NonFrozen FreezableQuartet<E0, E1, E2, E3> clone();
     
 }

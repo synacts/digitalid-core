@@ -5,7 +5,9 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Capturable;
+import net.digitalid.core.annotations.Frozen;
 import net.digitalid.core.annotations.Immutable;
+import net.digitalid.core.annotations.NonFrozen;
 import net.digitalid.core.annotations.NonFrozenRecipient;
 import net.digitalid.core.annotations.Pure;
 
@@ -20,6 +22,8 @@ import net.digitalid.core.annotations.Pure;
  */
 public class FreezableHashMap<K,V> extends HashMap<K,V> implements FreezableMap<K,V> {
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Freezable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
     /**
      * Stores whether this object is frozen.
      */
@@ -32,7 +36,7 @@ public class FreezableHashMap<K,V> extends HashMap<K,V> implements FreezableMap<
     }
     
     @Override
-    public @Nonnull ReadOnlyMap<K,V> freeze() {
+    public @Nonnull @Frozen ReadOnlyMap<K,V> freeze() {
         if (!frozen) {
             frozen = true;
             // Assuming that the keys are already immutable.
@@ -47,6 +51,7 @@ public class FreezableHashMap<K,V> extends HashMap<K,V> implements FreezableMap<
         return this;
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructors –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * @see HashMap#HashMap()
@@ -76,6 +81,7 @@ public class FreezableHashMap<K,V> extends HashMap<K,V> implements FreezableMap<
         super(map);
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Entries –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
@@ -95,6 +101,7 @@ public class FreezableHashMap<K,V> extends HashMap<K,V> implements FreezableMap<
         return new BackedFreezableSet<>(this, super.entrySet());
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Operations –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Override
     @NonFrozenRecipient
@@ -139,13 +146,15 @@ public class FreezableHashMap<K,V> extends HashMap<K,V> implements FreezableMap<
         super.clear();
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Cloneable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
-    public @Capturable @Nonnull FreezableHashMap<K,V> clone() {
+    public @Capturable @Nonnull @NonFrozen FreezableHashMap<K,V> clone() {
         return new FreezableHashMap<>(this);
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override

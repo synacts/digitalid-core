@@ -68,7 +68,7 @@ public final class Sender extends Thread {
     @Override
     @Committing
     public void run() {
-        final @Nonnull InternalAction reference = (InternalAction) methods.getNotNull(0);
+        final @Nonnull InternalAction reference = (InternalAction) methods.getNonNullable(0);
         final @Nonnull Role role = reference.getRole();
         final @Nonnull Service service = reference.getService();
         
@@ -101,7 +101,7 @@ public final class Sender extends Thread {
                     
                     if (reference.isSimilarTo(reference)) {
                         for (int i = methods.size() - 1; i >= 0; i--) {
-                            final @Nonnull InternalAction action = (InternalAction) methods.getNotNull(i);
+                            final @Nonnull InternalAction action = (InternalAction) methods.getNonNullable(i);
                             
                             try {
                                 response.checkReply(i);

@@ -2,6 +2,8 @@ package net.digitalid.core.collections;
 
 import javax.annotation.Nonnull;
 import net.digitalid.core.annotations.Capturable;
+import net.digitalid.core.annotations.Frozen;
+import net.digitalid.core.annotations.NonFrozen;
 import net.digitalid.core.annotations.Pure;
 
 /**
@@ -11,6 +13,8 @@ import net.digitalid.core.annotations.Pure;
  * @version 1.0
  */
 public class FreezableObject implements Freezable {
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Freezable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores whether this object is frozen.
@@ -24,15 +28,16 @@ public class FreezableObject implements Freezable {
     }
     
     @Override
-    public @Nonnull ReadOnly freeze() {
+    public @Nonnull @Frozen ReadOnly freeze() {
         frozen = true;
         return this;
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Cloneable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
-    public @Capturable @Nonnull FreezableObject clone() {
+    public @Capturable @Nonnull @NonFrozen FreezableObject clone() {
         return new FreezableObject();
     }
     

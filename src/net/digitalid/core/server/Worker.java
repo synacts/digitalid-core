@@ -91,7 +91,7 @@ public final class Worker implements Runnable {
                     subject = reference.getSubject();
                     if (signature instanceof HostSignatureWrapper) signer = ((HostSignatureWrapper) signature).getSigner();
                     else if (signature instanceof ClientSignatureWrapper) signer = subject;
-                    else if (signature instanceof CredentialsSignatureWrapper) signer = ((CredentialsSignatureWrapper) signature).getCredentials().getNotNull(0).getIssuer().getAddress();
+                    else if (signature instanceof CredentialsSignatureWrapper) signer = ((CredentialsSignatureWrapper) signature).getCredentials().getNonNullable(0).getIssuer().getAddress();
                     
                     requestAudit = request.getAudit();
                     final @Nullable Agent agent = requestAudit != null && service.equals(CoreService.SERVICE) ? signature.getAgentCheckedAndRestricted(reference.getNonHostAccount(), null) : null;
@@ -145,7 +145,7 @@ public final class Worker implements Runnable {
                                 restrictions = Restrictions.MIN;
                             }
                         } else {
-                            final @Nonnull Credential credential = signature.toCredentialsSignatureWrapper().getCredentials().getNotNull(0);
+                            final @Nonnull Credential credential = signature.toCredentialsSignatureWrapper().getCredentials().getNonNullable(0);
                             permissions = credential.getPermissions();
                             restrictions = credential.getRestrictions();
                             if (permissions == null || restrictions == null) throw new PacketException(PacketError.AUTHORIZATION, "If an audit is requested, neither the permissions nor the restrictions may be null.");

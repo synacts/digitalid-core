@@ -14,6 +14,8 @@ import net.digitalid.core.annotations.Pure;
  */
 public class ConcurrentHashMap<K, V> extends java.util.concurrent.ConcurrentHashMap<K, V> implements ConcurrentMap<K, V> {
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructors –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
     /**
      * @see java.util.concurrent.ConcurrentHashMap#ConcurrentHashMap(int, float, int)
      */
@@ -49,6 +51,7 @@ public class ConcurrentHashMap<K, V> extends java.util.concurrent.ConcurrentHash
         super(m);
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– ConcurrentMap –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Override
     public @Nonnull V putIfAbsentElseReturnPresent(@Nonnull K key, @Nonnull V value) {
@@ -57,12 +60,15 @@ public class ConcurrentHashMap<K, V> extends java.util.concurrent.ConcurrentHash
         else return previous;
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Cloneable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
     @Pure
     @Override
     public @Capturable @Nonnull ConcurrentHashMap<K, V> clone() {
         return new ConcurrentHashMap<>(this);
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override

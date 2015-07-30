@@ -246,8 +246,8 @@ public final class SynchronizerModule implements ClientModule {
         assert !methods.containsNull() : "The list of methods does not contain null.";
         assert Method.areSimilar(methods) : "The methods are similar to each other.";
         
-        final @Nonnull Role role = methods.getNotNull(0).getRole();
-        final @Nonnull String SQL = "DELETE FROM " + role.getSite() + "synchronization_action WHERE time IN (SELECT time FROM " + role.getSite() + "synchronization_action WHERE entity = " + role + " AND service = " + methods.getNotNull(0).getService() + " AND action = ? ORDER BY time LIMIT 1)";
+        final @Nonnull Role role = methods.getNonNullable(0).getRole();
+        final @Nonnull String SQL = "DELETE FROM " + role.getSite() + "synchronization_action WHERE time IN (SELECT time FROM " + role.getSite() + "synchronization_action WHERE entity = " + role + " AND service = " + methods.getNonNullable(0).getService() + " AND action = ? ORDER BY time LIMIT 1)";
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
             for (final @Nonnull Method method : methods) {
                 new SelfcontainedWrapper(Packet.CONTENT, method).toBlock().set(preparedStatement, 1);

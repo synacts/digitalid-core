@@ -72,7 +72,7 @@ final class Options {
             final int input = Console.readNumber("Choice: ", 0) - 1;
             Console.write();
             if (input >= 0 && input < hosts.size()) {
-                return hosts.getNotNull(input);
+                return hosts.getNonNullable(input);
             } else if (input > 0) {
                 Console.write("Please choose one of the given options!");
             }

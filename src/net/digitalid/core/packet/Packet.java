@@ -206,7 +206,7 @@ public abstract class Packet {
         for (int i = 0; i < size; i++) {
             if (!elements.isNull(i)) {
                 final @Nonnull SignatureWrapper signature;
-                try { signature = verified ? SignatureWrapper.decode(elements.getNotNull(i), account) : SignatureWrapper.decodeWithoutVerifying(elements.getNotNull(i), false, account); } catch (InvalidEncodingException | InvalidSignatureException exception) { throw new PacketException(PacketError.SIGNATURE, "A signature is invalid.", exception, isResponse); }
+                try { signature = verified ? SignatureWrapper.decode(elements.getNonNullable(i), account) : SignatureWrapper.decodeWithoutVerifying(elements.getNonNullable(i), false, account); } catch (InvalidEncodingException | InvalidSignatureException exception) { throw new PacketException(PacketError.SIGNATURE, "A signature is invalid.", exception, isResponse); }
                 try { signature.checkRecency(); } catch (InactiveSignatureException exception) { throw new PacketException(PacketError.SIGNATURE, "One of the signatures is no longer active.", exception, isResponse); }
                 
                 final @Nullable Audit _audit = signature.getAudit();

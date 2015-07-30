@@ -8,9 +8,13 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Capturable;
+import net.digitalid.core.annotations.Frozen;
 import net.digitalid.core.annotations.Immutable;
+import net.digitalid.core.annotations.NonFrozen;
 import net.digitalid.core.annotations.NonFrozenRecipient;
 import net.digitalid.core.annotations.Pure;
+import net.digitalid.core.annotations.ValidIndex;
+import net.digitalid.core.annotations.ValidIndexForInsertion;
 
 /**
  * This class extends the {@link LinkedList} and makes it {@link Freezable}.
@@ -24,6 +28,8 @@ import net.digitalid.core.annotations.Pure;
  */
 public class FreezableLinkedList<E> extends LinkedList<E> implements FreezableList<E> {
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Freezable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
     /**
      * Stores whether this object is frozen.
      */
@@ -36,7 +42,7 @@ public class FreezableLinkedList<E> extends LinkedList<E> implements FreezableLi
     }
     
     @Override
-    public @Nonnull ReadOnlyList<E> freeze() {
+    public @Nonnull @Frozen ReadOnlyList<E> freeze() {
         if (!frozen) {
             frozen = true;
             for (@Nullable E element : this) {
@@ -50,6 +56,7 @@ public class FreezableLinkedList<E> extends LinkedList<E> implements FreezableLi
         return this;
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructors –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * @see LinkedList#LinkedList()
@@ -86,6 +93,7 @@ public class FreezableLinkedList<E> extends LinkedList<E> implements FreezableLi
         super(collection);
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Collection –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
@@ -93,22 +101,60 @@ public class FreezableLinkedList<E> extends LinkedList<E> implements FreezableLi
         return size() == 1;
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– List –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
-    public boolean isNull(int index) {
+    public @Nullable E getNullable(@ValidIndex int index) {
+        return get(index);
+    }
+    
+    @Pure
+    @Override
+    public boolean isNull(@ValidIndex int index) {
         return get(index) == null;
     }
     
     @Pure
     @Override
-    public @Nonnull E getNotNull(int index) {
+    public @Nonnull E getNonNullable(@ValidIndex int index) {
         @Nullable E element = get(index);
         assert element != null : "The element at the given index is not null.";
         
         return element;
     }
     
+    @Pure
+    @Override
+    public @Nonnull FreezableIterator<E> iterator() {
+        return new FreezableIterableIterator<>(this, super.iterator());
+    }
+    
+    @Pure
+    @Override
+    public @Nonnull FreezableIterator<E> descendingIterator() {
+        return new FreezableIterableIterator<>(this, super.descendingIterator());
+    }
+    
+    @Pure
+    @Override
+    public @Nonnull FreezableListIterator<E> listIterator() {
+        return new FreezableListIterator<>(this, super.listIterator());
+    }
+    
+    @Pure
+    @Override
+    public @Nonnull FreezableListIterator<E> listIterator(@ValidIndexForInsertion int index) {
+        return new FreezableListIterator<>(this, super.listIterator(index));
+    }
+    
+    @Pure
+    @Override
+    public @Nonnull FreezableList<E> subList(@ValidIndex int fromIndex, @ValidIndexForInsertion int toIndex) {
+        return new BackedFreezableList<>(this, super.subList(fromIndex, toIndex));
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Add –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Override
     @NonFrozenRecipient
@@ -120,7 +166,7 @@ public class FreezableLinkedList<E> extends LinkedList<E> implements FreezableLi
     
     @Override
     @NonFrozenRecipient
-    public void add(int index, @Nullable E element) {
+    public void add(@ValidIndexForInsertion int index, @Nullable E element) {
         assert !isFrozen() : "This object is not frozen.";
         
         super.add(index, element);
@@ -152,12 +198,13 @@ public class FreezableLinkedList<E> extends LinkedList<E> implements FreezableLi
     
     @Override
     @NonFrozenRecipient
-    public boolean addAll(int index, @Nonnull Collection<? extends E> collection) {
+    public boolean addAll(@ValidIndexForInsertion int index, @Nonnull Collection<? extends E> collection) {
         assert !isFrozen() : "This object is not frozen.";
         
         return super.addAll(index, collection);
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Offer –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Override
     @NonFrozenRecipient
@@ -183,6 +230,7 @@ public class FreezableLinkedList<E> extends LinkedList<E> implements FreezableLi
         return super.offerLast(element);
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Remove –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Override
     @NonFrozenRecipient
@@ -210,7 +258,7 @@ public class FreezableLinkedList<E> extends LinkedList<E> implements FreezableLi
     
     @Override
     @NonFrozenRecipient
-    public @Nullable E remove(int index) {
+    public @Nullable E remove(@ValidIndex int index) {
         assert !isFrozen() : "This object is not frozen.";
         
         return super.remove(index);
@@ -242,7 +290,7 @@ public class FreezableLinkedList<E> extends LinkedList<E> implements FreezableLi
     
     @Override
     @NonFrozenRecipient
-    protected void removeRange(int fromIndex, int toIndex) {
+    protected void removeRange(@ValidIndex int fromIndex, @ValidIndexForInsertion int toIndex) {
         assert !isFrozen() : "This object is not frozen.";
         
         super.removeRange(fromIndex, toIndex);
@@ -256,6 +304,7 @@ public class FreezableLinkedList<E> extends LinkedList<E> implements FreezableLi
         return super.removeAll(collection);
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Poll –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Override
     @NonFrozenRecipient
@@ -281,6 +330,7 @@ public class FreezableLinkedList<E> extends LinkedList<E> implements FreezableLi
         return super.pollLast();
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Stack –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Override
     @NonFrozenRecipient
@@ -298,10 +348,11 @@ public class FreezableLinkedList<E> extends LinkedList<E> implements FreezableLi
         return super.pop();
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Operations –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Override
     @NonFrozenRecipient
-    public @Nullable E set(int index, @Nullable E element) {
+    public @Nullable E set(@ValidIndex int index, @Nullable E element) {
         assert !isFrozen() : "This object is not frozen.";
         
         return super.set(index, element);
@@ -323,37 +374,7 @@ public class FreezableLinkedList<E> extends LinkedList<E> implements FreezableLi
         return super.retainAll(collection);
     }
     
-    
-    @Pure
-    @Override
-    public @Nonnull FreezableListIterator<E> listIterator(int index) {
-        return new FreezableListIterator<>(this, super.listIterator(index));
-    }
-    
-    @Pure
-    @Override
-    public @Nonnull FreezableListIterator<E> listIterator() {
-        return new FreezableListIterator<>(this, super.listIterator());
-    }
-    
-    @Pure
-    @Override
-    public @Nonnull FreezableIterator<E> iterator() {
-        return new FreezableIterableIterator<>(this, super.iterator());
-    }
-    
-    @Pure
-    @Override
-    public @Nonnull FreezableIterator<E> descendingIterator() {
-        return new FreezableIterableIterator<>(this, super.descendingIterator());
-    }
-    
-    @Pure
-    @Override
-    public @Nonnull FreezableList<E> subList(int fromIndex, int toIndex) {
-        return new BackedFreezableList<>(this, super.subList(fromIndex, toIndex));
-    }
-    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Conditions –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
@@ -375,6 +396,7 @@ public class FreezableLinkedList<E> extends LinkedList<E> implements FreezableLi
         return false;
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Ordering –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns whether the elements in this list are ordered (excluding null values).
@@ -424,17 +446,18 @@ public class FreezableLinkedList<E> extends LinkedList<E> implements FreezableLi
         return isOrdered(true, false);
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Conversions –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
-    public @Capturable @Nonnull FreezableLinkedList<E> clone() {
+    public @Capturable @Nonnull @NonFrozen FreezableLinkedList<E> clone() {
         return new FreezableLinkedList<>(this);
     }
     
     @Pure
     @Override
     @SuppressWarnings("unchecked")
-    public @Capturable @Nonnull FreezableArray<E> toFreezableArray() {
+    public @Capturable @Nonnull @NonFrozen FreezableArray<E> toFreezableArray() {
         return new FreezableArray<>(toArray((E[]) new Object[size()]));
     }
     

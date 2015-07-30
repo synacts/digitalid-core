@@ -4,7 +4,9 @@ import java.util.Iterator;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Capturable;
+import net.digitalid.core.annotations.Frozen;
 import net.digitalid.core.annotations.Immutable;
+import net.digitalid.core.annotations.NonFrozen;
 import net.digitalid.core.annotations.NonFrozenRecipient;
 import net.digitalid.core.annotations.Pure;
 
@@ -16,12 +18,14 @@ import net.digitalid.core.annotations.Pure;
  * <em>Important:</em> Only use freezable or immutable types for the elements!
  * (The type is not restricted to {@link Freezable} or {@link Immutable} so that library types can also be used.)
  * 
- * @see FreezableIterable
+ * @see FreezableListIterator
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
 class FreezableIterableIterator<E> implements FreezableIterator<E> {
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Fields –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores a reference to the underlying iterable.
@@ -33,17 +37,20 @@ class FreezableIterableIterator<E> implements FreezableIterator<E> {
      */
     private final @Nonnull Iterator<E> iterator;
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
     /**
      * Creates a new freezable iterator.
      * 
      * @param iterable a reference to the underlying iterable.
      * @param iterator a reference to the underlying iterator.
      */
-    protected FreezableIterableIterator(@Nonnull FreezableIterable<E> iterable, @Nonnull Iterator<E> iterator) {
+    FreezableIterableIterator(@Nonnull FreezableIterable<E> iterable, @Nonnull Iterator<E> iterator) {
         this.iterable = iterable;
         this.iterator = iterator;
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Freezable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
@@ -52,11 +59,12 @@ class FreezableIterableIterator<E> implements FreezableIterator<E> {
     }
     
     @Override
-    public @Nonnull ReadOnlyIterator<E> freeze() {
+    public @Nonnull @Frozen ReadOnlyIterator<E> freeze() {
         iterable.freeze();
         return this;
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Iterator –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
@@ -69,6 +77,7 @@ class FreezableIterableIterator<E> implements FreezableIterator<E> {
         return iterator.next();
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Operation –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Override
     @NonFrozenRecipient
@@ -78,10 +87,11 @@ class FreezableIterableIterator<E> implements FreezableIterator<E> {
         iterator.remove();
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Cloneable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
-    public @Capturable @Nonnull FreezableIterator<E> clone() {
+    public @Capturable @Nonnull @NonFrozen FreezableIterator<E> clone() {
         return iterable.clone().iterator();
     }
     

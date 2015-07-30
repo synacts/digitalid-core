@@ -7,6 +7,7 @@ import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Capturable;
 import net.digitalid.core.annotations.Frozen;
 import net.digitalid.core.annotations.NonCommitting;
+import net.digitalid.core.annotations.NonFrozen;
 import net.digitalid.core.annotations.NonNullableElements;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.collections.ReadOnlyList;
@@ -28,7 +29,7 @@ public interface ReadOnlyPredecessors extends ReadOnlyList<Predecessor>, Blockab
 
     @Pure
     @Override
-    public @Capturable @Nonnull FreezablePredecessors clone();
+    public @Capturable @Nonnull @NonFrozen FreezablePredecessors clone();
     
     /**
      * Returns the identities of the predecessors that are mapped.

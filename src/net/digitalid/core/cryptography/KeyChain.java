@@ -144,7 +144,7 @@ abstract class KeyChain<Key extends Blockable> implements Blockable {
      */
     @Pure
     public final @Nonnull Time getNewestTime() {
-        return items.getNotNull(0).getElement0();
+        return items.getNonNullable(0).getElement0();
     }
     
     /**

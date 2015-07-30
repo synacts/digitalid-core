@@ -6,7 +6,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Capturable;
 import net.digitalid.core.annotations.Captured;
+import net.digitalid.core.annotations.Frozen;
 import net.digitalid.core.annotations.Immutable;
+import net.digitalid.core.annotations.NonFrozen;
 import net.digitalid.core.annotations.NonFrozenRecipient;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.annotations.ValidIndex;
@@ -22,10 +24,14 @@ import net.digitalid.core.annotations.ValidIndex;
  */
 public class FreezableArray<E> extends FreezableObject implements ReadOnlyArray<E>, FreezableIterable<E> {
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Field –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
     /**
      * Stores the elements in an array.
      */
     private final @Nonnull E[] array;
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructors –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Creates a new freezable array with the given size.
@@ -47,9 +53,10 @@ public class FreezableArray<E> extends FreezableObject implements ReadOnlyArray<
         this.array = array;
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Freezable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Override
-    public @Nonnull ReadOnlyArray<E> freeze() {
+    public @Nonnull @Frozen ReadOnlyArray<E> freeze() {
         if (!isFrozen()) {
             super.freeze();
             for (final @Nullable E element : array) {
@@ -63,6 +70,7 @@ public class FreezableArray<E> extends FreezableObject implements ReadOnlyArray<
         return this;
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Retrieval –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
@@ -72,7 +80,7 @@ public class FreezableArray<E> extends FreezableObject implements ReadOnlyArray<
     
     @Pure
     @Override
-    public @Nullable E getNullable(int index) {
+    public @Nullable E getNullable(@ValidIndex int index) {
         assert index >= 0 && index < size() : "The index is valid.";
         
         return array[index];
@@ -80,18 +88,26 @@ public class FreezableArray<E> extends FreezableObject implements ReadOnlyArray<
     
     @Pure
     @Override
-    public boolean isNull(int index) {
+    public boolean isNull(@ValidIndex int index) {
         return getNullable(index) == null;
     }
     
     @Pure
     @Override
-    public @Nonnull E getNonNullable(int index) {
+    public @Nonnull E getNonNullable(@ValidIndex int index) {
         @Nullable E element = getNullable(index);
         assert element != null : "The element at the given index is not null.";
         
         return element;
     }
+    
+    @Pure
+    @Override
+    public @Nonnull FreezableArrayIterator<E> iterator() {
+        return new FreezableArrayIterator<>(this);
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Operation –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Sets the element at the given index to the new value.
@@ -107,12 +123,7 @@ public class FreezableArray<E> extends FreezableObject implements ReadOnlyArray<
         array[index] = element;
     }
     
-    @Pure
-    @Override
-    public @Nonnull FreezableArrayIterator<E> iterator() {
-        return new FreezableArrayIterator<>(this);
-    }
-    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Conditions –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
@@ -134,6 +145,23 @@ public class FreezableArray<E> extends FreezableObject implements ReadOnlyArray<
         return false;
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Conversions –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    @Pure
+    @Override
+    public @Capturable @Nonnull @NonFrozen FreezableArray<E> clone() {
+        return new FreezableArray<>(array.clone());
+    }
+    
+    @Pure
+    @Override
+    public @Capturable @Nonnull @NonFrozen FreezableList<E> toFreezableList() {
+        final @Nonnull FreezableList<E> freezableList = new FreezableArrayList<>(array.length);
+        for (final @Nullable E element : array) freezableList.add(element);
+        return freezableList;
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
@@ -149,20 +177,6 @@ public class FreezableArray<E> extends FreezableObject implements ReadOnlyArray<
     @Override
     public int hashCode() {
         return Arrays.deepHashCode(array);
-    }
-    
-    @Pure
-    @Override
-    public @Capturable @Nonnull FreezableArray<E> clone() {
-        return new FreezableArray<>(array.clone());
-    }
-    
-    @Pure
-    @Override
-    public @Capturable @Nonnull FreezableList<E> toFreezableList() {
-        final @Nonnull FreezableList<E> freezableList = new FreezableArrayList<>(array.length);
-        for (final @Nullable E element : array) freezableList.add(element);
-        return freezableList;
     }
     
     @Pure

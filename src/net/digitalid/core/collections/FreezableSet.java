@@ -2,6 +2,7 @@ package net.digitalid.core.collections;
 
 import java.util.Set;
 import javax.annotation.Nonnull;
+import net.digitalid.core.annotations.Frozen;
 import net.digitalid.core.annotations.Immutable;
 
 /**
@@ -11,12 +12,18 @@ import net.digitalid.core.annotations.Immutable;
  * <em>Important:</em> Only use freezable or immutable types for the elements!
  * (The type is not restricted to {@link Freezable} or {@link Immutable} so that library types can also be used.)
  * 
+ * @see FreezableHashSet
+ * @see FreezableLinkedHashSet
+ * @see BackedFreezableSet
+ * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
 public interface FreezableSet<E> extends ReadOnlySet<E>, Set<E>, FreezableCollection<E> {
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Freezable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
     @Override
-    public @Nonnull ReadOnlySet<E> freeze();
+    public @Nonnull @Frozen ReadOnlySet<E> freeze();
     
 }

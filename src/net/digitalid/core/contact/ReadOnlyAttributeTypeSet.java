@@ -3,6 +3,7 @@ package net.digitalid.core.contact;
 import javax.annotation.Nonnull;
 import net.digitalid.core.agent.FreezableAgentPermissions;
 import net.digitalid.core.annotations.Capturable;
+import net.digitalid.core.annotations.NonFrozen;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.collections.ReadOnlySet;
 import net.digitalid.core.identity.SemanticType;
@@ -31,6 +32,6 @@ public interface ReadOnlyAttributeTypeSet extends ReadOnlySet<SemanticType>, Blo
     
     @Pure
     @Override
-    public @Capturable @Nonnull FreezableAttributeTypeSet clone();
+    public @Capturable @Nonnull @NonFrozen FreezableAttributeTypeSet clone();
     
 }

@@ -5,7 +5,9 @@ import java.util.HashSet;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Capturable;
+import net.digitalid.core.annotations.Frozen;
 import net.digitalid.core.annotations.Immutable;
+import net.digitalid.core.annotations.NonFrozen;
 import net.digitalid.core.annotations.NonFrozenRecipient;
 import net.digitalid.core.annotations.Pure;
 
@@ -25,6 +27,8 @@ import net.digitalid.core.annotations.Pure;
  */
 class BackedFreezableCollection<E> implements FreezableCollection<E> {
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Fields –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
     /**
      * Stores a reference to the underlying freezable.
      */
@@ -35,17 +39,20 @@ class BackedFreezableCollection<E> implements FreezableCollection<E> {
      */
     private final @Nonnull Collection<E> collection;
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
     /**
      * Creates a new backed freezable collection.
      * 
      * @param freezable a reference to the underlying freezable.
      * @param collection a reference to the underlying collection.
      */
-    protected BackedFreezableCollection(@Nonnull Freezable freezable, @Nonnull Collection<E> collection) {
+    BackedFreezableCollection(@Nonnull Freezable freezable, @Nonnull Collection<E> collection) {
         this.freezable = freezable;
         this.collection = collection;
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Freezable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
@@ -54,24 +61,12 @@ class BackedFreezableCollection<E> implements FreezableCollection<E> {
     }
     
     @Override
-    public @Nonnull ReadOnlyCollection<E> freeze() {
+    public @Nonnull @Frozen ReadOnlyCollection<E> freeze() {
         freezable.freeze();
         return this;
     }
     
-    
-    @Pure
-    @Override
-    public boolean equals(@Nullable Object object) {
-        return collection.equals(object);
-    }
-    
-    @Pure
-    @Override
-    public int hashCode() {
-        return collection.hashCode();
-    }
-    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Collection –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
@@ -121,6 +116,7 @@ class BackedFreezableCollection<E> implements FreezableCollection<E> {
         return new FreezableIterableIterator<>(this, collection.iterator());
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Conditions –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
@@ -142,6 +138,7 @@ class BackedFreezableCollection<E> implements FreezableCollection<E> {
         return false;
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Operations –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Override
     @NonFrozenRecipient
@@ -191,18 +188,33 @@ class BackedFreezableCollection<E> implements FreezableCollection<E> {
         collection.clear();
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Conversions –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
-    public @Capturable @Nonnull FreezableCollection<E> clone() {
+    public @Capturable @Nonnull @NonFrozen FreezableCollection<E> clone() {
         return new FreezableArrayList<>(collection);
     }
     
     @Pure
     @Override
     @SuppressWarnings("unchecked")
-    public @Capturable @Nonnull FreezableArray<E> toFreezableArray() {
+    public @Capturable @Nonnull @NonFrozen FreezableArray<E> toFreezableArray() {
         return new FreezableArray<>(toArray((E[]) new Object[size()]));
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    @Pure
+    @Override
+    public boolean equals(@Nullable Object object) {
+        return collection.equals(object);
+    }
+    
+    @Pure
+    @Override
+    public int hashCode() {
+        return collection.hashCode();
     }
     
 }

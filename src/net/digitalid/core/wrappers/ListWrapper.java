@@ -38,7 +38,7 @@ public final class ListWrapper extends BlockWrapper {
      */
     @Pure
     public static boolean basedOnParameter(@Nonnull SemanticType type, @Nonnull ReadOnlyList<Block> elements) {
-        final @Nonnull SemanticType parameter = type.getParameters().getNotNull(0);
+        final @Nonnull SemanticType parameter = type.getParameters().getNonNullable(0);
         for (final @Nullable Block element : elements) {
             if (element != null && !element.getType().isBasedOn(parameter)) return false;
         }
@@ -117,7 +117,7 @@ public final class ListWrapper extends BlockWrapper {
     public ListWrapper(@Nonnull Block block) throws InvalidEncodingException {
         super(block);
         
-        final @Nonnull SemanticType parameter = block.getType().getParameters().getNotNull(0);
+        final @Nonnull SemanticType parameter = block.getType().getParameters().getNonNullable(0);
         
         int offset = IntvarWrapper.decodeLength(block, 0);
         final int size = (int) IntvarWrapper.decodeValue(block, 0, offset);

@@ -2,6 +2,7 @@ package net.digitalid.core.collections;
 
 import java.util.Collection;
 import javax.annotation.Nonnull;
+import net.digitalid.core.annotations.Frozen;
 import net.digitalid.core.annotations.Immutable;
 
 /**
@@ -19,7 +20,9 @@ import net.digitalid.core.annotations.Immutable;
  */
 public interface FreezableCollection<E> extends ReadOnlyCollection<E>, Collection<E>, FreezableIterable<E> {
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Freezable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
     @Override
-    public @Nonnull ReadOnlyCollection<E> freeze();
+    public @Nonnull @Frozen ReadOnlyCollection<E> freeze();
     
 }

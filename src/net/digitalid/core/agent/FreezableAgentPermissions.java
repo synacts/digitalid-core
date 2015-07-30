@@ -11,6 +11,7 @@ import net.digitalid.core.annotations.AttributeType;
 import net.digitalid.core.annotations.Capturable;
 import net.digitalid.core.annotations.EmptyOrSingle;
 import net.digitalid.core.annotations.EmptyOrSingleRecipient;
+import net.digitalid.core.annotations.Frozen;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.NonFrozen;
 import net.digitalid.core.annotations.NonFrozenRecipient;
@@ -162,7 +163,7 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
     
     
     @Override
-    public @Nonnull ReadOnlyAgentPermissions freeze() {
+    public @Nonnull @Frozen ReadOnlyAgentPermissions freeze() {
         super.freeze();
         return this;
     }
@@ -377,7 +378,7 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
     
     @Pure
     @Override
-    public @Capturable @Nonnull FreezableAgentPermissions clone() {
+    public @Capturable @Nonnull @NonFrozen FreezableAgentPermissions clone() {
         return new FreezableAgentPermissions(this);
     }
     

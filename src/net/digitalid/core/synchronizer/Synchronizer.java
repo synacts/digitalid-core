@@ -293,7 +293,7 @@ public final class Synchronizer extends Thread {
                         threadPoolExecutor.execute(new Sender(methods));
                         resetBackoffInterval();
                     } catch (@Nonnull RejectedExecutionException exception) {
-                        final @Nonnull Method reference = methods.getNotNull(0);
+                        final @Nonnull Method reference = methods.getNonNullable(0);
                         resume(reference.getRole(), reference.getService());
                         Log.warning("Could not add a new sender.", exception);
                         Log.debugging("Sleep for " + backoff + " ms.");

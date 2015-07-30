@@ -10,11 +10,16 @@ import net.digitalid.core.annotations.Pure;
  * When a read-only object is {@link Object#clone() cloned}, its copy is of the corresponding {@link Freezable freezable} type and not {@link #isFrozen() frozen}.
  * 
  * @see Freezable
+ * @see ReadOnlyIterable
+ * @see ReadOnlyIterator
+ * @see ReadOnlyMap
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
 public interface ReadOnly extends Cloneable {
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Freezable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns whether this object is frozen and can thus no longer be modified.
@@ -26,6 +31,7 @@ public interface ReadOnly extends Cloneable {
     @Pure
     public boolean isFrozen();
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Cloneable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     public @Capturable @Nonnull @NonFrozen Freezable clone();

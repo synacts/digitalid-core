@@ -3,8 +3,9 @@ package net.digitalid.core.collections;
 import java.util.Set;
 import javax.annotation.Nonnull;
 import net.digitalid.core.annotations.Capturable;
-import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.annotations.Immutable;
+import net.digitalid.core.annotations.NonFrozen;
+import net.digitalid.core.annotations.Pure;
 
 /**
  * This interface provides read-only access to {@link Set sets} and should <em>never</em> be cast away (unless external code requires it).
@@ -19,6 +20,8 @@ import net.digitalid.core.annotations.Immutable;
  */
 public interface ReadOnlySet<E> extends ReadOnlyCollection<E> {
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Operations –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
     /**
      * Returns the union of this and the given set.
      * 
@@ -27,7 +30,7 @@ public interface ReadOnlySet<E> extends ReadOnlyCollection<E> {
      * @return the union of this and the given set.
      */
     @Pure
-    public @Capturable @Nonnull FreezableSet<E> add(ReadOnlySet<E> set);
+    public @Capturable @Nonnull @NonFrozen FreezableSet<E> add(@Nonnull ReadOnlySet<E> set);
     
     /**
      * Returns the relative complement of the given set in this set.
@@ -37,7 +40,7 @@ public interface ReadOnlySet<E> extends ReadOnlyCollection<E> {
      * @return the relative complement of the given set in this set.
      */
     @Pure
-    public @Capturable @Nonnull FreezableSet<E> subtract(ReadOnlySet<E> set);
+    public @Capturable @Nonnull @NonFrozen FreezableSet<E> subtract(@Nonnull ReadOnlySet<E> set);
     
     /**
      * Returns the intersection of this and the given set.
@@ -47,11 +50,12 @@ public interface ReadOnlySet<E> extends ReadOnlyCollection<E> {
      * @return the intersection of this and the given set.
      */
     @Pure
-    public @Capturable @Nonnull FreezableSet<E> intersect(ReadOnlySet<E> set);
+    public @Capturable @Nonnull @NonFrozen FreezableSet<E> intersect(@Nonnull ReadOnlySet<E> set);
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Cloneable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
-    public @Capturable @Nonnull FreezableSet<E> clone();
+    public @Capturable @Nonnull @NonFrozen FreezableSet<E> clone();
     
 }

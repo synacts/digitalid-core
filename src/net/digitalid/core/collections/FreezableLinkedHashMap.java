@@ -5,7 +5,9 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Capturable;
+import net.digitalid.core.annotations.Frozen;
 import net.digitalid.core.annotations.Immutable;
+import net.digitalid.core.annotations.NonFrozen;
 import net.digitalid.core.annotations.NonFrozenRecipient;
 import net.digitalid.core.annotations.Pure;
 
@@ -21,6 +23,8 @@ import net.digitalid.core.annotations.Pure;
  */
 public class FreezableLinkedHashMap<K,V> extends LinkedHashMap<K,V> implements FreezableMap<K,V> {
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Freezable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
     /**
      * Stores whether this object is frozen.
      */
@@ -33,7 +37,7 @@ public class FreezableLinkedHashMap<K,V> extends LinkedHashMap<K,V> implements F
     }
     
     @Override
-    public @Nonnull ReadOnlyMap<K,V> freeze() {
+    public @Nonnull @Frozen ReadOnlyMap<K,V> freeze() {
         if (!frozen) {
             frozen = true;
             // Assuming that the keys are already immutable.
@@ -48,6 +52,7 @@ public class FreezableLinkedHashMap<K,V> extends LinkedHashMap<K,V> implements F
         return this;
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructors –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * @see LinkedHashMap#LinkedHashMap()
@@ -84,6 +89,7 @@ public class FreezableLinkedHashMap<K,V> extends LinkedHashMap<K,V> implements F
         super(map);
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Entries –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
@@ -103,6 +109,7 @@ public class FreezableLinkedHashMap<K,V> extends LinkedHashMap<K,V> implements F
         return new BackedFreezableSet<>(this, super.entrySet());
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Operations –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Override
     @NonFrozenRecipient
@@ -147,11 +154,20 @@ public class FreezableLinkedHashMap<K,V> extends LinkedHashMap<K,V> implements F
         super.clear();
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Cloneable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
-    public @Capturable @Nonnull FreezableLinkedHashMap<K,V> clone() {
+    public @Capturable @Nonnull @NonFrozen FreezableLinkedHashMap<K,V> clone() {
         return new FreezableLinkedHashMap<>(this);
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    @Pure
+    @Override
+    public @Nonnull String toString() {
+        return IterableConverter.toString(entrySet(), new ElementConverter<Entry<K, V>>() { @Pure @Override public String toString(@Nullable Entry<K, V> entry) { return entry == null ? "null" : entry.getKey() + ": " + entry.getValue(); } }, Brackets.CURLY);
     }
     
 }

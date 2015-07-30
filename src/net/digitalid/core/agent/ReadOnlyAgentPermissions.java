@@ -5,12 +5,13 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import net.digitalid.core.annotations.Capturable;
 import net.digitalid.core.annotations.NonCommitting;
+import net.digitalid.core.annotations.NonFrozen;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.collections.ReadOnlyMap;
+import net.digitalid.core.database.SQLizable;
 import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.wrappers.Blockable;
-import net.digitalid.core.database.SQLizable;
 
 /**
  * This interface provides read-only access to {@link FreezableAgentPermissions agent permissions} and should <em>never</em> be cast away.
@@ -113,7 +114,7 @@ public interface ReadOnlyAgentPermissions extends ReadOnlyMap<SemanticType, Bool
     
     @Pure
     @Override
-    public @Capturable @Nonnull FreezableAgentPermissions clone();
+    public @Capturable @Nonnull @NonFrozen FreezableAgentPermissions clone();
     
     
     /**

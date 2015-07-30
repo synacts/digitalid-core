@@ -3,8 +3,9 @@ package net.digitalid.core.collections;
 import java.util.ListIterator;
 import javax.annotation.Nonnull;
 import net.digitalid.core.annotations.Capturable;
-import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.annotations.Immutable;
+import net.digitalid.core.annotations.NonFrozen;
+import net.digitalid.core.annotations.Pure;
 
 /**
  * This interface provides read-only access to {@link ListIterator list iterators} and should not be lost by assigning its objects to a supertype.
@@ -21,8 +22,10 @@ import net.digitalid.core.annotations.Immutable;
  */
 public interface ReadOnlyListIterator<E> extends ReadOnlyIterator<E>, ListIterator<E> {
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Cloneable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
     @Pure
     @Override
-    public @Capturable @Nonnull FreezableListIterator<E> clone();
+    public @Capturable @Nonnull @NonFrozen FreezableListIterator<E> clone();
     
 }

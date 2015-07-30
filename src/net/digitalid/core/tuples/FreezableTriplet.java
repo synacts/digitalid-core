@@ -4,7 +4,10 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Capturable;
+import net.digitalid.core.annotations.Frozen;
+import net.digitalid.core.annotations.NonFrozen;
 import net.digitalid.core.annotations.NonFrozenRecipient;
+import net.digitalid.core.annotations.NullableElements;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.collections.Freezable;
 
@@ -12,14 +15,18 @@ import net.digitalid.core.collections.Freezable;
  * This class models a {@link Freezable freezable} triplet.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 2.0
+ * @version 1.0
  */
 public class FreezableTriplet<E0, E1, E2> extends FreezablePair<E0, E1> implements ReadOnlyTriplet<E0, E1, E2> {
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Field –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the third element of this tuple.
      */
-    private E2 element2;
+    private @Nullable E2 element2;
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructors –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Creates a new triplet with the given elements.
@@ -28,7 +35,7 @@ public class FreezableTriplet<E0, E1, E2> extends FreezablePair<E0, E1> implemen
      * @param element1 the second element of this tuple.
      * @param element2 the third element of this tuple.
      */
-    public FreezableTriplet(E0 element0, E1 element1, E2 element2) {
+    public FreezableTriplet(@Nullable E0 element0, @Nullable E1 element1, @Nullable E2 element2) {
         super(element0, element1);
         
         this.element2 = element2;
@@ -39,18 +46,21 @@ public class FreezableTriplet<E0, E1, E2> extends FreezablePair<E0, E1> implemen
      * 
      * @param triplet the triplet containing the elements.
      */
-    public FreezableTriplet(@Nonnull ReadOnlyTriplet<E0, E1, E2> triplet) {
+    public FreezableTriplet(@Nonnull @NullableElements ReadOnlyTriplet<E0, E1, E2> triplet) {
         super(triplet);
         
         this.element2 = triplet.getElement2();
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Getter –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
-    public final E2 getElement2() {
+    public final @Nullable E2 getElement2() {
         return element2;
     }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Setter –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Sets the third element of this tuple.
@@ -58,25 +68,29 @@ public class FreezableTriplet<E0, E1, E2> extends FreezablePair<E0, E1> implemen
      * @param element2 the element to be set.
      */
     @NonFrozenRecipient
-    public final void setElement2(E2 element2) {
+    public final void setElement2(@Nullable E2 element2) {
         assert !isFrozen() : "This object is not frozen.";
         
         this.element2 = element2;
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Freezable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Override
-    public @Nonnull ReadOnlyTriplet<E0, E1, E2> freeze() {
+    public @Nonnull @Frozen ReadOnlyTriplet<E0, E1, E2> freeze() {
         super.freeze();
         return this;
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Cloneable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
     @Pure
     @Override
-    public @Capturable @Nonnull FreezableTriplet<E0, E1, E2> clone() {
+    public @Capturable @Nonnull @NonFrozen FreezableTriplet<E0, E1, E2> clone() {
         return new FreezableTriplet<>(this);
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override

@@ -2,8 +2,10 @@ package net.digitalid.core.collections;
 
 import java.util.Collection;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Capturable;
 import net.digitalid.core.annotations.Immutable;
+import net.digitalid.core.annotations.NonFrozen;
 import net.digitalid.core.annotations.Pure;
 
 /**
@@ -18,6 +20,8 @@ import net.digitalid.core.annotations.Pure;
  * @version 1.0
  */
 public interface ReadOnlyCollection<E> extends ReadOnlyIterable<E> {
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Collection –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * @see Collection#size()
@@ -43,7 +47,7 @@ public interface ReadOnlyCollection<E> extends ReadOnlyIterable<E> {
      * @see Collection#contains(java.lang.Object)
      */
     @Pure
-    public boolean contains(Object object);
+    public boolean contains(@Nullable Object object);
     
     /**
      * @see Collection#toArray() 
@@ -55,14 +59,15 @@ public interface ReadOnlyCollection<E> extends ReadOnlyIterable<E> {
      * @see Collection#toArray(Object[])
      */
     @Pure
-    public @Capturable @Nonnull <T> T[] toArray(T[] array);
+    public @Capturable @Nonnull <T> T[] toArray(@Nonnull T[] array);
     
     /**
      * @see Collection#containsAll(java.util.Collection) 
      */
     @Pure
-    public boolean containsAll(Collection<?> collection);
+    public boolean containsAll(@Nonnull Collection<?> collection);
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Conditions –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns whether this collection contains an element which is null.
@@ -80,10 +85,11 @@ public interface ReadOnlyCollection<E> extends ReadOnlyIterable<E> {
     @Pure
     public boolean containsDuplicates();
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Conversions –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
-    public @Capturable @Nonnull FreezableCollection<E> clone();
+    public @Capturable @Nonnull @NonFrozen FreezableCollection<E> clone();
     
     /**
      * Returns the elements of this collection in a freezable array.
@@ -91,6 +97,6 @@ public interface ReadOnlyCollection<E> extends ReadOnlyIterable<E> {
      * @return the elements of this collection in a freezable array.
      */
     @Pure
-    public @Capturable @Nonnull FreezableArray<E> toFreezableArray();
+    public @Capturable @Nonnull @NonFrozen FreezableArray<E> toFreezableArray();
     
 }

@@ -2,9 +2,10 @@ package net.digitalid.core.collections;
 
 import java.util.Map;
 import javax.annotation.Nonnull;
+import net.digitalid.core.annotations.Frozen;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonFrozenRecipient;
 import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.annotations.Immutable;
 
 /**
  * This interface models a {@link Map map} that can be {@link Freezable frozen}.
@@ -21,23 +22,27 @@ import net.digitalid.core.annotations.Immutable;
  */
 public interface FreezableMap<K,V> extends ReadOnlyMap<K,V>, Map<K,V>, Freezable {
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Freezable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
     @Override
-    public @Nonnull ReadOnlyMap<K,V> freeze();
+    public @Nonnull @Frozen ReadOnlyMap<K,V> freeze();
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Map –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
-    public FreezableSet<K> keySet();
+    public @Nonnull FreezableSet<K> keySet();
     
     @Pure
     @Override
-    public FreezableCollection<V> values();
+    public @Nonnull FreezableCollection<V> values();
     
     /**
      * <em>Important:</em> Never call {@code Map.Entry#setValue(java.lang.Object)} on the elements!
      */
     @Pure
     @Override
-    public FreezableSet<Map.Entry<K,V>> entrySet();
+    public @Nonnull FreezableSet<Map.Entry<K,V>> entrySet();
     
     /**
      * Associates the given value with the given key, if the

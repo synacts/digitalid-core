@@ -207,7 +207,7 @@ public class Request extends Packet {
      */
     @Pure
     public final @Nonnull Method getMethod(@ValidIndex int index) {
-        return methods.getNotNull(index);
+        return methods.getNonNullable(index);
     }
     
     /**

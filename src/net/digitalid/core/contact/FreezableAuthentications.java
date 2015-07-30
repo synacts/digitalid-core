@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import net.digitalid.core.annotations.Capturable;
+import net.digitalid.core.annotations.Frozen;
 import net.digitalid.core.annotations.NonCommitting;
+import net.digitalid.core.annotations.NonFrozen;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.exceptions.external.ExternalException;
@@ -91,7 +93,7 @@ public final class FreezableAuthentications extends FreezableAttributeTypeSet im
     
     
     @Override
-    public @Nonnull ReadOnlyAuthentications freeze() {
+    public @Nonnull @Frozen ReadOnlyAuthentications freeze() {
         super.freeze();
         return this;
     }
@@ -99,7 +101,7 @@ public final class FreezableAuthentications extends FreezableAttributeTypeSet im
     
     @Pure
     @Override
-    public @Capturable @Nonnull FreezableAuthentications clone() {
+    public @Capturable @Nonnull @NonFrozen FreezableAuthentications clone() {
         return new FreezableAuthentications(this);
     }
     

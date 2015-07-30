@@ -4,7 +4,10 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Capturable;
+import net.digitalid.core.annotations.Frozen;
+import net.digitalid.core.annotations.NonFrozen;
 import net.digitalid.core.annotations.NonFrozenRecipient;
+import net.digitalid.core.annotations.NullableElements;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.collections.Freezable;
 
@@ -12,14 +15,18 @@ import net.digitalid.core.collections.Freezable;
  * This class models a {@link Freezable freezable} quartet.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 2.0
+ * @version 1.0
  */
 public class FreezableQuartet<E0, E1, E2, E3> extends FreezableTriplet<E0, E1, E2> implements ReadOnlyQuartet<E0, E1, E2, E3> {
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Field –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the fourth element of this tuple.
      */
-    private E3 element3;
+    private @Nullable E3 element3;
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructors –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Creates a new quartet with the given elements.
@@ -29,7 +36,7 @@ public class FreezableQuartet<E0, E1, E2, E3> extends FreezableTriplet<E0, E1, E
      * @param element2 the third element of this tuple.
      * @param element3 the fourth element of this tuple.
      */
-    public FreezableQuartet(E0 element0, E1 element1, E2 element2, E3 element3) {
+    public FreezableQuartet(@Nullable E0 element0, @Nullable E1 element1, @Nullable E2 element2, @Nullable E3 element3) {
         super(element0, element1, element2);
         
         this.element3 = element3;
@@ -40,18 +47,21 @@ public class FreezableQuartet<E0, E1, E2, E3> extends FreezableTriplet<E0, E1, E
      * 
      * @param quartet the quartet containing the elements.
      */
-    public FreezableQuartet(@Nonnull ReadOnlyQuartet<E0, E1, E2, E3> quartet) {
+    public FreezableQuartet(@Nonnull @NullableElements ReadOnlyQuartet<E0, E1, E2, E3> quartet) {
         super(quartet);
         
         this.element3 = quartet.getElement3();
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Getter –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
-    public final E3 getElement3() {
+    public final @Nullable E3 getElement3() {
         return element3;
     }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Setter –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Sets the fourth element of this tuple.
@@ -59,25 +69,29 @@ public class FreezableQuartet<E0, E1, E2, E3> extends FreezableTriplet<E0, E1, E
      * @param element3 the element to be set.
      */
     @NonFrozenRecipient
-    public final void setElement3(E3 element3) {
+    public final void setElement3(@Nullable E3 element3) {
         assert !isFrozen() : "This object is not frozen.";
         
         this.element3 = element3;
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Freezable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Override
-    public @Nonnull ReadOnlyQuartet<E0, E1, E2, E3> freeze() {
+    public @Nonnull @Frozen ReadOnlyQuartet<E0, E1, E2, E3> freeze() {
         super.freeze();
         return this;
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Cloneable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
     @Pure
     @Override
-    public @Capturable @Nonnull FreezableQuartet<E0, E1, E2, E3> clone() {
+    public @Capturable @Nonnull @NonFrozen FreezableQuartet<E0, E1, E2, E3> clone() {
         return new FreezableQuartet<>(this);
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override

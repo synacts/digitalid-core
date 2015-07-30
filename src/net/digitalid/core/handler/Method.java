@@ -319,7 +319,7 @@ public abstract class Method extends Handler {
     public static @Nonnull Response send(@Nonnull ReadOnlyList<Method> methods, @Nullable RequestAudit audit) throws SQLException, IOException, PacketException, ExternalException {
         assert areSimilar(methods) : "The methods are similar to each other.";
         
-        final @Nonnull Method reference = methods.getNotNull(0);
+        final @Nonnull Method reference = methods.getNonNullable(0);
         final @Nullable Entity entity = reference.getEntity();
         final @Nonnull InternalIdentifier subject = reference.getSubject();
         final @Nonnull HostIdentifier recipient = reference.getRecipient();

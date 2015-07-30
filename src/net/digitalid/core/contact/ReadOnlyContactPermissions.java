@@ -2,6 +2,7 @@ package net.digitalid.core.contact;
 
 import javax.annotation.Nonnull;
 import net.digitalid.core.annotations.Capturable;
+import net.digitalid.core.annotations.NonFrozen;
 import net.digitalid.core.annotations.Pure;
 
 /**
@@ -16,6 +17,6 @@ public interface ReadOnlyContactPermissions extends ReadOnlyAttributeTypeSet {
     
     @Pure
     @Override
-    public @Capturable @Nonnull FreezableContactPermissions clone();
+    public @Capturable @Nonnull @NonFrozen FreezableContactPermissions clone();
     
 }

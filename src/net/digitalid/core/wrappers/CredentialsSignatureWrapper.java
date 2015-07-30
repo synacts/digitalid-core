@@ -411,7 +411,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
         
         if (certificates != null) {
             if (credentials.size() != 1) return false;
-            final @Nonnull Credential credential = credentials.getNotNull(0);
+            final @Nonnull Credential credential = credentials.getNonNullable(0);
             if (credential.isAttributeBased()) return false;
             final @Nonnull InternalNonHostIdentity issuer = credential.getIssuer();
             for (final @Nullable CertifiedAttributeValue certificate : certificates) {
@@ -484,7 +484,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
         final @Nonnull CredentialsSignatureWrapper other = (CredentialsSignatureWrapper) signature;
         if (this.credentials.size() != other.credentials.size()) return false;
         for (int i = 0; i < credentials.size(); i++) {
-            if (!this.credentials.getNotNull(i).isSimilarTo(other.credentials.getNotNull(i))) return false;
+            if (!this.credentials.getNonNullable(i).isSimilarTo(other.credentials.getNonNullable(i))) return false;
         }
         return Objects.equals(this.certificates, other.certificates) && this.lodged == other.lodged && Objects.equals(this.value, other.value);
     }
@@ -525,7 +525,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
      */
     @Pure
     public boolean isIdentityBased() {
-        return credentials.getNotNull(0).isIdentityBased();
+        return credentials.getNonNullable(0).isIdentityBased();
     }
     
     /**
@@ -535,7 +535,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
      */
     @Pure
     public boolean isAttributeBased() {
-        return credentials.getNotNull(0).isAttributeBased();
+        return credentials.getNonNullable(0).isAttributeBased();
     }
     
     /**
@@ -545,7 +545,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
      */
     @Pure
     public boolean isRoleBased() {
-        return credentials.getNotNull(0).isRoleBased();
+        return credentials.getNonNullable(0).isRoleBased();
     }
     
     
@@ -562,7 +562,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
         assert isIdentityBased() : "The authentication is identity-based.";
         assert !isRoleBased() : "The authentication is not role-based.";
         
-        return (InternalPerson) credentials.getNotNull(0).getIssuer();
+        return (InternalPerson) credentials.getNonNullable(0).getIssuer();
     }
     
     /**
@@ -748,9 +748,9 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
         final @Nonnull ReadOnlyList<Block> list = new ListWrapper(signature.getElementNotNull(4)).getElementsNotNull();
         final @Nonnull FreezableList<Block> ts = new FreezableArrayList<>(list.size());
         for (int i = 0; i < list.size(); i++) {
-            final @Nonnull PublicKey publicKey = credentials.getNotNull(i).getPublicKey();
-            final @Nonnull Exponent o = credentials.getNotNull(i).getO();
-            final @Nonnull TupleWrapper credential = new TupleWrapper(list.getNotNull(i));
+            final @Nonnull PublicKey publicKey = credentials.getNonNullable(i).getPublicKey();
+            final @Nonnull Exponent o = credentials.getNonNullable(i).getO();
+            final @Nonnull TupleWrapper credential = new TupleWrapper(list.getNonNullable(i));
             final @Nonnull Element c = publicKey.getCompositeGroup().getElement(credential.getElementNotNull(2));
             
             final @Nonnull Exponent se = new Exponent(credential.getElementNotNull(3));
@@ -832,8 +832,8 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
     void sign(@Nonnull @NonFrozen FreezableArray<Block> elements) {
         final @Nonnull Time start = new Time();
         
-        assert credentials.get(0) instanceof ClientCredential : "The first credential is a client credential (like all others).";
-        final @Nonnull ClientCredential mainCredential = (ClientCredential) credentials.getNotNull(0);
+        assert credentials.getNonNullable(0) instanceof ClientCredential : "The first credential is a client credential (like all others).";
+        final @Nonnull ClientCredential mainCredential = (ClientCredential) credentials.getNonNullable(0);
         final @Nonnull Exponent u = mainCredential.getU();
         final @Nonnull Exponent v = mainCredential.getV();
         
@@ -859,8 +859,8 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
         
         final @Nonnull FreezableList<Block> ts = new FreezableArrayList<>(size);
         for (int i = 0; i < size; i++) {
-            assert credentials.getNotNull(i) instanceof ClientCredential : "All credentials have to be client credentials, which was already checked in the constructor.";
-            randomizedCredentials[i] = ((ClientCredential) credentials.getNotNull(i)).getRandomizedCredential();
+            assert credentials.getNonNullable(i) instanceof ClientCredential : "All credentials have to be client credentials, which was already checked in the constructor.";
+            randomizedCredentials[i] = ((ClientCredential) credentials.getNonNullable(i)).getRandomizedCredential();
             final @Nonnull PublicKey publicKey = randomizedCredentials[i].getPublicKey();
             @Nonnull Element element = publicKey.getCompositeGroup().getElement(BigInteger.ONE);
             
@@ -967,7 +967,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
     @Override
     @NonCommitting
     public @Nullable OutgoingRole getAgent(@Nonnull NonHostEntity entity) throws SQLException {
-        final @Nonnull Credential credential = getCredentials().getNotNull(0);
+        final @Nonnull Credential credential = getCredentials().getNonNullable(0);
         return credential.isRoleBased() ? AgentModule.getOutgoingRole(entity, credential.getRoleNotNull(), false) : null;
     }
     
@@ -975,7 +975,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
     @Override
     @NonCommitting
     public @Nonnull OutgoingRole getAgentCheckedAndRestricted(@Nonnull NonHostEntity entity, @Nullable PublicKey publicKey) throws SQLException, PacketException {
-        final @Nonnull Credential credential = getCredentials().getNotNull(0);
+        final @Nonnull Credential credential = getCredentials().getNonNullable(0);
         if (credential.isRoleBased()) {
             final @Nullable OutgoingRole outgoingRole = AgentModule.getOutgoingRole(entity, credential.getRoleNotNull(), true);
             if (outgoingRole != null && outgoingRole.getContext().contains(Contact.get(entity, (Person) credential.getIssuer()))) {

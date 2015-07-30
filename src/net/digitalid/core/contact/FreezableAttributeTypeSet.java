@@ -7,7 +7,9 @@ import javax.annotation.Nullable;
 import net.digitalid.core.agent.FreezableAgentPermissions;
 import net.digitalid.core.annotations.AttributeType;
 import net.digitalid.core.annotations.Capturable;
+import net.digitalid.core.annotations.Frozen;
 import net.digitalid.core.annotations.NonCommitting;
+import net.digitalid.core.annotations.NonFrozen;
 import net.digitalid.core.annotations.NonFrozenRecipient;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.annotations.Single;
@@ -106,7 +108,7 @@ public class FreezableAttributeTypeSet extends FreezableLinkedHashSet<SemanticTy
     
     
     @Override
-    public @Nonnull ReadOnlyAttributeTypeSet freeze() {
+    public @Nonnull @Frozen ReadOnlyAttributeTypeSet freeze() {
         super.freeze();
         return this;
     }
@@ -134,7 +136,7 @@ public class FreezableAttributeTypeSet extends FreezableLinkedHashSet<SemanticTy
     
     @Pure
     @Override
-    public @Capturable @Nonnull FreezableAttributeTypeSet clone() {
+    public @Capturable @Nonnull @NonFrozen FreezableAttributeTypeSet clone() {
         return new FreezableAttributeTypeSet(this);
     }
     

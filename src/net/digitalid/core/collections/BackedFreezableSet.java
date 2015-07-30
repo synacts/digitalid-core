@@ -3,7 +3,9 @@ package net.digitalid.core.collections;
 import java.util.Set;
 import javax.annotation.Nonnull;
 import net.digitalid.core.annotations.Capturable;
+import net.digitalid.core.annotations.Frozen;
 import net.digitalid.core.annotations.Immutable;
+import net.digitalid.core.annotations.NonFrozen;
 import net.digitalid.core.annotations.Pure;
 
 /**
@@ -19,10 +21,14 @@ import net.digitalid.core.annotations.Pure;
  */
 class BackedFreezableSet<E> extends BackedFreezableCollection<E> implements FreezableSet<E> {
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Field –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
     /**
      * Stores a reference to the set.
      */
     private final @Nonnull Set<E> set;
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Creates a new backed freezable set.
@@ -30,22 +36,25 @@ class BackedFreezableSet<E> extends BackedFreezableCollection<E> implements Free
      * @param freezable a reference to the underlying freezable.
      * @param set a reference to the underlying set.
      */
-    protected BackedFreezableSet(@Nonnull Freezable freezable, @Nonnull Set<E> set) {
+    BackedFreezableSet(@Nonnull Freezable freezable, @Nonnull Set<E> set) {
         super(freezable, set);
         
         this.set = set;
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Freezable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
     @Override
-    public @Nonnull ReadOnlySet<E> freeze() {
+    public @Nonnull @Frozen ReadOnlySet<E> freeze() {
         super.freeze();
         return this;
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– ReadOnlySet –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
-    public @Capturable @Nonnull FreezableSet<E> add(ReadOnlySet<E> set) {
+    public @Capturable @Nonnull @NonFrozen FreezableSet<E> add(@Nonnull ReadOnlySet<E> set) {
         final @Nonnull FreezableSet<E> clone = clone();
         clone.addAll((FreezableSet<E>) set);
         return clone;
@@ -53,7 +62,7 @@ class BackedFreezableSet<E> extends BackedFreezableCollection<E> implements Free
     
     @Pure
     @Override
-    public @Capturable @Nonnull FreezableSet<E> subtract(ReadOnlySet<E> set) {
+    public @Capturable @Nonnull @NonFrozen FreezableSet<E> subtract(@Nonnull ReadOnlySet<E> set) {
         final @Nonnull FreezableSet<E> clone = clone();
         clone.removeAll((FreezableSet<E>) set);
         return clone;
@@ -61,19 +70,21 @@ class BackedFreezableSet<E> extends BackedFreezableCollection<E> implements Free
     
     @Pure
     @Override
-    public @Capturable @Nonnull FreezableSet<E> intersect(ReadOnlySet<E> set) {
+    public @Capturable @Nonnull @NonFrozen FreezableSet<E> intersect(@Nonnull ReadOnlySet<E> set) {
         final @Nonnull FreezableSet<E> clone = clone();
         clone.retainAll((FreezableSet<E>) set);
         return clone;
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Cloneable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
-    public @Capturable @Nonnull FreezableSet<E> clone() {
+    public @Capturable @Nonnull @NonFrozen FreezableSet<E> clone() {
         return new FreezableHashSet<>(set);
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override

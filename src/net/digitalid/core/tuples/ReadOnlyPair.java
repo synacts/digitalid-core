@@ -1,7 +1,9 @@
 package net.digitalid.core.tuples;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Capturable;
+import net.digitalid.core.annotations.NonFrozen;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.collections.ReadOnly;
 
@@ -15,13 +17,15 @@ import net.digitalid.core.collections.ReadOnly;
  */
 public interface ReadOnlyPair<E0, E1> extends ReadOnly {
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Getters –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
     /**
      * Returns the first element of this tuple.
      * 
      * @return the first element of this tuple.
      */
     @Pure
-    public E0 getElement0();
+    public @Nullable E0 getElement0();
     
     /**
      * Returns the second element of this tuple.
@@ -29,11 +33,12 @@ public interface ReadOnlyPair<E0, E1> extends ReadOnly {
      * @return the second element of this tuple.
      */
     @Pure
-    public E1 getElement1();
+    public @Nullable E1 getElement1();
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Cloneable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
-    public @Capturable @Nonnull FreezablePair<E0, E1> clone();
+    public @Capturable @Nonnull @NonFrozen FreezablePair<E0, E1> clone();
     
 }

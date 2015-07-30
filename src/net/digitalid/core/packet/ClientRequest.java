@@ -115,7 +115,7 @@ public final class ClientRequest extends Request {
      */
     @NonCommitting
     @Nonnull Response recommit(@Nonnull FreezableList<Method> methods, int iteration, boolean verified) throws SQLException, IOException, PacketException, ExternalException {
-        final @Nonnull NativeRole role = methods.getNotNull(0).getRole().toNativeRole();
+        final @Nonnull NativeRole role = methods.getNonNullable(0).getRole().toNativeRole();
         final @Nonnull Client client = role.getClient();
         final @Nonnull Commitment oldCommitment = role.getAgent().getCommitment();
         final @Nonnull Commitment newCommitment = client.getCommitment(role.getIssuer().getAddress());

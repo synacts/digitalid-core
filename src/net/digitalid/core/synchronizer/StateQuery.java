@@ -115,7 +115,7 @@ final class StateQuery extends InternalQuery {
             final @Nonnull Agent agent = getSignatureNotNull().getAgentCheckedAndRestricted(account, null);
             return new StateReply(account, module.getState(account, agent.getPermissions(), agent.getRestrictions(), agent), service);
         } else {
-            final @Nonnull Credential credential = getSignatureNotNull().toCredentialsSignatureWrapper().getCredentials().getNotNull(0);
+            final @Nonnull Credential credential = getSignatureNotNull().toCredentialsSignatureWrapper().getCredentials().getNonNullable(0);
             final @Nullable ReadOnlyAgentPermissions permissions = credential.getPermissions();
             final @Nullable Restrictions restrictions = credential.getRestrictions();
             if (permissions == null || restrictions == null) throw new PacketException(PacketError.AUTHORIZATION, "For state queries, neither the permissions nor the restrictions may be null.");

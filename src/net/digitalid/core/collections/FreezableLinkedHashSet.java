@@ -6,7 +6,9 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Capturable;
+import net.digitalid.core.annotations.Frozen;
 import net.digitalid.core.annotations.Immutable;
+import net.digitalid.core.annotations.NonFrozen;
 import net.digitalid.core.annotations.NonFrozenRecipient;
 import net.digitalid.core.annotations.Pure;
 
@@ -21,6 +23,8 @@ import net.digitalid.core.annotations.Pure;
  */
 public class FreezableLinkedHashSet<E> extends LinkedHashSet<E> implements FreezableSet<E> {
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Freezable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
     /**
      * Stores whether this object is frozen.
      */
@@ -33,7 +37,7 @@ public class FreezableLinkedHashSet<E> extends LinkedHashSet<E> implements Freez
     }
     
     @Override
-    public @Nonnull ReadOnlySet<E> freeze() {
+    public @Nonnull @Frozen ReadOnlySet<E> freeze() {
         if (!frozen) {
             frozen = true;
             for (E element : this) {
@@ -47,6 +51,7 @@ public class FreezableLinkedHashSet<E> extends LinkedHashSet<E> implements Freez
         return this;
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructors –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * @see LinkedHashSet#LinkedHashSet()
@@ -86,6 +91,7 @@ public class FreezableLinkedHashSet<E> extends LinkedHashSet<E> implements Freez
         super(collection);
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Collection –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
@@ -99,6 +105,7 @@ public class FreezableLinkedHashSet<E> extends LinkedHashSet<E> implements Freez
         return new FreezableIterableIterator<>(this, super.iterator());
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Conditions –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
@@ -115,6 +122,7 @@ public class FreezableLinkedHashSet<E> extends LinkedHashSet<E> implements Freez
         return false;
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Operations –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Override
     @NonFrozenRecipient
@@ -164,10 +172,11 @@ public class FreezableLinkedHashSet<E> extends LinkedHashSet<E> implements Freez
         super.clear();
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– ReadOnlySet –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
-    public @Capturable @Nonnull FreezableSet<E> add(ReadOnlySet<E> set) {
+    public @Capturable @Nonnull @NonFrozen FreezableSet<E> add(@Nonnull ReadOnlySet<E> set) {
         final @Nonnull FreezableSet<E> clone = clone();
         clone.addAll((FreezableSet<E>) set);
         return clone;
@@ -175,7 +184,7 @@ public class FreezableLinkedHashSet<E> extends LinkedHashSet<E> implements Freez
     
     @Pure
     @Override
-    public @Capturable @Nonnull FreezableSet<E> subtract(ReadOnlySet<E> set) {
+    public @Capturable @Nonnull @NonFrozen FreezableSet<E> subtract(@Nonnull ReadOnlySet<E> set) {
         final @Nonnull FreezableSet<E> clone = clone();
         clone.removeAll((FreezableSet<E>) set);
         return clone;
@@ -183,24 +192,33 @@ public class FreezableLinkedHashSet<E> extends LinkedHashSet<E> implements Freez
     
     @Pure
     @Override
-    public @Capturable @Nonnull FreezableSet<E> intersect(ReadOnlySet<E> set) {
+    public @Capturable @Nonnull @NonFrozen FreezableSet<E> intersect(@Nonnull ReadOnlySet<E> set) {
         final @Nonnull FreezableSet<E> clone = clone();
         clone.retainAll((FreezableSet<E>) set);
         return clone;
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Conversions –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
-    public @Capturable @Nonnull FreezableLinkedHashSet<E> clone() {
+    public @Capturable @Nonnull @NonFrozen FreezableLinkedHashSet<E> clone() {
         return new FreezableLinkedHashSet<>(this);
     }
     
     @Pure
     @Override
     @SuppressWarnings("unchecked")
-    public @Capturable @Nonnull FreezableArray<E> toFreezableArray() {
+    public @Capturable @Nonnull @NonFrozen FreezableArray<E> toFreezableArray() {
         return new FreezableArray<>(toArray((E[]) new Object[size()]));
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    @Pure
+    @Override
+    public @Nonnull String toString() {
+        return IterableConverter.toString(this, Brackets.CURLY);
     }
     
 }

@@ -68,7 +68,7 @@ public final class CompressionWrapper extends BlockWrapper {
     public CompressionWrapper(@Nonnull SemanticType type, @Nullable Block element, byte algorithm) {
         super(type);
         
-        assert element == null || element.getType().isBasedOn(type.getParameters().getNotNull(0)) : "The element is either null or based on the parameter of the given type.";
+        assert element == null || element.getType().isBasedOn(type.getParameters().getNonNullable(0)) : "The element is either null or based on the parameter of the given type.";
         assert algorithm == NONE || algorithm == ZLIB : "The algorithm is either none or ZLIB.";
         
         this.element = element;
@@ -103,7 +103,7 @@ public final class CompressionWrapper extends BlockWrapper {
         
         this.algorithm = block.getByte(0);
         if (block.getLength() > 1) {
-            final @Nonnull SemanticType parameter = block.getType().getParameters().getNotNull(0);
+            final @Nonnull SemanticType parameter = block.getType().getParameters().getNonNullable(0);
             if (algorithm == NONE) {
                 this.element = new Block(parameter, block, 1, block.getLength() - 1);
             } else if (algorithm == ZLIB) {

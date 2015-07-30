@@ -4,7 +4,9 @@ import java.util.NoSuchElementException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Capturable;
+import net.digitalid.core.annotations.Frozen;
 import net.digitalid.core.annotations.Immutable;
+import net.digitalid.core.annotations.NonFrozen;
 import net.digitalid.core.annotations.NonFrozenRecipient;
 import net.digitalid.core.annotations.Pure;
 
@@ -23,6 +25,8 @@ import net.digitalid.core.annotations.Pure;
  */
 public class FreezableArrayIterator<E> implements ReadOnlyArrayIterator<E>, FreezableIterator<E> {
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Fields –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
     /**
      * Stores a reference to the underlying array.
      */
@@ -33,15 +37,18 @@ public class FreezableArrayIterator<E> implements ReadOnlyArrayIterator<E>, Free
      */
     private int index = 0;
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
     /**
      * Creates a new freezable iterator.
      * 
      * @param array a reference to the underlying array.
      */
-    protected FreezableArrayIterator(@Nonnull FreezableArray<E> array) {
+    FreezableArrayIterator(@Nonnull FreezableArray<E> array) {
         this.array = array;
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Freezable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
@@ -50,11 +57,12 @@ public class FreezableArrayIterator<E> implements ReadOnlyArrayIterator<E>, Free
     }
     
     @Override
-    public ReadOnlyArrayIterator<E> freeze() {
+    public @Nonnull @Frozen ReadOnlyArrayIterator<E> freeze() {
         array.freeze();
         return this;
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Iterator –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
@@ -68,6 +76,7 @@ public class FreezableArrayIterator<E> implements ReadOnlyArrayIterator<E>, Free
         return array.getNullable(index++);
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– ArrayIterator –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
@@ -93,6 +102,7 @@ public class FreezableArrayIterator<E> implements ReadOnlyArrayIterator<E>, Free
         return index - 1;
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Operation –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Override
     @NonFrozenRecipient
@@ -102,10 +112,11 @@ public class FreezableArrayIterator<E> implements ReadOnlyArrayIterator<E>, Free
         array.set(index, null);
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Cloneable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
-    public @Capturable @Nonnull FreezableArrayIterator<E> clone() {
+    public @Capturable @Nonnull @NonFrozen FreezableArrayIterator<E> clone() {
         return new FreezableArrayIterator<>(array.clone());
     }
     

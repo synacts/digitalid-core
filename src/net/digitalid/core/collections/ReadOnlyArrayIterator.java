@@ -4,8 +4,9 @@ import java.util.Iterator;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Capturable;
-import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.annotations.Immutable;
+import net.digitalid.core.annotations.NonFrozen;
+import net.digitalid.core.annotations.Pure;
 
 /**
  * This interface provides read-only access to {@link FreezableArrayIterator array iterators} and should not be lost by assigning its objects to a supertype.
@@ -21,6 +22,8 @@ import net.digitalid.core.annotations.Immutable;
  * @version 1.0
  */
 public interface ReadOnlyArrayIterator<E> extends ReadOnlyIterator<E> {
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Iteration –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns whether this iterator has a previous element.
@@ -53,9 +56,10 @@ public interface ReadOnlyArrayIterator<E> extends ReadOnlyIterator<E> {
     @Pure
     public int previousIndex();
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Cloneable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
-    public @Capturable @Nonnull FreezableArrayIterator<E> clone();
+    public @Capturable @Nonnull @NonFrozen FreezableArrayIterator<E> clone();
     
 }

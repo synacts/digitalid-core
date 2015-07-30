@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import net.digitalid.core.annotations.Capturable;
+import net.digitalid.core.annotations.Frozen;
 import net.digitalid.core.annotations.NonCommitting;
+import net.digitalid.core.annotations.NonFrozen;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.packet.PacketException;
@@ -78,7 +80,7 @@ public final class FreezableContactPermissions extends FreezableAttributeTypeSet
     
     
     @Override
-    public @Nonnull ReadOnlyContactPermissions freeze() {
+    public @Nonnull @Frozen ReadOnlyContactPermissions freeze() {
         super.freeze();
         return this;
     }
@@ -86,7 +88,7 @@ public final class FreezableContactPermissions extends FreezableAttributeTypeSet
     
     @Pure
     @Override
-    public @Capturable @Nonnull FreezableContactPermissions clone() {
+    public @Capturable @Nonnull @NonFrozen FreezableContactPermissions clone() {
         return new FreezableContactPermissions(this);
     }
     

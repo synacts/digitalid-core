@@ -112,7 +112,7 @@ public class SignatureWrapper extends BlockWrapper {
     SignatureWrapper(@Nonnull SemanticType type, @Nullable Block element, @Nonnull InternalIdentifier subject, @Nullable Audit audit) {
         super(type);
         
-        assert element == null || element.getType().isBasedOn(type.getParameters().getNotNull(0)) : "The element is either null or based on the parameter of the given type.";
+        assert element == null || element.getType().isBasedOn(type.getParameters().getNonNullable(0)) : "The element is either null or based on the parameter of the given type.";
         
         this.element = element;
         this.subject = subject;
@@ -137,7 +137,7 @@ public class SignatureWrapper extends BlockWrapper {
     public SignatureWrapper(@Nonnull SemanticType type, @Nullable Block element, @Nullable InternalIdentifier subject) {
         super(type);
         
-        assert element == null || element.getType().isBasedOn(type.getParameters().getNotNull(0)) : "The element is either null or based on the parameter of the given type.";
+        assert element == null || element.getType().isBasedOn(type.getParameters().getNonNullable(0)) : "The element is either null or based on the parameter of the given type.";
         
         this.element = element;
         this.subject = subject;
@@ -228,7 +228,7 @@ public class SignatureWrapper extends BlockWrapper {
         if (hasSubject() && time == null) throw new InvalidEncodingException("The signature time may not be null if this signature has a subject.");
         if (time != null && !time.isPositive()) throw new InvalidEncodingException("The signature time has to be positive.");
         this.element = tuple.getElement(2);
-        if (element != null) element.setType(block.getType().getParameters().getNotNull(0));
+        if (element != null) element.setType(block.getType().getParameters().getNonNullable(0));
         this.audit = tuple.isElementNull(3) ? null : Audit.get(tuple.getElementNotNull(3));
         this.verified = verified;
     }

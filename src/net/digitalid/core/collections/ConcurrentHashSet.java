@@ -15,6 +15,8 @@ import net.digitalid.core.annotations.Pure;
  */
 public class ConcurrentHashSet<E> extends AbstractSet<E> implements ConcurrentSet<E> {
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Fields –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
     /**
      * Stores the elements of this concurrent hash set.
      */
@@ -24,6 +26,8 @@ public class ConcurrentHashSet<E> extends AbstractSet<E> implements ConcurrentSe
      * Stores the set representation of the map.
      */
     private final @Nonnull Set<E> set;
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructors –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * @see ConcurrentHashMap#ConcurrentHashMap(int, float, int)
@@ -66,6 +70,7 @@ public class ConcurrentHashSet<E> extends AbstractSet<E> implements ConcurrentSe
         addAll(set);
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Set –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
@@ -104,6 +109,7 @@ public class ConcurrentHashSet<E> extends AbstractSet<E> implements ConcurrentSe
         return set.toArray(array);
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Operations –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Override
     public boolean add(@Nonnull E element) {
@@ -114,7 +120,6 @@ public class ConcurrentHashSet<E> extends AbstractSet<E> implements ConcurrentSe
     public boolean remove(@Nonnull Object object) {
         return map.remove(object) != null;
     }
-    
     
     @Pure
     @Override
@@ -146,6 +151,7 @@ public class ConcurrentHashSet<E> extends AbstractSet<E> implements ConcurrentSe
         map.clear();
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override

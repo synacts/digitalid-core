@@ -43,7 +43,7 @@ public final class TupleWrapper extends BlockWrapper {
         if (elements.size() == 0 || elements.size() > parameters.size()) return false;
         for (int i = 0; i < elements.size(); i++) {
             final @Nullable Block element = elements.getNullable(i);
-            if (element != null && !element.getType().isBasedOn(parameters.getNotNull(i))) return false;
+            if (element != null && !element.getType().isBasedOn(parameters.getNonNullable(i))) return false;
         }
         return true;
     }
@@ -134,7 +134,7 @@ public final class TupleWrapper extends BlockWrapper {
             offset += intvarLength;
             if (elementLength > 0) {
                 if (offset + elementLength > block.getLength()) throw new InvalidEncodingException("The subblock may not exceed the given block.");
-                array.set(i, new Block(parameters.getNotNull(i), block, offset, elementLength));
+                array.set(i, new Block(parameters.getNonNullable(i), block, offset, elementLength));
                 offset += elementLength;
             }
         }

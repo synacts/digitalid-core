@@ -2,8 +2,11 @@ package net.digitalid.core.collections;
 
 import java.util.List;
 import javax.annotation.Nonnull;
-import net.digitalid.core.annotations.Pure;
+import net.digitalid.core.annotations.Frozen;
 import net.digitalid.core.annotations.Immutable;
+import net.digitalid.core.annotations.Pure;
+import net.digitalid.core.annotations.ValidIndex;
+import net.digitalid.core.annotations.ValidIndexForInsertion;
 
 /**
  * This interface models a {@link List list} that can be {@link Freezable frozen}.
@@ -14,25 +17,30 @@ import net.digitalid.core.annotations.Immutable;
  * 
  * @see FreezableArrayList
  * @see FreezableLinkedList
+ * @see BackedFreezableList
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
 public interface FreezableList<E> extends ReadOnlyList<E>, List<E>, FreezableCollection<E> {
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Freezable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
     @Override
-    public @Nonnull ReadOnlyList<E> freeze();
+    public @Nonnull @Frozen ReadOnlyList<E> freeze();
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– List –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
-    public FreezableListIterator<E> listIterator();
+    public @Nonnull FreezableListIterator<E> listIterator();
     
     @Pure
     @Override
-    public FreezableListIterator<E> listIterator(int index);
+    public @Nonnull FreezableListIterator<E> listIterator(@ValidIndexForInsertion int index);
     
     @Pure
     @Override
-    public FreezableList<E> subList(int fromIndex, int toIndex);
+    public @Nonnull FreezableList<E> subList(@ValidIndex int fromIndex, @ValidIndexForInsertion int toIndex);
     
 }

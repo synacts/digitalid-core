@@ -10,6 +10,7 @@ import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Capturable;
 import net.digitalid.core.annotations.Frozen;
 import net.digitalid.core.annotations.NonCommitting;
+import net.digitalid.core.annotations.NonFrozen;
 import net.digitalid.core.annotations.NonNullableElements;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.collections.FreezableArrayList;
@@ -107,7 +108,7 @@ public final class FreezablePredecessors extends FreezableArrayList<Predecessor>
     
     
     @Override
-    public @Nonnull ReadOnlyPredecessors freeze() {
+    public @Nonnull @Frozen ReadOnlyPredecessors freeze() {
         super.freeze();
         return this;
     }
@@ -115,7 +116,7 @@ public final class FreezablePredecessors extends FreezableArrayList<Predecessor>
     
     @Pure
     @Override
-    public @Capturable @Nonnull FreezablePredecessors clone() {
+    public @Capturable @Nonnull @NonFrozen FreezablePredecessors clone() {
         return new FreezablePredecessors(this);
     }
     
@@ -144,7 +145,7 @@ public final class FreezablePredecessors extends FreezableArrayList<Predecessor>
         if (size != other.size()) return false;
         
         for (int i = 0; i < size; i++) {
-            if (!this.getNotNull(i).equals(other.getNotNull(i))) return false;
+            if (!this.getNonNullable(i).equals(other.getNonNullable(i))) return false;
         }
         
         return true;

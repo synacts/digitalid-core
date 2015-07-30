@@ -2,8 +2,10 @@ package net.digitalid.core.collections;
 
 import java.util.Map;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Capturable;
 import net.digitalid.core.annotations.Immutable;
+import net.digitalid.core.annotations.NonFrozen;
 import net.digitalid.core.annotations.Pure;
 
 /**
@@ -19,6 +21,8 @@ import net.digitalid.core.annotations.Pure;
  * @version 1.0
  */
 public interface ReadOnlyMap<K,V> extends ReadOnly {
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Map –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * @see Map#size()
@@ -36,35 +40,36 @@ public interface ReadOnlyMap<K,V> extends ReadOnly {
      * @see Map#containsKey(java.lang.Object)
      */
     @Pure
-    public boolean containsKey(Object key);
+    public boolean containsKey(@Nullable Object key);
     
     /**
      * @see Map#containsValue(java.lang.Object)
      */
     @Pure
-    public boolean containsValue(Object value);
+    public boolean containsValue(@Nullable Object value);
     
     /**
      * @see Map#get(java.lang.Object)
      */
     @Pure
-    public V get(Object key);
+    public @Nullable V get(@Nullable Object key);
     
     /**
      * @see Map#keySet()
      */
     @Pure
-    public ReadOnlySet<K> keySet();
+    public @Nonnull ReadOnlySet<K> keySet();
     
     /**
      * @see Map#values()
      */
     @Pure
-    public ReadOnlyCollection<V> values();
+    public @Nonnull ReadOnlyCollection<V> values();
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Cloneable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
-    public @Capturable @Nonnull FreezableMap<K,V> clone();
+    public @Capturable @Nonnull @NonFrozen FreezableMap<K,V> clone();
     
 }

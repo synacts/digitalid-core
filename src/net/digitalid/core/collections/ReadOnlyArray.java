@@ -4,6 +4,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Capturable;
 import net.digitalid.core.annotations.Immutable;
+import net.digitalid.core.annotations.NonFrozen;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.annotations.ValidIndex;
 
@@ -19,6 +20,8 @@ import net.digitalid.core.annotations.ValidIndex;
  * @version 1.0
  */
 public interface ReadOnlyArray<E> extends ReadOnlyIterable<E> {
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Retrieval –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns the size of this array.
@@ -55,7 +58,7 @@ public interface ReadOnlyArray<E> extends ReadOnlyIterable<E> {
      * 
      * @return the element at the given index.
      * 
-     * @require isNotNull(index) : "The element at the given index is not null.";
+     * @require !isNull(index) : "The element at the given index is not null.";
      */
     @Pure
     public @Nonnull E getNonNullable(@ValidIndex int index);
@@ -64,6 +67,7 @@ public interface ReadOnlyArray<E> extends ReadOnlyIterable<E> {
     @Override
     public @Nonnull ReadOnlyArrayIterator<E> iterator();
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Conditions –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns whether this array contains an element which is null.
@@ -82,10 +86,11 @@ public interface ReadOnlyArray<E> extends ReadOnlyIterable<E> {
     @Pure
     public boolean containsDuplicates();
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Conversions –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
-    public @Capturable @Nonnull FreezableArray<E> clone();
+    public @Capturable @Nonnull @NonFrozen FreezableArray<E> clone();
     
     /**
      * Returns the elements of this array in a freezable list.
@@ -93,6 +98,6 @@ public interface ReadOnlyArray<E> extends ReadOnlyIterable<E> {
      * @return the elements of this array in a freezable list.
      */
     @Pure
-    public @Capturable @Nonnull FreezableList<E> toFreezableList();
+    public @Capturable @Nonnull @NonFrozen FreezableList<E> toFreezableList();
     
 }

@@ -164,7 +164,7 @@ public final class EncryptionWrapper extends BlockWrapper {
     public EncryptionWrapper(@Nonnull SemanticType type, @Nullable Block element, @Nullable HostIdentifier recipient, @Nullable SymmetricKey symmetricKey) throws SQLException, IOException, PacketException, ExternalException {
         super(type);
         
-        assert element == null || element.getType().isBasedOn(type.getParameters().getNotNull(0)) : "The element is either null or based on the parameter of the given type.";
+        assert element == null || element.getType().isBasedOn(type.getParameters().getNonNullable(0)) : "The element is either null or based on the parameter of the given type.";
         
         this.time = new Time();
         this.element = element;
@@ -234,7 +234,7 @@ public final class EncryptionWrapper extends BlockWrapper {
         
         final @Nullable Block element = tuple.getElement(4);
         if (element != null) {
-            final @Nonnull SemanticType parameter = block.getType().getParameters().getNotNull(0);
+            final @Nonnull SemanticType parameter = block.getType().getParameters().getNonNullable(0);
             final @Nullable SymmetricKey sk = this.symmetricKey;
             final @Nullable InitializationVector iv = this.initializationVector;
             if (sk != null) {

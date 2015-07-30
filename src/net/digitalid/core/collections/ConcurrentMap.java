@@ -12,7 +12,7 @@ import net.digitalid.core.annotations.Pure;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public interface ConcurrentMap<K, V> extends java.util.concurrent.ConcurrentMap<K, V> {
+public interface ConcurrentMap<K, V> extends java.util.concurrent.ConcurrentMap<K, V>, Cloneable {
     
     /**
      * Associates the given value with the given key, if the
@@ -24,6 +24,8 @@ public interface ConcurrentMap<K, V> extends java.util.concurrent.ConcurrentMap<
      * @return the value that is now associated with the given key.
      */
     public @Nonnull V putIfAbsentElseReturnPresent(@Nonnull K key, @Nonnull V value);
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Cloneable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns a shallow copy of this map (the keys and values themselves are not cloned).

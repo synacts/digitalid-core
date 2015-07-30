@@ -515,8 +515,8 @@ public final class Mapper {
         
         final @Nonnull InternalNonHostIdentity identity;
         // Relocate the existing identity in case there is exactly one internal predecessor.
-        if (identities.size() == 1 && identities.getNotNull(0).getCategory().isInternalNonHostIdentity()) {
-            identity = identities.getNotNull(0).toInternalNonHostIdentity();
+        if (identities.size() == 1 && identities.getNonNullable(0).getCategory().isInternalNonHostIdentity()) {
+            identity = identities.getNonNullable(0).toInternalNonHostIdentity();
             try (@Nonnull Statement statement = Database.createStatement()) {
                 statement.executeUpdate("INSERT INTO general_identifier (identifier, identity) VALUES (" + identifier + ", " + identity + ")");
                 statement.executeUpdate("UPDATE general_identity SET address = " + identifier + " WHERE identity = " + identity);

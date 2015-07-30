@@ -7,9 +7,13 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Capturable;
+import net.digitalid.core.annotations.Frozen;
 import net.digitalid.core.annotations.Immutable;
+import net.digitalid.core.annotations.NonFrozen;
 import net.digitalid.core.annotations.NonFrozenRecipient;
 import net.digitalid.core.annotations.Pure;
+import net.digitalid.core.annotations.ValidIndex;
+import net.digitalid.core.annotations.ValidIndexForInsertion;
 
 /**
  * This class implements a {@link Set set} that can be {@link Freezable frozen}.
@@ -24,10 +28,14 @@ import net.digitalid.core.annotations.Pure;
  */
 class BackedFreezableList<E> extends BackedFreezableCollection<E> implements FreezableList<E> {
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Field –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
     /**
      * Stores a reference to the list.
      */
     private final @Nonnull List<E> list;
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Creates a new freezable sublist.
@@ -35,34 +43,43 @@ class BackedFreezableList<E> extends BackedFreezableCollection<E> implements Fre
      * @param freezable a reference to the underlying freezable.
      * @param list a reference to the underlying list.
      */
-    protected BackedFreezableList(@Nonnull Freezable freezable, @Nonnull List<E> list) {
+    BackedFreezableList(@Nonnull Freezable freezable, @Nonnull List<E> list) {
         super(freezable, list);
         
         this.list = list;
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Freezable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
     @Override
-    public @Nonnull ReadOnlyList<E> freeze() {
+    public @Nonnull @Frozen ReadOnlyList<E> freeze() {
         super.freeze();
         return this;
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– List –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
-    public @Nullable E get(int index) {
+    public @Nullable E get(@ValidIndex int index) {
         return list.get(index);
     }
     
     @Pure
     @Override
-    public boolean isNull(int index) {
+    public @Nullable E getNullable(@ValidIndex int index) {
+        return list.get(index);
+    }
+    
+    @Pure
+    @Override
+    public boolean isNull(@ValidIndex int index) {
         return get(index) == null;
     }
     
     @Pure
     @Override
-    public @Nonnull E getNotNull(int index) {
+    public @Nonnull E getNonNullable(@ValidIndex int index) {
         final @Nullable E element = get(index);
         assert element != null : "The element at the given index is not null.";
         
@@ -89,20 +106,21 @@ class BackedFreezableList<E> extends BackedFreezableCollection<E> implements Fre
     
     @Pure
     @Override
-    public @Nonnull FreezableListIterator<E> listIterator(int index) {
+    public @Nonnull FreezableListIterator<E> listIterator(@ValidIndexForInsertion int index) {
         return new FreezableListIterator<>(this, list.listIterator(index));
     }
     
     @Pure
     @Override
-    public @Nonnull FreezableList<E> subList(int fromIndex, int toIndex) {
+    public @Nonnull FreezableList<E> subList(@ValidIndex int fromIndex, @ValidIndexForInsertion int toIndex) {
         return new BackedFreezableList<>(this, list.subList(fromIndex, toIndex));
     }
-
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Operations –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Override
     @NonFrozenRecipient
-    public @Nullable E set(int index, @Nullable E element) {
+    public @Nullable E set(@ValidIndex int index, @Nullable E element) {
         assert !isFrozen() : "This object is not frozen.";
         
         return list.set(index, element);
@@ -110,7 +128,7 @@ class BackedFreezableList<E> extends BackedFreezableCollection<E> implements Fre
     
     @Override
     @NonFrozenRecipient
-    public void add(int index, @Nullable E element) {
+    public void add(@ValidIndexForInsertion int index, @Nullable E element) {
         assert !isFrozen() : "This object is not frozen.";
         
         list.add(index, element);
@@ -118,7 +136,7 @@ class BackedFreezableList<E> extends BackedFreezableCollection<E> implements Fre
     
     @Override
     @NonFrozenRecipient
-    public E remove(int index) {
+    public @Nullable E remove(@ValidIndex int index) {
         assert !isFrozen() : "This object is not frozen.";
         
         return list.remove(index);
@@ -126,12 +144,13 @@ class BackedFreezableList<E> extends BackedFreezableCollection<E> implements Fre
     
     @Override
     @NonFrozenRecipient
-    public boolean addAll(int index, @Nonnull Collection<? extends E> collection) {
+    public boolean addAll(@ValidIndexForInsertion int index, @Nonnull Collection<? extends E> collection) {
         assert !isFrozen() : "This object is not frozen.";
         
         return list.addAll(index, collection);
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Conditions –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
@@ -153,6 +172,7 @@ class BackedFreezableList<E> extends BackedFreezableCollection<E> implements Fre
         return false;
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Ordering –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns whether the elements in this list are ordered (excluding null values).
@@ -202,13 +222,15 @@ class BackedFreezableList<E> extends BackedFreezableCollection<E> implements Fre
         return isOrdered(true, false);
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Cloneable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
-    public @Capturable @Nonnull FreezableList<E> clone() {
+    public @Capturable @Nonnull @NonFrozen FreezableList<E> clone() {
         return new FreezableArrayList<>(list);
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
