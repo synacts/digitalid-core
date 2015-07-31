@@ -10,6 +10,10 @@ import net.digitalid.core.wrappers.Block;
 /**
  * This annotation indicates that a method should only be invoked on non-{@link Exposed exposed} objects.
  * 
+ * @see Encoding
+ * @see NonEncoding
+ * @see EncodingRecipient
+ * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
@@ -17,4 +21,4 @@ import net.digitalid.core.wrappers.Block;
 @TargetType(Block.class)
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.CLASS)
-public @interface NonExposedRecipient {}
+public @interface NonEncodingRecipient {}

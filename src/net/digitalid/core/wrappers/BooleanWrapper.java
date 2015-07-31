@@ -1,7 +1,7 @@
 package net.digitalid.core.wrappers;
 
 import javax.annotation.Nonnull;
-import net.digitalid.core.annotations.Exposed;
+import net.digitalid.core.annotations.Encoding;
 import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
@@ -15,7 +15,7 @@ import net.digitalid.core.identity.SyntacticType;
  * @version 1.0
  */
 @Immutable
-public final class BooleanWrapper extends BlockWrapper {
+public final class BooleanWrapper extends Wrapper {
     
     /**
      * Stores the syntactic type {@code boolean@core.digitalid.net}.
@@ -88,7 +88,7 @@ public final class BooleanWrapper extends BlockWrapper {
     
     @Pure
     @Override
-    protected void encode(@Exposed @Nonnull Block block) {
+    protected void encode(@Encoding @Nonnull Block block) {
         assert block.isEncoding() : "The given block is in the process of being encoded.";
         assert block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
         assert block.getLength() == determineLength() : "The block's length has to match the determined length.";

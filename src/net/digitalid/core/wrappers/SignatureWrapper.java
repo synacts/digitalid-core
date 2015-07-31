@@ -6,7 +6,7 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.agent.Agent;
-import net.digitalid.core.annotations.Exposed;
+import net.digitalid.core.annotations.Encoding;
 import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.NonFrozen;
@@ -45,7 +45,7 @@ import net.digitalid.core.synchronizer.Audit;
  * @version 1.0
  */
 @Immutable
-public class SignatureWrapper extends BlockWrapper {
+public class SignatureWrapper extends Wrapper {
     
     /**
      * Stores the syntactic type {@code signature@core.digitalid.net}.
@@ -457,7 +457,7 @@ public class SignatureWrapper extends BlockWrapper {
     
     @Pure
     @Override
-    protected final void encode(@Exposed @Nonnull Block block) {
+    protected final void encode(@Encoding @Nonnull Block block) {
         assert block.isEncoding() : "The given block is in the process of being encoded.";
         assert block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
         assert block.getLength() == determineLength() : "The block's length has to match the determined length.";

@@ -1,7 +1,7 @@
 package net.digitalid.core.wrappers;
 
 import javax.annotation.Nonnull;
-import net.digitalid.core.annotations.Exposed;
+import net.digitalid.core.annotations.Encoding;
 import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
@@ -15,7 +15,7 @@ import net.digitalid.core.identity.SyntacticType;
  * @version 1.0
  */
 @Immutable
-public final class IntvarWrapper extends BlockWrapper {
+public final class IntvarWrapper extends Wrapper {
     
     /**
      * Stores the syntactic type {@code intvar@core.digitalid.net}.
@@ -101,7 +101,7 @@ public final class IntvarWrapper extends BlockWrapper {
     
     @Pure
     @Override
-    protected void encode(@Exposed @Nonnull Block block) {
+    protected void encode(@Encoding @Nonnull Block block) {
         assert block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
         
         encode(block, 0, block.getLength(), value);
@@ -250,7 +250,7 @@ public final class IntvarWrapper extends BlockWrapper {
      * @require value <= MAX_VALUE : "The first two bits have to be zero.";
      */
     @SuppressWarnings("AssignmentToMethodParameter")
-    public static void encode(final @Exposed @Nonnull Block block, final int offset, final int length, long value) {
+    public static void encode(final @Encoding @Nonnull Block block, final int offset, final int length, long value) {
         assert block.isEncoding() : "The given block is in the process of being encoded.";
         assert offset >= 0 : "The offset is not negative.";
         assert offset + length <= block.getLength() : "The indicated section may not exceed the given block.";

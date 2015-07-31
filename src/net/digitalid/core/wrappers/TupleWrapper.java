@@ -2,7 +2,7 @@ package net.digitalid.core.wrappers;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.annotations.Exposed;
+import net.digitalid.core.annotations.Encoding;
 import net.digitalid.core.annotations.Frozen;
 import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonNegative;
@@ -22,7 +22,7 @@ import net.digitalid.core.identity.SyntacticType;
  * @version 1.0
  */
 @Immutable
-public final class TupleWrapper extends BlockWrapper {
+public final class TupleWrapper extends Wrapper {
     
     /**
      * Stores the syntactic type {@code tuple@core.digitalid.net}.
@@ -218,20 +218,6 @@ public final class TupleWrapper extends BlockWrapper {
     }
     
     /**
-     * Returns whether the element at the given index is not null.
-     * 
-     * @param index the index of the element to be checked.
-     * 
-     * @return whether the element at the given index is not null.
-     * 
-     * @throws InvalidEncodingException if the number of elements is less than or equal to the given index.
-     */
-    @Pure
-    public boolean isElementNotNull(@NonNegative int index) throws InvalidEncodingException {
-        return !isElementNull(index);
-    }
-    
-    /**
      * Returns the element at the given index.
      * 
      * @param index the index of the element to be returned.
@@ -336,7 +322,7 @@ public final class TupleWrapper extends BlockWrapper {
     
     @Pure
     @Override
-    protected void encode(@Exposed @Nonnull Block block) {
+    protected void encode(@Encoding @Nonnull Block block) {
         assert block.isEncoding() : "The given block is in the process of being encoded.";
         assert block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
         assert block.getLength() == determineLength() : "The block's length has to match the determined length.";

@@ -2,7 +2,7 @@ package net.digitalid.core.wrappers;
 
 import java.nio.charset.Charset;
 import javax.annotation.Nonnull;
-import net.digitalid.core.annotations.Exposed;
+import net.digitalid.core.annotations.Encoding;
 import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
@@ -16,7 +16,7 @@ import net.digitalid.core.identity.SyntacticType;
  * @version 1.0
  */
 @Immutable
-public final class StringWrapper extends BlockWrapper {
+public final class StringWrapper extends Wrapper {
     
     /**
      * Stores the syntactic type {@code string@core.digitalid.net}.
@@ -94,7 +94,7 @@ public final class StringWrapper extends BlockWrapper {
     
     @Pure
     @Override
-    protected void encode(@Exposed @Nonnull Block block) {
+    protected void encode(@Encoding @Nonnull Block block) {
         assert block.isEncoding() : "The given block is in the process of being encoded.";
         assert block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
         assert block.getLength() == determineLength() : "The block's length has to match the determined length.";

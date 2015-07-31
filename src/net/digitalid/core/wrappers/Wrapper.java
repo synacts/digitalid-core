@@ -2,13 +2,14 @@ package net.digitalid.core.wrappers;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.annotations.Exposed;
+import net.digitalid.core.annotations.Encoding;
 import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Loaded;
 import net.digitalid.core.annotations.Positive;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.identity.SyntacticType;
+import net.digitalid.core.storable.Storable;
 
 /**
  * Blocks are wrapped by separate objects for modular decoding and encoding.
@@ -17,12 +18,14 @@ import net.digitalid.core.identity.SyntacticType;
  * @version 1.0
  */
 @Immutable
-public abstract class BlockWrapper implements Blockable { // TODO: Rename to Wrapper and introduce subclasses ValueWrapper<V>, ElementWrapper and ElementsWrapper?
+public abstract class Wrapper<W extends Wrapper<W>> implements Storable<W> { // TODO: Probably declare the storable interface in the non-abstract wrappers.
+    
+    // TODO: Introduce a factory that implements @Nonnull Block encodeNonNullable(@Nonnull O object) with by return new Block(@Nonnull @Loaded SemanticType type, @Nonnull Wrapper<?> wrapper).
     
     /**
-     * References the wrapped block.
+     * Stores the semantic type of this wrapper.
      */
-    private final @Nonnull Block block; // TODO: Remove the reference to the block and introduce a reference to the semantic type instead.
+    private final @Nonnull SemanticType type;
     
     /**
      * Creates and wraps a new block for lazy encoding.
@@ -31,7 +34,7 @@ public abstract class BlockWrapper implements Blockable { // TODO: Rename to Wra
      * 
      * @require type.isBasedOn(getSyntacticType()) : "The given type is based on the indicated syntactic type.";
      */
-    protected BlockWrapper(@Nonnull @Loaded SemanticType type) {
+    protected Wrapper(@Nonnull @Loaded SemanticType type) {
         assert type.isBasedOn(getSyntacticType()) : "The given type is based on the indicated syntactic type.";
         
         block = new Block(type, this);
@@ -44,7 +47,7 @@ public abstract class BlockWrapper implements Blockable { // TODO: Rename to Wra
      * 
      * @require block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
      */
-    protected BlockWrapper(@Nonnull Block block) {
+    protected Wrapper(@Nonnull Block block) {
         assert block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
         
         this.block = block;
@@ -93,15 +96,15 @@ public abstract class BlockWrapper implements Blockable { // TODO: Rename to Wra
      * @require block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
      * @require block.getLength() == determineLength() : "The block's length has to match the determined length.";
      */
-    protected abstract void encode(@Exposed @Nonnull Block block);
+    protected abstract void encode(@Encoding @Nonnull Block block);
     
     
     @Pure
     @Override
     public final boolean equals(@Nullable Object object) {
         if (object == this) return true;
-        if (object == null || !(object instanceof BlockWrapper)) return false;
-        final @Nonnull BlockWrapper other = (BlockWrapper) object;
+        if (object == null || !(object instanceof Wrapper)) return false;
+        final @Nonnull Wrapper other = (Wrapper) object;
         return this.getClass().equals(other.getClass()) && this.block.equals(other.block);
     }
     

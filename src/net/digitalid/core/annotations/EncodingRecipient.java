@@ -8,16 +8,17 @@ import java.lang.annotation.Target;
 import net.digitalid.core.wrappers.Block;
 
 /**
- * This annotation indicates that a parameter or local variable is in a special state and should only
- * be assigned to parameters and local variables that are also annotated as {@link Exposed exposed}.
+ * This annotation indicates that a method should only be invoked on {@link Block#isEncoding() encoding} {@link Block blocks}.
  * 
- * @see Block
+ * @see Encoding
+ * @see NonEncoding
+ * @see NonEncodingRecipient
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
 @Documented
 @TargetType(Block.class)
+@Target(ElementType.METHOD)
 @Retention(RetentionPolicy.CLASS)
-@Target({ElementType.PARAMETER, ElementType.LOCAL_VARIABLE})
-public @interface Exposed {}
+public @interface EncodingRecipient {}

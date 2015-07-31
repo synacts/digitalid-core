@@ -9,32 +9,42 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Types;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Capturable;
 import net.digitalid.core.annotations.Captured;
-import net.digitalid.core.annotations.Exposed;
-import net.digitalid.core.annotations.ExposedRecipient;
+import net.digitalid.core.annotations.Encoded;
+import net.digitalid.core.annotations.Encoding;
+import net.digitalid.core.annotations.EncodingRecipient;
 import net.digitalid.core.annotations.Immutable;
-import net.digitalid.core.annotations.NonCommitting;
-import net.digitalid.core.annotations.NonExposedRecipient;
+import net.digitalid.core.annotations.Loaded;
+import net.digitalid.core.annotations.NonEmpty;
+import net.digitalid.core.annotations.NonEncoded;
+import net.digitalid.core.annotations.NonEncoding;
+import net.digitalid.core.annotations.NonEncodingRecipient;
+import net.digitalid.core.annotations.NonFrozen;
+import net.digitalid.core.annotations.NonNegative;
+import net.digitalid.core.annotations.NonNullableElements;
+import net.digitalid.core.annotations.Positive;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.annotations.ValidIndex;
+import net.digitalid.core.collections.FreezableArray;
 import net.digitalid.core.cryptography.InitializationVector;
 import net.digitalid.core.cryptography.SymmetricKey;
+import net.digitalid.core.database.Column;
 import net.digitalid.core.database.Database;
-import net.digitalid.core.database.SQLizable;
+import net.digitalid.core.database.SQLType;
 import net.digitalid.core.errors.ShouldNeverHappenError;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.identity.SemanticType;
+import net.digitalid.core.storable.NonConceptFactory;
 import net.digitalid.core.storable.Storable;
 
 /**
  * A block is a sequence of bytes that is encoded according to some syntactic type.
  * In order to prevent unnecessary copying, this sequence is given by a byte array,
  * where an offset and a length is used to reference just a part of the array.
- * If a block is annotated as {@link Exposed exposed}, it {@link #isEncoding() is encoding}.
+ * If a block is annotated as {@link Encoding exposed}, it {@link #isEncoding() is encoding}.
  * <p>
  * <em>Important:</em> Only share {@link #isEncoded() encoded} blocks between threads!
  * 
@@ -48,42 +58,65 @@ import net.digitalid.core.storable.Storable;
  * @version 1.0
  */
 @Immutable
-public final class Block implements SQLizable, Cloneable {
+public final class Block implements Storable<Block>, Cloneable {
     
-    // TODO: Javadoc and nullable version
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Conversions –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Returns the given non-nullable storable as a block.
+     * 
+     * @param storable the non-nullable object to convert.
+     * 
+     * @return the given non-nullable storable as a block.
+     */
     @Pure
     public static @Nonnull <V extends Storable<V>> Block fromNonNullable(@Nonnull V storable) {
         return storable.getFactory().encodeNonNullable(storable);
     }
     
     /**
-     * Returns the blockable instance as a block or null if the instance is null.
+     * Returns the given nullable storable as a block.
      * 
-     * @param blockable the instance to be returned as a block.
+     * @param storable the nullable object to convert.
      * 
-     * @return the blockable instance as a block or null if the instance is null.
+     * @return the given nullable storable as a block.
      */
     @Pure
-    public static @Nullable Block toBlock(@Nullable Blockable blockable) {
-        return blockable == null ? null : blockable.toBlock();
+    public static @Nullable <V extends Storable<V>> Block fromNullable(@Nullable V storable) {
+        return storable == null ? null : fromNonNullable(storable);
     }
     
     /**
-     * Returns the blockable instance as a block of the given type or null if the instance is null.
+     * Returns the given non-nullable storable as a block of the given type.
      * 
-     * @param type the type to set for the returned block.
-     * @param blockable the instance to be returned as a block.
+     * @param storable the non-nullable object to be converted to a block.
+     * @param type the type which is to be set for the returned block.
      * 
-     * @return the blockable instance as a block of the given type or null if the instance is null.
+     * @return the given non-nullable storable as a block of the given type.
      * 
-     * @require type.isLoaded() : "The type declaration is loaded.";
-     * @require blockable == null || type.isBasedOn(blockable.getType()) : "If the blockable instance is not null, the type is based on its type.";
+     * @require type.isBasedOn(storable.getFactory().getType()) : "The given type is based on its type.";
      */
     @Pure
-    public static @Nullable Block toBlock(@Nonnull SemanticType type, @Nullable Blockable blockable) {
-        return blockable == null ? null : blockable.toBlock().setType(type);
+    public static @Nonnull <V extends Storable<V>> Block fromNonNullable(@Nonnull V storable, @Nonnull @Loaded SemanticType type) {
+        return fromNonNullable(storable).setType(type);
     }
     
+    /**
+     * Returns the given nullable storable as a block of the given type.
+     * 
+     * @param storable the nullable object to be converted to a block.
+     * @param type the type which is to be set for the returned block.
+     * 
+     * @return the given nullable storable as a block of the given type.
+     * 
+     * @require storable == null || type.isBasedOn(storable.getFactory().getType()) : "If the storable instance is not null, the given type is based on its type.";
+     */
+    @Pure
+    public static @Nullable <V extends Storable<V>> Block fromNullable(@Nullable V storable, @Nonnull @Loaded SemanticType type) {
+        return storable == null ? null : fromNonNullable(storable).setType(type);
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Invariant –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Asserts that the class invariant still holds.
@@ -98,13 +131,14 @@ public final class Block implements SQLizable, Cloneable {
         return true;
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Fields –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
     /**
      * Stores the semantic type of this block.
      * 
-     * @invariant type.isLoaded() : "The type declaration is loaded.";
      * @invariant new.isBasedOn(old) : "The type can only be downcast.";
      */
-    private @Nonnull SemanticType type;
+    private @Nonnull @Loaded SemanticType type;
     
     /**
      * Stores the byte array of this block.
@@ -118,7 +152,7 @@ public final class Block implements SQLizable, Cloneable {
     private int offset = 0;
     
     /**
-     * Stores the (determined and cached) length of this block.
+     * Stores the given or determined length of this block.
      * A negative value indicates that the length of this block has not yet been determined.
      */
     private int length = -1;
@@ -126,25 +160,22 @@ public final class Block implements SQLizable, Cloneable {
     /**
      * Stores the wrapper of this block for lazy encoding or null otherwise.
      */
-    private final @Nullable BlockWrapper wrapper;
+    private final @Nullable Wrapper<?> wrapper;
     
     /**
      * Stores whether this block is already encoded and can thus no longer be written to.
      */
     private boolean encoded = false;
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructors –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
     /**
      * Allocates a new block of the given type with the given byte array.
      * 
      * @param type the semantic type of this block.
      * @param bytes the byte array of this block.
-     * 
-     * @require type.isLoaded() : "The type declaration is loaded.";
-     * @require bytes.length > 0 : "The byte array is not empty.";
-     * 
-     * @ensure isEncoded() : "This block is encoded.";
      */
-    public Block(@Nonnull SemanticType type, @Captured @Nonnull byte[] bytes) {
+    public @Encoded Block(@Nonnull @Loaded SemanticType type, @Captured @Nonnull @NonEmpty byte[] bytes) {
         assert type.isLoaded() : "The type declaration is loaded.";
         assert bytes.length > 0 : "The byte array is not empty.";
         
@@ -164,14 +195,9 @@ public final class Block implements SQLizable, Cloneable {
      * 
      * @param type the semantic type of this block.
      * @param block the block containing the byte array.
-     * 
-     * @require type.isLoaded() : "The type declaration is loaded.";
-     * @require !block.isEncoding() : "The given block is not in the process of being encoded.";
-     * 
-     * @ensure isEncoded() : "This block is encoded.";
      */
-    public Block(@Nonnull SemanticType type, @Nonnull Block block) {
-        this(type, block.ensureEncoded(), 0, block.getLength());
+    public @Encoded Block(@Nonnull SemanticType type, @Nonnull @NonEncoding Block block) {
+        this(type, block.encodeIfNotYetEncoded(), 0, block.getLength());
     }
     
     /**
@@ -182,15 +208,9 @@ public final class Block implements SQLizable, Cloneable {
      * @param offset the offset of this block in the given block.
      * @param length the length of this block.
      * 
-     * @require type.isLoaded() : "The type declaration is loaded.";
-     * @require block.isEncoded() : "The given block is encoded.";
-     * @require offset >= 0 : "The offset is not negative.";
-     * @require length > 0 : "The length is positive.";
      * @require offset + length <= block.getLength() : "The section fits into the given block.";
-     * 
-     * @ensure isEncoded() : "This block is encoded.";
      */
-    public Block(@Nonnull SemanticType type, @Nonnull Block block, int offset, int length) {
+    public @Encoded Block(@Nonnull @Loaded SemanticType type, @Nonnull @Encoded Block block, @NonNegative int offset, @Positive int length) {
         assert type.isLoaded() : "The type declaration is loaded.";
         assert block.isEncoded() : "The given block is encoded.";
         assert offset >= 0 : "The offset is not negative.";
@@ -214,11 +234,9 @@ public final class Block implements SQLizable, Cloneable {
      * @param type the semantic type of this block.
      * @param wrapper the wrapper of this block.
      * 
-     * @require type.isLoaded() : "The type declaration is loaded.";
-     * 
      * @ensure !isAllocated() : "This block is not yet allocated.";
      */
-    Block(@Nonnull SemanticType type, @Nonnull BlockWrapper wrapper) {
+    @NonEncoded Block(@Nonnull @Loaded SemanticType type, @Nonnull Wrapper<?> wrapper) {
         assert type.isLoaded() : "The type declaration is loaded.";
         
         this.type = type;
@@ -227,6 +245,7 @@ public final class Block implements SQLizable, Cloneable {
         assert invariant();
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns the semantic type of this block.
@@ -236,11 +255,10 @@ public final class Block implements SQLizable, Cloneable {
      * 
      * @return the semantic type of this block.
      * 
-     * @ensure type.isLoaded() : "The type declaration is loaded.";
      * @ensure new.isBasedOn(old) : "The type can only be downcast.";
      */
     @Pure
-    public @Nonnull SemanticType getType() {
+    public @Nonnull @Loaded SemanticType getType() {
         return type;
     }
     
@@ -251,10 +269,9 @@ public final class Block implements SQLizable, Cloneable {
      * 
      * @return this block.
      * 
-     * @require type.isLoaded() : "The type declaration is loaded.";
      * @require type.isBasedOn(getType()) : "The type can only be downcast.";
      */
-    public @Nonnull Block setType(@Nonnull SemanticType type) {
+    public @Nonnull Block setType(@Nonnull @Loaded SemanticType type) {
         assert type.isLoaded() : "The type declaration is loaded.";
         assert type.isBasedOn(getType()) : "The type can only be downcast.";
         
@@ -270,16 +287,13 @@ public final class Block implements SQLizable, Cloneable {
      * @return this block.
      * 
      * @throws InvalidEncodingException if this is not the case.
-     * 
-     * @require type.isLoaded() : "The type declaration is loaded.";
      */
-    public @Nonnull Block checkType(@Nonnull SemanticType type) throws InvalidEncodingException {
-        assert type.isLoaded() : "The type declaration is loaded.";
-        
+    public @Nonnull Block checkType(@Nonnull @Loaded SemanticType type) throws InvalidEncodingException {
         if (!this.type.isBasedOn(type)) throw new InvalidEncodingException("The type of this block (" + this.type.getAddress() + ") is not based on the given type (" + type.getAddress() + ").");
         return this;
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Get Bytes –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns the byte at the given index of this block.
@@ -288,16 +302,14 @@ public final class Block implements SQLizable, Cloneable {
      * 
      * @return the byte at the given index of this block.
      * 
-     * @require !isEncoding() : "This method is not called during encoding.";
-     * 
      * @ensure isEncoded() : "This block is encoded.";
      */
-    @NonExposedRecipient
+    @NonEncodingRecipient
     public @Nonnull byte getByte(@ValidIndex int index) {
         assert !isEncoding() : "This method is not called during encoding.";
         assert index >= 0 && index < getLength() : "The index is valid.";
         
-        ensureEncoded();
+        encodeIfNotYetEncoded();
         return bytes[offset + index];
     }
     
@@ -307,12 +319,10 @@ public final class Block implements SQLizable, Cloneable {
      * 
      * @return the bytes of this block.
      * 
-     * @require isNotEncoding() : "This method is not called during encoding.";
-     * 
      * @ensure isEncoded() : "The block is encoded.";
      * @ensure result.length == getLength() : "The result has the whole length.";
      */
-    @NonExposedRecipient
+    @NonEncodingRecipient
     public @Capturable @Nonnull byte[] getBytes() {
         return getBytes(0);
     }
@@ -331,7 +341,7 @@ public final class Block implements SQLizable, Cloneable {
      * @ensure isEncoded() : "The block is encoded.";
      * @ensure result.length == getLength() - offset : "The result has the right length.";
      */
-    @NonExposedRecipient
+    @NonEncodingRecipient
     public @Capturable @Nonnull byte[] getBytes(int offset) {
         return getBytes(offset, getLength() - offset);
     }
@@ -345,37 +355,33 @@ public final class Block implements SQLizable, Cloneable {
      * 
      * @return the given length of bytes from the given offset of this block.
      * 
-     * @require !isEncoding() : "This method is not called during encoding.";
-     * @require offset >= 0 : "The offset is non-negative.";
-     * @require length >= 0 : "The length is non-negative.";
      * @require offset + length <= getLength() : "The offset and length are within this block.";
      * 
      * @ensure isEncoded() : "The block is encoded.";
      * @ensure result.length == length : "The result has the given length.";
      */
-    @NonExposedRecipient
-    public @Capturable @Nonnull byte[] getBytes(int offset, int length) {
+    @NonEncodingRecipient
+    public @Capturable @Nonnull byte[] getBytes(@NonNegative int offset, @NonNegative int length) {
         assert !isEncoding() : "This method is not called during encoding.";
         assert offset >= 0 : "The offset is non-negative.";
         assert length >= 0 : "The length is non-negative.";
         assert offset + length <= getLength() : "The offset and length are within this block.";
         
-        ensureEncoded();
+        encodeIfNotYetEncoded();
         final @Nonnull byte[] result = new byte[length];
         System.arraycopy(bytes, this.offset + offset, result, 0, length);
         return result;
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Set Bytes –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Sets the byte at the given index of this block to the given value.
      * 
      * @param index the index of the byte to be set.
      * @param value the new value of the byte at the given index.
-     * 
-     * @require isEncoding() : "This method may only be called during encoding.";
      */
-    @ExposedRecipient
+    @EncodingRecipient
     public void setByte(@ValidIndex int index, byte value) {
         assert isEncoding() : "This method may only be called during encoding.";
         assert index >= 0 && index < getLength() : "The index is valid.";
@@ -389,12 +395,10 @@ public final class Block implements SQLizable, Cloneable {
      * @param offset the offset of the bytes to be set.
      * @param values the new values of the bytes at the given offset.
      * 
-     * @require isEncoding() : "This method may only be called during encoding.";
-     * @require offset >= 0 : "The offset is not negative.";
      * @require offset + values.length <= getLength() : "The given values may not exceed this block.";
      */
-    @ExposedRecipient
-    public void setBytes(int offset, @Nonnull byte[] values) {
+    @EncodingRecipient
+    public void setBytes(@NonNegative int offset, @Nonnull byte[] values) {
         setBytes(offset, values, 0, values.length);
     }
     
@@ -406,15 +410,11 @@ public final class Block implements SQLizable, Cloneable {
      * @param offset the offset of the indicated section in the byte array.
      * @param length the length of the indicated section in the byte array.
      * 
-     * @require isEncoding() : "This method may only be called during encoding.";
-     * @require index >= 0 : "The index is not negative.";
      * @require index + length <= getLength() : "The given values may not exceed this block.";
-     * @require offset >= 0 : "The offset is not negative.";
-     * @require length >= 0 : "The length is non-negative.";
      * @require offset + length <= values.length : "The indicated section may not exceed the given byte array.";
      */
-    @ExposedRecipient
-    public void setBytes(int index, @Nonnull byte[] values, int offset, int length) {
+    @EncodingRecipient
+    public void setBytes(@NonNegative int index, @Nonnull byte[] values, @NonNegative int offset, @NonNegative int length) {
         assert isEncoding() : "This method may only be called during encoding.";
         assert index >= 0 : "The index is not negative.";
         assert index + length <= getLength() : "The given values may not exceed this block.";
@@ -425,16 +425,15 @@ public final class Block implements SQLizable, Cloneable {
         System.arraycopy(values, offset, bytes, this.offset + index, length);
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Length –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns the length of this block.
      * 
      * @return the length of this block.
-     * 
-     * @ensure return > 0 : "The returned length is positive (i.e. the block is not empty).";
      */
     @Pure
-    public int getLength() {
+    public @Positive int getLength() {
         if (length < 0) {
             assert wrapper != null : "The length may only be negative in case of lazy encoding.";
             length = wrapper.determineLength();
@@ -444,6 +443,8 @@ public final class Block implements SQLizable, Cloneable {
         }
         return length;
     }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encoding –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns whether this block is allocated.
@@ -470,7 +471,7 @@ public final class Block implements SQLizable, Cloneable {
     /**
      * Returns whether this block is in the process of being encoded.
      * <p>
-     * <em>Important:</em> If a parameter or local variable is not annotated as {@link Exposed exposed}, it is assumed that such a block is <em>not</em> in the process of being encoded.
+     * <em>Important:</em> If a parameter or local variable is not annotated as {@link Encoding encoding}, it is assumed that such a block is <em>not</em> in the process of being encoded.
      * 
      * @return whether this block is in the process of being encoded.
      * 
@@ -486,13 +487,11 @@ public final class Block implements SQLizable, Cloneable {
      * 
      * @return this block.
      * 
-     * @require !isEncoding() : "This method is not called during encoding.";
-     * 
      * @ensure isEncoded() : "This block is encoded.";
      */
     @Pure
-    @NonExposedRecipient
-    public @Nonnull Block ensureEncoded() {
+    @NonEncodingRecipient
+    public @Nonnull @Encoded Block encodeIfNotYetEncoded() {
         assert !isEncoding() : "This method is not called during encoding.";
         
         if (!isEncoded()) encode();
@@ -504,7 +503,8 @@ public final class Block implements SQLizable, Cloneable {
      * 
      * @ensure isEncoded() : "This block is encoded.";
      */
-    @NonExposedRecipient
+    @Pure
+    @NonEncodingRecipient
     private void encode() {
         assert !isAllocated() : "This block may not yet be allocated.";
         
@@ -516,44 +516,16 @@ public final class Block implements SQLizable, Cloneable {
         assert invariant();
     }
     
-    
-    /**
-     * Returns the SHA-256 hash of this block.
-     * 
-     * @return the SHA-256 hash of this block.
-     * 
-     * @ensure isEncoded() : "This block is encoded.";
-     * @ensure return.signum() >= 0 : "The result is positive.";
-     * @ensure return.bitLength() <= Parameters.HASH : "The length of the result is at most Parameters.HASH.";
-     */
-    @Pure
-    @NonExposedRecipient
-    public @Nonnull BigInteger getHash() {
-        assert !isEncoding() : "This method is not called during encoding.";
-        
-        ensureEncoded();
-        try {
-            final @Nonnull MessageDigest instance = MessageDigest.getInstance("SHA-256");
-            instance.update(bytes, offset, length);
-            return new BigInteger(1, instance.digest());
-        } catch (@Nonnull NoSuchAlgorithmException exception) {
-            throw new ShouldNeverHappenError("The hashing algorithm 'SHA-256' is not supported on this platform.", exception);
-        }
-    }
-    
-    
     /**
      * Writes this block into the given block (and encodes this block in place if necessary).
      * This method allows syntactic types to recast a block for their internal encoding.
      * 
      * @param block the block to writeTo this block to.
      * 
-     * @require block.isEncoding() : "The given block is in the process of being encoded.";
      * @require getLength() == block.getLength() : "This block has to have the same length as the given block.";
-     * @require isNotEncoding() : "This block is not in the process of being encoded.";
      */
-    @NonExposedRecipient
-    public void writeTo(@Exposed @Nonnull Block block) {
+    @NonEncodingRecipient
+    public void writeTo(@Nonnull @Encoding Block block) {
         writeTo(block, 0, block.getLength());
     }
     
@@ -564,14 +536,11 @@ public final class Block implements SQLizable, Cloneable {
      * @param offset the offset of the section in the given block.
      * @param length the length of the section in the given block.
      * 
-     * @require block.isEncoding() : "The given block is in the process of being encoded.";
-     * @require offset >= 0 : "The offset is not negative.";
-     * @require length > 0 : "The length is positive.";
      * @require offset + length <= block.getLength() : "The indicated section may not exceed the given block.";
      * @require getLength() == length : "This block has to have the same length as the designated section.";
      */
-    @NonExposedRecipient
-    public void writeTo(@Exposed @Nonnull Block block, int offset, int length) {
+    @NonEncodingRecipient
+    public void writeTo(@Nonnull @Encoding Block block, @NonNegative int offset, @Positive int length) {
         assert block.isEncoding() : "The given block is in the process of being encoded.";
         assert offset >= 0 : "The offset is not negative.";
         assert length > 0 : "The length is positive.";
@@ -593,20 +562,44 @@ public final class Block implements SQLizable, Cloneable {
         assert invariant();
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Hash –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Returns this block as a blockable object.
+     * Returns the SHA-256 hash of this block.
      * 
-     * @return this block as a blockable object.
+     * @return the SHA-256 hash of this block.
+     * 
+     * @ensure isEncoded() : "This block is encoded.";
+     * @ensure return.bitLength() <= Parameters.HASH : "The length of the result is at most Parameters.HASH.";
      */
     @Pure
-    public @Nonnull Blockable toBlockable() {
-        return new BlockableObject(this);
+    @NonEncodingRecipient
+    public @Nonnull @NonNegative BigInteger getHash() {
+        assert !isEncoding() : "This method is not called during encoding.";
+        
+        encodeIfNotYetEncoded();
+        try {
+            final @Nonnull MessageDigest instance = MessageDigest.getInstance("SHA-256");
+            instance.update(bytes, offset, length);
+            return new BigInteger(1, instance.digest());
+        } catch (@Nonnull NoSuchAlgorithmException exception) {
+            throw new ShouldNeverHappenError("The hashing algorithm 'SHA-256' is not supported on this platform.", exception);
+        }
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Cloneable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
+    public @Nonnull @Encoded Block clone() {
+        return new Block(type, this);
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    @Pure
+    @Override
+    @NonEncodingRecipient
     public boolean equals(@Nullable Object object) {
         if (object == this) return true;
         if (object == null || !(object instanceof Block)) return false;
@@ -614,8 +607,8 @@ public final class Block implements SQLizable, Cloneable {
         
         if (!getType().equals(other.getType())) return false;
         
-        this.ensureEncoded();
-        other.ensureEncoded();
+        this.encodeIfNotYetEncoded();
+        other.encodeIfNotYetEncoded();
         
         if (this.length != other.length) return false;
         
@@ -628,8 +621,9 @@ public final class Block implements SQLizable, Cloneable {
     
     @Pure
     @Override
+    @NonEncodingRecipient
     public int hashCode() {
-        ensureEncoded();
+        encodeIfNotYetEncoded();
         int result = 1;
         for (int i = 0; i < length; i++) {
             result = 31 * result + bytes[offset + i];
@@ -637,86 +631,11 @@ public final class Block implements SQLizable, Cloneable {
         return result;
     }
     
-    
-    /**
-     * Stores the data type used to store instances of this class in the database.
-     */
-    public static final @Nonnull String FORMAT = Database.getConfiguration().BLOB();
-    
-    /**
-     * Returns the block at the given index of the given result set.
-     * 
-     * @param type the semantic type of the block to be returned.
-     * @param resultSet the result set whose block is to be returned.
-     * @param columnIndex the index of the block to be returned.
-     * 
-     * @return the block at the given index of the given result set.
-     */
-    @NonCommitting
-    public static @Nullable Block get(@Nonnull SemanticType type, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
-        final @Nonnull byte[] bytes = resultSet.getBytes(columnIndex);
-        if (resultSet.wasNull()) return null;
-        else return new Block(type, bytes);
-    }
-    
-    /**
-     * Returns the block at the given index of the given result set.
-     * Please note that the column of the block may not contain null.
-     * 
-     * @param type the semantic type of the block to be returned.
-     * @param resultSet the result set whose block is to be returned.
-     * @param columnIndex the index of the block to be returned.
-     * 
-     * @return the block at the given index of the given result set.
-     */
-    @NonCommitting
-    public static @Nonnull Block getNotNull(@Nonnull SemanticType type, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
-        return new Block(type, resultSet.getBytes(columnIndex));
-    }
-    
-    @Override
-    @NonCommitting
-    @NonExposedRecipient
-    public void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
-        assert !isEncoding() : "This method is not called during encoding.";
-        
-        if (Database.getConfiguration().supportsBinaryStream()) {
-            preparedStatement.setBinaryStream(parameterIndex, getInputStream(), getLength());
-        } else {
-            preparedStatement.setBytes(parameterIndex, getBytes());
-        }
-    }
-    
-    /**
-     * Sets the parameter at the given index of the prepared statement to the given block.
-     * 
-     * @param block the block to which the parameter at the given index is to be set.
-     * @param preparedStatement the prepared statement whose parameter is to be set.
-     * @param parameterIndex the index of the parameter to set.
-     * 
-     * @require block == null || !block.isEncoding() : "The block is either null or not encoding.";
-     */
-    @NonCommitting
-    public static void set(@Nullable Block block, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
-        assert block == null || !block.isEncoding(): "The block is either null or not encoding.";
-        
-        if (block == null) preparedStatement.setNull(parameterIndex, Types.BLOB);
-        else block.set(preparedStatement, parameterIndex);
-    }
-    
     @Pure
     @Override
-    public @Nonnull Block clone() {
-        return new Block(type, this);
-    }
-    
-    @Pure
-    @Override
-    @NonExposedRecipient
+    @NonEncodingRecipient
     public @Nonnull String toString() {
-        assert !isEncoding() : "This method is not called during encoding.";
-        
-        ensureEncoded();
+        encodeIfNotYetEncoded();
         // See: 8.4.1. in http://www.postgresql.org/docs/9.0/static/datatype-binary.html
         final @Nonnull StringBuilder string = new StringBuilder("E'\\x");
         for (int i = offset; i < offset + length; i++) {
@@ -727,6 +646,71 @@ public final class Block implements SQLizable, Cloneable {
         return string.toString();
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * The factory for blocks.
+     */
+    private static class Factory extends NonConceptFactory<Block> {
+        
+        /**
+         * Stores the columns for blocks.
+         */
+        private static final @Nonnull Column column = Column.get("block", SQLType.BLOB, true, null);
+        
+        /**
+         * Creates a new factory with the given type.
+         * 
+         * @param type the type of the block which is returned.
+         */
+        private Factory(@Nonnull @Loaded SemanticType type) {
+            super(type, column);
+        }
+        
+        @Pure
+        @Override
+        public @Nonnull Block encodeNonNullable(@Nonnull Block block) {
+            return block;
+        }
+        
+        @Pure
+        @Override
+        public @Nonnull Block decodeNonNullable(@Nonnull Block block) {
+            return block;
+        }
+        
+        @Pure
+        @Override
+        protected @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getValues(@Nonnull Block block) {
+            return new FreezableArray<>(block.toString());
+        }
+        
+        @Override
+        public void setNonNullable(@Nonnull Block block, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+            if (Database.getConfiguration().supportsBinaryStream()) {
+                preparedStatement.setBinaryStream(parameterIndex, block.getInputStream(), block.getLength());
+            } else {
+                preparedStatement.setBytes(parameterIndex, block.getBytes());
+            }
+        }
+        
+        @Pure
+        @Override
+        public @Nullable Block getNullable(@Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+            final @Nonnull byte[] bytes = resultSet.getBytes(columnIndex);
+            if (resultSet.wasNull()) return null;
+            else return new Block(getType(), bytes);
+        }
+        
+    }
+    
+    @Pure
+    @Override
+    public @Nonnull NonConceptFactory<Block> getFactory() {
+        return new Factory(type);
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Cryptography –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Encrypts this block with the given symmetric key.
@@ -738,11 +722,11 @@ public final class Block implements SQLizable, Cloneable {
      * @return a new block containing the encryption of this block.
      */
     @Pure
-    @NonExposedRecipient
+    @NonEncodingRecipient
     @Nonnull Block encrypt(@Nonnull SemanticType type, @Nonnull SymmetricKey symmetricKey, @Nonnull InitializationVector initializationVector) {
         assert !isEncoding() : "This method is not called during encoding.";
         
-        ensureEncoded();
+        encodeIfNotYetEncoded();
         assert bytes != null : "The byte array is allocated.";
         return new Block(type, symmetricKey.encrypt(initializationVector, bytes, offset, length));
     }
@@ -757,15 +741,16 @@ public final class Block implements SQLizable, Cloneable {
      * @return a new block containing the decryption of this block.
      */
     @Pure
-    @NonExposedRecipient
+    @NonEncodingRecipient
     @Nonnull Block decrypt(@Nonnull SemanticType type, @Nonnull SymmetricKey symmetricKey, @Nonnull InitializationVector initializationVector) throws InvalidEncodingException {
         assert !isEncoding() : "This method is not called during encoding.";
         
-        ensureEncoded();
+        encodeIfNotYetEncoded();
         assert bytes != null : "The byte array is allocated.";
         return new Block(type, symmetricKey.decrypt(initializationVector, bytes, offset, length));
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Write –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Writes this block to the given output stream and optionally closes the output stream afterwards.
@@ -773,7 +758,7 @@ public final class Block implements SQLizable, Cloneable {
      * @param outputStream the output stream to writeTo to.
      * @param close whether the output stream shall be closed.
      */
-    @NonExposedRecipient
+    @NonEncodingRecipient
     public void writeTo(@Nonnull OutputStream outputStream, boolean close) throws IOException {
         writeTo(0, outputStream, close);
     }
@@ -785,7 +770,7 @@ public final class Block implements SQLizable, Cloneable {
      * @param outputStream the output stream to write to.
      * @param close whether the output stream shall be closed.
      */
-    @NonExposedRecipient
+    @NonEncodingRecipient
     public void writeTo(@ValidIndex int offset, @Nonnull OutputStream outputStream, boolean close) throws IOException {
         writeTo(offset, getLength() - offset, outputStream, close);
     }
@@ -802,7 +787,7 @@ public final class Block implements SQLizable, Cloneable {
      * @require length > 0 : "The length is positive.";
      * @require offset + length <= getLength() : "The offset and length are within this block.";
      */
-    @NonExposedRecipient
+    @NonEncodingRecipient
     public void writeTo(int offset, int length, @Nonnull OutputStream outputStream, boolean close) throws IOException {
         assert !isEncoding() : "This method is not called during encoding.";
         assert offset >= 0 : "The offset is non-negative.";
@@ -810,7 +795,7 @@ public final class Block implements SQLizable, Cloneable {
         assert offset + length <= getLength() : "The offset and length are within this block.";
         
         try {
-            ensureEncoded();
+            encodeIfNotYetEncoded();
             outputStream.write(bytes, this.offset + offset, length);
             outputStream.flush();
         } finally {
@@ -818,6 +803,7 @@ public final class Block implements SQLizable, Cloneable {
         }
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Input Stream –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns an input stream to read directly from this block.
@@ -827,7 +813,7 @@ public final class Block implements SQLizable, Cloneable {
      * @require isNotEncoding() : "This method is not called during encoding.";
      */
     @Pure
-    @NonExposedRecipient
+    @NonEncodingRecipient
     public @Nonnull InputStream getInputStream() {
         return getInputStream(0);
     }
@@ -843,7 +829,7 @@ public final class Block implements SQLizable, Cloneable {
      * @require offset >= 0 && offset < getLength() : "The offset is valid.";
      */
     @Pure
-    @NonExposedRecipient
+    @NonEncodingRecipient
     public @Nonnull InputStream getInputStream(int offset) {
         return getInputStream(offset, getLength() - offset);
     }
@@ -861,14 +847,14 @@ public final class Block implements SQLizable, Cloneable {
      * @require offset + length <= getLength() : "The offset and length are within this block.";
      */
     @Pure
-    @NonExposedRecipient
+    @NonEncodingRecipient
     public @Nonnull InputStream getInputStream(int offset, int length) {
         assert !isEncoding() : "This method is not called during encoding.";
         assert offset >= 0 : "The offset is non-negative.";
         assert length > 0 : "The length is positive.";
         assert offset + length <= getLength() : "The offset and length are within this block.";
         
-        ensureEncoded();
+        encodeIfNotYetEncoded();
         return new BlockInputStream(this.offset + offset, length);
     }
     
@@ -976,6 +962,7 @@ public final class Block implements SQLizable, Cloneable {
         
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Output Stream –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns an output stream to write directly into this block.
@@ -985,7 +972,7 @@ public final class Block implements SQLizable, Cloneable {
      * @require isEncoding() : "This method may only be called during encoding.";
      */
     @Pure
-    @ExposedRecipient
+    @EncodingRecipient
     public @Nonnull OutputStream getOutputStream() {
         return getOutputStream(0);
     }
@@ -1001,7 +988,7 @@ public final class Block implements SQLizable, Cloneable {
      * @require offset >= 0 && offset < getLength() : "The offset is valid.";
      */
     @Pure
-    @ExposedRecipient
+    @EncodingRecipient
     public @Nonnull OutputStream getOutputStream(int offset) {
         return getOutputStream(offset, getLength() - offset);
     }
@@ -1020,7 +1007,7 @@ public final class Block implements SQLizable, Cloneable {
      * @require offset + length <= getLength() : "The offset and length are within this block.";
      */
     @Pure
-    @ExposedRecipient
+    @EncodingRecipient
     public @Nonnull OutputStream getOutputStream(int offset, int length) {
         assert isEncoding() : "This method may only be called during encoding.";
         assert offset >= 0 : "The offset is non-negative.";

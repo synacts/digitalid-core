@@ -79,8 +79,7 @@ public abstract class NonHostConceptFactory<O> {
      */
     @Pure
     public final @Nullable Block encodeNullable(@Nullable O object) {
-        if (object != null) return encodeNonNullable(object);
-        else return null;
+        return object == null ? null : encodeNonNullable(object);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Decoding –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -277,10 +276,8 @@ public abstract class NonHostConceptFactory<O> {
      */
     @Pure
     private @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getValuesOrNulls(@Nullable O object) {
-        if (object != null) return getValues(object);
-        final @Nonnull FreezableArray<String> values = new FreezableArray<>(columns.size());
-        values.setAll("NULL");
-        return values;
+        if (object == null) return new FreezableArray<String>(columns.size()).setAll("NULL");
+        else return getValues(object);
     }
     
     /**
@@ -319,7 +316,7 @@ public abstract class NonHostConceptFactory<O> {
      * @ensure return.size() == columns.size() : "The returned array contains a value for each column.";
      */
     @Pure
-    private @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getColumnsEqualsValues(@Nonnull @Validated String alias, @Nonnull @Validated String prefix, @Nullable O object) {
+    private @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getColumnsEqualValues(@Nonnull @Validated String alias, @Nonnull @Validated String prefix, @Nullable O object) {
         assert isValidAlias(alias) : "The alias is valid.";
         assert isValidPrefix(prefix) : "The prefix is valid.";
         
@@ -340,7 +337,7 @@ public abstract class NonHostConceptFactory<O> {
      */
     @Pure
     public final @Nonnull String getUpdate(@Nonnull @Validated String prefix, @Nullable O object) {
-        return IterableConverter.toString(getColumnsEqualsValues("", prefix, object));
+        return IterableConverter.toString(getColumnsEqualValues("", prefix, object));
     }
     
     /**
@@ -366,7 +363,7 @@ public abstract class NonHostConceptFactory<O> {
      */
     @Pure
     public final @Nonnull String getCondition(@Nonnull @Validated String alias, @Nonnull @Validated String prefix, @Nullable O object) {
-        return IterableConverter.toString(getColumnsEqualsValues(alias, prefix, object), " AND ");
+        return IterableConverter.toString(getColumnsEqualValues(alias, prefix, object), " AND ");
     }
     
     /**
@@ -395,6 +392,102 @@ public abstract class NonHostConceptFactory<O> {
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storing (with PreparedStatement) –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Returns as many question marks as columns separated by commas.
+     * 
+     * @return as many question marks as columns separated by commas.
+     */
+    @Pure
+    public final @Nonnull String getInsert() {
+        return IterableConverter.toString(new FreezableArray<String>(columns.size()).setAll("?"));
+    }
+    
+    /**
+     * Returns the name of each column followed by the equality sign and a question mark.
+     * 
+     * @param alias the table alias that is to be prepended to all columns.
+     * @param prefix the prefix that is to be prepended to all column names.
+     * 
+     * @return the name of each column followed by the equality sign and a question mark.
+     * 
+     * @ensure return.size() == columns.size() : "The returned array contains a value for each column.";
+     */
+    @Pure
+    private @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getColumnsEqualQuestionMarks(@Nonnull @Validated String alias, @Nonnull @Validated String prefix) {
+        assert isValidAlias(alias) : "The alias is valid.";
+        assert isValidPrefix(prefix) : "The prefix is valid.";
+        
+        final @Nonnull FreezableArray<String> values = new FreezableArray<>(columns.size());
+        for (int i = 0; i < values.size(); i++) {
+            values.set(i, (alias.isEmpty() ? "" : alias + ".") + prefix + columns.getNonNullable(i).getName() + " = ?");
+        }
+        return values;
+    }
+    
+    /**
+     * Returns the name of each column followed by the equality sign and a question mark separated by commas.
+     * 
+     * @param prefix the prefix that is to be prepended to all column names.
+     * @param object the object whose values are to be used for equality.
+     * 
+     * @return the name of each column followed by the equality sign and a question mark separated by commas.
+     */
+    @Pure
+    public final @Nonnull String getUpdate(@Nonnull @Validated String prefix) {
+        return IterableConverter.toString(getColumnsEqualQuestionMarks("", prefix));
+    }
+    
+    /**
+     * Returns the name of each column followed by the equality sign and a question mark separated by commas.
+     * 
+     * @param object the object whose values are to be used for equality.
+     * 
+     * @return the name of each column followed by the equality sign and a question mark separated by commas.
+     */
+    @Pure
+    public final @Nonnull String getUpdate() {
+        return getUpdate("");
+    }
+    
+    /**
+     * Returns the name of each column followed by the equality sign and a question mark separated by {@code AND}.
+     * 
+     * @param alias the table alias that is to be prepended to all columns.
+     * @param prefix the prefix that is to be prepended to all column names.
+     * @param object the object whose values are to be used for equality.
+     * 
+     * @return the name of each column followed by the equality sign and a question mark separated by {@code AND}.
+     */
+    @Pure
+    public final @Nonnull String getCondition(@Nonnull @Validated String alias, @Nonnull @Validated String prefix) {
+        return IterableConverter.toString(getColumnsEqualQuestionMarks(alias, prefix), " AND ");
+    }
+    
+    /**
+     * Returns the name of each column followed by the equality sign and a question mark separated by {@code AND}.
+     * 
+     * @param prefix the prefix that is to be prepended to all column names.
+     * @param object the object whose values are to be used for equality.
+     * 
+     * @return the name of each column followed by the equality sign and a question mark separated by {@code AND}.
+     */
+    @Pure
+    public final @Nonnull String getCondition(@Nonnull @Validated String prefix) {
+        return getCondition("", prefix);
+    }
+    
+    /**
+     * Returns the name of each column followed by the equality sign and a question mark separated by {@code AND}.
+     * 
+     * @param object the object whose values are to be used for equality.
+     * 
+     * @return the name of each column followed by the equality sign and a question mark separated by {@code AND}.
+     */
+    @Pure
+    public final @Nonnull String getCondition() {
+        return getCondition("");
+    }
     
     /**
      * Sets the parameters starting from the given index of the prepared statement to the given non-nullable object.

@@ -8,13 +8,15 @@ import java.lang.annotation.Target;
 import net.digitalid.core.wrappers.Block;
 
 /**
- * This annotation indicates that a method should only be invoked on {@link Exposed exposed} objects.
+ * This annotation indicates that a {@link Block block} is not {@link Block#isEncoded() encoded}.
+ * 
+ * @see Encoded
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
 @Documented
 @TargetType(Block.class)
-@Target(ElementType.METHOD)
 @Retention(RetentionPolicy.CLASS)
-public @interface ExposedRecipient {}
+@Target({ElementType.PARAMETER, ElementType.LOCAL_VARIABLE, ElementType.METHOD, ElementType.CONSTRUCTOR})
+public @interface NonEncoded {}

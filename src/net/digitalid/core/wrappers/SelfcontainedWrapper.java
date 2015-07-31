@@ -6,7 +6,7 @@ import java.io.OutputStream;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.annotations.Exposed;
+import net.digitalid.core.annotations.Encoding;
 import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
@@ -29,7 +29,7 @@ import net.digitalid.core.wrappers.exceptions.UnsupportedBlockLengthException;
  * @version 1.0
  */
 @Immutable
-public final class SelfcontainedWrapper extends BlockWrapper {
+public final class SelfcontainedWrapper extends Wrapper {
     
     /**
      * Stores the syntactic type {@code selfcontained@core.digitalid.net}.
@@ -177,7 +177,7 @@ public final class SelfcontainedWrapper extends BlockWrapper {
     
     @Pure
     @Override
-    protected void encode(@Exposed @Nonnull Block block) {
+    protected void encode(@Encoding @Nonnull Block block) {
         assert block.isEncoding() : "The given block is in the process of being encoded.";
         assert block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
         assert block.getLength() == determineLength() : "The block's length has to match the determined length.";
