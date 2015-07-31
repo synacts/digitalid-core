@@ -80,6 +80,19 @@ public final class IterableConverter {
      * Converts the given iterable to a string.
      * 
      * @param iterable the iterable to convert to a string.
+     * @param delimiter the delimiter between elements.
+     * 
+     * @return the given iterable as a string.
+     */
+    @Pure
+    public static @Nonnull <E> String toString(@Nonnull Iterable<E> iterable, @Nonnull String delimiter) {
+        return toString(iterable, ElementConverter.DEFAULT, null, delimiter);
+    }
+    
+    /**
+     * Converts the given iterable to a string.
+     * 
+     * @param iterable the iterable to convert to a string.
      * 
      * @return the given iterable as a string.
      */

@@ -123,6 +123,18 @@ public class FreezableArray<E> extends FreezableObject implements ReadOnlyArray<
         array[index] = element;
     }
     
+    /**
+     * Sets each element to the given value.
+     * 
+     * @param element the value to replace all elements with.
+     */
+    @NonFrozenRecipient
+    public void setAll(@Nullable E element) {
+        assert !isFrozen() : "This object is not frozen.";
+        
+        for (int i = 0; i < array.length; i++) array[i] = element;
+    }
+    
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Conditions –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure

@@ -5,10 +5,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.core.annotations.Capturable;
 import net.digitalid.core.annotations.Frozen;
 import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Loaded;
 import net.digitalid.core.annotations.NonCommitting;
+import net.digitalid.core.annotations.NonFrozen;
 import net.digitalid.core.annotations.NonNullableElements;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.annotations.Validated;
@@ -250,7 +252,149 @@ public abstract class NonHostConceptFactory<O> {
         return getForeignKeys("", site);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storing –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storing (with Statement) –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Returns the value of the given object for each column.
+     * 
+     * @param object the object whose values are to be returned.
+     * 
+     * @return the value of the given object for each column.
+     * 
+     * @ensure return.size() == getColumns().size() : "The returned array contains a value for each column.";
+     */
+    @Pure
+    protected abstract @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getValues(@Nonnull O object);
+    
+    /**
+     * Returns the value of the given object or null for each column.
+     * 
+     * @param object the nullable object whose values are to be returned.
+     * 
+     * @return the value of the given object or null for each column.
+     * 
+     * @ensure return.size() == columns.size() : "The returned array contains a value for each column.";
+     */
+    @Pure
+    private @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getValuesOrNulls(@Nullable O object) {
+        if (object != null) return getValues(object);
+        final @Nonnull FreezableArray<String> values = new FreezableArray<>(columns.size());
+        values.setAll("NULL");
+        return values;
+    }
+    
+    /**
+     * Returns the values of the given object separated by commas.
+     * 
+     * @param object the object whose values are to be returned.
+     * 
+     * @return the values of the given object separated by commas.
+     */
+    @Pure
+    public final @Nonnull String getInsert(@Nullable O object) {
+        return IterableConverter.toString(getValuesOrNulls(object));
+    }
+    
+    /**
+     * Returns whether the given alias is valid.
+     * 
+     * @param alias the alias to be checked.
+     * 
+     * @return whether the given alias is valid.
+     */
+    @Pure
+    public static boolean isValidAlias(@Nonnull String alias) {
+        return alias.isEmpty() || Database.getConfiguration().isValidIdentifier(alias);
+    }
+    
+    /**
+     * Returns the name of each column followed by the equality sign and the corresponding value of the given object.
+     * 
+     * @param alias the table alias that is to be prepended to all columns.
+     * @param prefix the prefix that is to be prepended to all column names.
+     * @param object the object whose values are to be used for equality.
+     * 
+     * @return the name of each column followed by the equality sign and the corresponding value of the given object.
+     * 
+     * @ensure return.size() == columns.size() : "The returned array contains a value for each column.";
+     */
+    @Pure
+    private @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getColumnsEqualsValues(@Nonnull @Validated String alias, @Nonnull @Validated String prefix, @Nullable O object) {
+        assert isValidAlias(alias) : "The alias is valid.";
+        assert isValidPrefix(prefix) : "The prefix is valid.";
+        
+        final @Nonnull FreezableArray<String> values = getValuesOrNulls(object);
+        for (int i = 0; i < values.size(); i++) {
+            values.set(i, (alias.isEmpty() ? "" : alias + ".") + prefix + columns.getNonNullable(i).getName() + " = " + values.getNonNullable(i));
+        }
+        return values;
+    }
+    
+    /**
+     * Returns the name of each column followed by the equality sign and the corresponding value of the given object separated by commas.
+     * 
+     * @param prefix the prefix that is to be prepended to all column names.
+     * @param object the object whose values are to be used for equality.
+     * 
+     * @return the name of each column followed by the equality sign and the corresponding value of the given object separated by commas.
+     */
+    @Pure
+    public final @Nonnull String getUpdate(@Nonnull @Validated String prefix, @Nullable O object) {
+        return IterableConverter.toString(getColumnsEqualsValues("", prefix, object));
+    }
+    
+    /**
+     * Returns the name of each column followed by the equality sign and the corresponding value of the given object separated by commas.
+     * 
+     * @param object the object whose values are to be used for equality.
+     * 
+     * @return the name of each column followed by the equality sign and the corresponding value of the given object separated by commas.
+     */
+    @Pure
+    public final @Nonnull String getUpdate(@Nullable O object) {
+        return getUpdate("", object);
+    }
+    
+    /**
+     * Returns the name of each column followed by the equality sign and the corresponding value of the given object separated by {@code AND}.
+     * 
+     * @param alias the table alias that is to be prepended to all columns.
+     * @param prefix the prefix that is to be prepended to all column names.
+     * @param object the object whose values are to be used for equality.
+     * 
+     * @return the name of each column followed by the equality sign and the corresponding value of the given object separated by {@code AND}.
+     */
+    @Pure
+    public final @Nonnull String getCondition(@Nonnull @Validated String alias, @Nonnull @Validated String prefix, @Nullable O object) {
+        return IterableConverter.toString(getColumnsEqualsValues(alias, prefix, object), " AND ");
+    }
+    
+    /**
+     * Returns the name of each column followed by the equality sign and the corresponding value of the given object separated by {@code AND}.
+     * 
+     * @param prefix the prefix that is to be prepended to all column names.
+     * @param object the object whose values are to be used for equality.
+     * 
+     * @return the name of each column followed by the equality sign and the corresponding value of the given object separated by {@code AND}.
+     */
+    @Pure
+    public final @Nonnull String getCondition(@Nonnull @Validated String prefix, @Nullable O object) {
+        return getCondition("", prefix, object);
+    }
+    
+    /**
+     * Returns the name of each column followed by the equality sign and the corresponding value of the given object separated by {@code AND}.
+     * 
+     * @param object the object whose values are to be used for equality.
+     * 
+     * @return the name of each column followed by the equality sign and the corresponding value of the given object separated by {@code AND}.
+     */
+    @Pure
+    public final @Nonnull String getCondition(@Nullable O object) {
+        return getCondition("", object);
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storing (with PreparedStatement) –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Sets the parameters starting from the given index of the prepared statement to the given non-nullable object.
