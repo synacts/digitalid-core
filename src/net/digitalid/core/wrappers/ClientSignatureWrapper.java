@@ -171,7 +171,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper {
         final @Nonnull Exponent r = commitment.getPublicKey().getCompositeGroup().getRandomExponent(Parameters.RANDOM_EXPONENT);
         final @Nonnull BigInteger t = commitment.getPublicKey().getAu().pow(r).toBlock().getHash();
         subelements.set(1, new HashWrapper(HASH, t).toBlock());
-        final @Nonnull Exponent h = new Exponent(t.xor(elements.getNonNullable(0).getHash()));
+        final @Nonnull Exponent h = new Exponent(t.xor(elements.get(0).getHash()));
         final @Nonnull Exponent s = r.subtract(commitment.getSecret().multiply(h));
         subelements.set(2, s.toBlock());
         elements.set(2, new TupleWrapper(SIGNATURE, subelements.freeze()).toBlock());

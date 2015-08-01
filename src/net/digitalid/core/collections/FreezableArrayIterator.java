@@ -44,8 +44,18 @@ public class FreezableArrayIterator<E> implements ReadOnlyArrayIterator<E>, Free
      * 
      * @param array a reference to the underlying array.
      */
-    FreezableArrayIterator(@Nonnull FreezableArray<E> array) {
+    protected FreezableArrayIterator(@Nonnull FreezableArray<E> array) {
         this.array = array;
+    }
+    
+    /**
+     * Creates a new freezable iterator.
+     * 
+     * @param array a reference to the underlying array.
+     */
+    @Pure
+    protected static @Capturable @Nonnull <E> FreezableArrayIterator<E> get(@Nonnull FreezableArray<E> array) {
+        return new FreezableArrayIterator<>(array);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Freezable –––––––––––––––––––––––––––––––––––––––––––––––––– */

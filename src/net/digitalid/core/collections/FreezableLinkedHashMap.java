@@ -9,6 +9,8 @@ import net.digitalid.core.annotations.Frozen;
 import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonFrozen;
 import net.digitalid.core.annotations.NonFrozenRecipient;
+import net.digitalid.core.annotations.NonNegative;
+import net.digitalid.core.annotations.Positive;
 import net.digitalid.core.annotations.Pure;
 
 /**
@@ -55,38 +57,65 @@ public class FreezableLinkedHashMap<K,V> extends LinkedHashMap<K,V> implements F
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructors –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * @see LinkedHashMap#LinkedHashMap()
+     * @see LinkedHashMap#LinkedHashMap(int, float, boolean)
      */
-    public FreezableLinkedHashMap() {
-        super();
+    protected FreezableLinkedHashMap(@NonNegative int initialCapacity, @Positive float loadFactor, boolean accessOrder) {
+        super(initialCapacity, loadFactor, accessOrder);
+    }
+
+    /**
+     * @see LinkedHashMap#LinkedHashMap(int, float, boolean)
+     */
+    @Pure
+    public static @Capturable @Nonnull @NonFrozen <K, V> FreezableLinkedHashMap<K, V> get(@NonNegative int initialCapacity, @Positive float loadFactor, boolean accessOrder) {
+        return new FreezableLinkedHashMap<>(initialCapacity, loadFactor, accessOrder);
+    }
+
+    /**
+     * @see LinkedHashMap#LinkedHashMap(int, float)
+     */
+    @Pure
+    public static @Capturable @Nonnull @NonFrozen <K, V> FreezableLinkedHashMap<K, V> get(@NonNegative int initialCapacity, @Positive float loadFactor) {
+        return get(initialCapacity, loadFactor, false);
     }
     
     /**
      * @see LinkedHashMap#LinkedHashMap(int)
      */
-    public FreezableLinkedHashMap(int initialCapacity) {
-        super(initialCapacity);
+    @Pure
+    public static @Capturable @Nonnull @NonFrozen <K, V> FreezableLinkedHashMap<K, V> get(@NonNegative int initialCapacity) {
+        return get(initialCapacity, 0.75f);
     }
     
     /**
-     * @see LinkedHashMap#LinkedHashMap(int, float)
+     * @see LinkedHashMap#LinkedHashMap()
      */
-    public FreezableLinkedHashMap(int initialCapacity, float loadFactor) {
-        super(initialCapacity, loadFactor);
+    @Pure
+    public static @Capturable @Nonnull @NonFrozen <K, V> FreezableLinkedHashMap<K, V> get() {
+        return get(16);
     }
     
-    /**
-     * @see LinkedHashMap#LinkedHashMap(int, float, boolean)
-     */
-    public FreezableLinkedHashMap(int initialCapacity, float loadFactor, boolean accessOrder) {
-        super(initialCapacity, loadFactor);
-    }
-
     /**
      * @see LinkedHashMap#LinkedHashMap(java.util.Map)
      */
-    public FreezableLinkedHashMap(@Nonnull Map<? extends K, ? extends V> map) {
+    protected FreezableLinkedHashMap(@Nonnull Map<? extends K, ? extends V> map) {
         super(map);
+    }
+    
+    /**
+     * @see LinkedHashMap#LinkedHashMap(java.util.Map)
+     */
+    @Pure
+    public static @Capturable @Nonnull @NonFrozen <K, V> FreezableLinkedHashMap<K, V> getNonNullable(@Nonnull Map<? extends K, ? extends V> map) {
+        return new FreezableLinkedHashMap<>(map);
+    }
+    
+    /**
+     * @see LinkedHashMap#LinkedHashMap(java.util.Map)
+     */
+    @Pure
+    public static @Capturable @Nullable @NonFrozen <K, V> FreezableLinkedHashMap<K, V> getNullable(@Nullable Map<? extends K, ? extends V> map) {
+        return map == null ? null : getNonNullable(map);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Entries –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -94,19 +123,19 @@ public class FreezableLinkedHashMap<K,V> extends LinkedHashMap<K,V> implements F
     @Pure
     @Override
     public @Nonnull FreezableSet<K> keySet() {
-        return new BackedFreezableSet<>(this, super.keySet());
+        return BackedFreezableSet.get(this, super.keySet());
     }
     
     @Pure
     @Override
     public @Nonnull FreezableCollection<V> values() {
-        return new BackedFreezableCollection<>(this, super.values());
+        return BackedFreezableCollection.get(this, super.values());
     }
     
     @Pure
     @Override
     public @Nonnull FreezableSet<Map.Entry<K,V>> entrySet() {
-        return new BackedFreezableSet<>(this, super.entrySet());
+        return BackedFreezableSet.get(this, super.entrySet());
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Operations –––––––––––––––––––––––––––––––––––––––––––––––––– */

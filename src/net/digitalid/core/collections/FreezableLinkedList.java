@@ -61,18 +61,30 @@ public class FreezableLinkedList<E> extends LinkedList<E> implements FreezableLi
     /**
      * @see LinkedList#LinkedList()
      */
-    public FreezableLinkedList() {
+    protected FreezableLinkedList() {
         super();
+    }
+    
+    /**
+     * @see LinkedList#LinkedList()
+     */
+    @Pure
+    public static @Capturable @Nonnull @NonFrozen <E> FreezableLinkedList<E> get() {
+        return new FreezableLinkedList<>();
     }
     
     /**
      * Creates a new freezable linked list with the given element.
      * 
      * @param element the element to add to the newly created list.
+     * 
+     * @return a new freezable linked list with the given element.
      */
-    public FreezableLinkedList(@Nullable E element) {
-        this();
-        add(element);
+    @Pure
+    public static @Capturable @Nonnull @NonFrozen <E> FreezableLinkedList<E> get(@Nullable E element) {
+        final @Nonnull FreezableLinkedList<E> list = get();
+        list.add(element);
+        return list;
     }
     
     /**
@@ -80,17 +92,35 @@ public class FreezableLinkedList<E> extends LinkedList<E> implements FreezableLi
      * 
      * @param elements the elements to add to the newly created list.
      */
+    @Pure
     @SuppressWarnings("unchecked")
-    public FreezableLinkedList(@Nonnull E... elements) {
-        this();
-        addAll(Arrays.asList(elements));
+    public static @Capturable @Nonnull @NonFrozen <E> FreezableLinkedList<E> get(@Nonnull E... elements) {
+        final @Nonnull FreezableLinkedList<E> list = get();
+        list.addAll(Arrays.asList(elements));
+        return list;
     }
     
     /**
      * @see LinkedList#LinkedList(java.util.Collection)
      */
-    public FreezableLinkedList(@Nonnull Collection<? extends E> collection) {
+    protected FreezableLinkedList(@Nonnull Collection<? extends E> collection) {
         super(collection);
+    }
+    
+    /**
+     * @see LinkedList#LinkedList(java.util.Collection)
+     */
+    @Pure
+    public static @Capturable @Nonnull @NonFrozen <E> FreezableLinkedList<E> getNonNullable(@Nonnull Collection<? extends E> collection) {
+        return new FreezableLinkedList<>(collection);
+    }
+    
+    /**
+     * @see LinkedList#LinkedList(java.util.Collection)
+     */
+    @Pure
+    public static @Capturable @Nullable @NonFrozen <E> FreezableLinkedList<E> getNullable(@Nullable Collection<? extends E> collection) {
+        return collection == null ? null : getNonNullable(collection);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Collection –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -126,32 +156,32 @@ public class FreezableLinkedList<E> extends LinkedList<E> implements FreezableLi
     
     @Pure
     @Override
-    public @Nonnull FreezableIterator<E> iterator() {
-        return new FreezableIterableIterator<>(this, super.iterator());
+    public @Capturable @Nonnull FreezableIterator<E> iterator() {
+        return FreezableIterableIterator.get(this, super.iterator());
     }
     
     @Pure
     @Override
-    public @Nonnull FreezableIterator<E> descendingIterator() {
-        return new FreezableIterableIterator<>(this, super.descendingIterator());
+    public @Capturable @Nonnull FreezableIterator<E> descendingIterator() {
+        return FreezableIterableIterator.get(this, super.descendingIterator());
     }
     
     @Pure
     @Override
-    public @Nonnull FreezableListIterator<E> listIterator() {
-        return new FreezableListIterator<>(this, super.listIterator());
+    public @Capturable @Nonnull FreezableListIterator<E> listIterator() {
+        return FreezableListIterator.get(this, super.listIterator());
     }
     
     @Pure
     @Override
-    public @Nonnull FreezableListIterator<E> listIterator(@ValidIndexForInsertion int index) {
-        return new FreezableListIterator<>(this, super.listIterator(index));
+    public @Capturable @Nonnull FreezableListIterator<E> listIterator(@ValidIndexForInsertion int index) {
+        return FreezableListIterator.get(this, super.listIterator(index));
     }
     
     @Pure
     @Override
     public @Nonnull FreezableList<E> subList(@ValidIndex int fromIndex, @ValidIndexForInsertion int toIndex) {
-        return new BackedFreezableList<>(this, super.subList(fromIndex, toIndex));
+        return BackedFreezableList.get(this, super.subList(fromIndex, toIndex));
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Add –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -458,7 +488,7 @@ public class FreezableLinkedList<E> extends LinkedList<E> implements FreezableLi
     @Override
     @SuppressWarnings("unchecked")
     public @Capturable @Nonnull @NonFrozen FreezableArray<E> toFreezableArray() {
-        return new FreezableArray<>(toArray((E[]) new Object[size()]));
+        return FreezableArray.getNonNullable(toArray((E[]) new Object[size()]));
     }
     
 }

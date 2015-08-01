@@ -40,19 +40,46 @@ public class FreezablePair<E0, E1> extends FreezableObject implements ReadOnlyPa
      * @param element0 the first element of this tuple.
      * @param element1 the second element of this tuple.
      */
-    public FreezablePair(@Nullable E0 element0, @Nullable E1 element1) {
+    protected FreezablePair(@Nullable E0 element0, @Nullable E1 element1) {
         this.element0 = element0;
         this.element1 = element1;
+    }
+    
+    /**
+     * Creates a new pair with the given elements.
+     * 
+     * @param element0 the first element of this tuple.
+     * @param element1 the second element of this tuple.
+     * 
+     * @return a new pair with the given elements.
+     */
+    @Pure
+    public static @Capturable @Nonnull @NonFrozen <E0, E1> FreezablePair<E0, E1> get(@Nullable E0 element0, @Nullable E1 element1) {
+        return new FreezablePair<>(element0, element1);
     }
     
     /**
      * Creates a new pair from the given pair.
      * 
      * @param pair the pair containing the elements.
+     * 
+     * @return a new pair from the given pair.
      */
-    public FreezablePair(@Nonnull @NullableElements ReadOnlyPair<E0, E1> pair) {
-        this.element0 = pair.getElement0();
-        this.element1 = pair.getElement1();
+    @Pure
+    public static @Capturable @Nonnull @NonFrozen <E0, E1> FreezablePair<E0, E1> getNonNullable(@Nonnull @NullableElements ReadOnlyPair<E0, E1> pair) {
+        return get(pair.getElement0(), pair.getElement1());
+    }
+    
+    /**
+     * Creates a new pair from the given pair.
+     * 
+     * @param pair the pair containing the elements.
+     * 
+     * @return a new pair from the given pair.
+     */
+    @Pure
+    public static @Capturable @Nullable @NonFrozen <E0, E1> FreezablePair<E0, E1> getNullable(@Nullable @NullableElements ReadOnlyPair<E0, E1> pair) {
+        return pair == null ? null : getNonNullable(pair);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Getters –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -108,7 +135,7 @@ public class FreezablePair<E0, E1> extends FreezableObject implements ReadOnlyPa
     @Pure
     @Override
     public @Capturable @Nonnull @NonFrozen FreezablePair<E0, E1> clone() {
-        return new FreezablePair<>(this);
+        return FreezablePair.getNonNullable(this);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */

@@ -35,21 +35,48 @@ public class FreezableTriplet<E0, E1, E2> extends FreezablePair<E0, E1> implemen
      * @param element1 the second element of this tuple.
      * @param element2 the third element of this tuple.
      */
-    public FreezableTriplet(@Nullable E0 element0, @Nullable E1 element1, @Nullable E2 element2) {
+    protected FreezableTriplet(@Nullable E0 element0, @Nullable E1 element1, @Nullable E2 element2) {
         super(element0, element1);
         
         this.element2 = element2;
     }
     
     /**
+     * Creates a new triplet with the given elements.
+     * 
+     * @param element0 the first element of this tuple.
+     * @param element1 the second element of this tuple.
+     * @param element2 the third element of this tuple.
+     * 
+     * @return a new triplet with the given elements.
+     */
+    @Pure
+    public static @Capturable @Nonnull @NonFrozen <E0, E1, E2> FreezableTriplet<E0, E1, E2> get(@Nullable E0 element0, @Nullable E1 element1, @Nullable E2 element2) {
+        return new FreezableTriplet<>(element0, element1, element2);
+    }
+    
+    /**
      * Creates a new triplet from the given triplet.
      * 
      * @param triplet the triplet containing the elements.
+     * 
+     * @return a new triplet from the given triplet.
      */
-    public FreezableTriplet(@Nonnull @NullableElements ReadOnlyTriplet<E0, E1, E2> triplet) {
-        super(triplet);
-        
-        this.element2 = triplet.getElement2();
+    @Pure
+    public static @Capturable @Nonnull @NonFrozen <E0, E1, E2> FreezableTriplet<E0, E1, E2> getNonNullable(@Nonnull @NullableElements ReadOnlyTriplet<E0, E1, E2> triplet) {
+        return get(triplet.getElement0(), triplet.getElement1(), triplet.getElement2());
+    }
+    
+    /**
+     * Creates a new triplet from the given triplet.
+     * 
+     * @param triplet the triplet containing the elements.
+     * 
+     * @return a new triplet from the given triplet.
+     */
+    @Pure
+    public static @Capturable @Nullable @NonFrozen <E0, E1, E2> FreezableTriplet<E0, E1, E2> getNullable(@Nullable @NullableElements ReadOnlyTriplet<E0, E1, E2> triplet) {
+        return triplet == null ? null : getNonNullable(triplet);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Getter –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -87,7 +114,7 @@ public class FreezableTriplet<E0, E1, E2> extends FreezablePair<E0, E1> implemen
     @Pure
     @Override
     public @Capturable @Nonnull @NonFrozen FreezableTriplet<E0, E1, E2> clone() {
-        return new FreezableTriplet<>(this);
+        return FreezableTriplet.getNonNullable(this);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */

@@ -4,6 +4,7 @@ import java.util.Iterator;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Capturable;
+import net.digitalid.core.annotations.Captured;
 import net.digitalid.core.annotations.Frozen;
 import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonFrozen;
@@ -45,9 +46,22 @@ class FreezableIterableIterator<E> implements FreezableIterator<E> {
      * @param iterable a reference to the underlying iterable.
      * @param iterator a reference to the underlying iterator.
      */
-    FreezableIterableIterator(@Nonnull FreezableIterable<E> iterable, @Nonnull Iterator<E> iterator) {
+    protected FreezableIterableIterator(@Nonnull FreezableIterable<E> iterable, @Captured @Nonnull Iterator<E> iterator) {
         this.iterable = iterable;
         this.iterator = iterator;
+    }
+    
+    /**
+     * Creates a new freezable iterator.
+     * 
+     * @param iterable a reference to the underlying iterable.
+     * @param iterator a reference to the underlying iterator.
+     * 
+     * @return a new freezable iterator.
+     */
+    @Pure
+    static @Capturable @Nonnull <E> FreezableIterableIterator<E> get(@Nonnull FreezableIterable<E> iterable, @Captured @Nonnull Iterator<E> iterator) {
+        return new FreezableIterableIterator<>(iterable, iterator);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Freezable –––––––––––––––––––––––––––––––––––––––––––––––––– */

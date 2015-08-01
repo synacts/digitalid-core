@@ -52,6 +52,19 @@ class BackedFreezableCollection<E> implements FreezableCollection<E> {
         this.collection = collection;
     }
     
+    /**
+     * Creates a new backed freezable collection.
+     * 
+     * @param freezable a reference to the underlying freezable.
+     * @param collection a reference to the underlying collection.
+     * 
+     * @return a new backed freezable collection.
+     */
+    @Pure
+    static @Nonnull <E> BackedFreezableCollection<E> get(@Nonnull Freezable freezable, @Nonnull Collection<E> collection) {
+        return new BackedFreezableCollection<>(freezable, collection);
+    }
+    
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Freezable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
@@ -100,6 +113,7 @@ class BackedFreezableCollection<E> implements FreezableCollection<E> {
     
     @Pure
     @Override
+    @SuppressWarnings("SuspiciousToArrayCall")
     public @Capturable @Nonnull <T> T[] toArray(@Nonnull T[] array) {
         return collection.toArray(array);
     }
@@ -113,7 +127,7 @@ class BackedFreezableCollection<E> implements FreezableCollection<E> {
     @Pure
     @Override
     public @Nonnull FreezableIterator<E> iterator() {
-        return new FreezableIterableIterator<>(this, collection.iterator());
+        return FreezableIterableIterator.get(this, collection.iterator());
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Conditions –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -193,14 +207,14 @@ class BackedFreezableCollection<E> implements FreezableCollection<E> {
     @Pure
     @Override
     public @Capturable @Nonnull @NonFrozen FreezableCollection<E> clone() {
-        return new FreezableArrayList<>(collection);
+        return FreezableArrayList.getNonNullable(collection);
     }
     
     @Pure
     @Override
     @SuppressWarnings("unchecked")
     public @Capturable @Nonnull @NonFrozen FreezableArray<E> toFreezableArray() {
-        return new FreezableArray<>(toArray((E[]) new Object[size()]));
+        return FreezableArray.getNonNullable(toArray((E[]) new Object[size()]));
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */

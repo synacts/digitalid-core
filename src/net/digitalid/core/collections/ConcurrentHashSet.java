@@ -5,6 +5,10 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import net.digitalid.core.annotations.Capturable;
+import net.digitalid.core.annotations.NonNegative;
+import net.digitalid.core.annotations.Positive;
 import net.digitalid.core.annotations.Pure;
 
 /**
@@ -32,42 +36,66 @@ public class ConcurrentHashSet<E> extends AbstractSet<E> implements ConcurrentSe
     /**
      * @see ConcurrentHashMap#ConcurrentHashMap(int, float, int)
      */
-    public ConcurrentHashSet(int initialCapacity, float loadFactor, int concurrencyLevel) {
-        this.map = new ConcurrentHashMap<>(initialCapacity, loadFactor, concurrencyLevel);
+    protected ConcurrentHashSet(@NonNegative int initialCapacity, @Positive float loadFactor, @Positive int concurrencyLevel) {
+        this.map = ConcurrentHashMap.get(initialCapacity, loadFactor, concurrencyLevel);
         this.set = map.keySet();
+    }
+    
+    /**
+     * @see ConcurrentHashMap#ConcurrentHashMap(int, float, int)
+     */
+    @Pure
+    public static @Capturable @Nonnull <E> ConcurrentHashSet<E> get(@NonNegative int initialCapacity, @Positive float loadFactor, @Positive int concurrencyLevel) {
+        return new ConcurrentHashSet<>(initialCapacity, loadFactor, concurrencyLevel);
     }
     
     /**
      * @see ConcurrentHashMap#ConcurrentHashMap(int, float)
      */
-    public ConcurrentHashSet(int initialCapacity, float loadFactor) {
-        this.map = new ConcurrentHashMap<>(initialCapacity, loadFactor);
-        this.set = map.keySet();
+    @Pure
+    public static @Capturable @Nonnull <E> ConcurrentHashSet<E> get(@NonNegative int initialCapacity, @Positive float loadFactor) {
+        return get(initialCapacity, loadFactor, 16);
     }
     
     /**
      * @see ConcurrentHashMap#ConcurrentHashMap(int)
      */
-    public ConcurrentHashSet(int initialCapacity) {
-        this.map = new ConcurrentHashMap<>(initialCapacity);
-        this.set = map.keySet();
+    @Pure
+    public static @Capturable @Nonnull <E> ConcurrentHashSet<E> get(@NonNegative int initialCapacity) {
+        return get(initialCapacity, 0.75f);
     }
     
     /**
      * @see ConcurrentHashMap#ConcurrentHashMap()
      */
-    public ConcurrentHashSet() {
-        this.map = new ConcurrentHashMap<>();
-        this.set = map.keySet();
+    @Pure
+    public static @Capturable @Nonnull <E> ConcurrentHashSet<E> get() {
+        return get(16);
     }
     
     /**
      * @see ConcurrentHashMap#ConcurrentHashMap(java.util.Map)
      */
-    public ConcurrentHashSet(@Nonnull Set<? extends E> set) {
-        this.map = new ConcurrentHashMap<>(set.size());
+    protected ConcurrentHashSet(@Nonnull Set<? extends E> set) {
+        this.map = ConcurrentHashMap.get(set.size());
         this.set = map.keySet();
         addAll(set);
+    }
+    
+    /**
+     * @see ConcurrentHashMap#ConcurrentHashMap(java.util.Map)
+     */
+    @Pure
+    public static @Capturable @Nonnull <E> ConcurrentHashSet<E> getNonNullable(@Nonnull Set<? extends E> set) {
+        return new ConcurrentHashSet<>(set);
+    }
+    
+    /**
+     * @see ConcurrentHashMap#ConcurrentHashMap(java.util.Map)
+     */
+    @Pure
+    public static @Capturable @Nullable <E> ConcurrentHashSet<E> getNullable(@Nullable Set<? extends E> set) {
+        return set == null ? null : getNonNullable(set);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Set –––––––––––––––––––––––––––––––––––––––––––––––––– */

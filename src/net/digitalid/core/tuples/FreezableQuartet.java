@@ -36,21 +36,37 @@ public class FreezableQuartet<E0, E1, E2, E3> extends FreezableTriplet<E0, E1, E
      * @param element2 the third element of this tuple.
      * @param element3 the fourth element of this tuple.
      */
-    public FreezableQuartet(@Nullable E0 element0, @Nullable E1 element1, @Nullable E2 element2, @Nullable E3 element3) {
+    protected FreezableQuartet(@Nullable E0 element0, @Nullable E1 element1, @Nullable E2 element2, @Nullable E3 element3) {
         super(element0, element1, element2);
         
         this.element3 = element3;
     }
     
     /**
+     * Creates a new quartet with the given elements.
+     * 
+     * @param element0 the first element of this tuple.
+     * @param element1 the second element of this tuple.
+     * @param element2 the third element of this tuple.
+     * @param element3 the fourth element of this tuple.
+     * 
+     * @return a new quartet with the given elements.
+     */
+    @Pure
+    public static @Capturable @Nonnull @NonFrozen <E0, E1, E2, E3> FreezableQuartet<E0, E1, E2, E3> get(@Nullable E0 element0, @Nullable E1 element1, @Nullable E2 element2, @Nullable E3 element3) {
+        return new FreezableQuartet<>(element0, element1, element2, element3);
+    }
+    
+    /**
      * Creates a new quartet from the given quartet.
      * 
      * @param quartet the quartet containing the elements.
+     * 
+     * @return a new quartet from the given quartet.
      */
-    public FreezableQuartet(@Nonnull @NullableElements ReadOnlyQuartet<E0, E1, E2, E3> quartet) {
-        super(quartet);
-        
-        this.element3 = quartet.getElement3();
+    @Pure
+    public static @Capturable @Nonnull @NonFrozen <E0, E1, E2, E3> FreezableQuartet<E0, E1, E2, E3> getNonNullable(@Nonnull @NullableElements ReadOnlyQuartet<E0, E1, E2, E3> quartet) {
+        return get(quartet.getElement0(), quartet.getElement1(), quartet.getElement2(), quartet.getElement3());
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Getter –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -88,7 +104,7 @@ public class FreezableQuartet<E0, E1, E2, E3> extends FreezableTriplet<E0, E1, E
     @Pure
     @Override
     public @Capturable @Nonnull @NonFrozen FreezableQuartet<E0, E1, E2, E3> clone() {
-        return new FreezableQuartet<>(this);
+        return FreezableQuartet.getNonNullable(this);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */

@@ -12,6 +12,7 @@
   - [Setup](#setup)
 - [Library](#library)
   - [Classpath](#classpath)
+  - [Constructors](#constructors)
   - [Initialization](#initialization)
   - [Role Creation](#role-creation)
   - [Concept Retrieval](#concept-retrieval)
@@ -138,6 +139,19 @@ All you have to do to deinstall Digital ID, is to delete the folder `~/.DigitalI
 #### Classpath
 
 In order to use the Digital ID reference implementation as a library, download [DigitalID-Client.jar](https://www.digitalid.net/libraries/DigitalID-Client.jar) and add it to the classpath of your favorite [IDE](https://en.wikipedia.org/wiki/Integrated_development_environment).
+
+#### Constructors
+
+For reasons of flexibility and consistency, there are no public constructors in the core library but only static methods like `getNullable()` and `getNonNullable()`. This design principle has the following advantages:
+- Possibility to return a cached object instead of a new one, which is important for the observer pattern.
+- Possibility to return null instead of a new object, which is useful to propagate null values.
+- Possibility to perform operations before having to call the constructor of the superclass.
+- Possibility to choose a more descriptive name for the static constructor method.
+- Possibility to construct objects of a subclass instead of the current class.
+- Possibility to make use of these possibilities at some later point in time.
+- And [NetBeans](https://netbeans.org) correctly checks non-null types!
+
+Besides slightly bigger classes, the biggest disadvantage seems to be that static methods are inherited and can thus lead to namespace pollution.
 
 #### Initialization
 

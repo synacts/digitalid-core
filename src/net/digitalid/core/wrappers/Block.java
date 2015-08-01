@@ -170,56 +170,25 @@ public final class Block implements Storable<Block>, Cloneable {
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructors –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Allocates a new block of the given type with the given byte array.
+     * Creates a new block with the given parameters.
      * 
-     * @param type the semantic type of this block.
-     * @param bytes the byte array of this block.
+     * @param type the semantic type of the new block.
+     * @param bytes the byte array of the new block.
+     * @param offset the offset of the new block in the given byte array.
+     * @param length the length of the new block.
+     * 
+     * @require offset + length <= bytes.length : "The section fits into the given byte array.";
      */
-    public @Encoded Block(@Nonnull @Loaded SemanticType type, @Captured @Nonnull @NonEmpty byte[] bytes) {
+    private @Encoded Block(@Nonnull @Loaded SemanticType type, @Captured @Nonnull @NonEmpty byte[] bytes, @NonNegative int offset, @Positive int length) {
         assert type.isLoaded() : "The type declaration is loaded.";
         assert bytes.length > 0 : "The byte array is not empty.";
+        assert offset >= 0 : "The offset is not negative.";
+        assert length > 0 : "The length is positive.";
+        assert offset + length <= bytes.length : "The section fits into the given byte array.";
         
         this.type = type;
         this.bytes = bytes;
-        this.offset = 0;
-        this.length = bytes.length;
-        this.wrapper = null;
-        this.encoded = true;
-        
-        assert invariant();
-    }
-    
-    /**
-     * Allocates a new block of the given type based on the given block.
-     * This constructor allows syntactic types to recast a block for their internal decoding.
-     * 
-     * @param type the semantic type of this block.
-     * @param block the block containing the byte array.
-     */
-    public @Encoded Block(@Nonnull SemanticType type, @Nonnull @NonEncoding Block block) {
-        this(type, block.encodeIfNotYetEncoded(), 0, block.getLength());
-    }
-    
-    /**
-     * Allocates a new block with the indicated section in the byte array.
-     * 
-     * @param type the semantic type of this block.
-     * @param block the block containing the byte array.
-     * @param offset the offset of this block in the given block.
-     * @param length the length of this block.
-     * 
-     * @require offset + length <= block.getLength() : "The section fits into the given block.";
-     */
-    public @Encoded Block(@Nonnull @Loaded SemanticType type, @Nonnull @Encoded Block block, @NonNegative int offset, @Positive int length) {
-        assert type.isLoaded() : "The type declaration is loaded.";
-        assert block.isEncoded() : "The given block is encoded.";
-        assert offset >= 0 : "The offset is not negative.";
-        assert length > 0 : "The length is positive.";
-        assert offset + length <= block.getLength() : "The section fits into the given block.";
-        
-        this.type = type;
-        this.bytes = block.bytes;
-        this.offset = block.offset + offset;
+        this.offset = offset;
         this.length = length;
         this.wrapper = null;
         this.encoded = true;
@@ -228,21 +197,96 @@ public final class Block implements Storable<Block>, Cloneable {
     }
     
     /**
+     * Allocates a new block of the given type with the given byte array.
+     * 
+     * @param type the semantic type of the new block.
+     * @param bytes the byte array of the new block.
+     * 
+     * @return a new block of the given type with the given byte array.
+     */
+    @Pure
+    public static @Nonnull @Encoded Block getNonNullable(@Nonnull @Loaded SemanticType type, @Captured @Nonnull @NonEmpty byte[] bytes) {
+        return new Block(type, bytes, 0, bytes.length);
+    }
+    
+    /**
+     * Allocates a new block of the given type with the given byte array.
+     * 
+     * @param type the semantic type of the new block.
+     * @param bytes the byte array of the new block.
+     * 
+     * @return a new block of the given type with the given byte array.
+     */
+    @Pure
+    public static @Nullable @Encoded Block getNullable(@Nonnull @Loaded SemanticType type, @Captured @Nullable @NonEmpty byte[] bytes) {
+        return bytes == null ? null : getNonNullable(type, bytes);
+    }
+    
+    /**
+     * Allocates a new block with the indicated section in the given block.
+     * 
+     * @param type the semantic type of the new block.
+     * @param block the block containing the byte array.
+     * @param offset the offset of the new block in the given block.
+     * @param length the length of the new block.
+     * 
+     * @return a new block with the indicated section in the given block.
+     * 
+     * @require offset + length <= block.getLength() : "The section fits into the given block.";
+     */
+    @Pure
+    public static @Nonnull @Encoded Block getNonNullable(@Nonnull @Loaded SemanticType type, @Nonnull @Encoded Block block, @NonNegative int offset, @Positive int length) {
+        assert block.isEncoded() : "The given block is encoded.";
+        
+        return new Block(type, block.bytes, block.offset + offset, length);
+    }
+    
+    /**
+     * Allocates a new block of the given type based on the given block.
+     * This constructor allows syntactic types to recast a block for their internal decoding.
+     * 
+     * @param type the semantic type of the new block.
+     * @param block the block containing the byte array.
+     * 
+     * @return a new block of the given type based on the given block.
+     */
+    @Pure
+    public static @Nonnull @Encoded Block getNonNullable(@Nonnull SemanticType type, @Nonnull @NonEncoding Block block) {
+        return getNonNullable(type, block.encodeIfNotYetEncoded(), 0, block.getLength());
+    }
+    
+    /**
      * Allocates a new block of the given type with the given wrapper.
      * This constructor is used for the lazy encoding of blocks.
      * 
-     * @param type the semantic type of this block.
-     * @param wrapper the wrapper of this block.
+     * @param type the semantic type of the new block.
+     * @param wrapper the wrapper of the new block.
      * 
      * @ensure !isAllocated() : "This block is not yet allocated.";
      */
-    @NonEncoded Block(@Nonnull @Loaded SemanticType type, @Nonnull Wrapper<?> wrapper) {
+    private @NonEncoded Block(@Nonnull @Loaded SemanticType type, @Nonnull Wrapper<?> wrapper) {
         assert type.isLoaded() : "The type declaration is loaded.";
         
         this.type = type;
         this.wrapper = wrapper;
         
         assert invariant();
+    }
+    
+    /**
+     * Allocates a new block of the given type with the given wrapper.
+     * This constructor is used for the lazy encoding of blocks.
+     * 
+     * @param type the semantic type of the new block.
+     * @param wrapper the wrapper of the new block.
+     * 
+     * @return a new block of the given type with the given wrapper.
+     * 
+     * @ensure !isAllocated() : "This block is not yet allocated.";
+     */
+    @Pure
+    static @Nonnull @NonEncoded Block getNonNullable(@Nonnull @Loaded SemanticType type, @Nonnull Wrapper<?> wrapper) {
+        return new Block(type, wrapper);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -592,7 +636,7 @@ public final class Block implements Storable<Block>, Cloneable {
     @Pure
     @Override
     public @Nonnull @Encoded Block clone() {
-        return new Block(type, this);
+        return Block.getNonNullable(type, this);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -682,7 +726,7 @@ public final class Block implements Storable<Block>, Cloneable {
         @Pure
         @Override
         protected @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getValues(@Nonnull Block block) {
-            return new FreezableArray<>(block.toString());
+            return FreezableArray.getNonNullable(block.toString());
         }
         
         @Override
@@ -699,7 +743,7 @@ public final class Block implements Storable<Block>, Cloneable {
         public @Nullable Block getNullable(@Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
             final @Nonnull byte[] bytes = resultSet.getBytes(columnIndex);
             if (resultSet.wasNull()) return null;
-            else return new Block(getType(), bytes);
+            else return Block.getNonNullable(getType(), bytes);
         }
         
     }
@@ -728,7 +772,7 @@ public final class Block implements Storable<Block>, Cloneable {
         
         encodeIfNotYetEncoded();
         assert bytes != null : "The byte array is allocated.";
-        return new Block(type, symmetricKey.encrypt(initializationVector, bytes, offset, length));
+        return Block.getNonNullable(type, symmetricKey.encrypt(initializationVector, bytes, offset, length));
     }
     
     /**
@@ -747,7 +791,7 @@ public final class Block implements Storable<Block>, Cloneable {
         
         encodeIfNotYetEncoded();
         assert bytes != null : "The byte array is allocated.";
-        return new Block(type, symmetricKey.decrypt(initializationVector, bytes, offset, length));
+        return Block.getNonNullable(type, symmetricKey.decrypt(initializationVector, bytes, offset, length));
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Write –––––––––––––––––––––––––––––––––––––––––––––––––– */

@@ -12,6 +12,7 @@ import net.digitalid.core.annotations.Frozen;
 import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonFrozen;
 import net.digitalid.core.annotations.NonFrozenRecipient;
+import net.digitalid.core.annotations.NonNegative;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.annotations.ValidIndex;
 import net.digitalid.core.annotations.ValidIndexForInsertion;
@@ -61,43 +62,83 @@ public class FreezableArrayList<E> extends ArrayList<E> implements FreezableList
     /**
      * @see ArrayList#ArrayList()
      */
-    public FreezableArrayList() {
+    protected FreezableArrayList() {
         super();
+    }
+    
+    /**
+     * @see ArrayList#ArrayList()
+     */
+    @Pure
+    public static @Capturable @Nonnull @NonFrozen <E> FreezableArrayList<E> get() {
+        return new FreezableArrayList<>();
     }
     
     /**
      * Creates a new freezable array list with the given element.
      * 
      * @param element the element to add to the newly created list.
+     * 
+     * @return a new freezable array list with the given element.
      */
-    public FreezableArrayList(@Nullable E element) {
-        this();
-        add(element);
+    @Pure
+    public static @Capturable @Nonnull @NonFrozen <E> FreezableArrayList<E> get(@Nullable E element) {
+        final @Nonnull FreezableArrayList<E> list = get();
+        list.add(element);
+        return list;
+    }
+    
+    /**
+     * @see ArrayList#ArrayList(int)
+     */
+    protected FreezableArrayList(@NonNegative int initialCapacity) {
+        super(initialCapacity);
+    }
+    
+    /**
+     * @see ArrayList#ArrayList(int)
+     */
+    @Pure
+    public static @Capturable @Nonnull @NonFrozen <E> FreezableArrayList<E> getWithCapacity(@NonNegative int initialCapacity) {
+        return new FreezableArrayList<>(initialCapacity);
     }
     
     /**
      * Creates a new freezable array list with the given elements.
      * 
      * @param elements the elements to add to the newly created list.
+     * 
+     * @return a new freezable array list with the given elements.
      */
+    @Pure
     @SuppressWarnings("unchecked")
-    public FreezableArrayList(@Nonnull E... elements) {
-        this(elements.length);
-        addAll(Arrays.asList(elements));
-    }
-    
-    /**
-     * @see ArrayList#ArrayList(int)
-     */
-    public FreezableArrayList(int initialCapacity) {
-        super(initialCapacity);
+    public static @Capturable @Nonnull @NonFrozen <E> FreezableArrayList<E> get(@Nonnull E... elements) {
+        final @Nonnull FreezableArrayList<E> list = getWithCapacity(elements.length);
+        list.addAll(Arrays.asList(elements));
+        return list;
     }
     
     /**
      * @see ArrayList#ArrayList(java.util.Collection)
      */
-    public FreezableArrayList(@Nonnull Collection<? extends E> collection) {
+    protected FreezableArrayList(@Nonnull Collection<? extends E> collection) {
         super(collection);
+    }
+    
+    /**
+     * @see ArrayList#ArrayList(java.util.Collection)
+     */
+    @Pure
+    public static @Capturable @Nonnull @NonFrozen <E> FreezableArrayList<E> getNonNullable(@Nonnull Collection<? extends E> collection) {
+        return new FreezableArrayList<>(collection);
+    }
+    
+    /**
+     * @see ArrayList#ArrayList(java.util.Collection)
+     */
+    @Pure
+    public static @Capturable @Nullable @NonFrozen <E> FreezableArrayList<E> getNullable(@Nullable Collection<? extends E> collection) {
+        return collection == null ? null : getNonNullable(collection);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Collection –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -133,26 +174,26 @@ public class FreezableArrayList<E> extends ArrayList<E> implements FreezableList
     
     @Pure
     @Override
-    public @Nonnull FreezableIterator<E> iterator() {
-        return new FreezableIterableIterator<>(this, super.iterator());
+    public @Capturable @Nonnull FreezableIterator<E> iterator() {
+        return FreezableIterableIterator.get(this, super.iterator());
     }
     
     @Pure
     @Override
-    public @Nonnull FreezableListIterator<E> listIterator() {
-        return new FreezableListIterator<>(this, super.listIterator());
+    public @Capturable @Nonnull FreezableListIterator<E> listIterator() {
+        return FreezableListIterator.get(this, super.listIterator());
     }
     
     @Pure
     @Override
-    public @Nonnull FreezableListIterator<E> listIterator(@ValidIndexForInsertion int index) {
-        return new FreezableListIterator<>(this, super.listIterator(index));
+    public @Capturable @Nonnull FreezableListIterator<E> listIterator(@ValidIndexForInsertion int index) {
+        return FreezableListIterator.get(this, super.listIterator(index));
     }
     
     @Pure
     @Override
     public @Nonnull FreezableList<E> subList(@ValidIndex int fromIndex, @ValidIndexForInsertion int toIndex) {
-        return new BackedFreezableList<>(this, super.subList(fromIndex, toIndex));
+        return BackedFreezableList.get(this, super.subList(fromIndex, toIndex));
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Operations –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -321,7 +362,7 @@ public class FreezableArrayList<E> extends ArrayList<E> implements FreezableList
     @Override
     @SuppressWarnings("unchecked")
     public @Capturable @Nonnull @NonFrozen FreezableArray<E> toFreezableArray() {
-        return new FreezableArray<>(toArray((E[]) new Object[size()]));
+        return FreezableArray.getNonNullable(toArray((E[]) new Object[size()]));
     }
     
 }

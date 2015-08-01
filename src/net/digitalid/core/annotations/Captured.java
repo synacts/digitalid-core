@@ -10,6 +10,8 @@ import java.lang.annotation.Target;
  * This annotation indicates that a parameter is captured by the callee and that the passed object
  * should afterwards no longer be modified by the caller of the constructor or (setter) method.
  * 
+ * @see Capturable
+ * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */

@@ -10,6 +10,7 @@ import net.digitalid.core.annotations.Frozen;
 import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonFrozen;
 import net.digitalid.core.annotations.NonFrozenRecipient;
+import net.digitalid.core.annotations.NonNegative;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.annotations.ValidIndex;
 
@@ -39,8 +40,20 @@ public class FreezableArray<E> extends FreezableObject implements ReadOnlyArray<
      * @param size the size of the newly created array.
      */
     @SuppressWarnings("unchecked")
-    public FreezableArray(int size) {
+    protected FreezableArray(@NonNegative int size) {
         array = (E[]) new Object[size];
+    }
+    
+    /**
+     * Creates a new freezable array with the given size.
+     * 
+     * @param size the size of the newly created array.
+     * 
+     * @return a new freezable array with the given size.
+     */
+    @Pure
+    public static @Capturable @Nonnull @NonFrozen <E> FreezableArray<E> get(@NonNegative int size) {
+        return new FreezableArray<>(size);
     }
     
     /**
@@ -49,8 +62,33 @@ public class FreezableArray<E> extends FreezableObject implements ReadOnlyArray<
      * @param array the elements of the new array.
      */
     @SafeVarargs
-    public FreezableArray(@Captured @Nonnull E... array) {
+    protected FreezableArray(@Captured @Nonnull E... array) {
         this.array = array;
+    }
+    
+    /**
+     * Creates a new freezable array from the given array.
+     * 
+     * @param array the elements of the new array.
+     * 
+     * @return a new freezable array from the given array.
+     */
+    @Pure
+    @SafeVarargs
+    public static @Capturable @Nonnull @NonFrozen <E> FreezableArray<E> getNonNullable(@Captured @Nonnull E... array) {
+        return new FreezableArray<>(array);
+    }
+    
+    /**
+     * Creates a new freezable array from the given array.
+     * 
+     * @param array the elements of the new array.
+     * 
+     * @return a new freezable array from the given array.
+     */
+    @Pure
+    public static @Capturable @Nullable @NonFrozen <E> FreezableArray<E> getNullable(@Captured @Nullable E[] array) {
+        return array == null ? null : getNonNullable(array);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Freezable –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -103,8 +141,8 @@ public class FreezableArray<E> extends FreezableObject implements ReadOnlyArray<
     
     @Pure
     @Override
-    public @Nonnull FreezableArrayIterator<E> iterator() {
-        return new FreezableArrayIterator<>(this);
+    public @Capturable @Nonnull FreezableArrayIterator<E> iterator() {
+        return FreezableArrayIterator.get(this);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Operation –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -171,7 +209,7 @@ public class FreezableArray<E> extends FreezableObject implements ReadOnlyArray<
     @Pure
     @Override
     public @Capturable @Nonnull @NonFrozen FreezableList<E> toFreezableList() {
-        final @Nonnull FreezableList<E> freezableList = new FreezableArrayList<>(array.length);
+        final @Nonnull FreezableList<E> freezableList = FreezableArrayList.getWithCapacity(array.length);
         for (final @Nullable E element : array) freezableList.add(element);
         return freezableList;
     }

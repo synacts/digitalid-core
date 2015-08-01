@@ -10,6 +10,8 @@ import net.digitalid.core.annotations.Frozen;
 import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonFrozen;
 import net.digitalid.core.annotations.NonFrozenRecipient;
+import net.digitalid.core.annotations.NonNegative;
+import net.digitalid.core.annotations.Positive;
 import net.digitalid.core.annotations.Pure;
 
 /**
@@ -54,41 +56,71 @@ public class FreezableLinkedHashSet<E> extends LinkedHashSet<E> implements Freez
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructors –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
+     * @see LinkedHashSet#LinkedHashSet(int, float)
+     */
+    protected FreezableLinkedHashSet(@NonNegative int initialCapacity, @Positive float loadFactor) {
+        super(initialCapacity, loadFactor);
+    }
+    
+    /**
+     * @see LinkedHashSet#LinkedHashSet(int, float)
+     */
+    @Pure
+    public static @Capturable @Nonnull @NonFrozen <E> FreezableLinkedHashSet<E> get(@NonNegative int initialCapacity, @Positive float loadFactor) {
+        return new FreezableLinkedHashSet<>(initialCapacity, loadFactor);
+    }
+    
+    /**
+     * @see LinkedHashSet#LinkedHashSet(int)
+     */
+    @Pure
+    public static @Capturable @Nonnull @NonFrozen <E> FreezableLinkedHashSet<E> get(@NonNegative int initialCapacity) {
+        return get(initialCapacity, 0.75f);
+    }
+    
+    /**
      * @see LinkedHashSet#LinkedHashSet()
      */
-    public FreezableLinkedHashSet() {
-        super();
+    @Pure
+    public static @Capturable @Nonnull @NonFrozen <E> FreezableLinkedHashSet<E> get() {
+        return get(16);
     }
     
     /**
      * Creates a new freezable linked hash set with the given element.
      * 
      * @param element the element to add to the newly created hash set.
+     * 
+     * @return a new freezable linked hash set with the given element.
      */
-    public FreezableLinkedHashSet(@Nullable E element) {
-        this();
-        add(element);
-    }
-    
-    /**
-     * @see LinkedHashSet#LinkedHashSet(int)
-     */
-    public FreezableLinkedHashSet(int initialCapacity) {
-        super(initialCapacity);
-    }
-    
-    /**
-     * @see LinkedHashSet#LinkedHashSet(int, float)
-     */
-    public FreezableLinkedHashSet(int initialCapacity, float loadFactor) {
-        super(initialCapacity, loadFactor);
+    @Pure
+    public static @Capturable @Nonnull @NonFrozen <E> FreezableLinkedHashSet<E> get(@Nullable E element) {
+        final @Nonnull FreezableLinkedHashSet<E> set = get();
+        set.add(element);
+        return set;
     }
     
     /**
      * @see LinkedHashSet#LinkedHashSet(java.util.Collection)
      */
-    public FreezableLinkedHashSet(@Nonnull Collection<? extends E> collection) {
+    protected FreezableLinkedHashSet(@Nonnull Collection<? extends E> collection) {
         super(collection);
+    }
+    
+    /**
+     * @see LinkedHashSet#LinkedHashSet(java.util.Collection)
+     */
+    @Pure
+    public static @Capturable @Nonnull @NonFrozen <E> FreezableLinkedHashSet<E> getNonNullable(@Nonnull Collection<? extends E> collection) {
+        return new FreezableLinkedHashSet<>(collection);
+    }
+    
+    /**
+     * @see LinkedHashSet#LinkedHashSet(java.util.Collection)
+     */
+    @Pure
+    public static @Capturable @Nullable @NonFrozen <E> FreezableLinkedHashSet<E> getNullable(@Nullable Collection<? extends E> collection) {
+        return new FreezableLinkedHashSet<>(collection);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Collection –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -102,7 +134,7 @@ public class FreezableLinkedHashSet<E> extends LinkedHashSet<E> implements Freez
     @Pure
     @Override
     public @Nonnull FreezableIterator<E> iterator() {
-        return new FreezableIterableIterator<>(this, super.iterator());
+        return FreezableIterableIterator.get(this, super.iterator());
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Conditions –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -210,7 +242,7 @@ public class FreezableLinkedHashSet<E> extends LinkedHashSet<E> implements Freez
     @Override
     @SuppressWarnings("unchecked")
     public @Capturable @Nonnull @NonFrozen FreezableArray<E> toFreezableArray() {
-        return new FreezableArray<>(toArray((E[]) new Object[size()]));
+        return FreezableArray.getNonNullable(toArray((E[]) new Object[size()]));
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */

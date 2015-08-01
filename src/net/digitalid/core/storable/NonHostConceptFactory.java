@@ -322,7 +322,7 @@ public abstract class NonHostConceptFactory<O> {
         
         final @Nonnull FreezableArray<String> values = getValuesOrNulls(object);
         for (int i = 0; i < values.size(); i++) {
-            values.set(i, (alias.isEmpty() ? "" : alias + ".") + prefix + columns.getNonNullable(i).getName() + " = " + values.getNonNullable(i));
+            values.set(i, (alias.isEmpty() ? "" : alias + ".") + prefix + columns.getNonNullable(i).getName() + " = " + values.get(i));
         }
         return values;
     }

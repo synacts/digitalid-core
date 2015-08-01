@@ -19,7 +19,7 @@ import net.digitalid.core.annotations.Pure;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-class BackedFreezableSet<E> extends BackedFreezableCollection<E> implements FreezableSet<E> {
+final class BackedFreezableSet<E> extends BackedFreezableCollection<E> implements FreezableSet<E> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Field –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -36,10 +36,23 @@ class BackedFreezableSet<E> extends BackedFreezableCollection<E> implements Free
      * @param freezable a reference to the underlying freezable.
      * @param set a reference to the underlying set.
      */
-    BackedFreezableSet(@Nonnull Freezable freezable, @Nonnull Set<E> set) {
+    private BackedFreezableSet(@Nonnull Freezable freezable, @Nonnull Set<E> set) {
         super(freezable, set);
         
         this.set = set;
+    }
+    
+    /**
+     * Creates a new backed freezable set.
+     * 
+     * @param freezable a reference to the underlying freezable.
+     * @param set a reference to the underlying set.
+     * 
+     * @return a new backed freezable set.
+     */
+    @Pure
+    static @Nonnull <E> BackedFreezableSet<E> get(@Nonnull Freezable freezable, @Nonnull Set<E> set) {
+        return new BackedFreezableSet<>(freezable, set);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Freezable –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -81,7 +94,7 @@ class BackedFreezableSet<E> extends BackedFreezableCollection<E> implements Free
     @Pure
     @Override
     public @Capturable @Nonnull @NonFrozen FreezableSet<E> clone() {
-        return new FreezableHashSet<>(set);
+        return FreezableHashSet.getNonNullable(set);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */

@@ -10,6 +10,8 @@ import net.digitalid.core.annotations.Frozen;
 import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonFrozen;
 import net.digitalid.core.annotations.NonFrozenRecipient;
+import net.digitalid.core.annotations.NonNegative;
+import net.digitalid.core.annotations.Positive;
 import net.digitalid.core.annotations.Pure;
 
 /**
@@ -54,41 +56,71 @@ public class FreezableHashSet<E> extends HashSet<E> implements FreezableSet<E> {
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructors –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
+     * @see HashSet#HashSet(int, float)
+     */
+    protected FreezableHashSet(@NonNegative int initialCapacity, @Positive float loadFactor) {
+        super(initialCapacity, loadFactor);
+    }
+    
+    /**
+     * @see HashSet#HashSet(int, float)
+     */
+    @Pure
+    public static @Capturable @Nonnull @NonFrozen <E> FreezableHashSet<E> get(@NonNegative int initialCapacity, @Positive float loadFactor) {
+        return new FreezableHashSet<>(initialCapacity, loadFactor);
+    }
+    
+    /**
+     * @see HashSet#HashSet(int)
+     */
+    @Pure
+    public static @Capturable @Nonnull @NonFrozen <E> FreezableHashSet<E> get(@NonNegative int initialCapacity) {
+        return get(initialCapacity, 0.75f);
+    }
+    
+    /**
      * @see HashSet#HashSet()
      */
-    public FreezableHashSet() {
-        super();
+    @Pure
+    public static @Capturable @Nonnull @NonFrozen <E> FreezableHashSet<E> get() {
+        return get(16);
     }
     
     /**
      * Creates a new freezable hash set with the given element.
      * 
      * @param element the element to add to the newly created hash set.
+     * 
+     * @return a new freezable hash set with the given element.
      */
-    public FreezableHashSet(@Nullable E element) {
-        this();
-        add(element);
-    }
-    
-    /**
-     * @see HashSet#HashSet(int)
-     */
-    public FreezableHashSet(int initialCapacity) {
-        super(initialCapacity);
-    }
-    
-    /**
-     * @see HashSet#HashSet(int, float)
-     */
-    public FreezableHashSet(int initialCapacity, float loadFactor) {
-        super(initialCapacity, loadFactor);
+    @Pure
+    public static @Capturable @Nonnull @NonFrozen <E> FreezableHashSet<E> get(@Nullable E element) {
+        final @Nonnull FreezableHashSet<E> set = get();
+        set.add(element);
+        return set;
     }
     
     /**
      * @see HashSet#HashSet(java.util.Collection)
      */
-    public FreezableHashSet(@Nonnull Collection<? extends E> collection) {
+    protected FreezableHashSet(@Nonnull Collection<? extends E> collection) {
         super(collection);
+    }
+    
+    /**
+     * @see HashSet#HashSet(java.util.Collection)
+     */
+    @Pure
+    public static @Capturable @Nonnull @NonFrozen <E> FreezableHashSet<E> getNonNullable(@Nonnull Collection<? extends E> collection) {
+        return new FreezableHashSet<>(collection);
+    }
+    
+    /**
+     * @see HashSet#HashSet(java.util.Collection)
+     */
+    @Pure
+    public static @Capturable @Nullable @NonFrozen <E> FreezableHashSet<E> getNullable(@Nullable Collection<? extends E> collection) {
+        return collection == null ? null : getNonNullable(collection);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Collection –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -102,7 +134,7 @@ public class FreezableHashSet<E> extends HashSet<E> implements FreezableSet<E> {
     @Pure
     @Override
     public @Nonnull FreezableIterator<E> iterator() {
-        return new FreezableIterableIterator<>(this, super.iterator());
+        return FreezableIterableIterator.get(this, super.iterator());
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Conditions –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -210,7 +242,7 @@ public class FreezableHashSet<E> extends HashSet<E> implements FreezableSet<E> {
     @Override
     @SuppressWarnings("unchecked")
     public @Capturable @Nonnull @NonFrozen FreezableArray<E> toFreezableArray() {
-        return new FreezableArray<>(toArray((E[]) new Object[size()]));
+        return FreezableArray.getNonNullable(toArray((E[]) new Object[size()]));
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */

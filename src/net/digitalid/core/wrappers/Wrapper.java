@@ -53,6 +53,7 @@ public abstract class Wrapper<W extends Wrapper<W>> implements Storable<W> { // 
         this.block = block;
     }
     
+    // TODO: Introduce a WrapperFactory (that uses the local type).
     
     @Pure
     @Override

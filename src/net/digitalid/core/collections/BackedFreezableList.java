@@ -26,7 +26,7 @@ import net.digitalid.core.annotations.ValidIndexForInsertion;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-class BackedFreezableList<E> extends BackedFreezableCollection<E> implements FreezableList<E> {
+final class BackedFreezableList<E> extends BackedFreezableCollection<E> implements FreezableList<E> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Field –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -43,10 +43,21 @@ class BackedFreezableList<E> extends BackedFreezableCollection<E> implements Fre
      * @param freezable a reference to the underlying freezable.
      * @param list a reference to the underlying list.
      */
-    BackedFreezableList(@Nonnull Freezable freezable, @Nonnull List<E> list) {
+    private BackedFreezableList(@Nonnull Freezable freezable, @Nonnull List<E> list) {
         super(freezable, list);
         
         this.list = list;
+    }
+    
+    /**
+     * Creates a new freezable sublist.
+     * 
+     * @param freezable a reference to the underlying freezable.
+     * @param list a reference to the underlying list.
+     */
+    @Pure
+    static @Nonnull <E> BackedFreezableList<E> get(@Nonnull Freezable freezable, @Nonnull List<E> list) {
+        return new BackedFreezableList<>(freezable, list);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Freezable –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -227,7 +238,7 @@ class BackedFreezableList<E> extends BackedFreezableCollection<E> implements Fre
     @Pure
     @Override
     public @Capturable @Nonnull @NonFrozen FreezableList<E> clone() {
-        return new FreezableArrayList<>(list);
+        return FreezableArrayList.getNonNullable(list);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */
