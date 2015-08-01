@@ -6,6 +6,7 @@ import net.digitalid.core.annotations.Encoding;
 import net.digitalid.core.annotations.Frozen;
 import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonNullableElements;
+import net.digitalid.core.annotations.NullableElements;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.collections.FreezableArrayList;
 import net.digitalid.core.collections.FreezableList;
@@ -150,7 +151,7 @@ public final class ListWrapper extends Wrapper {
      * @ensure basedOnParameter(toBlock().getType(), elements) : "Each element is either null or based on the parameter of the block's type.";
      */
     @Pure
-    public @Nonnull @Frozen ReadOnlyList<Block> getElements() {
+    public @Nonnull @NullableElements @Frozen ReadOnlyList<Block> getElements() {
         return elements;
     }
     
@@ -164,7 +165,7 @@ public final class ListWrapper extends Wrapper {
      * @ensure basedOnParameters(toBlock().getType(), elements) : "Each element is based on the parameter of the block's type.";
      */
     @Pure
-    public @Nonnull @Frozen @NonNullableElements ReadOnlyList<Block> getElementsNotNull() throws InvalidEncodingException {
+    public @Nonnull @NonNullableElements @Frozen ReadOnlyList<Block> getElementsNotNull() throws InvalidEncodingException {
         final @Nonnull ReadOnlyList<Block> elements = getElements();
         
         if (elements.containsNull()) throw new InvalidEncodingException("The list contains null.");

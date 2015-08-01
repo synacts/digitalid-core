@@ -149,7 +149,7 @@ For reasons of flexibility and consistency, there are no public constructors in 
 - Possibility to choose a more descriptive name for the static constructor method.
 - Possibility to construct objects of a subclass instead of the current class.
 - Possibility to make use of these possibilities at some later point in time.
-- And [NetBeans](https://netbeans.org) correctly checks non-null types!
+- And [NetBeans](https://netbeans.org) correctly checks non-null parameter assignments!
 
 Besides slightly bigger classes, the biggest disadvantage seems to be that static methods are inherited and can thus lead to namespace pollution.
 

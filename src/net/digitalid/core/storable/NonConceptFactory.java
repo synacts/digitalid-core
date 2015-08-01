@@ -6,6 +6,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Loaded;
 import net.digitalid.core.annotations.NonCommitting;
+import net.digitalid.core.annotations.NonEncoding;
 import net.digitalid.core.annotations.NonNullableElements;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.database.Column;
@@ -34,11 +35,11 @@ public abstract class NonConceptFactory<O> extends GeneralConceptFactory<O> {
      * @require block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
      */
     @Pure
-    public abstract @Nonnull O decodeNonNullable(@Nonnull Block block) throws InvalidEncodingException;
+    public abstract @Nonnull O decodeNonNullable(@Nonnull @NonEncoding Block block) throws InvalidEncodingException;
     
     @Pure
     @Override
-    public final @Nonnull O decodeNonNullable(@Nonnull Entity entity, @Nonnull Block block) throws InvalidEncodingException {
+    public final @Nonnull O decodeNonNullable(@Nonnull Entity entity, @Nonnull @NonEncoding Block block) throws InvalidEncodingException {
         return decodeNonNullable(block);
     }
     
@@ -52,7 +53,7 @@ public abstract class NonConceptFactory<O> extends GeneralConceptFactory<O> {
      * @require block == null || block.getType().isBasedOn(getType()) : "The block is either null or based on the indicated type.";
      */
     @Pure
-    public final @Nullable O decodeNullable(@Nullable Block block) throws InvalidEncodingException {
+    public final @Nullable O decodeNullable(@Nullable @NonEncoding Block block) throws InvalidEncodingException {
         if (block != null) return decodeNonNullable(block);
         else return null;
     }
@@ -104,7 +105,7 @@ public abstract class NonConceptFactory<O> extends GeneralConceptFactory<O> {
      * @param type the semantic type that corresponds to the storable class.
      * @param columns the columns used to store objects of the storable class.
      */
-    protected NonConceptFactory(@Nonnull @Loaded SemanticType type, @NonNullableElements Column... columns) {
+    protected NonConceptFactory(@Nonnull @Loaded SemanticType type, @Nonnull @NonNullableElements Column... columns) {
         super(type, columns);
     }
     

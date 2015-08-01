@@ -16,8 +16,8 @@ import net.digitalid.core.wrappers.Block;
  * @version 1.0
  */
 @Documented
-@TargetType(Block.class)
 @Retention(RetentionPolicy.CLASS)
+@TargetType({Block.class, SemanticType.class})
 @Target({ElementType.FIELD, ElementType.PARAMETER, ElementType.LOCAL_VARIABLE, ElementType.METHOD, ElementType.CONSTRUCTOR})
 public @interface BasedOn {
     String value();

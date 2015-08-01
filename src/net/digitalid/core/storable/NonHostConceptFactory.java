@@ -10,6 +10,7 @@ import net.digitalid.core.annotations.Frozen;
 import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Loaded;
 import net.digitalid.core.annotations.NonCommitting;
+import net.digitalid.core.annotations.NonEncoding;
 import net.digitalid.core.annotations.NonFrozen;
 import net.digitalid.core.annotations.NonNullableElements;
 import net.digitalid.core.annotations.Pure;
@@ -66,7 +67,7 @@ public abstract class NonHostConceptFactory<O> {
      * @ensure return.getType().equals(getType()) : "The returned block has the indicated type.";
      */
     @Pure
-    public abstract @Nonnull Block encodeNonNullable(@Nonnull O object);
+    public abstract @Nonnull @NonEncoding Block encodeNonNullable(@Nonnull O object);
     
     /**
      * Encodes the given nullable object as a new block.
@@ -78,7 +79,7 @@ public abstract class NonHostConceptFactory<O> {
      * @ensure return == null || return.getType().equals(getType()) : "The returned block is either null or has the indicated type.";
      */
     @Pure
-    public final @Nullable Block encodeNullable(@Nullable O object) {
+    public final @Nullable @NonEncoding Block encodeNullable(@Nullable O object) {
         return object == null ? null : encodeNonNullable(object);
     }
     
@@ -95,7 +96,7 @@ public abstract class NonHostConceptFactory<O> {
      * @require block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
      */
     @Pure
-    public abstract @Nonnull O decodeNonNullable(@Nonnull NonHostEntity entity, @Nonnull Block block) throws InvalidEncodingException;
+    public abstract @Nonnull O decodeNonNullable(@Nonnull NonHostEntity entity, @Nonnull @NonEncoding Block block) throws InvalidEncodingException;
     
     /**
      * Decodes the given nullable block.
@@ -108,7 +109,7 @@ public abstract class NonHostConceptFactory<O> {
      * @require block == null || block.getType().isBasedOn(getType()) : "The block is either null or based on the indicated type.";
      */
     @Pure
-    public final @Nullable O decodeNullable(@Nonnull NonHostEntity entity, @Nullable Block block) throws InvalidEncodingException {
+    public final @Nullable O decodeNullable(@Nonnull NonHostEntity entity, @Nullable @NonEncoding Block block) throws InvalidEncodingException {
         if (block != null) return decodeNonNullable(entity, block);
         else return null;
     }
@@ -276,7 +277,7 @@ public abstract class NonHostConceptFactory<O> {
      */
     @Pure
     private @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getValuesOrNulls(@Nullable O object) {
-        if (object == null) return new FreezableArray<String>(columns.size()).setAll("NULL");
+        if (object == null) return FreezableArray.<String>get(columns.size()).setAll("NULL");
         else return getValues(object);
     }
     
@@ -322,7 +323,7 @@ public abstract class NonHostConceptFactory<O> {
         
         final @Nonnull FreezableArray<String> values = getValuesOrNulls(object);
         for (int i = 0; i < values.size(); i++) {
-            values.set(i, (alias.isEmpty() ? "" : alias + ".") + prefix + columns.getNonNullable(i).getName() + " = " + values.get(i));
+            values.set(i, (alias.isEmpty() ? "" : alias + ".") + prefix + columns.getNonNullable(i).getName() + " = " + values.getNonNullable(i));
         }
         return values;
     }
@@ -400,7 +401,7 @@ public abstract class NonHostConceptFactory<O> {
      */
     @Pure
     public final @Nonnull String getInsert() {
-        return IterableConverter.toString(new FreezableArray<String>(columns.size()).setAll("?"));
+        return IterableConverter.toString(FreezableArray.<String>get(columns.size()).setAll("?"));
     }
     
     /**
@@ -418,7 +419,7 @@ public abstract class NonHostConceptFactory<O> {
         assert isValidAlias(alias) : "The alias is valid.";
         assert isValidPrefix(prefix) : "The prefix is valid.";
         
-        final @Nonnull FreezableArray<String> values = new FreezableArray<>(columns.size());
+        final @Nonnull FreezableArray<String> values = FreezableArray.get(columns.size());
         for (int i = 0; i < values.size(); i++) {
             values.set(i, (alias.isEmpty() ? "" : alias + ".") + prefix + columns.getNonNullable(i).getName() + " = ?");
         }
@@ -569,9 +570,9 @@ public abstract class NonHostConceptFactory<O> {
      * @param type the semantic type that corresponds to the storable class.
      * @param columns the columns used to store objects of the storable class.
      */
-    protected NonHostConceptFactory(@Nonnull @Loaded SemanticType type, @NonNullableElements Column... columns) {
+    protected NonHostConceptFactory(@Nonnull @Loaded SemanticType type, @Nonnull @NonNullableElements Column... columns) {
         this.type = type;
-        this.columns = new FreezableArray<>(columns).freeze();
+        this.columns = FreezableArray.getNonNullable(columns).freeze();
         int maximumColumnLength = 0;
         for (final @Nonnull Column column : columns) {
             final int columnLength = column.getName().length();

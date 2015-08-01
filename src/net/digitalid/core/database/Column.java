@@ -150,6 +150,18 @@ public class Column {
         return new Column(name, type, nullable, reference);
     }
     
+    /**
+     * Returns a new column with the given parameters.
+     * 
+     * @param name the name of the new column.
+     * @param type the SQL type of the new column.
+     * 
+     * @return a new column with the given parameters.
+     */
+    public static final @Nonnull Column get(@Nonnull @Validated String name, @Nonnull SQLType type) {
+        return get(name, type, true, null);
+    }
+    
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Declaration –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure

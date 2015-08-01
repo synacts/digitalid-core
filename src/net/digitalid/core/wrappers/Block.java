@@ -235,7 +235,7 @@ public final class Block implements Storable<Block>, Cloneable {
      * @require offset + length <= block.getLength() : "The section fits into the given block.";
      */
     @Pure
-    public static @Nonnull @Encoded Block getNonNullable(@Nonnull @Loaded SemanticType type, @Nonnull @Encoded Block block, @NonNegative int offset, @Positive int length) {
+    public static @Nonnull @Encoded Block get(@Nonnull @Loaded SemanticType type, @Nonnull @Encoded Block block, @NonNegative int offset, @Positive int length) {
         assert block.isEncoded() : "The given block is encoded.";
         
         return new Block(type, block.bytes, block.offset + offset, length);
@@ -251,8 +251,8 @@ public final class Block implements Storable<Block>, Cloneable {
      * @return a new block of the given type based on the given block.
      */
     @Pure
-    public static @Nonnull @Encoded Block getNonNullable(@Nonnull SemanticType type, @Nonnull @NonEncoding Block block) {
-        return getNonNullable(type, block.encodeIfNotYetEncoded(), 0, block.getLength());
+    public static @Nonnull @Encoded Block get(@Nonnull SemanticType type, @Nonnull @NonEncoding Block block) {
+        return Block.get(type, block.encodeIfNotYetEncoded(), 0, block.getLength());
     }
     
     /**
@@ -264,7 +264,7 @@ public final class Block implements Storable<Block>, Cloneable {
      * 
      * @ensure !isAllocated() : "This block is not yet allocated.";
      */
-    private @NonEncoded Block(@Nonnull @Loaded SemanticType type, @Nonnull Wrapper<?> wrapper) {
+    private @NonEncoded @NonEncoding Block(@Nonnull @Loaded SemanticType type, @Nonnull Wrapper<?> wrapper) {
         assert type.isLoaded() : "The type declaration is loaded.";
         
         this.type = type;
@@ -285,7 +285,7 @@ public final class Block implements Storable<Block>, Cloneable {
      * @ensure !isAllocated() : "This block is not yet allocated.";
      */
     @Pure
-    static @Nonnull @NonEncoded Block getNonNullable(@Nonnull @Loaded SemanticType type, @Nonnull Wrapper<?> wrapper) {
+    static @Nonnull @NonEncoded @NonEncoding Block get(@Nonnull @Loaded SemanticType type, @Nonnull Wrapper<?> wrapper) {
         return new Block(type, wrapper);
     }
     
@@ -636,7 +636,7 @@ public final class Block implements Storable<Block>, Cloneable {
     @Pure
     @Override
     public @Nonnull @Encoded Block clone() {
-        return Block.getNonNullable(type, this);
+        return Block.get(type, this);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -698,9 +698,9 @@ public final class Block implements Storable<Block>, Cloneable {
     private static class Factory extends NonConceptFactory<Block> {
         
         /**
-         * Stores the columns for blocks.
+         * Stores the column for blocks.
          */
-        private static final @Nonnull Column column = Column.get("block", SQLType.BLOB, true, null);
+        private static final @Nonnull Column column = Column.get("block", SQLType.BLOB);
         
         /**
          * Creates a new factory with the given type.
