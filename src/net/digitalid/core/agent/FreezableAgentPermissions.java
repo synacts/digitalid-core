@@ -56,28 +56,28 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
     /**
      * Stores the semantic type {@code type.permission.agent@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType ATTRIBUTE_TYPE = SemanticType.create("type.permission.agent@core.digitalid.net").load(SemanticType.IDENTIFIER);
+    public static final @Nonnull SemanticType ATTRIBUTE_TYPE = SemanticType.map("type.permission.agent@core.digitalid.net").load(SemanticType.IDENTIFIER);
     
     /**
      * Stores the semantic type {@code writing.permission.agent@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType WRITING = SemanticType.create("writing.permission.agent@core.digitalid.net").load(BooleanWrapper.TYPE);
+    public static final @Nonnull SemanticType WRITING = SemanticType.map("writing.permission.agent@core.digitalid.net").load(BooleanWrapper.TYPE);
     
     /**
      * Stores the semantic type {@code permission.agent@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType PERMISSION = SemanticType.create("permission.agent@core.digitalid.net").load(TupleWrapper.TYPE, ATTRIBUTE_TYPE, WRITING); 
+    public static final @Nonnull SemanticType PERMISSION = SemanticType.map("permission.agent@core.digitalid.net").load(TupleWrapper.TYPE, ATTRIBUTE_TYPE, WRITING); 
     
     /**
      * Stores the semantic type {@code list.permission.agent@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("list.permission.agent@core.digitalid.net").load(ListWrapper.TYPE, PERMISSION);
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("list.permission.agent@core.digitalid.net").load(ListWrapper.TYPE, PERMISSION);
     
     
     /**
      * Stores the semantic type {@code general.permission.agent@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType GENERAL = SemanticType.create("general.permission.agent@core.digitalid.net").load(new Category[] {Category.HOST, Category.SYNTACTIC_TYPE, Category.SEMANTIC_TYPE, Category.NATURAL_PERSON, Category.ARTIFICIAL_PERSON}, Time.TROPICAL_YEAR, BooleanWrapper.TYPE);
+    public static final @Nonnull SemanticType GENERAL = SemanticType.map("general.permission.agent@core.digitalid.net").load(new Category[] {Category.HOST, Category.SYNTACTIC_TYPE, Category.SEMANTIC_TYPE, Category.NATURAL_PERSON, Category.ARTIFICIAL_PERSON}, Time.TROPICAL_YEAR, BooleanWrapper.TYPE);
     
     /**
      * Stores an empty set of agent permissions.

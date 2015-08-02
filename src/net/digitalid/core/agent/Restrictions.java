@@ -44,32 +44,32 @@ public final class Restrictions implements Blockable, SQLizable {
     /**
      * Stores the semantic type {@code client.restrictions.agent@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType CLIENT_TYPE = SemanticType.create("client.restrictions.agent@core.digitalid.net").load(BooleanWrapper.TYPE);
+    private static final @Nonnull SemanticType CLIENT_TYPE = SemanticType.map("client.restrictions.agent@core.digitalid.net").load(BooleanWrapper.TYPE);
     
     /**
      * Stores the semantic type {@code role.restrictions.agent@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType ROLE_TYPE = SemanticType.create("role.restrictions.agent@core.digitalid.net").load(BooleanWrapper.TYPE);
+    private static final @Nonnull SemanticType ROLE_TYPE = SemanticType.map("role.restrictions.agent@core.digitalid.net").load(BooleanWrapper.TYPE);
     
     /**
      * Stores the semantic type {@code writing.restrictions.agent@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType WRITING_TYPE = SemanticType.create("writing.restrictions.agent@core.digitalid.net").load(BooleanWrapper.TYPE);
+    private static final @Nonnull SemanticType WRITING_TYPE = SemanticType.map("writing.restrictions.agent@core.digitalid.net").load(BooleanWrapper.TYPE);
     
     /**
      * Stores the semantic type {@code context.restrictions.agent@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType CONTEXT_TYPE = SemanticType.create("context.restrictions.agent@core.digitalid.net").load(Context.TYPE);
+    private static final @Nonnull SemanticType CONTEXT_TYPE = SemanticType.map("context.restrictions.agent@core.digitalid.net").load(Context.TYPE);
     
     /**
      * Stores the semantic type {@code contact.restrictions.agent@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType CONTACT_TYPE = SemanticType.create("contact.restrictions.agent@core.digitalid.net").load(Contact.TYPE);
+    private static final @Nonnull SemanticType CONTACT_TYPE = SemanticType.map("contact.restrictions.agent@core.digitalid.net").load(Contact.TYPE);
     
     /**
      * Stores the semantic type {@code restrictions.agent@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("restrictions.agent@core.digitalid.net").load(TupleWrapper.TYPE, CLIENT_TYPE, ROLE_TYPE, WRITING_TYPE, CONTEXT_TYPE, CONTACT_TYPE);
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("restrictions.agent@core.digitalid.net").load(TupleWrapper.TYPE, CLIENT_TYPE, ROLE_TYPE, WRITING_TYPE, CONTEXT_TYPE, CONTACT_TYPE);
     
     
     /**

@@ -30,7 +30,7 @@ public final class Time implements Blockable, Comparable<Time>, SQLizable /*, Si
     /**
      * Stores the semantic type {@code time@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("time@core.digitalid.net").load(Int64Wrapper.TYPE);
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("time@core.digitalid.net").load(Int64Wrapper.TYPE);
     
     
     /**

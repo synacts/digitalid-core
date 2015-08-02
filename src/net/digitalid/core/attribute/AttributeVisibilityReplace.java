@@ -42,17 +42,17 @@ final class AttributeVisibilityReplace extends CoreServiceInternalAction {
     /**
      * Stores the semantic type {@code old.visibility.attribute@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType OLD_VISIBILITY = SemanticType.create("old.visibility.attribute@core.digitalid.net").load(PassiveExpression.TYPE);
+    private static final @Nonnull SemanticType OLD_VISIBILITY = SemanticType.map("old.visibility.attribute@core.digitalid.net").load(PassiveExpression.TYPE);
     
     /**
      * Stores the semantic type {@code new.visibility.attribute@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType NEW_VISIBILITY = SemanticType.create("new.visibility.attribute@core.digitalid.net").load(PassiveExpression.TYPE);
+    private static final @Nonnull SemanticType NEW_VISIBILITY = SemanticType.map("new.visibility.attribute@core.digitalid.net").load(PassiveExpression.TYPE);
     
     /**
      * Stores the semantic type {@code replace.visibility.attribute@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType TYPE = SemanticType.create("replace.visibility.attribute@core.digitalid.net").load(TupleWrapper.TYPE, SemanticType.ATTRIBUTE_IDENTIFIER, OLD_VISIBILITY, NEW_VISIBILITY);
+    private static final @Nonnull SemanticType TYPE = SemanticType.map("replace.visibility.attribute@core.digitalid.net").load(TupleWrapper.TYPE, SemanticType.ATTRIBUTE_IDENTIFIER, OLD_VISIBILITY, NEW_VISIBILITY);
     
     
     /**

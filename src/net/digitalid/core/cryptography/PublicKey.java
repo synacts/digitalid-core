@@ -26,129 +26,129 @@ public final class PublicKey implements Blockable {
     /**
      * Stores the semantic type {@code composite.group.public.key.host@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType COMPOSITE_GROUP = SemanticType.create("composite.group.public.key.host@core.digitalid.net").load(Group.TYPE);
+    private static final @Nonnull SemanticType COMPOSITE_GROUP = SemanticType.map("composite.group.public.key.host@core.digitalid.net").load(Group.TYPE);
     
     /**
      * Stores the semantic type {@code e.public.key.host@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType E = SemanticType.create("e.public.key.host@core.digitalid.net").load(Exponent.TYPE);
+    private static final @Nonnull SemanticType E = SemanticType.map("e.public.key.host@core.digitalid.net").load(Exponent.TYPE);
     
     /**
      * Stores the semantic type {@code ab.public.key.host@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType AB = SemanticType.create("ab.public.key.host@core.digitalid.net").load(Element.TYPE);
+    private static final @Nonnull SemanticType AB = SemanticType.map("ab.public.key.host@core.digitalid.net").load(Element.TYPE);
     
     /**
      * Stores the semantic type {@code au.public.key.host@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType AU = SemanticType.create("au.public.key.host@core.digitalid.net").load(Element.TYPE);
+    private static final @Nonnull SemanticType AU = SemanticType.map("au.public.key.host@core.digitalid.net").load(Element.TYPE);
     
     /**
      * Stores the semantic type {@code ai.public.key.host@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType AI = SemanticType.create("ai.public.key.host@core.digitalid.net").load(Element.TYPE);
+    private static final @Nonnull SemanticType AI = SemanticType.map("ai.public.key.host@core.digitalid.net").load(Element.TYPE);
     
     /**
      * Stores the semantic type {@code av.public.key.host@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType AV = SemanticType.create("av.public.key.host@core.digitalid.net").load(Element.TYPE);
+    private static final @Nonnull SemanticType AV = SemanticType.map("av.public.key.host@core.digitalid.net").load(Element.TYPE);
     
     /**
      * Stores the semantic type {@code ao.public.key.host@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType AO = SemanticType.create("ao.public.key.host@core.digitalid.net").load(Element.TYPE);
+    private static final @Nonnull SemanticType AO = SemanticType.map("ao.public.key.host@core.digitalid.net").load(Element.TYPE);
     
     /**
      * Stores the semantic type {@code t.public.key.host@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType T = SemanticType.create("t.public.key.host@core.digitalid.net").load(Exponent.TYPE);
+    private static final @Nonnull SemanticType T = SemanticType.map("t.public.key.host@core.digitalid.net").load(Exponent.TYPE);
     
     /**
      * Stores the semantic type {@code su.public.key.host@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType SU = SemanticType.create("su.public.key.host@core.digitalid.net").load(Exponent.TYPE);
+    private static final @Nonnull SemanticType SU = SemanticType.map("su.public.key.host@core.digitalid.net").load(Exponent.TYPE);
     
     /**
      * Stores the semantic type {@code si.public.key.host@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType SI = SemanticType.create("si.public.key.host@core.digitalid.net").load(Exponent.TYPE);
+    private static final @Nonnull SemanticType SI = SemanticType.map("si.public.key.host@core.digitalid.net").load(Exponent.TYPE);
     
     /**
      * Stores the semantic type {@code sv.public.key.host@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType SV = SemanticType.create("sv.public.key.host@core.digitalid.net").load(Exponent.TYPE);
+    private static final @Nonnull SemanticType SV = SemanticType.map("sv.public.key.host@core.digitalid.net").load(Exponent.TYPE);
     
     /**
      * Stores the semantic type {@code so.public.key.host@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType SO = SemanticType.create("so.public.key.host@core.digitalid.net").load(Exponent.TYPE);
+    private static final @Nonnull SemanticType SO = SemanticType.map("so.public.key.host@core.digitalid.net").load(Exponent.TYPE);
     
     /**
      * Stores the semantic type {@code square.group.public.key.host@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType SQUARE_GROUP = SemanticType.create("square.group.public.key.host@core.digitalid.net").load(Group.TYPE);
+    private static final @Nonnull SemanticType SQUARE_GROUP = SemanticType.map("square.group.public.key.host@core.digitalid.net").load(Group.TYPE);
     
     /**
      * Stores the semantic type {@code g.public.key.host@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType G = SemanticType.create("g.public.key.host@core.digitalid.net").load(Element.TYPE);
+    private static final @Nonnull SemanticType G = SemanticType.map("g.public.key.host@core.digitalid.net").load(Element.TYPE);
     
     /**
      * Stores the semantic type {@code y.public.key.host@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType Y = SemanticType.create("y.public.key.host@core.digitalid.net").load(Element.TYPE);
+    private static final @Nonnull SemanticType Y = SemanticType.map("y.public.key.host@core.digitalid.net").load(Element.TYPE);
     
     /**
      * Stores the semantic type {@code z.public.key.host@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType Z = SemanticType.create("z.public.key.host@core.digitalid.net").load(Element.TYPE);
+    private static final @Nonnull SemanticType Z = SemanticType.map("z.public.key.host@core.digitalid.net").load(Element.TYPE);
     
     /**
      * Stores the semantic type {@code public.key.host@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("public.key.host@core.digitalid.net").load(TupleWrapper.TYPE, COMPOSITE_GROUP, E, AB, AU, AI, AV, AO, T, SU, SI, SV, SO, SQUARE_GROUP, G, Y, Z);
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("public.key.host@core.digitalid.net").load(TupleWrapper.TYPE, COMPOSITE_GROUP, E, AB, AU, AI, AV, AO, T, SU, SI, SV, SO, SQUARE_GROUP, G, Y, Z);
     
     
     /**
      * Stores the semantic type {@code tu.public.key.host@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TU = SemanticType.create("tu.public.key.host@core.digitalid.net").load(Element.TYPE);
+    public static final @Nonnull SemanticType TU = SemanticType.map("tu.public.key.host@core.digitalid.net").load(Element.TYPE);
     
     /**
      * Stores the semantic type {@code ti.public.key.host@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TI = SemanticType.create("ti.public.key.host@core.digitalid.net").load(Element.TYPE);
+    public static final @Nonnull SemanticType TI = SemanticType.map("ti.public.key.host@core.digitalid.net").load(Element.TYPE);
     
     /**
      * Stores the semantic type {@code tv.public.key.host@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TV = SemanticType.create("tv.public.key.host@core.digitalid.net").load(Element.TYPE);
+    public static final @Nonnull SemanticType TV = SemanticType.map("tv.public.key.host@core.digitalid.net").load(Element.TYPE);
     
     /**
      * Stores the semantic type {@code to.public.key.host@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TO = SemanticType.create("to.public.key.host@core.digitalid.net").load(Element.TYPE);
+    public static final @Nonnull SemanticType TO = SemanticType.map("to.public.key.host@core.digitalid.net").load(Element.TYPE);
     
     /**
      * Stores the semantic type {@code tuple.public.key.host@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TUPLE = SemanticType.create("tuple.public.key.host@core.digitalid.net").load(TupleWrapper.TYPE, TU, TI, TV, TO);
+    public static final @Nonnull SemanticType TUPLE = SemanticType.map("tuple.public.key.host@core.digitalid.net").load(TupleWrapper.TYPE, TU, TI, TV, TO);
     
     
     /**
      * Stores the semantic type {@code w1.verifiable.encryption@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType W1 = SemanticType.create("w1.verifiable.encryption@core.digitalid.net").load(Element.TYPE);
+    public static final @Nonnull SemanticType W1 = SemanticType.map("w1.verifiable.encryption@core.digitalid.net").load(Element.TYPE);
     
     /**
      * Stores the semantic type {@code w2.verifiable.encryption@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType W2 = SemanticType.create("w2.verifiable.encryption@core.digitalid.net").load(Element.TYPE);
+    public static final @Nonnull SemanticType W2 = SemanticType.map("w2.verifiable.encryption@core.digitalid.net").load(Element.TYPE);
     
     /**
      * Stores the semantic type {@code verifiable.encryption@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType VERIFIABLE_ENCRYPTION = SemanticType.create("verifiable.encryption@core.digitalid.net").load(TupleWrapper.TYPE, W1, W2);
+    public static final @Nonnull SemanticType VERIFIABLE_ENCRYPTION = SemanticType.map("verifiable.encryption@core.digitalid.net").load(TupleWrapper.TYPE, W1, W2);
     
     
     /**

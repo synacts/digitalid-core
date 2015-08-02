@@ -36,7 +36,7 @@ final class ContactsAdd extends CoreServiceInternalAction {
     /**
      * Stores the semantic type {@code add.contacts.context@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType TYPE = SemanticType.create("add.contacts.context@core.digitalid.net").load(TupleWrapper.TYPE, Context.TYPE, FreezableContacts.TYPE);
+    private static final @Nonnull SemanticType TYPE = SemanticType.map("add.contacts.context@core.digitalid.net").load(TupleWrapper.TYPE, Context.TYPE, FreezableContacts.TYPE);
     
     
     /**

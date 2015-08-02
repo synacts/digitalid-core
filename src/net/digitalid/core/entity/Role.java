@@ -58,17 +58,17 @@ public abstract class Role extends EntityClass implements NonHostEntity, Observe
     /**
      * Stores the semantic type {@code issuer.role@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType ISSUER = SemanticType.create("issuer.role@core.digitalid.net").load(InternalNonHostIdentity.IDENTIFIER);
+    public static final @Nonnull SemanticType ISSUER = SemanticType.map("issuer.role@core.digitalid.net").load(InternalNonHostIdentity.IDENTIFIER);
     
     /**
      * Stores the semantic type {@code relation.role@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType RELATION = SemanticType.create("relation.role@core.digitalid.net").load(SemanticType.IDENTIFIER);
+    public static final @Nonnull SemanticType RELATION = SemanticType.map("relation.role@core.digitalid.net").load(SemanticType.IDENTIFIER);
     
     /**
      * Stores the semantic type {@code agent.role@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType AGENT = SemanticType.create("agent.role@core.digitalid.net").load(Agent.NUMBER);
+    public static final @Nonnull SemanticType AGENT = SemanticType.map("agent.role@core.digitalid.net").load(Agent.NUMBER);
     
     
     /**

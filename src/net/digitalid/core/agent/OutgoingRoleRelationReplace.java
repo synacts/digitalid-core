@@ -34,17 +34,17 @@ final class OutgoingRoleRelationReplace extends CoreServiceInternalAction {
     /**
      * Stores the semantic type {@code old.relation.outgoing.role@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType OLD_RELATION = SemanticType.create("old.relation.outgoing.role@core.digitalid.net").load(SemanticType.IDENTIFIER);
+    private static final @Nonnull SemanticType OLD_RELATION = SemanticType.map("old.relation.outgoing.role@core.digitalid.net").load(SemanticType.IDENTIFIER);
     
     /**
      * Stores the semantic type {@code new.relation.outgoing.role@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType NEW_RELATION = SemanticType.create("new.relation.outgoing.role@core.digitalid.net").load(SemanticType.IDENTIFIER);
+    private static final @Nonnull SemanticType NEW_RELATION = SemanticType.map("new.relation.outgoing.role@core.digitalid.net").load(SemanticType.IDENTIFIER);
     
     /**
      * Stores the semantic type {@code replace.relation.outgoing.role@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType TYPE = SemanticType.create("replace.relation.outgoing.role@core.digitalid.net").load(TupleWrapper.TYPE, Agent.TYPE, OLD_RELATION, NEW_RELATION);
+    private static final @Nonnull SemanticType TYPE = SemanticType.map("replace.relation.outgoing.role@core.digitalid.net").load(TupleWrapper.TYPE, Agent.TYPE, OLD_RELATION, NEW_RELATION);
     
     
     /**

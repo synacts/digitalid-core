@@ -22,7 +22,7 @@ public abstract class ExternalPerson extends Person implements ExternalIdentity 
     /**
      * Stores the semantic type {@code external.person@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType IDENTIFIER = SemanticType.create("external.person@core.digitalid.net").load(Person.IDENTIFIER);
+    public static final @Nonnull SemanticType IDENTIFIER = SemanticType.map("external.person@core.digitalid.net").load(Person.IDENTIFIER);
     
     
     /**

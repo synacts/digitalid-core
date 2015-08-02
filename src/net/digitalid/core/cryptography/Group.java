@@ -27,17 +27,17 @@ public final class Group implements Blockable { // TODO: Make it abstract and im
     /**
      * Stores the semantic type {@code modulus.group@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType MODULUS = SemanticType.create("modulus.group@core.digitalid.net").load(IntegerWrapper.TYPE);
+    private static final @Nonnull SemanticType MODULUS = SemanticType.map("modulus.group@core.digitalid.net").load(IntegerWrapper.TYPE);
     
     /**
      * Stores the semantic type {@code order.group@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType ORDER = SemanticType.create("order.group@core.digitalid.net").load(IntegerWrapper.TYPE);
+    private static final @Nonnull SemanticType ORDER = SemanticType.map("order.group@core.digitalid.net").load(IntegerWrapper.TYPE);
     
     /**
      * Stores the semantic type {@code group@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("group@core.digitalid.net").load(TupleWrapper.TYPE, MODULUS, ORDER);
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("group@core.digitalid.net").load(TupleWrapper.TYPE, MODULUS, ORDER);
     
     
     /**

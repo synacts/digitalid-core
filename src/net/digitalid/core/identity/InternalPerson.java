@@ -20,7 +20,7 @@ public abstract class InternalPerson extends Person implements InternalNonHostId
     /**
      * Stores the semantic type {@code internal.person@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType IDENTIFIER = SemanticType.create("internal.person@core.digitalid.net").load(Person.IDENTIFIER);
+    public static final @Nonnull SemanticType IDENTIFIER = SemanticType.map("internal.person@core.digitalid.net").load(Person.IDENTIFIER);
     
     
     /**

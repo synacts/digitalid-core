@@ -32,12 +32,12 @@ public final class Predecessor implements Blockable {
     /**
      * Stores the semantic type {@code predecessor.identity@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("predecessor.identity@core.digitalid.net");
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("predecessor.identity@core.digitalid.net");
     
     /**
      * Stores the semantic type {@code list.predecessor.identity@core.digitalid.net}.
      */
-    static final @Nonnull SemanticType PREDECESSORS = SemanticType.create("list.predecessor.identity@core.digitalid.net").load(ListWrapper.TYPE, TYPE);
+    static final @Nonnull SemanticType PREDECESSORS = SemanticType.map("list.predecessor.identity@core.digitalid.net").load(ListWrapper.TYPE, TYPE);
     
     // Load the recursive declaration of the predecessor type.
     static { TYPE.load(TupleWrapper.TYPE, NonHostIdentity.IDENTIFIER, PREDECESSORS); }

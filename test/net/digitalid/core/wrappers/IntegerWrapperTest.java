@@ -19,7 +19,7 @@ public final class IntegerWrapperTest extends DatabaseSetup {
     
     @Test
     public void testWrapping() throws InvalidEncodingException {
-        final @Nonnull SemanticType TYPE = SemanticType.create("integer@test.digitalid.net").load(IntegerWrapper.TYPE);
+        final @Nonnull SemanticType TYPE = SemanticType.map("integer@test.digitalid.net").load(IntegerWrapper.TYPE);
         final @Nonnull Random random = new Random();
         for (int i = 0; i < 10000; i = (i + 1) * 3) {
             @Nonnull BigInteger value = new BigInteger(i, random);

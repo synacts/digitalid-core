@@ -34,30 +34,30 @@ public final class SyntacticType extends Type {
      * Stores the semantic type {@code @core.digitalid.net}.
      * (This hack was necessary to get the initialization working.)
      */
-    static final @Nonnull SemanticType IDENTITY_IDENTIFIER = SemanticType.create("@core.digitalid.net").load(StringWrapper.TYPE);
+    static final @Nonnull SemanticType IDENTITY_IDENTIFIER = SemanticType.map("@core.digitalid.net").load(StringWrapper.TYPE);
     
     /**
      * Stores the semantic type {@code nonhost@core.digitalid.net}.
      * (This hack was necessary to get the initialization working.)
      */
-    static final @Nonnull SemanticType NONHOST_IDENTIFIER = SemanticType.create("nonhost@core.digitalid.net").load(IDENTITY_IDENTIFIER);
+    static final @Nonnull SemanticType NONHOST_IDENTIFIER = SemanticType.map("nonhost@core.digitalid.net").load(IDENTITY_IDENTIFIER);
     
     /**
      * Stores the semantic type {@code type@core.digitalid.net}.
      * (This hack was necessary to get the initialization working.)
      */
-    static final @Nonnull SemanticType TYPE_IDENTIFIER = SemanticType.create("type@core.digitalid.net").load(NONHOST_IDENTIFIER);
+    static final @Nonnull SemanticType TYPE_IDENTIFIER = SemanticType.map("type@core.digitalid.net").load(NONHOST_IDENTIFIER);
     
     /**
      * Stores the semantic type {@code syntactic.type@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType IDENTIFIER = SemanticType.create("syntactic.type@core.digitalid.net").load(TYPE_IDENTIFIER);
+    public static final @Nonnull SemanticType IDENTIFIER = SemanticType.map("syntactic.type@core.digitalid.net").load(TYPE_IDENTIFIER);
     
     
     /**
      * Stores the semantic type {@code parameters.syntactic.type@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType PARAMETERS = SemanticType.create("parameters.syntactic.type@core.digitalid.net").load(new Category[] {Category.SYNTACTIC_TYPE}, Time.TROPICAL_YEAR, Int8Wrapper.TYPE);
+    public static final @Nonnull SemanticType PARAMETERS = SemanticType.map("parameters.syntactic.type@core.digitalid.net").load(new Category[] {Category.SYNTACTIC_TYPE}, Time.TROPICAL_YEAR, Int8Wrapper.TYPE);
     
     
     /**
@@ -79,14 +79,14 @@ public final class SyntacticType extends Type {
     }
     
     /**
-     * Creates a new syntactic type with the given identifier.
+     * Maps the syntactic type with the given identifier.
      * 
-     * @param identifier the identifier of the new syntactic type.
+     * @param identifier the identifier of the syntactic type.
      * 
      * @require InternalNonHostIdentifier.isValid(identifier) : "The string is a valid internal non-host identifier.";
      */
     @OnMainThread
-    public static @Nonnull @NonLoaded SyntacticType create(@Nonnull String identifier) {
+    public static @Nonnull @NonLoaded SyntacticType map(@Nonnull String identifier) {
         return Mapper.mapSyntacticType(new InternalNonHostIdentifier(identifier));
     }
     

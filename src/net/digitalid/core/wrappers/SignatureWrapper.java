@@ -50,22 +50,22 @@ public class SignatureWrapper extends Wrapper {
     /**
      * Stores the syntactic type {@code signature@core.digitalid.net}.
      */
-    public static final @Nonnull SyntacticType TYPE = SyntacticType.create("signature@core.digitalid.net").load(1);
+    public static final @Nonnull SyntacticType TYPE = SyntacticType.map("signature@core.digitalid.net").load(1);
     
     /**
      * Stores the semantic type {@code subject.content.signature@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType SUBJECT = SemanticType.create("subject.content.signature@core.digitalid.net").load(InternalIdentity.IDENTIFIER);
+    public static final @Nonnull SemanticType SUBJECT = SemanticType.map("subject.content.signature@core.digitalid.net").load(InternalIdentity.IDENTIFIER);
     
     /**
      * Stores the semantic type {@code content.signature@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType CONTENT = SemanticType.create("content.signature@core.digitalid.net").load(TupleWrapper.TYPE, SUBJECT, Time.TYPE, SemanticType.UNKNOWN, Audit.TYPE);
+    private static final @Nonnull SemanticType CONTENT = SemanticType.map("content.signature@core.digitalid.net").load(TupleWrapper.TYPE, SUBJECT, Time.TYPE, SemanticType.UNKNOWN, Audit.TYPE);
     
     /**
      * Stores the semantic type {@code signature@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType IMPLEMENTATION = SemanticType.create("implementation.signature@core.digitalid.net").load(TupleWrapper.TYPE, CONTENT, HostSignatureWrapper.SIGNATURE, ClientSignatureWrapper.SIGNATURE, CredentialsSignatureWrapper.SIGNATURE);
+    private static final @Nonnull SemanticType IMPLEMENTATION = SemanticType.map("implementation.signature@core.digitalid.net").load(TupleWrapper.TYPE, CONTENT, HostSignatureWrapper.SIGNATURE, ClientSignatureWrapper.SIGNATURE, CredentialsSignatureWrapper.SIGNATURE);
     
     
     /**

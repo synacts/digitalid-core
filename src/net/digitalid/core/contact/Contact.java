@@ -48,7 +48,7 @@ public final class Contact extends NonHostConcept implements Blockable, SQLizabl
     /**
      * Stores the semantic type {@code contact@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("contact@core.digitalid.net").load(Person.IDENTIFIER);
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("contact@core.digitalid.net").load(Person.IDENTIFIER);
     
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Person –––––––––––––––––––––––––––––––––––––––––––––––––– */

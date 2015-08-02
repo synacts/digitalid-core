@@ -43,7 +43,7 @@ public final class AttributesReply extends CoreServiceQueryReply {
     /**
      * Stores the semantic type {@code reply.attribute@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType TYPE = SemanticType.create("reply.attribute@core.digitalid.net").load(AttributeValue.LIST);
+    private static final @Nonnull SemanticType TYPE = SemanticType.map("reply.attribute@core.digitalid.net").load(AttributeValue.LIST);
     
     
     /**

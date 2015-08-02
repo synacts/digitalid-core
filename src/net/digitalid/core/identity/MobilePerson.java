@@ -17,7 +17,7 @@ public final class MobilePerson extends ExternalPerson {
     /**
      * Stores the semantic type {@code mobile.person@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType IDENTIFIER = SemanticType.create("mobile.person@core.digitalid.net").load(ExternalPerson.IDENTIFIER);
+    public static final @Nonnull SemanticType IDENTIFIER = SemanticType.map("mobile.person@core.digitalid.net").load(ExternalPerson.IDENTIFIER);
     
     
     /**

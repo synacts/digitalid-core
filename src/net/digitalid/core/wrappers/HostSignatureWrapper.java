@@ -46,17 +46,17 @@ public final class HostSignatureWrapper extends SignatureWrapper {
     /**
      * Stores the semantic type {@code signer.host.signature@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType SIGNER = SemanticType.create("signer.host.signature@core.digitalid.net").load(InternalIdentity.IDENTIFIER);
+    private static final @Nonnull SemanticType SIGNER = SemanticType.map("signer.host.signature@core.digitalid.net").load(InternalIdentity.IDENTIFIER);
     
     /**
      * Stores the semantic type {@code value.host.signature@core.digitalid.net}.
      */
-    static final @Nonnull SemanticType VALUE = SemanticType.create("value.host.signature@core.digitalid.net").load(Element.TYPE);
+    static final @Nonnull SemanticType VALUE = SemanticType.map("value.host.signature@core.digitalid.net").load(Element.TYPE);
     
     /**
      * Stores the semantic type {@code host.signature@core.digitalid.net}.
      */
-    static final @Nonnull SemanticType SIGNATURE = SemanticType.create("host.signature@core.digitalid.net").load(TupleWrapper.TYPE, SIGNER, VALUE);
+    static final @Nonnull SemanticType SIGNATURE = SemanticType.map("host.signature@core.digitalid.net").load(TupleWrapper.TYPE, SIGNER, VALUE);
     
     
     /**

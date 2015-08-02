@@ -20,7 +20,7 @@ public final class BooleanWrapper extends Wrapper {
     /**
      * Stores the syntactic type {@code boolean@core.digitalid.net}.
      */
-    public static final @Nonnull SyntacticType TYPE = SyntacticType.create("boolean@core.digitalid.net").load(0);
+    public static final @Nonnull SyntacticType TYPE = SyntacticType.map("boolean@core.digitalid.net").load(0);
     
     /**
      * The byte length of a boolean.

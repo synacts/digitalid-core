@@ -80,12 +80,12 @@ public final class PasswordModule implements BothModule {
     /**
      * Stores the semantic type {@code entry.password.module@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType MODULE_ENTRY = SemanticType.create("entry.password.module@core.digitalid.net").load(TupleWrapper.TYPE, Identity.IDENTIFIER, Password.TYPE);
+    private static final @Nonnull SemanticType MODULE_ENTRY = SemanticType.map("entry.password.module@core.digitalid.net").load(TupleWrapper.TYPE, Identity.IDENTIFIER, Password.TYPE);
     
     /**
      * Stores the semantic type {@code password.module@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType MODULE_FORMAT = SemanticType.create("password.module@core.digitalid.net").load(ListWrapper.TYPE, MODULE_ENTRY);
+    private static final @Nonnull SemanticType MODULE_FORMAT = SemanticType.map("password.module@core.digitalid.net").load(ListWrapper.TYPE, MODULE_ENTRY);
     
     @Pure
     @Override
@@ -131,7 +131,7 @@ public final class PasswordModule implements BothModule {
     /**
      * Stores the semantic type {@code passwords.state@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType STATE_FORMAT = SemanticType.create("passwords.state@core.digitalid.net").load(TupleWrapper.TYPE, Password.TYPE);
+    private static final @Nonnull SemanticType STATE_FORMAT = SemanticType.map("passwords.state@core.digitalid.net").load(TupleWrapper.TYPE, Password.TYPE);
     
     @Pure
     @Override

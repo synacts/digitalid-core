@@ -57,7 +57,7 @@ final class CredentialInternalQuery extends CoreServiceInternalQuery {
     /**
      * Stores the semantic type {@code query.internal.credential@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType TYPE = SemanticType.create("query.internal.credential@core.digitalid.net").load(TupleWrapper.TYPE, RandomizedAgentPermissions.TYPE, SemanticType.IDENTIFIER);
+    private static final @Nonnull SemanticType TYPE = SemanticType.map("query.internal.credential@core.digitalid.net").load(TupleWrapper.TYPE, RandomizedAgentPermissions.TYPE, SemanticType.IDENTIFIER);
     
     
     /**

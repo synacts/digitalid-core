@@ -20,7 +20,7 @@ public final class IntvarWrapper extends Wrapper {
     /**
      * Stores the syntactic type {@code intvar@core.digitalid.net}.
      */
-    public static final @Nonnull SyntacticType TYPE = SyntacticType.create("intvar@core.digitalid.net").load(0);
+    public static final @Nonnull SyntacticType TYPE = SyntacticType.map("intvar@core.digitalid.net").load(0);
     
     /**
      * Stores the maximum value an intvar can have.

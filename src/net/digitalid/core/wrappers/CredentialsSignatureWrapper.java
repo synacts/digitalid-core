@@ -77,95 +77,95 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
     /**
      * Stores the semantic type {@code t.credentials.signature@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType T = SemanticType.create("t.credentials.signature@core.digitalid.net").load(Exponent.TYPE);
+    private static final @Nonnull SemanticType T = SemanticType.map("t.credentials.signature@core.digitalid.net").load(Exponent.TYPE);
     
     /**
      * Stores the semantic type {@code su.credentials.signature@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType SU = SemanticType.create("su.credentials.signature@core.digitalid.net").load(Exponent.TYPE);
+    private static final @Nonnull SemanticType SU = SemanticType.map("su.credentials.signature@core.digitalid.net").load(Exponent.TYPE);
     
     /**
      * Stores the semantic type {@code sv.credentials.signature@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType SV = SemanticType.create("sv.credentials.signature@core.digitalid.net").load(Exponent.TYPE);
+    private static final @Nonnull SemanticType SV = SemanticType.map("sv.credentials.signature@core.digitalid.net").load(Exponent.TYPE);
     
     /**
      * Stores the semantic type {@code f_prime.credentials.signature@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType F_PRIME = SemanticType.create("f_prime.credentials.signature@core.digitalid.net").load(Element.TYPE);
+    private static final @Nonnull SemanticType F_PRIME = SemanticType.map("f_prime.credentials.signature@core.digitalid.net").load(Element.TYPE);
     
     /**
      * Stores the semantic type {@code sb_prime.credentials.signature@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType SB_PRIME = SemanticType.create("sb_prime.credentials.signature@core.digitalid.net").load(Exponent.TYPE);
+    private static final @Nonnull SemanticType SB_PRIME = SemanticType.map("sb_prime.credentials.signature@core.digitalid.net").load(Exponent.TYPE);
     
     
     /**
      * Stores the semantic type {@code c.credential.credentials.signature@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType C = SemanticType.create("c.credential.credentials.signature@core.digitalid.net").load(Element.TYPE);
+    private static final @Nonnull SemanticType C = SemanticType.map("c.credential.credentials.signature@core.digitalid.net").load(Element.TYPE);
     
     /**
      * Stores the semantic type {@code se.credential.credentials.signature@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType SE = SemanticType.create("se.credential.credentials.signature@core.digitalid.net").load(Exponent.TYPE);
+    private static final @Nonnull SemanticType SE = SemanticType.map("se.credential.credentials.signature@core.digitalid.net").load(Exponent.TYPE);
     
     /**
      * Stores the semantic type {@code sb.credential.credentials.signature@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType SB = SemanticType.create("sb.credential.credentials.signature@core.digitalid.net").load(Exponent.TYPE);
+    private static final @Nonnull SemanticType SB = SemanticType.map("sb.credential.credentials.signature@core.digitalid.net").load(Exponent.TYPE);
     
     /**
      * Stores the semantic type {@code i.credential.credentials.signature@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType I = SemanticType.create("i.credential.credentials.signature@core.digitalid.net").load(Exponent.TYPE);
+    private static final @Nonnull SemanticType I = SemanticType.map("i.credential.credentials.signature@core.digitalid.net").load(Exponent.TYPE);
     
     /**
      * Stores the semantic type {@code si.credential.credentials.signature@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType SI = SemanticType.create("si.credential.credentials.signature@core.digitalid.net").load(Exponent.TYPE);
+    private static final @Nonnull SemanticType SI = SemanticType.map("si.credential.credentials.signature@core.digitalid.net").load(Exponent.TYPE);
     
     
     /**
      * Stores the semantic type {@code wi.ve.credential.credentials.signature@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType WI = SemanticType.create("wi.ve.credential.credentials.signature@core.digitalid.net").load(PublicKey.VERIFIABLE_ENCRYPTION);
+    private static final @Nonnull SemanticType WI = SemanticType.map("wi.ve.credential.credentials.signature@core.digitalid.net").load(PublicKey.VERIFIABLE_ENCRYPTION);
     
     /**
      * Stores the semantic type {@code swi.ve.credential.credentials.signature@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType SWI = SemanticType.create("swi.ve.credential.credentials.signature@core.digitalid.net").load(Exponent.TYPE);
+    private static final @Nonnull SemanticType SWI = SemanticType.map("swi.ve.credential.credentials.signature@core.digitalid.net").load(Exponent.TYPE);
     
     /**
      * Stores the semantic type {@code wb.ve.credential.credentials.signature@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType WB = SemanticType.create("wb.ve.credential.credentials.signature@core.digitalid.net").load(PublicKey.VERIFIABLE_ENCRYPTION);
+    private static final @Nonnull SemanticType WB = SemanticType.map("wb.ve.credential.credentials.signature@core.digitalid.net").load(PublicKey.VERIFIABLE_ENCRYPTION);
     
     /**
      * Stores the semantic type {@code swb.ve.credential.credentials.signature@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType SWB = SemanticType.create("swb.ve.credential.credentials.signature@core.digitalid.net").load(Exponent.TYPE);
+    private static final @Nonnull SemanticType SWB = SemanticType.map("swb.ve.credential.credentials.signature@core.digitalid.net").load(Exponent.TYPE);
     
     /**
      * Stores the semantic type {@code ve.credential.credentials.signature@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType ENCRYPTION = SemanticType.create("ve.credential.credentials.signature@core.digitalid.net").load(TupleWrapper.TYPE, WI, SWI, WB, SWB);
+    private static final @Nonnull SemanticType ENCRYPTION = SemanticType.map("ve.credential.credentials.signature@core.digitalid.net").load(TupleWrapper.TYPE, WI, SWI, WB, SWB);
     
     
     /**
      * Stores the semantic type {@code credential.credentials.signature@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType CREDENTIAL = SemanticType.create("credential.credentials.signature@core.digitalid.net").load(TupleWrapper.TYPE, Credential.EXPOSED, RandomizedAgentPermissions.TYPE, C, SE, SB, I, SI, ENCRYPTION);
+    private static final @Nonnull SemanticType CREDENTIAL = SemanticType.map("credential.credentials.signature@core.digitalid.net").load(TupleWrapper.TYPE, Credential.EXPOSED, RandomizedAgentPermissions.TYPE, C, SE, SB, I, SI, ENCRYPTION);
     
     /**
      * Stores the semantic type {@code list.credential.credentials.signature@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType CREDENTIALS = SemanticType.create("list.credential.credentials.signature@core.digitalid.net").load(ListWrapper.TYPE, CREDENTIAL);
+    private static final @Nonnull SemanticType CREDENTIALS = SemanticType.map("list.credential.credentials.signature@core.digitalid.net").load(ListWrapper.TYPE, CREDENTIAL);
     
     /**
      * Stores the semantic type {@code credentials.signature@core.digitalid.net}.
      */
-    static final @Nonnull SemanticType SIGNATURE = SemanticType.create("credentials.signature@core.digitalid.net").load(TupleWrapper.TYPE, T, SU, Restrictions.TYPE, SV, CREDENTIALS, AttributeValue.LIST, F_PRIME, SB_PRIME);
+    static final @Nonnull SemanticType SIGNATURE = SemanticType.map("credentials.signature@core.digitalid.net").load(TupleWrapper.TYPE, T, SU, Restrictions.TYPE, SV, CREDENTIALS, AttributeValue.LIST, F_PRIME, SB_PRIME);
     
     
     /**
@@ -702,22 +702,22 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
     /**
      * Stores the semantic type {@code twi.array.credential.credentials.signature@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType TWI = SemanticType.create("twi.array.credential.credentials.signature@core.digitalid.net").load(PublicKey.VERIFIABLE_ENCRYPTION);
+    private static final @Nonnull SemanticType TWI = SemanticType.map("twi.array.credential.credentials.signature@core.digitalid.net").load(PublicKey.VERIFIABLE_ENCRYPTION);
     
     /**
      * Stores the semantic type {@code twb.array.credential.credentials.signature@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType TWB = SemanticType.create("twb.array.credential.credentials.signature@core.digitalid.net").load(PublicKey.VERIFIABLE_ENCRYPTION);
+    private static final @Nonnull SemanticType TWB = SemanticType.map("twb.array.credential.credentials.signature@core.digitalid.net").load(PublicKey.VERIFIABLE_ENCRYPTION);
     
     /**
      * Stores the semantic type {@code array.credential.credentials.signature@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType ARRAY = SemanticType.create("array.credential.credentials.signature@core.digitalid.net").load(TupleWrapper.TYPE, Element.TYPE, TWI, TWB);
+    private static final @Nonnull SemanticType ARRAY = SemanticType.map("array.credential.credentials.signature@core.digitalid.net").load(TupleWrapper.TYPE, Element.TYPE, TWI, TWB);
     
     /**
      * Stores the semantic type {@code list.array.credential.credentials.signature@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType ARRAYS = SemanticType.create("list.array.credential.credentials.signature@core.digitalid.net").load(ListWrapper.TYPE, ARRAY);
+    private static final @Nonnull SemanticType ARRAYS = SemanticType.map("list.array.credential.credentials.signature@core.digitalid.net").load(ListWrapper.TYPE, ARRAY);
     
     @Pure
     @Override

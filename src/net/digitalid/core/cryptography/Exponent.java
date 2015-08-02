@@ -27,7 +27,7 @@ public final class Exponent extends Number implements SQLizable {
     /**
      * Stores the semantic type {@code exponent.group@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("exponent.group@core.digitalid.net").load(IntegerWrapper.TYPE);
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("exponent.group@core.digitalid.net").load(IntegerWrapper.TYPE);
     
     
     /**

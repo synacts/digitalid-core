@@ -36,7 +36,7 @@ final class ContactsRemove extends CoreServiceInternalAction {
     /**
      * Stores the semantic type {@code remove.contacts.context@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType TYPE = SemanticType.create("remove.contacts.context@core.digitalid.net").load(TupleWrapper.TYPE, Context.TYPE, FreezableContacts.TYPE);
+    private static final @Nonnull SemanticType TYPE = SemanticType.map("remove.contacts.context@core.digitalid.net").load(TupleWrapper.TYPE, Context.TYPE, FreezableContacts.TYPE);
     
     
     /**

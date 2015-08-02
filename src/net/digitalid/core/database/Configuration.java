@@ -133,68 +133,84 @@ public abstract class Configuration {
     public abstract boolean isValidIdentifier(@Nonnull String identifier);
     
     /**
-     * Returns the syntax for defining an auto-incrementing primary key.
+     * Returns the syntax for declaring an auto-incrementing primary key.
      * 
-     * @return the syntax for defining an auto-incrementing primary key.
+     * @return the syntax for declaring an auto-incrementing primary key.
      */
     @Pure
     public abstract @Nonnull String PRIMARY_KEY();
     
     /**
-     * Returns the syntax for defining a tiny integer.
+     * Returns the syntax for declaring a tiny integer.
      * 
-     * @return the syntax for defining a tiny integer.
+     * @return the syntax for declaring a tiny integer.
      */
     @Pure
     public abstract @Nonnull String TINYINT();
     
     /**
-     * Returns the syntax for defining a binary collation.
+     * Returns the syntax for declaring a binary collation.
      * 
-     * @return the syntax for defining a binary collation.
+     * @return the syntax for declaring a binary collation.
      */
     @Pure
     public abstract @Nonnull String BINARY();
     
     /**
-     * Returns the syntax for defining a case-insensitive collation.
+     * Returns the syntax for declaring a case-insensitive collation.
      * 
-     * @return the syntax for defining a case-insensitive collation.
+     * @return the syntax for declaring a case-insensitive collation.
      */
     @Pure
     public abstract @Nonnull String NOCASE();
     
     /**
-     * Returns the syntax for defining a case-insensitive text.
+     * Returns the syntax for declaring a case-insensitive text.
      * 
-     * @return the syntax for defining a case-insensitive text.
+     * @return the syntax for declaring a case-insensitive text.
      */
     @Pure
     public abstract @Nonnull String CITEXT();
     
     /**
-     * Returns the syntax for defining a binary large object.
+     * Returns the syntax for declaring a binary large object.
      * 
-     * @return the syntax for defining a binary large object.
+     * @return the syntax for declaring a binary large object.
      */
     @Pure
     public abstract @Nonnull String BLOB();
     
     /**
-     * Returns the syntax for defining a 256-bit hash.
+     * Returns the syntax for declaring a 256-bit hash.
      * 
-     * @return the syntax for defining a 256-bit hash.
+     * @return the syntax for declaring a 256-bit hash.
      */
     @Pure
     public abstract @Nonnull String HASH();
     
     /**
-     * Returns the syntax for defining a 128-bit vector.
+     * Returns the syntax for declaring a 128-bit vector.
      * 
-     * @return the syntax for defining a 128-bit vector.
+     * @return the syntax for declaring a 128-bit vector.
      */
     @Pure
     public abstract @Nonnull String VECTOR();
+    
+    /**
+     * Returns the syntax for declaring a 32-bit float.
+     * 
+     * @return the syntax for declaring a 32-bit float.
+     */
+    @Pure
+    public abstract @Nonnull String FLOAT();
+    
+    /**
+     * Returns the syntax for declaring a 64-bit float.
+     * 
+     * @return the syntax for declaring a 64-bit float.
+     */
+    @Pure
+    public abstract @Nonnull String DOUBLE();
     
     /**
      * Returns the syntax for replacing existing entries during inserts.

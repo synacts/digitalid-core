@@ -22,7 +22,7 @@ public final class HashWrapper extends Wrapper {
     /**
      * Stores the syntactic type {@code hash@core.digitalid.net}.
      */
-    public static final @Nonnull SyntacticType TYPE = SyntacticType.create("hash@core.digitalid.net").load(0);
+    public static final @Nonnull SyntacticType TYPE = SyntacticType.map("hash@core.digitalid.net").load(0);
     
     /**
      * The byte length of a hash.

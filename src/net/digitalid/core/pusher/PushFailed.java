@@ -52,27 +52,27 @@ public final class PushFailed extends ExternalAction {
     /**
      * Stores the semantic type {@code number.failed.push@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType NUMBER = SemanticType.create("number.failed.push@core.digitalid.net").load(Int64Wrapper.TYPE);
+    private static final @Nonnull SemanticType NUMBER = SemanticType.map("number.failed.push@core.digitalid.net").load(Int64Wrapper.TYPE);
     
     /**
      * Stores the semantic type {@code subject.failed.push@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType SUBJECT = SemanticType.create("subject.failed.push@core.digitalid.net").load(SignatureWrapper.SUBJECT);
+    private static final @Nonnull SemanticType SUBJECT = SemanticType.map("subject.failed.push@core.digitalid.net").load(SignatureWrapper.SUBJECT);
     
     /**
      * Stores the semantic type {@code recipient.failed.push@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType RECIPIENT = SemanticType.create("recipient.failed.push@core.digitalid.net").load(EncryptionWrapper.RECIPIENT);
+    private static final @Nonnull SemanticType RECIPIENT = SemanticType.map("recipient.failed.push@core.digitalid.net").load(EncryptionWrapper.RECIPIENT);
     
     /**
      * Stores the semantic type {@code action.failed.push@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType ACTION = SemanticType.create("action.failed.push@core.digitalid.net").load(SelfcontainedWrapper.TYPE);
+    private static final @Nonnull SemanticType ACTION = SemanticType.map("action.failed.push@core.digitalid.net").load(SelfcontainedWrapper.TYPE);
     
     /**
      * Stores the semantic type {@code failed.push@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType TYPE = SemanticType.create("failed.push@core.digitalid.net").load(TupleWrapper.TYPE, NUMBER, SUBJECT, RECIPIENT, ACTION);
+    private static final @Nonnull SemanticType TYPE = SemanticType.map("failed.push@core.digitalid.net").load(TupleWrapper.TYPE, NUMBER, SUBJECT, RECIPIENT, ACTION);
     
     
     /**

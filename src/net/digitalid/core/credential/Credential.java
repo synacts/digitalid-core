@@ -52,27 +52,27 @@ public abstract class Credential {
     /**
      * Stores the semantic type {@code issuer.exposed.credential@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType ISSUER = SemanticType.create("issuer.exposed.credential@core.digitalid.net").load(NonHostIdentity.IDENTIFIER);
+    private static final @Nonnull SemanticType ISSUER = SemanticType.map("issuer.exposed.credential@core.digitalid.net").load(NonHostIdentity.IDENTIFIER);
     
     /**
      * Stores the semantic type {@code issuance.exposed.credential@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType ISSUANCE = SemanticType.create("issuance.exposed.credential@core.digitalid.net").load(Time.TYPE);
+    private static final @Nonnull SemanticType ISSUANCE = SemanticType.map("issuance.exposed.credential@core.digitalid.net").load(Time.TYPE);
     
     /**
      * Stores the semantic type {@code hash.exposed.credential@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType HASH = SemanticType.create("hash.exposed.credential@core.digitalid.net").load(RandomizedAgentPermissions.HASH);
+    private static final @Nonnull SemanticType HASH = SemanticType.map("hash.exposed.credential@core.digitalid.net").load(RandomizedAgentPermissions.HASH);
     
     /**
      * Stores the semantic type {@code role.exposed.credential@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType ROLE = SemanticType.create("role.exposed.credential@core.digitalid.net").load(SemanticType.ROLE_IDENTIFIER);
+    private static final @Nonnull SemanticType ROLE = SemanticType.map("role.exposed.credential@core.digitalid.net").load(SemanticType.ROLE_IDENTIFIER);
     
     /**
      * Stores the semantic type {@code exposed.credential@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType EXPOSED = SemanticType.create("exposed.credential@core.digitalid.net").load(TupleWrapper.TYPE, ISSUER, ISSUANCE, HASH, ROLE, AttributeValue.CONTENT);
+    public static final @Nonnull SemanticType EXPOSED = SemanticType.map("exposed.credential@core.digitalid.net").load(TupleWrapper.TYPE, ISSUER, ISSUANCE, HASH, ROLE, AttributeValue.CONTENT);
     
     /**
      * Returns the block containing the exposed arguments of a credential.

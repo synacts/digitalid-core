@@ -34,17 +34,17 @@ public final class SelfcontainedWrapper extends Wrapper {
     /**
      * Stores the syntactic type {@code selfcontained@core.digitalid.net}.
      */
-    public static final @Nonnull SyntacticType TYPE = SyntacticType.create("selfcontained@core.digitalid.net").load(0);
+    public static final @Nonnull SyntacticType TYPE = SyntacticType.map("selfcontained@core.digitalid.net").load(0);
     
     /**
      * Stores the semantic type {@code default@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType DEFAULT = SemanticType.create("default@core.digitalid.net").load(TYPE);
+    public static final @Nonnull SemanticType DEFAULT = SemanticType.map("default@core.digitalid.net").load(TYPE);
     
     /**
      * Stores the semantic type {@code implementation.selfcontained@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType IMPLEMENTATION = SemanticType.create("implementation.selfcontained@core.digitalid.net").load(TupleWrapper.TYPE, SemanticType.IDENTIFIER, SemanticType.UNKNOWN);
+    private static final @Nonnull SemanticType IMPLEMENTATION = SemanticType.map("implementation.selfcontained@core.digitalid.net").load(TupleWrapper.TYPE, SemanticType.IDENTIFIER, SemanticType.UNKNOWN);
     
     
     /**

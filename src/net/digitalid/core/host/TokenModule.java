@@ -61,12 +61,12 @@ public final class TokenModule implements HostModule {
     /**
      * Stores the semantic type {@code entry.tokens.module@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType MODULE_ENTRY = SemanticType.create("entry.tokens.module@core.digitalid.net").load(TupleWrapper.TYPE, net.digitalid.core.identity.SemanticType.UNKNOWN);
+    private static final @Nonnull SemanticType MODULE_ENTRY = SemanticType.map("entry.tokens.module@core.digitalid.net").load(TupleWrapper.TYPE, net.digitalid.core.identity.SemanticType.UNKNOWN);
     
     /**
      * Stores the semantic type {@code tokens.module@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType MODULE_FORMAT = SemanticType.create("tokens.module@core.digitalid.net").load(ListWrapper.TYPE, MODULE_ENTRY);
+    private static final @Nonnull SemanticType MODULE_FORMAT = SemanticType.map("tokens.module@core.digitalid.net").load(ListWrapper.TYPE, MODULE_ENTRY);
     
     @Pure
     @Override

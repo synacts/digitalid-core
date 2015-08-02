@@ -80,27 +80,27 @@ public final class HostCredentialModule implements HostModule {
     /**
      * Stores the semantic type {@code e.entry.host.credential.module@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType E = SemanticType.create("e.entry.host.credential.module@core.digitalid.net").load(Exponent.TYPE);
+    private static final @Nonnull SemanticType E = SemanticType.map("e.entry.host.credential.module@core.digitalid.net").load(Exponent.TYPE);
     
     /**
      * Stores the semantic type {@code i.entry.host.credential.module@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType I = SemanticType.create("i.entry.host.credential.module@core.digitalid.net").load(Exponent.TYPE);
+    private static final @Nonnull SemanticType I = SemanticType.map("i.entry.host.credential.module@core.digitalid.net").load(Exponent.TYPE);
     
     /**
      * Stores the semantic type {@code v.entry.host.credential.module@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType V = SemanticType.create("v.entry.host.credential.module@core.digitalid.net").load(Exponent.TYPE);
+    private static final @Nonnull SemanticType V = SemanticType.map("v.entry.host.credential.module@core.digitalid.net").load(Exponent.TYPE);
     
     /**
      * Stores the semantic type {@code entry.host.credential.module@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType MODULE_ENTRY = SemanticType.create("entry.host.credential.module@core.digitalid.net").load(TupleWrapper.TYPE, Time.TYPE, InternalNonHostIdentity.IDENTIFIER, E, I, V, Packet.SIGNATURE);
+    private static final @Nonnull SemanticType MODULE_ENTRY = SemanticType.map("entry.host.credential.module@core.digitalid.net").load(TupleWrapper.TYPE, Time.TYPE, InternalNonHostIdentity.IDENTIFIER, E, I, V, Packet.SIGNATURE);
     
     /**
      * Stores the semantic type {@code host.credential.module@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType MODULE_FORMAT = SemanticType.create("host.credential.module@core.digitalid.net").load(ListWrapper.TYPE, MODULE_ENTRY);
+    private static final @Nonnull SemanticType MODULE_FORMAT = SemanticType.map("host.credential.module@core.digitalid.net").load(ListWrapper.TYPE, MODULE_ENTRY);
     
     @Pure
     @Override

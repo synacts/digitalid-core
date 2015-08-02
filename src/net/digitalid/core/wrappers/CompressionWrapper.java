@@ -28,7 +28,7 @@ public final class CompressionWrapper extends Wrapper {
     /**
      * Stores the syntactic type {@code compression@core.digitalid.net}.
      */
-    public static final @Nonnull SyntacticType TYPE = SyntacticType.create("compression@core.digitalid.net").load(1);
+    public static final @Nonnull SyntacticType TYPE = SyntacticType.map("compression@core.digitalid.net").load(1);
     
     /**
      * Indicates that no compression is used.

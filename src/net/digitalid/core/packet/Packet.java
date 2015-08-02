@@ -67,32 +67,32 @@ public abstract class Packet {
     /**
      * Stores the semantic type {@code content.packet@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType CONTENT = SemanticType.create("content.packet@core.digitalid.net").load(SelfcontainedWrapper.TYPE);
+    public static final @Nonnull SemanticType CONTENT = SemanticType.map("content.packet@core.digitalid.net").load(SelfcontainedWrapper.TYPE);
     
     /**
      * Stores the semantic type {@code compression.packet@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType COMPRESSION = SemanticType.create("compression.packet@core.digitalid.net").load(CompressionWrapper.TYPE, CONTENT);
+    public static final @Nonnull SemanticType COMPRESSION = SemanticType.map("compression.packet@core.digitalid.net").load(CompressionWrapper.TYPE, CONTENT);
     
     /**
      * Stores the semantic type {@code signature.packet@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType SIGNATURE = SemanticType.create("signature.packet@core.digitalid.net").load(SignatureWrapper.TYPE, COMPRESSION);
+    public static final @Nonnull SemanticType SIGNATURE = SemanticType.map("signature.packet@core.digitalid.net").load(SignatureWrapper.TYPE, COMPRESSION);
     
     /**
      * Stores the semantic type {@code list.signature.packet@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType SIGNATURES = SemanticType.create("list.signature.packet@core.digitalid.net").load(ListWrapper.TYPE, SIGNATURE);
+    public static final @Nonnull SemanticType SIGNATURES = SemanticType.map("list.signature.packet@core.digitalid.net").load(ListWrapper.TYPE, SIGNATURE);
     
     /**
      * Stores the semantic type {@code encryption.packet@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType ENCRYPTION = SemanticType.create("encryption.packet@core.digitalid.net").load(EncryptionWrapper.TYPE, SIGNATURES);
+    public static final @Nonnull SemanticType ENCRYPTION = SemanticType.map("encryption.packet@core.digitalid.net").load(EncryptionWrapper.TYPE, SIGNATURES);
     
     /**
      * Stores the semantic type {@code packet@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("packet@core.digitalid.net").load(SelfcontainedWrapper.DEFAULT);
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("packet@core.digitalid.net").load(SelfcontainedWrapper.DEFAULT);
     
     
     /**

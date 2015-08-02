@@ -202,6 +202,18 @@ public final class SQLiteConfiguration extends Configuration {
     
     @Pure
     @Override
+    public @Nonnull String FLOAT() {
+        return "REAL";
+    }
+    
+    @Pure
+    @Override
+    public @Nonnull String DOUBLE() {
+        return "REAL";
+    }
+    
+    @Pure
+    @Override
     public @Nonnull String REPLACE() {
         return "REPLACE";
     }

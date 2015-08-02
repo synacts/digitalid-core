@@ -40,7 +40,7 @@ final class OutgoingRoleIssue extends CoreServiceExternalAction {
     /**
      * Stores the semantic type {@code issuance.role@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType TYPE = SemanticType.create("issuance.role@core.digitalid.net").load(TupleWrapper.TYPE, SemanticType.IDENTIFIER, Agent.NUMBER);
+    private static final @Nonnull SemanticType TYPE = SemanticType.map("issuance.role@core.digitalid.net").load(TupleWrapper.TYPE, SemanticType.IDENTIFIER, Agent.NUMBER);
     
     
     /**

@@ -71,12 +71,12 @@ public final class CertificateModule implements BothModule {
     /**
      * Stores the semantic type {@code entry.certificates.module@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType MODULE_ENTRY = SemanticType.create("entry.certificates.module@core.digitalid.net").load(TupleWrapper.TYPE, net.digitalid.core.identity.SemanticType.UNKNOWN);
+    private static final @Nonnull SemanticType MODULE_ENTRY = SemanticType.map("entry.certificates.module@core.digitalid.net").load(TupleWrapper.TYPE, net.digitalid.core.identity.SemanticType.UNKNOWN);
     
     /**
      * Stores the semantic type {@code certificates.module@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType MODULE_FORMAT = SemanticType.create("certificates.module@core.digitalid.net").load(ListWrapper.TYPE, MODULE_ENTRY);
+    private static final @Nonnull SemanticType MODULE_FORMAT = SemanticType.map("certificates.module@core.digitalid.net").load(ListWrapper.TYPE, MODULE_ENTRY);
     
     @Pure
     @Override
@@ -110,12 +110,12 @@ public final class CertificateModule implements BothModule {
     /**
      * Stores the semantic type {@code entry.certificates.state@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType STATE_ENTRY = SemanticType.create("entry.certificates.state@core.digitalid.net").load(TupleWrapper.TYPE, net.digitalid.core.identity.SemanticType.UNKNOWN);
+    private static final @Nonnull SemanticType STATE_ENTRY = SemanticType.map("entry.certificates.state@core.digitalid.net").load(TupleWrapper.TYPE, net.digitalid.core.identity.SemanticType.UNKNOWN);
     
     /**
      * Stores the semantic type {@code certificates.state@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType STATE_FORMAT = SemanticType.create("certificates.state@core.digitalid.net").load(ListWrapper.TYPE, STATE_ENTRY);
+    private static final @Nonnull SemanticType STATE_FORMAT = SemanticType.map("certificates.state@core.digitalid.net").load(ListWrapper.TYPE, STATE_ENTRY);
     
     @Pure
     @Override

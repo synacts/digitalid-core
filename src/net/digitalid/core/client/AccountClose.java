@@ -44,7 +44,7 @@ public final class AccountClose extends CoreServiceInternalAction {
     /**
      * Stores the semantic type {@code close.account@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType TYPE = SemanticType.create("close.account@core.digitalid.net").load(InternalNonHostIdentity.IDENTIFIER);
+    private static final @Nonnull SemanticType TYPE = SemanticType.map("close.account@core.digitalid.net").load(InternalNonHostIdentity.IDENTIFIER);
     
     
     /**

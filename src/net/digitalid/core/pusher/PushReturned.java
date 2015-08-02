@@ -51,17 +51,17 @@ public final class PushReturned extends ExternalAction {
     /**
      * Stores the semantic type {@code valid.returned.push@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType VALID = SemanticType.create("valid.returned.push@core.digitalid.net").load(BooleanWrapper.TYPE);
+    private static final @Nonnull SemanticType VALID = SemanticType.map("valid.returned.push@core.digitalid.net").load(BooleanWrapper.TYPE);
     
     /**
      * Stores the semantic type {@code reply.returned.push@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType REPLY = SemanticType.create("reply.returned.push@core.digitalid.net").load(Packet.SIGNATURE);
+    private static final @Nonnull SemanticType REPLY = SemanticType.map("reply.returned.push@core.digitalid.net").load(Packet.SIGNATURE);
     
     /**
      * Stores the semantic type {@code returned.push@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType TYPE = SemanticType.create("returned.push@core.digitalid.net").load(TupleWrapper.TYPE, VALID, REPLY);
+    private static final @Nonnull SemanticType TYPE = SemanticType.map("returned.push@core.digitalid.net").load(TupleWrapper.TYPE, VALID, REPLY);
     
     
     /**

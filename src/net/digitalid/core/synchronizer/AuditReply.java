@@ -33,7 +33,7 @@ final class AuditReply extends QueryReply {
     /**
      * Stores the semantic type {@code reply.audit@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("reply.audit@core.digitalid.net").load(SemanticType.IDENTIFIER);
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("reply.audit@core.digitalid.net").load(SemanticType.IDENTIFIER);
     
     
     /**

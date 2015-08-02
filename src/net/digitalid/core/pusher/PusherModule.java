@@ -67,12 +67,12 @@ public final class PusherModule implements BothModule {
     /**
      * Stores the semantic type {@code entry.pusher.module@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType MODULE_ENTRY = SemanticType.create("entry.pusher.module@core.digitalid.net").load(TupleWrapper.TYPE, net.digitalid.core.identity.SemanticType.UNKNOWN);
+    private static final @Nonnull SemanticType MODULE_ENTRY = SemanticType.map("entry.pusher.module@core.digitalid.net").load(TupleWrapper.TYPE, net.digitalid.core.identity.SemanticType.UNKNOWN);
     
     /**
      * Stores the semantic type {@code pusher.module@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType MODULE_FORMAT = SemanticType.create("pusher.module@core.digitalid.net").load(ListWrapper.TYPE, MODULE_ENTRY);
+    private static final @Nonnull SemanticType MODULE_FORMAT = SemanticType.map("pusher.module@core.digitalid.net").load(ListWrapper.TYPE, MODULE_ENTRY);
     
     @Pure
     @Override
@@ -106,12 +106,12 @@ public final class PusherModule implements BothModule {
     /**
      * Stores the semantic type {@code entry.pusher.state@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType STATE_ENTRY = SemanticType.create("entry.pusher.state@core.digitalid.net").load(TupleWrapper.TYPE, net.digitalid.core.identity.SemanticType.UNKNOWN);
+    private static final @Nonnull SemanticType STATE_ENTRY = SemanticType.map("entry.pusher.state@core.digitalid.net").load(TupleWrapper.TYPE, net.digitalid.core.identity.SemanticType.UNKNOWN);
     
     /**
      * Stores the semantic type {@code pusher.state@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType STATE_FORMAT = SemanticType.create("pusher.state@core.digitalid.net").load(ListWrapper.TYPE, STATE_ENTRY);
+    private static final @Nonnull SemanticType STATE_FORMAT = SemanticType.map("pusher.state@core.digitalid.net").load(ListWrapper.TYPE, STATE_ENTRY);
     
     @Pure
     @Override

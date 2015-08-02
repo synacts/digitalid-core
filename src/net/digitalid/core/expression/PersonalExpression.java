@@ -26,7 +26,7 @@ public final class PersonalExpression extends AbstractExpression {
     /**
      * Stores the semantic type {@code personal.expression@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("personal.expression@core.digitalid.net").load(StringWrapper.TYPE);
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("personal.expression@core.digitalid.net").load(StringWrapper.TYPE);
     
     
     /**

@@ -38,7 +38,7 @@ final class OutgoingRoleRevoke extends CoreServiceExternalAction {
     /**
      * Stores the semantic type {@code revocaton.role@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType TYPE = SemanticType.create("revocaton.role@core.digitalid.net").load(SemanticType.IDENTIFIER);
+    private static final @Nonnull SemanticType TYPE = SemanticType.map("revocaton.role@core.digitalid.net").load(SemanticType.IDENTIFIER);
     
     
     /**

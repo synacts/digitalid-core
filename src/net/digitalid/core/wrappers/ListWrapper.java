@@ -27,7 +27,7 @@ public final class ListWrapper extends Wrapper {
     /**
      * Stores the syntactic type {@code list@core.digitalid.net}.
      */
-    public static final @Nonnull SyntacticType TYPE = SyntacticType.create("list@core.digitalid.net").load(1);
+    public static final @Nonnull SyntacticType TYPE = SyntacticType.map("list@core.digitalid.net").load(1);
     
     /**
      * Returns whether the given elements are based on the parameter of the given type.

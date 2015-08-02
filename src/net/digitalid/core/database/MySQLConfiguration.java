@@ -239,6 +239,18 @@ public final class MySQLConfiguration extends Configuration {
     
     @Pure
     @Override
+    public @Nonnull String FLOAT() {
+        return "FLOAT";
+    }
+    
+    @Pure
+    @Override
+    public @Nonnull String DOUBLE() {
+        return "DOUBLE";
+    }
+    
+    @Pure
+    @Override
     public @Nonnull String REPLACE() {
         return "REPLACE";
     }

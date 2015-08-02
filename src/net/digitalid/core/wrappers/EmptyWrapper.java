@@ -20,7 +20,7 @@ public final class EmptyWrapper extends Wrapper {
     /**
      * Stores the syntactic type {@code empty@core.digitalid.net}.
      */
-    public static final @Nonnull SyntacticType TYPE = SyntacticType.create("empty@core.digitalid.net").load(0);
+    public static final @Nonnull SyntacticType TYPE = SyntacticType.map("empty@core.digitalid.net").load(0);
     
     /**
      * The byte length of nothing.

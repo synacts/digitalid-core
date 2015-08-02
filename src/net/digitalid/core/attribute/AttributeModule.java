@@ -92,29 +92,29 @@ public final class AttributeModule implements BothModule {
     /**
      * Stores the semantic type {@code entry.value.attribute.module@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType VALUE_MODULE_ENTRY = SemanticType.create("entry.value.attribute.module@core.digitalid.net").load(TupleWrapper.TYPE, Identity.IDENTIFIER, SemanticType.ATTRIBUTE_IDENTIFIER, Attribute.PUBLISHED, AttributeValue.TYPE);
+    private static final @Nonnull SemanticType VALUE_MODULE_ENTRY = SemanticType.map("entry.value.attribute.module@core.digitalid.net").load(TupleWrapper.TYPE, Identity.IDENTIFIER, SemanticType.ATTRIBUTE_IDENTIFIER, Attribute.PUBLISHED, AttributeValue.TYPE);
     
     /**
      * Stores the semantic type {@code table.value.attribute.module@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType VALUE_MODULE_TABLE = SemanticType.create("table.value.attribute.module@core.digitalid.net").load(ListWrapper.TYPE, VALUE_MODULE_ENTRY);
+    private static final @Nonnull SemanticType VALUE_MODULE_TABLE = SemanticType.map("table.value.attribute.module@core.digitalid.net").load(ListWrapper.TYPE, VALUE_MODULE_ENTRY);
     
     
     /**
      * Stores the semantic type {@code entry.visibility.attribute.module@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType VISIBILITY_MODULE_ENTRY = SemanticType.create("entry.visibility.attribute.module@core.digitalid.net").load(TupleWrapper.TYPE, Identity.IDENTIFIER, SemanticType.ATTRIBUTE_IDENTIFIER, PassiveExpression.TYPE);
+    private static final @Nonnull SemanticType VISIBILITY_MODULE_ENTRY = SemanticType.map("entry.visibility.attribute.module@core.digitalid.net").load(TupleWrapper.TYPE, Identity.IDENTIFIER, SemanticType.ATTRIBUTE_IDENTIFIER, PassiveExpression.TYPE);
     
     /**
      * Stores the semantic type {@code table.visibility.attribute.module@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType VISIBILITY_MODULE_TABLE = SemanticType.create("table.visibility.attribute.module@core.digitalid.net").load(ListWrapper.TYPE, VISIBILITY_MODULE_ENTRY);
+    private static final @Nonnull SemanticType VISIBILITY_MODULE_TABLE = SemanticType.map("table.visibility.attribute.module@core.digitalid.net").load(ListWrapper.TYPE, VISIBILITY_MODULE_ENTRY);
     
     
     /**
      * Stores the semantic type {@code attribute.module@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType MODULE_FORMAT = SemanticType.create("attribute.module@core.digitalid.net").load(TupleWrapper.TYPE, VALUE_MODULE_TABLE, VISIBILITY_MODULE_TABLE);
+    private static final @Nonnull SemanticType MODULE_FORMAT = SemanticType.map("attribute.module@core.digitalid.net").load(TupleWrapper.TYPE, VALUE_MODULE_TABLE, VISIBILITY_MODULE_TABLE);
     
     @Pure
     @Override
@@ -195,29 +195,29 @@ public final class AttributeModule implements BothModule {
     /**
      * Stores the semantic type {@code entry.value.attribute.state@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType VALUE_STATE_ENTRY = SemanticType.create("entry.value.attribute.state@core.digitalid.net").load(TupleWrapper.TYPE, SemanticType.ATTRIBUTE_IDENTIFIER, Attribute.PUBLISHED, AttributeValue.TYPE);
+    private static final @Nonnull SemanticType VALUE_STATE_ENTRY = SemanticType.map("entry.value.attribute.state@core.digitalid.net").load(TupleWrapper.TYPE, SemanticType.ATTRIBUTE_IDENTIFIER, Attribute.PUBLISHED, AttributeValue.TYPE);
     
     /**
      * Stores the semantic type {@code table.value.attribute.state@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType VALUE_STATE_TABLE = SemanticType.create("table.value.attribute.state@core.digitalid.net").load(ListWrapper.TYPE, VALUE_STATE_ENTRY);
+    private static final @Nonnull SemanticType VALUE_STATE_TABLE = SemanticType.map("table.value.attribute.state@core.digitalid.net").load(ListWrapper.TYPE, VALUE_STATE_ENTRY);
     
     
     /**
      * Stores the semantic type {@code entry.visibility.attribute.state@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType VISIBILITY_STATE_ENTRY = SemanticType.create("entry.visibility.attribute.state@core.digitalid.net").load(TupleWrapper.TYPE, SemanticType.ATTRIBUTE_IDENTIFIER, PassiveExpression.TYPE);
+    private static final @Nonnull SemanticType VISIBILITY_STATE_ENTRY = SemanticType.map("entry.visibility.attribute.state@core.digitalid.net").load(TupleWrapper.TYPE, SemanticType.ATTRIBUTE_IDENTIFIER, PassiveExpression.TYPE);
     
     /**
      * Stores the semantic type {@code table.visibility.attribute.state@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType VISIBILITY_STATE_TABLE = SemanticType.create("table.visibility.attribute.state@core.digitalid.net").load(ListWrapper.TYPE, VISIBILITY_STATE_ENTRY);
+    private static final @Nonnull SemanticType VISIBILITY_STATE_TABLE = SemanticType.map("table.visibility.attribute.state@core.digitalid.net").load(ListWrapper.TYPE, VISIBILITY_STATE_ENTRY);
     
     
     /**
      * Stores the semantic type {@code attribute.state@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType STATE_FORMAT = SemanticType.create("attribute.state@core.digitalid.net").load(TupleWrapper.TYPE, VALUE_STATE_TABLE, VISIBILITY_STATE_TABLE);
+    private static final @Nonnull SemanticType STATE_FORMAT = SemanticType.map("attribute.state@core.digitalid.net").load(TupleWrapper.TYPE, VALUE_STATE_TABLE, VISIBILITY_STATE_TABLE);
     
     @Pure
     @Override

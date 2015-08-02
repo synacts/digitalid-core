@@ -26,7 +26,7 @@ public final class ImpersonalExpression extends AbstractExpression {
     /**
      * Stores the semantic type {@code impersonal.expression@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("impersonal.expression@core.digitalid.net").load(StringWrapper.TYPE);
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("impersonal.expression@core.digitalid.net").load(StringWrapper.TYPE);
     
     
     /**

@@ -31,7 +31,7 @@ final class AgentRemove extends CoreServiceInternalAction {
     /**
      * Stores the semantic type {@code remove.agent@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType TYPE = SemanticType.create("remove.agent@core.digitalid.net").load(Agent.TYPE);
+    private static final @Nonnull SemanticType TYPE = SemanticType.map("remove.agent@core.digitalid.net").load(Agent.TYPE);
     
     
     /**

@@ -41,7 +41,7 @@ public final class CertificateIssue extends CoreServiceExternalAction {
     /**
      * Stores the semantic type {@code issuance.certificate@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("issuance.certificate@core.digitalid.net").load(AttributeValue.TYPE);
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("issuance.certificate@core.digitalid.net").load(AttributeValue.TYPE);
     
     
     /**

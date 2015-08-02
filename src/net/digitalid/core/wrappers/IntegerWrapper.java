@@ -21,7 +21,7 @@ public final class IntegerWrapper extends Wrapper {
     /**
      * Stores the syntactic type {@code integer@core.digitalid.net}.
      */
-    public static final @Nonnull SyntacticType TYPE = SyntacticType.create("integer@core.digitalid.net").load(0);
+    public static final @Nonnull SyntacticType TYPE = SyntacticType.map("integer@core.digitalid.net").load(0);
     
     
     /**

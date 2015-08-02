@@ -17,7 +17,7 @@ public final class NaturalPerson extends InternalPerson {
     /**
      * Stores the semantic type {@code natural.person@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType IDENTIFIER = SemanticType.create("natural.person@core.digitalid.net").load(InternalPerson.IDENTIFIER);
+    public static final @Nonnull SemanticType IDENTIFIER = SemanticType.map("natural.person@core.digitalid.net").load(InternalPerson.IDENTIFIER);
     
     
     /**

@@ -85,22 +85,22 @@ public abstract class Agent extends NonHostConcept implements Blockable, SQLizab
     /**
      * Stores the semantic type {@code number.agent@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType NUMBER = SemanticType.create("number.agent@core.digitalid.net").load(Int64Wrapper.TYPE);
+    public static final @Nonnull SemanticType NUMBER = SemanticType.map("number.agent@core.digitalid.net").load(Int64Wrapper.TYPE);
     
     /**
      * Stores the semantic type {@code client.agent@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType CLIENT = SemanticType.create("client.agent@core.digitalid.net").load(BooleanWrapper.TYPE);
+    public static final @Nonnull SemanticType CLIENT = SemanticType.map("client.agent@core.digitalid.net").load(BooleanWrapper.TYPE);
     
     /**
      * Stores the semantic type {@code removed.agent@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType REMOVED = SemanticType.create("removed.agent@core.digitalid.net").load(BooleanWrapper.TYPE);
+    public static final @Nonnull SemanticType REMOVED = SemanticType.map("removed.agent@core.digitalid.net").load(BooleanWrapper.TYPE);
     
     /**
      * Stores the semantic type {@code agent@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("agent@core.digitalid.net").load(TupleWrapper.TYPE, NUMBER, CLIENT, REMOVED);
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("agent@core.digitalid.net").load(TupleWrapper.TYPE, NUMBER, CLIENT, REMOVED);
     
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Number –––––––––––––––––––––––––––––––––––––––––––––––––– */

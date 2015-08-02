@@ -40,7 +40,7 @@ public final class AccessRequest extends CoreServiceExternalAction {
     /**
      * Stores the semantic type {@code request.access@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("request.access@core.digitalid.net").load(FreezableContactPermissions.TYPE);
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("request.access@core.digitalid.net").load(FreezableContactPermissions.TYPE);
     
     
     /**

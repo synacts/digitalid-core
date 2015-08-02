@@ -90,12 +90,12 @@ public class Client extends Site implements Observer {
     /**
      * Stores the semantic type {@code secret.client@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType SECRET = SemanticType.create("secret.client@core.digitalid.net").load(Exponent.TYPE);
+    public static final @Nonnull SemanticType SECRET = SemanticType.map("secret.client@core.digitalid.net").load(Exponent.TYPE);
     
     /**
      * Stores the semantic type {@code name.client.agent@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType NAME = SemanticType.create("name.client.agent@core.digitalid.net").load(StringWrapper.TYPE);
+    public static final @Nonnull SemanticType NAME = SemanticType.map("name.client.agent@core.digitalid.net").load(StringWrapper.TYPE);
     
     
     /**

@@ -24,7 +24,7 @@ public final class FreezableContactPermissions extends FreezableAttributeTypeSet
     /**
      * Stores the semantic type {@code permission.contact@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("permission.contact@core.digitalid.net").load(FreezableAttributeTypeSet.TYPE);
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("permission.contact@core.digitalid.net").load(FreezableAttributeTypeSet.TYPE);
     
     
     /**

@@ -18,7 +18,7 @@ public final class Int32WrapperTest extends DatabaseSetup {
     
     @Test
     public void testWrapping() throws InvalidEncodingException {
-        final @Nonnull SemanticType TYPE = SemanticType.create("int32@test.digitalid.net").load(Int32Wrapper.TYPE);
+        final @Nonnull SemanticType TYPE = SemanticType.map("int32@test.digitalid.net").load(Int32Wrapper.TYPE);
         final @Nonnull Random random = new Random();
         for (int i = 0; i < 10; i++) {
             final int value = random.nextInt();

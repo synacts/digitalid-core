@@ -243,6 +243,18 @@ public final class PostgreSQLConfiguration extends Configuration {
     
     @Pure
     @Override
+    public @Nonnull String FLOAT() {
+        return "FLOAT4";
+    }
+    
+    @Pure
+    @Override
+    public @Nonnull String DOUBLE() {
+        return "FLOAT8";
+    }
+    
+    @Pure
+    @Override
     public @Nonnull String REPLACE() {
         return "INSERT";
     }

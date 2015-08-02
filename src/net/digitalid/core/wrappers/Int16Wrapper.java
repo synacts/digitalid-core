@@ -20,7 +20,7 @@ public final class Int16Wrapper extends Wrapper {
     /**
      * Stores the syntactic type {@code int16@core.digitalid.net}.
      */
-    public static final @Nonnull SyntacticType TYPE = SyntacticType.create("int16@core.digitalid.net").load(0);
+    public static final @Nonnull SyntacticType TYPE = SyntacticType.map("int16@core.digitalid.net").load(0);
     
     /**
      * The byte length of an int16.
@@ -100,7 +100,7 @@ public final class Int16Wrapper extends Wrapper {
         short value = this.value;
         for (int i = LENGTH - 1; i >= 0; i--) {  
             block.setByte(i, (byte) value);
-            value = (short) (value >>> 8);
+            value >>>= 8;
         }
     }
     

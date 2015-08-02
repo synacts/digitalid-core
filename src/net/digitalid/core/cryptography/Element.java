@@ -23,7 +23,7 @@ public final class Element extends Number {
     /**
      * Stores the semantic type {@code element.group@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("element.group@core.digitalid.net").load(IntegerWrapper.TYPE);
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("element.group@core.digitalid.net").load(IntegerWrapper.TYPE);
     
     
     /**

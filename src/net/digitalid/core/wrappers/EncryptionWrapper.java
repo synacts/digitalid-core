@@ -46,22 +46,22 @@ public final class EncryptionWrapper extends Wrapper {
     /**
      * Stores the syntactic type {@code encryption@core.digitalid.net}.
      */
-    public static final @Nonnull SyntacticType TYPE = SyntacticType.create("encryption@core.digitalid.net").load(1);
+    public static final @Nonnull SyntacticType TYPE = SyntacticType.map("encryption@core.digitalid.net").load(1);
     
     /**
      * Stores the semantic type {@code recipient.encryption@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType RECIPIENT = SemanticType.create("recipient.encryption@core.digitalid.net").load(HostIdentity.IDENTIFIER);
+    public static final @Nonnull SemanticType RECIPIENT = SemanticType.map("recipient.encryption@core.digitalid.net").load(HostIdentity.IDENTIFIER);
     
     /**
      * Stores the semantic type {@code key.encryption@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType KEY = SemanticType.create("key.encryption@core.digitalid.net").load(Element.TYPE);
+    private static final @Nonnull SemanticType KEY = SemanticType.map("key.encryption@core.digitalid.net").load(Element.TYPE);
     
     /**
      * Stores the semantic type {@code encryption@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType IMPLEMENTATION = SemanticType.create("implementation.encryption@core.digitalid.net").load(TupleWrapper.TYPE, Time.TYPE, RECIPIENT, KEY, InitializationVector.TYPE, SemanticType.UNKNOWN);
+    private static final @Nonnull SemanticType IMPLEMENTATION = SemanticType.map("implementation.encryption@core.digitalid.net").load(TupleWrapper.TYPE, Time.TYPE, RECIPIENT, KEY, InitializationVector.TYPE, SemanticType.UNKNOWN);
     
     
     /**

@@ -36,7 +36,7 @@ public final class IdentityQuery extends CoreServiceExternalQuery {
     /**
      * Stores the semantic type {@code query.identity@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("query.identity@core.digitalid.net").load(EmptyWrapper.TYPE);
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("query.identity@core.digitalid.net").load(EmptyWrapper.TYPE);
     
     
     /**

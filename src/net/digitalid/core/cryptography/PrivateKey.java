@@ -26,37 +26,37 @@ public final class PrivateKey implements Blockable {
     /**
      * Stores the semantic type {@code composite.group.private.key.host@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType COMPOSITE_GROUP = SemanticType.create("composite.group.private.key.host@core.digitalid.net").load(Group.TYPE);
+    private static final @Nonnull SemanticType COMPOSITE_GROUP = SemanticType.map("composite.group.private.key.host@core.digitalid.net").load(Group.TYPE);
     
     /**
      * Stores the semantic type {@code p.private.key.host@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType P = SemanticType.create("p.private.key.host@core.digitalid.net").load(IntegerWrapper.TYPE);
+    private static final @Nonnull SemanticType P = SemanticType.map("p.private.key.host@core.digitalid.net").load(IntegerWrapper.TYPE);
     
     /**
      * Stores the semantic type {@code q.private.key.host@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType Q = SemanticType.create("q.private.key.host@core.digitalid.net").load(IntegerWrapper.TYPE);
+    private static final @Nonnull SemanticType Q = SemanticType.map("q.private.key.host@core.digitalid.net").load(IntegerWrapper.TYPE);
     
     /**
      * Stores the semantic type {@code d.private.key.host@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType D = SemanticType.create("d.private.key.host@core.digitalid.net").load(Exponent.TYPE);
+    private static final @Nonnull SemanticType D = SemanticType.map("d.private.key.host@core.digitalid.net").load(Exponent.TYPE);
     
     /**
      * Stores the semantic type {@code square.group.private.key.host@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType SQUARE_GROUP = SemanticType.create("square.group.private.key.host@core.digitalid.net").load(Group.TYPE);
+    private static final @Nonnull SemanticType SQUARE_GROUP = SemanticType.map("square.group.private.key.host@core.digitalid.net").load(Group.TYPE);
     
     /**
      * Stores the semantic type {@code x.private.key.host@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType X = SemanticType.create("x.private.key.host@core.digitalid.net").load(Exponent.TYPE);
+    private static final @Nonnull SemanticType X = SemanticType.map("x.private.key.host@core.digitalid.net").load(Exponent.TYPE);
     
     /**
      * Stores the semantic type {@code private.key.host@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("private.key.host@core.digitalid.net").load(TupleWrapper.TYPE, COMPOSITE_GROUP, P, Q, D, SQUARE_GROUP, X);
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("private.key.host@core.digitalid.net").load(TupleWrapper.TYPE, COMPOSITE_GROUP, P, Q, D, SQUARE_GROUP, X);
     
     
     /**

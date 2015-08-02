@@ -20,7 +20,7 @@ public interface InternalNonHostIdentity extends InternalIdentity, NonHostIdenti
     /**
      * Stores the semantic type {@code nonhost.internal@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType IDENTIFIER = SemanticType.create("nonhost.internal@core.digitalid.net").load(InternalIdentity.IDENTIFIER);
+    public static final @Nonnull SemanticType IDENTIFIER = SemanticType.map("nonhost.internal@core.digitalid.net").load(InternalIdentity.IDENTIFIER);
     
     
     @Pure

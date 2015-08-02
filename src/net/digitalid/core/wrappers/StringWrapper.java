@@ -11,6 +11,9 @@ import net.digitalid.core.identity.SyntacticType;
 
 /**
  * Wraps a block with the syntactic type {@code string@core.digitalid.net} for encoding and decoding.
+ * <p>
+ * <em>Important:</em> SQL injections have to be prevented by the caller of this class!
+ * Only a warning is issued when the character might be used in a normal SQL statement.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
@@ -21,7 +24,7 @@ public final class StringWrapper extends Wrapper {
     /**
      * Stores the syntactic type {@code string@core.digitalid.net}.
      */
-    public static final @Nonnull SyntacticType TYPE = SyntacticType.create("string@core.digitalid.net").load(0);
+    public static final @Nonnull SyntacticType TYPE = SyntacticType.map("string@core.digitalid.net").load(0);
     
     /**
      * Stores the character set used to encode and decode strings.

@@ -31,12 +31,12 @@ public final class Int64Wrapper extends Wrapper<Int64Wrapper> {
     /**
      * Stores the syntactic type {@code int64@core.digitalid.net}.
      */
-    public static final @Nonnull SyntacticType TYPE = SyntacticType.create("int64@core.digitalid.net").load(0);
+    public static final @Nonnull SyntacticType TYPE = SyntacticType.map("int64@core.digitalid.net").load(0);
     
     /**
      * Stores the semantic type {@code semantic.int64@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType SEMANTIC = SemanticType.create("int64@core.digitalid.net").load(TYPE);
+    private static final @Nonnull SemanticType SEMANTIC = SemanticType.map("semantic.int64@core.digitalid.net").load(TYPE);
     
     @Pure
     @Override
@@ -126,11 +126,7 @@ public final class Int64Wrapper extends Wrapper<Int64Wrapper> {
         assert block.getLength() == determineLength() : "The block's length has to match the determined length.";
         assert block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
         
-        long value = this.value;
-        for (int i = LENGTH - 1; i >= 0; i--) {  
-            block.setByte(i, (byte) value);
-            value >>>= 8;
-        }
+        block.encodeValue(value);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -161,11 +157,7 @@ public final class Int64Wrapper extends Wrapper<Int64Wrapper> {
         public @Nonnull Int64Wrapper decodeNonNullable(@Nonnull @NonEncoding Block block) throws InvalidEncodingException {
             if (block.getLength() != LENGTH) throw new InvalidEncodingException("The block's length is invalid.");
             
-            long value = 0;
-            for (int i = 0; i < LENGTH; i++) {
-                value = (value << 8) | (block.getByte(i) & 0xff);
-            }
-            return new Int64Wrapper(block.getType(), value);
+            return new Int64Wrapper(block.getType(), block.decodeValue());
         }
         
         @Override

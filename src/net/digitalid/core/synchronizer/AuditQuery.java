@@ -41,7 +41,7 @@ final class AuditQuery extends InternalQuery {
     /**
      * Stores the semantic type {@code query.audit@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType TYPE = SemanticType.create("query.audit@core.digitalid.net").load(SemanticType.IDENTIFIER);
+    private static final @Nonnull SemanticType TYPE = SemanticType.map("query.audit@core.digitalid.net").load(SemanticType.IDENTIFIER);
     
     
     /**

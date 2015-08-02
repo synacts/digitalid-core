@@ -60,7 +60,7 @@ public final class Attribute extends GeneralConcept {
     /**
      * Stores the semantic type {@code published.attribute@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType PUBLISHED = SemanticType.create("published.attribute@core.digitalid.net").load(BooleanWrapper.TYPE);
+    public static final @Nonnull SemanticType PUBLISHED = SemanticType.map("published.attribute@core.digitalid.net").load(BooleanWrapper.TYPE);
     
     
     /**

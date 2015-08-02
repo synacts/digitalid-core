@@ -29,22 +29,22 @@ public final class Certificate extends NonHostConcept {
     /**
      * Stores the semantic type {@code delegation@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType DELEGATION = SemanticType.create("delegation@core.digitalid.net").load(TupleWrapper.TYPE, NonHostIdentity.IDENTIFIER, PassiveExpression.TYPE);
+    public static final @Nonnull SemanticType DELEGATION = SemanticType.map("delegation@core.digitalid.net").load(TupleWrapper.TYPE, NonHostIdentity.IDENTIFIER, PassiveExpression.TYPE);
     
     /**
      * Stores the semantic type {@code list.delegation@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType DELEGATIONS = SemanticType.create("list.delegation@core.digitalid.net").load(ListWrapper.TYPE, DELEGATION);
+    public static final @Nonnull SemanticType DELEGATIONS = SemanticType.map("list.delegation@core.digitalid.net").load(ListWrapper.TYPE, DELEGATION);
     
     /**
      * Stores the semantic type {@code outgoing.list.delegation@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType OUTGOING_DELEGATIONS = SemanticType.create("outgoing.list.delegation@core.digitalid.net").load(new Category[] {Category.SEMANTIC_TYPE, Category.NATURAL_PERSON, Category.ARTIFICIAL_PERSON}, Time.TROPICAL_YEAR, DELEGATIONS);
+    public static final @Nonnull SemanticType OUTGOING_DELEGATIONS = SemanticType.map("outgoing.list.delegation@core.digitalid.net").load(new Category[] {Category.SEMANTIC_TYPE, Category.NATURAL_PERSON, Category.ARTIFICIAL_PERSON}, Time.TROPICAL_YEAR, DELEGATIONS);
     
     /**
      * Stores the semantic type {@code incoming.list.delegation@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType INCOMING_DELEGATIONS = SemanticType.create("incoming.list.delegation@core.digitalid.net").load(new Category[] {Category.NATURAL_PERSON, Category.ARTIFICIAL_PERSON}, Time.TROPICAL_YEAR, DELEGATIONS);
+    public static final @Nonnull SemanticType INCOMING_DELEGATIONS = SemanticType.map("incoming.list.delegation@core.digitalid.net").load(new Category[] {Category.NATURAL_PERSON, Category.ARTIFICIAL_PERSON}, Time.TROPICAL_YEAR, DELEGATIONS);
     
     /**
      * Returns whether the given issuer is authorized to certify the given content.

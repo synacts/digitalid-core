@@ -20,9 +20,9 @@ public final class SelfcontainedWrapperTest extends DatabaseSetup {
     
     @Test
     public void testWrapping() throws SQLException, IOException, PacketException, ExternalException {
-        final @Nonnull SemanticType STRING = SemanticType.create("string@core.digitalid.net").load(StringWrapper.TYPE);
-        final @Nonnull SemanticType INT32 = SemanticType.create("int32@core.digitalid.net").load(Int32Wrapper.TYPE);
-        final @Nonnull SemanticType TYPE = SemanticType.create("selfcontained@core.digitalid.net").load(SelfcontainedWrapper.TYPE);
+        final @Nonnull SemanticType STRING = SemanticType.map("string@core.digitalid.net").load(StringWrapper.TYPE);
+        final @Nonnull SemanticType INT32 = SemanticType.map("int32@core.digitalid.net").load(Int32Wrapper.TYPE);
+        final @Nonnull SemanticType TYPE = SemanticType.map("selfcontained@core.digitalid.net").load(SelfcontainedWrapper.TYPE);
         
         final @Nonnull Block string = new StringWrapper(STRING, "This is a short string.").toBlock();
         final @Nonnull Block int32 = new Int32Wrapper(INT32, 123456789).toBlock();

@@ -105,7 +105,7 @@ public enum Category implements Blockable, SQLizable {
     /**
      * Stores the semantic type {@code category@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("category@core.digitalid.net").load(Int8Wrapper.TYPE);
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("category@core.digitalid.net").load(Int8Wrapper.TYPE);
     
     /**
      * Returns the category encoded by the given block or throws an {@link InvalidEncodingException}.

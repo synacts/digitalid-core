@@ -60,7 +60,7 @@ public final class CoreService extends Service {
     /**
      * Stores the semantic type {@code module@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType MODULE = SemanticType.create("module@core.digitalid.net").load(Service.MODULES);
+    private static final @Nonnull SemanticType MODULE = SemanticType.map("module@core.digitalid.net").load(Service.MODULES);
     
     @Pure
     @Override
@@ -72,7 +72,7 @@ public final class CoreService extends Service {
     /**
      * Stores the semantic type {@code state@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType STATE = SemanticType.create("state@core.digitalid.net").load(Service.STATES);
+    public static final @Nonnull SemanticType STATE = SemanticType.map("state@core.digitalid.net").load(Service.STATES);
     
     @Pure
     @Override

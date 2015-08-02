@@ -29,7 +29,7 @@ public final class ActiveExpression extends AbstractExpression {
     /**
      * Stores the semantic type {@code active.expression@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("active.expression@core.digitalid.net").load(StringWrapper.TYPE);
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("active.expression@core.digitalid.net").load(StringWrapper.TYPE);
     
     
     /**

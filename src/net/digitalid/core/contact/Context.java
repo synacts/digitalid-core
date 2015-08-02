@@ -103,17 +103,17 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
     /**
      * Stores the semantic type {@code context@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("context@core.digitalid.net").load(Int64Wrapper.TYPE);
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("context@core.digitalid.net").load(Int64Wrapper.TYPE);
     
     /**
      * Stores the semantic type {@code flat.context@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType FLAT = SemanticType.create("flat.context@core.digitalid.net");    
+    public static final @Nonnull SemanticType FLAT = SemanticType.map("flat.context@core.digitalid.net");    
     
     /**
      * Stores the semantic type {@code name.context@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType NAME_TYPE = SemanticType.create("name.context@core.digitalid.net").load(StringWrapper.TYPE);
+    public static final @Nonnull SemanticType NAME_TYPE = SemanticType.map("name.context@core.digitalid.net").load(StringWrapper.TYPE);
     
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Number –––––––––––––––––––––––––––––––––––––––––––––––––– */

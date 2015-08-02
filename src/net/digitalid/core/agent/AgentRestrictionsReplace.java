@@ -34,17 +34,17 @@ final class AgentRestrictionsReplace extends CoreServiceInternalAction {
     /**
      * Stores the semantic type {@code old.restrictions.agent@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType OLD_RESTRICTIONS = SemanticType.create("old.restrictions.agent@core.digitalid.net").load(Restrictions.TYPE);
+    private static final @Nonnull SemanticType OLD_RESTRICTIONS = SemanticType.map("old.restrictions.agent@core.digitalid.net").load(Restrictions.TYPE);
     
     /**
      * Stores the semantic type {@code new.restrictions.agent@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType NEW_RESTRICTIONS = SemanticType.create("new.restrictions.agent@core.digitalid.net").load(Restrictions.TYPE);
+    private static final @Nonnull SemanticType NEW_RESTRICTIONS = SemanticType.map("new.restrictions.agent@core.digitalid.net").load(Restrictions.TYPE);
     
     /**
      * Stores the semantic type {@code replace.restrictions.agent@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType TYPE = SemanticType.create("replace.restrictions.agent@core.digitalid.net").load(TupleWrapper.TYPE, Agent.TYPE, OLD_RESTRICTIONS, NEW_RESTRICTIONS);
+    private static final @Nonnull SemanticType TYPE = SemanticType.map("replace.restrictions.agent@core.digitalid.net").load(TupleWrapper.TYPE, Agent.TYPE, OLD_RESTRICTIONS, NEW_RESTRICTIONS);
     
     
     /**

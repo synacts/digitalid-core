@@ -58,12 +58,12 @@ public final class AccountInitialize extends CoreServiceInternalAction {
     /**
      * Stores the semantic type {@code state.initialize.account@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType STATE = SemanticType.create("state.initialize.account@core.digitalid.net").load(TupleWrapper.TYPE, Predecessor.TYPE, CoreService.STATE);
+    private static final @Nonnull SemanticType STATE = SemanticType.map("state.initialize.account@core.digitalid.net").load(TupleWrapper.TYPE, Predecessor.TYPE, CoreService.STATE);
     
     /**
      * Stores the semantic type {@code initialize.account@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("initialize.account@core.digitalid.net").load(ListWrapper.TYPE, STATE);
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("initialize.account@core.digitalid.net").load(ListWrapper.TYPE, STATE);
     
     
     /**

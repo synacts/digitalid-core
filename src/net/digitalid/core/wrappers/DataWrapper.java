@@ -25,7 +25,7 @@ public final class DataWrapper extends Wrapper {
     /**
      * Stores the syntactic type {@code data@core.digitalid.net}.
      */
-    public static final @Nonnull SyntacticType TYPE = SyntacticType.create("data@core.digitalid.net").load(0);
+    public static final @Nonnull SyntacticType TYPE = SyntacticType.map("data@core.digitalid.net").load(0);
     
     
     /**

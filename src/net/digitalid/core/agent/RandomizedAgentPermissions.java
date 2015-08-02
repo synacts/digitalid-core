@@ -35,22 +35,22 @@ public final class RandomizedAgentPermissions implements Blockable {
     /**
      * Stores the semantic type {@code salt.randomized.permission.agent@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType SALT = SemanticType.create("salt.randomized.permission.agent@core.digitalid.net").load(HashWrapper.TYPE);
+    private static final @Nonnull SemanticType SALT = SemanticType.map("salt.randomized.permission.agent@core.digitalid.net").load(HashWrapper.TYPE);
     
     /**
      * Stores the semantic type {@code permissions.randomized.permission.agent@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType PERMISSIONS = SemanticType.create("permissions.randomized.permission.agent@core.digitalid.net").load(FreezableAgentPermissions.TYPE);
+    private static final @Nonnull SemanticType PERMISSIONS = SemanticType.map("permissions.randomized.permission.agent@core.digitalid.net").load(FreezableAgentPermissions.TYPE);
     
     /**
      * Stores the semantic type {@code randomized.permission.agent@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("randomized.permission.agent@core.digitalid.net").load(TupleWrapper.TYPE, SALT, PERMISSIONS);
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("randomized.permission.agent@core.digitalid.net").load(TupleWrapper.TYPE, SALT, PERMISSIONS);
     
     /**
      * Stores the semantic type {@code hash.randomized.permission.agent@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType HASH = SemanticType.create("hash.randomized.permission.agent@core.digitalid.net").load(HashWrapper.TYPE);
+    public static final @Nonnull SemanticType HASH = SemanticType.map("hash.randomized.permission.agent@core.digitalid.net").load(HashWrapper.TYPE);
     
     
     /**

@@ -45,22 +45,22 @@ final class CredentialReply extends CoreServiceQueryReply {
     /**
      * Stores the semantic type {@code c.credential@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType C = SemanticType.create("c.credential@core.digitalid.net").load(Element.TYPE);
+    private static final @Nonnull SemanticType C = SemanticType.map("c.credential@core.digitalid.net").load(Element.TYPE);
     
     /**
      * Stores the semantic type {@code e.credential@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType E = SemanticType.create("e.credential@core.digitalid.net").load(Exponent.TYPE);
+    private static final @Nonnull SemanticType E = SemanticType.map("e.credential@core.digitalid.net").load(Exponent.TYPE);
     
     /**
      * Stores the semantic type {@code i.credential@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType I = SemanticType.create("i.credential@core.digitalid.net").load(Exponent.TYPE);
+    private static final @Nonnull SemanticType I = SemanticType.map("i.credential@core.digitalid.net").load(Exponent.TYPE);
     
     /**
      * Stores the semantic type {@code reply.credential@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType TYPE = SemanticType.create("reply.credential@core.digitalid.net").load(TupleWrapper.TYPE, Restrictions.TYPE, Time.TYPE, C, E, I);
+    private static final @Nonnull SemanticType TYPE = SemanticType.map("reply.credential@core.digitalid.net").load(TupleWrapper.TYPE, Restrictions.TYPE, Time.TYPE, C, E, I);
     
     
     /**

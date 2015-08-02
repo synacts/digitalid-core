@@ -27,7 +27,7 @@ public final class PassiveExpression extends AbstractExpression {
     /**
      * Stores the semantic type {@code passive.expression@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("passive.expression@core.digitalid.net").load(StringWrapper.TYPE);
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("passive.expression@core.digitalid.net").load(StringWrapper.TYPE);
     
     
     /**

@@ -27,7 +27,7 @@ public final class TupleWrapper extends Wrapper {
     /**
      * Stores the syntactic type {@code tuple@core.digitalid.net}.
      */
-    public static final @Nonnull SyntacticType TYPE = SyntacticType.create("tuple@core.digitalid.net").load(-1);
+    public static final @Nonnull SyntacticType TYPE = SyntacticType.map("tuple@core.digitalid.net").load(-1);
     
     /**
      * Returns whether the given elements are based on the corresponding parameter of the given type.

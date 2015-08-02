@@ -149,7 +149,7 @@ public enum PacketError implements Blockable, SQLizable {
     /**
      * Stores the semantic type {@code code.error.packet@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("code.error.packet@core.digitalid.net").load(Int8Wrapper.TYPE);
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("code.error.packet@core.digitalid.net").load(Int8Wrapper.TYPE);
     
     /**
      * Returns the packet error encoded by the given block.

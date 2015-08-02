@@ -20,8 +20,8 @@ public final class ListWrapperTest extends DatabaseSetup {
 
     @Test
     public void testWrapping() throws InvalidEncodingException {
-        final @Nonnull SemanticType STRING = SemanticType.create("string@test.digitalid.net").load(StringWrapper.TYPE);
-        final @Nonnull SemanticType TYPE = SemanticType.create("list@test.digitalid.net").load(ListWrapper.TYPE, STRING);
+        final @Nonnull SemanticType STRING = SemanticType.map("string@test.digitalid.net").load(StringWrapper.TYPE);
+        final @Nonnull SemanticType TYPE = SemanticType.map("list@test.digitalid.net").load(ListWrapper.TYPE, STRING);
         final @Nonnull Block block1 = new StringWrapper(STRING, "This is a short first block.").toBlock();
         final @Nonnull Block block2 = new StringWrapper(STRING, "This is a longer second block in order to test different block lengths.").toBlock();
         final @Nonnull Block block3 = new StringWrapper(STRING, "This is an even longer third block in order to test the wrapping of more than two blocks.").toBlock();

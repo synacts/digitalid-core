@@ -50,49 +50,49 @@ public final class SemanticType extends Type {
     /**
      * Stores the semantic type {@code semantic.type@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType IDENTIFIER = SemanticType.create("semantic.type@core.digitalid.net").load(Type.IDENTIFIER);
+    public static final @Nonnull SemanticType IDENTIFIER = SemanticType.map("semantic.type@core.digitalid.net").load(Type.IDENTIFIER);
     
     /**
      * Stores the semantic type {@code attribute.type@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType ATTRIBUTE_IDENTIFIER = SemanticType.create("attribute.type@core.digitalid.net").load(SemanticType.IDENTIFIER);
+    public static final @Nonnull SemanticType ATTRIBUTE_IDENTIFIER = SemanticType.map("attribute.type@core.digitalid.net").load(SemanticType.IDENTIFIER);
     
     /**
      * Stores the semantic type {@code role.type@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType ROLE_IDENTIFIER = SemanticType.create("role.type@core.digitalid.net").load(SemanticType.IDENTIFIER);
+    public static final @Nonnull SemanticType ROLE_IDENTIFIER = SemanticType.map("role.type@core.digitalid.net").load(SemanticType.IDENTIFIER);
     
     
     /**
      * Stores the semantic type {@code categories.attribute.type@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType CATEGORIES = SemanticType.create("categories.attribute.type@core.digitalid.net").load(new Category[] {Category.SEMANTIC_TYPE}, Time.TROPICAL_YEAR, ListWrapper.TYPE, Category.TYPE);
+    public static final @Nonnull SemanticType CATEGORIES = SemanticType.map("categories.attribute.type@core.digitalid.net").load(new Category[] {Category.SEMANTIC_TYPE}, Time.TROPICAL_YEAR, ListWrapper.TYPE, Category.TYPE);
     
     /**
      * Stores the semantic type {@code caching.attribute.type@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType CACHING = SemanticType.create("caching.attribute.type@core.digitalid.net").load(new Category[] {Category.SEMANTIC_TYPE}, Time.TROPICAL_YEAR, Time.TYPE);
+    public static final @Nonnull SemanticType CACHING = SemanticType.map("caching.attribute.type@core.digitalid.net").load(new Category[] {Category.SEMANTIC_TYPE}, Time.TROPICAL_YEAR, Time.TYPE);
     
     /**
      * Stores the semantic type {@code syntactic.base.semantic.type@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType SYNTACTIC_BASE = SemanticType.create("syntactic.base.semantic.type@core.digitalid.net").load(new Category[] {Category.SEMANTIC_TYPE}, Time.TROPICAL_YEAR, SyntacticType.IDENTIFIER);
+    public static final @Nonnull SemanticType SYNTACTIC_BASE = SemanticType.map("syntactic.base.semantic.type@core.digitalid.net").load(new Category[] {Category.SEMANTIC_TYPE}, Time.TROPICAL_YEAR, SyntacticType.IDENTIFIER);
     
     /**
      * Stores the semantic type {@code parameters.semantic.type@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType PARAMETERS = SemanticType.create("parameters.semantic.type@core.digitalid.net").load(new Category[] {Category.SEMANTIC_TYPE}, Time.TROPICAL_YEAR, ListWrapper.TYPE, SemanticType.IDENTIFIER);
+    public static final @Nonnull SemanticType PARAMETERS = SemanticType.map("parameters.semantic.type@core.digitalid.net").load(new Category[] {Category.SEMANTIC_TYPE}, Time.TROPICAL_YEAR, ListWrapper.TYPE, SemanticType.IDENTIFIER);
     
     /**
      * Stores the semantic type {@code semantic.base.semantic.type@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType SEMANTIC_BASE = SemanticType.create("semantic.base.semantic.type@core.digitalid.net").load(new Category[] {Category.SEMANTIC_TYPE}, Time.TROPICAL_YEAR, SemanticType.IDENTIFIER);
+    public static final @Nonnull SemanticType SEMANTIC_BASE = SemanticType.map("semantic.base.semantic.type@core.digitalid.net").load(new Category[] {Category.SEMANTIC_TYPE}, Time.TROPICAL_YEAR, SemanticType.IDENTIFIER);
     
     
     /**
      * Stores the semantic type {@code unknown@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType UNKNOWN = SemanticType.create("unknown@core.digitalid.net").load(DataWrapper.TYPE);
+    public static final @Nonnull SemanticType UNKNOWN = SemanticType.map("unknown@core.digitalid.net").load(DataWrapper.TYPE);
     
     
     /**
@@ -141,15 +141,15 @@ public final class SemanticType extends Type {
     }
     
     /**
-     * Creates a new semantic type with the given identifier.
+     * Maps the semantic type with the given identifier.
      * 
-     * @param identifier the identifier of the new semantic type.
+     * @param identifier the identifier of the semantic type.
      * 
      * @require InternalNonHostIdentifier.isValid(identifier) : "The string is a valid internal non-host identifier.";
      */
     @OnMainThread
     @NonCommitting
-    public static @Nonnull @NonLoaded SemanticType create(@Nonnull String identifier) {
+    public static @Nonnull @NonLoaded SemanticType map(@Nonnull String identifier) {
         return Mapper.mapSemanticType(new InternalNonHostIdentifier(identifier));
     }
     

@@ -25,14 +25,29 @@ public enum SQLType {
     TINYINT(Types.TINYINT, Database.getConfiguration().TINYINT()),
     
     /**
+     * The SQL type for floats.
+     */
+    FLOAT(Types.FLOAT, Database.getConfiguration().FLOAT()),
+    
+    /**
+     * The SQL type for doubles.
+     */
+    DOUBLE(Types.DOUBLE, Database.getConfiguration().DOUBLE()),
+    
+    /**
      * The SQL type for strings.
      */
     STRING(Types.VARCHAR, "VARCHAR(50)"),
     
     /**
+     * The SQL type for chars.
+     */
+    CHAR(Types.VARCHAR, "CHAR(1)"),
+    
+    /**
      * The SQL type for large objects.
      */
-    BLOB(Types.BLOB, Database.getConfiguration().TINYINT());
+    BLOB(Types.BLOB, Database.getConfiguration().BLOB());
     
     
     /**

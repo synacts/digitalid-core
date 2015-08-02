@@ -30,7 +30,7 @@ public final class InitializationVector extends IvParameterSpec implements Block
     /**
      * Stores the semantic type {@code initialization.vector@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("initialization.vector@core.digitalid.net").load(DataWrapper.TYPE);
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("initialization.vector@core.digitalid.net").load(DataWrapper.TYPE);
     
     
     /**

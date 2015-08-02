@@ -17,7 +17,7 @@ public final class EmailPerson extends ExternalPerson {
     /**
      * Stores the semantic type {@code email.person@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType IDENTIFIER = SemanticType.create("email.person@core.digitalid.net").load(ExternalPerson.IDENTIFIER);
+    public static final @Nonnull SemanticType IDENTIFIER = SemanticType.map("email.person@core.digitalid.net").load(ExternalPerson.IDENTIFIER);
     
     
     /**

@@ -29,22 +29,22 @@ public abstract class Audit implements Blockable {
     /**
      * Stores the semantic type {@code last.time.audit@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType LAST_TIME = SemanticType.create("last.time.audit@core.digitalid.net").load(Time.TYPE);
+    public static final @Nonnull SemanticType LAST_TIME = SemanticType.map("last.time.audit@core.digitalid.net").load(Time.TYPE);
     
     /**
      * Stores the semantic type {@code this.time.audit@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType THIS_TIME = SemanticType.create("this.time.audit@core.digitalid.net").load(Time.TYPE);
+    public static final @Nonnull SemanticType THIS_TIME = SemanticType.map("this.time.audit@core.digitalid.net").load(Time.TYPE);
     
     /**
      * Stores the semantic type {@code trail.audit@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TRAIL = SemanticType.create("trail.audit@core.digitalid.net").load(Packet.SIGNATURES);
+    public static final @Nonnull SemanticType TRAIL = SemanticType.map("trail.audit@core.digitalid.net").load(Packet.SIGNATURES);
     
     /**
      * Stores the semantic type {@code audit@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("audit@core.digitalid.net").load(TupleWrapper.TYPE, LAST_TIME, THIS_TIME, TRAIL);
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("audit@core.digitalid.net").load(TupleWrapper.TYPE, LAST_TIME, THIS_TIME, TRAIL);
     
     
     /**

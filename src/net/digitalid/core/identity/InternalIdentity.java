@@ -20,7 +20,7 @@ public interface InternalIdentity extends Identity {
     /**
      * Stores the semantic type {@code internal@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType IDENTIFIER = SemanticType.create("internal@core.digitalid.net").load(Identity.IDENTIFIER);
+    public static final @Nonnull SemanticType IDENTIFIER = SemanticType.map("internal@core.digitalid.net").load(Identity.IDENTIFIER);
     
     
     @Pure

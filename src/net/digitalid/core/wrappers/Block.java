@@ -469,6 +469,43 @@ public final class Block implements Storable<Block>, Cloneable {
         System.arraycopy(values, offset, bytes, this.offset + index, length);
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Decodes the value in this block.
+     * 
+     * @return the value encoded in this block.
+     */
+    @Pure
+    @NonEncodingRecipient
+    public long decodeValue() {
+        assert !isEncoding() : "This method is not called during encoding.";
+        
+        encodeIfNotYetEncoded();
+        
+        long value = 0;
+        for (int i = 0; i < length; i++) {
+            value = (value << 8) | (bytes[offset + i] & 0xff);
+        }
+        return value;
+    }
+    
+    /**
+     * Encodes the given value into this block.
+     * 
+     * @param value the value to be encoded.
+     */
+    @EncodingRecipient
+    public void encodeValue(long value) {
+        assert isEncoding() : "This method may only be called during encoding.";
+        
+        long shifter = value;
+        for (int i = length - 1; i >= 0; i--) {
+            bytes[offset + i] = (byte) shifter;
+            shifter >>>= 8;
+        }
+    }
+    
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Length –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**

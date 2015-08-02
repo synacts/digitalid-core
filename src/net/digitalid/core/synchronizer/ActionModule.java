@@ -99,12 +99,12 @@ public final class ActionModule implements BothModule {
     /**
      * Stores the semantic type {@code entry.actions.module@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType MODULE_ENTRY = SemanticType.create("entry.actions.module@core.digitalid.net").load(TupleWrapper.TYPE, InternalNonHostIdentity.IDENTIFIER, SemanticType.ATTRIBUTE_IDENTIFIER, Time.TYPE, FreezableAgentPermissions.TYPE, Restrictions.TYPE, Agent.NUMBER, HostIdentity.IDENTIFIER, Packet.SIGNATURE);
+    private static final @Nonnull SemanticType MODULE_ENTRY = SemanticType.map("entry.actions.module@core.digitalid.net").load(TupleWrapper.TYPE, InternalNonHostIdentity.IDENTIFIER, SemanticType.ATTRIBUTE_IDENTIFIER, Time.TYPE, FreezableAgentPermissions.TYPE, Restrictions.TYPE, Agent.NUMBER, HostIdentity.IDENTIFIER, Packet.SIGNATURE);
     
     /**
      * Stores the semantic type {@code actions.module@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType MODULE_FORMAT = SemanticType.create("actions.module@core.digitalid.net").load(ListWrapper.TYPE, MODULE_ENTRY);
+    private static final @Nonnull SemanticType MODULE_FORMAT = SemanticType.map("actions.module@core.digitalid.net").load(ListWrapper.TYPE, MODULE_ENTRY);
     
     @Pure
     @Override
@@ -164,7 +164,7 @@ public final class ActionModule implements BothModule {
     /**
      * Stores the semantic type {@code actions.state@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType STATE_FORMAT = SemanticType.create("actions.state@core.digitalid.net").load(EmptyWrapper.TYPE);
+    private static final @Nonnull SemanticType STATE_FORMAT = SemanticType.map("actions.state@core.digitalid.net").load(EmptyWrapper.TYPE);
     
     @Pure
     @Override

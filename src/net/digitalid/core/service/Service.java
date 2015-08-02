@@ -278,12 +278,12 @@ public abstract class Service implements BothModule, SQLizable {
     /**
      * Stores the semantic type {@code module.service@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType MODULE = SemanticType.create("module.service@core.digitalid.net").load(SelfcontainedWrapper.TYPE);
+    private static final @Nonnull SemanticType MODULE = SemanticType.map("module.service@core.digitalid.net").load(SelfcontainedWrapper.TYPE);
     
     /**
      * Stores the semantic type {@code list.module.service@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType MODULES = SemanticType.create("list.module.service@core.digitalid.net").load(ListWrapper.TYPE, MODULE);
+    public static final @Nonnull SemanticType MODULES = SemanticType.map("list.module.service@core.digitalid.net").load(ListWrapper.TYPE, MODULE);
     
     /**
      * @ensure return.isBasedOn(MODULES) : "The returned type is based on the modules format.";
@@ -320,12 +320,12 @@ public abstract class Service implements BothModule, SQLizable {
     /**
      * Stores the semantic type {@code state.service@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType STATE = SemanticType.create("state.service@core.digitalid.net").load(SelfcontainedWrapper.TYPE);
+    private static final @Nonnull SemanticType STATE = SemanticType.map("state.service@core.digitalid.net").load(SelfcontainedWrapper.TYPE);
     
     /**
      * Stores the semantic type {@code list.state.service@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType STATES = SemanticType.create("list.state.service@core.digitalid.net").load(ListWrapper.TYPE, STATE);
+    public static final @Nonnull SemanticType STATES = SemanticType.map("list.state.service@core.digitalid.net").load(ListWrapper.TYPE, STATE);
     
     /**
      * @ensure return.isBasedOn(STATES) : "The returned type is based on the states format.";

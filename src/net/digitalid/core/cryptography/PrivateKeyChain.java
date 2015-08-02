@@ -27,12 +27,12 @@ public final class PrivateKeyChain extends KeyChain<PrivateKey> {
     /**
      * Stores the semantic type {@code item.private.key.chain.host@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType ITEM = SemanticType.create("item.private.key.chain.host@core.digitalid.net").load(TupleWrapper.TYPE, Time.TYPE, PrivateKey.TYPE);
+    private static final @Nonnull SemanticType ITEM = SemanticType.map("item.private.key.chain.host@core.digitalid.net").load(TupleWrapper.TYPE, Time.TYPE, PrivateKey.TYPE);
     
     /**
      * Stores the semantic type {@code private.key.chain.host@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("private.key.chain.host@core.digitalid.net").load(ListWrapper.TYPE, ITEM);
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("private.key.chain.host@core.digitalid.net").load(ListWrapper.TYPE, ITEM);
     
     
     /**

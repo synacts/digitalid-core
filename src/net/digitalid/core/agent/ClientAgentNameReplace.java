@@ -36,17 +36,17 @@ final class ClientAgentNameReplace extends CoreServiceInternalAction {
     /**
      * Stores the semantic type {@code old.name.client.agent@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType OLD_NAME = SemanticType.create("old.name.client.agent@core.digitalid.net").load(StringWrapper.TYPE);
+    private static final @Nonnull SemanticType OLD_NAME = SemanticType.map("old.name.client.agent@core.digitalid.net").load(StringWrapper.TYPE);
     
     /**
      * Stores the semantic type {@code new.name.client.agent@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType NEW_NAME = SemanticType.create("new.name.client.agent@core.digitalid.net").load(StringWrapper.TYPE);
+    private static final @Nonnull SemanticType NEW_NAME = SemanticType.map("new.name.client.agent@core.digitalid.net").load(StringWrapper.TYPE);
     
     /**
      * Stores the semantic type {@code replace.name.client.agent@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType TYPE = SemanticType.create("replace.name.client.agent@core.digitalid.net").load(TupleWrapper.TYPE, Agent.TYPE, OLD_NAME, NEW_NAME);
+    private static final @Nonnull SemanticType TYPE = SemanticType.map("replace.name.client.agent@core.digitalid.net").load(TupleWrapper.TYPE, Agent.TYPE, OLD_NAME, NEW_NAME);
     
     
     /**

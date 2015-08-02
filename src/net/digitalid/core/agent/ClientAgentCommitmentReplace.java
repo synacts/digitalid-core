@@ -35,17 +35,17 @@ public final class ClientAgentCommitmentReplace extends CoreServiceInternalActio
     /**
      * Stores the semantic type {@code old.commitment.client.agent@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType OLD_COMMITMENT = SemanticType.create("old.commitment.client.agent@core.digitalid.net").load(Commitment.TYPE);
+    private static final @Nonnull SemanticType OLD_COMMITMENT = SemanticType.map("old.commitment.client.agent@core.digitalid.net").load(Commitment.TYPE);
     
     /**
      * Stores the semantic type {@code new.commitment.client.agent@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType NEW_COMMITMENT = SemanticType.create("new.commitment.client.agent@core.digitalid.net").load(Commitment.TYPE);
+    private static final @Nonnull SemanticType NEW_COMMITMENT = SemanticType.map("new.commitment.client.agent@core.digitalid.net").load(Commitment.TYPE);
     
     /**
      * Stores the semantic type {@code replace.commitment.client.agent@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType TYPE = SemanticType.create("replace.commitment.client.agent@core.digitalid.net").load(TupleWrapper.TYPE, Agent.TYPE, OLD_COMMITMENT, NEW_COMMITMENT);
+    private static final @Nonnull SemanticType TYPE = SemanticType.map("replace.commitment.client.agent@core.digitalid.net").load(TupleWrapper.TYPE, Agent.TYPE, OLD_COMMITMENT, NEW_COMMITMENT);
     
     
     /**

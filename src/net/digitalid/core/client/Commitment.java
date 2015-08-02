@@ -46,22 +46,22 @@ public class Commitment implements Blockable, SQLizable {
     /**
      * Stores the semantic type {@code host.commitment.client@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType HOST = SemanticType.create("host.commitment.client@core.digitalid.net").load(HostIdentity.IDENTIFIER);
+    private static final @Nonnull SemanticType HOST = SemanticType.map("host.commitment.client@core.digitalid.net").load(HostIdentity.IDENTIFIER);
     
     /**
      * Stores the semantic type {@code time.commitment.client@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType TIME = SemanticType.create("time.commitment.client@core.digitalid.net").load(Time.TYPE);
+    private static final @Nonnull SemanticType TIME = SemanticType.map("time.commitment.client@core.digitalid.net").load(Time.TYPE);
     
     /**
      * Stores the semantic type {@code value.commitment.client@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType VALUE = SemanticType.create("value.commitment.client@core.digitalid.net").load(Element.TYPE);
+    private static final @Nonnull SemanticType VALUE = SemanticType.map("value.commitment.client@core.digitalid.net").load(Element.TYPE);
     
     /**
      * Stores the semantic type {@code commitment.client@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("commitment.client@core.digitalid.net").load(TupleWrapper.TYPE, HOST, TIME, VALUE);
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("commitment.client@core.digitalid.net").load(TupleWrapper.TYPE, HOST, TIME, VALUE);
     
     
     /**

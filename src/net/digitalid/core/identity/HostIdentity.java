@@ -21,7 +21,7 @@ public final class HostIdentity extends IdentityClass implements InternalIdentit
     /**
      * Stores the semantic type {@code host@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType IDENTIFIER = SemanticType.create("host@core.digitalid.net").load(Identity.IDENTIFIER);
+    public static final @Nonnull SemanticType IDENTIFIER = SemanticType.map("host@core.digitalid.net").load(Identity.IDENTIFIER);
     
     
     /**

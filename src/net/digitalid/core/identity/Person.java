@@ -24,7 +24,7 @@ public abstract class Person extends NonHostIdentityClass {
     /**
      * Stores the semantic type {@code person@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType IDENTIFIER = SemanticType.create("person@core.digitalid.net").load(NonHostIdentity.IDENTIFIER);
+    public static final @Nonnull SemanticType IDENTIFIER = SemanticType.map("person@core.digitalid.net").load(NonHostIdentity.IDENTIFIER);
     
     
     /**

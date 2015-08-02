@@ -43,7 +43,7 @@ public final class Password extends NonHostConcept {
     /**
      * Stores the semantic type {@code password@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.create("password@core.digitalid.net").load(StringWrapper.TYPE);
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("password@core.digitalid.net").load(StringWrapper.TYPE);
     
     
     /**
