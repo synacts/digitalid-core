@@ -20,6 +20,16 @@ public enum SQLType {
     BIGINT(Types.BIGINT, "BIGINT"),
     
     /**
+     * The SQL type for normal integers.
+     */
+    INT(Types.INTEGER, "INT"),
+    
+    /**
+     * The SQL type for small integers.
+     */
+    SMALLINT(Types.SMALLINT, "SMALLINT"),
+    
+    /**
      * The SQL type for tiny integers.
      */
     TINYINT(Types.TINYINT, Database.getConfiguration().TINYINT()),
@@ -33,6 +43,11 @@ public enum SQLType {
      * The SQL type for doubles.
      */
     DOUBLE(Types.DOUBLE, Database.getConfiguration().DOUBLE()),
+    
+    /**
+     * The SQL type for booleans.
+     */
+    BOOLEAN(Types.TINYINT, "BOOLEAN"),
     
     /**
      * The SQL type for strings.

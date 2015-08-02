@@ -1,21 +1,34 @@
 package net.digitalid.core.wrappers;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import net.digitalid.core.annotations.BasedOn;
 import net.digitalid.core.annotations.Encoding;
 import net.digitalid.core.annotations.Immutable;
+import net.digitalid.core.annotations.Loaded;
+import net.digitalid.core.annotations.NonEmpty;
+import net.digitalid.core.annotations.NonEncoding;
+import net.digitalid.core.annotations.NonNegative;
 import net.digitalid.core.annotations.Pure;
+import net.digitalid.core.database.Column;
+import net.digitalid.core.database.SQLType;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.identity.SyntacticType;
 
 /**
- * Wraps a block with the syntactic type {@code intvar@core.digitalid.net} for encoding and decoding.
+ * Wraps values of the syntactic type {@code intvar@core.digitalid.net} for encoding and decoding.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
 @Immutable
-public final class IntvarWrapper extends Wrapper {
+public final class IntvarWrapper extends Wrapper<IntvarWrapper> {
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the syntactic type {@code intvar@core.digitalid.net}.
@@ -23,10 +36,22 @@ public final class IntvarWrapper extends Wrapper {
     public static final @Nonnull SyntacticType TYPE = SyntacticType.map("intvar@core.digitalid.net").load(0);
     
     /**
+     * Stores the semantic type {@code semantic.intvar@core.digitalid.net}.
+     */
+    private static final @Nonnull SemanticType SEMANTIC = SemanticType.map("semantic.intvar@core.digitalid.net").load(TYPE);
+    
+    @Pure
+    @Override
+    public @Nonnull SyntacticType getSyntacticType() {
+        return TYPE;
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
      * Stores the maximum value an intvar can have.
      */
     public static final long MAX_VALUE = 4611686018427387903l;
-    
     
     /**
      * Stores the value of this wrapper.
@@ -37,46 +62,9 @@ public final class IntvarWrapper extends Wrapper {
     private final long value;
     
     /**
-     * Encodes the given value into a new block of the given type.
+     * Returns the value of this wrapper.
      * 
-     * @param type the semantic type of the new block.
-     * @param value the value to encode into the new block.
-     * 
-     * @require type.isLoaded() : "The type declaration is loaded.";
-     * @require type.isBasedOn(TYPE) : "The given type is based on the indicated syntactic type.";
-     * @require value >= 0 : "The value is not negative.";
-     * @require value <= MAX_VALUE : "The first two bits have to be zero.";
-     */
-    public IntvarWrapper(@Nonnull SemanticType type, long value) {
-        super(type);
-        
-        assert value >= 0 : "The value is not negative.";
-        assert value <= MAX_VALUE : "The first two bits have to be zero.";
-        
-        this.value = value;
-    }
-    
-    /**
-     * Wraps and decodes the given block.
-     * 
-     * @param block the block to wrap and decode.
-     * 
-     * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated syntactic type.";
-     */
-    public IntvarWrapper(@Nonnull Block block) throws InvalidEncodingException {
-        super(block);
-        
-        final int length = block.getLength();
-        
-        if (length != decodeLength(block, 0)) throw new InvalidEncodingException("The block's length is invalid.");
-        
-        value = decodeValue(block, 0, length);
-    }
-    
-    /**
-     * Returns the value of the wrapped block.
-     * 
-     * @return the value of the wrapped block.
+     * @return the value of this wrapper.
      * 
      * @ensure value >= 0 : "The value is not negative.";
      * @ensure value <= MAX_VALUE : "The first two bits are zero.";
@@ -86,12 +74,65 @@ public final class IntvarWrapper extends Wrapper {
         return value;
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
-    @Pure
-    @Override
-    public @Nonnull SyntacticType getSyntacticType() {
-        return TYPE;
+    /**
+     * Creates a new wrapper with the given type and value.
+     * 
+     * @param type the semantic type of the new wrapper.
+     * @param value the value of the new wrapper.
+     * 
+     * @require value >= 0 : "The value is not negative.";
+     * @require value <= MAX_VALUE : "The first two bits have to be zero.";
+     */
+    private IntvarWrapper(@Nonnull @Loaded @BasedOn("intvar@core.digitalid.net") SemanticType type, long value) {
+        super(type);
+        
+        assert value >= 0 : "The value is not negative.";
+        assert value <= MAX_VALUE : "The first two bits have to be zero.";
+        
+        this.value = value;
     }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Utility –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Stores the factory of this class.
+     */
+    private static final Wrapper.Factory<IntvarWrapper> FACTORY = new Factory(SEMANTIC);
+    
+    /**
+     * Encodes the given value into a new block of the given type.
+     * 
+     * @param type the semantic type of the new block.
+     * @param value the value to encode into the new block.
+     * 
+     * @return a new block containing the given value.
+     * 
+     * @require value >= 0 : "The value is not negative.";
+     * @require value <= MAX_VALUE : "The first two bits have to be zero.";
+     */
+    @Pure
+    public static @Nonnull @NonEncoding Block encode(@Nonnull @Loaded @BasedOn("intvar@core.digitalid.net") SemanticType type, long value) {
+        return FACTORY.encodeNonNullable(new IntvarWrapper(type, value));
+    }
+    
+    /**
+     * Decodes the given block. 
+     * 
+     * @param block the block to be decoded.
+     * 
+     * @return the value contained in the given block.
+     * 
+     * @ensure value >= 0 : "The value is not negative.";
+     * @ensure value <= MAX_VALUE : "The first two bits are zero.";
+     */
+    @Pure
+    public static long decode(@Nonnull @NonEncoding @BasedOn("intvar@core.digitalid.net") Block block) throws InvalidEncodingException {
+        return FACTORY.decodeNonNullable(block).value;
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encoding –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
@@ -102,11 +143,13 @@ public final class IntvarWrapper extends Wrapper {
     @Pure
     @Override
     protected void encode(@Encoding @Nonnull Block block) {
+        assert block.getLength() == determineLength() : "The block's length has to match the determined length.";
         assert block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
         
         encode(block, 0, block.getLength(), value);
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Decode Length –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Decodes the length of the intvar as indicated in the first two bits of the byte at the given offset.
@@ -116,12 +159,10 @@ public final class IntvarWrapper extends Wrapper {
      * 
      * @return the length of the intvar.
      * 
-     * @require offset >= 0 : "The offset is not negative.";
-     * 
      * @ensure return == 1 || return == 2 || return == 4 || return == 8 : "The result is either 1, 2, 4 or 8.";
      */
     @Pure
-    public static int decodeLength(@Nonnull Block block, int offset) throws InvalidEncodingException {
+    public static int decodeLength(@Nonnull Block block, @NonNegative int offset) throws InvalidEncodingException {
         assert offset >= 0 : "The offset is not negative.";
         
         if (offset >= block.getLength()) throw new InvalidEncodingException("The offset is not out of bounds.");
@@ -136,17 +177,16 @@ public final class IntvarWrapper extends Wrapper {
      * 
      * @return the length of the intvar.
      * 
-     * @require bytes.length > 0 : "The byte array is not empty.";
-     * 
      * @ensure return == 1 || return == 2 || return == 4 || return == 8 : "The result is either 1, 2, 4 or 8.";
      */
     @Pure
-    static int decodeLength(@Nonnull byte[] bytes) throws InvalidEncodingException {
+    static int decodeLength(@Nonnull @NonEmpty byte[] bytes) throws InvalidEncodingException {
         assert bytes.length > 0 : "The byte array is not empty.";
         
         return 1 << ((bytes[0] & 0xFF) >>> 6);
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Decode Value –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Decodes the value of the intvar that is stored in the indicated section of the given block.
@@ -157,13 +197,12 @@ public final class IntvarWrapper extends Wrapper {
      * 
      * @return the decoded value of the intvar.
      * 
-     * @require offset >= 0 : "The offset is not negative.";
      * @require length == decodeLength(block, offset) : "The length is correct.";
      * 
      * @ensure determineLength(return) == length : "The length of the return value as an intvar matches the given length.";
      */
     @Pure
-    public static long decodeValue(@Nonnull Block block, int offset, int length) throws InvalidEncodingException {
+    public static long decodeValue(@Nonnull Block block, @NonNegative int offset, int length) throws InvalidEncodingException {
         assert offset >= 0 : "The offset is not negative.";
         assert length == decodeLength(block, offset) : "The length is correct.";
         
@@ -207,6 +246,7 @@ public final class IntvarWrapper extends Wrapper {
         return result;
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Static Encoding –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Determines the length of the given value when encoded as an intvar.
@@ -242,28 +282,124 @@ public final class IntvarWrapper extends Wrapper {
      * @param length the length of the indicated section in the block.
      * @param value the value to be encoded as an intvar.
      * 
-     * @require block.isEncoding() : "The given block is in the process of being encoded.";
-     * @require offset >= 0 : "The offset is not negative.";
      * @require offset + length <= block.getLength() : "The indicated section may not exceed the given block.";
      * @require length == determineLength(value) : "The length of the indicated section in the block has to match the length of the encoded value.";
      * @require value >= 0 : "The value is not negative.";
      * @require value <= MAX_VALUE : "The first two bits have to be zero.";
      */
-    @SuppressWarnings("AssignmentToMethodParameter")
-    public static void encode(final @Encoding @Nonnull Block block, final int offset, final int length, long value) {
-        assert block.isEncoding() : "The given block is in the process of being encoded.";
+    public static void encode(@Nonnull @Encoding Block block, @NonNegative int offset, int length, long value) {
         assert offset >= 0 : "The offset is not negative.";
         assert offset + length <= block.getLength() : "The indicated section may not exceed the given block.";
         assert length == determineLength(value) : "The length of the indicated section in the block has to match the length of the encoded value.";
         assert value >= 0 : "The value is not negative.";
         assert value <= MAX_VALUE : "The first two bits have to be zero.";
         
+        long shifter = value;
         for (int i = length - 1; i >= 1; i--) {  
-            block.setByte(offset + i, (byte) value);
-            value >>>= 8;
+            block.setByte(offset + i, (byte) shifter);
+            shifter >>>= 8;
         }
         
-        block.setByte(offset, (byte) (value | (Integer.numberOfTrailingZeros(length) << 6)));
+        block.setByte(offset, (byte) (shifter | (Integer.numberOfTrailingZeros(length) << 6)));
     }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * The factory for this class.
+     */
+    private static class Factory extends Wrapper.Factory<IntvarWrapper> {
+        
+        /**
+         * Stores the column for the wrapper.
+         */
+        private static final @Nonnull Column COLUMN = Column.get("value", SQLType.BIGINT);
+        
+        /**
+         * Creates a new factory with the given type.
+         * 
+         * @param type the semantic type that corresponds to the wrapper.
+         */
+        protected Factory(@Nonnull @Loaded @BasedOn("intvar@core.digitalid.net") SemanticType type) {
+            super(type, COLUMN);
+            
+            assert type.isBasedOn(TYPE) : "The given semantic type is based on the indicated syntactic type.";
+        }
+        
+        @Pure
+        @Override
+        public @Nonnull IntvarWrapper decodeNonNullable(@Nonnull @NonEncoding Block block) throws InvalidEncodingException {
+            final int length = block.getLength();
+            
+            if (length != decodeLength(block, 0)) throw new InvalidEncodingException("The block's length is invalid.");
+            
+            final long value = decodeValue(block, 0, length);
+            return new IntvarWrapper(block.getType(), value);
+        }
+        
+        @Override
+        public void setNonNullable(@Nonnull IntvarWrapper wrapper, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+            preparedStatement.setLong(parameterIndex, wrapper.value);
+        }
+        
+        @Pure
+        @Override
+        public @Nullable IntvarWrapper getNullable(@Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+            final long value = resultSet.getLong(columnIndex);
+            if (resultSet.wasNull()) return null;
+            if (value < 0 || value > MAX_VALUE) throw new SQLException("The value " + value + " does not fit into an intvar.");
+            else return new IntvarWrapper(getType(), value);
+        }
+        
+    }
+    
+    @Pure
+    @Override
+    public @Nonnull Wrapper.Factory<IntvarWrapper> getFactory() {
+        return new Factory(getSemanticType());
+    }
+    
+    @Pure
+    @Override
+    public @Nonnull String toString() {
+        return String.valueOf(value);
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factory –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * The factory for the value type of this wrapper.
+     */
+    public static class ValueFactory extends Wrapper.ValueFactory<Long, IntvarWrapper> {
+        
+        /**
+         * Creates a new factory with the given type.
+         * 
+         * @param type the semantic type that corresponds to the wrapper.
+         */
+        protected ValueFactory(@Nonnull @Loaded @BasedOn("intvar@core.digitalid.net") SemanticType type) {
+            super(type, FACTORY);
+            
+            assert type.isBasedOn(TYPE) : "The given semantic type is based on the indicated syntactic type.";
+        }
+        
+        @Pure
+        @Override
+        protected @Nonnull IntvarWrapper wrap(@Nonnull Long value) {
+            return new IntvarWrapper(getType(), value);
+        }
+        
+        @Pure
+        @Override
+        protected @Nonnull Long unwrap(@Nonnull IntvarWrapper wrapper) {
+            return wrapper.value;
+        }
+        
+    }
+    
+    /**
+     * Stores the factory for the value type of this wrapper.
+     */
+    public static final @Nonnull ValueFactory VALUE_FACTORY = new ValueFactory(SEMANTIC);
     
 }

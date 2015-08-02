@@ -22,7 +22,7 @@ import net.digitalid.core.io.Log;
  * Wraps values of the syntactic type {@code char@core.digitalid.net} for encoding and decoding.
  * <p>
  * <em>Important:</em> SQL injections have to be prevented by the caller of this class!
- * Only a warning is issued when the character might be used in a normal SQL statement.
+ * Only a warning is issued when the character might be used in an unprepared SQL statement.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
@@ -187,7 +187,7 @@ public final class CharWrapper extends Wrapper<CharWrapper> {
     @Pure
     @Override
     public @Nonnull String toString() {
-        Log.warning("The character '" + value + "' might be used in a normal SQL statement and might cause an injection.", new Exception());
+        Log.warning("The character '" + value + "' might be used in an unprepared SQL statement and might cause an injection.", new Exception());
         return "'" + value + "'";
     }
     
