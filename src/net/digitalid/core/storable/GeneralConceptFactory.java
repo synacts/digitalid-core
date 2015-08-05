@@ -17,10 +17,12 @@ import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.wrappers.Block;
 
 /**
- * Description.
+ * This factory allows to store and restore objects of general concepts.
+ * 
+ * @see NonConceptFactory
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 0.0
+ * @version 1.0
  */
 public abstract class GeneralConceptFactory<O> extends NonHostConceptFactory<O> {
     

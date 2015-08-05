@@ -62,7 +62,7 @@ public enum SQLType {
     /**
      * The SQL type for strings.
      */
-    STRING(Types.VARCHAR, "VARCHAR(50)"),
+    STRING(Types.VARCHAR, "TEXT"),
     
     /**
      * The SQL type for chars.

@@ -28,9 +28,10 @@ import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.wrappers.Block;
 
 /**
- * The factory allows to store and restore objects.
+ * This factory allows to store and restore objects of non-host concepts.
  * 
  * @see Storable
+ * @see GeneralConceptFactory
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
@@ -289,7 +290,7 @@ public abstract class NonHostConceptFactory<O> {
      * @return the values of the given object separated by commas.
      */
     @Pure
-    public final @Nonnull String getInsert(@Nullable O object) {
+    public final @Nonnull String getInsertForStatement(@Nullable O object) {
         return IterableConverter.toString(getValuesOrNulls(object));
     }
     
@@ -337,7 +338,7 @@ public abstract class NonHostConceptFactory<O> {
      * @return the name of each column followed by the equality sign and the corresponding value of the given object separated by commas.
      */
     @Pure
-    public final @Nonnull String getUpdate(@Nonnull @Validated String prefix, @Nullable O object) {
+    public final @Nonnull String getUpdateForStatement(@Nonnull @Validated String prefix, @Nullable O object) {
         return IterableConverter.toString(getColumnsEqualValues("", prefix, object));
     }
     
@@ -349,8 +350,8 @@ public abstract class NonHostConceptFactory<O> {
      * @return the name of each column followed by the equality sign and the corresponding value of the given object separated by commas.
      */
     @Pure
-    public final @Nonnull String getUpdate(@Nullable O object) {
-        return getUpdate("", object);
+    public final @Nonnull String getUpdateForStatement(@Nullable O object) {
+        return getUpdateForStatement("", object);
     }
     
     /**
@@ -363,7 +364,7 @@ public abstract class NonHostConceptFactory<O> {
      * @return the name of each column followed by the equality sign and the corresponding value of the given object separated by {@code AND}.
      */
     @Pure
-    public final @Nonnull String getCondition(@Nonnull @Validated String alias, @Nonnull @Validated String prefix, @Nullable O object) {
+    public final @Nonnull String getConditionForStatement(@Nonnull @Validated String alias, @Nonnull @Validated String prefix, @Nullable O object) {
         return IterableConverter.toString(getColumnsEqualValues(alias, prefix, object), " AND ");
     }
     
@@ -376,8 +377,8 @@ public abstract class NonHostConceptFactory<O> {
      * @return the name of each column followed by the equality sign and the corresponding value of the given object separated by {@code AND}.
      */
     @Pure
-    public final @Nonnull String getCondition(@Nonnull @Validated String prefix, @Nullable O object) {
-        return getCondition("", prefix, object);
+    public final @Nonnull String getConditionForStatement(@Nonnull @Validated String prefix, @Nullable O object) {
+        return getConditionForStatement("", prefix, object);
     }
     
     /**
@@ -388,8 +389,8 @@ public abstract class NonHostConceptFactory<O> {
      * @return the name of each column followed by the equality sign and the corresponding value of the given object separated by {@code AND}.
      */
     @Pure
-    public final @Nonnull String getCondition(@Nullable O object) {
-        return getCondition("", object);
+    public final @Nonnull String getConditionForStatement(@Nullable O object) {
+        return getConditionForStatement("", object);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storing (with PreparedStatement) –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -400,7 +401,7 @@ public abstract class NonHostConceptFactory<O> {
      * @return as many question marks as columns separated by commas.
      */
     @Pure
-    public final @Nonnull String getInsert() {
+    public final @Nonnull String getInsertForPreparedStatement() {
         return IterableConverter.toString(FreezableArray.<String>get(columns.size()).setAll("?"));
     }
     
@@ -435,7 +436,7 @@ public abstract class NonHostConceptFactory<O> {
      * @return the name of each column followed by the equality sign and a question mark separated by commas.
      */
     @Pure
-    public final @Nonnull String getUpdate(@Nonnull @Validated String prefix) {
+    public final @Nonnull String getUpdateForPreparedStatement(@Nonnull @Validated String prefix) {
         return IterableConverter.toString(getColumnsEqualQuestionMarks("", prefix));
     }
     
@@ -447,8 +448,8 @@ public abstract class NonHostConceptFactory<O> {
      * @return the name of each column followed by the equality sign and a question mark separated by commas.
      */
     @Pure
-    public final @Nonnull String getUpdate() {
-        return getUpdate("");
+    public final @Nonnull String getUpdateForPreparedStatement() {
+        return getUpdateForPreparedStatement("");
     }
     
     /**
@@ -461,7 +462,7 @@ public abstract class NonHostConceptFactory<O> {
      * @return the name of each column followed by the equality sign and a question mark separated by {@code AND}.
      */
     @Pure
-    public final @Nonnull String getCondition(@Nonnull @Validated String alias, @Nonnull @Validated String prefix) {
+    public final @Nonnull String getConditionForPreparedStatement(@Nonnull @Validated String alias, @Nonnull @Validated String prefix) {
         return IterableConverter.toString(getColumnsEqualQuestionMarks(alias, prefix), " AND ");
     }
     
@@ -474,8 +475,8 @@ public abstract class NonHostConceptFactory<O> {
      * @return the name of each column followed by the equality sign and a question mark separated by {@code AND}.
      */
     @Pure
-    public final @Nonnull String getCondition(@Nonnull @Validated String prefix) {
-        return getCondition("", prefix);
+    public final @Nonnull String getConditionForPreparedStatement(@Nonnull @Validated String prefix) {
+        return getConditionForPreparedStatement("", prefix);
     }
     
     /**
@@ -486,8 +487,8 @@ public abstract class NonHostConceptFactory<O> {
      * @return the name of each column followed by the equality sign and a question mark separated by {@code AND}.
      */
     @Pure
-    public final @Nonnull String getCondition() {
-        return getCondition("");
+    public final @Nonnull String getConditionForPreparedStatement() {
+        return getConditionForPreparedStatement("");
     }
     
     /**
