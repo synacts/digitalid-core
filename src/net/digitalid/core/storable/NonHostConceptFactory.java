@@ -1,5 +1,6 @@
 package net.digitalid.core.storable;
 
+import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -23,7 +24,8 @@ import net.digitalid.core.database.Column;
 import net.digitalid.core.database.Database;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.entity.Site;
-import net.digitalid.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.core.exceptions.external.ExternalException;
+import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.wrappers.Block;
 
@@ -139,7 +141,8 @@ public abstract class NonHostConceptFactory<O> {
      * @require block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
      */
     @Pure
-    public abstract @Nonnull O decodeNonNullable(@Nonnull NonHostEntity entity, @Nonnull @NonEncoding Block block) throws InvalidEncodingException;
+    @NonCommitting
+    public abstract @Nonnull O decodeNonNullable(@Nonnull NonHostEntity entity, @Nonnull @NonEncoding Block block) throws SQLException, IOException, PacketException, ExternalException;
     
     /**
      * Decodes the given nullable block.
@@ -152,7 +155,8 @@ public abstract class NonHostConceptFactory<O> {
      * @require block == null || block.getType().isBasedOn(getType()) : "The block is either null or based on the indicated type.";
      */
     @Pure
-    public final @Nullable O decodeNullable(@Nonnull NonHostEntity entity, @Nullable @NonEncoding Block block) throws InvalidEncodingException {
+    @NonCommitting
+    public final @Nullable O decodeNullable(@Nonnull NonHostEntity entity, @Nullable @NonEncoding Block block) throws SQLException, IOException, PacketException, ExternalException {
         if (block != null) return decodeNonNullable(entity, block);
         else return null;
     }

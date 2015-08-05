@@ -9,6 +9,7 @@ import net.digitalid.core.annotations.BasedOn;
 import net.digitalid.core.annotations.Encoding;
 import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Loaded;
+import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.NonEncoding;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.database.Column;
@@ -60,7 +61,7 @@ public final class EmptyWrapper extends Wrapper<EmptyWrapper> {
     /**
      * Stores the factory of this class.
      */
-    private static final Wrapper.Factory<EmptyWrapper> FACTORY = new Factory(SEMANTIC);
+    private static final Factory FACTORY = new Factory(SEMANTIC);
     
     /**
      * Encodes nothing into a new block of the given type.
@@ -127,10 +128,12 @@ public final class EmptyWrapper extends Wrapper<EmptyWrapper> {
         }
         
         @Override
+        @NonCommitting
         public void setNonNullable(@Nonnull EmptyWrapper wrapper, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {}
         
         @Pure
         @Override
+        @NonCommitting
         public @Nullable EmptyWrapper getNullable(@Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
             resultSet.getBoolean(columnIndex);
             if (resultSet.wasNull()) return null;

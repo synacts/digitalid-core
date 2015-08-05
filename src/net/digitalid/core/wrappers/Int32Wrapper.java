@@ -9,6 +9,7 @@ import net.digitalid.core.annotations.BasedOn;
 import net.digitalid.core.annotations.Encoding;
 import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Loaded;
+import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.NonEncoding;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.database.Column;
@@ -80,7 +81,7 @@ public final class Int32Wrapper extends Wrapper<Int32Wrapper> {
     /**
      * Stores the factory of this class.
      */
-    private static final Wrapper.Factory<Int32Wrapper> FACTORY = new Factory(SEMANTIC);
+    private static final Factory FACTORY = new Factory(SEMANTIC);
     
     /**
      * Encodes the given value into a new block of the given type.
@@ -161,12 +162,14 @@ public final class Int32Wrapper extends Wrapper<Int32Wrapper> {
         }
         
         @Override
+        @NonCommitting
         public void setNonNullable(@Nonnull Int32Wrapper wrapper, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
             preparedStatement.setInt(parameterIndex, wrapper.value);
         }
         
         @Pure
         @Override
+        @NonCommitting
         public @Nullable Int32Wrapper getNullable(@Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
             final int value = resultSet.getInt(columnIndex);
             if (resultSet.wasNull()) return null;

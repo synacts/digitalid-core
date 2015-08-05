@@ -12,6 +12,7 @@ import net.digitalid.core.annotations.Capturable;
 import net.digitalid.core.annotations.Encoding;
 import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Loaded;
+import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.NonEncoding;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.database.Column;
@@ -50,7 +51,7 @@ public final class BytesWrapper extends Wrapper<BytesWrapper> {
         return TYPE;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Bytes –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the bytes of this wrapper.
@@ -124,7 +125,7 @@ public final class BytesWrapper extends Wrapper<BytesWrapper> {
     /**
      * Stores the factory of this class.
      */
-    private static final Wrapper.Factory<BytesWrapper> FACTORY = new Factory(SEMANTIC);
+    private static final Factory FACTORY = new Factory(SEMANTIC);
     
     /**
      * Encodes the given non-nullable bytes into a new block of the given type.
@@ -257,6 +258,7 @@ public final class BytesWrapper extends Wrapper<BytesWrapper> {
         }
         
         @Override
+        @NonCommitting
         public void setNonNullable(@Nonnull BytesWrapper wrapper, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
             if (Database.getConfiguration().supportsBinaryStream()) {
                 preparedStatement.setBinaryStream(parameterIndex, wrapper.getBytesAsInputStream(), wrapper.determineLength());
@@ -267,6 +269,7 @@ public final class BytesWrapper extends Wrapper<BytesWrapper> {
         
         @Pure
         @Override
+        @NonCommitting
         public @Nullable BytesWrapper getNullable(@Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
             final @Nonnull byte[] bytes = resultSet.getBytes(columnIndex);
             if (resultSet.wasNull()) return null;

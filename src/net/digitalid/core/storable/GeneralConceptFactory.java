@@ -1,5 +1,6 @@
 package net.digitalid.core.storable;
 
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
@@ -12,7 +13,8 @@ import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.database.Column;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NonHostEntity;
-import net.digitalid.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.core.exceptions.external.ExternalException;
+import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.wrappers.Block;
 
@@ -39,11 +41,13 @@ public abstract class GeneralConceptFactory<O> extends NonHostConceptFactory<O> 
      * @require block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
      */
     @Pure
-    public abstract @Nonnull O decodeNonNullable(@Nonnull Entity entity, @Nonnull @NonEncoding Block block) throws InvalidEncodingException;
+    @NonCommitting
+    public abstract @Nonnull O decodeNonNullable(@Nonnull Entity entity, @Nonnull @NonEncoding Block block) throws SQLException, IOException, PacketException, ExternalException;
     
     @Pure
     @Override
-    public final @Nonnull O decodeNonNullable(@Nonnull NonHostEntity entity, @Nonnull @NonEncoding Block block) throws InvalidEncodingException {
+    @NonCommitting
+    public final @Nonnull O decodeNonNullable(@Nonnull NonHostEntity entity, @Nonnull @NonEncoding Block block) throws SQLException, IOException, PacketException, ExternalException {
         return decodeNonNullable((Entity) entity, block);
     }
     
@@ -58,7 +62,8 @@ public abstract class GeneralConceptFactory<O> extends NonHostConceptFactory<O> 
      * @require block == null || block.getType().isBasedOn(getType()) : "The block is either null or based on the indicated type.";
      */
     @Pure
-    public final @Nullable O decodeNullable(@Nonnull Entity entity, @Nullable @NonEncoding Block block) throws InvalidEncodingException {
+    @NonCommitting
+    public final @Nullable O decodeNullable(@Nonnull Entity entity, @Nullable @NonEncoding Block block) throws SQLException, IOException, PacketException, ExternalException {
         if (block != null) return decodeNonNullable(entity, block);
         else return null;
     }

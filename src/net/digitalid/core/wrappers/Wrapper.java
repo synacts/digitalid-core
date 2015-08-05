@@ -1,5 +1,6 @@
 package net.digitalid.core.wrappers;
 
+import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,6 +10,7 @@ import net.digitalid.core.annotations.Capturable;
 import net.digitalid.core.annotations.Encoding;
 import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Loaded;
+import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.NonEncoding;
 import net.digitalid.core.annotations.NonFrozen;
 import net.digitalid.core.annotations.NonNullableElements;
@@ -16,7 +18,8 @@ import net.digitalid.core.annotations.Positive;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.collections.FreezableArray;
 import net.digitalid.core.database.Column;
-import net.digitalid.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.core.exceptions.external.ExternalException;
+import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.identity.SyntacticType;
 import net.digitalid.core.storable.NonConceptFactory;
@@ -225,7 +228,8 @@ public abstract class Wrapper<W extends Wrapper<W>> implements Storable<W> {
         
         @Pure
         @Override
-        public final @Nonnull V decodeNonNullable(@Nonnull @NonEncoding Block block) throws InvalidEncodingException {
+        @NonCommitting
+        public final @Nonnull V decodeNonNullable(@Nonnull @NonEncoding Block block) throws SQLException, IOException, PacketException, ExternalException {
             return unwrap(factory.decodeNonNullable(block));
         }
         
@@ -236,12 +240,14 @@ public abstract class Wrapper<W extends Wrapper<W>> implements Storable<W> {
         }
         
         @Override
+        @NonCommitting
         public final void setNonNullable(@Nonnull V value, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
             factory.setNonNullable(wrap(value), preparedStatement, parameterIndex);
         }
         
         @Pure
         @Override
+        @NonCommitting
         public final @Nullable V getNullable(@Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
             final @Nullable W wrapper = factory.getNullable(resultSet, columnIndex);
             return wrapper == null ? null : unwrap(wrapper);

@@ -1,8 +1,5 @@
 package net.digitalid.core.wrappers;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.BasedOn;
@@ -17,9 +14,6 @@ import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.collections.FreezableArrayList;
 import net.digitalid.core.collections.FreezableList;
 import net.digitalid.core.collections.ReadOnlyList;
-import net.digitalid.core.database.Column;
-import net.digitalid.core.database.Database;
-import net.digitalid.core.database.SQLType;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.identity.SyntacticType;
@@ -32,7 +26,7 @@ import net.digitalid.core.storable.Storable;
  * @version 1.0
  */
 @Immutable
-public final class ListWrapper extends Wrapper<ListWrapper> {
+public final class ListWrapper extends BlockWrapper<ListWrapper> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -69,7 +63,7 @@ public final class ListWrapper extends Wrapper<ListWrapper> {
         return true;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Elements –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the nullable elements of this list wrapper.
@@ -130,7 +124,7 @@ public final class ListWrapper extends Wrapper<ListWrapper> {
     /**
      * Stores the factory of this class.
      */
-    private static final Wrapper.Factory<ListWrapper> FACTORY = new Factory(SEMANTIC);
+    private static final Factory FACTORY = new Factory(SEMANTIC);
     
     /**
      * Encodes the given elements into a new block of the given type.
@@ -254,12 +248,7 @@ public final class ListWrapper extends Wrapper<ListWrapper> {
     /**
      * The factory for this class.
      */
-    private static class Factory extends Wrapper.Factory<ListWrapper> {
-        
-        /**
-         * Stores the column for the wrapper.
-         */
-        private static final @Nonnull Column COLUMN = Column.get("value", SQLType.BLOB);
+    private static class Factory extends BlockWrapper.Factory<ListWrapper> {
         
         /**
          * Creates a new factory with the given type.
@@ -267,7 +256,7 @@ public final class ListWrapper extends Wrapper<ListWrapper> {
          * @param type the semantic type of the wrapper.
          */
         private Factory(@Nonnull @Loaded @BasedOn("list@core.digitalid.net") SemanticType type) {
-            super(type, COLUMN);
+            super(type);
             
             assert type.isBasedOn(TYPE) : "The given semantic type is based on the indicated syntactic type.";
         }
@@ -300,34 +289,12 @@ public final class ListWrapper extends Wrapper<ListWrapper> {
             return new ListWrapper(block.getType(), elements.freeze());
         }
         
-        @Override
-        public void setNonNullable(@Nonnull ListWrapper wrapper, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
-            Database.setNonNullable(Block.fromNonNullable(wrapper), preparedStatement, parameterIndex);
-        }
-        
-        @Pure
-        @Override
-        public @Nullable ListWrapper getNullable(@Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
-            try {
-                final @Nullable Block block = Block.FACTORY.getNullable(resultSet, columnIndex);
-                return block == null ? null : decodeNonNullable(block.setType(getType()));
-            } catch (@Nonnull InvalidEncodingException exception) {
-                throw new SQLException("Could not decode a list from the database.", exception);
-            }
-        }
-        
     }
     
     @Pure
     @Override
-    public @Nonnull Wrapper.Factory<ListWrapper> getFactory() {
+    public @Nonnull BlockWrapper.Factory<ListWrapper> getFactory() {
         return new Factory(getSemanticType());
-    }
-    
-    @Pure
-    @Override
-    public @Nonnull String toString() {
-        return Block.fromNonNullable(this).toString();
     }
     
 }

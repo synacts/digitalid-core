@@ -2,15 +2,18 @@ package net.digitalid.core.wrappers;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.core.annotations.BasedOn;
 import net.digitalid.core.annotations.Encoding;
 import net.digitalid.core.annotations.Immutable;
+import net.digitalid.core.annotations.Loaded;
 import net.digitalid.core.annotations.NonCommitting;
+import net.digitalid.core.annotations.NonEncoding;
+import net.digitalid.core.annotations.NonNegative;
+import net.digitalid.core.annotations.NonNullableElements;
 import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.collections.FreezableArray;
 import net.digitalid.core.collections.ReadOnlyArray;
 import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
@@ -19,17 +22,20 @@ import net.digitalid.core.identifier.Identifier;
 import net.digitalid.core.identifier.IdentifierClass;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.identity.SyntacticType;
+import net.digitalid.core.storable.Storable;
 import net.digitalid.core.wrappers.exceptions.UnexpectedEndOfFileException;
 import net.digitalid.core.wrappers.exceptions.UnsupportedBlockLengthException;
 
 /**
- * Wraps a block with the syntactic type {@code selfcontained@core.digitalid.net} for encoding and decoding.
+ * Wraps an element with the syntactic type {@code selfcontained@core.digitalid.net} for encoding and decoding.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
 @Immutable
-public final class SelfcontainedWrapper extends Wrapper {
+public final class SelfcontainedWrapper extends BlockWrapper<SelfcontainedWrapper> {
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the syntactic type {@code selfcontained@core.digitalid.net}.
@@ -42,42 +48,22 @@ public final class SelfcontainedWrapper extends Wrapper {
     public static final @Nonnull SemanticType DEFAULT = SemanticType.map("default@core.digitalid.net").load(TYPE);
     
     /**
+     * Stores the semantic type {@code semantic.selfcontained@core.digitalid.net}.
+     */
+    private static final @Nonnull SemanticType SEMANTIC = SemanticType.map("semantic.selfcontained@core.digitalid.net").load(TYPE);
+    
+    /**
      * Stores the semantic type {@code implementation.selfcontained@core.digitalid.net}.
      */
     private static final @Nonnull SemanticType IMPLEMENTATION = SemanticType.map("implementation.selfcontained@core.digitalid.net").load(TupleWrapper.TYPE, SemanticType.IDENTIFIER, SemanticType.UNKNOWN);
     
-    
-    /**
-     * Returns the given block in a selfcontained wrapper of the given type or null if the given block is null.
-     * 
-     * @param type the type of the returned selfcontained wrapper.
-     * @param block the block to return in a selfcontained wrapper.
-     * 
-     * @return the given block in a selfcontained wrapper of the given type or null if the given block is null.
-     * 
-     * @require type.isLoaded() : "The type declaration is loaded.";
-     * @require type.isBasedOn(TYPE) : "The given type is based on the indicated syntactic type.";
-     */
     @Pure
-    public static @Nullable Block toBlock(@Nonnull SemanticType type, @Nullable Block block) {
-        return block == null ? null : new SelfcontainedWrapper(type, block).toBlock();
+    @Override
+    public @Nonnull SyntacticType getSyntacticType() {
+        return TYPE;
     }
     
-    /**
-     * Returns the element contained in the given block or null if the given block is null.
-     * 
-     * @param block the block containing the element which is to be returned.
-     * 
-     * @return the element contained in the given block or null if the given block is null.
-     * 
-     * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated syntactic type.";
-     */
-    @Pure
-    @NonCommitting
-    public static @Nullable Block toElement(@Nullable Block block) throws SQLException, IOException, PacketException, ExternalException {
-        return block == null ? null : new SelfcontainedWrapper(block).getElement();
-    }
-    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Element –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the tuple of this wrapper.
@@ -92,51 +78,105 @@ public final class SelfcontainedWrapper extends Wrapper {
     private final @Nonnull Block element;
     
     /**
-     * Encodes the given element into a new block of the given type.
+     * Returns the element of this wrapper.
      * 
-     * @param type the semantic type of the new block.
-     * @param element the element to encode into a new block.
-     * 
-     * @require type.isLoaded() : "The type declaration is loaded.";
-     * @require type.isBasedOn(TYPE) : "The given type is based on the indicated syntactic type.";
+     * @return the element of this wrapper.
      */
-    public SelfcontainedWrapper(@Nonnull SemanticType type, @Nonnull Block element) {
+    @Pure
+    public @Nonnull @NonEncoding Block getElement() {
+        return element;
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructors –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Creates a new selfcontained wrapper with the given type and element.
+     * 
+     * @param type the semantic type of the new selfcontained wrapper.
+     * @param element the element of the new selfcontained wrapper.
+     */
+    private SelfcontainedWrapper(@Nonnull @Loaded @BasedOn("selfcontained@core.digitalid.net") SemanticType type, @Nonnull Block element) {
         super(type);
         
-        final @Nonnull FreezableArray<Block> elements = new FreezableArray<>(element.getType().toBlock(SemanticType.IDENTIFIER), element);
-        this.tuple = new TupleWrapper(IMPLEMENTATION, elements.freeze()).toBlock();
+        this.tuple = TupleWrapper.encode(IMPLEMENTATION, element.getType().toBlock(SemanticType.IDENTIFIER), element);
         this.element = element;
     }
     
     /**
-     * Encodes the given element into a new block of the given type.
+     * Creates a new selfcontained wrapper from the given block.
      * 
-     * @param type the semantic type of the new block.
-     * @param element the element to encode into a new block.
-     * 
-     * @require type.isLoaded() : "The type declaration is loaded.";
-     * @require type.isBasedOn(TYPE) : "The given type is based on the indicated syntactic type.";
-     */
-    public SelfcontainedWrapper(@Nonnull SemanticType type, @Nonnull Blockable element) {
-        this(type, element.toBlock());
-    }
-    
-    /**
-     * Wraps and decodes the given block.
-     * 
-     * @param block the block to wrap and decode.
+     * @param block the block that contains the identifier and the element.
      * 
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated syntactic type.";
      */
     @NonCommitting
-    public SelfcontainedWrapper(@Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
-        super(block);
+    private SelfcontainedWrapper(@Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
+        super(block.getType());
         
-        this.tuple = new Block(IMPLEMENTATION, block);
-        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(tuple).getNonNullableElements(2);
+        this.tuple = Block.get(IMPLEMENTATION, block);
+        final @Nonnull @NonNullableElements ReadOnlyArray<Block> elements = TupleWrapper.decode(tuple).getNonNullableElements(2);
         final @Nonnull Identifier identifier = IdentifierClass.create(elements.getNonNullable(0));
         this.element = elements.getNonNullable(1);
         element.setType(identifier.getIdentity().toSemanticType());
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Utility –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Stores the factory of this class.
+     */
+    private static final Factory FACTORY = new Factory(SEMANTIC);
+    
+    /**
+     * Encodes the given element into a new non-nullable selfcontained block of the given type.
+     * 
+     * @param type the semantic type of the new block.
+     * @param value the value to encode into the new block.
+     * 
+     * @return a new non-nullable selfcontained block containing the given element.
+     */
+    @Pure
+    public static @Nonnull @NonEncoding <V extends Storable<V>> Block encodeNonNullable(@Nonnull @Loaded @BasedOn("selfcontained@core.digitalid.net") SemanticType type, @Nonnull V element) {
+        return FACTORY.encodeNonNullable(new SelfcontainedWrapper(type, Block.fromNonNullable(element)));
+    }
+    
+    /**
+     * Encodes the given element into a new nullable selfcontained block of the given type.
+     * 
+     * @param type the semantic type of the new block.
+     * @param value the value to encode into the new block.
+     * 
+     * @return a new nullable selfcontained block containing the given element.
+     */
+    @Pure
+    public static @Nullable @NonEncoding <V extends Storable<V>> Block encodeNullable(@Nonnull @Loaded @BasedOn("selfcontained@core.digitalid.net") SemanticType type, @Nullable V element) {
+        return element == null ? null : encodeNonNullable(type, element);
+    }
+    
+    /**
+     * Decodes the given non-nullable block. 
+     * 
+     * @param block the block to be decoded.
+     * 
+     * @return the value contained in the given block.
+     */
+    @Pure
+    @NonCommitting
+    public static @Nonnull @NonEncoding Block decodeNonNullable(@Nonnull @NonEncoding @BasedOn("selfcontained@core.digitalid.net") Block block) throws SQLException, IOException, PacketException, ExternalException {
+        return FACTORY.decodeNonNullable(block).element;
+    }
+    
+    /**
+     * Decodes the given nullable block. 
+     * 
+     * @param block the block to be decoded.
+     * 
+     * @return the value contained in the given block.
+     */
+    @Pure
+    @NonCommitting
+    public static @Nullable @NonEncoding Block decodeNullable(@Nullable @NonEncoding @BasedOn("selfcontained@core.digitalid.net") Block block) throws SQLException, IOException, PacketException, ExternalException {
+        return block == null ? null : decodeNonNullable(block);
     }
     
     /**
@@ -145,29 +185,15 @@ public final class SelfcontainedWrapper extends Wrapper {
      * @param inputStream the input stream to read from.
      * @param close whether the input stream shall be closed.
      * 
-     * @ensure getType().equals(SELFCONTAINED) : "The type of the new wrapper is selfcontained.";
+     * @return the element of the selfcontained block from the given input stream.
      */
+    @Pure
     @NonCommitting
-    public SelfcontainedWrapper(@Nonnull InputStream inputStream, boolean close) throws SQLException, IOException, PacketException, ExternalException {
-        this(read(inputStream, close));
+    public static @Nonnull @NonEncoding Block decodeBlockFrom(@Nonnull InputStream inputStream, boolean close) throws SQLException, IOException, PacketException, ExternalException {
+        return decodeNonNullable(readBlockFrom(inputStream, close));
     }
     
-    /**
-     * Returns the element of the wrapped block.
-     * 
-     * @return the element of the wrapped block.
-     */
-    @Pure
-    public @Nonnull Block getElement() {
-        return element;
-    }
-    
-    
-    @Pure
-    @Override
-    public @Nonnull SyntacticType getSyntacticType() {
-        return TYPE;
-    }
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encoding –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
@@ -178,23 +204,46 @@ public final class SelfcontainedWrapper extends Wrapper {
     @Pure
     @Override
     protected void encode(@Encoding @Nonnull Block block) {
-        assert block.isEncoding() : "The given block is in the process of being encoded.";
         assert block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
         assert block.getLength() == determineLength() : "The block's length has to match the determined length.";
         
         tuple.writeTo(block);
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Writes this block to the given output stream and optionally closes the output stream afterwards.
-     * 
-     * @param outputStream the output stream to writeTo to.
-     * @param close whether the output stream shall be closed.
+     * The factory for this class.
      */
-    public void write(@Nonnull OutputStream outputStream, boolean close) throws IOException {
-        toBlock().writeTo(outputStream, close);
+    private static class Factory extends BlockWrapper.Factory<SelfcontainedWrapper> {
+        
+        /**
+         * Creates a new factory with the given type.
+         * 
+         * @param type the semantic type of the wrapper.
+         */
+        private Factory(@Nonnull @Loaded @BasedOn("selfcontained@core.digitalid.net") SemanticType type) {
+            super(type);
+            
+            assert type.isBasedOn(TYPE) : "The given semantic type is based on the indicated syntactic type.";
+        }
+        
+        @Pure
+        @Override
+        @NonCommitting
+        public @Nonnull SelfcontainedWrapper decodeNonNullable(@Nonnull @NonEncoding Block block) throws SQLException, IOException, PacketException, ExternalException {
+            return new SelfcontainedWrapper(block);
+        }
+        
     }
+    
+    @Pure
+    @Override
+    public @Nonnull BlockWrapper.Factory<SelfcontainedWrapper> getFactory() {
+        return new Factory(getSemanticType());
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Reading –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Reads a selfcontained block from the given input stream and optionally closes the input stream afterwards.
@@ -204,9 +253,9 @@ public final class SelfcontainedWrapper extends Wrapper {
      * 
      * @return the selfcontained block read from the input stream.
      * 
-     * @ensure return.getType().equals(SELFCONTAINED) : "The returned block is selfcontained.";
+     * @ensure return.getType().equals(DEFAULT) : "The returned block is selfcontained.";
      */
-    private static @Nonnull Block read(@Nonnull InputStream inputStream, boolean close) throws InvalidEncodingException, IOException {
+    private static @Nonnull Block readBlockFrom(@Nonnull InputStream inputStream, boolean close) throws InvalidEncodingException, IOException {
         try {
             final @Nonnull byte[] intvarOfIdentifier = new byte[8];
             read(inputStream, intvarOfIdentifier, 0, 1);
@@ -233,7 +282,7 @@ public final class SelfcontainedWrapper extends Wrapper {
             System.arraycopy(intvarOfElement, 0, bytes, intvarOfIdentifierLength + identifierLength, intvarOfElementLength);
             read(inputStream, bytes, intvarOfIdentifierLength + identifierLength + intvarOfElementLength, elementLength);
             
-            return new Block(DEFAULT, bytes);
+            return Block.getNonNullable(DEFAULT, bytes);
         } finally {
             if (close) inputStream.close();
         }
@@ -249,16 +298,15 @@ public final class SelfcontainedWrapper extends Wrapper {
      * 
      * @throws UnexpectedEndOfFileException if the end of the input stream has been reached before the indicated data could be read.
      * 
-     * @require offset >= 0 && length >= 0 : "The offset and length is not negative.";
      * @require offset + length <= bytes.length : "The indicated section may not exceed the byte array.";
      */
     @SuppressWarnings("AssignmentToMethodParameter")
-    private static void read(final @Nonnull InputStream inputStream, final @Nonnull byte[] bytes, int offset, int length) throws IOException {
-        assert offset >= 0 && length >= 0 : "The offset and length is not negative.";
+    private static void read(final @Nonnull InputStream inputStream, final @Nonnull byte[] bytes, @NonNegative int offset, @NonNegative int length) throws IOException {
+        assert offset >= 0 && length >= 0 : "The offset and length are non-negative.";
         assert offset + length <= bytes.length : "The indicated section may not exceed the byte array.";
         
         while (length > 0) {
-            int read = inputStream.read(bytes, offset, length);
+            final int read = inputStream.read(bytes, offset, length);
             if (read == -1) throw new UnexpectedEndOfFileException();
             offset += read;
             length -= read;

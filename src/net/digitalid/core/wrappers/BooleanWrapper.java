@@ -9,6 +9,7 @@ import net.digitalid.core.annotations.BasedOn;
 import net.digitalid.core.annotations.Encoding;
 import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Loaded;
+import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.NonEncoding;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.database.Column;
@@ -81,7 +82,7 @@ public final class BooleanWrapper extends Wrapper<BooleanWrapper> {
     /**
      * Stores the factory of this class.
      */
-    private static final Wrapper.Factory<BooleanWrapper> FACTORY = new Factory(SEMANTIC);
+    private static final Factory FACTORY = new Factory(SEMANTIC);
     
     /**
      * Encodes the given value into a new block of the given type.
@@ -162,12 +163,14 @@ public final class BooleanWrapper extends Wrapper<BooleanWrapper> {
         }
         
         @Override
+        @NonCommitting
         public void setNonNullable(@Nonnull BooleanWrapper wrapper, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
             preparedStatement.setBoolean(parameterIndex, wrapper.value);
         }
         
         @Pure
         @Override
+        @NonCommitting
         public @Nullable BooleanWrapper getNullable(@Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
             final boolean value = resultSet.getBoolean(columnIndex);
             if (resultSet.wasNull()) return null;

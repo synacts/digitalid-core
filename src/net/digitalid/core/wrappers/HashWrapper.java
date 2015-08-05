@@ -10,6 +10,7 @@ import net.digitalid.core.annotations.BasedOn;
 import net.digitalid.core.annotations.Encoding;
 import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Loaded;
+import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.NonEncoding;
 import net.digitalid.core.annotations.NonNegative;
 import net.digitalid.core.annotations.Pure;
@@ -90,7 +91,7 @@ public final class HashWrapper extends Wrapper<HashWrapper> {
     /**
      * Stores the factory of this class.
      */
-    private static final Wrapper.Factory<HashWrapper> FACTORY = new Factory(SEMANTIC);
+    private static final Factory FACTORY = new Factory(SEMANTIC);
     
     /**
      * Encodes the given non-nullable value into a new block of the given type.
@@ -206,12 +207,14 @@ public final class HashWrapper extends Wrapper<HashWrapper> {
         }
         
         @Override
+        @NonCommitting
         public void setNonNullable(@Nonnull HashWrapper wrapper, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
             preparedStatement.setBytes(parameterIndex, wrapper.value.toByteArray());
         }
         
         @Pure
         @Override
+        @NonCommitting
         public @Nullable HashWrapper getNullable(@Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
             final @Nullable byte[] bytes = resultSet.getBytes(columnIndex);
             return bytes == null || bytes.length > LENGTH ? null : new HashWrapper(getType(), new BigInteger(1, bytes));
