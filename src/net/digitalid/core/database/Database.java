@@ -25,6 +25,7 @@ import net.digitalid.core.collections.ConcurrentMap;
 import net.digitalid.core.io.Log;
 import net.digitalid.core.server.Server;
 import net.digitalid.core.server.Worker;
+import net.digitalid.core.storable.Storable;
 
 /**
  * This class provides connections to the database.
@@ -39,6 +40,19 @@ import net.digitalid.core.server.Worker;
  */
 @Stateless
 public final class Database {
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storing –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Sets the parameters starting from the given index of the prepared statement to the given non-nullable storable.
+     * 
+     * @param storable the non-nullable storable which is to be stored in the database.
+     * @param preparedStatement the prepared statement whose parameters are to be set.
+     * @param parameterIndex the starting index of the parameters which are to be set.
+     */
+    public static <V extends Storable<V>> void setNonNullable(@Nonnull V storable, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+        storable.getFactory().setNonNullable(storable, preparedStatement, parameterIndex);
+    }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Configuration –––––––––––––––––––––––––––––––––––––––––––––––––– */
     

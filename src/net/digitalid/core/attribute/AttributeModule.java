@@ -161,13 +161,13 @@ public final class AttributeModule implements BothModule {
     public void importModule(@Nonnull Host host, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         assert block.getType().isBasedOn(getModuleFormat()) : "The block is based on the format of this module.";
         
-        final @Nonnull ReadOnlyArray<Block> tables = new TupleWrapper(block).getElementsNotNull(2);
+        final @Nonnull ReadOnlyArray<Block> tables = new TupleWrapper(block).getNonNullableElements(2);
         final @Nonnull String prefix = "INSERT INTO " + host;
         
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(prefix + "attribute_value (entity, type, published, value) VALUES (?, ?, ?, ?)")) {
             final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNonNullable(0)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
-                final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(4);
+                final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getNonNullableElements(4);
                 IdentityClass.create(elements.getNonNullable(0)).toInternalIdentity().set(preparedStatement, 1);
                 IdentityClass.create(elements.getNonNullable(1)).toSemanticType().checkIsAttributeType().set(preparedStatement, 2);
                 preparedStatement.setBoolean(3, new BooleanWrapper(elements.getNonNullable(2)).getValue());
@@ -180,7 +180,7 @@ public final class AttributeModule implements BothModule {
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(prefix + "attribute_visibility (entity, type, visibility) VALUES (?, ?, ?)")) {
             final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNonNullable(1)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
-                final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(3);
+                final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getNonNullableElements(3);
                 IdentityClass.create(elements.getNonNullable(0)).toInternalIdentity().set(preparedStatement, 1);
                 IdentityClass.create(elements.getNonNullable(1)).toSemanticType().checkIsAttributeType().set(preparedStatement, 2);
                 preparedStatement.setString(2, new StringWrapper(elements.getNonNullable(2)).getString());
@@ -269,14 +269,14 @@ public final class AttributeModule implements BothModule {
             Database.onInsertIgnore(statement, site + "attribute_visibility", "entity", "type");
         }
         
-        final @Nonnull ReadOnlyArray<Block> tables = new TupleWrapper(block).getElementsNotNull(2);
+        final @Nonnull ReadOnlyArray<Block> tables = new TupleWrapper(block).getNonNullableElements(2);
         final @Nonnull String prefix = "INSERT" + Database.getConfiguration().IGNORE() + " INTO " + site;
         
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(prefix + "attribute_value (entity, type, published, value) VALUES (?, ?, ?, ?)")) {
             entity.set(preparedStatement, 1);
             final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNonNullable(0)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
-                final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(3);
+                final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getNonNullableElements(3);
                 IdentityClass.create(elements.getNonNullable(0)).toSemanticType().checkIsAttributeFor(entity).set(preparedStatement, 2);
                 preparedStatement.setBoolean(3, new BooleanWrapper(elements.getNonNullable(1)).getValue());
                 elements.getNonNullable(2).set(preparedStatement, 4);
@@ -289,7 +289,7 @@ public final class AttributeModule implements BothModule {
             entity.set(preparedStatement, 1);
             final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNonNullable(1)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
-                final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(2);
+                final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getNonNullableElements(2);
                 IdentityClass.create(elements.getNonNullable(0)).toSemanticType().checkIsAttributeFor(entity).set(preparedStatement, 2);
                 preparedStatement.setString(3, new StringWrapper(elements.getNonNullable(1)).getString());
                 preparedStatement.addBatch();

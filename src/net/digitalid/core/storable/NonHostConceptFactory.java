@@ -56,6 +56,34 @@ public abstract class NonHostConceptFactory<O> {
         return type;
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Casting –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Casts the nullable object to the class of this factory.
+     * 
+     * @param object the nullable object which is to be casted.
+     * 
+     * @return the nullable object casted to the class of this factory.
+     */
+    @Pure
+    @SuppressWarnings("unchecked")
+    public final @Nullable O castNullable(@Nullable Object object) {
+        return (O) object;
+    }
+    
+    /**
+     * Casts the non-nullable object to the class of this factory.
+     * 
+     * @param object the non-nullable object which is to be casted.
+     * 
+     * @return the non-nullable object casted to the class of this factory.
+     */
+    @Pure
+    @SuppressWarnings("unchecked")
+    public final @Nonnull O castNonNullable(@Nonnull Object object) {
+        return (O) object;
+    }
+    
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encoding –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
@@ -82,6 +110,20 @@ public abstract class NonHostConceptFactory<O> {
     @Pure
     public final @Nullable @NonEncoding Block encodeNullable(@Nullable O object) {
         return object == null ? null : encodeNonNullable(object);
+    }
+    
+    /**
+     * Encodes the given nullable object as a new block.
+     * 
+     * @param object the nullable object to encode as a block.
+     * 
+     * @return the given nullable object encoded as a new block.
+     * 
+     * @ensure return == null || return.getType().equals(getType()) : "The returned block is either null or has the indicated type.";
+     */
+    @Pure
+    public final @Nullable @NonEncoding Block encodeNullableWithCast(@Nullable Object object) {
+        return encodeNullable(castNullable(object));
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Decoding –––––––––––––––––––––––––––––––––––––––––––––––––– */

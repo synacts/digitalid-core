@@ -193,11 +193,11 @@ public final class Restrictions implements Blockable, SQLizable {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         final @Nonnull TupleWrapper tuple = new TupleWrapper(block);
-        this.client = new BooleanWrapper(tuple.getElementNotNull(0)).getValue();
-        this.role = new BooleanWrapper(tuple.getElementNotNull(1)).getValue();
-        this.writing = new BooleanWrapper(tuple.getElementNotNull(2)).getValue();
-        this.context = tuple.isElementNull(3) ? null : Context.get(entity, tuple.getElementNotNull(3));
-        this.contact = tuple.isElementNull(4) ? null : Contact.get(entity, tuple.getElementNotNull(4));
+        this.client = new BooleanWrapper(tuple.getNonNullableElement(0)).getValue();
+        this.role = new BooleanWrapper(tuple.getNonNullableElement(1)).getValue();
+        this.writing = new BooleanWrapper(tuple.getNonNullableElement(2)).getValue();
+        this.context = tuple.isElementNull(3) ? null : Context.get(entity, tuple.getNonNullableElement(3));
+        this.contact = tuple.isElementNull(4) ? null : Contact.get(entity, tuple.getNonNullableElement(4));
         
         if (context != null && contact != null) throw new InvalidEncodingException("The context and the contact are not null.");
     }

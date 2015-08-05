@@ -118,7 +118,7 @@ public final class PasswordModule implements BothModule {
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
             final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(block).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
-                final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getElementsNotNull(2);
+                final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getNonNullableElements(2);
                 preparedStatement.setLong(1, IdentifierClass.create(elements.getNonNullable(0)).getIdentity().toInternalNonHostIdentity().getNumber());
                 preparedStatement.setString(2, new StringWrapper(elements.getNonNullable(1)).getString());
                 preparedStatement.addBatch();
@@ -151,7 +151,7 @@ public final class PasswordModule implements BothModule {
     public void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws SQLException, InvalidEncodingException {
         assert block.getType().isBasedOn(getStateFormat()) : "The block is based on the indicated type.";
         
-        final @Nullable Block element = new TupleWrapper(block).getElement(0);
+        final @Nullable Block element = new TupleWrapper(block).getNullableElement(0);
         if (element != null) set(entity, new StringWrapper(element).getString());
         
         Password.reset(entity);

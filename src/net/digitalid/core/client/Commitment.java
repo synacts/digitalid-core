@@ -125,7 +125,7 @@ public class Commitment implements Blockable, SQLizable {
     public Commitment(@Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
-        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(3);
+        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getNonNullableElements(3);
         final @Nonnull HostIdentifier identifier = IdentifierClass.create(elements.getNonNullable(0)).toHostIdentifier();
         this.host = identifier.getIdentity();
         this.time = new Time(elements.getNonNullable(1));

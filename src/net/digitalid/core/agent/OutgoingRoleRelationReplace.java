@@ -105,7 +105,7 @@ final class OutgoingRoleRelationReplace extends CoreServiceInternalAction {
     private OutgoingRoleRelationReplace(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
-        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(3);
+        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getNonNullableElements(3);
         this.outgoingRole = Agent.get(entity.toNonHostEntity(), elements.getNonNullable(0)).toOutgoingRole();
         this.oldRelation = IdentityClass.create(elements.getNonNullable(1)).toSemanticType().checkIsRoleType();
         this.newRelation = IdentityClass.create(elements.getNonNullable(2)).toSemanticType().checkIsRoleType();

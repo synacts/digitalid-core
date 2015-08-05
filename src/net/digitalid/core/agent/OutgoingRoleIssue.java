@@ -100,7 +100,7 @@ final class OutgoingRoleIssue extends CoreServiceExternalAction {
             this.issuer = entity.getIdentity().toInternalNonHostIdentity();
         }
         
-        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(2);
+        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getNonNullableElements(2);
         this.relation = IdentityClass.create(elements.getNonNullable(0)).toSemanticType().checkIsRoleType();
         this.agentNumber = new Int64Wrapper(elements.getNonNullable(1)).getValue();
     }

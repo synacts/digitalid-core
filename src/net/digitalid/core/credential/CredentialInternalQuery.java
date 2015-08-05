@@ -134,9 +134,9 @@ final class CredentialInternalQuery extends CoreServiceInternalQuery {
         
         if (!(entity.getIdentity() instanceof InternalPerson)) throw new PacketException(PacketError.IDENTIFIER, "An identity- or role-based credential can only be requested for internal persons.");
         final @Nonnull TupleWrapper tuple = new TupleWrapper(block);
-        this.permissions = new RandomizedAgentPermissions(tuple.getElementNotNull(0));
+        this.permissions = new RandomizedAgentPermissions(tuple.getNonNullableElement(0));
         if (tuple.isElementNull(1)) this.relation = null;
-        else this.relation = IdentityClass.create(tuple.getElementNotNull(1)).toSemanticType().checkIsRoleType();
+        else this.relation = IdentityClass.create(tuple.getNonNullableElement(1)).toSemanticType().checkIsRoleType();
         if (signature instanceof ClientSignatureWrapper) this.value = ((ClientSignatureWrapper) signature).getCommitment().getValue().getValue();
         else if (signature instanceof CredentialsSignatureWrapper) this.value = ((CredentialsSignatureWrapper) signature).getValue();
         else throw new PacketException(PacketError.SIGNATURE, "A credential request must be signed by a client or with credentials.");

@@ -122,10 +122,10 @@ final class AttributeValueReplace extends CoreServiceInternalAction {
         super(entity.toNonHostEntity(), signature, recipient);
         
         final @Nonnull TupleWrapper tuple = new TupleWrapper(block);
-        this.attribute = Attribute.get(entity, IdentifierClass.create(tuple.getElementNotNull(0)).getIdentity().toSemanticType().checkIsAttributeFor(entity));
-        this.published = new BooleanWrapper(tuple.getElementNotNull(1)).getValue();
-        this.oldValue = tuple.isElementNotNull(2) ? AttributeValue.get(tuple.getElementNotNull(2), true).checkMatches(attribute) : null;
-        this.newValue = tuple.isElementNotNull(3) ? AttributeValue.get(tuple.getElementNotNull(3), true).checkMatches(attribute) : null;
+        this.attribute = Attribute.get(entity, IdentifierClass.create(tuple.getNonNullableElement(0)).getIdentity().toSemanticType().checkIsAttributeFor(entity));
+        this.published = new BooleanWrapper(tuple.getNonNullableElement(1)).getValue();
+        this.oldValue = tuple.isElementNotNull(2) ? AttributeValue.get(tuple.getNonNullableElement(2), true).checkMatches(attribute) : null;
+        this.newValue = tuple.isElementNotNull(3) ? AttributeValue.get(tuple.getNonNullableElement(3), true).checkMatches(attribute) : null;
         if (Objects.equals(oldValue, newValue)) throw new InvalidEncodingException("The old and new value may not be equal.");
     }
     

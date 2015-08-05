@@ -174,7 +174,7 @@ public abstract class Wrapper<W extends Wrapper<W>> implements Storable<W> {
         /**
          * Creates a new factory with the given type and factory.
          * 
-         * @param type the semantic type that corresponds to the wrapper.
+         * @param type the semantic type that of the surrounding wrapper.
          * @param factory the factory that allows to wrap and unwrap the values.
          */
         protected ValueFactory(@Nonnull @Loaded SemanticType type, @Nonnull Factory<W> factory) {

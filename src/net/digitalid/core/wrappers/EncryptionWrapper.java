@@ -203,17 +203,17 @@ public final class EncryptionWrapper extends Wrapper {
         super(block);
         
         final @Nonnull TupleWrapper tuple = new TupleWrapper(new Block(IMPLEMENTATION, block));
-        this.time = new Time(tuple.getElementNotNull(0));
+        this.time = new Time(tuple.getNonNullableElement(0));
         
         if (tuple.isElementNull(1)) {
             this.recipient = null;
         } else {
-            this.recipient = IdentifierClass.create(tuple.getElementNotNull(1)).toHostIdentifier();
+            this.recipient = IdentifierClass.create(tuple.getNonNullableElement(1)).toHostIdentifier();
             if (!Server.hasHost(recipient)) throw new InvalidEncodingException(recipient + " does not run on this server.");
         }
         
-        final @Nullable Block key = tuple.getElement(2);
-        this.initializationVector = tuple.isElementNull(3) ? null : new InitializationVector(tuple.getElementNotNull(3));
+        final @Nullable Block key = tuple.getNullableElement(2);
+        this.initializationVector = tuple.isElementNull(3) ? null : new InitializationVector(tuple.getNonNullableElement(3));
         if (recipient == null) {
             // Encrypted for clients.
             if (key == null) {
@@ -232,7 +232,7 @@ public final class EncryptionWrapper extends Wrapper {
             }
         }
         
-        final @Nullable Block element = tuple.getElement(4);
+        final @Nullable Block element = tuple.getNullableElement(4);
         if (element != null) {
             final @Nonnull SemanticType parameter = block.getType().getParameters().getNonNullable(0);
             final @Nullable SymmetricKey sk = this.symmetricKey;

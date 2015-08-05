@@ -144,9 +144,9 @@ public final class Int32Wrapper extends Wrapper<Int32Wrapper> {
         /**
          * Creates a new factory with the given type.
          * 
-         * @param type the semantic type that corresponds to the wrapper.
+         * @param type the semantic type of the wrapper.
          */
-        protected Factory(@Nonnull @Loaded @BasedOn("int32@core.digitalid.net") SemanticType type) {
+        private Factory(@Nonnull @Loaded @BasedOn("int32@core.digitalid.net") SemanticType type) {
             super(type, COLUMN);
             
             assert type.isBasedOn(TYPE) : "The given semantic type is based on the indicated syntactic type.";
@@ -197,9 +197,9 @@ public final class Int32Wrapper extends Wrapper<Int32Wrapper> {
         /**
          * Creates a new factory with the given type.
          * 
-         * @param type the semantic type that corresponds to the wrapper.
+         * @param type the type of the blocks which are returned by the factory.
          */
-        protected ValueFactory(@Nonnull @Loaded @BasedOn("int32@core.digitalid.net") SemanticType type) {
+        private ValueFactory(@Nonnull @Loaded @BasedOn("int32@core.digitalid.net") SemanticType type) {
             super(type, FACTORY);
             
             assert type.isBasedOn(TYPE) : "The given semantic type is based on the indicated syntactic type.";
@@ -217,6 +217,18 @@ public final class Int32Wrapper extends Wrapper<Int32Wrapper> {
             return wrapper.value;
         }
         
+    }
+    
+    /**
+     * Returns a new factory for the value type of this wrapper.
+     * 
+     * @param type the type of the blocks which are returned by the factory.
+     * 
+     * @return a new factory for the value type of this wrapper.
+     */
+    @Pure
+    public static @Nonnull ValueFactory getValueFactory(@Nonnull @Loaded @BasedOn("int32@core.digitalid.net") SemanticType type) {
+        return new ValueFactory(type);
     }
     
     /**

@@ -83,7 +83,7 @@ final class AgentPermissionsAdd extends CoreServiceInternalAction {
     private AgentPermissionsAdd(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
-        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(2);
+        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getNonNullableElements(2);
         this.agent = Agent.get(entity.toNonHostEntity(), elements.getNonNullable(0));
         this.permissions = new FreezableAgentPermissions(elements.getNonNullable(1)).freeze();
     }

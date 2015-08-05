@@ -196,7 +196,7 @@ public class SignatureWrapper extends Wrapper {
     @Pure
     @NonCommitting
     public static @Nonnull SignatureWrapper decodeWithoutVerifying(@Nonnull Block block, boolean verified, @Nullable Entity entity) throws SQLException, IOException, PacketException, ExternalException {
-        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(new Block(IMPLEMENTATION, block)).getElements(4);
+        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(new Block(IMPLEMENTATION, block)).getNullableElements(4);
         final @Nullable Block hostSignature = elements.getNullable(1);
         final @Nullable Block clientSignature = elements.getNullable(2);
         final @Nullable Block credentialsSignature = elements.getNullable(3);
@@ -220,16 +220,16 @@ public class SignatureWrapper extends Wrapper {
         super(block);
         
         this.cache = new Block(IMPLEMENTATION, block);
-        final @Nonnull Block content = new TupleWrapper(cache).getElementNotNull(0);
+        final @Nonnull Block content = new TupleWrapper(cache).getNonNullableElement(0);
         final @Nonnull TupleWrapper tuple = new TupleWrapper(content);
-        this.subject = tuple.isElementNull(0) ? null : IdentifierClass.create(tuple.getElementNotNull(0)).toInternalIdentifier();
+        this.subject = tuple.isElementNull(0) ? null : IdentifierClass.create(tuple.getNonNullableElement(0)).toInternalIdentifier();
         if (isSigned() && subject == null) throw new InvalidEncodingException("The subject may not be null if the element is signed.");
-        this.time = tuple.isElementNull(1) ? null : new Time(tuple.getElementNotNull(1));
+        this.time = tuple.isElementNull(1) ? null : new Time(tuple.getNonNullableElement(1));
         if (hasSubject() && time == null) throw new InvalidEncodingException("The signature time may not be null if this signature has a subject.");
         if (time != null && !time.isPositive()) throw new InvalidEncodingException("The signature time has to be positive.");
-        this.element = tuple.getElement(2);
+        this.element = tuple.getNullableElement(2);
         if (element != null) element.setType(block.getType().getParameters().getNonNullable(0));
-        this.audit = tuple.isElementNull(3) ? null : Audit.get(tuple.getElementNotNull(3));
+        this.audit = tuple.isElementNull(3) ? null : Audit.get(tuple.getNonNullableElement(3));
         this.verified = verified;
     }
     

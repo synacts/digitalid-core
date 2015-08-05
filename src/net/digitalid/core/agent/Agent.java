@@ -460,7 +460,7 @@ public abstract class Agent extends NonHostConcept implements Blockable, SQLizab
     public static @Nonnull Agent get(@Nonnull NonHostEntity entity, @Nonnull Block block) throws InvalidEncodingException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
-        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(3);
+        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getNonNullableElements(3);
         final long number = new Int64Wrapper(elements.getNonNullable(0)).getValue();
         final boolean client = new BooleanWrapper(elements.getNonNullable(1)).getValue();
         final boolean removed = new BooleanWrapper(elements.getNonNullable(2)).getValue();

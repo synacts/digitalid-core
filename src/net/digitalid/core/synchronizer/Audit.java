@@ -72,12 +72,12 @@ public abstract class Audit implements Blockable {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         final @Nonnull TupleWrapper tuple = new TupleWrapper(block);
-        final @Nonnull Time lastTime = new Time(tuple.getElementNotNull(0));
+        final @Nonnull Time lastTime = new Time(tuple.getNonNullableElement(0));
         if (tuple.isElementNull(1)) {
             return new RequestAudit(lastTime);
         } else {
-            final @Nonnull Time thisTime = new Time(tuple.getElementNotNull(1));
-            final @Nonnull ReadOnlyList<Block> trail = new ListWrapper(tuple.getElementNotNull(2)).getElementsNotNull();
+            final @Nonnull Time thisTime = new Time(tuple.getNonNullableElement(1));
+            final @Nonnull ReadOnlyList<Block> trail = new ListWrapper(tuple.getNonNullableElement(2)).getElementsNotNull();
             return new ResponseAudit(lastTime, thisTime, trail);
         }
     }

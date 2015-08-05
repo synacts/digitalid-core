@@ -742,7 +742,7 @@ public final class Block implements Storable<Block>, Cloneable {
         /**
          * Creates a new factory with the given type.
          * 
-         * @param type the type of the block which is returned.
+         * @param type the type of the blocks which are returned.
          */
         private Factory(@Nonnull @Loaded SemanticType type) {
             super(type, column);
@@ -790,6 +790,23 @@ public final class Block implements Storable<Block>, Cloneable {
     public @Nonnull NonConceptFactory<Block> getFactory() {
         return new Factory(type);
     }
+    
+    /**
+     * Returns a new factory for the given type.
+     * 
+     * @param type the type of the blocks which are returned by the factory.
+     * 
+     * @return a new factory for the given type.
+     */
+    @Pure
+    public static @Nonnull NonConceptFactory<Block> getFactory(@Nonnull @Loaded SemanticType type) {
+        return new Factory(type);
+    }
+    
+    /**
+     * Stores the factory for blocks of unknown type.
+     */
+    public static final @Nonnull NonConceptFactory<Block> FACTORY = new Factory(SemanticType.UNKNOWN);
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Cryptography –––––––––––––––––––––––––––––––––––––––––––––––––– */
     

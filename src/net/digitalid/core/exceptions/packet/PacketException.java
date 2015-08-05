@@ -96,7 +96,7 @@ public final class PacketException extends Exception implements Blockable {
     public static PacketException create(@Nonnull Block block) throws InvalidEncodingException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
-        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(2);
+        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getNonNullableElements(2);
         final @Nonnull PacketError error = PacketError.get(elements.getNonNullable(0));
         final @Nonnull String message = new StringWrapper(elements.getNonNullable(1)).getString();
         return new PacketException(error, "A host responded with a packet error. [" + message + "]", null, true);

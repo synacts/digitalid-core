@@ -133,7 +133,7 @@ public final class SelfcontainedWrapper extends Wrapper {
         super(block);
         
         this.tuple = new Block(IMPLEMENTATION, block);
-        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(tuple).getElementsNotNull(2);
+        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(tuple).getNonNullableElements(2);
         final @Nonnull Identifier identifier = IdentifierClass.create(elements.getNonNullable(0));
         this.element = elements.getNonNullable(1);
         element.setType(identifier.getIdentity().toSemanticType());

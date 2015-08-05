@@ -317,7 +317,7 @@ public final class PublicKey implements Blockable {
     public PublicKey(@Nonnull Block block) throws InvalidEncodingException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
-        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(16);
+        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getNonNullableElements(16);
         this.compositeGroup = new Group(elements.getNonNullable(0));
         this.e = new Exponent(elements.getNonNullable(1));
         this.ab = compositeGroup.getElement(elements.getNonNullable(2));

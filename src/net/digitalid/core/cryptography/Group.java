@@ -83,10 +83,10 @@ public final class Group implements Blockable { // TODO: Make it abstract and im
         
         final @Nonnull TupleWrapper tuple = new TupleWrapper(block);
         
-        this.modulus = new IntegerWrapper(tuple.getElementNotNull(0)).getValue();
+        this.modulus = new IntegerWrapper(tuple.getNonNullableElement(0)).getValue();
         if (modulus.compareTo(BigInteger.ZERO) != 1) throw new InvalidEncodingException("The modulus has to be positive.");
         
-        this.order = tuple.isElementNull(1) ? null : new IntegerWrapper(tuple.getElementNotNull(1)).getValue();
+        this.order = tuple.isElementNull(1) ? null : new IntegerWrapper(tuple.getNonNullableElement(1)).getValue();
         if (order != null && (order.compareTo(BigInteger.ZERO) != 1 || order.compareTo(modulus) != -1)) throw new InvalidEncodingException("The order has to be either unknown (indicated with null) or positive and smaller than the modulus.");
     }
     

@@ -144,16 +144,16 @@ public final class ActionModule implements BothModule {
             final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(block).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull TupleWrapper tuple = new TupleWrapper(entry);
-                final @Nonnull InternalNonHostIdentity identity = IdentityClass.create(tuple.getElementNotNull(0)).toInternalNonHostIdentity();
+                final @Nonnull InternalNonHostIdentity identity = IdentityClass.create(tuple.getNonNullableElement(0)).toInternalNonHostIdentity();
                 identity.set(preparedStatement, 1);
-                IdentityClass.create(tuple.getElementNotNull(1)).toSemanticType().set(preparedStatement, 2);
-                new Time(tuple.getElementNotNull(2)).set(preparedStatement, 3);
-                new FreezableAgentPermissions(tuple.getElementNotNull(3)).checkIsSingle().setEmptyOrSingle(preparedStatement, 4);
-                new Restrictions(NonHostAccount.get(host, identity), tuple.getElementNotNull(4)).set(preparedStatement, 6); // The entity is wrong for services but it does not matter. (Correct would be Roles.getRole(host.getClient(), identity.toInternalPerson()).)
-                if (tuple.isElementNull(5)) preparedStatement.setLong(11, new Int64Wrapper(tuple.getElementNotNull(5)).getValue());
+                IdentityClass.create(tuple.getNonNullableElement(1)).toSemanticType().set(preparedStatement, 2);
+                new Time(tuple.getNonNullableElement(2)).set(preparedStatement, 3);
+                new FreezableAgentPermissions(tuple.getNonNullableElement(3)).checkIsSingle().setEmptyOrSingle(preparedStatement, 4);
+                new Restrictions(NonHostAccount.get(host, identity), tuple.getNonNullableElement(4)).set(preparedStatement, 6); // The entity is wrong for services but it does not matter. (Correct would be Roles.getRole(host.getClient(), identity.toInternalPerson()).)
+                if (tuple.isElementNull(5)) preparedStatement.setLong(11, new Int64Wrapper(tuple.getNonNullableElement(5)).getValue());
                 else preparedStatement.setNull(11, Types.BIGINT);
-                IdentifierClass.create(tuple.getElementNotNull(6)).toHostIdentifier().set(preparedStatement, 12);
-                tuple.getElementNotNull(7).set(preparedStatement, 13);
+                IdentifierClass.create(tuple.getNonNullableElement(6)).toHostIdentifier().set(preparedStatement, 12);
+                tuple.getNonNullableElement(7).set(preparedStatement, 13);
                 preparedStatement.addBatch();
             }
             preparedStatement.executeBatch();

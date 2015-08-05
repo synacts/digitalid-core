@@ -240,20 +240,20 @@ public abstract class Credential {
         assert i == null || i.getType().isBasedOn(Exponent.TYPE) : "The serial number is either null or based on the indicated type.";
         
         final @Nonnull TupleWrapper tuple = new TupleWrapper(exposed);
-        this.issuer = IdentifierClass.create(tuple.getElementNotNull(0)).getIdentity().toInternalNonHostIdentity();
-        this.issuance = new Time(tuple.getElementNotNull(1));
+        this.issuer = IdentifierClass.create(tuple.getNonNullableElement(0)).getIdentity().toInternalNonHostIdentity();
+        this.issuance = new Time(tuple.getNonNullableElement(1));
         if (!issuance.isPositive() || !issuance.isMultipleOf(Time.HALF_HOUR)) throw new InvalidEncodingException("The issuance time has to be positive and a multiple of half an hour.");
         this.publicKey = Cache.getPublicKey(issuer.getAddress().getHostIdentifier(), issuance);
-        final @Nonnull BigInteger hash = new HashWrapper(tuple.getElementNotNull(2)).getValue();
+        final @Nonnull BigInteger hash = new HashWrapper(tuple.getNonNullableElement(2)).getValue();
         if (randomizedPermissions != null) {
             this.randomizedPermissions = new RandomizedAgentPermissions(randomizedPermissions);
             if (!this.randomizedPermissions.getHash().equals(hash)) throw new InvalidEncodingException("The hash of the given permissions has to equal the credential's exposed hash.");
         } else {
             this.randomizedPermissions = new RandomizedAgentPermissions(hash);
         }
-        this.role = tuple.isElementNull(3) ? null : IdentifierClass.create(tuple.getElementNotNull(3)).getIdentity().toSemanticType();
+        this.role = tuple.isElementNull(3) ? null : IdentifierClass.create(tuple.getNonNullableElement(3)).getIdentity().toSemanticType();
         if (role != null && !role.isRoleType()) throw new InvalidEncodingException("The role has to be either null or a role type");
-        this.attributeContent = SelfcontainedWrapper.toElement(tuple.getElement(4));
+        this.attributeContent = SelfcontainedWrapper.toElement(tuple.getNullableElement(4));
         if (role != null && attributeContent != null) throw new InvalidEncodingException("The role and the attribute may not both be not null.");
         this.restrictions = restrictions;
         if (attributeContent == null && !(issuer instanceof InternalPerson)) throw new InvalidEncodingException("If the attribute is null, the issuer has to be an internal person.");

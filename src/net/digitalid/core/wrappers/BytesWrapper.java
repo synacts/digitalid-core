@@ -127,40 +127,77 @@ public final class BytesWrapper extends Wrapper<BytesWrapper> {
     private static final Wrapper.Factory<BytesWrapper> FACTORY = new Factory(SEMANTIC);
     
     /**
-     * Encodes the given bytes into a new block of the given type.
+     * Encodes the given non-nullable bytes into a new block of the given type.
      * 
      * @param type the semantic type of the new block.
      * @param bytes the bytes to encode into the new block.
      * 
-     * @return a new block containing the given bytes.
+     * @return a new non-nullable block containing the given bytes.
      */
     @Pure
-    public static @Nonnull @NonEncoding Block encode(@Nonnull @Loaded @BasedOn("bytes@core.digitalid.net") SemanticType type, @Nonnull byte[] bytes) {
+    public static @Nonnull @NonEncoding Block encodeNonNullable(@Nonnull @Loaded @BasedOn("bytes@core.digitalid.net") SemanticType type, @Nonnull byte[] bytes) {
         return FACTORY.encodeNonNullable(new BytesWrapper(type, bytes));
     }
     
     /**
-     * Decodes the given block. 
+     * Encodes the given nullable bytes into a new block of the given type.
+     * 
+     * @param type the semantic type of the new block.
+     * @param bytes the bytes to encode into the new block.
+     * 
+     * @return a new nullable block containing the given bytes.
+     */
+    @Pure
+    public static @Nullable @NonEncoding Block encodeNullable(@Nonnull @Loaded @BasedOn("bytes@core.digitalid.net") SemanticType type, @Nullable byte[] bytes) {
+        return bytes == null ? null : encodeNonNullable(type, bytes);
+    }
+    
+    /**
+     * Decodes the given non-nullable block. 
      * 
      * @param block the block to be decoded.
      * 
      * @return the bytes contained in the given block.
      */
     @Pure
-    public static byte[] decode(@Nonnull @NonEncoding @BasedOn("bytes@core.digitalid.net") Block block) throws InvalidEncodingException {
+    public static @Nonnull byte[] decodeNonNullable(@Nonnull @NonEncoding @BasedOn("bytes@core.digitalid.net") Block block) throws InvalidEncodingException {
         return FACTORY.decodeNonNullable(block).getBytes();
     }
     
     /**
-     * Decodes the given block. 
+     * Decodes the given nullable block. 
      * 
      * @param block the block to be decoded.
      * 
      * @return the bytes contained in the given block.
      */
     @Pure
-    public static @Nonnull InputStream decodeAsInputStream(@Nonnull @NonEncoding @BasedOn("bytes@core.digitalid.net") Block block) throws InvalidEncodingException {
+    public static @Nullable byte[] decodeNullable(@Nullable @NonEncoding @BasedOn("bytes@core.digitalid.net") Block block) throws InvalidEncodingException {
+        return block == null ? null : decodeNonNullable(block);
+    }
+    
+    /**
+     * Decodes the given non-nullable block. 
+     * 
+     * @param block the block to be decoded.
+     * 
+     * @return the bytes contained in the given block.
+     */
+    @Pure
+    public static @Nonnull InputStream decodeNonNullableAsInputStream(@Nonnull @NonEncoding @BasedOn("bytes@core.digitalid.net") Block block) throws InvalidEncodingException {
         return FACTORY.decodeNonNullable(block).getBytesAsInputStream();
+    }
+    
+    /**
+     * Decodes the given nullable block. 
+     * 
+     * @param block the block to be decoded.
+     * 
+     * @return the bytes contained in the given block.
+     */
+    @Pure
+    public static @Nullable InputStream decodeNullableAsInputStream(@Nullable @NonEncoding @BasedOn("bytes@core.digitalid.net") Block block) throws InvalidEncodingException {
+        return block == null ? null : decodeNonNullableAsInputStream(block);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encoding –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -205,9 +242,9 @@ public final class BytesWrapper extends Wrapper<BytesWrapper> {
         /**
          * Creates a new factory with the given type.
          * 
-         * @param type the semantic type that corresponds to the wrapper.
+         * @param type the semantic type of the wrapper.
          */
-        protected Factory(@Nonnull @Loaded @BasedOn("bytes@core.digitalid.net") SemanticType type) {
+        private Factory(@Nonnull @Loaded @BasedOn("bytes@core.digitalid.net") SemanticType type) {
             super(type, COLUMN);
             
             assert type.isBasedOn(TYPE) : "The given semantic type is based on the indicated syntactic type.";
@@ -270,9 +307,9 @@ public final class BytesWrapper extends Wrapper<BytesWrapper> {
         /**
          * Creates a new factory with the given type.
          * 
-         * @param type the semantic type that corresponds to the wrapper.
+         * @param type the type of the blocks which are returned by the factory.
          */
-        protected ValueFactory(@Nonnull @Loaded @BasedOn("bytes@core.digitalid.net") SemanticType type) {
+        private ValueFactory(@Nonnull @Loaded @BasedOn("bytes@core.digitalid.net") SemanticType type) {
             super(type, FACTORY);
             
             assert type.isBasedOn(TYPE) : "The given semantic type is based on the indicated syntactic type.";
@@ -290,6 +327,18 @@ public final class BytesWrapper extends Wrapper<BytesWrapper> {
             return wrapper.getBytes();
         }
         
+    }
+    
+    /**
+     * Returns a new factory for the value type of this wrapper.
+     * 
+     * @param type the type of the blocks which are returned by the factory.
+     * 
+     * @return a new factory for the value type of this wrapper.
+     */
+    @Pure
+    public static @Nonnull ValueFactory getValueFactory(@Nonnull @Loaded @BasedOn("bytes@core.digitalid.net") SemanticType type) {
+        return new ValueFactory(type);
     }
     
     /**

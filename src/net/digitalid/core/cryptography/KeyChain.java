@@ -84,7 +84,7 @@ abstract class KeyChain<Key extends Blockable> implements Blockable {
         final @Nonnull FreezableLinkedList<ReadOnlyPair<Time, Key>> items = new FreezableLinkedList<>();
         
         for (final @Nonnull Block element : elements) {
-            final @Nonnull ReadOnlyArray<Block> pair = new TupleWrapper(element).getElementsNotNull(2);
+            final @Nonnull ReadOnlyArray<Block> pair = new TupleWrapper(element).getNonNullableElements(2);
             final @Nonnull Time time = new Time(pair.getNonNullable(0));
             final @Nonnull Key key = createKey(pair.getNonNullable(1));
             items.add(new FreezablePair<>(time, key).freeze());

@@ -124,7 +124,7 @@ public final class HostSignatureWrapper extends SignatureWrapper {
         
         assert hostSignature.getType().isBasedOn(SIGNATURE) : "The signature is based on the implementation type.";
         
-        this.signer = IdentifierClass.create(new TupleWrapper(hostSignature).getElementNotNull(0)).toInternalIdentifier();
+        this.signer = IdentifierClass.create(new TupleWrapper(hostSignature).getNonNullableElement(0)).toInternalIdentifier();
     }
     
     /**
@@ -156,7 +156,7 @@ public final class HostSignatureWrapper extends SignatureWrapper {
         if (getTimeNotNull().isLessThan(Time.TWO_YEARS.ago())) throw new InvalidSignatureException("The host signature is out of date.");
         
         final @Nonnull TupleWrapper tuple = new TupleWrapper(getCache());
-        final @Nonnull BigInteger hash = tuple.getElementNotNull(0).getHash();
+        final @Nonnull BigInteger hash = tuple.getNonNullableElement(0).getHash();
         
         final @Nonnull PublicKey publicKey;
         if (signer.getHostIdentifier().equals(HostIdentifier.DIGITALID)) {
@@ -165,7 +165,7 @@ public final class HostSignatureWrapper extends SignatureWrapper {
             publicKey = Cache.getPublicKey(signer.getHostIdentifier(), getTimeNotNull());
         }
         
-        final @Nonnull ReadOnlyArray<Block> subelements = new TupleWrapper(tuple.getElementNotNull(1)).getElementsNotNull(2);
+        final @Nonnull ReadOnlyArray<Block> subelements = new TupleWrapper(tuple.getNonNullableElement(1)).getNonNullableElements(2);
         if (!publicKey.getCompositeGroup().getElement(subelements.getNonNullable(1)).pow(publicKey.getE()).getValue().equals(hash)) throw new InvalidSignatureException("The host signature is not valid.");
         
         Log.verbose("Signature verified in " + start.ago().getValue() + " ms.");

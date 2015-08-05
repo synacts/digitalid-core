@@ -134,7 +134,7 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
         
         final @Nonnull ReadOnlyList<Block> elements = new ListWrapper(block).getElementsNotNull();
         for (final @Nonnull Block element : elements) {
-            final @Nonnull ReadOnlyArray<Block> subelements = new TupleWrapper(element).getElementsNotNull(2);
+            final @Nonnull ReadOnlyArray<Block> subelements = new TupleWrapper(element).getNonNullableElements(2);
             final @Nonnull SemanticType type = IdentityClass.create(subelements.getNonNullable(0)).toSemanticType().checkIsAttributeType();
             put(type, new BooleanWrapper(subelements.getNonNullable(1)).getValue());
         }

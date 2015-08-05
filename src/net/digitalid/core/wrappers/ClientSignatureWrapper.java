@@ -115,7 +115,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper {
         
         assert clientSignature.getType().isBasedOn(SIGNATURE) : "The signature is based on the implementation type.";
         
-        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(clientSignature).getElementsNotNull(3);
+        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(clientSignature).getNonNullableElements(3);
         this.commitment = new Commitment(elements.getNonNullable(0));
     }
     
@@ -147,9 +147,9 @@ public final class ClientSignatureWrapper extends SignatureWrapper {
         if (getTimeNotNull().isLessThan(Time.TROPICAL_YEAR.ago())) throw new InvalidSignatureException("The client signature is out of date.");
         
         final @Nonnull TupleWrapper tuple = new TupleWrapper(getCache());
-        final @Nonnull BigInteger hash = tuple.getElementNotNull(0).getHash();
+        final @Nonnull BigInteger hash = tuple.getNonNullableElement(0).getHash();
         
-        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(tuple.getElementNotNull(2)).getElementsNotNull(3);
+        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(tuple.getNonNullableElement(2)).getNonNullableElements(3);
         final @Nonnull BigInteger t = new HashWrapper(elements.getNonNullable(1)).getValue();
         final @Nonnull Exponent s = new Exponent(elements.getNonNullable(2));
         final @Nonnull BigInteger h = t.xor(hash);

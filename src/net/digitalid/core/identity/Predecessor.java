@@ -91,7 +91,7 @@ public final class Predecessor implements Blockable {
     public Predecessor(@Nonnull Block block) throws InvalidEncodingException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
-        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(2);
+        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getNonNullableElements(2);
         this.identifier = IdentifierClass.create(elements.getNonNullable(0)).toNonHostIdentifier();
         this.predecessors = new FreezablePredecessors(elements.getNonNullable(1)).freeze();
     }

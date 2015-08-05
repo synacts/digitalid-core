@@ -111,7 +111,7 @@ public final class RandomizedAgentPermissions implements Blockable {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         this.hash = block.getHash();
-        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(2);
+        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getNonNullableElements(2);
         this.salt = new HashWrapper(elements.getNonNullable(0)).getValue();
         this.permissions = new FreezableAgentPermissions(elements.getNonNullable(1)).freeze();
     }

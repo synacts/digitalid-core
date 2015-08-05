@@ -91,28 +91,53 @@ public final class IntegerWrapper extends Wrapper<IntegerWrapper> {
     private static final Wrapper.Factory<IntegerWrapper> FACTORY = new Factory(SEMANTIC);
     
     /**
-     * Encodes the given value into a new block of the given type.
+     * Encodes the given value into a new non-nullable block of the given type.
      * 
      * @param type the semantic type of the new block.
      * @param value the value to encode into the new block.
      * 
-     * @return a new block containing the given value.
+     * @return a new non-nullable block containing the given value.
      */
     @Pure
-    public static @Nonnull @NonEncoding Block encode(@Nonnull @Loaded @BasedOn("integer@core.digitalid.net") SemanticType type, @Nonnull BigInteger value) {
+    public static @Nonnull @NonEncoding Block encodeNonNullable(@Nonnull @Loaded @BasedOn("integer@core.digitalid.net") SemanticType type, @Nonnull BigInteger value) {
         return FACTORY.encodeNonNullable(new IntegerWrapper(type, value.toByteArray(), value));
     }
     
     /**
-     * Decodes the given block. 
+     * Encodes the given value into a new nullable block of the given type.
+     * 
+     * @param type the semantic type of the new block.
+     * @param value the value to encode into the new block.
+     * 
+     * @return a new nullable block containing the given value.
+     */
+    @Pure
+    public static @Nullable @NonEncoding Block encodeNullable(@Nonnull @Loaded @BasedOn("integer@core.digitalid.net") SemanticType type, @Nullable BigInteger value) {
+        return value == null ? null : encodeNonNullable(type, value);
+    }
+    
+    /**
+     * Decodes the given non-nullable block. 
      * 
      * @param block the block to be decoded.
      * 
      * @return the value contained in the given block.
      */
     @Pure
-    public static @Nonnull BigInteger decode(@Nonnull @NonEncoding @BasedOn("integer@core.digitalid.net") Block block) throws InvalidEncodingException {
+    public static @Nonnull BigInteger decodeNonNullable(@Nonnull @NonEncoding @BasedOn("integer@core.digitalid.net") Block block) throws InvalidEncodingException {
         return FACTORY.decodeNonNullable(block).value;
+    }
+    
+    /**
+     * Decodes the given nullable block. 
+     * 
+     * @param block the block to be decoded.
+     * 
+     * @return the value contained in the given block.
+     */
+    @Pure
+    public static @Nullable BigInteger decodeNullable(@Nullable @NonEncoding @BasedOn("integer@core.digitalid.net") Block block) throws InvalidEncodingException {
+        return block == null ? null : decodeNonNullable(block);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encoding –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -147,9 +172,9 @@ public final class IntegerWrapper extends Wrapper<IntegerWrapper> {
         /**
          * Creates a new factory with the given type.
          * 
-         * @param type the semantic type that corresponds to the wrapper.
+         * @param type the semantic type of the wrapper.
          */
-        protected Factory(@Nonnull @Loaded @BasedOn("integer@core.digitalid.net") SemanticType type) {
+        private Factory(@Nonnull @Loaded @BasedOn("integer@core.digitalid.net") SemanticType type) {
             super(type, COLUMN);
             
             assert type.isBasedOn(TYPE) : "The given semantic type is based on the indicated syntactic type.";
@@ -203,9 +228,9 @@ public final class IntegerWrapper extends Wrapper<IntegerWrapper> {
         /**
          * Creates a new factory with the given type.
          * 
-         * @param type the semantic type that corresponds to the wrapper.
+         * @param type the type of the blocks which are returned by the factory.
          */
-        protected ValueFactory(@Nonnull @Loaded @BasedOn("integer@core.digitalid.net") SemanticType type) {
+        private ValueFactory(@Nonnull @Loaded @BasedOn("integer@core.digitalid.net") SemanticType type) {
             super(type, FACTORY);
             
             assert type.isBasedOn(TYPE) : "The given semantic type is based on the indicated syntactic type.";
@@ -223,6 +248,18 @@ public final class IntegerWrapper extends Wrapper<IntegerWrapper> {
             return wrapper.value;
         }
         
+    }
+    
+    /**
+     * Returns a new factory for the value type of this wrapper.
+     * 
+     * @param type the type of the blocks which are returned by the factory.
+     * 
+     * @return a new factory for the value type of this wrapper.
+     */
+    @Pure
+    public static @Nonnull ValueFactory getValueFactory(@Nonnull @Loaded @BasedOn("integer@core.digitalid.net") SemanticType type) {
+        return new ValueFactory(type);
     }
     
     /**

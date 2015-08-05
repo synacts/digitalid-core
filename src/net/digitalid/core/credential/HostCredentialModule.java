@@ -137,12 +137,12 @@ public final class HostCredentialModule implements HostModule {
             final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(block).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull TupleWrapper tuple = new TupleWrapper(entry);
-                new Time(tuple.getElementNotNull(0)).set(preparedStatement, 1);
-                IdentityClass.create(tuple.getElementNotNull(1)).toInternalNonHostIdentity().set(preparedStatement, 2);
-                tuple.getElementNotNull(2).set(preparedStatement, 3);
-                tuple.getElementNotNull(3).set(preparedStatement, 4);
-                Block.set(tuple.getElement(4), preparedStatement, 5);
-                tuple.getElementNotNull(5).set(preparedStatement, 6);
+                new Time(tuple.getNonNullableElement(0)).set(preparedStatement, 1);
+                IdentityClass.create(tuple.getNonNullableElement(1)).toInternalNonHostIdentity().set(preparedStatement, 2);
+                tuple.getNonNullableElement(2).set(preparedStatement, 3);
+                tuple.getNonNullableElement(3).set(preparedStatement, 4);
+                Block.set(tuple.getNullableElement(4), preparedStatement, 5);
+                tuple.getNonNullableElement(5).set(preparedStatement, 6);
                 preparedStatement.addBatch();
             }
             preparedStatement.executeBatch();

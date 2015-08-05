@@ -95,10 +95,10 @@ public final class IdentityReply extends CoreServiceQueryReply {
         super(entity, signature, number);
         
         final @Nonnull TupleWrapper tuple = new TupleWrapper(block);
-        this.category = Category.get(tuple.getElementNotNull(0));
+        this.category = Category.get(tuple.getNonNullableElement(0));
         if (!category.isInternalNonHostIdentity()) throw new InvalidEncodingException("The category is " + category.name() + " instead of an internal non-host identity.");
-        this.predecessors = new FreezablePredecessors(tuple.getElementNotNull(1)).freeze();
-        this.successor = tuple.isElementNull(2) ? null : IdentifierClass.create(tuple.getElementNotNull(2)).toInternalNonHostIdentifier();
+        this.predecessors = new FreezablePredecessors(tuple.getNonNullableElement(1)).freeze();
+        this.successor = tuple.isElementNull(2) ? null : IdentifierClass.create(tuple.getNonNullableElement(2)).toInternalNonHostIdentifier();
     }
     
     @Pure

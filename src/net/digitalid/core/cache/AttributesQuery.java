@@ -107,7 +107,7 @@ public final class AttributesQuery extends CoreServiceExternalQuery {
     private AttributesQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException  {
         super(entity, signature, recipient);
         
-        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(2);
+        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getNonNullableElements(2);
         this.attributeTypes = new FreezableAttributeTypeSet(elements.getNonNullable(0)).freeze();
         if (attributeTypes.isEmpty()) throw new InvalidEncodingException("The attribute types may not be empty.");
         this.published = new BooleanWrapper(elements.getNonNullable(1)).getValue();

@@ -110,9 +110,9 @@ public final class EmptyWrapper extends Wrapper<EmptyWrapper> {
         /**
          * Creates a new factory with the given type.
          * 
-         * @param type the semantic type that corresponds to the wrapper.
+         * @param type the semantic type of the wrapper.
          */
-        protected Factory(@Nonnull @Loaded @BasedOn("empty@core.digitalid.net") SemanticType type) {
+        private Factory(@Nonnull @Loaded @BasedOn("empty@core.digitalid.net") SemanticType type) {
             super(type, COLUMN);
             
             assert type.isBasedOn(TYPE) : "The given semantic type is based on the indicated syntactic type.";

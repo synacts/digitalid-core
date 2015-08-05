@@ -35,8 +35,8 @@ public final class TupleWrapperTest extends DatabaseSetup {
         listOfElements.add(new FreezableArray<>(string).freeze());
         
         for (final @Nonnull ReadOnlyArray<Block> elements : listOfElements) {
-            if (elements.size() == 2) Assert.assertEquals(elements, new TupleWrapper(new TupleWrapper(TYPE, elements).toBlock()).getElements());
-            else Assert.assertEquals(elements.getNonNullable(0), new TupleWrapper(new TupleWrapper(TYPE, elements).toBlock()).getElementNotNull(0));
+            if (elements.size() == 2) Assert.assertEquals(elements, new TupleWrapper(new TupleWrapper(TYPE, elements).toBlock()).getNullableElements());
+            else Assert.assertEquals(elements.getNonNullable(0), new TupleWrapper(new TupleWrapper(TYPE, elements).toBlock()).getNonNullableElement(0));
         }
     }
 }

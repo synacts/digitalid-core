@@ -121,7 +121,7 @@ public final class PushFailed extends ExternalAction {
     private PushFailed(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(entity, signature, recipient);
         
-        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getElementsNotNull(4);
+        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getNonNullableElements(4);
         this.number = new Int64Wrapper(elements.getNonNullable(0)).getValue();
         
         final @Nonnull InternalIdentifier _subject = IdentifierClass.create(elements.getNonNullable(1)).toInternalIdentifier();

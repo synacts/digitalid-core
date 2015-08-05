@@ -133,12 +133,12 @@ final class CredentialReply extends CoreServiceQueryReply {
         if (!hasEntity()) throw new InvalidEncodingException("A credential reply must have an entity.");
         
         final @Nonnull TupleWrapper tuple = new TupleWrapper(block);
-        this.restrictions = tuple.isElementNotNull(0) ? new Restrictions(entity, tuple.getElementNotNull(0)) : null;
-        this.issuance = new Time(tuple.getElementNotNull(1));
+        this.restrictions = tuple.isElementNotNull(0) ? new Restrictions(entity, tuple.getNonNullableElement(0)) : null;
+        this.issuance = new Time(tuple.getNonNullableElement(1));
         this.publicKey = Cache.getPublicKey(signature.getSubjectNotNull().getHostIdentifier(), issuance);
-        this.c = publicKey.getCompositeGroup().getElement(tuple.getElementNotNull(2));
-        this.e = new Exponent(tuple.getElementNotNull(3));
-        this.i = new Exponent(tuple.getElementNotNull(4));
+        this.c = publicKey.getCompositeGroup().getElement(tuple.getNonNullableElement(2));
+        this.e = new Exponent(tuple.getNonNullableElement(3));
+        this.i = new Exponent(tuple.getNonNullableElement(4));
         
         if (issuance.isLessThan(Time.HOUR.ago())) throw new InvalidEncodingException("The returned credential is no longer active.");
     }

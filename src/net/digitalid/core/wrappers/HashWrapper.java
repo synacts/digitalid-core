@@ -93,32 +93,61 @@ public final class HashWrapper extends Wrapper<HashWrapper> {
     private static final Wrapper.Factory<HashWrapper> FACTORY = new Factory(SEMANTIC);
     
     /**
-     * Encodes the given value into a new block of the given type.
+     * Encodes the given non-nullable value into a new block of the given type.
      * 
      * @param type the semantic type of the new block.
      * @param value the value to encode into the new block.
      * 
-     * @return a new block containing the given value.
+     * @return a new non-nullable block containing the given value.
      * 
      * @require value.bitLength() <= Parameters.HASH : "The length of the value is at most Parameters.HASH.";
      */
     @Pure
-    public static @Nonnull @NonEncoding Block encode(@Nonnull @Loaded @BasedOn("hash@core.digitalid.net") SemanticType type, @Nonnull @NonNegative BigInteger value) {
+    public static @Nonnull @NonEncoding Block encodeNonNullable(@Nonnull @Loaded @BasedOn("hash@core.digitalid.net") SemanticType type, @Nonnull @NonNegative BigInteger value) {
         return FACTORY.encodeNonNullable(new HashWrapper(type, value));
     }
     
     /**
-     * Decodes the given block. 
+     * Encodes the given nullable value into a new block of the given type.
+     * 
+     * @param type the semantic type of the new block.
+     * @param value the value to encode into the new block.
+     * 
+     * @return a new nullable block containing the given value.
+     * 
+     * @require value == null || value.bitLength() <= Parameters.HASH : "The value is either null or its length is at most Parameters.HASH.";
+     */
+    @Pure
+    public static @Nullable @NonEncoding Block encodeNullable(@Nonnull @Loaded @BasedOn("hash@core.digitalid.net") SemanticType type, @Nullable @NonNegative BigInteger value) {
+        return value == null ? null : encodeNonNullable(type, value);
+    }
+    
+    /**
+     * Decodes the given non-nullable block. 
      * 
      * @param block the block to be decoded.
      * 
      * @return the value contained in the given block.
      * 
-     * @ensure value.bitLength() <= Parameters.HASH : "The length of the value is at most Parameters.HASH.";
+     * @ensure return.bitLength() <= Parameters.HASH : "The length of the returned value is at most Parameters.HASH.";
      */
     @Pure
-    public static @Nonnull @NonNegative BigInteger decode(@Nonnull @NonEncoding @BasedOn("hash@core.digitalid.net") Block block) throws InvalidEncodingException {
+    public static @Nonnull @NonNegative BigInteger decodeNonNullable(@Nonnull @NonEncoding @BasedOn("hash@core.digitalid.net") Block block) throws InvalidEncodingException {
         return FACTORY.decodeNonNullable(block).value;
+    }
+    
+    /**
+     * Decodes the given nullable block. 
+     * 
+     * @param block the block to be decoded.
+     * 
+     * @return the value contained in the given block.
+     * 
+     * @ensure return == null ||  return.bitLength() <= Parameters.HASH : "The returned value is either null or its length is at most Parameters.HASH.";
+     */
+    @Pure
+    public static @Nullable @NonNegative BigInteger decodeNullable(@Nullable @NonEncoding @BasedOn("hash@core.digitalid.net") Block block) throws InvalidEncodingException {
+        return block == null ? null : decodeNonNullable(block);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encoding –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -160,9 +189,9 @@ public final class HashWrapper extends Wrapper<HashWrapper> {
         /**
          * Creates a new factory with the given type.
          * 
-         * @param type the semantic type that corresponds to the wrapper.
+         * @param type the semantic type of the wrapper.
          */
-        protected Factory(@Nonnull @Loaded @BasedOn("hash@core.digitalid.net") SemanticType type) {
+        private Factory(@Nonnull @Loaded @BasedOn("hash@core.digitalid.net") SemanticType type) {
             super(type, COLUMN);
             
             assert type.isBasedOn(TYPE) : "The given semantic type is based on the indicated syntactic type.";
@@ -218,9 +247,9 @@ public final class HashWrapper extends Wrapper<HashWrapper> {
         /**
          * Creates a new factory with the given type.
          * 
-         * @param type the semantic type that corresponds to the wrapper.
+         * @param type the type of the blocks which are returned by the factory.
          */
-        protected ValueFactory(@Nonnull @Loaded @BasedOn("hash@core.digitalid.net") SemanticType type) {
+        private ValueFactory(@Nonnull @Loaded @BasedOn("hash@core.digitalid.net") SemanticType type) {
             super(type, FACTORY);
             
             assert type.isBasedOn(TYPE) : "The given semantic type is based on the indicated syntactic type.";
@@ -246,6 +275,18 @@ public final class HashWrapper extends Wrapper<HashWrapper> {
             return wrapper.value;
         }
         
+    }
+    
+    /**
+     * Returns a new factory for the value type of this wrapper.
+     * 
+     * @param type the type of the blocks which are returned by the factory.
+     * 
+     * @return a new factory for the value type of this wrapper.
+     */
+    @Pure
+    public static @Nonnull ValueFactory getValueFactory(@Nonnull @Loaded @BasedOn("hash@core.digitalid.net") SemanticType type) {
+        return new ValueFactory(type);
     }
     
     /**

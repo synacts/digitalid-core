@@ -111,7 +111,7 @@ public final class AccountInitialize extends CoreServiceInternalAction {
         final @Nonnull FreezableList<ReadOnlyPair<Predecessor, Block>> states = new FreezableArrayList<>(elements.size());
         for (final @Nonnull Block element : elements) {
             final @Nonnull TupleWrapper tuple = new TupleWrapper(element);
-            final @Nonnull Predecessor predecessor = new Predecessor(tuple.getElementNotNull(0));
+            final @Nonnull Predecessor predecessor = new Predecessor(tuple.getNonNullableElement(0));
             final @Nonnull NonHostIdentifier identifier = predecessor.getIdentifier();
             final @Nonnull NonHostIdentity identity = identifier.getIdentity();
             final @Nonnull String message = "The claimed predecessor " + identifier + " of " + subject;
@@ -122,7 +122,7 @@ public final class AccountInitialize extends CoreServiceInternalAction {
                 if (!predecessor.getPredecessors().isEmpty()) throw new InvalidDeclarationException(message + " is an external person and may not have any predecessors.", subject, null);
             }
             if (!Successor.getReloaded(identifier).equals(subject)) throw new InvalidDeclarationException(message + " does not link back.", subject, null);
-            states.add(new FreezablePair<>(predecessor, tuple.getElement(1)).freeze());
+            states.add(new FreezablePair<>(predecessor, tuple.getNullableElement(1)).freeze());
         }
         this.states = states.freeze();
     }
