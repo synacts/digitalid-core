@@ -15,7 +15,7 @@ import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.wrappers.Blockable;
 import net.digitalid.core.database.SQLizable;
 import net.digitalid.core.wrappers.Block;
-import net.digitalid.core.wrappers.DataWrapper;
+import net.digitalid.core.wrappers.BytesWrapper;
 import net.digitalid.core.wrappers.EncryptionWrapper;
 
 /**
@@ -30,7 +30,7 @@ public final class InitializationVector extends IvParameterSpec implements Block
     /**
      * Stores the semantic type {@code initialization.vector@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.map("initialization.vector@core.digitalid.net").load(DataWrapper.TYPE);
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("initialization.vector@core.digitalid.net").load(BytesWrapper.TYPE);
     
     
     /**
@@ -74,7 +74,7 @@ public final class InitializationVector extends IvParameterSpec implements Block
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
     public InitializationVector(@Nonnull Block block) throws InvalidEncodingException {
-        super(new DataWrapper(block).getData());
+        super(new BytesWrapper(block).getData());
         
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
@@ -90,7 +90,7 @@ public final class InitializationVector extends IvParameterSpec implements Block
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        return new DataWrapper(TYPE, getIV()).toBlock();
+        return new BytesWrapper(TYPE, getIV()).toBlock();
     }
     
     

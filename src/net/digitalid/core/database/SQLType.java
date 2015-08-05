@@ -45,6 +45,16 @@ public enum SQLType {
     DOUBLE(Types.DOUBLE, Database.getConfiguration().DOUBLE()),
     
     /**
+     * The SQL type for hashes.
+     */
+    HASH(Types.BINARY, Database.getConfiguration().HASH()),
+    
+    /**
+     * The SQL type for vectors.
+     */
+    VECTOR(Types.BINARY, Database.getConfiguration().VECTOR()),
+    
+    /**
      * The SQL type for booleans.
      */
     BOOLEAN(Types.TINYINT, "BOOLEAN"),

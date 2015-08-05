@@ -182,11 +182,25 @@ public abstract class Wrapper<W extends Wrapper<W>> implements Storable<W> {
         }
         
         /**
+         * Returns whether the given value is valid.
+         * 
+         * @param value the value to check.
+         * 
+         * @return whether the given value is valid.
+         */
+        @Pure
+        protected boolean isValid(@Nonnull V value) {
+            return true;
+        }
+        
+        /**
          * Wraps the given value.
          * 
          * @param value the value to wrap.
          * 
          * @return the wrapper around the value.
+         * 
+         * @require isValid(value) : "The value is valid.";
          */
         @Pure
         protected abstract @Nonnull W wrap(@Nonnull V value);
@@ -197,6 +211,8 @@ public abstract class Wrapper<W extends Wrapper<W>> implements Storable<W> {
          * @param wrapper the wrapper to unwrap.
          * 
          * @return the value wrapped in the given wrapper.
+         * 
+         * @ensure isValid(value) : "The value is valid.";
          */
         @Pure
         protected abstract @Nonnull V unwrap(@Nonnull W wrapper);

@@ -32,7 +32,7 @@ import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.identifier.IdentifierClass;
 import net.digitalid.core.identifier.InternalNonHostIdentifier;
 import net.digitalid.core.wrappers.Block;
-import net.digitalid.core.wrappers.DataWrapper;
+import net.digitalid.core.wrappers.BytesWrapper;
 import net.digitalid.core.wrappers.ListWrapper;
 
 /**
@@ -92,7 +92,7 @@ public final class SemanticType extends Type {
     /**
      * Stores the semantic type {@code unknown@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType UNKNOWN = SemanticType.map("unknown@core.digitalid.net").load(DataWrapper.TYPE);
+    public static final @Nonnull SemanticType UNKNOWN = SemanticType.map("unknown@core.digitalid.net").load(BytesWrapper.TYPE);
     
     
     /**

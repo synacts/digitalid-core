@@ -56,21 +56,19 @@ public final class IntvarWrapper extends Wrapper<IntvarWrapper> {
     /**
      * Stores the value of this wrapper.
      * 
-     * @invariant value >= 0 : "The value is not negative.";
      * @invariant value <= MAX_VALUE : "The first two bits are zero.";
      */
-    private final long value;
+    private final @NonNegative long value;
     
     /**
      * Returns the value of this wrapper.
      * 
      * @return the value of this wrapper.
      * 
-     * @ensure value >= 0 : "The value is not negative.";
      * @ensure value <= MAX_VALUE : "The first two bits are zero.";
      */
     @Pure
-    public long getValue() {
+    public @NonNegative long getValue() {
         return value;
     }
     
@@ -82,13 +80,12 @@ public final class IntvarWrapper extends Wrapper<IntvarWrapper> {
      * @param type the semantic type of the new wrapper.
      * @param value the value of the new wrapper.
      * 
-     * @require value >= 0 : "The value is not negative.";
      * @require value <= MAX_VALUE : "The first two bits have to be zero.";
      */
-    private IntvarWrapper(@Nonnull @Loaded @BasedOn("intvar@core.digitalid.net") SemanticType type, long value) {
+    private IntvarWrapper(@Nonnull @Loaded @BasedOn("intvar@core.digitalid.net") SemanticType type, @NonNegative long value) {
         super(type);
         
-        assert value >= 0 : "The value is not negative.";
+        assert value >= 0 : "The value is non-negative.";
         assert value <= MAX_VALUE : "The first two bits have to be zero.";
         
         this.value = value;
@@ -109,11 +106,10 @@ public final class IntvarWrapper extends Wrapper<IntvarWrapper> {
      * 
      * @return a new block containing the given value.
      * 
-     * @require value >= 0 : "The value is not negative.";
      * @require value <= MAX_VALUE : "The first two bits have to be zero.";
      */
     @Pure
-    public static @Nonnull @NonEncoding Block encode(@Nonnull @Loaded @BasedOn("intvar@core.digitalid.net") SemanticType type, long value) {
+    public static @Nonnull @NonEncoding Block encode(@Nonnull @Loaded @BasedOn("intvar@core.digitalid.net") SemanticType type, @NonNegative long value) {
         return FACTORY.encodeNonNullable(new IntvarWrapper(type, value));
     }
     
@@ -124,11 +120,10 @@ public final class IntvarWrapper extends Wrapper<IntvarWrapper> {
      * 
      * @return the value contained in the given block.
      * 
-     * @ensure value >= 0 : "The value is not negative.";
      * @ensure value <= MAX_VALUE : "The first two bits are zero.";
      */
     @Pure
-    public static long decode(@Nonnull @NonEncoding @BasedOn("intvar@core.digitalid.net") Block block) throws InvalidEncodingException {
+    public static @NonNegative long decode(@Nonnull @NonEncoding @BasedOn("intvar@core.digitalid.net") Block block) throws InvalidEncodingException {
         return FACTORY.decodeNonNullable(block).value;
     }
     
@@ -200,9 +195,10 @@ public final class IntvarWrapper extends Wrapper<IntvarWrapper> {
      * @require length == decodeLength(block, offset) : "The length is correct.";
      * 
      * @ensure determineLength(return) == length : "The length of the return value as an intvar matches the given length.";
+     * @ensure value <= MAX_VALUE : "The first two bits are zero.";
      */
     @Pure
-    public static long decodeValue(@Nonnull Block block, @NonNegative int offset, int length) throws InvalidEncodingException {
+    public static @NonNegative long decodeValue(@Nonnull Block block, @NonNegative int offset, int length) throws InvalidEncodingException {
         assert offset >= 0 : "The offset is not negative.";
         assert length == decodeLength(block, offset) : "The length is correct.";
         
@@ -230,9 +226,10 @@ public final class IntvarWrapper extends Wrapper<IntvarWrapper> {
      * @require length == decodeLength(bytes) : "The length is correct.";
      * 
      * @ensure determineLength(return) == length : "The length of the return value as an intvar matches the given length.";
+     * @ensure value <= MAX_VALUE : "The first two bits are zero.";
      */
     @Pure
-    static long decodeValue(@Nonnull byte[] bytes, int length) throws InvalidEncodingException {
+    static @NonNegative long decodeValue(@Nonnull byte[] bytes, int length) throws InvalidEncodingException {
         assert bytes.length >= length : "The byte array is big enough.";
         assert length == decodeLength(bytes) : "The length is correct.";
         
@@ -255,11 +252,10 @@ public final class IntvarWrapper extends Wrapper<IntvarWrapper> {
      * 
      * @return the length of the given value when encoded as an intvar.
      * 
-     * @require value >= 0 : "The value is not negative.";
      * @require value <= MAX_VALUE : "The first two bits have to be zero.";
      */
     @Pure
-    public static int determineLength(long value) {
+    public static int determineLength(@NonNegative long value) {
         assert value >= 0 : "The value is not negative.";
         assert value <= MAX_VALUE : "The first two bits have to be zero.";
         
@@ -284,10 +280,9 @@ public final class IntvarWrapper extends Wrapper<IntvarWrapper> {
      * 
      * @require offset + length <= block.getLength() : "The indicated section may not exceed the given block.";
      * @require length == determineLength(value) : "The length of the indicated section in the block has to match the length of the encoded value.";
-     * @require value >= 0 : "The value is not negative.";
      * @require value <= MAX_VALUE : "The first two bits have to be zero.";
      */
-    public static void encode(@Nonnull @Encoding Block block, @NonNegative int offset, int length, long value) {
+    public static void encode(@Nonnull @Encoding Block block, @NonNegative int offset, int length, @NonNegative long value) {
         assert offset >= 0 : "The offset is not negative.";
         assert offset + length <= block.getLength() : "The indicated section may not exceed the given block.";
         assert length == determineLength(value) : "The length of the indicated section in the block has to match the length of the encoded value.";
@@ -385,7 +380,15 @@ public final class IntvarWrapper extends Wrapper<IntvarWrapper> {
         
         @Pure
         @Override
+        protected boolean isValid(@Nonnull Long value) {
+            return value >= 0 && value <= MAX_VALUE;
+        }
+        
+        @Pure
+        @Override
         protected @Nonnull IntvarWrapper wrap(@Nonnull Long value) {
+            assert isValid(value) : "The value is valid.";
+            
             return new IntvarWrapper(getType(), value);
         }
         
