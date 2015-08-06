@@ -136,7 +136,8 @@ public final class BooleanWrapper extends Wrapper<BooleanWrapper> {
     /**
      * The factory for this class.
      */
-    private static class Factory extends Wrapper.Factory<BooleanWrapper> {
+    @Immutable
+    public static class Factory extends Wrapper.Factory<BooleanWrapper> {
         
         /**
          * Stores the column for the wrapper.
@@ -181,7 +182,7 @@ public final class BooleanWrapper extends Wrapper<BooleanWrapper> {
     
     @Pure
     @Override
-    public @Nonnull Wrapper.Factory<BooleanWrapper> getFactory() {
+    public @Nonnull Factory getFactory() {
         return new Factory(getSemanticType());
     }
     
@@ -196,6 +197,7 @@ public final class BooleanWrapper extends Wrapper<BooleanWrapper> {
     /**
      * The factory for the value type of this wrapper.
      */
+    @Immutable
     public static class ValueFactory extends Wrapper.ValueFactory<Boolean, BooleanWrapper> {
         
         /**

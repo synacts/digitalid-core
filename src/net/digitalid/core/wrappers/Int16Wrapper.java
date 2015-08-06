@@ -135,7 +135,8 @@ public final class Int16Wrapper extends Wrapper<Int16Wrapper> {
     /**
      * The factory for this class.
      */
-    private static class Factory extends Wrapper.Factory<Int16Wrapper> {
+    @Immutable
+    public static class Factory extends Wrapper.Factory<Int16Wrapper> {
         
         /**
          * Stores the column for the wrapper.
@@ -180,7 +181,7 @@ public final class Int16Wrapper extends Wrapper<Int16Wrapper> {
     
     @Pure
     @Override
-    public @Nonnull Wrapper.Factory<Int16Wrapper> getFactory() {
+    public @Nonnull Factory getFactory() {
         return new Factory(getSemanticType());
     }
     
@@ -195,6 +196,7 @@ public final class Int16Wrapper extends Wrapper<Int16Wrapper> {
     /**
      * The factory for the value type of this wrapper.
      */
+    @Immutable
     public static class ValueFactory extends Wrapper.ValueFactory<Short, Int16Wrapper> {
         
         /**

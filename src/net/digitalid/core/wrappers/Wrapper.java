@@ -122,6 +122,7 @@ public abstract class Wrapper<W extends Wrapper<W>> implements Storable<W> {
     /**
      * The factory for wrappers.
      */
+    @Immutable
     public abstract static class Factory<W extends Wrapper<W>> extends NonConceptFactory<W> {
         
         /**
@@ -130,7 +131,7 @@ public abstract class Wrapper<W extends Wrapper<W>> implements Storable<W> {
          * @param type the semantic type that corresponds to the wrapper.
          * @param column the column used to store objects of the wrapper.
          */
-        protected Factory(@Nonnull @Loaded SemanticType type, @Nonnull Column column) {
+        protected Factory(@Nonnull @Loaded SemanticType type, @Nonnull @NonNullableElements Column column) {
             super(type, column);
         }
         
@@ -167,6 +168,7 @@ public abstract class Wrapper<W extends Wrapper<W>> implements Storable<W> {
     /**
      * The factory for values.
      */
+    @Immutable
     public abstract static class ValueFactory<V, W extends Wrapper<W>> extends NonConceptFactory<V> {
         
         /**

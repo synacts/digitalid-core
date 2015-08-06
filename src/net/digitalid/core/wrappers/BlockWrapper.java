@@ -44,6 +44,7 @@ public abstract class BlockWrapper<W extends BlockWrapper<W>> extends Wrapper<W>
     /**
      * The factory for block wrappers.
      */
+    @Immutable
     public abstract static class Factory<W extends Wrapper<W>> extends Wrapper.Factory<W> {
         
         /**

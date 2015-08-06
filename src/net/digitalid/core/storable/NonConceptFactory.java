@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Loaded;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.NonEncoding;
@@ -23,6 +24,7 @@ import net.digitalid.core.wrappers.Block;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
+@Immutable
 public abstract class NonConceptFactory<O> extends GeneralConceptFactory<O> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Decoding –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -58,7 +60,7 @@ public abstract class NonConceptFactory<O> extends GeneralConceptFactory<O> {
      */
     @Pure
     @NonCommitting
-    public final @Nullable O decodeNullable(@Nullable @NonEncoding Block block) throws SQLException, IOException, PacketException, ExternalException {
+    public @Nullable O decodeNullable(@Nullable @NonEncoding Block block) throws SQLException, IOException, PacketException, ExternalException {
         if (block != null) return decodeNonNullable(block);
         else return null;
     }

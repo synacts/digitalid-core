@@ -163,7 +163,8 @@ public final class IntegerWrapper extends Wrapper<IntegerWrapper> {
     /**
      * The factory for this class.
      */
-    private static class Factory extends Wrapper.Factory<IntegerWrapper> {
+    @Immutable
+    public static class Factory extends Wrapper.Factory<IntegerWrapper> {
         
         /**
          * Stores the column for the wrapper.
@@ -206,19 +207,14 @@ public final class IntegerWrapper extends Wrapper<IntegerWrapper> {
     
     @Pure
     @Override
-    public @Nonnull Wrapper.Factory<IntegerWrapper> getFactory() {
+    public @Nonnull Factory getFactory() {
         return new Factory(getSemanticType());
     }
     
     @Pure
     @Override
     public @Nonnull String toString() {
-        final @Nonnull StringBuilder string = new StringBuilder("E'\\x");
-        for (int i = 0; i < bytes.length; i++) {
-            string.append(String.format("%02X", bytes[i]));
-        }
-        string.append("'");
-        return string.toString();
+        return Block.toString(bytes);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factory –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -226,6 +222,7 @@ public final class IntegerWrapper extends Wrapper<IntegerWrapper> {
     /**
      * The factory for the value type of this wrapper.
      */
+    @Immutable
     public static class ValueFactory extends Wrapper.ValueFactory<BigInteger, IntegerWrapper> {
         
         /**

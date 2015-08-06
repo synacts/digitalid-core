@@ -180,7 +180,8 @@ public final class HashWrapper extends Wrapper<HashWrapper> {
     /**
      * The factory for this class.
      */
-    private static class Factory extends Wrapper.Factory<HashWrapper> {
+    @Immutable
+    public static class Factory extends Wrapper.Factory<HashWrapper> {
         
         /**
          * Stores the column for the wrapper.
@@ -224,20 +225,14 @@ public final class HashWrapper extends Wrapper<HashWrapper> {
     
     @Pure
     @Override
-    public @Nonnull Wrapper.Factory<HashWrapper> getFactory() {
+    public @Nonnull Factory getFactory() {
         return new Factory(getSemanticType());
     }
     
     @Pure
     @Override
     public @Nonnull String toString() {
-        final @Nonnull byte[] bytes = value.toByteArray();
-        final @Nonnull StringBuilder string = new StringBuilder("E'\\x");
-        for (int i = 0; i < bytes.length; i++) {
-            string.append(String.format("%02X", bytes[i]));
-        }
-        string.append("'");
-        return string.toString();
+        return Block.toString(value.toByteArray());
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factory –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -245,6 +240,7 @@ public final class HashWrapper extends Wrapper<HashWrapper> {
     /**
      * The factory for the value type of this wrapper.
      */
+    @Immutable
     public static class ValueFactory extends Wrapper.ValueFactory<BigInteger, HashWrapper> {
         
         /**

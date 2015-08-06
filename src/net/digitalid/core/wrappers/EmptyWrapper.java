@@ -101,7 +101,8 @@ public final class EmptyWrapper extends Wrapper<EmptyWrapper> {
     /**
      * The factory for this class.
      */
-    private static class Factory extends Wrapper.Factory<EmptyWrapper> {
+    @Immutable
+    public static class Factory extends Wrapper.Factory<EmptyWrapper> {
         
         /**
          * Stores the column for the wrapper.
@@ -144,7 +145,7 @@ public final class EmptyWrapper extends Wrapper<EmptyWrapper> {
     
     @Pure
     @Override
-    public @Nonnull Wrapper.Factory<EmptyWrapper> getFactory() {
+    public @Nonnull Factory getFactory() {
         return new Factory(getSemanticType());
     }
     

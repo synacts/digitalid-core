@@ -248,7 +248,8 @@ public final class ListWrapper extends BlockWrapper<ListWrapper> {
     /**
      * The factory for this class.
      */
-    private static class Factory extends BlockWrapper.Factory<ListWrapper> {
+    @Immutable
+    public static class Factory extends BlockWrapper.Factory<ListWrapper> {
         
         /**
          * Creates a new factory with the given type.
@@ -293,7 +294,7 @@ public final class ListWrapper extends BlockWrapper<ListWrapper> {
     
     @Pure
     @Override
-    public @Nonnull BlockWrapper.Factory<ListWrapper> getFactory() {
+    public @Nonnull Factory getFactory() {
         return new Factory(getSemanticType());
     }
     

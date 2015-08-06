@@ -14,6 +14,8 @@ import net.digitalid.core.collections.Freezable;
 /**
  * This class models a {@link Freezable freezable} triplet.
  * 
+ * @see FreezableQuartet
+ * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */

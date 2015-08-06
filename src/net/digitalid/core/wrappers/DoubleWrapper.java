@@ -135,7 +135,8 @@ public final class DoubleWrapper extends Wrapper<DoubleWrapper> {
     /**
      * The factory for this class.
      */
-    private static class Factory extends Wrapper.Factory<DoubleWrapper> {
+    @Immutable
+    public static class Factory extends Wrapper.Factory<DoubleWrapper> {
         
         /**
          * Stores the column for the wrapper.
@@ -180,7 +181,7 @@ public final class DoubleWrapper extends Wrapper<DoubleWrapper> {
     
     @Pure
     @Override
-    public @Nonnull Wrapper.Factory<DoubleWrapper> getFactory() {
+    public @Nonnull Factory getFactory() {
         return new Factory(getSemanticType());
     }
     
@@ -195,6 +196,7 @@ public final class DoubleWrapper extends Wrapper<DoubleWrapper> {
     /**
      * The factory for the value type of this wrapper.
      */
+    @Immutable
     public static class ValueFactory extends Wrapper.ValueFactory<Double, DoubleWrapper> {
         
         /**

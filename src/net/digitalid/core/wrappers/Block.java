@@ -699,19 +699,53 @@ public final class Block implements Storable<Block>, Cloneable {
         return result;
     }
     
+    /**
+     * Returns the given section in the byte array as a string.
+     * 
+     * @param bytes the byte array which contains the section.
+     * @param offset the offset of the section in the byte array.
+     * @param length the length of the section in the byte array.
+     * 
+     * @return the given section in the byte array as a string.
+     * 
+     * @require offset >= 0 : "The offset is non-negative.";
+     * @require length >= 0 : "The length is non-negative.";
+     * @require offset + length <= bytes.length : "The section fits into the given byte array.";
+     */
     @Pure
-    @Override
-    @NonEncodingRecipient
-    public @Nonnull String toString() {
-        encodeIfNotYetEncoded();
+    public static @Nonnull String toString(@Nonnull byte[] bytes, @NonNegative int offset, @NonNegative int length) {
+        assert offset >= 0 : "The offset is non-negative.";
+        assert length >= 0 : "The length is non-negative.";
+        assert offset + length <= bytes.length : "The section fits into the given byte array.";
+        
         // See: 8.4.1. in http://www.postgresql.org/docs/9.0/static/datatype-binary.html
         final @Nonnull StringBuilder string = new StringBuilder("E'\\x");
         for (int i = offset; i < offset + length; i++) {
             // if (string.length() > 4) string.append(" ");
             string.append(String.format("%02X", bytes[i]));
         }
-        string.append("'");
-        return string.toString();
+        return string.append("'").toString();
+    }
+    
+    /**
+     * Returns the given byte array as a string.
+     * 
+     * @param bytes the byte array to encode.
+     * 
+     * @return the given byte array as a string.
+     */
+    @Pure
+    public static @Nonnull String toString(@Nonnull byte[] bytes) {
+        return toString(bytes, 0, bytes.length);
+    }
+    
+    @Pure
+    @Override
+    @NonEncodingRecipient
+    public @Nonnull String toString() {
+        encodeIfNotYetEncoded();
+        assert bytes != null : "Encoded now.";
+        return toString(bytes, offset, length);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */

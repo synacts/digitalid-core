@@ -304,7 +304,8 @@ public final class IntvarWrapper extends Wrapper<IntvarWrapper> {
     /**
      * The factory for this class.
      */
-    private static class Factory extends Wrapper.Factory<IntvarWrapper> {
+    @Immutable
+    public static class Factory extends Wrapper.Factory<IntvarWrapper> {
         
         /**
          * Stores the column for the wrapper.
@@ -353,7 +354,7 @@ public final class IntvarWrapper extends Wrapper<IntvarWrapper> {
     
     @Pure
     @Override
-    public @Nonnull Wrapper.Factory<IntvarWrapper> getFactory() {
+    public @Nonnull Factory getFactory() {
         return new Factory(getSemanticType());
     }
     
@@ -368,6 +369,7 @@ public final class IntvarWrapper extends Wrapper<IntvarWrapper> {
     /**
      * The factory for the value type of this wrapper.
      */
+    @Immutable
     public static class ValueFactory extends Wrapper.ValueFactory<Long, IntvarWrapper> {
         
         /**

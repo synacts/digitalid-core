@@ -139,7 +139,8 @@ public final class CharWrapper extends Wrapper<CharWrapper> {
     /**
      * The factory for this class.
      */
-    private static class Factory extends Wrapper.Factory<CharWrapper> {
+    @Immutable
+    public static class Factory extends Wrapper.Factory<CharWrapper> {
         
         /**
          * Stores the column for the wrapper.
@@ -183,7 +184,7 @@ public final class CharWrapper extends Wrapper<CharWrapper> {
     
     @Pure
     @Override
-    public @Nonnull Wrapper.Factory<CharWrapper> getFactory() {
+    public @Nonnull Factory getFactory() {
         return new Factory(getSemanticType());
     }
     
@@ -199,6 +200,7 @@ public final class CharWrapper extends Wrapper<CharWrapper> {
     /**
      * The factory for the value type of this wrapper.
      */
+    @Immutable
     public static class ValueFactory extends Wrapper.ValueFactory<Character, CharWrapper> {
         
         /**

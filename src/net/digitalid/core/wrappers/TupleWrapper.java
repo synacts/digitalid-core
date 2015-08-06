@@ -370,7 +370,8 @@ public final class TupleWrapper extends BlockWrapper<TupleWrapper> {
     /**
      * The factory for this class.
      */
-    private static class Factory extends BlockWrapper.Factory<TupleWrapper> {
+    @Immutable
+    public static class Factory extends BlockWrapper.Factory<TupleWrapper> {
         
         /**
          * Creates a new factory with the given type.
@@ -412,7 +413,7 @@ public final class TupleWrapper extends BlockWrapper<TupleWrapper> {
     
     @Pure
     @Override
-    public @Nonnull BlockWrapper.Factory<TupleWrapper> getFactory() {
+    public @Nonnull Factory getFactory() {
         return new Factory(getSemanticType());
     }
     

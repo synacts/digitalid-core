@@ -135,7 +135,8 @@ public final class Int64Wrapper extends Wrapper<Int64Wrapper> {
     /**
      * The factory for this class.
      */
-    private static class Factory extends Wrapper.Factory<Int64Wrapper> {
+    @Immutable
+    public static class Factory extends Wrapper.Factory<Int64Wrapper> {
         
         /**
          * Stores the column for the wrapper.
@@ -180,7 +181,7 @@ public final class Int64Wrapper extends Wrapper<Int64Wrapper> {
     
     @Pure
     @Override
-    public @Nonnull Wrapper.Factory<Int64Wrapper> getFactory() {
+    public @Nonnull Factory getFactory() {
         return new Factory(getSemanticType());
     }
     
@@ -195,6 +196,7 @@ public final class Int64Wrapper extends Wrapper<Int64Wrapper> {
     /**
      * The factory for the value type of this wrapper.
      */
+    @Immutable
     public static final class ValueFactory extends Wrapper.ValueFactory<Long, Int64Wrapper> {
         
         /**

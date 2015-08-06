@@ -83,7 +83,7 @@ public final class SelfcontainedWrapper extends BlockWrapper<SelfcontainedWrappe
      * @return the element of this wrapper.
      */
     @Pure
-    public @Nonnull @NonEncoding Block getElement() {
+    public @Nonnull Block getElement() {
         return element;
     }
     
@@ -215,7 +215,8 @@ public final class SelfcontainedWrapper extends BlockWrapper<SelfcontainedWrappe
     /**
      * The factory for this class.
      */
-    private static class Factory extends BlockWrapper.Factory<SelfcontainedWrapper> {
+    @Immutable
+    public static class Factory extends BlockWrapper.Factory<SelfcontainedWrapper> {
         
         /**
          * Creates a new factory with the given type.
@@ -239,7 +240,7 @@ public final class SelfcontainedWrapper extends BlockWrapper<SelfcontainedWrappe
     
     @Pure
     @Override
-    public @Nonnull BlockWrapper.Factory<SelfcontainedWrapper> getFactory() {
+    public @Nonnull Factory getFactory() {
         return new Factory(getSemanticType());
     }
     

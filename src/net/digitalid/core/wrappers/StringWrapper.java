@@ -184,7 +184,8 @@ public final class StringWrapper extends Wrapper<StringWrapper> {
     /**
      * The factory for this class.
      */
-    private static class Factory extends Wrapper.Factory<StringWrapper> {
+    @Immutable
+    public static class Factory extends Wrapper.Factory<StringWrapper> {
         
         /**
          * Stores the column for the wrapper.
@@ -227,7 +228,7 @@ public final class StringWrapper extends Wrapper<StringWrapper> {
     
     @Pure
     @Override
-    public @Nonnull Wrapper.Factory<StringWrapper> getFactory() {
+    public @Nonnull Factory getFactory() {
         return new Factory(getSemanticType());
     }
     
@@ -243,6 +244,7 @@ public final class StringWrapper extends Wrapper<StringWrapper> {
     /**
      * The factory for the value type of this wrapper.
      */
+    @Immutable
     public static class ValueFactory extends Wrapper.ValueFactory<String, StringWrapper> {
         
         /**

@@ -15,6 +15,8 @@ import net.digitalid.core.collections.FreezableObject;
 /**
  * This class models a {@link Freezable freezable} pair.
  * 
+ * @see FreezableTriplet
+ * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */

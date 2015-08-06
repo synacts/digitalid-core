@@ -193,7 +193,7 @@ public abstract class Packet {
         final @Nullable HostAccount account = recipient == null ? null : Server.getHost(recipient).getAccount();
         
         final @Nonnull ReadOnlyList<Block> elements;
-        try { elements = new ListWrapper(encryption.getNonNullableElement()).getElements(); } catch (InvalidEncodingException exception) { throw new PacketException(PacketError.ELEMENTS, "The elements could not be decoded.", exception, isResponse); }
+        try { elements = new ListWrapper(encryption.getElement()).getElements(); } catch (InvalidEncodingException exception) { throw new PacketException(PacketError.ELEMENTS, "The elements could not be decoded.", exception, isResponse); }
         
         this.size = elements.size();
         if (size == 0) throw new PacketException(PacketError.ELEMENTS, "The encryption of a packet must contain at least one element.", null, isResponse);

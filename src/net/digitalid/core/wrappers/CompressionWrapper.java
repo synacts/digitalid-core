@@ -198,7 +198,8 @@ public final class CompressionWrapper extends BlockWrapper<CompressionWrapper> {
     /**
      * The factory for this class.
      */
-    private static class Factory extends BlockWrapper.Factory<CompressionWrapper> {
+    @Immutable
+    public static class Factory extends BlockWrapper.Factory<CompressionWrapper> {
         
         /**
          * Creates a new factory with the given type.
@@ -231,7 +232,7 @@ public final class CompressionWrapper extends BlockWrapper<CompressionWrapper> {
     
     @Pure
     @Override
-    public @Nonnull BlockWrapper.Factory<CompressionWrapper> getFactory() {
+    public @Nonnull Factory getFactory() {
         return new Factory(getSemanticType());
     }
     

@@ -233,7 +233,8 @@ public final class BytesWrapper extends Wrapper<BytesWrapper> {
     /**
      * The factory for this class.
      */
-    private static class Factory extends Wrapper.Factory<BytesWrapper> {
+    @Immutable
+    public static class Factory extends Wrapper.Factory<BytesWrapper> {
         
         /**
          * Stores the column for the wrapper.
@@ -280,7 +281,7 @@ public final class BytesWrapper extends Wrapper<BytesWrapper> {
     
     @Pure
     @Override
-    public @Nonnull Wrapper.Factory<BytesWrapper> getFactory() {
+    public @Nonnull Factory getFactory() {
         return new Factory(getSemanticType());
     }
     
@@ -288,12 +289,7 @@ public final class BytesWrapper extends Wrapper<BytesWrapper> {
     @Override
     public @Nonnull String toString() {
         if (bytes != null) {
-            final @Nonnull StringBuilder string = new StringBuilder("E'\\x");
-            for (int i = 0; i < bytes.length; i++) {
-                string.append(String.format("%02X", bytes[i]));
-            }
-            string.append("'");
-            return string.toString();
+            return Block.toString(bytes);
         } else {
             assert block != null : "See the class invariant.";
             return block.toString().replace("E'\\x00", "E'\\x");
@@ -305,6 +301,7 @@ public final class BytesWrapper extends Wrapper<BytesWrapper> {
     /**
      * The factory for the value type of this wrapper.
      */
+    @Immutable
     public static class ValueFactory extends Wrapper.ValueFactory<byte[], BytesWrapper> {
         
         /**
