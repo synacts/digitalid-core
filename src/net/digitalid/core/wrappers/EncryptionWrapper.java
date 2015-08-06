@@ -1,15 +1,12 @@
 package net.digitalid.core.wrappers;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.sql.SQLException;
 import java.util.Map;
-import java.util.zip.InflaterOutputStream;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.BasedOn;
-import net.digitalid.core.annotations.Encoded;
 import net.digitalid.core.annotations.Encoding;
 import net.digitalid.core.annotations.Frozen;
 import net.digitalid.core.annotations.Immutable;
@@ -30,6 +27,7 @@ import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.identifier.HostIdentifier;
+import net.digitalid.core.identifier.Identifier;
 import net.digitalid.core.identifier.IdentifierClass;
 import net.digitalid.core.identity.HostIdentity;
 import net.digitalid.core.identity.SemanticType;
@@ -57,11 +55,6 @@ public final class EncryptionWrapper extends BlockWrapper<EncryptionWrapper> {
      * Stores the syntactic type {@code encryption@core.digitalid.net}.
      */
     public static final @Nonnull SyntacticType TYPE = SyntacticType.map("encryption@core.digitalid.net").load(1);
-    
-    /**
-     * Stores the semantic type {@code semantic.encryption@core.digitalid.net}.
-     */
-    private static final @Nonnull SemanticType SEMANTIC = SemanticType.map("semantic.encryption@core.digitalid.net").load(TYPE);
     
     /**
      * Stores the semantic type {@code recipient.encryption@core.digitalid.net}.
@@ -184,6 +177,7 @@ public final class EncryptionWrapper extends BlockWrapper<EncryptionWrapper> {
     
     /**
      * Returns the identifier of the host for which the element is encrypted or null if the recipient is not known.
+     * If the recipient is not null, the encryption is part of a request. If the recipient is null, it is part of a response.
      * 
      * @return the identifier of the host for which the element is encrypted or null if the recipient is not known.
      */
@@ -195,14 +189,14 @@ public final class EncryptionWrapper extends BlockWrapper<EncryptionWrapper> {
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Symmetric Key –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Stores the symmetric key that is used for the encryption of the element or null if no encryption is used.
+     * Stores the symmetric key that is used for the encryption or decryption of the element or null if no encryption is used.
      */
     private final @Nullable SymmetricKey symmetricKey;
     
     /**
-     * Returns the symmetric key that is used for the encryption of the element or null if no encryption is used.
+     * Returns the symmetric key that is used for the encryption or decryption of the element or null if no encryption is used.
      * 
-     * @return the symmetric key that is used for the encryption of the element or null if no encryption is used.
+     * @return the symmetric key that is used for the encryption or decryption of the element or null if no encryption is used.
      */
     @Pure
     public @Nullable SymmetricKey getSymmetricKey() {
@@ -274,57 +268,55 @@ public final class EncryptionWrapper extends BlockWrapper<EncryptionWrapper> {
      * 
      * @param block the block that contains the encrypted element.
      * @param symmetricKey the symmetric key used for decryption or null if the element is encrypted for a host or not at all.
-     * 
-     * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated syntactic type.";
      */
-    private EncryptionWrapper(@Nonnull @BasedOn("encryption@core.digitalid.net") Block block, @Nullable SymmetricKey symmetricKey) throws InvalidEncodingException {
+    private EncryptionWrapper(@Nonnull @NonEncoding @BasedOn("encryption@core.digitalid.net") Block block, @Nullable SymmetricKey symmetricKey) throws InvalidEncodingException {
         super(block.getType());
         
-        final @Nonnull TupleWrapper tuple = TupleWrapper.decode(Block.get(IMPLEMENTATION, block));
+        this.cache = Block.get(IMPLEMENTATION, block);
+        
+        final @Nonnull TupleWrapper tuple = TupleWrapper.decode(cache);
+        
         this.time = new Time(tuple.getNonNullableElement(0));
         
-        if (tuple.isElementNull(1)) {
-            this.recipient = null;
-        } else {
-            this.recipient = IdentifierClass.create(tuple.getNonNullableElement(1)).toHostIdentifier();
-            if (!Server.hasHost(recipient)) throw new InvalidEncodingException(recipient + " does not run on this server.");
-        }
-        
-        final @Nullable Block key = tuple.getNullableElement(2);
         this.initializationVector = InitializationVector.FACTORY.decodeNullable(tuple.getNullableElement(3));
-        if (recipient == null) {
-            // Encrypted for clients.
-            if (key == null) {
+        final @Nullable Block encryptedKey = tuple.getNullableElement(2);
+        
+        if (tuple.isElementNull(1)) {
+            // The encryption is part of a response.
+            this.recipient = null;
+            if (encryptedKey != null) throw new InvalidEncodingException("A response may not include an encrypted symmetric key.");
+            if (initializationVector != null) {
                 if (symmetricKey == null) throw new InvalidEncodingException("A symmetric key is needed in order to decrypt the response.");
                 this.symmetricKey = symmetricKey;
             } else {
+                // It can happen that a requester expects an encryption but the host is not able to decipher the symmetric key and thus cannot encrypt the response.
                 this.symmetricKey = null;
             }
         } else {
-            // Encrypted for hosts.
-            if (key != null) {
+            // The encryption is part of a request.
+            this.recipient = IdentifierClass.create(tuple.getNonNullableElement(1)).toHostIdentifier();
+            if (!Server.hasHost(recipient)) throw new InvalidEncodingException(recipient + " does not run on this server.");
+            if (symmetricKey != null) throw new InvalidEncodingException("A response may not include a recipient.");
+            if (encryptedKey != null) {
+                if (initializationVector == null) throw new InvalidEncodingException("An initialization vector is needed to decrypt an element.");
                 final @Nonnull PrivateKey privateKey = Server.getHost(recipient).getPrivateKeyChain().getKey(time);
-                this.symmetricKey = decrypt(privateKey, key);
+                this.symmetricKey = decrypt(privateKey, encryptedKey);
             } else {
+                if (initializationVector != null) throw new InvalidEncodingException("If a request is encrypted, a symmetric key has to be provided.");
                 this.symmetricKey = null;
             }
         }
         
-        final @Nullable Block element = tuple.getNullableElement(4);
-        if (element != null) {
-            final @Nonnull SemanticType parameter = block.getType().getParameters().getNonNullable(0);
-            final @Nullable SymmetricKey sk = this.symmetricKey;
-            final @Nullable InitializationVector iv = this.initializationVector;
-            if (sk != null) {
-                final @Nonnull Time start = new Time();
-                if (iv == null) throw new InvalidEncodingException("The initialization vector may not be null for decryption.");
-                this.element = element.decrypt(parameter, sk, iv);
-                Log.verbose("Element with " + element.getLength() + " bytes decrypted in " + start.ago().getValue() + " ms.");
-            } else {
-                this.element = element.setType(parameter);
-            }
+        final @Nonnull Block element = tuple.getNonNullableElement(4);
+        final @Nonnull SemanticType parameter = block.getType().getParameters().getNonNullable(0);
+        final @Nullable SymmetricKey sk = this.symmetricKey;
+        final @Nullable InitializationVector iv = this.initializationVector;
+        if (sk != null && iv != null) {
+            final @Nonnull Time start = new Time();
+            this.element = element.decrypt(parameter, sk, iv);
+            Log.verbose("Element with " + element.getLength() + " bytes decrypted in " + start.ago().getValue() + " ms.");
         } else {
-            this.element = null;
+            this.element = element.setType(parameter);
         }
         
         this.publicKey = null;
@@ -333,70 +325,42 @@ public final class EncryptionWrapper extends BlockWrapper<EncryptionWrapper> {
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Utility –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Stores the factory of this class.
-     */
-    private static final Factory FACTORY = new Factory(SEMANTIC);
-    
-    /**
-     * Compresses the given element into a new non-nullable block of the given type.
+     * Encrypts the given element with a new encryption wrapper.
      * 
-     * @param type the semantic type of the new block.
-     * @param element the element to compress into the new block.
+     * @param type the semantic type of the new encryption wrapper.
+     * @param element the element of the new encryption wrapper.
+     * @param recipient the identifier of the host for which the element is encrypted or null if the recipient is not known.
+     * @param symmetricKey the symmetric key that is used for the encryption of the element or null if no encryption is used.
      * 
-     * @return a new non-nullable block containing the given element.
+     * @return a new encryption wrapper with the given parameters.
+     * 
+     * @require element.getFactory().getType().isBasedOn(type.getParameters().getNonNullable(0)) : "The element is based on the parameter of the given type.";
      */
     @Pure
-    public static @Nonnull @NonEncoding <V extends Storable<V>> Block compressNonNullable(@Nonnull @Loaded @BasedOn("compression@core.digitalid.net") SemanticType type, @Nonnull V element) {
-        return FACTORY.encodeNonNullable(new CompressionWrapper(type, Block.fromNonNullable(element)));
+    public static @Nonnull <V extends Storable<V>> EncryptionWrapper encrypt(@Nonnull @Loaded @BasedOn("encryption@core.digitalid.net") SemanticType type, @Nonnull V element, @Nullable HostIdentifier recipient, @Nullable SymmetricKey symmetricKey) throws SQLException, IOException, PacketException, ExternalException {
+        return new EncryptionWrapper(type, Block.fromNonNullable(element), recipient, symmetricKey);
     }
     
     /**
-     * Compresses the given element into a new nullable block of the given type.
+     * Decrypts the given block with a new encryption wrapper. 
      * 
-     * @param type the semantic type of the new block.
-     * @param element the element to compress into the new block.
+     * @param block the block that contains the encrypted element.
+     * @param symmetricKey the symmetric key used for decryption or null if the element is encrypted for a host or not at all.
      * 
-     * @return a new nullable block containing the given element.
-     */
-    @Pure
-    public static @Nullable @NonEncoding <V extends Storable<V>> Block compressNullable(@Nonnull @Loaded @BasedOn("compression@core.digitalid.net") SemanticType type, @Nullable V element) {
-        return element == null ? null : compressNonNullable(type, element);
-    }
-    
-    /**
-     * Decompresses the given non-nullable block. 
-     * 
-     * @param block the block to be decompressed.
-     * 
-     * @return the element contained in the given block.
+     * @return a new encryption wrapper with the given parameters.
      */
     @Pure
     @NonCommitting
-    public static @Nonnull @NonEncoding Block decompressNonNullable(@Nonnull @NonEncoding @BasedOn("compression@core.digitalid.net") Block block) throws InvalidEncodingException {
-        return FACTORY.decodeNonNullable(block).element;
-    }
-    
-    /**
-     * Decompresses the given nullable block. 
-     * 
-     * @param block the block to be decompressed.
-     * 
-     * @return the element contained in the given block.
-     */
-    @Pure
-    @NonCommitting
-    public static @Nullable @NonEncoding Block decompressNullable(@Nullable @NonEncoding @BasedOn("compression@core.digitalid.net") Block block) throws InvalidEncodingException {
-        return block == null ? null : decompressNonNullable(block);
+    public static @Nonnull EncryptionWrapper decrypt(@Nonnull @NonEncoding @BasedOn("encryption@core.digitalid.net") Block block, @Nullable SymmetricKey symmetricKey) throws InvalidEncodingException {
+        return new EncryptionWrapper(block, symmetricKey);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encoding –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the encryption of the element.
-     * 
-     * @invariant cache.getType().equals(IMPLEMENTATION) : "The cache is of the implementation type.";
      */
-    private @Nullable Block cache;
+    private @Nullable @BasedOn("implementation.encryption@core.digitalid.net") Block cache;
     
     /**
      * Returns the cached encryption of the element.
@@ -406,36 +370,29 @@ public final class EncryptionWrapper extends BlockWrapper<EncryptionWrapper> {
     @Pure
     private @Nonnull Block getCache() {
         if (cache == null) {
-            @Nonnull FreezableArray<Block> elements = new FreezableArray<>(5);
+            final @Nonnull FreezableArray<Block> elements = FreezableArray.get(5);
             elements.set(0, time.toBlock());
-            elements.set(1, Block.toBlock(RECIPIENT, recipient));
+            elements.set(1, Block.<Identifier>fromNullable(recipient, RECIPIENT));
             
-            if (recipient == null) {
-                // Encrypt by hosts for clients.
-                elements.set(2, isEncrypted() ? null : new IntegerWrapper(KEY, BigInteger.ZERO).toBlock());
-            } else {
-                // Encrypt for hosts.
-                if (symmetricKey != null) {
-                    assert publicKey != null : "The public key is not null because this method is only called for encoding a block.";
-                    elements.set(2, encrypt(publicKey, symmetricKey));
-                }
+            if (recipient != null && symmetricKey != null) {
+                assert publicKey != null : "The public key is not null because this method is only called for encoding a block.";
+                elements.set(2, encrypt(publicKey, symmetricKey));
             }
             
-            elements.set(3, Block.toBlock(initializationVector));
+            elements.set(3, Block.fromNullable(initializationVector));
             
-            if (symmetricKey == null || initializationVector == null) {
-                elements.set(4, element);
-            } else {
+            if (symmetricKey != null && initializationVector != null) {
                 final @Nonnull Time start = new Time();
                 elements.set(4, element.encrypt(SemanticType.UNKNOWN, symmetricKey, initializationVector));
                 Log.verbose("Element with " + element.getLength() + " bytes encrypted in " + start.ago().getValue() + " ms.");
+            } else {
+                elements.set(4, element);
             }
             
-            cache = new TupleWrapper(IMPLEMENTATION, elements.freeze()).toBlock();
+            cache = TupleWrapper.encode(IMPLEMENTATION, elements.freeze());
         }
         return cache;
     }
-    
     
     @Pure
     @Override
@@ -445,10 +402,9 @@ public final class EncryptionWrapper extends BlockWrapper<EncryptionWrapper> {
     
     @Pure
     @Override
-    protected void encode(@Encoding @Nonnull Block block) {
-        assert block.isEncoding() : "The given block is in the process of being encoded.";
-        assert block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
+    protected void encode(@Nonnull @Encoding Block block) {
         assert block.getLength() == determineLength() : "The block's length has to match the determined length.";
+        assert block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
         
         getCache().writeTo(block);
     }
@@ -459,7 +415,7 @@ public final class EncryptionWrapper extends BlockWrapper<EncryptionWrapper> {
      * The factory for this class.
      */
     @Immutable
-    private static class Factory extends BlockWrapper.Factory<EncryptionWrapper> {
+    public static class Factory extends BlockWrapper.Factory<EncryptionWrapper> {
         
         /**
          * Creates a new factory with the given type.
@@ -468,31 +424,19 @@ public final class EncryptionWrapper extends BlockWrapper<EncryptionWrapper> {
          */
         private Factory(@Nonnull @Loaded @BasedOn("encryption@core.digitalid.net") SemanticType type) {
             super(type);
-            
-            assert type.isBasedOn(TYPE) : "The given semantic type is based on the indicated syntactic type.";
         }
         
         @Pure
         @Override
         public @Nonnull EncryptionWrapper decodeNonNullable(@Nonnull @NonEncoding Block block) throws InvalidEncodingException {
-            final @Nonnull SemanticType parameter = block.getType().getParameters().getNonNullable(0);
-            try {
-                final @Nonnull Time start = new Time();
-                final @Nonnull ByteArrayOutputStream uncompressed = new ByteArrayOutputStream(2 * block.getLength());
-                block.writeTo(new InflaterOutputStream(uncompressed), true);
-                final @Nonnull @Encoded Block element = Block.get(parameter, uncompressed.toByteArray());
-                Log.verbose("Element with " + element.getLength() + " bytes decompressed in " + start.ago().getValue() + " ms.");
-                return new EncryptionWrapper(block.getType(), element);
-            } catch (@Nonnull IOException exception) {
-                throw new InvalidEncodingException("The given block could not be decompressed.", exception);
-            }
+            return new EncryptionWrapper(block, null);
         }
         
     }
     
     @Pure
     @Override
-    public @Nonnull BlockWrapper.Factory<EncryptionWrapper> getFactory() {
+    public @Nonnull Factory getFactory() {
         return new Factory(getSemanticType());
     }
     

@@ -38,6 +38,8 @@ public abstract class Wrapper<W extends Wrapper<W>> implements Storable<W> {
     
     /**
      * Stores the semantic type of this wrapper.
+     * 
+     * @invariant semanticType.isBasedOn(getSyntacticType()) : "The semantic type is based on the syntactic type.";
      */
     private final @Nonnull SemanticType semanticType;
     
@@ -45,6 +47,8 @@ public abstract class Wrapper<W extends Wrapper<W>> implements Storable<W> {
      * Returns the semantic type of this wrapper.
      * 
      * @return the semantic type of this wrapper.
+     * 
+     * @ensure semanticType.isBasedOn(getSyntacticType()) : "The semantic type is based on the syntactic type.";
      */
     @Pure
     public final @Nonnull SemanticType getSemanticType() {

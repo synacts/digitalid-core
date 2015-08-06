@@ -10,8 +10,7 @@ import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.identity.Identity;
-import net.digitalid.core.wrappers.Blockable;
-import net.digitalid.core.database.SQLizable;
+import net.digitalid.core.storable.Storable;
 
 /**
  * This interface models identifiers.
@@ -23,7 +22,7 @@ import net.digitalid.core.database.SQLizable;
  * @version 1.0
  */
 @Immutable
-public interface Identifier extends Blockable, SQLizable {
+public interface Identifier extends Storable<Identifier> {
     
     /**
      * Returns the string of this identifier.

@@ -172,7 +172,7 @@ public final class StringWrapper extends Wrapper<StringWrapper> {
     
     @Pure
     @Override
-    protected void encode(@Encoding @Nonnull Block block) {
+    protected void encode(@Nonnull @Encoding Block block) {
         assert block.getLength() == determineLength() : "The block's length has to match the determined length.";
         assert block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
         
@@ -199,8 +199,6 @@ public final class StringWrapper extends Wrapper<StringWrapper> {
          */
         private Factory(@Nonnull @Loaded @BasedOn("string@core.digitalid.net") SemanticType type) {
             super(type, COLUMN);
-            
-            assert type.isBasedOn(TYPE) : "The given semantic type is based on the indicated syntactic type.";
         }
         
         @Pure
