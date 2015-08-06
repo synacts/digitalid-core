@@ -126,7 +126,7 @@ public final class EncryptionWrapper extends Wrapper {
      * 
      * @invariant element == null || element.getType().isBasedOn(getType().getParameters().getNotNull(0)) : "The element is either null or based on the parameter of the block's type.";
      */
-    private final @Nullable Block element;
+    private final @Nullable Block element; // TODO: Make non-nullable!
     
     /**
      * Stores the identifier of the host for which the element is encrypted or null if the recipient is not known.
@@ -271,7 +271,8 @@ public final class EncryptionWrapper extends Wrapper {
      * @ensure element == null || element.getType().isBasedOn(getType().getParameters().getNotNull(0)) : "The element is either null or based on the parameter of the block's type.";
      */
     @Pure
-    public @Nullable Block getElement() {
+    @Deprecated
+    public @Nullable Block getNullableElement() {
         return element;
     }
     
@@ -285,7 +286,7 @@ public final class EncryptionWrapper extends Wrapper {
      * @ensure element.getType().isBasedOn(getType().getParameters().getNotNull(0)) : "The element is based on the parameter of the block's type.";
      */
     @Pure
-    public @Nonnull Block getElementNotNull() throws InvalidEncodingException {
+    public @Nonnull Block getNonNullableElement() throws InvalidEncodingException {
         if (element == null) throw new InvalidEncodingException("The compressed element is null.");
         return element;
     }

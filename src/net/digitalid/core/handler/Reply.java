@@ -271,7 +271,7 @@ public abstract class Reply extends Handler implements SQLizable {
                 final @Nonnull Block block = Block.getNotNull(Packet.SIGNATURE, rs, 1);
                 final @Nonnull SignatureWrapper signature = SignatureWrapper.decodeWithoutVerifying(block, true, entity);
                 final @Nonnull CompressionWrapper compression = new CompressionWrapper(signature.getElementNotNull());
-                final @Nonnull SelfcontainedWrapper content = new SelfcontainedWrapper(compression.getElementNotNull());
+                final @Nonnull SelfcontainedWrapper content = new SelfcontainedWrapper(compression.getElement());
                 return get(entity, signature.toHostSignatureWrapper(), number, content.getElement());
             } else {
                 throw new SQLException("There exists no reply with the number " + number + ".");

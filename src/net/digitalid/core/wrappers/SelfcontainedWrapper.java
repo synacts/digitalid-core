@@ -95,7 +95,7 @@ public final class SelfcontainedWrapper extends BlockWrapper<SelfcontainedWrappe
      * @param type the semantic type of the new selfcontained wrapper.
      * @param element the element of the new selfcontained wrapper.
      */
-    private SelfcontainedWrapper(@Nonnull @Loaded @BasedOn("selfcontained@core.digitalid.net") SemanticType type, @Nonnull Block element) {
+    private SelfcontainedWrapper(@Nonnull @Loaded @BasedOn("selfcontained@core.digitalid.net") SemanticType type, @Nonnull @NonEncoding Block element) {
         super(type);
         
         this.tuple = TupleWrapper.encode(IMPLEMENTATION, element.getType().toBlock(SemanticType.IDENTIFIER), element);
@@ -110,7 +110,7 @@ public final class SelfcontainedWrapper extends BlockWrapper<SelfcontainedWrappe
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated syntactic type.";
      */
     @NonCommitting
-    private SelfcontainedWrapper(@Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
+    private SelfcontainedWrapper(@Nonnull @NonEncoding Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(block.getType());
         
         this.tuple = Block.get(IMPLEMENTATION, block);
@@ -131,7 +131,7 @@ public final class SelfcontainedWrapper extends BlockWrapper<SelfcontainedWrappe
      * Encodes the given element into a new non-nullable selfcontained block of the given type.
      * 
      * @param type the semantic type of the new block.
-     * @param value the value to encode into the new block.
+     * @param element the element to encode into the new block.
      * 
      * @return a new non-nullable selfcontained block containing the given element.
      */
@@ -144,7 +144,7 @@ public final class SelfcontainedWrapper extends BlockWrapper<SelfcontainedWrappe
      * Encodes the given element into a new nullable selfcontained block of the given type.
      * 
      * @param type the semantic type of the new block.
-     * @param value the value to encode into the new block.
+     * @param element the element to encode into the new block.
      * 
      * @return a new nullable selfcontained block containing the given element.
      */
@@ -158,7 +158,7 @@ public final class SelfcontainedWrapper extends BlockWrapper<SelfcontainedWrappe
      * 
      * @param block the block to be decoded.
      * 
-     * @return the value contained in the given block.
+     * @return the element contained in the given block.
      */
     @Pure
     @NonCommitting
@@ -171,7 +171,7 @@ public final class SelfcontainedWrapper extends BlockWrapper<SelfcontainedWrappe
      * 
      * @param block the block to be decoded.
      * 
-     * @return the value contained in the given block.
+     * @return the element contained in the given block.
      */
     @Pure
     @NonCommitting
@@ -204,8 +204,8 @@ public final class SelfcontainedWrapper extends BlockWrapper<SelfcontainedWrappe
     @Pure
     @Override
     protected void encode(@Encoding @Nonnull Block block) {
-        assert block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
         assert block.getLength() == determineLength() : "The block's length has to match the determined length.";
+        assert block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
         
         tuple.writeTo(block);
     }
@@ -282,7 +282,7 @@ public final class SelfcontainedWrapper extends BlockWrapper<SelfcontainedWrappe
             System.arraycopy(intvarOfElement, 0, bytes, intvarOfIdentifierLength + identifierLength, intvarOfElementLength);
             read(inputStream, bytes, intvarOfIdentifierLength + identifierLength + intvarOfElementLength, elementLength);
             
-            return Block.getNonNullable(DEFAULT, bytes);
+            return Block.get(DEFAULT, bytes);
         } finally {
             if (close) inputStream.close();
         }

@@ -34,7 +34,7 @@ public final class EncryptionWrapperTest extends ServerSetup {
                     @Nonnull Block cipherBlock = new EncryptionWrapper(TYPE, block, getRecipient(), symmetricKey).toBlock();
 //                    System.out.println("–> From client to host: " + cipherBlock);
                     @Nonnull EncryptionWrapper encryption = new EncryptionWrapper(cipherBlock, null);
-                    Assert.assertEquals(block, encryption.getElement());
+                    Assert.assertEquals(block, encryption.getNullableElement());
                     Assert.assertEquals(getRecipient(), encryption.getRecipient());
                     Assert.assertEquals(symmetricKey, encryption.getSymmetricKey());
                     
@@ -42,7 +42,7 @@ public final class EncryptionWrapperTest extends ServerSetup {
                     cipherBlock = new EncryptionWrapper(TYPE, block, null, symmetricKey).toBlock();
 //                    System.out.println("–> From host to client:" + cipherBlock);
                     encryption = new EncryptionWrapper(cipherBlock, symmetricKey);
-                    Assert.assertEquals(block, encryption.getElement());
+                    Assert.assertEquals(block, encryption.getNullableElement());
                     Assert.assertEquals(null, encryption.getRecipient());
                     Assert.assertEquals(symmetricKey, encryption.getSymmetricKey());
                 }

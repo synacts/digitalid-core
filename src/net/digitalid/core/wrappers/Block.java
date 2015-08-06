@@ -205,21 +205,8 @@ public final class Block implements Storable<Block>, Cloneable {
      * @return a new block of the given type with the given byte array.
      */
     @Pure
-    public static @Nonnull @Encoded Block getNonNullable(@Nonnull @Loaded SemanticType type, @Captured @Nonnull @NonEmpty byte[] bytes) {
+    public static @Nonnull @Encoded Block get(@Nonnull @Loaded SemanticType type, @Captured @Nonnull @NonEmpty byte[] bytes) {
         return new Block(type, bytes, 0, bytes.length);
-    }
-    
-    /**
-     * Allocates a new block of the given type with the given byte array.
-     * 
-     * @param type the semantic type of the new block.
-     * @param bytes the byte array of the new block.
-     * 
-     * @return a new block of the given type with the given byte array.
-     */
-    @Pure
-    public static @Nullable @Encoded Block getNullable(@Nonnull @Loaded SemanticType type, @Captured @Nullable @NonEmpty byte[] bytes) {
-        return bytes == null ? null : getNonNullable(type, bytes);
     }
     
     /**
@@ -780,7 +767,7 @@ public final class Block implements Storable<Block>, Cloneable {
         public @Nullable Block getNullable(@Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
             final @Nonnull byte[] bytes = resultSet.getBytes(columnIndex);
             if (resultSet.wasNull()) return null;
-            else return Block.getNonNullable(getType(), bytes);
+            else return Block.get(getType(), bytes);
         }
         
     }
@@ -826,7 +813,7 @@ public final class Block implements Storable<Block>, Cloneable {
         
         encodeIfNotYetEncoded();
         assert bytes != null : "The byte array is allocated.";
-        return Block.getNonNullable(type, symmetricKey.encrypt(initializationVector, bytes, offset, length));
+        return Block.get(type, symmetricKey.encrypt(initializationVector, bytes, offset, length));
     }
     
     /**
@@ -845,7 +832,7 @@ public final class Block implements Storable<Block>, Cloneable {
         
         encodeIfNotYetEncoded();
         assert bytes != null : "The byte array is allocated.";
-        return Block.getNonNullable(type, symmetricKey.decrypt(initializationVector, bytes, offset, length));
+        return Block.get(type, symmetricKey.decrypt(initializationVector, bytes, offset, length));
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Write –––––––––––––––––––––––––––––––––––––––––––––––––– */

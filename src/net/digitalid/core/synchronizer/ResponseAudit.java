@@ -151,7 +151,7 @@ public final class ResponseAudit extends Audit {
         for (@Nonnull Block block : trail) {
             final @Nonnull SignatureWrapper signature = SignatureWrapper.decodeWithoutVerifying(block, true, role);
             final @Nonnull CompressionWrapper compression = new CompressionWrapper(signature.getElementNotNull());
-            final @Nonnull Block element = new SelfcontainedWrapper(compression.getElementNotNull()).getElement();
+            final @Nonnull Block element = new SelfcontainedWrapper(compression.getElement()).getElement();
             final @Nonnull Action action = Method.get(role, signature, recipient, element).toAction();
             Database.commit();
             

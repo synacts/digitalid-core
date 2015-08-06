@@ -289,7 +289,7 @@ public final class TupleWrapper extends BlockWrapper<TupleWrapper> {
      * @require basedOnParameters(type, elements) : "Each element is either null or based on the corresponding parameter of the given type.";
      */
     @Pure
-    public static @Nonnull @NonEncoding Block encode(@Nonnull @Loaded @BasedOn("tuple@core.digitalid.net") SemanticType type, @Nonnull Block... elements) {
+    public static @Nonnull @NonEncoding Block encode(@Nonnull @Loaded @BasedOn("tuple@core.digitalid.net") SemanticType type, @Nonnull @NonEncoding Block... elements) {
         return encode(type, FreezableArray.getNonNullable(elements).freeze());
     }
     

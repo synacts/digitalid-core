@@ -193,7 +193,7 @@ public abstract class Packet {
         final @Nullable HostAccount account = recipient == null ? null : Server.getHost(recipient).getAccount();
         
         final @Nonnull ReadOnlyList<Block> elements;
-        try { elements = new ListWrapper(encryption.getElementNotNull()).getElements(); } catch (InvalidEncodingException exception) { throw new PacketException(PacketError.ELEMENTS, "The elements could not be decoded.", exception, isResponse); }
+        try { elements = new ListWrapper(encryption.getNonNullableElement()).getElements(); } catch (InvalidEncodingException exception) { throw new PacketException(PacketError.ELEMENTS, "The elements could not be decoded.", exception, isResponse); }
         
         this.size = elements.size();
         if (size == 0) throw new PacketException(PacketError.ELEMENTS, "The encryption of a packet must contain at least one element.", null, isResponse);
@@ -221,7 +221,7 @@ public abstract class Packet {
                     try { compression = new CompressionWrapper(element); } catch (InvalidEncodingException exception) { throw new PacketException(PacketError.COMPRESSION, "The compression could not be decoded.", exception, isResponse); }
                     
                     final @Nonnull SelfcontainedWrapper content;
-                    try { content = new SelfcontainedWrapper(compression.getElementNotNull()); } catch (InvalidEncodingException exception) { throw new PacketException(PacketError.CONTENT, "The content could not be decoded.", exception, isResponse); }
+                    try { content = new SelfcontainedWrapper(compression.getElement()); } catch (InvalidEncodingException exception) { throw new PacketException(PacketError.CONTENT, "The content could not be decoded.", exception, isResponse); }
                     
                     final @Nonnull Block block = content.getElement();
                     final @Nonnull SemanticType type = block.getType();

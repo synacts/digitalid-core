@@ -119,7 +119,7 @@ public final class PushReturned extends ExternalAction {
         final @Nonnull SignatureWrapper _signature = SignatureWrapper.decodeWithoutVerifying(elements.getNonNullable(1), false, null);
         if (!(_signature instanceof HostSignatureWrapper)) throw new InvalidEncodingException("Replies have to be signed by a host.");
         final @Nonnull CompressionWrapper _compression = new CompressionWrapper(_signature.getElementNotNull());
-        final @Nonnull SelfcontainedWrapper _content = new SelfcontainedWrapper(_compression.getElementNotNull());
+        final @Nonnull SelfcontainedWrapper _content = new SelfcontainedWrapper(_compression.getElement());
         try {
             this.reply = Reply.get(entity.toNonHostEntity(), (HostSignatureWrapper) _signature, _content.getElement()).toActionReply();
         } catch (@Nonnull PacketException exception) {

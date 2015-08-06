@@ -24,7 +24,7 @@ public final class CompressionWrapperTest extends DatabaseSetup {
         for (final @Nonnull Block block : blocks) {
             for (final byte algorithm : algorithms) {
 //                System.out.println("Algorithm: " + algorithm + "; Uncompressed: " + block.getLength() + "; Compressed: " + new CompressionWrapper(TYPE, block, algorithm).toBlock().getLength());
-                Assert.assertEquals(block, new CompressionWrapper(new CompressionWrapper(TYPE, block, algorithm).toBlock()).getElement());
+                Assert.assertEquals(block, new CompressionWrapper(new CompressionWrapper(TYPE, block, algorithm).toBlock()).getNullableElement());
             }
         }
     }

@@ -152,7 +152,7 @@ public final class ListWrapper extends BlockWrapper<ListWrapper> {
      * @require basedOnParameter(type, elements) : "Each element is either null or based on the parameter of the given type.";
      */
     @Pure
-    public static @Nonnull @NonEncoding Block encode(@Nonnull @Loaded @BasedOn("list@core.digitalid.net") SemanticType type, @Nonnull Block... elements) {
+    public static @Nonnull @NonEncoding Block encode(@Nonnull @Loaded @BasedOn("list@core.digitalid.net") SemanticType type, @Nonnull @NonEncoding Block... elements) {
         return encode(type, FreezableArrayList.get(elements).freeze());
     }
     
