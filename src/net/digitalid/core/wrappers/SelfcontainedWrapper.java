@@ -28,7 +28,7 @@ import net.digitalid.core.wrappers.exceptions.UnexpectedEndOfFileException;
 import net.digitalid.core.wrappers.exceptions.UnsupportedBlockLengthException;
 
 /**
- * Wraps an element with the syntactic type {@code selfcontained@core.digitalid.net} for encoding and decoding.
+ * This class wraps an {@link Block element} for encoding and decoding a block of the syntactic type {@code selfcontained@core.digitalid.net}.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0

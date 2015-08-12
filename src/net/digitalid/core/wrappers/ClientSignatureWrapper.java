@@ -144,7 +144,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper {
         
         final @Nonnull Time start = new Time();
         
-        if (getTimeNotNull().isLessThan(Time.TROPICAL_YEAR.ago())) throw new InvalidSignatureException("The client signature is out of date.");
+        if (getNonNullableTime().isLessThan(Time.TROPICAL_YEAR.ago())) throw new InvalidSignatureException("The client signature is out of date.");
         
         final @Nonnull TupleWrapper tuple = new TupleWrapper(getCache());
         final @Nonnull BigInteger hash = tuple.getNonNullableElement(0).getHash();

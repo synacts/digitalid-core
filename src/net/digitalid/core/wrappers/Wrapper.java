@@ -28,6 +28,8 @@ import net.digitalid.core.storable.Storable;
 
 /**
  * Values and elements are wrapped by separate objects as the native types do not support encoding and decoding.
+ * 
+ * @see Block
  *
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0

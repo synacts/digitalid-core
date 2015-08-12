@@ -65,7 +65,7 @@ public abstract class CoreServiceInternalAction extends InternalAction {
         
         if (!getSubject().getHostIdentifier().equals(getRecipient())) throw new PacketException(PacketError.IDENTIFIER, "The host of the subject has to match the recipient for internal actions of the core service.");
         
-        this.publicKey = Cache.getPublicKey(getRecipient(), signature.getTimeNotNull());
+        this.publicKey = Cache.getPublicKey(getRecipient(), signature.getNonNullableTime());
     }
     
     

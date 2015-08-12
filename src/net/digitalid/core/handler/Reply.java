@@ -270,7 +270,7 @@ public abstract class Reply extends Handler implements SQLizable {
             if (rs.next()) {
                 final @Nonnull Block block = Block.getNotNull(Packet.SIGNATURE, rs, 1);
                 final @Nonnull SignatureWrapper signature = SignatureWrapper.decodeWithoutVerifying(block, true, entity);
-                final @Nonnull CompressionWrapper compression = new CompressionWrapper(signature.getElementNotNull());
+                final @Nonnull CompressionWrapper compression = new CompressionWrapper(signature.getNonNullableElement());
                 final @Nonnull SelfcontainedWrapper content = new SelfcontainedWrapper(compression.getElement());
                 return get(entity, signature.toHostSignatureWrapper(), number, content.getElement());
             } else {
@@ -310,7 +310,7 @@ public abstract class Reply extends Handler implements SQLizable {
     private static long store(@Nonnull HostSignatureWrapper signature) throws IdentityNotFoundException, SQLException {
         final @Nonnull String SQL = "INSERT INTO general_reply (time, signature) VALUES (?, ?)";
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareInsertStatement(SQL)) {
-            signature.getTimeNotNull().set(preparedStatement, 1);
+            signature.getNonNullableTime().set(preparedStatement, 1);
             signature.toBlock().set(preparedStatement, 2);
             preparedStatement.executeUpdate();
             return Database.getGeneratedKey(preparedStatement);

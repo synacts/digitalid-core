@@ -19,7 +19,7 @@ import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.identity.SyntacticType;
 
 /**
- * Wraps values of the syntactic type {@code int64@core.digitalid.net} for encoding and decoding.
+ * This class wraps a {@code long} for encoding and decoding a block of the syntactic type {@code int64@core.digitalid.net}.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0

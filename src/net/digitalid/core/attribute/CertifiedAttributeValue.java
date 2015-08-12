@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import net.digitalid.core.annotations.Immutable;
+import net.digitalid.core.annotations.Locked;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.auxiliary.Time;
@@ -14,8 +15,8 @@ import net.digitalid.core.exceptions.external.InvalidSignatureException;
 import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.identity.InternalIdentity;
 import net.digitalid.core.identity.InternalNonHostIdentity;
-import net.digitalid.core.wrappers.Blockable;
 import net.digitalid.core.wrappers.Block;
+import net.digitalid.core.wrappers.Blockable;
 import net.digitalid.core.wrappers.HostSignatureWrapper;
 import net.digitalid.core.wrappers.SelfcontainedWrapper;
 import net.digitalid.core.wrappers.SignatureWrapper;
@@ -99,7 +100,7 @@ public final class CertifiedAttributeValue extends AttributeValue {
         
         if (signature instanceof HostSignatureWrapper) this.signature = (HostSignatureWrapper) signature;
         else throw new InvalidEncodingException("Certified attribute values have to be signed by a host.");
-        this.subject = this.signature.getSubjectNotNull().getIdentity();
+        this.subject = this.signature.getNonNullableSubject().getIdentity();
         this.issuer = this.signature.getSigner().getIdentity().toInternalNonHostIdentity();
         if (!content.getType().isAttributeFor(subject.getCategory())) throw new InvalidEncodingException("The content has to be an attribute for the subject.");
     }
@@ -119,6 +120,7 @@ public final class CertifiedAttributeValue extends AttributeValue {
     }
     
     @Pure
+    @Locked
     @Override
     @NonCommitting
     public void verify() throws SQLException, IOException, PacketException, ExternalException {
@@ -136,7 +138,7 @@ public final class CertifiedAttributeValue extends AttributeValue {
      */
     @Pure
     public @Nonnull Time getTime() {
-        return signature.getTimeNotNull();
+        return signature.getNonNullableTime();
     }
     
     /**

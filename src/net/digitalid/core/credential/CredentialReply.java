@@ -135,7 +135,7 @@ final class CredentialReply extends CoreServiceQueryReply {
         final @Nonnull TupleWrapper tuple = new TupleWrapper(block);
         this.restrictions = tuple.isElementNotNull(0) ? new Restrictions(entity, tuple.getNonNullableElement(0)) : null;
         this.issuance = new Time(tuple.getNonNullableElement(1));
-        this.publicKey = Cache.getPublicKey(signature.getSubjectNotNull().getHostIdentifier(), issuance);
+        this.publicKey = Cache.getPublicKey(signature.getNonNullableSubject().getHostIdentifier(), issuance);
         this.c = publicKey.getCompositeGroup().getElement(tuple.getNonNullableElement(2));
         this.e = new Exponent(tuple.getNonNullableElement(3));
         this.i = new Exponent(tuple.getNonNullableElement(4));
@@ -175,7 +175,7 @@ final class CredentialReply extends CoreServiceQueryReply {
         if (restrictions == null) throw new InvalidEncodingException("The restrictions may not be null for internal credentials.");
         final @Nonnull Exponent v = new Exponent(restrictions.toBlock().getHash());
         
-        final @Nonnull InternalPerson issuer = getSignatureNotNull().getSubjectNotNull().getIdentity().toInternalPerson();
+        final @Nonnull InternalPerson issuer = getSignatureNotNull().getNonNullableSubject().getIdentity().toInternalPerson();
         return new ClientCredential(publicKey, issuer, issuance, randomizedPermissions, role, restrictions, c, e, new Exponent(b), u, i, v);
     }
     
@@ -198,7 +198,7 @@ final class CredentialReply extends CoreServiceQueryReply {
         
         if (restrictions != null) throw new InvalidEncodingException("The restrictions must be null for external credentials.");
         
-        final @Nonnull InternalNonHostIdentity issuer = getSignatureNotNull().getSubjectNotNull().getIdentity().toInternalNonHostIdentity();
+        final @Nonnull InternalNonHostIdentity issuer = getSignatureNotNull().getNonNullableSubject().getIdentity().toInternalNonHostIdentity();
         return new ClientCredential(publicKey, issuer, issuance, randomizedPermissions, attributeContent, c, e, new Exponent(b), u, i, v, false);
     }
     

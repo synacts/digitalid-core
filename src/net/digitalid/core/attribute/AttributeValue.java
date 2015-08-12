@@ -86,7 +86,7 @@ public abstract class AttributeValue implements Blockable, SQLizable {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         final @Nonnull SignatureWrapper signature = SignatureWrapper.decodeWithoutVerifying(block, verified, null);
-        final @Nonnull Block content = new SelfcontainedWrapper(signature.getElementNotNull()).getElement();
+        final @Nonnull Block content = new SelfcontainedWrapper(signature.getNonNullableElement()).getElement();
         content.getType().checkIsAttributeType();
         
         if (signature.isSigned()) return new CertifiedAttributeValue(content, signature);

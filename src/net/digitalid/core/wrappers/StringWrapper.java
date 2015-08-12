@@ -21,7 +21,7 @@ import net.digitalid.core.identity.SyntacticType;
 import net.digitalid.core.io.Log;
 
 /**
- * Wraps values of the syntactic type {@code string@core.digitalid.net} for encoding and decoding.
+ * This class wraps a {@link String string} for encoding and decoding a block of the syntactic type {@code string@core.digitalid.net}.
  * <p>
  * <em>Important:</em> SQL injections have to be prevented by the caller of this class!
  * Only a warning is issued when the character might be used in an unprepared SQL statement.

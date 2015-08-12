@@ -9,6 +9,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.BasedOn;
 import net.digitalid.core.annotations.Capturable;
+import net.digitalid.core.annotations.Captured;
 import net.digitalid.core.annotations.Encoding;
 import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Loaded;
@@ -23,7 +24,7 @@ import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.identity.SyntacticType;
 
 /**
- * Wraps values of the syntactic type {@code bytes@core.digitalid.net} for encoding and decoding.
+ * This class wraps {@code byte[]} for encoding and decoding a block of the syntactic type {@code bytes@core.digitalid.net}.
  * 
  * @invariant (bytes == null) != (block == null) : "Either the bytes or the block is null.";
  * 
@@ -101,7 +102,7 @@ public final class BytesWrapper extends Wrapper<BytesWrapper> {
      * @param type the semantic type of the new wrapper.
      * @param bytes the bytes of the new wrapper.
      */
-    private BytesWrapper(@Nonnull @Loaded @BasedOn("bytes@core.digitalid.net") SemanticType type, @Nonnull byte[] bytes) {
+    private BytesWrapper(@Nonnull @Loaded @BasedOn("bytes@core.digitalid.net") SemanticType type, @Captured @Nonnull byte[] bytes) {
         super(type);
         
         this.bytes = bytes;
@@ -136,7 +137,7 @@ public final class BytesWrapper extends Wrapper<BytesWrapper> {
      * @return a new non-nullable block containing the given bytes.
      */
     @Pure
-    public static @Nonnull @NonEncoding Block encodeNonNullable(@Nonnull @Loaded @BasedOn("bytes@core.digitalid.net") SemanticType type, @Nonnull byte[] bytes) {
+    public static @Nonnull @NonEncoding Block encodeNonNullable(@Nonnull @Loaded @BasedOn("bytes@core.digitalid.net") SemanticType type, @Captured @Nonnull byte[] bytes) {
         return FACTORY.encodeNonNullable(new BytesWrapper(type, bytes));
     }
     
@@ -149,7 +150,7 @@ public final class BytesWrapper extends Wrapper<BytesWrapper> {
      * @return a new nullable block containing the given bytes.
      */
     @Pure
-    public static @Nullable @NonEncoding Block encodeNullable(@Nonnull @Loaded @BasedOn("bytes@core.digitalid.net") SemanticType type, @Nullable byte[] bytes) {
+    public static @Nullable @NonEncoding Block encodeNullable(@Nonnull @Loaded @BasedOn("bytes@core.digitalid.net") SemanticType type, @Captured @Nullable byte[] bytes) {
         return bytes == null ? null : encodeNonNullable(type, bytes);
     }
     
@@ -161,7 +162,7 @@ public final class BytesWrapper extends Wrapper<BytesWrapper> {
      * @return the bytes contained in the given block.
      */
     @Pure
-    public static @Nonnull byte[] decodeNonNullable(@Nonnull @NonEncoding @BasedOn("bytes@core.digitalid.net") Block block) throws InvalidEncodingException {
+    public static @Capturable @Nonnull byte[] decodeNonNullable(@Nonnull @NonEncoding @BasedOn("bytes@core.digitalid.net") Block block) throws InvalidEncodingException {
         return FACTORY.decodeNonNullable(block).getBytes();
     }
     
@@ -173,7 +174,7 @@ public final class BytesWrapper extends Wrapper<BytesWrapper> {
      * @return the bytes contained in the given block.
      */
     @Pure
-    public static @Nullable byte[] decodeNullable(@Nullable @NonEncoding @BasedOn("bytes@core.digitalid.net") Block block) throws InvalidEncodingException {
+    public static @Capturable @Nullable byte[] decodeNullable(@Nullable @NonEncoding @BasedOn("bytes@core.digitalid.net") Block block) throws InvalidEncodingException {
         return block == null ? null : decodeNonNullable(block);
     }
     
@@ -185,7 +186,7 @@ public final class BytesWrapper extends Wrapper<BytesWrapper> {
      * @return the bytes contained in the given block.
      */
     @Pure
-    public static @Nonnull InputStream decodeNonNullableAsInputStream(@Nonnull @NonEncoding @BasedOn("bytes@core.digitalid.net") Block block) throws InvalidEncodingException {
+    public static @Capturable @Nonnull InputStream decodeNonNullableAsInputStream(@Nonnull @NonEncoding @BasedOn("bytes@core.digitalid.net") Block block) throws InvalidEncodingException {
         return FACTORY.decodeNonNullable(block).getBytesAsInputStream();
     }
     
@@ -197,7 +198,7 @@ public final class BytesWrapper extends Wrapper<BytesWrapper> {
      * @return the bytes contained in the given block.
      */
     @Pure
-    public static @Nullable InputStream decodeNullableAsInputStream(@Nullable @NonEncoding @BasedOn("bytes@core.digitalid.net") Block block) throws InvalidEncodingException {
+    public static @Capturable @Nullable InputStream decodeNullableAsInputStream(@Nullable @NonEncoding @BasedOn("bytes@core.digitalid.net") Block block) throws InvalidEncodingException {
         return block == null ? null : decodeNonNullableAsInputStream(block);
     }
     

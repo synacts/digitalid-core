@@ -22,7 +22,7 @@ import net.digitalid.core.io.Log;
 import net.digitalid.core.storable.Storable;
 
 /**
- * Wraps an element with the syntactic type {@code compression@core.digitalid.net} for encoding and decoding.
+ * This class wraps an {@link Block element} for encoding and decoding a block of the syntactic type {@code compression@core.digitalid.net}.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
@@ -58,9 +58,9 @@ public final class CompressionWrapper extends BlockWrapper<CompressionWrapper> {
     private final @Nonnull Block element;
     
     /**
-     * Returns the element of the wrapped block.
+     * Returns the element of this wrapper.
      * 
-     * @return the element of the wrapped block.
+     * @return the element of this wrapper.
      * 
      * @ensure element.getType().isBasedOn(getSemanticType().getParameters().getNotNull(0)) : "The element is based on the parameter of the semantic type.";
      */

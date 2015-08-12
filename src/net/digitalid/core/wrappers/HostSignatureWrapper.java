@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Immutable;
+import net.digitalid.core.annotations.Locked;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.NonFrozen;
 import net.digitalid.core.annotations.Pure;
@@ -146,6 +147,7 @@ public final class HostSignatureWrapper extends SignatureWrapper {
     
     
     @Pure
+    @Locked
     @Override
     @NonCommitting
     public void verify() throws SQLException, IOException, PacketException, ExternalException {
@@ -153,16 +155,16 @@ public final class HostSignatureWrapper extends SignatureWrapper {
         
         final @Nonnull Time start = new Time();
         
-        if (getTimeNotNull().isLessThan(Time.TWO_YEARS.ago())) throw new InvalidSignatureException("The host signature is out of date.");
+        if (getNonNullableTime().isLessThan(Time.TWO_YEARS.ago())) throw new InvalidSignatureException("The host signature is out of date.");
         
         final @Nonnull TupleWrapper tuple = new TupleWrapper(getCache());
         final @Nonnull BigInteger hash = tuple.getNonNullableElement(0).getHash();
         
         final @Nonnull PublicKey publicKey;
         if (signer.getHostIdentifier().equals(HostIdentifier.DIGITALID)) {
-            publicKey = new PublicKeyChain(Cache.getStaleAttributeContent(HostIdentity.DIGITALID, null, PublicKeyChain.TYPE)).getKey(getTimeNotNull());
+            publicKey = new PublicKeyChain(Cache.getStaleAttributeContent(HostIdentity.DIGITALID, null, PublicKeyChain.TYPE)).getKey(getNonNullableTime());
         } else {
-            publicKey = Cache.getPublicKey(signer.getHostIdentifier(), getTimeNotNull());
+            publicKey = Cache.getPublicKey(signer.getHostIdentifier(), getNonNullableTime());
         }
         
         final @Nonnull ReadOnlyArray<Block> subelements = new TupleWrapper(tuple.getNonNullableElement(1)).getNonNullableElements(2);
@@ -180,7 +182,7 @@ public final class HostSignatureWrapper extends SignatureWrapper {
         final @Nonnull FreezableArray<Block> subelements = new FreezableArray<>(2);
         subelements.set(0, signer.toBlock().setType(SIGNER));
         try {
-            final @Nonnull PrivateKey privateKey = Server.getHost(signer.getHostIdentifier()).getPrivateKeyChain().getKey(getTimeNotNull());
+            final @Nonnull PrivateKey privateKey = Server.getHost(signer.getHostIdentifier()).getPrivateKeyChain().getKey(getNonNullableTime());
             subelements.set(1, privateKey.powD(elements.get(0).getHash()).toBlock().setType(VALUE));
         } catch (@Nonnull InvalidEncodingException exception) {
             throw new ShouldNeverHappenError("There should always be a key for the current time.", exception);

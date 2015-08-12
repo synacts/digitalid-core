@@ -206,7 +206,7 @@ public abstract class Packet {
         for (int i = 0; i < size; i++) {
             if (!elements.isNull(i)) {
                 final @Nonnull SignatureWrapper signature;
-                try { signature = verified ? SignatureWrapper.decode(elements.getNonNullable(i), account) : SignatureWrapper.decodeWithoutVerifying(elements.getNonNullable(i), false, account); } catch (InvalidEncodingException | InvalidSignatureException exception) { throw new PacketException(PacketError.SIGNATURE, "A signature is invalid.", exception, isResponse); }
+                try { signature = verified ? SignatureWrapper.decodeWithVerifying(elements.getNonNullable(i), account) : SignatureWrapper.decodeWithoutVerifying(elements.getNonNullable(i), false, account); } catch (InvalidEncodingException | InvalidSignatureException exception) { throw new PacketException(PacketError.SIGNATURE, "A signature is invalid.", exception, isResponse); }
                 try { signature.checkRecency(); } catch (InactiveSignatureException exception) { throw new PacketException(PacketError.SIGNATURE, "One of the signatures is no longer active.", exception, isResponse); }
                 
                 final @Nullable Audit _audit = signature.getAudit();
@@ -215,7 +215,7 @@ public abstract class Packet {
                     if (!signature.isSigned()) throw new PacketException(PacketError.SIGNATURE, "A packet that contains an audit has to be signed.");
                 }
                 
-                final @Nullable Block element = signature.getElement();
+                final @Nullable Block element = signature.getNullableElement();
                 if (element != null) {
                     final @Nonnull CompressionWrapper compression;
                     try { compression = new CompressionWrapper(element); } catch (InvalidEncodingException exception) { throw new PacketException(PacketError.COMPRESSION, "The compression could not be decoded.", exception, isResponse); }
@@ -226,7 +226,7 @@ public abstract class Packet {
                     final @Nonnull Block block = content.getElement();
                     final @Nonnull SemanticType type = block.getType();
                     if (response != null) {
-                        if (signature.hasSubject() && !signature.getSubjectNotNull().equals(request.getSubject())) throw new PacketException(PacketError.IDENTIFIER, "The subject of the request was " + request.getSubject() + ", the response from " + request.getRecipient() + " was about " + signature.getSubjectNotNull() + " though.", null, isResponse);
+                        if (signature.hasSubject() && !signature.getNonNullableSubject().equals(request.getSubject())) throw new PacketException(PacketError.IDENTIFIER, "The subject of the request was " + request.getSubject() + ", the response from " + request.getRecipient() + " was about " + signature.getNonNullableSubject() + " though.", null, isResponse);
                         
                         if (signature.isSigned()) {
                             if (reference == null) reference = signature;
@@ -251,7 +251,7 @@ public abstract class Packet {
                         }
                     } else {
                         if (!signature.hasSubject()) throw new PacketException(PacketError.SIGNATURE, "Each signature in a request must have a subject.", null, isResponse);
-                        final @Nonnull InternalIdentifier subject = signature.getSubjectNotNull();
+                        final @Nonnull InternalIdentifier subject = signature.getNonNullableSubject();
                         if (subject instanceof HostIdentifier && !type.equals(AttributesQuery.TYPE) && !type.equals(CertificateIssue.TYPE)) throw new PacketException(PacketError.METHOD, "A host can only be the subject of an attributes query and a certificate issuance but not " + type.getAddress() + ".", null, isResponse);
                         
                         if (reference == null) reference = signature;

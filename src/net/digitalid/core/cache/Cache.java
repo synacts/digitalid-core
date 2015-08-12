@@ -220,7 +220,7 @@ public final class Cache {
     @Pure
     private static @Nonnull Time getExpiration(@Nonnull SemanticType type, @Nullable AttributeValue value, @Nonnull AttributesReply reply) throws InvalidEncodingException {
         if (value != null && !value.getContent().getType().equals(type)) throw new InvalidEncodingException("A replied attribute value does not match the queried type.");
-        return type.getCachingPeriodNotNull().add(value instanceof CertifiedAttributeValue ? ((CertifiedAttributeValue) value).getTime() : reply.getSignatureNotNull().getTimeNotNull());
+        return type.getCachingPeriodNotNull().add(value instanceof CertifiedAttributeValue ? ((CertifiedAttributeValue) value).getTime() : reply.getSignatureNotNull().getNonNullableTime());
     }
     
     /**

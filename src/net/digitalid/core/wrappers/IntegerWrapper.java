@@ -20,7 +20,7 @@ import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.identity.SyntacticType;
 
 /**
- * Wraps values of the syntactic type {@code integer@core.digitalid.net} for encoding and decoding.
+ * This class wraps an {@link BigInteger integer} for encoding and decoding a block of the syntactic type {@code integer@core.digitalid.net}.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0

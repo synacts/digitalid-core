@@ -3,7 +3,9 @@ package net.digitalid.core.certificate;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import net.digitalid.core.annotations.Locked;
 import net.digitalid.core.annotations.NonCommitting;
+import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.concept.NonHostConcept;
 import net.digitalid.core.entity.NonHostEntity;
@@ -54,6 +56,8 @@ public final class Certificate extends NonHostConcept {
      * 
      * @return whether the given issuer is authorized to certify the given content.
      */
+    @Pure
+    @Locked
     @NonCommitting
     public static boolean isAuthorized(@Nonnull InternalNonHostIdentity issuer, @Nonnull Block content) throws SQLException, IOException, PacketException, ExternalException {
 //        long vid = Mapper.getVid(identifier);

@@ -40,7 +40,7 @@ import net.digitalid.core.tuples.FreezablePair;
 import net.digitalid.core.tuples.ReadOnlyPair;
 
 /**
- * Wraps an element with the syntactic type {@code encryption@core.digitalid.net} for encoding and decoding.
+ * This class wraps an {@link Block element} for encoding and decoding a block of the syntactic type {@code encryption@core.digitalid.net}.
  * The structure of encrypted blocks is a tuple that consists of the time of the encryption, the receiving
  * host's identifier, the encrypted key, the initialization vector and the possibly encrypted element.
  * 

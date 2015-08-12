@@ -71,7 +71,7 @@ public abstract class Handler implements Blockable {
     protected Handler(@Nullable Entity entity, @Nonnull SignatureWrapper signature) {
         this.entity = entity;
         this.signature = signature;
-        this.subject = signature.getSubjectNotNull();
+        this.subject = signature.getNonNullableSubject();
     }
     
     /**

@@ -22,7 +22,7 @@ import net.digitalid.core.identity.SyntacticType;
 import net.digitalid.core.storable.Storable;
 
 /**
- * Wraps elements of the syntactic type {@code tuple@core.digitalid.net} for encoding and decoding.
+ * This class wraps a {@link ReadOnlyArray tuple} for encoding and decoding a block of the syntactic type {@code tuple@core.digitalid.net}.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0

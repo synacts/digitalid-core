@@ -189,7 +189,7 @@ final class CredentialInternalQuery extends CoreServiceInternalQuery {
         final @Nonnull NonHostAccount account = getNonHostAccount();
         final @Nonnull Host host = account.getHost();
         
-        final @Nonnull Time issuance = signature instanceof CredentialsSignatureWrapper ? ((CredentialsSignatureWrapper) signature).getCredentials().getNonNullable(0).getIssuance() : signature.getTimeNotNull().roundDown(Time.HALF_HOUR);
+        final @Nonnull Time issuance = signature instanceof CredentialsSignatureWrapper ? ((CredentialsSignatureWrapper) signature).getCredentials().getNonNullable(0).getIssuance() : signature.getNonNullableTime().roundDown(Time.HALF_HOUR);
         
         try {
             final @Nonnull PublicKey publicKey = host.getPublicKeyChain().getKey(issuance);

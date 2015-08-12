@@ -20,7 +20,7 @@ import net.digitalid.core.identity.SyntacticType;
 import net.digitalid.core.storable.Storable;
 
 /**
- * Wraps elements of the syntactic type {@code list@core.digitalid.net} for encoding and decoding.
+ * This class wraps a {@link ReadOnlyList list} for encoding and decoding a block of the syntactic type {@code list@core.digitalid.net}.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0

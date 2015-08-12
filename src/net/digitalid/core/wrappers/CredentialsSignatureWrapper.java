@@ -14,6 +14,7 @@ import net.digitalid.core.agent.RandomizedAgentPermissions;
 import net.digitalid.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.core.agent.Restrictions;
 import net.digitalid.core.annotations.Immutable;
+import net.digitalid.core.annotations.Locked;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.NonFrozen;
 import net.digitalid.core.annotations.Pure;
@@ -237,7 +238,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
         this.certificates = certificates;
         this.lodged = lodged;
         this.value = value;
-        this.publicKey = value == null ? null : Cache.getPublicKey(subject.getHostIdentifier(), getTimeNotNull());
+        this.publicKey = value == null ? null : Cache.getPublicKey(subject.getHostIdentifier(), getNonNullableTime());
     }
     
     /**
@@ -296,7 +297,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
             final @Nonnull NonHostEntity nonHostEntity;
             if (entity instanceof HostEntity) {
                 final @Nonnull Host host = ((HostEntity) entity).getHost();
-                final @Nonnull InternalIdentifier subject = getSubjectNotNull();
+                final @Nonnull InternalIdentifier subject = getNonNullableSubject();
                 final @Nonnull InternalPerson person = subject.getIdentity().toInternalPerson();
                 // If the subject is hosted on the given host, the entity is recreated for that subject.
                 if (host.getIdentifier().equals(subject.getHostIdentifier())) {
@@ -340,7 +341,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
         
         // Value and public key
         this.value = tuple.isElementNull(6) ? null : new IntegerWrapper(tuple.getNonNullableElement(6)).getValue();
-        this.publicKey = tuple.isElementNull(6) ? null : Cache.getPublicKey(getSubjectNotNull().getHostIdentifier(), getTimeNotNull());
+        this.publicKey = tuple.isElementNull(6) ? null : Cache.getPublicKey(getNonNullableSubject().getHostIdentifier(), getNonNullableTime());
     }
     
     
@@ -720,6 +721,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
     private static final @Nonnull SemanticType ARRAYS = SemanticType.map("list.array.credential.credentials.signature@core.digitalid.net").load(ListWrapper.TYPE, ARRAY);
     
     @Pure
+    @Locked
     @Override
     @NonCommitting
     public void verify() throws SQLException, IOException, PacketException, ExternalException {
@@ -727,7 +729,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
         
         final @Nonnull Time start = new Time();
         
-        if (getTimeNotNull().isLessThan(Time.TROPICAL_YEAR.ago())) throw new InvalidSignatureException("The credentials signature is out of date.");
+        if (getNonNullableTime().isLessThan(Time.TROPICAL_YEAR.ago())) throw new InvalidSignatureException("The credentials signature is out of date.");
         
         final @Nonnull TupleWrapper tuple = new TupleWrapper(getCache());
         final @Nonnull BigInteger hash = tuple.getNonNullableElement(0).getHash();
@@ -819,7 +821,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
         if (certificates != null) {
             for (final @Nonnull CertifiedAttributeValue certificate : certificates) {
                 certificate.verify();
-                certificate.checkIsValid(getTimeNotNull());
+                certificate.checkIsValid(getNonNullableTime());
             }
         }
         
@@ -839,7 +841,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
         
         final @Nonnull SecureRandom random = new SecureRandom();
         final @Nonnull Exponent ru = new Exponent(new BigInteger(Parameters.RANDOM_EXPONENT, random));
-        final @Nullable Exponent rv = mainCredential.getRestrictions() != null && (mainCredential.getIssuer().getAddress().equals(getSubjectNotNull()) || mainCredential.isRoleBased()) ? null : new Exponent(new BigInteger(Parameters.RANDOM_EXPONENT, random));
+        final @Nullable Exponent rv = mainCredential.getRestrictions() != null && (mainCredential.getIssuer().getAddress().equals(getNonNullableSubject()) || mainCredential.isRoleBased()) ? null : new Exponent(new BigInteger(Parameters.RANDOM_EXPONENT, random));
         
         final int size = credentials.size();
         final @Nonnull ClientCredential[] randomizedCredentials = new ClientCredential[size];

@@ -66,7 +66,7 @@ public abstract class CoreServiceInternalQuery extends InternalQuery {
         
         if (!getSubject().getHostIdentifier().equals(getRecipient())) throw new PacketException(PacketError.IDENTIFIER, "The host of the subject has to match the recipient for internal queries of the core service.");
         
-        this.publicKey = Cache.getPublicKey(getRecipient(), signature.getTimeNotNull());
+        this.publicKey = Cache.getPublicKey(getRecipient(), signature.getNonNullableTime());
     }
     
     
