@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import net.digitalid.core.annotations.Immutable;
+import net.digitalid.core.annotations.Locked;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.exceptions.external.ExternalException;
@@ -41,6 +42,7 @@ public interface Identifier extends Storable<Identifier> {
      * @return whether this identifier is mapped.
      */
     @Pure
+    @Locked
     @NonCommitting
     public boolean isMapped() throws SQLException;
     
@@ -52,6 +54,7 @@ public interface Identifier extends Storable<Identifier> {
      * @require isMapped() : "This identifier is mapped.";
      */
     @Pure
+    @Locked
     @NonCommitting
     public @Nonnull Identity getMappedIdentity() throws SQLException;
     
@@ -63,6 +66,7 @@ public interface Identifier extends Storable<Identifier> {
      * @ensure !(result instanceof Type) || ((Type) result).isLoaded() : "If the result is a type, its declaration is loaded.";
      */
     @Pure
+    @Locked
     @NonCommitting
     public @Nonnull Identity getIdentity() throws SQLException, IOException, PacketException, ExternalException;
     

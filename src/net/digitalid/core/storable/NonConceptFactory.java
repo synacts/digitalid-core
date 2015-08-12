@@ -7,6 +7,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Loaded;
+import net.digitalid.core.annotations.Locked;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.NonEncoding;
 import net.digitalid.core.annotations.NonNullableElements;
@@ -20,6 +21,8 @@ import net.digitalid.core.wrappers.Block;
 
 /**
  * This factory allows to store and restore objects of non-concepts.
+ * 
+ * @see SimpleDecodingFactory
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
@@ -39,10 +42,12 @@ public abstract class NonConceptFactory<O> extends GeneralConceptFactory<O> {
      * @require block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
      */
     @Pure
+    @Locked
     @NonCommitting
     public abstract @Nonnull O decodeNonNullable(@Nonnull @NonEncoding Block block) throws SQLException, IOException, PacketException, ExternalException;
     
     @Pure
+    @Locked
     @Override
     @NonCommitting
     public final @Nonnull O decodeNonNullable(@Nonnull Entity entity, @Nonnull @NonEncoding Block block) throws SQLException, IOException, PacketException, ExternalException  {
@@ -59,6 +64,7 @@ public abstract class NonConceptFactory<O> extends GeneralConceptFactory<O> {
      * @require block == null || block.getType().isBasedOn(getType()) : "The block is either null or based on the indicated type.";
      */
     @Pure
+    @Locked
     @NonCommitting
     public @Nullable O decodeNullable(@Nullable @NonEncoding Block block) throws SQLException, IOException, PacketException, ExternalException {
         if (block != null) return decodeNonNullable(block);

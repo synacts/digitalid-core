@@ -9,6 +9,7 @@ import net.digitalid.core.annotations.BasedOn;
 import net.digitalid.core.annotations.Encoding;
 import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Loaded;
+import net.digitalid.core.annotations.Locked;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.NonEncoding;
 import net.digitalid.core.annotations.NonNegative;
@@ -109,6 +110,7 @@ public final class SelfcontainedWrapper extends BlockWrapper<SelfcontainedWrappe
      * 
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated syntactic type.";
      */
+    @Locked
     @NonCommitting
     private SelfcontainedWrapper(@Nonnull @NonEncoding Block block) throws SQLException, IOException, PacketException, ExternalException {
         super(block.getType());
@@ -161,6 +163,7 @@ public final class SelfcontainedWrapper extends BlockWrapper<SelfcontainedWrappe
      * @return the element contained in the given block.
      */
     @Pure
+    @Locked
     @NonCommitting
     public static @Nonnull @NonEncoding Block decodeNonNullable(@Nonnull @NonEncoding @BasedOn("selfcontained@core.digitalid.net") Block block) throws SQLException, IOException, PacketException, ExternalException {
         return FACTORY.decodeNonNullable(block).element;
@@ -174,6 +177,7 @@ public final class SelfcontainedWrapper extends BlockWrapper<SelfcontainedWrappe
      * @return the element contained in the given block.
      */
     @Pure
+    @Locked
     @NonCommitting
     public static @Nullable @NonEncoding Block decodeNullable(@Nullable @NonEncoding @BasedOn("selfcontained@core.digitalid.net") Block block) throws SQLException, IOException, PacketException, ExternalException {
         return block == null ? null : decodeNonNullable(block);
@@ -188,6 +192,7 @@ public final class SelfcontainedWrapper extends BlockWrapper<SelfcontainedWrappe
      * @return the element of the selfcontained block from the given input stream.
      */
     @Pure
+    @Locked
     @NonCommitting
     public static @Nonnull @NonEncoding Block decodeBlockFrom(@Nonnull InputStream inputStream, boolean close) throws SQLException, IOException, PacketException, ExternalException {
         return decodeNonNullable(readBlockFrom(inputStream, close));
@@ -228,6 +233,7 @@ public final class SelfcontainedWrapper extends BlockWrapper<SelfcontainedWrappe
         }
         
         @Pure
+        @Locked
         @Override
         @NonCommitting
         public @Nonnull SelfcontainedWrapper decodeNonNullable(@Nonnull @NonEncoding Block block) throws SQLException, IOException, PacketException, ExternalException {

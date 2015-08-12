@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Immutable;
+import net.digitalid.core.annotations.Locked;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.annotations.Validated;
@@ -111,6 +112,7 @@ public class Column {
      * 
      * @ensure return.isEmpty() || return.startsWith(",") : "The returned string is either empty or starts with a comma.";
      */
+    @Locked
     @NonCommitting
     public @Nonnull String getForeignKey(@Nonnull @Validated String prefix, @Nonnull Site site) throws SQLException {
         if (reference != null) return ", FOREIGN KEY (" + (reference.isEntityDependent() ? "entity, " : "") + prefix + name + ") " + reference.get(site);

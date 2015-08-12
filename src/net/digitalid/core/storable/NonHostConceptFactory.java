@@ -10,6 +10,7 @@ import net.digitalid.core.annotations.Capturable;
 import net.digitalid.core.annotations.Frozen;
 import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Loaded;
+import net.digitalid.core.annotations.Locked;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.NonEncoding;
 import net.digitalid.core.annotations.NonFrozen;
@@ -141,6 +142,7 @@ public abstract class NonHostConceptFactory<O> {
      * @require block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
      */
     @Pure
+    @Locked
     @NonCommitting
     public abstract @Nonnull O decodeNonNullable(@Nonnull NonHostEntity entity, @Nonnull @NonEncoding Block block) throws SQLException, IOException, PacketException, ExternalException;
     
@@ -155,6 +157,7 @@ public abstract class NonHostConceptFactory<O> {
      * @require block == null || block.getType().isBasedOn(getType()) : "The block is either null or based on the indicated type.";
      */
     @Pure
+    @Locked
     @NonCommitting
     public final @Nullable O decodeNullable(@Nonnull NonHostEntity entity, @Nullable @NonEncoding Block block) throws SQLException, IOException, PacketException, ExternalException {
         if (block != null) return decodeNonNullable(entity, block);
@@ -273,6 +276,7 @@ public abstract class NonHostConceptFactory<O> {
      * 
      * @ensure return.isEmpty() || return.startsWith(",") : "The returned string is either empty or starts with a comma.";
      */
+    @Locked
     @NonCommitting
     public @Nonnull String getForeignKeys(@Nonnull @Validated String prefix, @Nonnull Site site) throws SQLException {
         assert isValidPrefix(prefix) : "The prefix is valid.";
@@ -294,6 +298,7 @@ public abstract class NonHostConceptFactory<O> {
      * 
      * @ensure return.isEmpty() || return.startsWith(",") : "The returned string is either empty or starts with a comma.";
      */
+    @Locked
     @NonCommitting
     public final @Nonnull String getForeignKeys(@Nonnull Site site) throws SQLException {
         return getForeignKeys("", site);

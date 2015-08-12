@@ -2,6 +2,7 @@ package net.digitalid.core.database;
 
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import net.digitalid.core.annotations.Locked;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Stateless;
 import net.digitalid.core.entity.Site;
@@ -22,9 +23,11 @@ public abstract class GeneralReference extends Reference {
      * 
      * @ensure return.startsWith("REFERENCES") : "The returned string is a reference.";
      */
+    @Locked
     @NonCommitting
     public abstract @Nonnull String get() throws SQLException;
     
+    @Locked
     @Override
     @NonCommitting
     public final @Nonnull String get(@Nonnull Site site) throws SQLException {

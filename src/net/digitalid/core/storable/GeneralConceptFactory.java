@@ -7,6 +7,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Loaded;
+import net.digitalid.core.annotations.Locked;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.NonEncoding;
 import net.digitalid.core.annotations.NonNullableElements;
@@ -43,10 +44,12 @@ public abstract class GeneralConceptFactory<O> extends NonHostConceptFactory<O> 
      * @require block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
      */
     @Pure
+    @Locked
     @NonCommitting
     public abstract @Nonnull O decodeNonNullable(@Nonnull Entity entity, @Nonnull @NonEncoding Block block) throws SQLException, IOException, PacketException, ExternalException;
     
     @Pure
+    @Locked
     @Override
     @NonCommitting
     public final @Nonnull O decodeNonNullable(@Nonnull NonHostEntity entity, @Nonnull @NonEncoding Block block) throws SQLException, IOException, PacketException, ExternalException {
@@ -64,6 +67,7 @@ public abstract class GeneralConceptFactory<O> extends NonHostConceptFactory<O> 
      * @require block == null || block.getType().isBasedOn(getType()) : "The block is either null or based on the indicated type.";
      */
     @Pure
+    @Locked
     @NonCommitting
     public final @Nullable O decodeNullable(@Nonnull Entity entity, @Nullable @NonEncoding Block block) throws SQLException, IOException, PacketException, ExternalException {
         if (block != null) return decodeNonNullable(entity, block);

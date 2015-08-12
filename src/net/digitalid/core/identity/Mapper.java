@@ -10,8 +10,10 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.core.annotations.Locked;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.NonMapped;
+import net.digitalid.core.annotations.OnMainThread;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.annotations.Stateless;
 import net.digitalid.core.cache.Cache;
@@ -35,9 +37,7 @@ import net.digitalid.core.identifier.Identifier;
 import net.digitalid.core.identifier.IdentifierClass;
 import net.digitalid.core.identifier.InternalNonHostIdentifier;
 import net.digitalid.core.identifier.NonHostIdentifier;
-import net.digitalid.core.io.Level;
 import net.digitalid.core.io.Log;
-import net.digitalid.core.io.Logger;
 import net.digitalid.core.server.Server;
 import net.digitalid.core.tuples.FreezableTriplet;
 import net.digitalid.core.tuples.ReadOnlyTriplet;
@@ -222,6 +222,7 @@ public final class Mapper {
      * 
      * @require !numbers.containsKey(number) : "The given number is not yet loaded.";
      */
+    @Locked
     @NonCommitting
     private static @Nonnull Identity loadIdentity(long number) throws SQLException {
         assert !numbers.containsKey(number) : "The given number is not yet loaded.";
@@ -252,6 +253,7 @@ public final class Mapper {
      * 
      * @ensure !(result instanceof Type) || ((Type) result).isLoaded() : "If the result is a type, its declaration is loaded.";
      */
+    @Locked
     @NonCommitting
     static @Nonnull Identity getIdentity(long number) throws SQLException {
         @Nullable Identity identity = numbers.get(number);
@@ -274,6 +276,7 @@ public final class Mapper {
      * 
      * @require !identifiers.containsKey(identifier) : "The given identifier is not yet loaded.";
      */
+    @Locked
     @NonCommitting
     private static boolean loadIdentity(@Nonnull Identifier identifier) throws SQLException {
         assert !identifiers.containsKey(identifier) : "The given identifier is not yet loaded.";
@@ -320,6 +323,7 @@ public final class Mapper {
      * 
      * @return whether the given identifier is mapped.
      */
+    @Locked
     @NonCommitting
     public static boolean isMapped(@Nonnull Identifier identifier) throws SQLException {
         return identifiers.containsKey(identifier) || loadIdentity(identifier);
@@ -335,6 +339,7 @@ public final class Mapper {
      * @require isMapped(identifier) : "The identifier is mapped.";
      */
     @Pure
+    @Locked
     @NonCommitting
     public static @Nonnull Identity getMappedIdentity(@Nonnull Identifier identifier) throws SQLException {
         assert isMapped(identifier) : "The identifier is mapped.";
@@ -355,6 +360,7 @@ public final class Mapper {
      * 
      * @ensure return.getCategory().equals(category) : "The category of the returned identity equals the given category.";
      */
+    @Locked
     @NonCommitting
     public static @Nonnull Identity mapIdentity(@Nonnull Identifier identifier, @Nonnull Category category, @Nullable Reply reply) throws SQLException {
         if (isMapped(identifier)) {
@@ -380,6 +386,7 @@ public final class Mapper {
      * 
      * @return the host identity of the mapped identifier.
      */
+    @Locked
     @NonCommitting
     public static @Nonnull HostIdentity mapHostIdentity(@Nonnull HostIdentifier identifier) throws SQLException {
         try {
@@ -395,9 +402,8 @@ public final class Mapper {
      * @param identifier the non-host identifier to map.
      * 
      * @return the syntactic type of the mapped identifier.
-     * 
-     * @require Database.isMainThread() : "This method may only be called in the main thread.";
      */
+    @OnMainThread
     static @Nonnull SyntacticType mapSyntacticType(@Nonnull InternalNonHostIdentifier identifier) {
         assert Database.isMainThread() : "This method may only be called in the main thread.";
         
@@ -417,9 +423,8 @@ public final class Mapper {
      * @param identifier the non-host identifier to map.
      * 
      * @return the semantic type of the mapped identifier.
-     * 
-     * @require Database.isMainThread() : "This method may only be called in the main thread.";
      */
+    @OnMainThread
     static @Nonnull SemanticType mapSemanticType(@Nonnull InternalNonHostIdentifier identifier) {
         assert Database.isMainThread() : "This method may only be called in the main thread.";
         
@@ -440,6 +445,7 @@ public final class Mapper {
      * 
      * @return the external person of the mapped identifier.
      */
+    @Locked
     @NonCommitting
     private static @Nonnull ExternalPerson mapExternalIdentity(@Nonnull ExternalIdentifier identifier) throws SQLException, InvalidEncodingException {
         return mapIdentity(identifier, identifier.getCategory(), null).toExternalPerson();
@@ -453,6 +459,7 @@ public final class Mapper {
      * @param identities the identities which are to be merged.
      * @param newIdentity the new identity of the given identities.
      */
+    @Locked
     @NonCommitting
     public static void mergeIdentities(@Nonnull ReadOnlyList<NonHostIdentity> identities, @Nonnull InternalNonHostIdentity newIdentity) throws SQLException {
         final long newNumber = newIdentity.getNumber();
@@ -481,6 +488,7 @@ public final class Mapper {
      * 
      * @throws IdentityNotFoundException if no identity with the given identifier was found.
      */
+    @Locked
     @NonCommitting
     private static @Nonnull InternalNonHostIdentity establishInternalNonHostIdentity(@Nonnull @NonMapped InternalNonHostIdentifier identifier) throws SQLException, IOException, PacketException, ExternalException {
         assert !isMapped(identifier) : "The identifier is not mapped.";
@@ -552,6 +560,7 @@ public final class Mapper {
      * @return the newly established identity of the given identifier.
      */
     @Pure
+    @Locked
     @NonCommitting
     private static @Nonnull Person establishExternalIdentity(@Nonnull @NonMapped ExternalIdentifier identifier) throws SQLException, IOException, PacketException, ExternalException {
         assert !isMapped(identifier) : "The identifier is not mapped.";
@@ -577,6 +586,7 @@ public final class Mapper {
      * @return the identity of the given identifier.
      */
     @Pure
+    @Locked
     @NonCommitting
     public static @Nonnull Identity getIdentity(@Nonnull Identifier identifier) throws SQLException, IOException, PacketException, ExternalException {
         if (isMapped(identifier)) {

@@ -11,6 +11,7 @@ import net.digitalid.core.annotations.Encoding;
 import net.digitalid.core.annotations.Frozen;
 import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Loaded;
+import net.digitalid.core.annotations.Locked;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.NonEncoding;
 import net.digitalid.core.annotations.Pure;
@@ -249,6 +250,7 @@ public final class EncryptionWrapper extends BlockWrapper<EncryptionWrapper> {
      * 
      * @require element.getType().isBasedOn(type.getParameters().getNonNullable(0)) : "The element is based on the parameter of the given type.";
      */
+    @Locked
     @NonCommitting
     private EncryptionWrapper(@Nonnull @Loaded @BasedOn("encryption@core.digitalid.net") SemanticType type, @Nonnull Block element, @Nullable HostIdentifier recipient, @Nullable SymmetricKey symmetricKey) throws SQLException, IOException, PacketException, ExternalException {
         super(type);
@@ -337,6 +339,8 @@ public final class EncryptionWrapper extends BlockWrapper<EncryptionWrapper> {
      * @require element.getFactory().getType().isBasedOn(type.getParameters().getNonNullable(0)) : "The element is based on the parameter of the given type.";
      */
     @Pure
+    @Locked
+    @NonCommitting
     public static @Nonnull <V extends Storable<V>> EncryptionWrapper encrypt(@Nonnull @Loaded @BasedOn("encryption@core.digitalid.net") SemanticType type, @Nonnull V element, @Nullable HostIdentifier recipient, @Nullable SymmetricKey symmetricKey) throws SQLException, IOException, PacketException, ExternalException {
         return new EncryptionWrapper(type, Block.fromNonNullable(element), recipient, symmetricKey);
     }
@@ -350,7 +354,6 @@ public final class EncryptionWrapper extends BlockWrapper<EncryptionWrapper> {
      * @return a new encryption wrapper with the given parameters.
      */
     @Pure
-    @NonCommitting
     public static @Nonnull EncryptionWrapper decrypt(@Nonnull @NonEncoding @BasedOn("encryption@core.digitalid.net") Block block, @Nullable SymmetricKey symmetricKey) throws InvalidEncodingException {
         return new EncryptionWrapper(block, symmetricKey);
     }

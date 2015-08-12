@@ -10,6 +10,7 @@ import net.digitalid.core.annotations.Capturable;
 import net.digitalid.core.annotations.Encoding;
 import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Loaded;
+import net.digitalid.core.annotations.Locked;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.NonEncoding;
 import net.digitalid.core.annotations.NonFrozen;
@@ -233,6 +234,7 @@ public abstract class Wrapper<W extends Wrapper<W>> implements Storable<W> {
         }
         
         @Pure
+        @Locked
         @Override
         @NonCommitting
         public final @Nonnull V decodeNonNullable(@Nonnull @NonEncoding Block block) throws SQLException, IOException, PacketException, ExternalException {

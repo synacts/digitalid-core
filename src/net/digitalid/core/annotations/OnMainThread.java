@@ -9,6 +9,7 @@ import net.digitalid.core.database.Database;
 
 /**
  * This annotation indicates that a method should only be invoked on the {@link Database#isMainThread() main thread}.
+ * It is safe to assume that the {@link Database} is {@link Database#isLocked() locked} for methods on the main thread.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0

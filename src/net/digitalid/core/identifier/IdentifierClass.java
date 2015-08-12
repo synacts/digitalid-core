@@ -7,6 +7,7 @@ import java.sql.Types;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Immutable;
+import net.digitalid.core.annotations.Locked;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.database.Database;
@@ -129,6 +130,7 @@ public abstract class IdentifierClass implements Identifier {
     
     
     @Pure
+    @Locked
     @Override
     @NonCommitting
     public final boolean isMapped() throws SQLException {

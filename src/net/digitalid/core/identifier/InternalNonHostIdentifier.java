@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import net.digitalid.core.annotations.Immutable;
+import net.digitalid.core.annotations.Locked;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.exceptions.external.ExternalException;
@@ -50,6 +51,7 @@ public final class InternalNonHostIdentifier extends InternalIdentifier implemen
     
     
     @Pure
+    @Locked
     @Override
     @NonCommitting
     public @Nonnull InternalNonHostIdentity getMappedIdentity() throws SQLException {
@@ -61,6 +63,7 @@ public final class InternalNonHostIdentifier extends InternalIdentifier implemen
     }
     
     @Pure
+    @Locked
     @Override
     @NonCommitting
     public @Nonnull InternalNonHostIdentity getIdentity() throws SQLException, IOException, PacketException, ExternalException {

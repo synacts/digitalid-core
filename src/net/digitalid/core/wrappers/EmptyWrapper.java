@@ -128,7 +128,9 @@ public final class EmptyWrapper extends Wrapper<EmptyWrapper> {
         
         @Override
         @NonCommitting
-        public void setNonNullable(@Nonnull EmptyWrapper wrapper, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {}
+        public void setNonNullable(@Nonnull EmptyWrapper wrapper, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+            preparedStatement.setBoolean(parameterIndex, true);
+        }
         
         @Pure
         @Override

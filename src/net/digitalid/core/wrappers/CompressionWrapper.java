@@ -11,7 +11,6 @@ import net.digitalid.core.annotations.Encoded;
 import net.digitalid.core.annotations.Encoding;
 import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Loaded;
-import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.NonEncoding;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.auxiliary.Time;
@@ -129,7 +128,6 @@ public final class CompressionWrapper extends BlockWrapper<CompressionWrapper> {
      * @return the element contained in the given block.
      */
     @Pure
-    @NonCommitting
     public static @Nonnull @NonEncoding Block decompressNonNullable(@Nonnull @NonEncoding @BasedOn("compression@core.digitalid.net") Block block) throws InvalidEncodingException {
         return FACTORY.decodeNonNullable(block).element;
     }
@@ -142,7 +140,6 @@ public final class CompressionWrapper extends BlockWrapper<CompressionWrapper> {
      * @return the element contained in the given block.
      */
     @Pure
-    @NonCommitting
     public static @Nullable @NonEncoding Block decompressNullable(@Nullable @NonEncoding @BasedOn("compression@core.digitalid.net") Block block) throws InvalidEncodingException {
         return block == null ? null : decompressNonNullable(block);
     }
