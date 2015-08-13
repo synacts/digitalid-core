@@ -101,6 +101,8 @@ public final class CompressionWrapper extends BlockWrapper<CompressionWrapper> {
      * @param element the element to compress into the new block.
      * 
      * @return a new non-nullable block containing the given element.
+     * 
+     * @require element.getFactory().getType().isBasedOn(type.getParameters().getNonNullable(0)) : "The element is based on the parameter of the given type.";
      */
     @Pure
     public static @Nonnull @NonEncoding <V extends Storable<V>> Block compressNonNullable(@Nonnull @Loaded @BasedOn("compression@core.digitalid.net") SemanticType type, @Nonnull V element) {
@@ -114,6 +116,8 @@ public final class CompressionWrapper extends BlockWrapper<CompressionWrapper> {
      * @param element the element to compress into the new block.
      * 
      * @return a new nullable block containing the given element.
+     * 
+     * @require element.getFactory().getType().isBasedOn(type.getParameters().getNonNullable(0)) : "The element is based on the parameter of the given type.";
      */
     @Pure
     public static @Nullable @NonEncoding <V extends Storable<V>> Block compressNullable(@Nonnull @Loaded @BasedOn("compression@core.digitalid.net") SemanticType type, @Nullable V element) {

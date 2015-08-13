@@ -8,8 +8,8 @@ import net.digitalid.core.collections.FreezableArray;
 import net.digitalid.core.collections.ReadOnlyList;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.wrappers.Blockable;
 import net.digitalid.core.packet.Packet;
+import net.digitalid.core.storable.Storable;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.ListWrapper;
 import net.digitalid.core.wrappers.TupleWrapper;
@@ -24,7 +24,7 @@ import net.digitalid.core.wrappers.TupleWrapper;
  * @version 1.0
  */
 @Immutable
-public abstract class Audit implements Blockable {
+public abstract class Audit implements Storable<Audit> {
     
     /**
      * Stores the semantic type {@code last.time.audit@core.digitalid.net}.

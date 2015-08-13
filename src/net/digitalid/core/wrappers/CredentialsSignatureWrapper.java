@@ -56,7 +56,7 @@ import net.digitalid.core.io.Log;
 import net.digitalid.core.synchronizer.Audit;
 
 /**
- * Wraps a block with the syntactic type {@code signature@core.digitalid.net} that is signed with credentials.
+ * This class wraps an {@link Block element} for encoding and decoding a block of the syntactic type {@code signature@core.digitalid.net} that is signed with credentials.
  * <p>
  * Format:<br>
  * - {@code credentialsSignature = (t, su, v, sv, credentials, certificates, f', sb')}<br>

@@ -3,6 +3,7 @@ package net.digitalid.core.wrappers;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.BasedOn;
+import net.digitalid.core.annotations.Captured;
 import net.digitalid.core.annotations.Encoding;
 import net.digitalid.core.annotations.Frozen;
 import net.digitalid.core.annotations.Immutable;
@@ -289,7 +290,7 @@ public final class TupleWrapper extends BlockWrapper<TupleWrapper> {
      * @require basedOnParameters(type, elements) : "Each element is either null or based on the corresponding parameter of the given type.";
      */
     @Pure
-    public static @Nonnull @NonEncoding Block encode(@Nonnull @Loaded @BasedOn("tuple@core.digitalid.net") SemanticType type, @Nonnull @NonEncoding Block... elements) {
+    public static @Nonnull @NonEncoding Block encode(@Nonnull @Loaded @BasedOn("tuple@core.digitalid.net") SemanticType type, @Captured @Nonnull @NonEncoding Block... elements) {
         return encode(type, FreezableArray.getNonNullable(elements).freeze());
     }
     

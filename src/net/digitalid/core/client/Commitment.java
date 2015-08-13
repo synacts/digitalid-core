@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Immutable;
+import net.digitalid.core.annotations.Locked;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.auxiliary.Time;
@@ -17,6 +18,7 @@ import net.digitalid.core.collections.ReadOnlyArray;
 import net.digitalid.core.cryptography.Element;
 import net.digitalid.core.cryptography.Exponent;
 import net.digitalid.core.cryptography.PublicKey;
+import net.digitalid.core.database.SQLizable;
 import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.identifier.HostIdentifier;
@@ -25,10 +27,9 @@ import net.digitalid.core.identity.HostIdentity;
 import net.digitalid.core.identity.IdentityClass;
 import net.digitalid.core.identity.Mapper;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.wrappers.Blockable;
-import net.digitalid.core.database.SQLizable;
 import net.digitalid.core.server.Server;
 import net.digitalid.core.wrappers.Block;
+import net.digitalid.core.wrappers.Blockable;
 import net.digitalid.core.wrappers.IntegerWrapper;
 import net.digitalid.core.wrappers.TupleWrapper;
 
@@ -121,6 +122,7 @@ public class Commitment implements Blockable, SQLizable {
      * 
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
+    @Locked
     @NonCommitting
     public Commitment(@Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";

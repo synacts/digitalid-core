@@ -14,6 +14,7 @@ import net.digitalid.core.annotations.Locked;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.NonEncoding;
 import net.digitalid.core.annotations.NonFrozen;
+import net.digitalid.core.annotations.NullableElements;
 import net.digitalid.core.annotations.Positive;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.auxiliary.Time;
@@ -28,6 +29,7 @@ import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.exceptions.external.InvalidSignatureException;
 import net.digitalid.core.exceptions.packet.PacketError;
 import net.digitalid.core.exceptions.packet.PacketException;
+import net.digitalid.core.identifier.Identifier;
 import net.digitalid.core.identifier.IdentifierClass;
 import net.digitalid.core.identifier.InternalIdentifier;
 import net.digitalid.core.identity.InternalIdentity;
@@ -262,14 +264,14 @@ public class SignatureWrapper extends BlockWrapper<SignatureWrapper> {
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructors –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Encodes the element into a new block. (Only to be called by subclasses!)
+     * Creates a new signature wrapper with the given type, element, subject and audit.
      * 
-     * @param type the semantic type of the new block.
-     * @param element the element to encode into the new block.
+     * @param type the semantic type of the new signature wrapper.
+     * @param element the element of the new signature wrapper.
      * @param subject the identifier of the identity about which a statement is made.
      * @param audit the audit or null if no audit is or shall be appended.
      * 
-     * @require element == null || element.getType().isBasedOn(type.getParameters().getNotNull(0)) : "The element is either null or based on the parameter of the given type.";
+     * @require element == null || element.getType().isBasedOn(type.getParameters().getNonNullable(0)) : "The element is either null or based on the parameter of the given type.";
      * 
      * @ensure isVerified() : "This signature is verified.";
      */
@@ -286,9 +288,9 @@ public class SignatureWrapper extends BlockWrapper<SignatureWrapper> {
     }
     
     /**
-     * Wraps and decodes the given block.
+     * Creates a new signature wrapper from the given block.
      * 
-     * @param block the block to be wrapped and decoded.
+     * @param block the block that contains the signed element.
      * @param verified whether the signature is already verified.
      */
     SignatureWrapper(@Nonnull @NonEncoding @BasedOn("signature@core.digitalid.net") Block block, boolean verified) throws InvalidEncodingException {
@@ -297,6 +299,7 @@ public class SignatureWrapper extends BlockWrapper<SignatureWrapper> {
         this.cache = Block.get(IMPLEMENTATION, block);
         final @Nonnull Block content = TupleWrapper.decode(cache).getNonNullableElement(0);
         final @Nonnull TupleWrapper tuple = TupleWrapper.decode(content);
+        // TODO: Rewrite the following code with the null-propagating factory methods.
         this.subject = tuple.isElementNull(0) ? null : IdentifierClass.create(tuple.getNonNullableElement(0)).toInternalIdentifier();
         if (isSigned() && subject == null) throw new InvalidEncodingException("The subject may not be null if the element is signed.");
         this.time = tuple.isElementNull(1) ? null : new Time(tuple.getNonNullableElement(1));
@@ -311,33 +314,35 @@ public class SignatureWrapper extends BlockWrapper<SignatureWrapper> {
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Utility –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Encodes the element into a new block without signing.
+     * Encodes the given element with a new signature wrapper without signing.
      * 
-     * @param type the semantic type of the new block.
-     * @param element the element to encode into the new block.
+     * @param type the semantic type of the new signature wrapper.
+     * @param element the element of the new signature wrapper.
      * @param subject the identifier of the identity about which a statement is made or null if not required.
      * 
-     * @require element == null || element.getType().isBasedOn(type.getParameters().getNotNull(0)) : "The element is either null or based on the parameter of the given type.";
+     * @return a new signature wrapper with the given arguments.
      * 
-     * @ensure isVerified() : "This signature is verified.";
+     * @require element.getFactory().getType().isBasedOn(type.getParameters().getNonNullable(0)) : "The element is based on the parameter of the given type.";
+     * 
+     * @ensure return.isVerified() : "The returned signature is verified.";
      */
     @Pure
-    public static @Nonnull <V extends Storable<V>> SignatureWrapper encodeWithoutSigning(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nullable V element, @Nullable InternalIdentifier subject) {
-        return new SignatureWrapper(type, Block.fromNullable(element), subject, null);
+    public static @Nonnull <V extends Storable<V>> SignatureWrapper encodeWithoutSigning(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nonnull V element, @Nullable InternalIdentifier subject) {
+        return new SignatureWrapper(type, Block.fromNonNullable(element), subject, null);
     }
     
-    
     /**
-     * Wraps and decodes the given block with verifying the signature.
+     * Decodes the given block with a new signature wrapper with verifying the signature.
      * 
-     * @param block the block to be wrapped and decoded.
+     * @param block the block that contains the signed element.
      * @param entity the entity that decodes the signature.
      * 
      * @return the signature wrapper of the appropriate subclass.
      * 
-     * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated syntactic type.";
+     * @ensure return.isVerified() : "The returned signature is verified.";
      */
     @Pure
+    @Locked
     @NonCommitting
     public static @Nonnull SignatureWrapper decodeWithVerifying(@Nonnull @NonEncoding @BasedOn("signature@core.digitalid.net") Block block, @Nullable Entity entity) throws SQLException, IOException, PacketException, ExternalException {
         final @Nonnull SignatureWrapper signatureWrapper = decodeWithoutVerifying(block, false, entity);
@@ -346,20 +351,19 @@ public class SignatureWrapper extends BlockWrapper<SignatureWrapper> {
     }
     
     /**
-     * Wraps and decodes the given block without verifying the signature.
+     * Decodes the given block with a new signature wrapper without verifying the signature.
      * 
-     * @param block the block to be wrapped and decoded.
+     * @param block the block that contains the signed element.
      * @param verified whether the signature is already verified.
      * @param entity the entity that decodes the signature.
      * 
      * @return the signature wrapper of the appropriate subclass.
-     * 
-     * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated syntactic type.";
      */
     @Pure
+    @Locked
     @NonCommitting
     public static @Nonnull SignatureWrapper decodeWithoutVerifying(@Nonnull @NonEncoding @BasedOn("signature@core.digitalid.net") Block block, boolean verified, @Nullable Entity entity) throws SQLException, IOException, PacketException, ExternalException {
-        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(new Block(IMPLEMENTATION, block)).getNullableElements(4);
+        final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(Block.get(IMPLEMENTATION, block)).getNullableElements(4);
         final @Nullable Block hostSignature = elements.getNullable(1);
         final @Nullable Block clientSignature = elements.getNullable(2);
         final @Nullable Block credentialsSignature = elements.getNullable(3);
@@ -390,19 +394,21 @@ public class SignatureWrapper extends BlockWrapper<SignatureWrapper> {
      */
     @Pure
     public void checkRecency() throws InactiveSignatureException {
-        if (time != null && time.isLessThan(Time.HALF_HOUR.ago())) throw new InactiveSignatureException("The signature was signed more than half an hour ago.");
+        if (time == null || time.isLessThan(Time.HALF_HOUR.ago())) throw new InactiveSignatureException("The signature was signed more than half an hour ago.");
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encoding –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Signing –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Signs the element. (This method should be overridden in subclasses.)
+     * Signs the element. (This method should be overridden in the subclasses.)
      * 
      * @param elements the elements of the wrapped block with the indexes 1 to 3 reserved for the signatures.
      * 
      * @require !elements.isNull(0) : "The first element is not null.";
      */
-    void sign(@Nonnull @NonFrozen FreezableArray<Block> elements) {}
+    void sign(@Nonnull @NullableElements @NonFrozen FreezableArray<Block> elements) {}
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encoding –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the signed element.
@@ -417,18 +423,16 @@ public class SignatureWrapper extends BlockWrapper<SignatureWrapper> {
     @Pure
     final @Nonnull Block getCache() {
         if (cache == null) {
-            final @Nonnull FreezableArray<Block> subelements = new FreezableArray<>(4);
-            subelements.set(0, Block.toBlock(SUBJECT, subject));
-            subelements.set(1, Block.toBlock(time));
+            final @Nonnull FreezableArray<Block> subelements = FreezableArray.get(4);
+            subelements.set(0, Block.<Identifier>fromNullable(subject, SUBJECT));
+            subelements.set(1, Block.fromNullable(time));
             subelements.set(2, element);
-            subelements.set(3, Block.toBlock(audit));
+            subelements.set(3, Block.fromNullable(audit));
             
-            final @Nonnull FreezableArray<Block> elements = new FreezableArray<>(4);
-            final @Nonnull Block block = new TupleWrapper(CONTENT, subelements.freeze()).toBlock();
-            elements.set(0, block);
-            
+            final @Nonnull FreezableArray<Block> elements = FreezableArray.get(4);
+            elements.set(0, TupleWrapper.encode(CONTENT, subelements.freeze()));
             sign(elements);
-            cache = new TupleWrapper(IMPLEMENTATION, elements.freeze()).toBlock();
+            cache = TupleWrapper.encode(IMPLEMENTATION, elements.freeze());
         }
         return cache;
     }
@@ -468,7 +472,7 @@ public class SignatureWrapper extends BlockWrapper<SignatureWrapper> {
         @Pure
         @Override
         public @Nonnull SignatureWrapper decodeNonNullable(@Nonnull @NonEncoding Block block) throws InvalidEncodingException {
-            return new EncryptionWrapper(block, null);
+            return new SignatureWrapper(block, false);
         }
         
     }
@@ -523,23 +527,24 @@ public class SignatureWrapper extends BlockWrapper<SignatureWrapper> {
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Agent –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Returns the agent that signed the wrapped element or null if no such agent is found.
+     * Returns the agent that signed the element or null if no such agent is found.
      * 
      * @param entity the entity whose agent is to be returned.
      * 
-     * @return the agent that signed the wrapped element or null if no such agent is found.
+     * @return the agent that signed the element or null if no such agent is found.
      * 
-     * @see ClientSignatureWrapper#getAgent(net.digitalid.core.entity.NonHostEntity)
+     * @see ClientSignatureWrapper#getAgent(net.digitalid.core.entity.NonHostEntity) 
      * @see CredentialsSignatureWrapper#getAgent(net.digitalid.core.entity.NonHostEntity)
      */
     @Pure
+    @Locked
     @NonCommitting
     public @Nullable Agent getAgent(@Nonnull NonHostEntity entity) throws SQLException {
         return null;
     }
     
     /**
-     * Returns the restricted agent that signed the wrapped element.
+     * Returns the restricted agent that signed the element.
      * 
      * @param entity the entity whose agent is to be returned.
      * @param publicKey the active public key of the recipient.
@@ -552,6 +557,7 @@ public class SignatureWrapper extends BlockWrapper<SignatureWrapper> {
      * @see CredentialsSignatureWrapper#getAgentCheckedAndRestricted(net.digitalid.core.entity.NonHostEntity, net.digitalid.core.cryptography.PublicKey)
      */
     @Pure
+    @Locked
     @NonCommitting
     public @Nonnull Agent getAgentCheckedAndRestricted(@Nonnull NonHostEntity entity, @Nullable PublicKey publicKey) throws SQLException, PacketException {
         throw new PacketException(PacketError.AUTHORIZATION, "The element was not signed by an authorized agent.");
