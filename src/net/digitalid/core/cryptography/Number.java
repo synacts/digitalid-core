@@ -6,11 +6,12 @@ import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.core.storable.Storable;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.IntegerWrapper;
 
 /**
- * A number has a value and is {@link Blockable blockable}.
+ * A number has a value and is {@link Storable storable}.
  * 
  * @see Element
  * @see Exponent
@@ -19,7 +20,7 @@ import net.digitalid.core.wrappers.IntegerWrapper;
  * @version 1.0
  */
 @Immutable
-abstract class Number implements Blockable {
+public abstract class Number implements Storable<Number> {
     
     /**
      * Stores the value of this number.
