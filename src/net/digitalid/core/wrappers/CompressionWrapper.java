@@ -28,7 +28,7 @@ import net.digitalid.core.storable.Storable;
  * @version 1.0
  */
 @Immutable
-public final class CompressionWrapper extends BlockWrapper<CompressionWrapper> {
+public final class CompressionWrapper extends BlockBasedWrapper<CompressionWrapper> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -200,7 +200,7 @@ public final class CompressionWrapper extends BlockWrapper<CompressionWrapper> {
      * The factory for this class.
      */
     @Immutable
-    public static class Factory extends BlockWrapper.Factory<CompressionWrapper> {
+    public static class Factory extends BlockBasedWrapper.Factory<CompressionWrapper> {
         
         /**
          * Creates a new factory with the given type.

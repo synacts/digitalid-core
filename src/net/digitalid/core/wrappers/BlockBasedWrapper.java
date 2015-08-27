@@ -24,7 +24,7 @@ import net.digitalid.core.identity.SemanticType;
  * @version 1.0
  */
 @Immutable
-public abstract class BlockWrapper<W extends BlockWrapper<W>> extends Wrapper<W> {
+public abstract class BlockBasedWrapper<W extends BlockBasedWrapper<W>> extends Wrapper<W> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -35,7 +35,7 @@ public abstract class BlockWrapper<W extends BlockWrapper<W>> extends Wrapper<W>
      * 
      * @require semanticType.isBasedOn(getSyntacticType()) : "The given semantic type is based on the indicated syntactic type.";
      */
-    protected BlockWrapper(@Nonnull @Loaded SemanticType semanticType) {
+    protected BlockBasedWrapper(@Nonnull @Loaded SemanticType semanticType) {
         super(semanticType);
     }
     

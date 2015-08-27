@@ -34,7 +34,7 @@ import net.digitalid.core.wrappers.exceptions.UnsupportedBlockLengthException;
  * @version 1.0
  */
 @Immutable
-public final class SelfcontainedWrapper extends BlockWrapper<SelfcontainedWrapper> {
+public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedWrapper> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -221,7 +221,7 @@ public final class SelfcontainedWrapper extends BlockWrapper<SelfcontainedWrappe
      * The factory for this class.
      */
     @Immutable
-    public static class Factory extends BlockWrapper.Factory<SelfcontainedWrapper> {
+    public static class Factory extends BlockBasedWrapper.Factory<SelfcontainedWrapper> {
         
         /**
          * Creates a new factory with the given type.

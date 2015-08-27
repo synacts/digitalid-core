@@ -203,7 +203,9 @@ public final class StringWrapper extends Wrapper<StringWrapper> {
         
         @Pure
         @Override
-        public @Nonnull StringWrapper decodeNonNullable(@Nonnull @NonEncoding Block block) throws InvalidEncodingException {
+        public @Nonnull StringWrapper decodeNonNullable(@Nonnull @NonEncoding @BasedOn("string@core.digitalid.net") Block block) throws InvalidEncodingException {
+            assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
+            
             final @Nonnull byte[] bytes = block.getBytes(1);
             return new StringWrapper(block.getType(), bytes);
         }

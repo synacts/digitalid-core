@@ -48,7 +48,7 @@ import net.digitalid.core.tuples.ReadOnlyPair;
  * @version 1.0
  */
 @Immutable
-public final class EncryptionWrapper extends BlockWrapper<EncryptionWrapper> {
+public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -418,7 +418,7 @@ public final class EncryptionWrapper extends BlockWrapper<EncryptionWrapper> {
      * The factory for this class.
      */
     @Immutable
-    public static class Factory extends BlockWrapper.Factory<EncryptionWrapper> {
+    public static class Factory extends BlockBasedWrapper.Factory<EncryptionWrapper> {
         
         /**
          * Creates a new factory with the given type.

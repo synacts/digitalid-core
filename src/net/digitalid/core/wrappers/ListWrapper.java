@@ -26,7 +26,7 @@ import net.digitalid.core.storable.Storable;
  * @version 1.0
  */
 @Immutable
-public final class ListWrapper extends BlockWrapper<ListWrapper> {
+public final class ListWrapper extends BlockBasedWrapper<ListWrapper> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -249,7 +249,7 @@ public final class ListWrapper extends BlockWrapper<ListWrapper> {
      * The factory for this class.
      */
     @Immutable
-    public static class Factory extends BlockWrapper.Factory<ListWrapper> {
+    public static class Factory extends BlockBasedWrapper.Factory<ListWrapper> {
         
         /**
          * Creates a new factory with the given type.

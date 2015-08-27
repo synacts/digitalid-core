@@ -159,7 +159,7 @@ public abstract class NonHostConceptFactory<O> {
     @Pure
     @Locked
     @NonCommitting
-    public final @Nullable O decodeNullable(@Nonnull NonHostEntity entity, @Nullable @NonEncoding Block block) throws SQLException, IOException, PacketException, ExternalException {
+    public @Nullable O decodeNullable(@Nonnull NonHostEntity entity, @Nullable @NonEncoding Block block) throws SQLException, IOException, PacketException, ExternalException {
         if (block != null) return decodeNonNullable(entity, block);
         else return null;
     }

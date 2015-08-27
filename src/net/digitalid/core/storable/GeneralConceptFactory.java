@@ -69,7 +69,7 @@ public abstract class GeneralConceptFactory<O> extends NonHostConceptFactory<O> 
     @Pure
     @Locked
     @NonCommitting
-    public final @Nullable O decodeNullable(@Nonnull Entity entity, @Nullable @NonEncoding Block block) throws SQLException, IOException, PacketException, ExternalException {
+    public @Nullable O decodeNullable(@Nonnull Entity entity, @Nullable @NonEncoding Block block) throws SQLException, IOException, PacketException, ExternalException {
         if (block != null) return decodeNonNullable(entity, block);
         else return null;
     }

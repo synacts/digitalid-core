@@ -53,7 +53,7 @@ import net.digitalid.core.synchronizer.Audit;
  * @version 1.0
  */
 @Immutable
-public class SignatureWrapper extends BlockWrapper<SignatureWrapper> {
+public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -458,7 +458,7 @@ public class SignatureWrapper extends BlockWrapper<SignatureWrapper> {
      * The factory for this class.
      */
     @Immutable
-    public static class Factory extends BlockWrapper.Factory<SignatureWrapper> {
+    public static class Factory extends BlockBasedWrapper.Factory<SignatureWrapper> {
         
         /**
          * Creates a new factory with the given type.

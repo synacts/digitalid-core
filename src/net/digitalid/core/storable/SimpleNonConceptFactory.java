@@ -19,7 +19,7 @@ import net.digitalid.core.wrappers.Block;
  * @version 1.0
  */
 @Immutable
-public abstract class SimpleDecodingFactory<O> extends NonConceptFactory<O> {
+public abstract class SimpleNonConceptFactory<O> extends NonConceptFactory<O> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Decoding –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -37,12 +37,12 @@ public abstract class SimpleDecodingFactory<O> extends NonConceptFactory<O> {
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Creates a new simple decoding factory with the given parameters.
+     * Creates a new simple non-concept factory with the given parameters.
      * 
      * @param type the semantic type that corresponds to the storable class.
      * @param columns the columns used to store objects of the storable class.
      */
-    protected SimpleDecodingFactory(@Nonnull @Loaded SemanticType type, @Nonnull @NonNullableElements Column... columns) {
+    protected SimpleNonConceptFactory(@Nonnull @Loaded SemanticType type, @Nonnull @NonNullableElements Column... columns) {
         super(type, columns);
     }
     

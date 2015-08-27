@@ -10,8 +10,10 @@ import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.collections.FreezableArray;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.wrappers.Blockable;
+import net.digitalid.core.storable.BlockBasedSimpleNonConceptFactory;
+import net.digitalid.core.storable.Storable;
 import net.digitalid.core.wrappers.Block;
+import net.digitalid.core.wrappers.BytesWrapper;
 import net.digitalid.core.wrappers.IntegerWrapper;
 import net.digitalid.core.wrappers.TupleWrapper;
 
@@ -22,7 +24,9 @@ import net.digitalid.core.wrappers.TupleWrapper;
  * @version 1.0
  */
 @Immutable
-public final class Group implements Blockable { // TODO: Make it abstract and implement the known or unknown group.
+public abstract class Group implements Storable<Group> {
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the semantic type {@code modulus.group@core.digitalid.net}.
@@ -39,6 +43,7 @@ public final class Group implements Blockable { // TODO: Make it abstract and im
      */
     public static final @Nonnull SemanticType TYPE = SemanticType.map("group@core.digitalid.net").load(TupleWrapper.TYPE, MODULUS, ORDER);
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Modulus –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the modulus of this group.
@@ -48,11 +53,18 @@ public final class Group implements Blockable { // TODO: Make it abstract and im
     private final @Nonnull BigInteger modulus;
     
     /**
-     * Stores the order of this group or null if it is unknown.
+     * Returns the modulus of this group.
      * 
-     * @invariant order == null || order.compareTo(BigInteger.ZERO) == 1 && order.compareTo(modulus) == -1 : "The order is either unknown (indicated with null) or positive and smaller than the modulus.";
+     * @return the modulus of this group.
+     * 
+     * @ensure modulus.compareTo(BigInteger.ZERO) == 1 : "The modulus is always positive.";
      */
-    private final @Nullable BigInteger order;
+    @Pure
+    public @Nonnull BigInteger getModulus() {
+        return modulus;
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Creates a new multiplicative group with the given modulus and the given order (if not null).
@@ -71,52 +83,7 @@ public final class Group implements Blockable { // TODO: Make it abstract and im
         this.order = order;
     }
     
-    /**
-     * Creates a new multiplicative group with the modulus and the order encoded in the given block.
-     * 
-     * @param block the block containing the group.
-     * 
-     * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
-     */
-    Group(@Nonnull Block block) throws InvalidEncodingException {
-        assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
-        
-        final @Nonnull TupleWrapper tuple = new TupleWrapper(block);
-        
-        this.modulus = new IntegerWrapper(tuple.getNonNullableElement(0)).getValue();
-        if (modulus.compareTo(BigInteger.ZERO) != 1) throw new InvalidEncodingException("The modulus has to be positive.");
-        
-        this.order = tuple.isElementNull(1) ? null : new IntegerWrapper(tuple.getNonNullableElement(1)).getValue();
-        if (order != null && (order.compareTo(BigInteger.ZERO) != 1 || order.compareTo(modulus) != -1)) throw new InvalidEncodingException("The order has to be either unknown (indicated with null) or positive and smaller than the modulus.");
-    }
     
-    @Pure
-    @Override
-    public @Nonnull SemanticType getType() {
-        return TYPE;
-    }
-    
-    @Pure
-    @Override
-    public @Nonnull Block toBlock() {
-        final @Nonnull FreezableArray<Block> elements = new FreezableArray<>(2);
-        elements.set(0, new IntegerWrapper(MODULUS, modulus).toBlock());
-        elements.set(1, order == null ? null : new IntegerWrapper(ORDER, order).toBlock());
-        return new TupleWrapper(TYPE, elements.freeze()).toBlock();
-    }
-    
-    
-    /**
-     * Returns the modulus of this group.
-     * 
-     * @return the modulus of this group.
-     * 
-     * @ensure modulus.compareTo(BigInteger.ZERO) == 1 : "The modulus is always positive.";
-     */
-    @Pure
-    public @Nonnull BigInteger getModulus() {
-        return modulus;
-    }
     
     /**
      * Returns whether the order of this group is known.
@@ -128,47 +95,7 @@ public final class Group implements Blockable { // TODO: Make it abstract and im
         return order != null;
     }
     
-    /**
-     * Returns whether the order of this group is unknown.
-     * 
-     * @return whether the order of this group is unknown.
-     */
-    @Pure
-    public boolean hasNoOrder() {
-        return order == null;
-    }
-    
-    /**
-     * Returns the order of this group.
-     * 
-     * @return the order of this group.
-     * 
-     * @require hasOrder() : "The order of this group is known.";
-     * 
-     * @ensure order.compareTo(BigInteger.ZERO) == 1 && order.compareTo(modulus) == -1 : "The order is positive and smaller than the modulus.";
-     */
-    @Pure
-    public @Nonnull BigInteger getOrder() {
-        assert order != null : "The order of this group is known.";
-        
-        return order;
-    }
-    
-    /**
-     * Returns a new group with the same modulus but without the order.
-     * 
-     * @return a new group with the same modulus but without the order.
-     * 
-     * @require hasOrder() : "The order of this group is known.";
-     * 
-     * @ensure return.hasNoOrder() : "The order of the returned group is unknown.";
-     */
-    @Pure
-    public @Nonnull Group dropOrder() {
-        assert hasOrder() : "The order of this group is known.";
-        
-        return new Group(modulus, null);
-    }
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Element –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns a new element with the given value in this group.
@@ -214,6 +141,8 @@ public final class Group implements Blockable { // TODO: Make it abstract and im
         return new Element(this, value);
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Exponent –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
     /**
      * Returns a random exponent in this group.
      * 
@@ -243,6 +172,7 @@ public final class Group implements Blockable { // TODO: Make it abstract and im
         }
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
@@ -263,6 +193,58 @@ public final class Group implements Blockable { // TODO: Make it abstract and im
     @Override
     public @Nonnull String toString() {
         return "Group [Modulus: " + modulus.bitLength() + " bits, Order: " + (order == null ? "unknown" : order.bitLength() + "bits") + "]";
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * The factory for this class.
+     */
+    @Immutable
+    public static class Factory extends BlockBasedSimpleNonConceptFactory<Group> {
+        
+        /**
+         * Creates a new factory.
+         */
+        private Factory() {
+            super(TYPE);
+        }
+        
+        @Pure
+        @Override
+        public @Nonnull Block encodeNonNullable(@Nonnull Group group) {
+            final @Nonnull FreezableArray<Block> elements =  FreezableArray.get(2);
+            elements.set(0, IntegerWrapper.encodeNonNullable(MODULUS, group.modulus));
+            elements.set(1, order == null ? null : new IntegerWrapper(ORDER, order).toBlock());
+            return TupleWrapper.encode(TYPE, elements.freeze());
+        }
+        
+        @Pure
+        @Override
+        public @Nonnull Group decodeNonNullable(@Nonnull Block block) throws InvalidEncodingException {
+            assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
+            
+            final @Nonnull TupleWrapper tuple = new TupleWrapper(block);
+            
+            this.modulus = new IntegerWrapper(tuple.getNonNullableElement(0)).getValue();
+            if (modulus.compareTo(BigInteger.ZERO) != 1) throw new InvalidEncodingException("The modulus has to be positive.");
+            
+            this.order = tuple.isElementNull(1) ? null : new IntegerWrapper(tuple.getNonNullableElement(1)).getValue();
+            if (order != null && (order.compareTo(BigInteger.ZERO) != 1 || order.compareTo(modulus) != -1)) throw new InvalidEncodingException("The order has to be either unknown (indicated with null) or positive and smaller than the modulus.");
+            return new InitializationVector(BytesWrapper.decodeNonNullable(block));
+        }
+        
+    }
+    
+    /**
+     * Stores the factory of this class.
+     */
+    public static final Factory FACTORY = new Factory();
+    
+    @Pure
+    @Override
+    public @Nonnull Factory getFactory() {
+        return FACTORY;
     }
     
 }
