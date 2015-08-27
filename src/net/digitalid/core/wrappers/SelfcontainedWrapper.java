@@ -312,7 +312,7 @@ public final class SelfcontainedWrapper extends BlockWrapper<SelfcontainedWrappe
         
         while (length > 0) {
             final int read = inputStream.read(bytes, offset, length);
-            if (read == -1) throw new UnexpectedEndOfFileException();
+            if (read == -1) throw UnexpectedEndOfFileException.get();
             offset += read;
             length -= read;
         }
@@ -328,7 +328,7 @@ public final class SelfcontainedWrapper extends BlockWrapper<SelfcontainedWrappe
      * @throws UnsupportedBlockLengthException if the value is larger than the maximum integer.
      */
     private static int longToInt(long value) throws UnsupportedBlockLengthException {
-        if (value > (long) Integer.MAX_VALUE) throw new UnsupportedBlockLengthException();
+        if (value > (long) Integer.MAX_VALUE) throw UnsupportedBlockLengthException.get();
         return (int) value;
     }
     

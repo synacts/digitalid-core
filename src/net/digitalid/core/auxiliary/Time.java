@@ -152,7 +152,7 @@ public final class Time implements Storable<Time>, Comparable<Time> {
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        return new Int64Wrapper(TYPE, value).toBlock();
+        return Int64Wrapper.encode(TYPE, value);
     }
     
     

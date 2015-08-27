@@ -9,8 +9,8 @@ import net.digitalid.core.collections.FreezableArray;
 import net.digitalid.core.collections.ReadOnlyArray;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.wrappers.Blockable;
 import net.digitalid.core.wrappers.Block;
+import net.digitalid.core.wrappers.Blockable;
 import net.digitalid.core.wrappers.IntegerWrapper;
 import net.digitalid.core.wrappers.TupleWrapper;
 
@@ -157,10 +157,10 @@ public final class PrivateKey implements Blockable {
     public PrivateKey(@Nonnull Block block) throws InvalidEncodingException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
-        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getNonNullableElements(5);
+        final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(block).getNonNullableElements(5);
         this.compositeGroup = new Group(elements.getNonNullable(0));
-        this.p = new IntegerWrapper(elements.getNonNullable(1)).getValue();
-        this.q = new IntegerWrapper(elements.getNonNullable(2)).getValue();
+        this.p = IntegerWrapper.decodeNonNullable(elements.getNonNullable(1));
+        this.q = IntegerWrapper.decodeNonNullable(elements.getNonNullable(2));
         this.d = new Exponent(elements.getNonNullable(3));
         this.squareGroup = new Group(elements.getNonNullable(4));
         this.x = new Exponent(elements.getNonNullable(5));
@@ -189,14 +189,14 @@ public final class PrivateKey implements Blockable {
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        final @Nonnull FreezableArray<Block> elements = new FreezableArray<>(6);
+        final @Nonnull FreezableArray<Block> elements = FreezableArray.get(6);
         elements.set(0, compositeGroup.toBlock().setType(COMPOSITE_GROUP));
         elements.set(1, new IntegerWrapper(P, p).toBlock());
         elements.set(2, new IntegerWrapper(Q, q).toBlock());
         elements.set(3, d.toBlock().setType(D));
         elements.set(4, squareGroup.toBlock().setType(SQUARE_GROUP));
         elements.set(5, x.toBlock().setType(X));
-        return new TupleWrapper(TYPE, elements.freeze()).toBlock();
+        return TupleWrapper.encode(TYPE, elements.freeze());
     }
     
     

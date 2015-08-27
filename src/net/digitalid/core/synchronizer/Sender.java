@@ -22,9 +22,7 @@ import net.digitalid.core.exceptions.packet.PacketError;
 import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.handler.InternalAction;
 import net.digitalid.core.handler.Method;
-import net.digitalid.core.io.Level;
 import net.digitalid.core.io.Log;
-import net.digitalid.core.io.Logger;
 import net.digitalid.core.packet.ClientRequest;
 import net.digitalid.core.packet.Response;
 import net.digitalid.core.service.Service;
@@ -174,7 +172,14 @@ public final class Sender extends Thread {
             }
         } catch (@Nonnull InterruptedException | SQLException | PacketException | ExternalException exception) {
             Log.warning("Could not commit the transaction or reload the state.", exception);
-            Database.rollback();
+            try {
+                Database.lock();
+                Database.rollback();
+            } catch (@Nonnull SQLException e) {
+                Log.warning("Could not roll back.", e);
+            } finally {
+                Database.unlock();
+            }
         } finally {
             try {
                 Database.lock();

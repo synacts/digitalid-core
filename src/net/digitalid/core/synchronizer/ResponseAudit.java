@@ -29,9 +29,7 @@ import net.digitalid.core.handler.Action;
 import net.digitalid.core.handler.InternalAction;
 import net.digitalid.core.handler.Method;
 import net.digitalid.core.identifier.HostIdentifier;
-import net.digitalid.core.io.Level;
 import net.digitalid.core.io.Log;
-import net.digitalid.core.io.Logger;
 import net.digitalid.core.module.BothModule;
 import net.digitalid.core.packet.Packet;
 import net.digitalid.core.packet.Response;
@@ -129,12 +127,12 @@ public final class ResponseAudit extends Audit {
     /**
      * Stores an empty set of modules.
      */
-    static final @Nonnull ReadOnlySet<BothModule> emptyModuleSet = new FreezableHashSet<BothModule>().freeze();
+    static final @Nonnull ReadOnlySet<BothModule> emptyModuleSet = FreezableHashSet.<BothModule>get().freeze();
     
     /**
      * Stores an empty list of methods.
      */
-    static final @Nonnull ReadOnlyList<Method> emptyMethodList = new FreezableLinkedList<Method>().freeze();
+    static final @Nonnull ReadOnlyList<Method> emptyMethodList = FreezableLinkedList.<Method>get().freeze();
     
     /**
      * Executes the trail of this audit.
@@ -147,11 +145,10 @@ public final class ResponseAudit extends Audit {
      */
     @Committing
     void execute(@Nonnull Role role, @Nonnull Service service, @Nonnull HostIdentifier recipient, @Nonnull ReadOnlyList<Method> methods, @Nonnull ReadOnlySet<BothModule> ignoredModules) throws SQLException, IOException, PacketException, ExternalException {
-        final @Nonnull FreezableSet<BothModule> suspendedModules = new FreezableHashSet<>();
+        final @Nonnull FreezableSet<BothModule> suspendedModules = FreezableHashSet.get();
         for (@Nonnull Block block : trail) {
             final @Nonnull SignatureWrapper signature = SignatureWrapper.decodeWithoutVerifying(block, true, role);
-            final @Nonnull CompressionWrapper compression = new CompressionWrapper(signature.getNonNullableElement());
-            final @Nonnull Block element = new SelfcontainedWrapper(compression.getElement()).getElement();
+            final @Nonnull Block element = SelfcontainedWrapper.decodeNonNullable(CompressionWrapper.decompressNonNullable(signature.getNonNullableElement()));
             final @Nonnull Action action = Method.get(role, signature, recipient, element).toAction();
             Database.commit();
             
