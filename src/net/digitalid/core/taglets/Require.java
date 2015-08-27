@@ -1,6 +1,9 @@
 package net.digitalid.core.taglets;
 
 import java.util.Map;
+import javax.annotation.Nonnull;
+import net.digitalid.core.annotations.Pure;
+import net.digitalid.core.annotations.Stateless;
 
 /**
  * This class defines a custom block tag for constructor and method preconditions.
@@ -8,29 +11,43 @@ import java.util.Map;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
+@Stateless
 public final class Require extends Taglet {
     
-    public static void register(Map<String, Taglet> map) {
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Registration –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Registers this taglet at the given map.
+     * 
+     * @param map the map at which this taglet is registered.
+     */
+    public static void register(@Nonnull Map<String, Taglet> map) {
         Taglet.register(map, new Require());
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Overrides –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    @Pure
     @Override
     public boolean inConstructor() {
         return true;
     }
     
+    @Pure
     @Override
     public boolean inMethod() {
         return true;
     }
     
+    @Pure
     @Override
-    public String getName() {
+    public @Nonnull String getName() {
         return "require";
     }
     
+    @Pure
     @Override
-    public String getTitle() {
+    public @Nonnull String getTitle() {
         return "Requires";
     }
     
