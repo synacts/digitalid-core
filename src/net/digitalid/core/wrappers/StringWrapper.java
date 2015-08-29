@@ -204,7 +204,7 @@ public final class StringWrapper extends Wrapper<StringWrapper> {
         @Pure
         @Override
         public @Nonnull StringWrapper decodeNonNullable(@Nonnull @NonEncoding @BasedOn("string@core.digitalid.net") Block block) throws InvalidEncodingException {
-            assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
+            assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type."; // TODO: Introduce this check in all storable factories.
             
             final @Nonnull byte[] bytes = block.getBytes(1);
             return new StringWrapper(block.getType(), bytes);

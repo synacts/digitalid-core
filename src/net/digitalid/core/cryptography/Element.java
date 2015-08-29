@@ -29,7 +29,9 @@ public final class Element extends Number {
     /**
      * Stores the group of this element.
      */
-    private final @Nonnull Group group;
+    private final @Nonnull Group<?> group;
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Creates a new element in the given group with the given value.
@@ -37,7 +39,7 @@ public final class Element extends Number {
      * @param group the group of the new element.
      * @param value the value of the new element.
      */
-    Element(@Nonnull Group group, @Nonnull BigInteger value) {
+    Element(@Nonnull Group<?> group, @Nonnull BigInteger value) {
         super(value.mod(group.getModulus()));
         this.group = group;
         
@@ -52,7 +54,7 @@ public final class Element extends Number {
      * 
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
-    Element(@Nonnull Group group, @Nonnull Block block) throws InvalidEncodingException {
+    Element(@Nonnull Group<?> group, @Nonnull Block block) throws InvalidEncodingException {
         super(block);
         this.group = group;
         
@@ -72,7 +74,7 @@ public final class Element extends Number {
      * @return the group of this element.
      */
     @Pure
-    public @Nonnull Group getGroup() {
+    public @Nonnull Group<?> getGroup() {
         return group;
     }
     
@@ -84,7 +86,7 @@ public final class Element extends Number {
      * @return whether this element is in the given group.
      */
     @Pure
-    public boolean isElement(@Nonnull Group group) {
+    public boolean isElement(@Nonnull Group<?> group) {
         return getGroup().equals(group);
     }
     
