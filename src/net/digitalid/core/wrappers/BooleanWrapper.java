@@ -82,7 +82,7 @@ public final class BooleanWrapper extends Wrapper<BooleanWrapper> {
     /**
      * Stores the factory of this class.
      */
-    private static final Factory FACTORY = new Factory(SEMANTIC);
+    private static final @Nonnull Factory FACTORY = new Factory(SEMANTIC);
     
     /**
      * Encodes the given value into a new block of the given type.
@@ -155,7 +155,7 @@ public final class BooleanWrapper extends Wrapper<BooleanWrapper> {
         
         @Pure
         @Override
-        public @Nonnull BooleanWrapper decodeNonNullable(@Nonnull @NonEncoding Block block) throws InvalidEncodingException {
+        public @Nonnull BooleanWrapper decodeNonNullable(@Nonnull @NonEncoding @BasedOn("boolean@core.digitalid.net") Block block) throws InvalidEncodingException {
             if (block.getLength() != LENGTH) throw new InvalidEncodingException("The block's length is invalid.");
             
             return new BooleanWrapper(block.getType(), block.getByte(0) != 0);

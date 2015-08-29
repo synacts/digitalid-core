@@ -240,6 +240,8 @@ public abstract class Wrapper<W extends Wrapper<W>> implements Storable<W> {
         @Override
         @NonCommitting
         public final @Nonnull V decodeNonNullable(@Nonnull @NonEncoding Block block) throws SQLException, IOException, PacketException, ExternalException {
+            assert block.getType().isBasedOn(getType()) : "The block is based on the type of this factory.";
+            
             return unwrap(factory.decodeNonNullable(block));
         }
         

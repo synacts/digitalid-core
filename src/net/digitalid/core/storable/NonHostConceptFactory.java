@@ -139,7 +139,7 @@ public abstract class NonHostConceptFactory<O> {
      * 
      * @return the object that was encoded in the non-nullable block.
      * 
-     * @require block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
+     * @require block.getType().isBasedOn(getType()) : "The block is based on the type of this factory.";
      */
     @Pure
     @Locked

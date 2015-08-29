@@ -126,7 +126,7 @@ public final class BytesWrapper extends Wrapper<BytesWrapper> {
     /**
      * Stores the factory of this class.
      */
-    private static final Factory FACTORY = new Factory(SEMANTIC);
+    private static final @Nonnull Factory FACTORY = new Factory(SEMANTIC);
     
     /**
      * Encodes the given non-nullable bytes into a new block of the given type.
@@ -253,7 +253,7 @@ public final class BytesWrapper extends Wrapper<BytesWrapper> {
         
         @Pure
         @Override
-        public @Nonnull BytesWrapper decodeNonNullable(@Nonnull @NonEncoding Block block) throws InvalidEncodingException {
+        public @Nonnull BytesWrapper decodeNonNullable(@Nonnull @NonEncoding @BasedOn("bytes@core.digitalid.net") Block block) throws InvalidEncodingException {
             return new BytesWrapper(block);
         }
         

@@ -127,7 +127,7 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
     /**
      * Stores the factory of this class.
      */
-    private static final Factory FACTORY = new Factory(SEMANTIC);
+    private static final @Nonnull Factory FACTORY = new Factory(SEMANTIC);
     
     /**
      * Encodes the given element into a new non-nullable selfcontained block of the given type.
@@ -236,7 +236,7 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
         @Locked
         @Override
         @NonCommitting
-        public @Nonnull SelfcontainedWrapper decodeNonNullable(@Nonnull @NonEncoding Block block) throws SQLException, IOException, PacketException, ExternalException {
+        public @Nonnull SelfcontainedWrapper decodeNonNullable(@Nonnull @NonEncoding @BasedOn("selfcontained@core.digitalid.net") Block block) throws SQLException, IOException, PacketException, ExternalException {
             return new SelfcontainedWrapper(block);
         }
         

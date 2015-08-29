@@ -2,13 +2,15 @@ package net.digitalid.core.cryptography;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.core.annotations.BasedOn;
 import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.collections.FreezableArray;
 import net.digitalid.core.collections.ReadOnlyArray;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.wrappers.Blockable;
+import net.digitalid.core.storable.BlockBasedSimpleNonConceptFactory;
+import net.digitalid.core.storable.Storable;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.TupleWrapper;
 
@@ -21,12 +23,14 @@ import net.digitalid.core.wrappers.TupleWrapper;
  * @version 1.0
  */
 @Immutable
-public final class PublicKey implements Blockable {
+public final class PublicKey implements Storable<PublicKey> {
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the semantic type {@code composite.group.public.key.host@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType COMPOSITE_GROUP = SemanticType.map("composite.group.public.key.host@core.digitalid.net").load(Group.TYPE);
+    private static final @Nonnull SemanticType COMPOSITE_GROUP = SemanticType.map("composite.group.public.key.host@core.digitalid.net").load(GroupWithUnknownOrder.TYPE);
     
     /**
      * Stores the semantic type {@code e.public.key.host@core.digitalid.net}.
@@ -86,7 +90,7 @@ public final class PublicKey implements Blockable {
     /**
      * Stores the semantic type {@code square.group.public.key.host@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType SQUARE_GROUP = SemanticType.map("square.group.public.key.host@core.digitalid.net").load(Group.TYPE);
+    private static final @Nonnull SemanticType SQUARE_GROUP = SemanticType.map("square.group.public.key.host@core.digitalid.net").load(GroupWithUnknownOrder.TYPE);
     
     /**
      * Stores the semantic type {@code g.public.key.host@core.digitalid.net}.
@@ -150,13 +154,24 @@ public final class PublicKey implements Blockable {
      */
     public static final @Nonnull SemanticType VERIFIABLE_ENCRYPTION = SemanticType.map("verifiable.encryption@core.digitalid.net").load(TupleWrapper.TYPE, W1, W2);
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Composite Group –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the composite group for encryption and signing.
-     * 
-     * @invariant compositeGroup.hasNoOrder() : "The order of the composite group is unknown.";
      */
-    private final @Nonnull Group compositeGroup;
+    private final @Nonnull GroupWithUnknownOrder compositeGroup;
+    
+    /**
+     * Returns the composite group for encryption and signing.
+     * 
+     * @return the composite group for encryption and signing.
+     */
+    @Pure
+    public @Nonnull GroupWithUnknownOrder getCompositeGroup() {
+        return compositeGroup;
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encryption Exponent –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the encryption and verification exponent.
@@ -164,9 +179,33 @@ public final class PublicKey implements Blockable {
     private final @Nonnull Exponent e;
     
     /**
+     * Returns the encryption and verification exponent.
+     * 
+     * @return the encryption and verification exponent.
+     */
+    @Pure
+    public @Nonnull Exponent getE() {
+        return e;
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Base for Blinding –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
      * Stores the base for blinding.
      */
     private final @Nonnull Element ab;
+    
+    /**
+     * Returns the base for blinding.
+     * 
+     * @return the base for blinding.
+     */
+    @Pure
+    public @Nonnull Element getAb() {
+        return ab;
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Base for Secret –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the base of the client's secret.
@@ -174,9 +213,33 @@ public final class PublicKey implements Blockable {
     private final @Nonnull Element au;
     
     /**
+     * Returns the base of the client's secret.
+     * 
+     * @return the base of the client's secret.
+     */
+    @Pure
+    public @Nonnull Element getAu() {
+        return au;
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Base for Serial –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
      * Stores the base of the serial number.
      */
     private final @Nonnull Element ai;
+    
+    /**
+     * Returns the base of the serial number.
+     * 
+     * @return the base of the serial number.
+     */
+    @Pure
+    public @Nonnull Element getAi() {
+        return ai;
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Base for Identifier –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the base of the hashed identifier.
@@ -184,9 +247,33 @@ public final class PublicKey implements Blockable {
     private final @Nonnull Element av;
     
     /**
+     * Returns the base of the hashed identifier.
+     * 
+     * @return the base of the hashed identifier.
+     */
+    @Pure
+    public @Nonnull Element getAv() {
+        return av;
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Base for Arguments –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
      * Stores the base of the exposed arguments.
      */
     private final @Nonnull Element ao;
+    
+    /**
+     * Returns the base of the exposed arguments.
+     * 
+     * @return the base of the exposed arguments.
+     */
+    @Pure
+    public @Nonnull Element getAo() {
+        return ao;
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Subgroup Proof –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the hash of the temporary commitments in the subgroup proof.
@@ -214,11 +301,39 @@ public final class PublicKey implements Blockable {
     private final @Nonnull Exponent so;
     
     /**
-     * Stores the square group for verifiable encryption.
+     * Returns whether the proof that au, ai, av and ao are in the subgroup of ab is correct.
      * 
-     * @invariant squareGroup.hasNoOrder() : "The order of the square group is unknown.";
+     * @return {@code true} if the proof that au, ai, av and ao are in the subgroup of ab is correct, {@code false} otherwise.
      */
-    private final @Nonnull Group squareGroup;
+    @Pure
+    public boolean verifySubgroupProof() {
+        final @Nonnull Element tu = ab.pow(su).multiply(au.pow(t));
+        final @Nonnull Element ti = ab.pow(si).multiply(ai.pow(t));
+        final @Nonnull Element tv = ab.pow(sv).multiply(av.pow(t));
+        final @Nonnull Element to = ab.pow(so).multiply(ao.pow(t));
+        
+        final @Nonnull FreezableArray<Block> elements = FreezableArray.getNonNullable(Block.fromNonNullable(tu, PublicKey.TU), Block.fromNonNullable(ti, PublicKey.TI), Block.fromNonNullable(tv, PublicKey.TV), Block.fromNonNullable(to, PublicKey.TO));
+        return t.getValue().equals(TupleWrapper.encode(TUPLE, elements.freeze()).getHash());
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Square Group –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Stores the square group for verifiable encryption.
+     */
+    private final @Nonnull GroupWithUnknownOrder squareGroup;
+    
+    /**
+     * Returns the square group for verifiable encryption.
+     * 
+     * @return the square group for verifiable encryption.
+     */
+    @Pure
+    public @Nonnull GroupWithUnknownOrder getSquareGroup() {
+        return squareGroup;
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Group Generator –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the generator of the square group.
@@ -226,14 +341,50 @@ public final class PublicKey implements Blockable {
     private final @Nonnull Element g;
     
     /**
+     * Returns the generator of the square group.
+     * 
+     * @return the generator of the square group.
+     */
+    @Pure
+    public @Nonnull Element getG() {
+        return g;
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encryption Element –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
      * Stores the encryption element of the square group.
      */
     private final @Nonnull Element y;
 
     /**
+     * Returns the encryption element of the square group.
+     * 
+     * @return the encryption element of the square group.
+     */
+    @Pure
+    public @Nonnull Element getY() {
+        return y;
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encryption Base –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
      * Stores the encryption base of the square group.
      */
     private final @Nonnull Element zPlus1;
+    
+    /**
+     * Returns the encryption base of the square group.
+     * 
+     * @return the encryption base of the square group.
+     */
+    @Pure
+    public @Nonnull Element getZPlus1() {
+        return zPlus1;
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
 
     /**
      * Creates a new public key with the given groups, bases and exponents.
@@ -258,9 +409,6 @@ public final class PublicKey implements Blockable {
      * @param y the encryption element of the square group.
      * @param zPlus1 the encryption base of the square group.
      * 
-     * @require compositeGroup.hasNoOrder() : "The order of the composite group is unknown.";
-     * @require squareGroup.hasNoOrder() : "The order of the square group is unknown.";
-     *          
      * @require ab.isElement(compositeGroup) : "ab is an element in the composite group.";
      * @require au.isElement(compositeGroup) : "au is an element in the composite group.";
      * @require ai.isElement(compositeGroup) : "ai is an element in the composite group.";
@@ -273,10 +421,7 @@ public final class PublicKey implements Blockable {
      *          
      * @require verifySubgroupProof() : "Assert that au, ai, av and ao are in the subgroup of ab.";
      */
-    PublicKey(@Nonnull Group compositeGroup, @Nonnull Exponent e, @Nonnull Element ab, @Nonnull Element au, @Nonnull Element ai, @Nonnull Element av, @Nonnull Element ao, @Nonnull Exponent t, @Nonnull Exponent su, @Nonnull Exponent si, @Nonnull Exponent sv, @Nonnull Exponent so, @Nonnull Group squareGroup, @Nonnull Element g, @Nonnull Element y, @Nonnull Element zPlus1) {
-        assert compositeGroup.hasNoOrder() : "The order of the composite group is unknown.";
-        assert squareGroup.hasNoOrder() : "The order of the square group is unknown.";
-        
+    private PublicKey(@Nonnull GroupWithUnknownOrder compositeGroup, @Nonnull Exponent e, @Nonnull Element ab, @Nonnull Element au, @Nonnull Element ai, @Nonnull Element av, @Nonnull Element ao, @Nonnull Exponent t, @Nonnull Exponent su, @Nonnull Exponent si, @Nonnull Exponent sv, @Nonnull Exponent so, @Nonnull GroupWithUnknownOrder squareGroup, @Nonnull Element g, @Nonnull Element y, @Nonnull Element zPlus1) {
         assert ab.isElement(compositeGroup) : "ab is an element in the composite group.";
         assert au.isElement(compositeGroup) : "au is an element in the composite group.";
         assert ai.isElement(compositeGroup) : "ai is an element in the composite group.";
@@ -308,248 +453,46 @@ public final class PublicKey implements Blockable {
     }
     
     /**
-     * Creates a new public key with the groups, bases and exponents that are encoded in the given block.
+     * Creates a new public key with the given groups, bases and exponents.
      * 
-     * @param block the block containing the public key.
+     * @param compositeGroup the composite group for encryption and signing.
+     * @param e the encryption and verification exponent.
      * 
-     * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
-     */
-    public PublicKey(@Nonnull Block block) throws InvalidEncodingException {
-        assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
-        
-        final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getNonNullableElements(16);
-        this.compositeGroup = new Group(elements.getNonNullable(0));
-        this.e = new Exponent(elements.getNonNullable(1));
-        this.ab = compositeGroup.getElement(elements.getNonNullable(2));
-        this.au = compositeGroup.getElement(elements.getNonNullable(3));
-        this.ai = compositeGroup.getElement(elements.getNonNullable(4));
-        this.av = compositeGroup.getElement(elements.getNonNullable(5));
-        this.ao = compositeGroup.getElement(elements.getNonNullable(6));
-        this.t = new Exponent(elements.getNonNullable(7));
-        this.su = new Exponent(elements.getNonNullable(8));
-        this.si = new Exponent(elements.getNonNullable(9));
-        this.sv = new Exponent(elements.getNonNullable(10));
-        this.so = new Exponent(elements.getNonNullable(11));
-        this.squareGroup = new Group(elements.getNonNullable(12));
-        this.g = squareGroup.getElement(elements.getNonNullable(13));
-        this.y = squareGroup.getElement(elements.getNonNullable(14));
-        this.zPlus1 = squareGroup.getElement(elements.getNonNullable(15));
-        
-        if (compositeGroup.hasOrder()) throw new InvalidEncodingException("The order of the composite group may not be known.");
-        if (squareGroup.hasOrder()) throw new InvalidEncodingException("The order of the square group may not be known.");
-        
-        if (!verifySubgroupProof()) throw new InvalidEncodingException("The proof that au, ai, av and ao are in the subgroup of ab is invalid.");
-    }
-    
-    @Pure
-    @Override
-    public @Nonnull SemanticType getType() {
-        return TYPE;
-    }
-    
-    @Pure
-    @Override
-    public @Nonnull Block toBlock() {
-        final @Nonnull FreezableArray<Block> elements = new FreezableArray<>(16);
-        elements.set(0, compositeGroup.toBlock().setType(COMPOSITE_GROUP));
-        elements.set(1, e.toBlock().setType(E));
-        elements.set(2, ab.toBlock().setType(AB));
-        elements.set(3, au.toBlock().setType(AU));
-        elements.set(4, ai.toBlock().setType(AI));
-        elements.set(5, av.toBlock().setType(AV));
-        elements.set(6, ao.toBlock().setType(AO));
-        elements.set(7, t.toBlock().setType(T));
-        elements.set(8, su.toBlock().setType(SU));
-        elements.set(9, si.toBlock().setType(SI));
-        elements.set(10, sv.toBlock().setType(SV));
-        elements.set(11, so.toBlock().setType(SO));
-        elements.set(12, squareGroup.toBlock().setType(SQUARE_GROUP));
-        elements.set(13, g.toBlock().setType(G));
-        elements.set(14, y.toBlock().setType(Y));
-        elements.set(15, zPlus1.toBlock().setType(Z));
-        return new TupleWrapper(TYPE, elements.freeze()).toBlock();
-    }
-    
-    /**
-     * Returns whether the proof that au, ai, av and ao are in the subgroup of ab is correct.
+     * @param ab the base for blinding.
+     * @param au the base of the client's secret.
+     * @param ai the base of the serial number.
+     * @param av the base of the hashed identifier.
+     * @param ao the base of the exposed arguments.
      * 
-     * @return {@code true} if the proof that au, ai, av and ao are in the subgroup of ab is correct, {@code false} otherwise.
+     * @param t the hash of the temporary commitments in the subgroup proof.
+     * @param su the solution for the proof that au is in the subgroup of ab.
+     * @param si the solution for the proof that ai is in the subgroup of ab.
+     * @param sv the solution for the proof that av is in the subgroup of ab.
+     * @param so the solution for the proof that ao is in the subgroup of ab.
+     * 
+     * @param squareGroup the square group for verifiable encryption.
+     * @param g the generator of the square group.
+     * @param y the encryption element of the square group.
+     * @param zPlus1 the encryption base of the square group.
+     * 
+     * @require ab.isElement(compositeGroup) : "ab is an element in the composite group.";
+     * @require au.isElement(compositeGroup) : "au is an element in the composite group.";
+     * @require ai.isElement(compositeGroup) : "ai is an element in the composite group.";
+     * @require av.isElement(compositeGroup) : "av is an element in the composite group.";
+     * @require ao.isElement(compositeGroup) : "ao is an element in the composite group.";
+     *          
+     * @require g.isElement(squareGroup) : "g is an element in the square group.";
+     * @require y.isElement(squareGroup) : "y is an element in the square group.";
+     * @require zPlus1.isElement(squareGroup) : "zPlus1 is an element in the square group.";
+     *          
+     * @require verifySubgroupProof() : "Assert that au, ai, av and ao are in the subgroup of ab.";
      */
     @Pure
-    public boolean verifySubgroupProof() {
-        final @Nonnull Element tu = ab.pow(su).multiply(au.pow(t));
-        final @Nonnull Element ti = ab.pow(si).multiply(ai.pow(t));
-        final @Nonnull Element tv = ab.pow(sv).multiply(av.pow(t));
-        final @Nonnull Element to = ab.pow(so).multiply(ao.pow(t));
-        
-        final @Nonnull FreezableArray<Block> elements = new FreezableArray<>(tu.toBlock().setType(TU), ti.toBlock().setType(TI), tv.toBlock().setType(TV), to.toBlock().setType(TO));
-        return t.getValue().equals(new TupleWrapper(TUPLE, elements.freeze()).toBlock().getHash());
+    public static @Nonnull PublicKey get(@Nonnull GroupWithUnknownOrder compositeGroup, @Nonnull Exponent e, @Nonnull Element ab, @Nonnull Element au, @Nonnull Element ai, @Nonnull Element av, @Nonnull Element ao, @Nonnull Exponent t, @Nonnull Exponent su, @Nonnull Exponent si, @Nonnull Exponent sv, @Nonnull Exponent so, @Nonnull GroupWithUnknownOrder squareGroup, @Nonnull Element g, @Nonnull Element y, @Nonnull Element zPlus1) {
+        return new PublicKey(compositeGroup, e, ab, au, ai, av, ao, t, su, si, sv, so, squareGroup, g, y, zPlus1);
     }
     
-    
-    /**
-     * Returns the composite group for encryption and signing.
-     * 
-     * @return the composite group for encryption and signing.
-     * 
-     * @return return.hasNoOrder() : "The order of the composite group is unknown.";
-     */
-    @Pure
-    public @Nonnull Group getCompositeGroup() {
-        return compositeGroup;
-    }
-    
-    /**
-     * Returns the encryption and verification exponent.
-     * 
-     * @return the encryption and verification exponent.
-     */
-    @Pure
-    public @Nonnull Exponent getE() {
-        return e;
-    }
-    
-    /**
-     * Returns the base for blinding.
-     * 
-     * @return the base for blinding.
-     */
-    @Pure
-    public @Nonnull Element getAb() {
-        return ab;
-    }
-    
-    /**
-     * Returns the base of the client's secret.
-     * 
-     * @return the base of the client's secret.
-     */
-    @Pure
-    public @Nonnull Element getAu() {
-        return au;
-    }
-    
-    /**
-     * Returns the base of the serial number.
-     * 
-     * @return the base of the serial number.
-     */
-    @Pure
-    public @Nonnull Element getAi() {
-        return ai;
-    }
-    
-    /**
-     * Returns the base of the hashed identifier.
-     * 
-     * @return the base of the hashed identifier.
-     */
-    @Pure
-    public @Nonnull Element getAv() {
-        return av;
-    }
-    
-    /**
-     * Returns the base of the exposed arguments.
-     * 
-     * @return the base of the exposed arguments.
-     */
-    @Pure
-    public @Nonnull Element getAo() {
-        return ao;
-    }
-    
-    /**
-     * Returns the hash of the temporary commitments in the subgroup proof.
-     * 
-     * @return the hash of the temporary commitments in the subgroup proof.
-     */
-    @Pure
-    public @Nonnull Exponent getT() {
-        return t;
-    }
-    
-    /**
-     * Returns the solution for the proof that au is in the subgroup of ab.
-     * 
-     * @return the solution for the proof that au is in the subgroup of ab.
-     */
-    @Pure
-    public @Nonnull Exponent getSu() {
-        return su;
-    }
-    
-    /**
-     * Returns the solution for the proof that ai is in the subgroup of ab.
-     * 
-     * @return the solution for the proof that ai is in the subgroup of ab.
-     */
-    @Pure
-    public @Nonnull Exponent getSi() {
-        return si;
-    }
-    
-    /**
-     * Returns the solution for the proof that av is in the subgroup of ab.
-     * 
-     * @return the solution for the proof that av is in the subgroup of ab.
-     */
-    @Pure
-    public @Nonnull Exponent getSv() {
-        return sv;
-    }
-    
-    /**
-     * Returns the solution for the proof that ao is in the subgroup of ab.
-     * 
-     * @return the solution for the proof that ao is in the subgroup of ab.
-     */
-    @Pure
-    public @Nonnull Exponent getSo() {
-        return so;
-    }
-    
-    /**
-     * Returns the square group for verifiable encryption.
-     * 
-     * @return the square group for verifiable encryption.
-     * 
-     * @ensure return.hasNoOrder() : "The order of the square group is unknown.";
-     */
-    @Pure
-    public @Nonnull Group getSquareGroup() {
-        return squareGroup;
-    }
-    
-    /**
-     * Returns the generator of the square group.
-     * 
-     * @return the generator of the square group.
-     */
-    @Pure
-    public @Nonnull Element getG() {
-        return g;
-    }
-    
-    /**
-     * Returns the encryption element of the square group.
-     * 
-     * @return the encryption element of the square group.
-     */
-    @Pure
-    public @Nonnull Element getY() {
-        return y;
-    }
-    
-    /**
-     * Returns the encryption base of the square group.
-     * 
-     * @return the encryption base of the square group.
-     */
-    @Pure
-    public @Nonnull Element getZPlus1() {
-        return zPlus1;
-    }
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Verifiable Encryption –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns the verifiable encryption of the given value m with the random value r.
@@ -558,17 +501,16 @@ public final class PublicKey implements Blockable {
      * @param r the random value to blind the message.
      * 
      * @return the verifiable encryption of the given value m with the random value r.
-     * 
-     * @ensure return.getType().isBasedOn(VERIFIABLE_ENCRYPTION) : "The returned block is of the verifiable encryption type.";
      */
     @Pure
-    public @Nonnull Block getVerifiableEncryption(@Nonnull Exponent m, @Nonnull Exponent r) {
-        final @Nonnull FreezableArray<Block> elements = new FreezableArray<>(2);
-        elements.set(0, y.pow(r).multiply(zPlus1.pow(m)).toBlock().setType(W1));
-        elements.set(1, g.pow(r).toBlock().setType(W2));
-        return new TupleWrapper(VERIFIABLE_ENCRYPTION, elements.freeze()).toBlock();
+    public @Nonnull @BasedOn("verifiable.encryption@core.digitalid.net") Block getVerifiableEncryption(@Nonnull Exponent m, @Nonnull Exponent r) {
+        final @Nonnull FreezableArray<Block> elements = FreezableArray.get(2);
+        elements.set(0, Block.fromNonNullable(y.pow(r).multiply(zPlus1.pow(m)), W1));
+        elements.set(1, Block.fromNonNullable(g.pow(r), W2));
+        return TupleWrapper.encode(VERIFIABLE_ENCRYPTION, elements.freeze());
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
@@ -621,6 +563,90 @@ public final class PublicKey implements Blockable {
     @Override
     public @Nonnull String toString() {
         return "Public Key [n = " + compositeGroup.getModulus() + ", e = " + e + ", z^2 = " + squareGroup.getModulus() + ", g = " + g + ", y = " + y + "]";
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * The factory for this class.
+     */
+    @Immutable
+    public static class Factory extends BlockBasedSimpleNonConceptFactory<PublicKey> {
+        
+        /**
+         * Creates a new factory.
+         */
+        private Factory() {
+            super(TYPE);
+        }
+        
+        @Pure
+        @Override
+        public @Nonnull Block encodeNonNullable(@Nonnull PublicKey publicKey) {
+            final @Nonnull FreezableArray<Block> elements = FreezableArray.get(16);
+            elements.set(0, Block.fromNonNullable(publicKey.compositeGroup, COMPOSITE_GROUP));
+            elements.set(1, Block.fromNonNullable(publicKey.e, E));
+            elements.set(2, Block.fromNonNullable(publicKey.ab, AB));
+            elements.set(3, Block.fromNonNullable(publicKey.au, AU));
+            elements.set(4, Block.fromNonNullable(publicKey.ai, AI));
+            elements.set(5, Block.fromNonNullable(publicKey.av, AV));
+            elements.set(6, Block.fromNonNullable(publicKey.ao, AO));
+            elements.set(7, Block.fromNonNullable(publicKey.t, T));
+            elements.set(8, Block.fromNonNullable(publicKey.su, SU));
+            elements.set(9, Block.fromNonNullable(publicKey.si, SI));
+            elements.set(10, Block.fromNonNullable(publicKey.sv, SV));
+            elements.set(11, Block.fromNonNullable(publicKey.so, SO));
+            elements.set(12, Block.fromNonNullable(publicKey.squareGroup, SQUARE_GROUP));
+            elements.set(13, Block.fromNonNullable(publicKey.g, G));
+            elements.set(14, Block.fromNonNullable(publicKey.y, Y));
+            elements.set(15, Block.fromNonNullable(publicKey.zPlus1, Z));
+            return TupleWrapper.encode(TYPE, elements.freeze());
+        }
+        
+        @Pure
+        @Override
+        public @Nonnull PublicKey decodeNonNullable(@Nonnull @BasedOn("public.key.host@core.digitalid.net") Block block) throws InvalidEncodingException {
+            assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
+            
+            final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(block).getNonNullableElements(16);
+            final @Nonnull GroupWithUnknownOrder compositeGroup = GroupWithUnknownOrder.FACTORY.decodeNonNullable(elements.getNonNullable(0));
+            final @Nonnull Exponent e = Exponent.get(elements.getNonNullable(1));
+            final @Nonnull Element ab = compositeGroup.getElement(elements.getNonNullable(2));
+            final @Nonnull Element au = compositeGroup.getElement(elements.getNonNullable(3));
+            final @Nonnull Element ai = compositeGroup.getElement(elements.getNonNullable(4));
+            final @Nonnull Element av = compositeGroup.getElement(elements.getNonNullable(5));
+            final @Nonnull Element ao = compositeGroup.getElement(elements.getNonNullable(6));
+            final @Nonnull Exponent t = Exponent.get(elements.getNonNullable(7));
+            final @Nonnull Exponent su = Exponent.get(elements.getNonNullable(8));
+            final @Nonnull Exponent si = Exponent.get(elements.getNonNullable(9));
+            final @Nonnull Exponent sv = Exponent.get(elements.getNonNullable(10));
+            final @Nonnull Exponent so = Exponent.get(elements.getNonNullable(11));
+            final @Nonnull GroupWithUnknownOrder squareGroup = GroupWithUnknownOrder.FACTORY.decodeNonNullable(elements.getNonNullable(12));
+            final @Nonnull Element g = squareGroup.getElement(elements.getNonNullable(13));
+            final @Nonnull Element y = squareGroup.getElement(elements.getNonNullable(14));
+            final @Nonnull Element zPlus1 = squareGroup.getElement(elements.getNonNullable(15));
+            
+            final @Nonnull Element tu = ab.pow(su).multiply(au.pow(t));
+            final @Nonnull Element ti = ab.pow(si).multiply(ai.pow(t));
+            final @Nonnull Element tv = ab.pow(sv).multiply(av.pow(t));
+            final @Nonnull Element to = ab.pow(so).multiply(ao.pow(t));
+            
+            if (!t.getValue().equals(TupleWrapper.encode(TUPLE, Block.fromNonNullable(tu, PublicKey.TU), Block.fromNonNullable(ti, PublicKey.TI), Block.fromNonNullable(tv, PublicKey.TV), Block.fromNonNullable(to, PublicKey.TO)).getHash())) throw new InvalidEncodingException("The proof that au, ai, av and ao are in the subgroup of ab is invalid.");
+            
+            return new PublicKey(compositeGroup, e, ab, au, ai, av, ao, t, su, si, sv, so, squareGroup, g, y, zPlus1);
+        }
+        
+    }
+    
+    /**
+     * Stores the factory of this class.
+     */
+    public static final @Nonnull Factory FACTORY = new Factory();
+    
+    @Pure
+    @Override
+    public @Nonnull Factory getFactory() {
+        return FACTORY;
     }
     
 }

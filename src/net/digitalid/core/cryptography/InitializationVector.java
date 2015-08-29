@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.crypto.spec.IvParameterSpec;
+import net.digitalid.core.annotations.BasedOn;
 import net.digitalid.core.annotations.Capturable;
 import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
@@ -118,7 +119,9 @@ public final class InitializationVector extends IvParameterSpec implements Stora
         
         @Pure
         @Override
-        public @Nonnull InitializationVector decodeNonNullable(@Nonnull Block block) throws InvalidEncodingException {
+        public @Nonnull InitializationVector decodeNonNullable(@Nonnull @BasedOn("initialization.vector@core.digitalid.net") Block block) throws InvalidEncodingException {
+            assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
+            
             if (block.getLength() != 17) throw new InvalidEncodingException("An initialization vector has to be 16 bytes long.");
             return new InitializationVector(BytesWrapper.decodeNonNullable(block));
         }
@@ -148,7 +151,7 @@ public final class InitializationVector extends IvParameterSpec implements Stora
     /**
      * Stores the factory of this class.
      */
-    public static final Factory FACTORY = new Factory();
+    public static final @Nonnull Factory FACTORY = new Factory();
     
     @Pure
     @Override

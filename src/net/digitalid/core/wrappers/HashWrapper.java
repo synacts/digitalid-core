@@ -91,7 +91,7 @@ public final class HashWrapper extends Wrapper<HashWrapper> {
     /**
      * Stores the factory of this class.
      */
-    private static final Factory FACTORY = new Factory(SEMANTIC);
+    private static final @Nonnull Factory FACTORY = new Factory(SEMANTIC);
     
     /**
      * Encodes the given non-nullable value into a new block of the given type.
@@ -199,7 +199,7 @@ public final class HashWrapper extends Wrapper<HashWrapper> {
         
         @Pure
         @Override
-        public @Nonnull HashWrapper decodeNonNullable(@Nonnull @NonEncoding Block block) throws InvalidEncodingException {
+        public @Nonnull HashWrapper decodeNonNullable(@Nonnull @NonEncoding @BasedOn("hash@core.digitalid.net") Block block) throws InvalidEncodingException {
             if (block.getLength() != LENGTH) throw new InvalidEncodingException("The block's length is invalid.");
             
             return new HashWrapper(block.getType(), new BigInteger(1, block.getBytes()));

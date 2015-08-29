@@ -124,7 +124,7 @@ public final class ListWrapper extends BlockBasedWrapper<ListWrapper> {
     /**
      * Stores the factory of this class.
      */
-    private static final Factory FACTORY = new Factory(SEMANTIC);
+    private static final @Nonnull Factory FACTORY = new Factory(SEMANTIC);
     
     /**
      * Encodes the given elements into a new block of the given type.
@@ -262,7 +262,7 @@ public final class ListWrapper extends BlockBasedWrapper<ListWrapper> {
         
         @Pure
         @Override
-        public @Nonnull ListWrapper decodeNonNullable(@Nonnull @NonEncoding Block block) throws InvalidEncodingException {
+        public @Nonnull ListWrapper decodeNonNullable(@Nonnull @NonEncoding @BasedOn("list@core.digitalid.net") Block block) throws InvalidEncodingException {
             final @Nonnull SemanticType parameter = block.getType().getParameters().getNonNullable(0);
             
             int offset = IntvarWrapper.decodeLength(block, 0);

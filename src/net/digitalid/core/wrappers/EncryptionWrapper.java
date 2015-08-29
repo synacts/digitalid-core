@@ -431,7 +431,7 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
         
         @Pure
         @Override
-        public @Nonnull EncryptionWrapper decodeNonNullable(@Nonnull @NonEncoding Block block) throws InvalidEncodingException {
+        public @Nonnull EncryptionWrapper decodeNonNullable(@Nonnull @NonEncoding @BasedOn("encryption@core.digitalid.net") Block block) throws InvalidEncodingException {
             return new EncryptionWrapper(block, null);
         }
         

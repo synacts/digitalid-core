@@ -46,6 +46,7 @@ public final class GroupWithUnknownOrder extends Group<GroupWithUnknownOrder> {
      * 
      * @return a new multiplicative group with the given modulus.
      */
+    @Pure
     public static @Nonnull GroupWithUnknownOrder get(@Nonnull @Positive BigInteger modulus) {
         return new GroupWithUnknownOrder(modulus);
     }
@@ -86,7 +87,7 @@ public final class GroupWithUnknownOrder extends Group<GroupWithUnknownOrder> {
     /**
      * Stores the factory of this class.
      */
-    public static final Factory FACTORY = new Factory();
+    public static final @Nonnull Factory FACTORY = new Factory();
     
     @Pure
     @Override

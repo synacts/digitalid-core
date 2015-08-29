@@ -99,6 +99,7 @@ public final class GroupWithKnownOrder extends Group<GroupWithKnownOrder> {
      * 
      * @require order.compareTo(modulus) == -1 : "The order is smaller than the modulus.";
      */
+    @Pure
     public static @Nonnull GroupWithKnownOrder get(@Nonnull @Positive BigInteger modulus, @Nonnull @Positive BigInteger order) {
         return new GroupWithKnownOrder(modulus, order);
     }
@@ -148,7 +149,7 @@ public final class GroupWithKnownOrder extends Group<GroupWithKnownOrder> {
     /**
      * Stores the factory of this class.
      */
-    public static final Factory FACTORY = new Factory();
+    public static final @Nonnull Factory FACTORY = new Factory();
     
     @Pure
     @Override

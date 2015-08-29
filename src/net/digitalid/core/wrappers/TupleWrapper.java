@@ -262,7 +262,7 @@ public final class TupleWrapper extends BlockBasedWrapper<TupleWrapper> {
     /**
      * Stores the factory of this class.
      */
-    private static final Factory FACTORY = new Factory(SEMANTIC);
+    private static final @Nonnull Factory FACTORY = new Factory(SEMANTIC);
     
     /**
      * Encodes the given elements into a new block of the given type.
@@ -385,7 +385,7 @@ public final class TupleWrapper extends BlockBasedWrapper<TupleWrapper> {
         
         @Pure
         @Override
-        public @Nonnull TupleWrapper decodeNonNullable(@Nonnull @NonEncoding Block block) throws InvalidEncodingException {
+        public @Nonnull TupleWrapper decodeNonNullable(@Nonnull @NonEncoding @BasedOn("tuple@core.digitalid.net") Block block) throws InvalidEncodingException {
             final @Nonnull @NonNullableElements ReadOnlyList<SemanticType> parameters = block.getType().getParameters();
             final int size = parameters.size();
             final @Nonnull FreezableArray<Block> elements = FreezableArray.get(size);

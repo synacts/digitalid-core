@@ -19,10 +19,24 @@ import net.digitalid.core.wrappers.TupleWrapper;
 @Immutable
 public final class KeyPair {
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Private Key –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
     /**
      * Stores the private key of this key pair.
      */
     private final @Nonnull PrivateKey privateKey;
+    
+    /**
+     * Returns the private key of this key pair.
+     * 
+     * @return the private key of this key pair.
+     */
+    @Pure
+    public @Nonnull PrivateKey getPrivateKey() {
+        return privateKey;
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Public Key –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the public key of this key pair.
@@ -30,9 +44,21 @@ public final class KeyPair {
     private final @Nonnull PublicKey publicKey;
     
     /**
+     * Returns the public key of this key pair.
+     * 
+     * @return the public key of this key pair.
+     */
+    @Pure
+    public @Nonnull PublicKey getPublicKey() {
+        return publicKey;
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
      * Creates a new key pair with random values.
      */
-    public KeyPair() {
+    private KeyPair() {
         final @Nonnull Random random = new SecureRandom();
         
         // Determine a new RSA group with two inverse exponents and a random generator.
@@ -44,9 +70,9 @@ public final class KeyPair {
         
         final @Nonnull BigInteger modulus = p.multiply(q);
         final @Nonnull BigInteger order = pMinus1.multiply(qMinus1);
-        final @Nonnull Group compositeGroup = new Group(modulus, order);
+        final @Nonnull GroupWithKnownOrder compositeGroup = GroupWithKnownOrder.get(modulus, order);
         
-        final @Nonnull Exponent e = new Exponent(BigInteger.valueOf(65537)).getNextRelativePrime(compositeGroup);
+        final @Nonnull Exponent e = Exponent.get(BigInteger.valueOf(65537)).getNextRelativePrime(compositeGroup);
         final @Nonnull Exponent d = e.inverse(compositeGroup);
         
         @Nonnull Element ab = compositeGroup.getRandomElement();
@@ -78,8 +104,8 @@ public final class KeyPair {
         final @Nonnull Exponent ro = compositeGroup.getRandomExponent();
         final @Nonnull Element to = ab.pow(ro);
         
-        final @Nonnull FreezableArray<Block> elements = new FreezableArray<>(tu.toBlock().setType(PublicKey.TU), ti.toBlock().setType(PublicKey.TI), tv.toBlock().setType(PublicKey.TV), to.toBlock().setType(PublicKey.TO));
-        final @Nonnull Exponent t = new Exponent(new TupleWrapper(PublicKey.TUPLE, elements.freeze()).toBlock().getHash());
+        final @Nonnull FreezableArray<Block> elements = FreezableArray.getNonNullable(Block.fromNonNullable(tu, PublicKey.TU), Block.fromNonNullable(ti, PublicKey.TI), Block.fromNonNullable(tv, PublicKey.TV), Block.fromNonNullable(to, PublicKey.TO));
+        final @Nonnull Exponent t = Exponent.get(TupleWrapper.encode(PublicKey.TUPLE, elements.freeze()).getHash());
         
         final @Nonnull Exponent su = ru.subtract(t.multiply(eu));
         final @Nonnull Exponent si = ri.subtract(t.multiply(ei));
@@ -92,7 +118,7 @@ public final class KeyPair {
         final @Nonnull BigInteger z = BigInteger.probablePrime(Parameters.VERIFIABLE_ENCRYPTION, random);
         final @Nonnull BigInteger zMinus1 = z.subtract(BigInteger.ONE);
         
-        final @Nonnull Group squareGroup = new Group(z.pow(2), z.multiply(zMinus1));
+        final @Nonnull GroupWithKnownOrder squareGroup = GroupWithKnownOrder.get(z.pow(2), z.multiply(zMinus1));
         @Nonnull Element g = squareGroup.getRandomElement();
         while (g.pow(z).isOne() || g.pow(zMinus1).isOne()) g = squareGroup.getRandomElement();
         
@@ -101,9 +127,21 @@ public final class KeyPair {
         final @Nonnull Element zPlus1 = squareGroup.getElement(z.add(BigInteger.ONE));
         
         // Create and store the private and the public key.
-        this.privateKey = new PrivateKey(compositeGroup, p, q, d, squareGroup, x);
-        this.publicKey = new PublicKey(compositeGroup.dropOrder(), e, ab, au, ai, av, ao, t, su, si, sv, so, squareGroup.dropOrder(), g, y, zPlus1);
+        this.privateKey = PrivateKey.get(compositeGroup, p, q, d, squareGroup, x);
+        this.publicKey = PublicKey.get(compositeGroup.dropOrder(), e, ab, au, ai, av, ao, t, su, si, sv, so, squareGroup.dropOrder(), g, y, zPlus1);
     }
+    
+    /**
+     * Creates a new key pair with random values.
+     * 
+     * @return a new key pair with random values.
+     */
+    @Pure
+    public static @Nonnull KeyPair getRandom() {
+        return new KeyPair();
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Utility –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns a safe prime with the given bit-length.
@@ -124,27 +162,6 @@ public final class KeyPair {
             final @Nonnull BigInteger value = prime.shiftLeft(1).add(BigInteger.ONE);
             if (value.isProbablePrime(64)) return value;
         }
-    }
-    
-    
-    /**
-     * Returns the private key of this key pair.
-     * 
-     * @return the private key of this key pair.
-     */
-    @Pure
-    public @Nonnull PrivateKey getPrivateKey() {
-        return privateKey;
-    }
-    
-    /**
-     * Returns the public key of this key pair.
-     * 
-     * @return the public key of this key pair.
-     */
-    @Pure
-    public @Nonnull PublicKey getPublicKey() {
-        return publicKey;
     }
     
 }

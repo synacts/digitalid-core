@@ -471,7 +471,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
         
         @Pure
         @Override
-        public @Nonnull SignatureWrapper decodeNonNullable(@Nonnull @NonEncoding Block block) throws InvalidEncodingException {
+        public @Nonnull SignatureWrapper decodeNonNullable(@Nonnull @NonEncoding @BasedOn("signature@core.digitalid.net") Block block) throws InvalidEncodingException {
             return new SignatureWrapper(block, false);
         }
         

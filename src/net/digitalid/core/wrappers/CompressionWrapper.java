@@ -92,7 +92,7 @@ public final class CompressionWrapper extends BlockBasedWrapper<CompressionWrapp
     /**
      * Stores the factory of this class.
      */
-    private static final Factory FACTORY = new Factory(SEMANTIC);
+    private static final @Nonnull Factory FACTORY = new Factory(SEMANTIC);
     
     /**
      * Compresses the given element into a new non-nullable block of the given type.
@@ -213,7 +213,7 @@ public final class CompressionWrapper extends BlockBasedWrapper<CompressionWrapp
         
         @Pure
         @Override
-        public @Nonnull CompressionWrapper decodeNonNullable(@Nonnull @NonEncoding Block block) throws InvalidEncodingException {
+        public @Nonnull CompressionWrapper decodeNonNullable(@Nonnull @NonEncoding @BasedOn("compression@core.digitalid.net") Block block) throws InvalidEncodingException {
             final @Nonnull SemanticType parameter = block.getType().getParameters().getNonNullable(0);
             try {
                 final @Nonnull Time start = new Time();

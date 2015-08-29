@@ -3,14 +3,17 @@ package net.digitalid.core.cryptography;
 import java.math.BigInteger;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.core.annotations.BasedOn;
 import net.digitalid.core.annotations.Immutable;
+import net.digitalid.core.annotations.Matching;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.collections.FreezableArray;
 import net.digitalid.core.collections.ReadOnlyArray;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.identity.SemanticType;
+import net.digitalid.core.storable.BlockBasedSimpleNonConceptFactory;
+import net.digitalid.core.storable.Storable;
 import net.digitalid.core.wrappers.Block;
-import net.digitalid.core.wrappers.Blockable;
 import net.digitalid.core.wrappers.IntegerWrapper;
 import net.digitalid.core.wrappers.TupleWrapper;
 
@@ -21,12 +24,14 @@ import net.digitalid.core.wrappers.TupleWrapper;
  * @version 1.0
  */
 @Immutable
-public final class PrivateKey implements Blockable {
+public final class PrivateKey implements Storable<PrivateKey> {
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the semantic type {@code composite.group.private.key.host@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType COMPOSITE_GROUP = SemanticType.map("composite.group.private.key.host@core.digitalid.net").load(Group.TYPE);
+    private static final @Nonnull SemanticType COMPOSITE_GROUP = SemanticType.map("composite.group.private.key.host@core.digitalid.net").load(GroupWithKnownOrder.TYPE);
     
     /**
      * Stores the semantic type {@code p.private.key.host@core.digitalid.net}.
@@ -46,7 +51,7 @@ public final class PrivateKey implements Blockable {
     /**
      * Stores the semantic type {@code square.group.private.key.host@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType SQUARE_GROUP = SemanticType.map("square.group.private.key.host@core.digitalid.net").load(Group.TYPE);
+    private static final @Nonnull SemanticType SQUARE_GROUP = SemanticType.map("square.group.private.key.host@core.digitalid.net").load(GroupWithKnownOrder.TYPE);
     
     /**
      * Stores the semantic type {@code x.private.key.host@core.digitalid.net}.
@@ -58,13 +63,24 @@ public final class PrivateKey implements Blockable {
      */
     public static final @Nonnull SemanticType TYPE = SemanticType.map("private.key.host@core.digitalid.net").load(TupleWrapper.TYPE, COMPOSITE_GROUP, P, Q, D, SQUARE_GROUP, X);
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Composite Group –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the composite group of this private key.
-     * 
-     * @invariant compositeGroup.hasOrder() : "The order of the composite group is known.";
      */
-    private final @Nonnull Group compositeGroup;
+    private final @Nonnull GroupWithKnownOrder compositeGroup;
+    
+    /**
+     * Returns the composite group of this private key.
+     * 
+     * @return the composite group of this private key.
+     */
+    @Pure
+    public @Nonnull GroupWithKnownOrder getCompositeGroup() {
+        return compositeGroup;
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Prime Factors –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the first prime factor of the composite group's modulus.
@@ -75,6 +91,8 @@ public final class PrivateKey implements Blockable {
      * Stores the second prime factor of the composite group's modulus.
      */
     private final @Nonnull BigInteger q;
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Decryption Exponent –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the decryption exponent d of this private key.
@@ -100,117 +118,6 @@ public final class PrivateKey implements Blockable {
      * Stores the identity of q's subgroup in the Chinese Remainder Theorem.
      */
     private final @Nonnull BigInteger qIdentityCRT;
-    
-    /**
-     * Stores the square group of this private key.
-     * 
-     * @invariant squareGroup.hasOrder() : "The order of the square group is known.";
-     */
-    private final @Nonnull Group squareGroup;
-    
-    /**
-     * Stores the decryption exponent x of this private key.
-     */
-    private final @Nonnull Exponent x;
-    
-    /**
-     * Creates a new private key with the given groups and exponents.
-     * 
-     * @param compositeGroup the composite group of the private key.
-     * @param d the decryption exponent of the private key.
-     * @param squareGroup the square group of the private key.
-     * @param x the decryption exponent of the private key.
-     * 
-     * @require compositeGroup.getModulus().equals(p.multiply(q)) : "The modulus of the composite group is the product of p and q.";
-     * @require compositeGroup.hasOrder() : "The order of the composite group is known.";
-     * @require squareGroup.hasOrder() : "The order of the square group is known.";
-     */
-    PrivateKey(@Nonnull Group compositeGroup, @Nonnull BigInteger p, @Nonnull BigInteger q, @Nonnull Exponent d, @Nonnull Group squareGroup, @Nonnull Exponent x) {
-        assert compositeGroup.getModulus().equals(p.multiply(q)) : "The modulus of the composite group is the product of p and q.";
-        assert compositeGroup.hasOrder() : "The order of the composite group is known.";
-        assert squareGroup.hasOrder() : "The order of the square group is known.";
-        
-        this.compositeGroup = compositeGroup;
-        this.p = p;
-        this.q = q;
-        this.d = d;
-        this.squareGroup = squareGroup;
-        this.x = x;
-        
-        @Nonnull BigInteger pMinus1 = p.subtract(BigInteger.ONE);
-        @Nonnull BigInteger qMinus1 = q.subtract(BigInteger.ONE);
-        
-        this.dMod_pMinus1 = d.getValue().mod(pMinus1);
-        this.dMod_qMinus1 = d.getValue().mod(qMinus1);
-        
-        this.pIdentityCRT = q.modInverse(p).multiply(q).mod(compositeGroup.getModulus());
-        this.qIdentityCRT = p.modInverse(q).multiply(p).mod(compositeGroup.getModulus());
-    }
-    
-    /**
-     * Creates a new private key with the groups and exponents that are encoded in the given block.
-     * 
-     * @param block the block containing the private key.
-     * 
-     * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
-     */
-    public PrivateKey(@Nonnull Block block) throws InvalidEncodingException {
-        assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
-        
-        final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(block).getNonNullableElements(5);
-        this.compositeGroup = new Group(elements.getNonNullable(0));
-        this.p = IntegerWrapper.decodeNonNullable(elements.getNonNullable(1));
-        this.q = IntegerWrapper.decodeNonNullable(elements.getNonNullable(2));
-        this.d = new Exponent(elements.getNonNullable(3));
-        this.squareGroup = new Group(elements.getNonNullable(4));
-        this.x = new Exponent(elements.getNonNullable(5));
-        
-        if (compositeGroup.hasNoOrder()) throw new InvalidEncodingException("The order of the composite group may not be unknown.");
-        if (squareGroup.hasNoOrder()) throw new InvalidEncodingException("The order of the square group may not be unknown.");
-        
-        if (!compositeGroup.getModulus().equals(p.multiply(q))) throw new InvalidEncodingException("The modulus of the composite group has to be the product of p and q.");
-        
-        @Nonnull BigInteger pMinus1 = p.subtract(BigInteger.ONE);
-        @Nonnull BigInteger qMinus1 = q.subtract(BigInteger.ONE);
-        
-        this.dMod_pMinus1 = d.getValue().mod(pMinus1);
-        this.dMod_qMinus1 = d.getValue().mod(qMinus1);
-        
-        this.pIdentityCRT = q.modInverse(p).multiply(q).mod(compositeGroup.getModulus());
-        this.qIdentityCRT = p.modInverse(q).multiply(p).mod(compositeGroup.getModulus());
-    }
-    
-    @Pure
-    @Override
-    public @Nonnull SemanticType getType() {
-        return TYPE;
-    }
-    
-    @Pure
-    @Override
-    public @Nonnull Block toBlock() {
-        final @Nonnull FreezableArray<Block> elements = FreezableArray.get(6);
-        elements.set(0, compositeGroup.toBlock().setType(COMPOSITE_GROUP));
-        elements.set(1, new IntegerWrapper(P, p).toBlock());
-        elements.set(2, new IntegerWrapper(Q, q).toBlock());
-        elements.set(3, d.toBlock().setType(D));
-        elements.set(4, squareGroup.toBlock().setType(SQUARE_GROUP));
-        elements.set(5, x.toBlock().setType(X));
-        return TupleWrapper.encode(TYPE, elements.freeze());
-    }
-    
-    
-    /**
-     * Returns the composite group of this private key.
-     * 
-     * @return the composite group of this private key.
-     * 
-     * @ensure return.hasOrder() : "The order of the composite group is known.";
-     */
-    @Pure
-    public @Nonnull Group getCompositeGroup() {
-        return compositeGroup;
-    }
     
     /**
      * Returns the exponent d of this private key.
@@ -242,23 +149,35 @@ public final class PrivateKey implements Blockable {
      * @require c.getGroup().equals(compositeGroup) : "The element belongs to the composite group.";
      */
     @Pure
-    public @Nonnull Element powD(@Nonnull Element c) {
+    public @Nonnull @Matching Element powD(@Nonnull @Matching Element c) {
         assert c.getGroup().equals(compositeGroup) : "The element belongs to the composite group.";
         
         return powD(c.getValue());
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Square Group –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Stores the square group of this private key.
+     */
+    private final @Nonnull GroupWithKnownOrder squareGroup;
+    
     /**
      * Returns the square group of this private key.
      * 
      * @return the square group of this private key.
-     * 
-     * @ensure return.hasOrder() : "The order of the square group is known.";
      */
     @Pure
-    public @Nonnull Group getSquareGroup() {
+    public @Nonnull GroupWithKnownOrder getSquareGroup() {
         return squareGroup;
     }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Decryption Exponent –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Stores the decryption exponent x of this private key.
+     */
+    private final @Nonnull Exponent x;
     
     /**
      * Returns the exponent x of this private key.
@@ -270,6 +189,56 @@ public final class PrivateKey implements Blockable {
         return x;
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Creates a new private key with the given groups and exponents.
+     * 
+     * @param compositeGroup the composite group of the private key.
+     * @param d the decryption exponent of the private key.
+     * @param squareGroup the square group of the private key.
+     * @param x the decryption exponent of the private key.
+     * 
+     * @require compositeGroup.getModulus().equals(p.multiply(q)) : "The modulus of the composite group is the product of p and q.";
+     */
+    private PrivateKey(@Nonnull GroupWithKnownOrder compositeGroup, @Nonnull BigInteger p, @Nonnull BigInteger q, @Nonnull Exponent d, @Nonnull GroupWithKnownOrder squareGroup, @Nonnull Exponent x) {
+        assert compositeGroup.getModulus().equals(p.multiply(q)) : "The modulus of the composite group is the product of p and q.";
+        
+        this.compositeGroup = compositeGroup;
+        this.p = p;
+        this.q = q;
+        this.d = d;
+        this.squareGroup = squareGroup;
+        this.x = x;
+        
+        @Nonnull BigInteger pMinus1 = p.subtract(BigInteger.ONE);
+        @Nonnull BigInteger qMinus1 = q.subtract(BigInteger.ONE);
+        
+        this.dMod_pMinus1 = d.getValue().mod(pMinus1);
+        this.dMod_qMinus1 = d.getValue().mod(qMinus1);
+        
+        this.pIdentityCRT = q.modInverse(p).multiply(q).mod(compositeGroup.getModulus());
+        this.qIdentityCRT = p.modInverse(q).multiply(p).mod(compositeGroup.getModulus());
+    }
+    
+    /**
+     * Creates a new private key with the given groups and exponents.
+     * 
+     * @param compositeGroup the composite group of the private key.
+     * @param d the decryption exponent of the private key.
+     * @param squareGroup the square group of the private key.
+     * @param x the decryption exponent of the private key.
+     * 
+     * @return a new private key with the given groups and exponents.
+     * 
+     * @require compositeGroup.getModulus().equals(p.multiply(q)) : "The modulus of the composite group is the product of p and q.";
+     */
+    @Pure
+    public static @Nonnull PrivateKey get(@Nonnull GroupWithKnownOrder compositeGroup, @Nonnull BigInteger p, @Nonnull BigInteger q, @Nonnull Exponent d, @Nonnull GroupWithKnownOrder squareGroup, @Nonnull Exponent x) {
+        return new PrivateKey(compositeGroup, p, q, d, squareGroup, x);
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
@@ -302,6 +271,65 @@ public final class PrivateKey implements Blockable {
     @Override
     public @Nonnull String toString() {
         return "Private Key [n = " + compositeGroup.getModulus() + ", p = " + p + ", q = " + q + ", d = " + d + ", z^2 = " + squareGroup.getModulus() + ", x = " + x + "]";
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * The factory for this class.
+     */
+    @Immutable
+    public static class Factory extends BlockBasedSimpleNonConceptFactory<PrivateKey> {
+        
+        /**
+         * Creates a new factory.
+         */
+        private Factory() {
+            super(TYPE);
+        }
+        
+        @Pure
+        @Override
+        public @Nonnull Block encodeNonNullable(@Nonnull PrivateKey privateKey) {
+            final @Nonnull FreezableArray<Block> elements = FreezableArray.get(6);
+            elements.set(0, Block.fromNonNullable(privateKey.compositeGroup, COMPOSITE_GROUP));
+            elements.set(1, IntegerWrapper.encodeNonNullable(P, privateKey.p));
+            elements.set(2, IntegerWrapper.encodeNonNullable(Q, privateKey.q));
+            elements.set(3, Block.fromNonNullable(privateKey.d, D));
+            elements.set(4, Block.fromNonNullable(privateKey.squareGroup, SQUARE_GROUP));
+            elements.set(5, Block.fromNonNullable(privateKey.x, X));
+            return TupleWrapper.encode(TYPE, elements.freeze());
+        }
+        
+        @Pure
+        @Override
+        public @Nonnull PrivateKey decodeNonNullable(@Nonnull @BasedOn("private.key.host@core.digitalid.net") Block block) throws InvalidEncodingException {
+            assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
+            
+            final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(block).getNonNullableElements(5);
+            final @Nonnull GroupWithKnownOrder compositeGroup = GroupWithKnownOrder.FACTORY.decodeNonNullable(elements.getNonNullable(0));
+            final @Nonnull BigInteger p = IntegerWrapper.decodeNonNullable(elements.getNonNullable(1));
+            final @Nonnull BigInteger q = IntegerWrapper.decodeNonNullable(elements.getNonNullable(2));
+            final @Nonnull Exponent d = Exponent.get(elements.getNonNullable(3));
+            final @Nonnull GroupWithKnownOrder squareGroup = GroupWithKnownOrder.FACTORY.decodeNonNullable(elements.getNonNullable(4));
+            final @Nonnull Exponent x = Exponent.get(elements.getNonNullable(5));
+            
+            if (!compositeGroup.getModulus().equals(p.multiply(q))) throw new InvalidEncodingException("The modulus of the composite group has to be the product of p and q.");
+            
+            return new PrivateKey(compositeGroup, p, q, d, squareGroup, x);
+        }
+        
+    }
+    
+    /**
+     * Stores the factory of this class.
+     */
+    public static final @Nonnull Factory FACTORY = new Factory();
+    
+    @Pure
+    @Override
+    public @Nonnull Factory getFactory() {
+        return FACTORY;
     }
     
 }

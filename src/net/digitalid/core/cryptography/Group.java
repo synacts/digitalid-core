@@ -66,7 +66,7 @@ public abstract class Group<G extends Group<G>> implements Storable<G> {
      */
     @Pure
     public final @Nonnull Element getElement(@Nonnull BigInteger value) {
-        return new Element(this, value);
+        return Element.get(this, value);
     }
     
     /**
@@ -75,12 +75,10 @@ public abstract class Group<G extends Group<G>> implements Storable<G> {
      * @param block the block that encodes the value of the new element.
      * 
      * @return a new element with the encoded value in this group.
-     * 
-     * @require block.getType().isBasedOn(Element.TYPE) : "The block is based on the element type.";
      */
     @Pure
     public final @Nonnull Element getElement(@Nonnull @BasedOn("element.group@core.digitalid.net") Block block) throws InvalidEncodingException {
-        return new Element(this, block);
+        return Element.get(this, block);
     }
     
     /**
@@ -98,7 +96,8 @@ public abstract class Group<G extends Group<G>> implements Storable<G> {
             if (value.compareTo(modulus) == -1 && value.gcd(modulus).equals(BigInteger.ONE)) break;
         }
         
-        return new Element(this, value);
+        assert value != null;
+        return Element.get(this, value);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Exponent –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -121,7 +120,7 @@ public abstract class Group<G extends Group<G>> implements Storable<G> {
     @Pure
     public final @Nonnull Exponent getRandomExponent(int bitLength) {
         final @Nonnull Random random = new SecureRandom();
-        return new Exponent(new BigInteger(bitLength, random));
+        return Exponent.get(new BigInteger(bitLength, random));
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */

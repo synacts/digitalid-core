@@ -89,7 +89,7 @@ public final class IntegerWrapper extends Wrapper<IntegerWrapper> {
     /**
      * Stores the factory of this class.
      */
-    private static final Factory FACTORY = new Factory(SEMANTIC);
+    private static final @Nonnull Factory FACTORY = new Factory(SEMANTIC);
     
     /**
      * Encodes the given value into a new non-nullable block of the given type.
@@ -182,7 +182,7 @@ public final class IntegerWrapper extends Wrapper<IntegerWrapper> {
         
         @Pure
         @Override
-        public @Nonnull IntegerWrapper decodeNonNullable(@Nonnull @NonEncoding Block block) throws InvalidEncodingException {
+        public @Nonnull IntegerWrapper decodeNonNullable(@Nonnull @NonEncoding @BasedOn("integer@core.digitalid.net") Block block) throws InvalidEncodingException {
             final byte[] bytes = block.getBytes();
             return new IntegerWrapper(block.getType(), bytes, new BigInteger(bytes));
         }

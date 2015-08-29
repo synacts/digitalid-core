@@ -81,7 +81,7 @@ public final class FloatWrapper extends Wrapper<FloatWrapper> {
     /**
      * Stores the factory of this class.
      */
-    private static final Factory FACTORY = new Factory(SEMANTIC);
+    private static final @Nonnull Factory FACTORY = new Factory(SEMANTIC);
     
     /**
      * Encodes the given value into a new block of the given type.
@@ -154,7 +154,7 @@ public final class FloatWrapper extends Wrapper<FloatWrapper> {
         
         @Pure
         @Override
-        public @Nonnull FloatWrapper decodeNonNullable(@Nonnull @NonEncoding Block block) throws InvalidEncodingException {
+        public @Nonnull FloatWrapper decodeNonNullable(@Nonnull @NonEncoding @BasedOn("float@core.digitalid.net") Block block) throws InvalidEncodingException {
             if (block.getLength() != LENGTH) throw new InvalidEncodingException("The block's length is invalid.");
             
             return new FloatWrapper(block.getType(), Float.intBitsToFloat((int) block.decodeValue()));

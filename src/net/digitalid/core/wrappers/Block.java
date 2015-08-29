@@ -38,6 +38,7 @@ import net.digitalid.core.errors.ShouldNeverHappenError;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.storable.NonConceptFactory;
+import net.digitalid.core.storable.SimpleNonConceptFactory;
 import net.digitalid.core.storable.Storable;
 
 /**
@@ -753,7 +754,7 @@ public final class Block implements Storable<Block>, Cloneable {
     /**
      * The factory for blocks.
      */
-    private static class Factory extends NonConceptFactory<Block> {
+    private static class Factory extends SimpleNonConceptFactory<Block> {
         
         /**
          * Stores the column for blocks.

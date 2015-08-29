@@ -81,7 +81,7 @@ public final class Int32Wrapper extends Wrapper<Int32Wrapper> {
     /**
      * Stores the factory of this class.
      */
-    private static final Factory FACTORY = new Factory(SEMANTIC);
+    private static final @Nonnull Factory FACTORY = new Factory(SEMANTIC);
     
     /**
      * Encodes the given value into a new block of the given type.
@@ -154,7 +154,7 @@ public final class Int32Wrapper extends Wrapper<Int32Wrapper> {
         
         @Pure
         @Override
-        public @Nonnull Int32Wrapper decodeNonNullable(@Nonnull @NonEncoding Block block) throws InvalidEncodingException {
+        public @Nonnull Int32Wrapper decodeNonNullable(@Nonnull @NonEncoding @BasedOn("int32@core.digitalid.net") Block block) throws InvalidEncodingException {
             if (block.getLength() != LENGTH) throw new InvalidEncodingException("The block's length is invalid.");
             
             return new Int32Wrapper(block.getType(), (int) block.decodeValue());

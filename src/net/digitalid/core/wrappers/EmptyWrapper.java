@@ -61,7 +61,7 @@ public final class EmptyWrapper extends Wrapper<EmptyWrapper> {
     /**
      * Stores the factory of this class.
      */
-    private static final Factory FACTORY = new Factory(SEMANTIC);
+    private static final @Nonnull Factory FACTORY = new Factory(SEMANTIC);
     
     /**
      * Encodes nothing into a new block of the given type.
@@ -120,7 +120,7 @@ public final class EmptyWrapper extends Wrapper<EmptyWrapper> {
         
         @Pure
         @Override
-        public @Nonnull EmptyWrapper decodeNonNullable(@Nonnull @NonEncoding Block block) throws InvalidEncodingException {
+        public @Nonnull EmptyWrapper decodeNonNullable(@Nonnull @NonEncoding @BasedOn("empty@core.digitalid.net") Block block) throws InvalidEncodingException {
             if (block.getLength() != LENGTH) throw new InvalidEncodingException("The block's length is invalid.");
             
             return new EmptyWrapper(block.getType());

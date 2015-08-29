@@ -97,7 +97,7 @@ public final class IntvarWrapper extends Wrapper<IntvarWrapper> {
     /**
      * Stores the factory of this class.
      */
-    private static final Factory FACTORY = new Factory(SEMANTIC);
+    private static final @Nonnull Factory FACTORY = new Factory(SEMANTIC);
     
     /**
      * Encodes the given value into a new block of the given type.
@@ -323,7 +323,7 @@ public final class IntvarWrapper extends Wrapper<IntvarWrapper> {
         
         @Pure
         @Override
-        public @Nonnull IntvarWrapper decodeNonNullable(@Nonnull @NonEncoding Block block) throws InvalidEncodingException {
+        public @Nonnull IntvarWrapper decodeNonNullable(@Nonnull @NonEncoding @BasedOn("intvar@core.digitalid.net") Block block) throws InvalidEncodingException {
             final int length = block.getLength();
             
             if (length != decodeLength(block, 0)) throw new InvalidEncodingException("The block's length is invalid.");
