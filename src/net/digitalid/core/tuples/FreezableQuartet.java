@@ -66,14 +66,22 @@ public class FreezableQuartet<E0, E1, E2, E3> extends FreezableTriplet<E0, E1, E
      */
     @Pure
     public static @Capturable @Nonnull @NonFrozen <E0, E1, E2, E3> FreezableQuartet<E0, E1, E2, E3> getNonNullable(@Nonnull @NullableElements ReadOnlyQuartet<E0, E1, E2, E3> quartet) {
-        return get(quartet.getElement0(), quartet.getElement1(), quartet.getElement2(), quartet.getElement3());
+        return get(quartet.getNullableElement0(), quartet.getNullableElement1(), quartet.getNullableElement2(), quartet.getNullableElement3());
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Getter –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
-    public final @Nullable E3 getElement3() {
+    public final @Nullable E3 getNullableElement3() {
+        return element3;
+    }
+    
+    @Pure
+    @Override
+    public final @Nonnull E3 getNonNullableElement3() {
+        assert element3 != null : "The element is not null.";
+        
         return element3;
     }
     

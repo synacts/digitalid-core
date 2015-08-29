@@ -185,7 +185,7 @@ public final class StringWrapper extends Wrapper<StringWrapper> {
      * The factory for this class.
      */
     @Immutable
-    public static class Factory extends Wrapper.Factory<StringWrapper> {
+    public static final class Factory extends Wrapper.Factory<StringWrapper> {
         
         /**
          * Stores the column for the wrapper.

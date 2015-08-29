@@ -69,7 +69,7 @@ public class FreezablePair<E0, E1> extends FreezableObject implements ReadOnlyPa
      */
     @Pure
     public static @Capturable @Nonnull @NonFrozen <E0, E1> FreezablePair<E0, E1> getNonNullable(@Nonnull @NullableElements ReadOnlyPair<E0, E1> pair) {
-        return get(pair.getElement0(), pair.getElement1());
+        return get(pair.getNullableElement0(), pair.getNullableElement1());
     }
     
     /**
@@ -88,13 +88,29 @@ public class FreezablePair<E0, E1> extends FreezableObject implements ReadOnlyPa
     
     @Pure
     @Override
-    public final @Nullable E0 getElement0() {
+    public final @Nullable E0 getNullableElement0() {
         return element0;
     }
     
     @Pure
     @Override
-    public final @Nullable E1 getElement1() {
+    public final @Nonnull E0 getNonNullableElement0() {
+        assert element0 != null : "The element is not null.";
+        
+        return element0;
+    }
+    
+    @Pure
+    @Override
+    public final @Nullable E1 getNullableElement1() {
+        return element1;
+    }
+    
+    @Pure
+    @Override
+    public final @Nonnull E1 getNonNullableElement1() {
+        assert element1 != null : "The element is not null.";
+        
         return element1;
     }
     

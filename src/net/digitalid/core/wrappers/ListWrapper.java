@@ -249,7 +249,7 @@ public final class ListWrapper extends BlockBasedWrapper<ListWrapper> {
      * The factory for this class.
      */
     @Immutable
-    public static class Factory extends BlockBasedWrapper.Factory<ListWrapper> {
+    public static final class Factory extends BlockBasedWrapper.Factory<ListWrapper> {
         
         /**
          * Creates a new factory with the given type.

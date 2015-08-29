@@ -25,7 +25,15 @@ public interface ReadOnlyQuartet<E0, E1, E2, E3> extends ReadOnlyTriplet<E0, E1,
      * @return the third element of this tuple.
      */
     @Pure
-    public @Nullable E3 getElement3();
+    public @Nullable E3 getNullableElement3();
+    
+    /**
+     * Returns the third element of this tuple.
+     * 
+     * @return the third element of this tuple.
+     */
+    @Pure
+    public @Nonnull E3 getNonNullableElement3();
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Cloneable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     

@@ -7,11 +7,11 @@ import net.digitalid.core.annotations.NonEmpty;
 import net.digitalid.core.annotations.NonNullableElements;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.auxiliary.Time;
+import net.digitalid.core.collections.FreezableLinkedList;
 import net.digitalid.core.collections.ReadOnlyList;
-import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.identity.SemanticType;
+import net.digitalid.core.tuples.FreezablePair;
 import net.digitalid.core.tuples.ReadOnlyPair;
-import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.ListWrapper;
 import net.digitalid.core.wrappers.TupleWrapper;
 
@@ -22,7 +22,9 @@ import net.digitalid.core.wrappers.TupleWrapper;
  * @version 1.0
  */
 @Immutable
-public final class PrivateKeyChain extends KeyChain<PrivateKey> {
+public final class PrivateKeyChain extends KeyChain<PrivateKey, PrivateKeyChain> {
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the semantic type {@code item.private.key.chain.host@core.digitalid.net}.
@@ -34,18 +36,7 @@ public final class PrivateKeyChain extends KeyChain<PrivateKey> {
      */
     public static final @Nonnull SemanticType TYPE = SemanticType.map("private.key.chain.host@core.digitalid.net").load(ListWrapper.TYPE, ITEM);
     
-    
-    /**
-     * Creates a new key chain with the given time and private key.
-     * 
-     * @param time the time from when on the given private key is valid.
-     * @param privateKey the private key that is valid from the given time on.
-     * 
-     * @require time.isLessThanOrEqualTo(new Time()) : "The time lies in the past.";
-     */
-    public PrivateKeyChain(@Nonnull Time time, @Nonnull PrivateKey privateKey) {
-        super(time, privateKey);
-    }
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Creates a new key chain with the given items.
@@ -54,44 +45,76 @@ public final class PrivateKeyChain extends KeyChain<PrivateKey> {
      * 
      * @require items.isStrictlyDescending() : "The list is strictly descending.";
      */
-    public PrivateKeyChain(@Nonnull @Frozen @NonEmpty @NonNullableElements ReadOnlyList<ReadOnlyPair<Time, PrivateKey>> items) {
+    private PrivateKeyChain(@Nonnull @Frozen @NonEmpty @NonNullableElements ReadOnlyList<ReadOnlyPair<Time, PrivateKey>> items) {
         super(items);
     }
     
     /**
-     * Creates a new key chain with the entries encoded in the given block.
+     * Creates a new key chain with the given items.
      * 
-     * @param block the block containing the key chain entries.
+     * @param items the items of the new key chain.
      * 
-     * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
+     * @return a new key chain with the given items.
+     * 
+     * @require items.isStrictlyDescending() : "The list is strictly descending.";
      */
-    public PrivateKeyChain(@Nonnull Block block) throws InvalidEncodingException {
-        super(block);
-    }
-    
     @Pure
-    @Override
-    public @Nonnull SemanticType getType() {
-        return TYPE;
-    }
-    
-    
-    @Pure
-    @Override
-    protected @Nonnull SemanticType getItemType() {
-        return ITEM;
-    }
-    
-    @Pure
-    @Override
-    protected @Nonnull PrivateKey createKey(@Nonnull Block block) throws InvalidEncodingException {
-        return new PrivateKey(block);
-    }
-    
-    @Pure
-    @Override
-    protected @Nonnull KeyChain<PrivateKey> createKeyChain(@Nonnull ReadOnlyList<ReadOnlyPair<Time, PrivateKey>> items) {
+    public static @Nonnull PrivateKeyChain get(@Nonnull @Frozen @NonEmpty @NonNullableElements ReadOnlyList<ReadOnlyPair<Time, PrivateKey>> items) {
         return new PrivateKeyChain(items);
+    }
+    
+    /**
+     * Creates a new key chain with the given time and key.
+     * 
+     * @param time the time from when on the given key is valid.
+     * @param key the key that is valid from the given time on.
+     * 
+     * @return a new key chain with the given time and key.
+     * 
+     * @require time.isLessThanOrEqualTo(new Time()) : "The time lies in the past.";
+     */
+    @Pure
+    public static @Nonnull PrivateKeyChain get(@Nonnull Time time, @Nonnull PrivateKey key) {
+        assert time.isLessThanOrEqualTo(new Time()) : "The time lies in the past.";
+        
+        final @Nonnull FreezableLinkedList<ReadOnlyPair<Time, PrivateKey>> items = FreezableLinkedList.get();
+        items.add(FreezablePair.get(time, key).freeze());
+        return new PrivateKeyChain(items.freeze());
+    }
+    
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * The factory for this class.
+     */
+    @Immutable
+    public static final class Factory extends KeyChain.Factory<PrivateKey, PrivateKeyChain> {
+        
+        /**
+         * Creates a new factory.
+         */
+        protected Factory() {
+            super(TYPE, ITEM, PrivateKey.FACTORY);
+        }
+        
+        @Pure
+        @Override
+        protected @Nonnull PrivateKeyChain createKeyChain(@Nonnull @Frozen @NonEmpty @NonNullableElements ReadOnlyList<ReadOnlyPair<Time, PrivateKey>> items) {
+            return new PrivateKeyChain(items);
+        }
+        
+    }
+    
+    /**
+     * Stores the factory of this class.
+     */
+    public static final @Nonnull Factory FACTORY = new Factory();
+    
+    @Pure
+    @Override
+    public @Nonnull Factory getFactory() {
+        return FACTORY;
     }
     
 }

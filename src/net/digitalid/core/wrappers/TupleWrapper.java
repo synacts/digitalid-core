@@ -372,7 +372,7 @@ public final class TupleWrapper extends BlockBasedWrapper<TupleWrapper> {
      * The factory for this class.
      */
     @Immutable
-    public static class Factory extends BlockBasedWrapper.Factory<TupleWrapper> {
+    public static final class Factory extends BlockBasedWrapper.Factory<TupleWrapper> {
         
         /**
          * Creates a new factory with the given type.

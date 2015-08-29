@@ -235,7 +235,7 @@ public final class BytesWrapper extends Wrapper<BytesWrapper> {
      * The factory for this class.
      */
     @Immutable
-    public static class Factory extends Wrapper.Factory<BytesWrapper> {
+    public static final class Factory extends Wrapper.Factory<BytesWrapper> {
         
         /**
          * Stores the column for the wrapper.

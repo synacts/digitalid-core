@@ -305,7 +305,7 @@ public final class IntvarWrapper extends Wrapper<IntvarWrapper> {
      * The factory for this class.
      */
     @Immutable
-    public static class Factory extends Wrapper.Factory<IntvarWrapper> {
+    public static final class Factory extends Wrapper.Factory<IntvarWrapper> {
         
         /**
          * Stores the column for the wrapper.

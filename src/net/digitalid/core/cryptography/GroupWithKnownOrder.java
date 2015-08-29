@@ -110,7 +110,7 @@ public final class GroupWithKnownOrder extends Group<GroupWithKnownOrder> {
      * The factory for this class.
      */
     @Immutable
-    public static class Factory extends BlockBasedSimpleNonConceptFactory<GroupWithKnownOrder> {
+    public static final class Factory extends BlockBasedSimpleNonConceptFactory<GroupWithKnownOrder> {
         
         /**
          * Creates a new factory.

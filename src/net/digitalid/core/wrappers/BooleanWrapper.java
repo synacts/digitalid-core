@@ -137,7 +137,7 @@ public final class BooleanWrapper extends Wrapper<BooleanWrapper> {
      * The factory for this class.
      */
     @Immutable
-    public static class Factory extends Wrapper.Factory<BooleanWrapper> {
+    public static final class Factory extends Wrapper.Factory<BooleanWrapper> {
         
         /**
          * Stores the column for the wrapper.

@@ -196,7 +196,7 @@ public final class HostSignatureWrapper extends SignatureWrapper {
         subelements.set(0, signer.toBlock().setType(SIGNER));
         try {
             final @Nonnull PrivateKey privateKey = Server.getHost(signer.getHostIdentifier()).getPrivateKeyChain().getKey(getNonNullableTime());
-            subelements.set(1, privateKey.powD(elements.getNonNullable(0).getHash()).toBlock().setType(VALUE));
+            subelements.set(1, Block.fromNonNullable(privateKey.powD(elements.getNonNullable(0).getHash()), VALUE));
         } catch (@Nonnull InvalidEncodingException exception) {
             throw new ShouldNeverHappenError("There should always be a key for the current time.", exception);
         }

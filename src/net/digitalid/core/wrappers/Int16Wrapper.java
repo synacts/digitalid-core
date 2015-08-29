@@ -136,7 +136,7 @@ public final class Int16Wrapper extends Wrapper<Int16Wrapper> {
      * The factory for this class.
      */
     @Immutable
-    public static class Factory extends Wrapper.Factory<Int16Wrapper> {
+    public static final class Factory extends Wrapper.Factory<Int16Wrapper> {
         
         /**
          * Stores the column for the wrapper.

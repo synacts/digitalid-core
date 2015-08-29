@@ -102,7 +102,7 @@ public final class InitializationVector extends IvParameterSpec implements Stora
      * The factory for this class.
      */
     @Immutable
-    public static class Factory extends SimpleNonConceptFactory<InitializationVector> {
+    public static final class Factory extends SimpleNonConceptFactory<InitializationVector> {
         
         /**
          * Creates a new factory.

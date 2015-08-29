@@ -200,7 +200,7 @@ public final class CompressionWrapper extends BlockBasedWrapper<CompressionWrapp
      * The factory for this class.
      */
     @Immutable
-    public static class Factory extends BlockBasedWrapper.Factory<CompressionWrapper> {
+    public static final class Factory extends BlockBasedWrapper.Factory<CompressionWrapper> {
         
         /**
          * Creates a new factory with the given type.

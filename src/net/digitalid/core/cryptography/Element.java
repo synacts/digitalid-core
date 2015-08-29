@@ -212,7 +212,7 @@ public final class Element extends Number<Element> {
      * The factory for this class.
      */
     @Immutable
-    public static class Factory extends BlockBasedSimpleNonConceptFactory<Element> {
+    public static final class Factory extends BlockBasedSimpleNonConceptFactory<Element> {
         
         /**
          * Creates a new factory.

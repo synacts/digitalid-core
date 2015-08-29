@@ -162,10 +162,10 @@ public final class ClientSignatureWrapper extends SignatureWrapper {
         
         final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(tuple.getNonNullableElement(2)).getNonNullableElements(3);
         final @Nonnull BigInteger t = HashWrapper.decodeNonNullable(elements.getNonNullable(1));
-        final @Nonnull Exponent s = new Exponent(elements.getNonNullable(2));
+        final @Nonnull Exponent s = Exponent.get(elements.getNonNullable(2));
         final @Nonnull BigInteger h = t.xor(hash);
         final @Nonnull Element value = commitment.getPublicKey().getAu().pow(s).multiply(commitment.getValue().pow(h));
-        if (!t.equals(value.toBlock().getHash()) || s.getBitLength() > Parameters.RANDOM_EXPONENT) throw new InvalidSignatureException("The client signature is invalid.");
+        if (!t.equals(Block.fromNonNullable(value).getHash()) || s.getBitLength() > Parameters.RANDOM_EXPONENT) throw new InvalidSignatureException("The client signature is invalid.");
         
         Log.verbose("Signature verified in " + start.ago().getValue() + " ms.");
         
@@ -182,11 +182,11 @@ public final class ClientSignatureWrapper extends SignatureWrapper {
         final @Nonnull SecretCommitment commitment = (SecretCommitment) this.commitment;
         subelements.set(0, commitment.toBlock());
         final @Nonnull Exponent r = commitment.getPublicKey().getCompositeGroup().getRandomExponent(Parameters.RANDOM_EXPONENT);
-        final @Nonnull BigInteger t = commitment.getPublicKey().getAu().pow(r).toBlock().getHash();
+        final @Nonnull BigInteger t = Block.fromNonNullable(commitment.getPublicKey().getAu().pow(r)).getHash();
         subelements.set(1, HashWrapper.encodeNonNullable(HASH, t));
-        final @Nonnull Exponent h = new Exponent(t.xor(elements.getNonNullable(0).getHash()));
+        final @Nonnull Exponent h = Exponent.get(t.xor(elements.getNonNullable(0).getHash()));
         final @Nonnull Exponent s = r.subtract(commitment.getSecret().multiply(h));
-        subelements.set(2, s.toBlock());
+        subelements.set(2, Block.fromNonNullable(s));
         elements.set(2, TupleWrapper.encode(SIGNATURE, subelements.freeze()));
         
         Log.verbose("Element signed in " + start.ago().getValue() + " ms.");

@@ -98,7 +98,7 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
         @Nullable Block key = encryptions.get(pair);
         if (key == null) {
             final @Nonnull Time start = new Time();
-            key = publicKey.getCompositeGroup().getElement(symmetricKey.getValue()).pow(publicKey.getE()).toBlock().setType(KEY);
+            key = Block.fromNonNullable(publicKey.getCompositeGroup().getElement(symmetricKey.getValue()).pow(publicKey.getE()), KEY);
             encryptions.put(pair, key);
             Log.verbose("Symmetric key encrypted in " + start.ago().getValue() + " ms.");
         }
@@ -124,7 +124,7 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
         if (symmetricKey == null) {
             final @Nonnull Time start = new Time();
             final @Nonnull BigInteger value = IntegerWrapper.decodeNonNullable(key);
-            symmetricKey = new SymmetricKey(privateKey.powD(value).getValue());
+            symmetricKey = SymmetricKey.get(privateKey.powD(value).getValue());
             decryptions.put(pair, symmetricKey);
             Log.verbose("Symmetric key decrypted in " + start.ago().getValue() + " ms.");
         }
@@ -418,7 +418,7 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
      * The factory for this class.
      */
     @Immutable
-    public static class Factory extends BlockBasedWrapper.Factory<EncryptionWrapper> {
+    public static final class Factory extends BlockBasedWrapper.Factory<EncryptionWrapper> {
         
         /**
          * Creates a new factory with the given type.

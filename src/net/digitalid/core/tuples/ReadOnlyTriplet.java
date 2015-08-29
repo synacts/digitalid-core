@@ -25,7 +25,15 @@ public interface ReadOnlyTriplet<E0, E1, E2> extends ReadOnlyPair<E0, E1> {
      * @return the third element of this tuple.
      */
     @Pure
-    public @Nullable E2 getElement2();
+    public @Nullable E2 getNullableElement2();
+    
+    /**
+     * Returns the third element of this tuple.
+     * 
+     * @return the third element of this tuple.
+     */
+    @Pure
+    public @Nonnull E2 getNonNullableElement2();
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Cloneable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     

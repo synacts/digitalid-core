@@ -27,8 +27,7 @@ import net.digitalid.core.exceptions.packet.PacketError;
 import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.identity.Identity;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.wrappers.Blockable;
-import net.digitalid.core.database.SQLizable;
+import net.digitalid.core.storable.Storable;
 import net.digitalid.core.synchronizer.Synchronizer;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.BooleanWrapper;
@@ -47,7 +46,7 @@ import net.digitalid.core.wrappers.TupleWrapper;
  * @version 1.0
  */
 @Immutable
-public abstract class Agent extends NonHostConcept implements Blockable, SQLizable {
+public abstract class Agent extends NonHostConcept implements Storable<Agent> {
     
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Aspects –––––––––––––––––––––––––––––––––––––––––––––––––– */

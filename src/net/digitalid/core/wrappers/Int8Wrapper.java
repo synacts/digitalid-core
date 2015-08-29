@@ -136,7 +136,7 @@ public final class Int8Wrapper extends Wrapper<Int8Wrapper> {
      * The factory for this class.
      */
     @Immutable
-    public static class Factory extends Wrapper.Factory<Int8Wrapper> {
+    public static final class Factory extends Wrapper.Factory<Int8Wrapper> {
         
         /**
          * Stores the column for the wrapper.

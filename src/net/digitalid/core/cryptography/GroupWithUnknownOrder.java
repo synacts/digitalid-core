@@ -57,7 +57,7 @@ public final class GroupWithUnknownOrder extends Group<GroupWithUnknownOrder> {
      * The factory for this class.
      */
     @Immutable
-    public static class Factory extends BlockBasedSimpleNonConceptFactory<GroupWithUnknownOrder> {
+    public static final class Factory extends BlockBasedSimpleNonConceptFactory<GroupWithUnknownOrder> {
         
         /**
          * Creates a new factory.

@@ -221,7 +221,7 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
      * The factory for this class.
      */
     @Immutable
-    public static class Factory extends BlockBasedWrapper.Factory<SelfcontainedWrapper> {
+    public static final class Factory extends BlockBasedWrapper.Factory<SelfcontainedWrapper> {
         
         /**
          * Creates a new factory with the given type.

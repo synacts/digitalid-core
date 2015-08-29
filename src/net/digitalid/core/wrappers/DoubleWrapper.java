@@ -136,7 +136,7 @@ public final class DoubleWrapper extends Wrapper<DoubleWrapper> {
      * The factory for this class.
      */
     @Immutable
-    public static class Factory extends Wrapper.Factory<DoubleWrapper> {
+    public static final class Factory extends Wrapper.Factory<DoubleWrapper> {
         
         /**
          * Stores the column for the wrapper.

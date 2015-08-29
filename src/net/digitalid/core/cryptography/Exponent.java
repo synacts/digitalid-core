@@ -136,7 +136,7 @@ public final class Exponent extends Number<Exponent> {
      * The factory for this class.
      */
     @Immutable
-    public static class Factory extends BlockBasedSimpleNonConceptFactory<Exponent> {
+    public static final class Factory extends BlockBasedSimpleNonConceptFactory<Exponent> {
         
         /**
          * Creates a new factory.

@@ -571,7 +571,7 @@ public final class PublicKey implements Storable<PublicKey> {
      * The factory for this class.
      */
     @Immutable
-    public static class Factory extends BlockBasedSimpleNonConceptFactory<PublicKey> {
+    public static final class Factory extends BlockBasedSimpleNonConceptFactory<PublicKey> {
         
         /**
          * Creates a new factory.

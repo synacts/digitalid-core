@@ -136,7 +136,7 @@ public final class Int64Wrapper extends Wrapper<Int64Wrapper> {
      * The factory for this class.
      */
     @Immutable
-    public static class Factory extends Wrapper.Factory<Int64Wrapper> {
+    public static final class Factory extends Wrapper.Factory<Int64Wrapper> {
         
         /**
          * Stores the column for the wrapper.

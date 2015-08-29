@@ -458,7 +458,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
      * The factory for this class.
      */
     @Immutable
-    public static class Factory extends BlockBasedWrapper.Factory<SignatureWrapper> {
+    public static final class Factory extends BlockBasedWrapper.Factory<SignatureWrapper> {
         
         /**
          * Creates a new factory with the given type.

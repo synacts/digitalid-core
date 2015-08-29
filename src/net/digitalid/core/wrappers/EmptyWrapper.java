@@ -102,7 +102,7 @@ public final class EmptyWrapper extends Wrapper<EmptyWrapper> {
      * The factory for this class.
      */
     @Immutable
-    public static class Factory extends Wrapper.Factory<EmptyWrapper> {
+    public static final class Factory extends Wrapper.Factory<EmptyWrapper> {
         
         /**
          * Stores the column for the wrapper.

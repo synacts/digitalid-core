@@ -16,7 +16,9 @@ import net.digitalid.core.collections.ReadOnlyArray;
 import net.digitalid.core.collections.ReadOnlyList;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.wrappers.Blockable;
+import net.digitalid.core.storable.BlockBasedSimpleNonConceptFactory;
+import net.digitalid.core.storable.SimpleNonConceptFactory;
+import net.digitalid.core.storable.Storable;
 import net.digitalid.core.tuples.FreezablePair;
 import net.digitalid.core.tuples.ReadOnlyPair;
 import net.digitalid.core.wrappers.Block;
@@ -33,80 +35,16 @@ import net.digitalid.core.wrappers.TupleWrapper;
  * @version 1.0
  */
 @Immutable
-abstract class KeyChain<Key extends Blockable> implements Blockable {
+abstract class KeyChain<K extends Storable<K>, C extends KeyChain<K, C>> implements Storable<C> {
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Items –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the items of this key chain in chronological order with the newest one first.
      * 
      * @invariant items.isStrictlyDescending() : "The list is strictly descending.";
      */
-    private final @Nonnull @Frozen @NonEmpty @NonNullableElements ReadOnlyList<ReadOnlyPair<Time, Key>> items;
-    
-    /**
-     * Creates a new key chain with the given time and key.
-     * 
-     * @param time the time from when on the given key is valid.
-     * @param key the key that is valid from the given time on.
-     * 
-     * @require time.isLessThanOrEqualTo(new Time()) : "The time lies in the past.";
-     */
-    protected KeyChain(@Nonnull Time time, @Nonnull Key key) {
-        assert time.isLessThanOrEqualTo(new Time()) : "The time lies in the past.";
-        
-        final @Nonnull FreezableLinkedList<ReadOnlyPair<Time, Key>> items = new FreezableLinkedList<>();
-        items.add(new FreezablePair<>(time, key).freeze());
-        this.items = items.freeze();
-    }
-    
-    /**
-     * Creates a new key chain with the given items.
-     * 
-     * @param items the items of the new key chain.
-     * 
-     * @require items.isStrictlyDescending() : "The list is strictly descending.";
-     */
-    protected KeyChain(@Nonnull@Frozen @NonEmpty @NonNullableElements ReadOnlyList<ReadOnlyPair<Time, Key>> items) {
-        this.items = items;
-    }
-    
-    /**
-     * Creates a new key chain with the entries encoded in the given block.
-     * 
-     * @param block the block containing the key chain entries.
-     * 
-     * @require block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
-     */
-    protected KeyChain(@Nonnull Block block) throws InvalidEncodingException {
-        assert block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
-        
-        final @Nonnull ReadOnlyList<Block> elements = new ListWrapper(block).getElementsNotNull();
-        if (elements.isEmpty()) throw new InvalidEncodingException("The list of elements may not be empty.");
-        final @Nonnull FreezableLinkedList<ReadOnlyPair<Time, Key>> items = new FreezableLinkedList<>();
-        
-        for (final @Nonnull Block element : elements) {
-            final @Nonnull ReadOnlyArray<Block> pair = new TupleWrapper(element).getNonNullableElements(2);
-            final @Nonnull Time time = new Time(pair.getNonNullable(0));
-            final @Nonnull Key key = createKey(pair.getNonNullable(1));
-            items.add(new FreezablePair<>(time, key).freeze());
-        }
-        
-        if (!items.isStrictlyDescending()) throw new InvalidEncodingException("The time has to be strictly decreasing.");
-        this.items = items.freeze();
-    }
-    
-    @Pure
-    @Override
-    public final @Nonnull Block toBlock() {
-        final @Nonnull FreezableArrayList<Block> elements = new FreezableArrayList<>(items.size());
-        for (final @Nonnull ReadOnlyPair<Time, Key> item : items) {
-            final @Nonnull FreezableArray<Block> pair = new FreezableArray<>(2);
-            pair.set(0, item.getElement0().toBlock());
-            pair.set(1, item.getElement1().toBlock());
-            elements.add(new TupleWrapper(getItemType(), pair.freeze()).toBlock());
-        }
-        return new ListWrapper(getType(), elements.freeze()).toBlock();
-    }
-    
+    private final @Nonnull @Frozen @NonEmpty @NonNullableElements ReadOnlyList<ReadOnlyPair<Time, K>> items;
     
     /**
      * Returns the items of this key chain in chronological order with the newest one first.
@@ -116,7 +54,7 @@ abstract class KeyChain<Key extends Blockable> implements Blockable {
      * @ensure items.isStrictlyDescending() : "The list is strictly descending.";
      */
     @Pure
-    public final @Nonnull @Frozen @NonEmpty @NonNullableElements ReadOnlyList<ReadOnlyPair<Time, Key>> getItems() {
+    public final @Nonnull @Frozen @NonEmpty @NonNullableElements ReadOnlyList<ReadOnlyPair<Time, K>> getItems() {
         return items;
     }
     
@@ -130,9 +68,9 @@ abstract class KeyChain<Key extends Blockable> implements Blockable {
      * @throws InvalidEncodingException if there is no key for the given time.
      */
     @Pure
-    public final @Nonnull Key getKey(@Nonnull Time time) throws InvalidEncodingException {
-        for (final @Nonnull ReadOnlyPair<Time, Key> item : items) {
-            if (time.isGreaterThanOrEqualTo(item.getElement0())) return item.getElement1();
+    public final @Nonnull K getKey(@Nonnull Time time) throws InvalidEncodingException {
+        for (final @Nonnull ReadOnlyPair<Time, K> item : items) {
+            if (time.isGreaterThanOrEqualTo(item.getNonNullableElement0())) return item.getNonNullableElement1();
         }
         throw new InvalidEncodingException("There is no key for the given time (" + time + ") in this key chain " + this + ".");
     }
@@ -144,7 +82,7 @@ abstract class KeyChain<Key extends Blockable> implements Blockable {
      */
     @Pure
     public final @Nonnull Time getNewestTime() {
-        return items.getNonNullable(0).getElement0();
+        return items.getNonNullable(0).getNonNullableElement0();
     }
     
     /**
@@ -156,18 +94,18 @@ abstract class KeyChain<Key extends Blockable> implements Blockable {
      * @return a new key chain with the given key added and expired ones removed.
      */
     @Pure
-    public final @Nonnull KeyChain<Key> add(@Nonnull Time time, @Nonnull Key key) {
+    public final @Nonnull KeyChain<K, C> add(@Nonnull Time time, @Nonnull K key) {
         assert time.isGreaterThan(getNewestTime()) : "The time is greater than the newest time of this key chain.";
         assert time.isGreaterThan(new Time().add(Time.TROPICAL_YEAR)) : "The time lies at least one year in the future.";
         
-        final @Nonnull FreezableList<ReadOnlyPair<Time, Key>> copy = items.clone();
-        final @Nonnull ReadOnlyPair<Time, Key> pair = new FreezablePair<>(time, key).freeze();
+        final @Nonnull FreezableList<ReadOnlyPair<Time, K>> copy = items.clone();
+        final @Nonnull ReadOnlyPair<Time, K> pair = FreezablePair.get(time, key).freeze();
         copy.add(0, pair);
         
         final @Nonnull Time cutoff = Time.TWO_YEARS.ago();
-        final @Nonnull FreezableIterator<ReadOnlyPair<Time, Key>> iterator = copy.iterator();
+        final @Nonnull FreezableIterator<ReadOnlyPair<Time, K>> iterator = copy.iterator();
         while (iterator.hasNext()) {
-            if (iterator.next().getElement0().isLessThan(cutoff)) {
+            if (iterator.next().getNonNullableElement0().isLessThan(cutoff)) {
                 while (iterator.hasNext()) {
                     iterator.next();
                     iterator.remove();
@@ -175,8 +113,23 @@ abstract class KeyChain<Key extends Blockable> implements Blockable {
                 break;
             }
         }
-        return createKeyChain(copy.freeze());
+        return getFactory().createKeyChain(copy.freeze());
     }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Creates a new key chain with the given items.
+     * 
+     * @param items the items of the new key chain.
+     * 
+     * @require items.isStrictlyDescending() : "The list is strictly descending.";
+     */
+    protected KeyChain(@Nonnull @Frozen @NonEmpty @NonNullableElements ReadOnlyList<ReadOnlyPair<Time, K>> items) {
+        this.items = items;
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
@@ -184,35 +137,88 @@ abstract class KeyChain<Key extends Blockable> implements Blockable {
         return items.toString();
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Returns the type of the key chain items.
-     * 
-     * @return the type of the key chain items.
+     * The factory for this class.
      */
-    @Pure
-    protected abstract @Nonnull SemanticType getItemType();
+    @Immutable
+    public static abstract class Factory<K extends Storable<K>, C extends KeyChain<K, C>> extends BlockBasedSimpleNonConceptFactory<C> {
+        
+        /**
+         * Stores the type of the key chain items.
+         */
+        private final @Nonnull SemanticType itemType;
+        
+        /**
+         * Stores the factory that retrieves a key from a block.
+         */
+        private final @Nonnull SimpleNonConceptFactory<K> factory;
+        
+        /**
+         * Creates a new factory with the given parameters.
+         * 
+         * @param chainType the type of the key chain.
+         * @param itemType the type of the key chain items.
+         * @param factory the factory that retrieves a key from a block.
+         */
+        protected Factory(@Nonnull SemanticType chainType, @Nonnull SemanticType itemType, @Nonnull SimpleNonConceptFactory<K> factory) {
+            super(chainType);
+            
+            this.itemType = itemType;
+            this.factory = factory;
+        }
+        
+        /**
+         * Creates a new key chain with the given items.
+         * 
+         * @param items the items of the new key chain.
+         * 
+         * @return a new key chain with the given items.
+         * 
+         * @require items.isStrictlyDescending() : "The list is strictly descending.";
+         */
+        @Pure
+        protected abstract @Nonnull C createKeyChain(@Nonnull @Frozen @NonEmpty @NonNullableElements ReadOnlyList<ReadOnlyPair<Time, K>> items);
     
-    /**
-     * Creates a new key from the given block.
-     * 
-     * @param block the block containing the key.
-     * 
-     * @return a new key created from the given block.
-     */
-    @Pure
-    protected abstract @Nonnull Key createKey(@Nonnull Block block) throws InvalidEncodingException;
+        @Pure
+        @Override
+        public final @Nonnull Block encodeNonNullable(@Nonnull C chain) {
+            final @Nonnull ReadOnlyList<ReadOnlyPair<Time, K>> items = chain.getItems();
+            final @Nonnull FreezableArrayList<Block> elements = FreezableArrayList.getWithCapacity(items.size());
+            for (final @Nonnull ReadOnlyPair<Time, K> item : items) {
+                final @Nonnull FreezableArray<Block> pair = FreezableArray.get(2);
+                pair.set(0, Block.fromNonNullable(item.getNonNullableElement0()));
+                pair.set(1, Block.fromNonNullable(item.getNonNullableElement1()));
+                elements.add(TupleWrapper.encode(itemType, pair.freeze()));
+            }
+            return ListWrapper.encode(getType(), elements.freeze());
+        }
+        
+        @Pure
+        @Override
+        public @Nonnull C decodeNonNullable(@Nonnull Block block) throws InvalidEncodingException {
+            assert block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
+            
+            final @Nonnull ReadOnlyList<Block> elements = ListWrapper.decodeNonNullableElements(block);
+            if (elements.isEmpty()) throw new InvalidEncodingException("The list of elements may not be empty.");
+            final @Nonnull FreezableLinkedList<ReadOnlyPair<Time, K>> items = FreezableLinkedList.get();
+            
+            for (final @Nonnull Block element : elements) {
+                final @Nonnull ReadOnlyArray<Block> pair = TupleWrapper.decode(element).getNonNullableElements(2);
+                final @Nonnull Time time = new Time(pair.getNonNullable(0));
+                final @Nonnull K key = factory.decodeNonNullable(pair.getNonNullable(1));
+                items.add(FreezablePair.get(time, key).freeze());
+            }
+            
+            if (!items.isStrictlyDescending()) throw new InvalidEncodingException("The time has to be strictly decreasing.");
+            return createKeyChain(items.freeze());
+        }
+        
+    }
     
-    /**
-     * Creates a new key chain with the given items.
-     * 
-     * @param items the items of the new key chain.
-     * 
-     * @return a new key chain with the given items.
-     * 
-     * @require items.isStrictlyDescending() : "The list is strictly descending.";
-     */
     @Pure
-    protected abstract @Nonnull KeyChain<Key> createKeyChain(@Nonnull @Frozen @NonEmpty @NonNullableElements ReadOnlyList<ReadOnlyPair<Time, Key>> items);
+    @Override
+    public abstract @Nonnull Factory<K, C> getFactory();
     
 }

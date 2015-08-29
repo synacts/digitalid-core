@@ -164,7 +164,7 @@ public final class IntegerWrapper extends Wrapper<IntegerWrapper> {
      * The factory for this class.
      */
     @Immutable
-    public static class Factory extends Wrapper.Factory<IntegerWrapper> {
+    public static final class Factory extends Wrapper.Factory<IntegerWrapper> {
         
         /**
          * Stores the column for the wrapper.

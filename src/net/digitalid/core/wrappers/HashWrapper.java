@@ -181,7 +181,7 @@ public final class HashWrapper extends Wrapper<HashWrapper> {
      * The factory for this class.
      */
     @Immutable
-    public static class Factory extends Wrapper.Factory<HashWrapper> {
+    public static final class Factory extends Wrapper.Factory<HashWrapper> {
         
         /**
          * Stores the column for the wrapper.

@@ -66,7 +66,7 @@ public class FreezableTriplet<E0, E1, E2> extends FreezablePair<E0, E1> implemen
      */
     @Pure
     public static @Capturable @Nonnull @NonFrozen <E0, E1, E2> FreezableTriplet<E0, E1, E2> getNonNullable(@Nonnull @NullableElements ReadOnlyTriplet<E0, E1, E2> triplet) {
-        return get(triplet.getElement0(), triplet.getElement1(), triplet.getElement2());
+        return get(triplet.getNullableElement0(), triplet.getNullableElement1(), triplet.getNullableElement2());
     }
     
     /**
@@ -85,7 +85,15 @@ public class FreezableTriplet<E0, E1, E2> extends FreezablePair<E0, E1> implemen
     
     @Pure
     @Override
-    public final @Nullable E2 getElement2() {
+    public final @Nullable E2 getNullableElement2() {
+        return element2;
+    }
+    
+    @Pure
+    @Override
+    public final @Nonnull E2 getNonNullableElement2() {
+        assert element2 != null : "The element is not null.";
+        
         return element2;
     }
     

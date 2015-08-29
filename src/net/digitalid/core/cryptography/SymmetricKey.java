@@ -18,14 +18,19 @@ import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
+import net.digitalid.core.annotations.BasedOn;
 import net.digitalid.core.annotations.Capturable;
 import net.digitalid.core.annotations.Immutable;
+import net.digitalid.core.annotations.NonEmpty;
+import net.digitalid.core.annotations.NonNegative;
+import net.digitalid.core.annotations.Positive;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.errors.InitializationError;
 import net.digitalid.core.errors.ShouldNeverHappenError;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.wrappers.Blockable;
+import net.digitalid.core.storable.BlockBasedSimpleNonConceptFactory;
+import net.digitalid.core.storable.Storable;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.IntegerWrapper;
 
@@ -36,13 +41,16 @@ import net.digitalid.core.wrappers.IntegerWrapper;
  * @version 1.0
  */
 @Immutable
-public final class SymmetricKey implements Blockable {
+public final class SymmetricKey implements Storable<SymmetricKey> {
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the semantic type {@code symmetric.key@core.digitalid.net}.
      */
     public static final @Nonnull SemanticType TYPE = SemanticType.map("symmetric.key@core.digitalid.net").load(IntegerWrapper.TYPE);
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Circumvent Cryptographic Restrictions –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     static {
         try {
@@ -88,6 +96,7 @@ public final class SymmetricKey implements Blockable {
         }
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Parameters –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the length of symmetric keys in bytes.
@@ -99,62 +108,12 @@ public final class SymmetricKey implements Blockable {
      */
     private static final @Nonnull String mode = "AES/CBC/PKCS5Padding";
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the value of this symmetric key.
      */
     private final @Nonnull BigInteger value;
-    
-    /**
-     * Stores the key of this symmetric key.
-     */
-    private final @Nonnull Key key;
-    
-    /**
-     * Creates a new symmetric key with a random value.
-     */
-    public SymmetricKey() {
-        this(new BigInteger(Parameters.ENCRYPTION_KEY, new SecureRandom()));
-    }
-    
-    /**
-     * Creates a new symmetric key with the given value.
-     * 
-     * @param value the value of the new symmetric key.
-     */
-    public SymmetricKey(@Nonnull BigInteger value) {
-        this.value = value;
-        final @Nonnull byte[] bytes = value.toByteArray();
-        final @Nonnull byte[] key = new byte[LENGTH];
-        System.arraycopy(bytes, Math.max(bytes.length - LENGTH, 0), key, Math.max(LENGTH - bytes.length, 0), Math.min(LENGTH, bytes.length));
-        this.key = new SecretKeySpec(key, "AES");
-    }
-    
-    /**
-     * Creates a new time from the given block.
-     * 
-     * @param block the block containing the time.
-     * 
-     * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
-     */
-    public SymmetricKey(@Nonnull Block block) throws InvalidEncodingException {
-        this(new IntegerWrapper(block).getValue());
-        
-        assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
-    }
-    
-    @Pure
-    @Override
-    public @Nonnull SemanticType getType() {
-        return TYPE;
-    }
-    
-    @Pure
-    @Override
-    public @Nonnull Block toBlock() {
-        return new IntegerWrapper(TYPE, value).toBlock();
-    }
-    
     
     /**
      * Returns the value of this symmetric key.
@@ -166,6 +125,51 @@ public final class SymmetricKey implements Blockable {
         return value;
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Key –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Stores the key of this symmetric key.
+     */
+    private final @Nonnull Key key;
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Creates a new symmetric key with the given value.
+     * 
+     * @param value the value of the new symmetric key.
+     */
+    private SymmetricKey(@Nonnull BigInteger value) {
+        this.value = value;
+        final @Nonnull byte[] bytes = value.toByteArray();
+        final @Nonnull byte[] key = new byte[LENGTH];
+        System.arraycopy(bytes, Math.max(bytes.length - LENGTH, 0), key, Math.max(LENGTH - bytes.length, 0), Math.min(LENGTH, bytes.length));
+        this.key = new SecretKeySpec(key, "AES");
+    }
+    
+    /**
+     * Creates a new symmetric key with the given value.
+     * 
+     * @param value the value of the new symmetric key.
+     * 
+     * @return a new symmetric key with the given value.
+     */
+    @Pure
+    public static @Nonnull SymmetricKey get(@Nonnull BigInteger value) {
+        return new SymmetricKey(value);
+    }
+    
+    /**
+     * Creates a new symmetric key with a random value.
+     * 
+     * @return a new symmetric key with a random value.
+     */
+    @Pure
+    public static @Nonnull SymmetricKey getRandom() {
+        return new SymmetricKey(new BigInteger(Parameters.ENCRYPTION_KEY, new SecureRandom()));
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encryption and Decryption –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Encrypts the indicated section in the given byte array with this symmetric key.
@@ -177,14 +181,10 @@ public final class SymmetricKey implements Blockable {
      * 
      * @return the encryption of the indicated section in the given byte array.
      * 
-     * @require offset >= 0 : "The offset is not negative.";
-     * @require length > 0 : "The length is positive.";
      * @require offset + length <= bytes.length : "The indicated section may not exceed the given byte array.";
-     * 
-     * @ensure return.length > 0 : "The returned byte array is not empty.";
      */
     @Pure
-    public @Capturable @Nonnull byte[] encrypt(@Nonnull InitializationVector initializationVector, @Nonnull byte[] bytes, int offset, int length) {
+    public @Capturable @Nonnull @NonEmpty byte[] encrypt(@Nonnull InitializationVector initializationVector, @Nonnull byte[] bytes, @NonNegative int offset, @Positive int length) {
         assert offset >= 0 : "The offset is not negative.";
         assert length > 0 : "The length is positive.";
         assert offset + length <= bytes.length : "The indicated section may not exceed the given byte array.";
@@ -208,14 +208,10 @@ public final class SymmetricKey implements Blockable {
      * 
      * @return the decryption of the indicated section in the given byte array.
      * 
-     * @require offset >= 0 : "The offset is not negative.";
-     * @require length > 0 : "The length is positive.";
      * @require offset + length <= bytes.length : "The indicated section may not exceed the given byte array.";
-     * 
-     * @ensure return.length > 0 : "The returned byte array is not empty.";
      */
     @Pure
-    public @Capturable @Nonnull byte[] decrypt(@Nonnull InitializationVector initializationVector, @Nonnull byte[] bytes, int offset, int length) throws InvalidEncodingException {
+    public @Capturable @Nonnull @NonEmpty byte[] decrypt(@Nonnull InitializationVector initializationVector, @Nonnull byte[] bytes, @NonNegative int offset, @Positive int length) throws InvalidEncodingException {
         assert offset >= 0 : "The offset is not negative.";
         assert length > 0 : "The length is positive.";
         assert offset + length <= bytes.length : "The indicated section may not exceed the given byte array.";
@@ -229,6 +225,7 @@ public final class SymmetricKey implements Blockable {
         }
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
@@ -243,6 +240,48 @@ public final class SymmetricKey implements Blockable {
     @Override
     public int hashCode() {
         return this.value.hashCode();
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * The factory for this class.
+     */
+    @Immutable
+    public static final class Factory extends BlockBasedSimpleNonConceptFactory<SymmetricKey> {
+        
+        /**
+         * Creates a new factory.
+         */
+        private Factory() {
+            super(TYPE);
+        }
+        
+        @Pure
+        @Override
+        public @Nonnull Block encodeNonNullable(@Nonnull SymmetricKey symmetricKey) {
+            return IntegerWrapper.encodeNonNullable(TYPE, symmetricKey.value);
+        }
+        
+        @Pure
+        @Override
+        public @Nonnull SymmetricKey decodeNonNullable(@Nonnull @BasedOn("symmetric.key@core.digitalid.net") Block block) throws InvalidEncodingException {
+            assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
+            
+            return new SymmetricKey(IntegerWrapper.decodeNonNullable(block));
+        }
+        
+    }
+    
+    /**
+     * Stores the factory of this class.
+     */
+    public static final @Nonnull Factory FACTORY = new Factory();
+    
+    @Pure
+    @Override
+    public @Nonnull Factory getFactory() {
+        return FACTORY;
     }
     
 }

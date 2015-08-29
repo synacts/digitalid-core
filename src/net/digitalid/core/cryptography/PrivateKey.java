@@ -279,7 +279,7 @@ public final class PrivateKey implements Storable<PrivateKey> {
      * The factory for this class.
      */
     @Immutable
-    public static class Factory extends BlockBasedSimpleNonConceptFactory<PrivateKey> {
+    public static final class Factory extends BlockBasedSimpleNonConceptFactory<PrivateKey> {
         
         /**
          * Creates a new factory.

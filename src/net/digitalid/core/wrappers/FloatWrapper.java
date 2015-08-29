@@ -136,7 +136,7 @@ public final class FloatWrapper extends Wrapper<FloatWrapper> {
      * The factory for this class.
      */
     @Immutable
-    public static class Factory extends Wrapper.Factory<FloatWrapper> {
+    public static final class Factory extends Wrapper.Factory<FloatWrapper> {
         
         /**
          * Stores the column for the wrapper.

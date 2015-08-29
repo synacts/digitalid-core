@@ -140,7 +140,7 @@ public final class CharWrapper extends Wrapper<CharWrapper> {
      * The factory for this class.
      */
     @Immutable
-    public static class Factory extends Wrapper.Factory<CharWrapper> {
+    public static final class Factory extends Wrapper.Factory<CharWrapper> {
         
         /**
          * Stores the column for the wrapper.
