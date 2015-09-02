@@ -6,9 +6,9 @@ package net.digitalid.core.property.indexed;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 0.0
  */
-public class IndexedPropertyInternalAction {
+public class IndexedConceptPropertyInternalAction {
     
-    public IndexedPropertyInternalAction() {
+    public IndexedConceptPropertyInternalAction() {
         
     }
     

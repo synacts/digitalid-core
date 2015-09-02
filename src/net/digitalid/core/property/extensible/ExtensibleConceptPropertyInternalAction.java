@@ -6,9 +6,9 @@ package net.digitalid.core.property.extensible;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 0.0
  */
-public class ExtensiblePropertyTable {
+public class ExtensibleConceptPropertyInternalAction {
     
-    public ExtensiblePropertyTable() {
+    public ExtensibleConceptPropertyInternalAction() {
         
     }
     

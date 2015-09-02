@@ -35,6 +35,7 @@ import net.digitalid.core.wrappers.Block;
  * 
  * @see Storable
  * @see GeneralConceptFactory
+ * @see SimpleNonHostConceptFactory
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0

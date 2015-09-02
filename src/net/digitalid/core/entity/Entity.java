@@ -3,13 +3,11 @@ package net.digitalid.core.entity;
 import javax.annotation.Nonnull;
 import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.concept.Aspect;
 import net.digitalid.core.concept.Concept;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.handler.Handler;
 import net.digitalid.core.identity.Identity;
 import net.digitalid.core.identity.InternalIdentity;
-import net.digitalid.core.database.SQLizable;
 
 /**
  * An entity captures the {@link Site site} and the {@link Identity identity} of a {@link Concept concept} or {@link Handler handler}.

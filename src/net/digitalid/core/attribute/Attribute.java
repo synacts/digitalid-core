@@ -8,20 +8,19 @@ import net.digitalid.core.annotations.Capturable;
 import net.digitalid.core.annotations.Committing;
 import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
-import net.digitalid.core.annotations.OnlyForActions;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.collections.ConcurrentHashMap;
 import net.digitalid.core.collections.ConcurrentMap;
 import net.digitalid.core.collections.FreezableSet;
-import net.digitalid.core.concept.Aspect;
 import net.digitalid.core.concept.GeneralConcept;
-import net.digitalid.core.concept.Instance;
-import net.digitalid.core.concept.Observer;
 import net.digitalid.core.database.Database;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.expression.PassiveExpression;
 import net.digitalid.core.identity.SemanticType;
+import net.digitalid.core.property.nullable.NullableConceptProperty;
+import net.digitalid.core.property.nullable.NullableConceptPropertyTable;
+import net.digitalid.core.storable.Storable;
 import net.digitalid.core.synchronizer.Synchronizer;
 import net.digitalid.core.wrappers.BooleanWrapper;
 
@@ -34,47 +33,29 @@ import net.digitalid.core.wrappers.BooleanWrapper;
  * @version 1.0
  */
 @Immutable
-public final class Attribute extends GeneralConcept {
+public final class Attribute extends GeneralConcept implements Storable<Attribute> {
     
-    /**
-     * Stores the aspect of a published attribute changing its value.
-     */
-    public static final @Nonnull Aspect VALUE = new Aspect(Attribute.class, "value");
-    
-    /**
-     * Stores the aspect of an unpublished attribute changing its value.
-     */
-    public static final @Nonnull Aspect UNPUBLISHED = new Aspect(Attribute.class, "unpublished");
-    
-    /**
-     * Stores the aspect of an attribute changing its visibility.
-     */
-    public static final @Nonnull Aspect VISIBILITY = new Aspect(Attribute.class, "visibility");
-    
-    /**
-     * Stores the aspect of an attribute being reset after having reloaded the attributes module.
-     */
-    public static final @Nonnull Aspect RESET = new Aspect(Attribute.class, "attribute reset");
-    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the semantic type {@code published.attribute@core.digitalid.net}.
      */
     public static final @Nonnull SemanticType PUBLISHED = SemanticType.map("published.attribute@core.digitalid.net").load(BooleanWrapper.TYPE);
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Semantic Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Stores the type of this attribute.
+     * Stores the semantic type of this attribute.
      * 
      * @invariant type.isAttributeFor(getEntity()) : "The type is an attribute for the entity.";
      */
     private final @Nonnull SemanticType type;
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Published Value –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
-    /**
-     * Stores whether the value has already been loaded from the database.
-     */
-    private boolean valueLoaded = false;
+    private static final @Nonnull NullableConceptPropertyTable<AttributeValue> table = NullableConceptPropertyTable.get("attribute_value", Attribute.FACTORY);
+    
+    public final @Nonnull NullableConceptProperty<AttributeValue, Attribute> value;
     
     /**
      * Stores the value of this attribute.
@@ -83,6 +64,7 @@ public final class Attribute extends GeneralConcept {
      */
     private @Nullable AttributeValue value;
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Unpublished Value –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores whether the unpublished value has already been loaded from the database.
@@ -96,6 +78,7 @@ public final class Attribute extends GeneralConcept {
      */
     private @Nullable AttributeValue unpublished;
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Visibility Expression –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores whether the visibility has already been loaded from the database.
@@ -393,6 +376,7 @@ public final class Attribute extends GeneralConcept {
         }
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override

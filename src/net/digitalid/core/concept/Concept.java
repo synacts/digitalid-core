@@ -8,6 +8,7 @@ import net.digitalid.core.database.Database;
 import net.digitalid.core.entity.Account;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.Role;
+import net.digitalid.core.storable.Storable;
 
 /**
  * This class models a concept in the {@link Database database}.
@@ -19,7 +20,7 @@ import net.digitalid.core.entity.Role;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public abstract class Concept extends Instance {
+public abstract class Concept<C extends Concept<C>> implements Storable<C> {
     
     /**
      * Returns the entity to which this concept belongs.

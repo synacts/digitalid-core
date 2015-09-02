@@ -16,6 +16,8 @@ import net.digitalid.core.wrappers.Block;
 /**
  * This class is like {@link NonHostConceptFactory} except that the decoding of {@link Block blocks} throws less exceptions.
  * 
+ * @see BlockBasedSimpleNonHostConceptFactory
+ * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */

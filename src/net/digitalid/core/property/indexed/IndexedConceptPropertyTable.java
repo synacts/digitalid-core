@@ -6,9 +6,9 @@ package net.digitalid.core.property.indexed;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 0.0
  */
-public class IndexedPropertyTable {
+public class IndexedConceptPropertyTable {
     
-    public IndexedPropertyTable() {
+    public IndexedConceptPropertyTable() {
         
     }
     

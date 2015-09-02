@@ -1,4 +1,4 @@
-package net.digitalid.core.property.replaceable.nonnullable;
+package net.digitalid.core.property.nonnullable;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -41,17 +41,17 @@ import net.digitalid.core.tuples.FreezablePair;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 0.0
  */
-public class NonNullableReplaceableConceptPropertyTable<V> extends ConceptPropertyTable {
+public class NonNullableConceptPropertyTable<V> extends ConceptPropertyTable {
     
     private final @Nonnull NonHostConceptFactory<V> factory; // TODO: Move to super-class?
     
-    public NonNullableReplaceableConceptPropertyTable(@Nonnull NonHostConceptFactory<V> factory) {
+    public NonNullableConceptPropertyTable(@Nonnull NonHostConceptFactory<V> factory) {
         this.factory = factory;
     }
     
-    @Capturable @Nonnull @NonFrozen @NonNullableElements FreezablePair<Time, V> load(@Nonnull NonNullableReplaceableConceptProperty<V, ? extends Concept> property) {
+    @Capturable @Nonnull @NonFrozen @NonNullableElements FreezablePair<Time, V> load(@Nonnull NonNullableConceptProperty<V, ? extends Concept<?>> property) {
         V v = null;
-        return new FreezablePair<>(new Time(), v);
+        return FreezablePair.get(new Time(), v);
     }
     
     // TODO: The following code serves just as an example and should be removed afterwards.

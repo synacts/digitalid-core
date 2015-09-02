@@ -7,9 +7,20 @@ import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.collections.FreezableLinkedList;
 import net.digitalid.core.collections.FreezableList;
 import net.digitalid.core.collections.ReadOnlyList;
+import net.digitalid.core.database.Database;
+import net.digitalid.core.io.Log;
+import net.digitalid.core.property.extensible.ReadOnlyExtensibleProperty;
+import net.digitalid.core.property.indexed.ReadOnlyIndexedProperty;
+import net.digitalid.core.property.nonnullable.ReadOnlyNonNullableProperty;
+import net.digitalid.core.property.nullable.ReadOnlyNullableProperty;
 
 /**
  * A property is an object that can be {@link PropertyObserver observed}.
+ * 
+ * @see ReadOnlyNullableProperty
+ * @see ReadOnlyNonNullableProperty
+ * @see ReadOnlyExtensibleProperty
+ * @see ReadOnlyIndexedProperty
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
@@ -24,15 +35,6 @@ public abstract class ReadOnlyProperty<V, O extends PropertyObserver> {
     private final @Nonnull ValueValidator<? super V> validator;
     
     /**
-     * Creates a new read-only property with the given validator.
-     * 
-     * @param validator the validator used to validate the value(s) of this property.
-     */
-    protected ReadOnlyProperty(@Nonnull ValueValidator<? super V> validator) {
-        this.validator = validator;
-    }
-    
-    /**
      * Returns the value validator of this property.
      * 
      * @return the value validator of this property.
@@ -40,6 +42,17 @@ public abstract class ReadOnlyProperty<V, O extends PropertyObserver> {
     @Pure
     public final @Nonnull ValueValidator<? super V> getValidator() {
         return validator;
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Creates a new read-only property with the given validator.
+     * 
+     * @param validator the validator used to validate the value(s) of this property.
+     */
+    protected ReadOnlyProperty(@Nonnull ValueValidator<? super V> validator) {
+        this.validator = validator;
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Observers –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -55,7 +68,9 @@ public abstract class ReadOnlyProperty<V, O extends PropertyObserver> {
      * @param observer the observer to be registered.
      */
     public final void register(@Nonnull O observer) {
-        if (observers == null) observers = new FreezableLinkedList<>();
+        if (Database.isMultiAccess()) Log.warning("Since the database is in multi-access mode, you might not be notified about all changes.", new Exception());
+        
+        if (observers == null) observers = FreezableLinkedList.get();
         observers.add(observer);
     }
     
@@ -97,7 +112,7 @@ public abstract class ReadOnlyProperty<V, O extends PropertyObserver> {
      */
     @Pure
     protected final @Nonnull @NonFrozen ReadOnlyList<O> getObservers() {
-        if (observers == null) observers = new FreezableLinkedList<>();
+        if (observers == null) observers = FreezableLinkedList.get();
         return observers;
     }
     

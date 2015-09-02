@@ -11,7 +11,7 @@ import net.digitalid.core.entity.NonHostEntity;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public abstract class NonHostConcept extends Concept {
+public abstract class NonHostConcept<C extends NonHostConcept<C>> extends Concept<C> {
     
     /**
      * Stores the entity to which this concept belongs.

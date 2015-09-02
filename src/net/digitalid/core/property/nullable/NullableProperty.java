@@ -1,4 +1,4 @@
-package net.digitalid.core.property.replaceable.nullable;
+package net.digitalid.core.property.nullable;
 
 import java.util.Objects;
 import javax.annotation.Nonnull;
@@ -11,14 +11,14 @@ import net.digitalid.core.property.ValueValidator;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 0.0
  */
-public class NullableReplaceableProperty<V> extends ReadOnlyNullableReplaceableProperty<V> {
+public class NullableProperty<V> extends ReadOnlyNullableProperty<V> {
     
     /**
      * Creates a new nullable replaceable property with the given validator.
      * 
      * @param validator the validator used to validate the value of this property.
      */
-    NullableReplaceableProperty(@Nonnull ValueValidator<? super V> validator) {
+    NullableProperty(@Nonnull ValueValidator<? super V> validator) {
         super(validator);
     }
     
@@ -34,7 +34,7 @@ public class NullableReplaceableProperty<V> extends ReadOnlyNullableReplaceableP
         this.value = newValue;
         
         if (hasObservers() && !Objects.equals(oldValue, newValue)) {
-            for (final @Nonnull NullableReplaceablePropertyObserver<V> observer : getObservers()) observer.replaced(this, oldValue, newValue);
+            for (final @Nonnull NullablePropertyObserver<V> observer : getObservers()) observer.replaced(this, oldValue, newValue);
         }
     }
     

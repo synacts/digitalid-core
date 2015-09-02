@@ -3,8 +3,6 @@ package net.digitalid.core.entity;
 import javax.annotation.Nonnull;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.client.Client;
-import net.digitalid.core.concept.Aspect;
-import net.digitalid.core.concept.Instance;
 import net.digitalid.core.host.Host;
 
 /**

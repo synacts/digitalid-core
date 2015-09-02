@@ -7,21 +7,21 @@ import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.concept.Concept;
 import net.digitalid.core.property.extensible.ExtensibleConceptProperty;
 import net.digitalid.core.property.indexed.IndexedConceptProperty;
-import net.digitalid.core.property.replaceable.nonnullable.NonNullableReplaceableConceptProperty;
-import net.digitalid.core.property.replaceable.nullable.NullableReplaceableConceptProperty;
+import net.digitalid.core.property.nonnullable.NonNullableConceptProperty;
+import net.digitalid.core.property.nullable.NullableConceptProperty;
 
 /**
  * This interface is implemented by all {@link ReadOnlyProperty properties} that belong to a {@link Concept concept}.
  * 
- * @see IndexedConceptProperty
+ * @see NullableConceptProperty
+ * @see NonNullableConceptProperty
  * @see ExtensibleConceptProperty
- * @see NullableReplaceableConceptProperty
- * @see NonNullableReplaceableConceptProperty
+ * @see IndexedConceptProperty
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public interface ConceptProperty<C extends Concept> {
+public interface ConceptProperty<C extends Concept<C>> {
     
     /**
      * Returns the concept of this property.

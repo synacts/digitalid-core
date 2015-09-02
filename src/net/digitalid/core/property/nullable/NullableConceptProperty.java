@@ -1,4 +1,4 @@
-package net.digitalid.core.property.replaceable.nullable;
+package net.digitalid.core.property.nullable;
 
 import javax.annotation.Nonnull;
 import net.digitalid.core.annotations.Pure;
@@ -6,7 +6,7 @@ import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.concept.Concept;
 import net.digitalid.core.property.ConceptProperty;
 import net.digitalid.core.property.ValueValidator;
-import net.digitalid.core.property.replaceable.nonnullable.NonNullableReplaceableConceptPropertyTable;
+import net.digitalid.core.property.nonnullable.NonNullableConceptPropertyTable;
 
 /**
  * Description.
@@ -14,7 +14,7 @@ import net.digitalid.core.property.replaceable.nonnullable.NonNullableReplaceabl
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 0.0
  */
-public class NullableReplaceableConceptProperty<V, C extends Concept> extends NullableReplaceableProperty<V> implements ConceptProperty<C> {
+public class NullableConceptProperty<V, C extends Concept> extends NullableProperty<V> implements ConceptProperty<C> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Concept –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -32,11 +32,11 @@ public class NullableReplaceableConceptProperty<V, C extends Concept> extends Nu
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Table –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     // TODO: Introduce a reference to the database module/methods to load and change the value (or make this generic as well; usually either a column within a row or aggregating several rows)
-    private final @Nonnull NonNullableReplaceableConceptPropertyTable<V> table; // TODO: Change to nullable table.
+    private final @Nonnull NonNullableConceptPropertyTable<V> table; // TODO: Change to nullable table.
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
-    private NullableReplaceableConceptProperty(@Nonnull ValueValidator<? super V> validator, @Nonnull C concept, @Nonnull NonNullableReplaceableConceptPropertyTable<V> table) {
+    private NullableConceptProperty(@Nonnull ValueValidator<? super V> validator, @Nonnull C concept, @Nonnull NonNullableConceptPropertyTable<V> table) {
         super(validator);
         
         this.concept = concept;

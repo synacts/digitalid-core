@@ -173,7 +173,7 @@ public final class HostSignatureWrapper extends SignatureWrapper {
         
         final @Nonnull PublicKey publicKey;
         if (signer.getHostIdentifier().equals(HostIdentifier.DIGITALID)) {
-            publicKey = new PublicKeyChain(Cache.getStaleAttributeContent(HostIdentity.DIGITALID, null, PublicKeyChain.TYPE)).getKey(getNonNullableTime());
+            publicKey = PublicKeyChain.FACTORY.decodeNonNullable(Cache.getStaleAttributeContent(HostIdentity.DIGITALID, null, PublicKeyChain.TYPE)).getKey(getNonNullableTime());
         } else {
             publicKey = Cache.getPublicKey(signer.getHostIdentifier(), getNonNullableTime());
         }
