@@ -6,12 +6,12 @@ import net.digitalid.core.annotations.Locked;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Stateless;
 import net.digitalid.core.entity.Site;
-import net.digitalid.core.storable.NonHostConceptFactory;
+import net.digitalid.core.storable.Factory;
 
 /**
  * This class allows to retrieve foreign key references in a unified way.
  * 
- * @see NonHostConceptFactory
+ * @see Factory
  * @see GeneralReference
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)

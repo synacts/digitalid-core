@@ -10,7 +10,7 @@ import net.digitalid.core.wrappers.Block;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public interface Storable<O> {
+public interface Storable<O, E> {
     
     /**
      * Returns the factory to store and restore objects of this class.
@@ -18,6 +18,6 @@ public interface Storable<O> {
      * @return the factory to store and restore objects of this class.
      */
     @Pure
-    public @Nonnull NonHostConceptFactory<O> getFactory();
+    public @Nonnull Factory<O, E> getFactory();
     
 }

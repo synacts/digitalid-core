@@ -9,12 +9,12 @@ import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.annotations.Validated;
 import net.digitalid.core.entity.Site;
-import net.digitalid.core.storable.NonHostConceptFactory;
+import net.digitalid.core.storable.Factory;
 
 /**
  * Columns are used to store data in the database.
  * 
- * @see NonHostConceptFactory
+ * @see Factory
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0

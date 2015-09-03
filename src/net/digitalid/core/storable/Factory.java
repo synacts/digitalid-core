@@ -23,7 +23,6 @@ import net.digitalid.core.collections.IterableConverter;
 import net.digitalid.core.collections.ReadOnlyArray;
 import net.digitalid.core.database.Column;
 import net.digitalid.core.database.Database;
-import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.entity.Site;
 import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.packet.PacketException;
@@ -31,7 +30,7 @@ import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.wrappers.Block;
 
 /**
- * This factory allows to store and restore objects of non-host concepts.
+ * The factory allows to store and restore objects.
  * 
  * @see Storable
  * @see GeneralConceptFactory
@@ -41,7 +40,7 @@ import net.digitalid.core.wrappers.Block;
  * @version 1.0
  */
 @Immutable
-public abstract class NonHostConceptFactory<O> {
+public abstract class Factory<O, E> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -135,7 +134,7 @@ public abstract class NonHostConceptFactory<O> {
     /**
      * Decodes the given non-nullable block.
      * 
-     * @param entity the entity to which the block belongs.
+     * @param entity the entity needed to reconstruct the object.
      * @param block the non-nullable block which is to be decoded.
      * 
      * @return the object that was encoded in the non-nullable block.
@@ -145,12 +144,12 @@ public abstract class NonHostConceptFactory<O> {
     @Pure
     @Locked
     @NonCommitting
-    public abstract @Nonnull O decodeNonNullable(@Nonnull NonHostEntity entity, @Nonnull @NonEncoding Block block) throws SQLException, IOException, PacketException, ExternalException;
+    public abstract @Nonnull O decodeNonNullable(@Nonnull E entity, @Nonnull @NonEncoding Block block) throws SQLException, IOException, PacketException, ExternalException;
     
     /**
      * Decodes the given nullable block.
      * 
-     * @param entity the entity to which the block belongs.
+     * @param entity the entity needed to reconstruct the object.
      * @param block the nullable block which is to be decoded.
      * 
      * @return the object that was encoded in the nullable block.
@@ -160,7 +159,7 @@ public abstract class NonHostConceptFactory<O> {
     @Pure
     @Locked
     @NonCommitting
-    public @Nullable O decodeNullable(@Nonnull NonHostEntity entity, @Nullable @NonEncoding Block block) throws SQLException, IOException, PacketException, ExternalException {
+    public @Nullable O decodeNullable(@Nonnull E entity, @Nullable @NonEncoding Block block) throws SQLException, IOException, PacketException, ExternalException {
         if (block != null) return decodeNonNullable(entity, block);
         else return null;
     }
@@ -587,7 +586,7 @@ public abstract class NonHostConceptFactory<O> {
      * Returns a nullable object from the given columns of the result set.
      * The number of columns that are read is given by {@link #getNumberOfColumns()}.
      * 
-     * @param entity the non-host entity to which the returned object belongs.
+     * @param entity the entity which is needed to reconstruct the object.
      * @param resultSet the result set from which the data is to be retrieved.
      * @param columnIndex the starting index of the columns containing the data.
      * 
@@ -595,13 +594,13 @@ public abstract class NonHostConceptFactory<O> {
      */
     @Pure
     @NonCommitting
-    public abstract @Nullable O getNullable(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException;
+    public abstract @Nullable O getNullable(@Nonnull E entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException;
     
     /**
      * Returns a non-nullable object from the given columns of the result set.
      * The number of columns that are read is given by {@link #getNumberOfColumns()}.
      * 
-     * @param entity the non-host entity to which the returned object belongs.
+     * @param entity the entity which is needed to reconstruct the object.
      * @param resultSet the result set from which the data is to be retrieved.
      * @param columnIndex the starting index of the columns containing the data.
      * 
@@ -609,7 +608,7 @@ public abstract class NonHostConceptFactory<O> {
      */
     @Pure
     @NonCommitting
-    public final @Nonnull O getNonNullable(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+    public final @Nonnull O getNonNullable(@Nonnull E entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
         final @Nullable O object = getNullable(entity, resultSet, columnIndex);
         if (object == null) throw new SQLException("An object which should not be null was null.");
         return object;
@@ -623,7 +622,7 @@ public abstract class NonHostConceptFactory<O> {
      * @param type the semantic type that corresponds to the storable class.
      * @param columns the columns used to store objects of the storable class.
      */
-    protected NonHostConceptFactory(@Nonnull @Loaded SemanticType type, @Nonnull @NonNullableElements Column... columns) {
+    protected Factory(@Nonnull @Loaded SemanticType type, @Nonnull @NonNullableElements Column... columns) {
         this.type = type;
         this.columns = FreezableArray.getNonNullable(columns).freeze();
         int maximumColumnLength = 0;

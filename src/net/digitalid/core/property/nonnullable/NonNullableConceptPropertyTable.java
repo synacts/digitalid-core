@@ -17,7 +17,7 @@ import net.digitalid.core.concept.Concept;
 import net.digitalid.core.database.Database;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.property.ConceptPropertyTable;
-import net.digitalid.core.storable.NonHostConceptFactory;
+import net.digitalid.core.storable.Factory;
 import net.digitalid.core.tuples.FreezablePair;
 
 /**
@@ -43,9 +43,9 @@ import net.digitalid.core.tuples.FreezablePair;
  */
 public class NonNullableConceptPropertyTable<V> extends ConceptPropertyTable {
     
-    private final @Nonnull NonHostConceptFactory<V> factory; // TODO: Move to super-class?
+    private final @Nonnull Factory<V> factory; // TODO: Move to super-class?
     
-    public NonNullableConceptPropertyTable(@Nonnull NonHostConceptFactory<V> factory) {
+    public NonNullableConceptPropertyTable(@Nonnull Factory<V> factory) {
         this.factory = factory;
     }
     

@@ -16,33 +16,38 @@ import net.digitalid.core.collections.FreezableArray;
 import net.digitalid.core.database.Column;
 import net.digitalid.core.database.Database;
 import net.digitalid.core.database.SQLType;
-import net.digitalid.core.entity.Entity;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.wrappers.Block;
 
 /**
- * This class implements the methods that all simple general concept classes whose storable mechanisms use a {@link Block block} share.
+ * This class implements the methods that all simple factories which store their data as a {@link Block block} in the {@link Database database} share.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
 @Immutable
-public abstract class BlockBasedSimpleGeneralConceptFactory<O extends Storable<O>> extends SimpleGeneralConceptFactory<O> {
+public abstract class BlockBasedSimpleFactory<O extends Storable<O, E>, E> extends SimpleFactory<O, E> {
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Column –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the column of this factory.
      */
     private static final @Nonnull Column COLUMN = Column.get("block", SQLType.BLOB);
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
     /**
      * Creates a new factory with the given type.
      * 
      * @param type the semantic type that corresponds to the storable class.
      */
-    protected BlockBasedSimpleGeneralConceptFactory(@Nonnull @Loaded SemanticType type) {
+    protected BlockBasedSimpleFactory(@Nonnull @Loaded SemanticType type) {
         super(type, COLUMN);
     }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storing –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
@@ -56,10 +61,12 @@ public abstract class BlockBasedSimpleGeneralConceptFactory<O extends Storable<O
         Database.setNonNullable(Block.fromNonNullable(object), preparedStatement, parameterIndex);
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Retrieving –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
     @Pure
     @Override
     @NonCommitting
-    public final @Nullable O getNullable(@Nonnull Entity entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+    public final @Nullable O getNullable(@Nonnull E entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
         try {
             final @Nullable Block block = Block.FACTORY.getNullable(resultSet, columnIndex);
             return block == null ? null : decodeNonNullable(entity, block.setType(getType()));

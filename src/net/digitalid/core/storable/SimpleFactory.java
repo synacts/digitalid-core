@@ -13,24 +13,26 @@ import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.wrappers.Block;
 
 /**
- * This class is like {@link NonConceptFactory} except that the decoding of {@link Block blocks} throws less exceptions.
+ * This class is like {@link Factory} except that the decoding of {@link Block blocks} throws less exceptions.
+ * 
+ * @see BlockBasedSimpleNonHostConceptFactory
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
 @Immutable
-public abstract class SimpleNonConceptFactory<O> extends NonConceptFactory<O> {
+public abstract class SimpleFactory<O, E> extends Factory<O, E> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Decoding –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
-    public abstract @Nonnull O decodeNonNullable(@Nonnull @NonEncoding Block block) throws InvalidEncodingException;
+    public abstract @Nonnull O decodeNonNullable(@Nonnull E entity, @Nonnull @NonEncoding Block block) throws InvalidEncodingException;
     
     @Pure
     @Override
-    public @Nullable O decodeNullable(@Nullable @NonEncoding Block block) throws InvalidEncodingException {
-        if (block != null) return decodeNonNullable(block);
+    public @Nullable O decodeNullable(@Nonnull E entity, @Nullable @NonEncoding Block block) throws InvalidEncodingException {
+        if (block != null) return decodeNonNullable(entity, block);
         else return null;
     }
     
@@ -42,7 +44,7 @@ public abstract class SimpleNonConceptFactory<O> extends NonConceptFactory<O> {
      * @param type the semantic type that corresponds to the storable class.
      * @param columns the columns used to store objects of the storable class.
      */
-    protected SimpleNonConceptFactory(@Nonnull @Loaded SemanticType type, @Nonnull @NonNullableElements Column... columns) {
+    protected SimpleFactory(@Nonnull @Loaded SemanticType type, @Nonnull @NonNullableElements Column... columns) {
         super(type, columns);
     }
     
