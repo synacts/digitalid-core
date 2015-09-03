@@ -202,6 +202,12 @@ public class FreezableArray<E> extends FreezableObject implements ReadOnlyArray<
     
     @Pure
     @Override
+    public @Capturable @Nonnull E[] toArray() {
+        return array.clone();
+    }
+    
+    @Pure
+    @Override
     public @Capturable @Nonnull @NonFrozen FreezableArray<E> clone() {
         return new FreezableArray<>(array.clone());
     }

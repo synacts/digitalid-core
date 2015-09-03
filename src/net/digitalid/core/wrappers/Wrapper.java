@@ -23,7 +23,6 @@ import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.identity.SyntacticType;
-import net.digitalid.core.storable.NonConceptFactory;
 import net.digitalid.core.storable.Storable;
 
 /**

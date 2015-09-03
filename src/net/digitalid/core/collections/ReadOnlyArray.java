@@ -88,6 +88,14 @@ public interface ReadOnlyArray<E> extends ReadOnlyIterable<E> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Conversions –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
+    /**
+     * Returns the elements of this array as an array.
+     * 
+     * @return the elements of this array as an array.
+     */
+    @Pure
+    public @Capturable @Nonnull E[] toArray();
+    
     @Pure
     @Override
     public @Capturable @Nonnull @NonFrozen FreezableArray<E> clone();

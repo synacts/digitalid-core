@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Capturable;
+import net.digitalid.core.annotations.Captured;
 import net.digitalid.core.annotations.Frozen;
 import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Loaded;
@@ -33,8 +34,7 @@ import net.digitalid.core.wrappers.Block;
  * The factory allows to store and restore objects.
  * 
  * @see Storable
- * @see GeneralConceptFactory
- * @see SimpleNonHostConceptFactory
+ * @see SimpleFactory
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
@@ -316,7 +316,7 @@ public abstract class Factory<O, E> {
      * @ensure return.size() == getColumns().size() : "The returned array contains a value for each column.";
      */
     @Pure
-    protected abstract @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getValues(@Nonnull O object);
+    public abstract @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getValues(@Nonnull O object);
     
     /**
      * Returns the value of the given object or null for each column.
@@ -608,7 +608,7 @@ public abstract class Factory<O, E> {
      */
     @Pure
     @NonCommitting
-    public final @Nonnull O getNonNullable(@Nonnull E entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+    public @Nonnull O getNonNullable(@Nonnull E entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
         final @Nullable O object = getNullable(entity, resultSet, columnIndex);
         if (object == null) throw new SQLException("An object which should not be null was null.");
         return object;
@@ -622,7 +622,7 @@ public abstract class Factory<O, E> {
      * @param type the semantic type that corresponds to the storable class.
      * @param columns the columns used to store objects of the storable class.
      */
-    protected Factory(@Nonnull @Loaded SemanticType type, @Nonnull @NonNullableElements Column... columns) {
+    protected Factory(@Nonnull @Loaded SemanticType type, @Captured @Nonnull @NonNullableElements Column... columns) {
         this.type = type;
         this.columns = FreezableArray.getNonNullable(columns).freeze();
         int maximumColumnLength = 0;
