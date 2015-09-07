@@ -39,7 +39,7 @@ import net.digitalid.core.identity.Category;
 import net.digitalid.core.identity.InternalNonHostIdentity;
 import net.digitalid.core.identity.Mapper;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.module.BothModule;
+import net.digitalid.core.module.StateModule;
 import net.digitalid.core.packet.ClientRequest;
 import net.digitalid.core.packet.Response;
 import net.digitalid.core.service.CoreService;
@@ -301,7 +301,7 @@ public final class AccountOpen extends Action {
     
     @Pure
     @Override
-    public @Nonnull BothModule getModule() {
+    public @Nonnull StateModule getModule() {
         return CoreService.SERVICE;
     }
     

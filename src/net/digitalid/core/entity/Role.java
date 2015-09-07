@@ -26,7 +26,7 @@ import net.digitalid.core.exceptions.packet.PacketError;
 import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.identity.InternalNonHostIdentity;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.module.BothModule;
+import net.digitalid.core.module.StateModule;
 import net.digitalid.core.service.CoreService;
 import net.digitalid.core.service.Service;
 import net.digitalid.core.synchronizer.Synchronizer;
@@ -200,7 +200,7 @@ public abstract class Role extends EntityClass implements NonHostEntity, Observe
      */
     @NonLocked
     @Committing
-    public final void reloadState(@Nonnull BothModule module) throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
+    public final void reloadState(@Nonnull StateModule module) throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
         Synchronizer.reload(this, module);
         if (Database.isMultiAccess() && (module.equals(CoreService.SERVICE) || module.equals(AgentModule.MODULE))) {
             getAgent().reset();

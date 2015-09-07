@@ -15,7 +15,7 @@ import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.handler.QueryReply;
 import net.digitalid.core.handler.Reply;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.module.BothModule;
+import net.digitalid.core.module.StateModule;
 import net.digitalid.core.service.Service;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.HostSignatureWrapper;
@@ -108,7 +108,7 @@ final class StateReply extends QueryReply {
      */
     @NonCommitting
     void updateState() throws SQLException, IOException, PacketException, ExternalException {
-        final @Nonnull BothModule module = Service.getModule(state.getType());
+        final @Nonnull StateModule module = Service.getModule(state.getType());
         final @Nonnull Role role = getRole();
         module.removeState(role);
         module.addState(role, state);

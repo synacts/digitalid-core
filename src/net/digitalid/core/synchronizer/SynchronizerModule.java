@@ -39,7 +39,7 @@ import net.digitalid.core.handler.Method;
 import net.digitalid.core.io.Level;
 import net.digitalid.core.io.Log;
 import net.digitalid.core.io.Logger;
-import net.digitalid.core.module.BothModule;
+import net.digitalid.core.module.StateModule;
 import net.digitalid.core.module.ClientModule;
 import net.digitalid.core.packet.Packet;
 import net.digitalid.core.service.CoreService;
@@ -269,7 +269,7 @@ public final class SynchronizerModule implements ClientModule {
      * @param lastAction the last action that might have been affected by the reload.
      */
     @Committing
-    static void redoPendingActions(@Nonnull Role role, @Nonnull ReadOnlyCollection<BothModule> modules, @Nullable InternalAction lastAction) throws SQLException {
+    static void redoPendingActions(@Nonnull Role role, @Nonnull ReadOnlyCollection<StateModule> modules, @Nullable InternalAction lastAction) throws SQLException {
         for (final @Nonnull InternalAction pendingAction : pendingActions) {
             if (pendingAction.getRole().equals(role) && modules.contains(pendingAction.getModule())) {
                 try {

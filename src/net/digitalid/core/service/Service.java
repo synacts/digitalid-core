@@ -36,11 +36,11 @@ import net.digitalid.core.identity.IdentityClass;
 import net.digitalid.core.identity.InternalPerson;
 import net.digitalid.core.identity.Mapper;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.database.SQLizable;
-import net.digitalid.core.module.BothModule;
+import net.digitalid.core.module.StateModule;
 import net.digitalid.core.module.ClientModule;
 import net.digitalid.core.module.HostModule;
 import net.digitalid.core.module.Module;
+import net.digitalid.core.storable.Storable;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.ListWrapper;
 import net.digitalid.core.wrappers.SelfcontainedWrapper;
@@ -53,7 +53,7 @@ import net.digitalid.core.wrappers.SelfcontainedWrapper;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public abstract class Service implements BothModule, SQLizable {
+public abstract class Service implements StateModule, Storable<Service> {
     
     /**
      * Maps the services that are installed on this server from their type.
@@ -88,7 +88,7 @@ public abstract class Service implements BothModule, SQLizable {
     /**
      * Maps the modules that exist on this server from their state format.
      */
-    private static final @Nonnull FreezableMap<SemanticType, BothModule> modules = new FreezableLinkedHashMap<>();
+    private static final @Nonnull FreezableMap<SemanticType, StateModule> modules = new FreezableLinkedHashMap<>();
     
     /**
      * Returns the module whose state format matches the given type.
@@ -98,8 +98,8 @@ public abstract class Service implements BothModule, SQLizable {
      * @return the module whose state format matches the given type.
      */
     @Pure
-    public static @Nonnull BothModule getModule(@Nonnull SemanticType stateFormat) throws PacketException {
-        final @Nullable BothModule module = modules.get(stateFormat);
+    public static @Nonnull StateModule getModule(@Nonnull SemanticType stateFormat) throws PacketException {
+        final @Nullable StateModule module = modules.get(stateFormat);
         if (module != null) return module;
         throw new PacketException(PacketError.SERVICE, "There exists no module with the state format " + stateFormat.getAddress() + ".");
     }
@@ -211,7 +211,7 @@ public abstract class Service implements BothModule, SQLizable {
     /**
      * Maps the modules that are used on both hosts and clients from their state format.
      */
-    private final @Nonnull FreezableMap<SemanticType, BothModule> bothModules = new FreezableLinkedHashMap<>();
+    private final @Nonnull FreezableMap<SemanticType, StateModule> bothModules = new FreezableLinkedHashMap<>();
     
     /**
      * Returns the modules that are used on both hosts and clients of this service.
@@ -219,7 +219,7 @@ public abstract class Service implements BothModule, SQLizable {
      * @return the modules that are used on both hosts and clients of this service.
      */
     @Pure
-    public final @Nonnull ReadOnlyCollection<BothModule> getBothModules() {
+    public final @Nonnull ReadOnlyCollection<StateModule> getBothModules() {
         return bothModules.values();
     }
     
@@ -228,7 +228,7 @@ public abstract class Service implements BothModule, SQLizable {
      * 
      * @param bothModule the module to add to the list of host, client and both modules.
      */
-    public final void add(@Nonnull BothModule bothModule) {
+    public final void add(@Nonnull StateModule bothModule) {
         hostModules.put(bothModule.getModuleFormat(), bothModule);
         clientModules.add(bothModule);
         bothModules.put(bothModule.getStateFormat(), bothModule);
@@ -339,7 +339,7 @@ public abstract class Service implements BothModule, SQLizable {
     @NonCommitting
     public final @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws SQLException {
         final @Nonnull FreezableList<Block> elements = new FreezableArrayList<>(bothModules.size());
-        for (final @Nonnull BothModule bothModule : bothModules.values()) {
+        for (final @Nonnull StateModule bothModule : bothModules.values()) {
             elements.add(new SelfcontainedWrapper(STATE, bothModule.getState(entity, permissions, restrictions, agent)).toBlock());
         }
         return new ListWrapper(getStateFormat(), elements.freeze()).toBlock();
@@ -353,7 +353,7 @@ public abstract class Service implements BothModule, SQLizable {
         final @Nonnull ReadOnlyList<Block> elements = new ListWrapper(block).getElementsNotNull();
         for (final @Nonnull Block element : elements) {
             final @Nonnull Block state = new SelfcontainedWrapper(element).getElement();
-            final @Nullable BothModule bothModule = bothModules.get(state.getType());
+            final @Nullable StateModule bothModule = bothModules.get(state.getType());
             if (bothModule != null) bothModule.addState(entity, state);
             else throw new InvalidEncodingException("There is no module for the state of type " + state.getType().getAddress() + ".");
         }
@@ -362,9 +362,10 @@ public abstract class Service implements BothModule, SQLizable {
     @Override
     @NonCommitting
     public final void removeState(@Nonnull NonHostEntity entity) throws SQLException {
-      for (final @Nonnull BothModule bothModule : bothModules.values()) bothModule.removeState(entity);
+      for (final @Nonnull StateModule bothModule : bothModules.values()) bothModule.removeState(entity);
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the data type used to store instances of this class in the database.
@@ -396,22 +397,12 @@ public abstract class Service implements BothModule, SQLizable {
         getType().set(preparedStatement, parameterIndex);
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
     @Pure
     @Override
     public final @Nonnull String toString() {
         return getType().toString();
-    }
-    
-    @Pure
-    @Override
-    public final boolean equals(@Nullable Object object) {
-        return super.equals(object);
-    }
-    
-    @Pure
-    @Override
-    public final int hashCode() {
-        return super.hashCode();
     }
     
 }

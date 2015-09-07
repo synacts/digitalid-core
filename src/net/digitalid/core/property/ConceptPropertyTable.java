@@ -1,5 +1,12 @@
 package net.digitalid.core.property;
 
+import javax.annotation.Nonnull;
+import net.digitalid.core.annotations.Immutable;
+import net.digitalid.core.concept.Concept;
+import net.digitalid.core.entity.Entity;
+import net.digitalid.core.module.StateTable;
+import net.digitalid.core.storable.SimpleFactory;
+
 /**
  * This class models a database table.
  * 
@@ -9,11 +16,14 @@ package net.digitalid.core.property;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 0.0
  */
-public abstract class ConceptPropertyTable {
+@Immutable
+public abstract class ConceptPropertyTable<V, C extends Concept<C, E, ?>, E extends Entity> extends StateTable<ConceptPropertyTable<V, C, E>> {
     
-    // TODO: isValid() with at most 22 characters
+    private final @Nonnull SimpleFactory<V, E> valueFactory;
     
-    public ConceptPropertyTable() {
+    private final @Nonnull SimpleFactory<C, E> conceptFactory;
+    
+    protected ConceptPropertyTable() {
         
     }
     

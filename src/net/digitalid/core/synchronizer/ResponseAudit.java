@@ -30,7 +30,7 @@ import net.digitalid.core.handler.InternalAction;
 import net.digitalid.core.handler.Method;
 import net.digitalid.core.identifier.HostIdentifier;
 import net.digitalid.core.io.Log;
-import net.digitalid.core.module.BothModule;
+import net.digitalid.core.module.StateModule;
 import net.digitalid.core.packet.Packet;
 import net.digitalid.core.packet.Response;
 import net.digitalid.core.service.Service;
@@ -127,7 +127,7 @@ public final class ResponseAudit extends Audit {
     /**
      * Stores an empty set of modules.
      */
-    static final @Nonnull ReadOnlySet<BothModule> emptyModuleSet = FreezableHashSet.<BothModule>get().freeze();
+    static final @Nonnull ReadOnlySet<StateModule> emptyModuleSet = FreezableHashSet.<StateModule>get().freeze();
     
     /**
      * Stores an empty list of methods.
@@ -144,20 +144,20 @@ public final class ResponseAudit extends Audit {
      * @param ignoredModules the modules that are ignored when executing the trail.
      */
     @Committing
-    void execute(@Nonnull Role role, @Nonnull Service service, @Nonnull HostIdentifier recipient, @Nonnull ReadOnlyList<Method> methods, @Nonnull ReadOnlySet<BothModule> ignoredModules) throws SQLException, IOException, PacketException, ExternalException {
-        final @Nonnull FreezableSet<BothModule> suspendedModules = FreezableHashSet.get();
+    void execute(@Nonnull Role role, @Nonnull Service service, @Nonnull HostIdentifier recipient, @Nonnull ReadOnlyList<Method> methods, @Nonnull ReadOnlySet<StateModule> ignoredModules) throws SQLException, IOException, PacketException, ExternalException {
+        final @Nonnull FreezableSet<StateModule> suspendedModules = FreezableHashSet.get();
         for (@Nonnull Block block : trail) {
             final @Nonnull SignatureWrapper signature = SignatureWrapper.decodeWithoutVerifying(block, true, role);
             final @Nonnull Block element = SelfcontainedWrapper.decodeNonNullable(CompressionWrapper.decompressNonNullable(signature.getNonNullableElement()));
             final @Nonnull Action action = Method.get(role, signature, recipient, element).toAction();
             Database.commit();
             
-            final @Nonnull ReadOnlyList<BothModule> suspendModules = action.suspendModules();
+            final @Nonnull ReadOnlyList<StateModule> suspendModules = action.suspendModules();
             if (!suspendModules.isEmpty()) {
-                suspendedModules.addAll((FreezableList<BothModule>) suspendModules);
+                suspendedModules.addAll((FreezableList<StateModule>) suspendModules);
             }
             
-            final @Nonnull BothModule module = action.getModule();
+            final @Nonnull StateModule module = action.getModule();
             if (!suspendedModules.contains(module) && !ignoredModules.contains(module) && !methods.contains(action)) {
                 try {
                     Log.debugging("Execute on the client the audited action " + action + ".");
@@ -196,10 +196,10 @@ public final class ResponseAudit extends Audit {
         SynchronizerModule.setLastTime(role, service, thisTime);
         Database.commit();
         
-        suspendedModules.removeAll((FreezableSet<BothModule>) ignoredModules);
+        suspendedModules.removeAll((FreezableSet<StateModule>) ignoredModules);
         if (!suspendedModules.freeze().isEmpty()) {
             final @Nonnull FreezableList<Method> queries = new FreezableArrayList<>(suspendedModules.size());
-            for (final @Nonnull BothModule module : suspendedModules) queries.add(new StateQuery(role, module));
+            for (final @Nonnull StateModule module : suspendedModules) queries.add(new StateQuery(role, module));
             final @Nonnull Response response = Method.send(queries.freeze(), new RequestAudit(SynchronizerModule.getLastTime(role, service)));
             for (int i = 0; i < response.getSize(); i++) {
                 final @Nonnull StateReply reply = response.getReplyNotNull(i);

@@ -18,7 +18,7 @@ import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.identifier.HostIdentifier;
 import net.digitalid.core.identifier.InternalIdentifier;
-import net.digitalid.core.module.BothModule;
+import net.digitalid.core.module.StateModule;
 import net.digitalid.core.synchronizer.Audit;
 import net.digitalid.core.wrappers.SignatureWrapper;
 
@@ -124,12 +124,12 @@ public abstract class Action extends Method implements Auditable {
      * @return the module on which this action operates.
      */
     @Pure
-    public abstract @Nonnull BothModule getModule();
+    public abstract @Nonnull StateModule getModule();
     
     /**
      * Stores an empty list of modules.
      */
-    private static final @Nonnull ReadOnlyList<BothModule> emptyList = new FreezableLinkedList<BothModule>().freeze();
+    private static final @Nonnull ReadOnlyList<StateModule> emptyList = new FreezableLinkedList<StateModule>().freeze();
     
     /**
      * Returns the modules that need to be reloaded and are thus suspended.
@@ -137,7 +137,7 @@ public abstract class Action extends Method implements Auditable {
      * @return the modules that need to be reloaded and are thus suspended.
      */
     @Pure
-    public @Nonnull ReadOnlyList<BothModule> suspendModules() {
+    public @Nonnull ReadOnlyList<StateModule> suspendModules() {
         return emptyList;
     }
     

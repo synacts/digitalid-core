@@ -34,7 +34,7 @@ import net.digitalid.core.identity.IdentityClass;
 import net.digitalid.core.identity.Mapper;
 import net.digitalid.core.identity.Person;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.module.BothModule;
+import net.digitalid.core.module.StateModule;
 import net.digitalid.core.service.CoreService;
 import net.digitalid.core.service.Service;
 import net.digitalid.core.wrappers.Block;
@@ -57,7 +57,7 @@ import net.digitalid.core.wrappers.TupleWrapper;
  * @version 0.1
  */
 @Stateless
-public final class ContextModule implements BothModule {
+public final class ContextModule implements StateModule {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Module Initialization –––––––––––––––––––––––––––––––––––––––––––––––––– */
     

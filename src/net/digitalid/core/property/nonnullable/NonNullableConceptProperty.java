@@ -11,10 +11,11 @@ import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.annotations.Validated;
 import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.concept.Concept;
+import net.digitalid.core.entity.Entity;
 import net.digitalid.core.property.ConceptProperty;
 import net.digitalid.core.property.ValueValidator;
 import net.digitalid.core.synchronizer.Synchronizer;
-import net.digitalid.core.tuples.FreezablePair;
+import net.digitalid.core.tuples.ReadOnlyPair;
 
 /**
  * This property belongs to a concept and stores a replaceable value that cannot be null.
@@ -24,7 +25,7 @@ import net.digitalid.core.tuples.FreezablePair;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public final class NonNullableConceptProperty<V, C extends Concept<C>> extends WriteableNonNullableProperty<V> implements ConceptProperty<C> {
+public final class NonNullableConceptProperty<V, C extends Concept<C, E, ?>, E extends Entity> extends WriteableNonNullableProperty<V> implements ConceptProperty<C> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Concept –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -41,61 +42,53 @@ public final class NonNullableConceptProperty<V, C extends Concept<C>> extends W
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Database –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
-    private final @Nonnull NonNullableConceptPropertyTable<V> table;
+    /**
+     * Stores the table which stores the time and value of this property.
+     */
+    private final @Nonnull NonNullableConceptPropertyTable<V, C, E> table;
     
     /**
-     * 
+     * Loads the time and value of this property from the database.
      */
     @Pure
+    @Locked
     @NonCommitting
     private void load() throws SQLException {
-        final @Nonnull @NonNullableElements FreezablePair<Time, V> pair = table.load(this);
+        final @Nonnull @NonNullableElements ReadOnlyPair<Time, V> pair = table.load(this);
         this.time = pair.getNonNullableElement0();
         this.value = pair.getNonNullableElement1();
     }
     
-    /**
-     * 
-     * 
-     * @param oldValue
-     * @param newValue
-     * 
-     * @require !oldValue.equals(newValue) : "The old and the new value are not the same.";
-     */
-    @NonCommitting
-    void replace(@Nonnull Time oldTime, @Nonnull Time newTime, @Nonnull @Validated V oldValue, @Nonnull @Validated V newValue) throws SQLException {
-        assert getValidator().isValid(oldValue) : "The old value is valid.";
-        assert getValidator().isValid(newValue) : "The new value is valid.";
-        
-        table.replace(this, oldTime, newTime, oldValue, newValue);
-        this.time = newTime;
-        this.value = newValue;
-        notify(oldValue, newValue);
-    }
-    
-    /**
-     * Resets the time and value of this property.
-     */
-    @Pure
-    void reset() throws SQLException {
-        if (hasObservers() && value != null) {
-            final @Nonnull V oldValue = value;
-            this.value = null;
-            final @Nonnull V newValue = get();
-            if (!oldValue.equals(newValue)) notify(oldValue, newValue);
-        } else {
-            this.time = null;
-            this.value = null;
-        }
-    }
-    
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
-    private NonNullableConceptProperty(@Nonnull ValueValidator<? super V> validator, @Nonnull C concept, @Nonnull NonNullableConceptPropertyTable<V> table) {
+    /**
+     * Creates a new non-nullable concept property with the given parameters.
+     * 
+     * @param validator the validator used to validate the value of the new property.
+     * @param concept the concept to which the new property belongs.
+     * @param table the table which stores the time and value of the new property.
+     */
+    private NonNullableConceptProperty(@Nonnull ValueValidator<? super V> validator, @Nonnull C concept, @Nonnull NonNullableConceptPropertyTable<V, C, E> table) {
         super(validator);
         
         this.concept = concept;
         this.table = table;
+        
+        concept.register(this);
+    }
+    
+    /**
+     * Creates a new non-nullable concept property with the given parameters.
+     * 
+     * @param validator the validator used to validate the value of the new property.
+     * @param concept the concept to which the new property belongs.
+     * @param table the table which stores the time and value of the new property.
+     * 
+     * @return a new non-nullable concept property with the given parameters.
+     */
+    @Pure
+    public static @Nonnull <V, C extends Concept<C, E, ?>, E extends Entity> NonNullableConceptProperty<V, C, E> get(@Nonnull ValueValidator<? super V> validator, @Nonnull C concept, @Nonnull NonNullableConceptPropertyTable<V, C, E> table) {
+        return new NonNullableConceptProperty<>(validator, concept, table);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Time –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -106,6 +99,7 @@ public final class NonNullableConceptProperty<V, C extends Concept<C>> extends W
     private @Nullable Time time;
     
     @Pure
+    @Locked
     @Override
     @NonCommitting
     public @Nonnull Time getTime() throws SQLException {
@@ -140,6 +134,45 @@ public final class NonNullableConceptProperty<V, C extends Concept<C>> extends W
         final @Nonnull V oldValue = get();
         if (!newValue.equals(oldValue)) {
             Synchronizer.execute(new NonNullableConceptPropertyInternalAction(this, oldValue, newValue));
+        }
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Action –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Replaces the time and value of this property from the {@link NonNullableConceptPropertyInternalAction}.
+     * 
+     * @param oldTime the old time of this property.
+     * @param newTime the new time of this property.
+     * @param oldValue the old value of this property.
+     * @param newValue the new value of this property.
+     * 
+     * @require !oldValue.equals(newValue) : "The old and the new value are not the same.";
+     */
+    @Locked
+    @NonCommitting
+    void replace(@Nonnull Time oldTime, @Nonnull Time newTime, @Nonnull @Validated V oldValue, @Nonnull @Validated V newValue) throws SQLException {
+        assert getValidator().isValid(oldValue) : "The old value is valid.";
+        assert getValidator().isValid(newValue) : "The new value is valid.";
+        
+        table.replace(this, oldTime, newTime, oldValue, newValue);
+        this.time = newTime;
+        this.value = newValue;
+        notify(oldValue, newValue);
+    }
+    
+    @Locked
+    @Override
+    @NonCommitting
+    public void reset() throws SQLException {
+        if (hasObservers() && value != null) {
+            final @Nonnull V oldValue = value;
+            this.value = null;
+            final @Nonnull V newValue = get();
+            if (!oldValue.equals(newValue)) notify(oldValue, newValue);
+        } else {
+            this.time = null;
+            this.value = null;
         }
     }
     

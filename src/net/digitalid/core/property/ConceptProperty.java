@@ -2,6 +2,8 @@ package net.digitalid.core.property;
 
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import net.digitalid.core.annotations.Locked;
+import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.concept.Concept;
@@ -21,7 +23,7 @@ import net.digitalid.core.property.nullable.NullableConceptProperty;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public interface ConceptProperty<C extends Concept<C>> {
+public interface ConceptProperty<C extends Concept<C, ?, ?>> {
     
     /**
      * Returns the concept of this property.
@@ -37,6 +39,15 @@ public interface ConceptProperty<C extends Concept<C>> {
      * @return the time of the last modification.
      */
     @Pure
+    @Locked
+    @NonCommitting
     public @Nonnull Time getTime() throws SQLException;
+    
+    /**
+     * Resets the time and value of this property.
+     */
+    @Locked
+    @NonCommitting
+    public void reset() throws SQLException;
     
 }

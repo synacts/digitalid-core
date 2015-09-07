@@ -14,7 +14,7 @@ import net.digitalid.core.host.Host;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public abstract class Site extends Instance {
+public abstract class Site {
     
     /**
      * Stores the aspect of a new site being created.

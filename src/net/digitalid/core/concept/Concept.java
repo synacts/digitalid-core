@@ -7,6 +7,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Capturable;
 import net.digitalid.core.annotations.Immutable;
+import net.digitalid.core.annotations.Locked;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.NonFrozen;
 import net.digitalid.core.annotations.NonNullableElements;
@@ -14,11 +15,15 @@ import net.digitalid.core.annotations.OnlyForClients;
 import net.digitalid.core.annotations.OnlyForHosts;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.collections.FreezableArray;
+import net.digitalid.core.collections.FreezableLinkedList;
+import net.digitalid.core.collections.FreezableList;
+import net.digitalid.core.collections.ReadOnlyList;
 import net.digitalid.core.database.Database;
 import net.digitalid.core.entity.Account;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.Role;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.core.property.ConceptProperty;
 import net.digitalid.core.storable.SimpleFactory;
 import net.digitalid.core.storable.Storable;
 import net.digitalid.core.wrappers.Block;
@@ -129,6 +134,41 @@ public abstract class Concept<C extends Concept<C, E, K>, E extends Entity, K> i
         this.key = key;
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Properties –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Stores the properties of this concept.
+     */
+    private final @Nonnull @NonNullableElements @NonFrozen FreezableList<ConceptProperty<C>> properties = FreezableLinkedList.get();
+    
+    /**
+     * Registers the given property at this concept.
+     * 
+     * @param property the property to be registered.
+     */
+    public void register(@Nonnull ConceptProperty<C> property) {
+        properties.add(property);
+    }
+    
+    /**
+     * Returns the properties of this concept.
+     * 
+     * @return the properties of this concept.
+     */
+    @Pure
+    public final @Nonnull @NonNullableElements ReadOnlyList<ConceptProperty<C>> getProperties() {
+        return properties;
+    }
+    
+    /**
+     * Resets the properties of this concept.
+     */
+    @Locked
+    @NonCommitting
+    public void reset() throws SQLException {
+        for (final @Nonnull ConceptProperty<C> property : properties) property.reset();
+    }
+    
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
@@ -143,14 +183,31 @@ public abstract class Concept<C extends Concept<C, E, K>, E extends Entity, K> i
         private final @Nonnull SimpleFactory<K, E> factory;
         
         /**
+         * Stores the index that caches existing concepts.
+         */
+        private final @Nonnull Index<C, E, K> index;
+        
+        /**
+         * Returns the index that caches existing concepts.
+         * 
+         * @return the index that caches existing concepts.
+         */
+        @Pure
+        public final @Nonnull Index<C, E, K> getIndex() {
+            return index;
+        }
+        
+        /**
          * Creates a new concept factory based on the given key factory.
          * 
          * @param factory the factory to store and restore the key.
+         * @param index the index that caches existing concepts.
          */
-        protected Factory(@Nonnull SimpleFactory<K, E> factory) {
+        protected Factory(@Nonnull SimpleFactory<K, E> factory, @Nonnull Index<C, E, K> index) {
             super(factory.getType(), factory.getColumns().toArray());
             
             this.factory = factory;
+            this.index = index;
         }
         
         /**
@@ -173,7 +230,7 @@ public abstract class Concept<C extends Concept<C, E, K>, E extends Entity, K> i
         @Pure
         @Override
         public @Nonnull C decodeNonNullable(@Nonnull E entity, @Nonnull Block block) throws InvalidEncodingException {
-            return create(entity, factory.decodeNonNullable(entity, block));
+            return index.get(entity, factory.decodeNonNullable(entity, block));
         }
         
         @Pure
@@ -193,7 +250,7 @@ public abstract class Concept<C extends Concept<C, E, K>, E extends Entity, K> i
         @NonCommitting
         public @Nullable C getNullable(@Nonnull E entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
             final @Nullable K key = factory.getNullable(entity, resultSet, columnIndex);
-            return key == null ? null : create(entity, key);
+            return key == null ? null : index.get(entity, key);
         }
         
     }

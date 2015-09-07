@@ -19,7 +19,7 @@ import net.digitalid.core.entity.Site;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.host.Host;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.module.BothModule;
+import net.digitalid.core.module.StateModule;
 import net.digitalid.core.service.CoreService;
 import net.digitalid.core.service.Service;
 import net.digitalid.core.wrappers.Block;
@@ -33,7 +33,7 @@ import net.digitalid.core.wrappers.TupleWrapper;
  * @version 0.2
  */
 @Stateless
-public final class ContactModule implements BothModule {
+public final class ContactModule implements StateModule {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Module Initialization –––––––––––––––––––––––––––––––––––––––––––––––––– */
     

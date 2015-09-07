@@ -24,7 +24,7 @@ import net.digitalid.core.handler.Reply;
 import net.digitalid.core.identifier.HostIdentifier;
 import net.digitalid.core.identity.IdentityClass;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.module.BothModule;
+import net.digitalid.core.module.StateModule;
 import net.digitalid.core.service.CoreService;
 import net.digitalid.core.service.Service;
 import net.digitalid.core.wrappers.Block;
@@ -50,7 +50,7 @@ final class StateQuery extends InternalQuery {
     /**
      * Stores the module whose state is queried.
      */
-    private final @Nonnull BothModule module;
+    private final @Nonnull StateModule module;
     
     /**
      * Creates an internal query for the state of the given module.
@@ -59,7 +59,7 @@ final class StateQuery extends InternalQuery {
      * @param module the module whose state is queried.
      */
     @NonCommitting
-    StateQuery(@Nonnull Role role, @Nonnull BothModule module) throws SQLException, PacketException, InvalidEncodingException {
+    StateQuery(@Nonnull Role role, @Nonnull StateModule module) throws SQLException, PacketException, InvalidEncodingException {
         super(role, module.getService().getRecipient(role));
         
         this.module = module;

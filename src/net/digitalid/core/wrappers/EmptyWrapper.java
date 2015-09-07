@@ -155,4 +155,6 @@ public final class EmptyWrapper extends Wrapper<EmptyWrapper> {
         return "empty";
     }
     
+    // TODO: Implement a ValueFactory for the generic type None.
+    
 }

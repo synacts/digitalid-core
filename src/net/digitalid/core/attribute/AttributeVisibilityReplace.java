@@ -22,7 +22,7 @@ import net.digitalid.core.identifier.HostIdentifier;
 import net.digitalid.core.identifier.IdentifierClass;
 import net.digitalid.core.identity.InternalPerson;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.module.BothModule;
+import net.digitalid.core.module.StateModule;
 import net.digitalid.core.service.CoreServiceInternalAction;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.SignatureWrapper;
@@ -200,7 +200,7 @@ final class AttributeVisibilityReplace extends CoreServiceInternalAction {
     
     @Pure
     @Override
-    public @Nonnull BothModule getModule() {
+    public @Nonnull StateModule getModule() {
         return AttributeModule.MODULE;
     }
     

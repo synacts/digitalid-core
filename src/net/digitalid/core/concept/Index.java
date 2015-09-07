@@ -1,9 +1,12 @@
 package net.digitalid.core.concept;
 
+import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.core.annotations.Locked;
+import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.NonNullableElements;
 import net.digitalid.core.annotations.OnlyForSingleAccess;
 import net.digitalid.core.annotations.Pure;
@@ -96,6 +99,24 @@ public final class Index<C extends Concept<C, E, K>, E extends Entity, K> {
             return concept;
         } else {
             return factory.create(entity, key);
+        }
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Resetting –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Resets the concepts of the given entity.
+     * 
+     * @param entity the entity whose concepts are to be reset.
+     */
+    @Locked
+    @NonCommitting
+    public void reset(@Nonnull E entity) throws SQLException {
+        if (Database.isSingleAccess()) {
+            final @Nullable ConcurrentMap<K, C> map = concepts.get(entity);
+            if (map != null) {
+                for (final @Nonnull C concept : map.values()) concept.reset();
+            }
         }
     }
     

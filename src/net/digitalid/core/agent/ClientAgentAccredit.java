@@ -23,7 +23,7 @@ import net.digitalid.core.handler.InternalAction;
 import net.digitalid.core.handler.Method;
 import net.digitalid.core.identifier.HostIdentifier;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.module.BothModule;
+import net.digitalid.core.module.StateModule;
 import net.digitalid.core.packet.Response;
 import net.digitalid.core.password.Password;
 import net.digitalid.core.service.CoreServiceInternalAction;
@@ -229,7 +229,7 @@ public final class ClientAgentAccredit extends CoreServiceInternalAction {
     
     @Pure
     @Override
-    public @Nonnull BothModule getModule() {
+    public @Nonnull StateModule getModule() {
         return AgentModule.MODULE;
     }
     

@@ -16,7 +16,7 @@ import net.digitalid.core.handler.Action;
 import net.digitalid.core.handler.Method;
 import net.digitalid.core.identifier.HostIdentifier;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.module.BothModule;
+import net.digitalid.core.module.StateModule;
 import net.digitalid.core.service.CoreServiceInternalAction;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.SignatureWrapper;
@@ -184,7 +184,7 @@ final class AgentRestrictionsReplace extends CoreServiceInternalAction {
     
     @Pure
     @Override
-    public @Nonnull BothModule getModule() {
+    public @Nonnull StateModule getModule() {
         return AgentModule.MODULE;
     }
     

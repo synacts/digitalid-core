@@ -7,18 +7,21 @@ import java.sql.Statement;
 import javax.annotation.Nonnull;
 import net.digitalid.core.agent.ClientAgent;
 import net.digitalid.core.annotations.Capturable;
+import net.digitalid.core.annotations.Frozen;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
-import net.digitalid.core.annotations.NonFrozen;
 import net.digitalid.core.annotations.NonNullableElements;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.client.Client;
 import net.digitalid.core.concept.Concept;
 import net.digitalid.core.database.Database;
+import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.property.ConceptPropertyTable;
 import net.digitalid.core.storable.Factory;
 import net.digitalid.core.tuples.FreezablePair;
+import net.digitalid.core.tuples.ReadOnlyPair;
 
 /**
  * Description.
@@ -32,27 +35,27 @@ import net.digitalid.core.tuples.FreezablePair;
  * 
  * The module class could be always the same and contains a list of tables.
  * 
- * static final @Nonnull Module AGENT = Module.getNonNull();
- * 
- * static final @Nonnull NonNullableReplaceableConceptPropertyTable<ClientAgent> nameTable = ;
- * 
- * The concept class needs to implement the Storable interface.
- * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 0.0
  */
-public class NonNullableConceptPropertyTable<V> extends ConceptPropertyTable {
+@Immutable
+public class NonNullableConceptPropertyTable<V, C extends Concept<C, E, ?>, E extends Entity> extends ConceptPropertyTable<V, C, E> {
     
-    private final @Nonnull Factory<V> factory; // TODO: Move to super-class?
-    
-    public NonNullableConceptPropertyTable(@Nonnull Factory<V> factory) {
+    private NonNullableConceptPropertyTable(@Nonnull Factory<V> factory) {
         this.factory = factory;
     }
     
-    @Capturable @Nonnull @NonFrozen @NonNullableElements FreezablePair<Time, V> load(@Nonnull NonNullableConceptProperty<V, ? extends Concept<?>> property) {
+    @Capturable @Nonnull @NonNullableElements @Frozen ReadOnlyPair<Time, V> load(@Nonnull NonNullableConceptProperty<V, C, E> property) {
+        // TODO: Index all properties with their entity in order to be able to reset them. Alternatively, pass the concept index along?
+        
         V v = null;
-        return FreezablePair.get(new Time(), v);
+        return FreezablePair.get(new Time(), v).freeze();
     }
+    
+    void replace(@Nonnull NonNullableConceptProperty<V, C, E> property, @Nonnull Time oldTime, @Nonnull Time newTime, @Nonnull V oldValue, @Nonnull V newValue) {
+        // TODO!
+    }
+    
     
     // TODO: The following code serves just as an example and should be removed afterwards.
     

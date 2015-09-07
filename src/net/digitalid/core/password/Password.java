@@ -3,17 +3,20 @@ package net.digitalid.core.password;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
+import net.digitalid.core.auxiliary.None;
+import net.digitalid.core.concept.Concept;
 import net.digitalid.core.concept.Index;
-import net.digitalid.core.concept.NonHostConcept;
-import net.digitalid.core.database.Database;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.entity.Role;
 import net.digitalid.core.identity.SemanticType;
+import net.digitalid.core.module.Module;
 import net.digitalid.core.property.ValueValidator;
 import net.digitalid.core.property.nonnullable.NonNullableConceptProperty;
 import net.digitalid.core.property.nonnullable.NonNullableConceptPropertyTable;
+import net.digitalid.core.wrappers.EmptyWrapper;
 import net.digitalid.core.wrappers.StringWrapper;
 
 /**
@@ -22,7 +25,7 @@ import net.digitalid.core.wrappers.StringWrapper;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public final class Password extends NonHostConcept<Password> {
+public final class Password extends Concept<Password, NonHostEntity, None> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -58,56 +61,43 @@ public final class Password extends NonHostConcept<Password> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
-    private static final @Nonnull NonNullableConceptPropertyTable<Password> table = NonNullableConceptPropertyTable.get("password", Password.FACTORY);
+    private static final @Nonnull Module MODULE = Module.get();
+    
+    /**
+     * Stores the table to store the password.
+     */
+    private static final @Nonnull NonNullableConceptPropertyTable<String, Password, NonHostEntity> table = NonNullableConceptPropertyTable.get(MODULE, "password", Password.FACTORY);
     
     /**
      * Stores the value of this password.
      */
-    public final @Nonnull NonNullableConceptProperty<String, Password> value;
+    public final @Nonnull NonNullableConceptProperty<String, Password, NonHostEntity> value = NonNullableConceptProperty.get(VALIDATOR, this, table);
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
-    
-    private static final @Nonnull Index<Password, Void> index = Index.get();
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Index –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Returns the (locally cached) password of the given entity.
+     * Stores the index of this concept.
+     */
+    private static final @Nonnull Index<Password, NonHostEntity, None> index = Index.get(EmptyWrapper.VALUE_FACTORY);
+    
+    /**
+     * Returns a potentially cached password that might not yet exist in the database.
      * 
      * @param entity the entity to which the password belongs.
      * 
-     * @return a new or existing context with the given entity and number.
+     * @return a new or existing password with the given entity.
      * 
      * @require !(entity instanceof Role) || ((Role) entity).isNative() : "If the entity is a role, it is native.";
      */
     @Pure
     @NonCommitting
-    public static @Nonnull Password get(@Nonnull NonHostEntity entity) throws SQLException {
+    public static @Nonnull Password get(@Nonnull NonHostEntity entity) {
         assert !(entity instanceof Role) || ((Role) entity).isNative() : "If the entity is a role, it is native.";
         
-        final @Nonnull String value = PasswordModule.get(entity);
-        if (Database.isSingleAccess()) {
-            @Nullable Password password = index.get(entity);
-            if (password == null) password = index.putIfAbsentElseReturnPresent(entity, new Password(entity, value));
-            return password;
-        } else {
-            return new Password(entity, value);
-        }
+        return index.get(entity, None.OBJECT);
     }
     
-    /**
-     * Resets the password of the given entity after having reloaded the passwords module.
-     * 
-     * @param entity the entity whose password is to be reset.
-     */
-    @NonCommitting
-    public static void reset(@Nonnull NonHostEntity entity) throws SQLException {
-        if (Database.isSingleAccess()) {
-            final @Nullable Password password = index.get(entity);
-            if (password != null) {
-                password.value = PasswordModule.get(entity);
-                password.notify(RESET);
-            }
-        }
-    }
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Creates a new password with the given entity and value.
@@ -118,9 +108,7 @@ public final class Password extends NonHostConcept<Password> {
      * @require isValid(value) : "The value is valid.";
      */
     private Password(@Nonnull NonHostEntity entity) {
-        super(entity);
-        
-        this.value = NonNullableConceptProperty.get();
+        super(entity, None.OBJECT);
     }
     
     /**
@@ -160,6 +148,40 @@ public final class Password extends NonHostConcept<Password> {
     @Override
     public @Nonnull String toString() {
         return "The password of " + getEntity().getIdentity().getAddress() + " is '" + value + "'.";
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * The factory for this class.
+     */
+    @Immutable
+    public static final class Factory extends Concept.Factory<Password, NonHostEntity, None> {
+        
+        /**
+         * Creates a new factory.
+         */
+        private Factory() {
+            super(EmptyWrapper.VALUE_FACTORY, index);
+        }
+        
+        @Pure
+        @Override
+        public @Nonnull Password create(@Nonnull NonHostEntity entity, @Nonnull None key) {
+            return new Password(entity);
+        }
+        
+    }
+    
+    /**
+     * Stores the factory of this class.
+     */
+    public static final @Nonnull Factory FACTORY = new Factory();
+    
+    @Pure
+    @Override
+    public @Nonnull Factory getFactory() {
+        return FACTORY;
     }
     
 }

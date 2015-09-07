@@ -27,7 +27,7 @@ import net.digitalid.core.identifier.HostIdentifier;
 import net.digitalid.core.identifier.IdentifierClass;
 import net.digitalid.core.identifier.InternalIdentifier;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.module.BothModule;
+import net.digitalid.core.module.StateModule;
 import net.digitalid.core.packet.Packet;
 import net.digitalid.core.packet.Response;
 import net.digitalid.core.service.Service;
@@ -258,7 +258,7 @@ public final class PushFailed extends ExternalAction {
     
     @Pure
     @Override
-    public @Nonnull BothModule getModule() {
+    public @Nonnull StateModule getModule() {
         return PusherModule.MODULE;
     }
     

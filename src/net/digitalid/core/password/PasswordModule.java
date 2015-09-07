@@ -30,7 +30,7 @@ import net.digitalid.core.host.Host;
 import net.digitalid.core.identifier.IdentifierClass;
 import net.digitalid.core.identity.Identity;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.module.BothModule;
+import net.digitalid.core.module.StateModule;
 import net.digitalid.core.service.CoreService;
 import net.digitalid.core.service.Service;
 import net.digitalid.core.wrappers.Block;
@@ -45,7 +45,7 @@ import net.digitalid.core.wrappers.TupleWrapper;
  * @version 1.0
  */
 @Stateless
-public final class PasswordModule implements BothModule {
+public final class PasswordModule implements StateModule {
     
     /**
      * Stores an instance of this module.

@@ -26,7 +26,7 @@ import net.digitalid.core.identifier.NonHostIdentifier;
 import net.digitalid.core.identity.InternalNonHostIdentity;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.identity.Successor;
-import net.digitalid.core.module.BothModule;
+import net.digitalid.core.module.StateModule;
 import net.digitalid.core.service.CoreService;
 import net.digitalid.core.service.CoreServiceInternalAction;
 import net.digitalid.core.wrappers.Block;
@@ -174,7 +174,7 @@ public final class AccountClose extends CoreServiceInternalAction {
     
     @Pure
     @Override
-    public @Nonnull BothModule getModule() {
+    public @Nonnull StateModule getModule() {
         return CoreService.SERVICE;
     }
     

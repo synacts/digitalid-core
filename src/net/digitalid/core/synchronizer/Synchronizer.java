@@ -29,7 +29,7 @@ import net.digitalid.core.handler.Method;
 import net.digitalid.core.io.Level;
 import net.digitalid.core.io.Log;
 import net.digitalid.core.io.Logger;
-import net.digitalid.core.module.BothModule;
+import net.digitalid.core.module.StateModule;
 import net.digitalid.core.packet.Response;
 import net.digitalid.core.service.Service;
 import net.digitalid.core.thread.NamedThreadFactory;
@@ -134,7 +134,7 @@ public final class Synchronizer extends Thread {
      */
     @Locked
     @Committing
-    static void reloadSuspended(@Nonnull Role role, @Nonnull BothModule module) throws SQLException, IOException, PacketException, ExternalException {
+    static void reloadSuspended(@Nonnull Role role, @Nonnull StateModule module) throws SQLException, IOException, PacketException, ExternalException {
         final @Nonnull Service service = module.getService();
         assert isSuspended(role, service) : "The service is suspended.";
         
@@ -150,7 +150,7 @@ public final class Synchronizer extends Thread {
         final @Nullable InternalAction lastAction = SynchronizerModule.pendingActions.peekLast();
         Database.commit();
         
-        final @Nonnull ReadOnlySet<BothModule> modules = new FreezableHashSet<>(module).freeze();
+        final @Nonnull ReadOnlySet<StateModule> modules = new FreezableHashSet<>(module).freeze();
         SynchronizerModule.redoPendingActions(role, module.equals(service) ? service.getBothModules() : modules, lastAction);
         if (!module.equals(service)) response.getAuditNotNull().execute(role, service, response.getRequest().getRecipient(), ResponseAudit.emptyMethodList, modules);
     }
@@ -164,7 +164,7 @@ public final class Synchronizer extends Thread {
      */
     @NonLocked
     @Committing
-    public static void reload(@Nonnull Role role, @Nonnull BothModule module) throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
+    public static void reload(@Nonnull Role role, @Nonnull StateModule module) throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
         assert !Database.isLocked() : "The database is not locked.";
         
         @Nullable ConcurrentSet<Service> set = suspendedServices.get(role);
