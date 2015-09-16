@@ -19,7 +19,7 @@ import net.digitalid.core.database.Database;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.property.ConceptPropertyTable;
-import net.digitalid.core.storable.Factory;
+import net.digitalid.core.storable.AbstractFactory;
 import net.digitalid.core.tuples.FreezablePair;
 import net.digitalid.core.tuples.ReadOnlyPair;
 
@@ -41,7 +41,7 @@ import net.digitalid.core.tuples.ReadOnlyPair;
 @Immutable
 public class NonNullableConceptPropertyTable<V, C extends Concept<C, E, ?>, E extends Entity> extends ConceptPropertyTable<V, C, E> {
     
-    private NonNullableConceptPropertyTable(@Nonnull Factory<V> factory) {
+    private NonNullableConceptPropertyTable(@Nonnull AbstractFactory<V> factory) {
         this.factory = factory;
     }
     

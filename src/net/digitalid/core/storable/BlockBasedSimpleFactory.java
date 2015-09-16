@@ -13,9 +13,9 @@ import net.digitalid.core.annotations.NonFrozen;
 import net.digitalid.core.annotations.NonNullableElements;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.collections.FreezableArray;
-import net.digitalid.core.database.Column;
+import net.digitalid.core.column.Column;
+import net.digitalid.core.column.SQLType;
 import net.digitalid.core.database.Database;
-import net.digitalid.core.database.SQLType;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.wrappers.Block;
@@ -51,7 +51,7 @@ public abstract class BlockBasedSimpleFactory<O extends Storable<O, E>, E> exten
     
     @Pure
     @Override
-    protected final @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getValues(@Nonnull O object) {
+    public final @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getValues(@Nonnull O object) {
         return FreezableArray.getNonNullable(Block.fromNonNullable(object).toString());
     }
     

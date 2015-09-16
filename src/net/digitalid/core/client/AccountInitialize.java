@@ -35,7 +35,7 @@ import net.digitalid.core.identity.NonHostIdentity;
 import net.digitalid.core.identity.Predecessor;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.identity.Successor;
-import net.digitalid.core.module.StateModule;
+import net.digitalid.core.data.StateModule;
 import net.digitalid.core.password.PasswordModule;
 import net.digitalid.core.service.CoreService;
 import net.digitalid.core.service.CoreServiceInternalAction;

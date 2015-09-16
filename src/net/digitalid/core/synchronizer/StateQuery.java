@@ -24,9 +24,9 @@ import net.digitalid.core.handler.Reply;
 import net.digitalid.core.identifier.HostIdentifier;
 import net.digitalid.core.identity.IdentityClass;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.module.StateModule;
+import net.digitalid.core.data.StateModule;
 import net.digitalid.core.service.CoreService;
-import net.digitalid.core.service.Service;
+import net.digitalid.core.data.Service;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.SignatureWrapper;
 

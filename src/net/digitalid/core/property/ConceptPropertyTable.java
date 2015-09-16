@@ -4,7 +4,7 @@ import javax.annotation.Nonnull;
 import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.concept.Concept;
 import net.digitalid.core.entity.Entity;
-import net.digitalid.core.module.StateTable;
+import net.digitalid.core.data.StateTable;
 import net.digitalid.core.storable.SimpleFactory;
 
 /**

@@ -1,5 +1,6 @@
 package net.digitalid.core.service;
 
+import net.digitalid.core.data.Service;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;

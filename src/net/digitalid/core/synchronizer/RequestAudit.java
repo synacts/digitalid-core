@@ -10,7 +10,7 @@ import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.entity.Role;
 import net.digitalid.core.handler.InternalMethod;
 import net.digitalid.core.handler.Method;
-import net.digitalid.core.service.Service;
+import net.digitalid.core.data.Service;
 
 /**
  * This class models a request audit with the time of the last audit.

@@ -8,9 +8,9 @@ import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.annotations.Stateless;
 import net.digitalid.core.database.Database;
 import net.digitalid.core.entity.Site;
-import net.digitalid.core.module.ClientModule;
+import net.digitalid.core.data.ClientModule;
 import net.digitalid.core.service.CoreService;
-import net.digitalid.core.service.Service;
+import net.digitalid.core.data.Service;
 
 /**
  * This class provides database access to the accreditation requests of the core service.

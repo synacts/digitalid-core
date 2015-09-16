@@ -18,7 +18,7 @@ import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.identifier.HostIdentifier;
 import net.digitalid.core.identifier.InternalIdentifier;
-import net.digitalid.core.module.StateModule;
+import net.digitalid.core.data.StateModule;
 import net.digitalid.core.synchronizer.Audit;
 import net.digitalid.core.wrappers.SignatureWrapper;
 

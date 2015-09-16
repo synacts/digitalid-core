@@ -26,7 +26,7 @@ import net.digitalid.core.identifier.NonHostIdentifier;
 import net.digitalid.core.identity.InternalNonHostIdentity;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.identity.Successor;
-import net.digitalid.core.module.StateModule;
+import net.digitalid.core.data.StateModule;
 import net.digitalid.core.service.CoreService;
 import net.digitalid.core.service.CoreServiceInternalAction;
 import net.digitalid.core.wrappers.Block;

@@ -32,6 +32,7 @@ public abstract class InternalIdentifier extends IdentifierClass {
     
     /**
      * Returns whether the given string conforms to the criteria of this class.
+     * At most 38 characters may follow after the @-symbol.
      *
      * @param string the string to check.
      * 

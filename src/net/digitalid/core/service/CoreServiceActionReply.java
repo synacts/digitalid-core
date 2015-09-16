@@ -1,5 +1,6 @@
 package net.digitalid.core.service;
 
+import net.digitalid.core.data.Service;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Pure;

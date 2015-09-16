@@ -8,13 +8,13 @@ import net.digitalid.core.annotations.Loaded;
 import net.digitalid.core.annotations.NonEncoding;
 import net.digitalid.core.annotations.NonNullableElements;
 import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.database.Column;
+import net.digitalid.core.column.Column;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.wrappers.Block;
 
 /**
- * This class is like {@link Factory} except that the decoding of {@link Block blocks} throws less exceptions.
+ * This class is like {@link AbstractFactory} except that the decoding of {@link Block blocks} throws less exceptions.
  * 
  * @see BlockBasedSimpleFactory
  * 
@@ -22,7 +22,7 @@ import net.digitalid.core.wrappers.Block;
  * @version 1.0
  */
 @Immutable
-public abstract class SimpleFactory<O, E> extends Factory<O, E> {
+public abstract class SimpleFactory<O, E> extends AbstractFactory<O, E> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Decoding –––––––––––––––––––––––––––––––––––––––––––––––––– */
     

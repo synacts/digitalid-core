@@ -9,13 +9,14 @@ import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.auxiliary.None;
 import net.digitalid.core.concept.Concept;
 import net.digitalid.core.concept.Index;
+import net.digitalid.core.data.StateModule;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.entity.Role;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.module.Module;
 import net.digitalid.core.property.ValueValidator;
 import net.digitalid.core.property.nonnullable.NonNullableConceptProperty;
 import net.digitalid.core.property.nonnullable.NonNullableConceptPropertyTable;
+import net.digitalid.core.service.CoreService;
 import net.digitalid.core.wrappers.EmptyWrapper;
 import net.digitalid.core.wrappers.StringWrapper;
 
@@ -61,7 +62,7 @@ public final class Password extends Concept<Password, NonHostEntity, None> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
-    private static final @Nonnull Module MODULE = Module.get();
+    private static final @Nonnull StateModule MODULE = StateModule.get(CoreService.SERVICE, "password");
     
     /**
      * Stores the table to store the password.

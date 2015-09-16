@@ -19,6 +19,7 @@ import net.digitalid.core.client.Client;
 import net.digitalid.core.cryptography.KeyPair;
 import net.digitalid.core.cryptography.PrivateKeyChain;
 import net.digitalid.core.cryptography.PublicKeyChain;
+import net.digitalid.core.data.Service;
 import net.digitalid.core.database.Database;
 import net.digitalid.core.entity.HostAccount;
 import net.digitalid.core.entity.Site;
@@ -31,7 +32,6 @@ import net.digitalid.core.identity.Mapper;
 import net.digitalid.core.io.Directory;
 import net.digitalid.core.server.Server;
 import net.digitalid.core.service.CoreService;
-import net.digitalid.core.service.Service;
 import net.digitalid.core.wrappers.SelfcontainedWrapper;
 
 /**

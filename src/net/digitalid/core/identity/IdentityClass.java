@@ -10,11 +10,12 @@ import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
+import net.digitalid.core.auxiliary.None;
 import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.identifier.IdentifierClass;
-import net.digitalid.core.wrappers.Blockable;
+import net.digitalid.core.storable.Storable;
 import net.digitalid.core.wrappers.Block;
 
 /**
@@ -30,7 +31,7 @@ import net.digitalid.core.wrappers.Block;
  * @version 1.0
  */
 @Immutable
-public abstract class IdentityClass implements Identity {
+public abstract class IdentityClass implements Identity, Storable<Identity, None> {
     
     /**
      * Stores the internal number that represents and indexes this identity.

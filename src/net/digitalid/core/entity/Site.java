@@ -2,7 +2,9 @@ package net.digitalid.core.entity;
 
 import javax.annotation.Nonnull;
 import net.digitalid.core.annotations.Pure;
+import net.digitalid.core.annotations.Validated;
 import net.digitalid.core.client.Client;
+import net.digitalid.core.database.Database;
 import net.digitalid.core.host.Host;
 
 /**
@@ -16,49 +18,50 @@ import net.digitalid.core.host.Host;
  */
 public abstract class Site {
     
-    /**
-     * Stores the aspect of a new site being created.
-     */
-    public static final @Nonnull Aspect CREATED = new Aspect(Site.class, "created");
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Prefix –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Stores the aspect of a site being deleted.
+     * Returns whether the given prefix is valid.
+     * 
+     * @param prefix the prefix to be checked.
+     * 
+     * @return whether the given prefix is valid.
      */
-    public static final @Nonnull Aspect DELETED = new Aspect(Site.class, "deleted");
-    
+    @Pure
+    public static boolean isValidPrefix(@Nonnull String prefix) {
+        return prefix.length() <= 40 && Database.getConfiguration().isValidIdentifier(prefix);
+    }
     
     /**
      * Stores the prefix of the site-specific database tables.
-     * 
-     * @invariant prefix.length() <= 41 : "The prefix has at most 41 characters.";
      */
-    private final @Nonnull String prefix;
-    
-    /**
-     * Creates a new site with the given prefix.
-     * 
-     * @param prefix the prefix of the site-specific database tables.
-     * 
-     * @require prefix.length() <= 40 : "The prefix has at most 40 characters.";
-     */
-    protected Site(@Nonnull String prefix) {
-        assert prefix.length() <= 40 : "The prefix has at most 40 characters.";
-        
-        this.prefix = prefix + "_";
-    }
+    private final @Nonnull @Validated String prefix;
     
     /**
      * Returns the prefix of the site-specific database tables.
      * 
      * @return the prefix of the site-specific database tables.
-     * 
-     * @ensure return.length() <= 41 : "The prefix has at most 41 characters.";
      */
     @Pure
     @Override
-    public final @Nonnull String toString() {
+    public final @Nonnull @Validated String toString() {
         return prefix;
     }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Creates a new site with the given prefix.
+     * 
+     * @param prefix the prefix of the site-specific database tables.
+     */
+    protected Site(@Nonnull @Validated String prefix) {
+        assert isValidPrefix(prefix) : "The prefix is valid.";
+        
+        this.prefix = prefix;
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Reference –––––––––––––––––––––––––––––––––––––––––––––––––– */
         
     /**
      * Returns the foreign key referenced by the entity column.

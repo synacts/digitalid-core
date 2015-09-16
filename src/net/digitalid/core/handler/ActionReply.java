@@ -16,7 +16,7 @@ import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.pusher.Pusher;
 import net.digitalid.core.service.CoreServiceActionReply;
-import net.digitalid.core.service.Service;
+import net.digitalid.core.data.Service;
 import net.digitalid.core.synchronizer.Audit;
 import net.digitalid.core.wrappers.HostSignatureWrapper;
 

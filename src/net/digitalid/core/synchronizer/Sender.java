@@ -25,7 +25,7 @@ import net.digitalid.core.handler.Method;
 import net.digitalid.core.io.Log;
 import net.digitalid.core.packet.ClientRequest;
 import net.digitalid.core.packet.Response;
-import net.digitalid.core.service.Service;
+import net.digitalid.core.data.Service;
 
 /**
  * A sender sends {@link InternalAction internal actions} asynchronously.

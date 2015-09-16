@@ -22,7 +22,7 @@ import net.digitalid.core.identity.InternalNonHostIdentity;
 import net.digitalid.core.identity.InternalPerson;
 import net.digitalid.core.identity.Mapper;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.module.ClientModule;
+import net.digitalid.core.data.ClientModule;
 import net.digitalid.core.service.CoreService;
 
 /**

@@ -1,4 +1,4 @@
-package net.digitalid.core.module;
+package net.digitalid.core.data;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -22,27 +22,31 @@ import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.wrappers.Block;
 
 /**
- * Description.
+ * This class models a database table that contains part of an {@link Entity entity's} state.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
 @Immutable
-public abstract class StateTable<T extends StateTable<T>> extends HostTable<T> {
+public abstract class StateTable extends HostTable implements StateData {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Table Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Module –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    @Pure
+    @Override
+    public @Nonnull StateModule getModule() {
+        return (StateModule) super.getModule();
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– State Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the state type of this table.
      */
     private final @Nonnull @Loaded SemanticType stateType;
     
-    /**
-     * Returns the state type of this table.
-     * 
-     * @return the state type of this table.
-     */
     @Pure
+    @Override
     public final @Nonnull @Loaded SemanticType getStateType() {
         return stateType;
     }
@@ -54,52 +58,42 @@ public abstract class StateTable<T extends StateTable<T>> extends HostTable<T> {
      * 
      * @param module the module to which the new table belongs.
      * @param name the name of the new table.
-     * @param tableType the type of the new table.
+     * @param dumpType the dump type of the new table.
      * @param stateType the state type of the new table.
+     * 
+     * @require !(module instanceof Service) : "The module is not a service.";
      */
-    protected StateTable(@Nonnull Module<T> module, @Nonnull @Validated String name, @Nonnull @Loaded SemanticType tableType, @Nonnull @Loaded SemanticType stateType) {
-        super(module, name, tableType);
+    protected StateTable(@Nonnull StateModule module, @Nonnull @Validated String name, @Nonnull @Loaded SemanticType dumpType, @Nonnull @Loaded SemanticType stateType) {
+        super(module, name, dumpType);
         
         this.stateType = stateType;
+        
+        module.register(this);
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Sites –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    @Pure
+    @Override
+    public final boolean isForClients() {
+        return true;
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– State –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
-    /**
-     * Returns the partial state of the given entity restricted by the given authorization.
-     * 
-     * @param entity the entity whose partial state is to be returned.
-     * @param permissions the permissions that restrict the returned state.
-     * @param restrictions the restrictions that restrict the returned state.
-     * @param agent the agent whose authorization restricts the returned state.
-     * 
-     * @return the partial state of the given entity restricted by the given authorization.
-     * 
-     * @ensure return.getType().equals(getStateType()) : "The returned block has the indicated type.";
-     */
     @Pure
     @Locked
+    @Override
     @NonCommitting
     public abstract @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws SQLException;
     
-    /**
-     * Adds the partial state in the given block to the given entity.
-     * 
-     * @param entity the entity to which the partial state is to be added.
-     * @param block the block containing the partial state to be added.
-     * 
-     * @require block.getType().isBasedOn(getStateType()) : "The block is based on the indicated type.";
-     */
     @Locked
+    @Override
     @NonCommitting
     public abstract void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException;
     
-    /**
-     * Removes all the entries of the given entity in this table.
-     * 
-     * @param entity the entity whose entries are to be removed.
-     */
     @Locked
+    @Override
     @NonCommitting
     public void removeState(@Nonnull NonHostEntity entity) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {

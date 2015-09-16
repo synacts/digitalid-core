@@ -19,7 +19,7 @@ import net.digitalid.core.identity.IdentityClass;
 import net.digitalid.core.identity.InternalNonHostIdentity;
 import net.digitalid.core.identity.InternalPerson;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.module.StateModule;
+import net.digitalid.core.data.StateModule;
 import net.digitalid.core.service.CoreServiceActionReply;
 import net.digitalid.core.service.CoreServiceExternalAction;
 import net.digitalid.core.wrappers.Block;

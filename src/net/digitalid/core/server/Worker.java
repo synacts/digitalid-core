@@ -28,7 +28,7 @@ import net.digitalid.core.io.Logger;
 import net.digitalid.core.packet.Request;
 import net.digitalid.core.packet.Response;
 import net.digitalid.core.service.CoreService;
-import net.digitalid.core.service.Service;
+import net.digitalid.core.data.Service;
 import net.digitalid.core.synchronizer.ActionModule;
 import net.digitalid.core.synchronizer.RequestAudit;
 import net.digitalid.core.synchronizer.ResponseAudit;

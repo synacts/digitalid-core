@@ -16,7 +16,7 @@ import net.digitalid.core.host.Host;
 import net.digitalid.core.identifier.HostIdentifier;
 import net.digitalid.core.io.Console;
 import net.digitalid.core.io.Option;
-import net.digitalid.core.service.Service;
+import net.digitalid.core.data.Service;
 
 /**
  * This class contains the command-line options of the {@link Server}.

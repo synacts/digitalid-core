@@ -16,7 +16,7 @@ import net.digitalid.core.handler.Method;
 import net.digitalid.core.identifier.HostIdentifier;
 import net.digitalid.core.identity.IdentityClass;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.module.StateModule;
+import net.digitalid.core.data.StateModule;
 import net.digitalid.core.service.CoreServiceInternalAction;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.SignatureWrapper;

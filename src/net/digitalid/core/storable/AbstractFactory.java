@@ -22,7 +22,7 @@ import net.digitalid.core.collections.ElementConverter;
 import net.digitalid.core.collections.FreezableArray;
 import net.digitalid.core.collections.IterableConverter;
 import net.digitalid.core.collections.ReadOnlyArray;
-import net.digitalid.core.database.Column;
+import net.digitalid.core.column.Column;
 import net.digitalid.core.database.Database;
 import net.digitalid.core.entity.Site;
 import net.digitalid.core.exceptions.external.ExternalException;
@@ -40,7 +40,7 @@ import net.digitalid.core.wrappers.Block;
  * @version 1.0
  */
 @Immutable
-public abstract class Factory<O, E> {
+public abstract class AbstractFactory<O, E> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -622,7 +622,7 @@ public abstract class Factory<O, E> {
      * @param type the semantic type that corresponds to the storable class.
      * @param columns the columns used to store objects of the storable class.
      */
-    protected Factory(@Nonnull @Loaded SemanticType type, @Captured @Nonnull @NonNullableElements Column... columns) {
+    protected AbstractFactory(@Nonnull @Loaded SemanticType type, @Captured @Nonnull @NonNullableElements Column... columns) {
         this.type = type;
         this.columns = FreezableArray.getNonNullable(columns).freeze();
         int maximumColumnLength = 0;

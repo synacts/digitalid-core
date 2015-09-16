@@ -1,4 +1,4 @@
-package net.digitalid.core.database;
+package net.digitalid.core.column;
 
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
@@ -8,13 +8,14 @@ import net.digitalid.core.annotations.Locked;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.annotations.Validated;
+import net.digitalid.core.database.Database;
 import net.digitalid.core.entity.Site;
-import net.digitalid.core.storable.Factory;
+import net.digitalid.core.storable.AbstractFactory;
 
 /**
  * Columns are used to store data in the database.
  * 
- * @see Factory
+ * @see AbstractFactory
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0

@@ -84,6 +84,7 @@ public final class HostIdentifier extends InternalIdentifier {
     
     /**
      * Returns this host identifier as a host name which can be used as a {@link Site#toString() prefix} in {@link Database database} tables.
+     * Host identifiers consist of at most 38 characters. If the identifier starts with a digit, the host name is prepended by an underscore.
      * 
      * @return this host identifier as a host name which can be used as a {@link Site#toString() prefix} in {@link Database database} tables.
      * 

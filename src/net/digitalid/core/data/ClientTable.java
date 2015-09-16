@@ -1,4 +1,4 @@
-package net.digitalid.core.module;
+package net.digitalid.core.data;
 
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -12,7 +12,7 @@ import net.digitalid.core.database.Database;
 import net.digitalid.core.entity.Site;
 
 /**
- * This class models a database table.
+ * This class models a database table with the least requirements.
  * 
  * @see HostTable
  * 
@@ -20,14 +20,14 @@ import net.digitalid.core.entity.Site;
  * @version 1.0
  */
 @Immutable
-public abstract class Table<T extends Table<T>> {
+public abstract class ClientTable implements ClientData {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Module –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the module to which this table belongs.
      */
-    private final @Nonnull Module<T> module;
+    private final @Nonnull ClientModule module;
     
     /**
      * Returns the module to which this table belongs.
@@ -35,8 +35,16 @@ public abstract class Table<T extends Table<T>> {
      * @return the module to which this table belongs.
      */
     @Pure
-    public final @Nonnull Module<T> getModule() {
+    public @Nonnull ClientModule getModule() {
         return module;
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Service –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    @Pure
+    @Override
+    public final @Nonnull Service getService() {
+        return module.getService();
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Name –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -49,8 +57,8 @@ public abstract class Table<T extends Table<T>> {
      * @return whether the given name is valid.
      */
     @Pure
-    public final boolean isValid(@Nonnull String name) {
-        return name.length() <= 22 && Database.getConfiguration().isValidIdentifier(name);
+    public final boolean isValidName(@Nonnull String name) {
+        return name.length() <= 22 && name.startsWith("_") && name.length() > 1 && Database.getConfiguration().isValidIdentifier(name);
     }
     
     /**
@@ -58,12 +66,8 @@ public abstract class Table<T extends Table<T>> {
      */
     private final @Nonnull @Validated String name;
     
-    /**
-     * Returns the name of this table.
-     * 
-     * @return the name of this table.
-     */
     @Pure
+    @Override
     public final @Nonnull @Validated String getName() {
         return name;
     }
@@ -75,34 +79,45 @@ public abstract class Table<T extends Table<T>> {
      * 
      * @param module the module to which the new table belongs.
      * @param name the name of the new table.
+     * 
+     * @require !(module instanceof Service) : "The module is not a service.";
      */
-    @SuppressWarnings("unchecked")
-    protected Table(@Nonnull Module<T> module, @Nonnull @Validated String name) {
-        this.module = module;
-        this.name = name;
+    protected ClientTable(@Nonnull ClientModule module, @Nonnull @Validated String name) {
+        assert !(module instanceof Service) : "The module is not a service.";
         
-        module.register((T) this);
+        this.module = module;
+        this.name = module.getName() + "_" + name;
+        
+        module.register(this);
+        
+        assert isValidName(this.name) : "The name is valid.";
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Creation and Deletion –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Sites –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
-    /**
-     * Creates this table for the given site.
-     * 
-     * @param site the site for which to create this table.
-     */
-    @Locked
-    @NonCommitting
-    protected abstract void create(@Nonnull Site site) throws SQLException;
+    @Pure
+    @Override
+    public boolean isForHosts() {
+        return false;
+    }
     
-    /**
-     * Deletes this table for the given site.
-     * 
-     * @param site the site for which to delete this table.
-     */
+    @Pure
+    @Override
+    public boolean isForClients() {
+        return true;
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Tables –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
     @Locked
+    @Override
     @NonCommitting
-    protected void delete(@Nonnull Site site) throws SQLException {
+    public abstract void createTables(@Nonnull Site site) throws SQLException;
+    
+    @Locked
+    @Override
+    @NonCommitting
+    public void deleteTables(@Nonnull Site site) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("DROP TABLE IF EXISTS " + site + name);
         }

@@ -26,9 +26,9 @@ import net.digitalid.core.exceptions.packet.PacketError;
 import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.identity.InternalNonHostIdentity;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.module.StateModule;
+import net.digitalid.core.data.StateModule;
 import net.digitalid.core.service.CoreService;
-import net.digitalid.core.service.Service;
+import net.digitalid.core.data.Service;
 import net.digitalid.core.synchronizer.Synchronizer;
 import net.digitalid.core.synchronizer.SynchronizerModule;
 

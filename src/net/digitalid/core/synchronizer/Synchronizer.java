@@ -29,9 +29,9 @@ import net.digitalid.core.handler.Method;
 import net.digitalid.core.io.Level;
 import net.digitalid.core.io.Log;
 import net.digitalid.core.io.Logger;
-import net.digitalid.core.module.StateModule;
+import net.digitalid.core.data.StateModule;
 import net.digitalid.core.packet.Response;
-import net.digitalid.core.service.Service;
+import net.digitalid.core.data.Service;
 import net.digitalid.core.thread.NamedThreadFactory;
 
 /**

@@ -20,7 +20,7 @@ import net.digitalid.core.handler.Reply;
 import net.digitalid.core.identifier.HostIdentifier;
 import net.digitalid.core.identity.InternalPerson;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.module.StateModule;
+import net.digitalid.core.data.StateModule;
 import net.digitalid.core.service.CoreServiceActionReply;
 import net.digitalid.core.service.CoreServiceExternalAction;
 import net.digitalid.core.wrappers.Block;

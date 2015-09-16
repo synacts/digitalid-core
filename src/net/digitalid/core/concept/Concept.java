@@ -223,32 +223,32 @@ public abstract class Concept<C extends Concept<C, E, K>, E extends Entity, K> i
         
         @Pure
         @Override
-        public @Nonnull Block encodeNonNullable(@Nonnull C concept) {
+        public final @Nonnull Block encodeNonNullable(@Nonnull C concept) {
             return factory.encodeNonNullable(concept.getKey());
         }
         
         @Pure
         @Override
-        public @Nonnull C decodeNonNullable(@Nonnull E entity, @Nonnull Block block) throws InvalidEncodingException {
+        public final @Nonnull C decodeNonNullable(@Nonnull E entity, @Nonnull Block block) throws InvalidEncodingException {
             return index.get(entity, factory.decodeNonNullable(entity, block));
         }
         
         @Pure
         @Override
-        public @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getValues(@Nonnull C concept) {
+        public final @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getValues(@Nonnull C concept) {
             return factory.getValues(concept.getKey());
         }
         
         @Override
         @NonCommitting
-        public void setNonNullable(@Nonnull C concept, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+        public final void setNonNullable(@Nonnull C concept, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
             factory.setNonNullable(concept.getKey(), preparedStatement, parameterIndex);
         }
         
         @Pure
         @Override
         @NonCommitting
-        public @Nullable C getNullable(@Nonnull E entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+        public final @Nullable C getNullable(@Nonnull E entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
             final @Nullable K key = factory.getNullable(entity, resultSet, columnIndex);
             return key == null ? null : index.get(entity, key);
         }

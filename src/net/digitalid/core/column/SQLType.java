@@ -1,9 +1,10 @@
-package net.digitalid.core.database;
+package net.digitalid.core.column;
 
 import java.sql.Types;
 import javax.annotation.Nonnull;
 import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Pure;
+import net.digitalid.core.database.Database;
 
 /**
  * This class enumerates the various SQL types.
