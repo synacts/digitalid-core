@@ -50,7 +50,7 @@ public final class Database {
      * @param preparedStatement the prepared statement whose parameters are to be set.
      * @param parameterIndex the starting index of the parameters which are to be set.
      */
-    public static <V extends Storable<V>> void setNonNullable(@Nonnull V storable, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+    public static <V extends Storable<V, ?>> void setNonNullable(@Nonnull V storable, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
         storable.getFactory().setNonNullable(storable, preparedStatement, parameterIndex);
     }
     
@@ -462,7 +462,7 @@ public final class Database {
     /**
      * Stores the tables which are to be purged regularly.
      */
-    private static final @Nonnull ConcurrentMap<String, Time> tables = new ConcurrentHashMap<>();
+    private static final @Nonnull ConcurrentMap<String, Time> tables = ConcurrentHashMap.get();
     
     /**
      * Adds the given table to the list for regular purging.

@@ -20,7 +20,7 @@ import net.digitalid.core.column.Column;
 import net.digitalid.core.column.SQLType;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.storable.SimpleFactory;
+import net.digitalid.core.storable.LocalFactory;
 import net.digitalid.core.storable.Storable;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.BytesWrapper;
@@ -103,7 +103,7 @@ public final class InitializationVector extends IvParameterSpec implements Stora
      * The factory for this class.
      */
     @Immutable
-    public static final class Factory extends SimpleFactory<InitializationVector, None> {
+    public static final class Factory extends LocalFactory<InitializationVector, None> {
         
         /**
          * Creates a new factory.

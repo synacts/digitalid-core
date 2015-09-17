@@ -157,7 +157,7 @@ public final class Password extends Concept<Password, NonHostEntity, None> {
      * The factory for this class.
      */
     @Immutable
-    public static final class Factory extends Concept.Factory<Password, NonHostEntity, None> {
+    public static final class Factory extends Concept.IndexBasedGlobalFactory<Password, NonHostEntity, None> {
         
         /**
          * Creates a new factory.

@@ -28,17 +28,17 @@ import net.digitalid.core.annotations.NonNullableElements;
 import net.digitalid.core.annotations.Positive;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.annotations.ValidIndex;
+import net.digitalid.core.auxiliary.None;
 import net.digitalid.core.collections.FreezableArray;
+import net.digitalid.core.column.Column;
+import net.digitalid.core.column.SQLType;
 import net.digitalid.core.cryptography.InitializationVector;
 import net.digitalid.core.cryptography.SymmetricKey;
-import net.digitalid.core.column.Column;
 import net.digitalid.core.database.Database;
-import net.digitalid.core.column.SQLType;
 import net.digitalid.core.errors.ShouldNeverHappenError;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.storable.NonConceptFactory;
-import net.digitalid.core.storable.SimpleNonConceptFactory;
+import net.digitalid.core.storable.LocalFactory;
 import net.digitalid.core.storable.Storable;
 
 /**
@@ -59,7 +59,7 @@ import net.digitalid.core.storable.Storable;
  * @version 1.0
  */
 @Immutable
-public final class Block implements Storable<Block>, Cloneable {
+public final class Block implements Storable<Block, None>, Cloneable {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Conversions –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -71,7 +71,7 @@ public final class Block implements Storable<Block>, Cloneable {
      * @return the given non-nullable storable as a block.
      */
     @Pure
-    public static @Nonnull <V extends Storable<V>> Block fromNonNullable(@Nonnull V storable) {
+    public static @Nonnull <V extends Storable<V, ?>> Block fromNonNullable(@Nonnull V storable) {
         return storable.getFactory().encodeNonNullable(storable);
     }
     
@@ -83,7 +83,7 @@ public final class Block implements Storable<Block>, Cloneable {
      * @return the given nullable storable as a block.
      */
     @Pure
-    public static @Nullable <V extends Storable<V>> Block fromNullable(@Nullable V storable) {
+    public static @Nullable <V extends Storable<V, ?>> Block fromNullable(@Nullable V storable) {
         return storable == null ? null : fromNonNullable(storable);
     }
     
@@ -98,7 +98,7 @@ public final class Block implements Storable<Block>, Cloneable {
      * @require type.isBasedOn(storable.getFactory().getType()) : "The given type is based on its type.";
      */
     @Pure
-    public static @Nonnull <V extends Storable<V>> Block fromNonNullable(@Nonnull V storable, @Nonnull @Loaded SemanticType type) {
+    public static @Nonnull <V extends Storable<V, ?>> Block fromNonNullable(@Nonnull V storable, @Nonnull @Loaded SemanticType type) {
         return fromNonNullable(storable).setType(type);
     }
     
@@ -113,7 +113,7 @@ public final class Block implements Storable<Block>, Cloneable {
      * @require storable == null || type.isBasedOn(storable.getFactory().getType()) : "If the storable instance is not null, the given type is based on its type.";
      */
     @Pure
-    public static @Nullable <V extends Storable<V>> Block fromNullable(@Nullable V storable, @Nonnull @Loaded SemanticType type) {
+    public static @Nullable <V extends Storable<V, ?>> Block fromNullable(@Nullable V storable, @Nonnull @Loaded SemanticType type) {
         return storable == null ? null : fromNonNullable(storable).setType(type);
     }
     
@@ -754,7 +754,8 @@ public final class Block implements Storable<Block>, Cloneable {
     /**
      * The factory for blocks.
      */
-    private static class Factory extends SimpleNonConceptFactory<Block> {
+    @Immutable
+    public static class Factory extends LocalFactory<Block, None> {
         
         /**
          * Stores the column for blocks.
@@ -778,13 +779,13 @@ public final class Block implements Storable<Block>, Cloneable {
         
         @Pure
         @Override
-        public @Nonnull Block decodeNonNullable(@Nonnull Block block) {
+        public @Nonnull Block decodeNonNullable(@Nonnull None none, @Nonnull Block block) {
             return block;
         }
         
         @Pure
         @Override
-        protected @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getValues(@Nonnull Block block) {
+        public @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getValues(@Nonnull Block block) {
             return FreezableArray.getNonNullable(block.toString());
         }
         
@@ -799,7 +800,7 @@ public final class Block implements Storable<Block>, Cloneable {
         
         @Pure
         @Override
-        public @Nullable Block getNullable(@Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+        public @Nullable Block getNullable(@Nonnull None none, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
             final @Nonnull byte[] bytes = resultSet.getBytes(columnIndex);
             if (resultSet.wasNull()) return null;
             else return Block.get(getType(), bytes);
@@ -809,7 +810,7 @@ public final class Block implements Storable<Block>, Cloneable {
     
     @Pure
     @Override
-    public @Nonnull NonConceptFactory<Block> getFactory() {
+    public @Nonnull Factory getFactory() {
         return new Factory(type);
     }
     
@@ -821,14 +822,14 @@ public final class Block implements Storable<Block>, Cloneable {
      * @return a new factory for the given type.
      */
     @Pure
-    public static @Nonnull NonConceptFactory<Block> getFactory(@Nonnull @Loaded SemanticType type) {
+    public static @Nonnull Factory getFactory(@Nonnull @Loaded SemanticType type) {
         return new Factory(type);
     }
     
     /**
      * Stores the factory for blocks of unknown type.
      */
-    public static final @Nonnull NonConceptFactory<Block> FACTORY = new Factory(SemanticType.UNKNOWN);
+    public static final @Nonnull Factory FACTORY = new Factory(SemanticType.UNKNOWN);
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Cryptography –––––––––––––––––––––––––––––––––––––––––––––––––– */
     

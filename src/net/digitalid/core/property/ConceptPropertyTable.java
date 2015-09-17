@@ -5,7 +5,7 @@ import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.concept.Concept;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.data.StateTable;
-import net.digitalid.core.storable.SimpleFactory;
+import net.digitalid.core.storable.LocalFactory;
 
 /**
  * This class models a database table.
@@ -19,9 +19,9 @@ import net.digitalid.core.storable.SimpleFactory;
 @Immutable
 public abstract class ConceptPropertyTable<V, C extends Concept<C, E, ?>, E extends Entity> extends StateTable<ConceptPropertyTable<V, C, E>> {
     
-    private final @Nonnull SimpleFactory<V, E> valueFactory;
+    private final @Nonnull LocalFactory<V, E> valueFactory;
     
-    private final @Nonnull SimpleFactory<C, E> conceptFactory;
+    private final @Nonnull LocalFactory<C, E> conceptFactory;
     
     protected ConceptPropertyTable() {
         

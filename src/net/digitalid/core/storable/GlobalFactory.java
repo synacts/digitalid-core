@@ -31,16 +31,19 @@ import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.wrappers.Block;
 
 /**
- * The factory allows to store and restore objects.
+ * A factory allows to store and restore objects.
+ * The global factory allows global lookups during {@link #decodeNonNullable(java.lang.Object, net.digitalid.core.wrappers.Block) decoding}.
  * 
  * @see Storable
- * @see SimpleFactory
+ * @see LocalFactory
+ * @see BlockBasedGlobalFactory
+ * @see FactoryBasedGlobalFactory
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
 @Immutable
-public abstract class AbstractFactory<O, E> {
+public abstract class GlobalFactory<O, E> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -622,7 +625,7 @@ public abstract class AbstractFactory<O, E> {
      * @param type the semantic type that corresponds to the storable class.
      * @param columns the columns used to store objects of the storable class.
      */
-    protected AbstractFactory(@Nonnull @Loaded SemanticType type, @Captured @Nonnull @NonNullableElements Column... columns) {
+    protected GlobalFactory(@Nonnull @Loaded SemanticType type, @Captured @Nonnull @NonNullableElements Column... columns) {
         this.type = type;
         this.columns = FreezableArray.getNonNullable(columns).freeze();
         int maximumColumnLength = 0;

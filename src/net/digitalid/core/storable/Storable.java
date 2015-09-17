@@ -18,6 +18,6 @@ public interface Storable<O, E> {
      * @return the factory to store and restore objects of this class.
      */
     @Pure
-    public @Nonnull AbstractFactory<O, E> getFactory();
+    public @Nonnull GlobalFactory<O, E> getFactory();
     
 }

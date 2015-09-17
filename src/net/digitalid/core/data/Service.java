@@ -1,30 +1,21 @@
 package net.digitalid.core.data;
 
 import java.io.IOException;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.annotations.BasedOn;
-import net.digitalid.core.annotations.Capturable;
 import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Loaded;
 import net.digitalid.core.annotations.NonCommitting;
-import net.digitalid.core.annotations.NonFrozen;
-import net.digitalid.core.annotations.NonNullableElements;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.annotations.Validated;
 import net.digitalid.core.attribute.Attribute;
 import net.digitalid.core.attribute.AttributeValue;
 import net.digitalid.core.auxiliary.None;
 import net.digitalid.core.cache.Cache;
-import net.digitalid.core.collections.FreezableArray;
 import net.digitalid.core.collections.FreezableLinkedHashMap;
 import net.digitalid.core.collections.FreezableMap;
 import net.digitalid.core.collections.ReadOnlyCollection;
-import net.digitalid.core.cryptography.InitializationVector;
-import static net.digitalid.core.cryptography.InitializationVector.TYPE;
 import net.digitalid.core.entity.Role;
 import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
@@ -32,13 +23,12 @@ import net.digitalid.core.exceptions.packet.PacketError;
 import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.identifier.HostIdentifier;
 import net.digitalid.core.identifier.IdentifierClass;
+import net.digitalid.core.identity.Identity;
 import net.digitalid.core.identity.IdentityClass;
 import net.digitalid.core.identity.InternalPerson;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.storable.AbstractFactory;
+import net.digitalid.core.storable.FactoryBasedGlobalFactory;
 import net.digitalid.core.storable.Storable;
-import net.digitalid.core.wrappers.Block;
-import net.digitalid.core.wrappers.BytesWrapper;
 
 /**
  * This class models a service.
@@ -191,55 +181,39 @@ public class Service extends StateModule implements Storable<Service, None> {
         return IdentifierClass.create(Cache.getFreshAttributeContent(subject, role, getType(), false)).toHostIdentifier();
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    @Pure
+    @Override
+    public final @Nonnull String toString() {
+        return getType().toString();
+    }
+    
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * The factory for this class.
      */
     @Immutable
-    public static final class Factory extends AbstractFactory<Service, None> { // TODO: Introduce a FactoryBasedFactory.
+    public static final class Factory extends FactoryBasedGlobalFactory<Service, None, Identity> {
         
         /**
          * Creates a new factory.
          */
         private Factory() {
-            super(SemanticType.IDENTIFIER, IdentityClass.FACTORY.getColumns().getNonNullable(0));
+            super(SemanticType.IDENTIFIER, IdentityClass.FACTORY); // TODO: Redo after the identity is made storable.
         }
         
         @Pure
         @Override
-        public @Nonnull Block encodeNonNullable(@Nonnull Service service) {
-            return BytesWrapper.encodeNonNullable(TYPE, service.getIV());
+        public @Nonnull Identity getKey(@Nonnull Service service) {
+            return service.getType();
         }
         
         @Pure
         @Override
-        public @Nonnull Service decodeNonNullable(@Nonnull None none, @Nonnull @BasedOn("initialization.vector@core.digitalid.net") Block block) throws InvalidEncodingException {
-            assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
-            
-            return new InitializationVector(BytesWrapper.decodeNonNullable(block));
-        }
-        
-        @Pure
-        @Override
-        public @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getValues(@Nonnull Service service) {
-            return FreezableArray.getNonNullable(Block.toString(service.getIV()));
-        }
-        
-        @Override
-        @NonCommitting
-        public void setNonNullable(@Nonnull Service service, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
-            preparedStatement.setBytes(parameterIndex, service.getIV());
-            getType().set(preparedStatement, parameterIndex);
-        }
-        
-        @Pure
-        @Override
-        @NonCommitting
-        public @Nullable Service getNullable(@Nonnull None none, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
-            final @Nullable byte[] bytes = resultSet.getBytes(columnIndex);
-            return bytes == null ? null : new InitializationVector(bytes);
-            return getService(IdentityClass.getNotNull(resultSet, columnIndex).toSemanticType());
+        public @Nonnull Service getObject(@Nonnull None none, @Nonnull Identity identity) {
+            return getService(identity);
         }
         
     }
@@ -253,14 +227,6 @@ public class Service extends StateModule implements Storable<Service, None> {
     @Override
     public @Nonnull Factory getFactory() {
         return FACTORY;
-    }
-    
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */
-    
-    @Pure
-    @Override
-    public final @Nonnull String toString() {
-        return getType().toString();
     }
     
 }

@@ -24,7 +24,7 @@ import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.identity.SyntacticType;
-import net.digitalid.core.storable.AbstractFactory;
+import net.digitalid.core.storable.GlobalFactory;
 import net.digitalid.core.storable.Storable;
 
 /**
@@ -131,7 +131,7 @@ public abstract class Wrapper<W extends Wrapper<W>> implements Storable<W, None>
      * The factory for wrappers.
      */
     @Immutable
-    public abstract static class Factory<W extends Wrapper<W>> extends AbstractFactory<W, None> {
+    public abstract static class Factory<W extends Wrapper<W>> extends GlobalFactory<W, None> {
         
         /**
          * Creates a new factory with the given parameters.
@@ -177,7 +177,7 @@ public abstract class Wrapper<W extends Wrapper<W>> implements Storable<W, None>
      * The factory for values.
      */
     @Immutable
-    public abstract static class ValueFactory<V, W extends Wrapper<W>> extends AbstractFactory<V, None> {
+    public abstract static class ValueFactory<V, W extends Wrapper<W>> extends GlobalFactory<V, None> {
         
         /**
          * Stores the factory to wrap and unwrap the values.

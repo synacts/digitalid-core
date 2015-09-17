@@ -14,15 +14,17 @@ import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.wrappers.Block;
 
 /**
- * This class is like {@link AbstractFactory} except that the decoding of {@link Block blocks} throws less exceptions.
+ * This class is like {@link GlobalFactory} except that the decoding of {@link Block blocks} throws less exceptions.
+ * The local factory allows only local information during {@link #decodeNonNullable(java.lang.Object, net.digitalid.core.wrappers.Block) decoding}.
  * 
- * @see BlockBasedSimpleFactory
+ * @see BlockBasedLocalFactory
+ * @see FactoryBasedLocalFactory
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
 @Immutable
-public abstract class SimpleFactory<O, E> extends AbstractFactory<O, E> {
+public abstract class LocalFactory<O, E> extends GlobalFactory<O, E> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Decoding –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -45,7 +47,7 @@ public abstract class SimpleFactory<O, E> extends AbstractFactory<O, E> {
      * @param type the semantic type that corresponds to the storable class.
      * @param columns the columns used to store objects of the storable class.
      */
-    protected SimpleFactory(@Nonnull @Loaded SemanticType type, @Captured @Nonnull @NonNullableElements Column... columns) {
+    protected LocalFactory(@Nonnull @Loaded SemanticType type, @Captured @Nonnull @NonNullableElements Column... columns) {
         super(type, columns);
     }
     

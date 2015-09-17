@@ -1,11 +1,8 @@
 package net.digitalid.core.concept;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.annotations.Capturable;
 import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Locked;
 import net.digitalid.core.annotations.NonCommitting;
@@ -14,7 +11,6 @@ import net.digitalid.core.annotations.NonNullableElements;
 import net.digitalid.core.annotations.OnlyForClients;
 import net.digitalid.core.annotations.OnlyForHosts;
 import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.collections.FreezableArray;
 import net.digitalid.core.collections.FreezableLinkedList;
 import net.digitalid.core.collections.FreezableList;
 import net.digitalid.core.collections.ReadOnlyList;
@@ -24,7 +20,9 @@ import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.Role;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.property.ConceptProperty;
-import net.digitalid.core.storable.SimpleFactory;
+import net.digitalid.core.storable.FactoryBasedGlobalFactory;
+import net.digitalid.core.storable.GlobalFactory;
+import net.digitalid.core.storable.LocalFactory;
 import net.digitalid.core.storable.Storable;
 import net.digitalid.core.wrappers.Block;
 
@@ -172,15 +170,10 @@ public abstract class Concept<C extends Concept<C, E, K>, E extends Entity, K> i
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * The factory for concepts.
+     * The global factory for concepts.
      */
     @Immutable
-    public static abstract class Factory<C extends Concept<C, E, K>, E extends Entity, K> extends SimpleFactory<C, E> {
-        
-        /**
-         * Stores the factory to store and restore the key.
-         */
-        private final @Nonnull SimpleFactory<K, E> factory;
+    public static abstract class IndexBasedGlobalFactory<C extends Concept<C, E, K>, E extends Entity, K> extends FactoryBasedGlobalFactory<C, E, K> {
         
         /**
          * Stores the index that caches existing concepts.
@@ -198,15 +191,14 @@ public abstract class Concept<C extends Concept<C, E, K>, E extends Entity, K> i
         }
         
         /**
-         * Creates a new concept factory based on the given key factory.
+         * Creates a new concept factory based on the given factory.
          * 
          * @param factory the factory to store and restore the key.
          * @param index the index that caches existing concepts.
          */
-        protected Factory(@Nonnull SimpleFactory<K, E> factory, @Nonnull Index<C, E, K> index) {
-            super(factory.getType(), factory.getColumns().toArray());
+        protected IndexBasedGlobalFactory(@Nonnull GlobalFactory<K, E> factory, @Nonnull Index<C, E, K> index) {
+            super(factory);
             
-            this.factory = factory;
             this.index = index;
         }
         
@@ -223,40 +215,58 @@ public abstract class Concept<C extends Concept<C, E, K>, E extends Entity, K> i
         
         @Pure
         @Override
-        public final @Nonnull Block encodeNonNullable(@Nonnull C concept) {
-            return factory.encodeNonNullable(concept.getKey());
+        public final @Nonnull K getKey(@Nonnull C concept) {
+            return concept.getKey();
+        }
+        
+        @Pure
+        @Override
+        public final @Nonnull C getObject(@Nonnull E entity, @Nonnull K key) {
+            return index.get(entity, key);
+        }
+        
+    }
+    
+    /**
+     * The local factory for concepts.
+     */
+    @Immutable
+    public static abstract class IndexBasedLocalFactory<C extends Concept<C, E, K>, E extends Entity, K> extends IndexBasedGlobalFactory<C, E, K> {
+        
+        /**
+         * Stores the factory to store and restore the key.
+         */
+        private final @Nonnull LocalFactory<K, E> factory;
+        
+        /**
+         * Creates a new concept factory based on the given key factory.
+         * 
+         * @param factory the factory to store and restore the key.
+         * @param index the index that caches existing concepts.
+         */
+        protected IndexBasedLocalFactory(@Nonnull LocalFactory<K, E> factory, @Nonnull Index<C, E, K> index) {
+            super(factory, index);
+            
+            this.factory = factory;
         }
         
         @Pure
         @Override
         public final @Nonnull C decodeNonNullable(@Nonnull E entity, @Nonnull Block block) throws InvalidEncodingException {
-            return index.get(entity, factory.decodeNonNullable(entity, block));
+            return getIndex().get(entity, factory.decodeNonNullable(entity, block));
         }
         
         @Pure
         @Override
-        public final @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getValues(@Nonnull C concept) {
-            return factory.getValues(concept.getKey());
-        }
-        
-        @Override
-        @NonCommitting
-        public final void setNonNullable(@Nonnull C concept, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
-            factory.setNonNullable(concept.getKey(), preparedStatement, parameterIndex);
-        }
-        
-        @Pure
-        @Override
-        @NonCommitting
-        public final @Nullable C getNullable(@Nonnull E entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
-            final @Nullable K key = factory.getNullable(entity, resultSet, columnIndex);
-            return key == null ? null : index.get(entity, key);
+        public final @Nullable C decodeNullable(@Nonnull E entity, @Nullable Block block) throws InvalidEncodingException {
+            if (block != null) return decodeNonNullable(entity, block);
+            else return null;
         }
         
     }
     
     @Pure
     @Override
-    public abstract @Nonnull Factory<C, E, K> getFactory();
+    public abstract @Nonnull IndexBasedGlobalFactory<C, E, K> getFactory();
     
 }

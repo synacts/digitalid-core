@@ -10,12 +10,12 @@ import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.annotations.Validated;
 import net.digitalid.core.database.Database;
 import net.digitalid.core.entity.Site;
-import net.digitalid.core.storable.AbstractFactory;
+import net.digitalid.core.storable.GlobalFactory;
 
 /**
  * Columns are used to store data in the database.
  * 
- * @see AbstractFactory
+ * @see GlobalFactory
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
