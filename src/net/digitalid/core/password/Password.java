@@ -1,6 +1,5 @@
 package net.digitalid.core.password;
 
-import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Immutable;
@@ -35,6 +34,24 @@ public final class Password extends Concept<Password, NonHostEntity, None> {
      */
     public static final @Nonnull SemanticType TYPE = SemanticType.map("password@core.digitalid.net").load(StringWrapper.TYPE);
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Module –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Stores the password module.
+     */
+    private static final @Nonnull StateModule MODULE = StateModule.get(CoreService.SERVICE, "password");
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Selector –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    // TODO: Define a StateSelector that maps from an authorization to an SQL string that the table can use in getState().
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Table –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Stores the table to store the password.
+     */
+    private static final @Nonnull NonNullableConceptPropertyTable<String, Password, NonHostEntity> TABLE = NonNullableConceptPropertyTable.get(MODULE, "", Password.FACTORY, StringWrapper.getValueFactory(TYPE));
+    
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Validator –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
@@ -62,17 +79,10 @@ public final class Password extends Concept<Password, NonHostEntity, None> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
-    private static final @Nonnull StateModule MODULE = StateModule.get(CoreService.SERVICE, "password");
-    
-    /**
-     * Stores the table to store the password.
-     */
-    private static final @Nonnull NonNullableConceptPropertyTable<String, Password, NonHostEntity> table = NonNullableConceptPropertyTable.get(MODULE, "password", Password.FACTORY);
-    
     /**
      * Stores the value of this password.
      */
-    public final @Nonnull NonNullableConceptProperty<String, Password, NonHostEntity> value = NonNullableConceptProperty.get(VALIDATOR, this, table);
+    public final @Nonnull NonNullableConceptProperty<String, Password, NonHostEntity> value = NonNullableConceptProperty.get(VALIDATOR, this, TABLE);
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Index –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -110,22 +120,6 @@ public final class Password extends Concept<Password, NonHostEntity, None> {
      */
     private Password(@Nonnull NonHostEntity entity) {
         super(entity, None.OBJECT);
-    }
-    
-    /**
-     * Replaces the value of this password.
-     * 
-     * @param oldValue the old value of this password.
-     * @param newValue the new value of this password.
-     * 
-     * @require isValid(oldValue) : "The old value is valid.";
-     * @require isValid(newValue) : "The new value is valid.";
-     */
-    @NonCommitting
-    void replaceName(@Nonnull String oldValue, @Nonnull String newValue) throws SQLException {
-        PasswordModule.replace(this, oldValue, newValue);
-        this.value = newValue;
-        notify(VALUE);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */

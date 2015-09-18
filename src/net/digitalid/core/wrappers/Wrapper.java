@@ -17,7 +17,6 @@ import net.digitalid.core.annotations.NonFrozen;
 import net.digitalid.core.annotations.NonNullableElements;
 import net.digitalid.core.annotations.Positive;
 import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.auxiliary.None;
 import net.digitalid.core.collections.FreezableArray;
 import net.digitalid.core.column.Column;
 import net.digitalid.core.exceptions.external.ExternalException;
@@ -36,7 +35,7 @@ import net.digitalid.core.storable.Storable;
  * @version 1.0
  */
 @Immutable
-public abstract class Wrapper<W extends Wrapper<W>> implements Storable<W, None> {
+public abstract class Wrapper<W extends Wrapper<W>> implements Storable<W, Object> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -131,7 +130,7 @@ public abstract class Wrapper<W extends Wrapper<W>> implements Storable<W, None>
      * The factory for wrappers.
      */
     @Immutable
-    public abstract static class Factory<W extends Wrapper<W>> extends GlobalFactory<W, None> {
+    public abstract static class Factory<W extends Wrapper<W>> extends GlobalFactory<W, Object> {
         
         /**
          * Creates a new factory with the given parameters.
@@ -177,7 +176,7 @@ public abstract class Wrapper<W extends Wrapper<W>> implements Storable<W, None>
      * The factory for values.
      */
     @Immutable
-    public abstract static class ValueFactory<V, W extends Wrapper<W>> extends GlobalFactory<V, None> {
+    public abstract static class ValueFactory<V, W extends Wrapper<W>> extends GlobalFactory<V, Object> {
         
         /**
          * Stores the factory to wrap and unwrap the values.
@@ -240,7 +239,7 @@ public abstract class Wrapper<W extends Wrapper<W>> implements Storable<W, None>
         @Locked
         @Override
         @NonCommitting
-        public final @Nonnull V decodeNonNullable(@Nonnull None none, @Nonnull @NonEncoding Block block) throws SQLException, IOException, PacketException, ExternalException {
+        public final @Nonnull V decodeNonNullable(@Nonnull Object none, @Nonnull @NonEncoding Block block) throws SQLException, IOException, PacketException, ExternalException {
             assert block.getType().isBasedOn(getType()) : "The block is based on the type of this factory.";
             
             return unwrap(factory.decodeNonNullable(none, block));
@@ -261,7 +260,7 @@ public abstract class Wrapper<W extends Wrapper<W>> implements Storable<W, None>
         @Pure
         @Override
         @NonCommitting
-        public final @Nullable V getNullable(@Nonnull None none, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+        public final @Nullable V getNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
             final @Nullable W wrapper = factory.getNullable(none, resultSet, columnIndex);
             return wrapper == null ? null : unwrap(wrapper);
         }

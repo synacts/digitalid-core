@@ -120,6 +120,7 @@ public class StateModule extends HostModule implements StateData {
      * @return a new state module with the given service and name.
      */
     @Pure
+    @OnMainThread
     public static @Nonnull StateModule get(@Nonnull Service service, @Nonnull @Validated String name) {
         return new StateModule(service, name);
     }

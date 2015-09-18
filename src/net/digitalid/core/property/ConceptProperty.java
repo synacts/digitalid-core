@@ -34,6 +34,14 @@ public interface ConceptProperty<C extends Concept<C, ?, ?>> {
     public @Nonnull C getConcept();
     
     /**
+     * Returns the table which stores the time and value of this property.
+     * 
+     * @return the table which stores the time and value of this property.
+     */
+    @Pure
+    public @Nonnull ConceptPropertyTable<?, C, ?> getTable();
+    
+    /**
      * Returns the time of the last modification.
      * 
      * @return the time of the last modification.

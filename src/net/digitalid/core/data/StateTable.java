@@ -54,7 +54,7 @@ public abstract class StateTable extends HostTable implements StateData {
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Creates a new host table with the given parameters.
+     * Creates a new state table with the given parameters.
      * 
      * @param module the module to which the new table belongs.
      * @param name the name of the new table.
@@ -80,6 +80,8 @@ public abstract class StateTable extends HostTable implements StateData {
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– State –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    // TODO: Replace the NonHostEntity type in the following methods with E in order be compatible with the factory methods in subclasses?
     
     @Pure
     @Locked

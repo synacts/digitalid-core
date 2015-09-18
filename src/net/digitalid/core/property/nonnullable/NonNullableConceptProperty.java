@@ -40,12 +40,18 @@ public final class NonNullableConceptProperty<V, C extends Concept<C, E, ?>, E e
         return concept;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Database –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Table –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the table which stores the time and value of this property.
      */
     private final @Nonnull NonNullableConceptPropertyTable<V, C, E> table;
+    
+    @Pure
+    @Override
+    public @Nonnull NonNullableConceptPropertyTable<V, C, E> getTable() {
+        return table;
+    }
     
     /**
      * Loads the time and value of this property from the database.

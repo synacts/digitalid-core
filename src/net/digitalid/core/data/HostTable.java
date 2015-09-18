@@ -80,7 +80,7 @@ public abstract class HostTable extends ClientTable implements HostData {
         return false;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Export and Import –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Data –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Locked

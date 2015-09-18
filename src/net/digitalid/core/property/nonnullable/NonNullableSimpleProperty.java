@@ -11,7 +11,7 @@ import net.digitalid.core.property.ValueValidator;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public final class NonNullableSimpleProperty <V> extends WriteableNonNullableProperty<V> {
+public final class NonNullableSimpleProperty<V> extends WriteableNonNullableProperty<V> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value –––––––––––––––––––––––––––––––––––––––––––––––––– */
     

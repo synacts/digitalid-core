@@ -14,6 +14,7 @@ import net.digitalid.core.collections.ConcurrentHashMap;
 import net.digitalid.core.collections.ConcurrentMap;
 import net.digitalid.core.database.Database;
 import net.digitalid.core.entity.Entity;
+import net.digitalid.core.property.ConceptPropertyTable;
 
 /**
  * This class indexes the instances of a {@link Concept concept} by their {@link Entity entity} and key.
@@ -108,14 +109,15 @@ public final class Index<C extends Concept<C, E, K>, E extends Entity, K> {
      * Resets the concepts of the given entity.
      * 
      * @param entity the entity whose concepts are to be reset.
+     * @param table the table which initiated the reset of its properties.
      */
     @Locked
     @NonCommitting
-    public void reset(@Nonnull E entity) throws SQLException {
+    public void reset(@Nonnull E entity, @Nonnull ConceptPropertyTable<?, C, E> table) throws SQLException {
         if (Database.isSingleAccess()) {
             final @Nullable ConcurrentMap<K, C> map = concepts.get(entity);
             if (map != null) {
-                for (final @Nonnull C concept : map.values()) concept.reset();
+                for (final @Nonnull C concept : map.values()) concept.reset(table);
             }
         }
     }

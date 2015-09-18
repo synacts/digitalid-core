@@ -17,9 +17,11 @@ import net.digitalid.core.collections.ReadOnlyList;
 import net.digitalid.core.database.Database;
 import net.digitalid.core.entity.Account;
 import net.digitalid.core.entity.Entity;
+import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.entity.Role;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.property.ConceptProperty;
+import net.digitalid.core.property.ConceptPropertyTable;
 import net.digitalid.core.storable.FactoryBasedGlobalFactory;
 import net.digitalid.core.storable.GlobalFactory;
 import net.digitalid.core.storable.LocalFactory;
@@ -29,6 +31,8 @@ import net.digitalid.core.wrappers.Block;
 /**
  * This class models a concept in the {@link Database database}.
  * A concept always belongs to an {@link Entity entity}.
+ * 
+ * @param E should also be a supertype of {@link NonHostEntity}!
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
@@ -143,8 +147,12 @@ public abstract class Concept<C extends Concept<C, E, K>, E extends Entity, K> i
      * Registers the given property at this concept.
      * 
      * @param property the property to be registered.
+     * 
+     * @require property.getConcept() == this : "The given property belongs to this concept.";
      */
     public void register(@Nonnull ConceptProperty<C> property) {
+        assert property.getConcept() == this : "The given property belongs to this concept.";
+        
         properties.add(property);
     }
     
@@ -159,11 +167,24 @@ public abstract class Concept<C extends Concept<C, E, K>, E extends Entity, K> i
     }
     
     /**
+     * Resets the property with the given table of this concept.
+     * 
+     * @param table the table which initiated the reset of its properties.
+     */
+    @Locked
+    @NonCommitting
+    public void reset(@Nonnull ConceptPropertyTable<?, C, E> table) throws SQLException {
+        for (final @Nonnull ConceptProperty<C> property : properties) {
+            if (property.getTable().equals(table)) property.reset();
+        }
+    }
+    
+    /**
      * Resets the properties of this concept.
      */
     @Locked
     @NonCommitting
-    public void reset() throws SQLException {
+    public void resetAll() throws SQLException {
         for (final @Nonnull ConceptProperty<C> property : properties) property.reset();
     }
     

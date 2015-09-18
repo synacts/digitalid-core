@@ -91,6 +91,7 @@ public class HostModule extends ClientModule implements HostData {
      * @return a new host module with the given service and name.
      */
     @Pure
+    @OnMainThread
     public static @Nonnull HostModule get(@Nonnull Service service, @Nonnull @Validated String name) {
         return new HostModule(service, name);
     }
