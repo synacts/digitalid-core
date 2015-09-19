@@ -5,10 +5,9 @@ import javax.annotation.Nonnull;
 import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.auxiliary.None;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.core.factory.Storable;
 import net.digitalid.core.identifier.Identifier;
-import net.digitalid.core.storable.Storable;
 import net.digitalid.core.wrappers.Block;
 
 /**
@@ -22,7 +21,7 @@ import net.digitalid.core.wrappers.Block;
  * @version 1.0
  */
 @Immutable
-public interface Identity extends Storable<Identity, None> {
+public interface Identity extends Storable<Identity, Object> {
     
     /**
      * Stores the semantic type {@code @core.digitalid.net}.

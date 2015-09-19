@@ -107,7 +107,7 @@ public final class Host extends Site {
             this.publicKeyChain = new PublicKeyChain(new SelfcontainedWrapper(new FileInputStream(publicKeyFile), true).getElement().checkType(PublicKeyChain.TYPE));
         } else {
             final @Nonnull KeyPair keyPair = new KeyPair();
-            final @Nonnull Time time = new Time();
+            final @Nonnull Time time = Time.getCurrent();
             this.privateKeyChain = new PrivateKeyChain(time, keyPair.getPrivateKey());
             this.publicKeyChain = new PublicKeyChain(time, keyPair.getPublicKey());
         }

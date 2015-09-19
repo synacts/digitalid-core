@@ -35,7 +35,7 @@ import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.identity.SyntacticType;
 import net.digitalid.core.io.Log;
 import net.digitalid.core.server.Server;
-import net.digitalid.core.storable.Storable;
+import net.digitalid.core.factory.Storable;
 import net.digitalid.core.tuples.FreezablePair;
 import net.digitalid.core.tuples.ReadOnlyPair;
 
@@ -97,7 +97,7 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
         final @Nonnull @Frozen ReadOnlyPair<PublicKey, SymmetricKey> pair = FreezablePair.get(publicKey, symmetricKey).freeze();
         @Nullable Block key = encryptions.get(pair);
         if (key == null) {
-            final @Nonnull Time start = new Time();
+            final @Nonnull Time start = Time.getCurrent();
             key = Block.fromNonNullable(publicKey.getCompositeGroup().getElement(symmetricKey.getValue()).pow(publicKey.getE()), KEY);
             encryptions.put(pair, key);
             Log.verbose("Symmetric key encrypted in " + start.ago().getValue() + " ms.");
@@ -122,7 +122,7 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
         final @Nonnull @Frozen ReadOnlyPair<PrivateKey, Block> pair = FreezablePair.get(privateKey, key).freeze();
         @Nullable SymmetricKey symmetricKey = decryptions.get(pair);
         if (symmetricKey == null) {
-            final @Nonnull Time start = new Time();
+            final @Nonnull Time start = Time.getCurrent();
             final @Nonnull BigInteger value = IntegerWrapper.decodeNonNullable(key);
             symmetricKey = SymmetricKey.get(privateKey.powD(value).getValue());
             decryptions.put(pair, symmetricKey);
@@ -257,7 +257,7 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
         
         assert element.getType().isBasedOn(type.getParameters().getNonNullable(0)) : "The element is based on the parameter of the given type.";
         
-        this.time = new Time();
+        this.time = Time.getCurrent();
         this.element = element;
         this.recipient = recipient;
         this.symmetricKey = symmetricKey;
@@ -314,7 +314,7 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
         final @Nullable SymmetricKey sk = this.symmetricKey;
         final @Nullable InitializationVector iv = this.initializationVector;
         if (sk != null && iv != null) {
-            final @Nonnull Time start = new Time();
+            final @Nonnull Time start = Time.getCurrent();
             this.element = element.decrypt(parameter, sk, iv);
             Log.verbose("Element with " + element.getLength() + " bytes decrypted in " + start.ago().getValue() + " ms.");
         } else {
@@ -385,7 +385,7 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
             elements.set(3, Block.fromNullable(initializationVector));
             
             if (symmetricKey != null && initializationVector != null) {
-                final @Nonnull Time start = new Time();
+                final @Nonnull Time start = Time.getCurrent();
                 elements.set(4, element.encrypt(SemanticType.UNKNOWN, symmetricKey, initializationVector));
                 Log.verbose("Element with " + element.getLength() + " bytes encrypted in " + start.ago().getValue() + " ms.");
             } else {

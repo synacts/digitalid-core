@@ -27,7 +27,7 @@ import net.digitalid.core.exceptions.packet.PacketError;
 import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.identity.Identity;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.storable.Storable;
+import net.digitalid.core.factory.Storable;
 import net.digitalid.core.synchronizer.Synchronizer;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.BooleanWrapper;

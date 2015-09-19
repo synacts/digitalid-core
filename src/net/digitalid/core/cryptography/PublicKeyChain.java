@@ -72,11 +72,11 @@ public final class PublicKeyChain extends KeyChain<PublicKey, PublicKeyChain> {
      * 
      * @return a new key chain with the given time and key.
      * 
-     * @require time.isLessThanOrEqualTo(new Time()) : "The time lies in the past.";
+     * @require time.isLessThanOrEqualTo(Time.getCurrent()) : "The time lies in the past.";
      */
     @Pure
     public static @Nonnull PublicKeyChain get(@Nonnull Time time, @Nonnull PublicKey key) {
-        assert time.isLessThanOrEqualTo(new Time()) : "The time lies in the past.";
+        assert time.isLessThanOrEqualTo(Time.getCurrent()) : "The time lies in the past.";
         
         final @Nonnull FreezableLinkedList<ReadOnlyPair<Time, PublicKey>> items = FreezableLinkedList.get();
         items.add(FreezablePair.get(time, key).freeze());

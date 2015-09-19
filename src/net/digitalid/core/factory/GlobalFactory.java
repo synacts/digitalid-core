@@ -1,4 +1,4 @@
-package net.digitalid.core.storable;
+package net.digitalid.core.factory;
 
 import java.io.IOException;
 import java.sql.PreparedStatement;

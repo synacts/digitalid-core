@@ -11,7 +11,7 @@ import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.identity.Identity;
-import net.digitalid.core.storable.Storable;
+import net.digitalid.core.factory.Storable;
 
 /**
  * This interface models identifiers.

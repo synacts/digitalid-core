@@ -11,7 +11,6 @@ import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.annotations.Validated;
 import net.digitalid.core.attribute.Attribute;
 import net.digitalid.core.attribute.AttributeValue;
-import net.digitalid.core.auxiliary.None;
 import net.digitalid.core.cache.Cache;
 import net.digitalid.core.collections.FreezableLinkedHashMap;
 import net.digitalid.core.collections.FreezableMap;
@@ -21,14 +20,14 @@ import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.exceptions.packet.PacketError;
 import net.digitalid.core.exceptions.packet.PacketException;
+import net.digitalid.core.factory.FactoryBasedGlobalFactory;
+import net.digitalid.core.factory.Storable;
 import net.digitalid.core.identifier.HostIdentifier;
 import net.digitalid.core.identifier.IdentifierClass;
 import net.digitalid.core.identity.Identity;
 import net.digitalid.core.identity.IdentityClass;
 import net.digitalid.core.identity.InternalPerson;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.storable.FactoryBasedGlobalFactory;
-import net.digitalid.core.storable.Storable;
 
 /**
  * This class models a service.
@@ -38,7 +37,7 @@ import net.digitalid.core.storable.Storable;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public class Service extends StateModule implements Storable<Service, None> {
+public class Service extends StateModule implements Storable<Service, Object> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Services –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -195,7 +194,7 @@ public class Service extends StateModule implements Storable<Service, None> {
      * The factory for this class.
      */
     @Immutable
-    public static final class Factory extends FactoryBasedGlobalFactory<Service, None, Identity> {
+    public static final class Factory extends FactoryBasedGlobalFactory<Service, Object, Identity> {
         
         /**
          * Creates a new factory.
@@ -212,7 +211,7 @@ public class Service extends StateModule implements Storable<Service, None> {
         
         @Pure
         @Override
-        public @Nonnull Service getObject(@Nonnull None none, @Nonnull Identity identity) {
+        public @Nonnull Service getObject(@Nonnull Object none, @Nonnull Identity identity) {
             return getService(identity);
         }
         

@@ -110,7 +110,7 @@ public final class AttributesReply extends CoreServiceQueryReply {
         final @Nonnull InternalIdentity subject = getSubject().getIdentity();
         final @Nonnull ReadOnlyList<Block> elements = new ListWrapper(block).getElements();
         final @Nonnull FreezableList<AttributeValue> attributeValues = new FreezableArrayList<>(elements.size());
-        final @Nonnull Time time = new Time();
+        final @Nonnull Time time = Time.getCurrent();
         for (final @Nullable Block element : elements) {
             if (element != null) {
                 final @Nonnull AttributeValue attributeValue = AttributeValue.get(element, false);

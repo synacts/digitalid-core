@@ -9,7 +9,7 @@ import net.digitalid.core.collections.ReadOnlyList;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.packet.Packet;
-import net.digitalid.core.storable.Storable;
+import net.digitalid.core.factory.Storable;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.ListWrapper;
 import net.digitalid.core.wrappers.TupleWrapper;

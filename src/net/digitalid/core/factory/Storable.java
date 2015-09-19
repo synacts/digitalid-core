@@ -1,4 +1,4 @@
-package net.digitalid.core.storable;
+package net.digitalid.core.factory;
 
 import javax.annotation.Nonnull;
 import net.digitalid.core.annotations.Pure;

@@ -20,7 +20,7 @@ import net.digitalid.core.expression.PassiveExpression;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.property.nullable.NullableConceptProperty;
 import net.digitalid.core.property.nullable.NullableConceptPropertyTable;
-import net.digitalid.core.storable.Storable;
+import net.digitalid.core.factory.Storable;
 import net.digitalid.core.synchronizer.Synchronizer;
 import net.digitalid.core.wrappers.BooleanWrapper;
 

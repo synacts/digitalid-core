@@ -28,7 +28,6 @@ import net.digitalid.core.annotations.NonNullableElements;
 import net.digitalid.core.annotations.Positive;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.annotations.ValidIndex;
-import net.digitalid.core.auxiliary.None;
 import net.digitalid.core.collections.FreezableArray;
 import net.digitalid.core.column.Column;
 import net.digitalid.core.column.SQLType;
@@ -37,9 +36,9 @@ import net.digitalid.core.cryptography.SymmetricKey;
 import net.digitalid.core.database.Database;
 import net.digitalid.core.errors.ShouldNeverHappenError;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.core.factory.LocalFactory;
+import net.digitalid.core.factory.Storable;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.storable.LocalFactory;
-import net.digitalid.core.storable.Storable;
 
 /**
  * A block is a sequence of bytes that is encoded according to some syntactic type.
@@ -59,7 +58,7 @@ import net.digitalid.core.storable.Storable;
  * @version 1.0
  */
 @Immutable
-public final class Block implements Storable<Block, None>, Cloneable {
+public final class Block implements Storable<Block, Object>, Cloneable {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Conversions –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -755,7 +754,7 @@ public final class Block implements Storable<Block, None>, Cloneable {
      * The factory for blocks.
      */
     @Immutable
-    public static class Factory extends LocalFactory<Block, None> {
+    public static class Factory extends LocalFactory<Block, Object> {
         
         /**
          * Stores the column for blocks.
@@ -779,7 +778,7 @@ public final class Block implements Storable<Block, None>, Cloneable {
         
         @Pure
         @Override
-        public @Nonnull Block decodeNonNullable(@Nonnull None none, @Nonnull Block block) {
+        public @Nonnull Block decodeNonNullable(@Nonnull Object none, @Nonnull Block block) {
             return block;
         }
         
@@ -800,7 +799,7 @@ public final class Block implements Storable<Block, None>, Cloneable {
         
         @Pure
         @Override
-        public @Nullable Block getNullable(@Nonnull None none, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+        public @Nullable Block getNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
             final @Nonnull byte[] bytes = resultSet.getBytes(columnIndex);
             if (resultSet.wasNull()) return null;
             else return Block.get(getType(), bytes);

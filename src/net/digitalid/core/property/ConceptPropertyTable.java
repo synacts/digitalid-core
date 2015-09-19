@@ -10,7 +10,7 @@ import net.digitalid.core.data.StateModule;
 import net.digitalid.core.data.StateTable;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.storable.GlobalFactory;
+import net.digitalid.core.factory.GlobalFactory;
 
 /**
  * This class models a database table that stores a {@link ReadOnlyProperty property} of a {@link Concept concept}.

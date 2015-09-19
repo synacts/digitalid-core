@@ -35,7 +35,7 @@ import net.digitalid.core.identifier.InternalIdentifier;
 import net.digitalid.core.identity.InternalIdentity;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.identity.SyntacticType;
-import net.digitalid.core.storable.Storable;
+import net.digitalid.core.factory.Storable;
 import net.digitalid.core.synchronizer.Audit;
 
 /**
@@ -282,7 +282,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
         
         this.element = element;
         this.subject = subject;
-        this.time = (subject == null ? null : new Time());
+        this.time = (subject == null ? null : Time.getCurrent());
         this.audit = audit;
         this.verified = true;
     }

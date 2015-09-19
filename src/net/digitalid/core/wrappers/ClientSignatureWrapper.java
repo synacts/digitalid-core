@@ -33,7 +33,7 @@ import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.identifier.InternalIdentifier;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.io.Log;
-import net.digitalid.core.storable.Storable;
+import net.digitalid.core.factory.Storable;
 import net.digitalid.core.synchronizer.Audit;
 
 /**
@@ -153,7 +153,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper {
     public void verify() throws InvalidEncodingException, InvalidSignatureException {
         assert !isVerified() : "This signature is not verified.";
         
-        final @Nonnull Time start = new Time();
+        final @Nonnull Time start = Time.getCurrent();
         
         if (getNonNullableTime().isLessThan(Time.TROPICAL_YEAR.ago())) throw new InvalidSignatureException("The client signature is out of date.");
         
@@ -176,7 +176,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper {
     
     @Override
     void sign(@Nonnull @NonFrozen FreezableArray<Block> elements) {
-        final @Nonnull Time start = new Time();
+        final @Nonnull Time start = Time.getCurrent();
         
         final @Nonnull FreezableArray<Block> subelements = FreezableArray.get(3);
         final @Nonnull SecretCommitment commitment = (SecretCommitment) this.commitment;

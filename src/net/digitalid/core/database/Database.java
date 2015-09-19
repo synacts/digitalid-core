@@ -25,7 +25,7 @@ import net.digitalid.core.collections.ConcurrentMap;
 import net.digitalid.core.io.Log;
 import net.digitalid.core.server.Server;
 import net.digitalid.core.server.Worker;
-import net.digitalid.core.storable.Storable;
+import net.digitalid.core.factory.Storable;
 
 /**
  * This class provides connections to the database.

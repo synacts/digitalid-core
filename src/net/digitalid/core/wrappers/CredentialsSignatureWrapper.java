@@ -61,7 +61,7 @@ import net.digitalid.core.identity.InternalPerson;
 import net.digitalid.core.identity.Person;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.io.Log;
-import net.digitalid.core.storable.Storable;
+import net.digitalid.core.factory.Storable;
 import net.digitalid.core.synchronizer.Audit;
 
 /**
@@ -713,7 +713,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
     public void verify() throws SQLException, IOException, PacketException, ExternalException {
         assert !isVerified() : "This signature is not verified.";
         
-        final @Nonnull Time start = new Time();
+        final @Nonnull Time start = Time.getCurrent();
         
         if (getNonNullableTime().isLessThan(Time.TROPICAL_YEAR.ago())) throw new InvalidSignatureException("The credentials signature is out of date.");
         
@@ -820,7 +820,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
     
     @Override
     void sign(@Nonnull @NonFrozen FreezableArray<Block> elements) {
-        final @Nonnull Time start = new Time();
+        final @Nonnull Time start = Time.getCurrent();
         
         assert credentials.getNonNullable(0) instanceof ClientCredential : "The first credential is a client credential (like all others).";
         final @Nonnull ClientCredential mainCredential = (ClientCredential) credentials.getNonNullable(0);

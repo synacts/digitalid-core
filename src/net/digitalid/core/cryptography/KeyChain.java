@@ -18,7 +18,7 @@ import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.storable.BlockBasedSimpleNonConceptFactory;
 import net.digitalid.core.storable.SimpleNonConceptFactory;
-import net.digitalid.core.storable.Storable;
+import net.digitalid.core.factory.Storable;
 import net.digitalid.core.tuples.FreezablePair;
 import net.digitalid.core.tuples.ReadOnlyPair;
 import net.digitalid.core.wrappers.Block;
@@ -96,7 +96,7 @@ abstract class KeyChain<K extends Storable<K>, C extends KeyChain<K, C>> impleme
     @Pure
     public final @Nonnull KeyChain<K, C> add(@Nonnull Time time, @Nonnull K key) {
         assert time.isGreaterThan(getNewestTime()) : "The time is greater than the newest time of this key chain.";
-        assert time.isGreaterThan(new Time().add(Time.TROPICAL_YEAR)) : "The time lies at least one year in the future.";
+        assert time.isGreaterThan(Time.getCurrent().add(Time.TROPICAL_YEAR)) : "The time lies at least one year in the future.";
         
         final @Nonnull FreezableList<ReadOnlyPair<Time, K>> copy = items.clone();
         final @Nonnull ReadOnlyPair<Time, K> pair = FreezablePair.get(time, key).freeze();

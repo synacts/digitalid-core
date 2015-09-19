@@ -263,7 +263,7 @@ public class Client extends Site implements Observer {
     @NonCommitting
     private static @Nonnull Commitment getCommitment(@Nonnull InternalNonHostIdentifier subject, @Nonnull Exponent secret) throws SQLException, IOException, PacketException, ExternalException {
         final @Nonnull HostIdentity host = subject.getHostIdentifier().getIdentity();
-        final @Nonnull Time time = new Time();
+        final @Nonnull Time time = Time.getCurrent();
         final @Nonnull PublicKey publicKey = Cache.getPublicKeyChain(host).getKey(time);
         final @Nonnull Element value = publicKey.getAu().pow(secret);
         return new Commitment(host, time, value, publicKey);

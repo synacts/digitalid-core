@@ -1,5 +1,6 @@
-package net.digitalid.core.storable;
+package net.digitalid.core.factory;
 
+import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,35 +14,38 @@ import net.digitalid.core.annotations.NonFrozen;
 import net.digitalid.core.annotations.NonNullableElements;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.collections.FreezableArray;
-import net.digitalid.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.core.exceptions.external.ExternalException;
+import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.wrappers.Block;
 
 /**
- * This class implements a local factory that is based on another local factory.
+ * This class implements a global factory that is based on another global factory.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
 @Immutable
-public abstract class FactoryBasedLocalFactory<O, E, K> extends LocalFactory<O, E> {
+public abstract class FactoryBasedGlobalFactory<O, E, K> extends GlobalFactory<O, E> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factory –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the factory used to store and restore the key.
      */
-    private final @Nonnull LocalFactory<K, E> factory;
+    private final @Nonnull GlobalFactory<K, E> factory;
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Creates a new factory based local factory with the given parameters.
+     * Creates a new factory based global factory with the given parameters.
      * 
      * @param type the semantic type that corresponds to the storable class.
      * @param factory the factory used to store and restore the object's key.
+     * 
+     * @require type.isBasedOn(factory.getType()) : "The given type is based on the type of the factory.";
      */
-    protected FactoryBasedLocalFactory(@Nonnull @Loaded SemanticType type, @Nonnull LocalFactory<K, E> factory) {
+    protected FactoryBasedGlobalFactory(@Nonnull @Loaded SemanticType type, @Nonnull GlobalFactory<K, E> factory) {
         super(type, factory.getColumns().toArray());
         
         assert type.isBasedOn(factory.getType()) : "The given type is based on the type of the factory.";
@@ -50,11 +54,11 @@ public abstract class FactoryBasedLocalFactory<O, E, K> extends LocalFactory<O, 
     }
     
     /**
-     * Creates a new factory based local factory with the given parameter.
+     * Creates a new factory based global factory with the given parameter.
      * 
      * @param factory the factory used to store and restore the object's key.
      */
-    protected FactoryBasedLocalFactory(@Nonnull LocalFactory<K, E> factory) {
+    protected FactoryBasedGlobalFactory(@Nonnull GlobalFactory<K, E> factory) {
         this(factory.getType(), factory);
     }
     
@@ -91,7 +95,9 @@ public abstract class FactoryBasedLocalFactory<O, E, K> extends LocalFactory<O, 
     
     @Pure
     @Override
-    public @Nonnull O decodeNonNullable(@Nonnull E entity, @Nonnull Block block) throws InvalidEncodingException {
+    public @Nonnull O decodeNonNullable(@Nonnull E entity, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
+        assert block.getType().isBasedOn(getType()) : "The block is based on the type of this factory.";
+        
         return getObject(entity, factory.decodeNonNullable(entity, block));
     }
     

@@ -5,7 +5,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.storable.Storable;
+import net.digitalid.core.factory.Storable;
 
 /**
  * A number has a value and is {@link Storable storable}.

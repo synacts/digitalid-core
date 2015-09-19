@@ -10,7 +10,7 @@ import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.Positive;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.core.storable.Storable;
+import net.digitalid.core.factory.Storable;
 import net.digitalid.core.wrappers.Block;
 
 /**

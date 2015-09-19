@@ -17,7 +17,7 @@ import net.digitalid.core.collections.ReadOnlyList;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.identity.SyntacticType;
-import net.digitalid.core.storable.Storable;
+import net.digitalid.core.factory.Storable;
 
 /**
  * This class wraps a {@link ReadOnlyList list} for encoding and decoding a block of the syntactic type {@code list@core.digitalid.net}.

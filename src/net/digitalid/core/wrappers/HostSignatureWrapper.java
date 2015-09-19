@@ -35,7 +35,7 @@ import net.digitalid.core.identity.InternalIdentity;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.io.Log;
 import net.digitalid.core.server.Server;
-import net.digitalid.core.storable.Storable;
+import net.digitalid.core.factory.Storable;
 import net.digitalid.core.synchronizer.Audit;
 
 /**
@@ -164,7 +164,7 @@ public final class HostSignatureWrapper extends SignatureWrapper {
     public void verify() throws SQLException, IOException, PacketException, ExternalException {
         assert !isVerified() : "This signature is not verified.";
         
-        final @Nonnull Time start = new Time();
+        final @Nonnull Time start = Time.getCurrent();
         
         if (getNonNullableTime().isLessThan(Time.TWO_YEARS.ago())) throw new InvalidSignatureException("The host signature is out of date.");
         
@@ -190,7 +190,7 @@ public final class HostSignatureWrapper extends SignatureWrapper {
     
     @Override
     void sign(@Nonnull @NullableElements @NonFrozen FreezableArray<Block> elements) {
-        final @Nonnull Time start = new Time();
+        final @Nonnull Time start = Time.getCurrent();
         
         final @Nonnull FreezableArray<Block> subelements = FreezableArray.get(2);
         subelements.set(0, signer.toBlock().setType(SIGNER));

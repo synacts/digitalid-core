@@ -125,7 +125,7 @@ public final class Cache {
     @NonCommitting
     public static void invalidateCachedAttributeValues(@Nonnull InternalNonHostIdentity identity) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
-            final @Nonnull Time time = new Time();
+            final @Nonnull Time time = Time.getCurrent();
             statement.executeUpdate("UPDATE general_cache SET time = " + time + " WHERE (identity = " + identity + " OR role = " + identity + ") AND time > " + time);
         }
     }
@@ -369,7 +369,7 @@ public final class Cache {
     @Locked
     @NonCommitting
     public static @Nonnull Block getFreshAttributeContent(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull SemanticType type, boolean certified) throws SQLException, IOException, PacketException, ExternalException {
-        return getAttributeContent(identity, role, new Time(), type, certified);
+        return getAttributeContent(identity, role, Time.getCurrent(), type, certified);
     }
     
     /**

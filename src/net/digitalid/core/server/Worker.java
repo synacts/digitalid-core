@@ -68,7 +68,7 @@ public final class Worker implements Runnable {
     @Committing
     public void run() {
         try {
-            final @Nonnull Time start = new Time();
+            final @Nonnull Time start = Time.getCurrent();
             @Nullable InternalIdentifier subject = null;
             @Nullable InternalIdentifier signer = null;
             @Nullable PacketError error = null;
@@ -82,7 +82,7 @@ public final class Worker implements Runnable {
                 Database.lock();
                 try {
                     request = new Request(socket.getInputStream());
-                    Log.verbose("Request decoded in " + new Time().subtract(start).getValue() + " ms.");
+                    Log.verbose("Request decoded in " + Time.getCurrent().subtract(start).getValue() + " ms.");
                     
                     final @Nonnull Method reference = request.getMethod(0);
                     final @Nonnull SignatureWrapper signature = reference.getSignatureNotNull();
@@ -103,7 +103,7 @@ public final class Worker implements Runnable {
                     for (int i = 0; i < size; i++) {
                         replies.add(null);
                         exceptions.add(null);
-                        final @Nonnull Time methodStart = new Time();
+                        final @Nonnull Time methodStart = Time.getCurrent();
                         final @Nonnull Method method = request.getMethod(i);
                         
                         if (i == 0) {
@@ -126,13 +126,13 @@ public final class Worker implements Runnable {
                             Database.rollback();
                         }
                         
-                        final @Nonnull Time methodEnd = new Time();
+                        final @Nonnull Time methodEnd = Time.getCurrent();
                         Log.debugging(method.getClass().getSimpleName() + " handled in " + methodEnd.subtract(methodStart).getValue() + " ms.");
                     }
                     
                     final @Nullable ResponseAudit responseAudit;
                     if (requestAudit != null) {
-                        final @Nonnull Time auditStart = new Time();
+                        final @Nonnull Time auditStart = Time.getCurrent();
                         if (!(reference instanceof InternalMethod)) throw new PacketException(PacketError.AUTHORIZATION, "An audit may only be requested by internal methods.");
                         final @Nullable ReadOnlyAgentPermissions permissions;
                         @Nullable Restrictions restrictions;
@@ -152,7 +152,7 @@ public final class Worker implements Runnable {
                         }
                         responseAudit = ActionModule.getAudit(reference.getNonHostAccount(), service, requestAudit.getLastTime(), permissions, restrictions, agent);
                         Database.commit();
-                        final @Nonnull Time auditEnd = new Time();
+                        final @Nonnull Time auditEnd = Time.getCurrent();
                         Log.debugging("Audit retrieved in " + auditEnd.subtract(auditStart).getValue() + " ms.");
                     } else {
                         responseAudit = null;

@@ -347,7 +347,7 @@ public abstract class Method extends Handler {
             } else {
                 assert entity != null && entity instanceof Role;
                 final @Nonnull Role role = (Role) entity;
-                final @Nonnull Time time = new Time();
+                final @Nonnull Time time = Time.getCurrent();
                 final @Nonnull FreezableList<Credential> credentials;
                 final @Nullable FreezableList<CertifiedAttributeValue> certificates;
                 final @Nonnull ReadOnlyAgentPermissions permissions = getRequiredPermissions(methods);

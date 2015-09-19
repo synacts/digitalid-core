@@ -14,14 +14,13 @@ import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.NonFrozen;
 import net.digitalid.core.annotations.NonNullableElements;
 import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.auxiliary.None;
 import net.digitalid.core.collections.FreezableArray;
 import net.digitalid.core.column.Column;
 import net.digitalid.core.column.SQLType;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.core.factory.LocalFactory;
+import net.digitalid.core.factory.Storable;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.storable.LocalFactory;
-import net.digitalid.core.storable.Storable;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.BytesWrapper;
 import net.digitalid.core.wrappers.EncryptionWrapper;
@@ -33,7 +32,7 @@ import net.digitalid.core.wrappers.EncryptionWrapper;
  * @version 1.0
  */
 @Immutable
-public final class InitializationVector extends IvParameterSpec implements Storable<InitializationVector, None> {
+public final class InitializationVector extends IvParameterSpec implements Storable<InitializationVector, Object> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -103,7 +102,7 @@ public final class InitializationVector extends IvParameterSpec implements Stora
      * The factory for this class.
      */
     @Immutable
-    public static final class Factory extends LocalFactory<InitializationVector, None> {
+    public static final class Factory extends LocalFactory<InitializationVector, Object> {
         
         /**
          * Creates a new factory.
@@ -120,8 +119,8 @@ public final class InitializationVector extends IvParameterSpec implements Stora
         
         @Pure
         @Override
-        public @Nonnull InitializationVector decodeNonNullable(@Nonnull None none, @Nonnull @BasedOn("initialization.vector@core.digitalid.net") Block block) throws InvalidEncodingException {
-            assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
+        public @Nonnull InitializationVector decodeNonNullable(@Nonnull Object none, @Nonnull @BasedOn("initialization.vector@core.digitalid.net") Block block) throws InvalidEncodingException {
+            assert block.getType().isBasedOn(getType()) : "The block is based on the type of this factory.";
             
             if (block.getLength() != 17) throw new InvalidEncodingException("An initialization vector has to be 16 bytes long.");
             return new InitializationVector(BytesWrapper.decodeNonNullable(block));
@@ -142,7 +141,7 @@ public final class InitializationVector extends IvParameterSpec implements Stora
         @Pure
         @Override
         @NonCommitting
-        public @Nullable InitializationVector getNullable(@Nonnull None none, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+        public @Nullable InitializationVector getNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
             final @Nullable byte[] bytes = resultSet.getBytes(columnIndex);
             return bytes == null ? null : new InitializationVector(bytes);
         }

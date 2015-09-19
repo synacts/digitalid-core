@@ -7,12 +7,20 @@ import java.text.DateFormat;
 import java.util.Date;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.core.annotations.BasedOn;
+import net.digitalid.core.annotations.Capturable;
 import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
+import net.digitalid.core.annotations.NonFrozen;
+import net.digitalid.core.annotations.NonNullableElements;
 import net.digitalid.core.annotations.Pure;
+import net.digitalid.core.collections.FreezableArray;
+import net.digitalid.core.column.Column;
+import net.digitalid.core.column.SQLType;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.core.factory.LocalFactory;
+import net.digitalid.core.factory.Storable;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.storable.Storable;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.Int64Wrapper;
 
@@ -24,13 +32,16 @@ import net.digitalid.core.wrappers.Int64Wrapper;
  * @version 1.0
  */
 @Immutable
-public final class Time implements Storable<Time>, Comparable<Time> {
+public final class Time implements Storable<Time, Object>, Comparable<Time> {
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the semantic type {@code time@core.digitalid.net}.
      */
     public static final @Nonnull SemanticType TYPE = SemanticType.map("time@core.digitalid.net").load(Int64Wrapper.TYPE);
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constants –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the time of a decade (10 tropical years).
@@ -97,6 +108,7 @@ public final class Time implements Storable<Time>, Comparable<Time> {
      */
     public static final @Nonnull Time SECOND = new Time(1000l);
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Boundaries –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the earliest possible time.
@@ -108,53 +120,12 @@ public final class Time implements Storable<Time>, Comparable<Time> {
      */
     public static final @Nonnull Time MAX = new Time(Long.MAX_VALUE);
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the time in milliseconds.
      */
     private final long value;
-    
-    /**
-     * Creates a new time with the current system time.
-     */
-    public Time() {
-        this.value = System.currentTimeMillis();
-    }
-    
-    /**
-     * Creates a new time with the given value.
-     * 
-     * @param value the time in milliseconds.
-     */
-    public Time(long value) {
-        this.value = value;
-    }
-    
-    /**
-     * Creates a new time from the given block.
-     * 
-     * @param block the block containing the time.
-     * 
-     * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
-     */
-    public Time(@Nonnull Block block) throws InvalidEncodingException {
-        assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
-        
-        this.value = new Int64Wrapper(block).getValue();
-    }
-    
-    @Pure
-    @Override
-    public @Nonnull SemanticType getType() {
-        return TYPE;
-    }
-    
-    @Pure
-    @Override
-    public @Nonnull Block toBlock() {
-        return Int64Wrapper.encode(TYPE, value);
-    }
-    
     
     /**
      * Returns the time in milliseconds.
@@ -166,6 +137,40 @@ public final class Time implements Storable<Time>, Comparable<Time> {
         return value;
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Creates a new time with the given value.
+     * 
+     * @param value the time in milliseconds.
+     */
+    private Time(long value) {
+        this.value = value;
+    }
+    
+    /**
+     * Returns the time with the given value.
+     * 
+     * @param value the time in milliseconds.
+     * 
+     * @return the time with the given value.
+     */
+    @Pure
+    public static @Nonnull Time get(long value) {
+        return new Time(value);
+    }
+    
+    /**
+     * Returns the current time in milliseconds.
+     * 
+     * @return the current time in milliseconds.
+     */
+    @Pure
+    public static @Nonnull Time getCurrent() {
+        return new Time(System.currentTimeMillis());
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Relative Time –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns this interval ago now.
@@ -187,6 +192,7 @@ public final class Time implements Storable<Time>, Comparable<Time> {
         return new Time(System.currentTimeMillis() + value);
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Arithmetic Operations –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Adds the given time to this time.
@@ -272,6 +278,7 @@ public final class Time implements Storable<Time>, Comparable<Time> {
         return this.value % interval.value == 0;
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Sign Checks –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns whether this time is negative.
@@ -303,6 +310,17 @@ public final class Time implements Storable<Time>, Comparable<Time> {
         return this.value > 0;
     }
     
+    /**
+     * Returns whether this time is non-positive.
+     * 
+     * @return whether this time is non-positive.
+     */
+    @Pure
+    public boolean isNonPositive() {
+        return this.value <= 0;
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Comparisons –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns whether this time is equal to the given time.
@@ -370,6 +388,7 @@ public final class Time implements Storable<Time>, Comparable<Time> {
         return Long.compare(this.value, time.value);
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Retrievals –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns the number of calendar years in this time.
@@ -451,6 +470,7 @@ public final class Time implements Storable<Time>, Comparable<Time> {
         return this.value % SECOND.value;
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Formatting –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the date formatter.
@@ -527,6 +547,7 @@ public final class Time implements Storable<Time>, Comparable<Time> {
         return isGreaterThan(DECADE) ? asDate() : asInterval();
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
@@ -543,60 +564,72 @@ public final class Time implements Storable<Time>, Comparable<Time> {
         return (int) (value ^ (value >>> 32));
     }
     
-    
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
-    
-    // TODO: Implement the factory!
-    
-    /*
-    private static final class PrivateFactory extends Factory<Time> {
-        
-        @Pure
-        @Override
-        public @Nonnull Block encodeNonNullable(@Nonnull Time time) {
-            return new Int64Wrapper(TYPE, time.value).toBlock();
-        }
-        
-    }
-    
-    public static final @Nonnull Factory<Time> FACTORY = new PrivateFactory();
-    
-    @Pure
-    @Override
-    public @Nonnull Factory<Time> getFactory() {
-        return FACTORY;
-    }
-    */
-    
-    /**
-     * Stores the data type used to store instances of this class in the database.
-     */
-    public static final @Nonnull String FORMAT = "BIGINT";
-    
-    /**
-     * Returns the given column of the result set as an instance of this class.
-     * 
-     * @param resultSet the result set to retrieve the data from.
-     * @param columnIndex the index of the column containing the data.
-     * 
-     * @return the given column of the result set as an instance of this class.
-     */
-    @Pure
-    @NonCommitting
-    public static @Nonnull Time get(@Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
-        return new Time(resultSet.getLong(columnIndex));
-    }
-    
-    @Override
-    @NonCommitting
-    public void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
-        preparedStatement.setLong(parameterIndex, value);
-    }
-    
     @Pure
     @Override
     public @Nonnull String toString() {
         return String.valueOf(value);
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * The factory for this class.
+     */
+    @Immutable
+    public static final class Factory extends LocalFactory<Time, Object> {
+        
+        /**
+         * Creates a new factory.
+         */
+        private Factory() {
+            super(TYPE, Column.get("time", SQLType.BIGINT));
+        }
+        
+        @Pure
+        @Override
+        public @Nonnull Block encodeNonNullable(@Nonnull Time time) {
+            return Int64Wrapper.encode(TYPE, time.value);
+        }
+        
+        @Pure
+        @Override
+        public @Nonnull Time decodeNonNullable(@Nonnull Object none, @Nonnull @BasedOn("time@core.digitalid.net") Block block) throws InvalidEncodingException {
+            assert block.getType().isBasedOn(getType()) : "The block is based on the type of this factory.";
+            
+            return new Time(Int64Wrapper.decode(block));
+        }
+        
+        @Pure
+        @Override
+        public @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getValues(@Nonnull Time time) {
+            return FreezableArray.getNonNullable(time.toString());
+        }
+        
+        @Override
+        @NonCommitting
+        public void setNonNullable(@Nonnull Time time, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+            preparedStatement.setLong(parameterIndex, time.value);
+        }
+        
+        @Pure
+        @Override
+        @NonCommitting
+        public @Nullable Time getNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+            final long value = resultSet.getLong(columnIndex);
+            return resultSet.wasNull() ? null : new Time(value);
+        }
+        
+    }
+    
+    /**
+     * Stores the factory of this class.
+     */
+    public static final @Nonnull Factory FACTORY = new Factory();
+    
+    @Pure
+    @Override
+    public @Nonnull Factory getFactory() {
+        return FACTORY;
     }
     
 }

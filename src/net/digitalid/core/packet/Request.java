@@ -372,7 +372,7 @@ public class Request extends Packet {
     @Pure
     protected static @Nonnull SymmetricKey getSymmetricKey(@Nonnull HostIdentifier recipient, @Nonnull Time rotation) {
         if (cachingKeys) {
-            final @Nonnull Time time = new Time();
+            final @Nonnull Time time = Time.getCurrent();
             @Nullable ReadOnlyPair<Time, SymmetricKey> value = symmetricKeys.get(recipient);
             if (value == null || value.getElement0().isLessThan(time.subtract(rotation))) {
                 value = new FreezablePair<>(time, new SymmetricKey()).freeze();

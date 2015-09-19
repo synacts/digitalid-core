@@ -25,7 +25,7 @@ import net.digitalid.core.wrappers.StringWrapper;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0
  */
-public final class Password extends Concept<Password, NonHostEntity, None> {
+public final class Password extends Concept<Password, NonHostEntity, Object> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -89,7 +89,7 @@ public final class Password extends Concept<Password, NonHostEntity, None> {
     /**
      * Stores the index of this concept.
      */
-    private static final @Nonnull Index<Password, NonHostEntity, None> index = Index.get(EmptyWrapper.VALUE_FACTORY);
+    private static final @Nonnull Index<Password, NonHostEntity, Object> index = Index.get(EmptyWrapper.VALUE_FACTORY);
     
     /**
      * Returns a potentially cached password that might not yet exist in the database.
@@ -151,7 +151,7 @@ public final class Password extends Concept<Password, NonHostEntity, None> {
      * The factory for this class.
      */
     @Immutable
-    public static final class Factory extends Concept.IndexBasedGlobalFactory<Password, NonHostEntity, None> {
+    public static final class Factory extends Concept.IndexBasedGlobalFactory<Password, NonHostEntity, Object> {
         
         /**
          * Creates a new factory.
@@ -162,7 +162,7 @@ public final class Password extends Concept<Password, NonHostEntity, None> {
         
         @Pure
         @Override
-        public @Nonnull Password create(@Nonnull NonHostEntity entity, @Nonnull None key) {
+        public @Nonnull Password create(@Nonnull NonHostEntity entity, @Nonnull Object key) {
             return new Password(entity);
         }
         

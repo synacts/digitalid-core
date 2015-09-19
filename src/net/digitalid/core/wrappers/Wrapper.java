@@ -23,8 +23,8 @@ import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.identity.SyntacticType;
-import net.digitalid.core.storable.GlobalFactory;
-import net.digitalid.core.storable.Storable;
+import net.digitalid.core.factory.GlobalFactory;
+import net.digitalid.core.factory.Storable;
 
 /**
  * Values and elements are wrapped by separate objects as the native types do not support encoding and decoding.

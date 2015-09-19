@@ -44,7 +44,7 @@ import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.password.Password;
 import static net.digitalid.core.password.PasswordModule.set;
 import net.digitalid.core.property.ConceptPropertyTable;
-import net.digitalid.core.storable.GlobalFactory;
+import net.digitalid.core.factory.GlobalFactory;
 import net.digitalid.core.tuples.FreezablePair;
 import net.digitalid.core.tuples.ReadOnlyPair;
 import net.digitalid.core.wrappers.Block;
@@ -72,6 +72,7 @@ public class NonNullableConceptPropertyTable<V, C extends Concept<C, E, ?>, E ex
     
     @OnMainThread
     protected static @Nonnull @Loaded SemanticType mapDumpType(@Nonnull StateModule module, @Nonnull @Validated String name, @Nonnull Concept.IndexBasedGlobalFactory<?, ?, ?> conceptFactory, @Nonnull GlobalFactory<?, ?> valueFactory) {
+        // TODO: First map the tuple, then the list.
         return "";
     }
     
@@ -202,7 +203,7 @@ public class NonNullableConceptPropertyTable<V, C extends Concept<C, E, ?>, E ex
     @Pure
     @Capturable @Nonnull @NonNullableElements @Frozen ReadOnlyPair<Time, V> load(@Nonnull NonNullableConceptProperty<V, C, E> property) throws SQLException {
         V v = null;
-        return FreezablePair.get(new Time(), v).freeze();
+        return FreezablePair.get(Time.getCurrent(), v).freeze();
     }
     
     void replace(@Nonnull NonNullableConceptProperty<V, C, E> property, @Nonnull Time oldTime, @Nonnull Time newTime, @Nonnull V oldValue, @Nonnull V newValue) throws SQLException {

@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.Immutable;
+import net.digitalid.core.annotations.Loaded;
 import net.digitalid.core.annotations.Locked;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.NonFrozen;
@@ -20,12 +21,13 @@ import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.entity.Role;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.core.factory.FactoryBasedGlobalFactory;
+import net.digitalid.core.factory.GlobalFactory;
+import net.digitalid.core.factory.LocalFactory;
+import net.digitalid.core.factory.Storable;
+import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.property.ConceptProperty;
 import net.digitalid.core.property.ConceptPropertyTable;
-import net.digitalid.core.storable.FactoryBasedGlobalFactory;
-import net.digitalid.core.storable.GlobalFactory;
-import net.digitalid.core.storable.LocalFactory;
-import net.digitalid.core.storable.Storable;
 import net.digitalid.core.wrappers.Block;
 
 /**
@@ -212,15 +214,28 @@ public abstract class Concept<C extends Concept<C, E, K>, E extends Entity, K> i
         }
         
         /**
-         * Creates a new concept factory based on the given factory.
+         * Creates a new concept factory based on the given key factory.
+         * 
+         * @param type the type that corresponds to the storable class.
+         * @param factory the factory to store and restore the key.
+         * @param index the index that caches existing concepts.
+         * 
+         * @require type.isBasedOn(factory.getType()) : "The given type is based on the type of the factory.";
+         */
+        protected IndexBasedGlobalFactory(@Nonnull @Loaded SemanticType type, @Nonnull GlobalFactory<K, E> factory, @Nonnull Index<C, E, K> index) {
+            super(type, factory);
+            
+            this.index = index;
+        }
+        
+        /**
+         * Creates a new concept factory based on the given key factory.
          * 
          * @param factory the factory to store and restore the key.
          * @param index the index that caches existing concepts.
          */
         protected IndexBasedGlobalFactory(@Nonnull GlobalFactory<K, E> factory, @Nonnull Index<C, E, K> index) {
-            super(factory);
-            
-            this.index = index;
+            this(factory.getType(), factory, index);
         }
         
         /**
@@ -262,13 +277,26 @@ public abstract class Concept<C extends Concept<C, E, K>, E extends Entity, K> i
         /**
          * Creates a new concept factory based on the given key factory.
          * 
+         * @param type the type that corresponds to the storable class.
+         * @param factory the factory to store and restore the key.
+         * @param index the index that caches existing concepts.
+         * 
+         * @require type.isBasedOn(factory.getType()) : "The given type is based on the type of the factory.";
+         */
+        protected IndexBasedLocalFactory(@Nonnull @Loaded SemanticType type, @Nonnull LocalFactory<K, E> factory, @Nonnull Index<C, E, K> index) {
+            super(type, factory, index);
+            
+            this.factory = factory;
+        }
+        
+        /**
+         * Creates a new concept factory based on the given key factory.
+         * 
          * @param factory the factory to store and restore the key.
          * @param index the index that caches existing concepts.
          */
         protected IndexBasedLocalFactory(@Nonnull LocalFactory<K, E> factory, @Nonnull Index<C, E, K> index) {
-            super(factory, index);
-            
-            this.factory = factory;
+            this(factory.getType(), factory, index);
         }
         
         @Pure

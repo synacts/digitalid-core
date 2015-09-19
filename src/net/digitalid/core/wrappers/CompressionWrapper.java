@@ -19,7 +19,7 @@ import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.identity.SyntacticType;
 import net.digitalid.core.io.Log;
-import net.digitalid.core.storable.Storable;
+import net.digitalid.core.factory.Storable;
 
 /**
  * This class wraps an {@link Block element} for encoding and decoding a block of the syntactic type {@code compression@core.digitalid.net}.
@@ -164,7 +164,7 @@ public final class CompressionWrapper extends BlockBasedWrapper<CompressionWrapp
     private @Nonnull ByteArrayOutputStream getCache() {
         if (cache == null) {
             try {
-                final @Nonnull Time start = new Time();
+                final @Nonnull Time start = Time.getCurrent();
                 cache = new ByteArrayOutputStream(element.getLength());
                 element.writeTo(new DeflaterOutputStream(cache), true);
                 Log.verbose("Element with " + element.getLength() + " bytes compressed in " + start.ago().getValue() + " ms.");
@@ -216,7 +216,7 @@ public final class CompressionWrapper extends BlockBasedWrapper<CompressionWrapp
         public @Nonnull CompressionWrapper decodeNonNullable(@Nonnull @NonEncoding @BasedOn("compression@core.digitalid.net") Block block) throws InvalidEncodingException {
             final @Nonnull SemanticType parameter = block.getType().getParameters().getNonNullable(0);
             try {
-                final @Nonnull Time start = new Time();
+                final @Nonnull Time start = Time.getCurrent();
                 final @Nonnull ByteArrayOutputStream uncompressed = new ByteArrayOutputStream(2 * block.getLength());
                 block.writeTo(new InflaterOutputStream(uncompressed), true);
                 final @Nonnull @Encoded Block element = Block.get(parameter, uncompressed.toByteArray());
