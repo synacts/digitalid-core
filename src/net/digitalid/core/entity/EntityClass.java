@@ -24,7 +24,7 @@ import net.digitalid.core.host.Host;
  * @version 1.0
  */
 @Immutable
-public abstract class EntityClass extends Instance implements Entity {
+public abstract class EntityClass implements Entity {
     
     /**
      * Stores the data type used to reference instances of this class.

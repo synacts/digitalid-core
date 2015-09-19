@@ -15,6 +15,7 @@ import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
 import net.digitalid.core.annotations.Validated;
 import net.digitalid.core.database.Database;
+import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.packet.PacketException;
@@ -80,8 +81,6 @@ public abstract class StateTable extends HostTable implements StateData {
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– State –––––––––––––––––––––––––––––––––––––––––––––––––– */
-    
-    // TODO: Replace the NonHostEntity type in the following methods with E in order be compatible with the factory methods in subclasses?
     
     @Pure
     @Locked

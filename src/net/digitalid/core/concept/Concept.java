@@ -34,7 +34,10 @@ import net.digitalid.core.wrappers.Block;
  * This class models a concept in the {@link Database database}.
  * A concept always belongs to an {@link Entity entity}.
  * 
- * @param E should also be a supertype of {@link NonHostEntity}!
+ * @param <C> the type of the concept class that extends this class.
+ * @param <E> either {@link Entity} for a general concept or {@link NonHostEntity} for a concept that exists only for non-hosts.
+ *            (The type has to be a supertype of {@link NonHostEntity}, which cannot be declared in Java, unfortunately!)
+ * @param <K> the type of the key which identifies an instance among all instances of a concept at the same entity.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0

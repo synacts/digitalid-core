@@ -2,6 +2,9 @@ package net.digitalid.core.password;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.core.agent.Agent;
+import net.digitalid.core.agent.ReadOnlyAgentPermissions;
+import net.digitalid.core.agent.Restrictions;
 import net.digitalid.core.annotations.Immutable;
 import net.digitalid.core.annotations.NonCommitting;
 import net.digitalid.core.annotations.Pure;
@@ -9,9 +12,11 @@ import net.digitalid.core.auxiliary.None;
 import net.digitalid.core.concept.Concept;
 import net.digitalid.core.concept.Index;
 import net.digitalid.core.data.StateModule;
+import net.digitalid.core.database.Database;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.entity.Role;
 import net.digitalid.core.identity.SemanticType;
+import net.digitalid.core.property.StateSelector;
 import net.digitalid.core.property.ValueValidator;
 import net.digitalid.core.property.nonnullable.NonNullableConceptProperty;
 import net.digitalid.core.property.nonnullable.NonNullableConceptPropertyTable;
@@ -43,39 +48,36 @@ public final class Password extends Concept<Password, NonHostEntity, Object> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Selector –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
-    // TODO: Define a StateSelector that maps from an authorization to an SQL string that the table can use in getState().
+    /**
+     * Stores the validator of this class.
+     */
+    public static final @Nonnull StateSelector SELECTOR = new StateSelector() {
+        @Pure
+        @Override
+        public @Nonnull String getCondition(@Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) {
+            return Database.toBoolean(restrictions.isClient());
+        }
+    };
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Table –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the table to store the password.
      */
-    private static final @Nonnull NonNullableConceptPropertyTable<String, Password, NonHostEntity> TABLE = NonNullableConceptPropertyTable.get(MODULE, "", Password.FACTORY, StringWrapper.getValueFactory(TYPE));
+    private static final @Nonnull NonNullableConceptPropertyTable<String, Password, NonHostEntity> TABLE = NonNullableConceptPropertyTable.get(MODULE, "", NonHostEntity.FACTORY, Password.FACTORY, StringWrapper.getValueFactory(TYPE), SELECTOR);
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Validator –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * The validator for this class.
+     * Stores the validator of this class.
      */
-    public static class Validator implements ValueValidator<String> {
-        
-        /**
-         * Creates a new validator.
-         */
-        private Validator() {}
-        
+    public static final @Nonnull ValueValidator<String> VALIDATOR = new ValueValidator<String>() {
         @Pure
         @Override
         public boolean isValid(@Nonnull String value) {
             return value.length() <= 50;
         }
-        
-    }
-    
-    /**
-     * Stores the validator of this class.
-     */
-    public static final @Nonnull Validator VALIDATOR = new Validator();
+    };
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value –––––––––––––––––––––––––––––––––––––––––––––––––– */
     

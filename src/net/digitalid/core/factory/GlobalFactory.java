@@ -34,6 +34,10 @@ import net.digitalid.core.wrappers.Block;
  * A factory allows to store and restore objects.
  * The global factory allows global lookups during {@link #decodeNonNullable(java.lang.Object, net.digitalid.core.wrappers.Block) decoding}.
  * 
+ * @param <O> the type of the objects that this factory can store and restore, which is typically the surrounding class.
+ * @param <E> the type of the external object that is needed to restore an object, which is quite often an {@link Entity}.
+ *            In case no external information is needed for the restoration of an object, declare it as an {@link Object}.
+ * 
  * @see Storable
  * @see LocalFactory
  * @see BlockBasedGlobalFactory

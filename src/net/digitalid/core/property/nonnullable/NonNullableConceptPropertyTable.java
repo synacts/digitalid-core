@@ -37,14 +37,14 @@ import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.entity.Site;
 import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.packet.PacketException;
+import net.digitalid.core.factory.GlobalFactory;
 import net.digitalid.core.host.Host;
 import net.digitalid.core.identifier.IdentifierClass;
 import net.digitalid.core.identity.Identity;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.password.Password;
-import static net.digitalid.core.password.PasswordModule.set;
 import net.digitalid.core.property.ConceptPropertyTable;
-import net.digitalid.core.factory.GlobalFactory;
+import net.digitalid.core.property.StateSelector;
 import net.digitalid.core.tuples.FreezablePair;
 import net.digitalid.core.tuples.ReadOnlyPair;
 import net.digitalid.core.wrappers.Block;
@@ -73,26 +73,31 @@ public class NonNullableConceptPropertyTable<V, C extends Concept<C, E, ?>, E ex
     @OnMainThread
     protected static @Nonnull @Loaded SemanticType mapDumpType(@Nonnull StateModule module, @Nonnull @Validated String name, @Nonnull Concept.IndexBasedGlobalFactory<?, ?, ?> conceptFactory, @Nonnull GlobalFactory<?, ?> valueFactory) {
         // TODO: First map the tuple, then the list.
-        return "";
+        return null;
     }
+    
+    @OnMainThread
+    protected static @Nonnull @Loaded SemanticType mapStateType(@Nonnull StateModule module, @Nonnull @Validated String name, @Nonnull Concept.IndexBasedGlobalFactory<?, ?, ?> conceptFactory, @Nonnull GlobalFactory<?, ?> valueFactory) {
+        // TODO: First map the tuple, then the list.
+        return null;
+    }
+    
+    // TODO: Also create the types for the corresponding internal action.
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @OnMainThread
-    protected NonNullableConceptPropertyTable(@Nonnull StateModule module, @Nonnull @Validated String name, @Nonnull Concept.IndexBasedGlobalFactory<C, E, ?> conceptFactory, @Nonnull GlobalFactory<V, ? super E> valueFactory) {
-        super(module, name, mapDumpType(module, name, conceptFactory, valueFactory), stateType, conceptFactory, valueFactory);
+    protected NonNullableConceptPropertyTable(@Nonnull StateModule module, @Nonnull @Validated String name, @Nonnull GlobalFactory<E, Site> entityFactory, @Nonnull Concept.IndexBasedGlobalFactory<C, E, ?> conceptFactory, @Nonnull GlobalFactory<V, ? super E> valueFactory, @Nonnull StateSelector stateSelector) {
+        super(module, name, mapDumpType(module, name, conceptFactory, valueFactory), mapStateType(module, name, conceptFactory, valueFactory), entityFactory, conceptFactory, valueFactory, stateSelector);
         
         
     }
     
     @Pure
     @OnMainThread
-    public static @Nonnull <V, C extends Concept<C, E, ?>, E extends Entity> NonNullableConceptPropertyTable<V, C, E> get(@Nonnull StateModule module, @Nonnull @Validated String name, @Nonnull Concept.IndexBasedGlobalFactory<C, E, ?> conceptFactory, @Nonnull GlobalFactory<V, ? super E> valueFactory) {
-        return new NonNullableConceptPropertyTable<>(module, name, conceptFactory, valueFactory);
+    public static @Nonnull <V, C extends Concept<C, E, ?>, E extends Entity> NonNullableConceptPropertyTable<V, C, E> get(@Nonnull StateModule module, @Nonnull @Validated String name, @Nonnull GlobalFactory<E, Site> entityFactory, @Nonnull Concept.IndexBasedGlobalFactory<C, E, ?> conceptFactory, @Nonnull GlobalFactory<V, ? super E> valueFactory, @Nonnull StateSelector stateSelector) {
+        return new NonNullableConceptPropertyTable<>(module, name, entityFactory, conceptFactory, valueFactory, stateSelector);
     }
-    
-    // TODO: Define dumpType and stateType in the getter-constructor here.
-    // TODO: Also create the types for the corresponding internal action.
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– ClientTable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -151,9 +156,15 @@ public class NonNullableConceptPropertyTable<V, C extends Concept<C, E, ?>, E ex
     @Override
     @NonCommitting
     public void importAll(@Nonnull Host host, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
-        assert block.getType().isBasedOn(getModuleFormat()) : "The block is based on the format of this module.";
+        assert block.getType().isBasedOn(getDumpType()) : "The block is based on the format of this module.";
         
         // TODO: Adapt!
+        
+        // @Nonnull Entity entity = Account.get(host, IdentityClass.create(block).toInternalIdentity());
+        
+        final @Nonnull E entity = getEntityFactory().decodeNonNullable(host, block);
+        
+        getConceptFactory().decodeNonNullable(entity, block);
         
         final @Nonnull String SQL = "INSERT INTO " + host + "password (entity, password) VALUES (?, ?)";
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
@@ -179,7 +190,7 @@ public class NonNullableConceptPropertyTable<V, C extends Concept<C, E, ?>, E ex
     @Locked
     @Override
     @NonCommitting
-    public @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws SQLException {
+    public @Nonnull Block getState(@Nonnull E entity, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws SQLException {
         // Difficulty: How to select the state given the authorization?
         return new TupleWrapper(STATE_FORMAT, restrictions.isClient() ? new StringWrapper(Password.TYPE, get(entity)) : null).toBlock();
     }
@@ -187,13 +198,13 @@ public class NonNullableConceptPropertyTable<V, C extends Concept<C, E, ?>, E ex
     @Locked
     @Override
     @NonCommitting
-    public void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
-        assert block.getType().isBasedOn(getStateFormat()) : "The block is based on the indicated type.";
+    public void addState(@Nonnull E entity, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
+        assert block.getType().isBasedOn(getStateType()) : "The block is based on the indicated type.";
         
         // TODO: Adapt!
         
-        final @Nullable Block element = new TupleWrapper(block).getNullableElement(0);
-        if (element != null) set(entity, new StringWrapper(element).getString());
+//        final @Nullable Block element = new TupleWrapper(block).getNullableElement(0);
+//        if (element != null) set(entity, new StringWrapper(element).getString());
         
         getConceptFactory().getIndex().reset(entity, this);
     }
