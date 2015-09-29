@@ -1,5 +1,9 @@
 package net.digitalid.core.property;
 
+import javax.annotation.Nonnull;
+import net.digitalid.core.auxiliary.Time;
+import net.digitalid.core.identity.SemanticType;
+
 /**
  * Description.
  * 
@@ -7,6 +11,20 @@ package net.digitalid.core.property;
  * @version 0.0
  */
 public class ConceptPropertyInternalAction {
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Stores the semantic type {@code old.time@core.digitalid.net}.
+     */
+    public static final @Nonnull SemanticType OLD_TIME = SemanticType.map("old.time@core.digitalid.net").load(Time.TYPE);
+    
+    /**
+     * Stores the semantic type {@code new.time@core.digitalid.net}.
+     */
+    public static final @Nonnull SemanticType NEW_TIME = SemanticType.map("new.time@core.digitalid.net").load(Time.TYPE);
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     public ConceptPropertyInternalAction() {
         

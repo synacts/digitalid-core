@@ -73,10 +73,9 @@ public class HostModule extends ClientModule implements HostData {
         
         final @Nonnull String identifier;
         if (service == null) {
-            final @Nonnull String address = ((Service) this).getType().getAddress().getString();
-            identifier = "module.service" + (address.startsWith("@") ? "" : ".") + address;
+            identifier = "module.service" + ((Service) this).getType().getAddress().getStringWithDot();
         } else {
-            identifier = "module." + name + service.getType().getAddress().getString();
+            identifier = "module." + name + service.getType().getAddress().getStringWithDot();
             service.register(this);
         }
         this.dumpType = SemanticType.map(identifier).load(MODULE);

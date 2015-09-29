@@ -100,10 +100,9 @@ public class StateModule extends HostModule implements StateData {
         
         final @Nonnull String identifier;
         if (service == null) {
-            final @Nonnull String address = ((Service) this).getType().getAddress().getString();
-            identifier = "state.service" + (address.startsWith("@") ? "" : ".") + address;
+            identifier = "state.service" + ((Service) this).getType().getAddress().getStringWithDot();
         } else {
-            identifier = "state." + name + service.getType().getAddress().getString();
+            identifier = "state." + name + service.getType().getAddress().getStringWithDot();
             service.register(this);
         }
         this.stateType = SemanticType.map(identifier).load(STATE);

@@ -43,6 +43,7 @@ import net.digitalid.core.identifier.IdentifierClass;
 import net.digitalid.core.identity.Identity;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.password.Password;
+import net.digitalid.core.property.ConceptPropertyInternalAction;
 import net.digitalid.core.property.ConceptPropertyTable;
 import net.digitalid.core.property.StateSelector;
 import net.digitalid.core.tuples.FreezablePair;
@@ -54,8 +55,6 @@ import net.digitalid.core.wrappers.TupleWrapper;
 
 /**
  * Description.
- * 
- * an instance of which is created statically and creates the necessary semantic types for the value change.
  * 
  * Each table has a name and some columns:
  * – the entity
@@ -72,25 +71,46 @@ public class NonNullableConceptPropertyTable<V, C extends Concept<C, E, ?>, E ex
     
     @OnMainThread
     protected static @Nonnull @Loaded SemanticType mapDumpType(@Nonnull StateModule module, @Nonnull @Validated String name, @Nonnull Concept.IndexBasedGlobalFactory<?, ?, ?> conceptFactory, @Nonnull GlobalFactory<?, ?> valueFactory) {
-        // TODO: First map the tuple, then the list.
-        return null;
+        final @Nonnull String identifier = name + module.getDumpType().getAddress().getStringWithDot();
+        final @Nonnull SemanticType entry = SemanticType.map("entry." + identifier).load(TupleWrapper.TYPE, Identity.IDENTIFIER, conceptFactory.getType(), Time.TYPE, valueFactory.getType());
+        return SemanticType.map(identifier).load(ListWrapper.TYPE, entry);
     }
     
     @OnMainThread
     protected static @Nonnull @Loaded SemanticType mapStateType(@Nonnull StateModule module, @Nonnull @Validated String name, @Nonnull Concept.IndexBasedGlobalFactory<?, ?, ?> conceptFactory, @Nonnull GlobalFactory<?, ?> valueFactory) {
-        // TODO: First map the tuple, then the list.
-        return null;
+        final @Nonnull String identifier = name + module.getStateType().getAddress().getStringWithDot();
+        final @Nonnull SemanticType entry = SemanticType.map("entry." + identifier).load(TupleWrapper.TYPE, conceptFactory.getType(), Time.TYPE, valueFactory.getType());
+        return SemanticType.map(identifier).load(ListWrapper.TYPE, entry);
     }
     
-    // TODO: Also create the types for the corresponding internal action.
+    private final @Nonnull String identifier = getValueFactory().getType().getAddress().getStringWithDot();
+    
+    private final @Nonnull @Loaded SemanticType oldValueType = SemanticType.map("old" + identifier).load(getValueFactory().getType());
+    
+    @Pure
+    public final @Nonnull @Loaded SemanticType getOldValueType() {
+        return oldValueType;
+    }
+    
+    private final @Nonnull @Loaded SemanticType newValueType = SemanticType.map("new" + identifier).load(getValueFactory().getType());
+    
+    @Pure
+    public final @Nonnull @Loaded SemanticType getNewValueType() {
+        return newValueType;
+    }
+    
+    private final @Nonnull @Loaded SemanticType actionType = SemanticType.map("action" + identifier).load(TupleWrapper.TYPE, getConceptFactory().getType(), ConceptPropertyInternalAction.OLD_TIME, ConceptPropertyInternalAction.NEW_TIME, oldValueType, newValueType);
+    
+    @Pure
+    public final @Nonnull @Loaded SemanticType getActionType() {
+        return actionType;
+    }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @OnMainThread
     protected NonNullableConceptPropertyTable(@Nonnull StateModule module, @Nonnull @Validated String name, @Nonnull GlobalFactory<E, Site> entityFactory, @Nonnull Concept.IndexBasedGlobalFactory<C, E, ?> conceptFactory, @Nonnull GlobalFactory<V, ? super E> valueFactory, @Nonnull StateSelector stateSelector) {
         super(module, name, mapDumpType(module, name, conceptFactory, valueFactory), mapStateType(module, name, conceptFactory, valueFactory), entityFactory, conceptFactory, valueFactory, stateSelector);
-        
-        
     }
     
     @Pure
@@ -107,8 +127,9 @@ public class NonNullableConceptPropertyTable<V, C extends Concept<C, E, ?>, E ex
     public void createTables(@Nonnull Site site) throws SQLException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             // TODO: Adapt the copy-paste!
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "password (entity " + EntityClass.FORMAT + " NOT NULL, password VARCHAR(50) NOT NULL COLLATE " + Database.getConfiguration().BINARY() + ", PRIMARY KEY (entity), FOREIGN KEY (entity) " + site.getEntityReference() + ")");
-            Database.onInsertIgnore(statement, site + getName(), "entity"); // TODO: Probably also "concept"?
+            Password.FACTORY.getColumns();
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + getName() + " (entity " + EntityClass.FORMAT + " NOT NULL, password VARCHAR(50) NOT NULL COLLATE " + Database.getConfiguration().BINARY() + ", PRIMARY KEY (entity), FOREIGN KEY (entity) " + site.getEntityReference() + ")");
+            Database.onInsertIgnore(statement, site + getName(), "entity", "concept"); // TODO: Replace "concept" with column name.
         }
     }
     

@@ -79,4 +79,17 @@ public final class InternalNonHostIdentifier extends InternalIdentifier implemen
         return new HostIdentifier(getString().substring(getString().indexOf("@") + 1));
     }
     
+    
+    /**
+     * Returns the string of this identifier with a leading dot or @.
+     * This is useful for dynamically creating subtypes of existing types.
+     * 
+     * @return the string of this identifier with a leading dot or @.
+     */
+    @Pure
+    public @Nonnull String getStringWithDot() {
+        final @Nonnull String string = getString();
+        return (string.startsWith("@") ? "" : ".") + string;
+    }
+    
 }

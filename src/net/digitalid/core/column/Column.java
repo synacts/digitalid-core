@@ -34,7 +34,7 @@ public class Column {
      */
     @Pure
     public static boolean isValidName(@Nonnull String name) {
-        return name.length() <= 22 && !name.equalsIgnoreCase("entity") && Database.getConfiguration().isValidIdentifier(name);
+        return name.length() <= 22 && !name.equalsIgnoreCase("entity") && Database.getConfiguration().isValidIdentifier(name); // TODO: Why to exclude "entity" and limit the length? Remove both!
     }
     
     /**
@@ -74,7 +74,7 @@ public class Column {
     /**
      * Stores whether this column is nullable.
      */
-    private final boolean nullable;
+    private final boolean nullable; // TODO: I think this should not be determined by the column but rather by its occurrence (the table). Or both?
     
     /**
      * Returns whether this column is nullable.
