@@ -8,17 +8,17 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.BasedOn;
 import net.digitalid.core.annotations.Encoding;
-import net.digitalid.core.annotations.Frozen;
-import net.digitalid.core.annotations.Immutable;
+import net.digitalid.collections.annotations.freezable.Frozen;
+import net.digitalid.annotations.state.Immutable;
 import net.digitalid.core.annotations.Loaded;
-import net.digitalid.core.annotations.Locked;
-import net.digitalid.core.annotations.NonCommitting;
+import net.digitalid.database.annotations.Locked;
+import net.digitalid.database.annotations.NonCommitting;
 import net.digitalid.core.annotations.NonEncoding;
-import net.digitalid.core.annotations.Pure;
+import net.digitalid.annotations.state.Pure;
 import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.cache.Cache;
 import net.digitalid.core.collections.ConcurrentHashMap;
-import net.digitalid.core.collections.FreezableArray;
+import net.digitalid.collections.freezable.FreezableArray;
 import net.digitalid.core.cryptography.Element;
 import net.digitalid.core.cryptography.InitializationVector;
 import net.digitalid.core.cryptography.PrivateKey;
@@ -33,11 +33,11 @@ import net.digitalid.core.identifier.IdentifierClass;
 import net.digitalid.core.identity.HostIdentity;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.identity.SyntacticType;
-import net.digitalid.core.io.Log;
+import net.digitalid.system.logger.Log;
 import net.digitalid.core.server.Server;
 import net.digitalid.core.factory.Storable;
-import net.digitalid.core.tuples.FreezablePair;
-import net.digitalid.core.tuples.ReadOnlyPair;
+import net.digitalid.collections.tuples.FreezablePair;
+import net.digitalid.collections.tuples.ReadOnlyPair;
 
 /**
  * This class wraps an {@link Block element} for encoding and decoding a block of the syntactic type {@code encryption@core.digitalid.net}.
@@ -45,7 +45,7 @@ import net.digitalid.core.tuples.ReadOnlyPair;
  * host's identifier, the encrypted key, the initialization vector and the possibly encrypted element.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Immutable
 public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper> {

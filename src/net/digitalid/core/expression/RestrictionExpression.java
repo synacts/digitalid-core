@@ -2,11 +2,11 @@ package net.digitalid.core.expression;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.annotations.Capturable;
-import net.digitalid.core.annotations.Immutable;
-import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.collections.FreezableLinkedHashSet;
-import net.digitalid.core.collections.FreezableSet;
+import net.digitalid.annotations.reference.Capturable;
+import net.digitalid.annotations.state.Immutable;
+import net.digitalid.annotations.state.Pure;
+import net.digitalid.collections.freezable.FreezableLinkedHashSet;
+import net.digitalid.collections.freezable.FreezableSet;
 import net.digitalid.core.contact.Contact;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.identity.SemanticType;
@@ -20,7 +20,7 @@ import net.digitalid.core.wrappers.StringWrapper;
  * @invariant (string == null) == (symbol == null) : "Either both string and symbol are null or none of them.";
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Immutable
 final class RestrictionExpression extends Expression {

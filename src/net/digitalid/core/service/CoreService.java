@@ -2,7 +2,7 @@ package net.digitalid.core.service;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.annotations.Pure;
+import net.digitalid.annotations.state.Pure;
 import net.digitalid.core.data.Service;
 import net.digitalid.core.entity.Role;
 import net.digitalid.core.identifier.HostIdentifier;
@@ -13,7 +13,7 @@ import net.digitalid.core.identity.InternalPerson;
  * This class models the core service.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 public final class CoreService extends Service {
     

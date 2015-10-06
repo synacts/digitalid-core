@@ -3,11 +3,11 @@ package net.digitalid.core.agent;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
-import net.digitalid.core.annotations.Capturable;
-import net.digitalid.core.annotations.NonCommitting;
-import net.digitalid.core.annotations.NonFrozen;
-import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.collections.ReadOnlyMap;
+import net.digitalid.annotations.reference.Capturable;
+import net.digitalid.database.annotations.NonCommitting;
+import net.digitalid.collections.annotations.freezable.NonFrozen;
+import net.digitalid.annotations.state.Pure;
+import net.digitalid.collections.readonly.ReadOnlyMap;
 import net.digitalid.core.database.SQLizable;
 import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.identity.SemanticType;
@@ -21,7 +21,7 @@ import net.digitalid.core.wrappers.Blockable;
  * @see FreezableAgentPermissions
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 public interface ReadOnlyAgentPermissions extends ReadOnlyMap<SemanticType, Boolean>, Blockable, SQLizable {
     

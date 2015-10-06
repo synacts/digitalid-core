@@ -4,17 +4,17 @@ import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.annotations.Immutable;
-import net.digitalid.core.annotations.NonCommitting;
+import net.digitalid.annotations.state.Immutable;
+import net.digitalid.database.annotations.NonCommitting;
 import net.digitalid.core.annotations.OnlyForHosts;
-import net.digitalid.core.annotations.Pure;
+import net.digitalid.annotations.state.Pure;
 import net.digitalid.core.attribute.AttributeValue;
 import net.digitalid.core.attribute.CertifiedAttributeValue;
 import net.digitalid.core.attribute.UncertifiedAttributeValue;
 import net.digitalid.core.auxiliary.Time;
-import net.digitalid.core.collections.FreezableArrayList;
-import net.digitalid.core.collections.FreezableList;
-import net.digitalid.core.collections.ReadOnlyList;
+import net.digitalid.collections.freezable.FreezableArrayList;
+import net.digitalid.collections.freezable.FreezableList;
+import net.digitalid.collections.readonly.ReadOnlyList;
 import net.digitalid.core.entity.Account;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.exceptions.external.ExternalException;
@@ -35,7 +35,7 @@ import net.digitalid.core.wrappers.ListWrapper;
  * @see AttributesQuery
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Immutable
 public final class AttributesReply extends CoreServiceQueryReply {

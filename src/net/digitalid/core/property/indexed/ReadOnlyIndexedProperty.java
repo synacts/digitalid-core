@@ -1,8 +1,8 @@
 package net.digitalid.core.property.indexed;
 
 import javax.annotation.Nonnull;
-import net.digitalid.core.collections.ReadOnlyCollection;
-import net.digitalid.core.collections.ReadOnlyMap;
+import net.digitalid.collections.readonly.ReadOnlyCollection;
+import net.digitalid.collections.readonly.ReadOnlyMap;
 
 /**
  * Description.

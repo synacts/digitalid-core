@@ -5,16 +5,16 @@ import java.io.InputStream;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.annotations.Frozen;
-import net.digitalid.core.annotations.Immutable;
-import net.digitalid.core.annotations.NonCommitting;
-import net.digitalid.core.annotations.NonEmpty;
-import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.annotations.RawRecipient;
-import net.digitalid.core.annotations.ValidIndex;
-import net.digitalid.core.collections.FreezableArrayList;
-import net.digitalid.core.collections.FreezableList;
-import net.digitalid.core.collections.ReadOnlyList;
+import net.digitalid.collections.annotations.freezable.Frozen;
+import net.digitalid.annotations.state.Immutable;
+import net.digitalid.database.annotations.NonCommitting;
+import net.digitalid.collections.annotations.size.NonEmpty;
+import net.digitalid.annotations.state.Pure;
+import net.digitalid.annotations.reference.RawRecipient;
+import net.digitalid.collections.annotations.index.ValidIndex;
+import net.digitalid.collections.freezable.FreezableArrayList;
+import net.digitalid.collections.freezable.FreezableList;
+import net.digitalid.collections.readonly.ReadOnlyList;
 import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.handler.Reply;
@@ -22,8 +22,8 @@ import net.digitalid.core.identifier.HostIdentifier;
 import net.digitalid.core.identifier.InternalIdentifier;
 import net.digitalid.core.synchronizer.Audit;
 import net.digitalid.core.synchronizer.ResponseAudit;
-import net.digitalid.core.tuples.FreezablePair;
-import net.digitalid.core.tuples.ReadOnlyPair;
+import net.digitalid.collections.tuples.FreezablePair;
+import net.digitalid.collections.tuples.ReadOnlyPair;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.CompressionWrapper;
 import net.digitalid.core.wrappers.HostSignatureWrapper;
@@ -34,7 +34,7 @@ import net.digitalid.core.wrappers.HostSignatureWrapper;
  * @invariant getSize() == replies.size() && getSize() == exceptions.size() : "The number of elements equals the number of replies and the number of exceptions.";
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Immutable
 public final class Response extends Packet {

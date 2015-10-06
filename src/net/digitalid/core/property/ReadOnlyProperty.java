@@ -2,13 +2,13 @@ package net.digitalid.core.property;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.annotations.NonFrozen;
-import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.collections.FreezableLinkedList;
-import net.digitalid.core.collections.FreezableList;
-import net.digitalid.core.collections.ReadOnlyList;
-import net.digitalid.core.database.Database;
-import net.digitalid.core.io.Log;
+import net.digitalid.collections.annotations.freezable.NonFrozen;
+import net.digitalid.annotations.state.Pure;
+import net.digitalid.collections.freezable.FreezableLinkedList;
+import net.digitalid.collections.freezable.FreezableList;
+import net.digitalid.collections.readonly.ReadOnlyList;
+import net.digitalid.database.configuration.Database;
+import net.digitalid.system.logger.Log;
 import net.digitalid.core.property.extensible.ReadOnlyExtensibleProperty;
 import net.digitalid.core.property.indexed.ReadOnlyIndexedProperty;
 import net.digitalid.core.property.nonnullable.ReadOnlyNonNullableProperty;
@@ -23,7 +23,7 @@ import net.digitalid.core.property.nullable.ReadOnlyNullableProperty;
  * @see ReadOnlyIndexedProperty
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 public abstract class ReadOnlyProperty<V, O extends PropertyObserver> {
     

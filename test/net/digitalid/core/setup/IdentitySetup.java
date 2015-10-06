@@ -5,10 +5,10 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import net.digitalid.core.agent.Agent;
 import net.digitalid.core.agent.FreezableAgentPermissions;
-import net.digitalid.core.annotations.Committing;
-import net.digitalid.core.annotations.Pure;
+import net.digitalid.database.annotations.Committing;
+import net.digitalid.annotations.state.Pure;
 import net.digitalid.core.client.Client;
-import net.digitalid.core.database.Database;
+import net.digitalid.database.configuration.Database;
 import net.digitalid.core.entity.NativeRole;
 import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.packet.PacketException;
@@ -27,7 +27,7 @@ import org.junit.Test;
  * Sets up an {@link Identity} for testing.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 public class IdentitySetup extends ServerSetup {
     

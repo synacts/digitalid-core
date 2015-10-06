@@ -4,10 +4,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.annotations.Immutable;
-import net.digitalid.core.annotations.NonCommitting;
-import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.errors.ShouldNeverHappenError;
+import net.digitalid.annotations.state.Immutable;
+import net.digitalid.database.annotations.NonCommitting;
+import net.digitalid.annotations.state.Pure;
+import net.digitalid.system.errors.ShouldNeverHappenError;
 import net.digitalid.core.host.Host;
 import net.digitalid.core.identity.HostIdentity;
 import net.digitalid.core.identity.Identity;
@@ -22,7 +22,7 @@ import net.digitalid.core.identity.InternalNonHostIdentity;
  * @see NonHostAccount
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Immutable
 public abstract class Account extends EntityClass {

@@ -8,9 +8,9 @@ import javax.annotation.Nullable;
 import net.digitalid.core.agent.FreezableAgentPermissions;
 import net.digitalid.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.core.agent.Restrictions;
-import net.digitalid.core.annotations.Immutable;
-import net.digitalid.core.annotations.NonCommitting;
-import net.digitalid.core.annotations.Pure;
+import net.digitalid.annotations.state.Immutable;
+import net.digitalid.database.annotations.NonCommitting;
+import net.digitalid.annotations.state.Pure;
 import net.digitalid.core.contact.Context;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NativeRole;
@@ -36,7 +36,7 @@ import net.digitalid.core.wrappers.SignatureWrapper;
  * Closes the account and sets the given successor.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Immutable
 public final class AccountClose extends CoreServiceInternalAction {

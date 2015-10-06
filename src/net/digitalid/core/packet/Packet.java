@@ -6,20 +6,20 @@ import java.io.OutputStream;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.annotations.Immutable;
-import net.digitalid.core.annotations.NonCommitting;
-import net.digitalid.core.annotations.Positive;
-import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.annotations.RawRecipient;
-import net.digitalid.core.annotations.ValidIndex;
+import net.digitalid.annotations.state.Immutable;
+import net.digitalid.database.annotations.NonCommitting;
+import net.digitalid.annotations.math.Positive;
+import net.digitalid.annotations.state.Pure;
+import net.digitalid.annotations.reference.RawRecipient;
+import net.digitalid.collections.annotations.index.ValidIndex;
 import net.digitalid.core.cache.AttributesQuery;
 import net.digitalid.core.cache.AttributesReply;
 import net.digitalid.core.certificate.CertificateIssue;
 import net.digitalid.core.client.AccountInitialize;
 import net.digitalid.core.client.AccountOpen;
-import net.digitalid.core.collections.FreezableArrayList;
-import net.digitalid.core.collections.FreezableList;
-import net.digitalid.core.collections.ReadOnlyList;
+import net.digitalid.collections.freezable.FreezableArrayList;
+import net.digitalid.collections.freezable.FreezableList;
+import net.digitalid.collections.readonly.ReadOnlyList;
 import net.digitalid.core.cryptography.SymmetricKey;
 import net.digitalid.core.entity.Account;
 import net.digitalid.core.entity.Entity;
@@ -59,7 +59,7 @@ import net.digitalid.core.wrappers.SignatureWrapper;
  * @see Response
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Immutable
 public abstract class Packet {

@@ -3,17 +3,17 @@ package net.digitalid.core.identity;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
-import net.digitalid.core.annotations.Immutable;
+import net.digitalid.annotations.state.Immutable;
 import net.digitalid.core.annotations.Loaded;
 import net.digitalid.core.annotations.LoadedRecipient;
-import net.digitalid.core.annotations.NonCommitting;
+import net.digitalid.database.annotations.NonCommitting;
 import net.digitalid.core.annotations.NonLoaded;
 import net.digitalid.core.annotations.NonLoadedRecipient;
-import net.digitalid.core.annotations.OnMainThread;
-import net.digitalid.core.annotations.Pure;
+import net.digitalid.database.annotations.OnMainThread;
+import net.digitalid.annotations.state.Pure;
 import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.cache.Cache;
-import net.digitalid.core.database.Database;
+import net.digitalid.database.configuration.Database;
 import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.exceptions.packet.PacketException;
@@ -25,7 +25,7 @@ import net.digitalid.core.wrappers.StringWrapper;
  * This class models a syntactic type.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Immutable
 public final class SyntacticType extends Type {

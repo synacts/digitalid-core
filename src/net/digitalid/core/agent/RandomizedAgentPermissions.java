@@ -7,11 +7,11 @@ import java.sql.SQLException;
 import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.annotations.Immutable;
-import net.digitalid.core.annotations.NonCommitting;
-import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.collections.FreezableArray;
-import net.digitalid.core.collections.ReadOnlyArray;
+import net.digitalid.annotations.state.Immutable;
+import net.digitalid.database.annotations.NonCommitting;
+import net.digitalid.annotations.state.Pure;
+import net.digitalid.collections.freezable.FreezableArray;
+import net.digitalid.collections.readonly.ReadOnlyArray;
 import net.digitalid.core.cryptography.Parameters;
 import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.packet.PacketException;
@@ -27,7 +27,7 @@ import net.digitalid.core.wrappers.TupleWrapper;
  * @invariant (salt == null) == (permissions == null) : "The salt and the permissions are either both null or both non-null.";
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Immutable
 public final class RandomizedAgentPermissions implements Blockable {

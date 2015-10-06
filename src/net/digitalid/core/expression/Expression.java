@@ -4,13 +4,13 @@ import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.annotations.Capturable;
-import net.digitalid.core.annotations.Immutable;
-import net.digitalid.core.annotations.NonCommitting;
-import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.collections.FreezableArrayList;
-import net.digitalid.core.collections.FreezableSet;
-import net.digitalid.core.collections.ReadOnlyList;
+import net.digitalid.annotations.reference.Capturable;
+import net.digitalid.annotations.state.Immutable;
+import net.digitalid.database.annotations.NonCommitting;
+import net.digitalid.annotations.state.Pure;
+import net.digitalid.collections.freezable.FreezableArrayList;
+import net.digitalid.collections.freezable.FreezableSet;
+import net.digitalid.collections.readonly.ReadOnlyList;
 import net.digitalid.core.concept.NonHostConcept;
 import net.digitalid.core.contact.Contact;
 import net.digitalid.core.contact.Context;
@@ -36,7 +36,7 @@ import net.digitalid.core.wrappers.CredentialsSignatureWrapper;
  * @see RestrictionExpression
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Immutable
 abstract class Expression extends NonHostConcept {

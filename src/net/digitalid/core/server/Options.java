@@ -4,18 +4,18 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Collection;
 import javax.annotation.Nonnull;
-import net.digitalid.core.annotations.Committing;
-import net.digitalid.core.collections.FreezableArrayList;
-import net.digitalid.core.collections.ReadOnlyCollection;
-import net.digitalid.core.collections.ReadOnlyList;
-import net.digitalid.core.database.Database;
+import net.digitalid.database.annotations.Committing;
+import net.digitalid.collections.freezable.FreezableArrayList;
+import net.digitalid.collections.readonly.ReadOnlyCollection;
+import net.digitalid.collections.readonly.ReadOnlyList;
+import net.digitalid.database.configuration.Database;
 import net.digitalid.core.exceptions.external.ExternalException;
-import net.digitalid.core.exceptions.io.EscapeOptionException;
+import net.digitalid.system.console.exceptions.EscapeOptionException;
 import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.host.Host;
 import net.digitalid.core.identifier.HostIdentifier;
-import net.digitalid.core.io.Console;
-import net.digitalid.core.io.Option;
+import net.digitalid.system.console.Console;
+import net.digitalid.system.console.Option;
 import net.digitalid.core.data.Service;
 
 /**

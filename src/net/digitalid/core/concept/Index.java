@@ -5,14 +5,14 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.annotations.Locked;
-import net.digitalid.core.annotations.NonCommitting;
+import net.digitalid.database.annotations.Locked;
+import net.digitalid.database.annotations.NonCommitting;
 import net.digitalid.core.annotations.NonNullableElements;
-import net.digitalid.core.annotations.OnlyForSingleAccess;
-import net.digitalid.core.annotations.Pure;
+import net.digitalid.database.annotations.OnlyForSingleAccess;
+import net.digitalid.annotations.state.Pure;
 import net.digitalid.core.collections.ConcurrentHashMap;
 import net.digitalid.core.collections.ConcurrentMap;
-import net.digitalid.core.database.Database;
+import net.digitalid.database.configuration.Database;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.property.ConceptPropertyTable;
 
@@ -20,7 +20,7 @@ import net.digitalid.core.property.ConceptPropertyTable;
  * This class indexes the instances of a {@link Concept concept} by their {@link Entity entity} and key.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 public final class Index<C extends Concept<C, E, K>, E extends Entity, K> {
     

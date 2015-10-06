@@ -8,27 +8,27 @@ import java.sql.Types;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.AttributeType;
-import net.digitalid.core.annotations.Capturable;
-import net.digitalid.core.annotations.EmptyOrSingle;
-import net.digitalid.core.annotations.EmptyOrSingleRecipient;
-import net.digitalid.core.annotations.Frozen;
-import net.digitalid.core.annotations.NonCommitting;
-import net.digitalid.core.annotations.NonFrozen;
-import net.digitalid.core.annotations.NonFrozenRecipient;
-import net.digitalid.core.annotations.Pure;
+import net.digitalid.annotations.reference.Capturable;
+import net.digitalid.collections.annotations.size.EmptyOrSingle;
+import net.digitalid.collections.annotations.size.EmptyOrSingleRecipient;
+import net.digitalid.collections.annotations.freezable.Frozen;
+import net.digitalid.database.annotations.NonCommitting;
+import net.digitalid.collections.annotations.freezable.NonFrozen;
+import net.digitalid.collections.annotations.freezable.NonFrozenRecipient;
+import net.digitalid.annotations.state.Pure;
 import net.digitalid.core.annotations.Single;
 import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.collections.Brackets;
 import net.digitalid.core.collections.ElementConverter;
-import net.digitalid.core.collections.FreezableArray;
-import net.digitalid.core.collections.FreezableLinkedHashMap;
-import net.digitalid.core.collections.FreezableLinkedList;
-import net.digitalid.core.collections.FreezableList;
-import net.digitalid.core.collections.FreezableSet;
+import net.digitalid.collections.freezable.FreezableArray;
+import net.digitalid.collections.freezable.FreezableLinkedHashMap;
+import net.digitalid.collections.freezable.FreezableLinkedList;
+import net.digitalid.collections.freezable.FreezableList;
+import net.digitalid.collections.freezable.FreezableSet;
 import net.digitalid.core.collections.IterableConverter;
-import net.digitalid.core.collections.ReadOnlyArray;
-import net.digitalid.core.collections.ReadOnlyList;
-import net.digitalid.core.database.Database;
+import net.digitalid.collections.readonly.ReadOnlyArray;
+import net.digitalid.collections.readonly.ReadOnlyList;
+import net.digitalid.database.configuration.Database;
 import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.exceptions.packet.PacketError;
@@ -49,7 +49,7 @@ import net.digitalid.core.wrappers.TupleWrapper;
  * @invariant areValid() : "These agent permissions are always valid.";
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 public final class FreezableAgentPermissions extends FreezableLinkedHashMap<SemanticType, Boolean> implements ReadOnlyAgentPermissions {
     

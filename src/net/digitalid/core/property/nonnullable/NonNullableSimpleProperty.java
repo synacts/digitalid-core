@@ -1,15 +1,15 @@
 package net.digitalid.core.property.nonnullable;
 
 import javax.annotation.Nonnull;
-import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.annotations.Validated;
+import net.digitalid.annotations.state.Pure;
+import net.digitalid.annotations.state.Validated;
 import net.digitalid.core.property.ValueValidator;
 
 /**
  * This property stores a replaceable value that cannot be null.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 public final class NonNullableSimpleProperty<V> extends WriteableNonNullableProperty<V> {
     

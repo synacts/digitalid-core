@@ -5,7 +5,7 @@ import javax.annotation.Nullable;
 import net.digitalid.core.agent.Agent;
 import net.digitalid.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.core.agent.Restrictions;
-import net.digitalid.core.annotations.Pure;
+import net.digitalid.annotations.state.Pure;
 
 /**
  * A state selector returns the SQL condition with which the returned state is restricted.
@@ -13,7 +13,7 @@ import net.digitalid.core.annotations.Pure;
  * @see ConceptPropertyTable
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 public interface StateSelector {
     

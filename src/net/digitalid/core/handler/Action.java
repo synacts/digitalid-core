@@ -7,12 +7,12 @@ import net.digitalid.core.agent.Agent;
 import net.digitalid.core.agent.FreezableAgentPermissions;
 import net.digitalid.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.core.agent.Restrictions;
-import net.digitalid.core.annotations.Immutable;
-import net.digitalid.core.annotations.NonCommitting;
-import net.digitalid.core.annotations.Pure;
+import net.digitalid.annotations.state.Immutable;
+import net.digitalid.database.annotations.NonCommitting;
+import net.digitalid.annotations.state.Pure;
 import net.digitalid.core.client.AccountOpen;
-import net.digitalid.core.collections.FreezableLinkedList;
-import net.digitalid.core.collections.ReadOnlyList;
+import net.digitalid.collections.freezable.FreezableLinkedList;
+import net.digitalid.collections.readonly.ReadOnlyList;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.exceptions.packet.PacketException;
@@ -31,7 +31,7 @@ import net.digitalid.core.wrappers.SignatureWrapper;
  * @see ExternalAction
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Immutable
 public abstract class Action extends Method implements Auditable {

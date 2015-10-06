@@ -1,7 +1,7 @@
 package net.digitalid.core.property.nullable;
 
 import javax.annotation.Nonnull;
-import net.digitalid.core.annotations.Pure;
+import net.digitalid.annotations.state.Pure;
 import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.concept.Concept;
 import net.digitalid.core.property.ConceptProperty;

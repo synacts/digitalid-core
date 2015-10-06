@@ -5,38 +5,38 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.jar.JarFile;
 import javax.annotation.Nonnull;
-import net.digitalid.core.annotations.Committing;
-import net.digitalid.core.annotations.Locked;
-import net.digitalid.core.annotations.NonLocked;
-import net.digitalid.core.annotations.Stateless;
+import net.digitalid.database.annotations.Committing;
+import net.digitalid.database.annotations.Locked;
+import net.digitalid.database.annotations.NonLocked;
+import net.digitalid.annotations.state.Stateless;
 import net.digitalid.core.cache.Cache;
 import net.digitalid.core.client.Client;
-import net.digitalid.core.collections.FreezableLinkedHashMap;
-import net.digitalid.core.collections.FreezableMap;
-import net.digitalid.core.collections.ReadOnlyCollection;
-import net.digitalid.core.database.Configuration;
-import net.digitalid.core.database.Database;
-import net.digitalid.core.database.MySQLConfiguration;
-import net.digitalid.core.database.PostgreSQLConfiguration;
-import net.digitalid.core.database.SQLiteConfiguration;
-import net.digitalid.core.errors.InitializationError;
+import net.digitalid.collections.freezable.FreezableLinkedHashMap;
+import net.digitalid.collections.freezable.FreezableMap;
+import net.digitalid.collections.readonly.ReadOnlyCollection;
+import net.digitalid.database.configuration.Configuration;
+import net.digitalid.database.configuration.Database;
+import net.digitalid.database.configuration.MySQLConfiguration;
+import net.digitalid.database.configuration.PostgreSQLConfiguration;
+import net.digitalid.database.configuration.SQLiteConfiguration;
+import net.digitalid.system.errors.InitializationError;
 import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.host.Host;
 import net.digitalid.core.identifier.HostIdentifier;
 import net.digitalid.core.identity.HostIdentity;
-import net.digitalid.core.io.Console;
-import net.digitalid.core.io.DefaultLogger;
-import net.digitalid.core.io.Directory;
-import net.digitalid.core.io.Level;
-import net.digitalid.core.io.Loader;
-import net.digitalid.core.io.Logger;
+import net.digitalid.system.console.Console;
+import net.digitalid.system.logger.DefaultLogger;
+import net.digitalid.system.directory.Directory;
+import net.digitalid.system.logger.Level;
+import net.digitalid.system.loader.Loader;
+import net.digitalid.system.logger.Logger;
 
 /**
  * The server runs the configured hosts.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Stateless
 public final class Server {

@@ -3,9 +3,9 @@ package net.digitalid.core.synchronizer;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.annotations.Immutable;
-import net.digitalid.core.annotations.NonCommitting;
-import net.digitalid.core.annotations.Pure;
+import net.digitalid.annotations.state.Immutable;
+import net.digitalid.database.annotations.NonCommitting;
+import net.digitalid.annotations.state.Pure;
 import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.entity.Role;
 import net.digitalid.core.handler.InternalMethod;
@@ -16,7 +16,7 @@ import net.digitalid.core.data.Service;
  * This class models a request audit with the time of the last audit.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Immutable
 public final class RequestAudit extends Audit {

@@ -3,9 +3,9 @@ package net.digitalid.core.cryptography;
 import java.math.BigInteger;
 import javax.annotation.Nonnull;
 import net.digitalid.core.annotations.BasedOn;
-import net.digitalid.core.annotations.Immutable;
+import net.digitalid.annotations.state.Immutable;
 import net.digitalid.core.annotations.Matching;
-import net.digitalid.core.annotations.Pure;
+import net.digitalid.annotations.state.Pure;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.storable.BlockBasedSimpleNonConceptFactory;
@@ -18,7 +18,7 @@ import net.digitalid.core.wrappers.IntegerWrapper;
  * @invariant getValue().compareTo(BigInteger.ZERO) >= 0 && getValue().compareTo(getGroup().getModulus()) == -1 : "The value is non-negative and smaller than the group modulus.";
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Immutable
 public final class Element extends Number<Element> {

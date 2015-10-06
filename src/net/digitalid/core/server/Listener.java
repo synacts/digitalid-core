@@ -8,16 +8,16 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import javax.annotation.Nonnull;
-import net.digitalid.core.errors.InitializationError;
-import net.digitalid.core.io.Log;
+import net.digitalid.system.errors.InitializationError;
+import net.digitalid.system.logger.Log;
 import net.digitalid.core.packet.Request;
-import net.digitalid.core.thread.NamedThreadFactory;
+import net.digitalid.system.thread.NamedThreadFactory;
 
 /**
  * A listener accepts incoming {@link Request requests} and lets them handle by {@link Worker workers}.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 public final class Listener extends Thread {
     

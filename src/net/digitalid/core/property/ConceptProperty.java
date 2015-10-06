@@ -2,9 +2,9 @@ package net.digitalid.core.property;
 
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
-import net.digitalid.core.annotations.Locked;
-import net.digitalid.core.annotations.NonCommitting;
-import net.digitalid.core.annotations.Pure;
+import net.digitalid.database.annotations.Locked;
+import net.digitalid.database.annotations.NonCommitting;
+import net.digitalid.annotations.state.Pure;
 import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.concept.Concept;
 import net.digitalid.core.property.extensible.ExtensibleConceptProperty;
@@ -21,7 +21,7 @@ import net.digitalid.core.property.nullable.NullableConceptProperty;
  * @see IndexedConceptProperty
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 public interface ConceptProperty<C extends Concept<C, ?, ?>> {
     

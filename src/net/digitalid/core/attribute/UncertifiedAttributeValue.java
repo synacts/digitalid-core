@@ -3,9 +3,9 @@ package net.digitalid.core.attribute;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
-import net.digitalid.core.annotations.Immutable;
-import net.digitalid.core.annotations.NonCommitting;
-import net.digitalid.core.annotations.Pure;
+import net.digitalid.annotations.state.Immutable;
+import net.digitalid.database.annotations.NonCommitting;
+import net.digitalid.annotations.state.Pure;
 import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.wrappers.Blockable;
@@ -17,7 +17,7 @@ import net.digitalid.core.wrappers.SignatureWrapper;
  * This class facilitates the encoding and decoding of uncertified attribute values.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Immutable
 public final class UncertifiedAttributeValue extends AttributeValue {

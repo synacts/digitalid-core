@@ -10,14 +10,14 @@ import javax.annotation.Nullable;
 import net.digitalid.core.agent.Agent;
 import net.digitalid.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.core.agent.Restrictions;
-import net.digitalid.core.annotations.NonCommitting;
-import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.annotations.Stateless;
-import net.digitalid.core.collections.FreezableLinkedList;
-import net.digitalid.core.collections.FreezableList;
-import net.digitalid.core.collections.ReadOnlyArray;
-import net.digitalid.core.collections.ReadOnlyList;
-import net.digitalid.core.database.Database;
+import net.digitalid.database.annotations.NonCommitting;
+import net.digitalid.annotations.state.Pure;
+import net.digitalid.annotations.state.Stateless;
+import net.digitalid.collections.freezable.FreezableLinkedList;
+import net.digitalid.collections.freezable.FreezableList;
+import net.digitalid.collections.readonly.ReadOnlyArray;
+import net.digitalid.collections.readonly.ReadOnlyList;
+import net.digitalid.database.configuration.Database;
 import net.digitalid.core.entity.Account;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.EntityClass;
@@ -42,7 +42,7 @@ import net.digitalid.core.wrappers.TupleWrapper;
  * This class provides database access to the {@link Password passwords} of the core service.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Stateless
 public final class PasswordModule implements StateModule {

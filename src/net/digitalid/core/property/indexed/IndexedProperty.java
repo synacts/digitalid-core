@@ -1,11 +1,11 @@
 package net.digitalid.core.property.indexed;
 
 import javax.annotation.Nonnull;
-import net.digitalid.core.annotations.NonFrozen;
-import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.collections.FreezableMap;
-import net.digitalid.core.collections.ReadOnlyCollection;
-import net.digitalid.core.collections.ReadOnlyMap;
+import net.digitalid.collections.annotations.freezable.NonFrozen;
+import net.digitalid.annotations.state.Pure;
+import net.digitalid.collections.freezable.FreezableMap;
+import net.digitalid.collections.readonly.ReadOnlyCollection;
+import net.digitalid.collections.readonly.ReadOnlyMap;
 
 /**
  * Description.

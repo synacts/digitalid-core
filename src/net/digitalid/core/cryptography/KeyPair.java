@@ -4,9 +4,9 @@ import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.Random;
 import javax.annotation.Nonnull;
-import net.digitalid.core.annotations.Immutable;
-import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.collections.FreezableArray;
+import net.digitalid.annotations.state.Immutable;
+import net.digitalid.annotations.state.Pure;
+import net.digitalid.collections.freezable.FreezableArray;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.TupleWrapper;
 
@@ -14,7 +14,7 @@ import net.digitalid.core.wrappers.TupleWrapper;
  * This class generates new key pairs.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Immutable
 public final class KeyPair {

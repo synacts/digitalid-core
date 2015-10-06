@@ -1,13 +1,13 @@
 package net.digitalid.core.auxiliary;
 
 import javax.annotation.Nonnull;
-import net.digitalid.core.annotations.Stateless;
+import net.digitalid.annotations.state.Stateless;
 
 /**
  * This class is an alternative to {@link Void} which supports non-nullable parameters and return values.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Stateless
 public final class None {

@@ -12,21 +12,21 @@ import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.annotations.Committing;
-import net.digitalid.core.annotations.Frozen;
-import net.digitalid.core.annotations.Locked;
-import net.digitalid.core.annotations.NonCommitting;
-import net.digitalid.core.annotations.NonEmpty;
+import net.digitalid.database.annotations.Committing;
+import net.digitalid.collections.annotations.freezable.Frozen;
+import net.digitalid.database.annotations.Locked;
+import net.digitalid.database.annotations.NonCommitting;
+import net.digitalid.collections.annotations.size.NonEmpty;
 import net.digitalid.core.annotations.NonNullableElements;
-import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.annotations.Stateless;
+import net.digitalid.annotations.state.Pure;
+import net.digitalid.annotations.state.Stateless;
 import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.client.Client;
-import net.digitalid.core.collections.FreezableLinkedList;
-import net.digitalid.core.collections.FreezableList;
-import net.digitalid.core.collections.ReadOnlyCollection;
-import net.digitalid.core.collections.ReadOnlyList;
-import net.digitalid.core.database.Database;
+import net.digitalid.collections.freezable.FreezableLinkedList;
+import net.digitalid.collections.freezable.FreezableList;
+import net.digitalid.collections.readonly.ReadOnlyCollection;
+import net.digitalid.collections.readonly.ReadOnlyList;
+import net.digitalid.database.configuration.Database;
 import net.digitalid.core.entity.EntityClass;
 import net.digitalid.core.entity.Role;
 import net.digitalid.core.entity.Site;
@@ -36,16 +36,16 @@ import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.handler.Action;
 import net.digitalid.core.handler.InternalAction;
 import net.digitalid.core.handler.Method;
-import net.digitalid.core.io.Level;
-import net.digitalid.core.io.Log;
-import net.digitalid.core.io.Logger;
+import net.digitalid.system.logger.Level;
+import net.digitalid.system.logger.Log;
+import net.digitalid.system.logger.Logger;
 import net.digitalid.core.data.StateModule;
 import net.digitalid.core.data.ClientModule;
 import net.digitalid.core.packet.Packet;
 import net.digitalid.core.service.CoreService;
 import net.digitalid.core.data.Service;
-import net.digitalid.core.tuples.FreezablePair;
-import net.digitalid.core.tuples.ReadOnlyPair;
+import net.digitalid.collections.tuples.FreezablePair;
+import net.digitalid.collections.tuples.ReadOnlyPair;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.SelfcontainedWrapper;
 import net.digitalid.core.wrappers.SignatureWrapper;
@@ -56,7 +56,7 @@ import net.digitalid.core.wrappers.SignatureWrapper;
  * @see Synchronizer
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Stateless
 public final class SynchronizerModule implements ClientModule {

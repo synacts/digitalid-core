@@ -5,11 +5,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import javax.annotation.Nonnull;
-import net.digitalid.core.annotations.Committing;
-import net.digitalid.core.database.Database;
-import net.digitalid.core.database.MySQLConfiguration;
-import net.digitalid.core.database.PostgreSQLConfiguration;
-import net.digitalid.core.database.SQLiteConfiguration;
+import net.digitalid.database.annotations.Committing;
+import net.digitalid.database.configuration.Database;
+import net.digitalid.database.configuration.MySQLConfiguration;
+import net.digitalid.database.configuration.PostgreSQLConfiguration;
+import net.digitalid.database.configuration.SQLiteConfiguration;
 import net.digitalid.core.identity.SemanticType;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -19,7 +19,7 @@ import org.junit.Test;
  * Sets up the {@link Database} for testing.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 public class DatabaseSetup {
     

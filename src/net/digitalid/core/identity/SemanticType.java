@@ -4,26 +4,26 @@ import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.annotations.Frozen;
-import net.digitalid.core.annotations.Immutable;
+import net.digitalid.collections.annotations.freezable.Frozen;
+import net.digitalid.annotations.state.Immutable;
 import net.digitalid.core.annotations.Loaded;
 import net.digitalid.core.annotations.LoadedRecipient;
-import net.digitalid.core.annotations.NonCommitting;
+import net.digitalid.database.annotations.NonCommitting;
 import net.digitalid.core.annotations.NonLoaded;
 import net.digitalid.core.annotations.NonLoadedRecipient;
-import net.digitalid.core.annotations.NonNegative;
+import net.digitalid.annotations.math.NonNegative;
 import net.digitalid.core.annotations.NonNullableElements;
-import net.digitalid.core.annotations.OnMainThread;
-import net.digitalid.core.annotations.Pure;
+import net.digitalid.database.annotations.OnMainThread;
+import net.digitalid.annotations.state.Pure;
 import net.digitalid.core.annotations.UniqueElements;
 import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.cache.Cache;
-import net.digitalid.core.collections.FreezableArray;
-import net.digitalid.core.collections.FreezableArrayList;
-import net.digitalid.core.collections.FreezableList;
-import net.digitalid.core.collections.ReadOnlyList;
+import net.digitalid.collections.freezable.FreezableArray;
+import net.digitalid.collections.freezable.FreezableArrayList;
+import net.digitalid.collections.freezable.FreezableList;
+import net.digitalid.collections.readonly.ReadOnlyList;
 import net.digitalid.core.contact.Context;
-import net.digitalid.core.database.Database;
+import net.digitalid.database.configuration.Database;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.exceptions.external.AttributeNotFoundException;
 import net.digitalid.core.exceptions.external.ExternalException;
@@ -42,7 +42,7 @@ import net.digitalid.core.wrappers.ListWrapper;
  * @invariant !isLoaded() || getSyntacticBase().getNumberOfParameters() == -1 && getParameters().size() > 0 || getSyntacticBase().getNumberOfParameters() == getParameters().size() : "The number of required parameters is either variable or matches the given parameters.";
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Immutable
 public final class SemanticType extends Type {

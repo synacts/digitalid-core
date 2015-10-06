@@ -12,21 +12,21 @@ import net.digitalid.core.agent.Agent;
 import net.digitalid.core.agent.FreezableAgentPermissions;
 import net.digitalid.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.core.agent.Restrictions;
-import net.digitalid.core.annotations.Frozen;
-import net.digitalid.core.annotations.Immutable;
-import net.digitalid.core.annotations.NonCommitting;
-import net.digitalid.core.annotations.NonEmpty;
+import net.digitalid.collections.annotations.freezable.Frozen;
+import net.digitalid.annotations.state.Immutable;
+import net.digitalid.database.annotations.NonCommitting;
+import net.digitalid.collections.annotations.size.NonEmpty;
 import net.digitalid.core.annotations.NonNullableElements;
 import net.digitalid.core.annotations.OnlyForHosts;
-import net.digitalid.core.annotations.Pure;
+import net.digitalid.annotations.state.Pure;
 import net.digitalid.core.attribute.Attribute;
 import net.digitalid.core.attribute.AttributeValue;
 import net.digitalid.core.attribute.CertifiedAttributeValue;
 import net.digitalid.core.auxiliary.Time;
-import net.digitalid.core.collections.FreezableArrayList;
-import net.digitalid.core.collections.FreezableList;
-import net.digitalid.core.collections.ReadOnlyIterator;
-import net.digitalid.core.collections.ReadOnlyList;
+import net.digitalid.collections.freezable.FreezableArrayList;
+import net.digitalid.collections.freezable.FreezableList;
+import net.digitalid.collections.readonly.ReadOnlyIterator;
+import net.digitalid.collections.readonly.ReadOnlyList;
 import net.digitalid.core.contact.Contact;
 import net.digitalid.core.contact.FreezableAuthentications;
 import net.digitalid.core.contact.ReadOnlyAuthentications;
@@ -64,7 +64,7 @@ import net.digitalid.core.wrappers.SignatureWrapper;
  * @see Query
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Immutable
 public abstract class Method extends Handler {

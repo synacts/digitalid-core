@@ -8,12 +8,12 @@ import javax.annotation.Nullable;
 import net.digitalid.core.agent.Agent;
 import net.digitalid.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.core.agent.Restrictions;
-import net.digitalid.core.annotations.Committing;
+import net.digitalid.database.annotations.Committing;
 import net.digitalid.core.auxiliary.Time;
-import net.digitalid.core.collections.FreezableArrayList;
-import net.digitalid.core.collections.FreezableList;
+import net.digitalid.collections.freezable.FreezableArrayList;
+import net.digitalid.collections.freezable.FreezableList;
 import net.digitalid.core.credential.Credential;
-import net.digitalid.core.database.Database;
+import net.digitalid.database.configuration.Database;
 import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.packet.PacketError;
 import net.digitalid.core.exceptions.packet.PacketException;
@@ -22,9 +22,9 @@ import net.digitalid.core.handler.InternalMethod;
 import net.digitalid.core.handler.Method;
 import net.digitalid.core.handler.Reply;
 import net.digitalid.core.identifier.InternalIdentifier;
-import net.digitalid.core.io.Level;
-import net.digitalid.core.io.Log;
-import net.digitalid.core.io.Logger;
+import net.digitalid.system.logger.Level;
+import net.digitalid.system.logger.Log;
+import net.digitalid.system.logger.Logger;
 import net.digitalid.core.packet.Request;
 import net.digitalid.core.packet.Response;
 import net.digitalid.core.service.CoreService;
@@ -43,7 +43,7 @@ import net.digitalid.core.wrappers.SignatureWrapper;
  * @see Listener
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 public final class Worker implements Runnable {
     

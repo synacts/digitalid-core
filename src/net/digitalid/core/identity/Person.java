@@ -3,8 +3,8 @@ package net.digitalid.core.identity;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.annotations.Immutable;
-import net.digitalid.core.annotations.NonCommitting;
+import net.digitalid.annotations.state.Immutable;
+import net.digitalid.database.annotations.NonCommitting;
 import net.digitalid.core.identifier.InternalNonHostIdentifier;
 
 /**
@@ -16,7 +16,7 @@ import net.digitalid.core.identifier.InternalNonHostIdentifier;
  * @see ExternalPerson
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Immutable
 public abstract class Person extends NonHostIdentityClass {

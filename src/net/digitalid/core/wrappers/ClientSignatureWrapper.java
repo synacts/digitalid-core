@@ -8,18 +8,18 @@ import javax.annotation.Nullable;
 import net.digitalid.core.agent.AgentModule;
 import net.digitalid.core.agent.ClientAgent;
 import net.digitalid.core.annotations.BasedOn;
-import net.digitalid.core.annotations.Immutable;
+import net.digitalid.annotations.state.Immutable;
 import net.digitalid.core.annotations.Loaded;
-import net.digitalid.core.annotations.Locked;
-import net.digitalid.core.annotations.NonCommitting;
+import net.digitalid.database.annotations.Locked;
+import net.digitalid.database.annotations.NonCommitting;
 import net.digitalid.core.annotations.NonEncoding;
-import net.digitalid.core.annotations.NonFrozen;
-import net.digitalid.core.annotations.Pure;
+import net.digitalid.collections.annotations.freezable.NonFrozen;
+import net.digitalid.annotations.state.Pure;
 import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.client.Commitment;
 import net.digitalid.core.client.SecretCommitment;
-import net.digitalid.core.collections.FreezableArray;
-import net.digitalid.core.collections.ReadOnlyArray;
+import net.digitalid.collections.freezable.FreezableArray;
+import net.digitalid.collections.readonly.ReadOnlyArray;
 import net.digitalid.core.cryptography.Element;
 import net.digitalid.core.cryptography.Exponent;
 import net.digitalid.core.cryptography.Parameters;
@@ -32,7 +32,7 @@ import net.digitalid.core.exceptions.packet.PacketError;
 import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.identifier.InternalIdentifier;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.io.Log;
+import net.digitalid.system.logger.Log;
 import net.digitalid.core.factory.Storable;
 import net.digitalid.core.synchronizer.Audit;
 
@@ -42,7 +42,7 @@ import net.digitalid.core.synchronizer.Audit;
  * Format: {@code (commitment, t, s)}
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Immutable
 public final class ClientSignatureWrapper extends SignatureWrapper {

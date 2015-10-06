@@ -1,7 +1,7 @@
 package net.digitalid.core.property.nonnullable;
 
 import javax.annotation.Nonnull;
-import net.digitalid.core.annotations.Validated;
+import net.digitalid.annotations.state.Validated;
 import net.digitalid.core.property.PropertyObserver;
 import net.digitalid.core.property.ReadOnlyProperty;
 
@@ -9,7 +9,7 @@ import net.digitalid.core.property.ReadOnlyProperty;
  * Objects that implement this interface can be used to observe {@link ReadOnlyNonNullableProperty non-nullable properties}.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 public interface NonNullablePropertyObserver<V> extends PropertyObserver {
     

@@ -8,23 +8,23 @@ import java.sql.Statement;
 import java.util.HashSet;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.annotations.Capturable;
-import net.digitalid.core.annotations.Frozen;
-import net.digitalid.core.annotations.NonCommitting;
-import net.digitalid.core.annotations.NonFrozen;
-import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.annotations.Stateless;
+import net.digitalid.annotations.reference.Capturable;
+import net.digitalid.collections.annotations.freezable.Frozen;
+import net.digitalid.database.annotations.NonCommitting;
+import net.digitalid.collections.annotations.freezable.NonFrozen;
+import net.digitalid.annotations.state.Pure;
+import net.digitalid.annotations.state.Stateless;
 import net.digitalid.core.client.Client;
 import net.digitalid.core.client.Commitment;
-import net.digitalid.core.collections.FreezableArray;
-import net.digitalid.core.collections.FreezableLinkedList;
-import net.digitalid.core.collections.FreezableList;
-import net.digitalid.core.collections.ReadOnlyArray;
-import net.digitalid.core.collections.ReadOnlyList;
+import net.digitalid.collections.freezable.FreezableArray;
+import net.digitalid.collections.freezable.FreezableLinkedList;
+import net.digitalid.collections.freezable.FreezableList;
+import net.digitalid.collections.readonly.ReadOnlyArray;
+import net.digitalid.collections.readonly.ReadOnlyList;
 import net.digitalid.core.contact.Contact;
 import net.digitalid.core.contact.Context;
 import net.digitalid.core.contact.ContextModule;
-import net.digitalid.core.database.Database;
+import net.digitalid.database.configuration.Database;
 import net.digitalid.core.entity.EntityClass;
 import net.digitalid.core.entity.NonHostAccount;
 import net.digitalid.core.entity.NonHostEntity;
@@ -54,7 +54,7 @@ import net.digitalid.core.wrappers.TupleWrapper;
  * This class provides database access to the {@link Agent agents} of the core service.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Stateless
 public final class AgentModule implements StateModule {

@@ -3,7 +3,7 @@ package net.digitalid.core.wrappers;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import net.digitalid.core.attribute.AttributeTypes;
-import net.digitalid.core.database.Database;
+import net.digitalid.database.configuration.Database;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.setup.DatabaseSetup;
 import org.junit.Assert;
@@ -13,7 +13,7 @@ import org.junit.Test;
  * Unit testing of the class {@link Block}.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 public final class CloningTest extends DatabaseSetup {
     

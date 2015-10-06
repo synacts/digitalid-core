@@ -5,11 +5,11 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.agent.Restrictions;
-import net.digitalid.core.annotations.Immutable;
-import net.digitalid.core.annotations.NonCommitting;
-import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.collections.FreezableArray;
-import net.digitalid.core.collections.ReadOnlyArray;
+import net.digitalid.annotations.state.Immutable;
+import net.digitalid.database.annotations.NonCommitting;
+import net.digitalid.annotations.state.Pure;
+import net.digitalid.collections.freezable.FreezableArray;
+import net.digitalid.collections.readonly.ReadOnlyArray;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.packet.PacketException;
@@ -28,7 +28,7 @@ import net.digitalid.core.wrappers.TupleWrapper;
  * Replaces the value of a {@link Password password}.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Immutable
 final class PasswordValueReplace extends CoreServiceInternalAction {

@@ -4,15 +4,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.annotations.Immutable;
-import net.digitalid.core.annotations.NonCommitting;
-import net.digitalid.core.annotations.Pure;
+import net.digitalid.annotations.state.Immutable;
+import net.digitalid.database.annotations.NonCommitting;
+import net.digitalid.annotations.state.Pure;
 import net.digitalid.core.collections.ConcurrentHashMap;
 import net.digitalid.core.collections.ConcurrentMap;
 import net.digitalid.core.concept.Aspect;
 import net.digitalid.core.concept.Instance;
 import net.digitalid.core.concept.Observer;
-import net.digitalid.core.database.Database;
+import net.digitalid.database.configuration.Database;
 import net.digitalid.core.host.Host;
 import net.digitalid.core.identity.Identity;
 import net.digitalid.core.identity.IdentityClass;
@@ -22,7 +22,7 @@ import net.digitalid.core.identity.InternalNonHostIdentity;
  * This class models a non-host account.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Immutable
 public final class NonHostAccount extends Account implements NonHostEntity {

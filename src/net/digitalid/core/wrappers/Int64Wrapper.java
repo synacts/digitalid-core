@@ -7,13 +7,13 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.BasedOn;
 import net.digitalid.core.annotations.Encoding;
-import net.digitalid.core.annotations.Immutable;
+import net.digitalid.annotations.state.Immutable;
 import net.digitalid.core.annotations.Loaded;
-import net.digitalid.core.annotations.NonCommitting;
+import net.digitalid.database.annotations.NonCommitting;
 import net.digitalid.core.annotations.NonEncoding;
-import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.column.Column;
-import net.digitalid.core.column.SQLType;
+import net.digitalid.annotations.state.Pure;
+import net.digitalid.database.column.Column;
+import net.digitalid.database.column.SQLType;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.identity.SyntacticType;
@@ -22,7 +22,7 @@ import net.digitalid.core.identity.SyntacticType;
  * This class wraps a {@code long} for encoding and decoding a block of the syntactic type {@code int64@core.digitalid.net}.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Immutable
 public final class Int64Wrapper extends Wrapper<Int64Wrapper> {

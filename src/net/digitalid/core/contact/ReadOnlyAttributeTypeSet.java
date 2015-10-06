@@ -2,10 +2,10 @@ package net.digitalid.core.contact;
 
 import javax.annotation.Nonnull;
 import net.digitalid.core.agent.FreezableAgentPermissions;
-import net.digitalid.core.annotations.Capturable;
-import net.digitalid.core.annotations.NonFrozen;
-import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.collections.ReadOnlySet;
+import net.digitalid.annotations.reference.Capturable;
+import net.digitalid.collections.annotations.freezable.NonFrozen;
+import net.digitalid.annotations.state.Pure;
+import net.digitalid.collections.readonly.ReadOnlySet;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.wrappers.Blockable;
 
@@ -17,7 +17,7 @@ import net.digitalid.core.wrappers.Blockable;
  * @see ReadonlyContactPermissions
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 public interface ReadOnlyAttributeTypeSet extends ReadOnlySet<SemanticType>, Blockable {
     

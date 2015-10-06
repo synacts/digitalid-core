@@ -5,21 +5,21 @@ import java.sql.SQLException;
 import java.util.Random;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.annotations.Committing;
-import net.digitalid.core.annotations.Immutable;
-import net.digitalid.core.annotations.NonCommitting;
+import net.digitalid.database.annotations.Committing;
+import net.digitalid.annotations.state.Immutable;
+import net.digitalid.database.annotations.NonCommitting;
 import net.digitalid.core.annotations.OnlyForActions;
-import net.digitalid.core.annotations.Pure;
+import net.digitalid.annotations.state.Pure;
 import net.digitalid.core.collections.ConcurrentHashMap;
 import net.digitalid.core.collections.ConcurrentMap;
-import net.digitalid.core.collections.ReadOnlySet;
+import net.digitalid.collections.readonly.ReadOnlySet;
 import net.digitalid.core.concept.Aspect;
 import net.digitalid.core.concept.Instance;
 import net.digitalid.core.concept.Observer;
 import net.digitalid.core.contact.Contact;
 import net.digitalid.core.contact.Context;
 import net.digitalid.core.credential.Credential;
-import net.digitalid.core.database.Database;
+import net.digitalid.database.configuration.Database;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.exceptions.packet.PacketException;
@@ -32,7 +32,7 @@ import net.digitalid.core.synchronizer.Synchronizer;
  * This class models an outgoing role that acts on behalf of an {@link Identity identity}.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Immutable
 public final class OutgoingRole extends Agent {

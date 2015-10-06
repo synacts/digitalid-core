@@ -19,14 +19,14 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
 import net.digitalid.core.annotations.BasedOn;
-import net.digitalid.core.annotations.Capturable;
-import net.digitalid.core.annotations.Immutable;
-import net.digitalid.core.annotations.NonEmpty;
-import net.digitalid.core.annotations.NonNegative;
-import net.digitalid.core.annotations.Positive;
-import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.errors.InitializationError;
-import net.digitalid.core.errors.ShouldNeverHappenError;
+import net.digitalid.annotations.reference.Capturable;
+import net.digitalid.annotations.state.Immutable;
+import net.digitalid.collections.annotations.size.NonEmpty;
+import net.digitalid.annotations.math.NonNegative;
+import net.digitalid.annotations.math.Positive;
+import net.digitalid.annotations.state.Pure;
+import net.digitalid.system.errors.InitializationError;
+import net.digitalid.system.errors.ShouldNeverHappenError;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.storable.BlockBasedSimpleNonConceptFactory;
@@ -38,7 +38,7 @@ import net.digitalid.core.wrappers.IntegerWrapper;
  * Symmetric keys are used to encrypt and decrypt byte arrays with the Advanced Encryption Standard (AES).
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Immutable
 public final class SymmetricKey implements Storable<SymmetricKey> {

@@ -3,12 +3,12 @@ package net.digitalid.core.data;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
-import net.digitalid.core.annotations.Immutable;
+import net.digitalid.annotations.state.Immutable;
 import net.digitalid.core.annotations.Loaded;
-import net.digitalid.core.annotations.Locked;
-import net.digitalid.core.annotations.NonCommitting;
-import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.annotations.Validated;
+import net.digitalid.database.annotations.Locked;
+import net.digitalid.database.annotations.NonCommitting;
+import net.digitalid.annotations.state.Pure;
+import net.digitalid.annotations.state.Validated;
 import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.host.Host;
@@ -21,7 +21,7 @@ import net.digitalid.core.wrappers.Block;
  * @see StateTable
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Immutable
 public abstract class HostTable extends ClientTable implements HostData {

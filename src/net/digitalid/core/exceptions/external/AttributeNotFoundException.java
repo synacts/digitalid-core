@@ -1,7 +1,7 @@
 package net.digitalid.core.exceptions.external;
 
 import javax.annotation.Nonnull;
-import net.digitalid.core.annotations.Immutable;
+import net.digitalid.annotations.state.Immutable;
 import net.digitalid.core.identity.InternalIdentity;
 import net.digitalid.core.identity.SemanticType;
 
@@ -9,7 +9,7 @@ import net.digitalid.core.identity.SemanticType;
  * This exception is thrown when an attribute cannot be found.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Immutable
 public final class AttributeNotFoundException extends SomethingNotFoundException {

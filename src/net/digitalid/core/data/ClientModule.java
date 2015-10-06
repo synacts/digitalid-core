@@ -3,19 +3,19 @@ package net.digitalid.core.data;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.annotations.Locked;
-import net.digitalid.core.annotations.NonCommitting;
-import net.digitalid.core.annotations.NonFrozen;
+import net.digitalid.database.annotations.Locked;
+import net.digitalid.database.annotations.NonCommitting;
+import net.digitalid.collections.annotations.freezable.NonFrozen;
 import net.digitalid.core.annotations.NonNullableElements;
-import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.annotations.Validated;
+import net.digitalid.annotations.state.Pure;
+import net.digitalid.annotations.state.Validated;
 import net.digitalid.core.client.Client;
-import net.digitalid.core.collections.FreezableLinkedList;
-import net.digitalid.core.collections.FreezableList;
-import net.digitalid.core.collections.ReadOnlyList;
-import net.digitalid.core.database.Database;
+import net.digitalid.collections.freezable.FreezableLinkedList;
+import net.digitalid.collections.freezable.FreezableList;
+import net.digitalid.collections.readonly.ReadOnlyList;
+import net.digitalid.database.configuration.Database;
 import net.digitalid.core.entity.Site;
-import net.digitalid.core.errors.ShouldNeverHappenError;
+import net.digitalid.system.errors.ShouldNeverHappenError;
 import net.digitalid.core.host.Host;
 
 /**
@@ -24,7 +24,7 @@ import net.digitalid.core.host.Host;
  * @see HostModule
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 public class ClientModule implements ClientData {
     

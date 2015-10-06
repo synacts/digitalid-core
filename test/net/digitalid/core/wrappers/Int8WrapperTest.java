@@ -12,7 +12,7 @@ import org.junit.Test;
  * Unit testing of the class {@link Int8Wrapper}.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 public final class Int8WrapperTest extends DatabaseSetup {
     

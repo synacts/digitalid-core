@@ -13,23 +13,23 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.annotations.Committing;
-import net.digitalid.core.annotations.Frozen;
-import net.digitalid.core.annotations.Locked;
-import net.digitalid.core.annotations.NonCommitting;
+import net.digitalid.database.annotations.Committing;
+import net.digitalid.collections.annotations.freezable.Frozen;
+import net.digitalid.database.annotations.Locked;
+import net.digitalid.database.annotations.NonCommitting;
 import net.digitalid.core.annotations.NonMapped;
-import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.annotations.Stateless;
+import net.digitalid.annotations.state.Pure;
+import net.digitalid.annotations.state.Stateless;
 import net.digitalid.core.attribute.AttributeValue;
 import net.digitalid.core.attribute.CertifiedAttributeValue;
 import net.digitalid.core.auxiliary.Time;
-import net.digitalid.core.collections.ReadOnlyList;
+import net.digitalid.collections.readonly.ReadOnlyList;
 import net.digitalid.core.contact.FreezableAttributeTypeSet;
 import net.digitalid.core.cryptography.PublicKey;
 import net.digitalid.core.cryptography.PublicKeyChain;
-import net.digitalid.core.database.Database;
+import net.digitalid.database.configuration.Database;
 import net.digitalid.core.entity.Role;
-import net.digitalid.core.errors.InitializationError;
+import net.digitalid.system.errors.InitializationError;
 import net.digitalid.core.exceptions.external.AttributeNotFoundException;
 import net.digitalid.core.exceptions.external.CertificateNotFoundException;
 import net.digitalid.core.exceptions.external.ExternalException;
@@ -45,12 +45,12 @@ import net.digitalid.core.identity.InternalIdentity;
 import net.digitalid.core.identity.InternalNonHostIdentity;
 import net.digitalid.core.identity.Mapper;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.io.Directory;
-import net.digitalid.core.io.Log;
+import net.digitalid.system.directory.Directory;
+import net.digitalid.system.logger.Log;
 import net.digitalid.core.packet.Request;
 import net.digitalid.core.packet.Response;
-import net.digitalid.core.tuples.FreezablePair;
-import net.digitalid.core.tuples.ReadOnlyPair;
+import net.digitalid.collections.tuples.FreezablePair;
+import net.digitalid.collections.tuples.ReadOnlyPair;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.SelfcontainedWrapper;
 
@@ -58,7 +58,7 @@ import net.digitalid.core.wrappers.SelfcontainedWrapper;
  * This class caches the {@link AttributeValue attribute values} of {@link Identity identities} for the attribute-specific {@link SemanticType#getCachingPeriod() caching period}.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Stateless
 public final class Cache {

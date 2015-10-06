@@ -7,9 +7,9 @@ import net.digitalid.core.agent.Agent;
 import net.digitalid.core.agent.FreezableAgentPermissions;
 import net.digitalid.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.core.agent.Restrictions;
-import net.digitalid.core.annotations.Immutable;
-import net.digitalid.core.annotations.NonCommitting;
-import net.digitalid.core.annotations.Pure;
+import net.digitalid.annotations.state.Immutable;
+import net.digitalid.database.annotations.NonCommitting;
+import net.digitalid.annotations.state.Pure;
 import net.digitalid.core.entity.Account;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
@@ -29,7 +29,7 @@ import net.digitalid.core.wrappers.HostSignatureWrapper;
  * @see CoreServiceActionReply
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Immutable
 public abstract class ActionReply extends Reply implements Auditable {

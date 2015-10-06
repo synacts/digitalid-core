@@ -11,7 +11,7 @@ import net.digitalid.core.credential.Credential;
  * This annotation indicates that a {@link Credential credential} is {@link Credential#isActive() active}.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Documented
 @TargetType(Credential.class)

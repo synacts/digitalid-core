@@ -2,13 +2,13 @@ package net.digitalid.core.factory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.annotations.Captured;
-import net.digitalid.core.annotations.Immutable;
+import net.digitalid.annotations.reference.Captured;
+import net.digitalid.annotations.state.Immutable;
 import net.digitalid.core.annotations.Loaded;
 import net.digitalid.core.annotations.NonEncoding;
 import net.digitalid.core.annotations.NonNullableElements;
-import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.column.Column;
+import net.digitalid.annotations.state.Pure;
+import net.digitalid.database.column.Column;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.wrappers.Block;
@@ -21,7 +21,7 @@ import net.digitalid.core.wrappers.Block;
  * @see FactoryBasedLocalFactory
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Immutable
 public abstract class LocalFactory<O, E> extends GlobalFactory<O, E> {

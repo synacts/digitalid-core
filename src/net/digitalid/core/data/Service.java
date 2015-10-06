@@ -4,17 +4,17 @@ import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.annotations.Immutable;
+import net.digitalid.annotations.state.Immutable;
 import net.digitalid.core.annotations.Loaded;
-import net.digitalid.core.annotations.NonCommitting;
-import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.annotations.Validated;
+import net.digitalid.database.annotations.NonCommitting;
+import net.digitalid.annotations.state.Pure;
+import net.digitalid.annotations.state.Validated;
 import net.digitalid.core.attribute.Attribute;
 import net.digitalid.core.attribute.AttributeValue;
 import net.digitalid.core.cache.Cache;
-import net.digitalid.core.collections.FreezableLinkedHashMap;
-import net.digitalid.core.collections.FreezableMap;
-import net.digitalid.core.collections.ReadOnlyCollection;
+import net.digitalid.collections.freezable.FreezableLinkedHashMap;
+import net.digitalid.collections.freezable.FreezableMap;
+import net.digitalid.collections.readonly.ReadOnlyCollection;
 import net.digitalid.core.entity.Role;
 import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
@@ -35,7 +35,7 @@ import net.digitalid.core.identity.SemanticType;
  * @see CoreService
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 public class Service extends StateModule implements Storable<Service, Object> {
     

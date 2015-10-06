@@ -11,9 +11,9 @@ import net.digitalid.core.agent.Agent;
 import net.digitalid.core.agent.RandomizedAgentPermissions;
 import net.digitalid.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.core.agent.Restrictions;
-import net.digitalid.core.annotations.Immutable;
-import net.digitalid.core.annotations.NonCommitting;
-import net.digitalid.core.annotations.Pure;
+import net.digitalid.annotations.state.Immutable;
+import net.digitalid.database.annotations.NonCommitting;
+import net.digitalid.annotations.state.Pure;
 import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.cryptography.Element;
 import net.digitalid.core.cryptography.Exponent;
@@ -49,7 +49,7 @@ import net.digitalid.core.wrappers.TupleWrapper;
  * @see CredentialReply
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Immutable
 final class CredentialInternalQuery extends CoreServiceInternalQuery {

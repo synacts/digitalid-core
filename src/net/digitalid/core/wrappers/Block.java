@@ -11,30 +11,30 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.annotations.Capturable;
-import net.digitalid.core.annotations.Captured;
+import net.digitalid.annotations.reference.Capturable;
+import net.digitalid.annotations.reference.Captured;
 import net.digitalid.core.annotations.Encoded;
 import net.digitalid.core.annotations.Encoding;
 import net.digitalid.core.annotations.EncodingRecipient;
-import net.digitalid.core.annotations.Immutable;
+import net.digitalid.annotations.state.Immutable;
 import net.digitalid.core.annotations.Loaded;
-import net.digitalid.core.annotations.NonEmpty;
+import net.digitalid.collections.annotations.size.NonEmpty;
 import net.digitalid.core.annotations.NonEncoded;
 import net.digitalid.core.annotations.NonEncoding;
 import net.digitalid.core.annotations.NonEncodingRecipient;
-import net.digitalid.core.annotations.NonFrozen;
-import net.digitalid.core.annotations.NonNegative;
+import net.digitalid.collections.annotations.freezable.NonFrozen;
+import net.digitalid.annotations.math.NonNegative;
 import net.digitalid.core.annotations.NonNullableElements;
-import net.digitalid.core.annotations.Positive;
-import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.annotations.ValidIndex;
-import net.digitalid.core.collections.FreezableArray;
-import net.digitalid.core.column.Column;
-import net.digitalid.core.column.SQLType;
+import net.digitalid.annotations.math.Positive;
+import net.digitalid.annotations.state.Pure;
+import net.digitalid.collections.annotations.index.ValidIndex;
+import net.digitalid.collections.freezable.FreezableArray;
+import net.digitalid.database.column.Column;
+import net.digitalid.database.column.SQLType;
 import net.digitalid.core.cryptography.InitializationVector;
 import net.digitalid.core.cryptography.SymmetricKey;
-import net.digitalid.core.database.Database;
-import net.digitalid.core.errors.ShouldNeverHappenError;
+import net.digitalid.database.configuration.Database;
+import net.digitalid.system.errors.ShouldNeverHappenError;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.factory.LocalFactory;
 import net.digitalid.core.factory.Storable;
@@ -55,7 +55,7 @@ import net.digitalid.core.identity.SemanticType;
  * @invariant !isEncoded() || isAllocated() : "If the block is encoded, it is also allocated.";
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Immutable
 public final class Block implements Storable<Block, Object>, Cloneable {
@@ -982,7 +982,7 @@ public final class Block implements Storable<Block, Object>, Cloneable {
      * This class allows to read directly from the byte array of a {@link Block}.
      * 
      * @author Kaspar Etter (kaspar.etter@digitalid.net)
-     * @version 1.0
+     * @version 1.0.0
      */
     private final class BlockInputStream extends InputStream {
         
@@ -1141,7 +1141,7 @@ public final class Block implements Storable<Block, Object>, Cloneable {
      * This class allows to stream directly into the byte array of a {@link Block}.
      * 
      * @author Kaspar Etter (kaspar.etter@digitalid.net)
-     * @version 1.0
+     * @version 1.0.0
      */
     private final class BlockOutputStream extends OutputStream {
         

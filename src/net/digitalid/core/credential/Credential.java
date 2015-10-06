@@ -9,13 +9,13 @@ import javax.annotation.Nullable;
 import net.digitalid.core.agent.RandomizedAgentPermissions;
 import net.digitalid.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.core.agent.Restrictions;
-import net.digitalid.core.annotations.Immutable;
-import net.digitalid.core.annotations.NonCommitting;
-import net.digitalid.core.annotations.Pure;
+import net.digitalid.annotations.state.Immutable;
+import net.digitalid.database.annotations.NonCommitting;
+import net.digitalid.annotations.state.Pure;
 import net.digitalid.core.attribute.AttributeValue;
 import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.cache.Cache;
-import net.digitalid.core.collections.FreezableArray;
+import net.digitalid.collections.freezable.FreezableArray;
 import net.digitalid.core.cryptography.Exponent;
 import net.digitalid.core.cryptography.PublicKey;
 import net.digitalid.core.exceptions.external.ExternalException;
@@ -44,7 +44,7 @@ import net.digitalid.core.wrappers.TupleWrapper;
  * @see HostCredential
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Immutable
 public abstract class Credential {

@@ -4,13 +4,13 @@ import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.annotations.Capturable;
-import net.digitalid.core.annotations.Frozen;
-import net.digitalid.core.annotations.NonCommitting;
-import net.digitalid.core.annotations.NonFrozen;
+import net.digitalid.annotations.reference.Capturable;
+import net.digitalid.collections.annotations.freezable.Frozen;
+import net.digitalid.database.annotations.NonCommitting;
+import net.digitalid.collections.annotations.freezable.NonFrozen;
 import net.digitalid.core.annotations.NonNullableElements;
-import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.collections.ReadOnlyList;
+import net.digitalid.annotations.state.Pure;
+import net.digitalid.collections.readonly.ReadOnlyList;
 import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.handler.Reply;
@@ -23,7 +23,7 @@ import net.digitalid.core.wrappers.Blockable;
  * @see FreezablePredecessors
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 public interface ReadOnlyPredecessors extends ReadOnlyList<Predecessor>, Blockable {
 

@@ -6,22 +6,22 @@ import java.net.Socket;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.annotations.Frozen;
-import net.digitalid.core.annotations.Immutable;
-import net.digitalid.core.annotations.NonCommitting;
-import net.digitalid.core.annotations.NonEmpty;
+import net.digitalid.collections.annotations.freezable.Frozen;
+import net.digitalid.annotations.state.Immutable;
+import net.digitalid.database.annotations.NonCommitting;
+import net.digitalid.collections.annotations.size.NonEmpty;
 import net.digitalid.core.annotations.NonNullableElements;
-import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.annotations.RawRecipient;
-import net.digitalid.core.annotations.ValidIndex;
+import net.digitalid.annotations.state.Pure;
+import net.digitalid.annotations.reference.RawRecipient;
+import net.digitalid.collections.annotations.index.ValidIndex;
 import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.cache.AttributesQuery;
 import net.digitalid.core.cache.Cache;
 import net.digitalid.core.collections.ConcurrentHashMap;
 import net.digitalid.core.collections.ConcurrentMap;
-import net.digitalid.core.collections.FreezableArrayList;
-import net.digitalid.core.collections.FreezableList;
-import net.digitalid.core.collections.ReadOnlyList;
+import net.digitalid.collections.freezable.FreezableArrayList;
+import net.digitalid.collections.freezable.FreezableList;
+import net.digitalid.collections.readonly.ReadOnlyList;
 import net.digitalid.core.contact.FreezableAttributeTypeSet;
 import net.digitalid.core.cryptography.PublicKeyChain;
 import net.digitalid.core.cryptography.SymmetricKey;
@@ -42,8 +42,8 @@ import net.digitalid.core.server.Server;
 import net.digitalid.core.service.CoreService;
 import net.digitalid.core.synchronizer.Audit;
 import net.digitalid.core.synchronizer.RequestAudit;
-import net.digitalid.core.tuples.FreezablePair;
-import net.digitalid.core.tuples.ReadOnlyPair;
+import net.digitalid.collections.tuples.FreezablePair;
+import net.digitalid.collections.tuples.ReadOnlyPair;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.CompressionWrapper;
 import net.digitalid.core.wrappers.SignatureWrapper;
@@ -59,7 +59,7 @@ import net.digitalid.core.wrappers.SignatureWrapper;
  * @see CredentialsRequest
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Immutable
 public class Request extends Packet {

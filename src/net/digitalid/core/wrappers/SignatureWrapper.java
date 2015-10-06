@@ -8,18 +8,18 @@ import javax.annotation.Nullable;
 import net.digitalid.core.agent.Agent;
 import net.digitalid.core.annotations.BasedOn;
 import net.digitalid.core.annotations.Encoding;
-import net.digitalid.core.annotations.Immutable;
+import net.digitalid.annotations.state.Immutable;
 import net.digitalid.core.annotations.Loaded;
-import net.digitalid.core.annotations.Locked;
-import net.digitalid.core.annotations.NonCommitting;
+import net.digitalid.database.annotations.Locked;
+import net.digitalid.database.annotations.NonCommitting;
 import net.digitalid.core.annotations.NonEncoding;
-import net.digitalid.core.annotations.NonFrozen;
+import net.digitalid.collections.annotations.freezable.NonFrozen;
 import net.digitalid.core.annotations.NullableElements;
-import net.digitalid.core.annotations.Positive;
-import net.digitalid.core.annotations.Pure;
+import net.digitalid.annotations.math.Positive;
+import net.digitalid.annotations.state.Pure;
 import net.digitalid.core.auxiliary.Time;
-import net.digitalid.core.collections.FreezableArray;
-import net.digitalid.core.collections.ReadOnlyArray;
+import net.digitalid.collections.freezable.FreezableArray;
+import net.digitalid.collections.readonly.ReadOnlyArray;
 import net.digitalid.core.cryptography.PublicKey;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NonHostEntity;
@@ -50,7 +50,7 @@ import net.digitalid.core.synchronizer.Audit;
  * @see CredentialsSignatureWrapper
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Immutable
 public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {

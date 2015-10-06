@@ -7,21 +7,21 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.annotations.Committing;
-import net.digitalid.core.annotations.Frozen;
-import net.digitalid.core.annotations.Immutable;
+import net.digitalid.database.annotations.Committing;
+import net.digitalid.collections.annotations.freezable.Frozen;
+import net.digitalid.annotations.state.Immutable;
 import net.digitalid.core.annotations.NonNullableElements;
-import net.digitalid.core.annotations.Pure;
+import net.digitalid.annotations.state.Pure;
 import net.digitalid.core.auxiliary.Time;
-import net.digitalid.core.collections.FreezableArray;
-import net.digitalid.core.collections.FreezableArrayList;
-import net.digitalid.core.collections.FreezableHashSet;
-import net.digitalid.core.collections.FreezableLinkedList;
-import net.digitalid.core.collections.FreezableList;
-import net.digitalid.core.collections.FreezableSet;
-import net.digitalid.core.collections.ReadOnlyList;
-import net.digitalid.core.collections.ReadOnlySet;
-import net.digitalid.core.database.Database;
+import net.digitalid.collections.freezable.FreezableArray;
+import net.digitalid.collections.freezable.FreezableArrayList;
+import net.digitalid.collections.freezable.FreezableHashSet;
+import net.digitalid.collections.freezable.FreezableLinkedList;
+import net.digitalid.collections.freezable.FreezableList;
+import net.digitalid.collections.freezable.FreezableSet;
+import net.digitalid.collections.readonly.ReadOnlyList;
+import net.digitalid.collections.readonly.ReadOnlySet;
+import net.digitalid.database.configuration.Database;
 import net.digitalid.core.entity.Role;
 import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.packet.PacketException;
@@ -29,12 +29,12 @@ import net.digitalid.core.handler.Action;
 import net.digitalid.core.handler.InternalAction;
 import net.digitalid.core.handler.Method;
 import net.digitalid.core.identifier.HostIdentifier;
-import net.digitalid.core.io.Log;
+import net.digitalid.system.logger.Log;
 import net.digitalid.core.data.StateModule;
 import net.digitalid.core.packet.Packet;
 import net.digitalid.core.packet.Response;
 import net.digitalid.core.data.Service;
-import net.digitalid.core.thread.NamedThreadFactory;
+import net.digitalid.system.thread.NamedThreadFactory;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.CompressionWrapper;
 import net.digitalid.core.wrappers.ListWrapper;
@@ -46,7 +46,7 @@ import net.digitalid.core.wrappers.TupleWrapper;
  * This class models a response audit with the trail and the times of the last and this audit.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Immutable
 public final class ResponseAudit extends Audit {

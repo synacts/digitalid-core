@@ -9,23 +9,23 @@ import javax.annotation.Nullable;
 import net.digitalid.core.annotations.BasedOn;
 import net.digitalid.core.annotations.Encoded;
 import net.digitalid.core.annotations.Encoding;
-import net.digitalid.core.annotations.Immutable;
+import net.digitalid.annotations.state.Immutable;
 import net.digitalid.core.annotations.Loaded;
 import net.digitalid.core.annotations.NonEncoding;
-import net.digitalid.core.annotations.Pure;
+import net.digitalid.annotations.state.Pure;
 import net.digitalid.core.auxiliary.Time;
-import net.digitalid.core.errors.ShouldNeverHappenError;
+import net.digitalid.system.errors.ShouldNeverHappenError;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.identity.SyntacticType;
-import net.digitalid.core.io.Log;
+import net.digitalid.system.logger.Log;
 import net.digitalid.core.factory.Storable;
 
 /**
  * This class wraps an {@link Block element} for encoding and decoding a block of the syntactic type {@code compression@core.digitalid.net}.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Immutable
 public final class CompressionWrapper extends BlockBasedWrapper<CompressionWrapper> {

@@ -9,8 +9,8 @@ import net.digitalid.core.agent.Agent;
 import net.digitalid.core.agent.FreezableAgentPermissions;
 import net.digitalid.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.core.agent.Restrictions;
-import net.digitalid.core.annotations.NonCommitting;
-import net.digitalid.core.annotations.Pure;
+import net.digitalid.database.annotations.NonCommitting;
+import net.digitalid.annotations.state.Pure;
 import net.digitalid.core.cache.Cache;
 import net.digitalid.core.cryptography.PublicKey;
 import net.digitalid.core.entity.Entity;
@@ -29,7 +29,7 @@ import net.digitalid.core.wrappers.SignatureWrapper;
  * @invariant getSubject().getHostIdentifier().equals(getRecipient()) : "The host of the subject has to match the recipient for internal queries of the core service.";
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 public abstract class CoreServiceInternalQuery extends InternalQuery {
     

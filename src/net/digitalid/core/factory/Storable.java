@@ -1,7 +1,7 @@
 package net.digitalid.core.factory;
 
 import javax.annotation.Nonnull;
-import net.digitalid.core.annotations.Pure;
+import net.digitalid.annotations.state.Pure;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.wrappers.Block;
 
@@ -13,7 +13,7 @@ import net.digitalid.core.wrappers.Block;
  *            In case no external information is needed for the restoration of an object, declare it as an {@link Object}.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 public interface Storable<O, E> {
     

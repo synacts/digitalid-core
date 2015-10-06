@@ -15,26 +15,26 @@ import net.digitalid.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.core.agent.Restrictions;
 import net.digitalid.core.annotations.AttributeType;
 import net.digitalid.core.annotations.BasedOn;
-import net.digitalid.core.annotations.Frozen;
-import net.digitalid.core.annotations.Immutable;
+import net.digitalid.collections.annotations.freezable.Frozen;
+import net.digitalid.annotations.state.Immutable;
 import net.digitalid.core.annotations.Loaded;
-import net.digitalid.core.annotations.Locked;
-import net.digitalid.core.annotations.NonCommitting;
-import net.digitalid.core.annotations.NonEmpty;
+import net.digitalid.database.annotations.Locked;
+import net.digitalid.database.annotations.NonCommitting;
+import net.digitalid.collections.annotations.size.NonEmpty;
 import net.digitalid.core.annotations.NonEncoding;
-import net.digitalid.core.annotations.NonFrozen;
+import net.digitalid.collections.annotations.freezable.NonFrozen;
 import net.digitalid.core.annotations.NonNullableElements;
-import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.annotations.Validated;
+import net.digitalid.annotations.state.Pure;
+import net.digitalid.annotations.state.Validated;
 import net.digitalid.core.attribute.AttributeValue;
 import net.digitalid.core.attribute.CertifiedAttributeValue;
 import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.cache.Cache;
-import net.digitalid.core.collections.FreezableArray;
-import net.digitalid.core.collections.FreezableArrayList;
-import net.digitalid.core.collections.FreezableList;
-import net.digitalid.core.collections.ReadOnlyArray;
-import net.digitalid.core.collections.ReadOnlyList;
+import net.digitalid.collections.freezable.FreezableArray;
+import net.digitalid.collections.freezable.FreezableArrayList;
+import net.digitalid.collections.freezable.FreezableList;
+import net.digitalid.collections.readonly.ReadOnlyArray;
+import net.digitalid.collections.readonly.ReadOnlyList;
 import net.digitalid.core.contact.Contact;
 import net.digitalid.core.credential.ClientCredential;
 import net.digitalid.core.credential.Credential;
@@ -60,7 +60,7 @@ import net.digitalid.core.identity.InternalNonHostIdentity;
 import net.digitalid.core.identity.InternalPerson;
 import net.digitalid.core.identity.Person;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.io.Log;
+import net.digitalid.system.logger.Log;
 import net.digitalid.core.factory.Storable;
 import net.digitalid.core.synchronizer.Audit;
 
@@ -79,7 +79,7 @@ import net.digitalid.core.synchronizer.Audit;
  * The randomized permissions are always disclosed unless a commitment is given for certificate shortening.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Immutable
 public final class CredentialsSignatureWrapper extends SignatureWrapper {

@@ -3,12 +3,12 @@ package net.digitalid.core.agent;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
-import net.digitalid.core.annotations.Committing;
+import net.digitalid.database.annotations.Committing;
 import net.digitalid.core.attribute.AttributeTypes;
 import net.digitalid.core.client.Client;
 import net.digitalid.core.client.Commitment;
 import net.digitalid.core.contact.Context;
-import net.digitalid.core.database.Database;
+import net.digitalid.database.configuration.Database;
 import net.digitalid.core.entity.NativeRole;
 import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.packet.PacketException;
@@ -26,7 +26,7 @@ import org.junit.runners.MethodSorters;
  * Unit testing of the {@link Agent agent} with its {@link Action actions}.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public final class AgentTest extends IdentitySetup {

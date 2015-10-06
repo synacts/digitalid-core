@@ -5,14 +5,14 @@ import javax.annotation.Nullable;
 import net.digitalid.core.agent.Agent;
 import net.digitalid.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.core.agent.Restrictions;
-import net.digitalid.core.annotations.Immutable;
-import net.digitalid.core.annotations.NonCommitting;
-import net.digitalid.core.annotations.Pure;
+import net.digitalid.annotations.state.Immutable;
+import net.digitalid.database.annotations.NonCommitting;
+import net.digitalid.annotations.state.Pure;
 import net.digitalid.core.auxiliary.None;
 import net.digitalid.core.concept.Concept;
 import net.digitalid.core.concept.Index;
 import net.digitalid.core.data.StateModule;
-import net.digitalid.core.database.Database;
+import net.digitalid.database.configuration.Database;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.entity.Role;
 import net.digitalid.core.identity.SemanticType;
@@ -28,7 +28,7 @@ import net.digitalid.core.wrappers.StringWrapper;
  * This class models a password of a digital identity.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 public final class Password extends Concept<Password, NonHostEntity, Object> {
     

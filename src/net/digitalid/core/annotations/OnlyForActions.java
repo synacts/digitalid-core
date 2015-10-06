@@ -11,7 +11,7 @@ import net.digitalid.core.handler.Action;
  * This annotation indicates that a method should only be called by {@link Action actions}.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Documented
 @Deprecated

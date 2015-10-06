@@ -8,19 +8,19 @@ import net.digitalid.core.agent.Agent;
 import net.digitalid.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.core.agent.Restrictions;
 import net.digitalid.core.annotations.Loaded;
-import net.digitalid.core.annotations.Locked;
-import net.digitalid.core.annotations.NonCommitting;
-import net.digitalid.core.annotations.NonFrozen;
+import net.digitalid.database.annotations.Locked;
+import net.digitalid.database.annotations.NonCommitting;
+import net.digitalid.collections.annotations.freezable.NonFrozen;
 import net.digitalid.core.annotations.NonNullableElements;
-import net.digitalid.core.annotations.OnMainThread;
-import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.annotations.Validated;
+import net.digitalid.database.annotations.OnMainThread;
+import net.digitalid.annotations.state.Pure;
+import net.digitalid.annotations.state.Validated;
 import net.digitalid.core.client.Client;
-import net.digitalid.core.collections.FreezableArrayList;
-import net.digitalid.core.collections.FreezableLinkedHashMap;
-import net.digitalid.core.collections.FreezableList;
-import net.digitalid.core.collections.FreezableMap;
-import net.digitalid.core.collections.ReadOnlyList;
+import net.digitalid.collections.freezable.FreezableArrayList;
+import net.digitalid.collections.freezable.FreezableLinkedHashMap;
+import net.digitalid.collections.freezable.FreezableList;
+import net.digitalid.collections.freezable.FreezableMap;
+import net.digitalid.collections.readonly.ReadOnlyList;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
@@ -36,7 +36,7 @@ import net.digitalid.core.wrappers.SelfcontainedWrapper;
  * State modules are used on both {@link Host hosts} and {@link Client clients}.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 public class StateModule extends HostModule implements StateData {
     

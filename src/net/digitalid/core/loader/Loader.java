@@ -1,5 +1,6 @@
-package net.digitalid.core.io;
+package net.digitalid.system.loader;
 
+import net.digitalid.system.logger.Log;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -13,14 +14,14 @@ import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import javax.annotation.Nonnull;
-import net.digitalid.core.annotations.Committing;
-import net.digitalid.core.annotations.IsDirectory;
-import net.digitalid.core.annotations.Locked;
-import net.digitalid.core.annotations.Stateless;
+import net.digitalid.database.annotations.Committing;
+import net.digitalid.system.directory.annotations.IsDirectory;
+import net.digitalid.database.annotations.Locked;
+import net.digitalid.annotations.state.Stateless;
 import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.cache.Cache;
-import net.digitalid.core.database.Database;
-import net.digitalid.core.errors.InitializationError;
+import net.digitalid.database.configuration.Database;
+import net.digitalid.system.errors.InitializationError;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.server.Server;
 import net.digitalid.core.wrappers.SignatureWrapper;
@@ -29,7 +30,7 @@ import net.digitalid.core.wrappers.SignatureWrapper;
  * This class loads other classes in other domains.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Stateless
 public final class Loader {

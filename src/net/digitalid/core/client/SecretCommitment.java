@@ -1,8 +1,8 @@
 package net.digitalid.core.client;
 
 import javax.annotation.Nonnull;
-import net.digitalid.core.annotations.Immutable;
-import net.digitalid.core.annotations.Pure;
+import net.digitalid.annotations.state.Immutable;
+import net.digitalid.annotations.state.Pure;
 import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.cryptography.Element;
 import net.digitalid.core.cryptography.Exponent;
@@ -20,7 +20,7 @@ import net.digitalid.core.wrappers.ClientSignatureWrapper;
  * @see ClientSignatureWrapper
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Immutable
 public final class SecretCommitment extends Commitment {

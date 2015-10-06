@@ -1,13 +1,13 @@
 package net.digitalid.core.property;
 
 import javax.annotation.Nonnull;
-import net.digitalid.core.annotations.Pure;
+import net.digitalid.annotations.state.Pure;
 
 /**
  * A value validator checks whether a value is valid.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 public interface ValueValidator<V> {
     

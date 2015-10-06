@@ -4,9 +4,9 @@ import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.annotations.Immutable;
-import net.digitalid.core.annotations.NonCommitting;
-import net.digitalid.core.annotations.Pure;
+import net.digitalid.annotations.state.Immutable;
+import net.digitalid.database.annotations.NonCommitting;
+import net.digitalid.annotations.state.Pure;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
@@ -28,7 +28,7 @@ import net.digitalid.core.wrappers.SignatureWrapper;
  * @see IdentityReply
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Immutable
 public final class IdentityQuery extends CoreServiceExternalQuery {

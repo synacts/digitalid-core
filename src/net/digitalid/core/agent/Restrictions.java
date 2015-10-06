@@ -7,13 +7,13 @@ import java.sql.SQLException;
 import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.annotations.Immutable;
-import net.digitalid.core.annotations.NonCommitting;
-import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.collections.FreezableArray;
+import net.digitalid.annotations.state.Immutable;
+import net.digitalid.database.annotations.NonCommitting;
+import net.digitalid.annotations.state.Pure;
+import net.digitalid.collections.freezable.FreezableArray;
 import net.digitalid.core.contact.Contact;
 import net.digitalid.core.contact.Context;
-import net.digitalid.core.database.Database;
+import net.digitalid.database.configuration.Database;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.entity.Site;
 import net.digitalid.core.exceptions.external.ExternalException;
@@ -36,7 +36,7 @@ import net.digitalid.core.wrappers.TupleWrapper;
  * @invariant getContext() == null || getContact() == null : "The context or the contact is null.";
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Immutable
 public final class Restrictions implements Blockable, SQLizable {

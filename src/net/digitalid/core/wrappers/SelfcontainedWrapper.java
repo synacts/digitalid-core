@@ -7,15 +7,15 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.BasedOn;
 import net.digitalid.core.annotations.Encoding;
-import net.digitalid.core.annotations.Immutable;
+import net.digitalid.annotations.state.Immutable;
 import net.digitalid.core.annotations.Loaded;
-import net.digitalid.core.annotations.Locked;
-import net.digitalid.core.annotations.NonCommitting;
+import net.digitalid.database.annotations.Locked;
+import net.digitalid.database.annotations.NonCommitting;
 import net.digitalid.core.annotations.NonEncoding;
-import net.digitalid.core.annotations.NonNegative;
+import net.digitalid.annotations.math.NonNegative;
 import net.digitalid.core.annotations.NonNullableElements;
-import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.collections.ReadOnlyArray;
+import net.digitalid.annotations.state.Pure;
+import net.digitalid.collections.readonly.ReadOnlyArray;
 import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.exceptions.packet.PacketException;
@@ -31,7 +31,7 @@ import net.digitalid.core.wrappers.exceptions.UnsupportedBlockLengthException;
  * This class wraps an {@link Block element} for encoding and decoding a block of the syntactic type {@code selfcontained@core.digitalid.net}.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Immutable
 public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedWrapper> {

@@ -13,7 +13,7 @@ import net.digitalid.core.identity.Type;
  * @see NonLoadedRecipient
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Documented
 @Target(ElementType.METHOD)

@@ -7,9 +7,9 @@ import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import net.digitalid.core.agent.FreezableAgentPermissions;
-import net.digitalid.core.annotations.Committing;
-import net.digitalid.core.annotations.Locked;
-import net.digitalid.core.annotations.Pure;
+import net.digitalid.database.annotations.Committing;
+import net.digitalid.database.annotations.Locked;
+import net.digitalid.annotations.state.Pure;
 import net.digitalid.core.attribute.Attribute;
 import net.digitalid.core.attribute.AttributeValue;
 import net.digitalid.core.attribute.CertifiedAttributeValue;
@@ -20,7 +20,7 @@ import net.digitalid.core.cryptography.KeyPair;
 import net.digitalid.core.cryptography.PrivateKeyChain;
 import net.digitalid.core.cryptography.PublicKeyChain;
 import net.digitalid.core.data.Service;
-import net.digitalid.core.database.Database;
+import net.digitalid.database.configuration.Database;
 import net.digitalid.core.entity.HostAccount;
 import net.digitalid.core.entity.Site;
 import net.digitalid.core.exceptions.external.ExternalException;
@@ -29,7 +29,7 @@ import net.digitalid.core.identifier.HostIdentifier;
 import net.digitalid.core.identity.HostIdentity;
 import net.digitalid.core.identity.InternalIdentity;
 import net.digitalid.core.identity.Mapper;
-import net.digitalid.core.io.Directory;
+import net.digitalid.system.directory.Directory;
 import net.digitalid.core.server.Server;
 import net.digitalid.core.service.CoreService;
 import net.digitalid.core.wrappers.SelfcontainedWrapper;
@@ -40,7 +40,7 @@ import net.digitalid.core.wrappers.SelfcontainedWrapper;
  * TODO: Make sure that the host keys get rotated!
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 public final class Host extends Site {
     

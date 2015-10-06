@@ -5,11 +5,11 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.agent.Restrictions;
-import net.digitalid.core.annotations.Immutable;
-import net.digitalid.core.annotations.NonCommitting;
+import net.digitalid.annotations.state.Immutable;
+import net.digitalid.database.annotations.NonCommitting;
 import net.digitalid.core.annotations.OnlyForClients;
 import net.digitalid.core.annotations.OnlyForHosts;
-import net.digitalid.core.annotations.Pure;
+import net.digitalid.annotations.state.Pure;
 import net.digitalid.core.client.Client;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.Role;
@@ -34,7 +34,7 @@ import net.digitalid.core.wrappers.SignatureWrapper;
  * @see CoreServiceInternalAction
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Immutable
 public abstract class InternalAction extends Action implements InternalMethod {

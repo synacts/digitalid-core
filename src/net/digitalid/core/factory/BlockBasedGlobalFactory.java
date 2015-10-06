@@ -6,18 +6,18 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.annotations.Capturable;
-import net.digitalid.core.annotations.Immutable;
+import net.digitalid.annotations.reference.Capturable;
+import net.digitalid.annotations.state.Immutable;
 import net.digitalid.core.annotations.Loaded;
-import net.digitalid.core.annotations.NonCommitting;
-import net.digitalid.core.annotations.NonFrozen;
+import net.digitalid.database.annotations.NonCommitting;
+import net.digitalid.collections.annotations.freezable.NonFrozen;
 import net.digitalid.core.annotations.NonNullableElements;
-import net.digitalid.core.annotations.Pure;
+import net.digitalid.annotations.state.Pure;
 import net.digitalid.core.auxiliary.None;
-import net.digitalid.core.collections.FreezableArray;
-import net.digitalid.core.column.Column;
-import net.digitalid.core.column.SQLType;
-import net.digitalid.core.database.Database;
+import net.digitalid.collections.freezable.FreezableArray;
+import net.digitalid.database.column.Column;
+import net.digitalid.database.column.SQLType;
+import net.digitalid.database.configuration.Database;
 import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.identity.SemanticType;
@@ -27,7 +27,7 @@ import net.digitalid.core.wrappers.Block;
  * This class implements the methods that all global factories which store their data as a {@link Block block} in the {@link Database database} share.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Immutable
 public abstract class BlockBasedGlobalFactory<O extends Storable<O, E>, E> extends GlobalFactory<O, E> {

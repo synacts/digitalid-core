@@ -7,20 +7,20 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.agent.Agent;
 import net.digitalid.core.agent.AgentModule;
-import net.digitalid.core.annotations.Committing;
-import net.digitalid.core.annotations.Immutable;
-import net.digitalid.core.annotations.NonCommitting;
-import net.digitalid.core.annotations.NonFrozen;
-import net.digitalid.core.annotations.NonLocked;
+import net.digitalid.database.annotations.Committing;
+import net.digitalid.annotations.state.Immutable;
+import net.digitalid.database.annotations.NonCommitting;
+import net.digitalid.collections.annotations.freezable.NonFrozen;
+import net.digitalid.database.annotations.NonLocked;
 import net.digitalid.core.annotations.NonNullableElements;
-import net.digitalid.core.annotations.Pure;
+import net.digitalid.annotations.state.Pure;
 import net.digitalid.core.annotations.UniqueElements;
 import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.client.Client;
-import net.digitalid.core.collections.FreezableList;
-import net.digitalid.core.collections.ReadOnlyList;
+import net.digitalid.collections.freezable.FreezableList;
+import net.digitalid.collections.readonly.ReadOnlyList;
 import net.digitalid.core.credential.ClientCredential;
-import net.digitalid.core.database.Database;
+import net.digitalid.database.configuration.Database;
 import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.packet.PacketError;
 import net.digitalid.core.exceptions.packet.PacketException;
@@ -40,7 +40,7 @@ import net.digitalid.core.synchronizer.SynchronizerModule;
  * @see NonNativeRole
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Immutable
 public abstract class Role extends EntityClass implements NonHostEntity, Observer {

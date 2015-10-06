@@ -1,17 +1,17 @@
 package net.digitalid.core.cryptography;
 
 import javax.annotation.Nonnull;
-import net.digitalid.core.annotations.Frozen;
-import net.digitalid.core.annotations.Immutable;
-import net.digitalid.core.annotations.NonEmpty;
+import net.digitalid.collections.annotations.freezable.Frozen;
+import net.digitalid.annotations.state.Immutable;
+import net.digitalid.collections.annotations.size.NonEmpty;
 import net.digitalid.core.annotations.NonNullableElements;
-import net.digitalid.core.annotations.Pure;
+import net.digitalid.annotations.state.Pure;
 import net.digitalid.core.auxiliary.Time;
-import net.digitalid.core.collections.FreezableLinkedList;
-import net.digitalid.core.collections.ReadOnlyList;
+import net.digitalid.collections.freezable.FreezableLinkedList;
+import net.digitalid.collections.readonly.ReadOnlyList;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.tuples.FreezablePair;
-import net.digitalid.core.tuples.ReadOnlyPair;
+import net.digitalid.collections.tuples.FreezablePair;
+import net.digitalid.collections.tuples.ReadOnlyPair;
 import net.digitalid.core.wrappers.ListWrapper;
 import net.digitalid.core.wrappers.TupleWrapper;
 
@@ -19,7 +19,7 @@ import net.digitalid.core.wrappers.TupleWrapper;
  * This class models a {@link KeyChain key chain} of {@link PrivateKey private keys}.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Immutable
 public final class PrivateKeyChain extends KeyChain<PrivateKey, PrivateKeyChain> {

@@ -1,5 +1,6 @@
 package net.digitalid.core.database;
 
+import net.digitalid.database.configuration.Database;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -7,9 +8,9 @@ import java.sql.Savepoint;
 import java.sql.Statement;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.annotations.Committing;
-import net.digitalid.core.annotations.NonCommitting;
-import net.digitalid.core.annotations.Pure;
+import net.digitalid.database.annotations.Committing;
+import net.digitalid.database.annotations.NonCommitting;
+import net.digitalid.annotations.state.Pure;
 import net.digitalid.core.wrappers.Block;
 import org.junit.After;
 import org.junit.Assert;
@@ -25,7 +26,7 @@ import org.junit.runners.MethodSorters;
  * @see SQLiteTest
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class DatabaseTest {

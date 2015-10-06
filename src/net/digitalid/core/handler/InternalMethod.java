@@ -2,8 +2,8 @@ package net.digitalid.core.handler;
 
 import javax.annotation.Nonnull;
 import net.digitalid.core.agent.Restrictions;
-import net.digitalid.core.annotations.Immutable;
-import net.digitalid.core.annotations.Pure;
+import net.digitalid.annotations.state.Immutable;
+import net.digitalid.annotations.state.Pure;
 
 /**
  * Internal methods have to implement this interface in order to provide the required restrictions.
@@ -13,7 +13,7 @@ import net.digitalid.core.annotations.Pure;
  * @see InternalQuery
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Immutable
 public interface InternalMethod {

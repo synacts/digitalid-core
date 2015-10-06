@@ -1,8 +1,8 @@
 package net.digitalid.core.identity;
 
 import javax.annotation.Nonnull;
-import net.digitalid.core.annotations.Immutable;
-import net.digitalid.core.annotations.Pure;
+import net.digitalid.annotations.state.Immutable;
+import net.digitalid.annotations.state.Pure;
 import net.digitalid.core.identifier.ExternalIdentifier;
 import net.digitalid.core.identifier.InternalNonHostIdentifier;
 import net.digitalid.core.identifier.NonHostIdentifier;
@@ -14,7 +14,7 @@ import net.digitalid.core.identifier.NonHostIdentifier;
  * @see MobilePerson
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Immutable
 public abstract class ExternalPerson extends Person implements ExternalIdentity {

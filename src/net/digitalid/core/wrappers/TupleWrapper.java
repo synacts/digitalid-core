@@ -3,20 +3,20 @@ package net.digitalid.core.wrappers;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.BasedOn;
-import net.digitalid.core.annotations.Captured;
+import net.digitalid.annotations.reference.Captured;
 import net.digitalid.core.annotations.Encoding;
-import net.digitalid.core.annotations.Frozen;
-import net.digitalid.core.annotations.Immutable;
+import net.digitalid.collections.annotations.freezable.Frozen;
+import net.digitalid.annotations.state.Immutable;
 import net.digitalid.core.annotations.Loaded;
 import net.digitalid.core.annotations.NonEncoding;
-import net.digitalid.core.annotations.NonNegative;
+import net.digitalid.annotations.math.NonNegative;
 import net.digitalid.core.annotations.NonNullableElements;
 import net.digitalid.core.annotations.NullableElements;
-import net.digitalid.core.annotations.Positive;
-import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.collections.FreezableArray;
-import net.digitalid.core.collections.ReadOnlyArray;
-import net.digitalid.core.collections.ReadOnlyList;
+import net.digitalid.annotations.math.Positive;
+import net.digitalid.annotations.state.Pure;
+import net.digitalid.collections.freezable.FreezableArray;
+import net.digitalid.collections.readonly.ReadOnlyArray;
+import net.digitalid.collections.readonly.ReadOnlyList;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.identity.SyntacticType;
@@ -26,7 +26,7 @@ import net.digitalid.core.factory.Storable;
  * This class wraps a {@link ReadOnlyArray tuple} for encoding and decoding a block of the syntactic type {@code tuple@core.digitalid.net}.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Immutable
 public final class TupleWrapper extends BlockBasedWrapper<TupleWrapper> {

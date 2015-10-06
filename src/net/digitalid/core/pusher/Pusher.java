@@ -2,9 +2,9 @@ package net.digitalid.core.pusher;
 
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
-import net.digitalid.core.annotations.NonCommitting;
+import net.digitalid.database.annotations.NonCommitting;
 import net.digitalid.core.handler.ExternalAction;
-import net.digitalid.core.io.Log;
+import net.digitalid.system.logger.Log;
 
 /**
  * Pushes the external actions to their recipients (and retries on failure).

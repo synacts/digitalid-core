@@ -1,9 +1,9 @@
 package net.digitalid.core.wrappers;
 
 import javax.annotation.Nonnull;
-import net.digitalid.core.collections.FreezableLinkedList;
-import net.digitalid.core.collections.FreezableList;
-import net.digitalid.core.collections.ReadOnlyList;
+import net.digitalid.collections.freezable.FreezableLinkedList;
+import net.digitalid.collections.freezable.FreezableList;
+import net.digitalid.collections.readonly.ReadOnlyList;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.setup.DatabaseSetup;
@@ -14,7 +14,7 @@ import org.junit.Test;
  * Unit testing of the class {@link ListWrapper}.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 public final class ListWrapperTest extends DatabaseSetup {
 

@@ -1,6 +1,6 @@
 package net.digitalid.core.identity;
 
-import net.digitalid.core.annotations.Immutable;
+import net.digitalid.annotations.state.Immutable;
 
 /**
  * This class models a non-host identity.
@@ -9,7 +9,7 @@ import net.digitalid.core.annotations.Immutable;
  * @see Person
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Immutable
 public abstract class NonHostIdentityClass extends IdentityClass implements NonHostIdentity {

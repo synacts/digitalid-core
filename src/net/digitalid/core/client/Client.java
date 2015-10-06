@@ -13,19 +13,19 @@ import javax.annotation.Nullable;
 import net.digitalid.core.agent.ClientAgent;
 import net.digitalid.core.agent.ClientAgentAccredit;
 import net.digitalid.core.agent.ReadOnlyAgentPermissions;
-import net.digitalid.core.annotations.Committing;
-import net.digitalid.core.annotations.Frozen;
-import net.digitalid.core.annotations.Locked;
-import net.digitalid.core.annotations.NonCommitting;
-import net.digitalid.core.annotations.NonFrozen;
-import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.annotations.Validated;
+import net.digitalid.database.annotations.Committing;
+import net.digitalid.collections.annotations.freezable.Frozen;
+import net.digitalid.database.annotations.Locked;
+import net.digitalid.database.annotations.NonCommitting;
+import net.digitalid.collections.annotations.freezable.NonFrozen;
+import net.digitalid.annotations.state.Pure;
+import net.digitalid.annotations.state.Validated;
 import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.cache.Cache;
-import net.digitalid.core.collections.FreezableArrayList;
-import net.digitalid.core.collections.FreezableLinkedList;
-import net.digitalid.core.collections.FreezableList;
-import net.digitalid.core.collections.ReadOnlyList;
+import net.digitalid.collections.freezable.FreezableArrayList;
+import net.digitalid.collections.freezable.FreezableLinkedList;
+import net.digitalid.collections.freezable.FreezableList;
+import net.digitalid.collections.readonly.ReadOnlyList;
 import net.digitalid.core.concept.Aspect;
 import net.digitalid.core.concept.Instance;
 import net.digitalid.core.concept.Observer;
@@ -34,7 +34,7 @@ import net.digitalid.core.cryptography.Element;
 import net.digitalid.core.cryptography.Exponent;
 import net.digitalid.core.cryptography.Parameters;
 import net.digitalid.core.cryptography.PublicKey;
-import net.digitalid.core.database.Database;
+import net.digitalid.database.configuration.Database;
 import net.digitalid.core.entity.NativeRole;
 import net.digitalid.core.entity.Role;
 import net.digitalid.core.entity.RoleModule;
@@ -50,13 +50,13 @@ import net.digitalid.core.identity.InternalNonHostIdentity;
 import net.digitalid.core.identity.Mapper;
 import net.digitalid.core.identity.Predecessor;
 import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.io.Directory;
+import net.digitalid.system.directory.Directory;
 import net.digitalid.core.service.CoreService;
 import net.digitalid.core.synchronizer.ResponseAudit;
 import net.digitalid.core.synchronizer.Synchronizer;
 import net.digitalid.core.synchronizer.SynchronizerModule;
-import net.digitalid.core.tuples.FreezablePair;
-import net.digitalid.core.tuples.ReadOnlyPair;
+import net.digitalid.collections.tuples.FreezablePair;
+import net.digitalid.collections.tuples.ReadOnlyPair;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.SelfcontainedWrapper;
 import net.digitalid.core.wrappers.StringWrapper;
@@ -67,7 +67,7 @@ import net.digitalid.core.wrappers.StringWrapper;
  * TODO: Make sure that the client secret gets rotated!
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 public class Client extends Site implements Observer {
     

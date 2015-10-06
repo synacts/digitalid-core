@@ -3,19 +3,19 @@ package net.digitalid.core.concept;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.annotations.Immutable;
+import net.digitalid.annotations.state.Immutable;
 import net.digitalid.core.annotations.Loaded;
-import net.digitalid.core.annotations.Locked;
-import net.digitalid.core.annotations.NonCommitting;
-import net.digitalid.core.annotations.NonFrozen;
+import net.digitalid.database.annotations.Locked;
+import net.digitalid.database.annotations.NonCommitting;
+import net.digitalid.collections.annotations.freezable.NonFrozen;
 import net.digitalid.core.annotations.NonNullableElements;
 import net.digitalid.core.annotations.OnlyForClients;
 import net.digitalid.core.annotations.OnlyForHosts;
-import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.collections.FreezableLinkedList;
-import net.digitalid.core.collections.FreezableList;
-import net.digitalid.core.collections.ReadOnlyList;
-import net.digitalid.core.database.Database;
+import net.digitalid.annotations.state.Pure;
+import net.digitalid.collections.freezable.FreezableLinkedList;
+import net.digitalid.collections.freezable.FreezableList;
+import net.digitalid.collections.readonly.ReadOnlyList;
+import net.digitalid.database.configuration.Database;
 import net.digitalid.core.entity.Account;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NonHostEntity;
@@ -40,7 +40,7 @@ import net.digitalid.core.wrappers.Block;
  * @param <K> the type of the key which identifies an instance among all instances of a concept at the same entity.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 public abstract class Concept<C extends Concept<C, E, K>, E extends Entity, K> implements Storable<C, E> {
     

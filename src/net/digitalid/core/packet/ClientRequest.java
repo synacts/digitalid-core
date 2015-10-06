@@ -5,16 +5,16 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.agent.ClientAgentCommitmentReplace;
-import net.digitalid.core.annotations.Immutable;
-import net.digitalid.core.annotations.NonCommitting;
-import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.annotations.RawRecipient;
+import net.digitalid.annotations.state.Immutable;
+import net.digitalid.database.annotations.NonCommitting;
+import net.digitalid.annotations.state.Pure;
+import net.digitalid.annotations.reference.RawRecipient;
 import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.client.Client;
 import net.digitalid.core.client.Commitment;
 import net.digitalid.core.client.SecretCommitment;
-import net.digitalid.core.collections.FreezableList;
-import net.digitalid.core.collections.ReadOnlyList;
+import net.digitalid.collections.freezable.FreezableList;
+import net.digitalid.collections.readonly.ReadOnlyList;
 import net.digitalid.core.entity.NativeRole;
 import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.packet.PacketError;
@@ -32,7 +32,7 @@ import net.digitalid.core.wrappers.CompressionWrapper;
  * This class compresses, signs and encrypts requests by clients.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Immutable
 public final class ClientRequest extends Request {

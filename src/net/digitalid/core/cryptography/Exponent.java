@@ -3,8 +3,8 @@ package net.digitalid.core.cryptography;
 import java.math.BigInteger;
 import javax.annotation.Nonnull;
 import net.digitalid.core.annotations.BasedOn;
-import net.digitalid.core.annotations.Immutable;
-import net.digitalid.core.annotations.Pure;
+import net.digitalid.annotations.state.Immutable;
+import net.digitalid.annotations.state.Pure;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.identity.SemanticType;
 import net.digitalid.core.storable.BlockBasedSimpleNonConceptFactory;
@@ -15,7 +15,7 @@ import net.digitalid.core.wrappers.IntegerWrapper;
  * An exponent is a number that raises elements of an arbitrary group.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Immutable
 public final class Exponent extends Number<Exponent> {

@@ -7,14 +7,14 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.annotations.Committing;
-import net.digitalid.core.annotations.Frozen;
-import net.digitalid.core.annotations.NonCommitting;
-import net.digitalid.core.annotations.NonEmpty;
+import net.digitalid.database.annotations.Committing;
+import net.digitalid.collections.annotations.freezable.Frozen;
+import net.digitalid.database.annotations.NonCommitting;
+import net.digitalid.collections.annotations.size.NonEmpty;
 import net.digitalid.core.annotations.NonNullableElements;
-import net.digitalid.core.collections.FreezableArrayList;
-import net.digitalid.core.collections.ReadOnlyList;
-import net.digitalid.core.database.Database;
+import net.digitalid.collections.freezable.FreezableArrayList;
+import net.digitalid.collections.readonly.ReadOnlyList;
+import net.digitalid.database.configuration.Database;
 import net.digitalid.core.entity.Role;
 import net.digitalid.core.error.ErrorModule;
 import net.digitalid.core.exceptions.external.ExternalException;
@@ -22,7 +22,7 @@ import net.digitalid.core.exceptions.packet.PacketError;
 import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.handler.InternalAction;
 import net.digitalid.core.handler.Method;
-import net.digitalid.core.io.Log;
+import net.digitalid.system.logger.Log;
 import net.digitalid.core.packet.ClientRequest;
 import net.digitalid.core.packet.Response;
 import net.digitalid.core.data.Service;
@@ -33,7 +33,7 @@ import net.digitalid.core.data.Service;
  * @see Synchronizer
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 public final class Sender extends Thread {
     

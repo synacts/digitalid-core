@@ -13,7 +13,7 @@ import org.junit.Test;
  * Unit testing of the class {@link IntegerWrapper}.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 public final class IntegerWrapperTest extends DatabaseSetup {
     

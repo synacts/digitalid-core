@@ -7,17 +7,17 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.annotations.Capturable;
-import net.digitalid.core.annotations.Frozen;
-import net.digitalid.core.annotations.NonCommitting;
-import net.digitalid.core.annotations.NonFrozen;
+import net.digitalid.annotations.reference.Capturable;
+import net.digitalid.collections.annotations.freezable.Frozen;
+import net.digitalid.database.annotations.NonCommitting;
+import net.digitalid.collections.annotations.freezable.NonFrozen;
 import net.digitalid.core.annotations.NonNullableElements;
-import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.collections.FreezableArrayList;
-import net.digitalid.core.collections.FreezableList;
-import net.digitalid.core.collections.ReadOnlyList;
-import net.digitalid.core.database.Database;
-import net.digitalid.core.errors.InitializationError;
+import net.digitalid.annotations.state.Pure;
+import net.digitalid.collections.freezable.FreezableArrayList;
+import net.digitalid.collections.freezable.FreezableList;
+import net.digitalid.collections.readonly.ReadOnlyList;
+import net.digitalid.database.configuration.Database;
+import net.digitalid.system.errors.InitializationError;
 import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.exceptions.packet.PacketException;
@@ -38,7 +38,7 @@ import net.digitalid.core.wrappers.ListWrapper;
  * @invariant doesNotContainDuplicates() : "This list of predecessors does not contain duplicates.";
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 public final class FreezablePredecessors extends FreezableArrayList<Predecessor> implements ReadOnlyPredecessors {
     

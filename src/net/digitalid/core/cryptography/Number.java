@@ -3,8 +3,8 @@ package net.digitalid.core.cryptography;
 import java.math.BigInteger;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.annotations.Immutable;
-import net.digitalid.core.annotations.Pure;
+import net.digitalid.annotations.state.Immutable;
+import net.digitalid.annotations.state.Pure;
 import net.digitalid.core.factory.Storable;
 
 /**
@@ -14,7 +14,7 @@ import net.digitalid.core.factory.Storable;
  * @see Exponent
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Immutable
 public abstract class Number<E extends Number<E>> implements Storable<E> {

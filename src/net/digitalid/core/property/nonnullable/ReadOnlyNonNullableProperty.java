@@ -2,10 +2,10 @@ package net.digitalid.core.property.nonnullable;
 
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
-import net.digitalid.core.annotations.Locked;
-import net.digitalid.core.annotations.NonCommitting;
-import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.annotations.Validated;
+import net.digitalid.database.annotations.Locked;
+import net.digitalid.database.annotations.NonCommitting;
+import net.digitalid.annotations.state.Pure;
+import net.digitalid.annotations.state.Validated;
 import net.digitalid.core.property.ReadOnlyProperty;
 import net.digitalid.core.property.ValueValidator;
 
@@ -15,7 +15,7 @@ import net.digitalid.core.property.ValueValidator;
  * @see NonNullableReplaceableProperty
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 public abstract class ReadOnlyNonNullableProperty<V> extends ReadOnlyProperty<V, NonNullablePropertyObserver<V>> {
     

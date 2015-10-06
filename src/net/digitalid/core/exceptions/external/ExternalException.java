@@ -2,7 +2,7 @@ package net.digitalid.core.exceptions.external;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.annotations.Immutable;
+import net.digitalid.annotations.state.Immutable;
 
 /**
  * An external exception is caused by another party.
@@ -16,7 +16,7 @@ import net.digitalid.core.annotations.Immutable;
  * @see SomethingNotFoundException
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Immutable
 public abstract class ExternalException extends Exception {

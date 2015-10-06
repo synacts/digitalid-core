@@ -8,10 +8,10 @@ import net.digitalid.core.agent.FreezableAgentPermissions;
 import net.digitalid.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.core.annotations.BasedOn;
 import net.digitalid.core.annotations.HasSubject;
-import net.digitalid.core.annotations.Immutable;
-import net.digitalid.core.annotations.NonCommitting;
+import net.digitalid.annotations.state.Immutable;
+import net.digitalid.database.annotations.NonCommitting;
 import net.digitalid.core.annotations.OnlyForHosts;
-import net.digitalid.core.annotations.Pure;
+import net.digitalid.annotations.state.Pure;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.Role;
 import net.digitalid.core.exceptions.external.ExternalException;
@@ -33,7 +33,7 @@ import net.digitalid.core.wrappers.SignatureWrapper;
  * @see AuditReply
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Immutable
 final class AuditQuery extends InternalQuery {

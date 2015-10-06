@@ -1,16 +1,18 @@
 package net.digitalid.core.database;
 
+import net.digitalid.database.configuration.PostgreSQLConfiguration;
+import net.digitalid.database.configuration.Database;
 import java.io.IOException;
 import java.sql.SQLException;
-import net.digitalid.core.annotations.Committing;
-import net.digitalid.core.annotations.Pure;
+import net.digitalid.database.annotations.Committing;
+import net.digitalid.annotations.state.Pure;
 import org.junit.BeforeClass;
 
 /**
  * Unit testing of the {@link Database} with the {@link PostgreSQLConfiguration}.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 public final class PostgreSQLTest extends DatabaseTest {
     

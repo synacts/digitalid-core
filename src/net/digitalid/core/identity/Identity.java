@@ -2,9 +2,9 @@ package net.digitalid.core.identity;
 
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
-import net.digitalid.core.annotations.Immutable;
-import net.digitalid.core.annotations.NonCommitting;
-import net.digitalid.core.annotations.Pure;
+import net.digitalid.annotations.state.Immutable;
+import net.digitalid.database.annotations.NonCommitting;
+import net.digitalid.annotations.state.Pure;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.factory.Storable;
 import net.digitalid.core.identifier.Identifier;
@@ -18,7 +18,7 @@ import net.digitalid.core.wrappers.Block;
  * @see ExternalIdentity
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Immutable
 public interface Identity extends Storable<Identity, Object> {

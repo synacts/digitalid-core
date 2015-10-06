@@ -8,15 +8,15 @@ import java.util.Date;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.BasedOn;
-import net.digitalid.core.annotations.Capturable;
-import net.digitalid.core.annotations.Immutable;
-import net.digitalid.core.annotations.NonCommitting;
-import net.digitalid.core.annotations.NonFrozen;
+import net.digitalid.annotations.reference.Capturable;
+import net.digitalid.annotations.state.Immutable;
+import net.digitalid.database.annotations.NonCommitting;
+import net.digitalid.collections.annotations.freezable.NonFrozen;
 import net.digitalid.core.annotations.NonNullableElements;
-import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.collections.FreezableArray;
-import net.digitalid.core.column.Column;
-import net.digitalid.core.column.SQLType;
+import net.digitalid.annotations.state.Pure;
+import net.digitalid.collections.freezable.FreezableArray;
+import net.digitalid.database.column.Column;
+import net.digitalid.database.column.SQLType;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.factory.LocalFactory;
 import net.digitalid.core.factory.Storable;
@@ -29,7 +29,7 @@ import net.digitalid.core.wrappers.Int64Wrapper;
  * Dates are calculated as milliseconds since 1 January 1970, 00:00:00 GMT.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Immutable
 public final class Time implements Storable<Time, Object>, Comparable<Time> {

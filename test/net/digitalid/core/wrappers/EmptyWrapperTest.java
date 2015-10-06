@@ -10,7 +10,7 @@ import org.junit.Test;
  * Unit testing of the class {@link BooleanWrapper}.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 public class EmptyWrapperTest extends DatabaseSetup {
     

@@ -1,9 +1,9 @@
 package net.digitalid.core.contact;
 
 import javax.annotation.Nonnull;
-import net.digitalid.core.annotations.Capturable;
-import net.digitalid.core.annotations.NonFrozen;
-import net.digitalid.core.annotations.Pure;
+import net.digitalid.annotations.reference.Capturable;
+import net.digitalid.collections.annotations.freezable.NonFrozen;
+import net.digitalid.annotations.state.Pure;
 
 /**
  * This interface provides read-only access to {@link FreezableContactPermissions contact permissions} and should <em>never</em> be cast away.
@@ -11,7 +11,7 @@ import net.digitalid.core.annotations.Pure;
  * @see FreezableContactPermissions
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 public interface ReadOnlyContactPermissions extends ReadOnlyAttributeTypeSet {
     

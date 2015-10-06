@@ -2,18 +2,18 @@ package net.digitalid.core.identity;
 
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
-import net.digitalid.core.annotations.Immutable;
-import net.digitalid.core.annotations.NonCommitting;
-import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.database.Database;
-import net.digitalid.core.errors.InitializationError;
+import net.digitalid.annotations.state.Immutable;
+import net.digitalid.database.annotations.NonCommitting;
+import net.digitalid.annotations.state.Pure;
+import net.digitalid.database.configuration.Database;
+import net.digitalid.system.errors.InitializationError;
 import net.digitalid.core.identifier.HostIdentifier;
 
 /**
  * This class models a host identity.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Immutable
 public final class HostIdentity extends IdentityClass implements InternalIdentity {

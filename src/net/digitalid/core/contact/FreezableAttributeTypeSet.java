@@ -6,20 +6,20 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.agent.FreezableAgentPermissions;
 import net.digitalid.core.annotations.AttributeType;
-import net.digitalid.core.annotations.Capturable;
-import net.digitalid.core.annotations.Frozen;
-import net.digitalid.core.annotations.NonCommitting;
-import net.digitalid.core.annotations.NonFrozen;
-import net.digitalid.core.annotations.NonFrozenRecipient;
-import net.digitalid.core.annotations.Pure;
+import net.digitalid.annotations.reference.Capturable;
+import net.digitalid.collections.annotations.freezable.Frozen;
+import net.digitalid.database.annotations.NonCommitting;
+import net.digitalid.collections.annotations.freezable.NonFrozen;
+import net.digitalid.collections.annotations.freezable.NonFrozenRecipient;
+import net.digitalid.annotations.state.Pure;
 import net.digitalid.core.annotations.Single;
 import net.digitalid.core.collections.Brackets;
 import net.digitalid.core.collections.ElementConverter;
-import net.digitalid.core.collections.FreezableArrayList;
-import net.digitalid.core.collections.FreezableLinkedHashSet;
-import net.digitalid.core.collections.FreezableList;
+import net.digitalid.collections.freezable.FreezableArrayList;
+import net.digitalid.collections.freezable.FreezableLinkedHashSet;
+import net.digitalid.collections.freezable.FreezableList;
 import net.digitalid.core.collections.IterableConverter;
-import net.digitalid.core.collections.ReadOnlyList;
+import net.digitalid.collections.readonly.ReadOnlyList;
 import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.identity.IdentityClass;
@@ -34,7 +34,7 @@ import net.digitalid.core.wrappers.ListWrapper;
  * @see ContactPermissions
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 public class FreezableAttributeTypeSet extends FreezableLinkedHashSet<SemanticType> implements ReadOnlyAttributeTypeSet {
     

@@ -4,9 +4,9 @@ import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.annotations.Committing;
+import net.digitalid.database.annotations.Committing;
 import net.digitalid.core.cache.Cache;
-import net.digitalid.core.database.Database;
+import net.digitalid.database.configuration.Database;
 import net.digitalid.core.exceptions.external.AttributeNotFoundException;
 import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
@@ -24,7 +24,7 @@ import org.junit.runners.MethodSorters;
  * Unit testing of the {@link Attribute attribute} with its {@link Action actions}.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public final class AttributeTest extends IdentitySetup {

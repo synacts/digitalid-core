@@ -10,19 +10,19 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.annotations.Locked;
-import net.digitalid.core.annotations.NonCommitting;
+import net.digitalid.database.annotations.Locked;
+import net.digitalid.database.annotations.NonCommitting;
 import net.digitalid.core.annotations.NonMapped;
-import net.digitalid.core.annotations.OnMainThread;
-import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.annotations.Stateless;
+import net.digitalid.database.annotations.OnMainThread;
+import net.digitalid.annotations.state.Pure;
+import net.digitalid.annotations.state.Stateless;
 import net.digitalid.core.cache.Cache;
 import net.digitalid.core.client.AccountInitialize;
 import net.digitalid.core.client.AccountOpen;
-import net.digitalid.core.collections.ReadOnlyList;
-import net.digitalid.core.database.Database;
-import net.digitalid.core.errors.InitializationError;
-import net.digitalid.core.errors.ShouldNeverHappenError;
+import net.digitalid.collections.readonly.ReadOnlyList;
+import net.digitalid.database.configuration.Database;
+import net.digitalid.system.errors.InitializationError;
+import net.digitalid.system.errors.ShouldNeverHappenError;
 import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.external.IdentityNotFoundException;
 import net.digitalid.core.exceptions.external.InvalidDeclarationException;
@@ -37,10 +37,10 @@ import net.digitalid.core.identifier.Identifier;
 import net.digitalid.core.identifier.IdentifierClass;
 import net.digitalid.core.identifier.InternalNonHostIdentifier;
 import net.digitalid.core.identifier.NonHostIdentifier;
-import net.digitalid.core.io.Log;
+import net.digitalid.system.logger.Log;
 import net.digitalid.core.server.Server;
-import net.digitalid.core.tuples.FreezableTriplet;
-import net.digitalid.core.tuples.ReadOnlyTriplet;
+import net.digitalid.collections.tuples.FreezableTriplet;
+import net.digitalid.collections.tuples.ReadOnlyTriplet;
 
 /**
  * The mapper maps between {@link Identifier identifiers} and {@link Identity identities}.
@@ -51,7 +51,7 @@ import net.digitalid.core.tuples.ReadOnlyTriplet;
  * merged! (If the column can only contain {@link Type types}, this is not necessary.)
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Stateless
 public final class Mapper {

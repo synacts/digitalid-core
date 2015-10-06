@@ -3,19 +3,19 @@ package net.digitalid.core.property.nonnullable;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.annotations.Committing;
-import net.digitalid.core.annotations.Locked;
-import net.digitalid.core.annotations.NonCommitting;
+import net.digitalid.database.annotations.Committing;
+import net.digitalid.database.annotations.Locked;
+import net.digitalid.database.annotations.NonCommitting;
 import net.digitalid.core.annotations.NonNullableElements;
-import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.annotations.Validated;
+import net.digitalid.annotations.state.Pure;
+import net.digitalid.annotations.state.Validated;
 import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.concept.Concept;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.property.ConceptProperty;
 import net.digitalid.core.property.ValueValidator;
 import net.digitalid.core.synchronizer.Synchronizer;
-import net.digitalid.core.tuples.ReadOnlyPair;
+import net.digitalid.collections.tuples.ReadOnlyPair;
 
 /**
  * This property belongs to a concept and stores a replaceable value that cannot be null.
@@ -23,7 +23,7 @@ import net.digitalid.core.tuples.ReadOnlyPair;
  * @invariant (time == null) == (value == null) : "The time and value are either both null or both non-null.";
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 public final class NonNullableConceptProperty<V, C extends Concept<C, E, ?>, E extends Entity> extends WriteableNonNullableProperty<V> implements ConceptProperty<C> {
     

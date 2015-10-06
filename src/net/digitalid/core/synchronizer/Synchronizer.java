@@ -8,37 +8,37 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.annotations.Committing;
-import net.digitalid.core.annotations.Locked;
-import net.digitalid.core.annotations.NonLocked;
+import net.digitalid.database.annotations.Committing;
+import net.digitalid.database.annotations.Locked;
+import net.digitalid.database.annotations.NonLocked;
 import net.digitalid.core.auxiliary.Time;
 import net.digitalid.core.collections.ConcurrentHashMap;
 import net.digitalid.core.collections.ConcurrentHashSet;
 import net.digitalid.core.collections.ConcurrentMap;
 import net.digitalid.core.collections.ConcurrentSet;
-import net.digitalid.core.collections.FreezableArrayList;
-import net.digitalid.core.collections.FreezableHashSet;
-import net.digitalid.core.collections.ReadOnlyList;
-import net.digitalid.core.collections.ReadOnlySet;
-import net.digitalid.core.database.Database;
+import net.digitalid.collections.freezable.FreezableArrayList;
+import net.digitalid.collections.freezable.FreezableHashSet;
+import net.digitalid.collections.readonly.ReadOnlyList;
+import net.digitalid.collections.readonly.ReadOnlySet;
+import net.digitalid.database.configuration.Database;
 import net.digitalid.core.entity.Role;
 import net.digitalid.core.exceptions.external.ExternalException;
 import net.digitalid.core.exceptions.packet.PacketException;
 import net.digitalid.core.handler.InternalAction;
 import net.digitalid.core.handler.Method;
-import net.digitalid.core.io.Level;
-import net.digitalid.core.io.Log;
-import net.digitalid.core.io.Logger;
+import net.digitalid.system.logger.Level;
+import net.digitalid.system.logger.Log;
+import net.digitalid.system.logger.Logger;
 import net.digitalid.core.data.StateModule;
 import net.digitalid.core.packet.Response;
 import net.digitalid.core.data.Service;
-import net.digitalid.core.thread.NamedThreadFactory;
+import net.digitalid.system.thread.NamedThreadFactory;
 
 /**
  * This class synchronizes {@link InternalAction internal actions}.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 public final class Synchronizer extends Thread {
     

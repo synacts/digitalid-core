@@ -3,7 +3,7 @@ package net.digitalid.core.service;
 import net.digitalid.core.data.Service;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.annotations.Pure;
+import net.digitalid.annotations.state.Pure;
 import net.digitalid.core.entity.Account;
 import net.digitalid.core.entity.NonHostEntity;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
@@ -14,7 +14,7 @@ import net.digitalid.core.wrappers.HostSignatureWrapper;
  * This class models the {@link ActionReply action replies} of the {@link CoreService core service}.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 public abstract class CoreServiceActionReply extends ActionReply {
     

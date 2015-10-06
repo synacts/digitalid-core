@@ -7,14 +7,14 @@ import javax.annotation.Nullable;
 import net.digitalid.core.agent.FreezableAgentPermissions;
 import net.digitalid.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.core.agent.Restrictions;
-import net.digitalid.core.annotations.Frozen;
-import net.digitalid.core.annotations.Immutable;
-import net.digitalid.core.annotations.NonCommitting;
+import net.digitalid.collections.annotations.freezable.Frozen;
+import net.digitalid.annotations.state.Immutable;
+import net.digitalid.database.annotations.NonCommitting;
 import net.digitalid.core.annotations.NonNullableElements;
-import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.collections.FreezableArrayList;
-import net.digitalid.core.collections.FreezableList;
-import net.digitalid.core.collections.ReadOnlyList;
+import net.digitalid.annotations.state.Pure;
+import net.digitalid.collections.freezable.FreezableArrayList;
+import net.digitalid.collections.freezable.FreezableList;
+import net.digitalid.collections.readonly.ReadOnlyList;
 import net.digitalid.core.cryptography.PublicKey;
 import net.digitalid.core.entity.Entity;
 import net.digitalid.core.entity.NativeRole;
@@ -39,8 +39,8 @@ import net.digitalid.core.data.StateModule;
 import net.digitalid.core.password.PasswordModule;
 import net.digitalid.core.service.CoreService;
 import net.digitalid.core.service.CoreServiceInternalAction;
-import net.digitalid.core.tuples.FreezablePair;
-import net.digitalid.core.tuples.ReadOnlyPair;
+import net.digitalid.collections.tuples.FreezablePair;
+import net.digitalid.collections.tuples.ReadOnlyPair;
 import net.digitalid.core.wrappers.Block;
 import net.digitalid.core.wrappers.ListWrapper;
 import net.digitalid.core.wrappers.SignatureWrapper;
@@ -50,7 +50,7 @@ import net.digitalid.core.wrappers.TupleWrapper;
  * Initializes a new account with the given states.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Immutable
 public final class AccountInitialize extends CoreServiceInternalAction {

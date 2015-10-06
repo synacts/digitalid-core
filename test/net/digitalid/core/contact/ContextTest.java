@@ -2,8 +2,8 @@ package net.digitalid.core.contact;
 
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
-import net.digitalid.core.annotations.Committing;
-import net.digitalid.core.database.Database;
+import net.digitalid.database.annotations.Committing;
+import net.digitalid.database.configuration.Database;
 import net.digitalid.core.setup.IdentitySetup;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -15,7 +15,7 @@ import org.junit.runners.MethodSorters;
  * Unit testing of the {@link Context context} with its {@link Action actions}.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public final class ContextTest extends IdentitySetup {

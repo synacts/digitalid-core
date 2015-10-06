@@ -1,8 +1,8 @@
 package net.digitalid.core.entity;
 
 import javax.annotation.Nonnull;
-import net.digitalid.core.annotations.Immutable;
-import net.digitalid.core.annotations.Pure;
+import net.digitalid.annotations.state.Immutable;
+import net.digitalid.annotations.state.Pure;
 import net.digitalid.core.concept.Concept;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.handler.Handler;
@@ -17,7 +17,7 @@ import net.digitalid.core.identity.InternalIdentity;
  * @see NonHostEntity
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Immutable
 public interface Entity extends SQLizable {

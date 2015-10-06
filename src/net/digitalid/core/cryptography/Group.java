@@ -6,9 +6,9 @@ import java.util.Random;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.core.annotations.BasedOn;
-import net.digitalid.core.annotations.Immutable;
-import net.digitalid.core.annotations.Positive;
-import net.digitalid.core.annotations.Pure;
+import net.digitalid.annotations.state.Immutable;
+import net.digitalid.annotations.math.Positive;
+import net.digitalid.annotations.state.Pure;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.factory.Storable;
 import net.digitalid.core.wrappers.Block;
@@ -20,7 +20,7 @@ import net.digitalid.core.wrappers.Block;
  * @see GroupWithUnknownOrder
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Immutable
 public abstract class Group<G extends Group<G>> implements Storable<G> {

@@ -1,10 +1,10 @@
 package net.digitalid.core.property.extensible;
 
 import javax.annotation.Nonnull;
-import net.digitalid.core.annotations.Frozen;
-import net.digitalid.core.annotations.NonFrozen;
-import net.digitalid.core.collections.FreezableCollection;
-import net.digitalid.core.collections.ReadOnlyCollection;
+import net.digitalid.collections.annotations.freezable.Frozen;
+import net.digitalid.collections.annotations.freezable.NonFrozen;
+import net.digitalid.collections.freezable.FreezableCollection;
+import net.digitalid.collections.readonly.ReadOnlyCollection;
 
 /**
  * Description.

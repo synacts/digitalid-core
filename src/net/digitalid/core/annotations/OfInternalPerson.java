@@ -15,7 +15,7 @@ import net.digitalid.core.identity.InternalPerson;
  * @see OfType
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Documented
 @TargetType(Entity.class)

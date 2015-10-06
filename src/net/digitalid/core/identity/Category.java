@@ -4,13 +4,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
-import net.digitalid.core.annotations.Immutable;
-import net.digitalid.core.annotations.NonCommitting;
-import net.digitalid.core.annotations.Pure;
-import net.digitalid.core.collections.FreezableArrayList;
-import net.digitalid.core.collections.ReadOnlyList;
-import net.digitalid.core.database.Database;
-import net.digitalid.core.errors.ShouldNeverHappenError;
+import net.digitalid.annotations.state.Immutable;
+import net.digitalid.database.annotations.NonCommitting;
+import net.digitalid.annotations.state.Pure;
+import net.digitalid.collections.freezable.FreezableArrayList;
+import net.digitalid.collections.readonly.ReadOnlyList;
+import net.digitalid.database.configuration.Database;
+import net.digitalid.system.errors.ShouldNeverHappenError;
 import net.digitalid.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.core.wrappers.Blockable;
 import net.digitalid.core.database.SQLizable;
@@ -21,7 +21,7 @@ import net.digitalid.core.wrappers.Int8Wrapper;
  * This class enumerates the various categories of digital identities.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0
+ * @version 1.0.0
  */
 @Immutable
 public enum Category implements Blockable, SQLizable {
