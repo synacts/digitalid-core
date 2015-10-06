@@ -1,4 +1,4 @@
-package net.digitalid.core.cache;
+package net.digitalid.service.core.cache;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -13,46 +13,46 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.database.annotations.Committing;
-import net.digitalid.collections.annotations.freezable.Frozen;
-import net.digitalid.database.annotations.Locked;
-import net.digitalid.database.annotations.NonCommitting;
-import net.digitalid.core.annotations.NonMapped;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.annotations.state.Stateless;
-import net.digitalid.core.attribute.AttributeValue;
-import net.digitalid.core.attribute.CertifiedAttributeValue;
-import net.digitalid.core.auxiliary.Time;
-import net.digitalid.collections.readonly.ReadOnlyList;
-import net.digitalid.core.contact.FreezableAttributeTypeSet;
-import net.digitalid.core.cryptography.PublicKey;
-import net.digitalid.core.cryptography.PublicKeyChain;
-import net.digitalid.database.configuration.Database;
-import net.digitalid.core.entity.Role;
-import net.digitalid.system.errors.InitializationError;
-import net.digitalid.core.exceptions.external.AttributeNotFoundException;
-import net.digitalid.core.exceptions.external.CertificateNotFoundException;
-import net.digitalid.core.exceptions.external.ExternalException;
-import net.digitalid.core.exceptions.external.IdentityNotFoundException;
-import net.digitalid.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.core.exceptions.packet.PacketException;
-import net.digitalid.core.handler.Reply;
-import net.digitalid.core.host.Host;
-import net.digitalid.core.identifier.HostIdentifier;
-import net.digitalid.core.identity.HostIdentity;
-import net.digitalid.core.identity.Identity;
-import net.digitalid.core.identity.InternalIdentity;
-import net.digitalid.core.identity.InternalNonHostIdentity;
-import net.digitalid.core.identity.Mapper;
-import net.digitalid.core.identity.SemanticType;
-import net.digitalid.system.directory.Directory;
-import net.digitalid.system.logger.Log;
-import net.digitalid.core.packet.Request;
-import net.digitalid.core.packet.Response;
-import net.digitalid.collections.tuples.FreezablePair;
-import net.digitalid.collections.tuples.ReadOnlyPair;
-import net.digitalid.core.wrappers.Block;
-import net.digitalid.core.wrappers.SelfcontainedWrapper;
+import net.digitalid.service.core.annotations.NonMapped;
+import net.digitalid.service.core.attribute.AttributeValue;
+import net.digitalid.service.core.attribute.CertifiedAttributeValue;
+import net.digitalid.service.core.auxiliary.Time;
+import net.digitalid.service.core.contact.FreezableAttributeTypeSet;
+import net.digitalid.service.core.cryptography.PublicKey;
+import net.digitalid.service.core.cryptography.PublicKeyChain;
+import net.digitalid.service.core.entity.Role;
+import net.digitalid.service.core.exceptions.external.AttributeNotFoundException;
+import net.digitalid.service.core.exceptions.external.CertificateNotFoundException;
+import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.external.IdentityNotFoundException;
+import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.handler.Reply;
+import net.digitalid.service.core.host.Host;
+import net.digitalid.service.core.identifier.HostIdentifier;
+import net.digitalid.service.core.identity.HostIdentity;
+import net.digitalid.service.core.identity.Identity;
+import net.digitalid.service.core.identity.InternalIdentity;
+import net.digitalid.service.core.identity.InternalNonHostIdentity;
+import net.digitalid.service.core.identity.Mapper;
+import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.packet.Request;
+import net.digitalid.service.core.packet.Response;
+import net.digitalid.service.core.wrappers.Block;
+import net.digitalid.service.core.wrappers.SelfcontainedWrapper;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.annotations.state.Stateless;
+import net.digitalid.utility.collections.annotations.freezable.Frozen;
+import net.digitalid.utility.collections.readonly.ReadOnlyList;
+import net.digitalid.utility.collections.tuples.FreezablePair;
+import net.digitalid.utility.collections.tuples.ReadOnlyPair;
+import net.digitalid.utility.database.annotations.Committing;
+import net.digitalid.utility.database.annotations.Locked;
+import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.configuration.Database;
+import net.digitalid.utility.system.directory.Directory;
+import net.digitalid.utility.system.errors.InitializationError;
+import net.digitalid.utility.system.logger.Log;
 
 /**
  * This class caches the {@link AttributeValue attribute values} of {@link Identity identities} for the attribute-specific {@link SemanticType#getCachingPeriod() caching period}.
@@ -451,7 +451,7 @@ public final class Cache {
     
     /**
      * Establishes the identity of the given host identifier by checking its existence and requesting its public key chain.
-     * (This method is only to be called by {@link Mapper#getIdentity(net.digitalid.core.identifier.Identifier)}.)
+     * (This method is only to be called by {@link Mapper#getIdentity(net.digitalid.service.core.identifier.Identifier)}.)
      * 
      * @param identifier the host identifier whose identity is to be established.
      * 

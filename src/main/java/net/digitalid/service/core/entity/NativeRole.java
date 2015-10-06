@@ -1,20 +1,20 @@
-package net.digitalid.core.entity;
+package net.digitalid.service.core.entity;
 
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.agent.ClientAgent;
-import net.digitalid.annotations.state.Immutable;
-import net.digitalid.database.annotations.NonCommitting;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.core.client.Client;
-import net.digitalid.core.collections.ConcurrentHashMap;
-import net.digitalid.core.collections.ConcurrentMap;
-import net.digitalid.core.concept.Aspect;
-import net.digitalid.core.concept.Instance;
-import net.digitalid.core.concept.Observer;
-import net.digitalid.database.configuration.Database;
-import net.digitalid.core.identity.InternalNonHostIdentity;
+import net.digitalid.service.core.agent.ClientAgent;
+import net.digitalid.service.core.client.Client;
+import net.digitalid.service.core.concept.Aspect;
+import net.digitalid.service.core.concept.Instance;
+import net.digitalid.service.core.concept.Observer;
+import net.digitalid.service.core.identity.InternalNonHostIdentity;
+import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.collections.concurrent.ConcurrentHashMap;
+import net.digitalid.utility.collections.concurrent.ConcurrentMap;
+import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.configuration.Database;
 
 /**
  * This class models a native role on the client-side.
@@ -91,7 +91,7 @@ public final class NativeRole extends Role {
      * Returns a new or existing native role with the given arguments.
      * <p>
      * <em>Important:</em> This method should not be called directly!
-     * (Use {@link Client#addRole(net.digitalid.core.identity.InternalNonHostIdentity, long)} instead.)
+     * (Use {@link Client#addRole(net.digitalid.service.core.identity.InternalNonHostIdentity, long)} instead.)
      * 
      * @param client the client that can assume the returned role.
      * @param issuer the issuer of the returned role.

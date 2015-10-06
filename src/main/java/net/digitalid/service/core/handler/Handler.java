@@ -1,20 +1,20 @@
-package net.digitalid.core.handler;
+package net.digitalid.service.core.handler;
 
 import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.annotations.state.Immutable;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.core.entity.Account;
-import net.digitalid.core.entity.Entity;
-import net.digitalid.core.entity.NonHostAccount;
-import net.digitalid.core.entity.NonHostEntity;
-import net.digitalid.core.entity.Role;
-import net.digitalid.core.identifier.InternalIdentifier;
-import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.wrappers.Blockable;
-import net.digitalid.core.data.Service;
-import net.digitalid.core.wrappers.SignatureWrapper;
+import net.digitalid.service.core.data.Service;
+import net.digitalid.service.core.entity.Account;
+import net.digitalid.service.core.entity.Entity;
+import net.digitalid.service.core.entity.NonHostAccount;
+import net.digitalid.service.core.entity.NonHostEntity;
+import net.digitalid.service.core.entity.Role;
+import net.digitalid.service.core.identifier.InternalIdentifier;
+import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.wrappers.Blockable;
+import net.digitalid.service.core.wrappers.SignatureWrapper;
+import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.annotations.state.Pure;
 
 /**
  * This class provides the features that all handlers share.

@@ -1,9 +1,9 @@
-package net.digitalid.core.property.nonnullable;
+package net.digitalid.service.core.property.nonnullable;
 
 import javax.annotation.Nonnull;
-import net.digitalid.annotations.state.Validated;
-import net.digitalid.core.property.PropertyObserver;
-import net.digitalid.core.property.ReadOnlyProperty;
+import net.digitalid.service.core.property.PropertyObserver;
+import net.digitalid.service.core.property.ReadOnlyProperty;
+import net.digitalid.utility.annotations.state.Validated;
 
 /**
  * Objects that implement this interface can be used to observe {@link ReadOnlyNonNullableProperty non-nullable properties}.
@@ -14,7 +14,7 @@ import net.digitalid.core.property.ReadOnlyProperty;
 public interface NonNullablePropertyObserver<V> extends PropertyObserver {
     
     /**
-     * This method is called on {@link ReadOnlyProperty#register(net.digitalid.core.property.PropertyObserver) registered} observers when the value of the given property has been replaced.
+     * This method is called on {@link ReadOnlyProperty#register(net.digitalid.service.core.property.PropertyObserver) registered} observers when the value of the given property has been replaced.
      * 
      * @param property the property whose value has been replaced.
      * @param oldValue the old value of the given property.

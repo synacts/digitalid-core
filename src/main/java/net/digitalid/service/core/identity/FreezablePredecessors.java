@@ -1,4 +1,4 @@
-package net.digitalid.core.identity;
+package net.digitalid.service.core.identity;
 
 import java.io.IOException;
 import java.sql.PreparedStatement;
@@ -7,25 +7,25 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.annotations.reference.Capturable;
-import net.digitalid.collections.annotations.freezable.Frozen;
-import net.digitalid.database.annotations.NonCommitting;
-import net.digitalid.collections.annotations.freezable.NonFrozen;
-import net.digitalid.core.annotations.NonNullableElements;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.collections.freezable.FreezableArrayList;
-import net.digitalid.collections.freezable.FreezableList;
-import net.digitalid.collections.readonly.ReadOnlyList;
-import net.digitalid.database.configuration.Database;
-import net.digitalid.system.errors.InitializationError;
-import net.digitalid.core.exceptions.external.ExternalException;
-import net.digitalid.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.core.exceptions.packet.PacketException;
-import net.digitalid.core.handler.Reply;
-import net.digitalid.core.identifier.IdentifierClass;
-import net.digitalid.core.identifier.InternalNonHostIdentifier;
-import net.digitalid.core.wrappers.Block;
-import net.digitalid.core.wrappers.ListWrapper;
+import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.handler.Reply;
+import net.digitalid.service.core.identifier.IdentifierClass;
+import net.digitalid.service.core.identifier.InternalNonHostIdentifier;
+import net.digitalid.service.core.wrappers.Block;
+import net.digitalid.service.core.wrappers.ListWrapper;
+import net.digitalid.utility.annotations.reference.Capturable;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
+import net.digitalid.utility.collections.annotations.freezable.Frozen;
+import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
+import net.digitalid.utility.collections.freezable.FreezableArrayList;
+import net.digitalid.utility.collections.freezable.FreezableList;
+import net.digitalid.utility.collections.readonly.ReadOnlyList;
+import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.configuration.Database;
+import net.digitalid.utility.system.errors.InitializationError;
 
 /**
  * This class models a list of {@link Predecessor predecessors}.

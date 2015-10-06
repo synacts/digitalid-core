@@ -1,4 +1,4 @@
-package net.digitalid.core.synchronizer;
+package net.digitalid.service.core.synchronizer;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -7,25 +7,25 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.database.annotations.Committing;
-import net.digitalid.collections.annotations.freezable.Frozen;
-import net.digitalid.database.annotations.NonCommitting;
-import net.digitalid.collections.annotations.size.NonEmpty;
-import net.digitalid.core.annotations.NonNullableElements;
-import net.digitalid.collections.freezable.FreezableArrayList;
-import net.digitalid.collections.readonly.ReadOnlyList;
-import net.digitalid.database.configuration.Database;
-import net.digitalid.core.entity.Role;
-import net.digitalid.core.error.ErrorModule;
-import net.digitalid.core.exceptions.external.ExternalException;
-import net.digitalid.core.exceptions.packet.PacketError;
-import net.digitalid.core.exceptions.packet.PacketException;
-import net.digitalid.core.handler.InternalAction;
-import net.digitalid.core.handler.Method;
-import net.digitalid.system.logger.Log;
-import net.digitalid.core.packet.ClientRequest;
-import net.digitalid.core.packet.Response;
-import net.digitalid.core.data.Service;
+import net.digitalid.service.core.data.Service;
+import net.digitalid.service.core.entity.Role;
+import net.digitalid.service.core.error.ErrorModule;
+import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.packet.PacketError;
+import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.handler.InternalAction;
+import net.digitalid.service.core.handler.Method;
+import net.digitalid.service.core.packet.ClientRequest;
+import net.digitalid.service.core.packet.Response;
+import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
+import net.digitalid.utility.collections.annotations.freezable.Frozen;
+import net.digitalid.utility.collections.annotations.size.NonEmpty;
+import net.digitalid.utility.collections.freezable.FreezableArrayList;
+import net.digitalid.utility.collections.readonly.ReadOnlyList;
+import net.digitalid.utility.database.annotations.Committing;
+import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.configuration.Database;
+import net.digitalid.utility.system.logger.Log;
 
 /**
  * A sender sends {@link InternalAction internal actions} asynchronously.

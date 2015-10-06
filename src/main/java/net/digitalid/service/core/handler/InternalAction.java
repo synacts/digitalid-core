@@ -1,31 +1,31 @@
-package net.digitalid.core.handler;
+package net.digitalid.service.core.handler;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.agent.Restrictions;
-import net.digitalid.annotations.state.Immutable;
-import net.digitalid.database.annotations.NonCommitting;
-import net.digitalid.core.annotations.OnlyForClients;
-import net.digitalid.core.annotations.OnlyForHosts;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.core.client.Client;
-import net.digitalid.core.entity.Entity;
-import net.digitalid.core.entity.Role;
-import net.digitalid.core.exceptions.external.ExternalException;
-import net.digitalid.core.exceptions.packet.PacketError;
-import net.digitalid.core.exceptions.packet.PacketException;
-import net.digitalid.core.identifier.HostIdentifier;
-import net.digitalid.core.service.CoreServiceInternalAction;
-import net.digitalid.core.synchronizer.Synchronizer;
-import net.digitalid.core.wrappers.SignatureWrapper;
+import net.digitalid.service.core.agent.Restrictions;
+import net.digitalid.service.core.annotations.OnlyForClients;
+import net.digitalid.service.core.annotations.OnlyForHosts;
+import net.digitalid.service.core.client.Client;
+import net.digitalid.service.core.entity.Entity;
+import net.digitalid.service.core.entity.Role;
+import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.packet.PacketError;
+import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.identifier.HostIdentifier;
+import net.digitalid.service.core.service.CoreServiceInternalAction;
+import net.digitalid.service.core.synchronizer.Synchronizer;
+import net.digitalid.service.core.wrappers.SignatureWrapper;
+import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * Internal actions can only be sent by {@link Client clients} and can usually be {@link #reverseOnClient() reversed}.
  * They are always signed identity-based and an audit request or trail is appended during {@link Package packaging}.
  * <p>
- * <em>Important:</em> Do not execute internal actions directly but always pass them to the {@link Synchronizer#execute(net.digitalid.core.handler.InternalAction) Synchronizer}!
+ * <em>Important:</em> Do not execute internal actions directly but always pass them to the {@link Synchronizer#execute(net.digitalid.service.core.handler.InternalAction) Synchronizer}!
  * 
  * @invariant hasEntity() : "This internal action has an entity.";
  * @invariant isNonHost() : "This internal action belongs to a non-host.";

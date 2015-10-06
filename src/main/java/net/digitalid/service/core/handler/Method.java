@@ -1,4 +1,4 @@
-package net.digitalid.core.handler;
+package net.digitalid.service.core.handler;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -8,57 +8,57 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.agent.Agent;
-import net.digitalid.core.agent.FreezableAgentPermissions;
-import net.digitalid.core.agent.ReadOnlyAgentPermissions;
-import net.digitalid.core.agent.Restrictions;
-import net.digitalid.collections.annotations.freezable.Frozen;
-import net.digitalid.annotations.state.Immutable;
-import net.digitalid.database.annotations.NonCommitting;
-import net.digitalid.collections.annotations.size.NonEmpty;
-import net.digitalid.core.annotations.NonNullableElements;
-import net.digitalid.core.annotations.OnlyForHosts;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.core.attribute.Attribute;
-import net.digitalid.core.attribute.AttributeValue;
-import net.digitalid.core.attribute.CertifiedAttributeValue;
-import net.digitalid.core.auxiliary.Time;
-import net.digitalid.collections.freezable.FreezableArrayList;
-import net.digitalid.collections.freezable.FreezableList;
-import net.digitalid.collections.readonly.ReadOnlyIterator;
-import net.digitalid.collections.readonly.ReadOnlyList;
-import net.digitalid.core.contact.Contact;
-import net.digitalid.core.contact.FreezableAuthentications;
-import net.digitalid.core.contact.ReadOnlyAuthentications;
-import net.digitalid.core.credential.ClientCredential;
-import net.digitalid.core.credential.Credential;
-import net.digitalid.core.entity.Account;
-import net.digitalid.core.entity.Entity;
-import net.digitalid.core.entity.NonHostEntity;
-import net.digitalid.core.entity.Role;
-import net.digitalid.core.exceptions.external.ExternalException;
-import net.digitalid.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.core.exceptions.packet.PacketError;
-import net.digitalid.core.exceptions.packet.PacketException;
-import net.digitalid.core.identifier.HostIdentifier;
-import net.digitalid.core.identifier.InternalIdentifier;
-import net.digitalid.core.identity.Identity;
-import net.digitalid.core.identity.IdentityQuery;
-import net.digitalid.core.identity.Person;
-import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.packet.ClientRequest;
-import net.digitalid.core.packet.CredentialsRequest;
-import net.digitalid.core.packet.HostRequest;
-import net.digitalid.core.packet.Request;
-import net.digitalid.core.packet.Response;
-import net.digitalid.core.service.CoreService;
-import net.digitalid.core.synchronizer.RequestAudit;
-import net.digitalid.core.wrappers.Block;
-import net.digitalid.core.wrappers.SignatureWrapper;
+import net.digitalid.service.core.agent.Agent;
+import net.digitalid.service.core.agent.FreezableAgentPermissions;
+import net.digitalid.service.core.agent.ReadOnlyAgentPermissions;
+import net.digitalid.service.core.agent.Restrictions;
+import net.digitalid.service.core.annotations.OnlyForHosts;
+import net.digitalid.service.core.attribute.Attribute;
+import net.digitalid.service.core.attribute.AttributeValue;
+import net.digitalid.service.core.attribute.CertifiedAttributeValue;
+import net.digitalid.service.core.auxiliary.Time;
+import net.digitalid.service.core.contact.Contact;
+import net.digitalid.service.core.contact.FreezableAuthentications;
+import net.digitalid.service.core.contact.ReadOnlyAuthentications;
+import net.digitalid.service.core.credential.ClientCredential;
+import net.digitalid.service.core.credential.Credential;
+import net.digitalid.service.core.entity.Account;
+import net.digitalid.service.core.entity.Entity;
+import net.digitalid.service.core.entity.NonHostEntity;
+import net.digitalid.service.core.entity.Role;
+import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.packet.PacketError;
+import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.identifier.HostIdentifier;
+import net.digitalid.service.core.identifier.InternalIdentifier;
+import net.digitalid.service.core.identity.Identity;
+import net.digitalid.service.core.identity.IdentityQuery;
+import net.digitalid.service.core.identity.Person;
+import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.packet.ClientRequest;
+import net.digitalid.service.core.packet.CredentialsRequest;
+import net.digitalid.service.core.packet.HostRequest;
+import net.digitalid.service.core.packet.Request;
+import net.digitalid.service.core.packet.Response;
+import net.digitalid.service.core.service.CoreService;
+import net.digitalid.service.core.synchronizer.RequestAudit;
+import net.digitalid.service.core.wrappers.Block;
+import net.digitalid.service.core.wrappers.SignatureWrapper;
+import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
+import net.digitalid.utility.collections.annotations.freezable.Frozen;
+import net.digitalid.utility.collections.annotations.size.NonEmpty;
+import net.digitalid.utility.collections.freezable.FreezableArrayList;
+import net.digitalid.utility.collections.freezable.FreezableList;
+import net.digitalid.utility.collections.readonly.ReadOnlyIterator;
+import net.digitalid.utility.collections.readonly.ReadOnlyList;
+import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * This class implements a remote method invocation mechanism.
- * All methods have to extend this class and {@link #add(net.digitalid.core.identity.SemanticType, net.digitalid.core.handler.Method.Factory) register} themselves as handlers.
+ * All methods have to extend this class and {@link #add(net.digitalid.service.core.identity.SemanticType, net.digitalid.service.core.handler.Method.Factory) register} themselves as handlers.
  * 
  * @see Action
  * @see Query
@@ -219,7 +219,7 @@ public abstract class Method extends Handler {
     /**
      * Sends the block encoded by this method to the stored recipient.
      * This method can be overridden to support, for example, one-time credentials.
-     * You might also want to return {@code false} for {@link #isSimilarTo(net.digitalid.core.handler.Method)}.
+     * You might also want to return {@code false} for {@link #isSimilarTo(net.digitalid.service.core.handler.Method)}.
      * 
      * @return the response to the request that is encoded by this method.
      * 
@@ -260,7 +260,7 @@ public abstract class Method extends Handler {
     
     
     /**
-     * Returns whether the given methods are {@link #isSimilarTo(net.digitalid.core.handler.Method) similar} to each other (in both directions).
+     * Returns whether the given methods are {@link #isSimilarTo(net.digitalid.service.core.handler.Method) similar} to each other (in both directions).
      * 
      * @param methods the methods to check for similarity.
      * 
@@ -417,7 +417,7 @@ public abstract class Method extends Handler {
     
     
     /**
-     * Each method needs to {@link #add(net.digitalid.core.identity.SemanticType, net.digitalid.core.handler.Method.Factory) register} a factory that inherits from this class.
+     * Each method needs to {@link #add(net.digitalid.service.core.identity.SemanticType, net.digitalid.service.core.handler.Method.Factory) register} a factory that inherits from this class.
      */
     protected static abstract class Factory {
         

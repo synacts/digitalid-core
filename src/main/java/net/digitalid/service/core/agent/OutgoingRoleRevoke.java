@@ -1,30 +1,30 @@
-package net.digitalid.core.agent;
+package net.digitalid.service.core.agent;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.annotations.state.Immutable;
-import net.digitalid.database.annotations.NonCommitting;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.core.entity.Entity;
-import net.digitalid.core.entity.NonNativeRole;
-import net.digitalid.core.exceptions.external.ExternalException;
-import net.digitalid.core.exceptions.packet.PacketError;
-import net.digitalid.core.exceptions.packet.PacketException;
-import net.digitalid.core.handler.Method;
-import net.digitalid.core.handler.Reply;
-import net.digitalid.core.identifier.HostIdentifier;
-import net.digitalid.core.identity.IdentityClass;
-import net.digitalid.core.identity.InternalNonHostIdentity;
-import net.digitalid.core.identity.InternalPerson;
-import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.data.StateModule;
-import net.digitalid.core.service.CoreServiceActionReply;
-import net.digitalid.core.service.CoreServiceExternalAction;
-import net.digitalid.core.wrappers.Block;
-import net.digitalid.core.wrappers.HostSignatureWrapper;
-import net.digitalid.core.wrappers.SignatureWrapper;
+import net.digitalid.service.core.data.StateModule;
+import net.digitalid.service.core.entity.Entity;
+import net.digitalid.service.core.entity.NonNativeRole;
+import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.packet.PacketError;
+import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.handler.Method;
+import net.digitalid.service.core.handler.Reply;
+import net.digitalid.service.core.identifier.HostIdentifier;
+import net.digitalid.service.core.identity.IdentityClass;
+import net.digitalid.service.core.identity.InternalNonHostIdentity;
+import net.digitalid.service.core.identity.InternalPerson;
+import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.service.CoreServiceActionReply;
+import net.digitalid.service.core.service.CoreServiceExternalAction;
+import net.digitalid.service.core.wrappers.Block;
+import net.digitalid.service.core.wrappers.HostSignatureWrapper;
+import net.digitalid.service.core.wrappers.SignatureWrapper;
+import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * Revokes the given role from the given subject.

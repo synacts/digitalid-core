@@ -1,4 +1,4 @@
 /**
  * Provides classes for modeling tables, modules and services.
  */
-package net.digitalid.core.data;
+package net.digitalid.service.core.data;

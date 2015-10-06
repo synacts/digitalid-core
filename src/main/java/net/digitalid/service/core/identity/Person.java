@@ -1,11 +1,11 @@
-package net.digitalid.core.identity;
+package net.digitalid.service.core.identity;
 
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.annotations.state.Immutable;
-import net.digitalid.database.annotations.NonCommitting;
-import net.digitalid.core.identifier.InternalNonHostIdentifier;
+import net.digitalid.service.core.identifier.InternalNonHostIdentifier;
+import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * This class models a person.

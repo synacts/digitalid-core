@@ -1,10 +1,10 @@
-package net.digitalid.core.entity;
+package net.digitalid.service.core.entity;
 
 import javax.annotation.Nonnull;
-import net.digitalid.annotations.state.Immutable;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.core.host.Host;
-import net.digitalid.core.identity.HostIdentity;
+import net.digitalid.service.core.host.Host;
+import net.digitalid.service.core.identity.HostIdentity;
+import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.annotations.state.Pure;
 
 /**
  * This interface models a host entity.

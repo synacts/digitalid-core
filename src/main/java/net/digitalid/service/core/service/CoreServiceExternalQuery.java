@@ -1,19 +1,19 @@
-package net.digitalid.core.service;
+package net.digitalid.service.core.service;
 
-import net.digitalid.core.data.Service;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.database.annotations.NonCommitting;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.core.entity.Entity;
-import net.digitalid.core.entity.Role;
-import net.digitalid.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.core.exceptions.packet.PacketException;
-import net.digitalid.core.handler.ExternalQuery;
-import net.digitalid.core.identifier.HostIdentifier;
-import net.digitalid.core.identifier.InternalIdentifier;
-import net.digitalid.core.wrappers.SignatureWrapper;
+import net.digitalid.service.core.data.Service;
+import net.digitalid.service.core.entity.Entity;
+import net.digitalid.service.core.entity.Role;
+import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.handler.ExternalQuery;
+import net.digitalid.service.core.identifier.HostIdentifier;
+import net.digitalid.service.core.identifier.InternalIdentifier;
+import net.digitalid.service.core.wrappers.SignatureWrapper;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * This class models the {@link ExternalQuery external queries} of the {@link CoreService core service}.

@@ -1,4 +1,4 @@
-package net.digitalid.core.identity;
+package net.digitalid.service.core.identity;
 
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -6,18 +6,18 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.database.annotations.NonCommitting;
-import net.digitalid.database.configuration.Database;
-import net.digitalid.system.errors.InitializationError;
-import net.digitalid.core.exceptions.external.ExternalException;
-import net.digitalid.core.exceptions.packet.PacketError;
-import net.digitalid.core.exceptions.packet.PacketException;
-import net.digitalid.core.handler.Reply;
-import net.digitalid.core.identifier.ExternalIdentifier;
-import net.digitalid.core.identifier.Identifier;
-import net.digitalid.core.identifier.IdentifierClass;
-import net.digitalid.core.identifier.InternalNonHostIdentifier;
-import net.digitalid.core.identifier.NonHostIdentifier;
+import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.packet.PacketError;
+import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.handler.Reply;
+import net.digitalid.service.core.identifier.ExternalIdentifier;
+import net.digitalid.service.core.identifier.Identifier;
+import net.digitalid.service.core.identifier.IdentifierClass;
+import net.digitalid.service.core.identifier.InternalNonHostIdentifier;
+import net.digitalid.service.core.identifier.NonHostIdentifier;
+import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.configuration.Database;
+import net.digitalid.utility.system.errors.InitializationError;
 
 /**
  * This class models the successor of an {@link Identifier identifier}.

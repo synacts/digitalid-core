@@ -1,4 +1,4 @@
 /**
  * Provides classes for handling certificates.
  */
-package net.digitalid.core.certificate;
+package net.digitalid.service.core.certificate;

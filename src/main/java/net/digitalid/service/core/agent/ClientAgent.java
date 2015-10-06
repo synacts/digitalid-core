@@ -1,25 +1,25 @@
-package net.digitalid.core.agent;
+package net.digitalid.service.core.agent;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.database.annotations.Committing;
-import net.digitalid.annotations.state.Immutable;
-import net.digitalid.database.annotations.NonCommitting;
-import net.digitalid.core.annotations.OnlyForActions;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.core.client.Commitment;
-import net.digitalid.core.collections.ConcurrentHashMap;
-import net.digitalid.core.collections.ConcurrentMap;
-import net.digitalid.core.concept.Aspect;
-import net.digitalid.core.concept.Instance;
-import net.digitalid.core.concept.Observer;
-import net.digitalid.database.configuration.Database;
-import net.digitalid.core.entity.Entity;
-import net.digitalid.core.entity.NonHostEntity;
-import net.digitalid.core.identity.Identity;
-import net.digitalid.core.synchronizer.Synchronizer;
+import net.digitalid.service.core.annotations.OnlyForActions;
+import net.digitalid.service.core.client.Commitment;
+import net.digitalid.service.core.concept.Aspect;
+import net.digitalid.service.core.concept.Instance;
+import net.digitalid.service.core.concept.Observer;
+import net.digitalid.service.core.entity.Entity;
+import net.digitalid.service.core.entity.NonHostEntity;
+import net.digitalid.service.core.identity.Identity;
+import net.digitalid.service.core.synchronizer.Synchronizer;
+import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.collections.concurrent.ConcurrentHashMap;
+import net.digitalid.utility.collections.concurrent.ConcurrentMap;
+import net.digitalid.utility.database.annotations.Committing;
+import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.configuration.Database;
 
 /**
  * This class models a client agent that acts on behalf of an {@link Identity identity}.

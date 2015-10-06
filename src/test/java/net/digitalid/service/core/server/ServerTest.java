@@ -1,9 +1,9 @@
-package net.digitalid.core.server;
+package net.digitalid.service.core.server;
 
-import net.digitalid.core.agent.FreezableAgentPermissions;
-import net.digitalid.core.client.Client;
-import net.digitalid.system.directory.Directory;
-import net.digitalid.core.setup.ServerSetup;
+import net.digitalid.service.core.agent.FreezableAgentPermissions;
+import net.digitalid.service.core.client.Client;
+import net.digitalid.service.core.setup.ServerSetup;
+import net.digitalid.utility.system.directory.Directory;
 import org.junit.Test;
 
 /**

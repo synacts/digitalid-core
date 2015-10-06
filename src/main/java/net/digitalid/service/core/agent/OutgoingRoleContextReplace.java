@@ -1,27 +1,27 @@
-package net.digitalid.core.agent;
+package net.digitalid.service.core.agent;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.annotations.state.Immutable;
-import net.digitalid.database.annotations.NonCommitting;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.collections.readonly.ReadOnlyArray;
-import net.digitalid.core.contact.Context;
-import net.digitalid.core.entity.Entity;
-import net.digitalid.core.entity.NonHostEntity;
-import net.digitalid.core.exceptions.external.ExternalException;
-import net.digitalid.core.exceptions.packet.PacketException;
-import net.digitalid.core.handler.Action;
-import net.digitalid.core.handler.Method;
-import net.digitalid.core.identifier.HostIdentifier;
-import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.data.StateModule;
-import net.digitalid.core.service.CoreServiceInternalAction;
-import net.digitalid.core.wrappers.Block;
-import net.digitalid.core.wrappers.SignatureWrapper;
-import net.digitalid.core.wrappers.TupleWrapper;
+import net.digitalid.service.core.contact.Context;
+import net.digitalid.service.core.data.StateModule;
+import net.digitalid.service.core.entity.Entity;
+import net.digitalid.service.core.entity.NonHostEntity;
+import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.handler.Action;
+import net.digitalid.service.core.handler.Method;
+import net.digitalid.service.core.identifier.HostIdentifier;
+import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.service.CoreServiceInternalAction;
+import net.digitalid.service.core.wrappers.Block;
+import net.digitalid.service.core.wrappers.SignatureWrapper;
+import net.digitalid.service.core.wrappers.TupleWrapper;
+import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.collections.readonly.ReadOnlyArray;
+import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * Replaces the context of a {@link OutgoingRole outgoing role}.

@@ -1,21 +1,21 @@
-package net.digitalid.core.factory;
+package net.digitalid.service.core.factory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.annotations.reference.Captured;
-import net.digitalid.annotations.state.Immutable;
-import net.digitalid.core.annotations.Loaded;
-import net.digitalid.core.annotations.NonEncoding;
-import net.digitalid.core.annotations.NonNullableElements;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.database.column.Column;
-import net.digitalid.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.wrappers.Block;
+import net.digitalid.service.core.annotations.Loaded;
+import net.digitalid.service.core.annotations.NonEncoding;
+import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.wrappers.Block;
+import net.digitalid.utility.annotations.reference.Captured;
+import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
+import net.digitalid.utility.database.column.Column;
 
 /**
  * This class is like {@link GlobalFactory} except that the decoding of {@link Block blocks} throws less exceptions.
- * The local factory allows only local information during {@link #decodeNonNullable(java.lang.Object, net.digitalid.core.wrappers.Block) decoding}.
+ * The local factory allows only local information during {@link #decodeNonNullable(java.lang.Object, net.digitalid.service.core.wrappers.Block) decoding}.
  * 
  * @see BlockBasedLocalFactory
  * @see FactoryBasedLocalFactory

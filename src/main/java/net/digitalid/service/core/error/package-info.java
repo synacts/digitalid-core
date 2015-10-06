@@ -1,4 +1,4 @@
 /**
  * Provides classes for handling errors.
  */
-package net.digitalid.core.error;
+package net.digitalid.service.core.error;

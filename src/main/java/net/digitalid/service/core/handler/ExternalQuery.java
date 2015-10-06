@@ -1,18 +1,18 @@
-package net.digitalid.core.handler;
+package net.digitalid.service.core.handler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.annotations.state.Immutable;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.core.client.Client;
-import net.digitalid.core.entity.Entity;
-import net.digitalid.core.entity.Role;
-import net.digitalid.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.core.host.Host;
-import net.digitalid.core.identifier.HostIdentifier;
-import net.digitalid.core.identifier.InternalIdentifier;
-import net.digitalid.core.service.CoreServiceExternalQuery;
-import net.digitalid.core.wrappers.SignatureWrapper;
+import net.digitalid.service.core.client.Client;
+import net.digitalid.service.core.entity.Entity;
+import net.digitalid.service.core.entity.Role;
+import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.host.Host;
+import net.digitalid.service.core.identifier.HostIdentifier;
+import net.digitalid.service.core.identifier.InternalIdentifier;
+import net.digitalid.service.core.service.CoreServiceExternalQuery;
+import net.digitalid.service.core.wrappers.SignatureWrapper;
+import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.annotations.state.Pure;
 
 /**
  * External queries can be sent by both {@link Host hosts} and {@link Client clients}.

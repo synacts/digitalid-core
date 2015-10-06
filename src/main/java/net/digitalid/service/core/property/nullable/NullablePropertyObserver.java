@@ -1,8 +1,8 @@
-package net.digitalid.core.property.nullable;
+package net.digitalid.service.core.property.nullable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.property.PropertyObserver;
+import net.digitalid.service.core.property.PropertyObserver;
 
 /**
  * Description.

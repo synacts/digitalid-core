@@ -1,4 +1,4 @@
 /**
  * Provides classes for handling identifiers.
  */
-package net.digitalid.core.identifier;
+package net.digitalid.service.core.identifier;

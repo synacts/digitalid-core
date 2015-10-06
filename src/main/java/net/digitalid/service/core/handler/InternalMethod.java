@@ -1,9 +1,9 @@
-package net.digitalid.core.handler;
+package net.digitalid.service.core.handler;
 
 import javax.annotation.Nonnull;
-import net.digitalid.core.agent.Restrictions;
-import net.digitalid.annotations.state.Immutable;
-import net.digitalid.annotations.state.Pure;
+import net.digitalid.service.core.agent.Restrictions;
+import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.annotations.state.Pure;
 
 /**
  * Internal methods have to implement this interface in order to provide the required restrictions.

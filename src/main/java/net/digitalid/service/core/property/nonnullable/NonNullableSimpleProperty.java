@@ -1,9 +1,9 @@
-package net.digitalid.core.property.nonnullable;
+package net.digitalid.service.core.property.nonnullable;
 
 import javax.annotation.Nonnull;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.annotations.state.Validated;
-import net.digitalid.core.property.ValueValidator;
+import net.digitalid.service.core.property.ValueValidator;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.annotations.state.Validated;
 
 /**
  * This property stores a replaceable value that cannot be null.

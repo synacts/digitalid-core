@@ -1,42 +1,42 @@
-package net.digitalid.core.wrappers;
+package net.digitalid.service.core.wrappers;
 
 import java.io.IOException;
 import java.math.BigInteger;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.annotations.BasedOn;
-import net.digitalid.annotations.state.Immutable;
-import net.digitalid.core.annotations.Loaded;
-import net.digitalid.database.annotations.Locked;
-import net.digitalid.database.annotations.NonCommitting;
-import net.digitalid.core.annotations.NonEncoding;
-import net.digitalid.collections.annotations.freezable.NonFrozen;
-import net.digitalid.core.annotations.NullableElements;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.core.auxiliary.Time;
-import net.digitalid.core.cache.Cache;
-import net.digitalid.collections.freezable.FreezableArray;
-import net.digitalid.collections.readonly.ReadOnlyArray;
-import net.digitalid.core.cryptography.Element;
-import net.digitalid.core.cryptography.PrivateKey;
-import net.digitalid.core.cryptography.PublicKey;
-import net.digitalid.core.cryptography.PublicKeyChain;
-import net.digitalid.system.errors.ShouldNeverHappenError;
-import net.digitalid.core.exceptions.external.ExternalException;
-import net.digitalid.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.core.exceptions.external.InvalidSignatureException;
-import net.digitalid.core.exceptions.packet.PacketException;
-import net.digitalid.core.identifier.HostIdentifier;
-import net.digitalid.core.identifier.IdentifierClass;
-import net.digitalid.core.identifier.InternalIdentifier;
-import net.digitalid.core.identity.HostIdentity;
-import net.digitalid.core.identity.InternalIdentity;
-import net.digitalid.core.identity.SemanticType;
-import net.digitalid.system.logger.Log;
-import net.digitalid.core.server.Server;
-import net.digitalid.core.factory.Storable;
-import net.digitalid.core.synchronizer.Audit;
+import net.digitalid.service.core.annotations.BasedOn;
+import net.digitalid.service.core.annotations.Loaded;
+import net.digitalid.service.core.annotations.NonEncoding;
+import net.digitalid.service.core.auxiliary.Time;
+import net.digitalid.service.core.cache.Cache;
+import net.digitalid.service.core.cryptography.Element;
+import net.digitalid.service.core.cryptography.PrivateKey;
+import net.digitalid.service.core.cryptography.PublicKey;
+import net.digitalid.service.core.cryptography.PublicKeyChain;
+import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.InvalidSignatureException;
+import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.factory.Storable;
+import net.digitalid.service.core.identifier.HostIdentifier;
+import net.digitalid.service.core.identifier.IdentifierClass;
+import net.digitalid.service.core.identifier.InternalIdentifier;
+import net.digitalid.service.core.identity.HostIdentity;
+import net.digitalid.service.core.identity.InternalIdentity;
+import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.server.Server;
+import net.digitalid.service.core.synchronizer.Audit;
+import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.collections.annotations.elements.NullableElements;
+import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
+import net.digitalid.utility.collections.freezable.FreezableArray;
+import net.digitalid.utility.collections.readonly.ReadOnlyArray;
+import net.digitalid.utility.database.annotations.Locked;
+import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.system.errors.ShouldNeverHappenError;
+import net.digitalid.utility.system.logger.Log;
 
 /**
  * This class wraps an {@link Block element} for encoding and decoding a block of the syntactic type {@code signature@core.digitalid.net} that is signed by a host.
@@ -110,7 +110,7 @@ public final class HostSignatureWrapper extends SignatureWrapper {
     
     /**
      * Creates a new host signature wrapper from the given blocks.
-     * (Only to be called by {@link SignatureWrapper#decodeWithoutVerifying(ch.xdf.Block, boolean, net.digitalid.core.entity.Entity)}.)
+     * (Only to be called by {@link SignatureWrapper#decodeWithoutVerifying(ch.xdf.Block, boolean, net.digitalid.service.core.entity.Entity)}.)
      * 
      * @param block the block that contains the signed element.
      * @param hostSignature the host signature to be decoded.

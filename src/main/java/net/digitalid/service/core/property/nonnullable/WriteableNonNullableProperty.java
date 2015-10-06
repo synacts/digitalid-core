@@ -1,11 +1,11 @@
-package net.digitalid.core.property.nonnullable;
+package net.digitalid.service.core.property.nonnullable;
 
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
-import net.digitalid.database.annotations.Committing;
-import net.digitalid.database.annotations.Locked;
-import net.digitalid.annotations.state.Validated;
-import net.digitalid.core.property.ValueValidator;
+import net.digitalid.service.core.property.ValueValidator;
+import net.digitalid.utility.annotations.state.Validated;
+import net.digitalid.utility.database.annotations.Committing;
+import net.digitalid.utility.database.annotations.Locked;
 
 /**
  * This is the writable interface to a property that stores a non-null replaceable value.

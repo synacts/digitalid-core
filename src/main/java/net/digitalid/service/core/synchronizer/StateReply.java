@@ -1,25 +1,25 @@
-package net.digitalid.core.synchronizer;
+package net.digitalid.service.core.synchronizer;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.annotations.state.Immutable;
-import net.digitalid.database.annotations.NonCommitting;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.core.entity.NonHostAccount;
-import net.digitalid.core.entity.NonHostEntity;
-import net.digitalid.core.entity.Role;
-import net.digitalid.core.exceptions.external.ExternalException;
-import net.digitalid.core.exceptions.packet.PacketException;
-import net.digitalid.core.handler.QueryReply;
-import net.digitalid.core.handler.Reply;
-import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.data.StateModule;
-import net.digitalid.core.data.Service;
-import net.digitalid.core.wrappers.Block;
-import net.digitalid.core.wrappers.HostSignatureWrapper;
-import net.digitalid.core.wrappers.SelfcontainedWrapper;
+import net.digitalid.service.core.data.Service;
+import net.digitalid.service.core.data.StateModule;
+import net.digitalid.service.core.entity.NonHostAccount;
+import net.digitalid.service.core.entity.NonHostEntity;
+import net.digitalid.service.core.entity.Role;
+import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.handler.QueryReply;
+import net.digitalid.service.core.handler.Reply;
+import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.wrappers.Block;
+import net.digitalid.service.core.wrappers.HostSignatureWrapper;
+import net.digitalid.service.core.wrappers.SelfcontainedWrapper;
+import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * Replies the state of the given entity.

@@ -1,24 +1,24 @@
-package net.digitalid.core.handler;
+package net.digitalid.service.core.handler;
 
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.agent.Agent;
-import net.digitalid.core.agent.FreezableAgentPermissions;
-import net.digitalid.core.agent.ReadOnlyAgentPermissions;
-import net.digitalid.core.agent.Restrictions;
-import net.digitalid.annotations.state.Immutable;
-import net.digitalid.database.annotations.NonCommitting;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.core.entity.Account;
-import net.digitalid.core.entity.NonHostEntity;
-import net.digitalid.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.core.exceptions.packet.PacketException;
-import net.digitalid.core.pusher.Pusher;
-import net.digitalid.core.service.CoreServiceActionReply;
-import net.digitalid.core.data.Service;
-import net.digitalid.core.synchronizer.Audit;
-import net.digitalid.core.wrappers.HostSignatureWrapper;
+import net.digitalid.service.core.agent.Agent;
+import net.digitalid.service.core.agent.FreezableAgentPermissions;
+import net.digitalid.service.core.agent.ReadOnlyAgentPermissions;
+import net.digitalid.service.core.agent.Restrictions;
+import net.digitalid.service.core.data.Service;
+import net.digitalid.service.core.entity.Account;
+import net.digitalid.service.core.entity.NonHostEntity;
+import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.pusher.Pusher;
+import net.digitalid.service.core.service.CoreServiceActionReply;
+import net.digitalid.service.core.synchronizer.Audit;
+import net.digitalid.service.core.wrappers.HostSignatureWrapper;
+import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * This class models a {@link Reply reply} to an {@link ExternalAction external action}.

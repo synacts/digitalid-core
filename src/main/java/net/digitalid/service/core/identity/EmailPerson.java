@@ -1,9 +1,9 @@
-package net.digitalid.core.identity;
+package net.digitalid.service.core.identity;
 
 import javax.annotation.Nonnull;
-import net.digitalid.annotations.state.Immutable;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.core.identifier.EmailIdentifier;
+import net.digitalid.service.core.identifier.EmailIdentifier;
+import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.annotations.state.Pure;
 
 /**
  * This class models an email person.

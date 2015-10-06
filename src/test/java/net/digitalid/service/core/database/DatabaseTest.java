@@ -1,6 +1,5 @@
-package net.digitalid.core.database;
+package net.digitalid.service.core.database;
 
-import net.digitalid.database.configuration.Database;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -8,10 +7,11 @@ import java.sql.Savepoint;
 import java.sql.Statement;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.database.annotations.Committing;
-import net.digitalid.database.annotations.NonCommitting;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.core.wrappers.Block;
+import net.digitalid.service.core.wrappers.Block;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.database.annotations.Committing;
+import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.configuration.Database;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.FixMethodOrder;

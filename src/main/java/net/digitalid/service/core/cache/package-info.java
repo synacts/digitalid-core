@@ -1,4 +1,4 @@
 /**
  * Provides classes for retrieving and caching attributes.
  */
-package net.digitalid.core.cache;
+package net.digitalid.service.core.cache;

@@ -1,12 +1,12 @@
-package net.digitalid.core.wrappers;
+package net.digitalid.service.core.wrappers;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
-import net.digitalid.core.exceptions.external.ExternalException;
-import net.digitalid.core.exceptions.packet.PacketException;
-import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.setup.DatabaseSetup;
+import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.setup.DatabaseSetup;
 import org.junit.Assert;
 import org.junit.Test;
 

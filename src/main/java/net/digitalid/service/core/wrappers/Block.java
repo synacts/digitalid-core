@@ -1,4 +1,4 @@
-package net.digitalid.core.wrappers;
+package net.digitalid.service.core.wrappers;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,34 +11,34 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.annotations.reference.Capturable;
-import net.digitalid.annotations.reference.Captured;
-import net.digitalid.core.annotations.Encoded;
-import net.digitalid.core.annotations.Encoding;
-import net.digitalid.core.annotations.EncodingRecipient;
-import net.digitalid.annotations.state.Immutable;
-import net.digitalid.core.annotations.Loaded;
-import net.digitalid.collections.annotations.size.NonEmpty;
-import net.digitalid.core.annotations.NonEncoded;
-import net.digitalid.core.annotations.NonEncoding;
-import net.digitalid.core.annotations.NonEncodingRecipient;
-import net.digitalid.collections.annotations.freezable.NonFrozen;
-import net.digitalid.annotations.math.NonNegative;
-import net.digitalid.core.annotations.NonNullableElements;
-import net.digitalid.annotations.math.Positive;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.collections.annotations.index.ValidIndex;
-import net.digitalid.collections.freezable.FreezableArray;
-import net.digitalid.database.column.Column;
-import net.digitalid.database.column.SQLType;
-import net.digitalid.core.cryptography.InitializationVector;
-import net.digitalid.core.cryptography.SymmetricKey;
-import net.digitalid.database.configuration.Database;
-import net.digitalid.system.errors.ShouldNeverHappenError;
-import net.digitalid.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.core.factory.LocalFactory;
-import net.digitalid.core.factory.Storable;
-import net.digitalid.core.identity.SemanticType;
+import net.digitalid.service.core.annotations.Encoded;
+import net.digitalid.service.core.annotations.Encoding;
+import net.digitalid.service.core.annotations.EncodingRecipient;
+import net.digitalid.service.core.annotations.Loaded;
+import net.digitalid.service.core.annotations.NonEncoded;
+import net.digitalid.service.core.annotations.NonEncoding;
+import net.digitalid.service.core.annotations.NonEncodingRecipient;
+import net.digitalid.service.core.cryptography.InitializationVector;
+import net.digitalid.service.core.cryptography.SymmetricKey;
+import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.factory.LocalFactory;
+import net.digitalid.service.core.factory.Storable;
+import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.utility.annotations.math.NonNegative;
+import net.digitalid.utility.annotations.math.Positive;
+import net.digitalid.utility.annotations.reference.Capturable;
+import net.digitalid.utility.annotations.reference.Captured;
+import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
+import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
+import net.digitalid.utility.collections.annotations.index.ValidIndex;
+import net.digitalid.utility.collections.annotations.size.NonEmpty;
+import net.digitalid.utility.collections.freezable.FreezableArray;
+import net.digitalid.utility.database.column.Column;
+import net.digitalid.utility.database.column.SQLType;
+import net.digitalid.utility.database.configuration.Database;
+import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 
 /**
  * A block is a sequence of bytes that is encoded according to some syntactic type.
@@ -282,7 +282,7 @@ public final class Block implements Storable<Block, Object>, Cloneable {
      * Returns the semantic type of this block.
      * <p>
      * <em>Important:</em> Do not rely on the identity of the type, but rather use
-     * {@link SemanticType#isBasedOn(net.digitalid.core.identity.SemanticType)} for comparisons.
+     * {@link SemanticType#isBasedOn(net.digitalid.service.core.identity.SemanticType)} for comparisons.
      * 
      * @return the semantic type of this block.
      * 

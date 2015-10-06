@@ -1,4 +1,4 @@
-package net.digitalid.core.client;
+package net.digitalid.service.core.client;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -10,56 +10,56 @@ import java.sql.SQLException;
 import java.util.Random;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.agent.ClientAgent;
-import net.digitalid.core.agent.ClientAgentAccredit;
-import net.digitalid.core.agent.ReadOnlyAgentPermissions;
-import net.digitalid.database.annotations.Committing;
-import net.digitalid.collections.annotations.freezable.Frozen;
-import net.digitalid.database.annotations.Locked;
-import net.digitalid.database.annotations.NonCommitting;
-import net.digitalid.collections.annotations.freezable.NonFrozen;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.annotations.state.Validated;
-import net.digitalid.core.auxiliary.Time;
-import net.digitalid.core.cache.Cache;
-import net.digitalid.collections.freezable.FreezableArrayList;
-import net.digitalid.collections.freezable.FreezableLinkedList;
-import net.digitalid.collections.freezable.FreezableList;
-import net.digitalid.collections.readonly.ReadOnlyList;
-import net.digitalid.core.concept.Aspect;
-import net.digitalid.core.concept.Instance;
-import net.digitalid.core.concept.Observer;
-import net.digitalid.core.contact.Context;
-import net.digitalid.core.cryptography.Element;
-import net.digitalid.core.cryptography.Exponent;
-import net.digitalid.core.cryptography.Parameters;
-import net.digitalid.core.cryptography.PublicKey;
-import net.digitalid.database.configuration.Database;
-import net.digitalid.core.entity.NativeRole;
-import net.digitalid.core.entity.Role;
-import net.digitalid.core.entity.RoleModule;
-import net.digitalid.core.entity.Site;
-import net.digitalid.core.exceptions.external.ExternalException;
-import net.digitalid.core.exceptions.packet.PacketError;
-import net.digitalid.core.exceptions.packet.PacketException;
-import net.digitalid.core.identifier.ExternalIdentifier;
-import net.digitalid.core.identifier.InternalNonHostIdentifier;
-import net.digitalid.core.identity.Category;
-import net.digitalid.core.identity.HostIdentity;
-import net.digitalid.core.identity.InternalNonHostIdentity;
-import net.digitalid.core.identity.Mapper;
-import net.digitalid.core.identity.Predecessor;
-import net.digitalid.core.identity.SemanticType;
-import net.digitalid.system.directory.Directory;
-import net.digitalid.core.service.CoreService;
-import net.digitalid.core.synchronizer.ResponseAudit;
-import net.digitalid.core.synchronizer.Synchronizer;
-import net.digitalid.core.synchronizer.SynchronizerModule;
-import net.digitalid.collections.tuples.FreezablePair;
-import net.digitalid.collections.tuples.ReadOnlyPair;
-import net.digitalid.core.wrappers.Block;
-import net.digitalid.core.wrappers.SelfcontainedWrapper;
-import net.digitalid.core.wrappers.StringWrapper;
+import net.digitalid.service.core.agent.ClientAgent;
+import net.digitalid.service.core.agent.ClientAgentAccredit;
+import net.digitalid.service.core.agent.ReadOnlyAgentPermissions;
+import net.digitalid.service.core.auxiliary.Time;
+import net.digitalid.service.core.cache.Cache;
+import net.digitalid.service.core.concept.Aspect;
+import net.digitalid.service.core.concept.Instance;
+import net.digitalid.service.core.concept.Observer;
+import net.digitalid.service.core.contact.Context;
+import net.digitalid.service.core.cryptography.Element;
+import net.digitalid.service.core.cryptography.Exponent;
+import net.digitalid.service.core.cryptography.Parameters;
+import net.digitalid.service.core.cryptography.PublicKey;
+import net.digitalid.service.core.entity.NativeRole;
+import net.digitalid.service.core.entity.Role;
+import net.digitalid.service.core.entity.RoleModule;
+import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.packet.PacketError;
+import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.identifier.ExternalIdentifier;
+import net.digitalid.service.core.identifier.InternalNonHostIdentifier;
+import net.digitalid.service.core.identity.Category;
+import net.digitalid.service.core.identity.HostIdentity;
+import net.digitalid.service.core.identity.InternalNonHostIdentity;
+import net.digitalid.service.core.identity.Mapper;
+import net.digitalid.service.core.identity.Predecessor;
+import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.service.CoreService;
+import net.digitalid.service.core.synchronizer.ResponseAudit;
+import net.digitalid.service.core.synchronizer.Synchronizer;
+import net.digitalid.service.core.synchronizer.SynchronizerModule;
+import net.digitalid.service.core.wrappers.Block;
+import net.digitalid.service.core.wrappers.SelfcontainedWrapper;
+import net.digitalid.service.core.wrappers.StringWrapper;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.annotations.state.Validated;
+import net.digitalid.utility.collections.annotations.freezable.Frozen;
+import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
+import net.digitalid.utility.collections.freezable.FreezableArrayList;
+import net.digitalid.utility.collections.freezable.FreezableLinkedList;
+import net.digitalid.utility.collections.freezable.FreezableList;
+import net.digitalid.utility.collections.readonly.ReadOnlyList;
+import net.digitalid.utility.collections.tuples.FreezablePair;
+import net.digitalid.utility.collections.tuples.ReadOnlyPair;
+import net.digitalid.utility.database.annotations.Committing;
+import net.digitalid.utility.database.annotations.Locked;
+import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.column.Site;
+import net.digitalid.utility.database.configuration.Database;
+import net.digitalid.utility.system.directory.Directory;
 
 /**
  * A client is configured with an identifier and a secret.
@@ -358,7 +358,7 @@ public class Client extends Site implements Observer {
     
     /**
      * Accredits this client at the given identity.
-     * Loop on {@link Role#reloadOrRefreshState(net.digitalid.core.service.Service...)} afterwards.
+     * Loop on {@link Role#reloadOrRefreshState(net.digitalid.service.core.service.Service...)} afterwards.
      * 
      * @param identity the identity at which this client is to be accredited.
      * @param password the password for accreditation at the given identity.

@@ -1,4 +1,4 @@
-package net.digitalid.core.entity;
+package net.digitalid.service.core.entity;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -6,13 +6,13 @@ import java.sql.SQLException;
 import java.sql.Types;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.annotations.state.Immutable;
-import net.digitalid.database.annotations.NonCommitting;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.core.client.Client;
-import net.digitalid.system.errors.ShouldNeverHappenError;
-import net.digitalid.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.core.host.Host;
+import net.digitalid.service.core.client.Client;
+import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.host.Host;
+import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 
 /**
  * This class implements methods of the {@link Entity} interface.

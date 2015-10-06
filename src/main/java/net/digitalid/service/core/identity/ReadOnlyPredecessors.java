@@ -1,21 +1,21 @@
-package net.digitalid.core.identity;
+package net.digitalid.service.core.identity;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.annotations.reference.Capturable;
-import net.digitalid.collections.annotations.freezable.Frozen;
-import net.digitalid.database.annotations.NonCommitting;
-import net.digitalid.collections.annotations.freezable.NonFrozen;
-import net.digitalid.core.annotations.NonNullableElements;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.collections.readonly.ReadOnlyList;
-import net.digitalid.core.exceptions.external.ExternalException;
-import net.digitalid.core.exceptions.packet.PacketException;
-import net.digitalid.core.handler.Reply;
-import net.digitalid.core.identifier.InternalNonHostIdentifier;
-import net.digitalid.core.wrappers.Blockable;
+import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.handler.Reply;
+import net.digitalid.service.core.identifier.InternalNonHostIdentifier;
+import net.digitalid.service.core.wrappers.Blockable;
+import net.digitalid.utility.annotations.reference.Capturable;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
+import net.digitalid.utility.collections.annotations.freezable.Frozen;
+import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
+import net.digitalid.utility.collections.readonly.ReadOnlyList;
+import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * This interface provides read-only access to {@link FreezablePredecessors predecessors} and should <em>never</em> be cast away.

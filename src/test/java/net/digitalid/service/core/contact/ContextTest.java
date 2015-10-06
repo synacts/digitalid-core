@@ -1,10 +1,10 @@
-package net.digitalid.core.contact;
+package net.digitalid.service.core.contact;
 
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
-import net.digitalid.database.annotations.Committing;
-import net.digitalid.database.configuration.Database;
-import net.digitalid.core.setup.IdentitySetup;
+import net.digitalid.service.core.setup.IdentitySetup;
+import net.digitalid.utility.database.annotations.Committing;
+import net.digitalid.utility.database.configuration.Database;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;

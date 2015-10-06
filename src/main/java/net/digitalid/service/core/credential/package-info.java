@@ -1,4 +1,4 @@
 /**
  * Provides classes for managing credentials.
  */
-package net.digitalid.core.credential;
+package net.digitalid.service.core.credential;

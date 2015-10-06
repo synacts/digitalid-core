@@ -1,15 +1,15 @@
-package net.digitalid.core.credential;
+package net.digitalid.service.core.credential;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.agent.Restrictions;
-import net.digitalid.annotations.state.Immutable;
-import net.digitalid.database.annotations.NonCommitting;
-import net.digitalid.core.exceptions.external.ExternalException;
-import net.digitalid.core.exceptions.packet.PacketException;
-import net.digitalid.core.wrappers.Block;
+import net.digitalid.service.core.agent.Restrictions;
+import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.wrappers.Block;
+import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * This class models credentials on the host-side.

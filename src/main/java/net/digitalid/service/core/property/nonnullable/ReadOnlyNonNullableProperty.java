@@ -1,13 +1,13 @@
-package net.digitalid.core.property.nonnullable;
+package net.digitalid.service.core.property.nonnullable;
 
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
-import net.digitalid.database.annotations.Locked;
-import net.digitalid.database.annotations.NonCommitting;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.annotations.state.Validated;
-import net.digitalid.core.property.ReadOnlyProperty;
-import net.digitalid.core.property.ValueValidator;
+import net.digitalid.service.core.property.ReadOnlyProperty;
+import net.digitalid.service.core.property.ValueValidator;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.annotations.state.Validated;
+import net.digitalid.utility.database.annotations.Locked;
+import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * This is the read-only interface to a property that stores a non-nullable replaceable value.

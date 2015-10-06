@@ -1,9 +1,9 @@
-package net.digitalid.core.factory;
+package net.digitalid.service.core.factory;
 
 import javax.annotation.Nonnull;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.core.entity.Entity;
-import net.digitalid.core.wrappers.Block;
+import net.digitalid.service.core.entity.Entity;
+import net.digitalid.service.core.wrappers.Block;
+import net.digitalid.utility.annotations.state.Pure;
 
 /**
  * Objects of classes that implement this interface can be stored as a {@link Block block} or in the {@link Database database}.

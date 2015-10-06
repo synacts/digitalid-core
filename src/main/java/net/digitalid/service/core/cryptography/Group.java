@@ -1,17 +1,17 @@
-package net.digitalid.core.cryptography;
+package net.digitalid.service.core.cryptography;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.Random;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.annotations.BasedOn;
-import net.digitalid.annotations.state.Immutable;
-import net.digitalid.annotations.math.Positive;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.core.factory.Storable;
-import net.digitalid.core.wrappers.Block;
+import net.digitalid.service.core.annotations.BasedOn;
+import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.factory.Storable;
+import net.digitalid.service.core.wrappers.Block;
+import net.digitalid.utility.annotations.math.Positive;
+import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.annotations.state.Pure;
 
 /**
  * This class models a multiplicative group.

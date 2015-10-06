@@ -1,4 +1,4 @@
-package net.digitalid.core.wrappers;
+package net.digitalid.service.core.wrappers;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -6,20 +6,20 @@ import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterOutputStream;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.annotations.BasedOn;
-import net.digitalid.core.annotations.Encoded;
-import net.digitalid.core.annotations.Encoding;
-import net.digitalid.annotations.state.Immutable;
-import net.digitalid.core.annotations.Loaded;
-import net.digitalid.core.annotations.NonEncoding;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.core.auxiliary.Time;
-import net.digitalid.system.errors.ShouldNeverHappenError;
-import net.digitalid.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.identity.SyntacticType;
-import net.digitalid.system.logger.Log;
-import net.digitalid.core.factory.Storable;
+import net.digitalid.service.core.annotations.BasedOn;
+import net.digitalid.service.core.annotations.Encoded;
+import net.digitalid.service.core.annotations.Encoding;
+import net.digitalid.service.core.annotations.Loaded;
+import net.digitalid.service.core.annotations.NonEncoding;
+import net.digitalid.service.core.auxiliary.Time;
+import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.factory.Storable;
+import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.identity.SyntacticType;
+import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.system.errors.ShouldNeverHappenError;
+import net.digitalid.utility.system.logger.Log;
 
 /**
  * This class wraps an {@link Block element} for encoding and decoding a block of the syntactic type {@code compression@core.digitalid.net}.

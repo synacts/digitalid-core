@@ -1,15 +1,15 @@
-package net.digitalid.core.data;
+package net.digitalid.service.core.data;
 
 import java.sql.SQLException;
 import java.sql.Statement;
 import javax.annotation.Nonnull;
-import net.digitalid.annotations.state.Immutable;
-import net.digitalid.database.annotations.Locked;
-import net.digitalid.database.annotations.NonCommitting;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.annotations.state.Validated;
-import net.digitalid.database.configuration.Database;
-import net.digitalid.core.entity.Site;
+import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.annotations.state.Validated;
+import net.digitalid.utility.database.annotations.Locked;
+import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.column.Site;
+import net.digitalid.utility.database.configuration.Database;
 
 /**
  * This class models a database table with the least requirements.

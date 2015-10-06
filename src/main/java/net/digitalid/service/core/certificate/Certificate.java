@@ -1,24 +1,24 @@
-package net.digitalid.core.certificate;
+package net.digitalid.service.core.certificate;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
-import net.digitalid.database.annotations.Locked;
-import net.digitalid.database.annotations.NonCommitting;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.core.auxiliary.Time;
-import net.digitalid.core.concept.NonHostConcept;
-import net.digitalid.core.entity.NonHostEntity;
-import net.digitalid.core.exceptions.external.ExternalException;
-import net.digitalid.core.exceptions.packet.PacketException;
-import net.digitalid.core.expression.PassiveExpression;
-import net.digitalid.core.identity.Category;
-import net.digitalid.core.identity.InternalNonHostIdentity;
-import net.digitalid.core.identity.NonHostIdentity;
-import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.wrappers.Block;
-import net.digitalid.core.wrappers.ListWrapper;
-import net.digitalid.core.wrappers.TupleWrapper;
+import net.digitalid.service.core.auxiliary.Time;
+import net.digitalid.service.core.concept.NonHostConcept;
+import net.digitalid.service.core.entity.NonHostEntity;
+import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.expression.PassiveExpression;
+import net.digitalid.service.core.identity.Category;
+import net.digitalid.service.core.identity.InternalNonHostIdentity;
+import net.digitalid.service.core.identity.NonHostIdentity;
+import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.wrappers.Block;
+import net.digitalid.service.core.wrappers.ListWrapper;
+import net.digitalid.service.core.wrappers.TupleWrapper;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.database.annotations.Locked;
+import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * Description.

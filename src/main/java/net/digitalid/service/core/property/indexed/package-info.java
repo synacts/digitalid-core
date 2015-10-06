@@ -1,4 +1,4 @@
 /**
  * Provides classes for handling indexed properties.
  */
-package net.digitalid.core.property.indexed;
+package net.digitalid.service.core.property.indexed;

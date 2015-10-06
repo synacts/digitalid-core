@@ -1,23 +1,23 @@
-package net.digitalid.core.data;
+package net.digitalid.service.core.data;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.agent.Agent;
-import net.digitalid.core.agent.ReadOnlyAgentPermissions;
-import net.digitalid.core.agent.Restrictions;
-import net.digitalid.core.annotations.Loaded;
-import net.digitalid.database.annotations.Locked;
-import net.digitalid.database.annotations.NonCommitting;
-import net.digitalid.core.annotations.NonEncoding;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.core.entity.Entity;
-import net.digitalid.core.entity.NonHostEntity;
-import net.digitalid.core.exceptions.external.ExternalException;
-import net.digitalid.core.exceptions.packet.PacketException;
-import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.wrappers.Block;
+import net.digitalid.service.core.agent.Agent;
+import net.digitalid.service.core.agent.ReadOnlyAgentPermissions;
+import net.digitalid.service.core.agent.Restrictions;
+import net.digitalid.service.core.annotations.Loaded;
+import net.digitalid.service.core.annotations.NonEncoding;
+import net.digitalid.service.core.entity.Entity;
+import net.digitalid.service.core.entity.NonHostEntity;
+import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.wrappers.Block;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.database.annotations.Locked;
+import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * This interface models a collection of data that contains part of an {@link Entity entity's} state.

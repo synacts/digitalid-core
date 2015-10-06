@@ -1,4 +1,4 @@
 /**
  * Provides exceptions to indicate unexpected or unsupported input.
  */
-package net.digitalid.core.wrappers.exceptions;
+package net.digitalid.service.core.wrappers.exceptions;

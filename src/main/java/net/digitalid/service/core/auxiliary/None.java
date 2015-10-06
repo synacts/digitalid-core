@@ -1,7 +1,7 @@
-package net.digitalid.core.auxiliary;
+package net.digitalid.service.core.auxiliary;
 
 import javax.annotation.Nonnull;
-import net.digitalid.annotations.state.Stateless;
+import net.digitalid.utility.annotations.state.Stateless;
 
 /**
  * This class is an alternative to {@link Void} which supports non-nullable parameters and return values.

@@ -1,8 +1,8 @@
-package net.digitalid.core.exceptions.external;
+package net.digitalid.service.core.exceptions.external;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.annotations.state.Immutable;
+import net.digitalid.utility.annotations.state.Immutable;
 
 /**
  * An external exception is caused by another party.

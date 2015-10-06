@@ -1,25 +1,25 @@
-package net.digitalid.core.identity;
+package net.digitalid.service.core.identity;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
-import net.digitalid.annotations.state.Immutable;
-import net.digitalid.core.annotations.Loaded;
-import net.digitalid.core.annotations.LoadedRecipient;
-import net.digitalid.database.annotations.NonCommitting;
-import net.digitalid.core.annotations.NonLoaded;
-import net.digitalid.core.annotations.NonLoadedRecipient;
-import net.digitalid.database.annotations.OnMainThread;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.core.auxiliary.Time;
-import net.digitalid.core.cache.Cache;
-import net.digitalid.database.configuration.Database;
-import net.digitalid.core.exceptions.external.ExternalException;
-import net.digitalid.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.core.exceptions.packet.PacketException;
-import net.digitalid.core.identifier.InternalNonHostIdentifier;
-import net.digitalid.core.wrappers.Int8Wrapper;
-import net.digitalid.core.wrappers.StringWrapper;
+import net.digitalid.service.core.annotations.Loaded;
+import net.digitalid.service.core.annotations.LoadedRecipient;
+import net.digitalid.service.core.annotations.NonLoaded;
+import net.digitalid.service.core.annotations.NonLoadedRecipient;
+import net.digitalid.service.core.auxiliary.Time;
+import net.digitalid.service.core.cache.Cache;
+import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.identifier.InternalNonHostIdentifier;
+import net.digitalid.service.core.wrappers.Int8Wrapper;
+import net.digitalid.service.core.wrappers.StringWrapper;
+import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.annotations.OnMainThread;
+import net.digitalid.utility.database.configuration.Database;
 
 /**
  * This class models a syntactic type.

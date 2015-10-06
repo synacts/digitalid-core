@@ -1,16 +1,16 @@
-package net.digitalid.core.synchronizer;
+package net.digitalid.service.core.synchronizer;
 
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.annotations.state.Immutable;
-import net.digitalid.database.annotations.NonCommitting;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.core.auxiliary.Time;
-import net.digitalid.core.entity.Role;
-import net.digitalid.core.handler.InternalMethod;
-import net.digitalid.core.handler.Method;
-import net.digitalid.core.data.Service;
+import net.digitalid.service.core.auxiliary.Time;
+import net.digitalid.service.core.data.Service;
+import net.digitalid.service.core.entity.Role;
+import net.digitalid.service.core.handler.InternalMethod;
+import net.digitalid.service.core.handler.Method;
+import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * This class models a request audit with the time of the last audit.

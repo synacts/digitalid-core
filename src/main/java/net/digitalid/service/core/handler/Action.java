@@ -1,26 +1,26 @@
-package net.digitalid.core.handler;
+package net.digitalid.service.core.handler;
 
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.agent.Agent;
-import net.digitalid.core.agent.FreezableAgentPermissions;
-import net.digitalid.core.agent.ReadOnlyAgentPermissions;
-import net.digitalid.core.agent.Restrictions;
-import net.digitalid.annotations.state.Immutable;
-import net.digitalid.database.annotations.NonCommitting;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.core.client.AccountOpen;
-import net.digitalid.collections.freezable.FreezableLinkedList;
-import net.digitalid.collections.readonly.ReadOnlyList;
-import net.digitalid.core.entity.Entity;
-import net.digitalid.core.entity.NonHostEntity;
-import net.digitalid.core.exceptions.packet.PacketException;
-import net.digitalid.core.identifier.HostIdentifier;
-import net.digitalid.core.identifier.InternalIdentifier;
-import net.digitalid.core.data.StateModule;
-import net.digitalid.core.synchronizer.Audit;
-import net.digitalid.core.wrappers.SignatureWrapper;
+import net.digitalid.service.core.agent.Agent;
+import net.digitalid.service.core.agent.FreezableAgentPermissions;
+import net.digitalid.service.core.agent.ReadOnlyAgentPermissions;
+import net.digitalid.service.core.agent.Restrictions;
+import net.digitalid.service.core.client.AccountOpen;
+import net.digitalid.service.core.data.StateModule;
+import net.digitalid.service.core.entity.Entity;
+import net.digitalid.service.core.entity.NonHostEntity;
+import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.identifier.HostIdentifier;
+import net.digitalid.service.core.identifier.InternalIdentifier;
+import net.digitalid.service.core.synchronizer.Audit;
+import net.digitalid.service.core.wrappers.SignatureWrapper;
+import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.collections.freezable.FreezableLinkedList;
+import net.digitalid.utility.collections.readonly.ReadOnlyList;
+import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * Actions affect the state of a digital identity and are thus always {@link Audit audited}.

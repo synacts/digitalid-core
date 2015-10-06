@@ -1,11 +1,11 @@
-package net.digitalid.core.cryptography;
+package net.digitalid.service.core.cryptography;
 
 import java.math.BigInteger;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.annotations.state.Immutable;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.core.factory.Storable;
+import net.digitalid.service.core.factory.Storable;
+import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.annotations.state.Pure;
 
 /**
  * A number has a value and is {@link Storable storable}.

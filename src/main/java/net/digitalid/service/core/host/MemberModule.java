@@ -1,24 +1,24 @@
-package net.digitalid.core.host;
+package net.digitalid.service.core.host;
 
 import java.sql.SQLException;
 import java.sql.Statement;
 import javax.annotation.Nonnull;
-import net.digitalid.database.annotations.NonCommitting;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.annotations.state.Stateless;
-import net.digitalid.collections.freezable.FreezableLinkedList;
-import net.digitalid.collections.freezable.FreezableList;
-import net.digitalid.collections.readonly.ReadOnlyList;
-import net.digitalid.database.configuration.Database;
-import net.digitalid.core.entity.Site;
-import net.digitalid.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.data.HostModule;
-import net.digitalid.core.service.CoreService;
-import net.digitalid.core.data.Service;
-import net.digitalid.core.wrappers.Block;
-import net.digitalid.core.wrappers.ListWrapper;
-import net.digitalid.core.wrappers.TupleWrapper;
+import net.digitalid.service.core.data.HostModule;
+import net.digitalid.service.core.data.Service;
+import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.service.CoreService;
+import net.digitalid.service.core.wrappers.Block;
+import net.digitalid.service.core.wrappers.ListWrapper;
+import net.digitalid.service.core.wrappers.TupleWrapper;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.annotations.state.Stateless;
+import net.digitalid.utility.collections.freezable.FreezableLinkedList;
+import net.digitalid.utility.collections.freezable.FreezableList;
+import net.digitalid.utility.collections.readonly.ReadOnlyList;
+import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.column.Site;
+import net.digitalid.utility.database.configuration.Database;
 
 /**
  * This class provides database access to the members of the core service.
@@ -61,7 +61,7 @@ public final class MemberModule implements HostModule {
     /**
      * Stores the semantic type {@code entry.members.module@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType MODULE_ENTRY = SemanticType.map("entry.members.module@core.digitalid.net").load(TupleWrapper.TYPE, net.digitalid.core.identity.SemanticType.UNKNOWN);
+    private static final @Nonnull SemanticType MODULE_ENTRY = SemanticType.map("entry.members.module@core.digitalid.net").load(TupleWrapper.TYPE, net.digitalid.service.core.identity.SemanticType.UNKNOWN);
     
     /**
      * Stores the semantic type {@code members.module@core.digitalid.net}.

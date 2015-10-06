@@ -1,11 +1,11 @@
-package net.digitalid.core.annotations;
+package net.digitalid.service.core.annotations;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import net.digitalid.core.wrappers.SignatureWrapper;
+import net.digitalid.service.core.wrappers.SignatureWrapper;
 
 /**
  * This annotation indicates that a {@link SignatureWrapper signature} is {@link SignatureWrapper#isSigned() signed}.

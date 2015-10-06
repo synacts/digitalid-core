@@ -1,10 +1,10 @@
-package net.digitalid.core.exceptions.external;
+package net.digitalid.service.core.exceptions.external;
 
 import javax.annotation.Nonnull;
-import net.digitalid.annotations.state.Immutable;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.core.identity.InternalIdentity;
-import net.digitalid.core.identity.SemanticType;
+import net.digitalid.service.core.identity.InternalIdentity;
+import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.annotations.state.Pure;
 
 /**
  * This exception is thrown when something cannot be found.

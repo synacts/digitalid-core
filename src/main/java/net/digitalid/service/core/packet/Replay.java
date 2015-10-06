@@ -1,18 +1,18 @@
-package net.digitalid.core.packet;
+package net.digitalid.service.core.packet;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.database.annotations.NonCommitting;
-import net.digitalid.core.auxiliary.Time;
-import net.digitalid.core.cryptography.InitializationVector;
-import net.digitalid.database.configuration.Database;
-import net.digitalid.system.errors.InitializationError;
-import net.digitalid.core.exceptions.packet.PacketError;
-import net.digitalid.core.exceptions.packet.PacketException;
-import net.digitalid.core.wrappers.EncryptionWrapper;
+import net.digitalid.service.core.auxiliary.Time;
+import net.digitalid.service.core.cryptography.InitializationVector;
+import net.digitalid.service.core.exceptions.packet.PacketError;
+import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.wrappers.EncryptionWrapper;
+import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.configuration.Database;
+import net.digitalid.utility.system.errors.InitializationError;
 
 /**
  * Checks that no other encryption with the same initialization vector was received during the last half hour.

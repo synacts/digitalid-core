@@ -1,4 +1,4 @@
-package net.digitalid.core.auxiliary;
+package net.digitalid.service.core.auxiliary;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -7,22 +7,22 @@ import java.text.DateFormat;
 import java.util.Date;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.annotations.BasedOn;
-import net.digitalid.annotations.reference.Capturable;
-import net.digitalid.annotations.state.Immutable;
-import net.digitalid.database.annotations.NonCommitting;
-import net.digitalid.collections.annotations.freezable.NonFrozen;
-import net.digitalid.core.annotations.NonNullableElements;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.collections.freezable.FreezableArray;
-import net.digitalid.database.column.Column;
-import net.digitalid.database.column.SQLType;
-import net.digitalid.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.core.factory.LocalFactory;
-import net.digitalid.core.factory.Storable;
-import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.wrappers.Block;
-import net.digitalid.core.wrappers.Int64Wrapper;
+import net.digitalid.service.core.annotations.BasedOn;
+import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.factory.LocalFactory;
+import net.digitalid.service.core.factory.Storable;
+import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.wrappers.Block;
+import net.digitalid.service.core.wrappers.Int64Wrapper;
+import net.digitalid.utility.annotations.reference.Capturable;
+import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
+import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
+import net.digitalid.utility.collections.freezable.FreezableArray;
+import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.column.Column;
+import net.digitalid.utility.database.column.SQLType;
 
 /**
  * This class models time in milliseconds for both dates and intervals.

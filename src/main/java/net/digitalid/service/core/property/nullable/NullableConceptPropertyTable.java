@@ -1,6 +1,6 @@
-package net.digitalid.core.property.nullable;
+package net.digitalid.service.core.property.nullable;
 
-import net.digitalid.core.property.ConceptPropertyTable;
+import net.digitalid.service.core.property.ConceptPropertyTable;
 
 /**
  * Description.

@@ -1,16 +1,16 @@
-package net.digitalid.core.setup;
+package net.digitalid.service.core.setup;
 
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import javax.annotation.Nonnull;
-import net.digitalid.database.annotations.Committing;
-import net.digitalid.database.configuration.Database;
-import net.digitalid.database.configuration.MySQLConfiguration;
-import net.digitalid.database.configuration.PostgreSQLConfiguration;
-import net.digitalid.database.configuration.SQLiteConfiguration;
-import net.digitalid.core.identity.SemanticType;
+import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.utility.database.annotations.Committing;
+import net.digitalid.utility.database.configuration.Database;
+import net.digitalid.utility.database.configuration.MySQLConfiguration;
+import net.digitalid.utility.database.configuration.PostgreSQLConfiguration;
+import net.digitalid.utility.database.configuration.SQLiteConfiguration;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;

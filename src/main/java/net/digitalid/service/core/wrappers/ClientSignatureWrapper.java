@@ -1,40 +1,40 @@
-package net.digitalid.core.wrappers;
+package net.digitalid.service.core.wrappers;
 
 import java.io.IOException;
 import java.math.BigInteger;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.agent.AgentModule;
-import net.digitalid.core.agent.ClientAgent;
-import net.digitalid.core.annotations.BasedOn;
-import net.digitalid.annotations.state.Immutable;
-import net.digitalid.core.annotations.Loaded;
-import net.digitalid.database.annotations.Locked;
-import net.digitalid.database.annotations.NonCommitting;
-import net.digitalid.core.annotations.NonEncoding;
-import net.digitalid.collections.annotations.freezable.NonFrozen;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.core.auxiliary.Time;
-import net.digitalid.core.client.Commitment;
-import net.digitalid.core.client.SecretCommitment;
-import net.digitalid.collections.freezable.FreezableArray;
-import net.digitalid.collections.readonly.ReadOnlyArray;
-import net.digitalid.core.cryptography.Element;
-import net.digitalid.core.cryptography.Exponent;
-import net.digitalid.core.cryptography.Parameters;
-import net.digitalid.core.cryptography.PublicKey;
-import net.digitalid.core.entity.NonHostEntity;
-import net.digitalid.core.exceptions.external.ExternalException;
-import net.digitalid.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.core.exceptions.external.InvalidSignatureException;
-import net.digitalid.core.exceptions.packet.PacketError;
-import net.digitalid.core.exceptions.packet.PacketException;
-import net.digitalid.core.identifier.InternalIdentifier;
-import net.digitalid.core.identity.SemanticType;
-import net.digitalid.system.logger.Log;
-import net.digitalid.core.factory.Storable;
-import net.digitalid.core.synchronizer.Audit;
+import net.digitalid.service.core.agent.AgentModule;
+import net.digitalid.service.core.agent.ClientAgent;
+import net.digitalid.service.core.annotations.BasedOn;
+import net.digitalid.service.core.annotations.Loaded;
+import net.digitalid.service.core.annotations.NonEncoding;
+import net.digitalid.service.core.auxiliary.Time;
+import net.digitalid.service.core.client.Commitment;
+import net.digitalid.service.core.client.SecretCommitment;
+import net.digitalid.service.core.cryptography.Element;
+import net.digitalid.service.core.cryptography.Exponent;
+import net.digitalid.service.core.cryptography.Parameters;
+import net.digitalid.service.core.cryptography.PublicKey;
+import net.digitalid.service.core.entity.NonHostEntity;
+import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.InvalidSignatureException;
+import net.digitalid.service.core.exceptions.packet.PacketError;
+import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.factory.Storable;
+import net.digitalid.service.core.identifier.InternalIdentifier;
+import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.synchronizer.Audit;
+import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
+import net.digitalid.utility.collections.freezable.FreezableArray;
+import net.digitalid.utility.collections.readonly.ReadOnlyArray;
+import net.digitalid.utility.database.annotations.Locked;
+import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.system.logger.Log;
 
 /**
  * This class wraps an {@link Block element} for encoding and decoding a block of the syntactic type {@code signature@core.digitalid.net} that is signed by a client.
@@ -99,7 +99,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper {
     
     /**
      * Creates a new client signature wrapper from the given blocks.
-     * (Only to be called by {@link SignatureWrapper#decodeWithoutVerifying(ch.xdf.Block, boolean, net.digitalid.core.entity.Entity)}.)
+     * (Only to be called by {@link SignatureWrapper#decodeWithoutVerifying(ch.xdf.Block, boolean, net.digitalid.service.core.entity.Entity)}.)
      * 
      * @param block the block that contains the signed element.
      * @param clientSignature the client signature to be decoded.

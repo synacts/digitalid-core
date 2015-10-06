@@ -1,14 +1,14 @@
-package net.digitalid.core.cryptography;
+package net.digitalid.service.core.cryptography;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.Random;
 import javax.annotation.Nonnull;
-import net.digitalid.annotations.state.Immutable;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.collections.freezable.FreezableArray;
-import net.digitalid.core.wrappers.Block;
-import net.digitalid.core.wrappers.TupleWrapper;
+import net.digitalid.service.core.wrappers.Block;
+import net.digitalid.service.core.wrappers.TupleWrapper;
+import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.collections.freezable.FreezableArray;
 
 /**
  * This class generates new key pairs.

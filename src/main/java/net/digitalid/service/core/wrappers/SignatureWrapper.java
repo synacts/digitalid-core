@@ -1,42 +1,42 @@
-package net.digitalid.core.wrappers;
+package net.digitalid.service.core.wrappers;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.agent.Agent;
-import net.digitalid.core.annotations.BasedOn;
-import net.digitalid.core.annotations.Encoding;
-import net.digitalid.annotations.state.Immutable;
-import net.digitalid.core.annotations.Loaded;
-import net.digitalid.database.annotations.Locked;
-import net.digitalid.database.annotations.NonCommitting;
-import net.digitalid.core.annotations.NonEncoding;
-import net.digitalid.collections.annotations.freezable.NonFrozen;
-import net.digitalid.core.annotations.NullableElements;
-import net.digitalid.annotations.math.Positive;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.core.auxiliary.Time;
-import net.digitalid.collections.freezable.FreezableArray;
-import net.digitalid.collections.readonly.ReadOnlyArray;
-import net.digitalid.core.cryptography.PublicKey;
-import net.digitalid.core.entity.Entity;
-import net.digitalid.core.entity.NonHostEntity;
-import net.digitalid.core.exceptions.external.ExternalException;
-import net.digitalid.core.exceptions.external.InactiveSignatureException;
-import net.digitalid.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.core.exceptions.external.InvalidSignatureException;
-import net.digitalid.core.exceptions.packet.PacketError;
-import net.digitalid.core.exceptions.packet.PacketException;
-import net.digitalid.core.identifier.Identifier;
-import net.digitalid.core.identifier.IdentifierClass;
-import net.digitalid.core.identifier.InternalIdentifier;
-import net.digitalid.core.identity.InternalIdentity;
-import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.identity.SyntacticType;
-import net.digitalid.core.factory.Storable;
-import net.digitalid.core.synchronizer.Audit;
+import net.digitalid.service.core.agent.Agent;
+import net.digitalid.service.core.annotations.BasedOn;
+import net.digitalid.service.core.annotations.Encoding;
+import net.digitalid.service.core.annotations.Loaded;
+import net.digitalid.service.core.annotations.NonEncoding;
+import net.digitalid.service.core.auxiliary.Time;
+import net.digitalid.service.core.cryptography.PublicKey;
+import net.digitalid.service.core.entity.Entity;
+import net.digitalid.service.core.entity.NonHostEntity;
+import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.external.InactiveSignatureException;
+import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.InvalidSignatureException;
+import net.digitalid.service.core.exceptions.packet.PacketError;
+import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.factory.Storable;
+import net.digitalid.service.core.identifier.Identifier;
+import net.digitalid.service.core.identifier.IdentifierClass;
+import net.digitalid.service.core.identifier.InternalIdentifier;
+import net.digitalid.service.core.identity.InternalIdentity;
+import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.identity.SyntacticType;
+import net.digitalid.service.core.synchronizer.Audit;
+import net.digitalid.utility.annotations.math.Positive;
+import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.collections.annotations.elements.NullableElements;
+import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
+import net.digitalid.utility.collections.freezable.FreezableArray;
+import net.digitalid.utility.collections.readonly.ReadOnlyArray;
+import net.digitalid.utility.database.annotations.Locked;
+import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * This class wraps an {@link Block element} for encoding and decoding a block of the syntactic type {@code signature@core.digitalid.net}.
@@ -533,8 +533,8 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
      * 
      * @return the agent that signed the element or null if no such agent is found.
      * 
-     * @see ClientSignatureWrapper#getAgent(net.digitalid.core.entity.NonHostEntity) 
-     * @see CredentialsSignatureWrapper#getAgent(net.digitalid.core.entity.NonHostEntity)
+     * @see ClientSignatureWrapper#getAgent(net.digitalid.service.core.entity.NonHostEntity) 
+     * @see CredentialsSignatureWrapper#getAgent(net.digitalid.service.core.entity.NonHostEntity)
      */
     @Pure
     @Locked
@@ -553,8 +553,8 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
      * 
      * @throws PacketException if no such agent is found or the check failed.
      * 
-     * @see ClientSignatureWrapper#getAgentCheckedAndRestricted(net.digitalid.core.entity.NonHostEntity, net.digitalid.core.cryptography.PublicKey)
-     * @see CredentialsSignatureWrapper#getAgentCheckedAndRestricted(net.digitalid.core.entity.NonHostEntity, net.digitalid.core.cryptography.PublicKey)
+     * @see ClientSignatureWrapper#getAgentCheckedAndRestricted(net.digitalid.service.core.entity.NonHostEntity, net.digitalid.service.core.cryptography.PublicKey)
+     * @see CredentialsSignatureWrapper#getAgentCheckedAndRestricted(net.digitalid.service.core.entity.NonHostEntity, net.digitalid.service.core.cryptography.PublicKey)
      */
     @Pure
     @Locked

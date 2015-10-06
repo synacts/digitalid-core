@@ -1,31 +1,31 @@
-package net.digitalid.core.wrappers;
+package net.digitalid.service.core.wrappers;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.annotations.BasedOn;
-import net.digitalid.core.annotations.Encoding;
-import net.digitalid.annotations.state.Immutable;
-import net.digitalid.core.annotations.Loaded;
-import net.digitalid.database.annotations.Locked;
-import net.digitalid.database.annotations.NonCommitting;
-import net.digitalid.core.annotations.NonEncoding;
-import net.digitalid.annotations.math.NonNegative;
-import net.digitalid.core.annotations.NonNullableElements;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.collections.readonly.ReadOnlyArray;
-import net.digitalid.core.exceptions.external.ExternalException;
-import net.digitalid.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.core.exceptions.packet.PacketException;
-import net.digitalid.core.identifier.Identifier;
-import net.digitalid.core.identifier.IdentifierClass;
-import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.identity.SyntacticType;
-import net.digitalid.core.factory.Storable;
-import net.digitalid.core.wrappers.exceptions.UnexpectedEndOfFileException;
-import net.digitalid.core.wrappers.exceptions.UnsupportedBlockLengthException;
+import net.digitalid.service.core.annotations.BasedOn;
+import net.digitalid.service.core.annotations.Encoding;
+import net.digitalid.service.core.annotations.Loaded;
+import net.digitalid.service.core.annotations.NonEncoding;
+import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.factory.Storable;
+import net.digitalid.service.core.identifier.Identifier;
+import net.digitalid.service.core.identifier.IdentifierClass;
+import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.identity.SyntacticType;
+import net.digitalid.service.core.wrappers.exceptions.UnexpectedEndOfFileException;
+import net.digitalid.service.core.wrappers.exceptions.UnsupportedBlockLengthException;
+import net.digitalid.utility.annotations.math.NonNegative;
+import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
+import net.digitalid.utility.collections.readonly.ReadOnlyArray;
+import net.digitalid.utility.database.annotations.Locked;
+import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * This class wraps an {@link Block element} for encoding and decoding a block of the syntactic type {@code selfcontained@core.digitalid.net}.

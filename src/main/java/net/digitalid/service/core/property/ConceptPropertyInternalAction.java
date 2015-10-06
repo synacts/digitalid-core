@@ -1,8 +1,8 @@
-package net.digitalid.core.property;
+package net.digitalid.service.core.property;
 
 import javax.annotation.Nonnull;
-import net.digitalid.core.auxiliary.Time;
-import net.digitalid.core.identity.SemanticType;
+import net.digitalid.service.core.auxiliary.Time;
+import net.digitalid.service.core.identity.SemanticType;
 
 /**
  * Description.

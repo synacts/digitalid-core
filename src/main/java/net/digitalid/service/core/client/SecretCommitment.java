@@ -1,16 +1,16 @@
-package net.digitalid.core.client;
+package net.digitalid.service.core.client;
 
 import javax.annotation.Nonnull;
-import net.digitalid.annotations.state.Immutable;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.core.auxiliary.Time;
-import net.digitalid.core.cryptography.Element;
-import net.digitalid.core.cryptography.Exponent;
-import net.digitalid.core.cryptography.PublicKey;
-import net.digitalid.core.exceptions.packet.PacketError;
-import net.digitalid.core.exceptions.packet.PacketException;
-import net.digitalid.core.identity.HostIdentity;
-import net.digitalid.core.wrappers.ClientSignatureWrapper;
+import net.digitalid.service.core.auxiliary.Time;
+import net.digitalid.service.core.cryptography.Element;
+import net.digitalid.service.core.cryptography.Exponent;
+import net.digitalid.service.core.cryptography.PublicKey;
+import net.digitalid.service.core.exceptions.packet.PacketError;
+import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.identity.HostIdentity;
+import net.digitalid.service.core.wrappers.ClientSignatureWrapper;
+import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.annotations.state.Pure;
 
 /**
  * This class extends the {@link Commitment commitment} of a {@link Client client} with its {@link Client#getSecret() secret}.

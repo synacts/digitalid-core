@@ -1,24 +1,24 @@
-package net.digitalid.core.packet;
+package net.digitalid.service.core.packet;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.annotations.state.Immutable;
-import net.digitalid.database.annotations.NonCommitting;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.annotations.reference.RawRecipient;
-import net.digitalid.core.auxiliary.Time;
-import net.digitalid.collections.freezable.FreezableList;
-import net.digitalid.collections.readonly.ReadOnlyList;
-import net.digitalid.core.exceptions.external.ExternalException;
-import net.digitalid.core.exceptions.packet.PacketException;
-import net.digitalid.core.handler.Method;
-import net.digitalid.core.identifier.HostIdentifier;
-import net.digitalid.core.identifier.InternalIdentifier;
-import net.digitalid.core.synchronizer.Audit;
-import net.digitalid.core.wrappers.CompressionWrapper;
-import net.digitalid.core.wrappers.HostSignatureWrapper;
+import net.digitalid.service.core.auxiliary.Time;
+import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.handler.Method;
+import net.digitalid.service.core.identifier.HostIdentifier;
+import net.digitalid.service.core.identifier.InternalIdentifier;
+import net.digitalid.service.core.synchronizer.Audit;
+import net.digitalid.service.core.wrappers.CompressionWrapper;
+import net.digitalid.service.core.wrappers.HostSignatureWrapper;
+import net.digitalid.utility.annotations.reference.RawRecipient;
+import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.collections.freezable.FreezableList;
+import net.digitalid.utility.collections.readonly.ReadOnlyList;
+import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * This class compresses, signs and encrypts requests by hosts.

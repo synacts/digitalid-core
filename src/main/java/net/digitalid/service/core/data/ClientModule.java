@@ -1,22 +1,22 @@
-package net.digitalid.core.data;
+package net.digitalid.service.core.data;
 
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.database.annotations.Locked;
-import net.digitalid.database.annotations.NonCommitting;
-import net.digitalid.collections.annotations.freezable.NonFrozen;
-import net.digitalid.core.annotations.NonNullableElements;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.annotations.state.Validated;
-import net.digitalid.core.client.Client;
-import net.digitalid.collections.freezable.FreezableLinkedList;
-import net.digitalid.collections.freezable.FreezableList;
-import net.digitalid.collections.readonly.ReadOnlyList;
-import net.digitalid.database.configuration.Database;
-import net.digitalid.core.entity.Site;
-import net.digitalid.system.errors.ShouldNeverHappenError;
-import net.digitalid.core.host.Host;
+import net.digitalid.service.core.client.Client;
+import net.digitalid.service.core.host.Host;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.annotations.state.Validated;
+import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
+import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
+import net.digitalid.utility.collections.freezable.FreezableLinkedList;
+import net.digitalid.utility.collections.freezable.FreezableList;
+import net.digitalid.utility.collections.readonly.ReadOnlyList;
+import net.digitalid.utility.database.annotations.Locked;
+import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.column.Site;
+import net.digitalid.utility.database.configuration.Database;
+import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 
 /**
  * Client modules are only used on {@link Client clients}.

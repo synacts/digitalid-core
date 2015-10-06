@@ -1,16 +1,16 @@
-package net.digitalid.core.expression;
+package net.digitalid.service.core.expression;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.annotations.reference.Capturable;
-import net.digitalid.annotations.state.Immutable;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.collections.freezable.FreezableLinkedHashSet;
-import net.digitalid.collections.freezable.FreezableSet;
-import net.digitalid.core.contact.Contact;
-import net.digitalid.core.entity.NonHostEntity;
-import net.digitalid.core.wrappers.Block;
-import net.digitalid.core.wrappers.CredentialsSignatureWrapper;
+import net.digitalid.service.core.contact.Contact;
+import net.digitalid.service.core.entity.NonHostEntity;
+import net.digitalid.service.core.wrappers.Block;
+import net.digitalid.service.core.wrappers.CredentialsSignatureWrapper;
+import net.digitalid.utility.annotations.reference.Capturable;
+import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.collections.freezable.FreezableLinkedHashSet;
+import net.digitalid.utility.collections.freezable.FreezableSet;
 
 /**
  * This class models empty expressions.

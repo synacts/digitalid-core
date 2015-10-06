@@ -1,14 +1,14 @@
-package net.digitalid.core.service;
+package net.digitalid.service.core.service;
 
-import net.digitalid.core.data.Service;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.core.entity.Account;
-import net.digitalid.core.entity.NonHostEntity;
-import net.digitalid.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.core.handler.ActionReply;
-import net.digitalid.core.wrappers.HostSignatureWrapper;
+import net.digitalid.service.core.data.Service;
+import net.digitalid.service.core.entity.Account;
+import net.digitalid.service.core.entity.NonHostEntity;
+import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.handler.ActionReply;
+import net.digitalid.service.core.wrappers.HostSignatureWrapper;
+import net.digitalid.utility.annotations.state.Pure;
 
 /**
  * This class models the {@link ActionReply action replies} of the {@link CoreService core service}.

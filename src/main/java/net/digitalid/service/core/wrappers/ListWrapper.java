@@ -1,23 +1,23 @@
-package net.digitalid.core.wrappers;
+package net.digitalid.service.core.wrappers;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.annotations.BasedOn;
-import net.digitalid.core.annotations.Encoding;
-import net.digitalid.collections.annotations.freezable.Frozen;
-import net.digitalid.annotations.state.Immutable;
-import net.digitalid.core.annotations.Loaded;
-import net.digitalid.core.annotations.NonEncoding;
-import net.digitalid.core.annotations.NonNullableElements;
-import net.digitalid.core.annotations.NullableElements;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.collections.freezable.FreezableArrayList;
-import net.digitalid.collections.freezable.FreezableList;
-import net.digitalid.collections.readonly.ReadOnlyList;
-import net.digitalid.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.identity.SyntacticType;
-import net.digitalid.core.factory.Storable;
+import net.digitalid.service.core.annotations.BasedOn;
+import net.digitalid.service.core.annotations.Encoding;
+import net.digitalid.service.core.annotations.Loaded;
+import net.digitalid.service.core.annotations.NonEncoding;
+import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.factory.Storable;
+import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.identity.SyntacticType;
+import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
+import net.digitalid.utility.collections.annotations.elements.NullableElements;
+import net.digitalid.utility.collections.annotations.freezable.Frozen;
+import net.digitalid.utility.collections.freezable.FreezableArrayList;
+import net.digitalid.utility.collections.freezable.FreezableList;
+import net.digitalid.utility.collections.readonly.ReadOnlyList;
 
 /**
  * This class wraps a {@link ReadOnlyList list} for encoding and decoding a block of the syntactic type {@code list@core.digitalid.net}.

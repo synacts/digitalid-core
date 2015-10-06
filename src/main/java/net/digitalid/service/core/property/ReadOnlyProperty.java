@@ -1,18 +1,18 @@
-package net.digitalid.core.property;
+package net.digitalid.service.core.property;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.collections.annotations.freezable.NonFrozen;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.collections.freezable.FreezableLinkedList;
-import net.digitalid.collections.freezable.FreezableList;
-import net.digitalid.collections.readonly.ReadOnlyList;
-import net.digitalid.database.configuration.Database;
-import net.digitalid.system.logger.Log;
-import net.digitalid.core.property.extensible.ReadOnlyExtensibleProperty;
-import net.digitalid.core.property.indexed.ReadOnlyIndexedProperty;
-import net.digitalid.core.property.nonnullable.ReadOnlyNonNullableProperty;
-import net.digitalid.core.property.nullable.ReadOnlyNullableProperty;
+import net.digitalid.service.core.property.extensible.ReadOnlyExtensibleProperty;
+import net.digitalid.service.core.property.indexed.ReadOnlyIndexedProperty;
+import net.digitalid.service.core.property.nonnullable.ReadOnlyNonNullableProperty;
+import net.digitalid.service.core.property.nullable.ReadOnlyNullableProperty;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
+import net.digitalid.utility.collections.freezable.FreezableLinkedList;
+import net.digitalid.utility.collections.freezable.FreezableList;
+import net.digitalid.utility.collections.readonly.ReadOnlyList;
+import net.digitalid.utility.database.configuration.Database;
+import net.digitalid.utility.system.logger.Log;
 
 /**
  * A property is an object that can be {@link PropertyObserver observed}.

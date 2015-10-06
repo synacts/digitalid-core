@@ -1,4 +1,4 @@
-package net.digitalid.core.identifier;
+package net.digitalid.service.core.identifier;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -6,17 +6,17 @@ import java.sql.SQLException;
 import java.sql.Types;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.annotations.state.Immutable;
-import net.digitalid.database.annotations.Locked;
-import net.digitalid.database.annotations.NonCommitting;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.database.configuration.Database;
-import net.digitalid.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.core.identity.Identity;
-import net.digitalid.core.identity.Mapper;
-import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.wrappers.Block;
-import net.digitalid.core.wrappers.StringWrapper;
+import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.identity.Identity;
+import net.digitalid.service.core.identity.Mapper;
+import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.wrappers.Block;
+import net.digitalid.service.core.wrappers.StringWrapper;
+import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.database.annotations.Locked;
+import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.configuration.Database;
 
 /**
  * This class models identifiers.

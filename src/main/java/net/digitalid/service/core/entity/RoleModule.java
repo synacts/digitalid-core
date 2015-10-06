@@ -1,29 +1,29 @@
-package net.digitalid.core.entity;
+package net.digitalid.service.core.entity;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.agent.Agent;
-import net.digitalid.annotations.reference.Capturable;
-import net.digitalid.database.annotations.NonCommitting;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.core.client.Client;
-import net.digitalid.collections.freezable.FreezableLinkedList;
-import net.digitalid.collections.freezable.FreezableList;
-import net.digitalid.database.configuration.Database;
-import net.digitalid.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.core.exceptions.packet.PacketError;
-import net.digitalid.core.exceptions.packet.PacketException;
-import net.digitalid.core.identity.Identity;
-import net.digitalid.core.identity.IdentityClass;
-import net.digitalid.core.identity.InternalNonHostIdentity;
-import net.digitalid.core.identity.InternalPerson;
-import net.digitalid.core.identity.Mapper;
-import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.data.ClientModule;
-import net.digitalid.core.service.CoreService;
+import net.digitalid.service.core.agent.Agent;
+import net.digitalid.service.core.client.Client;
+import net.digitalid.service.core.data.ClientModule;
+import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.packet.PacketError;
+import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.identity.Identity;
+import net.digitalid.service.core.identity.IdentityClass;
+import net.digitalid.service.core.identity.InternalNonHostIdentity;
+import net.digitalid.service.core.identity.InternalPerson;
+import net.digitalid.service.core.identity.Mapper;
+import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.service.CoreService;
+import net.digitalid.utility.annotations.reference.Capturable;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.collections.freezable.FreezableLinkedList;
+import net.digitalid.utility.collections.freezable.FreezableList;
+import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.configuration.Database;
 
 /**
  * This class provides database access to the {@link Role roles} of the core service.

@@ -1,4 +1,4 @@
-package net.digitalid.core.identity;
+package net.digitalid.service.core.identity;
 
 /**
  * Unit testing of the class {@link Identity}.

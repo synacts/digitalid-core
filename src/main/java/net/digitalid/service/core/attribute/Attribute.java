@@ -1,28 +1,28 @@
-package net.digitalid.core.attribute;
+package net.digitalid.service.core.attribute;
 
 import java.sql.SQLException;
 import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.annotations.reference.Capturable;
-import net.digitalid.database.annotations.Committing;
-import net.digitalid.annotations.state.Immutable;
-import net.digitalid.database.annotations.NonCommitting;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.core.collections.ConcurrentHashMap;
-import net.digitalid.core.collections.ConcurrentMap;
-import net.digitalid.collections.freezable.FreezableSet;
-import net.digitalid.core.concept.GeneralConcept;
-import net.digitalid.database.configuration.Database;
-import net.digitalid.core.entity.Entity;
-import net.digitalid.core.entity.NonHostEntity;
-import net.digitalid.core.expression.PassiveExpression;
-import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.property.nullable.NullableConceptProperty;
-import net.digitalid.core.property.nullable.NullableConceptPropertyTable;
-import net.digitalid.core.factory.Storable;
-import net.digitalid.core.synchronizer.Synchronizer;
-import net.digitalid.core.wrappers.BooleanWrapper;
+import net.digitalid.service.core.concept.GeneralConcept;
+import net.digitalid.service.core.entity.Entity;
+import net.digitalid.service.core.entity.NonHostEntity;
+import net.digitalid.service.core.expression.PassiveExpression;
+import net.digitalid.service.core.factory.Storable;
+import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.property.nullable.NullableConceptProperty;
+import net.digitalid.service.core.property.nullable.NullableConceptPropertyTable;
+import net.digitalid.service.core.synchronizer.Synchronizer;
+import net.digitalid.service.core.wrappers.BooleanWrapper;
+import net.digitalid.utility.annotations.reference.Capturable;
+import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.collections.concurrent.ConcurrentHashMap;
+import net.digitalid.utility.collections.concurrent.ConcurrentMap;
+import net.digitalid.utility.collections.freezable.FreezableSet;
+import net.digitalid.utility.database.annotations.Committing;
+import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.configuration.Database;
 
 /**
  * This class models an attribute with its value and visibility.

@@ -1,4 +1,4 @@
-package net.digitalid.core.agent;
+package net.digitalid.service.core.agent;
 
 import java.io.IOException;
 import java.sql.PreparedStatement;
@@ -7,26 +7,26 @@ import java.sql.SQLException;
 import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.annotations.state.Immutable;
-import net.digitalid.database.annotations.NonCommitting;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.collections.freezable.FreezableArray;
-import net.digitalid.core.contact.Contact;
-import net.digitalid.core.contact.Context;
-import net.digitalid.database.configuration.Database;
-import net.digitalid.core.entity.NonHostEntity;
-import net.digitalid.core.entity.Site;
-import net.digitalid.core.exceptions.external.ExternalException;
-import net.digitalid.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.core.exceptions.packet.PacketError;
-import net.digitalid.core.exceptions.packet.PacketException;
-import net.digitalid.core.identity.Mapper;
-import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.wrappers.Blockable;
-import net.digitalid.core.database.SQLizable;
-import net.digitalid.core.wrappers.Block;
-import net.digitalid.core.wrappers.BooleanWrapper;
-import net.digitalid.core.wrappers.TupleWrapper;
+import net.digitalid.service.core.contact.Contact;
+import net.digitalid.service.core.contact.Context;
+import net.digitalid.service.core.database.SQLizable;
+import net.digitalid.service.core.entity.NonHostEntity;
+import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.packet.PacketError;
+import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.identity.Mapper;
+import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.wrappers.Block;
+import net.digitalid.service.core.wrappers.Blockable;
+import net.digitalid.service.core.wrappers.BooleanWrapper;
+import net.digitalid.service.core.wrappers.TupleWrapper;
+import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.collections.freezable.FreezableArray;
+import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.column.Site;
+import net.digitalid.utility.database.configuration.Database;
 
 /**
  * This class models the restrictions of an agent.

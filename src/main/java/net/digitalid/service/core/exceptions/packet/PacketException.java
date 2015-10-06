@@ -1,18 +1,18 @@
-package net.digitalid.core.exceptions.packet;
+package net.digitalid.service.core.exceptions.packet;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.annotations.state.Immutable;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.collections.freezable.FreezableArray;
-import net.digitalid.collections.readonly.ReadOnlyArray;
-import net.digitalid.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.core.identity.SemanticType;
-import net.digitalid.system.logger.Log;
-import net.digitalid.core.wrappers.Block;
-import net.digitalid.core.wrappers.Blockable;
-import net.digitalid.core.wrappers.StringWrapper;
-import net.digitalid.core.wrappers.TupleWrapper;
+import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.wrappers.Block;
+import net.digitalid.service.core.wrappers.Blockable;
+import net.digitalid.service.core.wrappers.StringWrapper;
+import net.digitalid.service.core.wrappers.TupleWrapper;
+import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.collections.freezable.FreezableArray;
+import net.digitalid.utility.collections.readonly.ReadOnlyArray;
+import net.digitalid.utility.system.logger.Log;
 
 /**
  * This exception indicates an error in the encoding or content of a packet.

@@ -1,17 +1,17 @@
-package net.digitalid.core.identifier;
+package net.digitalid.service.core.identifier;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
-import net.digitalid.annotations.state.Immutable;
-import net.digitalid.database.annotations.NonCommitting;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.core.exceptions.external.ExternalException;
-import net.digitalid.core.exceptions.external.IdentityNotFoundException;
-import net.digitalid.core.exceptions.packet.PacketException;
-import net.digitalid.core.identity.InternalIdentity;
-import net.digitalid.core.identity.Mapper;
+import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.external.IdentityNotFoundException;
+import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.identity.InternalIdentity;
+import net.digitalid.service.core.identity.Mapper;
+import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * This class models internal identifiers.

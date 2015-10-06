@@ -1,17 +1,17 @@
-package net.digitalid.core.agent;
+package net.digitalid.service.core.agent;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
-import net.digitalid.annotations.reference.Capturable;
-import net.digitalid.database.annotations.NonCommitting;
-import net.digitalid.collections.annotations.freezable.NonFrozen;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.collections.readonly.ReadOnlyMap;
-import net.digitalid.core.database.SQLizable;
-import net.digitalid.core.exceptions.packet.PacketException;
-import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.wrappers.Blockable;
+import net.digitalid.service.core.database.SQLizable;
+import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.wrappers.Blockable;
+import net.digitalid.utility.annotations.reference.Capturable;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
+import net.digitalid.utility.collections.readonly.ReadOnlyMap;
+import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * This interface provides read-only access to {@link FreezableAgentPermissions agent permissions} and should <em>never</em> be cast away.

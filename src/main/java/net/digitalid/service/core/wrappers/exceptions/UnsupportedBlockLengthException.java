@@ -1,8 +1,8 @@
-package net.digitalid.core.wrappers.exceptions;
+package net.digitalid.service.core.wrappers.exceptions;
 
 import java.io.IOException;
 import javax.annotation.Nonnull;
-import net.digitalid.annotations.state.Pure;
+import net.digitalid.utility.annotations.state.Pure;
 
 /**
  * Blocks that are larger than the maximum integer are not supported by this library due to the array limitations of Java.

@@ -1,9 +1,9 @@
-package net.digitalid.core.property.nullable;
+package net.digitalid.service.core.property.nullable;
 
 import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.property.ValueValidator;
+import net.digitalid.service.core.property.ValueValidator;
 
 /**
  * Description.

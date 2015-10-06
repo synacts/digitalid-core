@@ -1,4 +1,4 @@
-package net.digitalid.core.wrappers;
+package net.digitalid.service.core.wrappers;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -8,61 +8,61 @@ import java.util.Iterator;
 import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.agent.AgentModule;
-import net.digitalid.core.agent.OutgoingRole;
-import net.digitalid.core.agent.RandomizedAgentPermissions;
-import net.digitalid.core.agent.ReadOnlyAgentPermissions;
-import net.digitalid.core.agent.Restrictions;
-import net.digitalid.core.annotations.AttributeType;
-import net.digitalid.core.annotations.BasedOn;
-import net.digitalid.collections.annotations.freezable.Frozen;
-import net.digitalid.annotations.state.Immutable;
-import net.digitalid.core.annotations.Loaded;
-import net.digitalid.database.annotations.Locked;
-import net.digitalid.database.annotations.NonCommitting;
-import net.digitalid.collections.annotations.size.NonEmpty;
-import net.digitalid.core.annotations.NonEncoding;
-import net.digitalid.collections.annotations.freezable.NonFrozen;
-import net.digitalid.core.annotations.NonNullableElements;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.annotations.state.Validated;
-import net.digitalid.core.attribute.AttributeValue;
-import net.digitalid.core.attribute.CertifiedAttributeValue;
-import net.digitalid.core.auxiliary.Time;
-import net.digitalid.core.cache.Cache;
-import net.digitalid.collections.freezable.FreezableArray;
-import net.digitalid.collections.freezable.FreezableArrayList;
-import net.digitalid.collections.freezable.FreezableList;
-import net.digitalid.collections.readonly.ReadOnlyArray;
-import net.digitalid.collections.readonly.ReadOnlyList;
-import net.digitalid.core.contact.Contact;
-import net.digitalid.core.credential.ClientCredential;
-import net.digitalid.core.credential.Credential;
-import net.digitalid.core.credential.HostCredential;
-import net.digitalid.core.cryptography.Element;
-import net.digitalid.core.cryptography.Exponent;
-import net.digitalid.core.cryptography.Parameters;
-import net.digitalid.core.cryptography.PublicKey;
-import net.digitalid.core.entity.Entity;
-import net.digitalid.core.entity.HostEntity;
-import net.digitalid.core.entity.NonHostAccount;
-import net.digitalid.core.entity.NonHostEntity;
-import net.digitalid.core.entity.RoleModule;
-import net.digitalid.core.exceptions.external.ExternalException;
-import net.digitalid.core.exceptions.external.InactiveSignatureException;
-import net.digitalid.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.core.exceptions.external.InvalidSignatureException;
-import net.digitalid.core.exceptions.packet.PacketError;
-import net.digitalid.core.exceptions.packet.PacketException;
-import net.digitalid.core.host.Host;
-import net.digitalid.core.identifier.InternalIdentifier;
-import net.digitalid.core.identity.InternalNonHostIdentity;
-import net.digitalid.core.identity.InternalPerson;
-import net.digitalid.core.identity.Person;
-import net.digitalid.core.identity.SemanticType;
-import net.digitalid.system.logger.Log;
-import net.digitalid.core.factory.Storable;
-import net.digitalid.core.synchronizer.Audit;
+import net.digitalid.service.core.agent.AgentModule;
+import net.digitalid.service.core.agent.OutgoingRole;
+import net.digitalid.service.core.agent.RandomizedAgentPermissions;
+import net.digitalid.service.core.agent.ReadOnlyAgentPermissions;
+import net.digitalid.service.core.agent.Restrictions;
+import net.digitalid.service.core.annotations.AttributeType;
+import net.digitalid.service.core.annotations.BasedOn;
+import net.digitalid.service.core.annotations.Loaded;
+import net.digitalid.service.core.annotations.NonEncoding;
+import net.digitalid.service.core.attribute.AttributeValue;
+import net.digitalid.service.core.attribute.CertifiedAttributeValue;
+import net.digitalid.service.core.auxiliary.Time;
+import net.digitalid.service.core.cache.Cache;
+import net.digitalid.service.core.contact.Contact;
+import net.digitalid.service.core.credential.ClientCredential;
+import net.digitalid.service.core.credential.Credential;
+import net.digitalid.service.core.credential.HostCredential;
+import net.digitalid.service.core.cryptography.Element;
+import net.digitalid.service.core.cryptography.Exponent;
+import net.digitalid.service.core.cryptography.Parameters;
+import net.digitalid.service.core.cryptography.PublicKey;
+import net.digitalid.service.core.entity.Entity;
+import net.digitalid.service.core.entity.HostEntity;
+import net.digitalid.service.core.entity.NonHostAccount;
+import net.digitalid.service.core.entity.NonHostEntity;
+import net.digitalid.service.core.entity.RoleModule;
+import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.external.InactiveSignatureException;
+import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.external.InvalidSignatureException;
+import net.digitalid.service.core.exceptions.packet.PacketError;
+import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.factory.Storable;
+import net.digitalid.service.core.host.Host;
+import net.digitalid.service.core.identifier.InternalIdentifier;
+import net.digitalid.service.core.identity.InternalNonHostIdentity;
+import net.digitalid.service.core.identity.InternalPerson;
+import net.digitalid.service.core.identity.Person;
+import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.synchronizer.Audit;
+import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.annotations.state.Validated;
+import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
+import net.digitalid.utility.collections.annotations.freezable.Frozen;
+import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
+import net.digitalid.utility.collections.annotations.size.NonEmpty;
+import net.digitalid.utility.collections.freezable.FreezableArray;
+import net.digitalid.utility.collections.freezable.FreezableArrayList;
+import net.digitalid.utility.collections.freezable.FreezableList;
+import net.digitalid.utility.collections.readonly.ReadOnlyArray;
+import net.digitalid.utility.collections.readonly.ReadOnlyList;
+import net.digitalid.utility.database.annotations.Locked;
+import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.system.logger.Log;
 
 /**
  * This class wraps an {@link Block element} for encoding and decoding a block of the syntactic type {@code signature@core.digitalid.net} that is signed with credentials.
@@ -393,7 +393,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
     
     /**
      * Creates a new credentials signature wrapper from the given blocks.
-     * (Only to be called by {@link SignatureWrapper#decodeWithoutVerifying(ch.xdf.Block, boolean, net.digitalid.core.entity.Entity)}.)
+     * (Only to be called by {@link SignatureWrapper#decodeWithoutVerifying(ch.xdf.Block, boolean, net.digitalid.service.core.entity.Entity)}.)
      * 
      * @param block the block that contains the signed element.
      * @param credentialsSignature the signature to be decoded.

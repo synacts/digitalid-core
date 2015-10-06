@@ -1,28 +1,28 @@
-package net.digitalid.core.password;
+package net.digitalid.service.core.password;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.agent.Agent;
-import net.digitalid.core.agent.ReadOnlyAgentPermissions;
-import net.digitalid.core.agent.Restrictions;
-import net.digitalid.annotations.state.Immutable;
-import net.digitalid.database.annotations.NonCommitting;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.core.auxiliary.None;
-import net.digitalid.core.concept.Concept;
-import net.digitalid.core.concept.Index;
-import net.digitalid.core.data.StateModule;
-import net.digitalid.database.configuration.Database;
-import net.digitalid.core.entity.NonHostEntity;
-import net.digitalid.core.entity.Role;
-import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.property.StateSelector;
-import net.digitalid.core.property.ValueValidator;
-import net.digitalid.core.property.nonnullable.NonNullableConceptProperty;
-import net.digitalid.core.property.nonnullable.NonNullableConceptPropertyTable;
-import net.digitalid.core.service.CoreService;
-import net.digitalid.core.wrappers.EmptyWrapper;
-import net.digitalid.core.wrappers.StringWrapper;
+import net.digitalid.service.core.agent.Agent;
+import net.digitalid.service.core.agent.ReadOnlyAgentPermissions;
+import net.digitalid.service.core.agent.Restrictions;
+import net.digitalid.service.core.auxiliary.None;
+import net.digitalid.service.core.concept.Concept;
+import net.digitalid.service.core.concept.Index;
+import net.digitalid.service.core.data.StateModule;
+import net.digitalid.service.core.entity.NonHostEntity;
+import net.digitalid.service.core.entity.Role;
+import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.property.StateSelector;
+import net.digitalid.service.core.property.ValueValidator;
+import net.digitalid.service.core.property.nonnullable.NonNullableConceptProperty;
+import net.digitalid.service.core.property.nonnullable.NonNullableConceptPropertyTable;
+import net.digitalid.service.core.service.CoreService;
+import net.digitalid.service.core.wrappers.EmptyWrapper;
+import net.digitalid.service.core.wrappers.StringWrapper;
+import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.configuration.Database;
 
 /**
  * This class models a password of a digital identity.

@@ -1,22 +1,22 @@
-package net.digitalid.core.server;
+package net.digitalid.service.core.server;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Collection;
 import javax.annotation.Nonnull;
-import net.digitalid.database.annotations.Committing;
-import net.digitalid.collections.freezable.FreezableArrayList;
-import net.digitalid.collections.readonly.ReadOnlyCollection;
-import net.digitalid.collections.readonly.ReadOnlyList;
-import net.digitalid.database.configuration.Database;
-import net.digitalid.core.exceptions.external.ExternalException;
-import net.digitalid.system.console.exceptions.EscapeOptionException;
-import net.digitalid.core.exceptions.packet.PacketException;
-import net.digitalid.core.host.Host;
-import net.digitalid.core.identifier.HostIdentifier;
-import net.digitalid.system.console.Console;
-import net.digitalid.system.console.Option;
-import net.digitalid.core.data.Service;
+import net.digitalid.service.core.data.Service;
+import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.host.Host;
+import net.digitalid.service.core.identifier.HostIdentifier;
+import net.digitalid.utility.collections.freezable.FreezableArrayList;
+import net.digitalid.utility.collections.readonly.ReadOnlyCollection;
+import net.digitalid.utility.collections.readonly.ReadOnlyList;
+import net.digitalid.utility.database.annotations.Committing;
+import net.digitalid.utility.database.configuration.Database;
+import net.digitalid.utility.system.console.Console;
+import net.digitalid.utility.system.console.Option;
+import net.digitalid.utility.system.console.exceptions.EscapeOptionException;
 
 /**
  * This class contains the command-line options of the {@link Server}.

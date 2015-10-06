@@ -1,7 +1,7 @@
-package net.digitalid.core.exceptions.external;
+package net.digitalid.service.core.exceptions.external;
 
 import javax.annotation.Nonnull;
-import net.digitalid.annotations.state.Immutable;
+import net.digitalid.utility.annotations.state.Immutable;
 
 /**
  * This exception is thrown when a signature is invalid.

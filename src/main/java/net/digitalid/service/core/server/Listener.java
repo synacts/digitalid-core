@@ -1,4 +1,4 @@
-package net.digitalid.core.server;
+package net.digitalid.service.core.server;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -8,10 +8,10 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import javax.annotation.Nonnull;
-import net.digitalid.system.errors.InitializationError;
-import net.digitalid.system.logger.Log;
-import net.digitalid.core.packet.Request;
-import net.digitalid.system.thread.NamedThreadFactory;
+import net.digitalid.service.core.packet.Request;
+import net.digitalid.utility.system.errors.InitializationError;
+import net.digitalid.utility.system.logger.Log;
+import net.digitalid.utility.system.thread.NamedThreadFactory;
 
 /**
  * A listener accepts incoming {@link Request requests} and lets them handle by {@link Worker workers}.

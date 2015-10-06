@@ -1,4 +1,4 @@
-package net.digitalid.core.property.nonnullable;
+package net.digitalid.service.core.property.nonnullable;
 
 /**
  * Description.

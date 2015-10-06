@@ -1,4 +1,4 @@
-package net.digitalid.core.agent;
+package net.digitalid.service.core.agent;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -6,33 +6,33 @@ import java.sql.SQLException;
 import java.sql.Types;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.annotations.reference.Capturable;
-import net.digitalid.database.annotations.Committing;
-import net.digitalid.collections.annotations.freezable.Frozen;
-import net.digitalid.annotations.state.Immutable;
-import net.digitalid.database.annotations.NonCommitting;
-import net.digitalid.collections.annotations.freezable.NonFrozen;
-import net.digitalid.core.annotations.OnlyForActions;
-import net.digitalid.core.annotations.OnlyForClients;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.collections.freezable.FreezableArray;
-import net.digitalid.collections.freezable.FreezableList;
-import net.digitalid.collections.readonly.ReadOnlyArray;
-import net.digitalid.core.concept.Aspect;
-import net.digitalid.core.concept.NonHostConcept;
-import net.digitalid.core.entity.NonHostEntity;
-import net.digitalid.core.entity.Site;
-import net.digitalid.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.core.exceptions.packet.PacketError;
-import net.digitalid.core.exceptions.packet.PacketException;
-import net.digitalid.core.identity.Identity;
-import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.factory.Storable;
-import net.digitalid.core.synchronizer.Synchronizer;
-import net.digitalid.core.wrappers.Block;
-import net.digitalid.core.wrappers.BooleanWrapper;
-import net.digitalid.core.wrappers.Int64Wrapper;
-import net.digitalid.core.wrappers.TupleWrapper;
+import net.digitalid.service.core.annotations.OnlyForActions;
+import net.digitalid.service.core.annotations.OnlyForClients;
+import net.digitalid.service.core.concept.Aspect;
+import net.digitalid.service.core.concept.NonHostConcept;
+import net.digitalid.service.core.entity.NonHostEntity;
+import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.packet.PacketError;
+import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.factory.Storable;
+import net.digitalid.service.core.identity.Identity;
+import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.synchronizer.Synchronizer;
+import net.digitalid.service.core.wrappers.Block;
+import net.digitalid.service.core.wrappers.BooleanWrapper;
+import net.digitalid.service.core.wrappers.Int64Wrapper;
+import net.digitalid.service.core.wrappers.TupleWrapper;
+import net.digitalid.utility.annotations.reference.Capturable;
+import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.collections.annotations.freezable.Frozen;
+import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
+import net.digitalid.utility.collections.freezable.FreezableArray;
+import net.digitalid.utility.collections.freezable.FreezableList;
+import net.digitalid.utility.collections.readonly.ReadOnlyArray;
+import net.digitalid.utility.database.annotations.Committing;
+import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.column.Site;
 
 /**
  * This class models an agent that acts on behalf of an {@link Identity identity}.
@@ -219,7 +219,7 @@ public abstract class Agent extends NonHostConcept implements Storable<Agent> {
      * Adds the given permissions to this agent.
      * <p>
      * <em>Important:</em> The additional permissions should not cover any existing permissions. If they do,
-     * make sure to {@link #removePermissions(net.digitalid.core.agent.ReadonlyAgentPermissions) remove} them first.
+     * make sure to {@link #removePermissions(net.digitalid.service.core.agent.ReadonlyAgentPermissions) remove} them first.
      * 
      * @param permissions the permissions to be added to this agent.
      */

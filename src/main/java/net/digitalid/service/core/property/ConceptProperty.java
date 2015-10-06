@@ -1,16 +1,16 @@
-package net.digitalid.core.property;
+package net.digitalid.service.core.property;
 
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
-import net.digitalid.database.annotations.Locked;
-import net.digitalid.database.annotations.NonCommitting;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.core.auxiliary.Time;
-import net.digitalid.core.concept.Concept;
-import net.digitalid.core.property.extensible.ExtensibleConceptProperty;
-import net.digitalid.core.property.indexed.IndexedConceptProperty;
-import net.digitalid.core.property.nonnullable.NonNullableConceptProperty;
-import net.digitalid.core.property.nullable.NullableConceptProperty;
+import net.digitalid.service.core.auxiliary.Time;
+import net.digitalid.service.core.concept.Concept;
+import net.digitalid.service.core.property.extensible.ExtensibleConceptProperty;
+import net.digitalid.service.core.property.indexed.IndexedConceptProperty;
+import net.digitalid.service.core.property.nonnullable.NonNullableConceptProperty;
+import net.digitalid.service.core.property.nullable.NullableConceptProperty;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.database.annotations.Locked;
+import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * This interface is implemented by all {@link ReadOnlyProperty properties} that belong to a {@link Concept concept}.

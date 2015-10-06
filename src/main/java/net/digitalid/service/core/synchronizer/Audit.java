@@ -1,18 +1,18 @@
-package net.digitalid.core.synchronizer;
+package net.digitalid.service.core.synchronizer;
 
 import javax.annotation.Nonnull;
-import net.digitalid.annotations.state.Immutable;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.core.auxiliary.Time;
-import net.digitalid.collections.freezable.FreezableArray;
-import net.digitalid.collections.readonly.ReadOnlyList;
-import net.digitalid.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.packet.Packet;
-import net.digitalid.core.factory.Storable;
-import net.digitalid.core.wrappers.Block;
-import net.digitalid.core.wrappers.ListWrapper;
-import net.digitalid.core.wrappers.TupleWrapper;
+import net.digitalid.service.core.auxiliary.Time;
+import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.factory.Storable;
+import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.packet.Packet;
+import net.digitalid.service.core.wrappers.Block;
+import net.digitalid.service.core.wrappers.ListWrapper;
+import net.digitalid.service.core.wrappers.TupleWrapper;
+import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.collections.freezable.FreezableArray;
+import net.digitalid.utility.collections.readonly.ReadOnlyList;
 
 /**
  * This class models an audit with a time and trail.

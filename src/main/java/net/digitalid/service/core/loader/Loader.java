@@ -1,6 +1,5 @@
-package net.digitalid.system.loader;
+package net.digitalid.service.core.loader;
 
-import net.digitalid.system.logger.Log;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -14,17 +13,18 @@ import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import javax.annotation.Nonnull;
-import net.digitalid.database.annotations.Committing;
-import net.digitalid.system.directory.annotations.IsDirectory;
-import net.digitalid.database.annotations.Locked;
-import net.digitalid.annotations.state.Stateless;
-import net.digitalid.core.auxiliary.Time;
-import net.digitalid.core.cache.Cache;
-import net.digitalid.database.configuration.Database;
-import net.digitalid.system.errors.InitializationError;
-import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.server.Server;
-import net.digitalid.core.wrappers.SignatureWrapper;
+import net.digitalid.service.core.auxiliary.Time;
+import net.digitalid.service.core.cache.Cache;
+import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.server.Server;
+import net.digitalid.service.core.wrappers.SignatureWrapper;
+import net.digitalid.utility.annotations.state.Stateless;
+import net.digitalid.utility.database.annotations.Committing;
+import net.digitalid.utility.database.annotations.Locked;
+import net.digitalid.utility.database.configuration.Database;
+import net.digitalid.utility.system.directory.annotations.IsDirectory;
+import net.digitalid.utility.system.errors.InitializationError;
+import net.digitalid.utility.system.logger.Log;
 
 /**
  * This class loads other classes in other domains.

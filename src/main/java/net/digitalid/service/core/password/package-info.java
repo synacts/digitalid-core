@@ -1,4 +1,4 @@
 /**
  * Provides classes for handling passwords.
  */
-package net.digitalid.core.password;
+package net.digitalid.service.core.password;

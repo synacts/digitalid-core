@@ -1,20 +1,20 @@
-package net.digitalid.core.cryptography;
+package net.digitalid.service.core.cryptography;
 
 import javax.annotation.Nonnull;
-import net.digitalid.collections.annotations.freezable.Frozen;
-import net.digitalid.annotations.state.Immutable;
-import net.digitalid.collections.annotations.size.NonEmpty;
-import net.digitalid.core.annotations.NonNullableElements;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.core.auxiliary.Time;
-import net.digitalid.collections.freezable.FreezableLinkedList;
-import net.digitalid.collections.readonly.ReadOnlyList;
-import net.digitalid.core.identity.Category;
-import net.digitalid.core.identity.SemanticType;
-import net.digitalid.collections.tuples.FreezablePair;
-import net.digitalid.collections.tuples.ReadOnlyPair;
-import net.digitalid.core.wrappers.ListWrapper;
-import net.digitalid.core.wrappers.TupleWrapper;
+import net.digitalid.service.core.auxiliary.Time;
+import net.digitalid.service.core.identity.Category;
+import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.wrappers.ListWrapper;
+import net.digitalid.service.core.wrappers.TupleWrapper;
+import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
+import net.digitalid.utility.collections.annotations.freezable.Frozen;
+import net.digitalid.utility.collections.annotations.size.NonEmpty;
+import net.digitalid.utility.collections.freezable.FreezableLinkedList;
+import net.digitalid.utility.collections.readonly.ReadOnlyList;
+import net.digitalid.utility.collections.tuples.FreezablePair;
+import net.digitalid.utility.collections.tuples.ReadOnlyPair;
 
 /**
  * This class models a {@link KeyChain key chain} of {@link PublicKey public keys}.

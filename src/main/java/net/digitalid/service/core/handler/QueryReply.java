@@ -1,16 +1,16 @@
-package net.digitalid.core.handler;
+package net.digitalid.service.core.handler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.annotations.state.Immutable;
-import net.digitalid.core.annotations.OnlyForHosts;
-import net.digitalid.core.entity.Account;
-import net.digitalid.core.entity.NonHostEntity;
-import net.digitalid.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.core.identifier.InternalIdentifier;
-import net.digitalid.core.identity.IdentityReply;
-import net.digitalid.core.service.CoreServiceQueryReply;
-import net.digitalid.core.wrappers.HostSignatureWrapper;
+import net.digitalid.service.core.annotations.OnlyForHosts;
+import net.digitalid.service.core.entity.Account;
+import net.digitalid.service.core.entity.NonHostEntity;
+import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.identifier.InternalIdentifier;
+import net.digitalid.service.core.identity.IdentityReply;
+import net.digitalid.service.core.service.CoreServiceQueryReply;
+import net.digitalid.service.core.wrappers.HostSignatureWrapper;
+import net.digitalid.utility.annotations.state.Immutable;
 
 /**
  * This class models a {@link Reply reply} to a {@link Query query}.

@@ -1,31 +1,31 @@
-package net.digitalid.core.contact;
+package net.digitalid.service.core.contact;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.agent.FreezableAgentPermissions;
-import net.digitalid.core.annotations.AttributeType;
-import net.digitalid.annotations.reference.Capturable;
-import net.digitalid.collections.annotations.freezable.Frozen;
-import net.digitalid.database.annotations.NonCommitting;
-import net.digitalid.collections.annotations.freezable.NonFrozen;
-import net.digitalid.collections.annotations.freezable.NonFrozenRecipient;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.core.annotations.Single;
-import net.digitalid.core.collections.Brackets;
-import net.digitalid.core.collections.ElementConverter;
-import net.digitalid.collections.freezable.FreezableArrayList;
-import net.digitalid.collections.freezable.FreezableLinkedHashSet;
-import net.digitalid.collections.freezable.FreezableList;
-import net.digitalid.core.collections.IterableConverter;
-import net.digitalid.collections.readonly.ReadOnlyList;
-import net.digitalid.core.exceptions.external.ExternalException;
-import net.digitalid.core.exceptions.packet.PacketException;
-import net.digitalid.core.identity.IdentityClass;
-import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.wrappers.Block;
-import net.digitalid.core.wrappers.ListWrapper;
+import net.digitalid.service.core.agent.FreezableAgentPermissions;
+import net.digitalid.service.core.annotations.AttributeType;
+import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.identity.IdentityClass;
+import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.wrappers.Block;
+import net.digitalid.service.core.wrappers.ListWrapper;
+import net.digitalid.utility.annotations.reference.Capturable;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.collections.annotations.freezable.Frozen;
+import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
+import net.digitalid.utility.collections.annotations.freezable.NonFrozenRecipient;
+import net.digitalid.utility.collections.annotations.size.Single;
+import net.digitalid.utility.collections.converter.Brackets;
+import net.digitalid.utility.collections.converter.ElementConverter;
+import net.digitalid.utility.collections.converter.IterableConverter;
+import net.digitalid.utility.collections.freezable.FreezableArrayList;
+import net.digitalid.utility.collections.freezable.FreezableLinkedHashSet;
+import net.digitalid.utility.collections.freezable.FreezableList;
+import net.digitalid.utility.collections.readonly.ReadOnlyList;
+import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * This class models a freezable set of attribute types.

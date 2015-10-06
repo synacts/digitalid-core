@@ -1,29 +1,29 @@
-package net.digitalid.core.expression;
+package net.digitalid.service.core.expression;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.annotations.reference.Capturable;
-import net.digitalid.annotations.state.Immutable;
-import net.digitalid.database.annotations.NonCommitting;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.collections.freezable.FreezableArrayList;
-import net.digitalid.collections.freezable.FreezableSet;
-import net.digitalid.collections.readonly.ReadOnlyList;
-import net.digitalid.core.concept.NonHostConcept;
-import net.digitalid.core.contact.Contact;
-import net.digitalid.core.contact.Context;
-import net.digitalid.core.entity.NonHostEntity;
-import net.digitalid.core.exceptions.external.ExternalException;
-import net.digitalid.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.core.exceptions.packet.PacketException;
-import net.digitalid.core.identifier.IdentifierClass;
-import net.digitalid.core.identity.Identity;
-import net.digitalid.core.identity.Person;
-import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.wrappers.Block;
-import net.digitalid.core.wrappers.CredentialsSignatureWrapper;
+import net.digitalid.service.core.concept.NonHostConcept;
+import net.digitalid.service.core.contact.Contact;
+import net.digitalid.service.core.contact.Context;
+import net.digitalid.service.core.entity.NonHostEntity;
+import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.identifier.IdentifierClass;
+import net.digitalid.service.core.identity.Identity;
+import net.digitalid.service.core.identity.Person;
+import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.wrappers.Block;
+import net.digitalid.service.core.wrappers.CredentialsSignatureWrapper;
+import net.digitalid.utility.annotations.reference.Capturable;
+import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.collections.freezable.FreezableArrayList;
+import net.digitalid.utility.collections.freezable.FreezableSet;
+import net.digitalid.utility.collections.readonly.ReadOnlyList;
+import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * This class parses and represents expressions.

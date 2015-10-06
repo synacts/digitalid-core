@@ -1,7 +1,7 @@
-package net.digitalid.core.property;
+package net.digitalid.service.core.property;
 
 import javax.annotation.Nonnull;
-import net.digitalid.annotations.state.Pure;
+import net.digitalid.utility.annotations.state.Pure;
 
 /**
  * A value validator checks whether a value is valid.

@@ -1,11 +1,11 @@
-package net.digitalid.core.wrappers;
+package net.digitalid.service.core.wrappers;
 
 import java.math.BigInteger;
 import java.util.List;
 import javax.annotation.Nonnull;
-import net.digitalid.core.credential.Credential;
-import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.setup.ServerSetup;
+import net.digitalid.service.core.credential.Credential;
+import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.setup.ServerSetup;
 import org.junit.Test;
 
 /**

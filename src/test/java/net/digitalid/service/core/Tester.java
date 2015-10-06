@@ -1,4 +1,4 @@
-package net.digitalid.core;
+package net.digitalid.service.core;
 
 import org.junit.Test;
 

@@ -1,11 +1,11 @@
-package net.digitalid.core.property;
+package net.digitalid.service.core.property;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.agent.Agent;
-import net.digitalid.core.agent.ReadOnlyAgentPermissions;
-import net.digitalid.core.agent.Restrictions;
-import net.digitalid.annotations.state.Pure;
+import net.digitalid.service.core.agent.Agent;
+import net.digitalid.service.core.agent.ReadOnlyAgentPermissions;
+import net.digitalid.service.core.agent.Restrictions;
+import net.digitalid.utility.annotations.state.Pure;
 
 /**
  * A state selector returns the SQL condition with which the returned state is restricted.

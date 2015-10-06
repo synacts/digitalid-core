@@ -1,6 +1,6 @@
-package net.digitalid.core.cryptography;
+package net.digitalid.service.core.cryptography;
 
-import net.digitalid.annotations.state.Immutable;
+import net.digitalid.utility.annotations.state.Immutable;
 
 /**
  * This class specifies the cryptographic parameters.

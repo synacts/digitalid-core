@@ -1,10 +1,10 @@
-package net.digitalid.core.exceptions.external;
+package net.digitalid.service.core.exceptions.external;
 
 import javax.annotation.Nonnull;
-import net.digitalid.annotations.state.Immutable;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.core.handler.Reply;
-import net.digitalid.core.identifier.Identifier;
+import net.digitalid.service.core.handler.Reply;
+import net.digitalid.service.core.identifier.Identifier;
+import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.annotations.state.Pure;
 
 /**
  * This exception is thrown when an identity has an invalid declaration.

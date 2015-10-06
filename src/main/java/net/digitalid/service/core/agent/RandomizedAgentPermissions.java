@@ -1,4 +1,4 @@
-package net.digitalid.core.agent;
+package net.digitalid.service.core.agent;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -7,19 +7,19 @@ import java.sql.SQLException;
 import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.annotations.state.Immutable;
-import net.digitalid.database.annotations.NonCommitting;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.collections.freezable.FreezableArray;
-import net.digitalid.collections.readonly.ReadOnlyArray;
-import net.digitalid.core.cryptography.Parameters;
-import net.digitalid.core.exceptions.external.ExternalException;
-import net.digitalid.core.exceptions.packet.PacketException;
-import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.wrappers.Blockable;
-import net.digitalid.core.wrappers.Block;
-import net.digitalid.core.wrappers.HashWrapper;
-import net.digitalid.core.wrappers.TupleWrapper;
+import net.digitalid.service.core.cryptography.Parameters;
+import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.wrappers.Block;
+import net.digitalid.service.core.wrappers.Blockable;
+import net.digitalid.service.core.wrappers.HashWrapper;
+import net.digitalid.service.core.wrappers.TupleWrapper;
+import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.collections.freezable.FreezableArray;
+import net.digitalid.utility.collections.readonly.ReadOnlyArray;
+import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * This class models the randomized {@link FreezableAgentPermissions permissions} of {@link OutgoingRole outgoing roles}.

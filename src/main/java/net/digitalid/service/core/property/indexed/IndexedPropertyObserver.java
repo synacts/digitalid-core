@@ -1,8 +1,8 @@
-package net.digitalid.core.property.indexed;
+package net.digitalid.service.core.property.indexed;
 
 import javax.annotation.Nonnull;
-import net.digitalid.collections.readonly.ReadOnlyMap;
-import net.digitalid.core.property.PropertyObserver;
+import net.digitalid.service.core.property.PropertyObserver;
+import net.digitalid.utility.collections.readonly.ReadOnlyMap;
 
 /**
  * Description.

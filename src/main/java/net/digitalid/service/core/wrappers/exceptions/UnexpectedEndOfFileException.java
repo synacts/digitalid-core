@@ -1,8 +1,8 @@
-package net.digitalid.core.wrappers.exceptions;
+package net.digitalid.service.core.wrappers.exceptions;
 
 import java.io.IOException;
 import javax.annotation.Nonnull;
-import net.digitalid.annotations.state.Pure;
+import net.digitalid.utility.annotations.state.Pure;
 
 /**
  * The end of the input stream has been reached before the indicated data could be read.

@@ -1,8 +1,8 @@
-package net.digitalid.core.cryptography;
+package net.digitalid.service.core.cryptography;
 
 import javax.annotation.Nonnull;
-import net.digitalid.core.auxiliary.Time;
-import net.digitalid.core.setup.DatabaseSetup;
+import net.digitalid.service.core.auxiliary.Time;
+import net.digitalid.service.core.setup.DatabaseSetup;
 import org.junit.Assert;
 import org.junit.Test;
 

@@ -1,4 +1,4 @@
 /**
  * Provides classes that indicate packet exceptions.
  */
-package net.digitalid.core.exceptions.packet;
+package net.digitalid.service.core.exceptions.packet;

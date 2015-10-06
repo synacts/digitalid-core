@@ -1,10 +1,10 @@
-package net.digitalid.core.database;
+package net.digitalid.service.core.database;
 
-import net.digitalid.database.configuration.Database;
-import net.digitalid.database.configuration.SQLiteConfiguration;
 import java.sql.SQLException;
-import net.digitalid.database.annotations.Committing;
-import net.digitalid.annotations.state.Pure;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.database.annotations.Committing;
+import net.digitalid.utility.database.configuration.Database;
+import net.digitalid.utility.database.configuration.SQLiteConfiguration;
 import org.junit.BeforeClass;
 
 /**

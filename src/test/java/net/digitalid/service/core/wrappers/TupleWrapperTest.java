@@ -1,13 +1,13 @@
-package net.digitalid.core.wrappers;
+package net.digitalid.service.core.wrappers;
 
 import javax.annotation.Nonnull;
-import net.digitalid.collections.freezable.FreezableArray;
-import net.digitalid.collections.freezable.FreezableLinkedList;
-import net.digitalid.collections.freezable.FreezableList;
-import net.digitalid.collections.readonly.ReadOnlyArray;
-import net.digitalid.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.setup.DatabaseSetup;
+import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.setup.DatabaseSetup;
+import net.digitalid.utility.collections.freezable.FreezableArray;
+import net.digitalid.utility.collections.freezable.FreezableLinkedList;
+import net.digitalid.utility.collections.freezable.FreezableList;
+import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 import org.junit.Assert;
 import org.junit.Test;
 

@@ -1,4 +1,4 @@
-package net.digitalid.core.cryptography;
+package net.digitalid.service.core.cryptography;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -18,21 +18,21 @@ import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
-import net.digitalid.core.annotations.BasedOn;
-import net.digitalid.annotations.reference.Capturable;
-import net.digitalid.annotations.state.Immutable;
-import net.digitalid.collections.annotations.size.NonEmpty;
-import net.digitalid.annotations.math.NonNegative;
-import net.digitalid.annotations.math.Positive;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.system.errors.InitializationError;
-import net.digitalid.system.errors.ShouldNeverHappenError;
-import net.digitalid.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.storable.BlockBasedSimpleNonConceptFactory;
-import net.digitalid.core.factory.Storable;
-import net.digitalid.core.wrappers.Block;
-import net.digitalid.core.wrappers.IntegerWrapper;
+import net.digitalid.service.core.annotations.BasedOn;
+import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.factory.Storable;
+import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.storable.BlockBasedSimpleNonConceptFactory;
+import net.digitalid.service.core.wrappers.Block;
+import net.digitalid.service.core.wrappers.IntegerWrapper;
+import net.digitalid.utility.annotations.math.NonNegative;
+import net.digitalid.utility.annotations.math.Positive;
+import net.digitalid.utility.annotations.reference.Capturable;
+import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.collections.annotations.size.NonEmpty;
+import net.digitalid.utility.system.errors.InitializationError;
+import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 
 /**
  * Symmetric keys are used to encrypt and decrypt byte arrays with the Advanced Encryption Standard (AES).

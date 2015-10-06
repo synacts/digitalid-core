@@ -1,21 +1,21 @@
-package net.digitalid.core.identity;
+package net.digitalid.service.core.identity;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
-import net.digitalid.annotations.state.Immutable;
-import net.digitalid.database.annotations.NonCommitting;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.collections.freezable.FreezableArrayList;
-import net.digitalid.collections.readonly.ReadOnlyList;
-import net.digitalid.database.configuration.Database;
-import net.digitalid.system.errors.ShouldNeverHappenError;
-import net.digitalid.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.core.wrappers.Blockable;
-import net.digitalid.core.database.SQLizable;
-import net.digitalid.core.wrappers.Block;
-import net.digitalid.core.wrappers.Int8Wrapper;
+import net.digitalid.service.core.database.SQLizable;
+import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.wrappers.Block;
+import net.digitalid.service.core.wrappers.Blockable;
+import net.digitalid.service.core.wrappers.Int8Wrapper;
+import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.collections.freezable.FreezableArrayList;
+import net.digitalid.utility.collections.readonly.ReadOnlyList;
+import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.configuration.Database;
+import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 
 /**
  * This class enumerates the various categories of digital identities.

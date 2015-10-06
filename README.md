@@ -269,7 +269,7 @@ Furthermore, methods usually indicate whether they expect the database to be loc
 
 #### Other Annotations
 
-You find dozens more annotations in the package `net.digitalid.core.annotations`, which should largely be self-explanatory with their corresponding [documentation](#documentation). A design pattern that is used so extensively throughout the code so that it is worth to be mentioned here is `Freezable`. Objects that implement this interface can be changed until you `freeze()` them. From that point onwards they are immutable and can be shared among objects and threads without running into consistency problems. As you would expect by now, there are annotations to indicate whether the object denoted by a variable or parameter is `@Frozen` or `@NonFrozen`. Independent of their freezing state, such objects can be exposed through a `ReadOnly` interface (that only includes the methods that are `@Pure`).
+You find dozens more annotations in the package `net.digitalid.service.core.annotations`, which should largely be self-explanatory with their corresponding [documentation](#documentation). A design pattern that is used so extensively throughout the code so that it is worth to be mentioned here is `Freezable`. Objects that implement this interface can be changed until you `freeze()` them. From that point onwards they are immutable and can be shared among objects and threads without running into consistency problems. As you would expect by now, there are annotations to indicate whether the object denoted by a variable or parameter is `@Frozen` or `@NonFrozen`. Independent of their freezing state, such objects can be exposed through a `ReadOnly` interface (that only includes the methods that are `@Pure`).
 
 #### Assertion Checking
 

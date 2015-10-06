@@ -1,21 +1,21 @@
-package net.digitalid.core.property.nonnullable;
+package net.digitalid.service.core.property.nonnullable;
 
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.database.annotations.Committing;
-import net.digitalid.database.annotations.Locked;
-import net.digitalid.database.annotations.NonCommitting;
-import net.digitalid.core.annotations.NonNullableElements;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.annotations.state.Validated;
-import net.digitalid.core.auxiliary.Time;
-import net.digitalid.core.concept.Concept;
-import net.digitalid.core.entity.Entity;
-import net.digitalid.core.property.ConceptProperty;
-import net.digitalid.core.property.ValueValidator;
-import net.digitalid.core.synchronizer.Synchronizer;
-import net.digitalid.collections.tuples.ReadOnlyPair;
+import net.digitalid.service.core.auxiliary.Time;
+import net.digitalid.service.core.concept.Concept;
+import net.digitalid.service.core.entity.Entity;
+import net.digitalid.service.core.property.ConceptProperty;
+import net.digitalid.service.core.property.ValueValidator;
+import net.digitalid.service.core.synchronizer.Synchronizer;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.annotations.state.Validated;
+import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
+import net.digitalid.utility.collections.tuples.ReadOnlyPair;
+import net.digitalid.utility.database.annotations.Committing;
+import net.digitalid.utility.database.annotations.Locked;
+import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * This property belongs to a concept and stores a replaceable value that cannot be null.

@@ -1,13 +1,13 @@
-package net.digitalid.core.entity;
+package net.digitalid.service.core.entity;
 
 import javax.annotation.Nonnull;
-import net.digitalid.annotations.state.Immutable;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.core.concept.Concept;
-import net.digitalid.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.core.handler.Handler;
-import net.digitalid.core.identity.Identity;
-import net.digitalid.core.identity.InternalIdentity;
+import net.digitalid.service.core.concept.Concept;
+import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.handler.Handler;
+import net.digitalid.service.core.identity.Identity;
+import net.digitalid.service.core.identity.InternalIdentity;
+import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.annotations.state.Pure;
 
 /**
  * An entity captures the {@link Site site} and the {@link Identity identity} of a {@link Concept concept} or {@link Handler handler}.

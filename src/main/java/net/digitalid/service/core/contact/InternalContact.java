@@ -1,4 +1,4 @@
-package net.digitalid.core.contact;
+package net.digitalid.service.core.contact;
 
 /**
  * Description.

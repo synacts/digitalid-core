@@ -1,26 +1,26 @@
-package net.digitalid.core.identity;
+package net.digitalid.service.core.identity;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.annotations.state.Immutable;
-import net.digitalid.database.annotations.NonCommitting;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.core.entity.Entity;
-import net.digitalid.core.exceptions.external.ExternalException;
-import net.digitalid.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.core.exceptions.packet.PacketError;
-import net.digitalid.core.exceptions.packet.PacketException;
-import net.digitalid.core.handler.Method;
-import net.digitalid.core.handler.Reply;
-import net.digitalid.core.identifier.HostIdentifier;
-import net.digitalid.core.identifier.InternalIdentifier;
-import net.digitalid.core.identifier.InternalNonHostIdentifier;
-import net.digitalid.core.service.CoreServiceExternalQuery;
-import net.digitalid.core.wrappers.Block;
-import net.digitalid.core.wrappers.EmptyWrapper;
-import net.digitalid.core.wrappers.SignatureWrapper;
+import net.digitalid.service.core.entity.Entity;
+import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.packet.PacketError;
+import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.handler.Method;
+import net.digitalid.service.core.handler.Reply;
+import net.digitalid.service.core.identifier.HostIdentifier;
+import net.digitalid.service.core.identifier.InternalIdentifier;
+import net.digitalid.service.core.identifier.InternalNonHostIdentifier;
+import net.digitalid.service.core.service.CoreServiceExternalQuery;
+import net.digitalid.service.core.wrappers.Block;
+import net.digitalid.service.core.wrappers.EmptyWrapper;
+import net.digitalid.service.core.wrappers.SignatureWrapper;
+import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * Queries the identity of the given subject.

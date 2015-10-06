@@ -1,10 +1,10 @@
-package net.digitalid.core.attribute;
+package net.digitalid.service.core.attribute;
 
 import javax.annotation.Nonnull;
-import net.digitalid.core.auxiliary.Time;
-import net.digitalid.core.identity.Category;
-import net.digitalid.core.identity.SemanticType;
-import net.digitalid.core.wrappers.StringWrapper;
+import net.digitalid.service.core.auxiliary.Time;
+import net.digitalid.service.core.identity.Category;
+import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.wrappers.StringWrapper;
 
 /**
  * This class stores commonly used attribute types.

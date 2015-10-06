@@ -1,29 +1,29 @@
-package net.digitalid.core.handler;
+package net.digitalid.service.core.handler;
 
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.core.agent.Agent;
-import net.digitalid.core.agent.FreezableAgentPermissions;
-import net.digitalid.core.agent.ReadOnlyAgentPermissions;
-import net.digitalid.core.agent.Restrictions;
-import net.digitalid.annotations.state.Immutable;
-import net.digitalid.database.annotations.NonCommitting;
-import net.digitalid.annotations.state.Pure;
-import net.digitalid.core.client.Client;
-import net.digitalid.core.entity.Entity;
-import net.digitalid.core.entity.NonHostEntity;
-import net.digitalid.core.host.Host;
-import net.digitalid.core.identifier.HostIdentifier;
-import net.digitalid.core.identifier.InternalIdentifier;
-import net.digitalid.core.pusher.Pusher;
-import net.digitalid.core.service.CoreServiceExternalAction;
-import net.digitalid.core.wrappers.SignatureWrapper;
+import net.digitalid.service.core.agent.Agent;
+import net.digitalid.service.core.agent.FreezableAgentPermissions;
+import net.digitalid.service.core.agent.ReadOnlyAgentPermissions;
+import net.digitalid.service.core.agent.Restrictions;
+import net.digitalid.service.core.client.Client;
+import net.digitalid.service.core.entity.Entity;
+import net.digitalid.service.core.entity.NonHostEntity;
+import net.digitalid.service.core.host.Host;
+import net.digitalid.service.core.identifier.HostIdentifier;
+import net.digitalid.service.core.identifier.InternalIdentifier;
+import net.digitalid.service.core.pusher.Pusher;
+import net.digitalid.service.core.service.CoreServiceExternalAction;
+import net.digitalid.service.core.wrappers.SignatureWrapper;
+import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * External actions can be sent by both {@link Host hosts} and {@link Client clients}.
  * Depending on whether the reply is needed immediately, external actions can be either sent 
- * directly or passed to the {@link Pusher#send(net.digitalid.core.handler.ExternalAction) Pusher}!
+ * directly or passed to the {@link Pusher#send(net.digitalid.service.core.handler.ExternalAction) Pusher}!
  * 
  * @invariant hasEntity() : "This external action has an entity.";
  * 

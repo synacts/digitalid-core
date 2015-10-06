@@ -1,4 +1,4 @@
 /**
  * Provides an interface for storing objects.
  */
-package net.digitalid.core.factory;
+package net.digitalid.service.core.factory;
