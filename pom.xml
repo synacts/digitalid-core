@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>net.digitalid</groupId>
+    <artifactId>service-core</artifactId>
+    <version>0.6.0</version>
+    <packaging>jar</packaging>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.7</maven.compiler.source>
+        <maven.compiler.target>1.7</maven.compiler.target>
+    </properties>
+    <distributionManagement>
+        <repository>
+            <id>deployment</id>
+            <name>Final Releases</name>
+            <url>https://repo.digitalid.net/content/repositories/releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>deployment</id>
+            <name>Snapshot Releases</name>
+            <url>https://repo.digitalid.net/content/repositories/snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+    <repositories>
+        <repository>
+            <id>digitalid-releases</id>
+            <name>Digital ID Releases</name>
+            <url>https://repo.digitalid.net/content/repositories/releases/</url>
+        </repository>
+        <repository>
+            <id>digitalid-snapshots</id>
+            <name>Digital ID Snapshots</name>
+            <url>https://repo.digitalid.net/content/repositories/snapshots/</url>
+        </repository>
+    </repositories>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.10.3</version>
+                <configuration>
+                    <quiet>true</quiet>
+                    <linksource>true</linksource>
+                    <additionalparam>-Xdoclint:none</additionalparam>
+                    <links>
+                        <link>http://docs.oracle.com/javase/7/docs/api/</link>
+                    </links>
+                    <doctitle>Digital ID Core Service</doctitle>
+                   <!-- <tagletArtifacts>
+                        <tagletArtifact>
+                            <groupId>net.digitalid</groupId>
+                            <artifactId>utility-taglets</artifactId>
+                            <version>1.0.0</version>
+                        </tagletArtifact>
+                    </tagletArtifacts> -->
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.4</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin> -->
+        </plugins>
+    </build>
+    <dependencies>
+        <dependency>
+            <groupId>net.digitalid</groupId>
+            <artifactId>utility-annotations</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>net.digitalid</groupId>
+            <artifactId>utility-collections</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>net.digitalid</groupId>
+            <artifactId>utility-database</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>net.digitalid</groupId>
+            <artifactId>utility-system</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+    </dependencies>
+</project>
