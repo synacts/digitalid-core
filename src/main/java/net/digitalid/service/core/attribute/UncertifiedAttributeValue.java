@@ -6,7 +6,6 @@ import javax.annotation.Nonnull;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.wrappers.Block;
-import net.digitalid.service.core.wrappers.Blockable;
 import net.digitalid.service.core.wrappers.SelfcontainedWrapper;
 import net.digitalid.service.core.wrappers.SignatureWrapper;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -53,9 +52,9 @@ public final class UncertifiedAttributeValue extends AttributeValue {
      * 
      * @ensure isVerified() : "The signature of this attribute value is verified.";
      */
-    public UncertifiedAttributeValue(@Nonnull Blockable content) {
-        this(content.toBlock());
-    }
+//    public UncertifiedAttributeValue(@Nonnull Blockable content) {
+//        this(content.toBlock());
+//    }
     
     /**
      * Creates an uncertified attribute value with the given content and signature.

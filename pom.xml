@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.digitalid</groupId>
-    <artifactId>service-core</artifactId>
+    <artifactId>digitalid-service-core</artifactId>
     <version>0.6.0</version>
     <packaging>jar</packaging>
     <properties>
@@ -83,22 +83,22 @@
     <dependencies>
         <dependency>
             <groupId>net.digitalid</groupId>
-            <artifactId>utility-annotations</artifactId>
+            <artifactId>digitalid-utility-annotations</artifactId>
             <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>net.digitalid</groupId>
-            <artifactId>utility-collections</artifactId>
+            <artifactId>digitalid-utility-collections</artifactId>
             <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>net.digitalid</groupId>
-            <artifactId>utility-database</artifactId>
+            <artifactId>digitalid-utility-database</artifactId>
             <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>net.digitalid</groupId>
-            <artifactId>utility-system</artifactId>
+            <artifactId>digitalid-utility-system</artifactId>
             <version>1.0.0</version>
         </dependency>
         <dependency>
