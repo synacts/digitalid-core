@@ -42,12 +42,16 @@
                 <version>2.10.3</version>
                 <configuration>
                     <quiet>true</quiet>
-                    <linksource>true</linksource>
+                    <linksource>false</linksource>
+                    <doctitle>Digital ID Core Service</doctitle>
                     <additionalparam>-Xdoclint:none</additionalparam>
                     <links>
+                        <link>https://docs.digitalid.net/utility/annotations/1.0.0/</link>
+                        <link>https://docs.digitalid.net/utility/collections/1.0.0/</link>
+                        <link>https://docs.digitalid.net/utility/database/1.0.0/</link>
+                        <link>https://docs.digitalid.net/utility/system/1.0.0/</link>
                         <link>http://docs.oracle.com/javase/7/docs/api/</link>
                     </links>
-                    <doctitle>Digital ID Core Service</doctitle>
                     <tagletArtifacts>
                         <tagletArtifact>
                             <groupId>net.digitalid</groupId>
