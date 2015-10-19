@@ -3,7 +3,7 @@ package net.digitalid.service.core.cryptography;
 import java.math.BigInteger;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.service.core.factory.Storable;
+import net.digitalid.service.core.storable.Storable;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 

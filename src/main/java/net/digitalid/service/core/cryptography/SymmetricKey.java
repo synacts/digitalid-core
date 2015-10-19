@@ -20,7 +20,7 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
 import net.digitalid.service.core.annotations.BasedOn;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.service.core.factory.Storable;
+import net.digitalid.service.core.storable.Storable;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.storable.BlockBasedSimpleNonConceptFactory;
 import net.digitalid.service.core.wrappers.Block;

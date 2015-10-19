@@ -21,6 +21,7 @@ import net.digitalid.service.core.wrappers.EmptyWrapper;
 import net.digitalid.service.core.wrappers.StringWrapper;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.collections.tuples.FreezablePair;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.configuration.Database;
 
@@ -85,6 +86,15 @@ public final class Password extends Concept<Password, NonHostEntity, Object> {
      * Stores the value of this password.
      */
     public final @Nonnull NonNullableConceptProperty<String, Password, NonHostEntity> value = NonNullableConceptProperty.get(VALIDATOR, this, TABLE);
+    
+    // Alternative:
+//    public final @Nonnull NonNullableConceptProperty<String, Password, NonHostEntity> value = new NonNullableConceptProperty(this, TABLE) {
+//        @Pure
+//        @Override
+//        public boolean isValid(@Nonnull String value) {
+//            return value.length() <= 50;
+//        }
+//    }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Index –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -180,5 +190,10 @@ public final class Password extends Concept<Password, NonHostEntity, Object> {
     public @Nonnull Factory getFactory() {
         return FACTORY;
     }
+    
+    /**
+     * Stores the factories of this class.
+     */
+    public static final @Nonnull ReadOnlyPair<BlockableFactory, StorableFactory> FACTORIES = FreezablePair.get(BLOCKABLE_FACTORY, STORABLE_FACTORY).freeze();
     
 }

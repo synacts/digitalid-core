@@ -13,8 +13,8 @@ import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.packet.PacketError;
 import net.digitalid.service.core.exceptions.packet.PacketException;
-import net.digitalid.service.core.factory.FactoryBasedGlobalFactory;
-import net.digitalid.service.core.factory.Storable;
+import net.digitalid.service.core.storable.FactoryBasedStorableFactory;
+import net.digitalid.service.core.storable.Storable;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.identifier.IdentifierClass;
 import net.digitalid.service.core.identity.Identity;
@@ -194,7 +194,7 @@ public class Service extends StateModule implements Storable<Service, Object> {
      * The factory for this class.
      */
     @Immutable
-    public static final class Factory extends FactoryBasedGlobalFactory<Service, Object, Identity> {
+    public static final class Factory extends FactoryBasedStorableFactory<Service, Object, Identity> {
         
         /**
          * Creates a new factory.

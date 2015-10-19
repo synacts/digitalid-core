@@ -13,7 +13,7 @@ import net.digitalid.service.core.annotations.Loaded;
 import net.digitalid.service.core.annotations.NonEncoding;
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.service.core.factory.Storable;
+import net.digitalid.service.core.storable.Storable;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
 import net.digitalid.utility.annotations.state.Immutable;

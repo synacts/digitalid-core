@@ -1,4 +1,4 @@
-package net.digitalid.service.core.factory;
+package net.digitalid.service.core.storable;
 
 import java.io.IOException;
 import java.sql.PreparedStatement;
@@ -30,7 +30,7 @@ import net.digitalid.utility.database.configuration.Database;
  * @version 1.0.0
  */
 @Immutable
-public abstract class BlockBasedGlobalFactory<O extends Storable<O, E>, E> extends GlobalFactory<O, E> {
+public abstract class BlockBasedStorableFactory<O extends Storable<O, E>, E> extends StorableFactory<O, E> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Column –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -46,7 +46,7 @@ public abstract class BlockBasedGlobalFactory<O extends Storable<O, E>, E> exten
      * 
      * @param type the semantic type that corresponds to the storable class.
      */
-    protected BlockBasedGlobalFactory(@Nonnull @Loaded SemanticType type) {
+    protected BlockBasedStorableFactory(@Nonnull @Loaded SemanticType type) {
         super(type, COLUMN);
     }
     

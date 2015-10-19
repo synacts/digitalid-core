@@ -28,7 +28,7 @@ public class IndexedProperty<K, V, R extends ReadOnlyMap<K, V>, F extends Freeza
     
     @Pure
     @Override
-    public @Nonnull V get(@Nonnull K key) {
+    public @Nonnull V get(@Nonnull K key) { // TODO: How to handle the situation if the key was not found? Probably return null or throw exception.
         return map.get(key);
     }
     

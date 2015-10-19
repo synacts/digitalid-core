@@ -1,4 +1,4 @@
-package net.digitalid.service.core.factory;
+package net.digitalid.service.core.storable;
 
 import java.io.IOException;
 import java.sql.PreparedStatement;
@@ -26,14 +26,14 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * @version 1.0.0
  */
 @Immutable
-public abstract class FactoryBasedGlobalFactory<O, E, K> extends GlobalFactory<O, E> {
+public abstract class FactoryBasedStorableFactory<O, E, K> extends StorableFactory<O, E> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factory –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the factory used to store and restore the key.
      */
-    private final @Nonnull GlobalFactory<K, E> factory;
+    private final @Nonnull StorableFactory<K, E> factory;
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -45,7 +45,7 @@ public abstract class FactoryBasedGlobalFactory<O, E, K> extends GlobalFactory<O
      * 
      * @require type.isBasedOn(factory.getType()) : "The given type is based on the type of the factory.";
      */
-    protected FactoryBasedGlobalFactory(@Nonnull @Loaded SemanticType type, @Nonnull GlobalFactory<K, E> factory) {
+    protected FactoryBasedStorableFactory(@Nonnull @Loaded SemanticType type, @Nonnull StorableFactory<K, E> factory) {
         super(type, factory.getColumns().toArray());
         
         assert type.isBasedOn(factory.getType()) : "The given type is based on the type of the factory.";
@@ -58,7 +58,7 @@ public abstract class FactoryBasedGlobalFactory<O, E, K> extends GlobalFactory<O
      * 
      * @param factory the factory used to store and restore the object's key.
      */
-    protected FactoryBasedGlobalFactory(@Nonnull GlobalFactory<K, E> factory) {
+    protected FactoryBasedStorableFactory(@Nonnull StorableFactory<K, E> factory) {
         this(factory.getType(), factory);
     }
     

@@ -1,4 +1,4 @@
-package net.digitalid.service.core.factory;
+package net.digitalid.service.core.blockable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -7,24 +7,18 @@ import net.digitalid.service.core.annotations.NonEncoding;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.wrappers.Block;
-import net.digitalid.utility.annotations.reference.Captured;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
-import net.digitalid.utility.database.column.Column;
 
 /**
- * This class is like {@link GlobalFactory} except that the decoding of {@link Block blocks} throws less exceptions.
- * The local factory allows only local information during {@link #decodeNonNullable(java.lang.Object, net.digitalid.service.core.wrappers.Block) decoding}.
- * 
- * @see BlockBasedLocalFactory
- * @see FactoryBasedLocalFactory
+ * This class is like {@link BlockableFactory} except that the decoding of {@link Block blocks} throws less exceptions.
+ * This factory does not allow file, network and database requests during {@link #decodeNonNullable(java.lang.Object, net.digitalid.service.core.wrappers.Block) decoding}.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0.0
  */
 @Immutable
-public abstract class LocalFactory<O, E> extends GlobalFactory<O, E> {
+public abstract class NonRequestingBlockableFactory<O, E> extends BlockableFactory<O, E> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Decoding –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -42,13 +36,12 @@ public abstract class LocalFactory<O, E> extends GlobalFactory<O, E> {
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Creates a new simple factory with the given parameters.
+     * Creates a new non-requesting blockable factory with the given type.
      * 
      * @param type the semantic type that corresponds to the storable class.
-     * @param columns the columns used to store objects of the storable class.
      */
-    protected LocalFactory(@Nonnull @Loaded SemanticType type, @Captured @Nonnull @NonNullableElements Column... columns) {
-        super(type, columns);
+    protected NonRequestingBlockableFactory(@Nonnull @Loaded SemanticType type) {
+        super(type);
     }
     
 }

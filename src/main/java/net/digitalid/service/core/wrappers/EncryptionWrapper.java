@@ -20,7 +20,7 @@ import net.digitalid.service.core.cryptography.SymmetricKey;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
-import net.digitalid.service.core.factory.Storable;
+import net.digitalid.service.core.storable.Storable;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.identifier.Identifier;
 import net.digitalid.service.core.identifier.IdentifierClass;

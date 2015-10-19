@@ -18,12 +18,12 @@ import net.digitalid.service.core.annotations.Loaded;
 import net.digitalid.service.core.annotations.NonEncoded;
 import net.digitalid.service.core.annotations.NonEncoding;
 import net.digitalid.service.core.annotations.NonEncodingRecipient;
+import net.digitalid.service.core.blockable.NonRequestingBlockableFactory;
 import net.digitalid.service.core.cryptography.InitializationVector;
 import net.digitalid.service.core.cryptography.SymmetricKey;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.service.core.factory.LocalFactory;
-import net.digitalid.service.core.factory.Storable;
 import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.storable.Storable;
 import net.digitalid.utility.annotations.math.NonNegative;
 import net.digitalid.utility.annotations.math.Positive;
 import net.digitalid.utility.annotations.reference.Capturable;
@@ -59,62 +59,6 @@ import net.digitalid.utility.system.errors.ShouldNeverHappenError;
  */
 @Immutable
 public final class Block implements Storable<Block, Object>, Cloneable {
-    
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Conversions –––––––––––––––––––––––––––––––––––––––––––––––––– */
-    
-    /**
-     * Returns the given non-nullable storable as a block.
-     * 
-     * @param storable the non-nullable object to convert.
-     * 
-     * @return the given non-nullable storable as a block.
-     */
-    @Pure
-    public static @Nonnull <V extends Storable<V, ?>> Block fromNonNullable(@Nonnull V storable) {
-        return storable.getFactory().encodeNonNullable(storable);
-    }
-    
-    /**
-     * Returns the given nullable storable as a block.
-     * 
-     * @param storable the nullable object to convert.
-     * 
-     * @return the given nullable storable as a block.
-     */
-    @Pure
-    public static @Nullable <V extends Storable<V, ?>> Block fromNullable(@Nullable V storable) {
-        return storable == null ? null : fromNonNullable(storable);
-    }
-    
-    /**
-     * Returns the given non-nullable storable as a block of the given type.
-     * 
-     * @param storable the non-nullable object to be converted to a block.
-     * @param type the type which is to be set for the returned block.
-     * 
-     * @return the given non-nullable storable as a block of the given type.
-     * 
-     * @require type.isBasedOn(storable.getFactory().getType()) : "The given type is based on its type.";
-     */
-    @Pure
-    public static @Nonnull <V extends Storable<V, ?>> Block fromNonNullable(@Nonnull V storable, @Nonnull @Loaded SemanticType type) {
-        return fromNonNullable(storable).setType(type);
-    }
-    
-    /**
-     * Returns the given nullable storable as a block of the given type.
-     * 
-     * @param storable the nullable object to be converted to a block.
-     * @param type the type which is to be set for the returned block.
-     * 
-     * @return the given nullable storable as a block of the given type.
-     * 
-     * @require storable == null || type.isBasedOn(storable.getFactory().getType()) : "If the storable instance is not null, the given type is based on its type.";
-     */
-    @Pure
-    public static @Nullable <V extends Storable<V, ?>> Block fromNullable(@Nullable V storable, @Nonnull @Loaded SemanticType type) {
-        return storable == null ? null : fromNonNullable(storable).setType(type);
-    }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Invariant –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -754,7 +698,7 @@ public final class Block implements Storable<Block, Object>, Cloneable {
      * The factory for blocks.
      */
     @Immutable
-    public static class Factory extends LocalFactory<Block, Object> {
+    public static class Factory extends NonRequestingBlockableFactory<Block, Object> {
         
         /**
          * Stores the column for blocks.

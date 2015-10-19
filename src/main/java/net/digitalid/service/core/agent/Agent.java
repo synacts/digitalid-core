@@ -14,7 +14,7 @@ import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.packet.PacketError;
 import net.digitalid.service.core.exceptions.packet.PacketException;
-import net.digitalid.service.core.factory.Storable;
+import net.digitalid.service.core.storable.Storable;
 import net.digitalid.service.core.identity.Identity;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.synchronizer.Synchronizer;

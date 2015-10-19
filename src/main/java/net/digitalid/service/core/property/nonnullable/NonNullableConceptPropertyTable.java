@@ -22,7 +22,7 @@ import net.digitalid.service.core.entity.EntityClass;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
-import net.digitalid.service.core.factory.GlobalFactory;
+import net.digitalid.service.core.storable.StorableFactory;
 import net.digitalid.service.core.host.Host;
 import net.digitalid.service.core.identifier.IdentifierClass;
 import net.digitalid.service.core.identity.Identity;
@@ -70,14 +70,14 @@ public class NonNullableConceptPropertyTable<V, C extends Concept<C, E, ?>, E ex
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @OnMainThread
-    protected static @Nonnull @Loaded SemanticType mapDumpType(@Nonnull StateModule module, @Nonnull @Validated String name, @Nonnull Concept.IndexBasedGlobalFactory<?, ?, ?> conceptFactory, @Nonnull GlobalFactory<?, ?> valueFactory) {
+    protected static @Nonnull @Loaded SemanticType mapDumpType(@Nonnull StateModule module, @Nonnull @Validated String name, @Nonnull Concept.IndexBasedGlobalFactory<?, ?, ?> conceptFactory, @Nonnull StorableFactory<?, ?> valueFactory) {
         final @Nonnull String identifier = name + module.getDumpType().getAddress().getStringWithDot();
         final @Nonnull SemanticType entry = SemanticType.map("entry." + identifier).load(TupleWrapper.TYPE, Identity.IDENTIFIER, conceptFactory.getType(), Time.TYPE, valueFactory.getType());
         return SemanticType.map(identifier).load(ListWrapper.TYPE, entry);
     }
     
     @OnMainThread
-    protected static @Nonnull @Loaded SemanticType mapStateType(@Nonnull StateModule module, @Nonnull @Validated String name, @Nonnull Concept.IndexBasedGlobalFactory<?, ?, ?> conceptFactory, @Nonnull GlobalFactory<?, ?> valueFactory) {
+    protected static @Nonnull @Loaded SemanticType mapStateType(@Nonnull StateModule module, @Nonnull @Validated String name, @Nonnull Concept.IndexBasedGlobalFactory<?, ?, ?> conceptFactory, @Nonnull StorableFactory<?, ?> valueFactory) {
         final @Nonnull String identifier = name + module.getStateType().getAddress().getStringWithDot();
         final @Nonnull SemanticType entry = SemanticType.map("entry." + identifier).load(TupleWrapper.TYPE, conceptFactory.getType(), Time.TYPE, valueFactory.getType());
         return SemanticType.map(identifier).load(ListWrapper.TYPE, entry);
@@ -109,13 +109,13 @@ public class NonNullableConceptPropertyTable<V, C extends Concept<C, E, ?>, E ex
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @OnMainThread
-    protected NonNullableConceptPropertyTable(@Nonnull StateModule module, @Nonnull @Validated String name, @Nonnull GlobalFactory<E, Site> entityFactory, @Nonnull Concept.IndexBasedGlobalFactory<C, E, ?> conceptFactory, @Nonnull GlobalFactory<V, ? super E> valueFactory, @Nonnull StateSelector stateSelector) {
+    protected NonNullableConceptPropertyTable(@Nonnull StateModule module, @Nonnull @Validated String name, @Nonnull StorableFactory<E, Site> entityFactory, @Nonnull Concept.IndexBasedGlobalFactory<C, E, ?> conceptFactory, @Nonnull StorableFactory<V, ? super E> valueFactory, @Nonnull StateSelector stateSelector) {
         super(module, name, mapDumpType(module, name, conceptFactory, valueFactory), mapStateType(module, name, conceptFactory, valueFactory), entityFactory, conceptFactory, valueFactory, stateSelector);
     }
     
     @Pure
     @OnMainThread
-    public static @Nonnull <V, C extends Concept<C, E, ?>, E extends Entity> NonNullableConceptPropertyTable<V, C, E> get(@Nonnull StateModule module, @Nonnull @Validated String name, @Nonnull GlobalFactory<E, Site> entityFactory, @Nonnull Concept.IndexBasedGlobalFactory<C, E, ?> conceptFactory, @Nonnull GlobalFactory<V, ? super E> valueFactory, @Nonnull StateSelector stateSelector) {
+    public static @Nonnull <V, C extends Concept<C, E, ?>, E extends Entity> NonNullableConceptPropertyTable<V, C, E> get(@Nonnull StateModule module, @Nonnull @Validated String name, @Nonnull StorableFactory<E, Site> entityFactory, @Nonnull Concept.IndexBasedGlobalFactory<C, E, ?> conceptFactory, @Nonnull StorableFactory<V, ? super E> valueFactory, @Nonnull StateSelector stateSelector) {
         return new NonNullableConceptPropertyTable<>(module, name, entityFactory, conceptFactory, valueFactory, stateSelector);
     }
     

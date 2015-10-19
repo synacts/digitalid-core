@@ -6,8 +6,8 @@ import net.digitalid.service.core.annotations.BasedOn;
 import net.digitalid.service.core.annotations.Encoding;
 import net.digitalid.service.core.annotations.Loaded;
 import net.digitalid.service.core.annotations.NonEncoding;
+import net.digitalid.service.core.blockable.Blockable;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.service.core.factory.Storable;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
 import net.digitalid.utility.annotations.math.NonNegative;
@@ -305,7 +305,7 @@ public final class TupleWrapper extends BlockBasedWrapper<TupleWrapper> {
      * @require basedOnParameters(type, elements.toBlock()) : "Each element is either null or based on the corresponding parameter of the given type.";
      */
     @Pure
-    public static @Nonnull @NonEncoding Block encode(@Nonnull @Loaded @BasedOn("tuple@core.digitalid.net") SemanticType type, @Nonnull Storable<?>... elements) {
+    public static @Nonnull @NonEncoding Block encode(@Nonnull @Loaded @BasedOn("tuple@core.digitalid.net") SemanticType type, @Nonnull Blockable<?, ?>... elements) {
         final @Nonnull FreezableArray<Block> array = FreezableArray.get(elements.length);
         for (int i = 0; i < elements.length; i++) array.set(i, elements[i].getFactory().encodeNullableWithCast(elements[i]));
         return encode(type, array.freeze());

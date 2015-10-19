@@ -11,8 +11,8 @@ import net.digitalid.service.core.annotations.Loaded;
 import net.digitalid.service.core.annotations.NonEncoding;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
-import net.digitalid.service.core.factory.GlobalFactory;
-import net.digitalid.service.core.factory.Storable;
+import net.digitalid.service.core.storable.StorableFactory;
+import net.digitalid.service.core.storable.Storable;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
 import net.digitalid.utility.annotations.math.Positive;
@@ -130,7 +130,7 @@ public abstract class Wrapper<W extends Wrapper<W>> implements Storable<W, Objec
      * The factory for wrappers.
      */
     @Immutable
-    public abstract static class Factory<W extends Wrapper<W>> extends GlobalFactory<W, Object> {
+    public abstract static class Factory<W extends Wrapper<W>> extends StorableFactory<W, Object> {
         
         /**
          * Creates a new factory with the given parameters.
@@ -176,7 +176,7 @@ public abstract class Wrapper<W extends Wrapper<W>> implements Storable<W, Objec
      * The factory for values.
      */
     @Immutable
-    public abstract static class ValueFactory<V, W extends Wrapper<W>> extends GlobalFactory<V, Object> {
+    public abstract static class ValueFactory<V, W extends Wrapper<W>> extends StorableFactory<V, Object> {
         
         /**
          * Stores the factory to wrap and unwrap the values.

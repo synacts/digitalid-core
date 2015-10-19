@@ -17,7 +17,7 @@ import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
-import net.digitalid.service.core.factory.GlobalFactory;
+import net.digitalid.service.core.storable.StorableFactory;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.wrappers.Block;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -42,7 +42,7 @@ public abstract class ConceptPropertyTable<V, C extends Concept<C, E, ?>, E exte
     /**
      * Stores the factory to store and restore the entity.
      */
-    private final @Nonnull GlobalFactory<E, Site> entityFactory; // TODO: Use a more specific subtype as soon as the factories of entities are implemented.
+    private final @Nonnull StorableFactory<E, Site> entityFactory; // TODO: Use a more specific subtype as soon as the factories of entities are implemented.
     
     /**
      * Returns the factory to store and restore the entity.
@@ -50,7 +50,7 @@ public abstract class ConceptPropertyTable<V, C extends Concept<C, E, ?>, E exte
      * @return the factory to store and restore the entity.
      */
     @Pure
-    public final @Nonnull GlobalFactory<E, Site> getEntityFactory() {
+    public final @Nonnull StorableFactory<E, Site> getEntityFactory() {
         return entityFactory;
     }
     
@@ -76,7 +76,7 @@ public abstract class ConceptPropertyTable<V, C extends Concept<C, E, ?>, E exte
     /**
      * Stores the factory to store and restore the value of the property.
      */
-    private final @Nonnull GlobalFactory<V, ? super E> valueFactory;
+    private final @Nonnull StorableFactory<V, ? super E> valueFactory;
     
     /**
      * Returns the factory to store and restore the value of the property.
@@ -84,7 +84,7 @@ public abstract class ConceptPropertyTable<V, C extends Concept<C, E, ?>, E exte
      * @return the factory to store and restore the value of the property.
      */
     @Pure
-    public final @Nonnull GlobalFactory<V, ? super E> getValueFactory() {
+    public final @Nonnull StorableFactory<V, ? super E> getValueFactory() {
         return valueFactory;
     }
     
@@ -121,7 +121,7 @@ public abstract class ConceptPropertyTable<V, C extends Concept<C, E, ?>, E exte
      * 
      * @require !(module instanceof Service) : "The module is not a service.";
      */
-    protected ConceptPropertyTable(@Nonnull StateModule module, @Nonnull @Validated String name, @Nonnull @Loaded SemanticType dumpType, @Nonnull @Loaded SemanticType stateType, @Nonnull GlobalFactory<E, Site> entityFactory, @Nonnull Concept.IndexBasedGlobalFactory<C, E, ?> conceptFactory, @Nonnull GlobalFactory<V, ? super E> valueFactory, @Nonnull StateSelector stateSelector) {
+    protected ConceptPropertyTable(@Nonnull StateModule module, @Nonnull @Validated String name, @Nonnull @Loaded SemanticType dumpType, @Nonnull @Loaded SemanticType stateType, @Nonnull StorableFactory<E, Site> entityFactory, @Nonnull Concept.IndexBasedGlobalFactory<C, E, ?> conceptFactory, @Nonnull StorableFactory<V, ? super E> valueFactory, @Nonnull StateSelector stateSelector) {
         super(module, name, dumpType, stateType);
         
         this.entityFactory = entityFactory;

@@ -1,17 +1,10 @@
-package net.digitalid.service.core.factory;
+package net.digitalid.service.core.storable;
 
-import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.service.core.annotations.Loaded;
-import net.digitalid.service.core.annotations.NonEncoding;
-import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.packet.PacketException;
-import net.digitalid.service.core.identity.SemanticType;
-import net.digitalid.service.core.wrappers.Block;
 import net.digitalid.utility.annotations.reference.Capturable;
 import net.digitalid.utility.annotations.reference.Captured;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -31,145 +24,21 @@ import net.digitalid.utility.database.column.Site;
 import net.digitalid.utility.database.configuration.Database;
 
 /**
- * A factory allows to store and restore objects.
- * The global factory allows global lookups during {@link #decodeNonNullable(java.lang.Object, net.digitalid.service.core.wrappers.Block) decoding}.
+ * A storable factory allows to store and restore objects into and from the {@link Database database}.
  * 
  * @param <O> the type of the objects that this factory can store and restore, which is typically the surrounding class.
  * @param <E> the type of the external object that is needed to restore an object, which is quite often an {@link Entity}.
  *            In case no external information is needed for the restoration of an object, declare it as an {@link Object}.
  * 
  * @see Storable
- * @see LocalFactory
- * @see BlockBasedGlobalFactory
- * @see FactoryBasedGlobalFactory
+ * @see BlockBasedStorableFactory
+ * @see FactoryBasedStorableFactory
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0.0
  */
 @Immutable
-public abstract class GlobalFactory<O, E> {
-    
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
-    
-    /**
-     * Stores the semantic type that corresponds to the storable class.
-     */
-    private final @Nonnull @Loaded SemanticType type;
-    
-    /**
-     * Returns the semantic type that corresponds to the storable class.
-     * 
-     * @return the semantic type that corresponds to the storable class.
-     */
-    @Pure
-    public final @Nonnull @Loaded SemanticType getType() {
-        return type;
-    }
-    
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Casting –––––––––––––––––––––––––––––––––––––––––––––––––– */
-    
-    /**
-     * Casts the nullable object to the class of this factory.
-     * 
-     * @param object the nullable object which is to be casted.
-     * 
-     * @return the nullable object casted to the class of this factory.
-     */
-    @Pure
-    @SuppressWarnings("unchecked")
-    public final @Nullable O castNullable(@Nullable Object object) {
-        return (O) object;
-    }
-    
-    /**
-     * Casts the non-nullable object to the class of this factory.
-     * 
-     * @param object the non-nullable object which is to be casted.
-     * 
-     * @return the non-nullable object casted to the class of this factory.
-     */
-    @Pure
-    @SuppressWarnings("unchecked")
-    public final @Nonnull O castNonNullable(@Nonnull Object object) {
-        return (O) object;
-    }
-    
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encoding –––––––––––––––––––––––––––––––––––––––––––––––––– */
-    
-    /**
-     * Encodes the given non-nullable object as a new block.
-     * 
-     * @param object the non-nullable object to encode as a block.
-     * 
-     * @return the given non-nullable object encoded as a new block.
-     * 
-     * @ensure return.getType().equals(getType()) : "The returned block has the indicated type.";
-     */
-    @Pure
-    public abstract @Nonnull @NonEncoding Block encodeNonNullable(@Nonnull O object);
-    
-    /**
-     * Encodes the given nullable object as a new block.
-     * 
-     * @param object the nullable object to encode as a block.
-     * 
-     * @return the given nullable object encoded as a new block.
-     * 
-     * @ensure return == null || return.getType().equals(getType()) : "The returned block is either null or has the indicated type.";
-     */
-    @Pure
-    public final @Nullable @NonEncoding Block encodeNullable(@Nullable O object) {
-        return object == null ? null : encodeNonNullable(object);
-    }
-    
-    /**
-     * Encodes the given nullable object as a new block.
-     * 
-     * @param object the nullable object to encode as a block.
-     * 
-     * @return the given nullable object encoded as a new block.
-     * 
-     * @ensure return == null || return.getType().equals(getType()) : "The returned block is either null or has the indicated type.";
-     */
-    @Pure
-    public final @Nullable @NonEncoding Block encodeNullableWithCast(@Nullable Object object) {
-        return encodeNullable(castNullable(object));
-    }
-    
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Decoding –––––––––––––––––––––––––––––––––––––––––––––––––– */
-    
-    /**
-     * Decodes the given non-nullable block.
-     * 
-     * @param entity the entity needed to reconstruct the object.
-     * @param block the non-nullable block which is to be decoded.
-     * 
-     * @return the object that was encoded in the non-nullable block.
-     * 
-     * @require block.getType().isBasedOn(getType()) : "The block is based on the type of this factory.";
-     */
-    @Pure
-    @Locked
-    @NonCommitting
-    public abstract @Nonnull O decodeNonNullable(@Nonnull E entity, @Nonnull @NonEncoding Block block) throws SQLException, IOException, PacketException, ExternalException;
-    
-    /**
-     * Decodes the given nullable block.
-     * 
-     * @param entity the entity needed to reconstruct the object.
-     * @param block the nullable block which is to be decoded.
-     * 
-     * @return the object that was encoded in the nullable block.
-     * 
-     * @require block == null || block.getType().isBasedOn(getType()) : "The block is either null or based on the indicated type.";
-     */
-    @Pure
-    @Locked
-    @NonCommitting
-    public @Nullable O decodeNullable(@Nonnull E entity, @Nullable @NonEncoding Block block) throws SQLException, IOException, PacketException, ExternalException {
-        if (block != null) return decodeNonNullable(entity, block);
-        else return null;
-    }
+public abstract class StorableFactory<O, E> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Columns –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -184,7 +53,7 @@ public abstract class GlobalFactory<O, E> {
      * @return the columns used to store objects of the storable class in the database.
      */
     @Pure
-    public final @Nonnull @Frozen ReadOnlyArray<Column> getColumns() {
+    public final @Nonnull @Frozen @NonNullableElements ReadOnlyArray<Column> getColumns() {
         return columns;
     }
     
@@ -210,7 +79,7 @@ public abstract class GlobalFactory<O, E> {
      */
     @Pure
     public final int getMaximumColumnLength() {
-        return columns.size();
+        return maximumColumnLength;
     }
     
     /**
@@ -222,7 +91,7 @@ public abstract class GlobalFactory<O, E> {
      */
     @Pure
     public final boolean isValidPrefix(@Nonnull String prefix) {
-        return prefix.isEmpty() || prefix.length() + maximumColumnLength < 22 && Database.getConfiguration().isValidIdentifier(prefix);
+        return prefix.isEmpty() || prefix.length() + maximumColumnLength <= 62 && Database.getConfiguration().isValidIdentifier(prefix); // TODO: Adjust the number 62 to Database.getConfiguration().getMaximumIdentifierLength() - 1.
     }
     
     /**
@@ -298,7 +167,6 @@ public abstract class GlobalFactory<O, E> {
     /**
      * Returns the foreign key constraints of the columns without a prefix.
      * 
-     * @param prefix the prefix that is to be prepended to all column names.
      * @param site the site at which the foreign key constraints are declared.
      * 
      * @return the foreign key constraints of the columns without a prefix.
@@ -624,13 +492,11 @@ public abstract class GlobalFactory<O, E> {
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Creates a new non-host concept factory with the given parameters.
+     * Creates a new storable factory with the given columns.
      * 
-     * @param type the semantic type that corresponds to the storable class.
      * @param columns the columns used to store objects of the storable class.
      */
-    protected GlobalFactory(@Nonnull @Loaded SemanticType type, @Captured @Nonnull @NonNullableElements Column... columns) {
-        this.type = type;
+    protected StorableFactory(@Captured @Nonnull @NonNullableElements Column... columns) {
         this.columns = FreezableArray.getNonNullable(columns).freeze();
         int maximumColumnLength = 0;
         for (final @Nonnull Column column : columns) {

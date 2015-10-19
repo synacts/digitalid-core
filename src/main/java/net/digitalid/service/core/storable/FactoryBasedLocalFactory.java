@@ -1,5 +1,6 @@
-package net.digitalid.service.core.factory;
+package net.digitalid.service.core.storable;
 
+import net.digitalid.service.core.blockable.NonRequestingBlockableFactory;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -24,14 +25,14 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * @version 1.0.0
  */
 @Immutable
-public abstract class FactoryBasedLocalFactory<O, E, K> extends LocalFactory<O, E> {
+public abstract class FactoryBasedLocalFactory<O, E, K> extends NonRequestingBlockableFactory<O, E> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factory –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the factory used to store and restore the key.
      */
-    private final @Nonnull LocalFactory<K, E> factory;
+    private final @Nonnull NonRequestingBlockableFactory<K, E> factory;
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -43,7 +44,7 @@ public abstract class FactoryBasedLocalFactory<O, E, K> extends LocalFactory<O, 
      * 
      * @require type.isBasedOn(factory.getType()) : "The given type is based on the type of the factory.";
      */
-    protected FactoryBasedLocalFactory(@Nonnull @Loaded SemanticType type, @Nonnull LocalFactory<K, E> factory) {
+    protected FactoryBasedLocalFactory(@Nonnull @Loaded SemanticType type, @Nonnull NonRequestingBlockableFactory<K, E> factory) {
         super(type, factory.getColumns().toArray());
         
         assert type.isBasedOn(factory.getType()) : "The given type is based on the type of the factory.";
@@ -56,7 +57,7 @@ public abstract class FactoryBasedLocalFactory<O, E, K> extends LocalFactory<O, 
      * 
      * @param factory the factory used to store and restore the object's key.
      */
-    protected FactoryBasedLocalFactory(@Nonnull LocalFactory<K, E> factory) {
+    protected FactoryBasedLocalFactory(@Nonnull NonRequestingBlockableFactory<K, E> factory) {
         this(factory.getType(), factory);
     }
     

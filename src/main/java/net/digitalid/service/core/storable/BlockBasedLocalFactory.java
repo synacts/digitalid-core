@@ -1,5 +1,6 @@
-package net.digitalid.service.core.factory;
+package net.digitalid.service.core.storable;
 
+import net.digitalid.service.core.blockable.NonRequestingBlockableFactory;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -28,7 +29,7 @@ import net.digitalid.utility.database.configuration.Database;
  * @version 1.0.0
  */
 @Immutable
-public abstract class BlockBasedLocalFactory<O extends Storable<O, E>, E> extends LocalFactory<O, E> {
+public abstract class BlockBasedLocalFactory<O extends Storable<O, E>, E> extends NonRequestingBlockableFactory<O, E> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Column –––––––––––––––––––––––––––––––––––––––––––––––––– */
     

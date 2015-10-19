@@ -11,10 +11,10 @@ import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.entity.Role;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.service.core.factory.FactoryBasedGlobalFactory;
-import net.digitalid.service.core.factory.GlobalFactory;
-import net.digitalid.service.core.factory.LocalFactory;
-import net.digitalid.service.core.factory.Storable;
+import net.digitalid.service.core.storable.FactoryBasedStorableFactory;
+import net.digitalid.service.core.storable.StorableFactory;
+import net.digitalid.service.core.blockable.NonRequestingBlockableFactory;
+import net.digitalid.service.core.storable.Storable;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.property.ConceptProperty;
 import net.digitalid.service.core.property.ConceptPropertyTable;
@@ -199,7 +199,7 @@ public abstract class Concept<C extends Concept<C, E, K>, E extends Entity, K> i
      * The global factory for concepts.
      */
     @Immutable
-    public static abstract class IndexBasedGlobalFactory<C extends Concept<C, E, K>, E extends Entity, K> extends FactoryBasedGlobalFactory<C, E, K> {
+    public static abstract class IndexBasedGlobalFactory<C extends Concept<C, E, K>, E extends Entity, K> extends FactoryBasedStorableFactory<C, E, K> {
         
         /**
          * Stores the index that caches existing concepts.
@@ -225,7 +225,7 @@ public abstract class Concept<C extends Concept<C, E, K>, E extends Entity, K> i
          * 
          * @require type.isBasedOn(factory.getType()) : "The given type is based on the type of the factory.";
          */
-        protected IndexBasedGlobalFactory(@Nonnull @Loaded SemanticType type, @Nonnull GlobalFactory<K, E> factory, @Nonnull Index<C, E, K> index) {
+        protected IndexBasedGlobalFactory(@Nonnull @Loaded SemanticType type, @Nonnull StorableFactory<K, E> factory, @Nonnull Index<C, E, K> index) {
             super(type, factory);
             
             this.index = index;
@@ -237,7 +237,7 @@ public abstract class Concept<C extends Concept<C, E, K>, E extends Entity, K> i
          * @param factory the factory to store and restore the key.
          * @param index the index that caches existing concepts.
          */
-        protected IndexBasedGlobalFactory(@Nonnull GlobalFactory<K, E> factory, @Nonnull Index<C, E, K> index) {
+        protected IndexBasedGlobalFactory(@Nonnull StorableFactory<K, E> factory, @Nonnull Index<C, E, K> index) {
             this(factory.getType(), factory, index);
         }
         
@@ -275,7 +275,7 @@ public abstract class Concept<C extends Concept<C, E, K>, E extends Entity, K> i
         /**
          * Stores the factory to store and restore the key.
          */
-        private final @Nonnull LocalFactory<K, E> factory;
+        private final @Nonnull NonRequestingBlockableFactory<K, E> factory;
         
         /**
          * Creates a new concept factory based on the given key factory.
@@ -286,7 +286,7 @@ public abstract class Concept<C extends Concept<C, E, K>, E extends Entity, K> i
          * 
          * @require type.isBasedOn(factory.getType()) : "The given type is based on the type of the factory.";
          */
-        protected IndexBasedLocalFactory(@Nonnull @Loaded SemanticType type, @Nonnull LocalFactory<K, E> factory, @Nonnull Index<C, E, K> index) {
+        protected IndexBasedLocalFactory(@Nonnull @Loaded SemanticType type, @Nonnull NonRequestingBlockableFactory<K, E> factory, @Nonnull Index<C, E, K> index) {
             super(type, factory, index);
             
             this.factory = factory;
@@ -298,7 +298,7 @@ public abstract class Concept<C extends Concept<C, E, K>, E extends Entity, K> i
          * @param factory the factory to store and restore the key.
          * @param index the index that caches existing concepts.
          */
-        protected IndexBasedLocalFactory(@Nonnull LocalFactory<K, E> factory, @Nonnull Index<C, E, K> index) {
+        protected IndexBasedLocalFactory(@Nonnull NonRequestingBlockableFactory<K, E> factory, @Nonnull Index<C, E, K> index) {
             this(factory.getType(), factory, index);
         }
         

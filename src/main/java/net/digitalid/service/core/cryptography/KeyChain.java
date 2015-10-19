@@ -3,7 +3,7 @@ package net.digitalid.service.core.cryptography;
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.service.core.factory.Storable;
+import net.digitalid.service.core.storable.Storable;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.storable.BlockBasedSimpleNonConceptFactory;
 import net.digitalid.service.core.storable.SimpleNonConceptFactory;

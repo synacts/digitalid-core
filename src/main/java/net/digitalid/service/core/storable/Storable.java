@@ -1,12 +1,11 @@
-package net.digitalid.service.core.factory;
+package net.digitalid.service.core.storable;
 
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.entity.Entity;
-import net.digitalid.service.core.wrappers.Block;
 import net.digitalid.utility.annotations.state.Pure;
 
 /**
- * Objects of classes that implement this interface can be stored as a {@link Block block} or in the {@link Database database}.
+ * Objects of classes that implement this interface can be stored in the {@link Database database}.
  * 
  * @param <O> the type of the objects that the factory can store and restore, which is typically the declaring class itself.
  * @param <E> the type of the external object that is needed to restore an object, which is quite often an {@link Entity}.
@@ -23,6 +22,6 @@ public interface Storable<O, E> {
      * @return the factory to store and restore objects of this class.
      */
     @Pure
-    public @Nonnull GlobalFactory<O, E> getFactory();
+    public @Nonnull StorableFactory<O, E> getFactory();
     
 }
