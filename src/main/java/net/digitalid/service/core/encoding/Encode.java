@@ -9,7 +9,7 @@ import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Stateless;
 
 /**
- * This is a utility class to encode blockable objects.
+ * This is a utility class to encode encodable objects.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0.0
@@ -18,57 +18,57 @@ import net.digitalid.utility.annotations.state.Stateless;
 public final class Encode {
     
     /**
-     * Returns the given non-nullable blockable as a block.
+     * Returns the given non-nullable encodable as a block.
      * 
-     * @param blockable the non-nullable object to convert.
+     * @param encodable the non-nullable object to convert.
      * 
-     * @return the given non-nullable blockable as a block.
+     * @return the given non-nullable encodable as a block.
      */
     @Pure
-    public static @Nonnull <O extends Encodable<O, ?>> Block nonNullable(@Nonnull O blockable) {
-        return blockable.getEncodingFactory().encodeNonNullable(blockable);
+    public static @Nonnull <O extends Encodable<O, ?>> Block nonNullable(@Nonnull O encodable) {
+        return encodable.getEncodingFactory().encodeNonNullable(encodable);
     }
     
     /**
-     * Returns the given nullable blockable as a block.
+     * Returns the given nullable encodable as a block.
      * 
-     * @param blockable the nullable object to convert.
+     * @param encodable the nullable object to convert.
      * 
-     * @return the given nullable blockable as a block.
+     * @return the given nullable encodable as a block.
      */
     @Pure
-    public static @Nullable <O extends Encodable<O, ?>> Block nullable(@Nullable O blockable) {
-        return blockable == null ? null : nonNullable(blockable);
+    public static @Nullable <O extends Encodable<O, ?>> Block nullable(@Nullable O encodable) {
+        return encodable == null ? null : nonNullable(encodable);
     }
     
     /**
-     * Returns the given non-nullable blockable as a block of the given type.
+     * Returns the given non-nullable encodable as a block of the given type.
      * 
-     * @param blockable the non-nullable object to be converted to a block.
+     * @param encodable the non-nullable object to be converted to a block.
      * @param type the type which is to be set for the returned block.
      * 
-     * @return the given non-nullable blockable as a block of the given type.
+     * @return the given non-nullable encodable as a block of the given type.
      * 
-     * @require type.isBasedOn(blockable.getFactory().getType()) : "The given type is based on its type.";
+     * @require type.isBasedOn(encodable.getFactory().getType()) : "The given type is based on its type.";
      */
     @Pure
-    public static @Nonnull <O extends Encodable<O, ?>> Block nonNullable(@Nonnull O blockable, @Nonnull @Loaded SemanticType type) {
-        return nonNullable(blockable).setType(type);
+    public static @Nonnull <O extends Encodable<O, ?>> Block nonNullable(@Nonnull O encodable, @Nonnull @Loaded SemanticType type) {
+        return nonNullable(encodable).setType(type);
     }
     
     /**
-     * Returns the given nullable blockable as a block of the given type.
+     * Returns the given nullable encodable as a block of the given type.
      * 
-     * @param blockable the nullable object to be converted to a block.
+     * @param encodable the nullable object to be converted to a block.
      * @param type the type which is to be set for the returned block.
      * 
-     * @return the given nullable blockable as a block of the given type.
+     * @return the given nullable encodable as a block of the given type.
      * 
-     * @require blockable == null || type.isBasedOn(blockable.getFactory().getType()) : "If the blockable instance is not null, the given type is based on its type.";
+     * @require encodable == null || type.isBasedOn(encodable.getFactory().getType()) : "If the encodable instance is not null, the given type is based on its type.";
      */
     @Pure
-    public static @Nullable <O extends Encodable<O, ?>> Block nullable(@Nullable O blockable, @Nonnull @Loaded SemanticType type) {
-        return blockable == null ? null : nonNullable(blockable).setType(type);
+    public static @Nullable <O extends Encodable<O, ?>> Block nullable(@Nullable O encodable, @Nonnull @Loaded SemanticType type) {
+        return encodable == null ? null : nonNullable(encodable).setType(type);
     }
     
 }

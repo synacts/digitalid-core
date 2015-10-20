@@ -7,6 +7,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.property.ConceptPropertyTable;
+import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
 import net.digitalid.utility.collections.concurrent.ConcurrentHashMap;
@@ -22,14 +23,15 @@ import net.digitalid.utility.database.configuration.Database;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0.0
  */
-public final class Index<C extends Concept<C, E, K>, E extends Entity, K> {
+@Immutable
+public final class Index<C extends Concept<C, E, K>, E extends Entity<E>, K> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Removal –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores a list of all the indexes that were created.
      */
-    private static final @Nonnull @NonNullableElements List<Index<?, ? extends Entity, ?>> indexes = new LinkedList<>();
+    private static final @Nonnull @NonNullableElements List<Index<?, ? extends Entity<?>, ?>> indexes = new LinkedList<>();
     
     /**
      * Removes the entries of the given entity from all indexes.
@@ -37,10 +39,10 @@ public final class Index<C extends Concept<C, E, K>, E extends Entity, K> {
      * @param entity the entity whose entries are to be removed.
      */
     @OnlyForSingleAccess
-    public static void remove(@Nonnull Entity entity) {
+    public static void remove(@Nonnull Entity<?> entity) {
         assert Database.isSingleAccess() : "The database is in single-access mode.";
         
-        for (final @Nonnull Index<?, ? extends Entity, ?> index : indexes) {
+        for (final @Nonnull Index<?, ? extends Entity<?>, ?> index : indexes) {
             index.concepts.remove(entity);
         }
     }
@@ -50,7 +52,7 @@ public final class Index<C extends Concept<C, E, K>, E extends Entity, K> {
     /**
      * Stores the factory that can produce a new concept instance with a given entity and key.
      */
-    private final @Nonnull Concept.IndexBasedStoringFactory<C, E, K> factory;
+    private final @Nonnull Concept.Factory<C, E, K> factory;
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -59,7 +61,7 @@ public final class Index<C extends Concept<C, E, K>, E extends Entity, K> {
      * 
      * @param factory the factory that can produce a new concept instance.
      */
-    private Index(@Nonnull Concept.IndexBasedStoringFactory<C, E, K> factory) {
+    private Index(@Nonnull Concept.Factory<C, E, K> factory) {
         this.factory = factory;
         indexes.add(this);
     }
@@ -72,7 +74,7 @@ public final class Index<C extends Concept<C, E, K>, E extends Entity, K> {
      * @return a new index with the given concept factory.
      */
     @Pure
-    public static @Nonnull <C extends Concept<C, E, K>, E extends Entity, K> Index<C, E, K> get(@Nonnull Concept.IndexBasedStoringFactory<C, E, K> factory) {
+    public static @Nonnull <C extends Concept<C, E, K>, E extends Entity<E>, K> Index<C, E, K> get(@Nonnull Concept.Factory<C, E, K> factory) {
         return new Index<>(factory);
     }
     

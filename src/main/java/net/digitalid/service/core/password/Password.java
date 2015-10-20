@@ -1,20 +1,11 @@
 package net.digitalid.service.core.password;
 
-import net.digitalid.service.core.storing.AbstractStoringFactory;
-
-import net.digitalid.service.core.encoding.AbstractEncodingFactory;
-import net.digitalid.service.core.encoding.NonRequestingEncodingFactory;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
-import java.io.IOException;
-import java.sql.SQLException;
-import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.packet.PacketException;
-import net.digitalid.service.core.wrappers.Block;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.agent.Agent;
 import net.digitalid.service.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.service.core.agent.Restrictions;
+import net.digitalid.service.core.factories.GenericFactories;
 import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.concept.Concept;
 import net.digitalid.service.core.concept.Index;
@@ -31,8 +22,6 @@ import net.digitalid.service.core.wrappers.EmptyWrapper;
 import net.digitalid.service.core.wrappers.StringWrapper;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.collections.tuples.FreezablePair;
-import net.digitalid.utility.collections.tuples.ReadOnlyPair;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.configuration.Database;
 
@@ -49,7 +38,12 @@ public final class Password extends Concept<Password, NonHostEntity, Object> {
     /**
      * Stores the semantic type {@code password@core.digitalid.net}.
      */
-    public static final @Nonnull SemanticType TYPE = SemanticType.map("password@core.digitalid.net").load(StringWrapper.TYPE);
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("password@core.digitalid.net").load(EmptyWrapper.TYPE);
+    
+    /**
+     * Stores the semantic type {@code value.password@core.digitalid.net}.
+     */
+    public static final @Nonnull SemanticType VALUE_TYPE = SemanticType.map("value.password@core.digitalid.net").load(StringWrapper.TYPE);
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Module –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -76,7 +70,7 @@ public final class Password extends Concept<Password, NonHostEntity, Object> {
     /**
      * Stores the table to store the password.
      */
-    private static final @Nonnull NonNullableConceptPropertyTable<String, Password, NonHostEntity> TABLE = NonNullableConceptPropertyTable.get(MODULE, "", NonHostEntity.FACTORY, Password.FACTORIES, StringWrapper.getValueFactory(TYPE), SELECTOR);
+    private static final @Nonnull NonNullableConceptPropertyTable<String, Password, NonHostEntity> TABLE = NonNullableConceptPropertyTable.get(MODULE, "value", NonHostEntity.FACTORIES, Password.FACTORIES, StringWrapper.getValueFactories(VALUE_TYPE), SELECTOR);
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Validator –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -107,12 +101,42 @@ public final class Password extends Concept<Password, NonHostEntity, Object> {
 //        }
 //    }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Creates a new password with the given entity and value.
+     * 
+     * @param entity the entity to which the password belongs.
+     * @param value the value of the newly created password.
+     * 
+     * @require isValid(value) : "The value is valid.";
+     */
+    private Password(@Nonnull NonHostEntity entity) {
+        super(entity, None.OBJECT);
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factory –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * The factory for this class.
+     */
+    @Immutable
+    private static final class Factory extends Concept.Factory<Password, NonHostEntity, Object> {
+        
+        @Pure
+        @Override
+        public @Nonnull Password create(@Nonnull NonHostEntity entity, @Nonnull Object key) {
+            return new Password(entity);
+        }
+        
+    }
+    
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Index –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the index of this concept.
      */
-    private static final @Nonnull Index<Password, NonHostEntity, Object> index = Index.get(EmptyWrapper.VALUE_FACTORY);
+    private static final @Nonnull Index<Password, NonHostEntity, Object> INDEX = Index.get(new Factory());
     
     /**
      * Returns a potentially cached password that might not yet exist in the database.
@@ -128,21 +152,7 @@ public final class Password extends Concept<Password, NonHostEntity, Object> {
     public static @Nonnull Password get(@Nonnull NonHostEntity entity) {
         assert !(entity instanceof Role) || ((Role) entity).isNative() : "If the entity is a role, it is native.";
         
-        return index.get(entity, None.OBJECT);
-    }
-    
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
-    
-    /**
-     * Creates a new password with the given entity and value.
-     * 
-     * @param entity the entity to which the password belongs.
-     * @param value the value of the newly created password.
-     * 
-     * @require isValid(value) : "The value is valid.";
-     */
-    private Password(@Nonnull NonHostEntity entity) {
-        super(entity, None.OBJECT);
+        return INDEX.get(entity, None.OBJECT);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -168,31 +178,53 @@ public final class Password extends Concept<Password, NonHostEntity, Object> {
         return "The password of " + getEntity().getIdentity().getAddress() + " is '" + value + "'.";
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encodable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * The factory for this class.
+     * The encoding factory for this class.
      */
     @Immutable
-    public static final class StoringFactory extends Concept.IndexBasedStoringFactory<Password, NonHostEntity, Object> {
+    public static final class EncodingFactory extends Concept.EncodingFactory<Password, NonHostEntity, Object> {
         
         /**
-         * Creates a new factory.
+         * Creates a new encoding factory.
          */
-        private StoringFactory() {
-            super(EmptyWrapper.VALUE_FACTORY, index);
-        }
-        
-        @Pure
-        @Override
-        public @Nonnull Password create(@Nonnull NonHostEntity entity, @Nonnull Object key) {
-            return new Password(entity);
+        private EncodingFactory() {
+            super(EmptyWrapper.getValueEncodingFactory(TYPE), INDEX);
         }
         
     }
     
     /**
-     * Stores the storing factory of this class.
+     * Stores the encoding factory which is used to encode and decode this concept.
+     */
+    public static final @Nonnull EncodingFactory ENCODING_FACTORY = new EncodingFactory();
+    
+    @Pure
+    @Override
+    public @Nonnull EncodingFactory getEncodingFactory() {
+        return ENCODING_FACTORY;
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * The storing factory for this class.
+     */
+    @Immutable
+    public static final class StoringFactory extends Concept.StoringFactory<Password, NonHostEntity, Object> {
+        
+        /**
+         * Creates a new storing factory.
+         */
+        private StoringFactory() {
+            super(EmptyWrapper.getValueEncodingFactory(TYPE), INDEX);
+        }
+        
+    }
+    
+    /**
+     * Stores the storing factory which is used to store and restore this concept.
      */
     public static final @Nonnull StoringFactory STORING_FACTORY = new StoringFactory();
     
@@ -203,44 +235,8 @@ public final class Password extends Concept<Password, NonHostEntity, Object> {
     }
     
     /**
-     * The encoding factory for this class.
-     */
-    @Immutable
-    public static final class EncodingFactory extends Concept.IndexBasedEncodingFactory<Password, NonHostEntity> {
-
-		protected EncodingFactory(SemanticType type) {
-			super(type);
-		}
-
-		@Override
-		public @Nullable Block encodeNonNullable(Password object) {
-			// TODO check if this is ok...password does not need to be blockable
-			return null;
-		}
-
-		@Override
-		public @Nullable Password decodeNonNullable(NonHostEntity entity, Block block)
-				throws InvalidEncodingException {
-			// TODO check if this is ok...password does not need to be blockable
-			return null;
-		}
-
-    }
-    
-    /**
-     * Stores the encoding factory which is used to encode this concept.
-     */
-    public static final @Nonnull EncodingFactory ENCODING_FACTORY = new EncodingFactory(TYPE);
-    
-    @Pure
-    @Override
-    public @Nonnull EncodingFactory getEncodingFactory() {
-        return ENCODING_FACTORY;
-    }
-    
-    /**
      * Stores the factories of this class.
      */
-    public static final @Nonnull ReadOnlyPair<EncodingFactory, StoringFactory> FACTORIES = FreezablePair.get(ENCODING_FACTORY, STORING_FACTORY).freeze();
+    public static final @Nonnull GenericFactories<Password, NonHostEntity> FACTORIES = GenericFactories.get(ENCODING_FACTORY, STORING_FACTORY);
     
 }

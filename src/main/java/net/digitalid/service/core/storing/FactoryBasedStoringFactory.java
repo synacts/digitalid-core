@@ -14,7 +14,12 @@ import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
- * This class implements a global factory that is based on another global factory.
+ * This class implements a storing factory that is based on another storing factory.
+ * 
+ * @param <O> the type of the objects that this factory can store and restore, which is typically the surrounding class.
+ * @param <E> the type of the external object that is needed to restore an object, which is quite often an {@link Entity}.
+ *            In case no external information is needed for the restoration of an object, declare it as an {@link Object}.
+ * @param <K> the type of the objects that the other factory stores and restores (usually as a key for the objects of this factory).
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0.0
@@ -32,7 +37,7 @@ public abstract class FactoryBasedStoringFactory<O, E, K> extends AbstractStorin
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Creates a new factory based storable factory with the given parameters.
+     * Creates a new factory based storing factory with the given key factory.
      * 
      * @param keyFactory the factory used to store and restore the object's key.
      */
@@ -57,7 +62,7 @@ public abstract class FactoryBasedStoringFactory<O, E, K> extends AbstractStorin
     /**
      * Returns the object with the given key.
      * 
-     * @param entity the entity needed to reconstruct the object.
+     * @param entity the entity needed to restore the object.
      * @param key the key which denotes the returned object.
      * 
      * @return the object with the given key.

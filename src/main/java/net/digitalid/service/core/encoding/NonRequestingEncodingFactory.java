@@ -36,9 +36,9 @@ public abstract class NonRequestingEncodingFactory<O, E> extends AbstractEncodin
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Creates a new non-requesting blockable factory with the given type.
+     * Creates a new non-requesting encoding factory with the given type.
      * 
-     * @param type the semantic type that corresponds to the storable class.
+     * @param type the semantic type that corresponds to the encodable class.
      */
     protected NonRequestingEncodingFactory(@Nonnull @Loaded SemanticType type) {
         super(type);

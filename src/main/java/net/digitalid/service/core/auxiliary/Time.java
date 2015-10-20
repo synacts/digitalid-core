@@ -1,8 +1,5 @@
 package net.digitalid.service.core.auxiliary;
 
-import net.digitalid.service.core.storing.Storable;
-
-import net.digitalid.service.core.encoding.NonRequestingEncodingFactory;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,8 +8,13 @@ import java.util.Date;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.annotations.BasedOn;
+import net.digitalid.service.core.encoding.AbstractEncodingFactory;
+import net.digitalid.service.core.encoding.Encodable;
+import net.digitalid.service.core.encoding.NonRequestingEncodingFactory;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.storing.AbstractStoringFactory;
+import net.digitalid.service.core.storing.Storable;
 import net.digitalid.service.core.wrappers.Block;
 import net.digitalid.service.core.wrappers.Int64Wrapper;
 import net.digitalid.utility.annotations.reference.Capturable;
@@ -33,7 +35,7 @@ import net.digitalid.utility.database.column.SQLType;
  * @version 1.0.0
  */
 @Immutable
-public final class Time implements Storable<Time, Object>, Comparable<Time> {
+public final class Time implements Encodable<Time, Object>, Storable<Time, Object>, Comparable<Time> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -632,5 +634,9 @@ public final class Time implements Storable<Time, Object>, Comparable<Time> {
     public @Nonnull Factory getFactory() {
         return FACTORY;
     }
+    
+    public static @Nonnull AbstractEncodingFactory<Time, Object> ENCODING_FACTORY;
+    
+    public static @Nonnull AbstractStoringFactory<Time, Object> STORING_FACTORY;
     
 }

@@ -66,6 +66,12 @@ public class ClientModule implements ClientData {
         return name;
     }
     
+    @Pure
+    @Override
+    public final @Nonnull @Validated String getName(@Nonnull Site site) {
+        return site + name;
+    }
+    
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**

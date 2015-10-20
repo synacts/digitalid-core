@@ -150,7 +150,7 @@ public abstract class AbstractEncodingFactory<O, E> {
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Creates a new encodable factory with the given type.
+     * Creates a new encoding factory with the given type.
      * 
      * @param type the semantic type that corresponds to the encodable class.
      */

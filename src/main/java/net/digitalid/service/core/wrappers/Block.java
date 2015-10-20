@@ -20,6 +20,7 @@ import net.digitalid.service.core.annotations.NonEncoding;
 import net.digitalid.service.core.annotations.NonEncodingRecipient;
 import net.digitalid.service.core.cryptography.InitializationVector;
 import net.digitalid.service.core.cryptography.SymmetricKey;
+import net.digitalid.service.core.encoding.Encodable;
 import net.digitalid.service.core.encoding.NonRequestingEncodingFactory;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.identity.SemanticType;
@@ -58,7 +59,7 @@ import net.digitalid.utility.system.errors.ShouldNeverHappenError;
  * @version 1.0.0
  */
 @Immutable
-public final class Block implements Storable<Block, Object>, Cloneable {
+public final class Block implements Encodable<Block, Object>, Storable<Block, Object>, Cloneable {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Invariant –––––––––––––––––––––––––––––––––––––––––––––––––– */
     

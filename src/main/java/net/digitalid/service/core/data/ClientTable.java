@@ -69,7 +69,13 @@ public abstract class ClientTable implements ClientData {
     @Pure
     @Override
     public final @Nonnull @Validated String getName() {
-        return name;
+        return name; // TODO: Check whether the name consists of the service, module and property separated by an underline.
+    }
+    
+    @Pure
+    @Override
+    public final @Nonnull @Validated String getName(@Nonnull Site site) {
+        return site + name;
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */

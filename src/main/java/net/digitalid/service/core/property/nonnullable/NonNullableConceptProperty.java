@@ -25,7 +25,7 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0.0
  */
-public final class NonNullableConceptProperty<V, C extends Concept<C, E, ?>, E extends Entity> extends WriteableNonNullableProperty<V> implements ConceptProperty<C> {
+public final class NonNullableConceptProperty<V, C extends Concept<C, E, ?>, E extends Entity<E>> extends WriteableNonNullableProperty<V> implements ConceptProperty<C> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Concept –––––––––––––––––––––––––––––––––––––––––––––––––– */
     

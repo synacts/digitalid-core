@@ -12,4 +12,12 @@ public class NonNullableConceptPropertyInternalAction {
         
     }
     
+    /*
+    
+    The Method.add(...) registration with a new action factory needs to be called for each property table.
+    
+    This method factory probably has to pass a locally stored (as a field) concept property table to the property action constructor.
+    
+    */
+    
 }

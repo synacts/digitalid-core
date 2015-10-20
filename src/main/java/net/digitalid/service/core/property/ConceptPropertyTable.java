@@ -17,8 +17,9 @@ import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.factories.ConceptFactories;
+import net.digitalid.service.core.factories.Factories;
 import net.digitalid.service.core.identity.SemanticType;
-import net.digitalid.service.core.storing.AbstractStoringFactory;
 import net.digitalid.service.core.wrappers.Block;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -35,57 +36,57 @@ import net.digitalid.utility.database.configuration.Database;
  * @version 1.0.0
  */
 @Immutable
-public abstract class ConceptPropertyTable<V, C extends Concept<C, E, ?>, E extends Entity> extends StateTable {
+public abstract class ConceptPropertyTable<V, C extends Concept<C, E, ?>, E extends Entity<E>> extends StateTable {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Entity Factory –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Stores the factory to store and restore the entity.
+     * Stores the factories to convert the entity to other representations.
      */
-    private final @Nonnull AbstractStoringFactory<E, Site> entityFactory; // TODO: Use a more specific subtype as soon as the factories of entities are implemented.
+    private final @Nonnull Factories<E, Site> entityFactories;
     
     /**
-     * Returns the factory to store and restore the entity.
+     * Returns the factories to convert the entity to other representations.
      * 
-     * @return the factory to store and restore the entity.
+     * @return the factories to convert the entity to other representations.
      */
     @Pure
-    public final @Nonnull AbstractStoringFactory<E, Site> getEntityFactory() {
-        return entityFactory;
+    public final @Nonnull Factories<E, Site> getEntityFactories() {
+        return entityFactories;
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Concept Factory –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Stores the factory to store and restore the concept.
+     * Stores the factories to convert the concept to other representations.
      */
-    private final @Nonnull Concept.IndexBasedStoringFactory<C, E, ?> conceptFactory;
+    private final @Nonnull ConceptFactories<C, E> conceptFactories;
     
     /**
-     * Returns the factory to store and restore the concept.
+     * Returns the factories to convert the concept to other representations.
      * 
-     * @return the factory to store and restore the concept.
+     * @return the factories to convert the concept to other representations.
      */
     @Pure
-    public final @Nonnull Concept.IndexBasedStoringFactory<C, E, ?> getConceptFactory() {
-        return conceptFactory;
+    public final @Nonnull ConceptFactories<C, E> getConceptFactories() {
+        return conceptFactories;
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value Factory –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Stores the factory to store and restore the value of the property.
+     * Stores the factories to convert the value of the property to other representations.
      */
-    private final @Nonnull AbstractStoringFactory<V, ? super E> valueFactory;
+    private final @Nonnull Factories<V, ? super E> valueFactories;
     
     /**
-     * Returns the factory to store and restore the value of the property.
+     * Returns the factories to convert the value of the property to other representations.
      * 
-     * @return the factory to store and restore the value of the property.
+     * @return the factories to convert the value of the property to other representations.
      */
     @Pure
-    public final @Nonnull AbstractStoringFactory<V, ? super E> getValueFactory() {
-        return valueFactory;
+    public final @Nonnull Factories<V, ? super E> getValueFactories() {
+        return valueFactories;
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– State Selector –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -114,19 +115,19 @@ public abstract class ConceptPropertyTable<V, C extends Concept<C, E, ?>, E exte
      * @param name the name of the new table.
      * @param dumpType the dump type of the new table.
      * @param stateType the state type of the new table.
-     * @param entityFactory the factory to store and restore the entity.
-     * @param conceptFactory the factory to store and restore the concept.
-     * @param valueFactory the factory to store and restore the value of the property.
+     * @param entityFactories the factories to convert the entity to other representations.
+     * @param conceptFactories the factories to convert the concept to other representations.
+     * @param valueFactories the factories to convert the value of the property to other representations.
      * @param stateSelector the state selector to restrict the returned state.
      * 
      * @require !(module instanceof Service) : "The module is not a service.";
      */
-    protected ConceptPropertyTable(@Nonnull StateModule module, @Nonnull @Validated String name, @Nonnull @Loaded SemanticType dumpType, @Nonnull @Loaded SemanticType stateType, @Nonnull AbstractStoringFactory<E, Site> entityFactory, @Nonnull Concept.IndexBasedStoringFactory<C, E, ?> conceptFactory, @Nonnull AbstractStoringFactory<V, ? super E> valueFactory, @Nonnull StateSelector stateSelector) {
+    protected ConceptPropertyTable(@Nonnull StateModule module, @Nonnull @Validated String name, @Nonnull @Loaded SemanticType dumpType, @Nonnull @Loaded SemanticType stateType, @Nonnull Factories<E, Site> entityFactories, @Nonnull ConceptFactories<C, E> conceptFactories, @Nonnull Factories<V, ? super E> valueFactories, @Nonnull StateSelector stateSelector) {
         super(module, name, dumpType, stateType);
         
-        this.entityFactory = entityFactory;
-        this.conceptFactory = conceptFactory;
-        this.valueFactory = valueFactory;
+        this.entityFactories = entityFactories;
+        this.conceptFactories = conceptFactories;
+        this.valueFactories = valueFactories;
         this.stateSelector = stateSelector;
     }
     

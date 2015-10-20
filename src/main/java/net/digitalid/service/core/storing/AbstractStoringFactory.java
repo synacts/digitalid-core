@@ -24,7 +24,7 @@ import net.digitalid.utility.database.column.Site;
 import net.digitalid.utility.database.configuration.Database;
 
 /**
- * A storable factory allows to store and restore objects into and from the {@link Database database}.
+ * A storing factory allows to store and restore objects into and from the {@link Database database}.
  * 
  * @param <O> the type of the objects that this factory can store and restore, which is typically the surrounding class.
  * @param <E> the type of the external object that is needed to restore an object, which is quite often an {@link Entity}.
@@ -492,7 +492,7 @@ public abstract class AbstractStoringFactory<O, E> {
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Creates a new storable factory with the given columns.
+     * Creates a new storing factory with the given columns.
      * 
      * @param columns the columns used to store objects of the storable class.
      */

@@ -38,6 +38,16 @@ public interface ClientData {
     @Pure
     public @Nonnull @Validated String getName();
     
+    /**
+     * Returns the name of this data collection with the prefix of the given site.
+     * 
+     * @param site the site whose prefix is to be used for the returned name.
+     * 
+     * @return the name of this data collection with the prefix of the given site.
+     */
+    @Pure
+    public @Nonnull @Validated String getName(@Nonnull Site site);
+    
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Sites –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
