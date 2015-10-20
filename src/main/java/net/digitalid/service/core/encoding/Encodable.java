@@ -1,4 +1,4 @@
-package net.digitalid.service.core.blockable;
+package net.digitalid.service.core.encoding;
 
 import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.state.Pure;
@@ -13,7 +13,7 @@ import net.digitalid.utility.annotations.state.Pure;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0.0
  */
-public interface Blockable<O, E> {
+public interface Encodable<O, E> {
     
     /**
      * Returns the factory to encode and decode objects of this class.
@@ -21,6 +21,6 @@ public interface Blockable<O, E> {
      * @return the factory to encode and decode objects of this class.
      */
     @Pure
-    public @Nonnull BlockableFactory<O, E> getFactory();
+    public @Nonnull AbstractEncodingFactory<O, E> getEncodingFactory();
     
 }

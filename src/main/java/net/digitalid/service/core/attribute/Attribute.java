@@ -1,5 +1,7 @@
 package net.digitalid.service.core.attribute;
 
+import net.digitalid.service.core.storing.Storable;
+
 import java.sql.SQLException;
 import java.util.Objects;
 import javax.annotation.Nonnull;
@@ -8,7 +10,6 @@ import net.digitalid.service.core.concept.GeneralConcept;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.expression.PassiveExpression;
-import net.digitalid.service.core.storable.Storable;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.property.nullable.NullableConceptProperty;
 import net.digitalid.service.core.property.nullable.NullableConceptPropertyTable;

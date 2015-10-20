@@ -1,4 +1,4 @@
-package net.digitalid.service.core.blockable;
+package net.digitalid.service.core.encoding;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -23,27 +23,27 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * @param <E> the type of the external object that is needed to decode a block, which is quite often an {@link Entity}.
  *            In case no external information is needed for the decoding of a block, declare it as an {@link Object}.
  * 
- * @see Blockable
- * @see NonRequestingBlockableFactory
- * @see FactoryBasedBlockableFactory
+ * @see Encodable
+ * @see NonRequestingEncodingFactory
+ * @see FactoryBasedEncodingFactory
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0.0
  */
 @Immutable
-public abstract class BlockableFactory<O, E> {
+public abstract class AbstractEncodingFactory<O, E> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Stores the semantic type that corresponds to the blockable class.
+     * Stores the semantic type that corresponds to the encodable class.
      */
     private final @Nonnull @Loaded SemanticType type;
     
     /**
-     * Returns the semantic type that corresponds to the blockable class.
+     * Returns the semantic type that corresponds to the encodable class.
      * 
-     * @return the semantic type that corresponds to the blockable class.
+     * @return the semantic type that corresponds to the encodable class.
      */
     @Pure
     public final @Nonnull @Loaded SemanticType getType() {
@@ -150,11 +150,11 @@ public abstract class BlockableFactory<O, E> {
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Creates a new blockable factory with the given type.
+     * Creates a new encodable factory with the given type.
      * 
-     * @param type the semantic type that corresponds to the blockable class.
+     * @param type the semantic type that corresponds to the encodable class.
      */
-    protected BlockableFactory(@Nonnull @Loaded SemanticType type) {
+    protected AbstractEncodingFactory(@Nonnull @Loaded SemanticType type) {
         this.type = type;
     }
     

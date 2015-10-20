@@ -1,5 +1,8 @@
 package net.digitalid.service.core.auxiliary;
 
+import net.digitalid.service.core.storing.Storable;
+
+import net.digitalid.service.core.encoding.NonRequestingEncodingFactory;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,8 +12,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.annotations.BasedOn;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.service.core.blockable.NonRequestingBlockableFactory;
-import net.digitalid.service.core.storable.Storable;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.wrappers.Block;
 import net.digitalid.service.core.wrappers.Int64Wrapper;
@@ -576,7 +577,7 @@ public final class Time implements Storable<Time, Object>, Comparable<Time> {
      * The factory for this class.
      */
     @Immutable
-    public static final class Factory extends NonRequestingBlockableFactory<Time, Object> {
+    public static final class Factory extends NonRequestingEncodingFactory<Time, Object> {
         
         /**
          * Creates a new factory.

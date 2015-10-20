@@ -1,5 +1,15 @@
 package net.digitalid.service.core.password;
 
+import net.digitalid.service.core.storing.AbstractStoringFactory;
+
+import net.digitalid.service.core.encoding.AbstractEncodingFactory;
+import net.digitalid.service.core.encoding.NonRequestingEncodingFactory;
+import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import java.io.IOException;
+import java.sql.SQLException;
+import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.wrappers.Block;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.agent.Agent;
@@ -22,6 +32,7 @@ import net.digitalid.service.core.wrappers.StringWrapper;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.tuples.FreezablePair;
+import net.digitalid.utility.collections.tuples.ReadOnlyPair;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.configuration.Database;
 
@@ -65,7 +76,7 @@ public final class Password extends Concept<Password, NonHostEntity, Object> {
     /**
      * Stores the table to store the password.
      */
-    private static final @Nonnull NonNullableConceptPropertyTable<String, Password, NonHostEntity> TABLE = NonNullableConceptPropertyTable.get(MODULE, "", NonHostEntity.FACTORY, Password.FACTORY, StringWrapper.getValueFactory(TYPE), SELECTOR);
+    private static final @Nonnull NonNullableConceptPropertyTable<String, Password, NonHostEntity> TABLE = NonNullableConceptPropertyTable.get(MODULE, "", NonHostEntity.FACTORY, Password.FACTORIES, StringWrapper.getValueFactory(TYPE), SELECTOR);
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Validator –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -163,12 +174,12 @@ public final class Password extends Concept<Password, NonHostEntity, Object> {
      * The factory for this class.
      */
     @Immutable
-    public static final class Factory extends Concept.IndexBasedGlobalFactory<Password, NonHostEntity, Object> {
+    public static final class StoringFactory extends Concept.IndexBasedStoringFactory<Password, NonHostEntity, Object> {
         
         /**
          * Creates a new factory.
          */
-        private Factory() {
+        private StoringFactory() {
             super(EmptyWrapper.VALUE_FACTORY, index);
         }
         
@@ -181,19 +192,55 @@ public final class Password extends Concept<Password, NonHostEntity, Object> {
     }
     
     /**
-     * Stores the factory of this class.
+     * Stores the storing factory of this class.
      */
-    public static final @Nonnull Factory FACTORY = new Factory();
+    public static final @Nonnull StoringFactory STORING_FACTORY = new StoringFactory();
     
     @Pure
     @Override
-    public @Nonnull Factory getFactory() {
-        return FACTORY;
+    public @Nonnull StoringFactory getStoringFactory() {
+        return STORING_FACTORY;
+    }
+    
+    /**
+     * The encoding factory for this class.
+     */
+    @Immutable
+    public static final class EncodingFactory extends Concept.IndexBasedEncodingFactory<Password, NonHostEntity> {
+
+		protected EncodingFactory(SemanticType type) {
+			super(type);
+		}
+
+		@Override
+		public @Nullable Block encodeNonNullable(Password object) {
+			// TODO check if this is ok...password does not need to be blockable
+			return null;
+		}
+
+		@Override
+		public @Nullable Password decodeNonNullable(NonHostEntity entity, Block block)
+				throws InvalidEncodingException {
+			// TODO check if this is ok...password does not need to be blockable
+			return null;
+		}
+
+    }
+    
+    /**
+     * Stores the encoding factory which is used to encode this concept.
+     */
+    public static final @Nonnull EncodingFactory ENCODING_FACTORY = new EncodingFactory(TYPE);
+    
+    @Pure
+    @Override
+    public @Nonnull EncodingFactory getEncodingFactory() {
+        return ENCODING_FACTORY;
     }
     
     /**
      * Stores the factories of this class.
      */
-    public static final @Nonnull ReadOnlyPair<BlockableFactory, StorableFactory> FACTORIES = FreezablePair.get(BLOCKABLE_FACTORY, STORABLE_FACTORY).freeze();
+    public static final @Nonnull ReadOnlyPair<EncodingFactory, StoringFactory> FACTORIES = FreezablePair.get(ENCODING_FACTORY, STORING_FACTORY).freeze();
     
 }

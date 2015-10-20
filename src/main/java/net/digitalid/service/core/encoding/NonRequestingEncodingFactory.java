@@ -1,4 +1,4 @@
-package net.digitalid.service.core.blockable;
+package net.digitalid.service.core.encoding;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -11,14 +11,14 @@ import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 
 /**
- * This class is like {@link BlockableFactory} except that the decoding of {@link Block blocks} throws less exceptions.
+ * This class is like {@link AbstractEncodingFactory} except that the decoding of {@link Block blocks} throws less exceptions.
  * This factory does not allow file, network and database requests during {@link #decodeNonNullable(java.lang.Object, net.digitalid.service.core.wrappers.Block) decoding}.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0.0
  */
 @Immutable
-public abstract class NonRequestingBlockableFactory<O, E> extends BlockableFactory<O, E> {
+public abstract class NonRequestingEncodingFactory<O, E> extends AbstractEncodingFactory<O, E> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Decoding –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -40,7 +40,7 @@ public abstract class NonRequestingBlockableFactory<O, E> extends BlockableFacto
      * 
      * @param type the semantic type that corresponds to the storable class.
      */
-    protected NonRequestingBlockableFactory(@Nonnull @Loaded SemanticType type) {
+    protected NonRequestingEncodingFactory(@Nonnull @Loaded SemanticType type) {
         super(type);
     }
     

@@ -50,7 +50,7 @@ public final class Index<C extends Concept<C, E, K>, E extends Entity, K> {
     /**
      * Stores the factory that can produce a new concept instance with a given entity and key.
      */
-    private final @Nonnull Concept.IndexBasedGlobalFactory<C, E, K> factory;
+    private final @Nonnull Concept.IndexBasedStoringFactory<C, E, K> factory;
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -59,7 +59,7 @@ public final class Index<C extends Concept<C, E, K>, E extends Entity, K> {
      * 
      * @param factory the factory that can produce a new concept instance.
      */
-    private Index(@Nonnull Concept.IndexBasedGlobalFactory<C, E, K> factory) {
+    private Index(@Nonnull Concept.IndexBasedStoringFactory<C, E, K> factory) {
         this.factory = factory;
         indexes.add(this);
     }
@@ -72,7 +72,7 @@ public final class Index<C extends Concept<C, E, K>, E extends Entity, K> {
      * @return a new index with the given concept factory.
      */
     @Pure
-    public static @Nonnull <C extends Concept<C, E, K>, E extends Entity, K> Index<C, E, K> get(@Nonnull Concept.IndexBasedGlobalFactory<C, E, K> factory) {
+    public static @Nonnull <C extends Concept<C, E, K>, E extends Entity, K> Index<C, E, K> get(@Nonnull Concept.IndexBasedStoringFactory<C, E, K> factory) {
         return new Index<>(factory);
     }
     

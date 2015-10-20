@@ -1,16 +1,10 @@
-package net.digitalid.service.core.storable;
+package net.digitalid.service.core.storing;
 
-import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.service.core.annotations.Loaded;
-import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.packet.PacketException;
-import net.digitalid.service.core.identity.SemanticType;
-import net.digitalid.service.core.wrappers.Block;
 import net.digitalid.utility.annotations.reference.Capturable;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -26,40 +20,26 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * @version 1.0.0
  */
 @Immutable
-public abstract class FactoryBasedStorableFactory<O, E, K> extends StorableFactory<O, E> {
+public abstract class FactoryBasedStoringFactory<O, E, K> extends AbstractStoringFactory<O, E> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factory –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the factory used to store and restore the key.
      */
-    private final @Nonnull StorableFactory<K, E> factory;
+    private final @Nonnull AbstractStoringFactory<K, E> keyFactory;
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Creates a new factory based global factory with the given parameters.
+     * Creates a new factory based storable factory with the given parameters.
      * 
-     * @param type the semantic type that corresponds to the storable class.
-     * @param factory the factory used to store and restore the object's key.
-     * 
-     * @require type.isBasedOn(factory.getType()) : "The given type is based on the type of the factory.";
+     * @param keyFactory the factory used to store and restore the object's key.
      */
-    protected FactoryBasedStorableFactory(@Nonnull @Loaded SemanticType type, @Nonnull StorableFactory<K, E> factory) {
-        super(type, factory.getColumns().toArray());
+    protected FactoryBasedStoringFactory(@Nonnull AbstractStoringFactory<K, E> keyFactory) {
+        super(keyFactory.getColumns().toArray());
         
-        assert type.isBasedOn(factory.getType()) : "The given type is based on the type of the factory.";
-        
-        this.factory = factory;
-    }
-    
-    /**
-     * Creates a new factory based global factory with the given parameter.
-     * 
-     * @param factory the factory used to store and restore the object's key.
-     */
-    protected FactoryBasedStorableFactory(@Nonnull StorableFactory<K, E> factory) {
-        this(factory.getType(), factory);
+        this.keyFactory = keyFactory;
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Abstract –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -89,35 +69,21 @@ public abstract class FactoryBasedStorableFactory<O, E, K> extends StorableFacto
     
     @Pure
     @Override
-    public final @Nonnull Block encodeNonNullable(@Nonnull O object) {
-        return factory.encodeNonNullable(getKey(object)).setType(getType());
-    }
-    
-    @Pure
-    @Override
-    public @Nonnull O decodeNonNullable(@Nonnull E entity, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
-        assert block.getType().isBasedOn(getType()) : "The block is based on the type of this factory.";
-        
-        return getObject(entity, factory.decodeNonNullable(entity, block));
-    }
-    
-    @Pure
-    @Override
     public final @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getValues(@Nonnull O object) {
-        return factory.getValues(getKey(object));
+        return keyFactory.getValues(getKey(object));
     }
     
     @Override
     @NonCommitting
-    public final void setNonNullable(@Nonnull O object, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
-        factory.setNonNullable(getKey(object), preparedStatement, parameterIndex);
+    public final void storeNonNullable(@Nonnull O object, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+        keyFactory.storeNonNullable(getKey(object), preparedStatement, parameterIndex);
     }
     
     @Pure
     @Override
     @NonCommitting
-    public final @Nullable O getNullable(@Nonnull E entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
-        final @Nullable K key = factory.getNullable(entity, resultSet, columnIndex);
+    public final @Nullable O restoreNullable(@Nonnull E entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+        final @Nullable K key = keyFactory.restoreNullable(entity, resultSet, columnIndex);
         return key == null ? null : getObject(entity, key);
     }
     

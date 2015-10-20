@@ -6,15 +6,21 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.service.core.annotations.BasedOn;
 import net.digitalid.service.core.annotations.Encoding;
 import net.digitalid.service.core.annotations.Loaded;
 import net.digitalid.service.core.annotations.NonEncoding;
+import net.digitalid.service.core.encoding.AbstractEncodingFactory;
+import net.digitalid.service.core.encoding.Encodable;
+import net.digitalid.service.core.encoding.Encode;
+import net.digitalid.service.core.encoding.NonRequestingEncodingFactory;
 import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
-import net.digitalid.service.core.storable.StorableFactory;
-import net.digitalid.service.core.storable.Storable;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
+import net.digitalid.service.core.storing.AbstractStoringFactory;
+import net.digitalid.service.core.storing.Storable;
 import net.digitalid.utility.annotations.math.Positive;
 import net.digitalid.utility.annotations.reference.Capturable;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -24,7 +30,6 @@ import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
-import net.digitalid.utility.database.column.Column;
 
 /**
  * Values and elements are wrapped by separate objects as the native types do not support encoding and decoding.
@@ -35,7 +40,7 @@ import net.digitalid.utility.database.column.Column;
  * @version 1.0.0
  */
 @Immutable
-public abstract class Wrapper<W extends Wrapper<W>> implements Storable<W, Object> {
+public abstract class Wrapper<W extends Wrapper<W>> implements Encodable<W, Object>, Storable<W, Object> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -113,15 +118,15 @@ public abstract class Wrapper<W extends Wrapper<W>> implements Storable<W, Objec
     public final boolean equals(@Nullable Object object) {
         if (object == this) return true;
         if (object == null || !(object instanceof Wrapper)) return false;
-        final @Nonnull Wrapper<?> other = (Wrapper) object;
-        return this.getClass().equals(other.getClass()) && Block.fromNonNullable((W) this).equals(Block.fromNonNullable((W) other));
+        final @Nonnull Wrapper<?> other = (Wrapper<?>) object;
+        return this.getClass().equals(other.getClass()) && Encode.nonNullable((W) this).equals(Encode.nonNullable((W) other));
     }
     
     @Pure
     @Override
     @SuppressWarnings("unchecked")
     public final int hashCode() {
-        return Block.fromNonNullable((W) this).hashCode();
+        return Encode.nonNullable((W) this).hashCode();
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -130,16 +135,15 @@ public abstract class Wrapper<W extends Wrapper<W>> implements Storable<W, Objec
      * The factory for wrappers.
      */
     @Immutable
-    public abstract static class Factory<W extends Wrapper<W>> extends StorableFactory<W, Object> {
+    public abstract static class BlockableWrapperFactory<W extends Wrapper<W>> extends NonRequestingEncodingFactory<W, Object> {
         
         /**
          * Creates a new factory with the given parameters.
          * 
          * @param type the semantic type that corresponds to the wrapper.
-         * @param column the column used to store objects of the wrapper.
          */
-        protected Factory(@Nonnull @Loaded SemanticType type, @Nonnull @NonNullableElements Column column) {
-            super(type, column);
+        protected BlockableWrapperFactory(@Nonnull @Loaded SemanticType type) {
+            super(type);
         }
         
         @Pure
@@ -150,16 +154,42 @@ public abstract class Wrapper<W extends Wrapper<W>> implements Storable<W, Objec
         }
         
         @Pure
-        @Override
-        public final @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getValues(@Nonnull W wrapper) {
-            return FreezableArray.getNonNullable(wrapper.toString());
+        public @Nonnull W decodeNonNullable(@Nonnull @NonEncoding @BasedOn("string@core.digitalid.net") Block block) throws InvalidEncodingException {
+        	return super.decodeNullable(null, block);
         }
         
+
+		@Override
+		public W decodeNonNullable(Object entity, Block block)
+				throws InvalidEncodingException {
+			return super.decodeNullable(null, block);
+		}
+    }
+    
+    @Immutable
+    public abstract static class StorableWrapperFactory<W extends Wrapper<W>> extends AbstractStoringFactory<W, Object> {
+      
+		@Pure
+		@Override
+		public final @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getValues(@Nonnull W wrapper) {
+		    return FreezableArray.getNonNullable(wrapper.toString());
+		}
+      
+		public abstract W restoreNullable(ResultSet resultSet, int columnIndex) throws SQLException;
+		
+		public W restoreNullable(Object o, ResultSet resultSet, int columnIndex) throws SQLException {
+			return restoreNullable(resultSet, columnIndex);
+		}
+      
     }
     
     @Pure
     @Override
-    public abstract @Nonnull Factory<W> getFactory();
+    public abstract @Nonnull BlockableWrapperFactory<W> getEncodingFactory();
+
+    @Pure
+    @Override
+    public abstract @Nonnull StorableWrapperFactory<W> getStoringFactory();
     
     /**
      * Returns the value of this wrapper for SQL.
@@ -173,15 +203,15 @@ public abstract class Wrapper<W extends Wrapper<W>> implements Storable<W, Objec
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factory –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * The factory for values.
+     * The factory for encoding and decoding values.
      */
     @Immutable
-    public abstract static class ValueFactory<V, W extends Wrapper<W>> extends StorableFactory<V, Object> {
+    public abstract static class ValueFactory<V, W extends Wrapper<W>> extends AbstractEncodingFactory<V, Object> {
         
         /**
-         * Stores the factory to wrap and unwrap the values.
+         * Stores the BlockableWrapperFactory to wrap and unwrap the values.
          */
-        private @Nonnull Factory<W> factory;
+        private @Nonnull BlockableWrapperFactory<W> factory;
         
         /**
          * Creates a new factory with the given type and factory.
@@ -189,8 +219,8 @@ public abstract class Wrapper<W extends Wrapper<W>> implements Storable<W, Objec
          * @param type the semantic type that of the surrounding wrapper.
          * @param factory the factory that allows to wrap and unwrap the values.
          */
-        protected ValueFactory(@Nonnull @Loaded SemanticType type, @Nonnull Factory<W> factory) {
-            super(type, factory.getColumns().getNonNullable(0));
+        protected ValueFactory(@Nonnull @Loaded SemanticType type, @Nonnull BlockableWrapperFactory<W> factory) {
+            super(type);
         }
         
         /**
@@ -244,6 +274,52 @@ public abstract class Wrapper<W extends Wrapper<W>> implements Storable<W, Objec
             
             return unwrap(factory.decodeNonNullable(none, block));
         }
+    }
+    
+    /**
+     * The factory for encoding and decoding values.
+     */
+    @Immutable
+    public abstract static class ValueStorableFactory<V, W extends Wrapper<W>> extends AbstractStoringFactory<V, Object> {
+        
+        /**
+         * Stores the BlockableWrapperFactory to wrap and unwrap the values.
+         */
+        private @Nonnull StorableWrapperFactory<W> factory;
+        
+        /**
+         * Creates a new factory with the given type and factory.
+         * 
+         * @param type the semantic type that of the surrounding wrapper.
+         * @param factory the factory that allows to wrap and unwrap the values.
+         */
+        protected ValueStorableFactory(@Nonnull StorableWrapperFactory<W> factory) {
+            super(factory.getColumns().getNonNullable(0));
+        }
+        
+        /**
+         * Wraps the given value.
+         * 
+         * @param value the value to wrap.
+         * 
+         * @return the wrapper around the value.
+         * 
+         * @require isValid(value) : "The value is valid.";
+         */
+        @Pure
+        protected abstract @Nonnull W wrap(@Nonnull V value);
+        
+        /**
+         * Unwraps the given wrapper.
+         * 
+         * @param wrapper the wrapper to unwrap.
+         * 
+         * @return the value wrapped in the given wrapper.
+         * 
+         * @ensure isValid(value) : "The value is valid.";
+         */
+        @Pure
+        protected abstract @Nonnull V unwrap(@Nonnull W wrapper);
         
         @Pure
         @Override
@@ -253,18 +329,17 @@ public abstract class Wrapper<W extends Wrapper<W>> implements Storable<W, Objec
         
         @Override
         @NonCommitting
-        public final void setNonNullable(@Nonnull V value, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
-            factory.setNonNullable(wrap(value), preparedStatement, parameterIndex);
+        public final void storeNonNullable(@Nonnull V value, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+            factory.storeNonNullable(wrap(value), preparedStatement, parameterIndex);
         }
         
         @Pure
         @Override
         @NonCommitting
-        public final @Nullable V getNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
-            final @Nullable W wrapper = factory.getNullable(none, resultSet, columnIndex);
+        public final @Nullable V restoreNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+            final @Nullable W wrapper = factory.restoreNullable(none, resultSet, columnIndex);
             return wrapper == null ? null : unwrap(wrapper);
         }
-        
     }
     
 }

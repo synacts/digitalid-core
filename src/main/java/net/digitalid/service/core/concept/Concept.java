@@ -1,24 +1,20 @@
 package net.digitalid.service.core.concept;
 
+import net.digitalid.service.core.storing.AbstractStoringFactory;
+import net.digitalid.service.core.storing.FactoryBasedStoringFactory;
+import net.digitalid.service.core.storing.Storable;
+
+import net.digitalid.service.core.encoding.Encodable;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import net.digitalid.service.core.annotations.Loaded;
 import net.digitalid.service.core.annotations.OnlyForClients;
 import net.digitalid.service.core.annotations.OnlyForHosts;
 import net.digitalid.service.core.entity.Account;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.entity.Role;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.service.core.storable.FactoryBasedStorableFactory;
-import net.digitalid.service.core.storable.StorableFactory;
-import net.digitalid.service.core.blockable.NonRequestingBlockableFactory;
-import net.digitalid.service.core.storable.Storable;
-import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.property.ConceptProperty;
 import net.digitalid.service.core.property.ConceptPropertyTable;
-import net.digitalid.service.core.wrappers.Block;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
@@ -42,7 +38,7 @@ import net.digitalid.utility.database.configuration.Database;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0.0
  */
-public abstract class Concept<C extends Concept<C, E, K>, E extends Entity, K> implements Storable<C, E> {
+public abstract class Concept<C extends Concept<C, E, K>, E extends Entity, K> implements Storable<C, E>, Encodable<C, E> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Entity –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -196,10 +192,10 @@ public abstract class Concept<C extends Concept<C, E, K>, E extends Entity, K> i
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * The global factory for concepts.
+     * The storing factory for concepts.
      */
     @Immutable
-    public static abstract class IndexBasedGlobalFactory<C extends Concept<C, E, K>, E extends Entity, K> extends FactoryBasedStorableFactory<C, E, K> {
+    public static abstract class IndexBasedStoringFactory<C extends Concept<C, E, K>, E extends Entity, K> extends FactoryBasedStoringFactory<C, E, K> {
         
         /**
          * Stores the index that caches existing concepts.
@@ -219,26 +215,13 @@ public abstract class Concept<C extends Concept<C, E, K>, E extends Entity, K> i
         /**
          * Creates a new concept factory based on the given key factory.
          * 
-         * @param type the type that corresponds to the storable class.
-         * @param factory the factory to store and restore the key.
+         * @param keyFactory the factory to store and restore the key.
          * @param index the index that caches existing concepts.
-         * 
-         * @require type.isBasedOn(factory.getType()) : "The given type is based on the type of the factory.";
          */
-        protected IndexBasedGlobalFactory(@Nonnull @Loaded SemanticType type, @Nonnull StorableFactory<K, E> factory, @Nonnull Index<C, E, K> index) {
-            super(type, factory);
+        protected IndexBasedStoringFactory(@Nonnull AbstractStoringFactory<K, E> keyFactory, @Nonnull Index<C, E, K> index) {
+            super(keyFactory);
             
             this.index = index;
-        }
-        
-        /**
-         * Creates a new concept factory based on the given key factory.
-         * 
-         * @param factory the factory to store and restore the key.
-         * @param index the index that caches existing concepts.
-         */
-        protected IndexBasedGlobalFactory(@Nonnull StorableFactory<K, E> factory, @Nonnull Index<C, E, K> index) {
-            this(factory.getType(), factory, index);
         }
         
         /**
@@ -266,59 +249,8 @@ public abstract class Concept<C extends Concept<C, E, K>, E extends Entity, K> i
         
     }
     
-    /**
-     * The local factory for concepts.
-     */
-    @Immutable
-    public static abstract class IndexBasedLocalFactory<C extends Concept<C, E, K>, E extends Entity, K> extends IndexBasedGlobalFactory<C, E, K> {
-        
-        /**
-         * Stores the factory to store and restore the key.
-         */
-        private final @Nonnull NonRequestingBlockableFactory<K, E> factory;
-        
-        /**
-         * Creates a new concept factory based on the given key factory.
-         * 
-         * @param type the type that corresponds to the storable class.
-         * @param factory the factory to store and restore the key.
-         * @param index the index that caches existing concepts.
-         * 
-         * @require type.isBasedOn(factory.getType()) : "The given type is based on the type of the factory.";
-         */
-        protected IndexBasedLocalFactory(@Nonnull @Loaded SemanticType type, @Nonnull NonRequestingBlockableFactory<K, E> factory, @Nonnull Index<C, E, K> index) {
-            super(type, factory, index);
-            
-            this.factory = factory;
-        }
-        
-        /**
-         * Creates a new concept factory based on the given key factory.
-         * 
-         * @param factory the factory to store and restore the key.
-         * @param index the index that caches existing concepts.
-         */
-        protected IndexBasedLocalFactory(@Nonnull NonRequestingBlockableFactory<K, E> factory, @Nonnull Index<C, E, K> index) {
-            this(factory.getType(), factory, index);
-        }
-        
-        @Pure
-        @Override
-        public final @Nonnull C decodeNonNullable(@Nonnull E entity, @Nonnull Block block) throws InvalidEncodingException {
-            return getIndex().get(entity, factory.decodeNonNullable(entity, block));
-        }
-        
-        @Pure
-        @Override
-        public final @Nullable C decodeNullable(@Nonnull E entity, @Nullable Block block) throws InvalidEncodingException {
-            if (block != null) return decodeNonNullable(entity, block);
-            else return null;
-        }
-        
-    }
-    
     @Pure
     @Override
-    public abstract @Nonnull IndexBasedGlobalFactory<C, E, K> getFactory();
-    
+    public abstract @Nonnull IndexBasedStoringFactory<C, E, K> getStoringFactory();
+
 }

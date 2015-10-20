@@ -1,4 +1,4 @@
-package net.digitalid.service.core.storable;
+package net.digitalid.service.core.storing;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -22,7 +22,7 @@ public final class Store {
      * @param parameterIndex the starting index of the parameters which are to be set.
      */
     public static <V extends Storable<V, ?>> void nonNullable(@Nonnull V storable, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
-        storable.getFactory().setNonNullable(storable, preparedStatement, parameterIndex);
+        storable.getStoringFactory().storeNonNullable(storable, preparedStatement, parameterIndex);
     }
     
 }

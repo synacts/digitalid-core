@@ -8,10 +8,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.crypto.spec.IvParameterSpec;
 import net.digitalid.service.core.annotations.BasedOn;
+import net.digitalid.service.core.encoding.NonRequestingEncodingFactory;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.service.core.blockable.NonRequestingBlockableFactory;
-import net.digitalid.service.core.storable.Storable;
 import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.storing.Storable;
 import net.digitalid.service.core.wrappers.Block;
 import net.digitalid.service.core.wrappers.BytesWrapper;
 import net.digitalid.service.core.wrappers.EncryptionWrapper;
@@ -102,7 +102,7 @@ public final class InitializationVector extends IvParameterSpec implements Stora
      * The factory for this class.
      */
     @Immutable
-    public static final class Factory extends NonRequestingBlockableFactory<InitializationVector, Object> {
+    public static final class Factory extends NonRequestingEncodingFactory<InitializationVector, Object> {
         
         /**
          * Creates a new factory.

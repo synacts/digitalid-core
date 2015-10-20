@@ -1,4 +1,4 @@
-package net.digitalid.service.core.storable;
+package net.digitalid.service.core.storing;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -31,14 +31,14 @@ import net.digitalid.utility.database.configuration.Database;
  *            In case no external information is needed for the restoration of an object, declare it as an {@link Object}.
  * 
  * @see Storable
- * @see BlockBasedStorableFactory
- * @see FactoryBasedStorableFactory
+ * @see BlockBasedStoringFactory
+ * @see FactoryBasedStoringFactory
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0.0
  */
 @Immutable
-public abstract class StorableFactory<O, E> {
+public abstract class AbstractStoringFactory<O, E> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Columns –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -426,7 +426,7 @@ public abstract class StorableFactory<O, E> {
      * @param parameterIndex the starting index of the parameters which are to be set.
      */
     @NonCommitting
-    public abstract void setNonNullable(@Nonnull O object, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException;
+    public abstract void storeNonNullable(@Nonnull O object, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException;
     
     /**
      * Sets the parameters starting from the given index of the prepared statement to null.
@@ -435,7 +435,7 @@ public abstract class StorableFactory<O, E> {
      * @param parameterIndex the starting index of the parameters which are to be set.
      */
     @NonCommitting
-    public final void setNull(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+    public final void storeNull(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
         for (int i = 0; i < columns.size(); i++) {
             preparedStatement.setNull(parameterIndex + i, columns.getNonNullable(i).getType().getCode());
         }
@@ -450,9 +450,9 @@ public abstract class StorableFactory<O, E> {
      * @param parameterIndex the starting index of the parameters which are to be set.
      */
     @NonCommitting
-    public final void setNullable(@Nullable O object, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
-        if (object == null) setNull(preparedStatement, parameterIndex);
-        else setNonNullable(object, preparedStatement, parameterIndex);
+    public final void storeNullable(@Nullable O object, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+        if (object == null) storeNull(preparedStatement, parameterIndex);
+        else storeNonNullable(object, preparedStatement, parameterIndex);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Retrieving –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -461,7 +461,7 @@ public abstract class StorableFactory<O, E> {
      * Returns a nullable object from the given columns of the result set.
      * The number of columns that are read is given by {@link #getNumberOfColumns()}.
      * 
-     * @param entity the entity which is needed to reconstruct the object.
+     * @param entity the entisetNonNullablety which is needed to reconstruct the object.
      * @param resultSet the result set from which the data is to be retrieved.
      * @param columnIndex the starting index of the columns containing the data.
      * 
@@ -469,7 +469,7 @@ public abstract class StorableFactory<O, E> {
      */
     @Pure
     @NonCommitting
-    public abstract @Nullable O getNullable(@Nonnull E entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException;
+    public abstract @Nullable O restoreNullable(@Nonnull E entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException;
     
     /**
      * Returns a non-nullable object from the given columns of the result set.
@@ -483,8 +483,8 @@ public abstract class StorableFactory<O, E> {
      */
     @Pure
     @NonCommitting
-    public @Nonnull O getNonNullable(@Nonnull E entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
-        final @Nullable O object = getNullable(entity, resultSet, columnIndex);
+    public @Nonnull O restoreNonNullable(@Nonnull E entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+        final @Nullable O object = restoreNullable(entity, resultSet, columnIndex);
         if (object == null) throw new SQLException("An object which should not be null was null.");
         return object;
     }
@@ -496,7 +496,7 @@ public abstract class StorableFactory<O, E> {
      * 
      * @param columns the columns used to store objects of the storable class.
      */
-    protected StorableFactory(@Captured @Nonnull @NonNullableElements Column... columns) {
+    protected AbstractStoringFactory(@Captured @Nonnull @NonNullableElements Column... columns) {
         this.columns = FreezableArray.getNonNullable(columns).freeze();
         int maximumColumnLength = 0;
         for (final @Nonnull Column column : columns) {

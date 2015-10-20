@@ -1,4 +1,4 @@
-package net.digitalid.service.core.storable;
+package net.digitalid.service.core.storing;
 
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.entity.Entity;
@@ -22,6 +22,6 @@ public interface Storable<O, E> {
      * @return the factory to store and restore objects of this class.
      */
     @Pure
-    public @Nonnull StorableFactory<O, E> getFactory();
+    public @Nonnull AbstractStoringFactory<O, E> getStoringFactory();
     
 }

@@ -1,22 +1,12 @@
-package net.digitalid.service.core.storable;
+package net.digitalid.service.core.encoding;
 
-import net.digitalid.service.core.blockable.NonRequestingBlockableFactory;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import net.digitalid.service.core.annotations.Loaded;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.wrappers.Block;
-import net.digitalid.utility.annotations.reference.Capturable;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
-import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
-import net.digitalid.utility.collections.freezable.FreezableArray;
-import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * This class implements a local factory that is based on another local factory.
@@ -25,14 +15,14 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * @version 1.0.0
  */
 @Immutable
-public abstract class FactoryBasedLocalFactory<O, E, K> extends NonRequestingBlockableFactory<O, E> {
+public abstract class FactoryBasedEncodingFactory<O, E, K> extends NonRequestingEncodingFactory<O, E> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factory –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the factory used to store and restore the key.
      */
-    private final @Nonnull NonRequestingBlockableFactory<K, E> factory;
+    private final @Nonnull NonRequestingEncodingFactory<K, E> factory;
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -44,8 +34,8 @@ public abstract class FactoryBasedLocalFactory<O, E, K> extends NonRequestingBlo
      * 
      * @require type.isBasedOn(factory.getType()) : "The given type is based on the type of the factory.";
      */
-    protected FactoryBasedLocalFactory(@Nonnull @Loaded SemanticType type, @Nonnull NonRequestingBlockableFactory<K, E> factory) {
-        super(type, factory.getColumns().toArray());
+    protected FactoryBasedEncodingFactory(@Nonnull @Loaded SemanticType type, @Nonnull NonRequestingEncodingFactory<K, E> factory) {
+        super(type);
         
         assert type.isBasedOn(factory.getType()) : "The given type is based on the type of the factory.";
         
@@ -57,7 +47,7 @@ public abstract class FactoryBasedLocalFactory<O, E, K> extends NonRequestingBlo
      * 
      * @param factory the factory used to store and restore the object's key.
      */
-    protected FactoryBasedLocalFactory(@Nonnull NonRequestingBlockableFactory<K, E> factory) {
+    protected FactoryBasedEncodingFactory(@Nonnull NonRequestingEncodingFactory<K, E> factory) {
         this(factory.getType(), factory);
     }
     
@@ -100,24 +90,24 @@ public abstract class FactoryBasedLocalFactory<O, E, K> extends NonRequestingBlo
         return getObject(entity, factory.decodeNonNullable(entity, block));
     }
     
-    @Pure
-    @Override
-    public final @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getValues(@Nonnull O object) {
-        return factory.getValues(getKey(object));
-    }
-    
-    @Override
-    @NonCommitting
-    public final void setNonNullable(@Nonnull O object, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
-        factory.setNonNullable(getKey(object), preparedStatement, parameterIndex);
-    }
-    
-    @Pure
-    @Override
-    @NonCommitting
-    public final @Nullable O getNullable(@Nonnull E entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
-        final @Nullable K key = factory.getNullable(entity, resultSet, columnIndex);
-        return key == null ? null : getObject(entity, key);
-    }
+//    @Pure
+//    @Override
+//    public final @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getValues(@Nonnull O object) {
+//        return factory.getValues(getKey(object));
+//    }
+//    
+//    @Override
+//    @NonCommitting
+//    public final void setNonNullable(@Nonnull O object, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+//        factory.setNonNullable(getKey(object), preparedStatement, parameterIndex);
+//    }
+//    
+//    @Pure
+//    @Override
+//    @NonCommitting
+//    public final @Nullable O getNullable(@Nonnull E entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+//        final @Nullable K key = factory.getNullable(entity, resultSet, columnIndex);
+//        return key == null ? null : getObject(entity, key);
+//    }
     
 }

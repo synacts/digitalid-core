@@ -18,12 +18,12 @@ import net.digitalid.service.core.annotations.Loaded;
 import net.digitalid.service.core.annotations.NonEncoded;
 import net.digitalid.service.core.annotations.NonEncoding;
 import net.digitalid.service.core.annotations.NonEncodingRecipient;
-import net.digitalid.service.core.blockable.NonRequestingBlockableFactory;
 import net.digitalid.service.core.cryptography.InitializationVector;
 import net.digitalid.service.core.cryptography.SymmetricKey;
+import net.digitalid.service.core.encoding.NonRequestingEncodingFactory;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.identity.SemanticType;
-import net.digitalid.service.core.storable.Storable;
+import net.digitalid.service.core.storing.Storable;
 import net.digitalid.utility.annotations.math.NonNegative;
 import net.digitalid.utility.annotations.math.Positive;
 import net.digitalid.utility.annotations.reference.Capturable;
@@ -698,7 +698,7 @@ public final class Block implements Storable<Block, Object>, Cloneable {
      * The factory for blocks.
      */
     @Immutable
-    public static class Factory extends NonRequestingBlockableFactory<Block, Object> {
+    public static class Factory extends NonRequestingEncodingFactory<Block, Object> {
         
         /**
          * Stores the column for blocks.

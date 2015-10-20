@@ -1,4 +1,4 @@
-package net.digitalid.service.core.blockable;
+package net.digitalid.service.core.encoding;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -25,8 +25,8 @@ public final class Encode {
      * @return the given non-nullable blockable as a block.
      */
     @Pure
-    public static @Nonnull <O extends Blockable<O, ?>> Block nonNullable(@Nonnull O blockable) {
-        return blockable.getFactory().encodeNonNullable(blockable);
+    public static @Nonnull <O extends Encodable<O, ?>> Block nonNullable(@Nonnull O blockable) {
+        return blockable.getEncodingFactory().encodeNonNullable(blockable);
     }
     
     /**
@@ -37,7 +37,7 @@ public final class Encode {
      * @return the given nullable blockable as a block.
      */
     @Pure
-    public static @Nullable <O extends Blockable<O, ?>> Block nullable(@Nullable O blockable) {
+    public static @Nullable <O extends Encodable<O, ?>> Block nullable(@Nullable O blockable) {
         return blockable == null ? null : nonNullable(blockable);
     }
     
@@ -52,7 +52,7 @@ public final class Encode {
      * @require type.isBasedOn(blockable.getFactory().getType()) : "The given type is based on its type.";
      */
     @Pure
-    public static @Nonnull <O extends Blockable<O, ?>> Block nonNullable(@Nonnull O blockable, @Nonnull @Loaded SemanticType type) {
+    public static @Nonnull <O extends Encodable<O, ?>> Block nonNullable(@Nonnull O blockable, @Nonnull @Loaded SemanticType type) {
         return nonNullable(blockable).setType(type);
     }
     
@@ -67,7 +67,7 @@ public final class Encode {
      * @require blockable == null || type.isBasedOn(blockable.getFactory().getType()) : "If the blockable instance is not null, the given type is based on its type.";
      */
     @Pure
-    public static @Nullable <O extends Blockable<O, ?>> Block nullable(@Nullable O blockable, @Nonnull @Loaded SemanticType type) {
+    public static @Nullable <O extends Encodable<O, ?>> Block nullable(@Nullable O blockable, @Nonnull @Loaded SemanticType type) {
         return blockable == null ? null : nonNullable(blockable).setType(type);
     }
     

@@ -1,15 +1,16 @@
-package net.digitalid.service.core.storable;
+package net.digitalid.service.core.storing;
 
-import net.digitalid.service.core.blockable.NonRequestingBlockableFactory;
+import net.digitalid.service.core.encoding.AbstractEncodingFactory;
+
+import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.service.core.annotations.Loaded;
 import net.digitalid.service.core.auxiliary.None;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.wrappers.Block;
 import net.digitalid.utility.annotations.reference.Capturable;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -23,20 +24,25 @@ import net.digitalid.utility.database.column.SQLType;
 import net.digitalid.utility.database.configuration.Database;
 
 /**
- * This class implements the methods that all local factories which store their data as a {@link Block block} in the {@link Database database} share.
+ * This class implements the methods that all storable factories which store their data as a {@link Block block} in the {@link Database database} share.
  * 
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0.0
  */
 @Immutable
-public abstract class BlockBasedLocalFactory<O extends Storable<O, E>, E> extends NonRequestingBlockableFactory<O, E> {
+public abstract class BlockBasedStoringFactory<O extends Storable<O, E>, E> extends AbstractStoringFactory<O, E> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Column –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Stores the column of this factory.
+     * Stores the column of this storable factory.
      */
     private static final @Nonnull Column COLUMN = Column.get("block", SQLType.BLOB);
+    
+    /**
+     * Stores the blockable factory used to decode 
+     */
+    private final @Nonnull AbstractEncodingFactory<O, E> blockableFactory;
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -45,8 +51,9 @@ public abstract class BlockBasedLocalFactory<O extends Storable<O, E>, E> extend
      * 
      * @param type the semantic type that corresponds to the storable class.
      */
-    protected BlockBasedLocalFactory(@Nonnull @Loaded SemanticType type) {
-        super(type, COLUMN);
+    protected BlockBasedStoringFactory(@Nonnull AbstractEncodingFactory<O, E> blockableFactory) {
+        super(COLUMN);
+        this.blockableFactory = blockableFactory;
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storing –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -54,13 +61,13 @@ public abstract class BlockBasedLocalFactory<O extends Storable<O, E>, E> extend
     @Pure
     @Override
     public final @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getValues(@Nonnull O object) {
-        return FreezableArray.getNonNullable(Block.fromNonNullable(object).toString());
+        return FreezableArray.getNonNullable(blockableFactory.encodeNonNullable(object).toString());
     }
     
     @Override
     @NonCommitting
-    public final void setNonNullable(@Nonnull O object, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
-        Database.setNonNullable(Block.fromNonNullable(object), preparedStatement, parameterIndex);
+    public final void storeNonNullable(@Nonnull O object, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+        Store.nonNullable(blockableFactory.encodeNonNullable(object), preparedStatement, parameterIndex);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Retrieving –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -68,11 +75,11 @@ public abstract class BlockBasedLocalFactory<O extends Storable<O, E>, E> extend
     @Pure
     @Override
     @NonCommitting
-    public final @Nullable O getNullable(@Nonnull E entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+    public final @Nullable O restoreNullable(@Nonnull E entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
         try {
             final @Nullable Block block = Block.FACTORY.getNullable(None.OBJECT, resultSet, columnIndex);
-            return block == null ? null : decodeNonNullable(entity, block.setType(getType()));
-        } catch (@Nonnull InvalidEncodingException exception) {
+            return block == null ? null : blockableFactory.decodeNonNullable(entity, block);
+        } catch (@Nonnull IOException | PacketException | ExternalException exception) {
             throw new SQLException("Could not decode a block from the database.", exception);
         }
     }

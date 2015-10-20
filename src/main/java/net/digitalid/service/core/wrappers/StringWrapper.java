@@ -110,7 +110,7 @@ public final class StringWrapper extends Wrapper<StringWrapper> {
     /**
      * Stores the factory of this class.
      */
-    private static final @Nonnull Factory FACTORY = new Factory(SEMANTIC);
+    private static final @Nonnull BlockableWrapperFactory FACTORY = new BlockableWrapperFactory(SEMANTIC);
     
     /**
      * Encodes the given non-nullable value into a new block of the given type.
@@ -185,7 +185,7 @@ public final class StringWrapper extends Wrapper<StringWrapper> {
      * The factory for this class.
      */
     @Immutable
-    public static final class Factory extends Wrapper.Factory<StringWrapper> {
+    public static final class BlockableWrapperFactory extends Wrapper.BlockableWrapperFactory<StringWrapper> {
         
         /**
          * Stores the column for the wrapper.
@@ -197,8 +197,8 @@ public final class StringWrapper extends Wrapper<StringWrapper> {
          * 
          * @param type the semantic type of the wrapper.
          */
-        private Factory(@Nonnull @Loaded @BasedOn("string@core.digitalid.net") SemanticType type) {
-            super(type, COLUMN);
+        private BlockableWrapperFactory(@Nonnull @Loaded @BasedOn("string@core.digitalid.net") SemanticType type) {
+            super(type);
         }
         
         @Pure
@@ -207,27 +207,34 @@ public final class StringWrapper extends Wrapper<StringWrapper> {
             final @Nonnull byte[] bytes = block.getBytes(1);
             return new StringWrapper(block.getType(), bytes);
         }
-        
+    }
+    
+    @Pure
+    @Override
+    public @Nonnull Wrapper.BlockableWrapperFactory<StringWrapper> getEncodingFactory() {
+        return new BlockableWrapperFactory(getSemanticType());
+    }
+    
+    @Immutable
+    public static final class StorableWrapperFactory extends Wrapper.StorableWrapperFactory<StringWrapper> {
+    	
         @Override
         @NonCommitting
-        public void setNonNullable(@Nonnull StringWrapper wrapper, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+        public void storeNonNullable(@Nonnull StringWrapper wrapper, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
             preparedStatement.setString(parameterIndex, wrapper.value);
         }
         
         @Pure
         @Override
         @NonCommitting
-        public @Nullable StringWrapper getNullable(@Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+        public @Nullable StringWrapper restoreNullable(@Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
             final @Nullable String value = resultSet.getString(columnIndex);
             return value == null ? null : new StringWrapper(getType(), value);
         }
-        
     }
     
-    @Pure
-    @Override
-    public @Nonnull Factory getFactory() {
-        return new Factory(getSemanticType());
+    public @Nonnull Wrapper.StorableWrapperFactory<StringWrapper> getStoringFactory() {
+    	return new StorableWrapperFactory();
     }
     
     @Pure

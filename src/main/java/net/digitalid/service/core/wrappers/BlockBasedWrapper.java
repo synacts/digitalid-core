@@ -45,7 +45,7 @@ public abstract class BlockBasedWrapper<W extends BlockBasedWrapper<W>> extends 
      * The factory for block wrappers.
      */
     @Immutable
-    public abstract static class Factory<W extends Wrapper<W>> extends Wrapper.Factory<W> {
+    public abstract static class EncodingFactory<W extends Wrapper<W>> extends Wrapper.Factory<W> {
         
         /**
          * Stores the column for the wrapper.
@@ -57,22 +57,22 @@ public abstract class BlockBasedWrapper<W extends BlockBasedWrapper<W>> extends 
          * 
          * @param type the semantic type of the wrapper.
          */
-        protected Factory(@Nonnull @Loaded SemanticType type) {
-            super(type, COLUMN);
+        protected EncodingFactory(@Nonnull @Loaded SemanticType type) {
+            super(type);
         }
-        
-        @Override
-        @NonCommitting
-        public final void setNonNullable(@Nonnull W wrapper, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
-            Database.setNonNullable(Block.fromNonNullable(wrapper), preparedStatement, parameterIndex);
-        }
+//        TODO: move this to StoringFactory
+//        @Override
+//        @NonCommitting
+//        public final void setNonNullable(@Nonnull W wrapper, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+//            Database.setNonNullable(Block.fromNonNullable(wrapper), preparedStatement, parameterIndex);
+//        }
         
         @Pure
         @Override
         @NonCommitting
-        public final @Nullable W getNullable(@Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+        public final @Nullable W restoreNullable(@Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
             try {
-                final @Nullable Block block = Block.FACTORY.getNullable(resultSet, columnIndex);
+                final @Nullable Block block = Block.FACTORY.restoreNullable(resultSet, columnIndex);
                 return block == null ? null : decodeNonNullable(block.setType(getType()));
             } catch (@Nonnull IOException | PacketException | ExternalException exception) {
                 throw new SQLException("Could not decode a block from the database.", exception);
