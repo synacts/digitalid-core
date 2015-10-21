@@ -55,7 +55,7 @@ public final class Password extends Concept<Password, NonHostEntity, Object> {
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Selector –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Stores the validator of this class.
+     * Stores the selector of this class.
      */
     public static final @Nonnull StateSelector SELECTOR = new StateSelector() {
         @Pure

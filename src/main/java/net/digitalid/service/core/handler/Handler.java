@@ -4,6 +4,7 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.data.Service;
+import net.digitalid.service.core.encoding.Encodable;
 import net.digitalid.service.core.entity.Account;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostAccount;
@@ -11,7 +12,6 @@ import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.entity.Role;
 import net.digitalid.service.core.identifier.InternalIdentifier;
 import net.digitalid.service.core.identity.SemanticType;
-import net.digitalid.service.core.wrappers.Blockable;
 import net.digitalid.service.core.wrappers.SignatureWrapper;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -26,7 +26,7 @@ import net.digitalid.utility.annotations.state.Pure;
  * @version 1.0.0
  */
 @Immutable
-public abstract class Handler implements Blockable {
+public abstract class Handler<E, O> implements Encodable<E, O> {
     
     /**
      * Stores the entity to which this handler belongs or null if it is impersonal.
