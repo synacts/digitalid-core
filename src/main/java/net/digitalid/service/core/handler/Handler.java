@@ -26,7 +26,7 @@ import net.digitalid.utility.annotations.state.Pure;
  * @version 1.0.0
  */
 @Immutable
-public abstract class Handler<E, O> implements Encodable<E, O> {
+public abstract class Handler<O, E> implements Encodable<O, E> {
     
     /**
      * Stores the entity to which this handler belongs or null if it is impersonal.

@@ -93,7 +93,7 @@ public final class NonNullableConceptProperty<V, C extends Concept<C, E, ?>, E e
      * @return a new non-nullable concept property with the given parameters.
      */
     @Pure
-    public static @Nonnull <V, C extends Concept<C, E, ?>, E extends Entity> NonNullableConceptProperty<V, C, E> get(@Nonnull ValueValidator<? super V> validator, @Nonnull C concept, @Nonnull NonNullableConceptPropertyTable<V, C, E> table) {
+    public static @Nonnull <V, C extends Concept<C, E, ?>, E extends Entity<E>> NonNullableConceptProperty<V, C, E> get(@Nonnull ValueValidator<? super V> validator, @Nonnull C concept, @Nonnull NonNullableConceptPropertyTable<V, C, E> table) {
         return new NonNullableConceptProperty<>(validator, concept, table);
     }
     
@@ -139,7 +139,7 @@ public final class NonNullableConceptProperty<V, C extends Concept<C, E, ?>, E e
         
         final @Nonnull V oldValue = get();
         if (!newValue.equals(oldValue)) {
-            Synchronizer.execute(new NonNullableConceptPropertyInternalAction(this, oldValue, newValue));
+            Synchronizer.execute(NonNullableConceptPropertyInternalAction.get(this, oldValue, newValue));
         }
     }
     

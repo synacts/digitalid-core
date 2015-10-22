@@ -15,7 +15,7 @@ import net.digitalid.utility.annotations.state.Pure;
  * @version 1.0.0
  */
 @Immutable
-public interface NonHostEntity extends Entity {
+public interface NonHostEntity extends Entity<NonHostEntity> {
     
     @Pure
     @Override

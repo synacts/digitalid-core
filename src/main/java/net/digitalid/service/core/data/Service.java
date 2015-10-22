@@ -38,6 +38,7 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0.0
  */
+@Immutable
 public class Service extends StateModule implements Storable<Service, Object> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Services –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -161,10 +162,14 @@ public class Service extends StateModule implements Storable<Service, Object> {
      */
     @Pure
     @NonCommitting
-    public @Nonnull HostIdentifier getRecipient(@Nonnull Role role) throws SQLException, PacketException, InvalidEncodingException {
+    public @Nonnull HostIdentifier getRecipient(@Nonnull Role role) throws SQLException {
         final @Nullable AttributeValue attributeValue = Attribute.get(role, getType()).getValue();
-        if (attributeValue == null) throw new PacketException(PacketError.AUTHORIZATION, "Could not read the attribute value of " + getType().getAddress() + ".");
-        return IdentifierClass.create(attributeValue.getContent()).toHostIdentifier();
+        if (attributeValue == null) throw new SQLException("The role " + role.getIdentity().getAddress() + " has no attribute of type " + getType().getAddress() + ".");
+        try {
+            return IdentifierClass.create(attributeValue.getContent()).toHostIdentifier();
+        } catch (@Nonnull InvalidEncodingException exception) {
+            throw new SQLException("The attribute of type " + getType().getAddress() + " of the role " + role.getIdentity().getAddress() + " does not encode a host identifier.", exception);
+        }
     }
     
     /**

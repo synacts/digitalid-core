@@ -8,6 +8,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.encoding.AbstractEncodingFactory;
+import net.digitalid.service.core.encoding.Encodable;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.wrappers.Block;
@@ -33,7 +34,7 @@ import net.digitalid.utility.database.configuration.Database;
  * @version 1.0.0
  */
 @Immutable
-public abstract class BlockBasedStoringFactory<O extends Storable<O, E>, E> extends AbstractStoringFactory<O, E> {
+public final class BlockBasedStoringFactory<O, E> extends AbstractStoringFactory<O, E> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Column –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -41,6 +42,8 @@ public abstract class BlockBasedStoringFactory<O extends Storable<O, E>, E> exte
      * Stores the column of this storing factory.
      */
     private static final @Nonnull Column COLUMN = Column.get("block", SQLType.BLOB);
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Field –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the encoding factory used to encode and decode the block.
@@ -50,27 +53,39 @@ public abstract class BlockBasedStoringFactory<O extends Storable<O, E>, E> exte
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Creates a new block-based storing factory with the given type.
+     * Creates a new block-based storing factory with the given encoding factory.
      * 
-     * @param type the semantic type that corresponds to the storable class.
+     * @param encodingFactory the encoding factory used to encode and decode the block.
      */
-    protected BlockBasedStoringFactory(@Nonnull AbstractEncodingFactory<O, E> encodingFactory) {
+    private BlockBasedStoringFactory(@Nonnull AbstractEncodingFactory<O, E> encodingFactory) {
         super(COLUMN);
         
         this.encodingFactory = encodingFactory;
+    }
+    
+    /**
+     * Returns a new block-based storing factory with the given encoding factory.
+     * 
+     * @param encodingFactory the encoding factory used to encode and decode the block.
+     * 
+     * @return a new block-based storing factory with the given encoding factory.
+     */
+    @Pure
+    public static @Nonnull <O extends Encodable<O, E>, E> BlockBasedStoringFactory<O, E> get(@Nonnull AbstractEncodingFactory<O, E> encodingFactory) {
+        return new BlockBasedStoringFactory<>(encodingFactory);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storing –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
-    public final @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getValues(@Nonnull O object) {
+    public @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getValues(@Nonnull O object) {
         return FreezableArray.getNonNullable(encodingFactory.encodeNonNullable(object).toString());
     }
     
     @Override
     @NonCommitting
-    public final void storeNonNullable(@Nonnull O object, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+    public void storeNonNullable(@Nonnull O object, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
         Store.nonNullable(encodingFactory.encodeNonNullable(object), preparedStatement, parameterIndex);
     }
     
@@ -79,7 +94,7 @@ public abstract class BlockBasedStoringFactory<O extends Storable<O, E>, E> exte
     @Pure
     @Override
     @NonCommitting
-    public final @Nullable O restoreNullable(@Nonnull E entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+    public @Nullable O restoreNullable(@Nonnull E entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
         try {
             final @Nullable Block block = Block.FACTORY.getNullable(None.OBJECT, resultSet, columnIndex);
             return block == null ? null : encodingFactory.decodeNonNullable(entity, block);

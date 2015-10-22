@@ -1,7 +1,5 @@
 package net.digitalid.service.core.attribute;
 
-import net.digitalid.service.core.storing.Storable;
-
 import java.sql.SQLException;
 import java.util.Objects;
 import javax.annotation.Nonnull;
@@ -13,6 +11,7 @@ import net.digitalid.service.core.expression.PassiveExpression;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.property.nullable.NullableConceptProperty;
 import net.digitalid.service.core.property.nullable.NullableConceptPropertyTable;
+import net.digitalid.service.core.storing.Storable;
 import net.digitalid.service.core.synchronizer.Synchronizer;
 import net.digitalid.service.core.wrappers.BooleanWrapper;
 import net.digitalid.utility.annotations.reference.Capturable;
@@ -340,6 +339,9 @@ public final class Attribute extends GeneralConcept implements Storable<Attribut
      */
     @Pure
     public static @Nonnull Attribute get(@Nonnull Entity entity, @Nonnull SemanticType type) {
+        // TODO: Make the checkIsAttributeFor(entity) here? No, rather during decoding in the encoding factory!
+        // Attribute.get(entity, IdentifierClass.create(tuple.getNonNullableElement(0)).getIdentity().toSemanticType().checkIsAttributeFor(entity))
+        
         if (Database.isSingleAccess()) {
             @Nullable ConcurrentMap<SemanticType, Attribute> map = index.get(entity);
             if (map == null) map = index.putIfAbsentElseReturnPresent(entity, new ConcurrentHashMap<SemanticType, Attribute>());

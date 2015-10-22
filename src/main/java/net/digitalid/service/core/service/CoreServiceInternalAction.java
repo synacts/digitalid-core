@@ -8,6 +8,8 @@ import net.digitalid.service.core.agent.Agent;
 import net.digitalid.service.core.agent.FreezableAgentPermissions;
 import net.digitalid.service.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.service.core.agent.Restrictions;
+import net.digitalid.service.core.annotations.OnlyForClients;
+import net.digitalid.service.core.annotations.OnlyForHosts;
 import net.digitalid.service.core.cache.Cache;
 import net.digitalid.service.core.cryptography.PublicKey;
 import net.digitalid.service.core.data.Service;
@@ -20,6 +22,7 @@ import net.digitalid.service.core.handler.InternalAction;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.wrappers.CredentialsSignatureWrapper;
 import net.digitalid.service.core.wrappers.SignatureWrapper;
+import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.database.annotations.NonCommitting;
 
@@ -31,6 +34,7 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0.0
  */
+@Immutable
 public abstract class CoreServiceInternalAction extends InternalAction {
     
     /**
@@ -107,6 +111,7 @@ public abstract class CoreServiceInternalAction extends InternalAction {
     protected abstract void executeOnBoth() throws SQLException;
     
     @Override
+    @OnlyForHosts
     @NonCommitting
     public void executeOnHostInternalAction() throws PacketException, SQLException {
         final @Nonnull SignatureWrapper signature = getSignatureNotNull();
@@ -127,6 +132,7 @@ public abstract class CoreServiceInternalAction extends InternalAction {
     
     @Override
     @NonCommitting
+    @OnlyForClients
     public final void executeOnClient() throws SQLException {
         executeOnBoth();
     }

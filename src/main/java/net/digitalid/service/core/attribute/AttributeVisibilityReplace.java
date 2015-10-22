@@ -26,6 +26,7 @@ import net.digitalid.service.core.wrappers.SignatureWrapper;
 import net.digitalid.service.core.wrappers.TupleWrapper;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.annotations.state.Stateless;
 import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
@@ -207,6 +208,7 @@ final class AttributeVisibilityReplace extends CoreServiceInternalAction {
     /**
      * The factory class for the surrounding method.
      */
+    @Stateless
     private static final class Factory extends Method.Factory {
         
         static { Method.add(TYPE, new Factory()); }

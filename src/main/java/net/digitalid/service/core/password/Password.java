@@ -5,13 +5,13 @@ import javax.annotation.Nullable;
 import net.digitalid.service.core.agent.Agent;
 import net.digitalid.service.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.service.core.agent.Restrictions;
-import net.digitalid.service.core.factories.GenericFactories;
 import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.concept.Concept;
 import net.digitalid.service.core.concept.Index;
 import net.digitalid.service.core.data.StateModule;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.entity.Role;
+import net.digitalid.service.core.factories.Factories;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.property.StateSelector;
 import net.digitalid.service.core.property.ValueValidator;
@@ -237,6 +237,6 @@ public final class Password extends Concept<Password, NonHostEntity, Object> {
     /**
      * Stores the factories of this class.
      */
-    public static final @Nonnull GenericFactories<Password, NonHostEntity> FACTORIES = GenericFactories.get(ENCODING_FACTORY, STORING_FACTORY);
+    public static final @Nonnull Factories<Password, NonHostEntity> FACTORIES = Factories.get(ENCODING_FACTORY, STORING_FACTORY);
     
 }

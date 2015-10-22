@@ -93,6 +93,7 @@ public final class Index<C extends Concept<C, E, K>, E extends Entity<E>, K> {
      * 
      * @return a new or existing concept with the given entity and key.
      */
+    @Pure
     public @Nonnull C get(@Nonnull E entity, @Nonnull K key) {
         if (Database.isSingleAccess()) {
             @Nullable ConcurrentMap<K, C> map = concepts.get(entity);
