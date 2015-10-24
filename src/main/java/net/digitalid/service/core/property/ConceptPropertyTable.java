@@ -10,128 +10,92 @@ import net.digitalid.service.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.service.core.agent.Restrictions;
 import net.digitalid.service.core.annotations.Loaded;
 import net.digitalid.service.core.annotations.NonEncoding;
+import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.concept.Concept;
-import net.digitalid.service.core.data.StateModule;
 import net.digitalid.service.core.data.StateTable;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
-import net.digitalid.service.core.factories.ConceptFactories;
-import net.digitalid.service.core.factories.Factories;
+import net.digitalid.service.core.identity.Identity;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.wrappers.Block;
+import net.digitalid.service.core.wrappers.ListWrapper;
+import net.digitalid.service.core.wrappers.TupleWrapper;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.annotations.state.Validated;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
-import net.digitalid.utility.database.column.Site;
+import net.digitalid.utility.database.annotations.OnMainThread;
 import net.digitalid.utility.database.configuration.Database;
 
 /**
  * This class models a database table that stores a {@link ReadOnlyProperty property} of a {@link Concept concept}.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public abstract class ConceptPropertyTable<V, C extends Concept<C, E, ?>, E extends Entity<E>> extends StateTable {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Entity Factory –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Type Mappings –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Stores the factories to convert the entity to other representations.
-     */
-    private final @Nonnull Factories<E, Site> entityFactories;
-    
-    /**
-     * Returns the factories to convert the entity to other representations.
+     * Maps the dump type of this table by deriving the identifier from the property name.
      * 
-     * @return the factories to convert the entity to other representations.
+     * @param propertyFactory the factory that contains the name and module of the property.
+     * 
+     * @return the dump type of this table by deriving the identifier from the property name.
      */
-    @Pure
-    public final @Nonnull Factories<E, Site> getEntityFactories() {
-        return entityFactories;
+    @OnMainThread
+    private static @Nonnull @Loaded SemanticType mapDumpType(@Nonnull ConceptPropertyFactory<?, ?, ?> propertyFactory) {
+        final @Nonnull String identifier = propertyFactory.getPropertyName() + propertyFactory.getStateModule().getDumpType().getAddress().getStringWithDot();
+        final @Nonnull SemanticType entry = SemanticType.map("entry." + identifier).load(TupleWrapper.TYPE, Identity.IDENTIFIER, propertyFactory.getConceptFactories().getEncodingFactory().getType(), Time.TYPE, propertyFactory.getValueFactories().getEncodingFactory().getType());
+        return SemanticType.map(identifier).load(ListWrapper.TYPE, entry);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Concept Factory –––––––––––––––––––––––––––––––––––––––––––––––––– */
-    
     /**
-     * Stores the factories to convert the concept to other representations.
-     */
-    private final @Nonnull ConceptFactories<C, E> conceptFactories;
-    
-    /**
-     * Returns the factories to convert the concept to other representations.
+     * Maps the state type of this table by deriving the identifier from the property name.
      * 
-     * @return the factories to convert the concept to other representations.
+     * @param propertyFactory the factory that contains the name and module of the property.
+     * 
+     * @return the state type of this table by deriving the identifier from the property name.
      */
-    @Pure
-    public final @Nonnull ConceptFactories<C, E> getConceptFactories() {
-        return conceptFactories;
+    @OnMainThread
+    private static @Nonnull @Loaded SemanticType mapStateType(@Nonnull ConceptPropertyFactory<?, ?, ?> propertyFactory) {
+        final @Nonnull String identifier = propertyFactory.getPropertyName() + propertyFactory.getStateModule().getStateType().getAddress().getStringWithDot();
+        final @Nonnull SemanticType entry = SemanticType.map("entry." + identifier).load(TupleWrapper.TYPE, propertyFactory.getConceptFactories().getEncodingFactory().getType(), Time.TYPE, propertyFactory.getValueFactories().getEncodingFactory().getType());
+        return SemanticType.map(identifier).load(ListWrapper.TYPE, entry);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value Factory –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Property Factory –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Stores the factories to convert the value of the property to other representations.
+     * Stores the property factory that contains the required information.
      */
-    private final @Nonnull Factories<V, ? super E> valueFactories;
+    private final @Nonnull ConceptPropertyFactory<V, C, E> propertyFactory;
     
     /**
-     * Returns the factories to convert the value of the property to other representations.
+     * Returns the property factory that contains the required information.
      * 
-     * @return the factories to convert the value of the property to other representations.
+     * @return the property factory that contains the required information.
      */
     @Pure
-    public final @Nonnull Factories<V, ? super E> getValueFactories() {
-        return valueFactories;
-    }
-    
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– State Selector –––––––––––––––––––––––––––––––––––––––––––––––––– */
-    
-    /**
-     * Stores the state selector to restrict the returned state.
-     */
-    private final @Nonnull StateSelector stateSelector;
-    
-    /**
-     * Returns the state selector to restrict the returned state.
-     * 
-     * @return the state selector to restrict the returned state.
-     */
-    @Pure
-    public final @Nonnull StateSelector getStateSelector() {
-        return stateSelector;
+    public final @Nonnull ConceptPropertyFactory<V, C, E> getPropertyFactory() {
+        return propertyFactory;
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Creates a new concept property table with the given parameters.
+     * Creates a new concept property table with the given property factory.
      * 
-     * @param module the module to which the new table belongs.
-     * @param name the name of the new table.
-     * @param dumpType the dump type of the new table.
-     * @param stateType the state type of the new table.
-     * @param entityFactories the factories to convert the entity to other representations.
-     * @param conceptFactories the factories to convert the concept to other representations.
-     * @param valueFactories the factories to convert the value of the property to other representations.
-     * @param stateSelector the state selector to restrict the returned state.
-     * 
-     * @require !(module instanceof Service) : "The module is not a service.";
+     * @param propertyFactory the property factory that contains the required information.
      */
-    protected ConceptPropertyTable(@Nonnull StateModule module, @Nonnull @Validated String name, @Nonnull @Loaded SemanticType dumpType, @Nonnull @Loaded SemanticType stateType, @Nonnull Factories<E, Site> entityFactories, @Nonnull ConceptFactories<C, E> conceptFactories, @Nonnull Factories<V, ? super E> valueFactories, @Nonnull StateSelector stateSelector) {
-        super(module, name, dumpType, stateType);
+    protected ConceptPropertyTable(@Nonnull ConceptPropertyFactory<V, C, E> propertyFactory) {
+        super(propertyFactory.getStateModule(), propertyFactory.getPropertyName(), mapDumpType(propertyFactory), mapStateType(propertyFactory));
         
-        this.entityFactories = entityFactories;
-        this.conceptFactories = conceptFactories;
-        this.valueFactories = valueFactories;
-        this.stateSelector = stateSelector;
+        this.propertyFactory = propertyFactory;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– State –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Generic State –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     // Remark: The following methods are only necessary because Java does not allow lower bounds on type parameters.
     
@@ -176,6 +140,8 @@ public abstract class ConceptPropertyTable<V, C extends Concept<C, E, ?>, E exte
             statement.executeUpdate("DELETE FROM " + entity.getSite() + getName() + " WHERE entity = " + entity);
         }
     }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Non-Generic State –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Locked

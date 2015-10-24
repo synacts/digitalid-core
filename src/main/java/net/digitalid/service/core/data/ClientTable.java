@@ -62,7 +62,7 @@ public abstract class ClientTable implements ClientData {
     }
     
     /**
-     * Stores the name of this table.
+     * Stores the name of this table, which has to be unique within the module.
      */
     private final @Nonnull @Validated String name;
     
@@ -84,7 +84,7 @@ public abstract class ClientTable implements ClientData {
      * Creates a new table with the given module and name.
      * 
      * @param module the module to which the new table belongs.
-     * @param name the name of the new table.
+     * @param name the name of the new table (unique within the module).
      * 
      * @require !(module instanceof Service) : "The module is not a service.";
      */

@@ -98,10 +98,10 @@ public abstract class CoreServiceInternalQuery extends InternalQuery {
         if (isLodged() && signature instanceof CredentialsSignatureWrapper) ((CredentialsSignatureWrapper) signature).checkIsLogded();
         final @Nonnull Agent agent = signature.getAgentCheckedAndRestricted(getNonHostAccount(), publicKey);
         
-        final @Nonnull ReadOnlyAgentPermissions permissions = getRequiredPermissions();
+        final @Nonnull ReadOnlyAgentPermissions permissions = getRequiredPermissionsToExecuteMethod();
         if (!permissions.equals(FreezableAgentPermissions.NONE)) agent.getPermissions().checkCover(permissions);
         
-        final @Nonnull Restrictions restrictions = getRequiredRestrictions();
+        final @Nonnull Restrictions restrictions = getRequiredRestrictionsToExecuteMethod();
         if (!restrictions.equals(Restrictions.MIN)) agent.getRestrictions().checkCover(restrictions);
         
         return executeOnHost(agent);

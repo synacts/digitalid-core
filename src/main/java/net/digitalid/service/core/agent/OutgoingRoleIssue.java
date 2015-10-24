@@ -120,7 +120,7 @@ final class OutgoingRoleIssue extends CoreServiceExternalAction {
     
     @Pure
     @Override
-    public @Nonnull Restrictions getAuditRestrictions() {
+    public @Nonnull Restrictions getRequiredRestrictionsToSeeAudit() {
         return new Restrictions(false, true, false);
     }
     

@@ -24,6 +24,6 @@ public interface InternalMethod {
      * @return the restrictions required for this internal method.
      */
     @Pure
-    public @Nonnull Restrictions getRequiredRestrictions();
+    public @Nonnull Restrictions getRequiredRestrictionsToExecuteMethod();
     
 }

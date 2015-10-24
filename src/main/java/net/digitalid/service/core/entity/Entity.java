@@ -7,7 +7,7 @@ import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.handler.Handler;
 import net.digitalid.service.core.identity.Identity;
 import net.digitalid.service.core.identity.InternalIdentity;
-import net.digitalid.service.core.storing.Storable;
+import net.digitalid.utility.database.storing.Storable;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.database.column.Site;

@@ -128,19 +128,19 @@ final class OutgoingRoleContextReplace extends CoreServiceInternalAction {
     
     @Pure
     @Override
-    public @Nonnull Restrictions getRequiredRestrictions() {
+    public @Nonnull Restrictions getRequiredRestrictionsToExecuteMethod() {
         return new Restrictions(false, false, true, newContext);
     }
     
     @Pure
     @Override
-    public @Nonnull Agent getRequiredAgent() {
+    public @Nonnull Agent getRequiredAgentToExecuteMethod() {
         return outgoingRole;
     }
     
     @Pure
     @Override
-    public @Nonnull Agent getAuditAgent() {
+    public @Nonnull Agent getRequiredAgentToSeeAudit() {
         return outgoingRole;
     }
     

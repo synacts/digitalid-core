@@ -164,7 +164,7 @@ public abstract class Method extends Handler {
      * @return the permissions required for this method.
      */
     @Pure
-    public @Nonnull ReadOnlyAgentPermissions getRequiredPermissions() {
+    public @Nonnull ReadOnlyAgentPermissions getRequiredPermissionsToExecuteMethod() {
         return FreezableAgentPermissions.NONE;
     }
     
@@ -292,7 +292,7 @@ public abstract class Method extends Handler {
     private static ReadOnlyAgentPermissions getRequiredPermissions(@Nonnull ReadOnlyList<? extends Method> methods) {
         final @Nonnull FreezableAgentPermissions permissions = new FreezableAgentPermissions();
         for (@Nonnull Method method : methods) {
-            permissions.putAll(method.getRequiredPermissions());
+            permissions.putAll(method.getRequiredPermissionsToExecuteMethod());
         }
         return permissions.freeze();
     }
@@ -396,7 +396,7 @@ public abstract class Method extends Handler {
                 
                 final @Nonnull Restrictions restrictions = agent.getRestrictions();
                 for (@Nonnull Method method : methods) {
-                    if (!restrictions.cover(((InternalMethod) method).getRequiredRestrictions())) throw new PacketException(PacketError.AUTHORIZATION, "The restrictions of the role do not cover the required restrictions.");
+                    if (!restrictions.cover(((InternalMethod) method).getRequiredRestrictionsToExecuteMethod())) throw new PacketException(PacketError.AUTHORIZATION, "The restrictions of the role do not cover the required restrictions.");
                 }
                 
                 if (reference.getService().equals(CoreService.SERVICE)) {

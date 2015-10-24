@@ -133,19 +133,19 @@ final class OutgoingRoleRelationReplace extends CoreServiceInternalAction {
     
     @Pure
     @Override
-    public @Nonnull ReadOnlyAgentPermissions getRequiredPermissions() {
+    public @Nonnull ReadOnlyAgentPermissions getRequiredPermissionsToExecuteMethod() {
         return new FreezableAgentPermissions(newRelation, true).freeze();
     }
     
     @Pure
     @Override
-    public @Nonnull Agent getRequiredAgent() {
+    public @Nonnull Agent getRequiredAgentToExecuteMethod() {
         return outgoingRole;
     }
     
     @Pure
     @Override
-    public @Nonnull Agent getAuditAgent() {
+    public @Nonnull Agent getRequiredAgentToSeeAudit() {
         return outgoingRole;
     }
     

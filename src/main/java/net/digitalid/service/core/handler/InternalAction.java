@@ -90,7 +90,7 @@ public abstract class InternalAction extends Action implements InternalMethod {
     
     @Pure
     @Override
-    public @Nonnull Restrictions getRequiredRestrictions() {
+    public @Nonnull Restrictions getRequiredRestrictionsToExecuteMethod() {
         return Restrictions.MIN;
     }
     

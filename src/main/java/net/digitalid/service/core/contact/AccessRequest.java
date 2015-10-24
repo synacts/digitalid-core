@@ -135,13 +135,13 @@ public final class AccessRequest extends CoreServiceExternalAction {
     
     @Pure
     @Override
-    public @Nonnull ReadOnlyAgentPermissions getRequiredPermissions() {
+    public @Nonnull ReadOnlyAgentPermissions getRequiredPermissionsToExecuteMethod() {
         return permissions.toAgentPermissions().freeze();
     }
     
     @Pure
     @Override
-    public @Nonnull Restrictions getAuditRestrictions() {
+    public @Nonnull Restrictions getRequiredRestrictionsToSeeAudit() {
         return new Restrictions(false, false, true);
     }
     
@@ -157,7 +157,7 @@ public final class AccessRequest extends CoreServiceExternalAction {
     public @Nullable CoreServiceActionReply executeOnHost() throws PacketException, SQLException {
         final @Nonnull SignatureWrapper signature = getSignatureNotNull();
         if (signature instanceof CredentialsSignatureWrapper) {
-            ((CredentialsSignatureWrapper) signature).checkCover(getRequiredPermissions());
+            ((CredentialsSignatureWrapper) signature).checkCover(getRequiredPermissionsToExecuteMethod());
         } else if (signature instanceof ClientSignatureWrapper) {
             throw new PacketException(PacketError.AUTHORIZATION, "Access requests may not be signed by clients.");
         }

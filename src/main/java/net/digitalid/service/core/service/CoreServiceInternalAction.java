@@ -87,7 +87,7 @@ public abstract class CoreServiceInternalAction extends InternalAction {
      * @return the agent required for this internal action of the core service.
      */
     @Pure
-    public @Nullable Agent getRequiredAgent() {
+    public @Nullable Agent getRequiredAgentToExecuteMethod() {
         return null;
     }
     
@@ -118,13 +118,13 @@ public abstract class CoreServiceInternalAction extends InternalAction {
         if (signature instanceof CredentialsSignatureWrapper) ((CredentialsSignatureWrapper) signature).checkIsLogded();
         final @Nonnull Agent agent = signature.getAgentCheckedAndRestricted(getNonHostAccount(), getPublicKey());
         
-        final @Nonnull ReadOnlyAgentPermissions permissions = getRequiredPermissions();
+        final @Nonnull ReadOnlyAgentPermissions permissions = getRequiredPermissionsToExecuteMethod();
         if (!permissions.equals(FreezableAgentPermissions.NONE)) agent.getPermissions().checkCover(permissions);
         
-        final @Nonnull Restrictions restrictions = getRequiredRestrictions();
+        final @Nonnull Restrictions restrictions = getRequiredRestrictionsToExecuteMethod();
         if (!restrictions.equals(Restrictions.MIN)) agent.getRestrictions().checkCover(restrictions);
         
-        final @Nullable Agent other = getRequiredAgent();
+        final @Nullable Agent other = getRequiredAgentToExecuteMethod();
         if (other != null) agent.checkCovers(other);
         
         executeOnBoth();

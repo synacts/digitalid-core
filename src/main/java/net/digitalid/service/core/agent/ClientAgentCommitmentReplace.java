@@ -131,13 +131,13 @@ public final class ClientAgentCommitmentReplace extends CoreServiceInternalActio
     
     @Pure
     @Override
-    public @Nonnull Agent getRequiredAgent() {
+    public @Nonnull Agent getRequiredAgentToExecuteMethod() {
         return clientAgent;
     }
     
     @Pure
     @Override
-    public @Nonnull Agent getAuditAgent() {
+    public @Nonnull Agent getRequiredAgentToSeeAudit() {
         return clientAgent;
     }
     

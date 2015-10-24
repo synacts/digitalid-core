@@ -3,6 +3,8 @@ package net.digitalid.service.core.property.nonnullable;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import net.digitalid.service.core.agent.FreezableAgentPermissions;
+import net.digitalid.service.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.concept.Concept;
@@ -30,15 +32,13 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * Description.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, ?>, E extends Entity<E>> extends ConceptPropertyInternalAction {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Fields –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
+    // TODO: Instead of passing the table, create a new class like NonNullableConceptProperty.Factory that contains all other factories and types (and can also be passed to the table).
     private final @Nonnull NonNullableConceptPropertyTable<V, C, E> table;
     
     private final @Nonnull NonNullableConceptProperty<V, C, E> property;
@@ -54,7 +54,7 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructors –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     private NonNullableConceptPropertyInternalAction(@Nonnull NonNullableConceptPropertyTable<V, C, E> table, @Nonnull NonNullableConceptProperty<V, C, E> property, @Nonnull Time oldTime, @Nonnull Time newTime, @Nonnull V oldValue, @Nonnull V newValue) throws SQLException {
-        super(property.getConcept().getRole(), property.getTable().getService());
+        super(property.getConcept().getRole(), table.getService());
         
         this.table = table;
         this.property = property;
@@ -66,7 +66,7 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
     
     @Pure
     static @Nonnull <V, C extends Concept<C, E, ?>, E extends Entity<E>> NonNullableConceptPropertyInternalAction<V, C, E> get(@Nonnull NonNullableConceptProperty<V, C, E> property, @Nonnull V oldValue, @Nonnull V newValue) throws SQLException {
-        return new NonNullableConceptPropertyInternalAction<>(property.getTable(), property, property.getTime(), Time.getCurrent(), oldValue, newValue);
+        return new NonNullableConceptPropertyInternalAction<>(property.getTable(), property, property.getTime(), Time.getCurrent(), oldValue, newValue); // TODO: Let all the arguments be determined by the caller.
     }
     
     private NonNullableConceptPropertyInternalAction(@Nonnull E entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block content, @Nonnull NonNullableConceptPropertyTable<V, C, E> table) throws SQLException, IOException, PacketException, ExternalException {
@@ -123,7 +123,19 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
         return null;
     }
     
-    // TODO: Get the required permissions, restrictions, etc. from the concept?
+    // TODO: Get the required permissions, restrictions, etc. from the concept? No, from table.getRequiredAuthorization().
+    
+    @Pure
+    @Override
+    public @Nonnull ReadOnlyAgentPermissions getRequiredPermissionsToExecuteMethod() {
+        return table.getRequiredAuthorization().getRequiredPermissions(property.getConcept());
+    }
+    
+    @Pure
+    @Override
+    public @Nonnull ReadOnlyAgentPermissions getRequiredPermissionsToSeeAudit() {
+        return new FreezableAgentPermissions(attribute.getType(), true).freeze();
+    }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -147,29 +159,28 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
         return null;
     }
     
-    /*
-    
-    The Method.add(...) registration with a new action factory needs to be called for each property table.
-    
-    This method factory probably has to pass a locally stored (as a field) concept property table to the property action constructor.
-    
-    */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factory –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * The factory class for the surrounding method.
+     * The factory class for this method.
      */
     @Immutable
-    private static final class Factory<V, C extends Concept<C, E, ?>, E extends Entity<E>> extends Method.Factory {
+    static final class Factory<V, C extends Concept<C, E, ?>, E extends Entity<E>> extends Method.Factory {
         
-    	private @Nonnull NonNullableConceptPropertyTable<V, C, E> conceptPropertyTable;
+    	private final @Nonnull NonNullableConceptPropertyFactory<V, C, E> factory;
+        
+        Factory(@Nonnull NonNullableConceptPropertyFactory<V, C, E> factory) {
+            this.factory = factory;
+            
+            Method.add(factory.getActionType(), this);
+        }
     	
-    	// TODO: parameterize
         @Pure
         @Override
         @NonCommitting
         protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException  {
         	
-            return new NonNullableConceptPropertyInternalAction(entity, signature, recipient, conceptPropertyTable);
+            return new NonNullableConceptPropertyInternalAction((E) entity.toNonHostEntity(), signature, recipient, block, factory);
         }
         
     }

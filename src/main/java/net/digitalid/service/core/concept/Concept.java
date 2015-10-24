@@ -2,22 +2,16 @@ package net.digitalid.service.core.concept;
 
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
-import net.digitalid.service.core.annotations.Loaded;
+import javax.annotation.Nullable;
 import net.digitalid.service.core.annotations.OnlyForClients;
 import net.digitalid.service.core.annotations.OnlyForHosts;
-import net.digitalid.service.core.encoding.AbstractEncodingFactory;
 import net.digitalid.service.core.encoding.Encodable;
-import net.digitalid.service.core.encoding.FactoryBasedEncodingFactory;
 import net.digitalid.service.core.entity.Account;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.entity.Role;
-import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.property.ConceptProperty;
 import net.digitalid.service.core.property.ConceptPropertyTable;
-import net.digitalid.service.core.storing.AbstractStoringFactory;
-import net.digitalid.service.core.storing.FactoryBasedStoringFactory;
-import net.digitalid.service.core.storing.Storable;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
@@ -28,6 +22,7 @@ import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.configuration.Database;
+import net.digitalid.utility.database.storing.Storable;
 
 /**
  * This class models a concept in the {@link Database database}.
@@ -37,9 +32,6 @@ import net.digitalid.utility.database.configuration.Database;
  * @param <E> either {@link Entity} for a general concept or {@link NonHostEntity} for a concept that exists only for non-hosts.
  *            (The type has to be a supertype of {@link NonHostEntity}, which cannot be declared in Java, unfortunately!)
  * @param <K> the type of the key which identifies an instance among all instances of a concept at the same entity.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 public abstract class Concept<C extends Concept<C, E, K>, E extends Entity<E>, K> implements Encodable<C, E>, Storable<C, E> {
     
@@ -145,7 +137,7 @@ public abstract class Concept<C extends Concept<C, E, K>, E extends Entity<E>, K
     /**
      * Stores the properties of this concept.
      */
-    private final @Nonnull @NonNullableElements @NonFrozen FreezableList<ConceptProperty<C>> properties = FreezableLinkedList.get();
+    private final @Nonnull @NonNullableElements @NonFrozen FreezableList<ConceptProperty<?, C, E>> properties = FreezableLinkedList.get();
     
     /**
      * Registers the given property at this concept.
@@ -154,7 +146,7 @@ public abstract class Concept<C extends Concept<C, E, K>, E extends Entity<E>, K
      * 
      * @require property.getConcept() == this : "The given property belongs to this concept.";
      */
-    public void register(@Nonnull ConceptProperty<C> property) {
+    public void register(@Nonnull ConceptProperty<?, C, E> property) {
         assert property.getConcept() == this : "The given property belongs to this concept.";
         
         properties.add(property);
@@ -166,7 +158,7 @@ public abstract class Concept<C extends Concept<C, E, K>, E extends Entity<E>, K
      * @return the properties of this concept.
      */
     @Pure
-    public final @Nonnull @NonNullableElements ReadOnlyList<ConceptProperty<C>> getProperties() {
+    public final @Nonnull @NonNullableElements ReadOnlyList<ConceptProperty<?, C, E>> getProperties() {
         return properties;
     }
     
@@ -176,8 +168,8 @@ public abstract class Concept<C extends Concept<C, E, K>, E extends Entity<E>, K
      * @return the property of this concept with the given table.
      */
     @Pure
-    public final @Nonnull ConceptProperty<C> getProperty(@Nonnull ConceptPropertyTable<?, C, E> table) throws SQLException {
-        for (final @Nonnull ConceptProperty<C> property : properties) {
+    public final @Nonnull ConceptProperty<?, C, E> getProperty(@Nonnull ConceptPropertyTable<?, C, E> table) throws SQLException {
+        for (final @Nonnull ConceptProperty<?, C, E> property : properties) {
             if (property.getTable().equals(table)) return property;
         }
         throw new SQLException("No property is registered for the given table.");
@@ -200,7 +192,7 @@ public abstract class Concept<C extends Concept<C, E, K>, E extends Entity<E>, K
     @Locked
     @NonCommitting
     public void resetAll() throws SQLException {
-        for (final @Nonnull ConceptProperty<C> property : properties) property.reset();
+        for (final @Nonnull ConceptProperty<?, C, E> property : properties) property.reset();
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factory –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -226,121 +218,38 @@ public abstract class Concept<C extends Concept<C, E, K>, E extends Entity<E>, K
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encodable –––––––––––––––––––––––––––––––––––––––––––––––––– */
         
-    /**
-     * The encoding factory for concepts.
-     */
-    @Immutable
-    public static abstract class EncodingFactory<C extends Concept<C, E, K>, E extends Entity<E>, K> extends FactoryBasedEncodingFactory<C, E, K> {
-        
-        /**
-         * Stores the index that caches existing concepts.
-         */
-        private final @Nonnull Index<C, E, K> index;
-        
-        /**
-         * Returns the index that caches existing concepts.
-         * 
-         * @return the index that caches existing concepts.
-         */
-        @Pure
-        public final @Nonnull Index<C, E, K> getIndex() {
-            return index;
-        }
-        
-        /**
-         * Creates a new encoding factory based on the given key factory.
-         * 
-         * @param type the semantic type that corresponds to the encoding class.
-         * @param keyFactory the factory to encode and decode the key.
-         * @param index the index that caches existing concepts.
-         */
-        protected EncodingFactory(@Nonnull @Loaded SemanticType type, @Nonnull AbstractEncodingFactory<K, E> keyFactory, @Nonnull Index<C, E, K> index) {
-            super(type, keyFactory);
-            
-            this.index = index;
-        }
-        
-        /**
-         * Creates a new encoding factory based on the given key factory.
-         * 
-         * @param keyFactory the factory to encode and decode the key.
-         * @param index the index that caches existing concepts.
-         */
-        protected EncodingFactory(@Nonnull AbstractEncodingFactory<K, E> keyFactory, @Nonnull Index<C, E, K> index) {
-            super(keyFactory);
-            
-            this.index = index;
-        }
-        
-        @Pure
-        @Override
-        public final @Nonnull K getKey(@Nonnull C concept) {
-            return concept.getKey();
-        }
-        
-        @Pure
-        @Override
-        public final @Nonnull C getObject(@Nonnull E entity, @Nonnull K key) {
-            return index.get(entity, key);
-        }
-        
-    }
-    
     @Pure
     @Override
-    public abstract @Nonnull EncodingFactory<C, E, K> getEncodingFactory();
-
+    public abstract @Nonnull ConceptEncodingFactory<C, E, K> getEncodingFactory();
+    
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
-    /**
-     * The storing factory for concepts.
-     */
-    @Immutable
-    public static abstract class StoringFactory<C extends Concept<C, E, K>, E extends Entity<E>, K> extends FactoryBasedStoringFactory<C, E, K> {
-        
-        /**
-         * Stores the index that caches existing concepts.
-         */
-        private final @Nonnull Index<C, E, K> index;
-        
-        /**
-         * Returns the index that caches existing concepts.
-         * 
-         * @return the index that caches existing concepts.
-         */
-        @Pure
-        public final @Nonnull Index<C, E, K> getIndex() {
-            return index;
-        }
-        
-        /**
-         * Creates a new storing factory based on the given key factory.
-         * 
-         * @param keyFactory the factory to store and restore the key.
-         * @param index the index that caches existing concepts.
-         */
-        protected StoringFactory(@Nonnull AbstractStoringFactory<K, E> keyFactory, @Nonnull Index<C, E, K> index) {
-            super(keyFactory);
-            
-            this.index = index;
-        }
-        
-        @Pure
-        @Override
-        public final @Nonnull K getKey(@Nonnull C concept) {
-            return concept.getKey();
-        }
-        
-        @Pure
-        @Override
-        public final @Nonnull C getObject(@Nonnull E entity, @Nonnull K key) {
-            return index.get(entity, key);
-        }
-        
+    @Pure
+    @Override
+    public abstract @Nonnull ConceptStoringFactory<C, E, K> getStoringFactory();
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    @Pure
+    @Override
+    public final boolean equals(@Nullable Object object) {
+        if (object == this) return true;
+        if (object == null) return false;
+        if (!object.getClass().equals(getClass())) return false;
+        final @Nonnull Concept<?, ?, ?> other = (Concept) object;
+        return this.getEntity().equals(other.getEntity()) && this.getKey().equals(other.getKey());
     }
     
     @Pure
     @Override
-    public abstract @Nonnull StoringFactory<C, E, K> getStoringFactory();
-
+    public final int hashCode() {
+        return 41 * getEntity().hashCode() + getKey().hashCode();
+    }
+    
+    @Pure
+    @Override
+    public final @Nonnull String toString() {
+        return "The " + getClass().getSimpleName() + " of " + getEntity().getIdentity().getAddress() + ".";
+    }
+    
 }

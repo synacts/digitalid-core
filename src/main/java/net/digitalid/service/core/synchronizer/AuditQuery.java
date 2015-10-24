@@ -107,7 +107,7 @@ final class AuditQuery extends InternalQuery {
     
     @Pure
     @Override
-    public @Nonnull ReadOnlyAgentPermissions getRequiredPermissions() {
+    public @Nonnull ReadOnlyAgentPermissions getRequiredPermissionsToExecuteMethod() {
         return permissions;
     }
     

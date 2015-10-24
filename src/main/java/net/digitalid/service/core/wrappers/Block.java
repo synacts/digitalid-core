@@ -24,7 +24,7 @@ import net.digitalid.service.core.encoding.Encodable;
 import net.digitalid.service.core.encoding.NonRequestingEncodingFactory;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.identity.SemanticType;
-import net.digitalid.service.core.storing.Storable;
+import net.digitalid.utility.database.storing.Storable;
 import net.digitalid.utility.annotations.math.NonNegative;
 import net.digitalid.utility.annotations.math.Positive;
 import net.digitalid.utility.annotations.reference.Capturable;

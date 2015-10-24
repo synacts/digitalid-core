@@ -219,13 +219,13 @@ public final class PushFailed extends ExternalAction {
     
     @Pure
     @Override
-    public @Nonnull ReadOnlyAgentPermissions getAuditPermissions() {
+    public @Nonnull ReadOnlyAgentPermissions getRequiredPermissionsToSeeAudit() {
         return action.getFailedAuditPermissions();
     }
     
     @Pure
     @Override
-    public @Nonnull Restrictions getAuditRestrictions() {
+    public @Nonnull Restrictions getRequiredRestrictionsToSeeAudit() {
         return action.getFailedAuditRestrictions();
     }
     

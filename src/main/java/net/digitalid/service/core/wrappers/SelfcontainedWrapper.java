@@ -16,7 +16,7 @@ import net.digitalid.service.core.identifier.Identifier;
 import net.digitalid.service.core.identifier.IdentifierClass;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
-import net.digitalid.service.core.storing.Storable;
+import net.digitalid.utility.database.storing.Storable;
 import net.digitalid.service.core.wrappers.exceptions.UnexpectedEndOfFileException;
 import net.digitalid.service.core.wrappers.exceptions.UnsupportedBlockLengthException;
 import net.digitalid.utility.annotations.math.NonNegative;

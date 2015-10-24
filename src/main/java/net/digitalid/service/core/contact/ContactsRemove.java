@@ -100,13 +100,13 @@ final class ContactsRemove extends CoreServiceInternalAction {
     
     @Pure
     @Override
-    public @Nonnull Restrictions getRequiredRestrictions() {
+    public @Nonnull Restrictions getRequiredRestrictionsToExecuteMethod() {
         return new Restrictions(false, false, true, context);
     }
     
     @Pure
     @Override
-    public @Nonnull Restrictions getAuditRestrictions() {
+    public @Nonnull Restrictions getRequiredRestrictionsToSeeAudit() {
         return new Restrictions(false, false, false, context);
     }
     

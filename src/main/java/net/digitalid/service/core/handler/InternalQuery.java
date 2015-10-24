@@ -71,7 +71,7 @@ public abstract class InternalQuery extends Query implements InternalMethod {
     
     @Pure
     @Override
-    public @Nonnull Restrictions getRequiredRestrictions() {
+    public @Nonnull Restrictions getRequiredRestrictionsToExecuteMethod() {
         return Restrictions.MIN;
     }
     

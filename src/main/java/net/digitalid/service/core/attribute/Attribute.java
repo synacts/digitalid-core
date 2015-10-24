@@ -11,7 +11,7 @@ import net.digitalid.service.core.expression.PassiveExpression;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.property.nullable.NullableConceptProperty;
 import net.digitalid.service.core.property.nullable.NullableConceptPropertyTable;
-import net.digitalid.service.core.storing.Storable;
+import net.digitalid.utility.database.storing.Storable;
 import net.digitalid.service.core.synchronizer.Synchronizer;
 import net.digitalid.service.core.wrappers.BooleanWrapper;
 import net.digitalid.utility.annotations.reference.Capturable;

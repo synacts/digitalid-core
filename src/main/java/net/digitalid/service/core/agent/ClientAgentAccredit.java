@@ -167,7 +167,7 @@ public final class ClientAgentAccredit extends CoreServiceInternalAction {
     
     @Pure
     @Override
-    public @Nonnull Agent getAuditAgent() {
+    public @Nonnull Agent getRequiredAgentToSeeAudit() {
         return clientAgent;
     }
     

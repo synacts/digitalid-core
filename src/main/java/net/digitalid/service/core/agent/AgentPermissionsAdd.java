@@ -103,19 +103,19 @@ final class AgentPermissionsAdd extends CoreServiceInternalAction {
     
     @Pure
     @Override
-    public @Nonnull ReadOnlyAgentPermissions getRequiredPermissions() {
+    public @Nonnull ReadOnlyAgentPermissions getRequiredPermissionsToExecuteMethod() {
         return permissions;
     }
     
     @Pure
     @Override
-    public @Nonnull Agent getRequiredAgent() {
+    public @Nonnull Agent getRequiredAgentToExecuteMethod() {
         return agent;
     }
     
     @Pure
     @Override
-    public @Nonnull Agent getAuditAgent() {
+    public @Nonnull Agent getRequiredAgentToSeeAudit() {
         return agent;
     }
     

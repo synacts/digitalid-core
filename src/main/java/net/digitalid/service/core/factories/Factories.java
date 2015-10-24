@@ -3,7 +3,7 @@ package net.digitalid.service.core.factories;
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.encoding.AbstractEncodingFactory;
 import net.digitalid.service.core.entity.Entity;
-import net.digitalid.service.core.storing.AbstractStoringFactory;
+import net.digitalid.utility.database.storing.AbstractStoringFactory;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 

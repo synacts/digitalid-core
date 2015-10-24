@@ -29,7 +29,7 @@ public interface Auditable {
      * @ensure return.areEmptyOrSingle() : "The returned permissions are empty or single.";
      */
     @Pure
-    public @Nonnull ReadOnlyAgentPermissions getAuditPermissions();
+    public @Nonnull ReadOnlyAgentPermissions getRequiredPermissionsToSeeAudit();
     
     /**
      * Returns the restrictions that an agent needs to cover in order to see the audit of this handler.
@@ -37,7 +37,7 @@ public interface Auditable {
      * @return the restrictions that an agent needs to cover in order to see the audit of this handler.
      */
     @Pure
-    public @Nonnull Restrictions getAuditRestrictions();
+    public @Nonnull Restrictions getRequiredRestrictionsToSeeAudit();
     
     /**
      * Returns the agent that an agent needs to cover in order to see the audit of this handler.
@@ -45,6 +45,6 @@ public interface Auditable {
      * @return the agent that an agent needs to cover in order to see the audit of this handler.
      */
     @Pure
-    public @Nullable Agent getAuditAgent();
+    public @Nullable Agent getRequiredAgentToSeeAudit();
 
 }

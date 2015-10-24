@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.concept.Concept;
+import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.property.extensible.ExtensibleConceptProperty;
 import net.digitalid.service.core.property.indexed.IndexedConceptProperty;
 import net.digitalid.service.core.property.nonnullable.NonNullableConceptProperty;
@@ -19,27 +20,24 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * @see NonNullableConceptProperty
  * @see ExtensibleConceptProperty
  * @see IndexedConceptProperty
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
-public interface ConceptProperty<C extends Concept<C, ?, ?>> {
+public interface ConceptProperty<V, C extends Concept<C, E, ?>, E extends Entity<E>> {
     
     /**
-     * Returns the concept of this property.
+     * Returns the property factory that contains the required information.
      * 
-     * @return the concept of this property.
+     * @return the property factory that contains the required information.
+     */
+    @Pure
+    public @Nonnull ConceptPropertyFactory<V, C, E> getPropertyFactory();
+    
+    /**
+     * Returns the concept to which this property belongs.
+     * 
+     * @return the concept to which this property belongs.
      */
     @Pure
     public @Nonnull C getConcept();
-    
-    /**
-     * Returns the table which stores the time and value of this property.
-     * 
-     * @return the table which stores the time and value of this property.
-     */
-    @Pure
-    public @Nonnull ConceptPropertyTable<?, C, ?> getTable();
     
     /**
      * Returns the time of the last modification.

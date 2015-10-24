@@ -128,7 +128,7 @@ public final class AttributesQuery extends CoreServiceExternalQuery {
     
     @Pure
     @Override
-    public @Nonnull ReadOnlyAgentPermissions getRequiredPermissions() {
+    public @Nonnull ReadOnlyAgentPermissions getRequiredPermissionsToExecuteMethod() {
         return attributeTypes.toAgentPermissions().freeze();
     }
     

@@ -169,13 +169,13 @@ final class CredentialInternalQuery extends CoreServiceInternalQuery {
     
     @Pure
     @Override
-    public @Nonnull ReadOnlyAgentPermissions getRequiredPermissions() {
+    public @Nonnull ReadOnlyAgentPermissions getRequiredPermissionsToExecuteMethod() {
         return permissions.getPermissionsNotNull();
     }
     
     @Pure
     @Override
-    public @Nonnull Restrictions getRequiredRestrictions() {
+    public @Nonnull Restrictions getRequiredRestrictionsToExecuteMethod() {
         if (relation == null) return Restrictions.MIN;
         else return Restrictions.ROLE;
     }

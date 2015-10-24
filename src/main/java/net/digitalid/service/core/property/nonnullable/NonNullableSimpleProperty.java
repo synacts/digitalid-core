@@ -28,7 +28,7 @@ public final class NonNullableSimpleProperty<V> extends WriteableNonNullableProp
     
     @Override
     public void set(@Nonnull @Validated V newValue) {
-        assert getValidator().isValid(newValue) : "The new value is valid.";
+        assert getValueValidator().isValid(newValue) : "The new value is valid.";
         
         final @Nonnull V oldValue = this.value;
         this.value = newValue;

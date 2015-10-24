@@ -110,7 +110,7 @@ public final class CertificateIssue extends CoreServiceExternalAction {
     
     @Pure
     @Override
-    public @Nonnull ReadOnlyAgentPermissions getAuditPermissions() {
+    public @Nonnull ReadOnlyAgentPermissions getRequiredPermissionsToSeeAudit() {
         return new FreezableAgentPermissions(certificate.getContent().getType(), false).freeze();
     }
     

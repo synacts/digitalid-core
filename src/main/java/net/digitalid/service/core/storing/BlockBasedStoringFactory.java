@@ -1,5 +1,7 @@
 package net.digitalid.service.core.storing;
 
+import net.digitalid.utility.database.storing.AbstractStoringFactory;
+import net.digitalid.utility.database.storing.Store;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

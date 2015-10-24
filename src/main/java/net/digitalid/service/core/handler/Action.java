@@ -101,19 +101,19 @@ public abstract class Action extends Method implements Auditable {
     
     @Pure
     @Override
-    public @Nonnull ReadOnlyAgentPermissions getAuditPermissions() {
+    public @Nonnull ReadOnlyAgentPermissions getRequiredPermissionsToSeeAudit() {
         return FreezableAgentPermissions.NONE;
     }
     
     @Pure
     @Override
-    public @Nonnull Restrictions getAuditRestrictions() {
+    public @Nonnull Restrictions getRequiredRestrictionsToSeeAudit() {
         return Restrictions.MIN;
     }
     
     @Pure
     @Override
-    public @Nullable Agent getAuditAgent() {
+    public @Nullable Agent getRequiredAgentToSeeAudit() {
         return null;
     }
     

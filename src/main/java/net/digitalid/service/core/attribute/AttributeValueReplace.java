@@ -144,13 +144,13 @@ final class AttributeValueReplace extends CoreServiceInternalAction {
     
     @Pure
     @Override
-    public @Nonnull ReadOnlyAgentPermissions getRequiredPermissions() {
+    public @Nonnull ReadOnlyAgentPermissions getRequiredPermissionsToExecuteMethod() {
         return new FreezableAgentPermissions(attribute.getType(), true).freeze();
     }
     
     @Pure
     @Override
-    public @Nonnull ReadOnlyAgentPermissions getAuditPermissions() {
+    public @Nonnull ReadOnlyAgentPermissions getRequiredPermissionsToSeeAudit() {
         return new FreezableAgentPermissions(attribute.getType(), false).freeze();
     }
     

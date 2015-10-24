@@ -1,6 +1,6 @@
 package net.digitalid.service.core.agent;
 
-import net.digitalid.service.core.storing.Storable;
+import net.digitalid.utility.database.storing.Storable;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

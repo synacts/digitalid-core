@@ -53,7 +53,7 @@ public abstract class HostTable extends ClientTable implements HostData {
      * Creates a new host table with the given parameters.
      * 
      * @param module the module to which the new table belongs.
-     * @param name the name of the new table.
+     * @param name the name of the new table (unique within the module).
      * @param dumpType the dump type of the new table.
      * 
      * @require !(module instanceof Service) : "The module is not a service.";

@@ -87,13 +87,13 @@ final class AgentRemove extends CoreServiceInternalAction {
     
     @Pure
     @Override
-    public @Nonnull Agent getRequiredAgent() {
+    public @Nonnull Agent getRequiredAgentToExecuteMethod() {
         return agent;
     }
     
     @Pure
     @Override
-    public @Nonnull Agent getAuditAgent() {
+    public @Nonnull Agent getRequiredAgentToSeeAudit() {
         return agent;
     }
     

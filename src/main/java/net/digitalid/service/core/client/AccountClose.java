@@ -110,25 +110,25 @@ public final class AccountClose extends CoreServiceInternalAction {
     
     @Pure
     @Override
-    public @Nonnull ReadOnlyAgentPermissions getRequiredPermissions() {
+    public @Nonnull ReadOnlyAgentPermissions getRequiredPermissionsToExecuteMethod() {
         return FreezableAgentPermissions.GENERAL_WRITE;
     }
     
     @Pure
     @Override
-    public @Nonnull Restrictions getRequiredRestrictions() {
+    public @Nonnull Restrictions getRequiredRestrictionsToExecuteMethod() {
         return restrictions;
     }
     
     @Pure
     @Override
-    public @Nonnull ReadOnlyAgentPermissions getAuditPermissions() {
+    public @Nonnull ReadOnlyAgentPermissions getRequiredPermissionsToSeeAudit() {
         return FreezableAgentPermissions.GENERAL_WRITE;
     }
     
     @Pure
     @Override
-    public @Nonnull Restrictions getAuditRestrictions() {
+    public @Nonnull Restrictions getRequiredRestrictionsToSeeAudit() {
         return restrictions;
     }
     

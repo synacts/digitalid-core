@@ -209,14 +209,14 @@ public final class PushReturned extends ExternalAction {
     
     @Pure
     @Override
-    public @Nonnull ReadOnlyAgentPermissions getAuditPermissions() {
-        return reply.getAuditPermissions();
+    public @Nonnull ReadOnlyAgentPermissions getRequiredPermissionsToSeeAudit() {
+        return reply.getRequiredPermissionsToSeeAudit();
     }
     
     @Pure
     @Override
-    public @Nonnull Restrictions getAuditRestrictions() {
-        return reply.getAuditRestrictions();
+    public @Nonnull Restrictions getRequiredRestrictionsToSeeAudit() {
+        return reply.getRequiredRestrictionsToSeeAudit();
     }
     
     

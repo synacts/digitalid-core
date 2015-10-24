@@ -5,7 +5,9 @@ import javax.annotation.Nullable;
 import net.digitalid.service.core.agent.Agent;
 import net.digitalid.service.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.service.core.agent.Restrictions;
+import net.digitalid.service.core.concept.Concept;
 import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.annotations.state.Stateless;
 
 /**
  * A state selector returns the SQL condition with which the returned state is restricted.
@@ -15,7 +17,8 @@ import net.digitalid.utility.annotations.state.Pure;
  * @author Kaspar Etter (kaspar.etter@digitalid.net)
  * @version 1.0.0
  */
-public interface StateSelector {
+@Stateless
+public abstract class RequiredAuthorization<C extends Concept<C, ?, ?>> {
     
     /**
      * Returns the SQL condition with which the returned state is restricted.
@@ -27,6 +30,9 @@ public interface StateSelector {
      * @return the SQL condition with which the returned state is restricted.
      */
     @Pure
-    public @Nonnull String getCondition(@Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent);
+    public abstract @Nonnull String getStateFilter(@Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent);
+    
+    @Pure
+    public abstract @Nonnull ReadOnlyAgentPermissions getRequiredPermissions(C concept);
     
 }

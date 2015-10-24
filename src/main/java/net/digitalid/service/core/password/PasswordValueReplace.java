@@ -131,13 +131,13 @@ final class PasswordValueReplace extends CoreServiceInternalAction {
     
     @Pure
     @Override
-    public @Nonnull Restrictions getRequiredRestrictions() {
+    public @Nonnull Restrictions getRequiredRestrictionsToExecuteMethod() {
         return new Restrictions(true, false, true);
     }
     
     @Pure
     @Override
-    public @Nonnull Restrictions getAuditRestrictions() {
+    public @Nonnull Restrictions getRequiredRestrictionsToSeeAudit() {
         return new Restrictions(true, false, false);
     }
     

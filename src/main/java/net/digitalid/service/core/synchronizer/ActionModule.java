@@ -265,9 +265,9 @@ public final class ActionModule implements StateModule {
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
             entity.set(preparedStatement, 1);
             action.getService().set(preparedStatement, 2);
-            action.getAuditPermissions().setEmptyOrSingle(preparedStatement, 3);
-            action.getAuditRestrictions().set(preparedStatement, 5);
-            Agent.set(action.getAuditAgent(), preparedStatement, 10);
+            action.getRequiredPermissionsToSeeAudit().setEmptyOrSingle(preparedStatement, 3);
+            action.getRequiredRestrictionsToSeeAudit().set(preparedStatement, 5);
+            Agent.set(action.getRequiredAgentToSeeAudit(), preparedStatement, 10);
             action.getRecipient().set(preparedStatement, 11);
             action.getSignatureNotNull().toBlock().set(preparedStatement, 12);
             preparedStatement.executeUpdate();

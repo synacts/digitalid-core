@@ -11,7 +11,7 @@ import net.digitalid.service.core.annotations.BasedOn;
 import net.digitalid.service.core.encoding.NonRequestingEncodingFactory;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.identity.SemanticType;
-import net.digitalid.service.core.storing.Storable;
+import net.digitalid.utility.database.storing.Storable;
 import net.digitalid.service.core.wrappers.Block;
 import net.digitalid.service.core.wrappers.BytesWrapper;
 import net.digitalid.service.core.wrappers.EncryptionWrapper;

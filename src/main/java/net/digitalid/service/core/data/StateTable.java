@@ -58,7 +58,7 @@ public abstract class StateTable extends HostTable implements StateData {
      * Creates a new state table with the given parameters.
      * 
      * @param module the module to which the new table belongs.
-     * @param name the name of the new table.
+     * @param name the name of the new table (unique within the module).
      * @param dumpType the dump type of the new table.
      * @param stateType the state type of the new table.
      * 
