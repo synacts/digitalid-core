@@ -25,9 +25,6 @@ import net.digitalid.utility.system.logger.Log;
  * <p>
  * <em>Important:</em> SQL injections have to be prevented by the caller of this class!
  * Only a warning is issued when the character might be used in an unprepared SQL statement.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public final class StringWrapper extends Wrapper<StringWrapper> {

@@ -20,9 +20,6 @@ import net.digitalid.utility.database.column.SQLType;
 
 /**
  * This class wraps a {@code short} for encoding and decoding a block of the syntactic type {@code int16@core.digitalid.net}.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public final class Int16Wrapper extends Wrapper<Int16Wrapper> {

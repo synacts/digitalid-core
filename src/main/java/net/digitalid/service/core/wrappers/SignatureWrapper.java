@@ -48,9 +48,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * @see HostSignatureWrapper
  * @see ClientSignatureWrapper
  * @see CredentialsSignatureWrapper
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {

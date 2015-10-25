@@ -25,9 +25,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * Replaces the {@link Commitment commitment} of a {@link ClientAgent client agent}.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public final class ClientAgentCommitmentReplace extends CoreServiceInternalAction {

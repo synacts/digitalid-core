@@ -47,9 +47,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * Requests a new identity- or role-based credential with the given permissions and relation.
  * 
  * @see CredentialReply
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 final class CredentialInternalQuery extends CoreServiceInternalQuery {

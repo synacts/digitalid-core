@@ -11,9 +11,6 @@ import net.digitalid.service.core.identifier.Identifier;
  * This annotation indicates that a method should only be invoked on a {@link Identifier#isNotMapped() not mapped} {@link Identifier identifier}.
  * 
  * @see NonMapped
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Documented
 @Target(ElementType.METHOD)

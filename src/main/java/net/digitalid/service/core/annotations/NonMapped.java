@@ -11,9 +11,6 @@ import net.digitalid.service.core.identifier.Identifier;
  * This annotation indicates that an {@link Identifier identifier} is {@link Identifier#isNotMapped() not mapped}.
  * 
  * @see Mapped
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Documented
 @TargetType(Identifier.class)

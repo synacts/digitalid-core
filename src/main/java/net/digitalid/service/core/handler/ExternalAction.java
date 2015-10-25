@@ -28,9 +28,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * @invariant hasEntity() : "This external action has an entity.";
  * 
  * @see CoreServiceExternalAction
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public abstract class ExternalAction extends Action {

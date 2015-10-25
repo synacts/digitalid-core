@@ -40,9 +40,6 @@ import net.digitalid.utility.system.logger.Log;
  * This class wraps an {@link Block element} for encoding and decoding a block of the syntactic type {@code signature@core.digitalid.net} that is signed by a client.
  * <p>
  * Format: {@code (commitment, t, s)}
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public final class ClientSignatureWrapper extends SignatureWrapper {

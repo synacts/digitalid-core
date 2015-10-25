@@ -18,9 +18,6 @@ import net.digitalid.utility.annotations.state.Pure;
  * @param <E> the type of the external object that is needed to decode a block, which is quite often an {@link Entity}.
  *            In case no external information is needed for the decoding of a block, declare it as an {@link Object}.
  * @param <K> the type of the objects that the other factory encodes and decodes (usually as a key for the objects of this factory).
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public abstract class FactoryBasedEncodingFactory<O, E, K> extends AbstractEncodingFactory<O, E> {

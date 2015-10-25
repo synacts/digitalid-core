@@ -28,9 +28,6 @@ import net.digitalid.utility.collections.tuples.ReadOnlyPair;
  * 
  * @see PublicKeyChain
  * @see PrivateKeyChain
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 abstract class KeyChain<K extends Storable<K>, C extends KeyChain<K, C>> implements Storable<C> {

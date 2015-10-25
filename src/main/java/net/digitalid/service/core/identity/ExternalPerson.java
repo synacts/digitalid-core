@@ -12,9 +12,6 @@ import net.digitalid.utility.annotations.state.Pure;
  * 
  * @see EmailPerson
  * @see MobilePerson
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public abstract class ExternalPerson extends Person implements ExternalIdentity {

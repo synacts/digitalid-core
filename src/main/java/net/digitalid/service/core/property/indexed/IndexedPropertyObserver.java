@@ -6,9 +6,6 @@ import net.digitalid.utility.collections.readonly.ReadOnlyMap;
 
 /**
  * Description.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 0.0
  */
 public interface IndexedPropertyObserver<K, V, R extends ReadOnlyMap<K, V>> extends PropertyObserver {
     

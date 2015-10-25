@@ -26,9 +26,6 @@ import net.digitalid.utility.database.configuration.Database;
  * @see PassiveExpression
  * @see PersonalExpression
  * @see ImpersonalExpression
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 abstract class AbstractExpression extends NonHostConcept implements Blockable, SQLizable {

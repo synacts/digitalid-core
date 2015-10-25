@@ -9,9 +9,6 @@ import net.digitalid.service.core.wrappers.SignatureWrapper;
 
 /**
  * This annotation indicates that a {@link SignatureWrapper signature} has a {@link SignatureWrapper#hasSubject() subject}.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Documented
 @Retention(RetentionPolicy.CLASS)

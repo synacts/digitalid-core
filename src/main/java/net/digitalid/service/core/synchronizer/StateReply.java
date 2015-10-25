@@ -25,9 +25,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * Replies the state of the given entity.
  * 
  * @see StateQuery
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 final class StateReply extends QueryReply {

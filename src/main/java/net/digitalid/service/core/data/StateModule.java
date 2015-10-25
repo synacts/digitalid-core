@@ -34,9 +34,6 @@ import net.digitalid.utility.database.annotations.OnMainThread;
 
 /**
  * State modules are used on both {@link Host hosts} and {@link Client clients}.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 public class StateModule extends HostModule implements StateData {
     

@@ -29,9 +29,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * 
  * @see InternalAction
  * @see ExternalAction
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public abstract class Action extends Method implements Auditable {

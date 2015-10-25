@@ -14,9 +14,6 @@ import net.digitalid.utility.annotations.state.Pure;
 
 /**
  * This class models the {@link QueryReply query replies} of the {@link CoreService core service}.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 public abstract class CoreServiceQueryReply extends QueryReply {
     

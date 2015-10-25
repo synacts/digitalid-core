@@ -17,9 +17,6 @@ import net.digitalid.utility.annotations.state.Immutable;
  * Query replies are read with getter methods on the handler.
  * 
  * @see CoreServiceQueryReply
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public abstract class QueryReply extends Reply {

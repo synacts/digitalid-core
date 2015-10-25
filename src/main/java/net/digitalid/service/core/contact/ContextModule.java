@@ -52,9 +52,6 @@ import net.digitalid.utility.database.configuration.Database;
  * – Agents cannot be restricted to a specific context and see thus always everything (including the contacts).
  * 
  * What happens when a context is removed and an outgoing role or a client depends on one of its subcontexts (including itself)?
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 0.1
  */
 @Stateless
 public final class ContextModule implements StateModule {

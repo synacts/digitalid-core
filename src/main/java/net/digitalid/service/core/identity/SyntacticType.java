@@ -23,9 +23,6 @@ import net.digitalid.utility.database.configuration.Database;
 
 /**
  * This class models a syntactic type.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public final class SyntacticType extends Type {

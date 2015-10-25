@@ -16,9 +16,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * This class models context expressions.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 final class ContextExpression extends Expression {

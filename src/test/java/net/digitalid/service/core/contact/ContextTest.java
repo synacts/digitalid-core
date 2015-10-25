@@ -13,9 +13,6 @@ import org.junit.runners.MethodSorters;
 
 /**
  * Unit testing of the {@link Context context} with its {@link Action actions}.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public final class ContextTest extends IdentitySetup {

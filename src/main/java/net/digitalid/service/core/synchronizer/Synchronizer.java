@@ -34,9 +34,6 @@ import net.digitalid.utility.system.thread.NamedThreadFactory;
 
 /**
  * This class synchronizes {@link InternalAction internal actions}.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 public final class Synchronizer extends Thread {
     

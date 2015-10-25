@@ -9,9 +9,6 @@ import net.digitalid.utility.annotations.state.Pure;
  * This interface models an external identity.
  * 
  * @see ExternalPerson
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public interface ExternalIdentity extends Identity {

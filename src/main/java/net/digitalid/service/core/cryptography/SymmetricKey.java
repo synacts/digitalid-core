@@ -35,9 +35,6 @@ import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 
 /**
  * Symmetric keys are used to encrypt and decrypt byte arrays with the Advanced Encryption Standard (AES).
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public final class SymmetricKey implements Storable<SymmetricKey> {

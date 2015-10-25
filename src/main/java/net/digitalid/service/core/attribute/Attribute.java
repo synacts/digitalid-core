@@ -28,9 +28,6 @@ import net.digitalid.utility.database.configuration.Database;
  * This class models an attribute with its value and visibility.
  * 
  * @see AttributeModule
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public final class Attribute extends GeneralConcept implements Storable<Attribute> {

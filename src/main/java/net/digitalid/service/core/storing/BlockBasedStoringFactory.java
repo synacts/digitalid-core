@@ -31,9 +31,6 @@ import net.digitalid.utility.database.configuration.Database;
  * @param <O> the type of the objects that this factory can store and restore, which is typically the surrounding class.
  * @param <E> the type of the external object that is needed to restore an object, which is quite often an {@link Entity}.
  *            In case no external information is needed for the restoration of an object, declare it as an {@link Object}.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public final class BlockBasedStoringFactory<O, E> extends AbstractStoringFactory<O, E> {

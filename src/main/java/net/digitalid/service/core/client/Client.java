@@ -65,9 +65,6 @@ import net.digitalid.utility.system.directory.Directory;
  * A client is configured with an identifier and a secret.
  * 
  * TODO: Make sure that the client secret gets rotated!
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 public class Client extends Site implements Observer {
     

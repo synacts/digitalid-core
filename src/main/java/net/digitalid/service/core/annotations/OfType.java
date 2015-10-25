@@ -13,9 +13,6 @@ import net.digitalid.service.core.identity.Type;
  * This annotation indicates that the {@link Identity identity} of an {@link Entity entity} denotes an {@link Type type}.
  * 
  * @see OfInternalPerson
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Documented
 @TargetType(Entity.class)

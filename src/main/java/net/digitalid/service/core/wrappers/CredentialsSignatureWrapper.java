@@ -77,9 +77,6 @@ import net.digitalid.utility.system.logger.Log;
  * - Attribute-based requests: The value v is the hash of the anonymous identity's identifier and is never disclosed.<br>
  * <p>
  * The randomized permissions are always disclosed unless a commitment is given for certificate shortening.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public final class CredentialsSignatureWrapper extends SignatureWrapper {

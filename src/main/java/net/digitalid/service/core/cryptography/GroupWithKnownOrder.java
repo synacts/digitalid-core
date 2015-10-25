@@ -15,9 +15,6 @@ import net.digitalid.utility.collections.freezable.FreezableArray;
 
 /**
  * This class models a multiplicative group with known order.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public final class GroupWithKnownOrder extends Group<GroupWithKnownOrder> {

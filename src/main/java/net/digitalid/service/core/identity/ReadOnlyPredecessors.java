@@ -21,9 +21,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * This interface provides read-only access to {@link FreezablePredecessors predecessors} and should <em>never</em> be cast away.
  * 
  * @see FreezablePredecessors
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 public interface ReadOnlyPredecessors extends ReadOnlyList<Predecessor>, Blockable {
 

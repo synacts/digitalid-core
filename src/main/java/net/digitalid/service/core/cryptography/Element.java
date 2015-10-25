@@ -15,9 +15,6 @@ import net.digitalid.utility.annotations.state.Pure;
  * An element is a number in a certain group.
  * 
  * @invariant getValue().compareTo(BigInteger.ZERO) >= 0 && getValue().compareTo(getGroup().getModulus()) == -1 : "The value is non-negative and smaller than the group modulus.";
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public final class Element extends Number<Element> {

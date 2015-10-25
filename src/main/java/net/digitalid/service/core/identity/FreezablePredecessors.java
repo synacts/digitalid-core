@@ -36,9 +36,6 @@ import net.digitalid.utility.system.errors.InitializationError;
  * 
  * @invariant doesNotContainNull() : "This list of predecessors does not contain null.";
  * @invariant doesNotContainDuplicates() : "This list of predecessors does not contain duplicates.";
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 public final class FreezablePredecessors extends FreezableArrayList<Predecessor> implements ReadOnlyPredecessors {
     

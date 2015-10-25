@@ -27,9 +27,6 @@ import net.digitalid.utility.database.column.SQLType;
 
 /**
  * The random initialization vector ensures that multiple {@link EncryptionWrapper encryptions} of the same {@link Block block} are different.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public final class InitializationVector extends IvParameterSpec implements Storable<InitializationVector, Object> {

@@ -35,9 +35,6 @@ import net.digitalid.utility.database.configuration.Database;
 
 /**
  * Contacts have certain {@link FreezableContactPermissions permissions} and {@link FreezableAuthentications authentications}.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 0.6
  */
 @Immutable
 public final class Contact extends NonHostConcept implements Blockable, SQLizable {

@@ -28,9 +28,6 @@ import net.digitalid.utility.database.annotations.OnMainThread;
 
 /**
  * Host modules are only used on {@link Host hosts}.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 public class HostModule extends ClientModule implements HostData {
     

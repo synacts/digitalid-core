@@ -38,9 +38,6 @@ import net.digitalid.utility.database.configuration.Database;
  * @see RoleModule
  * @see NativeRole
  * @see NonNativeRole
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public abstract class Role extends EntityClass implements NonHostEntity, Observer {

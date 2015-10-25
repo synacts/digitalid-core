@@ -20,9 +20,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * 
  * @see InternalQuery
  * @see ExternalQuery
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public abstract class Query extends Method {

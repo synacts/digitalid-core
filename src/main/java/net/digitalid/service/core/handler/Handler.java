@@ -21,9 +21,6 @@ import net.digitalid.utility.annotations.state.Pure;
  * 
  * @see Method
  * @see Reply
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public abstract class Handler<O, E> implements Encodable<O, E> {

@@ -25,9 +25,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * This class facilitates the encoding and decoding of certified attribute values.
  * 
  * @invariant getContent().getType().isAttributeFor(getSubject().getCategory()) : "The content is an attribute for the subject.";
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public final class CertifiedAttributeValue extends AttributeValue {

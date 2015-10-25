@@ -19,9 +19,6 @@ import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 
 /**
  * This class enumerates the various categories of digital identities.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public enum Category implements Blockable, SQLizable {

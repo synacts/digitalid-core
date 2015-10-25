@@ -34,9 +34,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * @see EmptyExpression
  * @see EverybodyExpression
  * @see RestrictionExpression
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 abstract class Expression extends NonHostConcept {

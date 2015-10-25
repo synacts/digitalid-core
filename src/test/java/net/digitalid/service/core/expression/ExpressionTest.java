@@ -7,9 +7,6 @@ import org.junit.Test;
 
 /**
  * Unit testing of the class {@link Expression}.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 0.1
  */
 public final class ExpressionTest {
     

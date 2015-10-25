@@ -26,9 +26,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * Replaces the value of a {@link Password password}.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 final class PasswordValueReplace extends CoreServiceInternalAction {

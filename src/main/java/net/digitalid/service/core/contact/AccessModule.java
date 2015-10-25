@@ -28,9 +28,6 @@ import net.digitalid.utility.database.configuration.Database;
 
 /**
  * This class provides database access to the {@link AccessRequest access requests} of the core service.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 0.0
  */
 @Stateless
 final class AccessModule implements StateModule {

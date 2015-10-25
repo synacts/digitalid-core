@@ -38,9 +38,6 @@ import net.digitalid.utility.system.directory.Directory;
  * A host stores a {@link KeyPair} and is run by a {@link Server}.
  * 
  * TODO: Make sure that the host keys get rotated!
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 public final class Host extends Site {
     

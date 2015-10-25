@@ -22,9 +22,6 @@ import net.digitalid.utility.system.errors.ShouldNeverHappenError;
  * Client modules are only used on {@link Client clients}.
  * 
  * @see HostModule
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 public class ClientModule implements ClientData {
     

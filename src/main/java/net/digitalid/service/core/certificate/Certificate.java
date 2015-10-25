@@ -22,9 +22,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * Description.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 0.0
  */
 public final class Certificate extends NonHostConcept {
     

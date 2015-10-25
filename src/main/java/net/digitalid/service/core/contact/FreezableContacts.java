@@ -28,9 +28,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * This class models a set of {@link Contact contacts}.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 public final class FreezableContacts extends FreezableLinkedHashSet<Contact> implements ReadOnlyContacts {
     

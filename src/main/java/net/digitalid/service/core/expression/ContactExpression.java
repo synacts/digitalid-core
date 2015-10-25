@@ -14,9 +14,6 @@ import net.digitalid.utility.collections.freezable.FreezableSet;
 
 /**
  * This class models contact expressions.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 final class ContactExpression extends Expression {

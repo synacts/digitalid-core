@@ -34,9 +34,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * Closes the account and sets the given successor.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public final class AccountClose extends CoreServiceInternalAction {

@@ -31,9 +31,6 @@ import net.digitalid.utility.system.logger.Log;
  * A sender sends {@link InternalAction internal actions} asynchronously.
  * 
  * @see Synchronizer
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 public final class Sender extends Thread {
     

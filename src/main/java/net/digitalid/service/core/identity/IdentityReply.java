@@ -26,9 +26,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * Replies the identity of the given subject.
  * 
  * @see IdentityQuery
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public final class IdentityReply extends CoreServiceQueryReply {

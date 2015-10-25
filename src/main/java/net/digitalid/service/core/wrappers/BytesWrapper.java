@@ -27,9 +27,6 @@ import net.digitalid.utility.database.configuration.Database;
  * This class wraps {@code byte[]} for encoding and decoding a block of the syntactic type {@code bytes@core.digitalid.net}.
  * 
  * @invariant (bytes == null) != (block == null) : "Either the bytes or the block is null.";
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public final class BytesWrapper extends Wrapper<BytesWrapper> {

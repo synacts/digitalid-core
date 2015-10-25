@@ -10,9 +10,6 @@ import org.junit.Test;
 
 /**
  * Unit testing of the class {@link Int32Wrapper}.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 public final class Int32WrapperTest extends DatabaseSetup {
     

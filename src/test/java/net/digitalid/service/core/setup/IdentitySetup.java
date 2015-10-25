@@ -25,9 +25,6 @@ import org.junit.Test;
 
 /**
  * Sets up an {@link Identity} for testing.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 public class IdentitySetup extends ServerSetup {
     

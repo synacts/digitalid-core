@@ -24,9 +24,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * 
  * @see StateTable
  * @see StateModule
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 public interface StateData extends HostData {
     

@@ -10,9 +10,6 @@ import net.digitalid.utility.annotations.state.Pure;
  * 
  * @see Type
  * @see InternalPerson
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public interface InternalNonHostIdentity extends InternalIdentity, NonHostIdentity {

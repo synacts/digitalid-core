@@ -11,9 +11,6 @@ import net.digitalid.service.core.client.Client;
  * This annotation indicates that a method should only be called by {@link Client clients}.
  * 
  * @see OnlyForHosts
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Documented
 @Retention(RetentionPolicy.CLASS)

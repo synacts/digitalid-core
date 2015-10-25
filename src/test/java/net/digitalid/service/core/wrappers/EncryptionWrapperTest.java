@@ -10,9 +10,6 @@ import org.junit.Test;
 
 /**
  * Unit testing of the class {@link EncryptionWrapper}.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 public final class EncryptionWrapperTest extends ServerSetup {
     

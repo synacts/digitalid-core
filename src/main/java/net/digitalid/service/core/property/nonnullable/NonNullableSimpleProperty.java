@@ -7,9 +7,6 @@ import net.digitalid.utility.annotations.state.Validated;
 
 /**
  * This property stores a replaceable value that cannot be null.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 public final class NonNullableSimpleProperty<V> extends WriteableNonNullableProperty<V> {
     

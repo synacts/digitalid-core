@@ -25,9 +25,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * This class models the randomized {@link FreezableAgentPermissions permissions} of {@link OutgoingRole outgoing roles}.
  * 
  * @invariant (salt == null) == (permissions == null) : "The salt and the permissions are either both null or both non-null.";
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public final class RandomizedAgentPermissions implements Blockable {

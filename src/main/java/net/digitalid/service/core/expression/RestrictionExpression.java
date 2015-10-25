@@ -18,9 +18,6 @@ import net.digitalid.utility.collections.freezable.FreezableSet;
  * This class models restriction expressions.
  * 
  * @invariant (string == null) == (symbol == null) : "Either both string and symbol are null or none of them.";
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 final class RestrictionExpression extends Expression {

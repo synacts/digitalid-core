@@ -43,9 +43,6 @@ import net.digitalid.utility.system.logger.Log;
  * This class wraps an {@link Block element} for encoding and decoding a block of the syntactic type {@code encryption@core.digitalid.net}.
  * The structure of encrypted blocks is a tuple that consists of the time of the encryption, the receiving
  * host's identifier, the encrypted key, the initialization vector and the possibly encrypted element.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper> {

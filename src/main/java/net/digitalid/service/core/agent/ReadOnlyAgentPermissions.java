@@ -19,9 +19,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * @invariant areValid() : "These agent permissions are always valid.";
  * 
  * @see FreezableAgentPermissions
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 public interface ReadOnlyAgentPermissions extends ReadOnlyMap<SemanticType, Boolean>, Blockable, SQLizable {
     

@@ -14,9 +14,6 @@ import net.digitalid.utility.annotations.state.Immutable;
  * 
  * @see IdentityNotFoundException
  * @see SomethingNotFoundException
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public abstract class ExternalException extends Exception {

@@ -18,9 +18,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * This class models the authentications of contacts as a set of attribute types.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 public final class FreezableAuthentications extends FreezableAttributeTypeSet implements ReadOnlyAuthentications {
     

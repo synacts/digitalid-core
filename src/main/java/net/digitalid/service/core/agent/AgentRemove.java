@@ -21,9 +21,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * Removes the given {@link Agent agent}.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 final class AgentRemove extends CoreServiceInternalAction {

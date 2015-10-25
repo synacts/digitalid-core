@@ -18,9 +18,6 @@ import net.digitalid.utility.system.logger.Log;
  * This exception indicates an error in the encoding or content of a packet.
  * 
  * @see PacketErrorCode
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public final class PacketException extends Exception implements Blockable {

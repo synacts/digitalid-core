@@ -18,9 +18,6 @@ import net.digitalid.utility.database.column.Site;
  * @see EntityClass
  * @see HostEntity
  * @see NonHostEntity
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public interface Entity<E extends Entity<E>> extends Encodable<E, Object>, Storable<E, Object> {

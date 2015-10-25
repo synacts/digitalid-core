@@ -17,9 +17,6 @@ import net.digitalid.utility.collections.readonly.ReadOnlyArray;
  * This class stores the groups, elements and exponents of a host's public key.
  * 
  * @invariant verifySubgroupProof() : "The elements au, ai, av and ao are in the subgroup of ab.";
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public final class PublicKey implements Storable<PublicKey> {

@@ -10,9 +10,6 @@ import net.digitalid.utility.annotations.state.Stateless;
 
 /**
  * This is a utility class to encode encodable objects.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Stateless
 public final class Encode {

@@ -14,9 +14,6 @@ import net.digitalid.utility.database.column.Site;
  * @see HostData
  * @see ClientTable
  * @see ClientModule
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 public interface ClientData {
     

@@ -52,9 +52,6 @@ import net.digitalid.utility.system.logger.Log;
  * This class provides database access to the client synchronization.
  * 
  * @see Synchronizer
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Stateless
 public final class SynchronizerModule implements ClientModule {

@@ -30,9 +30,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * This class compresses, signs and encrypts requests by clients.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public final class ClientRequest extends Request {

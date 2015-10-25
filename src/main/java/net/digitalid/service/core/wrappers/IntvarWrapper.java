@@ -22,9 +22,6 @@ import net.digitalid.utility.database.column.SQLType;
 
 /**
  * This class wraps a {@code long} for encoding and decoding a block of the syntactic type {@code intvar@core.digitalid.net}.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public final class IntvarWrapper extends Wrapper<IntvarWrapper> {

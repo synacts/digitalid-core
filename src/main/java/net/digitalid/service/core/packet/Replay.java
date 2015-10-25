@@ -16,9 +16,6 @@ import net.digitalid.utility.system.errors.InitializationError;
 
 /**
  * Checks that no other encryption with the same initialization vector was received during the last half hour.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 public final class Replay {
     

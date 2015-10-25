@@ -19,9 +19,6 @@ import net.digitalid.utility.system.errors.ShouldNeverHappenError;
  * 
  * @see Account
  * @see Role
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public abstract class EntityClass implements Entity {

@@ -5,9 +5,6 @@ import net.digitalid.utility.annotations.state.Immutable;
 
 /**
  * This exception is thrown when a block has an invalid encoding.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public final class InvalidEncodingException extends ExternalException {

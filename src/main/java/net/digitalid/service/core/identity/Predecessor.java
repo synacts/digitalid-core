@@ -22,9 +22,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * This class models a predecessor of an identifier.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public final class Predecessor implements Blockable {

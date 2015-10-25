@@ -10,9 +10,6 @@ import org.junit.Test;
 
 /**
  * Unit testing of the class {@link SignatureWrapper}.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 0.2
  */
 public final class SignatureWrapperTest extends ServerSetup {
     

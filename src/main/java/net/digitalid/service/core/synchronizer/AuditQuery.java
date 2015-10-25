@@ -31,9 +31,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * Queries the audit of the given service for the given role.
  * 
  * @see AuditReply
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 final class AuditQuery extends InternalQuery {

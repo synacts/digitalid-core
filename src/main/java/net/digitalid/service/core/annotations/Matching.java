@@ -11,9 +11,6 @@ import net.digitalid.service.core.handler.Handler;
 
 /**
  * This annotation indicates that a value matches its surrounding object (usually meaning that it has the same {@link Entity entity}).
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Documented
 @Retention(RetentionPolicy.CLASS)

@@ -34,9 +34,6 @@ import net.digitalid.utility.database.configuration.Database;
  * <em>Important:</em> Though this class promises that its objects are immutable, their hash may change!
  * 
  * @invariant getContext() == null || getContact() == null : "The context or the contact is null.";
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public final class Restrictions implements Blockable, SQLizable {

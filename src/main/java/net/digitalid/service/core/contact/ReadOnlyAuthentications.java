@@ -9,9 +9,6 @@ import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
  * This interface provides read-only access to {@link FreezableAuthentications authentications} and should <em>never</em> be cast away.
  * 
  * @see FreezableAuthentications
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 public interface ReadOnlyAuthentications extends ReadOnlyAttributeTypeSet {
     

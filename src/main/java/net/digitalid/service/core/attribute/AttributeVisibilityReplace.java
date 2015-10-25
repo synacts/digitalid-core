@@ -33,9 +33,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * Replaces the {@link PassiveExpression visibility} of an {@link Attribute attribute}.
  * 
  * @invariant !Objects.equals(oldVisibility, newVisibility) : "The old and new visibility are not equal.";
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 final class AttributeVisibilityReplace extends CoreServiceInternalAction {

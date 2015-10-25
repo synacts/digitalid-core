@@ -12,9 +12,6 @@ import net.digitalid.utility.system.logger.Log;
  * TODO: Only retries if the connection could not be established. Otherwise an external action is created, signed and added to the internal audit.
  * 
  * @see PushFailed
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 0.0
  */
 public final class Pusher extends Thread {
     

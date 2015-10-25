@@ -10,9 +10,6 @@ import org.junit.Test;
 
 /**
  * Sets up the {@link Server} for testing.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 public class ServerSetup extends DatabaseSetup {
     

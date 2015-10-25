@@ -15,9 +15,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * 
  * @see InternalNonHostIdentifier
  * @see ExternalIdentifier
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public interface NonHostIdentifier extends Identifier {

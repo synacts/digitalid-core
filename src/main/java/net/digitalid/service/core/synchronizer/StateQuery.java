@@ -34,9 +34,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * Queries the state of the given module for the given role.
  * 
  * @see StateReply
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 final class StateQuery extends InternalQuery {

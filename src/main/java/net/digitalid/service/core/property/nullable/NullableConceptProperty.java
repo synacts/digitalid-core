@@ -10,9 +10,6 @@ import net.digitalid.utility.annotations.state.Pure;
 
 /**
  * Description.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 0.0
  */
 public class NullableConceptProperty<V, C extends Concept> extends NullableProperty<V> implements ConceptProperty<C> {
     

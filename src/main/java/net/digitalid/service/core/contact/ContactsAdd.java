@@ -26,9 +26,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * Adds {@link FreezableContacts contacts} to a {@link Context context}.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 final class ContactsAdd extends CoreServiceInternalAction {

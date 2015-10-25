@@ -13,9 +13,6 @@ import net.digitalid.service.core.wrappers.Block;
  * @see Encoding
  * @see NonEncoding
  * @see NonEncodingRecipient
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Documented
 @TargetType(Block.class)

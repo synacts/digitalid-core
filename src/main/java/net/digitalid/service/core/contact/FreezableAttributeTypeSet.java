@@ -32,9 +32,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * 
  * @see Authentications
  * @see ContactPermissions
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 public class FreezableAttributeTypeSet extends FreezableLinkedHashSet<SemanticType> implements ReadOnlyAttributeTypeSet {
     

@@ -20,9 +20,6 @@ import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 
 /**
  * This class models binary expressions.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 final class BinaryExpression extends Expression {

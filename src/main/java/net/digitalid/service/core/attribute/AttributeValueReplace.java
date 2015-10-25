@@ -31,9 +31,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * Replaces the {@link AttributeValue value} of an {@link Attribute attribute}.
  * 
  * @invariant !Objects.equals(oldValue, newValue) : "The old and new value are not equal.";
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 final class AttributeValueReplace extends CoreServiceInternalAction {

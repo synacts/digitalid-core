@@ -23,9 +23,6 @@ import net.digitalid.utility.system.errors.InitializationError;
  * This class models the successor of an {@link Identifier identifier}.
  * 
  * TODO: Support the export and import of all successors that belong to identifiers of a certain host.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 0.8
  */
 public final class Successor {
     

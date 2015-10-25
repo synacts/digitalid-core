@@ -28,9 +28,6 @@ import net.digitalid.utility.system.logger.Log;
 
 /**
  * This class loads other classes in other domains.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Stateless
 public final class Loader {

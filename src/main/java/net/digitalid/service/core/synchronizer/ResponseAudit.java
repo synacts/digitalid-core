@@ -44,9 +44,6 @@ import net.digitalid.utility.system.thread.NamedThreadFactory;
 
 /**
  * This class models a response audit with the trail and the times of the last and this audit.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public final class ResponseAudit extends Audit {

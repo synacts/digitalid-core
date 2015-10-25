@@ -14,9 +14,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * This class models a request audit with the time of the last audit.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public final class RequestAudit extends Audit {

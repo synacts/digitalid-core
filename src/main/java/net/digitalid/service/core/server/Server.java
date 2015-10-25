@@ -34,9 +34,6 @@ import net.digitalid.utility.system.logger.Logger;
 
 /**
  * The server runs the configured hosts.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Stateless
 public final class Server {

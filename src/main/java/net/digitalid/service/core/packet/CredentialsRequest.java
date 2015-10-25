@@ -28,9 +28,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * This class compresses, signs and encrypts requests with credentials.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public final class CredentialsRequest extends Request {

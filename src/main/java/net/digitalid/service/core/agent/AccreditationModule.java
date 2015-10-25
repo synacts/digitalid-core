@@ -16,9 +16,6 @@ import net.digitalid.utility.database.configuration.Database;
  * This class provides database access to the accreditation requests of the core service.
  * 
  * @see ClientAgent
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 0.0
  */
 @Stateless
 public final class AccreditationModule implements ClientModule {

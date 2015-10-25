@@ -33,9 +33,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * Replies the queried attribute values of the given subject that are accessible by the requester.
  * 
  * @see AttributesQuery
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public final class AttributesReply extends CoreServiceQueryReply {

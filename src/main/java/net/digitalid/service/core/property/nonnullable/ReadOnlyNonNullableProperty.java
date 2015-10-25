@@ -13,9 +13,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * This is the read-only interface to a property that stores a non-nullable replaceable value.
  * 
  * @see NonNullableReplaceableProperty
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 public abstract class ReadOnlyNonNullableProperty<V> extends ReadOnlyProperty<V, NonNullablePropertyObserver<V>> {
     

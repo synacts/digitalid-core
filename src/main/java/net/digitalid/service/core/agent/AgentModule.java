@@ -52,9 +52,6 @@ import net.digitalid.utility.database.configuration.Database;
 
 /**
  * This class provides database access to the {@link Agent agents} of the core service.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Stateless
 public final class AgentModule implements StateModule {

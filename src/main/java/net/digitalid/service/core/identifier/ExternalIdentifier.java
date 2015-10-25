@@ -19,9 +19,6 @@ import net.digitalid.utility.system.errors.ShouldNeverHappenError;
  * 
  * @see EmailIdentifier
  * @see MobileIdentifier
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public abstract class ExternalIdentifier extends IdentifierClass implements NonHostIdentifier {

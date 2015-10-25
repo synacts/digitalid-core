@@ -20,9 +20,6 @@ import net.digitalid.utility.system.errors.ShouldNeverHappenError;
  * 
  * @see HostAccount
  * @see NonHostAccount
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public abstract class Account extends EntityClass {

@@ -18,9 +18,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * 
  * @see HostIdentifier
  * @see InternalNonHostIdentifier
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public abstract class InternalIdentifier extends IdentifierClass {

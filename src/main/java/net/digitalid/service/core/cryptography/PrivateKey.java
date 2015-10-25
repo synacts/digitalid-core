@@ -18,9 +18,6 @@ import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 
 /**
  * This class stores the groups and exponents of a host's private key.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public final class PrivateKey implements Storable<PrivateKey> {

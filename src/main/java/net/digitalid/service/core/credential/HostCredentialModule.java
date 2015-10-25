@@ -38,9 +38,6 @@ import net.digitalid.utility.database.configuration.Database;
 
 /**
  * This class provides database access to the {@link Credential credentials} issued by a {@link Host host}.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Stateless
 public final class HostCredentialModule implements HostModule {

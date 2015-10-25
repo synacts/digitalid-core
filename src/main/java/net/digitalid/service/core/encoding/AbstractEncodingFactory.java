@@ -26,9 +26,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * @see Encodable
  * @see NonRequestingEncodingFactory
  * @see FactoryBasedEncodingFactory
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public abstract class AbstractEncodingFactory<O, E> {

@@ -8,9 +8,6 @@ import org.junit.Test;
 
 /**
  * System testing of the Digital ID {@link Server}.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 0.1
  */
 public final class ServerTest extends ServerSetup {
     

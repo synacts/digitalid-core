@@ -30,9 +30,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * Issues the given role to the given subject.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 final class OutgoingRoleIssue extends CoreServiceExternalAction {

@@ -24,9 +24,6 @@ import org.junit.runners.MethodSorters;
  * @see MySQLTest
  * @see PostgreSQLTest
  * @see SQLiteTest
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class DatabaseTest {

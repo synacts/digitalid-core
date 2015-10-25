@@ -32,9 +32,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * This class decrypts, verifies and decompresses responses on the client-side.
  * 
  * @invariant getSize() == replies.size() && getSize() == exceptions.size() : "The number of elements equals the number of replies and the number of exceptions.";
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public final class Response extends Packet {

@@ -12,9 +12,6 @@ import net.digitalid.utility.annotations.state.Pure;
 
 /**
  * An exponent is a number that raises elements of an arbitrary group.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public final class Exponent extends Number<Exponent> {

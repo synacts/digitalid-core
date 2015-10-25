@@ -29,9 +29,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * This class wraps an {@link Block element} for encoding and decoding a block of the syntactic type {@code selfcontained@core.digitalid.net}.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedWrapper> {

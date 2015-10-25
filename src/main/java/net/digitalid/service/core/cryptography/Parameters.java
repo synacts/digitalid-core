@@ -4,9 +4,6 @@ import net.digitalid.utility.annotations.state.Immutable;
 
 /**
  * This class specifies the cryptographic parameters.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public final class Parameters {

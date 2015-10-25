@@ -25,9 +25,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * Replaces the context of a {@link OutgoingRole outgoing role}.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 final class OutgoingRoleContextReplace extends CoreServiceInternalAction {

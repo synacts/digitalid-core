@@ -23,9 +23,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * Adds {@link FreezableAgentPermissions permissions} to an {@link Agent agent}.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 final class AgentPermissionsAdd extends CoreServiceInternalAction {

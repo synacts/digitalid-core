@@ -28,9 +28,6 @@ import net.digitalid.utility.database.configuration.Database;
 
 /**
  * This class provides database access to the {@link Contact contacts} of the core service.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 0.2
  */
 @Stateless
 public final class ContactModule implements StateModule {

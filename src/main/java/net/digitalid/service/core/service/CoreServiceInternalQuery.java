@@ -27,9 +27,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * This class models the {@link InternalQuery internal queries} of the {@link CoreService core service}.
  * 
  * @invariant getSubject().getHostIdentifier().equals(getRecipient()) : "The host of the subject has to match the recipient for internal queries of the core service.";
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 public abstract class CoreServiceInternalQuery extends InternalQuery {
     

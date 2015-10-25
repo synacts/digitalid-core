@@ -23,9 +23,6 @@ import net.digitalid.utility.system.console.exceptions.EscapeOptionException;
  * 
  * @see Option
  * @see Console
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 0.3
  */
 final class Options {
     

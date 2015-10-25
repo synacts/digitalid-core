@@ -42,9 +42,6 @@ import net.digitalid.utility.system.errors.ShouldNeverHappenError;
  * An action of this type is added to the audit if the {@link Pusher} failed to send an external action.
  * 
  * @see Pusher
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public final class PushFailed extends ExternalAction {

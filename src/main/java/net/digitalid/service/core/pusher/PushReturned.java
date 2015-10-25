@@ -41,9 +41,6 @@ import net.digitalid.utility.system.errors.ShouldNeverHappenError;
  * An action of this type is added to the audit if an {@link ExternalAction external action} on a {@link Host host} has a {@link ActionReply reply}.
  * 
  * @see Pusher
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public final class PushReturned extends ExternalAction {

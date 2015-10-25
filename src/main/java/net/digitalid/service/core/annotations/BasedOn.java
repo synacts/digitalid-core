@@ -11,9 +11,6 @@ import net.digitalid.service.core.wrappers.Block;
 /**
  * This annotation indicates that the {@link Block#getType() type} of a {@link Block block} is
  * {@link SemanticType#isBasedOn(net.digitalid.service.core.identity.SemanticType) based on} the type of the given identifier.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Documented
 @Retention(RetentionPolicy.CLASS)

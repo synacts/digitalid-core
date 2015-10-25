@@ -47,9 +47,6 @@ import net.digitalid.utility.database.configuration.Database;
  * This class models the permissions of agents as a mapping from attribute types to writings.
  * 
  * @invariant areValid() : "These agent permissions are always valid.";
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 public final class FreezableAgentPermissions extends FreezableLinkedHashMap<SemanticType, Boolean> implements ReadOnlyAgentPermissions {
     

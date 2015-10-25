@@ -12,9 +12,6 @@ import net.digitalid.utility.collections.readonly.ReadOnlySet;
  * This interface provides read-only access to {@link FreezableContacts contacts} and should <em>never</em> be cast away.
  * 
  * @see FreezableContacts
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 public interface ReadOnlyContacts extends ReadOnlySet<Contact>, Blockable, SQLizable {
     

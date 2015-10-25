@@ -20,9 +20,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * @see StateData
  * @see HostTable
  * @see HostModule
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 public interface HostData extends ClientData {
     

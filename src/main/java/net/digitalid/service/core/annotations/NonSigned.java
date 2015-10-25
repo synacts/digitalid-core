@@ -11,9 +11,6 @@ import net.digitalid.service.core.wrappers.SignatureWrapper;
  * This annotation indicates that a {@link SignatureWrapper signature} is {@link SignatureWrapper#isNotSigned() not signed}.
  * 
  * @see Signed
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Documented
 @Retention(RetentionPolicy.CLASS)

@@ -54,9 +54,6 @@ import net.digitalid.utility.database.configuration.Database;
 /**
  * This class provides database access to the {@link InternalAction internal actions} of the core service.
  * This module does not support getting, adding and deleting an entity's state as this is not desired.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Stateless
 public final class ActionModule implements StateModule {

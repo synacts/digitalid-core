@@ -7,9 +7,6 @@ import net.digitalid.utility.annotations.state.Immutable;
 
 /**
  * This exception is thrown when an attribute cannot be found.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public final class AttributeNotFoundException extends SomethingNotFoundException {

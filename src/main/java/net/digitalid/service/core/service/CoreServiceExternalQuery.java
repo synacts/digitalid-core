@@ -19,9 +19,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * This class models the {@link ExternalQuery external queries} of the {@link CoreService core service}.
  * 
  * @invariant getSubject().getHostIdentifier().equals(getRecipient()) : "The host of the subject and the recipient are the same for external queries of the core service.");
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 public abstract class CoreServiceExternalQuery extends ExternalQuery {
     

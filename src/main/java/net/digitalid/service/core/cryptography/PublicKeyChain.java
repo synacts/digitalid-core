@@ -18,9 +18,6 @@ import net.digitalid.utility.collections.tuples.ReadOnlyPair;
 
 /**
  * This class models a {@link KeyChain key chain} of {@link PublicKey public keys}.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public final class PublicKeyChain extends KeyChain<PublicKey, PublicKeyChain> {

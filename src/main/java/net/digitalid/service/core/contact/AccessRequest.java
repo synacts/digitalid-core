@@ -30,9 +30,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * Requests the given permissions of the given subject.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 0.9
  */
 @Immutable
 public final class AccessRequest extends CoreServiceExternalAction {

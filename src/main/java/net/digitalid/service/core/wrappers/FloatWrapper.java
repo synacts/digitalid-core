@@ -20,9 +20,6 @@ import net.digitalid.utility.database.column.SQLType;
 
 /**
  * This class wraps a {@code float} for encoding and decoding a block of the syntactic type {@code float@core.digitalid.net}.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public final class FloatWrapper extends Wrapper<FloatWrapper> {

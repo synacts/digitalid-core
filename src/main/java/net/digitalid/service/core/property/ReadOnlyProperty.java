@@ -21,9 +21,6 @@ import net.digitalid.utility.system.logger.Log;
  * @see ReadOnlyNonNullableProperty
  * @see ReadOnlyExtensibleProperty
  * @see ReadOnlyIndexedProperty
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 public abstract class ReadOnlyProperty<V, O extends PropertyObserver> {
     

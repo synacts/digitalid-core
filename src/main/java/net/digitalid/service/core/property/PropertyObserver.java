@@ -12,8 +12,5 @@ import net.digitalid.service.core.property.nullable.NullablePropertyObserver;
  * @see ExtensiblePropertyObserver
  * @see NullablePropertyObserver
  * @see NonNullablePropertyObserver
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 public interface PropertyObserver {}

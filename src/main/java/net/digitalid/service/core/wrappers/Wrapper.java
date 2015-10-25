@@ -1,6 +1,5 @@
 package net.digitalid.service.core.wrappers;
 
-import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -35,9 +34,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * Values and elements are wrapped by separate objects as the native types do not support encoding and decoding.
  * 
  * @see Block
- *
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public abstract class Wrapper<W extends Wrapper<W>> implements Encodable<W, Object>, Storable<W, Object> {

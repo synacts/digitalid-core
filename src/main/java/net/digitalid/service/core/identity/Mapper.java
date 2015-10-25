@@ -49,9 +49,6 @@ import net.digitalid.utility.system.logger.Log;
  * with {@link #addReference(java.lang.String, java.lang.String, java.lang.String...)}
  * in order that the values can be updated when two {@link Person persons} have been
  * merged! (If the column can only contain {@link Type types}, this is not necessary.)
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Stateless
 public final class Mapper {

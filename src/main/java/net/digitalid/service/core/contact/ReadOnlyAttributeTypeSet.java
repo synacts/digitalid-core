@@ -15,9 +15,6 @@ import net.digitalid.utility.collections.readonly.ReadOnlySet;
  * @see FreezableAttributeTypeSet
  * @see ReadonlyAuthentications
  * @see ReadonlyContactPermissions
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 public interface ReadOnlyAttributeTypeSet extends ReadOnlySet<SemanticType>, Blockable {
     

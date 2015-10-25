@@ -39,9 +39,6 @@ import net.digitalid.utility.system.logger.Log;
  * A worker processes incoming requests asynchronously.
  * 
  * @see Listener
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 public final class Worker implements Runnable {
     

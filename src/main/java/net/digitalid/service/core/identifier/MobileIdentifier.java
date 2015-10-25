@@ -15,9 +15,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * This class models mobile identifiers.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public final class MobileIdentifier extends ExternalIdentifier {

@@ -20,9 +20,6 @@ import net.digitalid.utility.database.configuration.Database;
 
 /**
  * This class models a host account.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public final class HostAccount extends Account implements HostEntity {

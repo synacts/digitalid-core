@@ -23,9 +23,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * Removes {@link FreezableAgentPermissions permissions} from an {@link Agent agent}.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 final class AgentPermissionsRemove extends CoreServiceInternalAction {

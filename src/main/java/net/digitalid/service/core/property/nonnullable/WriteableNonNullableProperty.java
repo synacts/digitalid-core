@@ -12,9 +12,6 @@ import net.digitalid.utility.database.annotations.Locked;
  * 
  * @see NonNullableSimpleProperty
  * @see NonNullableConceptProperty
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 public abstract class WriteableNonNullableProperty<V> extends ReadOnlyNonNullableProperty<V> {
     

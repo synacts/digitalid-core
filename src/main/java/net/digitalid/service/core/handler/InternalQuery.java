@@ -25,9 +25,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * @invariant getEntityNotNull().getIdentity().equals(getSubject().getIdentity()) : "The identity of the entity and the subject are the same.";
  * 
  * @see CoreServiceInternalQuery
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public abstract class InternalQuery extends Query implements InternalMethod {

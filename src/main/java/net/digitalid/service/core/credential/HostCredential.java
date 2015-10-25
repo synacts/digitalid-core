@@ -13,9 +13,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * This class models credentials on the host-side.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public final class HostCredential extends Credential {

@@ -14,9 +14,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * This class facilitates the encoding and decoding of uncertified attribute values.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public final class UncertifiedAttributeValue extends AttributeValue {

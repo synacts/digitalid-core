@@ -29,9 +29,6 @@ import net.digitalid.utility.database.configuration.Database;
 
 /**
  * This class provides database access to the {@link ExternalAction external actions} that still need to be {@link Pusher pushed}.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 0.0
  */
 @Stateless
 public final class PusherModule implements StateModule {

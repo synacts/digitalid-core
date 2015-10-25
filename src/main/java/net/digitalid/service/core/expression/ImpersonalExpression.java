@@ -16,9 +16,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * This class models impersonal expressions.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public final class ImpersonalExpression extends AbstractExpression {

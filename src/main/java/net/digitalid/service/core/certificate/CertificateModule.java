@@ -29,9 +29,6 @@ import net.digitalid.utility.database.configuration.Database;
 
 /**
  * This class provides database access to the {@link AttributeValue certificates} of the core service.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 0.0
  */
 @Stateless
 public final class CertificateModule implements StateModule {

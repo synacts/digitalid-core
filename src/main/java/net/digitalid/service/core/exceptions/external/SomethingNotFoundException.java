@@ -11,9 +11,6 @@ import net.digitalid.utility.annotations.state.Pure;
  * 
  * @see AttributeNotFoundException
  * @see CertificateNotFoundException
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public abstract class SomethingNotFoundException extends ExternalException {

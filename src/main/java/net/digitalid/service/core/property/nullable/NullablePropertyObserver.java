@@ -6,9 +6,6 @@ import net.digitalid.service.core.property.PropertyObserver;
 
 /**
  * Description.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 0.0
  */
 public interface NullablePropertyObserver<V> extends PropertyObserver {
     

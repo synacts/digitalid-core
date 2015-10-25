@@ -35,9 +35,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * Accredits a {@link ClientAgent client agent}.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public final class ClientAgentAccredit extends CoreServiceInternalAction {

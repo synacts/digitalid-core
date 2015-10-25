@@ -31,9 +31,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * Issues the given certificate to the given subject.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 0.6
  */
 @Immutable
 public final class CertificateIssue extends CoreServiceExternalAction {

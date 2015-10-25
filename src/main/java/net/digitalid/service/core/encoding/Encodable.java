@@ -9,9 +9,6 @@ import net.digitalid.utility.annotations.state.Pure;
  * @param <O> the type of the objects that the factory can encode and decode, which is typically the declaring class itself.
  * @param <E> the type of the external object that is needed to decode an object, which is quite often an {@link Entity}.
  *            In case no external information is needed for the decoding of an object, declare it as an {@link Object}.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 public interface Encodable<O, E> {
     

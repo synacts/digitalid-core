@@ -19,9 +19,6 @@ import net.digitalid.utility.collections.readonly.ReadOnlyList;
  * 
  * @see RequestAudit
  * @see ResponseAudit
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public abstract class Audit implements Storable<Audit> {

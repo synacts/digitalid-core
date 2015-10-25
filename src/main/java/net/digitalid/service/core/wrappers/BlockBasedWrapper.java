@@ -19,9 +19,6 @@ import net.digitalid.utility.database.configuration.Database;
 
 /**
  * This class implements methods that all wrappers whose storable mechanisms use a {@link Block block} share.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public abstract class BlockBasedWrapper<W extends BlockBasedWrapper<W>> extends Wrapper<W> {

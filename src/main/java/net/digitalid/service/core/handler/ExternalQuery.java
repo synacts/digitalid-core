@@ -18,9 +18,6 @@ import net.digitalid.utility.annotations.state.Pure;
  * External queries can be sent by both {@link Host hosts} and {@link Client clients}.
  * 
  * @see CoreServiceExternalQuery
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public abstract class ExternalQuery extends Query {

@@ -18,9 +18,6 @@ import net.digitalid.utility.annotations.state.Pure;
  * @invariant getPublicKey().getAu().pow(getSecret()).equals(getValue()) : "The secret matches the commitment.";
  * 
  * @see ClientSignatureWrapper
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public final class SecretCommitment extends Commitment {

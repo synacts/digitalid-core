@@ -19,9 +19,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * This class models a database table that can be exported and imported on {@link Host hosts}.
  * 
  * @see StateTable
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public abstract class HostTable extends ClientTable implements HostData {

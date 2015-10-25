@@ -7,9 +7,6 @@ import net.digitalid.utility.annotations.state.Immutable;
  * 
  * @see Type
  * @see Person
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public abstract class NonHostIdentityClass extends IdentityClass implements NonHostIdentity {

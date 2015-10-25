@@ -5,9 +5,6 @@ import net.digitalid.utility.annotations.state.Stateless;
 
 /**
  * This class is an alternative to {@link Void} which supports non-nullable parameters and return values.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Stateless
 public final class None {

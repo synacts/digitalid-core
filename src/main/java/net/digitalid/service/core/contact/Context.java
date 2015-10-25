@@ -42,9 +42,6 @@ import net.digitalid.utility.database.configuration.Database;
 
 /**
  * This class models the contexts for {@link Contact contacts}.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 0.4
  */
 @Immutable
 public final class Context extends NonHostConcept implements Blockable, SQLizable {

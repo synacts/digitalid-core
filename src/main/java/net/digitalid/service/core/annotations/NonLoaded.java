@@ -11,9 +11,6 @@ import net.digitalid.service.core.identity.Type;
  * This annotation indicates that a {@link Type type} is {@link Type#isNotLoaded() not loaded}.
  * 
  * @see Loaded
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Documented
 @TargetType(Type.class)

@@ -8,9 +8,6 @@ import net.digitalid.service.core.wrappers.StringWrapper;
 
 /**
  * This class stores commonly used attribute types.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 public final class AttributeTypes {
     

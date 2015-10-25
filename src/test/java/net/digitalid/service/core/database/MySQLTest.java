@@ -10,9 +10,6 @@ import org.junit.BeforeClass;
 
 /**
  * Unit testing of the {@link Database} with the {@link MySQLConfiguration}.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 public final class MySQLTest extends DatabaseTest {
     

@@ -42,9 +42,6 @@ import net.digitalid.utility.database.column.Site;
  * @see OutgoingRole
  * 
  * @see AgentModule
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public abstract class Agent extends NonHostConcept implements Storable<Agent> {

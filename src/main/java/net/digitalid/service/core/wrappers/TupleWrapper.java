@@ -24,9 +24,6 @@ import net.digitalid.utility.collections.readonly.ReadOnlyList;
 
 /**
  * This class wraps a {@link ReadOnlyArray tuple} for encoding and decoding a block of the syntactic type {@code tuple@core.digitalid.net}.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public final class TupleWrapper extends BlockBasedWrapper<TupleWrapper> {

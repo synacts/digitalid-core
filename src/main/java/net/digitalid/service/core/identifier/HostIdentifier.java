@@ -16,9 +16,6 @@ import net.digitalid.utility.database.configuration.Database;
 
 /**
  * This class models host identifiers.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public final class HostIdentifier extends InternalIdentifier {

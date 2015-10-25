@@ -6,9 +6,6 @@ import net.digitalid.utility.collections.readonly.ReadOnlyCollection;
 
 /**
  * Description.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 0.0
  */
 public interface ReadOnlyExtensibleProperty<E, R extends ReadOnlyCollection<E>> {
     

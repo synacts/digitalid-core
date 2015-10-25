@@ -27,9 +27,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * @invariant hasEntity() : "This action reply has an entity.");
  * 
  * @see CoreServiceActionReply
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public abstract class ActionReply extends Reply implements Auditable {

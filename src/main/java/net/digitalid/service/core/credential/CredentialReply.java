@@ -35,9 +35,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * 
  * @see CredentialInternalQuery
  * @see CredentialExternalQuery
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 final class CredentialReply extends CoreServiceQueryReply {

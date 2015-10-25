@@ -8,9 +8,6 @@ import net.digitalid.utility.collections.readonly.ReadOnlyCollection;
 
 /**
  * Description.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 0.0
  */
 public class ExtensibleProperty<E, R extends ReadOnlyCollection<E>, F extends FreezableCollection<E>> implements ReadOnlyExtensibleProperty<E, R> {
     

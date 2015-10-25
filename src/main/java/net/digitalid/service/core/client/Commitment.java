@@ -37,9 +37,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * This class models the commitment of a client.
  * 
  * @see SecretCommitment
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public class Commitment implements Blockable, SQLizable {

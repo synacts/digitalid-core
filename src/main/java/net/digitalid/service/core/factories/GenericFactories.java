@@ -13,9 +13,6 @@ import net.digitalid.utility.annotations.state.Immutable;
  *            In case no external information is needed for the reconstruction of an object, declare it as an {@link Object}.
  * @param <EF> the type of encoding factory that this class encapsulates.
  * @param <SF> the type of storing factory that this class encapsulates.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public abstract class GenericFactories<O, E, EF extends AbstractEncodingFactory<O, E>, SF extends AbstractStoringFactory<O, E>> {

@@ -16,9 +16,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * @see IdentityClass
  * @see InternalIdentity
  * @see ExternalIdentity
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public interface Identity extends Storable<Identity, Object> {

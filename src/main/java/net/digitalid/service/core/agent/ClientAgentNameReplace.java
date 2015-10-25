@@ -26,9 +26,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * Replaces the name of a {@link ClientAgent client agent}.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 final class ClientAgentNameReplace extends CoreServiceInternalAction {

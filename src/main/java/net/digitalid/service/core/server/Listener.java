@@ -15,9 +15,6 @@ import net.digitalid.utility.system.thread.NamedThreadFactory;
 
 /**
  * A listener accepts incoming {@link Request requests} and lets them handle by {@link Worker workers}.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 public final class Listener extends Thread {
     

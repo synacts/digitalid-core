@@ -9,9 +9,6 @@ import net.digitalid.service.core.identity.SemanticType;
 
 /**
  * This annotation indicates that a {@link SemanticType semantic type} denotes a {@link SemanticType#isRoleType() role type}.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Documented
 @TargetType(SemanticType.class)

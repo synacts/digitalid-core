@@ -23,9 +23,6 @@ import net.digitalid.utility.database.configuration.Database;
 /**
  * This class provides database access to the members of the core service.
  * The members of a host can create as many new identities as they want.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 0.0
  */
 @Stateless
 public final class MemberModule implements HostModule {

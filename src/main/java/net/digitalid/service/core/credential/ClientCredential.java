@@ -37,9 +37,6 @@ import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 
 /**
  * This class models credentials on the client-side.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 0.8
  */
 @Immutable
 public final class ClientCredential extends Credential {

@@ -12,9 +12,6 @@ import net.digitalid.utility.collections.freezable.FreezableArray;
 
 /**
  * This class generates new key pairs.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public final class KeyPair {

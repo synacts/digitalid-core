@@ -7,9 +7,6 @@ import net.digitalid.service.core.property.ValueValidator;
 
 /**
  * Description.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 0.0
  */
 public class NullableProperty<V> extends ReadOnlyNullableProperty<V> {
     

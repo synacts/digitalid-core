@@ -15,9 +15,6 @@ import net.digitalid.utility.database.configuration.Database;
  * This class models a database table with the least requirements.
  * 
  * @see HostTable
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public abstract class ClientTable implements ClientData {

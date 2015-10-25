@@ -14,9 +14,6 @@ import net.digitalid.utility.collections.readonly.ReadOnlyMap;
  * Unfortunately, this cannot be enforced with the limited Java generics.
  * 
  * [used for the hosts in the Server class and modules in the Service class]
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 0.0
  */
 public class IndexedProperty<K, V, R extends ReadOnlyMap<K, V>, F extends FreezableMap<K, V>> implements ReadOnlyIndexedProperty<K, V, R> {
     

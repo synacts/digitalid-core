@@ -13,9 +13,6 @@ import net.digitalid.utility.annotations.state.Pure;
 /**
  * This class is like {@link AbstractEncodingFactory} except that the decoding of {@link Block blocks} throws less exceptions.
  * This factory does not allow file, network and database requests during {@link #decodeNonNullable(java.lang.Object, net.digitalid.service.core.wrappers.Block) decoding}.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public abstract class NonRequestingEncodingFactory<O, E> extends AbstractEncodingFactory<O, E> {

@@ -41,9 +41,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * Queries the given attributes from the given subject.
  * 
  * @see AttributesReply
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public final class AttributesQuery extends CoreServiceExternalQuery {

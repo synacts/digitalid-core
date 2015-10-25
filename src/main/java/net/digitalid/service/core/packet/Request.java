@@ -59,9 +59,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * @see HostRequest
  * @see ClientRequest
  * @see CredentialsRequest
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public class Request extends Packet {

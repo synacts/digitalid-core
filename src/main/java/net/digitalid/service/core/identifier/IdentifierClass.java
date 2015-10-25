@@ -23,9 +23,6 @@ import net.digitalid.utility.database.configuration.Database;
  * 
  * @see InternalIdentifier
  * @see ExternalIdentifier
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public abstract class IdentifierClass implements Identifier {

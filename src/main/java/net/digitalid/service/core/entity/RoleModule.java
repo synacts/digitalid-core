@@ -29,9 +29,6 @@ import net.digitalid.utility.database.configuration.Database;
  * This class provides database access to the {@link Role roles} of the core service.
  * This class does not inherit from {@link ClientModule} and register itself at the
  * {@link CoreService} as its table needs be created in advance by a {@link Client}.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 public final class RoleModule {
     

@@ -7,9 +7,6 @@ import net.digitalid.utility.annotations.state.Validated;
 
 /**
  * Objects that implement this interface can be used to observe {@link ReadOnlyNonNullableProperty non-nullable properties}.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 public interface NonNullablePropertyObserver<V> extends PropertyObserver {
     

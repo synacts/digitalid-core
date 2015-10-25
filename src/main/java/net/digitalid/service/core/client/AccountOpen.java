@@ -56,9 +56,6 @@ import net.digitalid.utility.system.errors.ShouldNeverHappenError;
  * (This class inherits directly from the action class because no entity can be given.)
  * 
  * @invariant getSubject().getHostIdentifier().equals(getRecipient()) : "The host of the subject has to match the recipient for the action to open an account.";
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 0.9
  */
 @Immutable
 public final class AccountOpen extends Action {

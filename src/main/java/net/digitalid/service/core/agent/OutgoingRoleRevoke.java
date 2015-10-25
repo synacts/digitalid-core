@@ -28,9 +28,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * Revokes the given role from the given subject.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 final class OutgoingRoleRevoke extends CoreServiceExternalAction {

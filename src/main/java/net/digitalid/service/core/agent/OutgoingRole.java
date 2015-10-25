@@ -30,9 +30,6 @@ import net.digitalid.utility.database.configuration.Database;
 
 /**
  * This class models an outgoing role that acts on behalf of an {@link Identity identity}.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public final class OutgoingRole extends Agent {

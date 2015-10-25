@@ -24,7 +24,6 @@ import net.digitalid.service.core.encoding.Encodable;
 import net.digitalid.service.core.encoding.NonRequestingEncodingFactory;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.identity.SemanticType;
-import net.digitalid.utility.database.storing.Storable;
 import net.digitalid.utility.annotations.math.NonNegative;
 import net.digitalid.utility.annotations.math.Positive;
 import net.digitalid.utility.annotations.reference.Capturable;
@@ -39,6 +38,7 @@ import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.database.column.Column;
 import net.digitalid.utility.database.column.SQLType;
 import net.digitalid.utility.database.configuration.Database;
+import net.digitalid.utility.database.storing.Storable;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 
 /**
@@ -54,9 +54,6 @@ import net.digitalid.utility.system.errors.ShouldNeverHappenError;
  * @invariant bytes == null || length > 0 : "If this block is allocated, its length is positive.";
  * @invariant bytes == null || offset + length <= bytes.length : "If this block is allocated, it may not exceed the byte array.";
  * @invariant !isEncoded() || isAllocated() : "If the block is encoded, it is also allocated.";
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public final class Block implements Encodable<Block, Object>, Storable<Block, Object>, Cloneable {
@@ -925,9 +922,6 @@ public final class Block implements Encodable<Block, Object>, Storable<Block, Ob
     
     /**
      * This class allows to read directly from the byte array of a {@link Block}.
-     * 
-     * @author Kaspar Etter (kaspar.etter@digitalid.net)
-     * @version 1.0.0
      */
     private final class BlockInputStream extends InputStream {
         
@@ -1084,9 +1078,6 @@ public final class Block implements Encodable<Block, Object>, Storable<Block, Ob
     
     /**
      * This class allows to stream directly into the byte array of a {@link Block}.
-     * 
-     * @author Kaspar Etter (kaspar.etter@digitalid.net)
-     * @version 1.0.0
      */
     private final class BlockOutputStream extends OutputStream {
         

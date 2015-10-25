@@ -19,9 +19,6 @@ import net.digitalid.utility.database.configuration.Database;
 
 /**
  * This class indexes the instances of a {@link Concept concept} by their {@link Entity entity} and key.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public final class Index<C extends Concept<C, E, K>, E extends Entity<E>, K> {

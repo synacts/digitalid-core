@@ -11,9 +11,6 @@ import net.digitalid.service.core.wrappers.Block;
  * This annotation indicates that a {@link Block block} is {@link Block#isEncoded() encoded}.
  * 
  * @see NonEncoded
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Documented
 @TargetType(Block.class)

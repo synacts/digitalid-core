@@ -30,9 +30,6 @@ import net.digitalid.utility.database.column.SQLType;
 /**
  * This class models time in milliseconds for both dates and intervals.
  * Dates are calculated as milliseconds since 1 January 1970, 00:00:00 GMT.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public final class Time implements Encodable<Time, Object>, Storable<Time, Object>, Comparable<Time> {

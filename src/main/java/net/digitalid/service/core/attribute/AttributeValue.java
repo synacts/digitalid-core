@@ -27,9 +27,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * @see Attribute
  * @see CertifiedAttributeValue
  * @see UncertifiedAttributeValue
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public abstract class AttributeValue implements Blockable, SQLizable {

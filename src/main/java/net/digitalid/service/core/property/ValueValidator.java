@@ -5,9 +5,6 @@ import net.digitalid.utility.annotations.state.Pure;
 
 /**
  * A value validator checks whether a value is valid.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 public interface ValueValidator<V> {
     
