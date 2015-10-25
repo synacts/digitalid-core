@@ -7,7 +7,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.cryptography.InitializationVector;
-import net.digitalid.service.core.exceptions.packet.PacketError;
+import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.wrappers.EncryptionWrapper;
 import net.digitalid.utility.database.annotations.NonCommitting;
@@ -48,8 +48,8 @@ public final class Replay {
         final @Nonnull Time time = encryption.getTime();
         final @Nullable InitializationVector initializationVector = encryption.getInitializationVector();
         
-        if (time.isLessThan(Time.HALF_HOUR.ago())) throw new PacketException(PacketError.ENCRYPTION, "The encryption is older than half an hour.", null);
-        if (time.isGreaterThan(Time.MINUTE.ahead())) throw new PacketException(PacketError.ENCRYPTION, "The encryption is more than a minute ahead.", null);
+        if (time.isLessThan(Time.HALF_HOUR.ago())) throw new PacketException(PacketErrorCode.ENCRYPTION, "The encryption is older than half an hour.", null);
+        if (time.isGreaterThan(Time.MINUTE.ahead())) throw new PacketException(PacketErrorCode.ENCRYPTION, "The encryption is more than a minute ahead.", null);
         
         if (initializationVector != null) {
             final @Nonnull String SQL = "INSERT INTO general_replay (vector, time) VALUES (?, ?)";
@@ -58,7 +58,7 @@ public final class Replay {
                 time.set(preparedStatement, 2);
                 preparedStatement.executeUpdate();
             } catch (@Nonnull SQLException exception) {
-                throw new PacketException(PacketError.REPLAY, "The encryption has been replayed.", exception);
+                throw new PacketException(PacketErrorCode.REPLAY, "The encryption has been replayed.", exception);
             }
         }
     }

@@ -77,7 +77,7 @@ final class ContactsAdd extends CoreServiceInternalAction {
      * @ensure hasSignature() : "This handler has a signature.";
      */
     @NonCommitting
-    private ContactsAdd(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
+    private ContactsAdd(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
         super(entity, signature, recipient);
         
         final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getNonNullableElements(2);
@@ -165,7 +165,7 @@ final class ContactsAdd extends CoreServiceInternalAction {
         @Pure
         @Override
         @NonCommitting
-        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException  {
+        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException  {
             return new ContactsAdd(entity, signature, recipient, block);
         }
         

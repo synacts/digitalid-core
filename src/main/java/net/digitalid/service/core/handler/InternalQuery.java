@@ -8,7 +8,7 @@ import net.digitalid.service.core.client.Client;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.Role;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.packet.PacketError;
+import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.service.CoreServiceInternalQuery;
@@ -55,11 +55,11 @@ public abstract class InternalQuery extends Query implements InternalMethod {
      * @ensure isOnHost() : "Queries are only decoded on hosts.";
      */
     @NonCommitting
-    protected InternalQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws SQLException, IOException, PacketException, ExternalException {
+    protected InternalQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws AbortException, PacketException, ExternalException, NetworkException {
         super(entity, signature, recipient);
         
-        if (!isNonHost()) throw new PacketException(PacketError.IDENTIFIER, "Internal queries have to belong to a non-host.");
-        if (!getEntityNotNull().getIdentity().equals(getSubject().getIdentity())) throw new PacketException(PacketError.IDENTIFIER, "The identity of the entity and the subject have to be the same for internal queries.");
+        if (!isNonHost()) throw new PacketException(PacketErrorCode.IDENTIFIER, "Internal queries have to belong to a non-host.");
+        if (!getEntityNotNull().getIdentity().equals(getSubject().getIdentity())) throw new PacketException(PacketErrorCode.IDENTIFIER, "The identity of the entity and the subject have to be the same for internal queries.");
     }
     
     

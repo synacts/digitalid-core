@@ -132,7 +132,7 @@ public final class Synchronizer extends Thread {
      */
     @Locked
     @Committing
-    static void reloadSuspended(@Nonnull Role role, @Nonnull StateModule module) throws SQLException, IOException, PacketException, ExternalException {
+    static void reloadSuspended(@Nonnull Role role, @Nonnull StateModule module) throws AbortException, PacketException, ExternalException, NetworkException {
         final @Nonnull Service service = module.getService();
         assert isSuspended(role, service) : "The service is suspended.";
         
@@ -162,7 +162,7 @@ public final class Synchronizer extends Thread {
      */
     @NonLocked
     @Committing
-    public static void reload(@Nonnull Role role, @Nonnull StateModule module) throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
+    public static void reload(@Nonnull Role role, @Nonnull StateModule module) throws InterruptedException, AbortException, PacketException, ExternalException, NetworkException {
         assert !Database.isLocked() : "The database is not locked.";
         
         @Nullable ConcurrentSet<Service> set = suspendedServices.get(role);
@@ -192,7 +192,7 @@ public final class Synchronizer extends Thread {
      */
     @NonLocked
     @Committing
-    public static void refresh(@Nonnull Role role, @Nonnull Service service) throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
+    public static void refresh(@Nonnull Role role, @Nonnull Service service) throws InterruptedException, AbortException, PacketException, ExternalException, NetworkException {
         assert !Database.isLocked() : "The database is not locked.";
         
         if (suspend(role, service)) {

@@ -68,7 +68,7 @@ public interface Identifier extends Storable<Identifier> {
     @Pure
     @Locked
     @NonCommitting
-    public @Nonnull Identity getIdentity() throws SQLException, IOException, PacketException, ExternalException;
+    public @Nonnull Identity getIdentity() throws AbortException, PacketException, ExternalException, NetworkException;
     
     
     /**

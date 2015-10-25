@@ -28,7 +28,7 @@ import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.entity.Role;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.service.core.exceptions.packet.PacketError;
+import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.identifier.InternalIdentifier;
@@ -227,7 +227,7 @@ public abstract class Method extends Handler {
      * @ensure return.hasRequest() : "The returned response has a request.";
      */
     @NonCommitting
-    public @Nonnull Response send() throws SQLException, IOException, PacketException, ExternalException {
+    public @Nonnull Response send() throws AbortException, PacketException, ExternalException, NetworkException {
         final @Nullable RequestAudit requestAudit = RequestAudit.get(this);
         final @Nonnull Response response;
         try {
@@ -252,7 +252,7 @@ public abstract class Method extends Handler {
      */
     @NonCommitting
     @SuppressWarnings("unchecked")
-    public final @Nonnull <T extends Reply> T sendNotNull() throws SQLException, IOException, PacketException, ExternalException {
+    public final @Nonnull <T extends Reply> T sendNotNull() throws AbortException, PacketException, ExternalException, NetworkException {
         assert !matches(null) : "This method does not match null.";
         
         return (T) send().getReplyNotNull(0);
@@ -316,7 +316,7 @@ public abstract class Method extends Handler {
      * @ensure return.hasRequest() : "The returned response has a request.";
      */
     @NonCommitting
-    public static @Nonnull Response send(@Nonnull ReadOnlyList<Method> methods, @Nullable RequestAudit audit) throws SQLException, IOException, PacketException, ExternalException {
+    public static @Nonnull Response send(@Nonnull ReadOnlyList<Method> methods, @Nullable RequestAudit audit) throws AbortException, PacketException, ExternalException, NetworkException {
         assert areSimilar(methods) : "The methods are similar to each other.";
         
         final @Nonnull Method reference = methods.getNonNullable(0);
@@ -326,8 +326,8 @@ public abstract class Method extends Handler {
         final boolean lodged = reference.isLodged();
         final @Nullable BigInteger value = reference.getValue();
         
-        if (reference.isOnHost() && !reference.canBeSentByHosts()) throw new PacketException(PacketError.INTERNAL, "These methods cannot be sent by hosts.");
-        if (reference.isOnClient() && reference.canOnlyBeSentByHosts()) throw new PacketException(PacketError.INTERNAL, "These methods cannot be sent by clients.");
+        if (reference.isOnHost() && !reference.canBeSentByHosts()) throw new PacketException(PacketErrorCode.INTERNAL, "These methods cannot be sent by hosts.");
+        if (reference.isOnClient() && reference.canOnlyBeSentByHosts()) throw new PacketException(PacketErrorCode.INTERNAL, "These methods cannot be sent by clients.");
         
         if (reference instanceof ExternalQuery) {
             final @Nonnull ReadOnlyAuthentications authentications;
@@ -390,18 +390,18 @@ public abstract class Method extends Handler {
                 }
             } else {
                 assert reference instanceof InternalMethod;
-                if (!(entity instanceof Role)) throw new PacketException(PacketError.INTERNAL, "The entity has to be a role in case of internal methods.");
+                if (!(entity instanceof Role)) throw new PacketException(PacketErrorCode.INTERNAL, "The entity has to be a role in case of internal methods.");
                 final @Nonnull Role role = (Role) entity;
                 final @Nonnull Agent agent = role.getAgent();
                 
                 final @Nonnull Restrictions restrictions = agent.getRestrictions();
                 for (@Nonnull Method method : methods) {
-                    if (!restrictions.cover(((InternalMethod) method).getRequiredRestrictionsToExecuteMethod())) throw new PacketException(PacketError.AUTHORIZATION, "The restrictions of the role do not cover the required restrictions.");
+                    if (!restrictions.cover(((InternalMethod) method).getRequiredRestrictionsToExecuteMethod())) throw new PacketException(PacketErrorCode.AUTHORIZATION, "The restrictions of the role do not cover the required restrictions.");
                 }
                 
                 if (reference.getService().equals(CoreService.SERVICE)) {
                     if (role.isNative()) {
-                        if (!agent.getPermissions().cover(getRequiredPermissions(methods))) throw new PacketException(PacketError.AUTHORIZATION, "The permissions of the client agent do not cover the required permissions.");
+                        if (!agent.getPermissions().cover(getRequiredPermissions(methods))) throw new PacketException(PacketErrorCode.AUTHORIZATION, "The permissions of the client agent do not cover the required permissions.");
                         return new ClientRequest(methods, subject, audit, role.toNativeRole().getAgent().getCommitment().addSecret(role.getClient().getSecret())).send();
                     } else {
                         final @Nonnull ClientCredential credential = ClientCredential.getRoleBased(role.toNonNativeRole(), getRequiredPermissions(methods));
@@ -439,7 +439,7 @@ public abstract class Method extends Handler {
          */
         @Pure
         @NonCommitting
-        protected abstract @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException;
+        protected abstract @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException;
         
     }
     
@@ -478,9 +478,9 @@ public abstract class Method extends Handler {
      */
     @Pure
     @NonCommitting
-    public static @Nonnull Method get(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
+    public static @Nonnull Method get(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
         final @Nullable Method.Factory factory = factories.get(block.getType());
-        if (factory == null) throw new PacketException(PacketError.METHOD, "No method could be found for the type " + block.getType().getAddress() + ".");
+        if (factory == null) throw new PacketException(PacketErrorCode.METHOD, "No method could be found for the type " + block.getType().getAddress() + ".");
         else return factory.create(entity, signature, recipient, block);
     }
     

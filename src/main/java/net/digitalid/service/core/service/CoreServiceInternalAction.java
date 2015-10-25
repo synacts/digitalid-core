@@ -16,7 +16,7 @@ import net.digitalid.service.core.data.Service;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.Role;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.packet.PacketError;
+import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.InternalAction;
 import net.digitalid.service.core.identifier.HostIdentifier;
@@ -65,10 +65,10 @@ public abstract class CoreServiceInternalAction extends InternalAction {
      * @ensure hasSignature() : "This handler has a signature.";
      */
     @NonCommitting
-    protected CoreServiceInternalAction(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws SQLException, IOException, PacketException, ExternalException {
+    protected CoreServiceInternalAction(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws AbortException, PacketException, ExternalException, NetworkException {
         super(entity, signature, recipient);
         
-        if (!getSubject().getHostIdentifier().equals(getRecipient())) throw new PacketException(PacketError.IDENTIFIER, "The host of the subject has to match the recipient for internal actions of the core service.");
+        if (!getSubject().getHostIdentifier().equals(getRecipient())) throw new PacketException(PacketErrorCode.IDENTIFIER, "The host of the subject has to match the recipient for internal actions of the core service.");
         
         this.publicKey = Cache.getPublicKey(getRecipient(), signature.getNonNullableTime());
     }

@@ -81,7 +81,7 @@ public final class UncertifiedAttributeValue extends AttributeValue {
     @Pure
     @Override
     @NonCommitting
-    public void verify() throws SQLException, IOException, PacketException, ExternalException {
+    public void verify() throws AbortException, PacketException, ExternalException, NetworkException {
         signature.verify();
     }
     

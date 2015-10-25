@@ -25,7 +25,7 @@ import net.digitalid.utility.system.errors.ShouldNeverHappenError;
  * @version 1.0.0
  */
 @Immutable
-public enum PacketError implements Blockable, SQLizable {
+public enum PacketErrorCode implements Blockable, SQLizable {
     
     /**
      * The error code for an internal problem.
@@ -135,10 +135,10 @@ public enum PacketError implements Blockable, SQLizable {
      * @require isValid(value) : "The value is a valid packet error.";
      */
     @Pure
-    public static @Nonnull PacketError get(byte value) {
+    public static @Nonnull PacketErrorCode get(byte value) {
         assert isValid(value) : "The value is a valid packet error.";
         
-        for (final @Nonnull PacketError error : values()) {
+        for (final @Nonnull PacketErrorCode error : values()) {
             if (error.value == value) return error;
         }
         
@@ -161,7 +161,7 @@ public enum PacketError implements Blockable, SQLizable {
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
     @Pure
-    public static @Nonnull PacketError get(@Nonnull Block block) throws InvalidEncodingException {
+    public static @Nonnull PacketErrorCode get(@Nonnull Block block) throws InvalidEncodingException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         final byte value = new Int8Wrapper(block).getValue();
@@ -194,7 +194,7 @@ public enum PacketError implements Blockable, SQLizable {
      * 
      * @param value the value encoding the packet error.
      */
-    private PacketError(int value) {
+    private PacketErrorCode(int value) {
         this.value = (byte) value;
     }
     
@@ -237,7 +237,7 @@ public enum PacketError implements Blockable, SQLizable {
      */
     @Pure
     @NonCommitting
-    public static @Nonnull PacketError get(@Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+    public static @Nonnull PacketErrorCode get(@Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
         final @Nonnull byte value = resultSet.getByte(columnIndex);
         if (!isValid(value)) throw new SQLException("'" + value + "' is not a valid packet error.");
         return get(value);

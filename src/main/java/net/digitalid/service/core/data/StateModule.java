@@ -12,7 +12,7 @@ import net.digitalid.service.core.client.Client;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.service.core.exceptions.packet.PacketError;
+import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.host.Host;
 import net.digitalid.service.core.identity.SemanticType;
@@ -70,7 +70,7 @@ public class StateModule extends HostModule implements StateData {
     public static @Nonnull StateModule getModule(@Nonnull SemanticType stateType) throws PacketException {
         final @Nullable StateModule module = modules.get(stateType);
         if (module != null) return module;
-        throw new PacketException(PacketError.SERVICE, "There exists no module with the state type " + stateType.getAddress() + ".");
+        throw new PacketException(PacketErrorCode.SERVICE, "There exists no module with the state type " + stateType.getAddress() + ".");
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– State Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -163,7 +163,7 @@ public class StateModule extends HostModule implements StateData {
     @Locked
     @Override
     @NonCommitting
-    public final void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
+    public final void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
         final @Nonnull @NonNullableElements ReadOnlyList<Block> elements = ListWrapper.decodeNonNullableElements(block);
         for (final @Nonnull Block element : elements) {
             final @Nonnull Block selfcontained = SelfcontainedWrapper.decodeNonNullable(element);

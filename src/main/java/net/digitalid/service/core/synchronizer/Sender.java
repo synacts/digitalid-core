@@ -11,7 +11,7 @@ import net.digitalid.service.core.data.Service;
 import net.digitalid.service.core.entity.Role;
 import net.digitalid.service.core.error.ErrorModule;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.packet.PacketError;
+import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.InternalAction;
 import net.digitalid.service.core.handler.Method;
@@ -209,7 +209,7 @@ public final class Sender extends Thread {
      * @see ClientRequest
      */
     @NonCommitting
-    public static @Nullable RequestAudit runAsynchronously(final @Nonnull InternalAction action, final @Nullable RequestAudit audit) throws SQLException, IOException, PacketException, ExternalException {
+    public static @Nullable RequestAudit runAsynchronously(final @Nonnull InternalAction action, final @Nullable RequestAudit audit) throws AbortException, PacketException, ExternalException, NetworkException {
         // TODO: This will almost certainly not work with the locking mechanism of SQLite. The problem could propably be solved with savepoints and partial rollbacks, however.
         
         Log.error("The sender should not yet be run asynchronously.");
@@ -259,7 +259,7 @@ public final class Sender extends Thread {
             return task.get();
         } catch (@Nonnull InterruptedException | ExecutionException exception) {
             Log.error("Could not execute the action asynchronously.", exception);
-            throw new PacketException(PacketError.INTERNAL, "The action could not be executed asynchronously.", exception);
+            throw new PacketException(PacketErrorCode.INTERNAL, "The action could not be executed asynchronously.", exception);
         }
     }
     

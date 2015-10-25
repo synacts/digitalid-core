@@ -99,7 +99,7 @@ public abstract class IdentityClass implements Identity {
      */
     @Pure
     @NonCommitting
-    public static @Nonnull Identity create(@Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
+    public static @Nonnull Identity create(@Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
         return IdentifierClass.create(block).getIdentity();
     }
     

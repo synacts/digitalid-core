@@ -37,7 +37,7 @@ public final class AgentTest extends IdentitySetup {
     
     @BeforeClass
     @Committing
-    public static void accreditClientAgent() throws SQLException, IOException, PacketException, ExternalException {
+    public static void accreditClientAgent() throws AbortException, PacketException, ExternalException, NetworkException {
         print("accreditClientAgent");
         try {
             final @Nonnull FreezableAgentPermissions agentPermissions = new FreezableAgentPermissions();
@@ -57,7 +57,7 @@ public final class AgentTest extends IdentitySetup {
     
     @After
     @Committing
-    public void testAgentStateEquality() throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
+    public void testAgentStateEquality() throws InterruptedException, AbortException, PacketException, ExternalException, NetworkException {
         try {
             role.waitForCompletion(CoreService.SERVICE);
             Thread.sleep(1l);
@@ -83,7 +83,7 @@ public final class AgentTest extends IdentitySetup {
     
     @Test
     @Committing
-    public void _01_testUnremoveAgent() throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
+    public void _01_testUnremoveAgent() throws InterruptedException, AbortException, PacketException, ExternalException, NetworkException {
         print("_01_testUnremoveAgent");
         try {
             getRole().refreshState(CoreService.SERVICE);
@@ -99,7 +99,7 @@ public final class AgentTest extends IdentitySetup {
     
     @Test
     @Committing
-    public void _02_testPermissionsAdd() throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
+    public void _02_testPermissionsAdd() throws InterruptedException, AbortException, PacketException, ExternalException, NetworkException {
         print("_02_testPermissionsAdd");
         try {
             final @Nonnull FreezableAgentPermissions agentPermissions = new FreezableAgentPermissions();
@@ -152,7 +152,7 @@ public final class AgentTest extends IdentitySetup {
     
     @Test
     @Committing
-    public void _04_testRestrictionsReplace() throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
+    public void _04_testRestrictionsReplace() throws InterruptedException, AbortException, PacketException, ExternalException, NetworkException {
         print("_04_testRestrictionsReplace");
         try {
             getRole().getAgent().getWeakerAgent(role.getAgent().getNumber()).setRestrictions(new Restrictions(true, true, true, Context.getRoot(getRole())));
@@ -173,7 +173,7 @@ public final class AgentTest extends IdentitySetup {
     
     @Test
     @Committing
-    public void _05_testCommitmentReplace() throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
+    public void _05_testCommitmentReplace() throws InterruptedException, AbortException, PacketException, ExternalException, NetworkException {
         print("_05_testCommitmentReplace");
         try {
             final @Nonnull ClientAgent clientAgent = role.getAgent();

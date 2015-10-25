@@ -11,7 +11,7 @@ import net.digitalid.service.core.client.Client;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.Role;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.packet.PacketError;
+import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.service.CoreServiceInternalAction;
@@ -62,11 +62,11 @@ public abstract class InternalAction extends Action implements InternalMethod {
      * @ensure hasSignature() : "This handler has a signature.";
      */
     @NonCommitting
-    protected InternalAction(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws SQLException, IOException, PacketException, ExternalException {
+    protected InternalAction(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws AbortException, PacketException, ExternalException, NetworkException {
         super(entity, signature, recipient);
         
-        if (!isNonHost()) throw new PacketException(PacketError.IDENTIFIER, "Internal actions have to belong to a non-host.");
-        if (!getEntityNotNull().getIdentity().equals(getSubject().getIdentity())) throw new PacketException(PacketError.IDENTIFIER, "The identity of the entity and the subject have to be the same for internal actions.");
+        if (!isNonHost()) throw new PacketException(PacketErrorCode.IDENTIFIER, "Internal actions have to belong to a non-host.");
+        if (!getEntityNotNull().getIdentity().equals(getSubject().getIdentity())) throw new PacketException(PacketErrorCode.IDENTIFIER, "The identity of the entity and the subject have to be the same for internal actions.");
     }
     
     

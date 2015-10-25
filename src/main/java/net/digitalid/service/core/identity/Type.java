@@ -102,7 +102,7 @@ public abstract class Type extends NonHostIdentityClass implements InternalNonHo
      * @ensure isLoaded() : "The type declaration has been loaded.";
      */
     @NonCommitting
-    abstract void load() throws SQLException, IOException, PacketException, ExternalException;
+    abstract void load() throws AbortException, PacketException, ExternalException, NetworkException;
     
     /**
      * Ensures that the type declaration is loaded.
@@ -110,7 +110,7 @@ public abstract class Type extends NonHostIdentityClass implements InternalNonHo
      * @ensure isLoaded() : "The type declaration is loaded.";
      */
     @NonCommitting
-    public final void ensureLoaded() throws SQLException, IOException, PacketException, ExternalException {
+    public final void ensureLoaded() throws AbortException, PacketException, ExternalException, NetworkException {
         if (!loaded) load();
     }
     

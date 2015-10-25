@@ -61,7 +61,7 @@ public final class EmailIdentifier extends ExternalIdentifier {
     @Pure
     @Override
     @NonCommitting
-    public @Nonnull Person getIdentity() throws SQLException, IOException, PacketException, ExternalException {
+    public @Nonnull Person getIdentity() throws AbortException, PacketException, ExternalException, NetworkException {
         if (!providerExists()) throw new IdentityNotFoundException(this);
         return Mapper.getIdentity(this).toPerson();
     }

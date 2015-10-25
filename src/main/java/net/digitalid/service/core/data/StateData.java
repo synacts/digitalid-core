@@ -65,7 +65,7 @@ public interface StateData extends HostData {
      */
     @Locked
     @NonCommitting
-    public void addState(@Nonnull NonHostEntity entity, @Nonnull @NonEncoding Block block) throws SQLException, IOException, PacketException, ExternalException;
+    public void addState(@Nonnull NonHostEntity entity, @Nonnull @NonEncoding Block block) throws AbortException, PacketException, ExternalException, NetworkException;
     
     /**
      * Removes all the entries of the given entity in this data collection.

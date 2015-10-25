@@ -30,6 +30,6 @@ public interface NonHostIdentifier extends Identifier {
     @Pure
     @Override
     @NonCommitting
-    public @Nonnull NonHostIdentity getIdentity() throws SQLException, IOException, PacketException, ExternalException;
+    public @Nonnull NonHostIdentity getIdentity() throws AbortException, PacketException, ExternalException, NetworkException;
     
 }

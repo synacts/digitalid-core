@@ -19,9 +19,6 @@ import net.digitalid.utility.annotations.state.Pure;
 
 /**
  * Description.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public abstract class ConceptPropertyInternalAction extends InternalAction {
@@ -57,7 +54,7 @@ public abstract class ConceptPropertyInternalAction extends InternalAction {
         this.service = service;
     }
     
-    protected ConceptPropertyInternalAction(@Nonnull Entity<?> entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Service service) throws SQLException, IOException, PacketException, ExternalException {
+    protected ConceptPropertyInternalAction(@Nonnull Entity<?> entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Service service) throws AbortException, PacketException, ExternalException, NetworkException {
         super(entity, signature, recipient);
         
         this.service = service;

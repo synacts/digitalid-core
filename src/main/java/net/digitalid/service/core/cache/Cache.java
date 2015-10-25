@@ -147,7 +147,7 @@ public final class Cache {
      */
     @Locked
     @NonCommitting
-    private static @Nonnull @Frozen ReadOnlyPair<Boolean, AttributeValue> getCachedAttributeValue(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull Time time, @Nonnull SemanticType type) throws SQLException, IOException, PacketException, ExternalException {
+    private static @Nonnull @Frozen ReadOnlyPair<Boolean, AttributeValue> getCachedAttributeValue(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull Time time, @Nonnull SemanticType type) throws AbortException, PacketException, ExternalException, NetworkException {
         assert time.isNonNegative() : "The given time is non-negative.";
         assert type.isAttributeFor(identity.getCategory()) : "The type can be used as an attribute for the category of the given identity.";
         
@@ -248,7 +248,7 @@ public final class Cache {
     @Pure
     @Locked
     @NonCommitting
-    public static @Nonnull AttributeValue[] getAttributeValues(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull Time time, @Nonnull SemanticType... types) throws SQLException, IOException, PacketException, ExternalException {
+    public static @Nonnull AttributeValue[] getAttributeValues(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull Time time, @Nonnull SemanticType... types) throws AbortException, PacketException, ExternalException, NetworkException {
         assert time.isNonNegative() : "The given time is non-negative.";
         assert types.length > 0 : "At least one type is given.";
         assert !Arrays.asList(types).contains(PublicKeyChain.TYPE) || types.length == 1 : "If the public key chain of a host is queried, it is the only type.";
@@ -314,7 +314,7 @@ public final class Cache {
     @Pure
     @Locked
     @NonCommitting
-    public static @Nonnull AttributeValue getAttributeValue(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull Time time, @Nonnull SemanticType type) throws SQLException, IOException, PacketException, ExternalException {
+    public static @Nonnull AttributeValue getAttributeValue(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull Time time, @Nonnull SemanticType type) throws AbortException, PacketException, ExternalException, NetworkException {
         final @Nonnull AttributeValue[] attributeValues = getAttributeValues(identity, role, time, type);
         if (attributeValues[0] == null) throw new AttributeNotFoundException(identity, type);
         else return attributeValues[0];
@@ -342,7 +342,7 @@ public final class Cache {
     @Pure
     @Locked
     @NonCommitting
-    public static @Nonnull Block getAttributeContent(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull Time time, @Nonnull SemanticType type, boolean certified) throws SQLException, IOException, PacketException, ExternalException {
+    public static @Nonnull Block getAttributeContent(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull Time time, @Nonnull SemanticType type, boolean certified) throws AbortException, PacketException, ExternalException, NetworkException {
         final @Nonnull AttributeValue value = getAttributeValue(identity, role, time, type);
         if (certified && !value.isCertified()) throw new CertificateNotFoundException(identity, type);
         return value.getContent();
@@ -368,7 +368,7 @@ public final class Cache {
     @Pure
     @Locked
     @NonCommitting
-    public static @Nonnull Block getFreshAttributeContent(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull SemanticType type, boolean certified) throws SQLException, IOException, PacketException, ExternalException {
+    public static @Nonnull Block getFreshAttributeContent(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull SemanticType type, boolean certified) throws AbortException, PacketException, ExternalException, NetworkException {
         return getAttributeContent(identity, role, Time.getCurrent(), type, certified);
     }
     
@@ -392,7 +392,7 @@ public final class Cache {
     @Pure
     @Locked
     @NonCommitting
-    public static @Nonnull Block getReloadedAttributeContent(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull SemanticType type, boolean certified) throws SQLException, IOException, PacketException, ExternalException {
+    public static @Nonnull Block getReloadedAttributeContent(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull SemanticType type, boolean certified) throws AbortException, PacketException, ExternalException, NetworkException {
         return getAttributeContent(identity, role, Time.MAX, type, certified);
     }
     
@@ -414,7 +414,7 @@ public final class Cache {
     @Pure
     @Locked
     @NonCommitting
-    public static @Nonnull Block getStaleAttributeContent(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull SemanticType type) throws SQLException, IOException, PacketException, ExternalException {
+    public static @Nonnull Block getStaleAttributeContent(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull SemanticType type) throws AbortException, PacketException, ExternalException, NetworkException {
         return getAttributeContent(identity, role, Time.MIN, type, false);
     }
     
@@ -428,7 +428,7 @@ public final class Cache {
     @Pure
     @Locked
     @NonCommitting
-    public static @Nonnull PublicKeyChain getPublicKeyChain(@Nonnull HostIdentity identity) throws SQLException, IOException, PacketException, ExternalException {
+    public static @Nonnull PublicKeyChain getPublicKeyChain(@Nonnull HostIdentity identity) throws AbortException, PacketException, ExternalException, NetworkException {
         return new PublicKeyChain(getFreshAttributeContent(identity, null, PublicKeyChain.TYPE, true));
     }
     
@@ -443,7 +443,7 @@ public final class Cache {
     @Pure
     @Locked
     @NonCommitting
-    public static @Nonnull PublicKey getPublicKey(@Nonnull HostIdentifier identifier, @Nonnull Time time) throws SQLException, IOException, PacketException, ExternalException {
+    public static @Nonnull PublicKey getPublicKey(@Nonnull HostIdentifier identifier, @Nonnull Time time) throws AbortException, PacketException, ExternalException, NetworkException {
         return getPublicKeyChain(identifier.getIdentity()).getKey(time);
     }
     
@@ -461,7 +461,7 @@ public final class Cache {
      */
     @Locked
     @NonCommitting
-    public static @Nonnull HostIdentity establishHostIdentity(@Nonnull @NonMapped HostIdentifier identifier) throws SQLException, IOException, PacketException, ExternalException {
+    public static @Nonnull HostIdentity establishHostIdentity(@Nonnull @NonMapped HostIdentifier identifier) throws AbortException, PacketException, ExternalException, NetworkException {
         assert !identifier.isMapped() : "The identifier is not mapped.";
         
         final @Nonnull HostIdentity identity = Mapper.mapHostIdentity(identifier);

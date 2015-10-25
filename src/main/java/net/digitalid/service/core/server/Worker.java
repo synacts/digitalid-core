@@ -12,7 +12,7 @@ import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.credential.Credential;
 import net.digitalid.service.core.data.Service;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.packet.PacketError;
+import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.Action;
 import net.digitalid.service.core.handler.InternalMethod;
@@ -69,7 +69,7 @@ public final class Worker implements Runnable {
             final @Nonnull Time start = Time.getCurrent();
             @Nullable InternalIdentifier subject = null;
             @Nullable InternalIdentifier signer = null;
-            @Nullable PacketError error = null;
+            @Nullable PacketErrorCode error = null;
             @Nullable Service service = null;
             @Nullable RequestAudit requestAudit = null;
             @Nonnull StringBuilder methods = new StringBuilder("Request");
@@ -117,7 +117,7 @@ public final class Worker implements Runnable {
                             if (method instanceof Action) ActionModule.audit((Action) method);
                             Database.commit();
                         } catch (@Nonnull SQLException exception) {
-                            exceptions.set(i, new PacketException(PacketError.INTERNAL, "An SQLException occurred.", exception));
+                            exceptions.set(i, new PacketException(PacketErrorCode.INTERNAL, "An SQLException occurred.", exception));
                             Database.rollback();
                         } catch (@Nonnull PacketException exception) {
                             exceptions.set(i, exception);
@@ -131,7 +131,7 @@ public final class Worker implements Runnable {
                     final @Nullable ResponseAudit responseAudit;
                     if (requestAudit != null) {
                         final @Nonnull Time auditStart = Time.getCurrent();
-                        if (!(reference instanceof InternalMethod)) throw new PacketException(PacketError.AUTHORIZATION, "An audit may only be requested by internal methods.");
+                        if (!(reference instanceof InternalMethod)) throw new PacketException(PacketErrorCode.AUTHORIZATION, "An audit may only be requested by internal methods.");
                         final @Nullable ReadOnlyAgentPermissions permissions;
                         @Nullable Restrictions restrictions;
                         if (service.equals(CoreService.SERVICE)) {
@@ -146,7 +146,7 @@ public final class Worker implements Runnable {
                             final @Nonnull Credential credential = signature.toCredentialsSignatureWrapper().getCredentials().getNonNullable(0);
                             permissions = credential.getPermissions();
                             restrictions = credential.getRestrictions();
-                            if (permissions == null || restrictions == null) throw new PacketException(PacketError.AUTHORIZATION, "If an audit is requested, neither the permissions nor the restrictions may be null.");
+                            if (permissions == null || restrictions == null) throw new PacketException(PacketErrorCode.AUTHORIZATION, "If an audit is requested, neither the permissions nor the restrictions may be null.");
                         }
                         responseAudit = ActionModule.getAudit(reference.getNonHostAccount(), service, requestAudit.getLastTime(), permissions, restrictions, agent);
                         Database.commit();
@@ -158,14 +158,14 @@ public final class Worker implements Runnable {
                     
                     response = new Response(request, replies.freeze(), exceptions.freeze(), responseAudit);
                 } catch (@Nonnull SQLException exception) {
-                    throw new PacketException(PacketError.INTERNAL, "An SQLException occurred.", exception);
+                    throw new PacketException(PacketErrorCode.INTERNAL, "An SQLException occurred.", exception);
                 } catch (@Nonnull IOException exception) {
-                    throw new PacketException(PacketError.EXTERNAL, "An IOException occurred.", exception);
+                    throw new PacketException(PacketErrorCode.EXTERNAL, "An IOException occurred.", exception);
                 } catch (@Nonnull ExternalException exception) {
-                    throw new PacketException(PacketError.EXTERNAL, "An ExternalException occurred.", exception);
+                    throw new PacketException(PacketErrorCode.EXTERNAL, "An ExternalException occurred.", exception);
                 }
             } catch (@Nonnull PacketException exception) {
-                response = new Response(request, exception.isRemote() ? new PacketException(PacketError.EXTERNAL, "An external error occurred.", exception) : exception);
+                response = new Response(request, exception.isRemote() ? new PacketException(PacketErrorCode.EXTERNAL, "An external error occurred.", exception) : exception);
                 error = exception.getError();
                 Database.rollback();
             } finally {

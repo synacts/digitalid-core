@@ -91,7 +91,7 @@ public abstract class StateTable extends HostTable implements StateData {
     @Locked
     @Override
     @NonCommitting
-    public abstract void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException;
+    public abstract void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException;
     
     @Locked
     @Override

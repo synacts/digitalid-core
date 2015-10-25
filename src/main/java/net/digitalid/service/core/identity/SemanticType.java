@@ -157,7 +157,7 @@ public final class SemanticType extends Type {
     @Override
     @NonCommitting
     @NonLoadedRecipient
-    void load() throws SQLException, IOException, PacketException, ExternalException {
+    void load() throws AbortException, PacketException, ExternalException, NetworkException {
         assert !isLoaded() : "The type declaration is not loaded.";
         
         if (categories != null) throw new InvalidEncodingException("The semantic base may not be circular.");

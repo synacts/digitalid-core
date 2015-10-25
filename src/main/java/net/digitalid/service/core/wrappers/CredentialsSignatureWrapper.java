@@ -38,7 +38,7 @@ import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InactiveSignatureException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.external.InvalidSignatureException;
-import net.digitalid.service.core.exceptions.packet.PacketError;
+import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.host.Host;
 import net.digitalid.service.core.identifier.InternalIdentifier;
@@ -327,7 +327,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
      */
     @Pure
     public void checkIsLogded() throws PacketException {
-        if (!isLodged()) throw new PacketException(PacketError.SIGNATURE, "The credentials signature has to be lodged.");
+        if (!isLodged()) throw new PacketException(PacketErrorCode.SIGNATURE, "The credentials signature has to be lodged.");
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -376,7 +376,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
      */
     @Locked
     @NonCommitting
-    private CredentialsSignatureWrapper(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nullable Block element, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull @NonNullableElements @NonEmpty @Frozen @Validated ReadOnlyList<Credential> credentials, @Nullable @NonNullableElements @NonEmpty @Frozen @Validated ReadOnlyList<CertifiedAttributeValue> certificates, boolean lodged, @Nullable BigInteger value) throws SQLException, IOException, PacketException, ExternalException {
+    private CredentialsSignatureWrapper(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nullable Block element, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull @NonNullableElements @NonEmpty @Frozen @Validated ReadOnlyList<Credential> credentials, @Nullable @NonNullableElements @NonEmpty @Frozen @Validated ReadOnlyList<CertifiedAttributeValue> certificates, boolean lodged, @Nullable BigInteger value) throws AbortException, PacketException, ExternalException, NetworkException {
         super(type, element, subject, audit);
         
         assert credentials.isFrozen() : "The credentials are frozen.";
@@ -402,7 +402,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
      */
     @Locked
     @NonCommitting
-    CredentialsSignatureWrapper(@Nonnull @NonEncoding @BasedOn("signature@core.digitalid.net") Block block, @Nonnull @NonEncoding @BasedOn("credentials.signature@core.digitalid.net") Block credentialsSignature, boolean verified, @Nullable Entity entity) throws SQLException, IOException, PacketException, ExternalException {
+    CredentialsSignatureWrapper(@Nonnull @NonEncoding @BasedOn("signature@core.digitalid.net") Block block, @Nonnull @NonEncoding @BasedOn("credentials.signature@core.digitalid.net") Block credentialsSignature, boolean verified, @Nullable Entity entity) throws AbortException, PacketException, ExternalException, NetworkException {
         super(block, verified);
         
         assert credentialsSignature.getType().isBasedOn(SIGNATURE) : "The signature is based on the implementation type.";
@@ -485,7 +485,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
     @Pure
     @Locked
     @NonCommitting
-    public static @Nonnull <V extends Storable<V>> CredentialsSignatureWrapper sign(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nullable V element, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull @NonNullableElements @NonEmpty @Frozen @Validated ReadOnlyList<Credential> credentials, @Nullable @NonNullableElements @NonEmpty @Frozen @Validated ReadOnlyList<CertifiedAttributeValue> certificates, boolean lodged, @Nullable BigInteger value) throws SQLException, IOException, PacketException, ExternalException {
+    public static @Nonnull <V extends Storable<V>> CredentialsSignatureWrapper sign(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nullable V element, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull @NonNullableElements @NonEmpty @Frozen @Validated ReadOnlyList<Credential> credentials, @Nullable @NonNullableElements @NonEmpty @Frozen @Validated ReadOnlyList<CertifiedAttributeValue> certificates, boolean lodged, @Nullable BigInteger value) throws AbortException, PacketException, ExternalException, NetworkException {
         return new CredentialsSignatureWrapper(type, Block.fromNullable(element), subject, audit, credentials, certificates, lodged, value);
     }
     
@@ -570,7 +570,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
      */
     @Pure
     public void checkIssuer(@Nonnull InternalPerson issuer) throws PacketException {
-        if (!isIdentityBased() || isRoleBased() || !issuer.equals(getIssuer())) throw new PacketException(PacketError.AUTHORIZATION, "The credential was not issued by " + issuer.getAddress() + ".");
+        if (!isIdentityBased() || isRoleBased() || !issuer.equals(getIssuer())) throw new PacketException(PacketErrorCode.AUTHORIZATION, "The credential was not issued by " + issuer.getAddress() + ".");
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Attribute Content –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -629,7 +629,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
      */
     @Pure
     public void checkCanRead(@Nonnull @AttributeType SemanticType type) throws PacketException {
-        if (!canRead(type)) throw new PacketException(PacketError.AUTHORIZATION, "Not all credentials can read " + type.getAddress() + ".");
+        if (!canRead(type)) throw new PacketException(PacketErrorCode.AUTHORIZATION, "Not all credentials can read " + type.getAddress() + ".");
     }
     
     /**
@@ -655,7 +655,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
      */
     @Pure
     public void checkCanWrite(@Nonnull @AttributeType SemanticType type) throws PacketException {
-        if (!canWrite(type)) throw new PacketException(PacketError.AUTHORIZATION, "Not all credentials can write " + type.getAddress() + ".");
+        if (!canWrite(type)) throw new PacketException(PacketErrorCode.AUTHORIZATION, "Not all credentials can write " + type.getAddress() + ".");
     }
     
     /**
@@ -681,7 +681,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
      */
     @Pure
     public void checkCover(@Nonnull ReadOnlyAgentPermissions permissions) throws PacketException {
-        if (!cover(permissions)) throw new PacketException(PacketError.AUTHORIZATION, "Not all credentials cover " + permissions + ".");
+        if (!cover(permissions)) throw new PacketException(PacketErrorCode.AUTHORIZATION, "Not all credentials cover " + permissions + ".");
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Verifying –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -710,7 +710,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
     @Locked
     @Override
     @NonCommitting
-    public void verify() throws SQLException, IOException, PacketException, ExternalException {
+    public void verify() throws AbortException, PacketException, ExternalException, NetworkException {
         assert !isVerified() : "This signature is not verified.";
         
         final @Nonnull Time start = Time.getCurrent();
@@ -978,7 +978,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
                 return outgoingRole;
             }
         }
-        throw new PacketException(PacketError.AUTHORIZATION, "The credential does not belong to an authorized role.");
+        throw new PacketException(PacketErrorCode.AUTHORIZATION, "The credential does not belong to an authorized role.");
     }
     
 }

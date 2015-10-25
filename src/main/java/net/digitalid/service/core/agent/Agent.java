@@ -14,7 +14,7 @@ import net.digitalid.service.core.concept.Aspect;
 import net.digitalid.service.core.concept.NonHostConcept;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.service.core.exceptions.packet.PacketError;
+import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identity.Identity;
 import net.digitalid.service.core.identity.SemanticType;
@@ -144,7 +144,7 @@ public abstract class Agent extends NonHostConcept implements Storable<Agent> {
      */
     @Pure
     public final void checkNotRemoved() throws PacketException {
-        if (isRemoved()) throw new PacketException(PacketError.AUTHORIZATION, "The agent has been removed.");
+        if (isRemoved()) throw new PacketException(PacketErrorCode.AUTHORIZATION, "The agent has been removed.");
     }
     
     /**
@@ -396,7 +396,7 @@ public abstract class Agent extends NonHostConcept implements Storable<Agent> {
     @Pure
     @NonCommitting
     public final void checkCovers(@Nonnull Agent agent) throws PacketException, SQLException {
-        if (!covers(agent)) throw new PacketException(PacketError.AUTHORIZATION, "This agent does not cover the other agent.");
+        if (!covers(agent)) throw new PacketException(PacketErrorCode.AUTHORIZATION, "This agent does not cover the other agent.");
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructors –––––––––––––––––––––––––––––––––––––––––––––––––– */

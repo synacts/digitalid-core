@@ -93,7 +93,7 @@ public final class FreezableContacts extends FreezableLinkedHashSet<Contact> imp
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
     @NonCommitting
-    public @NonFrozen FreezableContacts(@Nonnull NonHostEntity entity, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
+    public @NonFrozen FreezableContacts(@Nonnull NonHostEntity entity, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         final @Nonnull ReadOnlyList<Block> elements = new ListWrapper(block).getElementsNotNull();

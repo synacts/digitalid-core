@@ -168,7 +168,7 @@ public final class Password extends Concept<Password, NonHostEntity, Object> {
     /**
      * Stores the storing factory which is used to store and restore this concept.
      */
-    public static final @Nonnull ConceptStoringFactory<Password, NonHostEntity, Object> STORING_FACTORY = ConceptStoringFactory.get(EmptyWrapper.getValueEncodingFactory(TYPE), INDEX);
+    public static final @Nonnull ConceptStoringFactory<Password, NonHostEntity, Object> STORING_FACTORY = ConceptStoringFactory.get(EmptyWrapper.getValueStoringFactory(TYPE), INDEX);
     
     @Pure
     @Override

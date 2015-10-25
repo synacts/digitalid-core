@@ -127,7 +127,7 @@ public abstract class AbstractEncodingFactory<O, E> {
     @Pure
     @Locked
     @NonCommitting
-    public abstract @Nonnull O decodeNonNullable(@Nonnull E entity, @Nonnull @NonEncoding Block block) throws SQLException, IOException, PacketException, ExternalException;
+    public abstract @Nonnull O decodeNonNullable(@Nonnull E entity, @Nonnull @NonEncoding Block block) throws AbortException, PacketException, ExternalException, NetworkException;
     
     /**
      * Decodes the given nullable block.
@@ -142,7 +142,7 @@ public abstract class AbstractEncodingFactory<O, E> {
     @Pure
     @Locked
     @NonCommitting
-    public @Nullable O decodeNullable(@Nonnull E entity, @Nullable @NonEncoding Block block) throws SQLException, IOException, PacketException, ExternalException {
+    public @Nullable O decodeNullable(@Nonnull E entity, @Nullable @NonEncoding Block block) throws AbortException, PacketException, ExternalException, NetworkException {
         if (block != null) return decodeNonNullable(entity, block);
         else return null;
     }

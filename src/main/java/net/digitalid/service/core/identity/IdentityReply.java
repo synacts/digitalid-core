@@ -8,7 +8,7 @@ import javax.annotation.Nullable;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.service.core.exceptions.packet.PacketError;
+import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.Reply;
 import net.digitalid.service.core.identifier.IdentifierClass;
@@ -72,10 +72,10 @@ public final class IdentityReply extends CoreServiceQueryReply {
     IdentityReply(@Nonnull InternalNonHostIdentifier subject) throws SQLException, PacketException {
         super(subject);
         
-        if (!subject.isMapped()) throw new PacketException(PacketError.IDENTIFIER, "The identity with the identifier " + subject + " does not exist on this host.");
+        if (!subject.isMapped()) throw new PacketException(PacketErrorCode.IDENTIFIER, "The identity with the identifier " + subject + " does not exist on this host.");
         this.category = subject.getMappedIdentity().getCategory();
         if (!category.isInternalNonHostIdentity()) throw new SQLException("The category is " + category.name() + " instead of an internal non-host identity.");
-        if (!FreezablePredecessors.exist(subject)) throw new PacketException(PacketError.IDENTIFIER, "The identity with the identifier " + subject + " is not yet initialized.");
+        if (!FreezablePredecessors.exist(subject)) throw new PacketException(PacketErrorCode.IDENTIFIER, "The identity with the identifier " + subject + " is not yet initialized.");
         this.predecessors = FreezablePredecessors.get(subject);
         this.successor = Successor.get(subject);
     }
@@ -190,7 +190,7 @@ public final class IdentityReply extends CoreServiceQueryReply {
         @Pure
         @Override
         @NonCommitting
-        protected @Nonnull Reply create(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
+        protected @Nonnull Reply create(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
             return new IdentityReply(entity, signature, number, block);
         }
         

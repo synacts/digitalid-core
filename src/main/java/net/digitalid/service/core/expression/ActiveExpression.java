@@ -39,7 +39,7 @@ public final class ActiveExpression extends AbstractExpression {
      * @param string the string which is to be parsed for the expression.
      */
     @NonCommitting
-    public ActiveExpression(@Nonnull NonHostEntity entity, @Nonnull String string) throws SQLException, IOException, PacketException, ExternalException {
+    public ActiveExpression(@Nonnull NonHostEntity entity, @Nonnull String string) throws AbortException, PacketException, ExternalException, NetworkException {
         super(entity, string);
     }
     
@@ -52,7 +52,7 @@ public final class ActiveExpression extends AbstractExpression {
      * @require block.getType().isBasedOn(StringWrapper.TYPE) : "The block is based on the string type.";
      */
     @NonCommitting
-    public ActiveExpression(@Nonnull NonHostEntity entity, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
+    public ActiveExpression(@Nonnull NonHostEntity entity, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
         super(entity, block);
     }
     

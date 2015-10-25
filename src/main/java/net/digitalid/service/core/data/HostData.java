@@ -58,6 +58,6 @@ public interface HostData extends ClientData {
      */
     @Locked
     @NonCommitting
-    public void importAll(@Nonnull Host host, @Nonnull @NonEncoding Block block) throws SQLException, IOException, PacketException, ExternalException;
+    public void importAll(@Nonnull Host host, @Nonnull @NonEncoding Block block) throws AbortException, PacketException, ExternalException, NetworkException;
     
 }

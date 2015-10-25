@@ -5,7 +5,7 @@ import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.cryptography.Element;
 import net.digitalid.service.core.cryptography.Exponent;
 import net.digitalid.service.core.cryptography.PublicKey;
-import net.digitalid.service.core.exceptions.packet.PacketError;
+import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identity.HostIdentity;
 import net.digitalid.service.core.wrappers.ClientSignatureWrapper;
@@ -42,7 +42,7 @@ public final class SecretCommitment extends Commitment {
     SecretCommitment(@Nonnull HostIdentity host, @Nonnull Time time, @Nonnull Element value, @Nonnull PublicKey publicKey, @Nonnull Exponent secret) throws PacketException {
         super(host, time, value, publicKey);
         
-        if (!publicKey.getAu().pow(secret).equals(value)) throw new PacketException(PacketError.INTERNAL, "The secret does not match the commitment.");
+        if (!publicKey.getAu().pow(secret).equals(value)) throw new PacketException(PacketErrorCode.INTERNAL, "The secret does not match the commitment.");
         this.secret = secret;
     }
     

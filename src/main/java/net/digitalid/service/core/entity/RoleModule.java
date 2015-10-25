@@ -9,7 +9,7 @@ import net.digitalid.service.core.agent.Agent;
 import net.digitalid.service.core.client.Client;
 import net.digitalid.service.core.data.ClientModule;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.service.core.exceptions.packet.PacketError;
+import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identity.Identity;
 import net.digitalid.service.core.identity.IdentityClass;
@@ -210,7 +210,7 @@ public final class RoleModule {
                 if (relation == null && recipient == null) return NativeRole.get(client, number, person, agentNumber);
                 if (relation != null && recipient != null) return NonNativeRole.get(client, number, person, relation, recipient, agentNumber);
                 else throw new InvalidEncodingException("The relation and the recipient have to be either both null or non-null.");
-            } else throw new PacketException(PacketError.IDENTIFIER, "No role for the person " + person.getAddress() + " could be found.");
+            } else throw new PacketException(PacketErrorCode.IDENTIFIER, "No role for the person " + person.getAddress() + " could be found.");
         } catch (@Nonnull InvalidEncodingException exception) {
             throw new SQLException("The encoding of a database entry is invalid.", exception);
         }

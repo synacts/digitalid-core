@@ -12,7 +12,7 @@ import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NativeRole;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.service.core.exceptions.packet.PacketError;
+import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.Action;
 import net.digitalid.service.core.handler.InternalAction;
@@ -90,7 +90,7 @@ public final class ClientAgentAccredit extends CoreServiceInternalAction {
      * @require Password.isValid(password) : "The password is valid.";
      */
     @NonCommitting
-    public ClientAgentAccredit(@Nonnull NativeRole role, @Nonnull String password) throws SQLException, IOException, PacketException, ExternalException {
+    public ClientAgentAccredit(@Nonnull NativeRole role, @Nonnull String password) throws AbortException, PacketException, ExternalException, NetworkException {
         super(role);
         
         assert Password.isValid(password) : "The password is valid.";
@@ -117,7 +117,7 @@ public final class ClientAgentAccredit extends CoreServiceInternalAction {
      * @ensure hasSignature() : "This handler has a signature.";
      */
     @NonCommitting
-    private ClientAgentAccredit(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
+    private ClientAgentAccredit(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
         super(entity, signature, recipient);
         
         final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getNonNullableElements(4);
@@ -158,7 +158,7 @@ public final class ClientAgentAccredit extends CoreServiceInternalAction {
     
     @Override
     @NonCommitting
-    public @Nonnull Response send() throws SQLException, IOException, PacketException, ExternalException {
+    public @Nonnull Response send() throws AbortException, PacketException, ExternalException, NetworkException {
         final @Nonnull Response response = Method.send(new FreezableArrayList<Method>(this).freeze(), null);
         response.checkReply(0);
         return response;
@@ -181,7 +181,7 @@ public final class ClientAgentAccredit extends CoreServiceInternalAction {
     @Override
     @NonCommitting
     public void executeOnHostInternalAction() throws PacketException, SQLException {
-        if (!Password.get(getNonHostAccount()).getValue().equals(password)) throw new PacketException(PacketError.AUTHORIZATION, "The password is not correct.");
+        if (!Password.get(getNonHostAccount()).getValue().equals(password)) throw new PacketException(PacketErrorCode.AUTHORIZATION, "The password is not correct.");
         executeOnBoth();
     }
     
@@ -243,7 +243,7 @@ public final class ClientAgentAccredit extends CoreServiceInternalAction {
         @Pure
         @Override
         @NonCommitting
-        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException  {
+        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException  {
             return new ClientAgentAccredit(entity, signature, recipient, block);
         }
         

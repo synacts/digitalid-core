@@ -92,7 +92,7 @@ public abstract class FactoryBasedEncodingFactory<O, E, K> extends AbstractEncod
     
     @Pure
     @Override
-    public @Nonnull O decodeNonNullable(@Nonnull E entity, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
+    public @Nonnull O decodeNonNullable(@Nonnull E entity, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
         assert block.getType().isBasedOn(getType()) : "The block is based on the type of this factory.";
         
         return getObject(entity, keyFactory.decodeNonNullable(entity, block));

@@ -93,7 +93,7 @@ public class Commitment implements Blockable, SQLizable {
      * @param value the value of this commitment.
      */
     @NonCommitting
-    public Commitment(@Nonnull HostIdentity host, @Nonnull Time time, @Nonnull BigInteger value) throws SQLException, IOException, PacketException, ExternalException {
+    public Commitment(@Nonnull HostIdentity host, @Nonnull Time time, @Nonnull BigInteger value) throws AbortException, PacketException, ExternalException, NetworkException {
         this.host = host;
         this.time = time;
         this.publicKey = Cache.getPublicKeyChain(host).getKey(time);
@@ -124,7 +124,7 @@ public class Commitment implements Blockable, SQLizable {
      */
     @Locked
     @NonCommitting
-    public Commitment(@Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
+    public Commitment(@Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getNonNullableElements(3);

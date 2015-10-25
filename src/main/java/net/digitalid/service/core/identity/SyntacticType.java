@@ -93,7 +93,7 @@ public final class SyntacticType extends Type {
     
     @Override
     @NonCommitting
-    void load() throws SQLException, IOException, PacketException, ExternalException {
+    void load() throws AbortException, PacketException, ExternalException, NetworkException {
         assert !isLoaded() : "The type declaration is not loaded.";
         
         this.numberOfParameters = new Int8Wrapper(Cache.getStaleAttributeContent(this, null, PARAMETERS)).getValue();

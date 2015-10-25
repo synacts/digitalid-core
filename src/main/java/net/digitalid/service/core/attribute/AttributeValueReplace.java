@@ -118,7 +118,7 @@ final class AttributeValueReplace extends CoreServiceInternalAction {
      * @ensure hasSignature() : "This handler has a signature.";
      */
     @NonCommitting
-    private AttributeValueReplace(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
+    private AttributeValueReplace(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
         super(entity.toNonHostEntity(), signature, recipient);
         
         final @Nonnull TupleWrapper tuple = new TupleWrapper(block);
@@ -219,7 +219,7 @@ final class AttributeValueReplace extends CoreServiceInternalAction {
         @Pure
         @Override
         @NonCommitting
-        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException  {
+        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException  {
             return new AttributeValueReplace(entity, signature, recipient, block);
         }
         

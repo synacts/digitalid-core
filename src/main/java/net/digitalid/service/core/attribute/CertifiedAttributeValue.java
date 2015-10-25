@@ -95,7 +95,7 @@ public final class CertifiedAttributeValue extends AttributeValue {
      * @require signature.isSigned() : "The signature is signed.";
      */
     @NonCommitting
-    CertifiedAttributeValue(@Nonnull Block content, @Nonnull SignatureWrapper signature) throws SQLException, IOException, PacketException, ExternalException {
+    CertifiedAttributeValue(@Nonnull Block content, @Nonnull SignatureWrapper signature) throws AbortException, PacketException, ExternalException, NetworkException {
         super(content);
         
         if (signature instanceof HostSignatureWrapper) this.signature = (HostSignatureWrapper) signature;
@@ -123,7 +123,7 @@ public final class CertifiedAttributeValue extends AttributeValue {
     @Locked
     @Override
     @NonCommitting
-    public void verify() throws SQLException, IOException, PacketException, ExternalException {
+    public void verify() throws AbortException, PacketException, ExternalException, NetworkException {
         signature.verify();
         Certificate.isAuthorized(getIssuer(), getContent());
     }

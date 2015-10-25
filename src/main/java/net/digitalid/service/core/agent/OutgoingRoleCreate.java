@@ -95,7 +95,7 @@ final class OutgoingRoleCreate extends CoreServiceInternalAction {
      * @ensure hasSignature() : "This handler has a signature.";
      */
     @NonCommitting
-    private OutgoingRoleCreate(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
+    private OutgoingRoleCreate(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
         super(entity, signature, recipient);
         
         final @Nonnull NonHostEntity nonHostEntity = entity.toNonHostEntity();
@@ -199,7 +199,7 @@ final class OutgoingRoleCreate extends CoreServiceInternalAction {
         @Pure
         @Override
         @NonCommitting
-        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException  {
+        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException  {
             return new OutgoingRoleCreate(entity, signature, recipient, block);
         }
         

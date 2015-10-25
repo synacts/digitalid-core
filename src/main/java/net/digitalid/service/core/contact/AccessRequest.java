@@ -11,7 +11,7 @@ import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.service.core.exceptions.packet.PacketError;
+import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.Method;
 import net.digitalid.service.core.handler.Reply;
@@ -93,7 +93,7 @@ public final class AccessRequest extends CoreServiceExternalAction {
      * @ensure hasSignature() : "This handler has a signature.";
      */
     @NonCommitting
-    private AccessRequest(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
+    private AccessRequest(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
         super(entity, signature, recipient);
         
         this.person = entity.getIdentity().toInternalPerson();
@@ -159,7 +159,7 @@ public final class AccessRequest extends CoreServiceExternalAction {
         if (signature instanceof CredentialsSignatureWrapper) {
             ((CredentialsSignatureWrapper) signature).checkCover(getRequiredPermissionsToExecuteMethod());
         } else if (signature instanceof ClientSignatureWrapper) {
-            throw new PacketException(PacketError.AUTHORIZATION, "Access requests may not be signed by clients.");
+            throw new PacketException(PacketErrorCode.AUTHORIZATION, "Access requests may not be signed by clients.");
         }
         executeOnClient();
         return null;
@@ -220,7 +220,7 @@ public final class AccessRequest extends CoreServiceExternalAction {
         @Pure
         @Override
         @NonCommitting
-        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
+        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
             return new AccessRequest(entity, signature, recipient, block);
         }
         

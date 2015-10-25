@@ -252,7 +252,7 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
      */
     @Locked
     @NonCommitting
-    private EncryptionWrapper(@Nonnull @Loaded @BasedOn("encryption@core.digitalid.net") SemanticType type, @Nonnull Block element, @Nullable HostIdentifier recipient, @Nullable SymmetricKey symmetricKey) throws SQLException, IOException, PacketException, ExternalException {
+    private EncryptionWrapper(@Nonnull @Loaded @BasedOn("encryption@core.digitalid.net") SemanticType type, @Nonnull Block element, @Nullable HostIdentifier recipient, @Nullable SymmetricKey symmetricKey) throws AbortException, PacketException, ExternalException, NetworkException {
         super(type);
         
         assert element.getType().isBasedOn(type.getParameters().getNonNullable(0)) : "The element is based on the parameter of the given type.";
@@ -341,7 +341,7 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
     @Pure
     @Locked
     @NonCommitting
-    public static @Nonnull <V extends Storable<V>> EncryptionWrapper encrypt(@Nonnull @Loaded @BasedOn("encryption@core.digitalid.net") SemanticType type, @Nonnull V element, @Nullable HostIdentifier recipient, @Nullable SymmetricKey symmetricKey) throws SQLException, IOException, PacketException, ExternalException {
+    public static @Nonnull <V extends Storable<V>> EncryptionWrapper encrypt(@Nonnull @Loaded @BasedOn("encryption@core.digitalid.net") SemanticType type, @Nonnull V element, @Nullable HostIdentifier recipient, @Nullable SymmetricKey symmetricKey) throws AbortException, PacketException, ExternalException, NetworkException {
         return new EncryptionWrapper(type, Block.fromNonNullable(element), recipient, symmetricKey);
     }
     

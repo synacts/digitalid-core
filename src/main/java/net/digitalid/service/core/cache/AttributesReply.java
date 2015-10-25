@@ -104,7 +104,7 @@ public final class AttributesReply extends CoreServiceQueryReply {
      * @ensure !isOnHost() : "Query replies are never decoded on hosts.";
      */
     @NonCommitting
-    private AttributesReply(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
+    private AttributesReply(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
         super(entity, signature, number);
         
         final @Nonnull InternalIdentity subject = getSubject().getIdentity();
@@ -193,7 +193,7 @@ public final class AttributesReply extends CoreServiceQueryReply {
         @Pure
         @Override
         @NonCommitting
-        protected @Nonnull Reply create(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
+        protected @Nonnull Reply create(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
             return new AttributesReply(entity, signature, number, block);
         }
         

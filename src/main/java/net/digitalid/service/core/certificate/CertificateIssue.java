@@ -13,7 +13,7 @@ import net.digitalid.service.core.data.StateModule;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostAccount;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.packet.PacketError;
+import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.Method;
 import net.digitalid.service.core.handler.Reply;
@@ -78,7 +78,7 @@ public final class CertificateIssue extends CoreServiceExternalAction {
      * @ensure hasSignature() : "This handler has a signature.";
      */
     @NonCommitting
-    private CertificateIssue(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
+    private CertificateIssue(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
         super(entity, signature, recipient);
         
         this.certificate = AttributeValue.get(block, false).toCertifiedAttributeValue();
@@ -127,12 +127,12 @@ public final class CertificateIssue extends CoreServiceExternalAction {
     @NonCommitting
     public @Nullable CoreServiceActionReply executeOnHost() throws PacketException, SQLException {
         final @Nonnull SignatureWrapper signature = getSignatureNotNull();
-        if (!(signature instanceof HostSignatureWrapper)) throw new PacketException(PacketError.AUTHORIZATION, "TODO");
+        if (!(signature instanceof HostSignatureWrapper)) throw new PacketException(PacketErrorCode.AUTHORIZATION, "TODO");
         
         try {
             certificate.verify();
         } catch (@Nonnull IOException | PacketException | ExternalException exception) { // TODO: What to do with the packet exception?
-            throw new PacketException(PacketError.METHOD, "TODO", exception);
+            throw new PacketException(PacketErrorCode.METHOD, "TODO", exception);
         }
         
         // TODO: Check other things like whether the signer is the one in the certificate.
@@ -197,7 +197,7 @@ public final class CertificateIssue extends CoreServiceExternalAction {
         @Pure
         @Override
         @NonCommitting
-        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
+        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
             return new CertificateIssue(entity, signature, recipient, block);
         }
         

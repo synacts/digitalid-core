@@ -18,7 +18,7 @@ import net.digitalid.service.core.entity.Account;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.IdentityNotFoundException;
-import net.digitalid.service.core.exceptions.packet.PacketError;
+import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identifier.InternalIdentifier;
 import net.digitalid.service.core.identity.SemanticType;
@@ -125,7 +125,7 @@ public abstract class Reply extends Handler implements SQLizable {
          */
         @Pure
         @NonCommitting
-        protected abstract Reply create(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException;
+        protected abstract Reply create(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException;
         
     }
     
@@ -161,9 +161,9 @@ public abstract class Reply extends Handler implements SQLizable {
      */
     @Pure
     @NonCommitting
-    private static @Nonnull Reply get(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
+    private static @Nonnull Reply get(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
         final @Nullable Reply.Factory factory = factories.get(block.getType());
-        if (factory == null) throw new PacketException(PacketError.REPLY, "No reply could be found for the type " + block.getType().getAddress() + ".", null, true);
+        if (factory == null) throw new PacketException(PacketErrorCode.REPLY, "No reply could be found for the type " + block.getType().getAddress() + ".", null, true);
         else return factory.create(entity, signature, number, block);
     }
     
@@ -182,7 +182,7 @@ public abstract class Reply extends Handler implements SQLizable {
      */
     @Pure
     @NonCommitting
-    public static @Nonnull Reply get(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
+    public static @Nonnull Reply get(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
         return get(entity, signature, store(signature), block);
     }
     
@@ -197,7 +197,7 @@ public abstract class Reply extends Handler implements SQLizable {
     @Pure
     public final @Nonnull ActionReply toActionReply() throws PacketException {
         if (this instanceof ActionReply) return (ActionReply) this;
-        throw new PacketException(PacketError.REPLY, "An action reply was expected but a query reply was found.", null, true);
+        throw new PacketException(PacketErrorCode.REPLY, "An action reply was expected but a query reply was found.", null, true);
     }
     
     /**
@@ -210,7 +210,7 @@ public abstract class Reply extends Handler implements SQLizable {
     @Pure
     public final @Nonnull QueryReply toQueryReply() throws PacketException {
         if (this instanceof QueryReply) return (QueryReply) this;
-        throw new PacketException(PacketError.REPLY, "A query reply was expected but an action reply was found.", null, true);
+        throw new PacketException(PacketErrorCode.REPLY, "A query reply was expected but an action reply was found.", null, true);
     }
     
     
@@ -263,7 +263,7 @@ public abstract class Reply extends Handler implements SQLizable {
      */
     @Pure
     @NonCommitting
-    public static @Nullable Reply get(@Nullable NonHostEntity entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException, IOException, PacketException, ExternalException {
+    public static @Nullable Reply get(@Nullable NonHostEntity entity, @Nonnull ResultSet resultSet, int columnIndex) throws AbortException, PacketException, ExternalException, NetworkException {
         final long number = resultSet.getLong(columnIndex);
         if (resultSet.wasNull()) return null;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet rs = statement.executeQuery("SELECT signature FROM general_reply WHERE reply = " + number)) {

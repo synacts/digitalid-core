@@ -13,7 +13,7 @@ import net.digitalid.service.core.credential.ClientCredential;
 import net.digitalid.service.core.data.Service;
 import net.digitalid.service.core.data.StateModule;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.packet.PacketError;
+import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identity.InternalNonHostIdentity;
 import net.digitalid.service.core.identity.SemanticType;
@@ -200,7 +200,7 @@ public abstract class Role extends EntityClass implements NonHostEntity, Observe
      */
     @NonLocked
     @Committing
-    public final void reloadState(@Nonnull StateModule module) throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
+    public final void reloadState(@Nonnull StateModule module) throws InterruptedException, AbortException, PacketException, ExternalException, NetworkException {
         Synchronizer.reload(this, module);
         if (Database.isMultiAccess() && (module.equals(CoreService.SERVICE) || module.equals(AgentModule.MODULE))) {
             getAgent().reset();
@@ -215,7 +215,7 @@ public abstract class Role extends EntityClass implements NonHostEntity, Observe
      */
     @NonLocked
     @Committing
-    public final void refreshState(@Nonnull Service service) throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
+    public final void refreshState(@Nonnull Service service) throws InterruptedException, AbortException, PacketException, ExternalException, NetworkException {
         Synchronizer.refresh(this, service);
         if (Database.isMultiAccess() && service.equals(CoreService.SERVICE)) {
             getAgent().reset();
@@ -232,7 +232,7 @@ public abstract class Role extends EntityClass implements NonHostEntity, Observe
      */
     @NonLocked
     @Committing
-    public boolean reloadOrRefreshState(@Nonnull Service... services) throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
+    public boolean reloadOrRefreshState(@Nonnull Service... services) throws InterruptedException, AbortException, PacketException, ExternalException, NetworkException {
         final @Nonnull Time[] times = new Time[services.length];
         try {
             Database.lock();
@@ -252,7 +252,7 @@ public abstract class Role extends EntityClass implements NonHostEntity, Observe
                 if (times[i].isLessThan(cutoff)) reloadState(services[i]);
                 else refreshState(services[i]);
             } catch (@Nonnull PacketException exception) {
-                if (exception.getError() == PacketError.AUDIT) return false;
+                if (exception.getError() == PacketErrorCode.AUDIT) return false;
                 else throw exception;
             }
         }

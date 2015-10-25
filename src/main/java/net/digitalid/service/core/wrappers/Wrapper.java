@@ -269,7 +269,7 @@ public abstract class Wrapper<W extends Wrapper<W>> implements Encodable<W, Obje
         @Locked
         @Override
         @NonCommitting
-        public final @Nonnull V decodeNonNullable(@Nonnull Object none, @Nonnull @NonEncoding Block block) throws SQLException, IOException, PacketException, ExternalException {
+        public final @Nonnull V decodeNonNullable(@Nonnull Object none, @Nonnull @NonEncoding Block block) throws AbortException, PacketException, ExternalException, NetworkException {
             assert block.getType().isBasedOn(getType()) : "The block is based on the type of this factory.";
             
             return unwrap(factory.decodeNonNullable(none, block));

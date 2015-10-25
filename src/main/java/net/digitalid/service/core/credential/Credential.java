@@ -234,7 +234,7 @@ public abstract class Credential {
      * @require i == null || i.getType().isBasedOn(Exponent.TYPE) : "The serial number is either null or based on the indicated type.";
      */
     @NonCommitting
-    Credential(@Nonnull Block exposed, @Nullable Block randomizedPermissions, @Nullable Restrictions restrictions, @Nullable Block i) throws SQLException, IOException, PacketException, ExternalException {
+    Credential(@Nonnull Block exposed, @Nullable Block randomizedPermissions, @Nullable Restrictions restrictions, @Nullable Block i) throws AbortException, PacketException, ExternalException, NetworkException {
         assert exposed.getType().isBasedOn(Credential.EXPOSED) : "The exposed block is based on the indicated type.";
         assert randomizedPermissions == null || randomizedPermissions.getType().isBasedOn(RandomizedAgentPermissions.TYPE) : "The randomized permissions are either null or based on the indicated type.";
         assert i == null || i.getType().isBasedOn(Exponent.TYPE) : "The serial number is either null or based on the indicated type.";

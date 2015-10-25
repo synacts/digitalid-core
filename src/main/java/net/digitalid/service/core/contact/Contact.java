@@ -211,7 +211,7 @@ public final class Contact extends NonHostConcept implements Blockable, SQLizabl
      */
     @Pure
     @NonCommitting
-    public static @Nonnull Contact get(@Nonnull NonHostEntity entity, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
+    public static @Nonnull Contact get(@Nonnull NonHostEntity entity, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         return get(entity, IdentifierClass.create(block).getIdentity().toPerson());

@@ -102,7 +102,7 @@ public final class NonNullableConceptPropertyTable<V, C extends Concept<C, E, ?>
     @Locked
     @Override
     @NonCommitting
-    public void importAll(@Nonnull Host host, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
+    public void importAll(@Nonnull Host host, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
         assert block.getType().isBasedOn(getDumpType()) : "The block is based on the dump type of this data collection.";
         
         final @Nonnull String SQL = "INSERT INTO " + getName(host) + " (" + getPropertyFactory().getEntityFactories().getStoringFactory().getSelection() + ", " + getPropertyFactory().getConceptFactories().getStoringFactory().getSelection() + ", " + Time.STORING_FACTORY.getSelection() + ", " + getPropertyFactory().getValueFactories().getStoringFactory().getSelection() + ") VALUES (" + getPropertyFactory().getEntityFactories().getStoringFactory().getInsertForPreparedStatement() + ", " + getPropertyFactory().getConceptFactories().getStoringFactory().getInsertForPreparedStatement() + ", " + Time.STORING_FACTORY.getInsertForPreparedStatement() + ", " + getPropertyFactory().getValueFactories().getStoringFactory().getInsertForPreparedStatement() + ")";
@@ -161,7 +161,7 @@ public final class NonNullableConceptPropertyTable<V, C extends Concept<C, E, ?>
     @Locked
     @Override
     @NonCommitting
-    public void addState(@Nonnull E entity, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
+    public void addState(@Nonnull E entity, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
         assert block.getType().isBasedOn(getStateType()) : "The block is based on the state type of this data collection.";
         
         final @Nonnull String SQL = "INSERT" + Database.getConfiguration().IGNORE() + " INTO " + getName(entity.getSite()) + " (" + getPropertyFactory().getEntityFactories().getStoringFactory().getSelection() + ", " + getPropertyFactory().getConceptFactories().getStoringFactory().getSelection() + ", " + Time.STORING_FACTORY.getSelection() + ", " + getPropertyFactory().getValueFactories().getStoringFactory().getSelection() + ") VALUES (" + getPropertyFactory().getEntityFactories().getStoringFactory().getInsertForPreparedStatement() + ", " + getPropertyFactory().getConceptFactories().getStoringFactory().getInsertForPreparedStatement() + ", " + Time.STORING_FACTORY.getInsertForPreparedStatement() + ", " + getPropertyFactory().getValueFactories().getStoringFactory().getInsertForPreparedStatement() + ")";

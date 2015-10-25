@@ -266,7 +266,7 @@ public final class ClientCredential extends Credential {
      * @return a role-based credential for the given role and permissions.
      */
     @NonCommitting
-    public static @Nonnull @Active ClientCredential getRoleBased(@Nonnull @OfInternalPerson NonNativeRole role, @Nonnull @Frozen @NonEmpty ReadOnlyAgentPermissions permissions) throws SQLException, IOException, PacketException, ExternalException {
+    public static @Nonnull @Active ClientCredential getRoleBased(@Nonnull @OfInternalPerson NonNativeRole role, @Nonnull @Frozen @NonEmpty ReadOnlyAgentPermissions permissions) throws AbortException, PacketException, ExternalException, NetworkException {
         @Nullable ConcurrentMap<ReadOnlyAgentPermissions, ClientCredential> map = roleBasedCredentials.get(role);
         if (map == null) map = roleBasedCredentials.putIfAbsentElseReturnPresent(role, new ConcurrentHashMap<ReadOnlyAgentPermissions, ClientCredential>());
         @Nullable ClientCredential credential = map.get(permissions);
@@ -296,7 +296,7 @@ public final class ClientCredential extends Credential {
      * @return an identity-based credential for the given role and permissions.
      */
     @NonCommitting
-    public static @Nonnull @Active ClientCredential getIdentityBased(@Nonnull @OfInternalPerson Role role, @Nonnull @Frozen @NonEmpty ReadOnlyAgentPermissions permissions) throws SQLException, IOException, PacketException, ExternalException {
+    public static @Nonnull @Active ClientCredential getIdentityBased(@Nonnull @OfInternalPerson Role role, @Nonnull @Frozen @NonEmpty ReadOnlyAgentPermissions permissions) throws AbortException, PacketException, ExternalException, NetworkException {
         @Nullable ConcurrentMap<ReadOnlyAgentPermissions, ClientCredential> map = identityBasedCredentials.get(role);
         if (map == null) map = identityBasedCredentials.putIfAbsentElseReturnPresent(role, new ConcurrentHashMap<ReadOnlyAgentPermissions, ClientCredential>());
         @Nullable ClientCredential credential = map.get(permissions);
@@ -326,7 +326,7 @@ public final class ClientCredential extends Credential {
      * @return an attribute-based credential for the given role, value and permissions.
      */
     @NonCommitting
-    public static @Nonnull @Active ClientCredential getAttributeBased(@Nonnull @OfInternalPerson Role role, @Nonnull CertifiedAttributeValue value, @Nonnull @Frozen @NonEmpty ReadOnlyAgentPermissions permissions) throws SQLException, IOException, PacketException, ExternalException {
+    public static @Nonnull @Active ClientCredential getAttributeBased(@Nonnull @OfInternalPerson Role role, @Nonnull CertifiedAttributeValue value, @Nonnull @Frozen @NonEmpty ReadOnlyAgentPermissions permissions) throws AbortException, PacketException, ExternalException, NetworkException {
         // TODO: Shortening with CredentialExternalQuery.
         throw new UnsupportedOperationException("Credentials for attribute-based access control are not yet supported!");
     }

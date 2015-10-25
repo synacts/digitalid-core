@@ -38,8 +38,7 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Fields –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
-    // TODO: Instead of passing the table, create a new class like NonNullableConceptProperty.Factory that contains all other factories and types (and can also be passed to the table).
-    private final @Nonnull NonNullableConceptPropertyTable<V, C, E> table;
+    private final @Nonnull NonNullableConceptPropertyFactory<V, C, E> table;
     
     private final @Nonnull NonNullableConceptProperty<V, C, E> property;
     
@@ -53,7 +52,7 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructors –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
-    private NonNullableConceptPropertyInternalAction(@Nonnull NonNullableConceptPropertyTable<V, C, E> table, @Nonnull NonNullableConceptProperty<V, C, E> property, @Nonnull Time oldTime, @Nonnull Time newTime, @Nonnull V oldValue, @Nonnull V newValue) throws SQLException {
+    private NonNullableConceptPropertyInternalAction(@Nonnull NonNullableConceptPropertyFactory<V, C, E> table, @Nonnull NonNullableConceptProperty<V, C, E> property, @Nonnull Time oldTime, @Nonnull Time newTime, @Nonnull V oldValue, @Nonnull V newValue) throws SQLException {
         super(property.getConcept().getRole(), table.getService());
         
         this.table = table;
@@ -69,7 +68,7 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
         return new NonNullableConceptPropertyInternalAction<>(property.getTable(), property, property.getTime(), Time.getCurrent(), oldValue, newValue); // TODO: Let all the arguments be determined by the caller.
     }
     
-    private NonNullableConceptPropertyInternalAction(@Nonnull E entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block content, @Nonnull NonNullableConceptPropertyTable<V, C, E> table) throws SQLException, IOException, PacketException, ExternalException {
+    private NonNullableConceptPropertyInternalAction(@Nonnull E entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block content, @Nonnull NonNullableConceptPropertyTable<V, C, E> table) throws AbortException, PacketException, ExternalException, NetworkException {
         super(entity, signature, recipient, table.getService());
         
         this.table = table;
@@ -178,7 +177,7 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
         @Pure
         @Override
         @NonCommitting
-        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException  {
+        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException  {
         	
             return new NonNullableConceptPropertyInternalAction((E) entity.toNonHostEntity(), signature, recipient, block, factory);
         }

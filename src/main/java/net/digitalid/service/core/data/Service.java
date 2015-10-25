@@ -11,7 +11,7 @@ import net.digitalid.service.core.cache.Cache;
 import net.digitalid.service.core.entity.Role;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.service.core.exceptions.packet.PacketError;
+import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.identifier.IdentifierClass;
@@ -69,7 +69,7 @@ public class Service extends StateModule implements Storable<Service, Object> {
     public static @Nonnull Service getService(@Nonnull SemanticType type) throws PacketException {
         final @Nullable Service service = services.get(type);
         if (service != null) return service;
-        throw new PacketException(PacketError.SERVICE, "No service with the type " + type.getAddress() + " is installed.");
+        throw new PacketException(PacketErrorCode.SERVICE, "No service with the type " + type.getAddress() + " is installed.");
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -182,7 +182,7 @@ public class Service extends StateModule implements Storable<Service, Object> {
      */
     @Pure
     @NonCommitting
-    public @Nonnull HostIdentifier getRecipient(@Nullable Role role, @Nonnull InternalPerson subject) throws SQLException, IOException, PacketException, ExternalException {
+    public @Nonnull HostIdentifier getRecipient(@Nullable Role role, @Nonnull InternalPerson subject) throws AbortException, PacketException, ExternalException, NetworkException {
         return IdentifierClass.create(Cache.getFreshAttributeContent(subject, role, getType(), false)).toHostIdentifier();
     }
     

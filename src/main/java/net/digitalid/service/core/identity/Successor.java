@@ -7,7 +7,7 @@ import java.sql.Statement;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.packet.PacketError;
+import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.Reply;
 import net.digitalid.service.core.identifier.ExternalIdentifier;
@@ -63,7 +63,7 @@ public final class Successor {
      * @return the successor of the given identifier as stored in the database or retrieved by a new request.
      */
     @NonCommitting
-    public static @Nonnull InternalNonHostIdentifier getReloaded(@Nonnull NonHostIdentifier identifier) throws SQLException, IOException, PacketException, ExternalException {
+    public static @Nonnull InternalNonHostIdentifier getReloaded(@Nonnull NonHostIdentifier identifier) throws AbortException, PacketException, ExternalException, NetworkException {
         @Nullable InternalNonHostIdentifier successor = get(identifier);
         if (successor == null) {
             final @Nonnull Reply reply;
@@ -78,7 +78,7 @@ public final class Successor {
             }
             
             if (successor != null) set(identifier, successor, reply);
-            else throw new PacketException(PacketError.EXTERNAL, "The identity with the identifier " + identifier + " has not been relocated.");
+            else throw new PacketException(PacketErrorCode.EXTERNAL, "The identity with the identifier " + identifier + " has not been relocated.");
         }
         return successor;
     }

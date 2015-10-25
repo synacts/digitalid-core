@@ -112,7 +112,7 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
      */
     @Locked
     @NonCommitting
-    private SelfcontainedWrapper(@Nonnull @NonEncoding Block block) throws SQLException, IOException, PacketException, ExternalException {
+    private SelfcontainedWrapper(@Nonnull @NonEncoding Block block) throws AbortException, PacketException, ExternalException, NetworkException {
         super(block.getType());
         
         this.tuple = Block.get(IMPLEMENTATION, block);
@@ -165,7 +165,7 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
     @Pure
     @Locked
     @NonCommitting
-    public static @Nonnull @NonEncoding Block decodeNonNullable(@Nonnull @NonEncoding @BasedOn("selfcontained@core.digitalid.net") Block block) throws SQLException, IOException, PacketException, ExternalException {
+    public static @Nonnull @NonEncoding Block decodeNonNullable(@Nonnull @NonEncoding @BasedOn("selfcontained@core.digitalid.net") Block block) throws AbortException, PacketException, ExternalException, NetworkException {
         return FACTORY.decodeNonNullable(block).element;
     }
     
@@ -179,7 +179,7 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
     @Pure
     @Locked
     @NonCommitting
-    public static @Nullable @NonEncoding Block decodeNullable(@Nullable @NonEncoding @BasedOn("selfcontained@core.digitalid.net") Block block) throws SQLException, IOException, PacketException, ExternalException {
+    public static @Nullable @NonEncoding Block decodeNullable(@Nullable @NonEncoding @BasedOn("selfcontained@core.digitalid.net") Block block) throws AbortException, PacketException, ExternalException, NetworkException {
         return block == null ? null : decodeNonNullable(block);
     }
     
@@ -194,7 +194,7 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
     @Pure
     @Locked
     @NonCommitting
-    public static @Nonnull @NonEncoding Block decodeBlockFrom(@Nonnull InputStream inputStream, boolean close) throws SQLException, IOException, PacketException, ExternalException {
+    public static @Nonnull @NonEncoding Block decodeBlockFrom(@Nonnull InputStream inputStream, boolean close) throws AbortException, PacketException, ExternalException, NetworkException {
         return decodeNonNullable(readBlockFrom(inputStream, close));
     }
     
@@ -236,7 +236,7 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
         @Locked
         @Override
         @NonCommitting
-        public @Nonnull SelfcontainedWrapper decodeNonNullable(@Nonnull @NonEncoding @BasedOn("selfcontained@core.digitalid.net") Block block) throws SQLException, IOException, PacketException, ExternalException {
+        public @Nonnull SelfcontainedWrapper decodeNonNullable(@Nonnull @NonEncoding @BasedOn("selfcontained@core.digitalid.net") Block block) throws AbortException, PacketException, ExternalException, NetworkException {
             return new SelfcontainedWrapper(block);
         }
         

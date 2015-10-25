@@ -11,7 +11,7 @@ import net.digitalid.service.core.annotations.AttributeType;
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.service.core.exceptions.packet.PacketError;
+import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identity.Category;
 import net.digitalid.service.core.identity.Identity;
@@ -129,7 +129,7 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
     @NonCommitting
-    public FreezableAgentPermissions(@Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
+    public FreezableAgentPermissions(@Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         final @Nonnull ReadOnlyList<Block> elements = new ListWrapper(block).getElementsNotNull();
@@ -236,7 +236,7 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
     @Pure
     @Override
     public void checkCanRead(@Nonnull SemanticType type) throws PacketException {
-        if (!canRead(type)) throw new PacketException(PacketError.AUTHORIZATION, "These agent permissions cannot read " + type.getAddress() + ".");
+        if (!canRead(type)) throw new PacketException(PacketErrorCode.AUTHORIZATION, "These agent permissions cannot read " + type.getAddress() + ".");
     }
     
     @Pure
@@ -250,7 +250,7 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
     @Pure
     @Override
     public void checkCanWrite(@Nonnull SemanticType type) throws PacketException {
-        if (!canWrite(type)) throw new PacketException(PacketError.AUTHORIZATION, "These agent permissions cannot write " + type.getAddress() + ".");
+        if (!canWrite(type)) throw new PacketException(PacketErrorCode.AUTHORIZATION, "These agent permissions cannot write " + type.getAddress() + ".");
     }
     
     @Pure
@@ -273,7 +273,7 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
     @Pure
     @Override
     public void checkCover(@Nonnull ReadOnlyAgentPermissions permissions) throws PacketException {
-        if (!cover(permissions)) throw new PacketException(PacketError.AUTHORIZATION, "These agent permissions do not cover " + permissions + ".");
+        if (!cover(permissions)) throw new PacketException(PacketErrorCode.AUTHORIZATION, "These agent permissions do not cover " + permissions + ".");
     }
     
     

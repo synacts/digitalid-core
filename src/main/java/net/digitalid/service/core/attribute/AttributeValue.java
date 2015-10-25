@@ -82,7 +82,7 @@ public abstract class AttributeValue implements Blockable, SQLizable {
      */
     @Pure
     @NonCommitting
-    public static @Nonnull AttributeValue get(@Nonnull Block block, boolean verified) throws SQLException, IOException, PacketException, ExternalException {
+    public static @Nonnull AttributeValue get(@Nonnull Block block, boolean verified) throws AbortException, PacketException, ExternalException, NetworkException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         final @Nonnull SignatureWrapper signature = SignatureWrapper.decodeWithoutVerifying(block, verified, null);
@@ -195,7 +195,7 @@ public abstract class AttributeValue implements Blockable, SQLizable {
      */
     @Pure
     @NonCommitting
-    public abstract void verify() throws SQLException, IOException, PacketException, ExternalException;
+    public abstract void verify() throws AbortException, PacketException, ExternalException, NetworkException;
     
     /**
      * Returns whether the signature of this attribute value is verified.

@@ -70,7 +70,7 @@ public final class HostIdentifier extends InternalIdentifier {
     @Pure
     @Override
     @NonCommitting
-    public @Nonnull HostIdentity getIdentity() throws SQLException, IOException, PacketException, ExternalException {
+    public @Nonnull HostIdentity getIdentity() throws AbortException, PacketException, ExternalException, NetworkException {
         return Mapper.getIdentity(this).toHostIdentity();
     }
     

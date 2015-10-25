@@ -57,7 +57,7 @@ public final class MobileIdentifier extends ExternalIdentifier {
     @Pure
     @Override
     @NonCommitting
-    public @Nonnull Person getIdentity() throws SQLException, IOException, PacketException, ExternalException {
+    public @Nonnull Person getIdentity() throws AbortException, PacketException, ExternalException, NetworkException {
         return Mapper.getIdentity(this).toPerson();
     }
     

@@ -12,7 +12,7 @@ import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostAccount;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.service.core.exceptions.packet.PacketError;
+import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.ActionReply;
 import net.digitalid.service.core.handler.ExternalAction;
@@ -110,7 +110,7 @@ public final class PushReturned extends ExternalAction {
      * @ensure hasSignature() : "This handler has a signature.";
      */
     @NonCommitting
-    private PushReturned(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
+    private PushReturned(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
         super(entity, signature, recipient);
         
         final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getNonNullableElements(2);
@@ -171,7 +171,7 @@ public final class PushReturned extends ExternalAction {
     
     @Override
     public @Nullable ActionReply executeOnHost() throws PacketException {
-        throw new PacketException(PacketError.METHOD, "Returned push replies cannot be executed on a host.");
+        throw new PacketException(PacketErrorCode.METHOD, "Returned push replies cannot be executed on a host.");
     }
     
     @Pure
@@ -203,7 +203,7 @@ public final class PushReturned extends ExternalAction {
     
     @Override
     public @Nullable Response send() throws PacketException {
-        throw new PacketException(PacketError.INTERNAL, "Returned push replies cannot be sent.");
+        throw new PacketException(PacketErrorCode.INTERNAL, "Returned push replies cannot be sent.");
     }
     
     
@@ -262,7 +262,7 @@ public final class PushReturned extends ExternalAction {
         @Pure
         @Override
         @NonCommitting
-        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
+        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
             return new PushReturned(entity, signature, recipient, block);
         }
         

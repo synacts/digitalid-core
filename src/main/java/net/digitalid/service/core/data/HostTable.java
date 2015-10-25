@@ -91,6 +91,6 @@ public abstract class HostTable extends ClientTable implements HostData {
     @Locked
     @Override
     @NonCommitting
-    public abstract void importAll(@Nonnull Host host, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException;
+    public abstract void importAll(@Nonnull Host host, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException;
     
 }

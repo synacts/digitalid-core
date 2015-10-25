@@ -137,7 +137,7 @@ public final class ActionModule implements StateModule {
     
     @Override
     @NonCommitting
-    public void importModule(@Nonnull Host host, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
+    public void importModule(@Nonnull Host host, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
         assert block.getType().isBasedOn(getModuleFormat()) : "The block is based on the format of this module.";
         
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement("INSERT INTO " + host + "action (entity, service, time, " + Restrictions.COLUMNS + ", " + FreezableAgentPermissions.COLUMNS + ", agent, recipient, action) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {

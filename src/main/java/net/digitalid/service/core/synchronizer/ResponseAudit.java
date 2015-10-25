@@ -144,7 +144,7 @@ public final class ResponseAudit extends Audit {
      * @param ignoredModules the modules that are ignored when executing the trail.
      */
     @Committing
-    void execute(@Nonnull Role role, @Nonnull Service service, @Nonnull HostIdentifier recipient, @Nonnull ReadOnlyList<Method> methods, @Nonnull ReadOnlySet<StateModule> ignoredModules) throws SQLException, IOException, PacketException, ExternalException {
+    void execute(@Nonnull Role role, @Nonnull Service service, @Nonnull HostIdentifier recipient, @Nonnull ReadOnlyList<Method> methods, @Nonnull ReadOnlySet<StateModule> ignoredModules) throws AbortException, PacketException, ExternalException, NetworkException {
         final @Nonnull FreezableSet<StateModule> suspendedModules = FreezableHashSet.get();
         for (@Nonnull Block block : trail) {
             final @Nonnull SignatureWrapper signature = SignatureWrapper.decodeWithoutVerifying(block, true, role);

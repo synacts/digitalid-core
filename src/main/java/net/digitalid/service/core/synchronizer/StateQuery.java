@@ -15,7 +15,7 @@ import net.digitalid.service.core.entity.NonHostAccount;
 import net.digitalid.service.core.entity.Role;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.service.core.exceptions.packet.PacketError;
+import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.InternalQuery;
 import net.digitalid.service.core.handler.Method;
@@ -80,7 +80,7 @@ final class StateQuery extends InternalQuery {
      * @ensure isOnHost() : "Queries are only decoded on hosts.";
      */
     @NonCommitting
-    private StateQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
+    private StateQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
         super(entity, signature, recipient);
         
         this.module = Service.getModule(IdentityClass.create(block).toSemanticType());
@@ -118,7 +118,7 @@ final class StateQuery extends InternalQuery {
             final @Nonnull Credential credential = getSignatureNotNull().toCredentialsSignatureWrapper().getCredentials().getNonNullable(0);
             final @Nullable ReadOnlyAgentPermissions permissions = credential.getPermissions();
             final @Nullable Restrictions restrictions = credential.getRestrictions();
-            if (permissions == null || restrictions == null) throw new PacketException(PacketError.AUTHORIZATION, "For state queries, neither the permissions nor the restrictions may be null.");
+            if (permissions == null || restrictions == null) throw new PacketException(PacketErrorCode.AUTHORIZATION, "For state queries, neither the permissions nor the restrictions may be null.");
             return new StateReply(account, module.getState(account, permissions, restrictions, null), service);
         }
     }
@@ -159,7 +159,7 @@ final class StateQuery extends InternalQuery {
         @Pure
         @Override
         @NonCommitting
-        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
+        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
             return new StateQuery(entity, signature, recipient, block);
         }
         

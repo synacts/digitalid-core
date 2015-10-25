@@ -140,7 +140,7 @@ public class HostModule extends ClientModule implements HostData {
     @Locked
     @Override
     @NonCommitting
-    public final void importAll(@Nonnull Host host, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
+    public final void importAll(@Nonnull Host host, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
         final @Nonnull @NonNullableElements ReadOnlyList<Block> elements = ListWrapper.decodeNonNullableElements(block);
         for (final @Nonnull Block element : elements) {
             final @Nonnull Block selfcontained = SelfcontainedWrapper.decodeNonNullable(element);

@@ -13,7 +13,7 @@ import net.digitalid.service.core.database.SQLizable;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.service.core.exceptions.packet.PacketError;
+import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identity.Mapper;
 import net.digitalid.service.core.identity.SemanticType;
@@ -189,7 +189,7 @@ public final class Restrictions implements Blockable, SQLizable {
      * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
      */
     @NonCommitting
-    public Restrictions(@Nonnull NonHostEntity entity, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
+    public Restrictions(@Nonnull NonHostEntity entity, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         final @Nonnull TupleWrapper tuple = new TupleWrapper(block);
@@ -277,7 +277,7 @@ public final class Restrictions implements Blockable, SQLizable {
      */
     @Pure
     public void checkIsClient() throws PacketException {
-        if (!isClient()) throw new PacketException(PacketError.AUTHORIZATION, "The action is restricted to clients.");
+        if (!isClient()) throw new PacketException(PacketErrorCode.AUTHORIZATION, "The action is restricted to clients.");
     }
     
     /**
@@ -285,7 +285,7 @@ public final class Restrictions implements Blockable, SQLizable {
      */
     @Pure
     public void checkIsRole() throws PacketException {
-        if (!isRole()) throw new PacketException(PacketError.AUTHORIZATION, "The action is restricted to agents that can assume incoming roles.");
+        if (!isRole()) throw new PacketException(PacketErrorCode.AUTHORIZATION, "The action is restricted to agents that can assume incoming roles.");
     }
     
     /**
@@ -293,7 +293,7 @@ public final class Restrictions implements Blockable, SQLizable {
      */
     @Pure
     public void checkIsWriting() throws PacketException {
-        if (!isWriting()) throw new PacketException(PacketError.AUTHORIZATION, "The action is restricted to agents that can write to contexts.");
+        if (!isWriting()) throw new PacketException(PacketErrorCode.AUTHORIZATION, "The action is restricted to agents that can write to contexts.");
     }
     
     
@@ -318,7 +318,7 @@ public final class Restrictions implements Blockable, SQLizable {
     @Pure
     @NonCommitting
     public void checkCover(@Nonnull Context other) throws PacketException, SQLException {
-        if (!cover(other)) throw new PacketException(PacketError.AUTHORIZATION, "The restrictions of the agent do not cover the necessary context.");
+        if (!cover(other)) throw new PacketException(PacketErrorCode.AUTHORIZATION, "The restrictions of the agent do not cover the necessary context.");
     }
     
     /**
@@ -342,7 +342,7 @@ public final class Restrictions implements Blockable, SQLizable {
     @Pure
     @NonCommitting
     public void checkCover(@Nonnull Contact other) throws PacketException, SQLException {
-        if (!cover(other)) throw new PacketException(PacketError.AUTHORIZATION, "The restrictions of the agent do not cover the necessary contact.");
+        if (!cover(other)) throw new PacketException(PacketErrorCode.AUTHORIZATION, "The restrictions of the agent do not cover the necessary contact.");
     }
     
     /**
@@ -372,7 +372,7 @@ public final class Restrictions implements Blockable, SQLizable {
     @Pure
     @NonCommitting
     public void checkCover(@Nonnull Restrictions restrictions) throws PacketException, SQLException {
-        if (!cover(restrictions)) throw new PacketException(PacketError.AUTHORIZATION, "The restrictions of the agent do not cover the necessary restrictions.");
+        if (!cover(restrictions)) throw new PacketException(PacketErrorCode.AUTHORIZATION, "The restrictions of the agent do not cover the necessary restrictions.");
     }
     
     

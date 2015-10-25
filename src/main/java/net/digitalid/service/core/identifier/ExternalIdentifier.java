@@ -107,7 +107,7 @@ public abstract class ExternalIdentifier extends IdentifierClass implements NonH
     @Pure
     @Override
     @NonCommitting
-    public abstract @Nonnull Person getIdentity() throws SQLException, IOException, PacketException, ExternalException;
+    public abstract @Nonnull Person getIdentity() throws AbortException, PacketException, ExternalException, NetworkException;
     
     
     /**

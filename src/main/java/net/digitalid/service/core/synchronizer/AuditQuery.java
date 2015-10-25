@@ -78,7 +78,7 @@ final class AuditQuery extends InternalQuery {
      */
     @OnlyForHosts
     @NonCommitting
-    private AuditQuery(@Nonnull Entity entity, @Nonnull @HasSubject SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull @BasedOn("query.audit@core.digitalid.net") Block block) throws SQLException, IOException, PacketException, ExternalException {
+    private AuditQuery(@Nonnull Entity entity, @Nonnull @HasSubject SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull @BasedOn("query.audit@core.digitalid.net") Block block) throws AbortException, PacketException, ExternalException, NetworkException {
         super(entity.toNonHostEntity(), signature, recipient);
         
         this.service = Service.getService(IdentityClass.create(block).toSemanticType());
@@ -153,7 +153,7 @@ final class AuditQuery extends InternalQuery {
         @Pure
         @Override
         @NonCommitting
-        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
+        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
             return new AuditQuery(entity, signature, recipient, block);
         }
         

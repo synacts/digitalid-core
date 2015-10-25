@@ -49,7 +49,7 @@ public final class HostRequest extends Request {
      * @require Server.hasHost(signer.getHostIdentifier()) : "The host of the signer is running on this server.";
      */
     @NonCommitting
-    public HostRequest(@Nonnull ReadOnlyList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject, @Nonnull InternalIdentifier signer) throws SQLException, IOException, PacketException, ExternalException {
+    public HostRequest(@Nonnull ReadOnlyList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject, @Nonnull InternalIdentifier signer) throws AbortException, PacketException, ExternalException, NetworkException {
         this(methods, recipient, subject, signer, 0);
     }
     
@@ -63,7 +63,7 @@ public final class HostRequest extends Request {
      * @param iteration how many times this request was resent.
      */
     @NonCommitting
-    private HostRequest(@Nonnull ReadOnlyList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject, @Nonnull InternalIdentifier signer, int iteration) throws SQLException, IOException, PacketException, ExternalException {
+    private HostRequest(@Nonnull ReadOnlyList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject, @Nonnull InternalIdentifier signer, int iteration) throws AbortException, PacketException, ExternalException, NetworkException {
         super(methods, recipient, getSymmetricKey(recipient, Time.TROPICAL_YEAR), subject, null, signer, iteration);
     }
     
@@ -91,7 +91,7 @@ public final class HostRequest extends Request {
     
     @Override
     @NonCommitting
-    @Nonnull Response resend(@Nonnull FreezableList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject, int iteration, boolean verified) throws SQLException, IOException, PacketException, ExternalException {
+    @Nonnull Response resend(@Nonnull FreezableList<Method> methods, @Nonnull HostIdentifier recipient, @Nonnull InternalIdentifier subject, int iteration, boolean verified) throws AbortException, PacketException, ExternalException, NetworkException {
         return new HostRequest(methods, recipient, subject, signer).send(verified);
     }
     

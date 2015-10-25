@@ -27,7 +27,7 @@ import net.digitalid.service.core.entity.NativeRole;
 import net.digitalid.service.core.entity.Role;
 import net.digitalid.service.core.entity.RoleModule;
 import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.packet.PacketError;
+import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identifier.ExternalIdentifier;
 import net.digitalid.service.core.identifier.InternalNonHostIdentifier;
@@ -165,7 +165,7 @@ public class Client extends Site implements Observer {
      */
     @Locked
     @Committing
-    public Client(@Nonnull @Validated String identifier, @Nonnull @Validated String name, @Nonnull @Frozen ReadOnlyAgentPermissions preferredPermissions) throws SQLException, IOException, PacketException, ExternalException {
+    public Client(@Nonnull @Validated String identifier, @Nonnull @Validated String name, @Nonnull @Frozen ReadOnlyAgentPermissions preferredPermissions) throws AbortException, PacketException, ExternalException, NetworkException {
         super(identifier);
         
         assert isValidIdentifier(identifier) : "The identifier is valid.";
@@ -261,7 +261,7 @@ public class Client extends Site implements Observer {
      */
     @Pure
     @NonCommitting
-    private static @Nonnull Commitment getCommitment(@Nonnull InternalNonHostIdentifier subject, @Nonnull Exponent secret) throws SQLException, IOException, PacketException, ExternalException {
+    private static @Nonnull Commitment getCommitment(@Nonnull InternalNonHostIdentifier subject, @Nonnull Exponent secret) throws AbortException, PacketException, ExternalException, NetworkException {
         final @Nonnull HostIdentity host = subject.getHostIdentifier().getIdentity();
         final @Nonnull Time time = Time.getCurrent();
         final @Nonnull PublicKey publicKey = Cache.getPublicKeyChain(host).getKey(time);
@@ -278,7 +278,7 @@ public class Client extends Site implements Observer {
      */
     @Pure
     @NonCommitting
-    public final @Nonnull Commitment getCommitment(@Nonnull InternalNonHostIdentifier subject) throws SQLException, IOException, PacketException, ExternalException {
+    public final @Nonnull Commitment getCommitment(@Nonnull InternalNonHostIdentifier subject) throws AbortException, PacketException, ExternalException, NetworkException {
         return getCommitment(subject, secret);
     }
     
@@ -288,7 +288,7 @@ public class Client extends Site implements Observer {
      * TODO: Make sure that other instances of the same client learn about the key rotation.
      */
     @Committing
-    public final void rotateSecret() throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
+    public final void rotateSecret() throws InterruptedException, AbortException, PacketException, ExternalException, NetworkException {
         final @Nonnull Exponent newSecret = new Exponent(new BigInteger(Parameters.HASH, new SecureRandom()));
         final @Nonnull ReadOnlyList<NativeRole> roles = getRoles();
         Database.commit();
@@ -368,7 +368,7 @@ public class Client extends Site implements Observer {
      * @require Password.isValid(password) : "The password is valid.";
      */
     @Committing
-    public final @Nonnull NativeRole accredit(@Nonnull InternalNonHostIdentity identity, @Nonnull String password) throws SQLException, IOException, PacketException, ExternalException {
+    public final @Nonnull NativeRole accredit(@Nonnull InternalNonHostIdentity identity, @Nonnull String password) throws AbortException, PacketException, ExternalException, NetworkException {
         final @Nonnull NativeRole role = addRole(identity, new Random().nextLong());
         Database.commit();
         try {
@@ -404,7 +404,7 @@ public class Client extends Site implements Observer {
      * @require !category.isType() || roles.size() <= 1 && identifiers.isEmpty() : "If the category denotes a type, at most one role and no identifier may be given.";
      */
     @Committing
-    public final @Nonnull NativeRole openAccount(@Nonnull InternalNonHostIdentifier subject, @Nonnull Category category, @Nonnull ReadOnlyList<NativeRole> roles, @Nonnull ReadOnlyList<ExternalIdentifier> identifiers) throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
+    public final @Nonnull NativeRole openAccount(@Nonnull InternalNonHostIdentifier subject, @Nonnull Category category, @Nonnull ReadOnlyList<NativeRole> roles, @Nonnull ReadOnlyList<ExternalIdentifier> identifiers) throws InterruptedException, AbortException, PacketException, ExternalException, NetworkException {
         assert !subject.exists() : "The subject does not exist.";
         assert category.isInternalNonHostIdentity() : "The category denotes an internal non-host identity.";
         assert !category.isType() || roles.size() <= 1 && identifiers.isEmpty() : "If the category denotes a type, at most one role and no identifier may be given.";
@@ -419,7 +419,7 @@ public class Client extends Site implements Observer {
         final @Nonnull FreezableList<ReadOnlyPair<Predecessor, Block>> states = new FreezableArrayList<>(roles.size() + identifiers.size());
         
         for (final @Nonnull NativeRole role : roles) {
-            if (role.getIdentity().getCategory() != category) throw new PacketException(PacketError.INTERNAL, "A role is of the wrong category.");
+            if (role.getIdentity().getCategory() != category) throw new PacketException(PacketErrorCode.INTERNAL, "A role is of the wrong category.");
             Synchronizer.reload(role, CoreService.SERVICE);
             final @Nonnull ClientAgent clientAgent = role.getAgent();
             final @Nonnull Block state = CoreService.SERVICE.getState(role, clientAgent.getPermissions(), clientAgent.getRestrictions(), clientAgent);
@@ -458,7 +458,7 @@ public class Client extends Site implements Observer {
      * @require category.isInternalNonHostIdentity() : "The category denotes an internal non-host identity.";
      */
     @Committing
-    public final @Nonnull NativeRole openAccount(@Nonnull InternalNonHostIdentifier identifier, @Nonnull Category category) throws InterruptedException, SQLException, IOException, PacketException, ExternalException {
+    public final @Nonnull NativeRole openAccount(@Nonnull InternalNonHostIdentifier identifier, @Nonnull Category category) throws InterruptedException, AbortException, PacketException, ExternalException, NetworkException {
         return openAccount(identifier, category, new FreezableLinkedList<NativeRole>().freeze(), new FreezableLinkedList<ExternalIdentifier>().freeze());
     }
     

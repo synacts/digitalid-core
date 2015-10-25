@@ -111,7 +111,7 @@ public final class PasswordModule implements StateModule {
     
     @Override
     @NonCommitting
-    public void importModule(@Nonnull Host host, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
+    public void importModule(@Nonnull Host host, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
         assert block.getType().isBasedOn(getModuleFormat()) : "The block is based on the format of this module.";
         
         final @Nonnull String SQL = "INSERT INTO " + host + "password (entity, password) VALUES (?, ?)";

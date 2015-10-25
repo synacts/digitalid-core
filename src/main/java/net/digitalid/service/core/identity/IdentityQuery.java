@@ -7,7 +7,7 @@ import javax.annotation.Nullable;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.service.core.exceptions.packet.PacketError;
+import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.Method;
 import net.digitalid.service.core.handler.Reply;
@@ -84,7 +84,7 @@ public final class IdentityQuery extends CoreServiceExternalQuery {
     @NonCommitting
     public @Nonnull IdentityReply executeOnHost() throws PacketException, SQLException {
         final @Nonnull InternalIdentifier subject = getSubject(); // The following exception should never be thrown as the condition is already checked in the packet class.
-        if (!(subject instanceof InternalNonHostIdentifier)) throw new PacketException(PacketError.IDENTIFIER, "The identity may only be queried of non-host identities.");
+        if (!(subject instanceof InternalNonHostIdentifier)) throw new PacketException(PacketErrorCode.IDENTIFIER, "The identity may only be queried of non-host identities.");
         return new IdentityReply((InternalNonHostIdentifier) subject);
     }
     
@@ -124,7 +124,7 @@ public final class IdentityQuery extends CoreServiceExternalQuery {
         @Pure
         @Override
         @NonCommitting
-        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
+        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
             return new IdentityQuery(entity, signature, recipient, block);
         }
         

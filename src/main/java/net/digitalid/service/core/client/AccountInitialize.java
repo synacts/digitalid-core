@@ -14,7 +14,7 @@ import net.digitalid.service.core.entity.NativeRole;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InvalidDeclarationException;
-import net.digitalid.service.core.exceptions.packet.PacketError;
+import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.Action;
 import net.digitalid.service.core.handler.Method;
@@ -78,7 +78,7 @@ public final class AccountInitialize extends CoreServiceInternalAction {
      * @param states the states to merge into the new account.
      */
     @NonCommitting
-    AccountInitialize(@Nonnull NativeRole role, @Nonnull @Frozen @NonNullableElements ReadOnlyList<ReadOnlyPair<Predecessor, Block>> states) throws SQLException, IOException, PacketException, ExternalException {
+    AccountInitialize(@Nonnull NativeRole role, @Nonnull @Frozen @NonNullableElements ReadOnlyList<ReadOnlyPair<Predecessor, Block>> states) throws AbortException, PacketException, ExternalException, NetworkException {
         super(role);
         
         this.states = states;
@@ -98,11 +98,11 @@ public final class AccountInitialize extends CoreServiceInternalAction {
      * @ensure hasSignature() : "This handler has a signature.";
      */
     @NonCommitting
-    private AccountInitialize(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
+    private AccountInitialize(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
         super(entity, signature, recipient);
         
         final @Nonnull InternalNonHostIdentifier subject = getSubject().toInternalNonHostIdentifier();
-        if (isOnHost() && FreezablePredecessors.exist(subject)) throw new PacketException(PacketError.METHOD, "The subject " + subject + " is already initialized.");
+        if (isOnHost() && FreezablePredecessors.exist(subject)) throw new PacketException(PacketErrorCode.METHOD, "The subject " + subject + " is already initialized.");
         
         final @Nonnull Category category = entity.getIdentity().getCategory();
         final @Nonnull ReadOnlyList<Block> elements = new ListWrapper(block).getElementsNotNull();
@@ -235,7 +235,7 @@ public final class AccountInitialize extends CoreServiceInternalAction {
         @Pure
         @Override
         @NonCommitting
-        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws SQLException, IOException, PacketException, ExternalException {
+        protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
             return new AccountInitialize(entity, signature, recipient, block);
         }
         

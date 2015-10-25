@@ -21,7 +21,7 @@ import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.external.InvalidSignatureException;
-import net.digitalid.service.core.exceptions.packet.PacketError;
+import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identifier.InternalIdentifier;
 import net.digitalid.service.core.identity.SemanticType;
@@ -107,7 +107,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper {
      */
     @Locked
     @NonCommitting
-    ClientSignatureWrapper(@Nonnull @NonEncoding @BasedOn("signature@core.digitalid.net") Block block, @Nonnull @NonEncoding @BasedOn("client.signature@core.digitalid.net") Block clientSignature, boolean verified) throws SQLException, IOException, PacketException, ExternalException {
+    ClientSignatureWrapper(@Nonnull @NonEncoding @BasedOn("signature@core.digitalid.net") Block block, @Nonnull @NonEncoding @BasedOn("client.signature@core.digitalid.net") Block clientSignature, boolean verified) throws AbortException, PacketException, ExternalException, NetworkException {
         super(block, verified);
         
         assert clientSignature.getType().isBasedOn(SIGNATURE) : "The signature is based on the implementation type.";
@@ -207,9 +207,9 @@ public final class ClientSignatureWrapper extends SignatureWrapper {
     @Override
     @NonCommitting
     public @Nonnull ClientAgent getAgentCheckedAndRestricted(@Nonnull NonHostEntity entity, @Nullable PublicKey publicKey) throws PacketException, SQLException {
-        if (publicKey != null && !commitment.getPublicKey().equals(publicKey)) throw new PacketException(PacketError.KEYROTATION, "The client has to recommit its secret.");
+        if (publicKey != null && !commitment.getPublicKey().equals(publicKey)) throw new PacketException(PacketErrorCode.KEYROTATION, "The client has to recommit its secret.");
         final @Nullable ClientAgent agent = AgentModule.getClientAgent(entity, commitment);
-        if (agent == null) throw new PacketException(PacketError.AUTHORIZATION, "The element was not signed by an authorized client.");
+        if (agent == null) throw new PacketException(PacketErrorCode.AUTHORIZATION, "The element was not signed by an authorized client.");
         agent.checkNotRemoved();
         return agent;
     }
