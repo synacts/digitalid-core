@@ -119,17 +119,36 @@ public abstract class Concept<C extends Concept<C, E, K>, E extends Entity<E>, K
         return key;
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Setup –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Stores the setup of this concept.
+     */
+    private final @Nonnull ConceptSetup<C, E, K> setup;
+    
+    /**
+     * Returns the setup of this concept.
+     * 
+     * @return the setup of this concept.
+     */
+    @Pure
+    public final @Nonnull ConceptSetup<C, E, K> getSetup() {
+        return setup;
+    }
+    
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Creates a new concept with the given entity.
+     * Creates a new concept with the given entity, key and setup.
      * 
      * @param entity the entity to which the new concept belongs.
      * @param key the key which identifies the new concept.
+     * @param setup the setup of the new concept.
      */
-    protected Concept(@Nonnull E entity, @Nonnull K key) {
+    protected Concept(@Nonnull E entity, @Nonnull K key, @Nonnull ConceptSetup<C, E, K> setup) {
         this.entity = entity;
         this.key = key;
+        this.setup = setup;
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Properties –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -220,13 +239,17 @@ public abstract class Concept<C extends Concept<C, E, K>, E extends Entity<E>, K
         
     @Pure
     @Override
-    public abstract @Nonnull ConceptEncodingFactory<C, E, K> getEncodingFactory();
+    public final @Nonnull ConceptEncodingFactory<C, E, K> getEncodingFactory() {
+        return setup.getEncodingFactory();
+    }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
-    public abstract @Nonnull ConceptStoringFactory<C, E, K> getStoringFactory();
+    public final @Nonnull ConceptStoringFactory<C, E, K> getStoringFactory() {
+        return setup.getStoringFactory();
+    }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */
     

@@ -3,22 +3,19 @@ package net.digitalid.service.core.password;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.agent.Agent;
+import net.digitalid.service.core.agent.FreezableAgentPermissions;
 import net.digitalid.service.core.agent.ReadOnlyAgentPermissions;
 import net.digitalid.service.core.agent.Restrictions;
 import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.concept.Concept;
-import net.digitalid.service.core.concept.ConceptEncodingFactory;
-import net.digitalid.service.core.concept.ConceptStoringFactory;
+import net.digitalid.service.core.concept.ConceptSetup;
 import net.digitalid.service.core.concept.Index;
-import net.digitalid.service.core.data.StateModule;
+import net.digitalid.service.core.concept.property.nonnullable.NonNullableConceptProperty;
+import net.digitalid.service.core.concept.property.nonnullable.NonNullableConceptPropertySetup;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.entity.Role;
-import net.digitalid.service.core.factories.ConceptFactories;
-import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.property.RequiredAuthorization;
 import net.digitalid.service.core.property.ValueValidator;
-import net.digitalid.service.core.concept.property.nonnullable.NonNullableConceptProperty;
-import net.digitalid.service.core.concept.property.nonnullable.NonNullableConceptPropertyFactory;
 import net.digitalid.service.core.service.CoreService;
 import net.digitalid.service.core.wrappers.EmptyWrapper;
 import net.digitalid.service.core.wrappers.StringWrapper;
@@ -32,73 +29,6 @@ import net.digitalid.utility.database.configuration.Database;
  */
 public final class Password extends Concept<Password, NonHostEntity, Object> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
-    
-    // TODO: Create the types dynamically?
-    
-    /**
-     * Stores the semantic type {@code password@core.digitalid.net}.
-     */
-    public static final @Nonnull SemanticType TYPE = SemanticType.map("password@core.digitalid.net").load(EmptyWrapper.TYPE);
-    
-    /**
-     * Stores the semantic type {@code value.password@core.digitalid.net}.
-     */
-    public static final @Nonnull SemanticType VALUE_TYPE = SemanticType.map("value.password@core.digitalid.net").load(StringWrapper.TYPE);
-    
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Module –––––––––––––––––––––––––––––––––––––––––––––––––– */
-    
-    /**
-     * Stores the password module.
-     */
-    private static final @Nonnull StateModule MODULE = StateModule.get(CoreService.SERVICE, "password");
-    
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Required Authorization –––––––––––––––––––––––––––––––––––––––––––––––––– */
-    
-    /**
-     * Stores the required authorization to set the property and see its changes.
-     */
-    public static final @Nonnull RequiredAuthorization<Password> REQUIRED_AUTHORIZATION = new RequiredAuthorization<Password>() {
-        
-        @Pure
-        @Override
-        public @Nonnull String getStateFilter(@Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) {
-            return Database.toBoolean(restrictions.isClient());
-        }
-        
-        @Pure
-        @Override
-        public @Nonnull ReadOnlyAgentPermissions getRequiredPermissions(@Nonnull Password password) {
-            
-        }
-        
-    };
-    
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value Validator –––––––––––––––––––––––––––––––––––––––––––––––––– */
-    
-    /**
-     * Stores the value validator of the value property.
-     */
-    public static final @Nonnull ValueValidator<String> VALUE_VALIDATOR = new ValueValidator<String>() {
-        @Pure
-        @Override
-        public boolean isValid(@Nonnull String value) {
-            return value.length() <= 50;
-        }
-    };
-    
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value Property –––––––––––––––––––––––––––––––––––––––––––––––––– */
-    
-    /**
-     * Stores the factory of the value property.
-     */
-    private static final @Nonnull NonNullableConceptPropertyFactory<String, Password, NonHostEntity> VALUE_PROPERTY_FACTORY = NonNullableConceptPropertyFactory.get(MODULE, "value", NonHostEntity.FACTORIES, Password.FACTORIES, StringWrapper.getValueFactories(VALUE_TYPE), REQUIRED_AUTHORIZATION, VALUE_VALIDATOR, "");
-    
-    /**
-     * Stores the value of this password.
-     */
-    public final @Nonnull NonNullableConceptProperty<String, Password, NonHostEntity> value = VALUE_PROPERTY_FACTORY.createConceptProperty(this);
-    
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
@@ -107,7 +37,7 @@ public final class Password extends Concept<Password, NonHostEntity, Object> {
      * @param entity the entity to which the password belongs.
      */
     private Password(@Nonnull NonHostEntity entity) {
-        super(entity, None.OBJECT);
+        super(entity, None.OBJECT, SETUP);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factory –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -150,37 +80,57 @@ public final class Password extends Concept<Password, NonHostEntity, Object> {
         return INDEX.get(entity, None.OBJECT);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encodable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Setup –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Stores the encoding factory which is used to encode and decode this concept.
+     * Stores the setup of this concept.
      */
-    public static final @Nonnull ConceptEncodingFactory<Password, NonHostEntity, Object> ENCODING_FACTORY = ConceptEncodingFactory.get(EmptyWrapper.getValueEncodingFactory(TYPE), INDEX);
+    public static final @Nonnull ConceptSetup<Password, NonHostEntity, Object> SETUP = ConceptSetup.get(CoreService.SERVICE, "password", INDEX, EmptyWrapper.getValueFactories(EmptyWrapper.SEMANTIC), NonHostEntity.FACTORIES);
     
-    @Pure
-    @Override
-    public @Nonnull ConceptEncodingFactory<Password, NonHostEntity, Object> getEncodingFactory() {
-        return ENCODING_FACTORY;
-    }
-    
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Required Authorization –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Stores the storing factory which is used to store and restore this concept.
+     * Stores the required authorization to set the property and see its changes.
      */
-    public static final @Nonnull ConceptStoringFactory<Password, NonHostEntity, Object> STORING_FACTORY = ConceptStoringFactory.get(EmptyWrapper.getValueStoringFactory(TYPE), INDEX);
+    public static final @Nonnull RequiredAuthorization<Password> REQUIRED_AUTHORIZATION = new RequiredAuthorization<Password>() {
+        
+        @Pure
+        @Override
+        public @Nonnull String getStateFilter(@Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) {
+            return Database.toBoolean(restrictions.isClient());
+        }
+        
+        @Pure
+        @Override
+        public @Nonnull ReadOnlyAgentPermissions getRequiredPermissions(@Nonnull Password password) {
+            return FreezableAgentPermissions.GENERAL_WRITE; // TODO
+        }
+        
+    };
     
-    @Pure
-    @Override
-    public @Nonnull ConceptStoringFactory<Password, NonHostEntity, Object> getStoringFactory() {
-        return STORING_FACTORY;
-    }
-    
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factories –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value Validator –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Stores the factories which are used to convert and reconstruct this concept.
+     * Stores the value validator of the value property.
      */
-    public static final @Nonnull ConceptFactories<Password, NonHostEntity> FACTORIES = ConceptFactories.get(ENCODING_FACTORY, STORING_FACTORY);
+    public static final @Nonnull ValueValidator<String> VALUE_VALIDATOR = new ValueValidator<String>() {
+        @Pure
+        @Override
+        public boolean isValid(@Nonnull String value) {
+            return value.length() <= 50;
+        }
+    };
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value Property –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Stores the setup of the value property.
+     */
+    private static final @Nonnull NonNullableConceptPropertySetup<String, Password, NonHostEntity> VALUE_PROPERTY_SETUP = NonNullableConceptPropertySetup.get(SETUP, "value", StringWrapper.getValueFactories(StringWrapper.SEMANTIC), REQUIRED_AUTHORIZATION, VALUE_VALIDATOR, "");
+    
+    /**
+     * Stores the value of this password.
+     */
+    public final @Nonnull NonNullableConceptProperty<String, Password, NonHostEntity> value = NonNullableConceptProperty.get(VALUE_PROPERTY_SETUP, this);
     
 }
