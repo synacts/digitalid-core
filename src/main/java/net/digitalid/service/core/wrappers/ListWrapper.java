@@ -6,10 +6,12 @@ import net.digitalid.service.core.annotations.BasedOn;
 import net.digitalid.service.core.annotations.Encoding;
 import net.digitalid.service.core.annotations.Loaded;
 import net.digitalid.service.core.annotations.NonEncoding;
+import net.digitalid.service.core.auxiliary.None;
+import net.digitalid.service.core.encoding.Encodable;
+import net.digitalid.service.core.encoding.Encode;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
-import net.digitalid.utility.database.storing.Storable;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
@@ -31,11 +33,6 @@ public final class ListWrapper extends BlockBasedWrapper<ListWrapper> {
      * Stores the syntactic type {@code list@core.digitalid.net}.
      */
     public static final @Nonnull SyntacticType TYPE = SyntacticType.map("list@core.digitalid.net").load(1);
-    
-    /**
-     * Stores the semantic type {@code semantic.list@core.digitalid.net}.
-     */
-    private static final @Nonnull SemanticType SEMANTIC = SemanticType.map("semantic.list@core.digitalid.net").load(TYPE);
     
     @Pure
     @Override
@@ -119,11 +116,6 @@ public final class ListWrapper extends BlockBasedWrapper<ListWrapper> {
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Utility –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Stores the factory of this class.
-     */
-    private static final @Nonnull Factory FACTORY = new Factory(SEMANTIC);
-    
-    /**
      * Encodes the given elements into a new block of the given type.
      * 
      * @param type the semantic type of the new block.
@@ -135,7 +127,7 @@ public final class ListWrapper extends BlockBasedWrapper<ListWrapper> {
      */
     @Pure
     public static @Nonnull @NonEncoding Block encode(@Nonnull @Loaded @BasedOn("list@core.digitalid.net") SemanticType type, @Nonnull @NullableElements @Frozen ReadOnlyList<Block> elements) {
-        return FACTORY.encodeNonNullable(new ListWrapper(type, elements));
+        return new EncodingFactory(type).encodeNonNullable(new ListWrapper(type, elements));
     }
     
     /**
@@ -165,9 +157,9 @@ public final class ListWrapper extends BlockBasedWrapper<ListWrapper> {
      */
     @Pure
     @SuppressWarnings("unchecked")
-    public static @Nonnull @NonEncoding <V extends Storable<V>> Block encode(@Nonnull @Loaded @BasedOn("list@core.digitalid.net") SemanticType type, @Nonnull V... elements) {
+    public static @Nonnull @NonEncoding <V extends Encodable<V, ?>> Block encode(@Nonnull @Loaded @BasedOn("list@core.digitalid.net") SemanticType type, @Nonnull V... elements) {
         final @Nonnull FreezableList<Block> list = FreezableArrayList.getWithCapacity(elements.length);
-        for (final @Nullable V element : elements) list.add(Block.fromNullable(element));
+        for (final @Nullable V element : elements) list.add(Encode.nullable(element));
         return encode(type, list.freeze());
     }
     
@@ -180,7 +172,7 @@ public final class ListWrapper extends BlockBasedWrapper<ListWrapper> {
      */
     @Pure
     public static @Nonnull @NullableElements @Frozen ReadOnlyList<Block> decodeNullableElements(@Nonnull @NonEncoding @BasedOn("list@core.digitalid.net") Block block) throws InvalidEncodingException {
-        return FACTORY.decodeNonNullable(block).getNullableElements();
+        return new EncodingFactory(block.getType()).decodeNonNullable(None.OBJECT, block).getNullableElements();
     }
     
     /**
@@ -192,7 +184,7 @@ public final class ListWrapper extends BlockBasedWrapper<ListWrapper> {
      */
     @Pure
     public static @Nonnull @NonNullableElements @Frozen ReadOnlyList<Block> decodeNonNullableElements(@Nonnull @NonEncoding @BasedOn("list@core.digitalid.net") Block block) throws InvalidEncodingException {
-        return FACTORY.decodeNonNullable(block).getNonNullableElements();
+        return new EncodingFactory(block.getType()).decodeNonNullable(None.OBJECT, block).getNonNullableElements();
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encoding –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -240,26 +232,26 @@ public final class ListWrapper extends BlockBasedWrapper<ListWrapper> {
         assert offset == block.getLength() : "The whole block should now be encoded.";
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encodable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * The factory for this class.
+     * The encoding factory for this class.
      */
     @Immutable
-    public static final class Factory extends BlockBasedWrapper.Factory<ListWrapper> {
+    public static final class EncodingFactory extends Wrapper.EncodingFactory<ListWrapper> {
         
         /**
-         * Creates a new factory with the given type.
+         * Creates a new encoding factory with the given type.
          * 
-         * @param type the semantic type of the wrapper.
+         * @param type the semantic type of the encoded blocks and decoded wrappers.
          */
-        private Factory(@Nonnull @Loaded @BasedOn("list@core.digitalid.net") SemanticType type) {
+        private EncodingFactory(@Nonnull @Loaded @BasedOn("list@core.digitalid.net") SemanticType type) {
             super(type);
         }
         
         @Pure
         @Override
-        public @Nonnull ListWrapper decodeNonNullable(@Nonnull @NonEncoding @BasedOn("list@core.digitalid.net") Block block) throws InvalidEncodingException {
+        public @Nonnull ListWrapper decodeNonNullable(@Nonnull Object none, @Nonnull @NonEncoding @BasedOn("list@core.digitalid.net") Block block) throws InvalidEncodingException {
             final @Nonnull SemanticType parameter = block.getType().getParameters().getNonNullable(0);
             
             int offset = IntvarWrapper.decodeLength(block, 0);
@@ -289,8 +281,17 @@ public final class ListWrapper extends BlockBasedWrapper<ListWrapper> {
     
     @Pure
     @Override
-    public @Nonnull Factory getFactory() {
-        return new Factory(getSemanticType());
+    public @Nonnull EncodingFactory getEncodingFactory() {
+        return new EncodingFactory(getSemanticType());
+    }
+    
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    @Pure
+    @Override
+    public @Nonnull StoringFactory<ListWrapper> getStoringFactory() {
+        return new StoringFactory<>(getEncodingFactory());
     }
     
 }

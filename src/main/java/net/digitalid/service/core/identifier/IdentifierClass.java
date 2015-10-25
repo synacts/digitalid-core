@@ -1,5 +1,7 @@
 package net.digitalid.service.core.identifier;
 
+import net.digitalid.service.core.encoding.Encodable;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -25,7 +27,7 @@ import net.digitalid.utility.database.configuration.Database;
  * @see ExternalIdentifier
  */
 @Immutable
-public abstract class IdentifierClass implements Identifier {
+public abstract class IdentifierClass<I extends IdentifierClass<I>> implements Identifier<I> {
     
     /**
      * Returns whether the given string conforms to the criteria of this class.

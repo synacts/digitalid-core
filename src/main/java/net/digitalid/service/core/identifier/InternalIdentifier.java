@@ -1,5 +1,9 @@
 package net.digitalid.service.core.identifier;
 
+import net.digitalid.service.core.exceptions.network.NetworkException;
+
+import net.digitalid.service.core.exceptions.abort.AbortException;
+import net.digitalid.service.core.encoding.Encodable;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.regex.Pattern;
@@ -20,7 +24,7 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * @see InternalNonHostIdentifier
  */
 @Immutable
-public abstract class InternalIdentifier extends IdentifierClass {
+public abstract class InternalIdentifier<I extends InternalIdentifier<I>> extends IdentifierClass<I> {
     
     /**
      * The pattern that valid internal identifiers have to match.

@@ -9,9 +9,13 @@ import net.digitalid.service.core.annotations.BasedOn;
 import net.digitalid.service.core.annotations.Encoding;
 import net.digitalid.service.core.annotations.Loaded;
 import net.digitalid.service.core.annotations.NonEncoding;
+import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.factories.Factories;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
+import net.digitalid.service.core.wrappers.ValueWrapper.ValueEncodingFactory;
+import net.digitalid.service.core.wrappers.ValueWrapper.ValueStoringFactory;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.database.annotations.NonCommitting;
@@ -31,11 +35,6 @@ public final class BooleanWrapper extends Wrapper<BooleanWrapper> {
      * Stores the syntactic type {@code boolean@core.digitalid.net}.
      */
     public static final @Nonnull SyntacticType TYPE = SyntacticType.map("boolean@core.digitalid.net").load(0);
-    
-    /**
-     * Stores the semantic type {@code semantic.boolean@core.digitalid.net}.
-     */
-    private static final @Nonnull SemanticType SEMANTIC = SemanticType.map("semantic.boolean@core.digitalid.net").load(TYPE);
     
     @Pure
     @Override
@@ -77,11 +76,6 @@ public final class BooleanWrapper extends Wrapper<BooleanWrapper> {
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Utility –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Stores the factory of this class.
-     */
-    private static final @Nonnull Factory FACTORY = new Factory(SEMANTIC);
-    
-    /**
      * Encodes the given value into a new block of the given type.
      * 
      * @param type the semantic type of the new block.
@@ -91,7 +85,7 @@ public final class BooleanWrapper extends Wrapper<BooleanWrapper> {
      */
     @Pure
     public static @Nonnull @NonEncoding Block encode(@Nonnull @Loaded @BasedOn("boolean@core.digitalid.net") SemanticType type, boolean value) {
-        return FACTORY.encodeNonNullable(new BooleanWrapper(type, value));
+        return new EncodingFactory(type).encodeNonNullable(new BooleanWrapper(type, value));
     }
     
     /**
@@ -103,7 +97,7 @@ public final class BooleanWrapper extends Wrapper<BooleanWrapper> {
      */
     @Pure
     public static boolean decode(@Nonnull @NonEncoding @BasedOn("boolean@core.digitalid.net") Block block) throws InvalidEncodingException {
-        return FACTORY.decodeNonNullable(block).value;
+        return new EncodingFactory(block.getType()).decodeNonNullable(None.OBJECT, block).value;
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encoding –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -128,13 +122,46 @@ public final class BooleanWrapper extends Wrapper<BooleanWrapper> {
         block.setByte(0, (byte) (value ? 1 : 0));
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encodable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * The encoding factory for this class.
+     */
+    @Immutable
+    public static final class EncodingFactory extends Wrapper.NonRequestingEncodingFactory<BooleanWrapper> {
+        
+        /**
+         * Creates a new encoding factory with the given type.
+         * 
+         * @param type the semantic type of the encoded blocks and decoded wrappers.
+         */
+        private EncodingFactory(@Nonnull @BasedOn("boolean@core.digitalid.net") SemanticType type) {
+            super(type);
+        }
+        
+        @Pure
+        @Override
+        public @Nonnull BooleanWrapper decodeNonNullable(@Nonnull Object none, @Nonnull @NonEncoding @BasedOn("boolean@core.digitalid.net") Block block) throws InvalidEncodingException {
+        	if (block.getLength() != LENGTH) throw new InvalidEncodingException("The block's length is invalid.");
+            
+            return new BooleanWrapper(block.getType(), block.getByte(0) != 0);
+        }
+        
+    }
+    
+    @Pure
+    @Override
+    public @Nonnull EncodingFactory getEncodingFactory() {
+        return new EncodingFactory(getSemanticType());
+    }
+    
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * The factory for this class.
+     * The storing factory for this class.
      */
     @Immutable
-    public static final class Factory extends Wrapper.Factory<BooleanWrapper> {
+    public static final class StoringFactory extends Wrapper.StoringFactory<BooleanWrapper> {
         
         /**
          * Stores the column for the wrapper.
@@ -142,32 +169,24 @@ public final class BooleanWrapper extends Wrapper<BooleanWrapper> {
         private static final @Nonnull Column COLUMN = Column.get("value", SQLType.BOOLEAN);
         
         /**
-         * Creates a new factory with the given type.
+         * Creates a new storing factory with the given type.
          * 
-         * @param type the semantic type of the wrapper.
+         * @param type the semantic type of the restored wrappers.
          */
-        private Factory(@Nonnull @Loaded @BasedOn("boolean@core.digitalid.net") SemanticType type) {
-            super(type, COLUMN);
-        }
-        
-        @Pure
-        @Override
-        public @Nonnull BooleanWrapper decodeNonNullable(@Nonnull @NonEncoding @BasedOn("boolean@core.digitalid.net") Block block) throws InvalidEncodingException {
-            if (block.getLength() != LENGTH) throw new InvalidEncodingException("The block's length is invalid.");
-            
-            return new BooleanWrapper(block.getType(), block.getByte(0) != 0);
+        private StoringFactory(@Nonnull @Loaded @BasedOn("boolean@core.digitalid.net") SemanticType type) {
+            super(COLUMN, type);
         }
         
         @Override
         @NonCommitting
-        public void setNonNullable(@Nonnull BooleanWrapper wrapper, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws AbortException {
+        public void storeNonNullable(@Nonnull BooleanWrapper wrapper, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
             preparedStatement.setBoolean(parameterIndex, wrapper.value);
         }
         
         @Pure
         @Override
         @NonCommitting
-        public @Nullable BooleanWrapper getNullable(@Nonnull ResultSet resultSet, int columnIndex) throws AbortException {
+        public @Nullable BooleanWrapper restoreNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
             final boolean value = resultSet.getBoolean(columnIndex);
             if (resultSet.wasNull()) return null;
             else return new BooleanWrapper(getType(), value);
@@ -177,8 +196,8 @@ public final class BooleanWrapper extends Wrapper<BooleanWrapper> {
     
     @Pure
     @Override
-    public @Nonnull Factory getFactory() {
-        return new Factory(getSemanticType());
+    public @Nonnull StoringFactory getStoringFactory() {
+        return new StoringFactory(getSemanticType());
     }
     
     @Pure
@@ -190,26 +209,15 @@ public final class BooleanWrapper extends Wrapper<BooleanWrapper> {
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factory –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * The factory for the value type of this wrapper.
+     * The factory for this wrapper.
      */
     @Immutable
-    public static class ValueFactory extends Wrapper.ValueEncodingFactory<Boolean, BooleanWrapper> {
-        
-        /**
-         * Creates a new factory with the given type.
-         * 
-         * @param type the type of the blocks which are returned by the factory.
-         */
-        private ValueFactory(@Nonnull @Loaded @BasedOn("boolean@core.digitalid.net") SemanticType type) {
-            super(type, FACTORY);
-            
-            assert type.isBasedOn(TYPE) : "The given semantic type is based on the indicated syntactic type.";
-        }
+    public static class Factory extends ValueWrapper.Factory<Boolean, BooleanWrapper> {
         
         @Pure
         @Override
-        protected @Nonnull BooleanWrapper wrap(@Nonnull Boolean value) {
-            return new BooleanWrapper(getType(), value);
+        protected @Nonnull BooleanWrapper wrap(@Nonnull SemanticType type, @Nonnull Boolean value) {
+            return new BooleanWrapper(type, value);
         }
         
         @Pure
@@ -219,22 +227,47 @@ public final class BooleanWrapper extends Wrapper<BooleanWrapper> {
         }
         
     }
-    
+
+	/**
+	 * Stores the factory of this class.
+	 */
+	private static final @Nonnull Factory FACTORY = new Factory();
+   
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value Factories –––––––––––––––––––––––––––––––––––––––––––––––––– */
+   
     /**
-     * Returns a new factory for the value type of this wrapper.
+     * Returns the value encoding factory of this wrapper.
      * 
-     * @param type the type of the blocks which are returned by the factory.
+     * @param type the semantic type of the encoded blocks.
      * 
-     * @return a new factory for the value type of this wrapper.
+     * @return the value encoding factory of this wrapper.
      */
     @Pure
-    public static @Nonnull ValueFactory getValueFactory(@Nonnull @Loaded @BasedOn("boolean@core.digitalid.net") SemanticType type) {
-        return new ValueFactory(type);
+    public static @Nonnull ValueEncodingFactory<Boolean, BooleanWrapper> getValueEncodingFactory(@Nonnull @BasedOn("boolean@core.digitalid.net") SemanticType type) {
+        return new ValueEncodingFactory<>(FACTORY, new EncodingFactory(type));
     }
     
     /**
-     * Stores the factory for the value type of this wrapper.
+     * Returns the value storing factory of this wrapper.
+     * 
+     * @param type any semantic type that is based on the syntactic type of this wrapper.
+     * 
+     * @return the value storing factory of this wrapper.
      */
-    public static final @Nonnull ValueFactory VALUE_FACTORY = new ValueFactory(SEMANTIC);
+    @Pure
+    public static @Nonnull ValueStoringFactory<Boolean, BooleanWrapper> getValueStoringFactory(@Nonnull @BasedOn("boolean@core.digitalid.net") SemanticType type) {
+        return new ValueStoringFactory<>(FACTORY, new StoringFactory(type));
+    }
     
+    /**
+     * Returns the value factories of this wrapper.
+     * 
+     * @param type the semantic type of the encoded blocks.
+     * 
+     * @return the value factories of this wrapper.
+     */
+    @Pure
+    public static @Nonnull Factories<Boolean, Object> getValueFactories(@Nonnull @BasedOn("boolean@core.digitalid.net") SemanticType type) {
+        return Factories.get(getValueEncodingFactory(type), getValueStoringFactory(type));
+    }
 }

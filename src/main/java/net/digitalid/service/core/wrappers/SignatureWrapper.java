@@ -1,5 +1,13 @@
 package net.digitalid.service.core.wrappers;
 
+import net.digitalid.service.core.auxiliary.None;
+
+import net.digitalid.service.core.wrappers.BlockBasedWrapper.StoringFactory;
+import net.digitalid.service.core.wrappers.TupleWrapper.EncodingFactory;
+import net.digitalid.service.core.exceptions.network.NetworkException;
+import net.digitalid.service.core.exceptions.abort.AbortException;
+import net.digitalid.service.core.encoding.Encode;
+import net.digitalid.service.core.encoding.Encodable;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Objects;
@@ -299,7 +307,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
         // TODO: Rewrite the following code with the null-propagating factory methods.
         this.subject = tuple.isElementNull(0) ? null : IdentifierClass.create(tuple.getNonNullableElement(0)).toInternalIdentifier();
         if (isSigned() && subject == null) throw new InvalidEncodingException("The subject may not be null if the element is signed.");
-        this.time = tuple.isElementNull(1) ? null : new Time(tuple.getNonNullableElement(1));
+        this.time = tuple.isElementNull(1) ? null : Time.ENCODING_FACTORY.decodeNonNullable(None.OBJECT, tuple.getNonNullableElement(1));
         if (hasSubject() && time == null) throw new InvalidEncodingException("The signature time may not be null if this signature has a subject.");
         if (time != null && !time.isPositive()) throw new InvalidEncodingException("The signature time has to be positive.");
         this.element = tuple.getNullableElement(2);
@@ -324,8 +332,8 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
      * @ensure return.isVerified() : "The returned signature is verified.";
      */
     @Pure
-    public static @Nonnull <V extends Storable<V>> SignatureWrapper encodeWithoutSigning(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nonnull V element, @Nullable InternalIdentifier subject) {
-        return new SignatureWrapper(type, Block.fromNonNullable(element), subject, null);
+    public static @Nonnull <V extends Encodable<V,?>> SignatureWrapper encodeWithoutSigning(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nonnull V element, @Nullable InternalIdentifier subject) {
+        return new SignatureWrapper(type, Encode.nonNullable(element), subject, null);
     }
     
     /**
@@ -421,10 +429,10 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
     final @Nonnull Block getCache() {
         if (cache == null) {
             final @Nonnull FreezableArray<Block> subelements = FreezableArray.get(4);
-            subelements.set(0, Block.<Identifier>fromNullable(subject, SUBJECT));
-            subelements.set(1, Block.fromNullable(time));
+            subelements.set(0, Encode.nullable(subject, SUBJECT));
+            subelements.set(1, Encode.nullable(time));
             subelements.set(2, element);
-            subelements.set(3, Block.fromNullable(audit));
+            subelements.set(3, Encode.nullable(audit));
             
             final @Nonnull FreezableArray<Block> elements = FreezableArray.get(4);
             elements.set(0, TupleWrapper.encode(CONTENT, subelements.freeze()));
@@ -449,26 +457,26 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
         getCache().writeTo(block);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encodable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * The factory for this class.
+     * The encoding factory for this class.
      */
     @Immutable
-    public static final class Factory extends BlockBasedWrapper.Factory<SignatureWrapper> {
+    public static final class EncodingFactory extends Wrapper.EncodingFactory<SignatureWrapper> {
         
         /**
          * Creates a new factory with the given type.
          * 
          * @param type the semantic type of the wrapper.
          */
-        private Factory(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type) {
+        private EncodingFactory(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type) {
             super(type);
         }
         
         @Pure
         @Override
-        public @Nonnull SignatureWrapper decodeNonNullable(@Nonnull @NonEncoding @BasedOn("signature@core.digitalid.net") Block block) throws InvalidEncodingException {
+        public @Nonnull SignatureWrapper decodeNonNullable(@Nonnull Object none, @Nonnull @NonEncoding @BasedOn("signature@core.digitalid.net") Block block) throws InvalidEncodingException {
             return new SignatureWrapper(block, false);
         }
         
@@ -476,8 +484,16 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
     
     @Pure
     @Override
-    public @Nonnull Factory getFactory() {
-        return new Factory(getSemanticType());
+    public @Nonnull EncodingFactory getEncodingFactory() {
+        return new EncodingFactory(getSemanticType());
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    @Pure
+    @Override
+    public @Nonnull StoringFactory<SignatureWrapper> getStoringFactory() {
+        return new StoringFactory<>(getEncodingFactory());
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Casting –––––––––––––––––––––––––––––––––––––––––––––––––– */

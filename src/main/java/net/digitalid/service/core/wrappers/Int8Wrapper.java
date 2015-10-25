@@ -9,9 +9,13 @@ import net.digitalid.service.core.annotations.BasedOn;
 import net.digitalid.service.core.annotations.Encoding;
 import net.digitalid.service.core.annotations.Loaded;
 import net.digitalid.service.core.annotations.NonEncoding;
+import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.factories.Factories;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
+import net.digitalid.service.core.wrappers.ValueWrapper.ValueEncodingFactory;
+import net.digitalid.service.core.wrappers.ValueWrapper.ValueStoringFactory;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.database.annotations.NonCommitting;
@@ -30,11 +34,6 @@ public final class Int8Wrapper extends Wrapper<Int8Wrapper> {
      * Stores the syntactic type {@code int8@core.digitalid.net}.
      */
     public static final @Nonnull SyntacticType TYPE = SyntacticType.map("int8@core.digitalid.net").load(0);
-    
-    /**
-     * Stores the semantic type {@code semantic.int8@core.digitalid.net}.
-     */
-    private static final @Nonnull SemanticType SEMANTIC = SemanticType.map("semantic.int8@core.digitalid.net").load(TYPE);
     
     @Pure
     @Override
@@ -76,11 +75,6 @@ public final class Int8Wrapper extends Wrapper<Int8Wrapper> {
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Utility –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Stores the factory of this class.
-     */
-    private static final @Nonnull Factory FACTORY = new Factory(SEMANTIC);
-    
-    /**
      * Encodes the given value into a new block of the given type.
      * 
      * @param type the semantic type of the new block.
@@ -90,7 +84,7 @@ public final class Int8Wrapper extends Wrapper<Int8Wrapper> {
      */
     @Pure
     public static @Nonnull @NonEncoding Block encode(@Nonnull @Loaded @BasedOn("int8@core.digitalid.net") SemanticType type, byte value) {
-        return FACTORY.encodeNonNullable(new Int8Wrapper(type, value));
+        return new EncodingFactory(type).encodeNonNullable(new Int8Wrapper(type, value));
     }
     
     /**
@@ -102,7 +96,7 @@ public final class Int8Wrapper extends Wrapper<Int8Wrapper> {
      */
     @Pure
     public static byte decode(@Nonnull @NonEncoding @BasedOn("int8@core.digitalid.net") Block block) throws InvalidEncodingException {
-        return FACTORY.decodeNonNullable(block).value;
+        return new EncodingFactory(block.getType()).decodeNonNullable(None.OBJECT, block).value;
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encoding –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -127,13 +121,46 @@ public final class Int8Wrapper extends Wrapper<Int8Wrapper> {
         block.encodeValue(value);
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encodable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * The encoding factory for this class.
+     */
+    @Immutable
+    public static final class EncodingFactory extends Wrapper.NonRequestingEncodingFactory<Int8Wrapper> {
+        
+        /**
+         * Creates a new encoding factory with the given type.
+         * 
+         * @param type the semantic type of the encoded blocks and decoded wrappers.
+         */
+        private EncodingFactory(@Nonnull @BasedOn("int8@core.digitalid.net") SemanticType type) {
+            super(type);
+        }
+        
+        @Pure
+        @Override
+        public @Nonnull Int8Wrapper decodeNonNullable(@Nonnull Object none, @Nonnull @NonEncoding @BasedOn("int8@core.digitalid.net") Block block) throws InvalidEncodingException {
+            if (block.getLength() != LENGTH) throw new InvalidEncodingException("The block's length is invalid.");
+            
+            return new Int8Wrapper(getType(), (byte) block.decodeValue());
+        }
+        
+    }
+    
+    @Pure
+    @Override
+    public @Nonnull EncodingFactory getEncodingFactory() {
+        return new EncodingFactory(getSemanticType());
+    }
+    
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * The factory for this class.
+     * The storing factory for this class.
      */
     @Immutable
-    public static final class Factory extends Wrapper.Factory<Int8Wrapper> {
+    public static final class StoringFactory extends Wrapper.StoringFactory<Int8Wrapper> {
         
         /**
          * Stores the column for the wrapper.
@@ -141,32 +168,24 @@ public final class Int8Wrapper extends Wrapper<Int8Wrapper> {
         private static final @Nonnull Column COLUMN = Column.get("value", SQLType.TINYINT);
         
         /**
-         * Creates a new factory with the given type.
+         * Creates a new storing factory with the given type.
          * 
-         * @param type the semantic type of the wrapper.
+         * @param type the semantic type of the restored wrappers.
          */
-        private Factory(@Nonnull @Loaded @BasedOn("int8@core.digitalid.net") SemanticType type) {
-            super(type, COLUMN);
-        }
-        
-        @Pure
-        @Override
-        public @Nonnull Int8Wrapper decodeNonNullable(@Nonnull @NonEncoding @BasedOn("int8@core.digitalid.net") Block block) throws InvalidEncodingException {
-            if (block.getLength() != LENGTH) throw new InvalidEncodingException("The block's length is invalid.");
-            
-            return new Int8Wrapper(block.getType(), (byte) block.decodeValue());
+        private StoringFactory(@Nonnull @Loaded @BasedOn("int8@core.digitalid.net") SemanticType type) {
+            super(COLUMN, type);
         }
         
         @Override
         @NonCommitting
-        public void setNonNullable(@Nonnull Int8Wrapper wrapper, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws AbortException {
+        public void storeNonNullable(@Nonnull Int8Wrapper wrapper, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
             preparedStatement.setByte(parameterIndex, wrapper.value);
         }
         
         @Pure
         @Override
         @NonCommitting
-        public @Nullable Int8Wrapper getNullable(@Nonnull ResultSet resultSet, int columnIndex) throws AbortException {
+        public @Nullable Int8Wrapper restoreNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
             final byte value = resultSet.getByte(columnIndex);
             if (resultSet.wasNull()) return null;
             else return new Int8Wrapper(getType(), value);
@@ -176,8 +195,8 @@ public final class Int8Wrapper extends Wrapper<Int8Wrapper> {
     
     @Pure
     @Override
-    public @Nonnull Factory getFactory() {
-        return new Factory(getSemanticType());
+    public @Nonnull StoringFactory getStoringFactory() {
+        return new StoringFactory(getSemanticType());
     }
     
     @Pure
@@ -189,26 +208,15 @@ public final class Int8Wrapper extends Wrapper<Int8Wrapper> {
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factory –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * The factory for the value type of this wrapper.
+     * The factory for this wrapper.
      */
     @Immutable
-    public static class ValueFactory extends Wrapper.ValueEncodingFactory<Byte, Int8Wrapper> {
-        
-        /**
-         * Creates a new factory with the given type.
-         * 
-         * @param type the type of the blocks which are returned by the factory.
-         */
-        private ValueFactory(@Nonnull @Loaded @BasedOn("int8@core.digitalid.net") SemanticType type) {
-            super(type, FACTORY);
-            
-            assert type.isBasedOn(TYPE) : "The given semantic type is based on the indicated syntactic type.";
-        }
+    public static class Factory extends ValueWrapper.Factory<Byte, Int8Wrapper> {
         
         @Pure
         @Override
-        protected @Nonnull Int8Wrapper wrap(@Nonnull Byte value) {
-            return new Int8Wrapper(getType(), value);
+        protected @Nonnull Int8Wrapper wrap(@Nonnull SemanticType type, @Nonnull Byte value) {
+            return new Int8Wrapper(type, value);
         }
         
         @Pure
@@ -220,20 +228,46 @@ public final class Int8Wrapper extends Wrapper<Int8Wrapper> {
     }
     
     /**
-     * Returns a new factory for the value type of this wrapper.
+     * Stores the factory of this class.
+     */
+    private static final @Nonnull Factory FACTORY = new Factory();
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value Factories –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Returns the value encoding factory of this wrapper.
      * 
-     * @param type the type of the blocks which are returned by the factory.
+     * @param type the semantic type of the encoded blocks.
      * 
-     * @return a new factory for the value type of this wrapper.
+     * @return the value encoding factory of this wrapper.
      */
     @Pure
-    public static @Nonnull ValueFactory getValueFactory(@Nonnull @Loaded @BasedOn("int8@core.digitalid.net") SemanticType type) {
-        return new ValueFactory(type);
+    public static @Nonnull ValueEncodingFactory<Byte, Int8Wrapper> getValueEncodingFactory(@Nonnull @BasedOn("int8@core.digitalid.net") SemanticType type) {
+        return new ValueEncodingFactory<>(FACTORY, new EncodingFactory(type));
     }
     
     /**
-     * Stores the factory for the value type of this wrapper.
+     * Returns the value storing factory of this wrapper.
+     * 
+     * @param type any semantic type that is based on the syntactic type of this wrapper.
+     * 
+     * @return the value storing factory of this wrapper.
      */
-    public static final @Nonnull ValueFactory VALUE_FACTORY = new ValueFactory(SEMANTIC);
+    @Pure
+    public static @Nonnull ValueStoringFactory<Byte, Int8Wrapper> getValueStoringFactory(@Nonnull @BasedOn("int8@core.digitalid.net") SemanticType type) {
+        return new ValueStoringFactory<>(FACTORY, new StoringFactory(type));
+    }
+    
+    /**
+     * Returns the value factories of this wrapper.
+     * 
+     * @param type the semantic type of the encoded blocks.
+     * 
+     * @return the value factories of this wrapper.
+     */
+    @Pure
+    public static @Nonnull Factories<Byte, Object> getValueFactories(@Nonnull @BasedOn("int8@core.digitalid.net") SemanticType type) {
+        return Factories.get(getValueEncodingFactory(type), getValueStoringFactory(type));
+    }
     
 }

@@ -1,5 +1,8 @@
 package net.digitalid.service.core.client;
 
+import net.digitalid.service.core.exceptions.network.NetworkException;
+
+import net.digitalid.service.core.exceptions.abort.AbortException;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.sql.PreparedStatement;

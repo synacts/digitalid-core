@@ -1,5 +1,10 @@
 package net.digitalid.service.core.wrappers;
 
+import net.digitalid.service.core.exceptions.network.NetworkException;
+
+import net.digitalid.service.core.exceptions.abort.AbortException;
+import net.digitalid.service.core.encoding.Encode;
+import net.digitalid.service.core.encoding.Encodable;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.sql.SQLException;
@@ -140,8 +145,8 @@ public final class HostSignatureWrapper extends SignatureWrapper {
      * @ensure return.isVerified() : "The returned signature is verified.";
      */
     @Pure
-    public static @Nonnull <V extends Storable<V>> HostSignatureWrapper sign(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nullable V element, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull InternalIdentifier signer) {
-        return new HostSignatureWrapper(type, Block.fromNullable(element), subject, audit, signer);
+    public static @Nonnull <V extends Encodable<V,?>> HostSignatureWrapper sign(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nullable V element, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull InternalIdentifier signer) {
+        return new HostSignatureWrapper(type, Encode.nullable(element), subject, audit, signer);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Checks –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -193,7 +198,7 @@ public final class HostSignatureWrapper extends SignatureWrapper {
         subelements.set(0, signer.toBlock().setType(SIGNER));
         try {
             final @Nonnull PrivateKey privateKey = Server.getHost(signer.getHostIdentifier()).getPrivateKeyChain().getKey(getNonNullableTime());
-            subelements.set(1, Block.fromNonNullable(privateKey.powD(elements.getNonNullable(0).getHash()), VALUE));
+            subelements.set(1, Encode.nonNullable(privateKey.powD(elements.getNonNullable(0).getHash()), VALUE));
         } catch (@Nonnull InvalidEncodingException exception) {
             throw new ShouldNeverHappenError("There should always be a key for the current time.", exception);
         }

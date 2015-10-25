@@ -11,11 +11,13 @@ import net.digitalid.service.core.annotations.Encoded;
 import net.digitalid.service.core.annotations.Encoding;
 import net.digitalid.service.core.annotations.Loaded;
 import net.digitalid.service.core.annotations.NonEncoding;
+import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.auxiliary.Time;
+import net.digitalid.service.core.encoding.Encodable;
+import net.digitalid.service.core.encoding.Encode;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
-import net.digitalid.utility.database.storing.Storable;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
@@ -33,11 +35,6 @@ public final class CompressionWrapper extends BlockBasedWrapper<CompressionWrapp
      * Stores the syntactic type {@code compression@core.digitalid.net}.
      */
     public static final @Nonnull SyntacticType TYPE = SyntacticType.map("compression@core.digitalid.net").load(1);
-    
-    /**
-     * Stores the semantic type {@code semantic.compression@core.digitalid.net}.
-     */
-    private static final @Nonnull SemanticType SEMANTIC = SemanticType.map("semantic.compression@core.digitalid.net").load(TYPE);
     
     @Pure
     @Override
@@ -87,11 +84,6 @@ public final class CompressionWrapper extends BlockBasedWrapper<CompressionWrapp
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Utility –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Stores the factory of this class.
-     */
-    private static final @Nonnull Factory FACTORY = new Factory(SEMANTIC);
-    
-    /**
      * Compresses the given element into a new non-nullable block of the given type.
      * 
      * @param type the semantic type of the new block.
@@ -102,8 +94,8 @@ public final class CompressionWrapper extends BlockBasedWrapper<CompressionWrapp
      * @require element.getFactory().getType().isBasedOn(type.getParameters().getNonNullable(0)) : "The element is based on the parameter of the given type.";
      */
     @Pure
-    public static @Nonnull @NonEncoding <V extends Storable<V>> Block compressNonNullable(@Nonnull @Loaded @BasedOn("compression@core.digitalid.net") SemanticType type, @Nonnull V element) {
-        return FACTORY.encodeNonNullable(new CompressionWrapper(type, Block.fromNonNullable(element)));
+    public static @Nonnull @NonEncoding <V extends Encodable<V, ?>> Block compressNonNullable(@Nonnull @Loaded @BasedOn("compression@core.digitalid.net") SemanticType type, @Nonnull V element) {
+        return new EncodingFactory(type).encodeNonNullable(new CompressionWrapper(type, Encode.nonNullable(element)));
     }
     
     /**
@@ -117,7 +109,7 @@ public final class CompressionWrapper extends BlockBasedWrapper<CompressionWrapp
      * @require element.getFactory().getType().isBasedOn(type.getParameters().getNonNullable(0)) : "The element is based on the parameter of the given type.";
      */
     @Pure
-    public static @Nullable @NonEncoding <V extends Storable<V>> Block compressNullable(@Nonnull @Loaded @BasedOn("compression@core.digitalid.net") SemanticType type, @Nullable V element) {
+    public static @Nullable @NonEncoding <V extends Encodable<V, ?>> Block compressNullable(@Nonnull @Loaded @BasedOn("compression@core.digitalid.net") SemanticType type, @Nullable V element) {
         return element == null ? null : compressNonNullable(type, element);
     }
     
@@ -130,7 +122,7 @@ public final class CompressionWrapper extends BlockBasedWrapper<CompressionWrapp
      */
     @Pure
     public static @Nonnull @NonEncoding Block decompressNonNullable(@Nonnull @NonEncoding @BasedOn("compression@core.digitalid.net") Block block) throws InvalidEncodingException {
-        return FACTORY.decodeNonNullable(block).element;
+        return new EncodingFactory(block.getType()).decodeNonNullable(None.OBJECT, block).element;
     }
     
     /**
@@ -191,26 +183,26 @@ public final class CompressionWrapper extends BlockBasedWrapper<CompressionWrapp
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encodable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * The factory for this class.
+     * The encoding factory for this class.
      */
     @Immutable
-    public static final class Factory extends BlockBasedWrapper.Factory<CompressionWrapper> {
+    public static final class EncodingFactory extends Wrapper.EncodingFactory<CompressionWrapper> {
         
         /**
-         * Creates a new factory with the given type.
+         * Creates a new encoding factory with the given type.
          * 
-         * @param type the semantic type of the wrapper.
+         * @param type the semantic type of the encoded blocks and decoded wrappers.
          */
-        private Factory(@Nonnull @Loaded @BasedOn("compression@core.digitalid.net") SemanticType type) {
+        private EncodingFactory(@Nonnull @Loaded @BasedOn("compression@core.digitalid.net") SemanticType type) {
             super(type);
         }
         
         @Pure
         @Override
-        public @Nonnull CompressionWrapper decodeNonNullable(@Nonnull @NonEncoding @BasedOn("compression@core.digitalid.net") Block block) throws InvalidEncodingException {
+        public @Nonnull CompressionWrapper decodeNonNullable(@Nonnull Object none, @Nonnull @NonEncoding @BasedOn("compression@core.digitalid.net") Block block) throws InvalidEncodingException {
             final @Nonnull SemanticType parameter = block.getType().getParameters().getNonNullable(0);
             try {
                 final @Nonnull Time start = Time.getCurrent();
@@ -228,8 +220,16 @@ public final class CompressionWrapper extends BlockBasedWrapper<CompressionWrapp
     
     @Pure
     @Override
-    public @Nonnull Factory getFactory() {
-        return new Factory(getSemanticType());
+    public @Nonnull EncodingFactory getEncodingFactory() {
+        return new EncodingFactory(getSemanticType());
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    @Pure
+    @Override
+    public @Nonnull StoringFactory<CompressionWrapper> getStoringFactory() {
+        return new StoringFactory<>(getEncodingFactory());
     }
     
 }

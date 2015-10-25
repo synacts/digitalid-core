@@ -1,5 +1,7 @@
 package net.digitalid.service.core.agent;
 
+import net.digitalid.service.core.exceptions.abort.AbortException;
+
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -1115,6 +1117,8 @@ public final class AgentModule implements StateModule {
                 if (resultSet.next()) return ClientAgent.get(entity, resultSet.getLong(1), resultSet.getBoolean(2));
                 else return null;
             }
+        } catch (SQLException exception) {
+        	throw AbortException.get(exception);
         }
     }
     

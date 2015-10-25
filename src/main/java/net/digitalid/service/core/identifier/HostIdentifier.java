@@ -1,5 +1,7 @@
 package net.digitalid.service.core.identifier;
 
+import com.sun.javafx.embed.HostInterface;
+
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
@@ -18,7 +20,7 @@ import net.digitalid.utility.database.configuration.Database;
  * This class models host identifiers.
  */
 @Immutable
-public final class HostIdentifier extends InternalIdentifier {
+public final class HostIdentifier extends InternalIdentifier<HostIdentifier> {
     
     /**
      * Stores the host identifier {@code core.digitalid.net}.

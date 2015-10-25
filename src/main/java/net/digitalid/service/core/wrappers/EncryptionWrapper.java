@@ -1,5 +1,11 @@
 package net.digitalid.service.core.wrappers;
 
+import net.digitalid.service.core.wrappers.BlockBasedWrapper.StoringFactory;
+import net.digitalid.service.core.wrappers.SignatureWrapper.EncodingFactory;
+
+import net.digitalid.service.core.encoding.Encodable;
+import net.digitalid.service.core.auxiliary.None;
+import net.digitalid.service.core.encoding.Encode;
 import java.math.BigInteger;
 import java.util.Map;
 import javax.annotation.Nonnull;
@@ -95,7 +101,7 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
         @Nullable Block key = encryptions.get(pair);
         if (key == null) {
             final @Nonnull Time start = Time.getCurrent();
-            key = Block.fromNonNullable(publicKey.getCompositeGroup().getElement(symmetricKey.getValue()).pow(publicKey.getE()), KEY);
+            key = Encode.nonNullable(publicKey.getCompositeGroup().getElement(symmetricKey.getValue()).pow(publicKey.getE()), KEY);
             encryptions.put(pair, key);
             Log.verbose("Symmetric key encrypted in " + start.ago().getValue() + " ms.");
         }
@@ -275,9 +281,9 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
         
         final @Nonnull TupleWrapper tuple = TupleWrapper.decode(cache);
         
-        this.time = new Time(tuple.getNonNullableElement(0));
+        this.time = Time.ENCODING_FACTORY.decodeNonNullable(None.OBJECT, tuple.getNonNullableElement(0));
         
-        this.initializationVector = InitializationVector.FACTORY.decodeNullable(tuple.getNullableElement(3));
+        this.initializationVector = InitializationVector.FACTORY.decodeNullable(None.OBJECT, tuple.getNullableElement(3));
         final @Nullable Block encryptedKey = tuple.getNullableElement(2);
         
         if (tuple.isElementNull(1)) {
@@ -338,8 +344,8 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
     @Pure
     @Locked
     @NonCommitting
-    public static @Nonnull <V extends Storable<V>> EncryptionWrapper encrypt(@Nonnull @Loaded @BasedOn("encryption@core.digitalid.net") SemanticType type, @Nonnull V element, @Nullable HostIdentifier recipient, @Nullable SymmetricKey symmetricKey) throws AbortException, PacketException, ExternalException, NetworkException {
-        return new EncryptionWrapper(type, Block.fromNonNullable(element), recipient, symmetricKey);
+    public static @Nonnull <V extends Encodable<V,?>> EncryptionWrapper encrypt(@Nonnull @Loaded @BasedOn("encryption@core.digitalid.net") SemanticType type, @Nonnull V element, @Nullable HostIdentifier recipient, @Nullable SymmetricKey symmetricKey) throws AbortException, PacketException, ExternalException, NetworkException {
+        return new EncryptionWrapper(type, Encode.nonNullable(element), recipient, symmetricKey);
     }
     
     /**
@@ -371,15 +377,15 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
     private @Nonnull Block getCache() {
         if (cache == null) {
             final @Nonnull FreezableArray<Block> elements = FreezableArray.get(5);
-            elements.set(0, time.toBlock());
-            elements.set(1, Block.<Identifier>fromNullable(recipient, RECIPIENT));
+            elements.set(0, Encode.nonNullable(time));
+            elements.set(1, Encode.nullable(recipient, RECIPIENT));
             
             if (recipient != null && symmetricKey != null) {
                 assert publicKey != null : "The public key is not null because this method is only called for encoding a block.";
                 elements.set(2, encrypt(publicKey, symmetricKey));
             }
             
-            elements.set(3, Block.fromNullable(initializationVector));
+            elements.set(3, Encode.nullable(initializationVector));
             
             if (symmetricKey != null && initializationVector != null) {
                 final @Nonnull Time start = Time.getCurrent();
@@ -409,35 +415,44 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
         getCache().writeTo(block);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encodable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * The factory for this class.
+     * The encoding factory for this class.
      */
     @Immutable
-    public static final class Factory extends BlockBasedWrapper.Factory<EncryptionWrapper> {
+    public static final class EncodingFactory extends Wrapper.EncodingFactory<EncryptionWrapper> {
         
         /**
          * Creates a new factory with the given type.
          * 
          * @param type the semantic type of the wrapper.
          */
-        private Factory(@Nonnull @Loaded @BasedOn("encryption@core.digitalid.net") SemanticType type) {
+        private EncodingFactory(@Nonnull @Loaded @BasedOn("encryption@core.digitalid.net") SemanticType type) {
             super(type);
         }
         
         @Pure
         @Override
-        public @Nonnull EncryptionWrapper decodeNonNullable(@Nonnull @NonEncoding @BasedOn("encryption@core.digitalid.net") Block block) throws InvalidEncodingException {
+        public @Nonnull EncryptionWrapper decodeNonNullable(@Nonnull Object none, @Nonnull @NonEncoding @BasedOn("encryption@core.digitalid.net") Block block) throws InvalidEncodingException {
             return new EncryptionWrapper(block, null);
         }
         
     }
     
+    
     @Pure
     @Override
-    public @Nonnull Factory getFactory() {
-        return new Factory(getSemanticType());
+    public @Nonnull EncodingFactory getEncodingFactory() {
+        return new EncodingFactory(getSemanticType());
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    @Pure
+    @Override
+    public @Nonnull StoringFactory<EncryptionWrapper> getStoringFactory() {
+        return new StoringFactory<>(getEncodingFactory());
     }
     
 }

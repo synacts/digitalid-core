@@ -1,5 +1,7 @@
 package net.digitalid.service.core.contact;
 
+import net.digitalid.service.core.exceptions.abort.AbortException;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;

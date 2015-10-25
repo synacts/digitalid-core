@@ -1,5 +1,10 @@
 package net.digitalid.service.core.wrappers;
 
+import net.digitalid.service.core.encoding.Encodable;
+
+import net.digitalid.service.core.encoding.Encode;
+import net.digitalid.service.core.exceptions.network.NetworkException;
+import net.digitalid.service.core.exceptions.abort.AbortException;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.SecureRandom;
@@ -482,8 +487,8 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
     @Pure
     @Locked
     @NonCommitting
-    public static @Nonnull <V extends Storable<V>> CredentialsSignatureWrapper sign(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nullable V element, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull @NonNullableElements @NonEmpty @Frozen @Validated ReadOnlyList<Credential> credentials, @Nullable @NonNullableElements @NonEmpty @Frozen @Validated ReadOnlyList<CertifiedAttributeValue> certificates, boolean lodged, @Nullable BigInteger value) throws AbortException, PacketException, ExternalException, NetworkException {
-        return new CredentialsSignatureWrapper(type, Block.fromNullable(element), subject, audit, credentials, certificates, lodged, value);
+    public static @Nonnull <V extends Encodable<V,?>> CredentialsSignatureWrapper sign(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nullable V element, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull @NonNullableElements @NonEmpty @Frozen @Validated ReadOnlyList<Credential> credentials, @Nullable @NonNullableElements @NonEmpty @Frozen @Validated ReadOnlyList<CertifiedAttributeValue> certificates, boolean lodged, @Nullable BigInteger value) throws AbortException, PacketException, ExternalException, NetworkException {
+        return new CredentialsSignatureWrapper(type, Encode.nullable(element), subject, audit, credentials, certificates, lodged, value);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Checks –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -765,7 +770,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
             shownElement = shownElement.inverse().multiply(publicKey.getAo().pow(o));
             
             final @Nonnull FreezableArray<Block> array = FreezableArray.get(3);
-            array.set(0, Block.fromNonNullable(hiddenElement.multiply(shownElement.pow(t))));
+            array.set(0, Encode.nonNullable(hiddenElement.multiply(shownElement.pow(t))));
             
             if (lodged && si != null) {
                 final @Nonnull ReadOnlyArray<Block> encryptions = TupleWrapper.decode(credential.getNonNullableElement(7)).getNonNullableElements(4);
@@ -776,11 +781,11 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
                 final @Nonnull Exponent swb = Exponent.get(encryptions.getNonNullable(3));
                 if (swb.getBitLength() > Parameters.RANDOM_BLINDING_EXPONENT) throw new InvalidSignatureException("The credentials signature is invalid: The value swb is too big.");
                 
-                wis.set(0, Block.fromNonNullable(publicKey.getY().pow(swi).multiply(publicKey.getZPlus1().pow(si)).multiply(publicKey.getSquareGroup().getElement(wis.getNonNullable(0)).pow(t)), PublicKey.W1));
-                wis.set(1, Block.fromNonNullable(publicKey.getG().pow(swi).multiply(publicKey.getSquareGroup().getElement(wis.getNonNullable(1)).pow(t)), PublicKey.W2));
+                wis.set(0, Encode.nonNullable(publicKey.getY().pow(swi).multiply(publicKey.getZPlus1().pow(si)).multiply(publicKey.getSquareGroup().getElement(wis.getNonNullable(0)).pow(t)), PublicKey.W1));
+                wis.set(1, Encode.nonNullable(publicKey.getG().pow(swi).multiply(publicKey.getSquareGroup().getElement(wis.getNonNullable(1)).pow(t)), PublicKey.W2));
                 
-                wbs.set(0, Block.fromNonNullable(publicKey.getY().pow(swb).multiply(publicKey.getZPlus1().pow(sb)).multiply(publicKey.getSquareGroup().getElement(wbs.getNonNullable(0)).pow(t)), PublicKey.W1));
-                wbs.set(1, Block.fromNonNullable(publicKey.getG().pow(swb).multiply(publicKey.getSquareGroup().getElement(wbs.getNonNullable(1)).pow(t)), PublicKey.W2));
+                wbs.set(0, Encode.nonNullable(publicKey.getY().pow(swb).multiply(publicKey.getZPlus1().pow(sb)).multiply(publicKey.getSquareGroup().getElement(wbs.getNonNullable(0)).pow(t)), PublicKey.W1));
+                wbs.set(1, Encode.nonNullable(publicKey.getG().pow(swb).multiply(publicKey.getSquareGroup().getElement(wbs.getNonNullable(1)).pow(t)), PublicKey.W2));
                 
                 array.set(1, TupleWrapper.encode(TWI, wis.freeze()));
                 array.set(2, TupleWrapper.encode(TWB, wbs.freeze()));
@@ -796,7 +801,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
             
             @Nonnull Element element = publicKey.getAu().pow(su).multiply(publicKey.getAb().pow(sb));
             if (sv != null) element = element.multiply(publicKey.getAv().pow(sv));
-            tf = Block.fromNonNullable(publicKey.getCompositeGroup().getElement(value).pow(t).multiply(element)).getHash();
+            tf = Encode.nonNullable(publicKey.getCompositeGroup().getElement(value).pow(t).multiply(element)).getHash();
         }
         
         if (!t.getValue().equals(hash.xor(ListWrapper.encode(ARRAYS, ts.freeze()).getHash()).xor(tf))) throw new InvalidSignatureException("The credentials signature is invalid: The value t is not correct.");
@@ -862,7 +867,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
             if (rv != null) element = element.multiply(publicKey.getAv().pow(rv));
             
             final @Nonnull FreezableArray<Block> array = FreezableArray.get(3);
-            array.set(0, Block.fromNonNullable(randomizedCredentials[i].getC().pow(res[i]).multiply(publicKey.getAb().pow(rbs[i])).multiply(publicKey.getAu().pow(ru)).multiply(element)));
+            array.set(0, Encode.nonNullable(randomizedCredentials[i].getC().pow(res[i]).multiply(publicKey.getAb().pow(rbs[i])).multiply(publicKey.getAu().pow(ru)).multiply(element)));
             
             if (lodged && !randomizedCredentials[i].isOneTime()) {
                 rwis[i] = Exponent.get(new BigInteger(Parameters.RANDOM_BLINDING_EXPONENT - Parameters.HASH, random));
@@ -890,7 +895,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
             
             f = publicKey.getAu().pow(ru).multiply(publicKey.getAb().pow(rb));
             if (rv != null) f = f.multiply(publicKey.getAv().pow(rv));
-            tf = Block.fromNonNullable(f).getHash();
+            tf = Encode.nonNullable(f).getHash();
             
             f = publicKey.getAu().pow(u).multiply(publicKey.getAb().pow(value));
             if (rv != null) f = f.multiply(publicKey.getAv().pow(v));
@@ -899,10 +904,10 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
         final @Nonnull Exponent t = Exponent.get(elements.getNonNullable(0).getHash().xor(ListWrapper.encode(ARRAYS, ts.freeze()).getHash()).xor(tf));
         
         final @Nonnull FreezableArray<Block> signature = FreezableArray.get(8);
-        signature.set(0, Block.fromNonNullable(t, T));
-        signature.set(1, Block.fromNonNullable(ru.subtract(t.multiply(u)), SU));
+        signature.set(0, Encode.nonNullable(t, T));
+        signature.set(1, Encode.nonNullable(ru.subtract(t.multiply(u)), SU));
         if (rv != null) {
-            signature.set(3, Block.fromNonNullable(rv.subtract(t.multiply(v)), SV));
+            signature.set(3, Encode.nonNullable(rv.subtract(t.multiply(v)), SV));
         } else {
             signature.set(2, mainCredential.getRestrictionsNotNull().toBlock());
         }
@@ -914,17 +919,17 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
             if (value == null || mainCredential.isRoleBased()) {
                 credential.set(1, randomizedCredentials[i].getRandomizedPermissions().toBlock());
             }
-            credential.set(2, Block.fromNonNullable(randomizedCredentials[i].getC(), C));
-            credential.set(3, Block.fromNonNullable(res[i].subtract(t.multiply(randomizedCredentials[i].getE())), SE));
-            credential.set(4, Block.fromNonNullable(rbs[i].subtract(t.multiply(randomizedCredentials[i].getB())), SB));
+            credential.set(2, Encode.nonNullable(randomizedCredentials[i].getC(), C));
+            credential.set(3, Encode.nonNullable(res[i].subtract(t.multiply(randomizedCredentials[i].getE())), SE));
+            credential.set(4, Encode.nonNullable(rbs[i].subtract(t.multiply(randomizedCredentials[i].getB())), SB));
             if (randomizedCredentials[i].isOneTime()) {
-                credential.set(5, Block.fromNonNullable(randomizedCredentials[i].getI(), I));
+                credential.set(5, Encode.nonNullable(randomizedCredentials[i].getI(), I));
             } else {
-                credential.set(6, Block.fromNonNullable(ris[i].subtract(t.multiply(randomizedCredentials[i].getI())), SI));
+                credential.set(6, Encode.nonNullable(ris[i].subtract(t.multiply(randomizedCredentials[i].getI())), SI));
                 
                 if (lodged) {
-                    final @Nonnull Block swi = Block.fromNonNullable(rrwis[i].subtract(t.multiply(rwis[i])), SWI);
-                    final @Nonnull Block swb = Block.fromNonNullable(rrwbs[i].subtract(t.multiply(rwbs[i])), SWB);
+                    final @Nonnull Block swi = Encode.nonNullable(rrwis[i].subtract(t.multiply(rwis[i])), SWI);
+                    final @Nonnull Block swb = Encode.nonNullable(rrwbs[i].subtract(t.multiply(rwbs[i])), SWB);
                     credential.set(7, TupleWrapper.encode(ENCRYPTION, wis[i], swi, wbs[i], swb));
                 }
             }
@@ -940,8 +945,8 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
         
         if (value != null) {
             assert f != null && rb != null : "If the credential is shortened, f and rb are not null (see the code above).";
-            signature.set(6, Block.fromNonNullable(f, F_PRIME));
-            signature.set(7, Block.fromNonNullable(rb.subtract(t.multiply(Exponent.get(value))), SB_PRIME));
+            signature.set(6, Encode.nonNullable(f, F_PRIME));
+            signature.set(7, Encode.nonNullable(rb.subtract(t.multiply(Exponent.get(value))), SB_PRIME));
         }
         
         elements.set(3, TupleWrapper.encode(SIGNATURE, signature.freeze()));

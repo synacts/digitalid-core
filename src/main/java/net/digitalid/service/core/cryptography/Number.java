@@ -1,5 +1,7 @@
 package net.digitalid.service.core.cryptography;
 
+import net.digitalid.service.core.encoding.Encodable;
+
 import java.math.BigInteger;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -14,7 +16,7 @@ import net.digitalid.utility.annotations.state.Pure;
  * @see Exponent
  */
 @Immutable
-public abstract class Number<E extends Number<E>> implements Storable<E> {
+public abstract class Number<E extends Number<E>> implements Encodable<E,Object> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value –––––––––––––––––––––––––––––––––––––––––––––––––– */
     

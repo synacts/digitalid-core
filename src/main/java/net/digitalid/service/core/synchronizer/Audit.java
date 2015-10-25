@@ -1,5 +1,7 @@
 package net.digitalid.service.core.synchronizer;
 
+import net.digitalid.service.core.encoding.Encodable;
+
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
@@ -21,7 +23,7 @@ import net.digitalid.utility.collections.readonly.ReadOnlyList;
  * @see ResponseAudit
  */
 @Immutable
-public abstract class Audit implements Storable<Audit> {
+public abstract class Audit implements Encodable<Audit, Object> {
     
     /**
      * Stores the semantic type {@code last.time.audit@core.digitalid.net}.

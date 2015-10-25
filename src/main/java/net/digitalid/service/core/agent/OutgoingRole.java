@@ -1,5 +1,7 @@
 package net.digitalid.service.core.agent;
 
+import net.digitalid.service.core.exceptions.abort.AbortException;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Random;

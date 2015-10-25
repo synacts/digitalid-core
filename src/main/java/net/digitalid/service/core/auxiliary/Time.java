@@ -632,7 +632,7 @@ public final class Time implements Encodable<Time, Object>, Storable<Time, Objec
         return FACTORY;
     }
     
-    public static @Nonnull AbstractEncodingFactory<Time, Object> ENCODING_FACTORY;
+    public static @Nonnull NonRequestingEncodingFactory<Time, Object> ENCODING_FACTORY;
     
     public static @Nonnull AbstractStoringFactory<Time, Object> STORING_FACTORY;
     

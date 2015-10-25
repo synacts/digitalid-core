@@ -6,6 +6,7 @@ import net.digitalid.service.core.annotations.BasedOn;
 import net.digitalid.service.core.annotations.Encoding;
 import net.digitalid.service.core.annotations.Loaded;
 import net.digitalid.service.core.annotations.NonEncoding;
+import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.encoding.Encodable;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.identity.SemanticType;
@@ -34,11 +35,6 @@ public final class TupleWrapper extends BlockBasedWrapper<TupleWrapper> {
      * Stores the syntactic type {@code tuple@core.digitalid.net}.
      */
     public static final @Nonnull SyntacticType TYPE = SyntacticType.map("tuple@core.digitalid.net").load(-1);
-    
-    /**
-     * Stores the semantic type {@code semantic.tuple@core.digitalid.net}.
-     */
-    private static final @Nonnull SemanticType SEMANTIC = SemanticType.map("semantic.tuple@core.digitalid.net").load(TYPE);
     
     @Pure
     @Override
@@ -257,11 +253,6 @@ public final class TupleWrapper extends BlockBasedWrapper<TupleWrapper> {
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Utility –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Stores the factory of this class.
-     */
-    private static final @Nonnull Factory FACTORY = new Factory(SEMANTIC);
-    
-    /**
      * Encodes the given elements into a new block of the given type.
      * 
      * @param type the semantic type of the new block.
@@ -273,7 +264,7 @@ public final class TupleWrapper extends BlockBasedWrapper<TupleWrapper> {
      */
     @Pure
     public static @Nonnull @NonEncoding Block encode(@Nonnull @Loaded @BasedOn("tuple@core.digitalid.net") SemanticType type, @Nonnull @NullableElements @Frozen ReadOnlyArray<Block> elements) {
-        return FACTORY.encodeNonNullable(new TupleWrapper(type, elements));
+        return new EncodingFactory(type).encodeNonNullable(new TupleWrapper(type, elements));
     }
     
     /**
@@ -317,7 +308,7 @@ public final class TupleWrapper extends BlockBasedWrapper<TupleWrapper> {
      */
     @Pure
     public static @Nonnull TupleWrapper decode(@Nonnull @NonEncoding @BasedOn("tuple@core.digitalid.net") Block block) throws InvalidEncodingException {
-        return FACTORY.decodeNonNullable(block);
+        return new EncodingFactory(block.getType()).decodeNonNullable(None.OBJECT, block);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encoding –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -363,26 +354,26 @@ public final class TupleWrapper extends BlockBasedWrapper<TupleWrapper> {
         assert offset == block.getLength() : "The whole block should now be encoded.";
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encodable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * The factory for this class.
+     * The encoding factory for this class.
      */
     @Immutable
-    public static final class Factory extends BlockBasedWrapper.Factory<TupleWrapper> {
+    public static final class EncodingFactory extends Wrapper.EncodingFactory<TupleWrapper> {
         
         /**
-         * Creates a new factory with the given type.
+         * Creates a new encoding factory with the given type.
          * 
-         * @param type the semantic type of the wrapper.
+         * @param type the semantic type of the encoded blocks and decoded wrappers.
          */
-        private Factory(@Nonnull @Loaded @BasedOn("tuple@core.digitalid.net") SemanticType type) {
+        private EncodingFactory(@Nonnull @Loaded @BasedOn("tuple@core.digitalid.net") SemanticType type) {
             super(type);
         }
         
         @Pure
         @Override
-        public @Nonnull TupleWrapper decodeNonNullable(@Nonnull @NonEncoding @BasedOn("tuple@core.digitalid.net") Block block) throws InvalidEncodingException {
+        public @Nonnull TupleWrapper decodeNonNullable(@Nonnull Object none, @Nonnull @NonEncoding @BasedOn("tuple@core.digitalid.net") Block block) throws InvalidEncodingException {
             final @Nonnull @NonNullableElements ReadOnlyList<SemanticType> parameters = block.getType().getParameters();
             final int size = parameters.size();
             final @Nonnull FreezableArray<Block> elements = FreezableArray.get(size);
@@ -409,8 +400,16 @@ public final class TupleWrapper extends BlockBasedWrapper<TupleWrapper> {
     
     @Pure
     @Override
-    public @Nonnull Factory getFactory() {
-        return new Factory(getSemanticType());
+    public @Nonnull EncodingFactory getEncodingFactory() {
+        return new EncodingFactory(getSemanticType());
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    @Pure
+    @Override
+    public @Nonnull StoringFactory<TupleWrapper> getStoringFactory() {
+        return new StoringFactory<>(getEncodingFactory());
     }
     
 }

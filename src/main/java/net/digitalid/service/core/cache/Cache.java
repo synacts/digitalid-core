@@ -1,5 +1,8 @@
 package net.digitalid.service.core.cache;
 
+import net.digitalid.service.core.exceptions.network.NetworkException;
+
+import net.digitalid.service.core.exceptions.abort.AbortException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;

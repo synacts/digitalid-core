@@ -1,5 +1,7 @@
 package net.digitalid.service.core.cryptography;
 
+import net.digitalid.service.core.encoding.Encodable;
+
 import java.security.SecureRandom;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -29,7 +31,7 @@ import net.digitalid.utility.database.column.SQLType;
  * The random initialization vector ensures that multiple {@link EncryptionWrapper encryptions} of the same {@link Block block} are different.
  */
 @Immutable
-public final class InitializationVector extends IvParameterSpec implements Storable<InitializationVector, Object> {
+public final class InitializationVector extends IvParameterSpec implements Encodable<InitializationVector, Object> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
     

@@ -205,7 +205,7 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
         tuple.writeTo(block);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encodable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * The encoding factory for this class.
