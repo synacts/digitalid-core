@@ -30,7 +30,7 @@ public final class AttributeTest extends IdentitySetup {
         
     @Test
     @Committing
-    public void _01_testValueReplace() throws SQLException, InvalidEncodingException {
+    public void _01_testValueReplace() throws AbortException, InvalidEncodingException {
         print("_01_testValueReplace");
         try {
             final @Nonnull Attribute attribute = Attribute.get(getRole(), AttributeTypes.NAME);

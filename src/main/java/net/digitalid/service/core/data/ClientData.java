@@ -72,7 +72,7 @@ public interface ClientData {
      */
     @Locked
     @NonCommitting
-    public void createTables(@Nonnull Site site) throws SQLException;
+    public void createTables(@Nonnull Site site) throws AbortException;
     
     /**
      * Deletes the database tables of this data collection for the given site.
@@ -81,6 +81,6 @@ public interface ClientData {
      */
     @Locked
     @NonCommitting
-    public void deleteTables(@Nonnull Site site) throws SQLException;
+    public void deleteTables(@Nonnull Site site) throws AbortException;
     
 }

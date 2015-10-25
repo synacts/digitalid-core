@@ -141,7 +141,7 @@ public final class ClientAgentCommitmentReplace extends CoreServiceInternalActio
     
     @Override
     @NonCommitting
-    protected void executeOnBoth() throws SQLException {
+    protected void executeOnBoth() throws AbortException {
         clientAgent.replaceCommitment(oldCommitment, newCommitment);
     }
     

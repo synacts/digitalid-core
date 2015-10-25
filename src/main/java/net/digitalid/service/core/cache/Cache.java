@@ -120,7 +120,7 @@ public final class Cache {
      */
     @Locked
     @NonCommitting
-    public static void invalidateCachedAttributeValues(@Nonnull InternalNonHostIdentity identity) throws SQLException {
+    public static void invalidateCachedAttributeValues(@Nonnull InternalNonHostIdentity identity) throws AbortException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             final @Nonnull Time time = Time.getCurrent();
             statement.executeUpdate("UPDATE general_cache SET time = " + time + " WHERE (identity = " + identity + " OR role = " + identity + ") AND time > " + time);
@@ -182,7 +182,7 @@ public final class Cache {
      */
     @Locked
     @NonCommitting
-    private static void setCachedAttributeValue(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull Time time, @Nonnull SemanticType type, @Nullable AttributeValue value, @Nullable Reply reply) throws SQLException, InvalidEncodingException {
+    private static void setCachedAttributeValue(@Nonnull InternalIdentity identity, @Nullable Role role, @Nonnull Time time, @Nonnull SemanticType type, @Nullable AttributeValue value, @Nullable Reply reply) throws AbortException, InvalidEncodingException {
         assert time.isNonNegative() : "The given time is non-negative.";
         assert type.isAttributeFor(identity.getCategory()) : "The type can be used as an attribute for the category of the given identity.";
         assert value == null || value.isVerified() : "The attribute value is null or its signature is verified.";

@@ -48,7 +48,7 @@ public abstract class ConceptPropertyInternalAction extends InternalAction {
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @OnlyForClients
-    protected ConceptPropertyInternalAction(@Nonnull Role role, @Nonnull Service service) throws SQLException {
+    protected ConceptPropertyInternalAction(@Nonnull Role role, @Nonnull Service service) throws AbortException {
         super(role, service.getRecipient(role));
         
         this.service = service;

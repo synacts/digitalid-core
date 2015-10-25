@@ -71,7 +71,7 @@ public final class ActionModule implements StateModule {
     
     @Override
     @NonCommitting
-    public void createTables(final @Nonnull Site site) throws SQLException {
+    public void createTables(final @Nonnull Site site) throws AbortException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "action (entity " + EntityClass.FORMAT + " NOT NULL, service " + Mapper.FORMAT + " NOT NULL, time " + Time.FORMAT + " NOT NULL, " + FreezableAgentPermissions.FORMAT_NULL + ", " + Restrictions.FORMAT + ", agent " + Agent.FORMAT + ", recipient " + IdentifierClass.FORMAT + " NOT NULL, action " + Block.FORMAT + " NOT NULL, PRIMARY KEY (entity, service, time), FOREIGN KEY (entity) " + site.getEntityReference() + ", FOREIGN KEY (service) " + Mapper.REFERENCE + Database.getConfiguration().INDEX("time") + ", " + FreezableAgentPermissions.REFERENCE + ", " + Restrictions.getForeignKeys(site) + ", FOREIGN KEY (entity, agent) " + Agent.getReference(site) + ")");
             Database.getConfiguration().createIndex(statement, site + "action", "time");
@@ -83,7 +83,7 @@ public final class ActionModule implements StateModule {
     
     @Override
     @NonCommitting
-    public void deleteTables(@Nonnull Site site) throws SQLException {
+    public void deleteTables(@Nonnull Site site) throws AbortException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             Database.removeRegularPurging(site + "action");
             if (site instanceof Host) Mapper.removeReference(site + "action", "entity", "entity", "service", "time");
@@ -112,7 +112,7 @@ public final class ActionModule implements StateModule {
     @Pure
     @Override
     @NonCommitting
-    public @Nonnull Block exportModule(@Nonnull Host host) throws SQLException {
+    public @Nonnull Block exportModule(@Nonnull Host host) throws AbortException {
         final @Nonnull String SQL = "SELECT entity, service, time, " + Restrictions.COLUMNS + ", " + FreezableAgentPermissions.COLUMNS + ", agent, recipient, action FROM " + host + "action";
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
             final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<>();
@@ -172,19 +172,19 @@ public final class ActionModule implements StateModule {
     @Pure
     @Override
     @NonCommitting
-    public @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws SQLException {
+    public @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws AbortException {
         return new EmptyWrapper(STATE_FORMAT).toBlock();
     }
     
     @Override
     @NonCommitting
-    public void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws SQLException, InvalidEncodingException {
+    public void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws AbortException, InvalidEncodingException {
         assert block.getType().isBasedOn(getStateFormat()) : "The block is based on the indicated type.";
     }
     
     @Override
     @NonCommitting
-    public void removeState(@Nonnull NonHostEntity entity) throws SQLException {}
+    public void removeState(@Nonnull NonHostEntity entity) throws AbortException {}
     
     
     /**
@@ -203,7 +203,7 @@ public final class ActionModule implements StateModule {
      */
     @Pure
     @NonCommitting
-    public static @Nonnull ResponseAudit getAudit(@Nonnull NonHostEntity entity, @Nonnull Service service, @Nonnull Time lastTime, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws SQLException {
+    public static @Nonnull ResponseAudit getAudit(@Nonnull NonHostEntity entity, @Nonnull Service service, @Nonnull Time lastTime, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws AbortException {
         assert agent == null || service.equals(CoreService.SERVICE) : "The agent is null or the audit trail is requested for the core service.";
         
         final @Nonnull Site site = entity.getSite();
@@ -251,7 +251,7 @@ public final class ActionModule implements StateModule {
      * @require action.hasSignature() : "The action has a signature.";
      */
     @NonCommitting
-    public static void audit(@Nonnull Action action) throws SQLException {
+    public static void audit(@Nonnull Action action) throws AbortException {
         assert action.hasEntity() : "The action has an entity.";
         assert action.hasSignature() : "The action has a signature.";
         

@@ -57,7 +57,7 @@ public final class PasswordModule implements StateModule {
     
     @Override
     @NonCommitting
-    public void createTables(@Nonnull Site site) throws SQLException {
+    public void createTables(@Nonnull Site site) throws AbortException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "password (entity " + EntityClass.FORMAT + " NOT NULL, password VARCHAR(50) NOT NULL COLLATE " + Database.getConfiguration().BINARY() + ", PRIMARY KEY (entity), FOREIGN KEY (entity) " + site.getEntityReference() + ")");
             Database.onInsertIgnore(statement, site + "password", "entity");
@@ -66,7 +66,7 @@ public final class PasswordModule implements StateModule {
     
     @Override
     @NonCommitting
-    public void deleteTables(@Nonnull Site site) throws SQLException {
+    public void deleteTables(@Nonnull Site site) throws AbortException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             Database.onInsertNotIgnore(statement, site + "password");
             statement.executeUpdate("DROP TABLE IF EXISTS " + site + "password");
@@ -93,7 +93,7 @@ public final class PasswordModule implements StateModule {
     @Pure
     @Override
     @NonCommitting
-    public @Nonnull Block exportModule(@Nonnull Host host) throws SQLException {
+    public @Nonnull Block exportModule(@Nonnull Host host) throws AbortException {
         final @Nonnull String SQL = "SELECT entity, password FROM " + host + "password";
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
             final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<>();
@@ -139,13 +139,13 @@ public final class PasswordModule implements StateModule {
     @Pure
     @Override
     @NonCommitting
-    public @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws SQLException {
+    public @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws AbortException {
         return new TupleWrapper(STATE_FORMAT, restrictions.isClient() ? new StringWrapper(Password.TYPE, get(entity)) : null).toBlock();
     }
     
     @Override
     @NonCommitting
-    public void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws SQLException, InvalidEncodingException {
+    public void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws AbortException, InvalidEncodingException {
         assert block.getType().isBasedOn(getStateFormat()) : "The block is based on the indicated type.";
         
         final @Nullable Block element = new TupleWrapper(block).getNullableElement(0);
@@ -156,7 +156,7 @@ public final class PasswordModule implements StateModule {
     
     @Override
     @NonCommitting
-    public void removeState(@Nonnull NonHostEntity entity) throws SQLException {
+    public void removeState(@Nonnull NonHostEntity entity) throws AbortException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("DELETE FROM " + entity.getSite() + "password WHERE entity = " + entity);
         }
@@ -173,7 +173,7 @@ public final class PasswordModule implements StateModule {
      * @ensure Password.isValid(return) : "The returned value is valid.";
      */
     @NonCommitting
-    static @Nonnull String get(@Nonnull Entity entity) throws SQLException {
+    static @Nonnull String get(@Nonnull Entity entity) throws AbortException {
         final @Nonnull String SQL = "SELECT password FROM " + entity.getSite() + "password WHERE entity = " + entity;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
             if (resultSet.next()) {
@@ -193,7 +193,7 @@ public final class PasswordModule implements StateModule {
      * @require Password.isValid(value) : "The value is valid.";
      */
     @NonCommitting
-    public static void set(@Nonnull Entity entity, @Nonnull String value) throws SQLException {
+    public static void set(@Nonnull Entity entity, @Nonnull String value) throws AbortException {
         assert Password.isValid(value) : "The value is valid.";
         
         final @Nonnull String SQL = "INSERT" + Database.getConfiguration().IGNORE() + " INTO " + entity.getSite() + "password (entity, password) VALUES (?, ?)";
@@ -211,13 +211,13 @@ public final class PasswordModule implements StateModule {
      * @param oldValue the old value to be replaced with the new value.
      * @param newValue the new value with which the old value is replaced.
      * 
-     * @throws SQLException if the passed value is not the old value.
+     * @throws AbortException if the passed value is not the old value.
      * 
      * @require Password.isValid(oldValue) : "The old value is valid.";
      * @require Password.isValid(newValue) : "The new value is valid.";
      */
     @NonCommitting
-    static void replace(@Nonnull Password password, @Nonnull String oldValue, @Nonnull String newValue) throws SQLException {
+    static void replace(@Nonnull Password password, @Nonnull String oldValue, @Nonnull String newValue) throws AbortException {
         assert Password.isValid(oldValue) : "The old value is valid.";
         assert Password.isValid(newValue) : "The new value is valid.";
         

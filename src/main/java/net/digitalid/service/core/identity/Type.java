@@ -61,7 +61,7 @@ public abstract class Type extends NonHostIdentityClass implements InternalNonHo
     @Pure
     @Override
     @NonCommitting
-    public final boolean hasBeenMerged(@Nonnull SQLException exception) throws SQLException {
+    public final boolean hasBeenMerged(@Nonnull SQLException exception) throws AbortException {
         Mapper.unmap(this);
         throw exception;
     }

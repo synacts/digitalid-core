@@ -44,7 +44,7 @@ public final class Successor {
      * @return the successor of the given identifier as stored in the database.
      */
     @NonCommitting
-    public static @Nullable InternalNonHostIdentifier get(@Nonnull NonHostIdentifier identifier) throws SQLException {
+    public static @Nullable InternalNonHostIdentifier get(@Nonnull NonHostIdentifier identifier) throws AbortException {
         @Nonnull String query = "SELECT successor FROM general_successor WHERE identifier = " + identifier;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(query)) {
             if (resultSet.next()) return new InternalNonHostIdentifier(resultSet.getString(1));
@@ -89,7 +89,7 @@ public final class Successor {
      * @param reply the reply stating that the given identifier has the given successor.
      */
     @NonCommitting
-    public static void set(@Nonnull NonHostIdentifier identifier, @Nonnull InternalNonHostIdentifier successor, @Nullable Reply reply) throws SQLException {
+    public static void set(@Nonnull NonHostIdentifier identifier, @Nonnull InternalNonHostIdentifier successor, @Nullable Reply reply) throws AbortException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("INSERT INTO general_successor (identifier, successor, reply) VALUES (" + identifier + ", " + successor + ", " + reply + ")");
         }

@@ -50,7 +50,7 @@ public interface StateData extends HostData {
     @Pure
     @Locked
     @NonCommitting
-    public @Nonnull @NonEncoding Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws SQLException;
+    public @Nonnull @NonEncoding Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws AbortException;
     
     /**
      * Adds the state in the given block to the given entity in this data collection.
@@ -71,6 +71,6 @@ public interface StateData extends HostData {
      */
     @Locked
     @NonCommitting
-    public void removeState(@Nonnull NonHostEntity entity) throws SQLException;
+    public void removeState(@Nonnull NonHostEntity entity) throws AbortException;
     
 }

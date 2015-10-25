@@ -159,14 +159,14 @@ public final class FloatWrapper extends Wrapper<FloatWrapper> {
         
         @Override
         @NonCommitting
-        public void setNonNullable(@Nonnull FloatWrapper wrapper, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+        public void setNonNullable(@Nonnull FloatWrapper wrapper, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws AbortException {
             preparedStatement.setFloat(parameterIndex, wrapper.value);
         }
         
         @Pure
         @Override
         @NonCommitting
-        public @Nullable FloatWrapper getNullable(@Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+        public @Nullable FloatWrapper getNullable(@Nonnull ResultSet resultSet, int columnIndex) throws AbortException {
             final float value = resultSet.getFloat(columnIndex);
             if (resultSet.wasNull()) return null;
             else return new FloatWrapper(getType(), value);
@@ -192,7 +192,7 @@ public final class FloatWrapper extends Wrapper<FloatWrapper> {
      * The factory for the value type of this wrapper.
      */
     @Immutable
-    public static class ValueFactory extends Wrapper.ValueFactory<Float, FloatWrapper> {
+    public static class ValueFactory extends Wrapper.ValueEncodingFactory<Float, FloatWrapper> {
         
         /**
          * Creates a new factory with the given type.

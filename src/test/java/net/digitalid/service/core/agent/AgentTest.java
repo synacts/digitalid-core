@@ -123,7 +123,7 @@ public final class AgentTest extends IdentitySetup {
     
     @Test
     @Committing
-    public void _03_testPermissionsRemove() throws SQLException {
+    public void _03_testPermissionsRemove() throws AbortException {
         print("_03_testPermissionsRemove");
         try {
             final @Nonnull ClientAgent clientAgent = role.getAgent();
@@ -192,7 +192,7 @@ public final class AgentTest extends IdentitySetup {
     
     @Test
     @Committing
-    public void _06_testNameReplace() throws SQLException {
+    public void _06_testNameReplace() throws AbortException {
         print("_06_testNameReplace");
         try {
             final @Nonnull String newName = "New Name of Client";
@@ -210,7 +210,7 @@ public final class AgentTest extends IdentitySetup {
     
     @Test
     @Committing
-    public void _07_testWeakerAgents() throws SQLException {
+    public void _07_testWeakerAgents() throws AbortException {
         print("_07_testWeakerAgents");
         try {
             Assert.assertEquals(1, role.getAgent().getWeakerAgents().size());

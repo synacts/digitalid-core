@@ -159,14 +159,14 @@ public final class DoubleWrapper extends Wrapper<DoubleWrapper> {
         
         @Override
         @NonCommitting
-        public void setNonNullable(@Nonnull DoubleWrapper wrapper, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+        public void setNonNullable(@Nonnull DoubleWrapper wrapper, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws AbortException {
             preparedStatement.setDouble(parameterIndex, wrapper.value);
         }
         
         @Pure
         @Override
         @NonCommitting
-        public @Nullable DoubleWrapper getNullable(@Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+        public @Nullable DoubleWrapper getNullable(@Nonnull ResultSet resultSet, int columnIndex) throws AbortException {
             final double value = resultSet.getDouble(columnIndex);
             if (resultSet.wasNull()) return null;
             else return new DoubleWrapper(getType(), value);
@@ -192,7 +192,7 @@ public final class DoubleWrapper extends Wrapper<DoubleWrapper> {
      * The factory for the value type of this wrapper.
      */
     @Immutable
-    public static class ValueFactory extends Wrapper.ValueFactory<Double, DoubleWrapper> {
+    public static class ValueFactory extends Wrapper.ValueEncodingFactory<Double, DoubleWrapper> {
         
         /**
          * Creates a new factory with the given type.

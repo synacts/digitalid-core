@@ -38,6 +38,7 @@ import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.database.column.Column;
 import net.digitalid.utility.database.column.SQLType;
 import net.digitalid.utility.database.configuration.Database;
+import net.digitalid.utility.database.storing.AbstractStoringFactory;
 import net.digitalid.utility.database.storing.Storable;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 
@@ -45,18 +46,18 @@ import net.digitalid.utility.system.errors.ShouldNeverHappenError;
  * A block is a sequence of bytes that is encoded according to some syntactic type.
  * In order to prevent unnecessary copying, this sequence is given by a byte array,
  * where an offset and a length is used to reference just a part of the array.
- * If a block is annotated as {@link Encoding exposed}, it {@link #isEncoding() is encoding}.
+ * The bytes of a block can only be written when it is {@link #isEncoding() encoding}.
  * <p>
  * <em>Important:</em> Only share {@link #isEncoded() encoded} blocks between threads!
  * 
- * @invariant bytes != null || wrapper != null : "Either the byte array or the wrapper of this block is given.";
- * @invariant offset >= 0 : "The offset of this block in the byte array is not negative.";
+ * @invariant bytes != null || wrapper != null : "Either the byte array or the wrapper of this block is set.";
+ * @invariant offset >= 0 : "The offset of this block in the byte array is non-negative.";
  * @invariant bytes == null || length > 0 : "If this block is allocated, its length is positive.";
  * @invariant bytes == null || offset + length <= bytes.length : "If this block is allocated, it may not exceed the byte array.";
  * @invariant !isEncoded() || isAllocated() : "If the block is encoded, it is also allocated.";
  */
 @Immutable
-public final class Block implements Encodable<Block, Object>, Storable<Block, Object>, Cloneable {
+public final class Block implements Encodable<Block, Object>, Storable<Block, SemanticType>, Cloneable {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Invariant –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -65,8 +66,8 @@ public final class Block implements Encodable<Block, Object>, Storable<Block, Ob
      */
     @Pure
     private boolean invariant() {
-        assert bytes != null || wrapper != null : "Either the byte array or the wrapper of this block is given.";
-        assert offset >= 0 : "The offset of this block in the byte array is not negative.";
+        assert bytes != null || wrapper != null : "Either the byte array or the wrapper of this block is set.";
+        assert offset >= 0 : "The offset of this block in the byte array is non-negative.";
         assert bytes == null || length > 0 : "If this block is allocated, its length is positive.";
         assert bytes == null || offset + length <= bytes.length : "If this block is allocated, it may not exceed the byte array.";
         assert !isEncoded() || isAllocated() : "If the block is encoded, it is also allocated.";
@@ -91,7 +92,7 @@ public final class Block implements Encodable<Block, Object>, Storable<Block, Ob
     /**
      * Stores the offset of this block in the byte array.
      */
-    private int offset = 0;
+    private @NonNegative int offset = 0;
     
     /**
      * Stores the given or determined length of this block.
@@ -109,7 +110,7 @@ public final class Block implements Encodable<Block, Object>, Storable<Block, Ob
      */
     private boolean encoded = false;
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructors –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Eager Constructors –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Creates a new block with the given parameters.
@@ -183,6 +184,8 @@ public final class Block implements Encodable<Block, Object>, Storable<Block, Ob
     public static @Nonnull @Encoded Block get(@Nonnull SemanticType type, @Nonnull @NonEncoding Block block) {
         return Block.get(type, block.encodeIfNotYetEncoded(), 0, block.getLength());
     }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Lazy Constructors –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Allocates a new block of the given type with the given wrapper.
@@ -389,9 +392,9 @@ public final class Block implements Encodable<Block, Object>, Storable<Block, Ob
     @EncodingRecipient
     public void setBytes(@NonNegative int index, @Nonnull byte[] values, @NonNegative int offset, @NonNegative int length) {
         assert isEncoding() : "This method may only be called during encoding.";
-        assert index >= 0 : "The index is not negative.";
+        assert index >= 0 : "The index is non-negative.";
         assert index + length <= getLength() : "The given values may not exceed this block.";
-        assert offset >= 0 : "The offset is not negative.";
+        assert offset >= 0 : "The offset is non-negative.";
         assert length >= 0 : "The length is non-negative.";
         assert offset + length <= values.length : "The indicated section may not exceed the given byte array.";
         
@@ -690,26 +693,21 @@ public final class Block implements Encodable<Block, Object>, Storable<Block, Ob
         return toString(bytes, offset, length);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encodable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * The factory for blocks.
+     * The encoding factory for this class.
      */
     @Immutable
-    public static class Factory extends NonRequestingEncodingFactory<Block, Object> {
+    public static class EncodingFactory extends NonRequestingEncodingFactory<Block, Object> {
         
         /**
-         * Stores the column for blocks.
-         */
-        private static final @Nonnull Column column = Column.get("block", SQLType.BLOB);
-        
-        /**
-         * Creates a new factory with the given type.
+         * Creates a new encoding factory with the given type.
          * 
          * @param type the type of the blocks which are returned.
          */
-        private Factory(@Nonnull @Loaded SemanticType type) {
-            super(type, column);
+        private EncodingFactory(@Nonnull @Loaded SemanticType type) {
+            super(type);
         }
         
         @Pure
@@ -724,6 +722,34 @@ public final class Block implements Encodable<Block, Object>, Storable<Block, Ob
             return block;
         }
         
+    }
+    
+    @Pure
+    @Override
+    public @Nonnull EncodingFactory getEncodingFactory() {
+        return new EncodingFactory(type);
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * The storing factory for this class.
+     */
+    @Immutable
+    public static class StoringFactory extends AbstractStoringFactory<Block, SemanticType> {
+        
+        /**
+         * Stores the column for blocks.
+         */
+        private static final @Nonnull Column COLUMN = Column.get("block", SQLType.BLOB);
+        
+        /**
+         * Creates a new storing factory.
+         */
+        private StoringFactory() {
+            super(COLUMN);
+        }
+        
         @Pure
         @Override
         public @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getValues(@Nonnull Block block) {
@@ -731,7 +757,7 @@ public final class Block implements Encodable<Block, Object>, Storable<Block, Ob
         }
         
         @Override
-        public void setNonNullable(@Nonnull Block block, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+        public void storeNonNullable(@Nonnull Block block, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
             if (Database.getConfiguration().supportsBinaryStream()) {
                 preparedStatement.setBinaryStream(parameterIndex, block.getInputStream(), block.getLength());
             } else {
@@ -741,36 +767,23 @@ public final class Block implements Encodable<Block, Object>, Storable<Block, Ob
         
         @Pure
         @Override
-        public @Nullable Block getNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+        public @Nullable Block restoreNullable(@Nonnull SemanticType type, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
             final @Nonnull byte[] bytes = resultSet.getBytes(columnIndex);
-            if (resultSet.wasNull()) return null;
-            else return Block.get(getType(), bytes);
+            return resultSet.wasNull() ? null : Block.get(type, bytes);
         }
         
     }
     
+    /**
+     * Stores the storing factory which is used to store and restore blocks.
+     */
+    public static final @Nonnull StoringFactory STORING_FACTORY = new StoringFactory();
+    
     @Pure
     @Override
-    public @Nonnull Factory getFactory() {
-        return new Factory(type);
+    public @Nonnull StoringFactory getStoringFactory() {
+        return STORING_FACTORY;
     }
-    
-    /**
-     * Returns a new factory for the given type.
-     * 
-     * @param type the type of the blocks which are returned by the factory.
-     * 
-     * @return a new factory for the given type.
-     */
-    @Pure
-    public static @Nonnull Factory getFactory(@Nonnull @Loaded SemanticType type) {
-        return new Factory(type);
-    }
-    
-    /**
-     * Stores the factory for blocks of unknown type.
-     */
-    public static final @Nonnull Factory FACTORY = new Factory(SemanticType.UNKNOWN);
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Cryptography –––––––––––––––––––––––––––––––––––––––––––––––––– */
     

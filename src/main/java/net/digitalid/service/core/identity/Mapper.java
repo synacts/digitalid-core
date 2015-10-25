@@ -105,7 +105,7 @@ public final class Mapper {
      * @param newNumber the new number of the person which is updated.
      */
     @NonCommitting
-    private static void updateReferences(@Nonnull Statement statement, long oldNumber, long newNumber) throws SQLException {
+    private static void updateReferences(@Nonnull Statement statement, long oldNumber, long newNumber) throws AbortException {
         final @Nonnull String IGNORE = Database.getConfiguration().IGNORE();
         for (final @Nonnull ReadOnlyTriplet<String, String, String[]> reference : references) {
             final @Nonnull String table = reference.getElement0();
@@ -163,7 +163,7 @@ public final class Mapper {
      */
     @Pure
     @NonCommitting
-    private static @Nonnull Identity createIdentity(@Nonnull Category category, long number, @Nonnull Identifier address) throws SQLException {
+    private static @Nonnull Identity createIdentity(@Nonnull Category category, long number, @Nonnull Identifier address) throws AbortException {
         try {
             switch (category) {
                 case HOST: return new HostIdentity(number, address.toHostIdentifier());
@@ -221,7 +221,7 @@ public final class Mapper {
      */
     @Locked
     @NonCommitting
-    private static @Nonnull Identity loadIdentity(long number) throws SQLException {
+    private static @Nonnull Identity loadIdentity(long number) throws AbortException {
         assert !numbers.containsKey(number) : "The given number is not yet loaded.";
         
         final @Nonnull String SQL = "SELECT category, address FROM general_identity WHERE identity = " + number;
@@ -252,7 +252,7 @@ public final class Mapper {
      */
     @Locked
     @NonCommitting
-    static @Nonnull Identity getIdentity(long number) throws SQLException {
+    static @Nonnull Identity getIdentity(long number) throws AbortException {
         @Nullable Identity identity = numbers.get(number);
         if (identity == null) identity = loadIdentity(number);
         try {
@@ -275,7 +275,7 @@ public final class Mapper {
      */
     @Locked
     @NonCommitting
-    private static boolean loadIdentity(@Nonnull Identifier identifier) throws SQLException {
+    private static boolean loadIdentity(@Nonnull Identifier identifier) throws AbortException {
         assert !identifiers.containsKey(identifier) : "The given identifier is not yet loaded.";
         
         Log.verbose("Try to load the identifier " + identifier + " from the database.");
@@ -322,7 +322,7 @@ public final class Mapper {
      */
     @Locked
     @NonCommitting
-    public static boolean isMapped(@Nonnull Identifier identifier) throws SQLException {
+    public static boolean isMapped(@Nonnull Identifier identifier) throws AbortException {
         return identifiers.containsKey(identifier) || loadIdentity(identifier);
     }
     
@@ -338,7 +338,7 @@ public final class Mapper {
     @Pure
     @Locked
     @NonCommitting
-    public static @Nonnull Identity getMappedIdentity(@Nonnull Identifier identifier) throws SQLException {
+    public static @Nonnull Identity getMappedIdentity(@Nonnull Identifier identifier) throws AbortException {
         assert isMapped(identifier) : "The identifier is mapped.";
         
         return identifiers.get(identifier);
@@ -359,7 +359,7 @@ public final class Mapper {
      */
     @Locked
     @NonCommitting
-    public static @Nonnull Identity mapIdentity(@Nonnull Identifier identifier, @Nonnull Category category, @Nullable Reply reply) throws SQLException {
+    public static @Nonnull Identity mapIdentity(@Nonnull Identifier identifier, @Nonnull Category category, @Nullable Reply reply) throws AbortException {
         if (isMapped(identifier)) {
             final @Nonnull Identity identity =  identifiers.get(identifier);
             if (!identity.getCategory().equals(category)) throw new SQLException("The identifier " + identifier + " should have been mapped with the category " + category + " but has already been mapped with the category " + identity.getCategory() + ".");
@@ -385,7 +385,7 @@ public final class Mapper {
      */
     @Locked
     @NonCommitting
-    public static @Nonnull HostIdentity mapHostIdentity(@Nonnull HostIdentifier identifier) throws SQLException {
+    public static @Nonnull HostIdentity mapHostIdentity(@Nonnull HostIdentifier identifier) throws AbortException {
         try {
             return mapIdentity(identifier, Category.HOST, null).toHostIdentity();
         } catch (@Nonnull InvalidEncodingException exception) {
@@ -444,7 +444,7 @@ public final class Mapper {
      */
     @Locked
     @NonCommitting
-    private static @Nonnull ExternalPerson mapExternalIdentity(@Nonnull ExternalIdentifier identifier) throws SQLException, InvalidEncodingException {
+    private static @Nonnull ExternalPerson mapExternalIdentity(@Nonnull ExternalIdentifier identifier) throws AbortException, InvalidEncodingException {
         return mapIdentity(identifier, identifier.getCategory(), null).toExternalPerson();
     }
     
@@ -458,7 +458,7 @@ public final class Mapper {
      */
     @Locked
     @NonCommitting
-    public static void mergeIdentities(@Nonnull ReadOnlyList<NonHostIdentity> identities, @Nonnull InternalNonHostIdentity newIdentity) throws SQLException {
+    public static void mergeIdentities(@Nonnull ReadOnlyList<NonHostIdentity> identities, @Nonnull InternalNonHostIdentity newIdentity) throws AbortException {
         final long newNumber = newIdentity.getNumber();
         try (@Nonnull Statement statement = Database.createStatement()) {
             for (final @Nonnull NonHostIdentity identity : identities) {

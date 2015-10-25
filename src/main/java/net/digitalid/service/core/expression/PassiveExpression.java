@@ -83,7 +83,7 @@ public final class PassiveExpression extends AbstractExpression {
      */
     @Pure
     @NonCommitting
-    public boolean matches(@Nonnull CredentialsSignatureWrapper signature) throws SQLException {
+    public boolean matches(@Nonnull CredentialsSignatureWrapper signature) throws AbortException {
         return getExpression().matches(signature);
     }
     
@@ -99,7 +99,7 @@ public final class PassiveExpression extends AbstractExpression {
      */
     @Pure
     @NonCommitting
-    public static @Nonnull PassiveExpression get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+    public static @Nonnull PassiveExpression get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int columnIndex) throws AbortException {
         try {
             return new PassiveExpression(entity, resultSet.getString(columnIndex));
         } catch (@Nonnull IOException | PacketException | ExternalException exception) {

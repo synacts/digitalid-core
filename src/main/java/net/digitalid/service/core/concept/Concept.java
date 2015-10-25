@@ -168,7 +168,7 @@ public abstract class Concept<C extends Concept<C, E, K>, E extends Entity<E>, K
      * @return the property of this concept with the given table.
      */
     @Pure
-    public final @Nonnull ConceptProperty<?, C, E> getProperty(@Nonnull ConceptPropertyTable<?, C, E> table) throws SQLException {
+    public final @Nonnull ConceptProperty<?, C, E> getProperty(@Nonnull ConceptPropertyTable<?, C, E> table) throws AbortException {
         for (final @Nonnull ConceptProperty<?, C, E> property : properties) {
             if (property.getTable().equals(table)) return property;
         }
@@ -182,7 +182,7 @@ public abstract class Concept<C extends Concept<C, E, K>, E extends Entity<E>, K
      */
     @Locked
     @NonCommitting
-    public void reset(@Nonnull ConceptPropertyTable<?, C, E> table) throws SQLException {
+    public void reset(@Nonnull ConceptPropertyTable<?, C, E> table) throws AbortException {
         getProperty(table).reset();
     }
     
@@ -191,7 +191,7 @@ public abstract class Concept<C extends Concept<C, E, K>, E extends Entity<E>, K
      */
     @Locked
     @NonCommitting
-    public void resetAll() throws SQLException {
+    public void resetAll() throws AbortException {
         for (final @Nonnull ConceptProperty<?, C, E> property : properties) property.reset();
     }
     

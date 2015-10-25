@@ -82,7 +82,7 @@ abstract class Expression extends NonHostConcept {
      */
     @Pure
     @NonCommitting
-    abstract @Nonnull @Capturable FreezableSet<Contact> getContacts() throws SQLException;
+    abstract @Nonnull @Capturable FreezableSet<Contact> getContacts() throws AbortException;
     
     /**
      * Returns whether this expression matches the given attribute content.
@@ -105,7 +105,7 @@ abstract class Expression extends NonHostConcept {
      */
     @Pure
     @NonCommitting
-    abstract boolean matches(@Nonnull CredentialsSignatureWrapper signature) throws SQLException;
+    abstract boolean matches(@Nonnull CredentialsSignatureWrapper signature) throws AbortException;
     
     
     /**

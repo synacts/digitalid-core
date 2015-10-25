@@ -256,7 +256,7 @@ public final class BytesWrapper extends Wrapper<BytesWrapper> {
         
         @Override
         @NonCommitting
-        public void setNonNullable(@Nonnull BytesWrapper wrapper, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+        public void setNonNullable(@Nonnull BytesWrapper wrapper, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws AbortException {
             if (Database.getConfiguration().supportsBinaryStream()) {
                 preparedStatement.setBinaryStream(parameterIndex, wrapper.getBytesAsInputStream(), wrapper.determineLength());
             } else {
@@ -267,7 +267,7 @@ public final class BytesWrapper extends Wrapper<BytesWrapper> {
         @Pure
         @Override
         @NonCommitting
-        public @Nullable BytesWrapper getNullable(@Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+        public @Nullable BytesWrapper getNullable(@Nonnull ResultSet resultSet, int columnIndex) throws AbortException {
             final @Nonnull byte[] bytes = resultSet.getBytes(columnIndex);
             if (resultSet.wasNull()) return null;
             else return new BytesWrapper(getType(), bytes);
@@ -298,7 +298,7 @@ public final class BytesWrapper extends Wrapper<BytesWrapper> {
      * The factory for the value type of this wrapper.
      */
     @Immutable
-    public static class ValueFactory extends Wrapper.ValueFactory<byte[], BytesWrapper> {
+    public static class ValueFactory extends Wrapper.ValueEncodingFactory<byte[], BytesWrapper> {
         
         /**
          * Creates a new factory with the given type.

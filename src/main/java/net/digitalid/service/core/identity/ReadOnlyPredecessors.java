@@ -46,6 +46,6 @@ public interface ReadOnlyPredecessors extends ReadOnlyList<Predecessor>, Blockab
      */
     @Pure
     @NonCommitting
-    public void set(@Nonnull InternalNonHostIdentifier identifier, @Nullable Reply reply) throws SQLException;
+    public void set(@Nonnull InternalNonHostIdentifier identifier, @Nullable Reply reply) throws AbortException;
     
 }

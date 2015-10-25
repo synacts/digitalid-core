@@ -146,7 +146,7 @@ public final class FreezableContacts extends FreezableLinkedHashSet<Contact> imp
      */
     @Pure
     @NonCommitting
-    public static @Capturable @Nonnull @NonFrozen FreezableContacts get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+    public static @Capturable @Nonnull @NonFrozen FreezableContacts get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int columnIndex) throws AbortException {
         final @Nonnull FreezableContacts contacts = new FreezableContacts();
         while (resultSet.next()) contacts.add(Contact.getNotNull(entity, resultSet, columnIndex));
         return contacts;
@@ -160,7 +160,7 @@ public final class FreezableContacts extends FreezableLinkedHashSet<Contact> imp
      */
     @Override
     @NonCommitting
-    public void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+    public void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws AbortException {
         for (final @Nonnull Contact contact : this) {
             contact.set(preparedStatement, parameterIndex);
             preparedStatement.addBatch();

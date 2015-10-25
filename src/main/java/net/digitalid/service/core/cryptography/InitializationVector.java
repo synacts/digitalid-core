@@ -131,14 +131,14 @@ public final class InitializationVector extends IvParameterSpec implements Stora
         
         @Override
         @NonCommitting
-        public void setNonNullable(@Nonnull InitializationVector vector, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+        public void setNonNullable(@Nonnull InitializationVector vector, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws AbortException {
             preparedStatement.setBytes(parameterIndex, vector.getIV());
         }
         
         @Pure
         @Override
         @NonCommitting
-        public @Nullable InitializationVector getNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+        public @Nullable InitializationVector getNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, int columnIndex) throws AbortException {
             final @Nullable byte[] bytes = resultSet.getBytes(columnIndex);
             return bytes == null ? null : new InitializationVector(bytes);
         }

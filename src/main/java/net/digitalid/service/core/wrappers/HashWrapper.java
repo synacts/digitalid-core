@@ -204,14 +204,14 @@ public final class HashWrapper extends Wrapper<HashWrapper> {
         
         @Override
         @NonCommitting
-        public void setNonNullable(@Nonnull HashWrapper wrapper, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+        public void setNonNullable(@Nonnull HashWrapper wrapper, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws AbortException {
             preparedStatement.setBytes(parameterIndex, wrapper.value.toByteArray());
         }
         
         @Pure
         @Override
         @NonCommitting
-        public @Nullable HashWrapper getNullable(@Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+        public @Nullable HashWrapper getNullable(@Nonnull ResultSet resultSet, int columnIndex) throws AbortException {
             final @Nullable byte[] bytes = resultSet.getBytes(columnIndex);
             return bytes == null || bytes.length > LENGTH ? null : new HashWrapper(getType(), new BigInteger(1, bytes));
         }
@@ -236,7 +236,7 @@ public final class HashWrapper extends Wrapper<HashWrapper> {
      * The factory for the value type of this wrapper.
      */
     @Immutable
-    public static class ValueFactory extends Wrapper.ValueFactory<BigInteger, HashWrapper> {
+    public static class ValueFactory extends Wrapper.ValueEncodingFactory<BigInteger, HashWrapper> {
         
         /**
          * Creates a new factory with the given type.

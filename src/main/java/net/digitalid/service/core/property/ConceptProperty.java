@@ -47,13 +47,13 @@ public interface ConceptProperty<V, C extends Concept<C, E, ?>, E extends Entity
     @Pure
     @Locked
     @NonCommitting
-    public @Nonnull Time getTime() throws SQLException;
+    public @Nonnull Time getTime() throws AbortException;
     
     /**
      * Resets the time and value of this property.
      */
     @Locked
     @NonCommitting
-    public void reset() throws SQLException;
+    public void reset() throws AbortException;
     
 }

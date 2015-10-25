@@ -163,14 +163,14 @@ public final class CharWrapper extends Wrapper<CharWrapper> {
         
         @Override
         @NonCommitting
-        public void setNonNullable(@Nonnull CharWrapper wrapper, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+        public void setNonNullable(@Nonnull CharWrapper wrapper, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws AbortException {
             preparedStatement.setString(parameterIndex, String.valueOf(wrapper.value));
         }
         
         @Pure
         @Override
         @NonCommitting
-        public @Nullable CharWrapper getNullable(@Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+        public @Nullable CharWrapper getNullable(@Nonnull ResultSet resultSet, int columnIndex) throws AbortException {
             final @Nullable String value = resultSet.getString(columnIndex);
             return value == null ? null : new CharWrapper(getType(), value.charAt(0));
         }
@@ -196,7 +196,7 @@ public final class CharWrapper extends Wrapper<CharWrapper> {
      * The factory for the value type of this wrapper.
      */
     @Immutable
-    public static class ValueFactory extends Wrapper.ValueFactory<Character, CharWrapper> {
+    public static class ValueFactory extends Wrapper.ValueEncodingFactory<Character, CharWrapper> {
         
         /**
          * Creates a new factory with the given type.

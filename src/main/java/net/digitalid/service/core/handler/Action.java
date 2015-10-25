@@ -80,20 +80,20 @@ public abstract class Action extends Method implements Auditable {
     /**
      * Executes this action on the client.
      * 
-     * @throws SQLException if this handler cannot be executed.
+     * @throws AbortException if this handler cannot be executed.
      * 
      * @require isOnClient() : "This method is called on a client.";
      */
     @NonCommitting
-    public abstract void executeOnClient() throws SQLException;
+    public abstract void executeOnClient() throws AbortException;
     
     /**
      * This method is executed after successful transmission.
      * 
-     * @throws SQLException if this handler cannot be executed.
+     * @throws AbortException if this handler cannot be executed.
      */
     @NonCommitting
-    public void executeOnSuccess() throws SQLException {}
+    public void executeOnSuccess() throws AbortException {}
     
     
     @Pure

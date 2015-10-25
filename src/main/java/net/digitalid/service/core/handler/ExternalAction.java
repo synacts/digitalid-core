@@ -86,7 +86,7 @@ public abstract class ExternalAction extends Action {
      * Executes this action if an error occurred during pushing.
      */
     @NonCommitting
-    public abstract void executeOnFailure() throws SQLException;
+    public abstract void executeOnFailure() throws AbortException;
     
     /**
      * Returns the permission that an agent needs to cover in order to see the audit of this external action when the pushing failed.
@@ -117,7 +117,7 @@ public abstract class ExternalAction extends Action {
      */
     @Pure
     @NonCommitting
-    public @Nullable Agent getFailedAuditAgent() throws SQLException {
+    public @Nullable Agent getFailedAuditAgent() throws AbortException {
         return null;
     }
     

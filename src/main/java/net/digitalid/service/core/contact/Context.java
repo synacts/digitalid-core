@@ -178,7 +178,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
      */
     @Pure
     @NonCommitting
-    public @Nonnull String getName() throws SQLException {
+    public @Nonnull String getName() throws AbortException {
         if (name == null) {
             throw new SQLException();
 //            name = Contexts.getName(this);
@@ -194,7 +194,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
      * @require isValid(name) : "The given name is valid.";
      */
     @Committing
-    public void setName(@Nonnull String newName) throws SQLException {
+    public void setName(@Nonnull String newName) throws AbortException {
         assert isValid(newName) : "The new name is valid.";
         
         final @Nonnull String oldName = getName();
@@ -214,7 +214,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
      */
     @NonCommitting
     @OnlyForActions
-    public void replaceName(@Nonnull String oldName, @Nonnull String newName) throws SQLException {
+    public void replaceName(@Nonnull String oldName, @Nonnull String newName) throws AbortException {
         assert isValid(oldName) : "The old name is valid.";
         assert isValid(newName) : "The new name is valid.";
         
@@ -239,7 +239,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
      */
     @Pure
     @NonCommitting
-    public @Nonnull ReadOnlyContactPermissions getPermissions() throws SQLException {
+    public @Nonnull ReadOnlyContactPermissions getPermissions() throws AbortException {
         if (permissions == null) {
             throw new SQLException();
 //            permissions = Contexts.getPermissions(this);
@@ -253,7 +253,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
      * @param permissions the permissions to be added to this context.
      */
     @Committing
-    public void addPermissions(@Nonnull ReadOnlyContactPermissions permissions) throws SQLException {
+    public void addPermissions(@Nonnull ReadOnlyContactPermissions permissions) throws AbortException {
         if (!permissions.isEmpty()) {
 //            Synchronizer.execute(new ContextPermissionsAdd(this, permissions));
         }
@@ -268,7 +268,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
      */
     @NonCommitting
     @OnlyForActions
-    public void addPermissionsForActions(@Nonnull ReadOnlyContactPermissions newPermissions) throws SQLException {
+    public void addPermissionsForActions(@Nonnull ReadOnlyContactPermissions newPermissions) throws AbortException {
         assert !newPermissions.isEmpty() : "The new permissions are not empty.";
         
 //        Contexts.addPermissions(this, newPermissions);
@@ -282,7 +282,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
      * @param permissions the permissions to be removed from this context.
      */
     @Committing
-    public void removePermissions(@Nonnull ReadOnlyContactPermissions permissions) throws SQLException {
+    public void removePermissions(@Nonnull ReadOnlyContactPermissions permissions) throws AbortException {
         if (!permissions.isEmpty()) {
 //            Synchronizer.execute(new ContextPermissionsRemove(this, permissions));
         }
@@ -297,7 +297,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
      */
     @NonCommitting
     @OnlyForActions
-    public void removePermissionsForActions(@Nonnull ReadOnlyContactPermissions oldPermissions) throws SQLException {
+    public void removePermissionsForActions(@Nonnull ReadOnlyContactPermissions oldPermissions) throws AbortException {
         assert !oldPermissions.isEmpty() : "The old permissions are not empty.";
         
 //        Contexts.removePermissions(this, oldPermissions);
@@ -313,7 +313,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
      * @return the authentications of this context.
      */
     @NonCommitting
-    public @Nonnull ReadOnlyAuthentications getAuthentications() throws SQLException {
+    public @Nonnull ReadOnlyAuthentications getAuthentications() throws AbortException {
         throw new SQLException();
     }
     
@@ -323,7 +323,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
      * @param authentications the authentications to be added to this context.
      */
     @Committing
-    public void addAuthentications(@Nonnull ReadOnlyAuthentications authentications) throws SQLException {
+    public void addAuthentications(@Nonnull ReadOnlyAuthentications authentications) throws AbortException {
         
     }
     
@@ -333,7 +333,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
      * @param authentications the authentications to be removed from this context.
      */
     @Committing
-    public void removeAuthentications(@Nonnull ReadOnlyAuthentications authentications) throws SQLException {
+    public void removeAuthentications(@Nonnull ReadOnlyAuthentications authentications) throws AbortException {
         
     }
     
@@ -345,7 +345,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
      * @return a list of the subcontexts in the specified sequence.
      */
     @NonCommitting
-    public @Nonnull List<Context> getSubcontexts() throws SQLException {
+    public @Nonnull List<Context> getSubcontexts() throws AbortException {
         throw new SQLException();
     }
     
@@ -357,7 +357,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
      * @require (Context subcontext : subcontexts).getIdentity().equals(getIdentity()) : "The identity of all contexts have to be the same.";
      */
     @Committing
-    public void addSubcontexts(@Nonnull List<Context> subcontexts, byte position) throws SQLException {
+    public void addSubcontexts(@Nonnull List<Context> subcontexts, byte position) throws AbortException {
         throw new SQLException();
     }
     
@@ -368,7 +368,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
      * @require (Context subcontext : subcontexts).getIdentity().equals(getIdentity()) : "The identity of all contexts have to be the same.";
      */
     @Committing
-    public void removeSubcontexts(@Nonnull List<Context> subcontexts) throws SQLException {
+    public void removeSubcontexts(@Nonnull List<Context> subcontexts) throws AbortException {
         throw new SQLException();
     }
     
@@ -383,7 +383,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
      * @require context.getIdentity().equals(getIdentity()) : "The identity of the given context is the same.";
      */
     @NonCommitting
-    public boolean isSupercontextOf(@Nonnull Context context) throws SQLException {
+    public boolean isSupercontextOf(@Nonnull Context context) throws AbortException {
         if (equals(context)) return true;
         else throw new SQLException();
     }
@@ -394,7 +394,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
      * @return a set with all subcontexts of this context (including this context).
      */
     @NonCommitting
-    public @Nonnull Set<Context> getAllSubcontexts() throws SQLException {
+    public @Nonnull Set<Context> getAllSubcontexts() throws AbortException {
         throw new SQLException();
     }
     
@@ -406,7 +406,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
      * @return a set with the subcontexts of this context.
      */
     @NonCommitting
-    public @Nonnull Set<Context> getSupercontexts() throws SQLException {
+    public @Nonnull Set<Context> getSupercontexts() throws AbortException {
         throw new SQLException();
     }
     
@@ -419,7 +419,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
      * @require context.getIdentity().equals(getIdentity()) : "The identity of the given context is the same.";
      */
     @NonCommitting
-    public boolean isSubcontextOf(@Nonnull Context context) throws SQLException {
+    public boolean isSubcontextOf(@Nonnull Context context) throws AbortException {
 //        assert context.getIdentity().equals(getIdentity()) : "The identity of the given context is the same.";
         
         return context.isSupercontextOf(this);
@@ -439,7 +439,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
      */
     @Locked
     @NonCommitting
-    public @Nonnull @NonFrozen ReadOnlyContacts getContacts() throws SQLException {
+    public @Nonnull @NonFrozen ReadOnlyContacts getContacts() throws AbortException {
         if (contacts == null) contacts = ContextModule.getContacts(this);
         return contacts;
     }
@@ -451,7 +451,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
      */
     @Committing
     @OnlyForClients
-    public void addContacts(@Nonnull @Frozen ReadOnlyContacts contacts) throws SQLException {
+    public void addContacts(@Nonnull @Frozen ReadOnlyContacts contacts) throws AbortException {
         if (!contacts.isEmpty()) Synchronizer.execute(new ContactsAdd(this, contacts));
     }
     
@@ -462,7 +462,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
      */
     @NonCommitting
     @OnlyForActions
-    void addContactsForActions(@Nonnull @Frozen ReadOnlyContacts newContacts) throws SQLException {
+    void addContactsForActions(@Nonnull @Frozen ReadOnlyContacts newContacts) throws AbortException {
         ContextModule.addContacts(this, newContacts);
         if (contacts != null) contacts.addAll(newContacts);
         notify(CONTACTS);
@@ -475,7 +475,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
      */
     @Committing
     @OnlyForClients
-    public void removeContacts(@Nonnull @Frozen ReadOnlyContacts contacts) throws SQLException {
+    public void removeContacts(@Nonnull @Frozen ReadOnlyContacts contacts) throws AbortException {
         if (!contacts.isEmpty()) Synchronizer.execute(new ContactsRemove(this, contacts));
     }
     
@@ -486,7 +486,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
      */
     @NonCommitting
     @OnlyForActions
-    void removeContactsForActions(@Nonnull @Frozen ReadOnlyContacts oldContacts) throws SQLException {
+    void removeContactsForActions(@Nonnull @Frozen ReadOnlyContacts oldContacts) throws AbortException {
         ContextModule.removeContacts(this, oldContacts);
         if (contacts != null) contacts.removeAll(oldContacts);
         notify(CONTACTS);
@@ -498,7 +498,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
      * @return a set with all the contacts of this context (i.e. including the contacts from subcontexts).
      */
     @NonCommitting
-    public @Nonnull @Capturable @NonFrozen FreezableContacts getAllContacts() throws SQLException {
+    public @Nonnull @Capturable @NonFrozen FreezableContacts getAllContacts() throws AbortException {
         return getContacts().clone(); // TODO: Make a real aggregation.
     }
     
@@ -510,7 +510,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
      * @return whether this context contains the given contact.
      */
     @NonCommitting
-    public boolean contains(@Nonnull Contact contact) throws SQLException {
+    public boolean contains(@Nonnull Contact contact) throws AbortException {
         return getAllContacts().contains(contact);
     }
     
@@ -532,7 +532,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
      */
     @NonCommitting
     @OnlyForActions
-    public void createForActions() throws SQLException {
+    public void createForActions() throws AbortException {
         ContextModule.create(this);
         notify(CREATED);
     }
@@ -678,7 +678,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
      * @return the foreign key constraint used to reference instances of this class.
      */
     @NonCommitting
-    public static @Nonnull String getReference(@Nonnull Site site) throws SQLException {
+    public static @Nonnull String getReference(@Nonnull Site site) throws AbortException {
         ContextModule.createReferenceTable(site);
         return "REFERENCES " + site + "context_name (entity, context) ON DELETE CASCADE";
     }
@@ -694,7 +694,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
      */
     @Pure
     @NonCommitting
-    public static @Nullable Context get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+    public static @Nullable Context get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int columnIndex) throws AbortException {
         final long number = resultSet.getLong(columnIndex);
         if (resultSet.wasNull()) return null;
         else return get(entity, number);
@@ -711,13 +711,13 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
      */
     @Pure
     @NonCommitting
-    public static @Nonnull Context getNotNull(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+    public static @Nonnull Context getNotNull(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int columnIndex) throws AbortException {
         return get(entity, resultSet.getLong(columnIndex));
     }
     
     @Override
     @NonCommitting
-    public void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+    public void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws AbortException {
         preparedStatement.setLong(parameterIndex, getNumber());
     }
     
@@ -729,7 +729,7 @@ public final class Context extends NonHostConcept implements Blockable, SQLizabl
      * @param parameterIndex the index of the parameter to set.
      */
     @NonCommitting
-    public static void set(@Nullable Context context, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+    public static void set(@Nullable Context context, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws AbortException {
         if (context == null) preparedStatement.setNull(parameterIndex, Types.BIGINT);
         else context.set(preparedStatement, parameterIndex);
     }

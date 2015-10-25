@@ -86,7 +86,7 @@ public abstract class CoreServiceInternalQuery extends InternalQuery {
      * @require hasSignature() : "This handler has a signature.";
      */
     @NonCommitting
-    protected abstract @Nonnull CoreServiceQueryReply executeOnHost(@Nonnull Agent agent) throws SQLException;
+    protected abstract @Nonnull CoreServiceQueryReply executeOnHost(@Nonnull Agent agent) throws AbortException;
     
     @Override
     @NonCommitting

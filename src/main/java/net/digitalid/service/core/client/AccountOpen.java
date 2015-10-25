@@ -197,7 +197,7 @@ public final class AccountOpen extends Action {
      * @param entity the entity which is to be initialized.
      */
     @NonCommitting
-    public void initialize(@Nonnull NonHostEntity entity) throws SQLException {
+    public void initialize(@Nonnull NonHostEntity entity) throws AbortException {
         final @Nonnull Context context = Context.getRoot(entity);
         context.createForActions();
         context.replaceName("New Context", "Root Context");
@@ -230,7 +230,7 @@ public final class AccountOpen extends Action {
     
     @Override
     @NonCommitting
-    public void executeOnClient() throws SQLException {
+    public void executeOnClient() throws AbortException {
         throw new ShouldNeverHappenError("The action to open an account should never be executed on a client.");
     }
     

@@ -136,7 +136,7 @@ final class OutgoingRoleCreate extends CoreServiceInternalAction {
     
     @Override
     @NonCommitting
-    protected void executeOnBoth() throws SQLException {
+    protected void executeOnBoth() throws AbortException {
         outgoingRole.createForActions(relation, context);
     }
     

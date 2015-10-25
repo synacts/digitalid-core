@@ -22,7 +22,7 @@ public interface NonHostIdentifier extends Identifier {
     @Pure
     @Override
     @NonCommitting
-    public @Nonnull NonHostIdentity getMappedIdentity() throws SQLException;
+    public @Nonnull NonHostIdentity getMappedIdentity() throws AbortException;
     
     @Pure
     @Override

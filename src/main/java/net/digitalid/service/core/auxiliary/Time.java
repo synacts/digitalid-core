@@ -607,14 +607,14 @@ public final class Time implements Encodable<Time, Object>, Storable<Time, Objec
         
         @Override
         @NonCommitting
-        public void setNonNullable(@Nonnull Time time, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+        public void setNonNullable(@Nonnull Time time, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws AbortException {
             preparedStatement.setLong(parameterIndex, time.value);
         }
         
         @Pure
         @Override
         @NonCommitting
-        public @Nullable Time getNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+        public @Nullable Time getNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, int columnIndex) throws AbortException {
             final long value = resultSet.getLong(columnIndex);
             return resultSet.wasNull() ? null : new Time(value);
         }

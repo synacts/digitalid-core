@@ -117,7 +117,7 @@ abstract class AbstractExpression extends NonHostConcept implements Blockable, S
     
     @Override
     @NonCommitting
-    public final void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+    public final void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws AbortException {
         preparedStatement.setString(parameterIndex, toString());
     }
     

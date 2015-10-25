@@ -30,7 +30,7 @@ public final class ContextTest extends IdentitySetup {
     
     @Test
     @Committing
-    public void _01_testEmptyContext() throws SQLException {
+    public void _01_testEmptyContext() throws AbortException {
         print("_01_testEmptyContext");
         try {
             Assert.assertTrue(context.getContacts().isEmpty());
@@ -44,7 +44,7 @@ public final class ContextTest extends IdentitySetup {
     
     @Test
     @Committing
-    public void _02_testAddContact() throws SQLException {
+    public void _02_testAddContact() throws AbortException {
         print("_02_testAddContact");
         try {
             context.addContacts(new FreezableContacts(contact).freeze());
@@ -57,7 +57,7 @@ public final class ContextTest extends IdentitySetup {
     
     @Test
     @Committing
-    public void _03_testContainsContact() throws SQLException {
+    public void _03_testContainsContact() throws AbortException {
         print("_03_testContainsContact");
         try {
             Assert.assertTrue(context.contains(contact));
@@ -71,7 +71,7 @@ public final class ContextTest extends IdentitySetup {
     
     @Test
     @Committing
-    public void _04_testRemoveContact() throws SQLException {
+    public void _04_testRemoveContact() throws AbortException {
         print("_04_testRemoveContact");
         try {
             context.removeContacts(new FreezableContacts(contact).freeze());
@@ -84,7 +84,7 @@ public final class ContextTest extends IdentitySetup {
     
     @Test
     @Committing
-    public void _05_testEmptyContext() throws SQLException {
+    public void _05_testEmptyContext() throws AbortException {
         print("_05_testEmptyContext");
         try {
             Assert.assertTrue(context.getContacts().isEmpty());

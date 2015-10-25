@@ -90,7 +90,7 @@ final class BinaryExpression extends Expression {
     @Pure
     @Override
     @NonCommitting
-    @Nonnull @Capturable FreezableSet<Contact> getContacts() throws SQLException {
+    @Nonnull @Capturable FreezableSet<Contact> getContacts() throws AbortException {
         assert isActive() : "This expression is active.";
         
         final @Nonnull FreezableSet<Contact> leftContacts = left.getContacts();
@@ -119,7 +119,7 @@ final class BinaryExpression extends Expression {
     @Pure
     @Override
     @NonCommitting
-    boolean matches(@Nonnull CredentialsSignatureWrapper signature) throws SQLException {
+    boolean matches(@Nonnull CredentialsSignatureWrapper signature) throws AbortException {
         switch (operator) {
             case '+': return left.matches(signature) || right.matches(signature);
             case '-': return left.matches(signature) && !right.matches(signature);

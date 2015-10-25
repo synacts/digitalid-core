@@ -128,7 +128,7 @@ public class HostModule extends ClientModule implements HostData {
     @Locked
     @Override
     @NonCommitting
-    public final @Nonnull Block exportAll(@Nonnull Host host) throws SQLException {
+    public final @Nonnull Block exportAll(@Nonnull Host host) throws AbortException {
         final @Nonnull FreezableList<Block> elements = FreezableArrayList.getWithCapacity(tables.size());
         for (final @Nonnull HostData table : tables.values()) elements.add(SelfcontainedWrapper.encodeNonNullable(TABLE, table.exportAll(host)));
         return ListWrapper.encode(dumpType, elements.freeze());

@@ -37,7 +37,7 @@ public abstract class WriteableNonNullableProperty<V> extends ReadOnlyNonNullabl
      */
     @Locked
     @Committing
-    public abstract void set(@Nonnull @Validated V newValue) throws SQLException;
+    public abstract void set(@Nonnull @Validated V newValue) throws AbortException;
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Notification –––––––––––––––––––––––––––––––––––––––––––––––––– */
     

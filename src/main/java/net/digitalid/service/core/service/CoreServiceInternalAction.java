@@ -105,7 +105,7 @@ public abstract class CoreServiceInternalAction extends InternalAction {
      * Executes this internal action on both the host and client.
      */
     @NonCommitting
-    protected abstract void executeOnBoth() throws SQLException;
+    protected abstract void executeOnBoth() throws AbortException;
     
     @Override
     @OnlyForHosts
@@ -130,7 +130,7 @@ public abstract class CoreServiceInternalAction extends InternalAction {
     @Override
     @NonCommitting
     @OnlyForClients
-    public final void executeOnClient() throws SQLException {
+    public final void executeOnClient() throws AbortException {
         executeOnBoth();
     }
     

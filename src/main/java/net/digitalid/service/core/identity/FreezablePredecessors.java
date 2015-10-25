@@ -174,7 +174,7 @@ public final class FreezablePredecessors extends FreezableArrayList<Predecessor>
      * @return whether the predecessors of the given identifier exist.
      */
     @NonCommitting
-    public static boolean exist(@Nonnull InternalNonHostIdentifier identifier) throws SQLException {
+    public static boolean exist(@Nonnull InternalNonHostIdentifier identifier) throws AbortException {
         final @Nonnull String SQL = "SELECT EXISTS (SELECT 1 FROM general_predecessors WHERE identifier = " + identifier + ")";
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
             if (resultSet.next()) return resultSet.getBoolean(1);
@@ -193,7 +193,7 @@ public final class FreezablePredecessors extends FreezableArrayList<Predecessor>
      */
     @Pure
     @NonCommitting
-    public static @Nonnull @Frozen ReadOnlyPredecessors get(@Nonnull InternalNonHostIdentifier identifier) throws SQLException {
+    public static @Nonnull @Frozen ReadOnlyPredecessors get(@Nonnull InternalNonHostIdentifier identifier) throws AbortException {
         assert exist(identifier) : "The predecessors of the given identifier exist.";
         
         final @Nonnull String SQL = "SELECT predecessors FROM general_predecessors WHERE identifier = " + identifier;
@@ -208,7 +208,7 @@ public final class FreezablePredecessors extends FreezableArrayList<Predecessor>
     @Pure
     @Override
     @NonCommitting
-    public void set(@Nonnull InternalNonHostIdentifier identifier, @Nullable Reply reply) throws SQLException {
+    public void set(@Nonnull InternalNonHostIdentifier identifier, @Nullable Reply reply) throws AbortException {
         final @Nonnull String SQL = "INSERT" + Database.getConfiguration().IGNORE() + " INTO general_predecessors (identifier, predecessors, reply) VALUES (?, ?, ?)";
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
             identifier.set(preparedStatement, 1);

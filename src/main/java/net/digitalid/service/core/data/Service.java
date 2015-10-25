@@ -159,7 +159,7 @@ public class Service extends StateModule implements Storable<Service, Object> {
      */
     @Pure
     @NonCommitting
-    public @Nonnull HostIdentifier getRecipient(@Nonnull Role role) throws SQLException {
+    public @Nonnull HostIdentifier getRecipient(@Nonnull Role role) throws AbortException {
         final @Nullable AttributeValue attributeValue = Attribute.get(role, getType()).getValue();
         if (attributeValue == null) throw new SQLException("The role " + role.getIdentity().getAddress() + " has no attribute of type " + getType().getAddress() + ".");
         try {

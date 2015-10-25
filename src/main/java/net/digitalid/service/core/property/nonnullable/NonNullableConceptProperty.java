@@ -74,7 +74,7 @@ public final class NonNullableConceptProperty<V, C extends Concept<C, E, ?>, E e
     @Pure
     @Locked
     @NonCommitting
-    private void load() throws SQLException {
+    private void load() throws AbortException {
         final @Nonnull @NonNullableElements ReadOnlyPair<Time, V> pair = propertyFactory.getPropertyTable().load(this);
         this.time = pair.getNonNullableElement0();
         this.value = pair.getNonNullableElement1();
@@ -91,7 +91,7 @@ public final class NonNullableConceptProperty<V, C extends Concept<C, E, ?>, E e
     @Locked
     @Override
     @NonCommitting
-    public @Nonnull Time getTime() throws SQLException {
+    public @Nonnull Time getTime() throws AbortException {
         if (time == null) load();
         assert time != null;
         return time;
@@ -108,7 +108,7 @@ public final class NonNullableConceptProperty<V, C extends Concept<C, E, ?>, E e
     @Locked
     @Override
     @NonCommitting
-    public @Nonnull @Validated V get() throws SQLException {
+    public @Nonnull @Validated V get() throws AbortException {
         if (value == null) load();
         assert value != null;
         return value;
@@ -117,7 +117,7 @@ public final class NonNullableConceptProperty<V, C extends Concept<C, E, ?>, E e
     @Locked
     @Override
     @Committing
-    public void set(@Nonnull @Validated V newValue) throws SQLException {
+    public void set(@Nonnull @Validated V newValue) throws AbortException {
         assert getValueValidator().isValid(newValue) : "The new value is valid.";
         
         final @Nonnull V oldValue = get();
@@ -140,7 +140,7 @@ public final class NonNullableConceptProperty<V, C extends Concept<C, E, ?>, E e
      */
     @Locked
     @NonCommitting
-    void replace(@Nonnull Time oldTime, @Nonnull Time newTime, @Nonnull @Validated V oldValue, @Nonnull @Validated V newValue) throws SQLException {
+    void replace(@Nonnull Time oldTime, @Nonnull Time newTime, @Nonnull @Validated V oldValue, @Nonnull @Validated V newValue) throws AbortException {
         assert getValueValidator().isValid(oldValue) : "The old value is valid.";
         assert getValueValidator().isValid(newValue) : "The new value is valid.";
         
@@ -153,7 +153,7 @@ public final class NonNullableConceptProperty<V, C extends Concept<C, E, ?>, E e
     @Locked
     @Override
     @NonCommitting
-    public void reset() throws SQLException {
+    public void reset() throws AbortException {
         if (hasObservers() && value != null) {
             final @Nonnull V oldValue = value;
             this.value = null;

@@ -182,7 +182,7 @@ public final class StringWrapper extends Wrapper<StringWrapper> {
      * The factory for this class.
      */
     @Immutable
-    public static final class BlockableWrapperFactory extends Wrapper.BlockableWrapperFactory<StringWrapper> {
+    public static final class BlockableWrapperFactory extends Wrapper.EncodingFactory<StringWrapper> {
         
         /**
          * Stores the column for the wrapper.
@@ -208,29 +208,29 @@ public final class StringWrapper extends Wrapper<StringWrapper> {
     
     @Pure
     @Override
-    public @Nonnull Wrapper.BlockableWrapperFactory<StringWrapper> getEncodingFactory() {
+    public @Nonnull Wrapper.EncodingFactory<StringWrapper> getEncodingFactory() {
         return new BlockableWrapperFactory(getSemanticType());
     }
     
     @Immutable
-    public static final class StorableWrapperFactory extends Wrapper.StorableWrapperFactory<StringWrapper> {
+    public static final class StorableWrapperFactory extends Wrapper.StoringFactory<StringWrapper> {
     	
         @Override
         @NonCommitting
-        public void storeNonNullable(@Nonnull StringWrapper wrapper, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+        public void storeNonNullable(@Nonnull StringWrapper wrapper, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws AbortException {
             preparedStatement.setString(parameterIndex, wrapper.value);
         }
         
         @Pure
         @Override
         @NonCommitting
-        public @Nullable StringWrapper restoreNullable(@Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+        public @Nullable StringWrapper restoreNullable(@Nonnull ResultSet resultSet, int columnIndex) throws AbortException {
             final @Nullable String value = resultSet.getString(columnIndex);
             return value == null ? null : new StringWrapper(getType(), value);
         }
     }
     
-    public @Nonnull Wrapper.StorableWrapperFactory<StringWrapper> getStoringFactory() {
+    public @Nonnull Wrapper.StoringFactory<StringWrapper> getStoringFactory() {
     	return new StorableWrapperFactory();
     }
     
@@ -247,7 +247,7 @@ public final class StringWrapper extends Wrapper<StringWrapper> {
      * The factory for the value type of this wrapper.
      */
     @Immutable
-    public static class ValueFactory extends Wrapper.ValueFactory<String, StringWrapper> {
+    public static class ValueFactory extends Wrapper.ValueEncodingFactory<String, StringWrapper> {
         
         /**
          * Creates a new factory with the given type.

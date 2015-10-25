@@ -242,7 +242,7 @@ public enum Category implements Blockable, SQLizable {
      */
     @Pure
     @NonCommitting
-    public static @Nonnull Category get(@Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+    public static @Nonnull Category get(@Nonnull ResultSet resultSet, int columnIndex) throws AbortException {
         final @Nonnull byte value = resultSet.getByte(columnIndex);
         if (!isValid(value)) throw new SQLException("'" + value + "' is not a valid category.");
         return get(value);
@@ -250,7 +250,7 @@ public enum Category implements Blockable, SQLizable {
     
     @Override
     @NonCommitting
-    public void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+    public void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws AbortException {
         preparedStatement.setByte(parameterIndex, value);
     }
     

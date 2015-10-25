@@ -73,7 +73,7 @@ public final class ActiveExpression extends AbstractExpression {
      */
     @Pure
     @NonCommitting
-    public @Nonnull @Capturable FreezableSet<Contact> getContacts() throws SQLException {
+    public @Nonnull @Capturable FreezableSet<Contact> getContacts() throws AbortException {
         return getExpression().getContacts();
     }
     
@@ -89,7 +89,7 @@ public final class ActiveExpression extends AbstractExpression {
      */
     @Pure
     @NonCommitting
-    public static @Nonnull ActiveExpression get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+    public static @Nonnull ActiveExpression get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int columnIndex) throws AbortException {
         try {
             return new ActiveExpression(entity, resultSet.getString(columnIndex));
         } catch (@Nonnull IOException | PacketException | ExternalException exception) {

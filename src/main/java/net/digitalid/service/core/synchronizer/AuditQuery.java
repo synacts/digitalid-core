@@ -58,7 +58,7 @@ final class AuditQuery extends InternalQuery {
      * @param service the service whose audit is queried.
      */
     @NonCommitting
-    AuditQuery(@Nonnull Role role, @Nonnull Service service) throws SQLException, PacketException, InvalidEncodingException {
+    AuditQuery(@Nonnull Role role, @Nonnull Service service) throws AbortException, PacketException, InvalidEncodingException {
         super(role, service.getRecipient(role));
         
         this.service = service;

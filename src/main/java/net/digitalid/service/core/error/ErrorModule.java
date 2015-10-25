@@ -34,7 +34,7 @@ public final class ErrorModule implements ClientModule {
     
     @Override
     @NonCommitting
-    public void createTables(@Nonnull Site site) throws SQLException {
+    public void createTables(@Nonnull Site site) throws AbortException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             // TODO: Create the tables of this module.
         }
@@ -42,7 +42,7 @@ public final class ErrorModule implements ClientModule {
     
     @Override
     @NonCommitting
-    public void deleteTables(@Nonnull Site site) throws SQLException {
+    public void deleteTables(@Nonnull Site site) throws AbortException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             // TODO: Delete the tables of this module.
         }

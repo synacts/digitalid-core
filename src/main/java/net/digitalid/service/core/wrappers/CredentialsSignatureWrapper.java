@@ -955,7 +955,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
     @Locked
     @Override
     @NonCommitting
-    public @Nullable OutgoingRole getAgent(@Nonnull NonHostEntity entity) throws SQLException {
+    public @Nullable OutgoingRole getAgent(@Nonnull NonHostEntity entity) throws AbortException {
         final @Nonnull Credential credential = getCredentials().getNonNullable(0);
         return credential.isRoleBased() ? AgentModule.getOutgoingRole(entity, credential.getRoleNotNull(), false) : null;
     }
@@ -964,7 +964,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
     @Locked
     @Override
     @NonCommitting
-    public @Nonnull OutgoingRole getAgentCheckedAndRestricted(@Nonnull NonHostEntity entity, @Nullable PublicKey publicKey) throws SQLException, PacketException {
+    public @Nonnull OutgoingRole getAgentCheckedAndRestricted(@Nonnull NonHostEntity entity, @Nullable PublicKey publicKey) throws AbortException, PacketException {
         final @Nonnull Credential credential = getCredentials().getNonNullable(0);
         if (credential.isRoleBased()) {
             final @Nullable OutgoingRole outgoingRole = AgentModule.getOutgoingRole(entity, credential.getRoleNotNull(), true);

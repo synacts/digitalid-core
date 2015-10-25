@@ -66,7 +66,7 @@ final class OutgoingRoleIssue extends CoreServiceExternalAction {
      * @require outgoingRole.isOnHost() : "The outgoing role is on a host.";
      */
     @NonCommitting
-    OutgoingRoleIssue(@Nonnull OutgoingRole outgoingRole, @Nonnull InternalPerson subject) throws SQLException {
+    OutgoingRoleIssue(@Nonnull OutgoingRole outgoingRole, @Nonnull InternalPerson subject) throws AbortException {
         super(outgoingRole.getAccount(), subject);
         
         this.issuer = outgoingRole.getAccount().getIdentity();
@@ -132,7 +132,7 @@ final class OutgoingRoleIssue extends CoreServiceExternalAction {
      * Executes this action on both hosts and clients.
      */
     @NonCommitting
-    private void executeOnBoth() throws SQLException {
+    private void executeOnBoth() throws AbortException {
         AgentModule.addIncomingRole(getNonHostEntity(), issuer, relation, agentNumber);
     }
     
@@ -152,14 +152,14 @@ final class OutgoingRoleIssue extends CoreServiceExternalAction {
     
     @Override
     @NonCommitting
-    public void executeOnClient() throws SQLException {
+    public void executeOnClient() throws AbortException {
         executeOnBoth();
         getRole().addRole(issuer, relation, agentNumber);
     }
     
     @Override
     @NonCommitting
-    public void executeOnFailure() throws SQLException {
+    public void executeOnFailure() throws AbortException {
         // TODO: Add this role issuance to a list of failed external actions.
     }
     

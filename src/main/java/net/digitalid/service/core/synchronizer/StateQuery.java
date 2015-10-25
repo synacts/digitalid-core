@@ -56,7 +56,7 @@ final class StateQuery extends InternalQuery {
      * @param module the module whose state is queried.
      */
     @NonCommitting
-    StateQuery(@Nonnull Role role, @Nonnull StateModule module) throws SQLException, PacketException, InvalidEncodingException {
+    StateQuery(@Nonnull Role role, @Nonnull StateModule module) throws AbortException, PacketException, InvalidEncodingException {
         super(role, module.getService().getRecipient(role));
         
         this.module = module;

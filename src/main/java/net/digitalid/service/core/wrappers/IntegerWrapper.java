@@ -186,14 +186,14 @@ public final class IntegerWrapper extends Wrapper<IntegerWrapper> {
         
         @Override
         @NonCommitting
-        public void setNonNullable(@Nonnull IntegerWrapper wrapper, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+        public void setNonNullable(@Nonnull IntegerWrapper wrapper, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws AbortException {
             preparedStatement.setBytes(parameterIndex, wrapper.bytes);
         }
         
         @Pure
         @Override
         @NonCommitting
-        public @Nullable IntegerWrapper getNullable(@Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+        public @Nullable IntegerWrapper getNullable(@Nonnull ResultSet resultSet, int columnIndex) throws AbortException {
             final @Nullable byte[] bytes = resultSet.getBytes(columnIndex);
             return bytes == null ? null : new IntegerWrapper(getType(), bytes, new BigInteger(bytes));
         }
@@ -218,7 +218,7 @@ public final class IntegerWrapper extends Wrapper<IntegerWrapper> {
      * The factory for the value type of this wrapper.
      */
     @Immutable
-    public static class ValueFactory extends Wrapper.ValueFactory<BigInteger, IntegerWrapper> {
+    public static class ValueFactory extends Wrapper.ValueEncodingFactory<BigInteger, IntegerWrapper> {
         
         /**
          * Creates a new factory with the given type.

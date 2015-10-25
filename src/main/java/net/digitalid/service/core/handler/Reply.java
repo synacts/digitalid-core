@@ -278,7 +278,7 @@ public abstract class Reply extends Handler implements SQLizable {
     
     @Override
     @NonCommitting
-    public void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+    public void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws AbortException {
         if (number == null) preparedStatement.setNull(parameterIndex, java.sql.Types.BIGINT);
         else preparedStatement.setLong(parameterIndex, number);
     }
@@ -291,7 +291,7 @@ public abstract class Reply extends Handler implements SQLizable {
      * @param parameterIndex the index of the parameter to set.
      */
     @NonCommitting
-    public static void set(@Nullable Reply reply, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+    public static void set(@Nullable Reply reply, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws AbortException {
         if (reply == null) preparedStatement.setNull(parameterIndex, Types.BIGINT);
         else reply.set(preparedStatement, parameterIndex);
     }

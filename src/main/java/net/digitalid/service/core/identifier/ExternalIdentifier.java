@@ -93,7 +93,7 @@ public abstract class ExternalIdentifier extends IdentifierClass implements NonH
     @Pure
     @Override
     @NonCommitting
-    public final @Nonnull Person getMappedIdentity() throws SQLException {
+    public final @Nonnull Person getMappedIdentity() throws AbortException {
         assert isMapped() : "This identifier is mapped.";
         
         final @Nonnull Identity identity = Mapper.getMappedIdentity(this);

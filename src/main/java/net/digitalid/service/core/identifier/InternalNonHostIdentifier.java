@@ -51,7 +51,7 @@ public final class InternalNonHostIdentifier extends InternalIdentifier implemen
     @Locked
     @Override
     @NonCommitting
-    public @Nonnull InternalNonHostIdentity getMappedIdentity() throws SQLException {
+    public @Nonnull InternalNonHostIdentity getMappedIdentity() throws AbortException {
         assert isMapped() : "This identifier is mapped.";
         
         final @Nonnull Identity identity = Mapper.getMappedIdentity(this);

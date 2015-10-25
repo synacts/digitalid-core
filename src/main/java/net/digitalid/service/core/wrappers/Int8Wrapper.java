@@ -159,14 +159,14 @@ public final class Int8Wrapper extends Wrapper<Int8Wrapper> {
         
         @Override
         @NonCommitting
-        public void setNonNullable(@Nonnull Int8Wrapper wrapper, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+        public void setNonNullable(@Nonnull Int8Wrapper wrapper, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws AbortException {
             preparedStatement.setByte(parameterIndex, wrapper.value);
         }
         
         @Pure
         @Override
         @NonCommitting
-        public @Nullable Int8Wrapper getNullable(@Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+        public @Nullable Int8Wrapper getNullable(@Nonnull ResultSet resultSet, int columnIndex) throws AbortException {
             final byte value = resultSet.getByte(columnIndex);
             if (resultSet.wasNull()) return null;
             else return new Int8Wrapper(getType(), value);
@@ -192,7 +192,7 @@ public final class Int8Wrapper extends Wrapper<Int8Wrapper> {
      * The factory for the value type of this wrapper.
      */
     @Immutable
-    public static class ValueFactory extends Wrapper.ValueFactory<Byte, Int8Wrapper> {
+    public static class ValueFactory extends Wrapper.ValueEncodingFactory<Byte, Int8Wrapper> {
         
         /**
          * Creates a new factory with the given type.

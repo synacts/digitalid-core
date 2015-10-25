@@ -75,12 +75,12 @@ public abstract class ActionReply extends Reply implements Auditable {
     /**
      * Executes this action reply by the synchronizer.
      * 
-     * @throws SQLException if this handler cannot be executed.
+     * @throws AbortException if this handler cannot be executed.
      * 
      * @require isOnClient() : "This method is called on a client.";
      */
     @NonCommitting
-    public abstract void executeBySynchronizer() throws SQLException;
+    public abstract void executeBySynchronizer() throws AbortException;
     
     
     @Pure

@@ -159,14 +159,14 @@ public final class Int32Wrapper extends Wrapper<Int32Wrapper> {
         
         @Override
         @NonCommitting
-        public void setNonNullable(@Nonnull Int32Wrapper wrapper, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+        public void setNonNullable(@Nonnull Int32Wrapper wrapper, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws AbortException {
             preparedStatement.setInt(parameterIndex, wrapper.value);
         }
         
         @Pure
         @Override
         @NonCommitting
-        public @Nullable Int32Wrapper getNullable(@Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+        public @Nullable Int32Wrapper getNullable(@Nonnull ResultSet resultSet, int columnIndex) throws AbortException {
             final int value = resultSet.getInt(columnIndex);
             if (resultSet.wasNull()) return null;
             else return new Int32Wrapper(getType(), value);
@@ -192,7 +192,7 @@ public final class Int32Wrapper extends Wrapper<Int32Wrapper> {
      * The factory for the value type of this wrapper.
      */
     @Immutable
-    public static class ValueFactory extends Wrapper.ValueFactory<Integer, Int32Wrapper> {
+    public static class ValueFactory extends Wrapper.ValueEncodingFactory<Integer, Int32Wrapper> {
         
         /**
          * Creates a new factory with the given type.

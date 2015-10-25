@@ -115,12 +115,12 @@ public abstract class ClientTable implements ClientData {
     @Locked
     @Override
     @NonCommitting
-    public abstract void createTables(@Nonnull Site site) throws SQLException;
+    public abstract void createTables(@Nonnull Site site) throws AbortException;
     
     @Locked
     @Override
     @NonCommitting
-    public void deleteTables(@Nonnull Site site) throws SQLException {
+    public void deleteTables(@Nonnull Site site) throws AbortException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("DROP TABLE IF EXISTS " + site + name);
         }

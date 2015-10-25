@@ -56,7 +56,7 @@ public final class HostIdentifier extends InternalIdentifier {
     @Pure
     @Override
     @NonCommitting
-    public @Nonnull HostIdentity getMappedIdentity() throws SQLException {
+    public @Nonnull HostIdentity getMappedIdentity() throws AbortException {
         assert isMapped() : "This identifier is mapped.";
         
         final @Nonnull Identity identity = Mapper.getMappedIdentity(this);

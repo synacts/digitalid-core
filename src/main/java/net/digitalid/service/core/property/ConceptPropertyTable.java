@@ -114,7 +114,7 @@ public abstract class ConceptPropertyTable<V, C extends Concept<C, E, ?>, E exte
     @Pure
     @Locked
     @NonCommitting
-    public abstract @Nonnull @NonEncoding Block getState(@Nonnull E entity, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws SQLException;
+    public abstract @Nonnull @NonEncoding Block getState(@Nonnull E entity, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws AbortException;
     
     /**
      * Adds the state in the given block to the given entity in this data collection.
@@ -135,7 +135,7 @@ public abstract class ConceptPropertyTable<V, C extends Concept<C, E, ?>, E exte
      */
     @Locked
     @NonCommitting
-    public void removeState(@Nonnull E entity) throws SQLException {
+    public void removeState(@Nonnull E entity) throws AbortException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("DELETE FROM " + entity.getSite() + getName() + " WHERE entity = " + entity);
         }
@@ -148,7 +148,7 @@ public abstract class ConceptPropertyTable<V, C extends Concept<C, E, ?>, E exte
     @Override
     @NonCommitting
     @SuppressWarnings("unchecked")
-    public final @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws SQLException {
+    public final @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws AbortException {
         return getState((E) entity, permissions, restrictions, agent);
     }
     
@@ -164,7 +164,7 @@ public abstract class ConceptPropertyTable<V, C extends Concept<C, E, ?>, E exte
     @Override
     @NonCommitting
     @SuppressWarnings("unchecked")
-    public final void removeState(@Nonnull NonHostEntity entity) throws SQLException {
+    public final void removeState(@Nonnull NonHostEntity entity) throws AbortException {
         removeState((E) entity);
     }
     

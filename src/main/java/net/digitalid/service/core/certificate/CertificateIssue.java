@@ -116,7 +116,7 @@ public final class CertificateIssue extends CoreServiceExternalAction {
      * Executes this action on both hosts and clients.
      */
     @NonCommitting
-    private void executeOnBoth() throws SQLException {
+    private void executeOnBoth() throws AbortException {
         // TODO: Replace the attribute with the certificate if they match. Otherwise, this should be reported as a packet error (at least on host).
     }
     
@@ -146,7 +146,7 @@ public final class CertificateIssue extends CoreServiceExternalAction {
     
     @Override
     @NonCommitting
-    public void executeOnClient() throws SQLException {
+    public void executeOnClient() throws AbortException {
         // TODO: I'm not sure how far the checks should go on the client.
         
         executeOnBoth();
@@ -154,7 +154,7 @@ public final class CertificateIssue extends CoreServiceExternalAction {
     
     @Override
     @NonCommitting
-    public void executeOnFailure() throws SQLException {
+    public void executeOnFailure() throws AbortException {
         // TODO!
     }
     

@@ -264,7 +264,7 @@ public class Commitment implements Blockable, SQLizable {
      */
     @Pure
     @NonCommitting
-    public static @Nonnull Commitment get(@Nonnull ResultSet resultSet, int startIndex) throws SQLException {
+    public static @Nonnull Commitment get(@Nonnull ResultSet resultSet, int startIndex) throws AbortException {
         try {
             final @Nonnull HostIdentity host = IdentityClass.getNotNull(resultSet, startIndex + 0).toHostIdentity();
             final @Nonnull Time time = Time.get(resultSet, startIndex + 1);
@@ -283,7 +283,7 @@ public class Commitment implements Blockable, SQLizable {
      */
     @Override
     @NonCommitting
-    public void set(@Nonnull PreparedStatement preparedStatement, int startIndex) throws SQLException {
+    public void set(@Nonnull PreparedStatement preparedStatement, int startIndex) throws AbortException {
         host.set(preparedStatement, startIndex + 0);
         time.set(preparedStatement, startIndex + 1);
         value.toBlock().set(preparedStatement, startIndex + 2);

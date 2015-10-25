@@ -140,7 +140,7 @@ final class ClientAgentNameReplace extends CoreServiceInternalAction {
     
     @Override
     @NonCommitting
-    protected void executeOnBoth() throws SQLException {
+    protected void executeOnBoth() throws AbortException {
         clientAgent.replaceName(oldName, newName);
     }
     

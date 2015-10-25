@@ -59,7 +59,7 @@ final class OutgoingRoleRevoke extends CoreServiceExternalAction {
      * @require outgoingRole.isOnHost() : "The outgoing role is on a host.";
      */
     @NonCommitting
-    OutgoingRoleRevoke(@Nonnull OutgoingRole outgoingRole, @Nonnull InternalPerson subject) throws SQLException {
+    OutgoingRoleRevoke(@Nonnull OutgoingRole outgoingRole, @Nonnull InternalPerson subject) throws AbortException {
         super(outgoingRole.getAccount(), subject);
         
         this.issuer = outgoingRole.getAccount().getIdentity();
@@ -114,7 +114,7 @@ final class OutgoingRoleRevoke extends CoreServiceExternalAction {
     @Pure
     @Override
     @NonCommitting
-    public @Nullable OutgoingRole getFailedAuditAgent() throws SQLException {
+    public @Nullable OutgoingRole getFailedAuditAgent() throws AbortException {
         return AgentModule.getOutgoingRole(getNonHostEntity(), relation, false);
     }
     
@@ -123,7 +123,7 @@ final class OutgoingRoleRevoke extends CoreServiceExternalAction {
      * Executes this action on both hosts and clients.
      */
     @NonCommitting
-    private void executeOnBoth() throws SQLException {
+    private void executeOnBoth() throws AbortException {
         AgentModule.removeIncomingRole(getNonHostEntity(), issuer, relation);
     }
     
@@ -143,7 +143,7 @@ final class OutgoingRoleRevoke extends CoreServiceExternalAction {
     
     @Override
     @NonCommitting
-    public void executeOnClient() throws SQLException {
+    public void executeOnClient() throws AbortException {
         executeOnBoth();
         for (final @Nonnull NonNativeRole role : getRole().getRoles()) {
             if (role.getIssuer().equals(issuer) && relation.equals(role.getRelation())) role.remove();
@@ -152,7 +152,7 @@ final class OutgoingRoleRevoke extends CoreServiceExternalAction {
     
     @Override
     @NonCommitting
-    public void executeOnFailure() throws SQLException {
+    public void executeOnFailure() throws AbortException {
         // TODO: Add this role issuance to a list of failed external actions.
     }
     

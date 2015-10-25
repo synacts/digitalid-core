@@ -125,14 +125,14 @@ public final class EmptyWrapper extends Wrapper<EmptyWrapper> {
         
         @Override
         @NonCommitting
-        public void setNonNullable(@Nonnull EmptyWrapper wrapper, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+        public void setNonNullable(@Nonnull EmptyWrapper wrapper, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws AbortException {
             preparedStatement.setBoolean(parameterIndex, true);
         }
         
         @Pure
         @Override
         @NonCommitting
-        public @Nullable EmptyWrapper getNullable(@Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+        public @Nullable EmptyWrapper getNullable(@Nonnull ResultSet resultSet, int columnIndex) throws AbortException {
             resultSet.getBoolean(columnIndex);
             if (resultSet.wasNull()) return null;
             else return new EmptyWrapper(getType());

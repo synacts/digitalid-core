@@ -148,7 +148,7 @@ public class ClientModule implements ClientData {
     @Locked
     @Override
     @NonCommitting
-    public final void createTables(@Nonnull Site site) throws SQLException {
+    public final void createTables(@Nonnull Site site) throws AbortException {
         if (site instanceof Host) {
             for (final @Nonnull ClientData table : tables) {
                 if (table.isForHosts()) table.createTables(site);
@@ -163,7 +163,7 @@ public class ClientModule implements ClientData {
     @Locked
     @Override
     @NonCommitting
-    public final void deleteTables(@Nonnull Site site) throws SQLException {
+    public final void deleteTables(@Nonnull Site site) throws AbortException {
         if (site instanceof Host) {
             for (final @Nonnull ClientData table : tables) {
                 if (table.isForHosts()) table.deleteTables(site);

@@ -83,7 +83,7 @@ public abstract class StateTable extends HostTable implements StateData {
     @Locked
     @Override
     @NonCommitting
-    public abstract @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws SQLException;
+    public abstract @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws AbortException;
     
     @Locked
     @Override
@@ -93,7 +93,7 @@ public abstract class StateTable extends HostTable implements StateData {
     @Locked
     @Override
     @NonCommitting
-    public void removeState(@Nonnull NonHostEntity entity) throws SQLException {
+    public void removeState(@Nonnull NonHostEntity entity) throws AbortException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("DELETE FROM " + entity.getSite() + getName() + " WHERE entity = " + entity);
         }

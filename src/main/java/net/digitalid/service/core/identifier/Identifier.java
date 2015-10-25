@@ -41,7 +41,7 @@ public interface Identifier extends Storable<Identifier> {
     @Pure
     @Locked
     @NonCommitting
-    public boolean isMapped() throws SQLException;
+    public boolean isMapped() throws AbortException;
     
     /**
      * Returns the mapped identity of this identifier.
@@ -53,7 +53,7 @@ public interface Identifier extends Storable<Identifier> {
     @Pure
     @Locked
     @NonCommitting
-    public @Nonnull Identity getMappedIdentity() throws SQLException;
+    public @Nonnull Identity getMappedIdentity() throws AbortException;
     
     /**
      * Returns the identity of this identifier.

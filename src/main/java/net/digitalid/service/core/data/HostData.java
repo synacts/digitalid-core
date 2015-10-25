@@ -43,7 +43,7 @@ public interface HostData extends ClientData {
     @Pure
     @Locked
     @NonCommitting
-    public @Nonnull @NonEncoding Block exportAll(@Nonnull Host host) throws SQLException;
+    public @Nonnull @NonEncoding Block exportAll(@Nonnull Host host) throws AbortException;
     
     /**
      * Imports this data collection for the given host from the given block.

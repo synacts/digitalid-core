@@ -113,7 +113,7 @@ public final class Index<C extends Concept<C, E, K>, E extends Entity<E>, K> {
      */
     @Locked
     @NonCommitting
-    public void reset(@Nonnull E entity, @Nonnull ConceptPropertyTable<?, C, E> table) throws SQLException {
+    public void reset(@Nonnull E entity, @Nonnull ConceptPropertyTable<?, C, E> table) throws AbortException {
         if (Database.isSingleAccess()) {
             final @Nullable ConcurrentMap<K, C> map = concepts.get(entity);
             if (map != null) {

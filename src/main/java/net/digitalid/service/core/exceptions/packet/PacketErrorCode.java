@@ -234,7 +234,7 @@ public enum PacketErrorCode implements Blockable, SQLizable {
      */
     @Pure
     @NonCommitting
-    public static @Nonnull PacketErrorCode get(@Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+    public static @Nonnull PacketErrorCode get(@Nonnull ResultSet resultSet, int columnIndex) throws AbortException {
         final @Nonnull byte value = resultSet.getByte(columnIndex);
         if (!isValid(value)) throw new SQLException("'" + value + "' is not a valid packet error.");
         return get(value);
@@ -242,7 +242,7 @@ public enum PacketErrorCode implements Blockable, SQLizable {
     
     @Override
     @NonCommitting
-    public void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+    public void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws AbortException {
         preparedStatement.setByte(parameterIndex, value);
     }
     

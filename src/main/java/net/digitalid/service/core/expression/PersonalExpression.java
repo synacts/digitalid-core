@@ -74,7 +74,7 @@ public final class PersonalExpression extends AbstractExpression {
      */
     @Pure
     @NonCommitting
-    public static @Nonnull PersonalExpression get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+    public static @Nonnull PersonalExpression get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int columnIndex) throws AbortException {
         try {
             return new PersonalExpression(entity, resultSet.getString(columnIndex));
         } catch (@Nonnull IOException | PacketException | ExternalException exception) {

@@ -463,7 +463,7 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
      */
     @Pure
     @NonCommitting
-    public static @Capturable @Nonnull @NonFrozen FreezableAgentPermissions get(@Nonnull ResultSet resultSet, int startIndex) throws SQLException {
+    public static @Capturable @Nonnull @NonFrozen FreezableAgentPermissions get(@Nonnull ResultSet resultSet, int startIndex) throws AbortException {
         try {
             final @Nonnull FreezableAgentPermissions permissions = new FreezableAgentPermissions();
             while (resultSet.next()) {
@@ -487,7 +487,7 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
      */
     @Pure
     @NonCommitting
-    public static @Capturable @Nonnull @NonFrozen @EmptyOrSingle FreezableAgentPermissions getEmptyOrSingle(@Nonnull ResultSet resultSet, int startIndex) throws SQLException {
+    public static @Capturable @Nonnull @NonFrozen @EmptyOrSingle FreezableAgentPermissions getEmptyOrSingle(@Nonnull ResultSet resultSet, int startIndex) throws AbortException {
         try {
             final @Nonnull FreezableAgentPermissions permissions = new FreezableAgentPermissions();
             final @Nullable Identity identity = IdentityClass.get(resultSet, startIndex);
@@ -506,7 +506,7 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
      */
     @Override
     @NonCommitting
-    public void set(@Nonnull PreparedStatement preparedStatement, int startIndex) throws SQLException {
+    public void set(@Nonnull PreparedStatement preparedStatement, int startIndex) throws AbortException {
         for (final @Nonnull SemanticType type : keySet()) {
             type.set(preparedStatement, startIndex);
             preparedStatement.setBoolean(startIndex + 1, get(type));
@@ -523,7 +523,7 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
     @Override
     @NonCommitting
     @EmptyOrSingleRecipient
-    public void setEmptyOrSingle(@Nonnull PreparedStatement preparedStatement, int startIndex) throws SQLException {
+    public void setEmptyOrSingle(@Nonnull PreparedStatement preparedStatement, int startIndex) throws AbortException {
         assert areEmptyOrSingle() : "These permissions are empty or single.";
         
         final @Nonnull FreezableSet<SemanticType> keySet = keySet();

@@ -331,14 +331,14 @@ public final class IntvarWrapper extends Wrapper<IntvarWrapper> {
         
         @Override
         @NonCommitting
-        public void setNonNullable(@Nonnull IntvarWrapper wrapper, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+        public void setNonNullable(@Nonnull IntvarWrapper wrapper, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws AbortException {
             preparedStatement.setLong(parameterIndex, wrapper.value);
         }
         
         @Pure
         @Override
         @NonCommitting
-        public @Nullable IntvarWrapper getNullable(@Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+        public @Nullable IntvarWrapper getNullable(@Nonnull ResultSet resultSet, int columnIndex) throws AbortException {
             final long value = resultSet.getLong(columnIndex);
             if (resultSet.wasNull()) return null;
             if (value < 0 || value > MAX_VALUE) throw new SQLException("The value " + value + " does not fit into an intvar.");
@@ -365,7 +365,7 @@ public final class IntvarWrapper extends Wrapper<IntvarWrapper> {
      * The factory for the value type of this wrapper.
      */
     @Immutable
-    public static class ValueFactory extends Wrapper.ValueFactory<Long, IntvarWrapper> {
+    public static class ValueFactory extends Wrapper.ValueEncodingFactory<Long, IntvarWrapper> {
         
         /**
          * Creates a new factory with the given type.

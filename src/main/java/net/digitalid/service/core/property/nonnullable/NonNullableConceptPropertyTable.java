@@ -1,6 +1,5 @@
 package net.digitalid.service.core.property.nonnullable;
 
-import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,6 +14,7 @@ import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.concept.Concept;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.host.Host;
 import net.digitalid.service.core.property.ConceptPropertyTable;
@@ -37,6 +37,7 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.annotations.OnMainThread;
 import net.digitalid.utility.database.column.Site;
 import net.digitalid.utility.database.configuration.Database;
+import net.digitalid.service.core.exceptions.abort.AbortException;
 
 /**
  * Description.
@@ -56,7 +57,7 @@ public final class NonNullableConceptPropertyTable<V, C extends Concept<C, E, ?>
     @Locked
     @Override
     @NonCommitting
-    public void createTables(@Nonnull Site site) throws SQLException {
+    public void createTables(@Nonnull Site site) throws AbortException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + getName(site) + " (" + getPropertyFactory().getEntityFactories().getStoringFactory().getDeclaration() + ", " + getPropertyFactory().getConceptFactories().getStoringFactory().getDeclaration() + ", " + Time.STORING_FACTORY.getDeclaration() + ", " + getPropertyFactory().getValueFactories().getStoringFactory().getDeclaration() + ", PRIMARY KEY (" + getPropertyFactory().getEntityFactories().getStoringFactory().getSelection() + ", " + getPropertyFactory().getConceptFactories().getStoringFactory().getSelection() + ")" + getPropertyFactory().getEntityFactories().getStoringFactory().getForeignKeys(site) + getPropertyFactory().getConceptFactories().getStoringFactory().getForeignKeys(site) + getPropertyFactory().getValueFactories().getStoringFactory().getForeignKeys(site) + ")");
             Database.onInsertIgnore(statement, getName(site), getPropertyFactory().getEntityFactories().getStoringFactory().getSelection(), getPropertyFactory().getConceptFactories().getStoringFactory().getSelection()); // TODO: There is a problem when the entity or the concept uses more than one column because the onInsertIgnore-method expects the arguments differently.
@@ -67,7 +68,7 @@ public final class NonNullableConceptPropertyTable<V, C extends Concept<C, E, ?>
     @Locked
     @Override
     @NonCommitting
-    public void deleteTables(@Nonnull Site site) throws SQLException {
+    public void deleteTables(@Nonnull Site site) throws AbortException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             Database.onInsertNotIgnore(statement, getName(site));
             statement.executeUpdate("DROP TABLE IF EXISTS " + getName(site));
@@ -80,7 +81,7 @@ public final class NonNullableConceptPropertyTable<V, C extends Concept<C, E, ?>
     @Locked
     @Override
     @NonCommitting
-    public @Nonnull Block exportAll(@Nonnull Host host) throws SQLException {
+    public @Nonnull Block exportAll(@Nonnull Host host) throws AbortException {
         final @Nonnull String SQL = "SELECT " + getPropertyFactory().getEntityFactories().getStoringFactory().getSelection() + ", " + getPropertyFactory().getConceptFactories().getStoringFactory().getSelection() + ", " + Time.STORING_FACTORY.getSelection() + ", " + getPropertyFactory().getValueFactories().getStoringFactory().getSelection() + " FROM " + getName(host);
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
             final @Nonnull FreezableList<Block> entries = FreezableLinkedList.get();
@@ -139,7 +140,7 @@ public final class NonNullableConceptPropertyTable<V, C extends Concept<C, E, ?>
     @Locked
     @Override
     @NonCommitting
-    public @Nonnull Block getState(@Nonnull E entity, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws SQLException {
+    public @Nonnull Block getState(@Nonnull E entity, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws AbortException {
         // TODO: String SQL = select(getConceptFactories(),Time.FACTORIES, getPropertyFactory().getValueFactories()).from(entity).where(factory, object).and().and().toSQL();
         // TODO: Instead of getPropertyFactory().getConceptFactories().getStoringFactory().storeNonNullable and getPropertyFactory().getConceptFactories().getStoringFactory().restoreNonNullable, one could define a store and restore method that also takes a GeneralFactories as a parameter.
         final @Nonnull String SQL = "SELECT " + getPropertyFactory().getConceptFactories().getStoringFactory().getSelection() + ", " + Time.STORING_FACTORY.getSelection() + ", " + getPropertyFactory().getValueFactories().getStoringFactory().getSelection() + " FROM " + getName(entity.getSite()) + " WHERE " + getPropertyFactory().getEntityFactories().getStoringFactory().getConditionForStatement(entity) + " AND " + getPropertyFactory().getRequiredAuthorization().getStateFilter(permissions, restrictions, agent);
@@ -196,7 +197,7 @@ public final class NonNullableConceptPropertyTable<V, C extends Concept<C, E, ?>
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Methods –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
-    @Nonnull @NonNullableElements @Frozen ReadOnlyPair<Time, V> load(@Nonnull NonNullableConceptProperty<V, C, E> property) throws SQLException {
+    @Nonnull @NonNullableElements @Frozen ReadOnlyPair<Time, V> load(@Nonnull NonNullableConceptProperty<V, C, E> property) throws AbortException {
         final @Nonnull E entity = property.getConcept().getEntity();
         final @Nonnull String SQL = "SELECT " + Time.STORING_FACTORY.getSelection() + ", " + getPropertyFactory().getValueFactories().getStoringFactory().getSelection() + " FROM " + getName(entity.getSite()) + " WHERE " + getPropertyFactory().getEntityFactories().getStoringFactory().getConditionForStatement(entity) + " AND " + getPropertyFactory().getConceptFactories().getStoringFactory().getConditionForStatement(property.getConcept());
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
@@ -215,7 +216,7 @@ public final class NonNullableConceptPropertyTable<V, C extends Concept<C, E, ?>
         }
     }
     
-    void replace(@Nonnull NonNullableConceptProperty<V, C, E> property, @Nonnull Time oldTime, @Nonnull Time newTime, @Nonnull @Validated V oldValue, @Nonnull @Validated V newValue) throws SQLException {
+    void replace(@Nonnull NonNullableConceptProperty<V, C, E> property, @Nonnull Time oldTime, @Nonnull Time newTime, @Nonnull @Validated V oldValue, @Nonnull @Validated V newValue) throws AbortException {
         final @Nonnull E entity = property.getConcept().getEntity();
         final @Nonnull String SQL = "UPDATE " + getName(entity.getSite()) + " SET " + Time.STORING_FACTORY.getUpdateForStatement(newTime) + ", " + getPropertyFactory().getValueFactories().getStoringFactory().getUpdateForPreparedStatement() + " WHERE " + getPropertyFactory().getEntityFactories().getStoringFactory().getConditionForStatement(entity) + " AND " + getPropertyFactory().getConceptFactories().getStoringFactory().getConditionForStatement(property.getConcept()) + " AND " + Time.STORING_FACTORY.getConditionForStatement(oldTime) + " AND " + getPropertyFactory().getValueFactories().getStoringFactory().getConditionForPreparedStatement();
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {

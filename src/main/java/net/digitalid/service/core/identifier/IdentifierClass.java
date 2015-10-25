@@ -130,7 +130,7 @@ public abstract class IdentifierClass implements Identifier {
     @Locked
     @Override
     @NonCommitting
-    public final boolean isMapped() throws SQLException {
+    public final boolean isMapped() throws AbortException {
         return Mapper.isMapped(this);
     }
     
@@ -202,7 +202,7 @@ public abstract class IdentifierClass implements Identifier {
      */
     @Pure
     @NonCommitting
-    public static @Nonnull Identifier get(@Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+    public static @Nonnull Identifier get(@Nonnull ResultSet resultSet, int columnIndex) throws AbortException {
         final @Nonnull String string = resultSet.getString(columnIndex);
         if (!isValid(string)) throw new SQLException("'" + string + "' is not a valid identifier.");
         return create(string);
@@ -210,7 +210,7 @@ public abstract class IdentifierClass implements Identifier {
     
     @Override
     @NonCommitting
-    public final void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+    public final void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws AbortException {
         preparedStatement.setString(parameterIndex, string);
     }
     
@@ -222,7 +222,7 @@ public abstract class IdentifierClass implements Identifier {
      * @param parameterIndex the index of the parameter to set.
      */
     @NonCommitting
-    public static void set(@Nullable Identifier identifier, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+    public static void set(@Nullable Identifier identifier, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws AbortException {
         if (identifier == null) preparedStatement.setNull(parameterIndex, Types.VARCHAR);
         else identifier.set(preparedStatement, parameterIndex);
     }

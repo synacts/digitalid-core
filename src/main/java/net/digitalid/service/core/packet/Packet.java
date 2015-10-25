@@ -160,8 +160,8 @@ public abstract class Packet {
             }
         }
         
-        this.encryption = new EncryptionWrapper(ENCRYPTION, new ListWrapper(SIGNATURES, signatures.freeze()), recipient, symmetricKey);
-        this.wrapper = new SelfcontainedWrapper(TYPE, encryption);
+        this.encryption = EncryptionWrapper.encrypt(ENCRYPTION, ListWrapper.encode(SIGNATURES, signatures.freeze()), recipient, symmetricKey);
+        this.wrapper = SelfcontainedWrapper.encodeNonNullable(TYPE, encryption);
     }
     
     /**

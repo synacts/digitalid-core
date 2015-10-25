@@ -116,7 +116,7 @@ public final class Contact extends NonHostConcept implements Blockable, SQLizabl
      * @return the permissions of this contact.
      */
     @NonCommitting
-    public @Nonnull ReadOnlyContactPermissions getPermissions() throws SQLException {
+    public @Nonnull ReadOnlyContactPermissions getPermissions() throws AbortException {
         return FreezableContactPermissions.NONE; // TODO
     }
     
@@ -128,7 +128,7 @@ public final class Contact extends NonHostConcept implements Blockable, SQLizabl
      * @return the authentications of this contact.
      */
     @NonCommitting
-    public @Nonnull ReadOnlyAuthentications getAuthentications() throws SQLException {
+    public @Nonnull ReadOnlyAuthentications getAuthentications() throws AbortException {
         return FreezableAuthentications.IDENTITY_BASED; // TODO
     }
     
@@ -237,7 +237,7 @@ public final class Contact extends NonHostConcept implements Blockable, SQLizabl
      */
     @Pure
     @NonCommitting
-    public static @Nullable Contact get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+    public static @Nullable Contact get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int columnIndex) throws AbortException {
         final @Nullable Identity identity = IdentityClass.get(resultSet, columnIndex);
         if (identity == null) return null;
         if (identity instanceof Person) return get(entity, (Person) identity);
@@ -255,7 +255,7 @@ public final class Contact extends NonHostConcept implements Blockable, SQLizabl
      */
     @Pure
     @NonCommitting
-    public static @Nonnull Contact getNotNull(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+    public static @Nonnull Contact getNotNull(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int columnIndex) throws AbortException {
         final @Nonnull Identity identity = IdentityClass.getNotNull(resultSet, columnIndex);
         if (identity instanceof Person) return get(entity, (Person) identity);
         else throw new SQLException("A non-person was stored as a contact.");
@@ -263,7 +263,7 @@ public final class Contact extends NonHostConcept implements Blockable, SQLizabl
     
     @Override
     @NonCommitting
-    public void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+    public void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws AbortException {
         preparedStatement.setLong(parameterIndex, person.getNumber());
     }
     
@@ -275,7 +275,7 @@ public final class Contact extends NonHostConcept implements Blockable, SQLizabl
      * @param parameterIndex the index of the parameter to set.
      */
     @NonCommitting
-    public static void set(@Nullable Contact contact, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+    public static void set(@Nullable Contact contact, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws AbortException {
         if (contact == null) preparedStatement.setNull(parameterIndex, Types.BIGINT);
         else contact.set(preparedStatement, parameterIndex);
     }

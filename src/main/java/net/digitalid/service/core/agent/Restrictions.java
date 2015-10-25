@@ -303,7 +303,7 @@ public final class Restrictions implements Blockable, SQLizable {
      */
     @Pure
     @NonCommitting
-    public boolean cover(@Nonnull Context other) throws SQLException {
+    public boolean cover(@Nonnull Context other) throws AbortException {
         return context != null && context.isSupercontextOf(other);
     }
     
@@ -327,7 +327,7 @@ public final class Restrictions implements Blockable, SQLizable {
      */
     @Pure
     @NonCommitting
-    public boolean cover(@Nonnull Contact other) throws SQLException {
+    public boolean cover(@Nonnull Contact other) throws AbortException {
         return context != null && !context.contains(other) || contact != null && !contact.equals(other);
     }
     
@@ -351,7 +351,7 @@ public final class Restrictions implements Blockable, SQLizable {
      */
     @Pure
     @NonCommitting
-    public boolean cover(@Nonnull Restrictions other) throws SQLException {
+    public boolean cover(@Nonnull Restrictions other) throws AbortException {
         if (other.client && !client) return false;
         if (other.role && !role) return false;
         if (other.writing && !writing) return false;
@@ -464,7 +464,7 @@ public final class Restrictions implements Blockable, SQLizable {
      * @return the foreign key constraints used by instances of this class.
      */
     @NonCommitting
-    public static @Nonnull String getForeignKeys(@Nonnull Site site) throws SQLException {
+    public static @Nonnull String getForeignKeys(@Nonnull Site site) throws AbortException {
         return "FOREIGN KEY (entity, context) " + Context.getReference(site) + ", FOREIGN KEY (contact) " + site.getEntityReference();
     }
     
@@ -479,7 +479,7 @@ public final class Restrictions implements Blockable, SQLizable {
      */
     @Pure
     @NonCommitting
-    public static @Nonnull Restrictions get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int startIndex) throws SQLException {
+    public static @Nonnull Restrictions get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int startIndex) throws AbortException {
         final boolean client = resultSet.getBoolean(startIndex + 0);
         final boolean role = resultSet.getBoolean(startIndex + 1);
         final boolean writing = resultSet.getBoolean(startIndex + 2);
@@ -496,7 +496,7 @@ public final class Restrictions implements Blockable, SQLizable {
      */
     @Override
     @NonCommitting
-    public void set(@Nonnull PreparedStatement preparedStatement, int startIndex) throws SQLException {
+    public void set(@Nonnull PreparedStatement preparedStatement, int startIndex) throws AbortException {
         preparedStatement.setBoolean(startIndex + 0, client);
         preparedStatement.setBoolean(startIndex + 1, role);
         preparedStatement.setBoolean(startIndex + 2, writing);

@@ -180,7 +180,7 @@ final class CredentialInternalQuery extends CoreServiceInternalQuery {
     
     @Override
     @NonCommitting
-    protected @Nonnull CredentialReply executeOnHost(@Nonnull Agent agent) throws SQLException {
+    protected @Nonnull CredentialReply executeOnHost(@Nonnull Agent agent) throws AbortException {
         final @Nonnull Restrictions restrictions = agent.getRestrictions();
         final @Nonnull SignatureWrapper signature = getSignatureNotNull();
         final @Nonnull NonHostAccount account = getNonHostAccount();

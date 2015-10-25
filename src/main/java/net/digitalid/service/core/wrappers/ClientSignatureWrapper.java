@@ -195,7 +195,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper {
     @Locked
     @Override
     @NonCommitting
-    public @Nullable ClientAgent getAgent(@Nonnull NonHostEntity entity) throws SQLException {
+    public @Nullable ClientAgent getAgent(@Nonnull NonHostEntity entity) throws AbortException {
         return AgentModule.getClientAgent(entity, commitment);
     }
     

@@ -1,25 +1,16 @@
 package net.digitalid.service.core.wrappers;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.service.core.annotations.BasedOn;
 import net.digitalid.service.core.annotations.Encoding;
 import net.digitalid.service.core.annotations.Loaded;
 import net.digitalid.service.core.annotations.NonEncoding;
 import net.digitalid.service.core.encoding.AbstractEncodingFactory;
 import net.digitalid.service.core.encoding.Encodable;
 import net.digitalid.service.core.encoding.Encode;
-import net.digitalid.service.core.encoding.NonRequestingEncodingFactory;
-import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
-import net.digitalid.utility.database.storing.AbstractStoringFactory;
-import net.digitalid.utility.database.storing.Storable;
 import net.digitalid.utility.annotations.math.Positive;
 import net.digitalid.utility.annotations.reference.Capturable;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -27,8 +18,9 @@ import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
 import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
 import net.digitalid.utility.collections.freezable.FreezableArray;
-import net.digitalid.utility.database.annotations.Locked;
-import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.column.Column;
+import net.digitalid.utility.database.storing.AbstractStoringFactory;
+import net.digitalid.utility.database.storing.Storable;
 
 /**
  * Values and elements are wrapped by separate objects as the native types do not support encoding and decoding.
@@ -38,7 +30,7 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 @Immutable
 public abstract class Wrapper<W extends Wrapper<W>> implements Encodable<W, Object>, Storable<W, Object> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Semantic Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the semantic type of this wrapper.
@@ -58,6 +50,8 @@ public abstract class Wrapper<W extends Wrapper<W>> implements Encodable<W, Obje
     public final @Nonnull SemanticType getSemanticType() {
         return semanticType;
     }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Syntactic Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns the syntactic type that corresponds to this class.
@@ -125,67 +119,107 @@ public abstract class Wrapper<W extends Wrapper<W>> implements Encodable<W, Obje
         return Encode.nonNullable((W) this).hashCode();
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encodable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * The factory for wrappers.
+     * The encoding factory for wrappers.
      */
     @Immutable
-    public abstract static class BlockableWrapperFactory<W extends Wrapper<W>> extends NonRequestingEncodingFactory<W, Object> {
+    public abstract static class EncodingFactory<W extends Wrapper<W>> extends AbstractEncodingFactory<W, Object> {
         
         /**
-         * Creates a new factory with the given parameters.
+         * Creates a new encoding factory with the given type.
          * 
-         * @param type the semantic type that corresponds to the wrapper.
+         * @param type the semantic type of the encoded blocks and decoded wrappers.
          */
-        protected BlockableWrapperFactory(@Nonnull @Loaded SemanticType type) {
+        protected EncodingFactory(@Nonnull @Loaded SemanticType type) {
             super(type);
         }
         
         @Pure
         @Override
         public final @Nonnull @NonEncoding Block encodeNonNullable(@Nonnull W wrapper) {
-            // This implementation violates the postcondition for static wrapper factories.
-            return Block.get(wrapper.getSemanticType(), wrapper);
+            return Block.get(getType(), wrapper);
+        }
+        
+    }
+    
+    /**
+     * The non-requesting encoding factory for wrappers.
+     */
+    @Immutable
+    public abstract static class NonRequestingEncodingFactory<W extends Wrapper<W>> extends EncodingFactory<W> {
+        
+        /**
+         * Creates a new non-requesting encoding factory with the given type.
+         * 
+         * @param type the semantic type of the encoded blocks and decoded wrappers.
+         */
+        protected NonRequestingEncodingFactory(@Nonnull @Loaded SemanticType type) {
+            super(type);
         }
         
         @Pure
-        public @Nonnull W decodeNonNullable(@Nonnull @NonEncoding @BasedOn("string@core.digitalid.net") Block block) throws InvalidEncodingException {
-        	return super.decodeNullable(null, block);
+        @Override
+        public abstract @Nonnull W decodeNonNullable(@Nonnull Object none, @Nonnull @NonEncoding Block block) throws InvalidEncodingException;
+        
+        @Pure
+        @Override
+        public final @Nullable W decodeNullable(@Nonnull Object none, @Nullable @NonEncoding Block block) throws InvalidEncodingException {
+            return block == null ? null : decodeNonNullable(none, block);
         }
         
-
-		@Override
-		public W decodeNonNullable(Object entity, Block block)
-				throws InvalidEncodingException {
-			return super.decodeNullable(null, block);
-		}
     }
     
+    @Pure
+    @Override
+    public abstract @Nonnull EncodingFactory<W> getEncodingFactory();
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * The storing factory for wrappers.
+     */
     @Immutable
-    public abstract static class StorableWrapperFactory<W extends Wrapper<W>> extends AbstractStoringFactory<W, Object> {
-      
-		@Pure
-		@Override
-		public final @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getValues(@Nonnull W wrapper) {
-		    return FreezableArray.getNonNullable(wrapper.toString());
-		}
-      
-		public abstract W restoreNullable(ResultSet resultSet, int columnIndex) throws SQLException;
-		
-		public W restoreNullable(Object o, ResultSet resultSet, int columnIndex) throws SQLException {
-			return restoreNullable(resultSet, columnIndex);
-		}
-      
+    public abstract static class StoringFactory<W extends Wrapper<W>> extends AbstractStoringFactory<W, Object> {
+        
+        /**
+         * Stores the semantic type of the restored wrappers.
+         */
+        private final @Nonnull @Loaded SemanticType type;
+        
+        /**
+         * Returns the semantic type of the restored wrappers.
+         * 
+         * @return the semantic type of the restored wrappers.
+         */
+        public final @Nonnull @Loaded SemanticType getType() {
+            return type;
+        }
+        
+        /**
+         * Creates a new storing factory with the given column.
+         * 
+         * @param column the column used to store objects of the wrapper.
+         * @param type the semantic type of the restored wrappers.
+         */
+        protected StoringFactory(@Nonnull @NonNullableElements Column column, @Nonnull @Loaded SemanticType type) {
+            super(column);
+            
+            this.type = type;
+        }
+        
+        @Pure
+        @Override
+        public final @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getValues(@Nonnull W wrapper) {
+            return FreezableArray.getNonNullable(wrapper.toString());
+        }
+        
     }
     
     @Pure
     @Override
-    public abstract @Nonnull BlockableWrapperFactory<W> getEncodingFactory();
-
-    @Pure
-    @Override
-    public abstract @Nonnull StorableWrapperFactory<W> getStoringFactory();
+    public abstract @Nonnull StoringFactory<W> getStoringFactory();
     
     /**
      * Returns the value of this wrapper for SQL.
@@ -195,147 +229,5 @@ public abstract class Wrapper<W extends Wrapper<W>> implements Encodable<W, Obje
     @Pure
     @Override
     public abstract @Nonnull String toString();
-    
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factory –––––––––––––––––––––––––––––––––––––––––––––––––– */
-    
-    /**
-     * The factory for encoding and decoding values.
-     */
-    @Immutable
-    public abstract static class ValueFactory<V, W extends Wrapper<W>> extends AbstractEncodingFactory<V, Object> {
-        
-        /**
-         * Stores the BlockableWrapperFactory to wrap and unwrap the values.
-         */
-        private @Nonnull BlockableWrapperFactory<W> factory;
-        
-        /**
-         * Creates a new factory with the given type and factory.
-         * 
-         * @param type the semantic type that of the surrounding wrapper.
-         * @param factory the factory that allows to wrap and unwrap the values.
-         */
-        protected ValueFactory(@Nonnull @Loaded SemanticType type, @Nonnull BlockableWrapperFactory<W> factory) {
-            super(type);
-        }
-        
-        /**
-         * Returns whether the given value is valid.
-         * 
-         * @param value the value to check.
-         * 
-         * @return whether the given value is valid.
-         */
-        @Pure
-        protected boolean isValid(@Nonnull V value) {
-            return true;
-        }
-        
-        /**
-         * Wraps the given value.
-         * 
-         * @param value the value to wrap.
-         * 
-         * @return the wrapper around the value.
-         * 
-         * @require isValid(value) : "The value is valid.";
-         */
-        @Pure
-        protected abstract @Nonnull W wrap(@Nonnull V value);
-        
-        /**
-         * Unwraps the given wrapper.
-         * 
-         * @param wrapper the wrapper to unwrap.
-         * 
-         * @return the value wrapped in the given wrapper.
-         * 
-         * @ensure isValid(value) : "The value is valid.";
-         */
-        @Pure
-        protected abstract @Nonnull V unwrap(@Nonnull W wrapper);
-        
-        @Pure
-        @Override
-        public final @Nonnull @NonEncoding Block encodeNonNullable(@Nonnull V value) {
-            return factory.encodeNonNullable(wrap(value));
-        }
-        
-        @Pure
-        @Locked
-        @Override
-        @NonCommitting
-        public final @Nonnull V decodeNonNullable(@Nonnull Object none, @Nonnull @NonEncoding Block block) throws AbortException, PacketException, ExternalException, NetworkException {
-            assert block.getType().isBasedOn(getType()) : "The block is based on the type of this factory.";
-            
-            return unwrap(factory.decodeNonNullable(none, block));
-        }
-    }
-    
-    /**
-     * The factory for encoding and decoding values.
-     */
-    @Immutable
-    public abstract static class ValueStorableFactory<V, W extends Wrapper<W>> extends AbstractStoringFactory<V, Object> {
-        
-        /**
-         * Stores the BlockableWrapperFactory to wrap and unwrap the values.
-         */
-        private @Nonnull StorableWrapperFactory<W> factory;
-        
-        /**
-         * Creates a new factory with the given type and factory.
-         * 
-         * @param type the semantic type that of the surrounding wrapper.
-         * @param factory the factory that allows to wrap and unwrap the values.
-         */
-        protected ValueStorableFactory(@Nonnull StorableWrapperFactory<W> factory) {
-            super(factory.getColumns().getNonNullable(0));
-        }
-        
-        /**
-         * Wraps the given value.
-         * 
-         * @param value the value to wrap.
-         * 
-         * @return the wrapper around the value.
-         * 
-         * @require isValid(value) : "The value is valid.";
-         */
-        @Pure
-        protected abstract @Nonnull W wrap(@Nonnull V value);
-        
-        /**
-         * Unwraps the given wrapper.
-         * 
-         * @param wrapper the wrapper to unwrap.
-         * 
-         * @return the value wrapped in the given wrapper.
-         * 
-         * @ensure isValid(value) : "The value is valid.";
-         */
-        @Pure
-        protected abstract @Nonnull V unwrap(@Nonnull W wrapper);
-        
-        @Pure
-        @Override
-        public final @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getValues(@Nonnull V value) {
-            return FreezableArray.getNonNullable(wrap(value).toString());
-        }
-        
-        @Override
-        @NonCommitting
-        public final void storeNonNullable(@Nonnull V value, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
-            factory.storeNonNullable(wrap(value), preparedStatement, parameterIndex);
-        }
-        
-        @Pure
-        @Override
-        @NonCommitting
-        public final @Nullable V restoreNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
-            final @Nullable W wrapper = factory.restoreNullable(none, resultSet, columnIndex);
-            return wrapper == null ? null : unwrap(wrapper);
-        }
-    }
     
 }

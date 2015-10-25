@@ -190,14 +190,14 @@ public final class PushFailed extends ExternalAction {
     
     @Override
     @NonCommitting
-    public void executeOnClient() throws SQLException {
+    public void executeOnClient() throws AbortException {
         // TODO: Add this failed push to some list where the user can see it (see the Errors module).
         action.executeOnFailure();
     }
     
     @Override
     @NonCommitting
-    public void executeOnFailure() throws SQLException {
+    public void executeOnFailure() throws AbortException {
         throw new ShouldNeverHappenError("Failed push actions should never be pushed themselves.");
     }
     

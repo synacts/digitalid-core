@@ -74,7 +74,7 @@ public final class Predecessor implements Blockable {
      * @param identifier the identifier of this predecessor.
      */
     @NonCommitting
-    public Predecessor(@Nonnull NonHostIdentifier identifier) throws SQLException {
+    public Predecessor(@Nonnull NonHostIdentifier identifier) throws AbortException {
         this(identifier, identifier instanceof InternalNonHostIdentifier ? FreezablePredecessors.get((InternalNonHostIdentifier) identifier) : new FreezablePredecessors().freeze());
     }
     

@@ -151,7 +151,7 @@ public class StateModule extends HostModule implements StateData {
     @Locked
     @Override
     @NonCommitting
-    public final @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws SQLException {
+    public final @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws AbortException {
         final @Nonnull FreezableList<Block> elements = FreezableArrayList.getWithCapacity(tables.size());
         for (final @Nonnull StateData table : tables.values()) elements.add(SelfcontainedWrapper.encodeNonNullable(TABLE, table.getState(entity, permissions, restrictions, agent)));
         return ListWrapper.encode(stateType, elements.freeze());
@@ -173,7 +173,7 @@ public class StateModule extends HostModule implements StateData {
     @Locked
     @Override
     @NonCommitting
-    public final void removeState(@Nonnull NonHostEntity entity) throws SQLException {
+    public final void removeState(@Nonnull NonHostEntity entity) throws AbortException {
       for (final @Nonnull StateData table : tables.values()) table.removeState(entity);
     }
     

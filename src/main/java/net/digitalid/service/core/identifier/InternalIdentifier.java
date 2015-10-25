@@ -86,7 +86,7 @@ public abstract class InternalIdentifier extends IdentifierClass {
     @Pure
     @Override
     @NonCommitting
-    public abstract @Nonnull InternalIdentity getMappedIdentity() throws SQLException;
+    public abstract @Nonnull InternalIdentity getMappedIdentity() throws AbortException;
     
     @Pure
     @Override

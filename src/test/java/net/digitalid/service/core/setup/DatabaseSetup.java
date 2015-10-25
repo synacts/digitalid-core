@@ -22,7 +22,7 @@ public class DatabaseSetup {
     
     @BeforeClass
     @Committing
-    public static void setUpDatabase() throws SQLException, IOException, ClassNotFoundException {
+    public static void setUpDatabase() throws AbortException, IOException, ClassNotFoundException {
         final int configuration = 0;
         switch (configuration) {
             case 0: Database.initialize(new MySQLConfiguration(true), false); break;
@@ -41,7 +41,7 @@ public class DatabaseSetup {
     
     @Test
     @Committing
-    public final void testDatabaseSetup() throws SQLException {
+    public final void testDatabaseSetup() throws AbortException {
         if (getClass().equals(DatabaseSetup.class)) {
             try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery("SELECT 1")) {
                 Assert.assertTrue(resultSet.next());

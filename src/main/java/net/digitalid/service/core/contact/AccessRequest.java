@@ -171,13 +171,13 @@ public final class AccessRequest extends CoreServiceExternalAction {
     
     @Override
     @NonCommitting
-    public void executeOnClient() throws SQLException {
+    public void executeOnClient() throws AbortException {
         // TODO: Add this access request to a list of pending access requests.
     }
     
     @Override
     @NonCommitting
-    public void executeOnFailure() throws SQLException {
+    public void executeOnFailure() throws AbortException {
         // TODO: Add this access request to a list of failed access requests.
     }
     

@@ -21,7 +21,7 @@ public final class MySQLTest extends DatabaseTest {
     
     @BeforeClass
     @Committing
-    public static void configureDatabase() throws SQLException, IOException {
+    public static void configureDatabase() throws AbortException, IOException {
         Database.initialize(new MySQLConfiguration(true), false);
         createTables();
     }

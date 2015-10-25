@@ -113,7 +113,7 @@ public abstract class IdentityClass implements Identity {
      */
     @Pure
     @NonCommitting
-    public static @Nullable Identity get(@Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+    public static @Nullable Identity get(@Nonnull ResultSet resultSet, int columnIndex) throws AbortException {
         final long number = resultSet.getLong(columnIndex);
         if (resultSet.wasNull()) return null;
         else return Mapper.getIdentity(number);
@@ -131,13 +131,13 @@ public abstract class IdentityClass implements Identity {
      */
     @Pure
     @NonCommitting
-    public static @Nonnull Identity getNotNull(@Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+    public static @Nonnull Identity getNotNull(@Nonnull ResultSet resultSet, int columnIndex) throws AbortException {
         return Mapper.getIdentity(resultSet.getLong(columnIndex));
     }
     
     @Override
     @NonCommitting
-    public final void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+    public final void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws AbortException {
         preparedStatement.setLong(parameterIndex, number);
     }
     
@@ -149,7 +149,7 @@ public abstract class IdentityClass implements Identity {
      * @param parameterIndex the index of the parameter to set.
      */
     @NonCommitting
-    public static void set(@Nullable Identity identity, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+    public static void set(@Nullable Identity identity, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws AbortException {
         if (identity == null) preparedStatement.setNull(parameterIndex, Types.BIGINT);
         else identity.set(preparedStatement, parameterIndex);
     }

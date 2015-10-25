@@ -1,17 +1,15 @@
 package net.digitalid.service.core.storing;
 
-import net.digitalid.utility.database.storing.AbstractStoringFactory;
-import net.digitalid.utility.database.storing.Store;
-import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.encoding.AbstractEncodingFactory;
 import net.digitalid.service.core.encoding.Encodable;
+import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.wrappers.Block;
 import net.digitalid.utility.annotations.reference.Capturable;
@@ -24,6 +22,8 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.column.Column;
 import net.digitalid.utility.database.column.SQLType;
 import net.digitalid.utility.database.configuration.Database;
+import net.digitalid.utility.database.storing.AbstractStoringFactory;
+import net.digitalid.utility.database.storing.Store;
 
 /**
  * This class implements the methods that all storing factories which store their data as a {@link Block block} in the {@link Database database} share.
@@ -95,9 +95,9 @@ public final class BlockBasedStoringFactory<O, E> extends AbstractStoringFactory
     @NonCommitting
     public @Nullable O restoreNullable(@Nonnull E entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
         try {
-            final @Nullable Block block = Block.FACTORY.getNullable(None.OBJECT, resultSet, columnIndex);
+            final @Nullable Block block = Block.STORING_FACTORY.restoreNullable(encodingFactory.getType(), resultSet, columnIndex);
             return block == null ? null : encodingFactory.decodeNonNullable(entity, block);
-        } catch (@Nonnull IOException | PacketException | ExternalException exception) {
+        } catch (@Nonnull AbortException | PacketException | ExternalException | NetworkException exception) {
             throw new SQLException("Could not decode a block from the database.", exception);
         }
     }

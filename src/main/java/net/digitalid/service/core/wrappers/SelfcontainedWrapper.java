@@ -2,21 +2,24 @@ package net.digitalid.service.core.wrappers;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.annotations.BasedOn;
 import net.digitalid.service.core.annotations.Encoding;
 import net.digitalid.service.core.annotations.Loaded;
 import net.digitalid.service.core.annotations.NonEncoding;
+import net.digitalid.service.core.auxiliary.None;
+import net.digitalid.service.core.encoding.Encodable;
+import net.digitalid.service.core.encoding.Encode;
+import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identifier.Identifier;
 import net.digitalid.service.core.identifier.IdentifierClass;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
-import net.digitalid.utility.database.storing.Storable;
 import net.digitalid.service.core.wrappers.exceptions.UnexpectedEndOfFileException;
 import net.digitalid.service.core.wrappers.exceptions.UnsupportedBlockLengthException;
 import net.digitalid.utility.annotations.math.NonNegative;
@@ -46,11 +49,6 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
     public static final @Nonnull SemanticType DEFAULT = SemanticType.map("default@core.digitalid.net").load(TYPE);
     
     /**
-     * Stores the semantic type {@code semantic.selfcontained@core.digitalid.net}.
-     */
-    private static final @Nonnull SemanticType SEMANTIC = SemanticType.map("semantic.selfcontained@core.digitalid.net").load(TYPE);
-    
-    /**
      * Stores the semantic type {@code implementation.selfcontained@core.digitalid.net}.
      */
     private static final @Nonnull SemanticType IMPLEMENTATION = SemanticType.map("implementation.selfcontained@core.digitalid.net").load(TupleWrapper.TYPE, SemanticType.IDENTIFIER, SemanticType.UNKNOWN);
@@ -65,10 +63,8 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
     
     /**
      * Stores the tuple of this wrapper.
-     * 
-     * @invariant tuple.getType().equals(IMPLEMENTATION) : "The tuple consists of an identifier and an element.";
      */
-    private final @Nonnull Block tuple;
+    private final @Nonnull @BasedOn("implementation.selfcontained@core.digitalid.net") Block tuple;
    
     /**
      * Stores the element of this wrapper.
@@ -93,7 +89,7 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
      * @param type the semantic type of the new selfcontained wrapper.
      * @param element the element of the new selfcontained wrapper.
      */
-    private SelfcontainedWrapper(@Nonnull @Loaded @BasedOn("selfcontained@core.digitalid.net") SemanticType type, @Nonnull @NonEncoding Block element) {
+    private SelfcontainedWrapper(@Nonnull @BasedOn("selfcontained@core.digitalid.net") SemanticType type, @Nonnull @NonEncoding Block element) {
         super(type);
         
         this.tuple = TupleWrapper.encode(IMPLEMENTATION, element.getType().toBlock(SemanticType.IDENTIFIER), element);
@@ -104,12 +100,10 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
      * Creates a new selfcontained wrapper from the given block.
      * 
      * @param block the block that contains the identifier and the element.
-     * 
-     * @require block.getType().isBasedOn(TYPE) : "The block is based on the indicated syntactic type.";
      */
     @Locked
     @NonCommitting
-    private SelfcontainedWrapper(@Nonnull @NonEncoding Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+    private SelfcontainedWrapper(@Nonnull @NonEncoding @BasedOn("selfcontained@core.digitalid.net") Block block) throws AbortException, PacketException, ExternalException, NetworkException {
         super(block.getType());
         
         this.tuple = Block.get(IMPLEMENTATION, block);
@@ -122,11 +116,6 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Utility –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Stores the factory of this class.
-     */
-    private static final @Nonnull Factory FACTORY = new Factory(SEMANTIC);
-    
-    /**
      * Encodes the given element into a new non-nullable selfcontained block of the given type.
      * 
      * @param type the semantic type of the new block.
@@ -135,8 +124,8 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
      * @return a new non-nullable selfcontained block containing the given element.
      */
     @Pure
-    public static @Nonnull @NonEncoding <V extends Storable<V>> Block encodeNonNullable(@Nonnull @Loaded @BasedOn("selfcontained@core.digitalid.net") SemanticType type, @Nonnull V element) {
-        return FACTORY.encodeNonNullable(new SelfcontainedWrapper(type, Block.fromNonNullable(element)));
+    public static @Nonnull @NonEncoding <V extends Encodable<V, Object>> Block encodeNonNullable(@Nonnull @BasedOn("selfcontained@core.digitalid.net") SemanticType type, @Nonnull V element) {
+        return new EncodingFactory(type).encodeNonNullable(new SelfcontainedWrapper(type, Encode.nonNullable(element)));
     }
     
     /**
@@ -148,7 +137,7 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
      * @return a new nullable selfcontained block containing the given element.
      */
     @Pure
-    public static @Nullable @NonEncoding <V extends Storable<V>> Block encodeNullable(@Nonnull @Loaded @BasedOn("selfcontained@core.digitalid.net") SemanticType type, @Nullable V element) {
+    public static @Nullable @NonEncoding <V extends Encodable<V, Object>> Block encodeNullable(@Nonnull @BasedOn("selfcontained@core.digitalid.net") SemanticType type, @Nullable V element) {
         return element == null ? null : encodeNonNullable(type, element);
     }
     
@@ -163,7 +152,7 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
     @Locked
     @NonCommitting
     public static @Nonnull @NonEncoding Block decodeNonNullable(@Nonnull @NonEncoding @BasedOn("selfcontained@core.digitalid.net") Block block) throws AbortException, PacketException, ExternalException, NetworkException {
-        return FACTORY.decodeNonNullable(block).element;
+        return new EncodingFactory(block.getType()).decodeNonNullable(None.OBJECT, block).element;
     }
     
     /**
@@ -192,7 +181,11 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
     @Locked
     @NonCommitting
     public static @Nonnull @NonEncoding Block decodeBlockFrom(@Nonnull InputStream inputStream, boolean close) throws AbortException, PacketException, ExternalException, NetworkException {
-        return decodeNonNullable(readBlockFrom(inputStream, close));
+        try {
+            return decodeNonNullable(readBlockFrom(inputStream, close));
+        } catch (@Nonnull IOException exception) {
+            throw NetworkException.get(exception);
+        }
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encoding –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -215,17 +208,17 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * The factory for this class.
+     * The encoding factory for this class.
      */
     @Immutable
-    public static final class Factory extends BlockBasedWrapper.Factory<SelfcontainedWrapper> {
+    public static final class EncodingFactory extends Wrapper.EncodingFactory<SelfcontainedWrapper> {
         
         /**
-         * Creates a new factory with the given type.
+         * Creates a new encoding factory with the given type.
          * 
-         * @param type the semantic type of the wrapper.
+         * @param type the semantic type of the encoded blocks and decoded wrappers.
          */
-        private Factory(@Nonnull @Loaded @BasedOn("selfcontained@core.digitalid.net") SemanticType type) {
+        private EncodingFactory(@Nonnull @Loaded @BasedOn("selfcontained@core.digitalid.net") SemanticType type) {
             super(type);
         }
         
@@ -233,7 +226,7 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
         @Locked
         @Override
         @NonCommitting
-        public @Nonnull SelfcontainedWrapper decodeNonNullable(@Nonnull @NonEncoding @BasedOn("selfcontained@core.digitalid.net") Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+        public @Nonnull SelfcontainedWrapper decodeNonNullable(@Nonnull Object none, @Nonnull @NonEncoding @BasedOn("selfcontained@core.digitalid.net") Block block) throws AbortException, PacketException, ExternalException, NetworkException {
             return new SelfcontainedWrapper(block);
         }
         
@@ -241,8 +234,16 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
     
     @Pure
     @Override
-    public @Nonnull Factory getFactory() {
-        return new Factory(getSemanticType());
+    public @Nonnull EncodingFactory getEncodingFactory() {
+        return new EncodingFactory(getSemanticType());
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    @Pure
+    @Override
+    public @Nonnull StoringFactory<SelfcontainedWrapper> getStoringFactory() {
+        return new StoringFactory<>(getEncodingFactory());
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Reading –––––––––––––––––––––––––––––––––––––––––––––––––– */

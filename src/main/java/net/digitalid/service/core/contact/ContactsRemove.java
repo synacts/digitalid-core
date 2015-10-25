@@ -110,7 +110,7 @@ final class ContactsRemove extends CoreServiceInternalAction {
     
     @Override
     @NonCommitting
-    protected void executeOnBoth() throws SQLException {
+    protected void executeOnBoth() throws AbortException {
         context.removeContactsForActions(contacts);
     }
     

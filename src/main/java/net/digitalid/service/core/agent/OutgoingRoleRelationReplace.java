@@ -149,7 +149,7 @@ final class OutgoingRoleRelationReplace extends CoreServiceInternalAction {
     
     @Override
     @NonCommitting
-    protected void executeOnBoth() throws SQLException {
+    protected void executeOnBoth() throws AbortException {
         outgoingRole.replaceRelation(oldRelation, newRelation);
     }
     

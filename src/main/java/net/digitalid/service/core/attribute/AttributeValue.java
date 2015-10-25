@@ -220,7 +220,7 @@ public abstract class AttributeValue implements Blockable, SQLizable {
      */
     @Pure
     @NonCommitting
-    public static @Nonnull AttributeValue get(@Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+    public static @Nonnull AttributeValue get(@Nonnull ResultSet resultSet, int columnIndex) throws AbortException {
         try {
             return AttributeValue.get(Block.getNotNull(TYPE, resultSet, columnIndex), true);
         } catch (@Nonnull IOException | PacketException | ExternalException exception) {
@@ -230,7 +230,7 @@ public abstract class AttributeValue implements Blockable, SQLizable {
     
     @Override
     @NonCommitting
-    public final void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+    public final void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws AbortException {
         toBlock().set(preparedStatement, parameterIndex);
     }
     
@@ -242,7 +242,7 @@ public abstract class AttributeValue implements Blockable, SQLizable {
      * @param parameterIndex the index of the parameter to set.
      */
     @NonCommitting
-    public static void set(@Nullable AttributeValue attributeValue, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+    public static void set(@Nullable AttributeValue attributeValue, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws AbortException {
         Block.set(Block.toBlock(attributeValue), preparedStatement, parameterIndex);
     }
     

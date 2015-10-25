@@ -323,7 +323,7 @@ public class Client extends Site implements Observer {
      */
     @Pure
     @NonCommitting
-    public final @Nonnull @NonFrozen ReadOnlyList<NativeRole> getRoles() throws SQLException {
+    public final @Nonnull @NonFrozen ReadOnlyList<NativeRole> getRoles() throws AbortException {
         if (Database.isMultiAccess()) return RoleModule.getRoles(this);
         if (roles == null) roles = RoleModule.getRoles(this);
         return roles;
@@ -338,7 +338,7 @@ public class Client extends Site implements Observer {
      * @return the newly created role of this client.
      */
     @NonCommitting
-    private @Nonnull NativeRole addRole(@Nonnull InternalNonHostIdentity issuer, long agentNumber) throws SQLException {
+    private @Nonnull NativeRole addRole(@Nonnull InternalNonHostIdentity issuer, long agentNumber) throws AbortException {
         final @Nonnull NativeRole role = NativeRole.add(this, issuer, agentNumber);
         if (Database.isSingleAccess()) role.observe(this, Role.DELETED);
         

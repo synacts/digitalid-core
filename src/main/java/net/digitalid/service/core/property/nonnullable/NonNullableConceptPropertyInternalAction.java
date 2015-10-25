@@ -52,7 +52,7 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructors –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
-    private NonNullableConceptPropertyInternalAction(@Nonnull NonNullableConceptPropertyFactory<V, C, E> table, @Nonnull NonNullableConceptProperty<V, C, E> property, @Nonnull Time oldTime, @Nonnull Time newTime, @Nonnull V oldValue, @Nonnull V newValue) throws SQLException {
+    private NonNullableConceptPropertyInternalAction(@Nonnull NonNullableConceptPropertyFactory<V, C, E> table, @Nonnull NonNullableConceptProperty<V, C, E> property, @Nonnull Time oldTime, @Nonnull Time newTime, @Nonnull V oldValue, @Nonnull V newValue) throws AbortException {
         super(property.getConcept().getRole(), table.getService());
         
         this.table = table;
@@ -64,7 +64,7 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
     }
     
     @Pure
-    static @Nonnull <V, C extends Concept<C, E, ?>, E extends Entity<E>> NonNullableConceptPropertyInternalAction<V, C, E> get(@Nonnull NonNullableConceptProperty<V, C, E> property, @Nonnull V oldValue, @Nonnull V newValue) throws SQLException {
+    static @Nonnull <V, C extends Concept<C, E, ?>, E extends Entity<E>> NonNullableConceptPropertyInternalAction<V, C, E> get(@Nonnull NonNullableConceptProperty<V, C, E> property, @Nonnull V oldValue, @Nonnull V newValue) throws AbortException {
         return new NonNullableConceptPropertyInternalAction<>(property.getTable(), property, property.getTime(), Time.getCurrent(), oldValue, newValue); // TODO: Let all the arguments be determined by the caller.
     }
     
@@ -91,7 +91,7 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
     }
     
     @Override
-    protected void executeOnBoth() throws SQLException {
+    protected void executeOnBoth() throws AbortException {
         property.replace(oldTime, newTime, oldValue, newValue);
     }
     
@@ -102,7 +102,7 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
     }
     
     @Override
-    public @Nonnull NonNullableConceptPropertyInternalAction<V, C, E> getReverse() throws SQLException {
+    public @Nonnull NonNullableConceptPropertyInternalAction<V, C, E> getReverse() throws AbortException {
         return new NonNullableConceptPropertyInternalAction<>(table, property, newTime, oldTime, newValue, oldValue);
     }
     

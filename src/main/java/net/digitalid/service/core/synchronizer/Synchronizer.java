@@ -49,7 +49,7 @@ public final class Synchronizer extends Thread {
      */
     @Locked
     @Committing
-    public static void execute(@Nonnull InternalAction action) throws SQLException {
+    public static void execute(@Nonnull InternalAction action) throws AbortException {
         assert action.isOnClient() : "The internal action is on a client.";
         
         if (action.isSimilarTo(action)) {

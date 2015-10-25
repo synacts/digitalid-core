@@ -179,7 +179,7 @@ public final class PushReturned extends ExternalAction {
     
     @Override
     @NonCommitting
-    public void executeOnClient() throws SQLException {
+    public void executeOnClient() throws AbortException {
         if (!isValid()) {
             // TODO: Add it to the Errors module.
         }

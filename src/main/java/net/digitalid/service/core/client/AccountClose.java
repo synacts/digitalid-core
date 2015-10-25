@@ -132,7 +132,7 @@ public final class AccountClose extends CoreServiceInternalAction {
     
     @Override
     @NonCommitting
-    protected void executeOnBoth() throws SQLException {
+    protected void executeOnBoth() throws AbortException {
         CoreService.SERVICE.removeState(getNonHostEntity());
         if (successor != null) Successor.set((NonHostIdentifier) getSubject(), successor, null);
     }

@@ -79,7 +79,7 @@ public final class AgentModule implements StateModule {
      * @param site the site for which the reference table is created.
      */
     @NonCommitting
-    public static void createReferenceTable(@Nonnull Site site) throws SQLException {
+    public static void createReferenceTable(@Nonnull Site site) throws AbortException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "agent (entity " + EntityClass.FORMAT + " NOT NULL, agent " + Agent.FORMAT + " NOT NULL, client BOOLEAN NOT NULL, removed BOOLEAN NOT NULL, PRIMARY KEY (entity, agent), FOREIGN KEY (entity) " + site.getEntityReference() + ")");
         }
@@ -87,7 +87,7 @@ public final class AgentModule implements StateModule {
     
     @Override
     @NonCommitting
-    public void createTables(@Nonnull Site site) throws SQLException {
+    public void createTables(@Nonnull Site site) throws AbortException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "agent_permission (entity " + EntityClass.FORMAT + " NOT NULL, agent " + Agent.FORMAT + " NOT NULL, " + FreezableAgentPermissions.FORMAT_NOT_NULL + ", PRIMARY KEY (entity, agent, type), FOREIGN KEY (entity, agent) " + Agent.getReference(site) + ", " + FreezableAgentPermissions.REFERENCE + ")");
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "agent_permission_order (entity " + EntityClass.FORMAT + " NOT NULL, stronger " + Agent.FORMAT + " NOT NULL, weaker " + Agent.FORMAT + " NOT NULL, PRIMARY KEY (entity, stronger, weaker), FOREIGN KEY (entity, stronger) " + Agent.getReference(site) + ", FOREIGN KEY (entity, weaker) " + Agent.getReference(site) + ")");
@@ -105,7 +105,7 @@ public final class AgentModule implements StateModule {
     
     @Override
     @NonCommitting
-    public void deleteTables(@Nonnull Site site) throws SQLException {
+    public void deleteTables(@Nonnull Site site) throws AbortException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             Mapper.removeReference(site + "incoming_role", "issuer", "entity", "issuer", "relation");
             statement.executeUpdate("DROP TABLE IF EXISTS " + site + "incoming_role");
@@ -247,7 +247,7 @@ public final class AgentModule implements StateModule {
     @Pure
     @Override
     @NonCommitting
-    public @Nonnull Block exportModule(@Nonnull Host host) throws SQLException {
+    public @Nonnull Block exportModule(@Nonnull Host host) throws AbortException {
         final @Nonnull FreezableArray<Block> tables = new FreezableArray<>(8);
         try (@Nonnull Statement statement = Database.createStatement()) {
             
@@ -540,7 +540,7 @@ public final class AgentModule implements StateModule {
     @Pure
     @Override
     @NonCommitting
-    public @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws SQLException {
+    public @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws AbortException {
         if (agent == null) throw new SQLException("The agent may not be null for state queries of the core service.");
         
         final @Nonnull Site site = entity.getSite();
@@ -724,7 +724,7 @@ public final class AgentModule implements StateModule {
     
     @Override
     @NonCommitting
-    public void removeState(@Nonnull NonHostEntity entity) throws SQLException {
+    public void removeState(@Nonnull NonHostEntity entity) throws AbortException {
         final @Nonnull Site site = entity.getSite();
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("DELETE FROM " + site + "incoming_role WHERE entity = " + entity);
@@ -749,7 +749,7 @@ public final class AgentModule implements StateModule {
      */
     @Pure
     @NonCommitting
-    static boolean isRemoved(@Nonnull Agent agent) throws SQLException {
+    static boolean isRemoved(@Nonnull Agent agent) throws AbortException {
         final @Nonnull String SQL = "SELECT removed FROM " + agent.getEntity().getSite() + "agent WHERE entity = " + agent.getEntity() + " AND agent = " + agent;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
             if (resultSet.next()) return resultSet.getBoolean(1);
@@ -762,7 +762,7 @@ public final class AgentModule implements StateModule {
      * 
      * @param agent the agent to be added.
      */
-    private static void addAgent(@Nonnull Agent agent) throws SQLException {
+    private static void addAgent(@Nonnull Agent agent) throws AbortException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("INSERT INTO " + agent.getEntity().getSite() + "agent (entity, agent, client, removed) VALUES (" + agent.getEntity() + ", " + agent + ", " + Database.toBoolean(agent.isClient()) + ", " + Database.toBoolean(agent.isRemoved()) + ")");
         }
@@ -774,7 +774,7 @@ public final class AgentModule implements StateModule {
      * @param agent the agent to be removed.
      */
     @NonCommitting
-    static void removeAgent(@Nonnull Agent agent) throws SQLException {
+    static void removeAgent(@Nonnull Agent agent) throws AbortException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             final @Nonnull String SQL = "UPDATE " + agent.getEntity().getSite() + "agent SET removed = " + Database.toBoolean(true) + " WHERE entity = " + agent.getEntity() + " AND agent = " + agent + " AND removed = " + Database.toBoolean(false);
             if (statement.executeUpdate(SQL) == 0) throw new SQLException("The agent with the number " + agent + " of " + agent.getEntity().getIdentity().getAddress() + " could not be removed.");
@@ -787,7 +787,7 @@ public final class AgentModule implements StateModule {
      * @param agent the agent to be unremoved.
      */
     @NonCommitting
-    static void unremoveAgent(@Nonnull Agent agent) throws SQLException {
+    static void unremoveAgent(@Nonnull Agent agent) throws AbortException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             final @Nonnull String SQL = "UPDATE " + agent.getEntity().getSite() + "agent SET removed = " + Database.toBoolean(false) + " WHERE entity = " + agent.getEntity() + " AND agent = " + agent + " AND removed = " + Database.toBoolean(true);
             if (statement.executeUpdate(SQL) == 0) throw new SQLException("The agent with the number " + agent + " of " + agent.getEntity().getIdentity().getAddress() + " could not be unremoved.");
@@ -805,7 +805,7 @@ public final class AgentModule implements StateModule {
      */
     @Pure
     @NonCommitting
-    static @Capturable @Nonnull @NonFrozen FreezableAgentPermissions getPermissions(@Nonnull Agent agent) throws SQLException {
+    static @Capturable @Nonnull @NonFrozen FreezableAgentPermissions getPermissions(@Nonnull Agent agent) throws AbortException {
         final @Nonnull String SQL = "SELECT " + FreezableAgentPermissions.COLUMNS + " FROM " + agent.getEntity().getSite() + "agent_permission WHERE entity = " + agent.getEntity() + " AND agent = " + agent;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
             return FreezableAgentPermissions.get(resultSet, 1);
@@ -819,7 +819,7 @@ public final class AgentModule implements StateModule {
      * @param permissions the permissions to be added to the given agent.
      */
     @NonCommitting
-    static void addPermissions(@Nonnull Agent agent, @Nonnull @Frozen ReadOnlyAgentPermissions permissions) throws SQLException {
+    static void addPermissions(@Nonnull Agent agent, @Nonnull @Frozen ReadOnlyAgentPermissions permissions) throws AbortException {
         final @Nonnull String SQL = "INSERT INTO " + agent.getEntity().getSite() + "agent_permission (entity, agent, " + FreezableAgentPermissions.COLUMNS + ") VALUES (" + agent.getEntity() + ", " + agent + ", ?, ?)";
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
             permissions.set(preparedStatement, 1);
@@ -835,7 +835,7 @@ public final class AgentModule implements StateModule {
      * @param permissions the permissions to be removed from the given agent.
      */
     @NonCommitting
-    static void removePermissions(@Nonnull Agent agent, @Nonnull @Frozen ReadOnlyAgentPermissions permissions) throws SQLException {
+    static void removePermissions(@Nonnull Agent agent, @Nonnull @Frozen ReadOnlyAgentPermissions permissions) throws AbortException {
         final @Nonnull String SQL = "DELETE FROM " + agent.getEntity().getSite() + "agent_permission WHERE entity = " + agent.getEntity() + " AND agent = " + agent + " AND " + FreezableAgentPermissions.CONDITION;
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
             permissions.set(preparedStatement, 1);
@@ -855,7 +855,7 @@ public final class AgentModule implements StateModule {
      * @param agent the agent whose order of permissions is to be redetermined or null.
      */
     @NonCommitting
-    private static void redeterminePermissionsOrder(@Nonnull NonHostEntity entity, @Nullable Agent agent) throws SQLException {
+    private static void redeterminePermissionsOrder(@Nonnull NonHostEntity entity, @Nullable Agent agent) throws AbortException {
         final @Nonnull Site site = entity.getSite();
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("DELETE FROM " + site + "agent_permission_order WHERE entity = " + entity + (agent != null ? " AND (stronger = " + agent + " OR weaker = " + agent + ")": ""));
@@ -871,7 +871,7 @@ public final class AgentModule implements StateModule {
      * @param agent the agent whose order of permissions is to be redetermined.
      */
     @NonCommitting
-    private static void redeterminePermissionsOrder(@Nonnull Agent agent) throws SQLException {
+    private static void redeterminePermissionsOrder(@Nonnull Agent agent) throws AbortException {
         redeterminePermissionsOrder(agent.getEntity(), agent);
     }
     
@@ -888,7 +888,7 @@ public final class AgentModule implements StateModule {
      */
     @Pure
     @NonCommitting
-    static @Nonnull Restrictions getRestrictions(@Nonnull Agent agent) throws SQLException {
+    static @Nonnull Restrictions getRestrictions(@Nonnull Agent agent) throws AbortException {
         final @Nonnull String SQL = "SELECT " + Restrictions.COLUMNS + " FROM " + agent.getEntity().getSite() + "agent_restrictions WHERE entity = " + agent.getEntity() + " AND agent = " + agent;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
             if (resultSet.next()) return Restrictions.get(agent.getEntity(), resultSet, 1).checkMatch(agent);
@@ -905,7 +905,7 @@ public final class AgentModule implements StateModule {
      * @param restrictions the restrictions to be set for the given agent.
      */
     @NonCommitting
-    private static void setRestrictions(@Nonnull Agent agent, @Nonnull Restrictions restrictions) throws SQLException {
+    private static void setRestrictions(@Nonnull Agent agent, @Nonnull Restrictions restrictions) throws AbortException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("INSERT INTO " + agent.getEntity().getSite() + "agent_restrictions (entity, agent, " + Restrictions.COLUMNS + ") VALUES (" + agent.getEntity() + ", " + agent + ", " + restrictions + ")");
         } catch (@Nonnull SQLException exception) {
@@ -923,13 +923,13 @@ public final class AgentModule implements StateModule {
      * @param oldRestrictions the old restrictions to be replaced with the new restrictions.
      * @param newRestrictions the new restrictions with which the old restrictions are replaced.
      * 
-     * @throws SQLException if the passed restrictions are not the old restrictions.
+     * @throws AbortException if the passed restrictions are not the old restrictions.
      * 
      * @require oldRestrictions.match(agent) : "The old restrictions match the given agent.";
      * @require newRestrictions.match(agent) : "The new restrictions match the given agent.";
      */
     @NonCommitting
-    static void replaceRestrictions(@Nonnull Agent agent, @Nonnull Restrictions oldRestrictions, @Nonnull Restrictions newRestrictions) throws SQLException {
+    static void replaceRestrictions(@Nonnull Agent agent, @Nonnull Restrictions oldRestrictions, @Nonnull Restrictions newRestrictions) throws AbortException {
         assert oldRestrictions.match(agent) : "The old restrictions match the given agent.";
         assert newRestrictions.match(agent) : "The new restrictions match the given agent.";
         
@@ -960,7 +960,7 @@ public final class AgentModule implements StateModule {
      * @param agent the agent whose order of restrictions is to be redetermined or null.
      */
     @NonCommitting
-    private static void redetermineRestrictionsOrder(@Nonnull NonHostEntity entity, @Nullable Agent agent) throws SQLException {
+    private static void redetermineRestrictionsOrder(@Nonnull NonHostEntity entity, @Nullable Agent agent) throws AbortException {
         final @Nonnull Site site = entity.getSite();
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("DELETE FROM " + site + "agent_restrictions_ord WHERE entity = " + entity + (agent != null ? " AND (stronger = " + agent + " OR weaker = " + agent + ")": ""));
@@ -979,7 +979,7 @@ public final class AgentModule implements StateModule {
      * @param agent the agent whose order of restrictions is to be redetermined.
      */
     @NonCommitting
-    private static void redetermineRestrictionsOrder(@Nonnull Agent agent) throws SQLException {
+    private static void redetermineRestrictionsOrder(@Nonnull Agent agent) throws AbortException {
         redetermineRestrictionsOrder(agent.getEntity(), agent);
     }
     
@@ -989,7 +989,7 @@ public final class AgentModule implements StateModule {
      * @param entity the entity whose order of agent restrictions is to be redetermined.
      */
     @NonCommitting
-    static void redetermineRestrictionsOrder(@Nonnull NonHostEntity entity) throws SQLException {
+    static void redetermineRestrictionsOrder(@Nonnull NonHostEntity entity) throws AbortException {
         redetermineRestrictionsOrder(entity, null);
     }
     
@@ -1006,7 +1006,7 @@ public final class AgentModule implements StateModule {
      */
     @Pure
     @NonCommitting
-    static @Capturable @Nonnull FreezableList<Agent> getWeakerAgents(@Nonnull Agent agent) throws SQLException {
+    static @Capturable @Nonnull FreezableList<Agent> getWeakerAgents(@Nonnull Agent agent) throws AbortException {
         final @Nonnull NonHostEntity entity = agent.getEntity();
         final @Nonnull Site site = entity.getSite();
         final @Nonnull String SQL = "SELECT agent, client, removed FROM " + site + "agent_permission_order po, " + site + "agent_restrictions_ord ro, " + site + "agent ag WHERE po.entity = " + entity + " AND po.stronger = " + agent + " AND ro.entity = " + entity + " AND ro.stronger = " + agent + " AND ag.entity = " + entity + " AND po.weaker = ag.agent AND ro.weaker = ag.agent";
@@ -1025,11 +1025,11 @@ public final class AgentModule implements StateModule {
      * 
      * @return the agent weaker than the given agent with the given agent number.
      * 
-     * @throws SQLException if no weaker agent with the given number is found.
+     * @throws AbortException if no weaker agent with the given number is found.
      */
     @Pure
     @NonCommitting
-    static @Nonnull Agent getWeakerAgent(@Nonnull Agent agent, long agentNumber) throws SQLException {
+    static @Nonnull Agent getWeakerAgent(@Nonnull Agent agent, long agentNumber) throws AbortException {
         final @Nonnull NonHostEntity entity = agent.getEntity();
         final @Nonnull Site site = entity.getSite();
         final @Nonnull String SQL = "SELECT agent, client, removed FROM " + site + "agent_permission_order po, " + site + "agent_restrictions_ord ro, " + site + "agent ag WHERE po.entity = " + entity + " AND po.stronger = " + agent + " AND po.weaker = " + agentNumber + " AND ro.entity = " + entity + " AND ro.stronger = " + agent + " AND ro.weaker = " + agentNumber + " AND ag.entity = " + entity + " AND ag.agent = " + agentNumber;
@@ -1051,7 +1051,7 @@ public final class AgentModule implements StateModule {
      */
     @Pure
     @NonCommitting
-    static boolean isStronger(@Nonnull Agent agent1, @Nonnull Agent agent2) throws SQLException {
+    static boolean isStronger(@Nonnull Agent agent1, @Nonnull Agent agent2) throws AbortException {
         assert agent1.getEntity().equals(agent2.getEntity()) : "Both agents belong to the same entity.";
         
         final @Nonnull NonHostEntity entity = agent1.getEntity();
@@ -1077,7 +1077,7 @@ public final class AgentModule implements StateModule {
      * @require Client.isValid(name) : "The name is valid.";
      */
     @NonCommitting
-    static void addClientAgent(@Nonnull ClientAgent clientAgent, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nonnull Commitment commitment, @Nonnull String name) throws SQLException {
+    static void addClientAgent(@Nonnull ClientAgent clientAgent, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nonnull Commitment commitment, @Nonnull String name) throws AbortException {
         assert permissions.isFrozen() : "The permissions are frozen.";
         assert Client.isValidName(name) : "The name is valid.";
         
@@ -1106,7 +1106,7 @@ public final class AgentModule implements StateModule {
      */
     @Pure
     @NonCommitting
-    public static @Nullable ClientAgent getClientAgent(@Nonnull NonHostEntity entity, @Nonnull Commitment commitment) throws SQLException {
+    public static @Nullable ClientAgent getClientAgent(@Nonnull NonHostEntity entity, @Nonnull Commitment commitment) throws AbortException {
         final @Nonnull Site site = entity.getSite();
         final @Nonnull String SQL = "SELECT a.agent, a.removed FROM " + site + "client_agent c, " + site + "agent a WHERE c.entity = " + entity + " AND a.entity = " + entity + " AND c.agent = a.agent AND " + Commitment.CONDITION;
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
@@ -1127,7 +1127,7 @@ public final class AgentModule implements StateModule {
      */
     @Pure
     @NonCommitting
-    static @Nonnull Commitment getCommitment(@Nonnull ClientAgent clientAgent) throws SQLException {
+    static @Nonnull Commitment getCommitment(@Nonnull ClientAgent clientAgent) throws AbortException {
         final @Nonnull NonHostEntity entity = clientAgent.getEntity();
         final @Nonnull String SQL = "SELECT " + Commitment.COLUMNS + " FROM " + entity.getSite() + "client_agent WHERE entity = " + entity + " AND agent = " + clientAgent;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
@@ -1144,7 +1144,7 @@ public final class AgentModule implements StateModule {
      * @param newCommitment the new commitment of the given client agent.
      */
     @NonCommitting
-    static void replaceCommitment(@Nonnull ClientAgent clientAgent, @Nonnull Commitment oldCommitment, @Nonnull Commitment newCommitment) throws SQLException {
+    static void replaceCommitment(@Nonnull ClientAgent clientAgent, @Nonnull Commitment oldCommitment, @Nonnull Commitment newCommitment) throws AbortException {
         final @Nonnull NonHostEntity entity = clientAgent.getEntity();
         final @Nonnull String SQL = "UPDATE " + entity.getSite() + "client_agent SET " + Commitment.UPDATE + " WHERE entity = " + entity + " AND agent = " + clientAgent + " AND " + Commitment.CONDITION;
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
@@ -1165,7 +1165,7 @@ public final class AgentModule implements StateModule {
      */
     @Pure
     @NonCommitting
-    static @Nonnull String getName(@Nonnull ClientAgent clientAgent) throws SQLException {
+    static @Nonnull String getName(@Nonnull ClientAgent clientAgent) throws AbortException {
         final @Nonnull NonHostEntity entity = clientAgent.getEntity();
         final @Nonnull String SQL = "SELECT name FROM " + entity.getSite() + "client_agent WHERE entity = " + entity + " AND agent = " + clientAgent;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
@@ -1188,7 +1188,7 @@ public final class AgentModule implements StateModule {
      * @require Client.isValid(newName) : "The new name is valid.";
      */
     @NonCommitting
-    static void replaceName(@Nonnull ClientAgent clientAgent, @Nonnull String oldName, @Nonnull String newName) throws SQLException {
+    static void replaceName(@Nonnull ClientAgent clientAgent, @Nonnull String oldName, @Nonnull String newName) throws AbortException {
         assert Client.isValidName(oldName) : "The old name is valid.";
         assert Client.isValidName(newName) : "The new name is valid.";
         
@@ -1214,7 +1214,7 @@ public final class AgentModule implements StateModule {
      * @require context.getEntity().equals(outgoingRole.getEntity()) : "The context belongs to the entity of the outgoing role.";
      */
     @NonCommitting
-    static void addOutgoingRole(@Nonnull OutgoingRole outgoingRole, @Nonnull SemanticType relation, @Nonnull Context context) throws SQLException {
+    static void addOutgoingRole(@Nonnull OutgoingRole outgoingRole, @Nonnull SemanticType relation, @Nonnull Context context) throws AbortException {
         assert relation.isRoleType() : "The relation is a role type.";
         assert context.getEntity().equals(outgoingRole.getEntity()) : "The context belongs to the entity of the outgoing role.";
         
@@ -1241,7 +1241,7 @@ public final class AgentModule implements StateModule {
      */
     @Pure
     @NonCommitting
-    public static @Nullable OutgoingRole getOutgoingRole(@Nonnull NonHostEntity entity, @Nonnull SemanticType relation, boolean restrictable) throws SQLException {
+    public static @Nullable OutgoingRole getOutgoingRole(@Nonnull NonHostEntity entity, @Nonnull SemanticType relation, boolean restrictable) throws AbortException {
         assert relation.isRoleType() : "The relation is a role type.";
         
         final @Nonnull Site site = entity.getSite();
@@ -1263,7 +1263,7 @@ public final class AgentModule implements StateModule {
      */
     @Pure
     @NonCommitting
-    static @Nonnull SemanticType getRelation(@Nonnull OutgoingRole outgoingRole) throws SQLException {
+    static @Nonnull SemanticType getRelation(@Nonnull OutgoingRole outgoingRole) throws AbortException {
         final @Nonnull NonHostEntity entity = outgoingRole.getEntity();
         final @Nonnull String SQL = "SELECT relation FROM " + entity.getSite() + "outgoing_role WHERE entity = " + entity + " AND agent = " + outgoingRole;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
@@ -1285,7 +1285,7 @@ public final class AgentModule implements StateModule {
      * @require newRelation.isRoleType() : "The new relation is a role type.";
      */
     @NonCommitting
-    static void replaceRelation(@Nonnull OutgoingRole outgoingRole, @Nonnull SemanticType oldRelation, @Nonnull SemanticType newRelation) throws SQLException {
+    static void replaceRelation(@Nonnull OutgoingRole outgoingRole, @Nonnull SemanticType oldRelation, @Nonnull SemanticType newRelation) throws AbortException {
         assert oldRelation.isRoleType() : "The old relation is a role type.";
         assert newRelation.isRoleType() : "The new relation is a role type.";
         
@@ -1307,7 +1307,7 @@ public final class AgentModule implements StateModule {
      */
     @Pure
     @NonCommitting
-    static @Nonnull Context getContext(@Nonnull OutgoingRole outgoingRole) throws SQLException {
+    static @Nonnull Context getContext(@Nonnull OutgoingRole outgoingRole) throws AbortException {
         final @Nonnull NonHostEntity entity = outgoingRole.getEntity();
         final @Nonnull String SQL = "SELECT context FROM " + entity.getSite() + "outgoing_role WHERE entity = " + entity + " AND agent = " + outgoingRole;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
@@ -1327,7 +1327,7 @@ public final class AgentModule implements StateModule {
      * @require newContext.isRoleType() : "The new context is a role type.";
      */
     @NonCommitting
-    static void replaceContext(@Nonnull OutgoingRole outgoingRole, @Nonnull Context oldContext, @Nonnull Context newContext) throws SQLException {
+    static void replaceContext(@Nonnull OutgoingRole outgoingRole, @Nonnull Context oldContext, @Nonnull Context newContext) throws AbortException {
         assert oldContext.getEntity().equals(outgoingRole.getEntity()) : "The old context belongs to the same entity as the outgoing role.";
         assert newContext.getEntity().equals(outgoingRole.getEntity()) : "The new context belongs to the same entity as the outgoing role.";
         
@@ -1352,7 +1352,7 @@ public final class AgentModule implements StateModule {
      * @require relation.isRoleType() : "The relation is a role type.";
      */
     @NonCommitting
-    static void addIncomingRole(@Nonnull NonHostEntity entity, @Nonnull InternalNonHostIdentity issuer, @Nonnull SemanticType relation, long agentNumber) throws SQLException {
+    static void addIncomingRole(@Nonnull NonHostEntity entity, @Nonnull InternalNonHostIdentity issuer, @Nonnull SemanticType relation, long agentNumber) throws AbortException {
         assert relation.isRoleType() : "The relation is a role type.";
         
         try (@Nonnull Statement statement = Database.createStatement()) {
@@ -1372,7 +1372,7 @@ public final class AgentModule implements StateModule {
      * @require relation.isRoleType() : "The relation is a role type.";
      */
     @NonCommitting
-    static void removeIncomingRole(@Nonnull NonHostEntity entity, @Nonnull InternalNonHostIdentity issuer, @Nonnull SemanticType relation) throws SQLException {
+    static void removeIncomingRole(@Nonnull NonHostEntity entity, @Nonnull InternalNonHostIdentity issuer, @Nonnull SemanticType relation) throws AbortException {
         assert relation.isRoleType() : "The relation is a role type.";
         
         try (@Nonnull Statement statement = Database.createStatement()) {
@@ -1390,7 +1390,7 @@ public final class AgentModule implements StateModule {
      * @param role the role whose incoming roles are to be reset.
      */
     @NonCommitting
-    static void resetIncomingRoles(@Nonnull Role role) throws SQLException {
+    static void resetIncomingRoles(@Nonnull Role role) throws AbortException {
         final @Nonnull ReadOnlyList<NonNativeRole> roles = role.getRoles();
         final @Nonnull HashSet<NonNativeRole> foundRoles = new HashSet<>();
         final @Nonnull String SQL = "SELECT issuer, relation, agent FROM " + role.getSite() + "incoming_role WHERE entity = " + role;

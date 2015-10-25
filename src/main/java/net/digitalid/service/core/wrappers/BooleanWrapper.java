@@ -160,14 +160,14 @@ public final class BooleanWrapper extends Wrapper<BooleanWrapper> {
         
         @Override
         @NonCommitting
-        public void setNonNullable(@Nonnull BooleanWrapper wrapper, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+        public void setNonNullable(@Nonnull BooleanWrapper wrapper, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws AbortException {
             preparedStatement.setBoolean(parameterIndex, wrapper.value);
         }
         
         @Pure
         @Override
         @NonCommitting
-        public @Nullable BooleanWrapper getNullable(@Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+        public @Nullable BooleanWrapper getNullable(@Nonnull ResultSet resultSet, int columnIndex) throws AbortException {
             final boolean value = resultSet.getBoolean(columnIndex);
             if (resultSet.wasNull()) return null;
             else return new BooleanWrapper(getType(), value);
@@ -193,7 +193,7 @@ public final class BooleanWrapper extends Wrapper<BooleanWrapper> {
      * The factory for the value type of this wrapper.
      */
     @Immutable
-    public static class ValueFactory extends Wrapper.ValueFactory<Boolean, BooleanWrapper> {
+    public static class ValueFactory extends Wrapper.ValueEncodingFactory<Boolean, BooleanWrapper> {
         
         /**
          * Creates a new factory with the given type.

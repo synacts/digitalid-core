@@ -66,7 +66,7 @@ public final class IdentityReply extends CoreServiceQueryReply {
      * @param subject the subject of this handler.
      */
     @NonCommitting
-    IdentityReply(@Nonnull InternalNonHostIdentifier subject) throws SQLException, PacketException {
+    IdentityReply(@Nonnull InternalNonHostIdentifier subject) throws AbortException, PacketException {
         super(subject);
         
         if (!subject.isMapped()) throw new PacketException(PacketErrorCode.IDENTIFIER, "The identity with the identifier " + subject + " does not exist on this host.");

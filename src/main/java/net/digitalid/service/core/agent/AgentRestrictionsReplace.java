@@ -143,7 +143,7 @@ final class AgentRestrictionsReplace extends CoreServiceInternalAction {
     
     @Override
     @NonCommitting
-    protected void executeOnBoth() throws SQLException {
+    protected void executeOnBoth() throws AbortException {
         agent.replaceRestrictions(oldRestrictions, newRestrictions);
     }
     

@@ -49,7 +49,7 @@ public final class ContactModule implements StateModule {
     
     @Override
     @NonCommitting
-    public void createTables(@Nonnull Site site) throws SQLException {
+    public void createTables(@Nonnull Site site) throws AbortException {
         // TODO: Remove the contact_preference table.
         
 //        try (@Nonnull Statement statement = Database.createStatement()) {
@@ -65,7 +65,7 @@ public final class ContactModule implements StateModule {
     
     @Override
     @NonCommitting
-    public void deleteTables(@Nonnull Site site) throws SQLException {
+    public void deleteTables(@Nonnull Site site) throws AbortException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             // TODO: Delete the tables of this module.
         }
@@ -92,7 +92,7 @@ public final class ContactModule implements StateModule {
     @Pure
     @Override
     @NonCommitting
-    public @Nonnull Block exportModule(@Nonnull Host host) throws SQLException {
+    public @Nonnull Block exportModule(@Nonnull Host host) throws AbortException {
         final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<>();
         try (@Nonnull Statement statement = Database.createStatement()) {
             // TODO: Retrieve all the entries from the database table(s).
@@ -102,7 +102,7 @@ public final class ContactModule implements StateModule {
     
     @Override
     @NonCommitting
-    public void importModule(@Nonnull Host host, @Nonnull Block block) throws SQLException, InvalidEncodingException {
+    public void importModule(@Nonnull Host host, @Nonnull Block block) throws AbortException, InvalidEncodingException {
         assert block.getType().isBasedOn(getModuleFormat()) : "The block is based on the format of this module.";
         
         final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(block).getElementsNotNull();
@@ -132,7 +132,7 @@ public final class ContactModule implements StateModule {
     @Pure
     @Override
     @NonCommitting
-    public @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws SQLException {
+    public @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws AbortException {
         final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<>();
         try (@Nonnull Statement statement = Database.createStatement()) {
             // TODO: Retrieve the entries of the given entity from the database table(s).
@@ -142,7 +142,7 @@ public final class ContactModule implements StateModule {
     
     @Override
     @NonCommitting
-    public void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws SQLException, InvalidEncodingException {
+    public void addState(@Nonnull NonHostEntity entity, @Nonnull Block block) throws AbortException, InvalidEncodingException {
         assert block.getType().isBasedOn(getStateFormat()) : "The block is based on the indicated type.";
         
         final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(block).getElementsNotNull();
@@ -153,7 +153,7 @@ public final class ContactModule implements StateModule {
     
     @Override
     @NonCommitting
-    public void removeState(@Nonnull NonHostEntity entity) throws SQLException {
+    public void removeState(@Nonnull NonHostEntity entity) throws AbortException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             // TODO: Remove the entries of the given entity from the database table(s).
         }
@@ -168,7 +168,7 @@ public final class ContactModule implements StateModule {
 //     * @return the preferences of the given contact at the given identity.
 //     */
 //    @NonCommitting
-//    static @Nonnull Set<SemanticType> getContactPreferences(@Nonnull NonHostIdentity identity, @Nonnull Person contact) throws SQLException {
+//    static @Nonnull Set<SemanticType> getContactPreferences(@Nonnull NonHostIdentity identity, @Nonnull Person contact) throws AbortException {
 //        @Nonnull Set<SemanticType> preferences = getTypes(connection, identity, "contact_preference", "contact = " + contact);
 //        if (preferences.isEmpty() && contact.hasBeenMerged()) return getContactPreferences(connection, identity, contact);
 //        return preferences;
@@ -182,7 +182,7 @@ public final class ContactModule implements StateModule {
 //     * @param preferences the preferences to be set for the given contact.
 //     */
 //    @NonCommitting
-//    static void setContactPreferences(@Nonnull NonHostIdentity identity, @Nonnull Person contact, @Nonnull Set<SemanticType> preferences) throws SQLException {
+//    static void setContactPreferences(@Nonnull NonHostIdentity identity, @Nonnull Person contact, @Nonnull Set<SemanticType> preferences) throws AbortException {
 //        try (@Nonnull Statement statement = connection.createStatement()) {
 //            int updated = statement.executeUpdate("DELETE FROM contact_preference WHERE identity = " + identity + " AND contact = " + contact);
 //            if (updated == 0 && contact.hasBeenMerged()) {
@@ -203,7 +203,7 @@ public final class ContactModule implements StateModule {
 //     * @return the permissions of the given contact at the given identity.
 //     */
 //    @NonCommitting
-//    static @Nonnull Set<SemanticType> getContactPermissions(@Nonnull NonHostIdentity identity, @Nonnull Person contact, boolean inherited) throws SQLException {
+//    static @Nonnull Set<SemanticType> getContactPermissions(@Nonnull NonHostIdentity identity, @Nonnull Person contact, boolean inherited) throws AbortException {
 //        @Nonnull Set<SemanticType> permissions = getTypes(connection, identity, "contact_permission", "contact = " + contact);
 //        if (permissions.isEmpty() && contact.hasBeenMerged()) return getContactPermissions(connection, identity, contact, inherited);
 //        if (inherited) {
@@ -223,7 +223,7 @@ public final class ContactModule implements StateModule {
 //     * @param permissions the permissions to be added to the given contact.
 //     */
 //    @NonCommitting
-//    static void addContactPermissions(@Nonnull NonHostIdentity identity, @Nonnull Person contact, @Nonnull Set<SemanticType> permissions) throws SQLException {
+//    static void addContactPermissions(@Nonnull NonHostIdentity identity, @Nonnull Person contact, @Nonnull Set<SemanticType> permissions) throws AbortException {
 //        try {
 //            addTypes(connection, identity, "contact_permission", "contact", contact.getNumber(), permissions);
 //        } catch (@Nonnull SQLException exception) {
@@ -240,7 +240,7 @@ public final class ContactModule implements StateModule {
 //     * @param permissions the permissions to be removed from the given contact.
 //     */
 //    @NonCommitting
-//    static void removeContactPermissions(@Nonnull NonHostIdentity identity, @Nonnull Person contact, @Nonnull Set<SemanticType> permissions) throws SQLException {
+//    static void removeContactPermissions(@Nonnull NonHostIdentity identity, @Nonnull Person contact, @Nonnull Set<SemanticType> permissions) throws AbortException {
 //        int removed = removeTypes(connection, identity, "contact_permission", "contact", contact.getNumber(), permissions);
 //        if (removed == 0 && !permissions.isEmpty() && contact.hasBeenMerged()) removeTypes(connection, identity, "contact_permission", "contact", contact.getNumber(), permissions);
 //    }
@@ -254,7 +254,7 @@ public final class ContactModule implements StateModule {
 //     * @return the authentications of the given contact at the given identity.
 //     */
 //    @NonCommitting
-//    static @Nonnull Set<SemanticType> getContactAuthentications(@Nonnull NonHostIdentity identity, @Nonnull Person contact, boolean inherited) throws SQLException {
+//    static @Nonnull Set<SemanticType> getContactAuthentications(@Nonnull NonHostIdentity identity, @Nonnull Person contact, boolean inherited) throws AbortException {
 //        @Nonnull Set<SemanticType> authentications = getTypes(connection, identity, "contact_authentication", "contact = " + contact);
 //        if (authentications.isEmpty() && contact.hasBeenMerged()) return getContactAuthentications(connection, identity, contact, inherited);
 //        if (inherited) {
@@ -274,7 +274,7 @@ public final class ContactModule implements StateModule {
 //     * @param authentications the authentications to be added to the given contact.
 //     */
 //    @NonCommitting
-//    static void addContactAuthentications(@Nonnull NonHostIdentity identity, @Nonnull Person contact, @Nonnull Set<SemanticType> authentications) throws SQLException {
+//    static void addContactAuthentications(@Nonnull NonHostIdentity identity, @Nonnull Person contact, @Nonnull Set<SemanticType> authentications) throws AbortException {
 //        try {
 //            addTypes(connection, identity, "contact_authentication", "contact", contact.getNumber(), authentications);
 //        } catch (@Nonnull SQLException exception) {
@@ -291,7 +291,7 @@ public final class ContactModule implements StateModule {
 //     * @param authentications the authentications to be removed from the given contact.
 //     */
 //    @NonCommitting
-//    static void removeContactAuthentications(@Nonnull NonHostIdentity identity, @Nonnull Person contact, @Nonnull Set<SemanticType> authentications) throws SQLException {
+//    static void removeContactAuthentications(@Nonnull NonHostIdentity identity, @Nonnull Person contact, @Nonnull Set<SemanticType> authentications) throws AbortException {
 //        int removed = removeTypes(connection, identity, "contact_authentication", "contact", contact.getNumber(), authentications);
 //        if (removed == 0 && contact.hasBeenMerged()) removeTypes(connection, identity, "contact_authentication", "contact", contact.getNumber(), authentications);
 //    }

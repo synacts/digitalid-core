@@ -58,7 +58,7 @@ public interface Identity extends Storable<Identity, Object> {
      * @return whether this identity has been merged.
      */
     @NonCommitting
-    public boolean hasBeenMerged(@Nonnull SQLException exception) throws SQLException;
+    public boolean hasBeenMerged(@Nonnull SQLException exception) throws AbortException;
     
     
     /**

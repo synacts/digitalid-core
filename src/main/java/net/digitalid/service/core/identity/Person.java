@@ -43,7 +43,7 @@ public abstract class Person extends NonHostIdentityClass {
     
     @Override
     @NonCommitting
-    public final boolean hasBeenMerged(@Nonnull SQLException exception) throws SQLException {
+    public final boolean hasBeenMerged(@Nonnull SQLException exception) throws AbortException {
         final @Nullable InternalNonHostIdentifier successor = Successor.get(getAddress());
         if (successor != null && successor.isMapped()) {
             final @Nonnull InternalNonHostIdentity person = successor.getMappedIdentity();

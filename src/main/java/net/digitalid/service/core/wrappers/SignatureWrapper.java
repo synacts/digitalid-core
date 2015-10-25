@@ -536,7 +536,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
     @Pure
     @Locked
     @NonCommitting
-    public @Nullable Agent getAgent(@Nonnull NonHostEntity entity) throws SQLException {
+    public @Nullable Agent getAgent(@Nonnull NonHostEntity entity) throws AbortException {
         return null;
     }
     
@@ -556,7 +556,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
     @Pure
     @Locked
     @NonCommitting
-    public @Nonnull Agent getAgentCheckedAndRestricted(@Nonnull NonHostEntity entity, @Nullable PublicKey publicKey) throws SQLException, PacketException {
+    public @Nonnull Agent getAgentCheckedAndRestricted(@Nonnull NonHostEntity entity, @Nullable PublicKey publicKey) throws AbortException, PacketException {
         throw new PacketException(PacketErrorCode.AUTHORIZATION, "The element was not signed by an authorized agent.");
     }
     

@@ -83,7 +83,7 @@ public abstract class HostTable extends ClientTable implements HostData {
     @Locked
     @Override
     @NonCommitting
-    public abstract @Nonnull Block exportAll(@Nonnull Host host) throws SQLException;
+    public abstract @Nonnull Block exportAll(@Nonnull Host host) throws AbortException;
     
     @Locked
     @Override

@@ -39,6 +39,6 @@ public abstract class ReadOnlyNonNullableProperty<V> extends ReadOnlyProperty<V,
     @Pure
     @Locked
     @NonCommitting
-    public abstract @Nonnull @Validated V get() throws SQLException;
+    public abstract @Nonnull @Validated V get() throws AbortException;
     
 }

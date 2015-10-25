@@ -25,9 +25,8 @@ public abstract class NonRequestingEncodingFactory<O, E> extends AbstractEncodin
     
     @Pure
     @Override
-    public @Nullable O decodeNullable(@Nonnull E entity, @Nullable @NonEncoding Block block) throws InvalidEncodingException {
-        if (block != null) return decodeNonNullable(entity, block);
-        else return null;
+    public final @Nullable O decodeNullable(@Nonnull E entity, @Nullable @NonEncoding Block block) throws InvalidEncodingException {
+        return block == null ? null : decodeNonNullable(entity, block);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */

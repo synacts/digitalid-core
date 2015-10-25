@@ -159,14 +159,14 @@ public final class Int64Wrapper extends Wrapper<Int64Wrapper> {
         
         @Override
         @NonCommitting
-        public void setNonNullable(@Nonnull Int64Wrapper wrapper, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+        public void setNonNullable(@Nonnull Int64Wrapper wrapper, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws AbortException {
             preparedStatement.setLong(parameterIndex, wrapper.value);
         }
         
         @Pure
         @Override
         @NonCommitting
-        public @Nullable Int64Wrapper getNullable(@Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+        public @Nullable Int64Wrapper getNullable(@Nonnull ResultSet resultSet, int columnIndex) throws AbortException {
             final long value = resultSet.getLong(columnIndex);
             if (resultSet.wasNull()) return null;
             else return new Int64Wrapper(getType(), value);
@@ -192,7 +192,7 @@ public final class Int64Wrapper extends Wrapper<Int64Wrapper> {
      * The factory for the value type of this wrapper.
      */
     @Immutable
-    public static final class ValueFactory extends Wrapper.ValueFactory<Long, Int64Wrapper> {
+    public static final class ValueFactory extends Wrapper.ValueEncodingFactory<Long, Int64Wrapper> {
         
         /**
          * Creates a new factory with the given type.

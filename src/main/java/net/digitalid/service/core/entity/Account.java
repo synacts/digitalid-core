@@ -110,7 +110,7 @@ public abstract class Account extends EntityClass {
      */
     @Pure
     @NonCommitting
-    public static @Nonnull Account getNotNull(@Nonnull Host host, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+    public static @Nonnull Account getNotNull(@Nonnull Host host, @Nonnull ResultSet resultSet, int columnIndex) throws AbortException {
         final @Nonnull Identity identity = IdentityClass.getNotNull(resultSet, columnIndex);
         if (identity instanceof InternalIdentity) return get(host, (InternalIdentity) identity);
         else throw new SQLException("The identity of " + identity.getAddress() + " is not internal.");

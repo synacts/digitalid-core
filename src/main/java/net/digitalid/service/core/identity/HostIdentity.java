@@ -76,7 +76,7 @@ public final class HostIdentity extends IdentityClass implements InternalIdentit
     @Pure
     @Override
     @NonCommitting
-    public boolean hasBeenMerged(@Nonnull SQLException exception) throws SQLException {
+    public boolean hasBeenMerged(@Nonnull SQLException exception) throws AbortException {
         Mapper.unmap(this);
         throw exception;
     }
