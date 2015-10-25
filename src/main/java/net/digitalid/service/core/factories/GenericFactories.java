@@ -2,8 +2,8 @@ package net.digitalid.service.core.factories;
 
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.encoding.AbstractEncodingFactory;
-import net.digitalid.utility.database.storing.AbstractStoringFactory;
 import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.database.storing.AbstractStoringFactory;
 
 /**
  * This class allows to store several generic factories in a single object.
@@ -13,6 +13,9 @@ import net.digitalid.utility.annotations.state.Immutable;
  *            In case no external information is needed for the reconstruction of an object, declare it as an {@link Object}.
  * @param <EF> the type of encoding factory that this class encapsulates.
  * @param <SF> the type of storing factory that this class encapsulates.
+ * 
+ * @see Factories
+ * @see ConceptFactories
  */
 @Immutable
 public abstract class GenericFactories<O, E, EF extends AbstractEncodingFactory<O, E>, SF extends AbstractStoringFactory<O, E>> {
@@ -29,7 +32,7 @@ public abstract class GenericFactories<O, E, EF extends AbstractEncodingFactory<
      * 
      * @return the encoding factory.
      */
-    public @Nonnull EF getEncodingFactory() {
+    public final @Nonnull EF getEncodingFactory() {
         return encodingFactory;
     }
     
@@ -45,7 +48,7 @@ public abstract class GenericFactories<O, E, EF extends AbstractEncodingFactory<
      * 
      * @return the storing factory.
      */
-    public @Nonnull SF getStoringFactory() {
+    public final @Nonnull SF getStoringFactory() {
         return storingFactory;
     }
     

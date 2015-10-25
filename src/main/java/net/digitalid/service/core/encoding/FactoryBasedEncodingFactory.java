@@ -18,6 +18,8 @@ import net.digitalid.utility.annotations.state.Pure;
  * @param <E> the type of the external object that is needed to decode a block, which is quite often an {@link Entity}.
  *            In case no external information is needed for the decoding of a block, declare it as an {@link Object}.
  * @param <K> the type of the objects that the other factory encodes and decodes (usually as a key for the objects of this factory).
+ * 
+ * @see SubtypingEncodingFactory
  */
 @Immutable
 public abstract class FactoryBasedEncodingFactory<O, E, K> extends AbstractEncodingFactory<O, E> {
@@ -37,7 +39,7 @@ public abstract class FactoryBasedEncodingFactory<O, E, K> extends AbstractEncod
      * @param type the semantic type that corresponds to the encoding class.
      * @param keyFactory the factory used to encode and decode the object's key.
      * 
-     * @require type.isBasedOn(factory.getType()) : "The given type is based on the type of the factory.";
+     * @require type.isBasedOn(keyFactory.getType()) : "The given type is based on the type of the key factory.";
      */
     protected FactoryBasedEncodingFactory(@Nonnull @Loaded SemanticType type, @Nonnull AbstractEncodingFactory<K, E> keyFactory) {
         super(type);
@@ -89,7 +91,7 @@ public abstract class FactoryBasedEncodingFactory<O, E, K> extends AbstractEncod
     
     @Pure
     @Override
-    public @Nonnull O decodeNonNullable(@Nonnull E entity, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+    public final @Nonnull O decodeNonNullable(@Nonnull E entity, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
         assert block.getType().isBasedOn(getType()) : "The block is based on the type of this factory.";
         
         return getObject(entity, keyFactory.decodeNonNullable(entity, block));

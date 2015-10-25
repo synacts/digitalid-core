@@ -35,7 +35,7 @@ public abstract class AbstractEncodingFactory<O, E> {
     /**
      * Stores the semantic type that corresponds to the encodable class.
      */
-    private final @Nonnull @Loaded SemanticType type;
+    private final @Nonnull SemanticType type;
     
     /**
      * Returns the semantic type that corresponds to the encodable class.
@@ -43,8 +43,20 @@ public abstract class AbstractEncodingFactory<O, E> {
      * @return the semantic type that corresponds to the encodable class.
      */
     @Pure
-    public final @Nonnull @Loaded SemanticType getType() {
+    public final @Nonnull SemanticType getType() {
         return type;
+    }
+    
+    /**
+     * Returns a subtyping encoding factory with the given type based on this factory.
+     * 
+     * @return a subtyping encoding factory with the given type based on this factory.
+     * 
+     * @require type.isBasedOn(getType()) : "The given type is based on the type of this factory.";
+     */
+    @Pure
+    public final @Nonnull SubtypingEncodingFactory<O, E> setType(@Nonnull SemanticType type) {
+        return SubtypingEncodingFactory.get(type, this);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encoding –––––––––––––––––––––––––––––––––––––––––––––––––– */

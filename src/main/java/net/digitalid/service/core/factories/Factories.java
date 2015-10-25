@@ -3,6 +3,7 @@ package net.digitalid.service.core.factories;
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.encoding.AbstractEncodingFactory;
 import net.digitalid.service.core.entity.Entity;
+import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.database.storing.AbstractStoringFactory;
@@ -40,6 +41,20 @@ public final class Factories<O, E> extends GenericFactories<O, E, AbstractEncodi
     @Pure
     public static @Nonnull <O, E> Factories<O, E> get(@Nonnull AbstractEncodingFactory<O, E> encodingFactory, @Nonnull AbstractStoringFactory<O, E> storingFactory) {
         return new Factories<>(encodingFactory, storingFactory);
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Subtyping –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Returns factories with the encoding factory subtyping to the given type.
+     * 
+     * @return factories with the encoding factory subtyping to the given type.
+     * 
+     * @require type.isBasedOn(getEncodingFactory().getType()) : "The given type is based on the type of the encoding factory.";
+     */
+    @Pure
+    public final @Nonnull Factories<O, E> setType(@Nonnull SemanticType type) {
+        return new Factories<>(getEncodingFactory().setType(type), getStoringFactory());
     }
     
 }
