@@ -1,4 +1,4 @@
-package net.digitalid.service.core.property;
+package net.digitalid.service.core.concept.property;
 
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.annotations.Loaded;
@@ -9,6 +9,8 @@ import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.factories.ConceptFactories;
 import net.digitalid.service.core.factories.Factories;
 import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.property.RequiredAuthorization;
+import net.digitalid.service.core.property.ValueValidator;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;

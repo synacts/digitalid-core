@@ -1,4 +1,4 @@
-package net.digitalid.service.core.property.nonnullable;
+package net.digitalid.service.core.concept.property.nonnullable;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -19,7 +19,7 @@ import net.digitalid.service.core.handler.Action;
 import net.digitalid.service.core.handler.Method;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.identity.SemanticType;
-import net.digitalid.service.core.property.ConceptPropertyInternalAction;
+import net.digitalid.service.core.concept.property.ConceptPropertyInternalAction;
 import net.digitalid.service.core.wrappers.Block;
 import net.digitalid.service.core.wrappers.SignatureWrapper;
 import net.digitalid.service.core.wrappers.TupleWrapper;

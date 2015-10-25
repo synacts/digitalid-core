@@ -1,17 +1,17 @@
 package net.digitalid.service.core.concept;
 
-import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.annotations.OnlyForClients;
 import net.digitalid.service.core.annotations.OnlyForHosts;
+import net.digitalid.service.core.concept.property.ConceptProperty;
+import net.digitalid.service.core.concept.property.ConceptPropertyTable;
 import net.digitalid.service.core.encoding.Encodable;
 import net.digitalid.service.core.entity.Account;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.entity.Role;
-import net.digitalid.service.core.property.ConceptProperty;
-import net.digitalid.service.core.property.ConceptPropertyTable;
+import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
@@ -172,7 +172,7 @@ public abstract class Concept<C extends Concept<C, E, K>, E extends Entity<E>, K
         for (final @Nonnull ConceptProperty<?, C, E> property : properties) {
             if (property.getTable().equals(table)) return property;
         }
-        throw new SQLException("No property is registered for the given table.");
+        throw AbortException.get("No property is registered for the given table.");
     }
     
     /**

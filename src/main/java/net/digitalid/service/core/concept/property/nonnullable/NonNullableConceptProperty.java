@@ -1,12 +1,13 @@
-package net.digitalid.service.core.property.nonnullable;
+package net.digitalid.service.core.concept.property.nonnullable;
 
-import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.concept.Concept;
 import net.digitalid.service.core.entity.Entity;
-import net.digitalid.service.core.property.ConceptProperty;
+import net.digitalid.service.core.concept.property.ConceptProperty;
+import net.digitalid.service.core.exceptions.abort.AbortException;
+import net.digitalid.service.core.property.nonnullable.WriteableNonNullableProperty;
 import net.digitalid.service.core.synchronizer.Synchronizer;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;

@@ -1,7 +1,7 @@
 package net.digitalid.service.core.property.nonnullable;
 
-import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.property.ValueValidator;
 import net.digitalid.utility.annotations.state.Validated;
 import net.digitalid.utility.database.annotations.Committing;

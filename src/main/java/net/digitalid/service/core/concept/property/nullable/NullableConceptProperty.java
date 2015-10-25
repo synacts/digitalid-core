@@ -1,11 +1,12 @@
-package net.digitalid.service.core.property.nullable;
+package net.digitalid.service.core.concept.property.nullable;
 
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.concept.Concept;
-import net.digitalid.service.core.property.ConceptProperty;
+import net.digitalid.service.core.concept.property.ConceptProperty;
 import net.digitalid.service.core.property.ValueValidator;
-import net.digitalid.service.core.property.nonnullable.NonNullableConceptPropertyTable;
+import net.digitalid.service.core.concept.property.nonnullable.NonNullableConceptPropertyTable;
+import net.digitalid.service.core.property.nullable.NullableProperty;
 import net.digitalid.utility.annotations.state.Pure;
 
 /**

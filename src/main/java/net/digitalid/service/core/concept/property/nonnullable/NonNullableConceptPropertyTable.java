@@ -1,4 +1,4 @@
-package net.digitalid.service.core.property.nonnullable;
+package net.digitalid.service.core.concept.property.nonnullable;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -17,7 +17,7 @@ import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.host.Host;
-import net.digitalid.service.core.property.ConceptPropertyTable;
+import net.digitalid.service.core.concept.property.ConceptPropertyTable;
 import net.digitalid.service.core.wrappers.Block;
 import net.digitalid.service.core.wrappers.ListWrapper;
 import net.digitalid.service.core.wrappers.TupleWrapper;

@@ -1,4 +1,4 @@
-package net.digitalid.service.core.property.nonnullable;
+package net.digitalid.service.core.concept.property.nonnullable;
 
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.annotations.Loaded;
@@ -8,8 +8,8 @@ import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.factories.ConceptFactories;
 import net.digitalid.service.core.factories.Factories;
 import net.digitalid.service.core.identity.SemanticType;
-import net.digitalid.service.core.property.ConceptPropertyFactory;
-import net.digitalid.service.core.property.ConceptPropertyInternalAction;
+import net.digitalid.service.core.concept.property.ConceptPropertyFactory;
+import net.digitalid.service.core.concept.property.ConceptPropertyInternalAction;
 import net.digitalid.service.core.property.RequiredAuthorization;
 import net.digitalid.service.core.property.ValueValidator;
 import net.digitalid.service.core.wrappers.TupleWrapper;

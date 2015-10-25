@@ -1,12 +1,12 @@
 package net.digitalid.service.core.concept;
 
-import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.entity.Entity;
-import net.digitalid.service.core.property.ConceptPropertyTable;
+import net.digitalid.service.core.concept.property.ConceptPropertyTable;
+import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.annotations.elements.NonNullableElements;

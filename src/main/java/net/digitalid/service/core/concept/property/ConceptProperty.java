@@ -1,14 +1,14 @@
-package net.digitalid.service.core.property;
+package net.digitalid.service.core.concept.property;
 
-import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.concept.Concept;
 import net.digitalid.service.core.entity.Entity;
-import net.digitalid.service.core.property.extensible.ExtensibleConceptProperty;
-import net.digitalid.service.core.property.indexed.IndexedConceptProperty;
-import net.digitalid.service.core.property.nonnullable.NonNullableConceptProperty;
-import net.digitalid.service.core.property.nullable.NullableConceptProperty;
+import net.digitalid.service.core.concept.property.extensible.ExtensibleConceptProperty;
+import net.digitalid.service.core.concept.property.indexed.IndexedConceptProperty;
+import net.digitalid.service.core.concept.property.nonnullable.NonNullableConceptProperty;
+import net.digitalid.service.core.concept.property.nullable.NullableConceptProperty;
+import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;

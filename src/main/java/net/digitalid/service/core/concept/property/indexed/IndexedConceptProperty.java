@@ -1,4 +1,4 @@
-package net.digitalid.service.core.property.indexed;
+package net.digitalid.service.core.concept.property.indexed;
 
 /**
  * Description.

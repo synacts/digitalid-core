@@ -1,4 +1,4 @@
-package net.digitalid.service.core.property;
+package net.digitalid.service.core.concept.property;
 
 import java.io.IOException;
 import java.sql.SQLException;
