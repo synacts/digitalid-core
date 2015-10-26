@@ -1,5 +1,7 @@
 package net.digitalid.service.core.wrappers;
 
+import net.digitalid.service.core.auxiliary.None;
+
 import java.math.BigInteger;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -171,7 +173,7 @@ public final class HostSignatureWrapper extends SignatureWrapper {
         
         final @Nonnull PublicKey publicKey;
         if (signer.getHostIdentifier().equals(HostIdentifier.DIGITALID)) {
-            publicKey = PublicKeyChain.FACTORY.decodeNonNullable(Cache.getStaleAttributeContent(HostIdentity.DIGITALID, null, PublicKeyChain.TYPE)).getKey(getNonNullableTime());
+            publicKey = PublicKeyChain.ENCODING_FACTORY.decodeNonNullable(None.OBJECT, Cache.getStaleAttributeContent(HostIdentity.DIGITALID, null, PublicKeyChain.TYPE)).getKey(getNonNullableTime());
         } else {
             publicKey = Cache.getPublicKey(signer.getHostIdentifier(), getNonNullableTime());
         }
