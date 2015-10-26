@@ -1,5 +1,6 @@
 package net.digitalid.service.core.cryptography;
 
+import net.digitalid.service.core.encoding.NonRequestingEncodingFactory;
 import java.math.BigInteger;
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.annotations.BasedOn;
@@ -126,18 +127,18 @@ public final class Exponent extends Number<Exponent> {
         return new Exponent(next);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encodable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * The factory for this class.
+     * The encoding factory for this class.
      */
     @Immutable
-    public static final class Factory extends BlockBasedSimpleNonConceptFactory<Exponent> {
+    public static final class EncodingFactory extends NonRequestingEncodingFactory<Exponent,Object> {
         
         /**
-         * Creates a new factory.
+         * Creates a new encoding factory with the given type.
          */
-        private Factory() {
+        private EncodingFactory() {
             super(TYPE);
         }
         
@@ -149,7 +150,7 @@ public final class Exponent extends Number<Exponent> {
         
         @Pure
         @Override
-        public @Nonnull Exponent decodeNonNullable(@Nonnull @BasedOn("exponent.group@core.digitalid.net") Block block) throws InvalidEncodingException {
+        public @Nonnull Exponent decodeNonNullable(@Nonnull Object none, @Nonnull @BasedOn("exponent.group@core.digitalid.net") Block block) throws InvalidEncodingException {
             assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
             
             return get(block);
@@ -160,12 +161,12 @@ public final class Exponent extends Number<Exponent> {
     /**
      * Stores the factory of this class.
      */
-    public static final @Nonnull Factory FACTORY = new Factory();
+    public static final @Nonnull EncodingFactory ENCODING_FACTORY = new EncodingFactory();
     
     @Pure
     @Override
-    public @Nonnull Factory getFactory() {
-        return FACTORY;
+    public @Nonnull EncodingFactory getEncodingFactory() {
+        return ENCODING_FACTORY;
     }
     
 }

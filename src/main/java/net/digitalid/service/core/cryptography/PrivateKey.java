@@ -5,9 +5,12 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.annotations.BasedOn;
 import net.digitalid.service.core.annotations.Matching;
+import net.digitalid.service.core.auxiliary.None;
+import net.digitalid.service.core.encoding.Encodable;
+import net.digitalid.service.core.encoding.Encode;
+import net.digitalid.service.core.encoding.NonRequestingEncodingFactory;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.identity.SemanticType;
-import net.digitalid.utility.database.storing.Storable;
 import net.digitalid.service.core.wrappers.Block;
 import net.digitalid.service.core.wrappers.IntegerWrapper;
 import net.digitalid.service.core.wrappers.TupleWrapper;
@@ -20,7 +23,7 @@ import net.digitalid.utility.collections.readonly.ReadOnlyArray;
  * This class stores the groups and exponents of a host's private key.
  */
 @Immutable
-public final class PrivateKey implements Storable<PrivateKey> {
+public final class PrivateKey implements Encodable<PrivateKey, Object> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -269,18 +272,18 @@ public final class PrivateKey implements Storable<PrivateKey> {
         return "Private Key [n = " + compositeGroup.getModulus() + ", p = " + p + ", q = " + q + ", d = " + d + ", z^2 = " + squareGroup.getModulus() + ", x = " + x + "]";
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encodable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * The factory for this class.
+     * The encoding factory for this class.
      */
     @Immutable
-    public static final class Factory extends BlockBasedSimpleNonConceptFactory<PrivateKey> {
+    public static final class EncodingFactory extends NonRequestingEncodingFactory<PrivateKey,Object> {
         
         /**
-         * Creates a new factory.
+         * Creates a new encoding factory with the given type.
          */
-        private Factory() {
+        private EncodingFactory() {
             super(TYPE);
         }
         
@@ -288,26 +291,26 @@ public final class PrivateKey implements Storable<PrivateKey> {
         @Override
         public @Nonnull Block encodeNonNullable(@Nonnull PrivateKey privateKey) {
             final @Nonnull FreezableArray<Block> elements = FreezableArray.get(6);
-            elements.set(0, Block.fromNonNullable(privateKey.compositeGroup, COMPOSITE_GROUP));
+            elements.set(0, Encode.nonNullable(privateKey.compositeGroup, COMPOSITE_GROUP));
             elements.set(1, IntegerWrapper.encodeNonNullable(P, privateKey.p));
             elements.set(2, IntegerWrapper.encodeNonNullable(Q, privateKey.q));
-            elements.set(3, Block.fromNonNullable(privateKey.d, D));
-            elements.set(4, Block.fromNonNullable(privateKey.squareGroup, SQUARE_GROUP));
-            elements.set(5, Block.fromNonNullable(privateKey.x, X));
+            elements.set(3, Encode.nonNullable(privateKey.d, D));
+            elements.set(4, Encode.nonNullable(privateKey.squareGroup, SQUARE_GROUP));
+            elements.set(5, Encode.nonNullable(privateKey.x, X));
             return TupleWrapper.encode(TYPE, elements.freeze());
         }
         
         @Pure
         @Override
-        public @Nonnull PrivateKey decodeNonNullable(@Nonnull @BasedOn("private.key.host@core.digitalid.net") Block block) throws InvalidEncodingException {
+        public @Nonnull PrivateKey decodeNonNullable(@Nonnull Object none, @Nonnull @BasedOn("private.key.host@core.digitalid.net") Block block) throws InvalidEncodingException {
             assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
             
             final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(block).getNonNullableElements(5);
-            final @Nonnull GroupWithKnownOrder compositeGroup = GroupWithKnownOrder.FACTORY.decodeNonNullable(elements.getNonNullable(0));
+            final @Nonnull GroupWithKnownOrder compositeGroup = GroupWithKnownOrder.ENCODING_FACTORY.decodeNonNullable(None.OBJECT, elements.getNonNullable(0));
             final @Nonnull BigInteger p = IntegerWrapper.decodeNonNullable(elements.getNonNullable(1));
             final @Nonnull BigInteger q = IntegerWrapper.decodeNonNullable(elements.getNonNullable(2));
             final @Nonnull Exponent d = Exponent.get(elements.getNonNullable(3));
-            final @Nonnull GroupWithKnownOrder squareGroup = GroupWithKnownOrder.FACTORY.decodeNonNullable(elements.getNonNullable(4));
+            final @Nonnull GroupWithKnownOrder squareGroup = GroupWithKnownOrder.ENCODING_FACTORY.decodeNonNullable(None.OBJECT, elements.getNonNullable(4));
             final @Nonnull Exponent x = Exponent.get(elements.getNonNullable(5));
             
             if (!compositeGroup.getModulus().equals(p.multiply(q))) throw new InvalidEncodingException("The modulus of the composite group has to be the product of p and q.");
@@ -320,12 +323,12 @@ public final class PrivateKey implements Storable<PrivateKey> {
     /**
      * Stores the factory of this class.
      */
-    public static final @Nonnull Factory FACTORY = new Factory();
+    public static final @Nonnull EncodingFactory ENCODING_FACTORY = new EncodingFactory();
     
     @Pure
     @Override
-    public @Nonnull Factory getFactory() {
-        return FACTORY;
+    public @Nonnull EncodingFactory getEncodingFactory() {
+        return ENCODING_FACTORY;
     }
     
 }

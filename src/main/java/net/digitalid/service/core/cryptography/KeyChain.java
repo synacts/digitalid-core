@@ -2,9 +2,11 @@ package net.digitalid.service.core.cryptography;
 
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.auxiliary.Time;
+import net.digitalid.service.core.encoding.Encodable;
+import net.digitalid.service.core.encoding.Encode;
+import net.digitalid.service.core.encoding.NonRequestingEncodingFactory;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.identity.SemanticType;
-import net.digitalid.utility.database.storing.Storable;
 import net.digitalid.service.core.wrappers.Block;
 import net.digitalid.service.core.wrappers.ListWrapper;
 import net.digitalid.service.core.wrappers.TupleWrapper;
@@ -30,7 +32,7 @@ import net.digitalid.utility.collections.tuples.ReadOnlyPair;
  * @see PrivateKeyChain
  */
 @Immutable
-abstract class KeyChain<K extends Storable<K>, C extends KeyChain<K, C>> implements Storable<C> {
+abstract class KeyChain<K extends Encodable<K, Object>, C extends KeyChain<K, C>> implements Encodable<C, Object> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Items –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -108,7 +110,7 @@ abstract class KeyChain<K extends Storable<K>, C extends KeyChain<K, C>> impleme
                 break;
             }
         }
-        return getFactory().createKeyChain(copy.freeze());
+        return getEncodingFactory().createKeyChain(copy.freeze());
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -132,15 +134,15 @@ abstract class KeyChain<K extends Storable<K>, C extends KeyChain<K, C>> impleme
         return items.toString();
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encodable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * The factory for this class.
+     * The encoding factory for this class.
      */
     @Immutable
-    public static abstract class Factory<K extends Storable<K>, C extends KeyChain<K, C>> extends BlockBasedSimpleNonConceptFactory<C> {
+    public static abstract class EncodingFactory<K extends Encodable<K, Object>, C extends KeyChain<K, C>> extends NonRequestingEncodingFactory<C, Object> {
         
-        /**
+    	/**
          * Stores the type of the key chain items.
          */
         private final @Nonnull SemanticType itemType;
@@ -148,7 +150,7 @@ abstract class KeyChain<K extends Storable<K>, C extends KeyChain<K, C>> impleme
         /**
          * Stores the factory that retrieves a key from a block.
          */
-        private final @Nonnull SimpleNonConceptFactory<K> factory;
+        private final @Nonnull NonRequestingEncodingFactory<K, Object> factory;
         
         /**
          * Creates a new factory with the given parameters.
@@ -157,13 +159,12 @@ abstract class KeyChain<K extends Storable<K>, C extends KeyChain<K, C>> impleme
          * @param itemType the type of the key chain items.
          * @param factory the factory that retrieves a key from a block.
          */
-        protected Factory(@Nonnull SemanticType chainType, @Nonnull SemanticType itemType, @Nonnull SimpleNonConceptFactory<K> factory) {
+        protected EncodingFactory(@Nonnull SemanticType chainType, @Nonnull SemanticType itemType, @Nonnull NonRequestingEncodingFactory<K, Object> factory) {
             super(chainType);
             
             this.itemType = itemType;
             this.factory = factory;
         }
-        
         /**
          * Creates a new key chain with the given items.
          * 
@@ -183,8 +184,8 @@ abstract class KeyChain<K extends Storable<K>, C extends KeyChain<K, C>> impleme
             final @Nonnull FreezableArrayList<Block> elements = FreezableArrayList.getWithCapacity(items.size());
             for (final @Nonnull ReadOnlyPair<Time, K> item : items) {
                 final @Nonnull FreezableArray<Block> pair = FreezableArray.get(2);
-                pair.set(0, Block.fromNonNullable(item.getNonNullableElement0()));
-                pair.set(1, Block.fromNonNullable(item.getNonNullableElement1()));
+                pair.set(0, Encode.nonNullable(item.getNonNullableElement0()));
+                pair.set(1, Encode.nonNullable(item.getNonNullableElement1()));
                 elements.add(TupleWrapper.encode(itemType, pair.freeze()));
             }
             return ListWrapper.encode(getType(), elements.freeze());
@@ -192,7 +193,7 @@ abstract class KeyChain<K extends Storable<K>, C extends KeyChain<K, C>> impleme
         
         @Pure
         @Override
-        public @Nonnull C decodeNonNullable(@Nonnull Block block) throws InvalidEncodingException {
+        public @Nonnull C decodeNonNullable(@Nonnull Object none, @Nonnull Block block) throws InvalidEncodingException {
             assert block.getType().isBasedOn(getType()) : "The block is based on the indicated type.";
             
             final @Nonnull ReadOnlyList<Block> elements = ListWrapper.decodeNonNullableElements(block);
@@ -201,8 +202,8 @@ abstract class KeyChain<K extends Storable<K>, C extends KeyChain<K, C>> impleme
             
             for (final @Nonnull Block element : elements) {
                 final @Nonnull ReadOnlyArray<Block> pair = TupleWrapper.decode(element).getNonNullableElements(2);
-                final @Nonnull Time time = new Time(pair.getNonNullable(0));
-                final @Nonnull K key = factory.decodeNonNullable(pair.getNonNullable(1));
+                final @Nonnull Time time = Time.ENCODING_FACTORY.decodeNonNullable(none, pair.getNonNullable(0));
+                final @Nonnull K key = factory.decodeNonNullable(none, pair.getNonNullable(1));
                 items.add(FreezablePair.get(time, key).freeze());
             }
             
@@ -214,6 +215,6 @@ abstract class KeyChain<K extends Storable<K>, C extends KeyChain<K, C>> impleme
     
     @Pure
     @Override
-    public abstract @Nonnull Factory<K, C> getFactory();
+    public abstract @Nonnull EncodingFactory<K, C> getEncodingFactory();
     
 }

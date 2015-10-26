@@ -1,5 +1,7 @@
 package net.digitalid.service.core.cryptography;
 
+import net.digitalid.service.core.encoding.Encodable;
+
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.identity.SemanticType;
@@ -79,20 +81,19 @@ public final class PrivateKeyChain extends KeyChain<PrivateKey, PrivateKeyChain>
         return new PrivateKeyChain(items.freeze());
     }
     
-    
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encodable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * The factory for this class.
+     * The encoding factory for this class.
      */
     @Immutable
-    public static final class Factory extends KeyChain.Factory<PrivateKey, PrivateKeyChain> {
+    public static final class EncodingFactory extends KeyChain.EncodingFactory<PrivateKey, PrivateKeyChain> {
         
         /**
-         * Creates a new factory.
+         * Creates a new encoding factory based on the encoding factory of the key.
          */
-        protected Factory() {
-            super(TYPE, ITEM, PrivateKey.FACTORY);
+        protected EncodingFactory() {
+            super(TYPE, ITEM, PrivateKey.ENCODING_FACTORY);
         }
         
         @Pure
@@ -106,12 +107,12 @@ public final class PrivateKeyChain extends KeyChain<PrivateKey, PrivateKeyChain>
     /**
      * Stores the factory of this class.
      */
-    public static final @Nonnull Factory FACTORY = new Factory();
+    public static final @Nonnull EncodingFactory ENCODING_FACTORY = new EncodingFactory();
     
     @Pure
     @Override
-    public @Nonnull Factory getFactory() {
-        return FACTORY;
+    public @Nonnull EncodingFactory getEncodingFactory() {
+        return ENCODING_FACTORY;
     }
     
 }

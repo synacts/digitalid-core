@@ -1,5 +1,7 @@
 package net.digitalid.service.core.cryptography;
 
+import net.digitalid.service.core.encoding.Encode;
+
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.Random;
@@ -101,7 +103,7 @@ public final class KeyPair {
         final @Nonnull Exponent ro = compositeGroup.getRandomExponent();
         final @Nonnull Element to = ab.pow(ro);
         
-        final @Nonnull FreezableArray<Block> elements = FreezableArray.getNonNullable(Block.fromNonNullable(tu, PublicKey.TU), Block.fromNonNullable(ti, PublicKey.TI), Block.fromNonNullable(tv, PublicKey.TV), Block.fromNonNullable(to, PublicKey.TO));
+        final @Nonnull FreezableArray<Block> elements = FreezableArray.getNonNullable(Encode.nonNullable(tu, PublicKey.TU), Encode.nonNullable(ti, PublicKey.TI), Encode.nonNullable(tv, PublicKey.TV), Encode.nonNullable(to, PublicKey.TO));
         final @Nonnull Exponent t = Exponent.get(TupleWrapper.encode(PublicKey.TUPLE, elements.freeze()).getHash());
         
         final @Nonnull Exponent su = ru.subtract(t.multiply(eu));

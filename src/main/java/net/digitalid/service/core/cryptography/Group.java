@@ -6,8 +6,8 @@ import java.util.Random;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.annotations.BasedOn;
+import net.digitalid.service.core.encoding.Encodable;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.utility.database.storing.Storable;
 import net.digitalid.service.core.wrappers.Block;
 import net.digitalid.utility.annotations.math.Positive;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -20,7 +20,7 @@ import net.digitalid.utility.annotations.state.Pure;
  * @see GroupWithUnknownOrder
  */
 @Immutable
-public abstract class Group<G extends Group<G>> implements Storable<G> {
+public abstract class Group<G extends Group<G>> implements Encodable<G,Object> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Modulus –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -127,7 +127,8 @@ public abstract class Group<G extends Group<G>> implements Storable<G> {
     public final boolean equals(@Nullable Object object) {
         if (object == this) return true;
         if (object == null || !(object instanceof Group)) return false;
-        final @Nonnull Group<?> other = (Group) object;
+        @SuppressWarnings("rawtypes")
+		final @Nonnull Group<?> other = (Group) object;
         return this.modulus.equals(other.modulus);
     }
     

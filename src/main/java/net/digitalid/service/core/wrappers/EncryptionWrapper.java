@@ -278,7 +278,7 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
         
         this.time = Time.ENCODING_FACTORY.decodeNonNullable(None.OBJECT, tuple.getNonNullableElement(0));
         
-        this.initializationVector = InitializationVector.FACTORY.decodeNullable(None.OBJECT, tuple.getNullableElement(3));
+        this.initializationVector = InitializationVector.STORING_FACTORY.decodeNullable(None.OBJECT, tuple.getNullableElement(3));
         final @Nullable Block encryptedKey = tuple.getNullableElement(2);
         
         if (tuple.isElementNull(1)) {

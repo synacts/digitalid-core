@@ -1,13 +1,12 @@
 package net.digitalid.service.core.cryptography;
 
-import net.digitalid.service.core.encoding.Encodable;
-
 import java.math.BigInteger;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.utility.database.storing.Storable;
+import net.digitalid.service.core.encoding.Encodable;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.database.storing.Storable;
 
 /**
  * A number has a value and is {@link Storable storable}.
@@ -63,7 +62,8 @@ public abstract class Number<E extends Number<E>> implements Encodable<E,Object>
     public final boolean equals(@Nullable Object object) {
         if (object == this) return true;
         if (object == null || !(object instanceof Number)) return false;
-        final @Nonnull Number<?> other = (Number) object;
+        @SuppressWarnings("rawtypes")
+		final @Nonnull Number<?> other = (Number) object;
         return value.equals(other.value);
     }
     

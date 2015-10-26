@@ -3,9 +3,12 @@ package net.digitalid.service.core.cryptography;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.annotations.BasedOn;
+import net.digitalid.service.core.auxiliary.None;
+import net.digitalid.service.core.encoding.Encodable;
+import net.digitalid.service.core.encoding.Encode;
+import net.digitalid.service.core.encoding.NonRequestingEncodingFactory;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.identity.SemanticType;
-import net.digitalid.utility.database.storing.Storable;
 import net.digitalid.service.core.wrappers.Block;
 import net.digitalid.service.core.wrappers.TupleWrapper;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -19,7 +22,7 @@ import net.digitalid.utility.collections.readonly.ReadOnlyArray;
  * @invariant verifySubgroupProof() : "The elements au, ai, av and ao are in the subgroup of ab.";
  */
 @Immutable
-public final class PublicKey implements Storable<PublicKey> {
+public final class PublicKey implements Encodable<PublicKey, Object> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -308,7 +311,7 @@ public final class PublicKey implements Storable<PublicKey> {
         final @Nonnull Element tv = ab.pow(sv).multiply(av.pow(t));
         final @Nonnull Element to = ab.pow(so).multiply(ao.pow(t));
         
-        final @Nonnull FreezableArray<Block> elements = FreezableArray.getNonNullable(Block.fromNonNullable(tu, PublicKey.TU), Block.fromNonNullable(ti, PublicKey.TI), Block.fromNonNullable(tv, PublicKey.TV), Block.fromNonNullable(to, PublicKey.TO));
+        final @Nonnull FreezableArray<Block> elements = FreezableArray.getNonNullable(Encode.nonNullable(tu, PublicKey.TU), Encode.nonNullable(ti, PublicKey.TI), Encode.nonNullable(tv, PublicKey.TV), Encode.nonNullable(to, PublicKey.TO));
         return t.getValue().equals(TupleWrapper.encode(TUPLE, elements.freeze()).getHash());
     }
     
@@ -501,8 +504,8 @@ public final class PublicKey implements Storable<PublicKey> {
     @Pure
     public @Nonnull @BasedOn("verifiable.encryption@core.digitalid.net") Block getVerifiableEncryption(@Nonnull Exponent m, @Nonnull Exponent r) {
         final @Nonnull FreezableArray<Block> elements = FreezableArray.get(2);
-        elements.set(0, Block.fromNonNullable(y.pow(r).multiply(zPlus1.pow(m)), W1));
-        elements.set(1, Block.fromNonNullable(g.pow(r), W2));
+        elements.set(0, Encode.nonNullable(y.pow(r).multiply(zPlus1.pow(m)), W1));
+        elements.set(1, Encode.nonNullable(g.pow(r), W2));
         return TupleWrapper.encode(VERIFIABLE_ENCRYPTION, elements.freeze());
     }
     
@@ -561,18 +564,18 @@ public final class PublicKey implements Storable<PublicKey> {
         return "Public Key [n = " + compositeGroup.getModulus() + ", e = " + e + ", z^2 = " + squareGroup.getModulus() + ", g = " + g + ", y = " + y + "]";
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encodable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * The factory for this class.
+     * The encoding factory for this class.
      */
     @Immutable
-    public static final class Factory extends BlockBasedSimpleNonConceptFactory<PublicKey> {
+    public static final class EncodingFactory extends NonRequestingEncodingFactory<PublicKey,Object> {
         
         /**
-         * Creates a new factory.
+         * Creates a new encoding factory with the given type.
          */
-        private Factory() {
+        private EncodingFactory() {
             super(TYPE);
         }
         
@@ -580,32 +583,32 @@ public final class PublicKey implements Storable<PublicKey> {
         @Override
         public @Nonnull Block encodeNonNullable(@Nonnull PublicKey publicKey) {
             final @Nonnull FreezableArray<Block> elements = FreezableArray.get(16);
-            elements.set(0, Block.fromNonNullable(publicKey.compositeGroup, COMPOSITE_GROUP));
-            elements.set(1, Block.fromNonNullable(publicKey.e, E));
-            elements.set(2, Block.fromNonNullable(publicKey.ab, AB));
-            elements.set(3, Block.fromNonNullable(publicKey.au, AU));
-            elements.set(4, Block.fromNonNullable(publicKey.ai, AI));
-            elements.set(5, Block.fromNonNullable(publicKey.av, AV));
-            elements.set(6, Block.fromNonNullable(publicKey.ao, AO));
-            elements.set(7, Block.fromNonNullable(publicKey.t, T));
-            elements.set(8, Block.fromNonNullable(publicKey.su, SU));
-            elements.set(9, Block.fromNonNullable(publicKey.si, SI));
-            elements.set(10, Block.fromNonNullable(publicKey.sv, SV));
-            elements.set(11, Block.fromNonNullable(publicKey.so, SO));
-            elements.set(12, Block.fromNonNullable(publicKey.squareGroup, SQUARE_GROUP));
-            elements.set(13, Block.fromNonNullable(publicKey.g, G));
-            elements.set(14, Block.fromNonNullable(publicKey.y, Y));
-            elements.set(15, Block.fromNonNullable(publicKey.zPlus1, Z));
+            elements.set(0, Encode.nonNullable(publicKey.compositeGroup, COMPOSITE_GROUP));
+            elements.set(1, Encode.nonNullable(publicKey.e, E));
+            elements.set(2, Encode.nonNullable(publicKey.ab, AB));
+            elements.set(3, Encode.nonNullable(publicKey.au, AU));
+            elements.set(4, Encode.nonNullable(publicKey.ai, AI));
+            elements.set(5, Encode.nonNullable(publicKey.av, AV));
+            elements.set(6, Encode.nonNullable(publicKey.ao, AO));
+            elements.set(7, Encode.nonNullable(publicKey.t, T));
+            elements.set(8, Encode.nonNullable(publicKey.su, SU));
+            elements.set(9, Encode.nonNullable(publicKey.si, SI));
+            elements.set(10, Encode.nonNullable(publicKey.sv, SV));
+            elements.set(11, Encode.nonNullable(publicKey.so, SO));
+            elements.set(12, Encode.nonNullable(publicKey.squareGroup, SQUARE_GROUP));
+            elements.set(13, Encode.nonNullable(publicKey.g, G));
+            elements.set(14, Encode.nonNullable(publicKey.y, Y));
+            elements.set(15, Encode.nonNullable(publicKey.zPlus1, Z));
             return TupleWrapper.encode(TYPE, elements.freeze());
         }
         
         @Pure
         @Override
-        public @Nonnull PublicKey decodeNonNullable(@Nonnull @BasedOn("public.key.host@core.digitalid.net") Block block) throws InvalidEncodingException {
+        public @Nonnull PublicKey decodeNonNullable(@Nonnull Object none, @Nonnull @BasedOn("public.key.host@core.digitalid.net") Block block) throws InvalidEncodingException {
             assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
             
             final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(block).getNonNullableElements(16);
-            final @Nonnull GroupWithUnknownOrder compositeGroup = GroupWithUnknownOrder.FACTORY.decodeNonNullable(elements.getNonNullable(0));
+            final @Nonnull GroupWithUnknownOrder compositeGroup = GroupWithUnknownOrder.ENCODING_FACTORY.decodeNonNullable(None.OBJECT, elements.getNonNullable(0));
             final @Nonnull Exponent e = Exponent.get(elements.getNonNullable(1));
             final @Nonnull Element ab = compositeGroup.getElement(elements.getNonNullable(2));
             final @Nonnull Element au = compositeGroup.getElement(elements.getNonNullable(3));
@@ -617,7 +620,7 @@ public final class PublicKey implements Storable<PublicKey> {
             final @Nonnull Exponent si = Exponent.get(elements.getNonNullable(9));
             final @Nonnull Exponent sv = Exponent.get(elements.getNonNullable(10));
             final @Nonnull Exponent so = Exponent.get(elements.getNonNullable(11));
-            final @Nonnull GroupWithUnknownOrder squareGroup = GroupWithUnknownOrder.FACTORY.decodeNonNullable(elements.getNonNullable(12));
+            final @Nonnull GroupWithUnknownOrder squareGroup = GroupWithUnknownOrder.ENCODING_FACTORY.decodeNonNullable(None.OBJECT, elements.getNonNullable(12));
             final @Nonnull Element g = squareGroup.getElement(elements.getNonNullable(13));
             final @Nonnull Element y = squareGroup.getElement(elements.getNonNullable(14));
             final @Nonnull Element zPlus1 = squareGroup.getElement(elements.getNonNullable(15));
@@ -627,7 +630,7 @@ public final class PublicKey implements Storable<PublicKey> {
             final @Nonnull Element tv = ab.pow(sv).multiply(av.pow(t));
             final @Nonnull Element to = ab.pow(so).multiply(ao.pow(t));
             
-            if (!t.getValue().equals(TupleWrapper.encode(TUPLE, Block.fromNonNullable(tu, PublicKey.TU), Block.fromNonNullable(ti, PublicKey.TI), Block.fromNonNullable(tv, PublicKey.TV), Block.fromNonNullable(to, PublicKey.TO)).getHash())) throw new InvalidEncodingException("The proof that au, ai, av and ao are in the subgroup of ab is invalid.");
+            if (!t.getValue().equals(TupleWrapper.encode(TUPLE, Encode.nonNullable(tu, PublicKey.TU), Encode.nonNullable(ti, PublicKey.TI), Encode.nonNullable(tv, PublicKey.TV), Encode.nonNullable(to, PublicKey.TO)).getHash())) throw new InvalidEncodingException("The proof that au, ai, av and ao are in the subgroup of ab is invalid.");
             
             return new PublicKey(compositeGroup, e, ab, au, ai, av, ao, t, su, si, sv, so, squareGroup, g, y, zPlus1);
         }
@@ -637,12 +640,12 @@ public final class PublicKey implements Storable<PublicKey> {
     /**
      * Stores the factory of this class.
      */
-    public static final @Nonnull Factory FACTORY = new Factory();
+    public static final @Nonnull EncodingFactory ENCODING_FACTORY = new EncodingFactory();
     
     @Pure
     @Override
-    public @Nonnull Factory getFactory() {
-        return FACTORY;
+    public @Nonnull EncodingFactory getEncodingFactory() {
+        return ENCODING_FACTORY;
     }
     
 }

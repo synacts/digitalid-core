@@ -3,6 +3,7 @@ package net.digitalid.service.core.cryptography;
 import java.math.BigInteger;
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.annotations.BasedOn;
+import net.digitalid.service.core.encoding.NonRequestingEncodingFactory;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.wrappers.Block;
@@ -100,18 +101,18 @@ public final class GroupWithKnownOrder extends Group<GroupWithKnownOrder> {
         return new GroupWithKnownOrder(modulus, order);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encodable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * The factory for this class.
+     * The encoding factory for this class.
      */
     @Immutable
-    public static final class Factory extends BlockBasedSimpleNonConceptFactory<GroupWithKnownOrder> {
+    public static final class EncodingFactory extends NonRequestingEncodingFactory<GroupWithKnownOrder,Object> {
         
         /**
-         * Creates a new factory.
+         * Creates a new encoding factory with the given type.
          */
-        private Factory() {
+        private EncodingFactory() {
             super(TYPE);
         }
         
@@ -126,7 +127,7 @@ public final class GroupWithKnownOrder extends Group<GroupWithKnownOrder> {
         
         @Pure
         @Override
-        public @Nonnull GroupWithKnownOrder decodeNonNullable(@Nonnull @BasedOn("known.group@core.digitalid.net") Block block) throws InvalidEncodingException {
+        public @Nonnull GroupWithKnownOrder decodeNonNullable(@Nonnull Object none, @Nonnull @BasedOn("known.group@core.digitalid.net") Block block) throws InvalidEncodingException {
             assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
             
             final @Nonnull TupleWrapper tuple = TupleWrapper.decode(block);
@@ -145,12 +146,12 @@ public final class GroupWithKnownOrder extends Group<GroupWithKnownOrder> {
     /**
      * Stores the factory of this class.
      */
-    public static final @Nonnull Factory FACTORY = new Factory();
+    public static final @Nonnull EncodingFactory ENCODING_FACTORY = new EncodingFactory();
     
     @Pure
     @Override
-    public @Nonnull Factory getFactory() {
-        return FACTORY;
+    public @Nonnull EncodingFactory getEncodingFactory() {
+        return ENCODING_FACTORY;
     }
     
 }
