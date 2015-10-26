@@ -1,15 +1,5 @@
 package net.digitalid.service.core.wrappers;
 
-import net.digitalid.service.core.auxiliary.None;
-
-import net.digitalid.service.core.wrappers.BlockBasedWrapper.StoringFactory;
-import net.digitalid.service.core.wrappers.TupleWrapper.EncodingFactory;
-import net.digitalid.service.core.exceptions.network.NetworkException;
-import net.digitalid.service.core.exceptions.abort.AbortException;
-import net.digitalid.service.core.encoding.Encode;
-import net.digitalid.service.core.encoding.Encodable;
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -18,23 +8,26 @@ import net.digitalid.service.core.annotations.BasedOn;
 import net.digitalid.service.core.annotations.Encoding;
 import net.digitalid.service.core.annotations.Loaded;
 import net.digitalid.service.core.annotations.NonEncoding;
+import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.cryptography.PublicKey;
+import net.digitalid.service.core.encoding.Encodable;
+import net.digitalid.service.core.encoding.Encode;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostEntity;
+import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InactiveSignatureException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.external.InvalidSignatureException;
+import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
-import net.digitalid.service.core.identifier.Identifier;
 import net.digitalid.service.core.identifier.IdentifierClass;
 import net.digitalid.service.core.identifier.InternalIdentifier;
 import net.digitalid.service.core.identity.InternalIdentity;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
-import net.digitalid.utility.database.storing.Storable;
 import net.digitalid.service.core.synchronizer.Audit;
 import net.digitalid.utility.annotations.math.Positive;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -137,7 +130,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
     /**
      * Stores the identifier of the identity about which a statement is made or null in case of unsigned attributes.
      */
-    private final @Nullable InternalIdentifier subject;
+    private final @Nullable InternalIdentifier<?> subject;
     
     /**
      * Returns whether this signature has a subject.
@@ -157,7 +150,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
      * @ensure !isSigned() || return != null : "If this signature is signed, the returned identifier is not null.";
      */
     @Pure
-    public final @Nullable InternalIdentifier getNullableSubject() {
+    public final @Nullable InternalIdentifier<?> getNullableSubject() {
         return subject;
     }
     
@@ -169,7 +162,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
      * @require hasSubject() : "This signature has a subject.";
      */
     @Pure
-    public final @Nonnull InternalIdentifier getNonNullableSubject() {
+    public final @Nonnull InternalIdentifier<?> getNonNullableSubject() {
         assert subject != null : "This signature has a subject.";
         
         return subject;
@@ -280,7 +273,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
      * 
      * @ensure isVerified() : "This signature is verified.";
      */
-    SignatureWrapper(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nullable Block element, @Nullable InternalIdentifier subject, @Nullable Audit audit) {
+    SignatureWrapper(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nullable Block element, @Nullable InternalIdentifier<?> subject, @Nullable Audit audit) {
         super(type);
         
         assert element == null || element.getType().isBasedOn(type.getParameters().getNonNullable(0)) : "The element is either null or based on the parameter of the given type.";
@@ -332,7 +325,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
      * @ensure return.isVerified() : "The returned signature is verified.";
      */
     @Pure
-    public static @Nonnull <V extends Encodable<V,?>> SignatureWrapper encodeWithoutSigning(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nonnull V element, @Nullable InternalIdentifier subject) {
+    public static @Nonnull <V extends Encodable<V,?>> SignatureWrapper encodeWithoutSigning(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nonnull V element, @Nullable InternalIdentifier<?> subject) {
         return new SignatureWrapper(type, Encode.nonNullable(element), subject, null);
     }
     
@@ -349,7 +342,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
     @Pure
     @Locked
     @NonCommitting
-    public static @Nonnull SignatureWrapper decodeWithVerifying(@Nonnull @NonEncoding @BasedOn("signature@core.digitalid.net") Block block, @Nullable Entity entity) throws AbortException, PacketException, ExternalException, NetworkException {
+    public static @Nonnull <E extends Entity<E>> SignatureWrapper decodeWithVerifying(@Nonnull @NonEncoding @BasedOn("signature@core.digitalid.net") Block block, @Nullable Entity<E> entity) throws AbortException, PacketException, ExternalException, NetworkException {
         final @Nonnull SignatureWrapper signatureWrapper = decodeWithoutVerifying(block, false, entity);
         signatureWrapper.verify();
         return signatureWrapper;
@@ -367,7 +360,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
     @Pure
     @Locked
     @NonCommitting
-    public static @Nonnull SignatureWrapper decodeWithoutVerifying(@Nonnull @NonEncoding @BasedOn("signature@core.digitalid.net") Block block, boolean verified, @Nullable Entity entity) throws AbortException, PacketException, ExternalException, NetworkException {
+    public static @Nonnull <E extends Entity<E>> SignatureWrapper decodeWithoutVerifying(@Nonnull @NonEncoding @BasedOn("signature@core.digitalid.net") Block block, boolean verified, @Nullable Entity<E> entity) throws AbortException, PacketException, ExternalException, NetworkException {
         final @Nonnull ReadOnlyArray<Block> elements = TupleWrapper.decode(Block.get(IMPLEMENTATION, block)).getNullableElements(4);
         final @Nullable Block hostSignature = elements.getNullable(1);
         final @Nullable Block clientSignature = elements.getNullable(2);
@@ -429,7 +422,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
     final @Nonnull Block getCache() {
         if (cache == null) {
             final @Nonnull FreezableArray<Block> subelements = FreezableArray.get(4);
-            subelements.set(0, Encode.nullable(subject, SUBJECT));
+            subelements.set(0, Encode.nullableWithCast(subject, SUBJECT));
             subelements.set(1, Encode.nullable(time));
             subelements.set(2, element);
             subelements.set(3, Encode.nullable(audit));

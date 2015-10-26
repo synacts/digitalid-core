@@ -108,7 +108,7 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
         
         this.tuple = Block.get(IMPLEMENTATION, block);
         final @Nonnull @NonNullableElements ReadOnlyArray<Block> elements = TupleWrapper.decode(tuple).getNonNullableElements(2);
-        final @Nonnull Identifier identifier = IdentifierClass.create(elements.getNonNullable(0));
+        final @Nonnull Identifier<?> identifier = IdentifierClass.create(elements.getNonNullable(0));
         this.element = elements.getNonNullable(1);
         element.setType(identifier.getIdentity().toSemanticType());
     }

@@ -1,5 +1,7 @@
 package net.digitalid.service.core.wrappers;
 
+import net.digitalid.service.core.encoding.Encode;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.annotations.BasedOn;
@@ -295,7 +297,7 @@ public final class TupleWrapper extends BlockBasedWrapper<TupleWrapper> {
     @Pure
     public static @Nonnull @NonEncoding Block encode(@Nonnull @Loaded @BasedOn("tuple@core.digitalid.net") SemanticType type, @Nonnull Encodable<?, ?>... elements) {
         final @Nonnull FreezableArray<Block> array = FreezableArray.get(elements.length);
-        for (int i = 0; i < elements.length; i++) array.set(i, elements[i].getEncodingFactory().encodeNullableWithCast(elements[i]));
+        for (int i = 0; i < elements.length; i++) array.set(i, Encode.nullableWithCast(elements[i]));
         return encode(type, array.freeze());
     }
     

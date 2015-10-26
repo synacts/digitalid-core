@@ -1,13 +1,6 @@
 package net.digitalid.service.core.wrappers;
 
-import net.digitalid.service.core.exceptions.network.NetworkException;
-
-import net.digitalid.service.core.exceptions.abort.AbortException;
-import net.digitalid.service.core.encoding.Encode;
-import net.digitalid.service.core.encoding.Encodable;
-import java.io.IOException;
 import java.math.BigInteger;
-import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.annotations.BasedOn;
@@ -19,9 +12,13 @@ import net.digitalid.service.core.cryptography.Element;
 import net.digitalid.service.core.cryptography.PrivateKey;
 import net.digitalid.service.core.cryptography.PublicKey;
 import net.digitalid.service.core.cryptography.PublicKeyChain;
+import net.digitalid.service.core.encoding.Encodable;
+import net.digitalid.service.core.encoding.Encode;
+import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.external.InvalidSignatureException;
+import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.identifier.IdentifierClass;
@@ -30,7 +27,6 @@ import net.digitalid.service.core.identity.HostIdentity;
 import net.digitalid.service.core.identity.InternalIdentity;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.server.Server;
-import net.digitalid.utility.database.storing.Storable;
 import net.digitalid.service.core.synchronizer.Audit;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -74,7 +70,7 @@ public final class HostSignatureWrapper extends SignatureWrapper {
      * Stores the identifier of the internal identity that is signing as a host.
      * (Certificates and external actions require that not only host identifiers are allowed here.)
      */
-    private final @Nonnull InternalIdentifier signer;
+    private final @Nonnull InternalIdentifier<?> signer;
     
     /**
      * Returns the identifier of the identity that is signing as a host.
@@ -82,7 +78,7 @@ public final class HostSignatureWrapper extends SignatureWrapper {
      * @return the identifier of the identity that is signing as a host.
      */
     @Pure
-    public @Nonnull InternalIdentifier getSigner() {
+    public @Nonnull InternalIdentifier<?> getSigner() {
         return signer;
     }
     
@@ -102,7 +98,7 @@ public final class HostSignatureWrapper extends SignatureWrapper {
      * 
      * @ensure isVerified() : "This signature is verified.";
      */
-    private HostSignatureWrapper(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nullable Block element, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull InternalIdentifier signer) {
+    private HostSignatureWrapper(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nullable Block element, @Nonnull InternalIdentifier<?> subject, @Nullable Audit audit, @Nonnull InternalIdentifier<?> signer) {
         super(type, element, subject, audit);
         
         assert Server.hasHost(signer.getHostIdentifier()) : "The host of the signer is running on this server.";
@@ -145,7 +141,7 @@ public final class HostSignatureWrapper extends SignatureWrapper {
      * @ensure return.isVerified() : "The returned signature is verified.";
      */
     @Pure
-    public static @Nonnull <V extends Encodable<V,?>> HostSignatureWrapper sign(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nullable V element, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull InternalIdentifier signer) {
+    public static @Nonnull <V extends Encodable<V,?>> HostSignatureWrapper sign(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nullable V element, @Nonnull InternalIdentifier<?> subject, @Nullable Audit audit, @Nonnull InternalIdentifier<?> signer) {
         return new HostSignatureWrapper(type, Encode.nullable(element), subject, audit, signer);
     }
     

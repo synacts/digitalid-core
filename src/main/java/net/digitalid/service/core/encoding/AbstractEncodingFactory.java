@@ -101,7 +101,7 @@ public abstract class AbstractEncodingFactory<O, E> {
      */
     @Pure
     @SuppressWarnings("unchecked")
-    public final @Nonnull @NonEncoding Block encodeNonNullableWithCast(@Nonnull Object object) {
+    final @Nonnull @NonEncoding Block encodeNonNullableWithCast(@Nonnull Object object) {
         return encodeNonNullable((O) object);
     }
     
@@ -117,7 +117,7 @@ public abstract class AbstractEncodingFactory<O, E> {
      */
     @Pure
     @SuppressWarnings("unchecked")
-    public final @Nullable @NonEncoding Block encodeNullableWithCast(@Nullable Object object) {
+    final @Nullable @NonEncoding Block encodeNullableWithCast(@Nullable Object object) {
         return encodeNullable((O) object);
     }
     

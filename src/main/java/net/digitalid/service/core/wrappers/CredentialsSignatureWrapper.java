@@ -1,14 +1,7 @@
 package net.digitalid.service.core.wrappers;
 
-import net.digitalid.service.core.encoding.Encodable;
-
-import net.digitalid.service.core.encoding.Encode;
-import net.digitalid.service.core.exceptions.network.NetworkException;
-import net.digitalid.service.core.exceptions.abort.AbortException;
-import java.io.IOException;
 import java.math.BigInteger;
 import java.security.SecureRandom;
-import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.Objects;
 import javax.annotation.Nonnull;
@@ -34,15 +27,19 @@ import net.digitalid.service.core.cryptography.Element;
 import net.digitalid.service.core.cryptography.Exponent;
 import net.digitalid.service.core.cryptography.Parameters;
 import net.digitalid.service.core.cryptography.PublicKey;
+import net.digitalid.service.core.encoding.Encodable;
+import net.digitalid.service.core.encoding.Encode;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.HostEntity;
 import net.digitalid.service.core.entity.NonHostAccount;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.entity.RoleModule;
+import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InactiveSignatureException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.external.InvalidSignatureException;
+import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.host.Host;
@@ -51,7 +48,6 @@ import net.digitalid.service.core.identity.InternalNonHostIdentity;
 import net.digitalid.service.core.identity.InternalPerson;
 import net.digitalid.service.core.identity.Person;
 import net.digitalid.service.core.identity.SemanticType;
-import net.digitalid.utility.database.storing.Storable;
 import net.digitalid.service.core.synchronizer.Audit;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -378,7 +374,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
      */
     @Locked
     @NonCommitting
-    private CredentialsSignatureWrapper(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nullable Block element, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull @NonNullableElements @NonEmpty @Frozen @Validated ReadOnlyList<Credential> credentials, @Nullable @NonNullableElements @NonEmpty @Frozen @Validated ReadOnlyList<CertifiedAttributeValue> certificates, boolean lodged, @Nullable BigInteger value) throws AbortException, PacketException, ExternalException, NetworkException {
+    private CredentialsSignatureWrapper(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nullable Block element, @Nonnull InternalIdentifier<?> subject, @Nullable Audit audit, @Nonnull @NonNullableElements @NonEmpty @Frozen @Validated ReadOnlyList<Credential> credentials, @Nullable @NonNullableElements @NonEmpty @Frozen @Validated ReadOnlyList<CertifiedAttributeValue> certificates, boolean lodged, @Nullable BigInteger value) throws AbortException, PacketException, ExternalException, NetworkException {
         super(type, element, subject, audit);
         
         assert credentials.isFrozen() : "The credentials are frozen.";
@@ -404,7 +400,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
      */
     @Locked
     @NonCommitting
-    CredentialsSignatureWrapper(@Nonnull @NonEncoding @BasedOn("signature@core.digitalid.net") Block block, @Nonnull @NonEncoding @BasedOn("credentials.signature@core.digitalid.net") Block credentialsSignature, boolean verified, @Nullable Entity entity) throws AbortException, PacketException, ExternalException, NetworkException {
+    <E extends Entity<E>> CredentialsSignatureWrapper(@Nonnull @NonEncoding @BasedOn("signature@core.digitalid.net") Block block, @Nonnull @NonEncoding @BasedOn("credentials.signature@core.digitalid.net") Block credentialsSignature, boolean verified, @Nullable Entity<E> entity) throws AbortException, PacketException, ExternalException, NetworkException {
         super(block, verified);
         
         assert credentialsSignature.getType().isBasedOn(SIGNATURE) : "The signature is based on the implementation type.";
@@ -419,7 +415,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
             final @Nonnull NonHostEntity nonHostEntity;
             if (entity instanceof HostEntity) {
                 final @Nonnull Host host = ((HostEntity) entity).getHost();
-                final @Nonnull InternalIdentifier subject = getNonNullableSubject();
+                final @Nonnull InternalIdentifier<?> subject = getNonNullableSubject();
                 final @Nonnull InternalPerson person = subject.getIdentity().toInternalPerson();
                 // If the subject is hosted on the given host, the entity is recreated for that subject.
                 if (host.getIdentifier().equals(subject.getHostIdentifier())) {
@@ -487,7 +483,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
     @Pure
     @Locked
     @NonCommitting
-    public static @Nonnull <V extends Encodable<V,?>> CredentialsSignatureWrapper sign(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nullable V element, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull @NonNullableElements @NonEmpty @Frozen @Validated ReadOnlyList<Credential> credentials, @Nullable @NonNullableElements @NonEmpty @Frozen @Validated ReadOnlyList<CertifiedAttributeValue> certificates, boolean lodged, @Nullable BigInteger value) throws AbortException, PacketException, ExternalException, NetworkException {
+    public static @Nonnull <V extends Encodable<V,?>> CredentialsSignatureWrapper sign(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nullable V element, @Nonnull InternalIdentifier<?> subject, @Nullable Audit audit, @Nonnull @NonNullableElements @NonEmpty @Frozen @Validated ReadOnlyList<Credential> credentials, @Nullable @NonNullableElements @NonEmpty @Frozen @Validated ReadOnlyList<CertifiedAttributeValue> certificates, boolean lodged, @Nullable BigInteger value) throws AbortException, PacketException, ExternalException, NetworkException {
         return new CredentialsSignatureWrapper(type, Encode.nullable(element), subject, audit, credentials, certificates, lodged, value);
     }
     
