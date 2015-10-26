@@ -1,7 +1,5 @@
 package net.digitalid.service.core.cryptography;
 
-import net.digitalid.service.core.encoding.Encodable;
-
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.identity.SemanticType;
