@@ -12,6 +12,7 @@ import net.digitalid.service.core.wrappers.Block;
 import net.digitalid.utility.annotations.math.Positive;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.database.storing.Storable;
 
 /**
  * This class models a multiplicative group.
@@ -20,7 +21,7 @@ import net.digitalid.utility.annotations.state.Pure;
  * @see GroupWithUnknownOrder
  */
 @Immutable
-public abstract class Group<G extends Group<G>> implements Encodable<G,Object> {
+public abstract class Group<G extends Group<G>> implements Encodable<G,Object>, Storable<G,Object> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Modulus –––––––––––––––––––––––––––––––––––––––––––––––––– */
     

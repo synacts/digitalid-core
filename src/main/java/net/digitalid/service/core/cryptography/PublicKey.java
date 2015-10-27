@@ -9,12 +9,15 @@ import net.digitalid.service.core.encoding.Encode;
 import net.digitalid.service.core.encoding.NonRequestingEncodingFactory;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.storing.BlockBasedStoringFactory;
 import net.digitalid.service.core.wrappers.Block;
 import net.digitalid.service.core.wrappers.TupleWrapper;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
+import net.digitalid.utility.database.storing.AbstractStoringFactory;
+import net.digitalid.utility.database.storing.Storable;
 
 /**
  * This class stores the groups, elements and exponents of a host's public key.
@@ -22,7 +25,7 @@ import net.digitalid.utility.collections.readonly.ReadOnlyArray;
  * @invariant verifySubgroupProof() : "The elements au, ai, av and ao are in the subgroup of ab.";
  */
 @Immutable
-public final class PublicKey implements Encodable<PublicKey, Object> {
+public final class PublicKey implements Encodable<PublicKey, Object>, Storable<PublicKey, Object> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -646,6 +649,19 @@ public final class PublicKey implements Encodable<PublicKey, Object> {
     @Override
     public @Nonnull EncodingFactory getEncodingFactory() {
         return ENCODING_FACTORY;
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Stores the storing factory of this class.
+     */
+    public static final @Nonnull AbstractStoringFactory<PublicKey,Object> STORING_FACTORY = BlockBasedStoringFactory.get(ENCODING_FACTORY);
+    
+    @Pure
+    @Override
+    public @Nonnull AbstractStoringFactory<PublicKey, Object> getStoringFactory() {
+        return STORING_FACTORY;
     }
     
 }

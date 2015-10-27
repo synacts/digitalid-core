@@ -24,6 +24,7 @@ import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.collections.tuples.FreezablePair;
 import net.digitalid.utility.collections.tuples.ReadOnlyPair;
+import net.digitalid.utility.database.storing.Storable;
 
 /**
  * A key chain contains several items to support the rotation of host keys.
@@ -32,7 +33,7 @@ import net.digitalid.utility.collections.tuples.ReadOnlyPair;
  * @see PrivateKeyChain
  */
 @Immutable
-abstract class KeyChain<K extends Encodable<K, Object>, C extends KeyChain<K, C>> implements Encodable<C, Object> {
+abstract class KeyChain<K extends Encodable<K, Object>, C extends KeyChain<K, C>> implements Encodable<C, Object>, Storable<C, Object> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Items –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -216,5 +217,5 @@ abstract class KeyChain<K extends Encodable<K, Object>, C extends KeyChain<K, C>
     @Pure
     @Override
     public abstract @Nonnull EncodingFactory<K, C> getEncodingFactory();
-    
+
 }

@@ -28,7 +28,7 @@ public abstract class Handler<O, E> implements Encodable<O, E> {
     /**
      * Stores the entity to which this handler belongs or null if it is impersonal.
      */
-    private final @Nullable Entity entity;
+    private final @Nullable Entity<?> entity;
     
     /**
      * Stores the subject of this handler.
@@ -36,7 +36,7 @@ public abstract class Handler<O, E> implements Encodable<O, E> {
      * The subject is stored as an identifier because for certain handlers
      * the corresponding identity is not known to (or does not yet) exist.
      */
-    private final @Nonnull InternalIdentifier subject;
+    private final @Nonnull InternalIdentifier<?> subject;
     
     /**
      * Stores the signature of this handler.
@@ -49,7 +49,7 @@ public abstract class Handler<O, E> implements Encodable<O, E> {
      * @param entity the entity to which this handler belongs or null if it is impersonal.
      * @param subject the subject of this handler.
      */
-    protected Handler(@Nullable Entity entity, @Nonnull InternalIdentifier subject) {
+    protected Handler(@Nullable Entity<?> entity, @Nonnull InternalIdentifier<?> subject) {
         this.entity = entity;
         this.signature = null;
         this.subject = subject;
@@ -65,7 +65,7 @@ public abstract class Handler<O, E> implements Encodable<O, E> {
      * 
      * @ensure hasSignature() : "This handler has a signature.";
      */
-    protected Handler(@Nullable Entity entity, @Nonnull SignatureWrapper signature) {
+    protected Handler(@Nullable Entity<?> entity, @Nonnull SignatureWrapper signature) {
         this.entity = entity;
         this.signature = signature;
         this.subject = signature.getNonNullableSubject();
@@ -77,7 +77,7 @@ public abstract class Handler<O, E> implements Encodable<O, E> {
      * @return the entity to which this handler belongs or null if it is impersonal.
      */
     @Pure
-    public final @Nullable Entity getEntity() {
+    public final @Nullable Entity<?> getEntity() {
         return entity;
     }
     
@@ -99,7 +99,7 @@ public abstract class Handler<O, E> implements Encodable<O, E> {
      * @require hasEntity() : "This handler has an entity.";
      */
     @Pure
-    public final @Nonnull Entity getEntityNotNull() {
+    public final @Nonnull Entity<?> getEntityNotNull() {
         assert entity != null : "This handler has an entity.";
         
         return entity;
@@ -203,7 +203,7 @@ public abstract class Handler<O, E> implements Encodable<O, E> {
      * @return the subject of this handler.
      */
     @Pure
-    public final @Nonnull InternalIdentifier getSubject() {
+    public final @Nonnull InternalIdentifier<?> getSubject() {
         return subject;
     }
     
@@ -281,7 +281,8 @@ public abstract class Handler<O, E> implements Encodable<O, E> {
     protected boolean protectedEquals(@Nullable Object object) {
         if (object == this) return true;
         if (object == null || !(object instanceof Handler)) return false;
-        final @Nonnull Handler other = (Handler) object;
+        @SuppressWarnings("rawtypes")
+		final @Nonnull Handler other = (Handler) object;
         return Objects.equals(this.entity, other.entity) && Objects.equals(this.subject, other.subject);
     }
     

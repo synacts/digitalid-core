@@ -141,11 +141,11 @@ public final class EmptyWrapper extends Wrapper<EmptyWrapper> {
         private StoringFactory(@Nonnull @Loaded @BasedOn("empty@core.digitalid.net") SemanticType type) {
             super(COLUMN, type);
         }
-
         
         @Override
         @NonCommitting
         public void storeNonNullable(@Nonnull EmptyWrapper wrapper, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+            // The entry is set to true just to indicate that it is not null. 
             preparedStatement.setBoolean(parameterIndex, true);
         }
         

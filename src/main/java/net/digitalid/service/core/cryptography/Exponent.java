@@ -1,15 +1,17 @@
 package net.digitalid.service.core.cryptography;
 
-import net.digitalid.service.core.encoding.NonRequestingEncodingFactory;
 import java.math.BigInteger;
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.annotations.BasedOn;
+import net.digitalid.service.core.encoding.NonRequestingEncodingFactory;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.storing.BlockBasedStoringFactory;
 import net.digitalid.service.core.wrappers.Block;
 import net.digitalid.service.core.wrappers.IntegerWrapper;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.database.storing.AbstractStoringFactory;
 
 /**
  * An exponent is a number that raises elements of an arbitrary group.
@@ -167,6 +169,19 @@ public final class Exponent extends Number<Exponent> {
     @Override
     public @Nonnull EncodingFactory getEncodingFactory() {
         return ENCODING_FACTORY;
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Stores the storing factory of this class.
+     */
+    public static final @Nonnull AbstractStoringFactory<Exponent,Object> STORING_FACTORY = BlockBasedStoringFactory.get(ENCODING_FACTORY);
+    
+    @Pure
+    @Override
+    public @Nonnull AbstractStoringFactory<Exponent, Object> getStoringFactory() {
+        return STORING_FACTORY;
     }
     
 }

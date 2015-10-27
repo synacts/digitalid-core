@@ -15,7 +15,7 @@ import net.digitalid.utility.database.storing.Storable;
  * @see Exponent
  */
 @Immutable
-public abstract class Number<E extends Number<E>> implements Encodable<E,Object> {
+public abstract class Number<E extends Number<E>> implements Encodable<E,Object>, Storable<E,Object> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value –––––––––––––––––––––––––––––––––––––––––––––––––– */
     

@@ -23,6 +23,7 @@ import net.digitalid.service.core.encoding.Encodable;
 import net.digitalid.service.core.encoding.NonRequestingEncodingFactory;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.storing.BlockBasedStoringFactory;
 import net.digitalid.service.core.wrappers.Block;
 import net.digitalid.service.core.wrappers.IntegerWrapper;
 import net.digitalid.utility.annotations.math.NonNegative;
@@ -31,6 +32,8 @@ import net.digitalid.utility.annotations.reference.Capturable;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.annotations.size.NonEmpty;
+import net.digitalid.utility.database.storing.AbstractStoringFactory;
+import net.digitalid.utility.database.storing.Storable;
 import net.digitalid.utility.system.errors.InitializationError;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 
@@ -38,7 +41,7 @@ import net.digitalid.utility.system.errors.ShouldNeverHappenError;
  * Symmetric keys are used to encrypt and decrypt byte arrays with the Advanced Encryption Standard (AES).
  */
 @Immutable
-public final class SymmetricKey implements Encodable<SymmetricKey, Object> {
+public final class SymmetricKey implements Encodable<SymmetricKey, Object>, Storable<SymmetricKey,Object> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -279,6 +282,19 @@ public final class SymmetricKey implements Encodable<SymmetricKey, Object> {
     @Override
     public @Nonnull EncodingFactory getEncodingFactory() {
         return ENCODING_FACTORY;
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Stores the storing factory of this class.
+     */
+    public static final @Nonnull AbstractStoringFactory<SymmetricKey,Object> STORING_FACTORY = BlockBasedStoringFactory.get(ENCODING_FACTORY);
+    
+    @Pure
+    @Override
+    public @Nonnull AbstractStoringFactory<SymmetricKey, Object> getStoringFactory() {
+        return STORING_FACTORY;
     }
     
 }

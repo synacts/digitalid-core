@@ -6,6 +6,7 @@ import net.digitalid.service.core.annotations.BasedOn;
 import net.digitalid.service.core.encoding.NonRequestingEncodingFactory;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.storing.BlockBasedStoringFactory;
 import net.digitalid.service.core.wrappers.Block;
 import net.digitalid.service.core.wrappers.IntegerWrapper;
 import net.digitalid.service.core.wrappers.TupleWrapper;
@@ -13,6 +14,7 @@ import net.digitalid.utility.annotations.math.Positive;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.freezable.FreezableArray;
+import net.digitalid.utility.database.storing.AbstractStoringFactory;
 
 /**
  * This class models a multiplicative group with known order.
@@ -152,6 +154,19 @@ public final class GroupWithKnownOrder extends Group<GroupWithKnownOrder> {
     @Override
     public @Nonnull EncodingFactory getEncodingFactory() {
         return ENCODING_FACTORY;
+    }
+
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Stores the storing factory of this class.
+     */
+    public static final @Nonnull AbstractStoringFactory<GroupWithKnownOrder,Object> STORING_FACTORY = BlockBasedStoringFactory.get(ENCODING_FACTORY);
+    
+    @Pure
+    @Override
+    public @Nonnull AbstractStoringFactory<GroupWithKnownOrder, Object> getStoringFactory() {
+        return STORING_FACTORY;
     }
     
 }

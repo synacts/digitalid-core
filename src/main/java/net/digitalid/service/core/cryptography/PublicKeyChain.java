@@ -4,6 +4,7 @@ import javax.annotation.Nonnull;
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.identity.Category;
 import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.storing.BlockBasedStoringFactory;
 import net.digitalid.service.core.wrappers.ListWrapper;
 import net.digitalid.service.core.wrappers.TupleWrapper;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -15,6 +16,7 @@ import net.digitalid.utility.collections.freezable.FreezableLinkedList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.collections.tuples.FreezablePair;
 import net.digitalid.utility.collections.tuples.ReadOnlyPair;
+import net.digitalid.utility.database.storing.AbstractStoringFactory;
 
 /**
  * This class models a {@link KeyChain key chain} of {@link PublicKey public keys}.
@@ -112,6 +114,19 @@ public final class PublicKeyChain extends KeyChain<PublicKey, PublicKeyChain> {
     @Override
     public @Nonnull EncodingFactory getEncodingFactory() {
         return ENCODING_FACTORY;
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Stores the storing factory of this class.
+     */
+    public static final @Nonnull AbstractStoringFactory<PublicKeyChain,Object> STORING_FACTORY = BlockBasedStoringFactory.get(ENCODING_FACTORY);
+    
+    @Pure
+    @Override
+    public @Nonnull AbstractStoringFactory<PublicKeyChain, Object> getStoringFactory() {
+        return STORING_FACTORY;
     }
         
 }
