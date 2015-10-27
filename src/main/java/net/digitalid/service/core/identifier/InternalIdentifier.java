@@ -1,9 +1,10 @@
 package net.digitalid.service.core.identifier;
 
-import net.digitalid.service.core.exceptions.network.NetworkException;
+import net.digitalid.service.core.identity.resolution.Mapper;
 
+import net.digitalid.service.core.factory.encoding.Encodable;
+import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.abort.AbortException;
-import net.digitalid.service.core.encoding.Encodable;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.regex.Pattern;
@@ -12,7 +13,6 @@ import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.IdentityNotFoundException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identity.InternalIdentity;
-import net.digitalid.service.core.identity.Mapper;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.database.annotations.NonCommitting;

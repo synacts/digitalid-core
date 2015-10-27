@@ -1,25 +1,26 @@
 package net.digitalid.service.core.entity;
 
+import net.digitalid.service.core.action.synchronizer.Synchronizer;
+import net.digitalid.service.core.action.synchronizer.SynchronizerModule;
+
+import net.digitalid.service.core.dataservice.StateModule;
+import net.digitalid.service.core.dataservice.Service;
+import net.digitalid.service.core.cryptography.credential.ClientCredential;
+import net.digitalid.service.core.concepts.agent.Agent;
+import net.digitalid.service.core.concepts.agent.AgentModule;
+import net.digitalid.service.core.site.client.Client;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.service.core.agent.Agent;
-import net.digitalid.service.core.agent.AgentModule;
 import net.digitalid.service.core.auxiliary.Time;
-import net.digitalid.service.core.client.Client;
-import net.digitalid.service.core.credential.ClientCredential;
-import net.digitalid.service.core.data.Service;
-import net.digitalid.service.core.data.StateModule;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identity.InternalNonHostIdentity;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.service.CoreService;
-import net.digitalid.service.core.synchronizer.Synchronizer;
-import net.digitalid.service.core.synchronizer.SynchronizerModule;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.annotations.elements.NonNullableElements;

@@ -1,5 +1,7 @@
 package net.digitalid.service.core.identifier;
 
+import net.digitalid.service.core.identity.resolution.Mapper;
+
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.regex.Pattern;
@@ -11,7 +13,6 @@ import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.IdentityNotFoundException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identity.Category;
-import net.digitalid.service.core.identity.Mapper;
 import net.digitalid.service.core.identity.Person;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;

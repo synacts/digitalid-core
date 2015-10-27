@@ -1,15 +1,16 @@
 package net.digitalid.service.core.server;
 
+import net.digitalid.service.core.site.host.Host;
+
+import net.digitalid.service.core.site.client.Client;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.jar.JarFile;
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.cache.Cache;
-import net.digitalid.service.core.client.Client;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
-import net.digitalid.service.core.host.Host;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.identity.HostIdentity;
 import net.digitalid.utility.annotations.state.Stateless;

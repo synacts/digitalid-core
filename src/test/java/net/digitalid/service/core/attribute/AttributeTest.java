@@ -1,5 +1,12 @@
 package net.digitalid.service.core.attribute;
 
+import net.digitalid.service.core.block.Block;
+
+import net.digitalid.service.core.block.wrappers.StringWrapper;
+import net.digitalid.service.core.concepts.attribute.Attribute;
+import net.digitalid.service.core.concepts.attribute.AttributeTypes;
+import net.digitalid.service.core.concepts.attribute.AttributeValue;
+import net.digitalid.service.core.concepts.attribute.UncertifiedAttributeValue;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
@@ -11,8 +18,6 @@ import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.expression.PassiveExpression;
 import net.digitalid.service.core.setup.IdentitySetup;
-import net.digitalid.service.core.wrappers.Block;
-import net.digitalid.service.core.wrappers.StringWrapper;
 import net.digitalid.utility.database.annotations.Committing;
 import net.digitalid.utility.database.configuration.Database;
 import org.junit.Assert;

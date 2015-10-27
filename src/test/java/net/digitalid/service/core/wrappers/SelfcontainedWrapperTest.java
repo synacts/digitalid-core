@@ -1,5 +1,10 @@
 package net.digitalid.service.core.wrappers;
 
+import net.digitalid.service.core.block.Block;
+
+import net.digitalid.service.core.block.wrappers.Int32Wrapper;
+import net.digitalid.service.core.block.wrappers.SelfcontainedWrapper;
+import net.digitalid.service.core.block.wrappers.StringWrapper;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;

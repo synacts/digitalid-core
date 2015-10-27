@@ -1,7 +1,10 @@
 package net.digitalid.service.core.identifier;
 
-import net.digitalid.service.core.encoding.Encodable;
+import net.digitalid.service.core.block.Block;
 
+import net.digitalid.service.core.block.wrappers.StringWrapper;
+import net.digitalid.service.core.identity.resolution.Mapper;
+import net.digitalid.service.core.factory.encoding.Encodable;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,10 +13,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.identity.Identity;
-import net.digitalid.service.core.identity.Mapper;
 import net.digitalid.service.core.identity.SemanticType;
-import net.digitalid.service.core.wrappers.Block;
-import net.digitalid.service.core.wrappers.StringWrapper;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.database.annotations.Locked;

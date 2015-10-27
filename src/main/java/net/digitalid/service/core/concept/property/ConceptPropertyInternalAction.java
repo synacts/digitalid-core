@@ -1,11 +1,13 @@
 package net.digitalid.service.core.concept.property;
 
+import net.digitalid.utility.database.annotations.OnlyForClients;
+
+import net.digitalid.service.core.block.wrappers.SignatureWrapper;
+import net.digitalid.service.core.dataservice.Service;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
-import net.digitalid.service.core.annotations.OnlyForClients;
 import net.digitalid.service.core.auxiliary.Time;
-import net.digitalid.service.core.data.Service;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.Role;
 import net.digitalid.service.core.exceptions.external.ExternalException;
@@ -13,7 +15,6 @@ import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.InternalAction;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.identity.SemanticType;
-import net.digitalid.service.core.wrappers.SignatureWrapper;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 

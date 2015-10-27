@@ -1,5 +1,7 @@
 package net.digitalid.service.core.wrappers;
 
+import net.digitalid.service.core.block.wrappers.HashWrapper;
+
 import java.math.BigInteger;
 import java.util.Random;
 import javax.annotation.Nonnull;

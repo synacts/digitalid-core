@@ -1,0 +1,235 @@
+package net.digitalid.service.core.block.wrappers;
+
+import net.digitalid.service.core.block.annotations.Encoding;
+import net.digitalid.service.core.block.annotations.NonEncoding;
+
+import net.digitalid.service.core.block.Block;
+import net.digitalid.service.core.identity.annotations.Loaded;
+import net.digitalid.service.core.factory.encoding.AbstractEncodingFactory;
+import net.digitalid.service.core.factory.encoding.Encodable;
+import net.digitalid.service.core.factory.encoding.Encode;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.identity.SyntacticType;
+import net.digitalid.utility.annotations.math.Positive;
+import net.digitalid.utility.annotations.reference.Capturable;
+import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
+import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
+import net.digitalid.utility.collections.freezable.FreezableArray;
+import net.digitalid.utility.database.column.Column;
+import net.digitalid.utility.database.storing.AbstractStoringFactory;
+import net.digitalid.utility.database.storing.Storable;
+
+/**
+ * Values and elements are wrapped by separate objects as the native types do not support encoding and decoding.
+ * 
+ * @see Block
+ */
+@Immutable
+public abstract class Wrapper<W extends Wrapper<W>> implements Encodable<W, Object>, Storable<W, Object> {
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Semantic Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Stores the semantic type of this wrapper.
+     * 
+     * @invariant semanticType.isBasedOn(getSyntacticType()) : "The semantic type is based on the syntactic type.";
+     */
+    private final @Nonnull SemanticType semanticType;
+    
+    /**
+     * Returns the semantic type of this wrapper.
+     * 
+     * @return the semantic type of this wrapper.
+     * 
+     * @ensure semanticType.isBasedOn(getSyntacticType()) : "The semantic type is based on the syntactic type.";
+     */
+    @Pure
+    public final @Nonnull SemanticType getSemanticType() {
+        return semanticType;
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Syntactic Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Returns the syntactic type that corresponds to this class.
+     * 
+     * @return the syntactic type that corresponds to this class.
+     */
+    @Pure
+    public abstract @Nonnull @Loaded SyntacticType getSyntacticType();
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Creates a new wrapper with the given semantic type.
+     * 
+     * @param semanticType the semantic type of the new wrapper.
+     * 
+     * @require semanticType.isBasedOn(getSyntacticType()) : "The given semantic type is based on the indicated syntactic type.";
+     */
+    protected Wrapper(@Nonnull @Loaded SemanticType semanticType) {
+        assert semanticType.isBasedOn(getSyntacticType()) : "The given semantic type is based on the indicated syntactic type.";
+        
+        this.semanticType = semanticType;
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encoding –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Determines the length of the encoding block.
+     * This method is required for lazy encoding.
+     * 
+     * @return the length of the encoding block.
+     */
+    @Pure
+    protected abstract @Positive int determineLength();
+    
+    /**
+     * Encodes the data into the encoding block.
+     * This method is required for lazy encoding.
+     * <p>
+     * <em>Important:</em> Do not leak the given block!
+     * 
+     * @param block an encoding block to encode the data into.
+     * 
+     * @require block.getLength() == determineLength() : "The block's length has to match the determined length.";
+     * @require block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
+     */
+    protected abstract void encode(@Encoding @Nonnull Block block);
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    @Pure
+    @Override
+    @SuppressWarnings("unchecked")
+    public final boolean equals(@Nullable Object object) {
+        if (object == this) return true;
+        if (object == null || !(object instanceof Wrapper)) return false;
+        final @Nonnull Wrapper<?> other = (Wrapper<?>) object;
+        return this.getClass().equals(other.getClass()) && Encode.nonNullable((W) this).equals(Encode.nonNullable((W) other));
+    }
+    
+    @Pure
+    @Override
+    @SuppressWarnings("unchecked")
+    public final int hashCode() {
+        return Encode.nonNullable((W) this).hashCode();
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encodable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * The encoding factory for wrappers.
+     */
+    @Immutable
+    public abstract static class EncodingFactory<W extends Wrapper<W>> extends AbstractEncodingFactory<W, Object> {
+        
+        /**
+         * Creates a new encoding factory with the given type.
+         * 
+         * @param type the semantic type of the encoded blocks and decoded wrappers.
+         */
+        protected EncodingFactory(@Nonnull @Loaded SemanticType type) {
+            super(type);
+        }
+        
+        @Pure
+        @Override
+        public final @Nonnull @NonEncoding Block encodeNonNullable(@Nonnull W wrapper) {
+            return Block.get(getType(), wrapper);
+        }
+        
+    }
+    
+    /**
+     * The non-requesting encoding factory for wrappers.
+     */
+    @Immutable
+    public abstract static class NonRequestingEncodingFactory<W extends Wrapper<W>> extends EncodingFactory<W> {
+        
+        /**
+         * Creates a new non-requesting encoding factory with the given type.
+         * 
+         * @param type the semantic type of the encoded blocks and decoded wrappers.
+         */
+        protected NonRequestingEncodingFactory(@Nonnull @Loaded SemanticType type) {
+            super(type);
+        }
+        
+        @Pure
+        @Override
+        public abstract @Nonnull W decodeNonNullable(@Nonnull Object none, @Nonnull @NonEncoding Block block) throws InvalidEncodingException;
+        
+        @Pure
+        @Override
+        public final @Nullable W decodeNullable(@Nonnull Object none, @Nullable @NonEncoding Block block) throws InvalidEncodingException {
+            return block == null ? null : decodeNonNullable(none, block);
+        }
+        
+    }
+    
+    @Pure
+    @Override
+    public abstract @Nonnull EncodingFactory<W> getEncodingFactory();
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * The storing factory for wrappers.
+     */
+    @Immutable
+    public abstract static class StoringFactory<W extends Wrapper<W>> extends AbstractStoringFactory<W, Object> {
+        
+        /**
+         * Stores the semantic type of the restored wrappers.
+         */
+        private final @Nonnull @Loaded SemanticType type;
+        
+        /**
+         * Returns the semantic type of the restored wrappers.
+         * 
+         * @return the semantic type of the restored wrappers.
+         */
+        public final @Nonnull @Loaded SemanticType getType() {
+            return type;
+        }
+        
+        /**
+         * Creates a new storing factory with the given column.
+         * 
+         * @param column the column used to store objects of the wrapper.
+         * @param type the semantic type of the restored wrappers.
+         */
+        protected StoringFactory(@Nonnull @NonNullableElements Column column, @Nonnull @Loaded SemanticType type) {
+            super(column);
+            
+            this.type = type;
+        }
+        
+        @Pure
+        @Override
+        public final @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getValues(@Nonnull W wrapper) {
+            return FreezableArray.getNonNullable(wrapper.toString());
+        }
+        
+    }
+    
+    @Pure
+    @Override
+    public abstract @Nonnull StoringFactory<W> getStoringFactory();
+    
+    /**
+     * Returns the value of this wrapper for SQL.
+     * 
+     * @return the value of this wrapper for SQL.
+     */
+    @Pure
+    @Override
+    public abstract @Nonnull String toString();
+    
+}

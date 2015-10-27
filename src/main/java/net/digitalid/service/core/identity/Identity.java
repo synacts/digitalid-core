@@ -1,11 +1,12 @@
 package net.digitalid.service.core.identity;
 
+import net.digitalid.service.core.block.Block;
+
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.identifier.Identifier;
 import net.digitalid.utility.database.storing.Storable;
-import net.digitalid.service.core.wrappers.Block;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.database.annotations.NonCommitting;

@@ -1,5 +1,7 @@
 package net.digitalid.service.core.password;
 
+import net.digitalid.service.core.concepts.password.Password;
+
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.setup.IdentitySetup;

@@ -1,16 +1,17 @@
 package net.digitalid.service.core.concept;
 
+import net.digitalid.utility.database.site.Site;
+
+import net.digitalid.service.core.factory.ConceptFactories;
+import net.digitalid.service.core.factory.Factories;
+import net.digitalid.service.core.dataservice.StateModule;
+import net.digitalid.service.core.dataservice.Service;
 import javax.annotation.Nonnull;
-import net.digitalid.service.core.data.Service;
-import net.digitalid.service.core.data.StateModule;
 import net.digitalid.service.core.entity.Entity;
-import net.digitalid.service.core.factories.ConceptFactories;
-import net.digitalid.service.core.factories.Factories;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
-import net.digitalid.utility.database.column.Site;
 
 /**
  * This class stores the setup of a {@link Concept concept}.

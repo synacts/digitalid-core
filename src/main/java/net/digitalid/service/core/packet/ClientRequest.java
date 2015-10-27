@@ -1,14 +1,20 @@
 package net.digitalid.service.core.packet;
 
+import net.digitalid.service.core.block.wrappers.ClientSignatureWrapper;
+import net.digitalid.service.core.block.wrappers.CompressionWrapper;
+
+import net.digitalid.service.core.action.synchronizer.Audit;
+import net.digitalid.service.core.action.synchronizer.RequestAudit;
+import net.digitalid.service.core.action.synchronizer.Sender;
+import net.digitalid.service.core.concepts.agent.ClientAgentCommitmentReplace;
+import net.digitalid.service.core.site.client.Client;
+import net.digitalid.service.core.site.client.Commitment;
+import net.digitalid.service.core.site.client.SecretCommitment;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.service.core.agent.ClientAgentCommitmentReplace;
 import net.digitalid.service.core.auxiliary.Time;
-import net.digitalid.service.core.client.Client;
-import net.digitalid.service.core.client.Commitment;
-import net.digitalid.service.core.client.SecretCommitment;
 import net.digitalid.service.core.entity.NativeRole;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
@@ -16,11 +22,6 @@ import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.Method;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.identifier.InternalIdentifier;
-import net.digitalid.service.core.synchronizer.Audit;
-import net.digitalid.service.core.synchronizer.RequestAudit;
-import net.digitalid.service.core.synchronizer.Sender;
-import net.digitalid.service.core.wrappers.ClientSignatureWrapper;
-import net.digitalid.service.core.wrappers.CompressionWrapper;
 import net.digitalid.utility.annotations.reference.RawRecipient;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;

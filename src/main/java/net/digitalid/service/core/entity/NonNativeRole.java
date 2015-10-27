@@ -1,10 +1,11 @@
 package net.digitalid.service.core.entity;
 
+import net.digitalid.service.core.concepts.agent.OutgoingRole;
+
+import net.digitalid.service.core.site.client.Client;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.service.core.agent.OutgoingRole;
-import net.digitalid.service.core.client.Client;
 import net.digitalid.service.core.concept.Aspect;
 import net.digitalid.service.core.concept.Instance;
 import net.digitalid.service.core.concept.Observer;

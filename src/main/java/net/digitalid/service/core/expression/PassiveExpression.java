@@ -1,5 +1,9 @@
 package net.digitalid.service.core.expression;
 
+import net.digitalid.service.core.block.Block;
+
+import net.digitalid.service.core.block.wrappers.CredentialsSignatureWrapper;
+import net.digitalid.service.core.block.wrappers.StringWrapper;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -8,9 +12,6 @@ import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identity.SemanticType;
-import net.digitalid.service.core.wrappers.Block;
-import net.digitalid.service.core.wrappers.CredentialsSignatureWrapper;
-import net.digitalid.service.core.wrappers.StringWrapper;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.database.annotations.NonCommitting;

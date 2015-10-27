@@ -1,5 +1,8 @@
 package net.digitalid.service.core.identity;
 
+import net.digitalid.service.core.identity.resolution.Mapper;
+import net.digitalid.service.core.identity.resolution.Successor;
+
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

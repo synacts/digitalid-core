@@ -1,17 +1,18 @@
 package net.digitalid.service.core.cryptography;
 
+import net.digitalid.service.core.block.Block;
+
+import net.digitalid.service.core.block.wrappers.TupleWrapper;
+import net.digitalid.service.core.identity.annotations.BasedOn;
+import net.digitalid.service.core.factory.storing.BlockBasedStoringFactory;
+import net.digitalid.service.core.factory.encoding.Encodable;
+import net.digitalid.service.core.factory.encoding.Encode;
+import net.digitalid.service.core.factory.encoding.NonRequestingEncodingFactory;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.service.core.annotations.BasedOn;
 import net.digitalid.service.core.auxiliary.None;
-import net.digitalid.service.core.encoding.Encodable;
-import net.digitalid.service.core.encoding.Encode;
-import net.digitalid.service.core.encoding.NonRequestingEncodingFactory;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.identity.SemanticType;
-import net.digitalid.service.core.storing.BlockBasedStoringFactory;
-import net.digitalid.service.core.wrappers.Block;
-import net.digitalid.service.core.wrappers.TupleWrapper;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.freezable.FreezableArray;

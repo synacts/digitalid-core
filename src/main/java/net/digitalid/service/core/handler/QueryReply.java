@@ -1,15 +1,16 @@
 package net.digitalid.service.core.handler;
 
+import net.digitalid.utility.database.annotations.OnlyForHosts;
+
+import net.digitalid.service.core.block.wrappers.HostSignatureWrapper;
+import net.digitalid.service.core.identity.resolution.IdentityReply;
+import net.digitalid.service.core.handler.core.CoreServiceQueryReply;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.service.core.annotations.OnlyForHosts;
 import net.digitalid.service.core.entity.Account;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.identifier.InternalIdentifier;
-import net.digitalid.service.core.identity.IdentityReply;
-import net.digitalid.service.core.service.CoreServiceQueryReply;
-import net.digitalid.service.core.wrappers.HostSignatureWrapper;
 import net.digitalid.utility.annotations.state.Immutable;
 
 /**

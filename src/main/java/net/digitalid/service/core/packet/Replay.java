@@ -1,5 +1,7 @@
 package net.digitalid.service.core.packet;
 
+import net.digitalid.service.core.block.wrappers.EncryptionWrapper;
+
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -9,7 +11,6 @@ import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.cryptography.InitializationVector;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
-import net.digitalid.service.core.wrappers.EncryptionWrapper;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.configuration.Database;
 import net.digitalid.utility.system.errors.InitializationError;

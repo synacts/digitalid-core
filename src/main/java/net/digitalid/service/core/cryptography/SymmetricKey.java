@@ -1,5 +1,12 @@
 package net.digitalid.service.core.cryptography;
 
+import net.digitalid.service.core.block.Block;
+
+import net.digitalid.service.core.block.wrappers.IntegerWrapper;
+import net.digitalid.service.core.identity.annotations.BasedOn;
+import net.digitalid.service.core.factory.storing.BlockBasedStoringFactory;
+import net.digitalid.service.core.factory.encoding.Encodable;
+import net.digitalid.service.core.factory.encoding.NonRequestingEncodingFactory;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.math.BigInteger;
@@ -18,14 +25,8 @@ import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
-import net.digitalid.service.core.annotations.BasedOn;
-import net.digitalid.service.core.encoding.Encodable;
-import net.digitalid.service.core.encoding.NonRequestingEncodingFactory;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.identity.SemanticType;
-import net.digitalid.service.core.storing.BlockBasedStoringFactory;
-import net.digitalid.service.core.wrappers.Block;
-import net.digitalid.service.core.wrappers.IntegerWrapper;
 import net.digitalid.utility.annotations.math.NonNegative;
 import net.digitalid.utility.annotations.math.Positive;
 import net.digitalid.utility.annotations.reference.Capturable;
@@ -41,7 +42,7 @@ import net.digitalid.utility.system.errors.ShouldNeverHappenError;
  * Symmetric keys are used to encrypt and decrypt byte arrays with the Advanced Encryption Standard (AES).
  */
 @Immutable
-public final class SymmetricKey implements Encodable<SymmetricKey, Object>, Storable<SymmetricKey,Object> {
+public final class SymmetricKey implements Encodable<SymmetricKey, Object>, Storable<SymmetricKey, Object> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -248,7 +249,7 @@ public final class SymmetricKey implements Encodable<SymmetricKey, Object>, Stor
      * The encoding factory for this class.
      */
     @Immutable
-    public static final class EncodingFactory extends NonRequestingEncodingFactory<SymmetricKey,Object> {
+    public static final class EncodingFactory extends NonRequestingEncodingFactory<SymmetricKey, Object> {
         
         /**
          * Creates a new encoding factory with the given type.
@@ -289,7 +290,7 @@ public final class SymmetricKey implements Encodable<SymmetricKey, Object>, Stor
     /**
      * Stores the storing factory of this class.
      */
-    public static final @Nonnull AbstractStoringFactory<SymmetricKey,Object> STORING_FACTORY = BlockBasedStoringFactory.get(ENCODING_FACTORY);
+    public static final @Nonnull AbstractStoringFactory<SymmetricKey, Object> STORING_FACTORY = BlockBasedStoringFactory.get(ENCODING_FACTORY);
     
     @Pure
     @Override

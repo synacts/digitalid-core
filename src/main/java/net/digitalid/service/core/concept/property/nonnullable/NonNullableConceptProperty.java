@@ -1,5 +1,7 @@
 package net.digitalid.service.core.concept.property.nonnullable;
 
+import net.digitalid.service.core.action.synchronizer.Synchronizer;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.auxiliary.Time;
@@ -8,7 +10,6 @@ import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.concept.property.ConceptProperty;
 import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.property.nonnullable.WriteableNonNullableProperty;
-import net.digitalid.service.core.synchronizer.Synchronizer;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
 import net.digitalid.utility.collections.annotations.elements.NonNullableElements;

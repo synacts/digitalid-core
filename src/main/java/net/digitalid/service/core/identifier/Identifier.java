@@ -1,7 +1,8 @@
 package net.digitalid.service.core.identifier;
 
+import net.digitalid.service.core.factory.encoding.Encodable;
+
 import javax.annotation.Nonnull;
-import net.digitalid.service.core.encoding.Encodable;
 import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;

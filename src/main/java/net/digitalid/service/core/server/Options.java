@@ -1,13 +1,14 @@
 package net.digitalid.service.core.server;
 
+import net.digitalid.service.core.dataservice.Service;
+
+import net.digitalid.service.core.site.host.Host;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Collection;
 import javax.annotation.Nonnull;
-import net.digitalid.service.core.data.Service;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
-import net.digitalid.service.core.host.Host;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.readonly.ReadOnlyCollection;

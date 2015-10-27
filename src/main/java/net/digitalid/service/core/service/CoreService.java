@@ -1,8 +1,9 @@
 package net.digitalid.service.core.service;
 
+import net.digitalid.service.core.dataservice.Service;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.service.core.data.Service;
 import net.digitalid.service.core.entity.Role;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.identity.Identity;

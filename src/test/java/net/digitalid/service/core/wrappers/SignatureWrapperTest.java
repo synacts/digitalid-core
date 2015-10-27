@@ -1,9 +1,13 @@
 package net.digitalid.service.core.wrappers;
 
+import net.digitalid.service.core.block.Block;
+
+import net.digitalid.service.core.block.wrappers.BooleanWrapper;
+import net.digitalid.service.core.block.wrappers.SignatureWrapper;
+import net.digitalid.service.core.cryptography.credential.Credential;
 import java.math.BigInteger;
 import java.util.List;
 import javax.annotation.Nonnull;
-import net.digitalid.service.core.credential.Credential;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.setup.ServerSetup;
 import org.junit.Test;

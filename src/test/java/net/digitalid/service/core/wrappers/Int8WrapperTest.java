@@ -1,5 +1,7 @@
 package net.digitalid.service.core.wrappers;
 
+import net.digitalid.service.core.block.wrappers.Int8Wrapper;
+
 import java.util.Random;
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;

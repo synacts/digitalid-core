@@ -1,14 +1,20 @@
 package net.digitalid.service.core.concept.property.nonnullable;
 
+import net.digitalid.utility.database.site.Site;
+
+import net.digitalid.service.core.block.Block;
+import net.digitalid.service.core.block.wrappers.ListWrapper;
+import net.digitalid.service.core.block.wrappers.TupleWrapper;
+import net.digitalid.service.core.concepts.agent.Agent;
+import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
+import net.digitalid.service.core.concepts.agent.Restrictions;
+import net.digitalid.service.core.site.host.Host;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.service.core.agent.Agent;
-import net.digitalid.service.core.agent.ReadOnlyAgentPermissions;
-import net.digitalid.service.core.agent.Restrictions;
 import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.concept.Concept;
@@ -16,11 +22,7 @@ import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
-import net.digitalid.service.core.host.Host;
 import net.digitalid.service.core.concept.property.ConceptPropertyTable;
-import net.digitalid.service.core.wrappers.Block;
-import net.digitalid.service.core.wrappers.ListWrapper;
-import net.digitalid.service.core.wrappers.TupleWrapper;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
@@ -35,7 +37,6 @@ import net.digitalid.utility.collections.tuples.ReadOnlyPair;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.annotations.OnMainThread;
-import net.digitalid.utility.database.column.Site;
 import net.digitalid.utility.database.configuration.Database;
 import net.digitalid.service.core.exceptions.abort.AbortException;
 

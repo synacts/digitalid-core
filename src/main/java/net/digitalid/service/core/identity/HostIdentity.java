@@ -1,5 +1,7 @@
 package net.digitalid.service.core.identity;
 
+import net.digitalid.service.core.identity.resolution.Mapper;
+
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.identifier.HostIdentifier;

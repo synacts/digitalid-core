@@ -1,27 +1,28 @@
 package net.digitalid.service.core.concept.property;
 
+import net.digitalid.service.core.block.annotations.NonEncoding;
+
+import net.digitalid.service.core.block.Block;
+import net.digitalid.service.core.block.wrappers.ListWrapper;
+import net.digitalid.service.core.block.wrappers.TupleWrapper;
+import net.digitalid.service.core.identity.annotations.Loaded;
+import net.digitalid.service.core.dataservice.StateTable;
+import net.digitalid.service.core.concepts.agent.Agent;
+import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
+import net.digitalid.service.core.concepts.agent.Restrictions;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Statement;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.service.core.agent.Agent;
-import net.digitalid.service.core.agent.ReadOnlyAgentPermissions;
-import net.digitalid.service.core.agent.Restrictions;
-import net.digitalid.service.core.annotations.Loaded;
-import net.digitalid.service.core.annotations.NonEncoding;
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.concept.Concept;
-import net.digitalid.service.core.data.StateTable;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identity.Identity;
 import net.digitalid.service.core.identity.SemanticType;
-import net.digitalid.service.core.wrappers.Block;
-import net.digitalid.service.core.wrappers.ListWrapper;
-import net.digitalid.service.core.wrappers.TupleWrapper;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.database.annotations.Locked;

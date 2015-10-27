@@ -1,12 +1,13 @@
 package net.digitalid.service.core.concept;
 
+import net.digitalid.utility.database.annotations.OnlyForClients;
+import net.digitalid.utility.database.annotations.OnlyForHosts;
+
+import net.digitalid.service.core.factory.encoding.Encodable;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.service.core.annotations.OnlyForClients;
-import net.digitalid.service.core.annotations.OnlyForHosts;
 import net.digitalid.service.core.concept.property.ConceptProperty;
 import net.digitalid.service.core.concept.property.ConceptPropertyTable;
-import net.digitalid.service.core.encoding.Encodable;
 import net.digitalid.service.core.entity.Account;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostEntity;

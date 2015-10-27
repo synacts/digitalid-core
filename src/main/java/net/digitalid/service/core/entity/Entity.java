@@ -1,8 +1,10 @@
 package net.digitalid.service.core.entity;
 
+import net.digitalid.utility.database.site.Site;
+
+import net.digitalid.service.core.factory.encoding.Encodable;
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.concept.Concept;
-import net.digitalid.service.core.encoding.Encodable;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.handler.Handler;
 import net.digitalid.service.core.identity.Identity;
@@ -10,7 +12,6 @@ import net.digitalid.service.core.identity.InternalIdentity;
 import net.digitalid.utility.database.storing.Storable;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.database.column.Site;
 
 /**
  * An entity captures the {@link Site site} and the {@link Identity identity} of a {@link Concept concept} or {@link Handler handler}.
