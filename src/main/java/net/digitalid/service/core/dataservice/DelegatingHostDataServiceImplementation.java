@@ -1,0 +1,122 @@
+package net.digitalid.service.core.dataservice;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import net.digitalid.service.core.block.Block;
+import net.digitalid.service.core.block.wrappers.ListWrapper;
+import net.digitalid.service.core.block.wrappers.SelfcontainedWrapper;
+import net.digitalid.service.core.exceptions.abort.AbortException;
+import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.network.NetworkException;
+import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.identity.annotations.Loaded;
+import net.digitalid.service.core.site.host.Host;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.annotations.state.Validated;
+import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
+import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
+import net.digitalid.utility.collections.freezable.FreezableArrayList;
+import net.digitalid.utility.collections.freezable.FreezableLinkedHashMap;
+import net.digitalid.utility.collections.freezable.FreezableList;
+import net.digitalid.utility.collections.freezable.FreezableMap;
+import net.digitalid.utility.collections.readonly.ReadOnlyList;
+import net.digitalid.utility.database.annotations.Locked;
+import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.annotations.OnMainThread;
+
+/**
+ * Host modules are only used on {@link Host hosts}.
+ */
+class DelegatingHostDataServiceImplementation extends DelegatingClientDataServiceImplementation implements HostDataService {
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Stores the semantic type {@code table.module@core.digitalid.net}.
+     */
+    private static final @Nonnull SemanticType TABLE = SemanticType.map("table.module@core.digitalid.net").load(SelfcontainedWrapper.TYPE);
+    
+    /**
+     * Stores the semantic type {@code module@core.digitalid.net}.
+     */
+    private static final @Nonnull SemanticType MODULE = SemanticType.map("module@core.digitalid.net").load(ListWrapper.TYPE, TABLE);
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Dump Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Stores the dump type of this module.
+     */
+    private final @Nonnull @Loaded SemanticType dumpType;
+    
+    @Pure
+    @Override
+    public final @Nonnull @Loaded SemanticType getDumpType() {
+        return dumpType;
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Creates a new host module with the given service and name.
+     * 
+     * @param service the service to which the new module belongs.
+     * @param name the name of the new module without any prefix.
+     */
+    @OnMainThread
+    DelegatingHostDataServiceImplementation(@Nullable Service service, @Nonnull @Validated String name) {
+        super(service, name);
+        
+        final @Nonnull String identifier;
+        if (service == null) {
+            identifier = "module.service" + ((Service) this).getType().getAddress().getStringWithDot();
+        } else {
+            identifier = "module." + name + service.getType().getAddress().getStringWithDot();
+        }
+        this.dumpType = SemanticType.map(identifier).load(MODULE);
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Tables –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Stores the tables of this module.
+     */
+    private final @Nonnull @NonNullableElements @NonFrozen FreezableMap<SemanticType, HostDataService> tables = FreezableLinkedHashMap.get();
+    
+    /**
+     * Registers the given table at this module.
+     * 
+     * @param table the table to be registered.
+     */
+    final void registerHostDataService(@Nonnull HostDataService table) {
+        tables.put(table.getDumpType(), table);
+        super.registerClientDataService(table);
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Data –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    @Pure
+    @Locked
+    @Override
+    @NonCommitting
+    public final @Nonnull Block exportAll(@Nonnull Host host) throws AbortException {
+        final @Nonnull FreezableList<Block> elements = FreezableArrayList.getWithCapacity(tables.size());
+        for (final @Nonnull HostDataService table : tables.values()) elements.add(SelfcontainedWrapper.encodeNonNullable(TABLE, table.exportAll(host)));
+        return ListWrapper.encode(dumpType, elements.freeze());
+    }
+    
+    @Locked
+    @Override
+    @NonCommitting
+    public final void importAll(@Nonnull Host host, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+        final @Nonnull @NonNullableElements ReadOnlyList<Block> elements = ListWrapper.decodeNonNullableElements(block);
+        for (final @Nonnull Block element : elements) {
+            final @Nonnull Block selfcontained = SelfcontainedWrapper.decodeNonNullable(element);
+            final @Nullable HostDataService table = tables.get(selfcontained.getType());
+            if (table == null) throw new InvalidEncodingException("There is no table for the block of type " + selfcontained.getType() + ".");
+            table.importAll(host, selfcontained);
+        }
+    }
+    
+}

@@ -12,11 +12,11 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 /**
  * This interface models a collection of data with the least requirements.
  * 
- * @see HostData
- * @see ClientTable
- * @see ClientModule
+ * @see HostDataService
+ * @see ClientTableImplementation
+ * @see DelegatingClientDataServiceImplementation
  */
-public interface ClientData {
+interface ClientDataService {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Fields –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -46,24 +46,6 @@ public interface ClientData {
     @Pure
     public @Nonnull @Validated String getName(@Nonnull Site site);
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Sites –––––––––––––––––––––––––––––––––––––––––––––––––– */
-    
-    /**
-     * Returns whether this data collection is for hosts.
-     * 
-     * @return whether this data collection is for hosts.
-     */
-    @Pure
-    public boolean isForHosts();
-    
-    /**
-     * Returns whether this data collection is for clients.
-     * 
-     * @return whether this data collection is for clients.
-     */
-    @Pure
-    public boolean isForClients();
-    
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Tables –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
@@ -73,8 +55,8 @@ public interface ClientData {
      */
     @Locked
     @NonCommitting
-    public void createTables(@Nonnull Site site) throws AbortException;
-    
+    public void createTables(@Nonnull Site site) throws SQLException;
+
     /**
      * Deletes the database tables of this data collection for the given site.
      * 
@@ -82,6 +64,8 @@ public interface ClientData {
      */
     @Locked
     @NonCommitting
-    public void deleteTables(@Nonnull Site site) throws AbortException;
+    public void deleteTables(@Nonnull Site site) throws SQLException;
+
     
+
 }

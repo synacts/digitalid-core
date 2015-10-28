@@ -1,52 +1,19 @@
 package net.digitalid.service.core.dataservice;
 
-import net.digitalid.service.core.block.Block;
-
+import javax.annotation.Nonnull;
+import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.Loaded;
 import net.digitalid.service.core.site.host.Host;
-import java.io.IOException;
-import java.sql.SQLException;
-import javax.annotation.Nonnull;
-import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.packet.PacketException;
-import net.digitalid.service.core.identity.SemanticType;
-import net.digitalid.utility.annotations.state.Immutable;
-import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
-import net.digitalid.utility.database.annotations.Locked;
-import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * This class models a database table that can be exported and imported on {@link Host hosts}.
  * 
- * @see StateTable
+ * @see ClientTable
+ * @see SiteTable
  */
-@Immutable
-public abstract class HostTable extends ClientTable implements HostData {
-    
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Module –––––––––––––––––––––––––––––––––––––––––––––––––– */
-    
-    @Pure
-    @Override
-    public @Nonnull HostModule getModule() {
-        return (HostModule) super.getModule();
-    }
-    
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Dump Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
-    
-    /**
-     * Stores the dump type of this table.
-     */
-    private final @Nonnull @Loaded SemanticType dumpType;
-    
-    @Pure
-    @Override
-    public final @Nonnull @Loaded SemanticType getDumpType() {
-        return dumpType;
-    }
-    
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
-    
+public abstract class HostTable extends HostTableImplementation<DelegatingHostDataServiceImplementation> {
+
     /**
      * Creates a new host table with the given parameters.
      * 
@@ -56,39 +23,7 @@ public abstract class HostTable extends ClientTable implements HostData {
      * 
      * @require !(module instanceof Service) : "The module is not a service.";
      */
-    protected HostTable(@Nonnull HostModule module, @Nonnull @Validated String name, @Nonnull @Loaded SemanticType dumpType) {
-        super(module, name);
-        
-        this.dumpType = dumpType;
-        
-        module.register(this);
+    protected HostTable(@Nonnull DelegatingHostDataServiceImplementation module, @Nonnull @Validated String name, @Nonnull @Loaded SemanticType dumpType) {
+        super(module, name, dumpType);
     }
-    
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Sites –––––––––––––––––––––––––––––––––––––––––––––––––– */
-    
-    @Pure
-    @Override
-    public final boolean isForHosts() {
-        return true;
-    }
-    
-    @Pure
-    @Override
-    public boolean isForClients() {
-        return false;
-    }
-    
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Data –––––––––––––––––––––––––––––––––––––––––––––––––– */
-    
-    @Pure
-    @Locked
-    @Override
-    @NonCommitting
-    public abstract @Nonnull Block exportAll(@Nonnull Host host) throws AbortException;
-    
-    @Locked
-    @Override
-    @NonCommitting
-    public abstract void importAll(@Nonnull Host host, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException;
-    
 }

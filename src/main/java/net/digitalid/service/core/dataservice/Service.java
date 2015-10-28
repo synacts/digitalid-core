@@ -1,7 +1,11 @@
 package net.digitalid.service.core.dataservice;
 
-import net.digitalid.service.core.identity.annotations.Loaded;
+import net.digitalid.utility.database.storing.AbstractStoringFactory;
 
+import net.digitalid.utility.database.site.Site;
+import net.digitalid.service.core.exceptions.network.NetworkException;
+import net.digitalid.service.core.exceptions.abort.AbortException;
+import net.digitalid.service.core.identity.annotations.Loaded;
 import net.digitalid.service.core.concepts.attribute.Attribute;
 import net.digitalid.service.core.concepts.attribute.AttributeValue;
 import java.io.IOException;
@@ -37,7 +41,7 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * @see CoreService
  */
 @Immutable
-public class Service extends StateModule implements Storable<Service, Object> {
+public class Service extends SiteModule implements Storable<Service, Object> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Services –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -195,28 +199,33 @@ public class Service extends StateModule implements Storable<Service, Object> {
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * The factory for this class.
+     * The storing factory for this class.
      */
     @Immutable
-    public static final class Factory extends FactoryBasedStoringFactory<Service, Object, Identity> {
+    public static final class StoringFactory extends FactoryBasedStoringFactory<Service, Object, SemanticType> {
         
         /**
-         * Creates a new factory.
+         * Creates a new storing factory.
          */
-        private Factory() {
-            super(SemanticType.IDENTIFIER, IdentityClass.FACTORY); // TODO: Redo after the identity is made storable.
+        private StoringFactory() {
+            super(SemanticType.STORING_FACTORY); // TODO: Redo after the identity is made storable.
         }
         
         @Pure
         @Override
-        public @Nonnull Identity getKey(@Nonnull Service service) {
+        public @Nonnull SemanticType getKey(@Nonnull Service service) {
             return service.getType();
         }
         
         @Pure
         @Override
-        public @Nonnull Service getObject(@Nonnull Object none, @Nonnull Identity identity) {
-            return getService(identity);
+        public @Nonnull Service getObject(@Nonnull Object none, @Nonnull SemanticType identity) {
+            try {
+                return getService(identity);
+            } catch (PacketException e) {
+                // TODO: getObject does not allow to throw any exceptions.
+                return null;
+            }
         }
         
     }
@@ -224,12 +233,12 @@ public class Service extends StateModule implements Storable<Service, Object> {
     /**
      * Stores the factory of this class.
      */
-    public static final @Nonnull Factory FACTORY = new Factory();
+    public static final @Nonnull StoringFactory STORING_FACTORY = new StoringFactory();
     
     @Pure
     @Override
-    public @Nonnull Factory getFactory() {
-        return FACTORY;
+    public @Nonnull StoringFactory getStoringFactory() {
+        return STORING_FACTORY;
     }
     
 }

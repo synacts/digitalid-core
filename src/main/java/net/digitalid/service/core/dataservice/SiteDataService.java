@@ -1,21 +1,20 @@
 package net.digitalid.service.core.dataservice;
 
-import net.digitalid.service.core.block.annotations.NonEncoding;
-
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import net.digitalid.service.core.block.Block;
-import net.digitalid.service.core.identity.annotations.Loaded;
+import net.digitalid.service.core.block.annotations.NonEncoding;
 import net.digitalid.service.core.concepts.agent.Agent;
 import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
 import net.digitalid.service.core.concepts.agent.Restrictions;
-import java.io.IOException;
-import java.sql.SQLException;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostEntity;
+import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.identity.annotations.Loaded;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
@@ -23,10 +22,10 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 /**
  * This interface models a collection of data that contains part of an {@link Entity entity's} state.
  * 
- * @see StateTable
- * @see StateModule
+ * @see SiteTableImplementation
+ * @see DelegatingSiteDataServiceImplementation
  */
-public interface StateData extends HostData {
+interface SiteDataService extends HostDataService {
     
     /**
      * Returns the state type of this data collection.

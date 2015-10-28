@@ -1,16 +1,15 @@
 package net.digitalid.service.core.dataservice;
 
-import net.digitalid.service.core.block.annotations.NonEncoding;
-
-import net.digitalid.service.core.block.Block;
-import net.digitalid.service.core.identity.annotations.Loaded;
-import net.digitalid.service.core.site.host.Host;
-import java.io.IOException;
-import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import net.digitalid.service.core.block.Block;
+import net.digitalid.service.core.block.annotations.NonEncoding;
+import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.identity.annotations.Loaded;
+import net.digitalid.service.core.site.host.Host;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
@@ -18,11 +17,11 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 /**
  * This interface models a collection of data that can be exported and imported on {@link Host hosts}.
  * 
- * @see StateData
- * @see HostTable
- * @see HostModule
+ * @see SiteDataService
+ * @see HostTableImplementation
+ * @see DelegatingHostDataServiceImplementation
  */
-public interface HostData extends ClientData {
+interface HostDataService extends ClientDataService {
     
     /**
      * Returns the dump type of this data collection.
@@ -51,6 +50,7 @@ public interface HostData extends ClientData {
      * 
      * @param host the host for whom this data collection is to be imported.
      * @param block the block containing the data of this collection.
+     * @throws AbortException 
      * 
      * @require block.getType().isBasedOn(getDumpType()) : "The block is based on the dump type of this data collection.";
      */

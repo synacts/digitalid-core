@@ -1,21 +1,21 @@
 package net.digitalid.service.core.dataservice;
 
-import net.digitalid.service.core.block.Block;
-
-import net.digitalid.service.core.identity.annotations.Loaded;
-import net.digitalid.service.core.concepts.agent.Agent;
-import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
-import net.digitalid.service.core.concepts.agent.Restrictions;
-import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Statement;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.service.core.block.Block;
+import net.digitalid.service.core.concepts.agent.Agent;
+import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
+import net.digitalid.service.core.concepts.agent.Restrictions;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostEntity;
+import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.identity.annotations.Loaded;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
@@ -24,17 +24,20 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.configuration.Database;
 
 /**
- * This class models a database table that contains part of an {@link Entity entity's} state.
+ * This class implements a data service to get, add and remove an {@link Entity entity's} state.
+ * 
+ * @see ClientTableImplementation
+ * @see HostTableImplementation
  */
 @Immutable
-public abstract class StateTable extends HostTable implements StateData {
+abstract class SiteTableImplementation<M extends DelegatingSiteDataServiceImplementation> extends HostTableImplementation<M> implements SiteDataService {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Module –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
-    public @Nonnull StateModule getModule() {
-        return (StateModule) super.getModule();
+    public @Nonnull M getModule() {
+        return (M) super.getModule();
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– State Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -62,20 +65,12 @@ public abstract class StateTable extends HostTable implements StateData {
      * 
      * @require !(module instanceof Service) : "The module is not a service.";
      */
-    protected StateTable(@Nonnull StateModule module, @Nonnull @Validated String name, @Nonnull @Loaded SemanticType dumpType, @Nonnull @Loaded SemanticType stateType) {
+    protected SiteTableImplementation(@Nonnull M module, @Nonnull @Validated String name, @Nonnull @Loaded SemanticType dumpType, @Nonnull @Loaded SemanticType stateType) {
         super(module, name, dumpType);
         
         this.stateType = stateType;
         
-        module.register(this);
-    }
-    
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Sites –––––––––––––––––––––––––––––––––––––––––––––––––– */
-    
-    @Pure
-    @Override
-    public final boolean isForClients() {
-        return true;
+        module.registerSiteDataService(this);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– State –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -95,8 +90,12 @@ public abstract class StateTable extends HostTable implements StateData {
     @Override
     @NonCommitting
     public void removeState(@Nonnull NonHostEntity entity) throws AbortException {
-        try (@Nonnull Statement statement = Database.createStatement()) {
-            statement.executeUpdate("DELETE FROM " + entity.getSite() + getName() + " WHERE entity = " + entity);
+        try {
+            try (@Nonnull Statement statement = Database.createStatement()) {
+                statement.executeUpdate("DELETE FROM " + entity.getSite() + getName() + " WHERE entity = " + entity);
+            }
+        } catch (SQLException exception) {
+            throw AbortException.get(exception);
         }
     }
     
