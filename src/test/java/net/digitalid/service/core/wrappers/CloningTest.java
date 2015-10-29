@@ -1,11 +1,10 @@
 package net.digitalid.service.core.wrappers;
 
-import net.digitalid.service.core.block.Block;
-
-import net.digitalid.service.core.block.wrappers.StringWrapper;
-import net.digitalid.service.core.concepts.attribute.AttributeTypes;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import net.digitalid.service.core.block.Block;
+import net.digitalid.service.core.block.wrappers.StringWrapper;
+import net.digitalid.service.core.concepts.attribute.AttributeTypes;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.setup.DatabaseSetup;
 import net.digitalid.utility.database.configuration.Database;

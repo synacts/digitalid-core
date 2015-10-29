@@ -1,22 +1,19 @@
 package net.digitalid.service.core.identity;
 
-import net.digitalid.service.core.block.wrappers.Int8Wrapper;
-import net.digitalid.service.core.block.wrappers.StringWrapper;
-
-import net.digitalid.service.core.identity.resolution.Mapper;
-import net.digitalid.service.core.identity.annotations.Loaded;
-import net.digitalid.service.core.identity.annotations.LoadedRecipient;
-import net.digitalid.service.core.identity.annotations.NonLoaded;
-import net.digitalid.service.core.identity.annotations.NonLoadedRecipient;
-import java.io.IOException;
-import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.auxiliary.Time;
+import net.digitalid.service.core.block.wrappers.Int8Wrapper;
+import net.digitalid.service.core.block.wrappers.StringWrapper;
 import net.digitalid.service.core.cache.Cache;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identifier.InternalNonHostIdentifier;
+import net.digitalid.service.core.identity.annotations.Loaded;
+import net.digitalid.service.core.identity.annotations.LoadedRecipient;
+import net.digitalid.service.core.identity.annotations.NonLoaded;
+import net.digitalid.service.core.identity.annotations.NonLoadedRecipient;
+import net.digitalid.service.core.identity.resolution.Mapper;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.database.annotations.NonCommitting;

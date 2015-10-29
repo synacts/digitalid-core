@@ -1,38 +1,31 @@
 package net.digitalid.service.core.block.wrappers;
 
-import net.digitalid.service.core.block.annotations.NonEncoding;
-
-import net.digitalid.service.core.block.Block;
-import net.digitalid.service.core.identity.annotations.AttributeType;
-import net.digitalid.service.core.identity.annotations.BasedOn;
-import net.digitalid.service.core.identity.annotations.Loaded;
-import net.digitalid.service.core.action.synchronizer.Audit;
-import net.digitalid.service.core.factory.encoding.Encodable;
-import net.digitalid.service.core.factory.encoding.Encode;
-import net.digitalid.service.core.cryptography.credential.ClientCredential;
-import net.digitalid.service.core.cryptography.credential.Credential;
-import net.digitalid.service.core.cryptography.credential.HostCredential;
-import net.digitalid.service.core.concepts.contact.Contact;
-import net.digitalid.service.core.concepts.attribute.AttributeValue;
-import net.digitalid.service.core.concepts.attribute.CertifiedAttributeValue;
-import net.digitalid.service.core.concepts.agent.AgentModule;
-import net.digitalid.service.core.concepts.agent.OutgoingRole;
-import net.digitalid.service.core.concepts.agent.RandomizedAgentPermissions;
-import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
-import net.digitalid.service.core.concepts.agent.Restrictions;
-import net.digitalid.service.core.site.host.Host;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.Iterator;
 import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.service.core.action.synchronizer.Audit;
 import net.digitalid.service.core.auxiliary.Time;
+import net.digitalid.service.core.block.Block;
+import net.digitalid.service.core.block.annotations.NonEncoding;
 import net.digitalid.service.core.cache.Cache;
+import net.digitalid.service.core.concepts.agent.AgentModule;
+import net.digitalid.service.core.concepts.agent.OutgoingRole;
+import net.digitalid.service.core.concepts.agent.RandomizedAgentPermissions;
+import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
+import net.digitalid.service.core.concepts.agent.Restrictions;
+import net.digitalid.service.core.concepts.attribute.AttributeValue;
+import net.digitalid.service.core.concepts.attribute.CertifiedAttributeValue;
+import net.digitalid.service.core.concepts.contact.Contact;
 import net.digitalid.service.core.cryptography.Element;
 import net.digitalid.service.core.cryptography.Exponent;
 import net.digitalid.service.core.cryptography.Parameters;
 import net.digitalid.service.core.cryptography.PublicKey;
+import net.digitalid.service.core.cryptography.credential.ClientCredential;
+import net.digitalid.service.core.cryptography.credential.Credential;
+import net.digitalid.service.core.cryptography.credential.HostCredential;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.HostEntity;
 import net.digitalid.service.core.entity.NonHostAccount;
@@ -46,11 +39,17 @@ import net.digitalid.service.core.exceptions.external.InvalidSignatureException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.factory.encoding.Encodable;
+import net.digitalid.service.core.factory.encoding.Encode;
 import net.digitalid.service.core.identifier.InternalIdentifier;
 import net.digitalid.service.core.identity.InternalNonHostIdentity;
 import net.digitalid.service.core.identity.InternalPerson;
 import net.digitalid.service.core.identity.Person;
 import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.identity.annotations.AttributeType;
+import net.digitalid.service.core.identity.annotations.BasedOn;
+import net.digitalid.service.core.identity.annotations.Loaded;
+import net.digitalid.service.core.site.host.Host;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
@@ -485,7 +484,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
     @Pure
     @Locked
     @NonCommitting
-    public static @Nonnull <V extends Encodable<V,?>> CredentialsSignatureWrapper sign(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nullable V element, @Nonnull InternalIdentifier<?> subject, @Nullable Audit audit, @Nonnull @NonNullableElements @NonEmpty @Frozen @Validated ReadOnlyList<Credential> credentials, @Nullable @NonNullableElements @NonEmpty @Frozen @Validated ReadOnlyList<CertifiedAttributeValue> certificates, boolean lodged, @Nullable BigInteger value) throws AbortException, PacketException, ExternalException, NetworkException {
+    public static @Nonnull <V extends Encodable<V, ?>> CredentialsSignatureWrapper sign(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nullable V element, @Nonnull InternalIdentifier<?> subject, @Nullable Audit audit, @Nonnull @NonNullableElements @NonEmpty @Frozen @Validated ReadOnlyList<Credential> credentials, @Nullable @NonNullableElements @NonEmpty @Frozen @Validated ReadOnlyList<CertifiedAttributeValue> certificates, boolean lodged, @Nullable BigInteger value) throws AbortException, PacketException, ExternalException, NetworkException {
         return new CredentialsSignatureWrapper(type, Encode.nullable(element), subject, audit, credentials, certificates, lodged, value);
     }
     

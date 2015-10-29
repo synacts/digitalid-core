@@ -1,13 +1,5 @@
 package net.digitalid.service.core.handler;
 
-import net.digitalid.utility.database.annotations.OnlyForHosts;
-
-import net.digitalid.service.core.block.Block;
-import net.digitalid.service.core.block.wrappers.CompressionWrapper;
-import net.digitalid.service.core.block.wrappers.HostSignatureWrapper;
-import net.digitalid.service.core.block.wrappers.SelfcontainedWrapper;
-import net.digitalid.service.core.block.wrappers.SignatureWrapper;
-import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -19,6 +11,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.auxiliary.Time;
+import net.digitalid.service.core.block.Block;
+import net.digitalid.service.core.block.wrappers.CompressionWrapper;
+import net.digitalid.service.core.block.wrappers.HostSignatureWrapper;
+import net.digitalid.service.core.block.wrappers.SelfcontainedWrapper;
+import net.digitalid.service.core.block.wrappers.SignatureWrapper;
 import net.digitalid.service.core.database.SQLizable;
 import net.digitalid.service.core.entity.Account;
 import net.digitalid.service.core.entity.NonHostEntity;
@@ -32,6 +29,7 @@ import net.digitalid.service.core.packet.Packet;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.annotations.OnlyForHosts;
 import net.digitalid.utility.database.configuration.Database;
 import net.digitalid.utility.system.errors.InitializationError;
 

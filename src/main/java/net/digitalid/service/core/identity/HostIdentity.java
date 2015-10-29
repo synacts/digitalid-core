@@ -1,10 +1,9 @@
 package net.digitalid.service.core.identity;
 
-import net.digitalid.service.core.identity.resolution.Mapper;
-
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.identifier.HostIdentifier;
+import net.digitalid.service.core.identity.resolution.Mapper;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.database.annotations.NonCommitting;

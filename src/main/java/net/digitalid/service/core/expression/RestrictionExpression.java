@@ -1,12 +1,11 @@
 package net.digitalid.service.core.expression;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import net.digitalid.service.core.block.Block;
-
 import net.digitalid.service.core.block.wrappers.CredentialsSignatureWrapper;
 import net.digitalid.service.core.block.wrappers.StringWrapper;
 import net.digitalid.service.core.concepts.contact.Contact;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.reference.Capturable;

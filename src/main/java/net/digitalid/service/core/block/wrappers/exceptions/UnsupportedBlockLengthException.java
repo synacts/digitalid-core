@@ -1,4 +1,4 @@
-package net.digitalid.service.core.wrappers.exceptions;
+package net.digitalid.service.core.block.wrappers.exceptions;
 
 import java.io.IOException;
 import javax.annotation.Nonnull;

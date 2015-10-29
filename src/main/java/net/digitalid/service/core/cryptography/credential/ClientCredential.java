@@ -1,26 +1,23 @@
 package net.digitalid.service.core.cryptography.credential;
 
-import net.digitalid.service.core.block.Block;
-
-import net.digitalid.service.core.cryptography.credential.annotations.Active;
-import net.digitalid.service.core.entity.annotations.OfInternalPerson;
-import net.digitalid.service.core.concepts.attribute.CertifiedAttributeValue;
-import net.digitalid.service.core.concepts.agent.RandomizedAgentPermissions;
-import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
-import net.digitalid.service.core.concepts.agent.Restrictions;
-import java.io.IOException;
 import java.math.BigInteger;
 import java.security.SecureRandom;
-import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.auxiliary.Time;
+import net.digitalid.service.core.block.Block;
+import net.digitalid.service.core.concepts.agent.RandomizedAgentPermissions;
+import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
+import net.digitalid.service.core.concepts.agent.Restrictions;
+import net.digitalid.service.core.concepts.attribute.CertifiedAttributeValue;
 import net.digitalid.service.core.cryptography.Element;
 import net.digitalid.service.core.cryptography.Exponent;
 import net.digitalid.service.core.cryptography.Parameters;
 import net.digitalid.service.core.cryptography.PublicKey;
+import net.digitalid.service.core.cryptography.credential.annotations.Active;
 import net.digitalid.service.core.entity.NonNativeRole;
 import net.digitalid.service.core.entity.Role;
+import net.digitalid.service.core.entity.annotations.OfInternalPerson;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InvalidSignatureException;
 import net.digitalid.service.core.exceptions.packet.PacketException;

@@ -1,11 +1,9 @@
 package net.digitalid.service.core.handler;
 
-import net.digitalid.utility.database.annotations.OnlyForHosts;
-
-import net.digitalid.service.core.block.wrappers.SignatureWrapper;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.service.core.block.wrappers.SignatureWrapper;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.Role;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
@@ -15,6 +13,7 @@ import net.digitalid.service.core.identifier.InternalIdentifier;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.annotations.OnlyForHosts;
 
 /**
  * Queries have to be sent by the caller and are thus executed synchronously.

@@ -1,16 +1,5 @@
 package net.digitalid.service.core.action.synchronizer;
 
-import net.digitalid.utility.database.site.Site;
-
-import net.digitalid.service.core.block.Block;
-import net.digitalid.service.core.block.wrappers.SelfcontainedWrapper;
-import net.digitalid.service.core.block.wrappers.SignatureWrapper;
-import net.digitalid.service.core.concepts.error.ErrorModule;
-import net.digitalid.service.core.dataservice.ClientModule;
-import net.digitalid.service.core.dataservice.StateModule;
-import net.digitalid.service.core.dataservice.Service;
-import net.digitalid.service.core.site.client.Client;
-import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -23,6 +12,13 @@ import java.util.concurrent.LinkedBlockingDeque;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.auxiliary.Time;
+import net.digitalid.service.core.block.Block;
+import net.digitalid.service.core.block.wrappers.SelfcontainedWrapper;
+import net.digitalid.service.core.block.wrappers.SignatureWrapper;
+import net.digitalid.service.core.concepts.error.ErrorModule;
+import net.digitalid.service.core.dataservice.ClientModule;
+import net.digitalid.service.core.dataservice.Service;
+import net.digitalid.service.core.dataservice.StateModule;
 import net.digitalid.service.core.entity.EntityClass;
 import net.digitalid.service.core.entity.Role;
 import net.digitalid.service.core.exceptions.external.ExternalException;
@@ -32,6 +28,7 @@ import net.digitalid.service.core.handler.InternalAction;
 import net.digitalid.service.core.handler.Method;
 import net.digitalid.service.core.packet.Packet;
 import net.digitalid.service.core.service.CoreService;
+import net.digitalid.service.core.site.client.Client;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Stateless;
 import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
@@ -47,6 +44,7 @@ import net.digitalid.utility.database.annotations.Committing;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.configuration.Database;
+import net.digitalid.utility.database.site.Site;
 import net.digitalid.utility.system.logger.Log;
 
 /**

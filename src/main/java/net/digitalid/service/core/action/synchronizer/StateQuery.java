@@ -1,18 +1,16 @@
 package net.digitalid.service.core.action.synchronizer;
 
-import net.digitalid.service.core.block.Block;
-
-import net.digitalid.service.core.block.wrappers.SignatureWrapper;
-import net.digitalid.service.core.dataservice.StateModule;
-import net.digitalid.service.core.dataservice.Service;
-import net.digitalid.service.core.cryptography.credential.Credential;
-import net.digitalid.service.core.concepts.agent.Agent;
-import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
-import net.digitalid.service.core.concepts.agent.Restrictions;
-import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.service.core.block.Block;
+import net.digitalid.service.core.block.wrappers.SignatureWrapper;
+import net.digitalid.service.core.concepts.agent.Agent;
+import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
+import net.digitalid.service.core.concepts.agent.Restrictions;
+import net.digitalid.service.core.cryptography.credential.Credential;
+import net.digitalid.service.core.dataservice.Service;
+import net.digitalid.service.core.dataservice.StateModule;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostAccount;
 import net.digitalid.service.core.entity.Role;

@@ -1,13 +1,10 @@
 package net.digitalid.service.core.concepts.certificate;
 
-import net.digitalid.service.core.block.Block;
-
-import net.digitalid.service.core.block.wrappers.ListWrapper;
-import net.digitalid.service.core.block.wrappers.TupleWrapper;
-import java.io.IOException;
-import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.auxiliary.Time;
+import net.digitalid.service.core.block.Block;
+import net.digitalid.service.core.block.wrappers.ListWrapper;
+import net.digitalid.service.core.block.wrappers.TupleWrapper;
 import net.digitalid.service.core.concept.NonHostConcept;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;

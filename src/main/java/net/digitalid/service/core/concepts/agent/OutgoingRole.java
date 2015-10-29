@@ -1,23 +1,21 @@
 package net.digitalid.service.core.concepts.agent;
 
-import net.digitalid.service.core.action.synchronizer.Synchronizer;
-
-import net.digitalid.service.core.action.pusher.Pusher;
-import net.digitalid.service.core.cryptography.credential.Credential;
-import net.digitalid.service.core.concepts.contact.Contact;
-import net.digitalid.service.core.concepts.contact.Context;
-import net.digitalid.service.core.exceptions.abort.AbortException;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Random;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.service.core.action.pusher.Pusher;
+import net.digitalid.service.core.action.synchronizer.Synchronizer;
 import net.digitalid.service.core.annotations.OnlyForActions;
 import net.digitalid.service.core.concept.Aspect;
 import net.digitalid.service.core.concept.Instance;
 import net.digitalid.service.core.concept.Observer;
+import net.digitalid.service.core.concepts.contact.Contact;
+import net.digitalid.service.core.concepts.contact.Context;
+import net.digitalid.service.core.cryptography.credential.Credential;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostEntity;
+import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identity.Identity;
 import net.digitalid.service.core.identity.SemanticType;

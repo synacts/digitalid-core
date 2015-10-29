@@ -1,38 +1,35 @@
 package net.digitalid.service.core.site.host;
 
-import net.digitalid.utility.database.site.Site;
-
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import javax.annotation.Nonnull;
+import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.block.wrappers.SelfcontainedWrapper;
-import net.digitalid.service.core.identity.resolution.Mapper;
-import net.digitalid.service.core.dataservice.Service;
+import net.digitalid.service.core.concepts.agent.FreezableAgentPermissions;
 import net.digitalid.service.core.concepts.attribute.Attribute;
 import net.digitalid.service.core.concepts.attribute.AttributeValue;
 import net.digitalid.service.core.concepts.attribute.CertifiedAttributeValue;
 import net.digitalid.service.core.concepts.attribute.UncertifiedAttributeValue;
-import net.digitalid.service.core.concepts.agent.FreezableAgentPermissions;
-import net.digitalid.service.core.site.client.Client;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.sql.SQLException;
-import javax.annotation.Nonnull;
-import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.cryptography.KeyPair;
 import net.digitalid.service.core.cryptography.PrivateKeyChain;
 import net.digitalid.service.core.cryptography.PublicKeyChain;
+import net.digitalid.service.core.dataservice.Service;
 import net.digitalid.service.core.entity.HostAccount;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.identity.HostIdentity;
 import net.digitalid.service.core.identity.InternalIdentity;
+import net.digitalid.service.core.identity.resolution.Mapper;
 import net.digitalid.service.core.server.Server;
 import net.digitalid.service.core.service.CoreService;
+import net.digitalid.service.core.site.client.Client;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.database.annotations.Committing;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.configuration.Database;
+import net.digitalid.utility.database.site.Site;
 import net.digitalid.utility.system.directory.Directory;
 
 /**

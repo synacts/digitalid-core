@@ -1,18 +1,15 @@
 package net.digitalid.service.core.concepts.contact;
 
-import net.digitalid.service.core.block.Block;
-
-import net.digitalid.service.core.block.wrappers.ListWrapper;
-import net.digitalid.service.core.identity.annotations.AttributeType;
-import net.digitalid.service.core.concepts.agent.FreezableAgentPermissions;
-import java.io.IOException;
-import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.service.core.block.Block;
+import net.digitalid.service.core.block.wrappers.ListWrapper;
+import net.digitalid.service.core.concepts.agent.FreezableAgentPermissions;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identity.IdentityClass;
 import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.identity.annotations.AttributeType;
 import net.digitalid.utility.annotations.reference.Capturable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.annotations.freezable.Frozen;

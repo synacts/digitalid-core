@@ -1,18 +1,17 @@
 package net.digitalid.service.core.factory.storing;
 
-import net.digitalid.service.core.block.Block;
-
-import net.digitalid.service.core.factory.encoding.AbstractEncodingFactory;
-import net.digitalid.service.core.factory.encoding.Encodable;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.factory.encoding.AbstractEncodingFactory;
+import net.digitalid.service.core.factory.encoding.Encodable;
 import net.digitalid.utility.annotations.reference.Capturable;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;

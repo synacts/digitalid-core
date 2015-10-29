@@ -1,10 +1,8 @@
 package net.digitalid.service.core.concepts.agent;
 
-import net.digitalid.service.core.block.wrappers.Blockable;
-
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import net.digitalid.service.core.block.wrappers.Blockable;
 import net.digitalid.service.core.database.SQLizable;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identity.SemanticType;

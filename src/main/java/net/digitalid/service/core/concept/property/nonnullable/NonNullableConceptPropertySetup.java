@@ -1,23 +1,22 @@
 package net.digitalid.service.core.concept.property.nonnullable;
 
-import net.digitalid.utility.database.site.Site;
-
-import net.digitalid.service.core.block.wrappers.TupleWrapper;
-import net.digitalid.service.core.identity.annotations.Loaded;
-import net.digitalid.service.core.factory.ConceptFactories;
-import net.digitalid.service.core.factory.Factories;
-import net.digitalid.service.core.dataservice.StateModule;
 import javax.annotation.Nonnull;
+import net.digitalid.service.core.block.wrappers.TupleWrapper;
 import net.digitalid.service.core.concept.Concept;
 import net.digitalid.service.core.concept.property.ConceptPropertyInternalAction;
 import net.digitalid.service.core.concept.property.ConceptPropertySetup;
+import net.digitalid.service.core.dataservice.StateModule;
 import net.digitalid.service.core.entity.Entity;
+import net.digitalid.service.core.factory.ConceptFactories;
+import net.digitalid.service.core.factory.Factories;
 import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.identity.annotations.Loaded;
 import net.digitalid.service.core.property.RequiredAuthorization;
 import net.digitalid.service.core.property.ValueValidator;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
+import net.digitalid.utility.database.site.Site;
 
 /**
  * This is the factory for non-nullable concept properties.

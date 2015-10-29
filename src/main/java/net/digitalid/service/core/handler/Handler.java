@@ -1,17 +1,16 @@
 package net.digitalid.service.core.handler;
 
-import net.digitalid.service.core.block.wrappers.SignatureWrapper;
-
-import net.digitalid.service.core.factory.encoding.Encodable;
-import net.digitalid.service.core.dataservice.Service;
 import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.service.core.block.wrappers.SignatureWrapper;
+import net.digitalid.service.core.dataservice.Service;
 import net.digitalid.service.core.entity.Account;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostAccount;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.entity.Role;
+import net.digitalid.service.core.factory.encoding.Encodable;
 import net.digitalid.service.core.identifier.InternalIdentifier;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -283,7 +282,7 @@ public abstract class Handler<O, E> implements Encodable<O, E> {
         if (object == this) return true;
         if (object == null || !(object instanceof Handler)) return false;
         @SuppressWarnings("rawtypes")
-		final @Nonnull Handler other = (Handler) object;
+        final @Nonnull Handler other = (Handler) object;
         return Objects.equals(this.entity, other.entity) && Objects.equals(this.subject, other.subject);
     }
     

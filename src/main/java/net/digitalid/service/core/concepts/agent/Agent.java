@@ -1,21 +1,17 @@
 package net.digitalid.service.core.concepts.agent;
 
-import net.digitalid.utility.database.annotations.OnlyForClients;
-
-import net.digitalid.utility.database.site.Site;
-import net.digitalid.service.core.block.Block;
-import net.digitalid.service.core.block.wrappers.BooleanWrapper;
-import net.digitalid.service.core.block.wrappers.Int64Wrapper;
-import net.digitalid.service.core.block.wrappers.TupleWrapper;
-import net.digitalid.service.core.action.synchronizer.Synchronizer;
-import net.digitalid.utility.database.storing.Storable;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.service.core.action.synchronizer.Synchronizer;
 import net.digitalid.service.core.annotations.OnlyForActions;
+import net.digitalid.service.core.block.Block;
+import net.digitalid.service.core.block.wrappers.BooleanWrapper;
+import net.digitalid.service.core.block.wrappers.Int64Wrapper;
+import net.digitalid.service.core.block.wrappers.TupleWrapper;
 import net.digitalid.service.core.concept.Aspect;
 import net.digitalid.service.core.concept.NonHostConcept;
 import net.digitalid.service.core.entity.NonHostEntity;
@@ -34,6 +30,9 @@ import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 import net.digitalid.utility.database.annotations.Committing;
 import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.annotations.OnlyForClients;
+import net.digitalid.utility.database.site.Site;
+import net.digitalid.utility.database.storing.Storable;
 
 /**
  * This class models an agent that acts on behalf of an {@link Identity identity}.

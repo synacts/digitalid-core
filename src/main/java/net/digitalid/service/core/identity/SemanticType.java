@@ -1,21 +1,13 @@
 package net.digitalid.service.core.identity;
 
-import net.digitalid.service.core.block.Block;
-
-import net.digitalid.service.core.block.wrappers.BytesWrapper;
-import net.digitalid.service.core.block.wrappers.ListWrapper;
-import net.digitalid.service.core.identity.resolution.Mapper;
-import net.digitalid.service.core.identity.annotations.Loaded;
-import net.digitalid.service.core.identity.annotations.LoadedRecipient;
-import net.digitalid.service.core.identity.annotations.NonLoaded;
-import net.digitalid.service.core.identity.annotations.NonLoadedRecipient;
-import net.digitalid.service.core.concepts.contact.Context;
-import java.io.IOException;
-import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.auxiliary.Time;
+import net.digitalid.service.core.block.Block;
+import net.digitalid.service.core.block.wrappers.BytesWrapper;
+import net.digitalid.service.core.block.wrappers.ListWrapper;
 import net.digitalid.service.core.cache.Cache;
+import net.digitalid.service.core.concepts.contact.Context;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.exceptions.external.AttributeNotFoundException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
@@ -23,6 +15,11 @@ import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identifier.IdentifierClass;
 import net.digitalid.service.core.identifier.InternalNonHostIdentifier;
+import net.digitalid.service.core.identity.annotations.Loaded;
+import net.digitalid.service.core.identity.annotations.LoadedRecipient;
+import net.digitalid.service.core.identity.annotations.NonLoaded;
+import net.digitalid.service.core.identity.annotations.NonLoadedRecipient;
+import net.digitalid.service.core.identity.resolution.Mapper;
 import net.digitalid.utility.annotations.math.NonNegative;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;

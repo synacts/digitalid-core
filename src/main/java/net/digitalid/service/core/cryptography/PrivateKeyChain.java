@@ -1,11 +1,11 @@
 package net.digitalid.service.core.cryptography;
 
-import net.digitalid.service.core.block.wrappers.ListWrapper;
-import net.digitalid.service.core.block.wrappers.TupleWrapper;
-
-import net.digitalid.service.core.factory.storing.BlockBasedStoringFactory;
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.auxiliary.Time;
+import net.digitalid.service.core.block.wrappers.ListWrapper;
+import net.digitalid.service.core.block.wrappers.TupleWrapper;
+import net.digitalid.service.core.factory.Factories;
+import net.digitalid.service.core.factory.storing.BlockBasedStoringFactory;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -106,7 +106,7 @@ public final class PrivateKeyChain extends KeyChain<PrivateKey, PrivateKeyChain>
     }
     
     /**
-     * Stores the factory of this class.
+     * Stores the encoding factory of this class.
      */
     public static final @Nonnull EncodingFactory ENCODING_FACTORY = new EncodingFactory();
     
@@ -121,12 +121,19 @@ public final class PrivateKeyChain extends KeyChain<PrivateKey, PrivateKeyChain>
     /**
      * Stores the storing factory of this class.
      */
-    public static final @Nonnull AbstractStoringFactory<PrivateKeyChain,Object> STORING_FACTORY = BlockBasedStoringFactory.get(ENCODING_FACTORY);
+    public static final @Nonnull AbstractStoringFactory<PrivateKeyChain, Object> STORING_FACTORY = BlockBasedStoringFactory.get(ENCODING_FACTORY);
     
     @Pure
     @Override
     public @Nonnull AbstractStoringFactory<PrivateKeyChain, Object> getStoringFactory() {
         return STORING_FACTORY;
     }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factories –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Stores the factories of this class.
+     */
+    public static final @Nonnull Factories<PrivateKeyChain, Object> FACTORIES = Factories.get(ENCODING_FACTORY, STORING_FACTORY);
     
 }

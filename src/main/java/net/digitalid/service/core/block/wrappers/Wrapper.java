@@ -1,18 +1,17 @@
 package net.digitalid.service.core.block.wrappers;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.annotations.Encoding;
 import net.digitalid.service.core.block.annotations.NonEncoding;
-
-import net.digitalid.service.core.block.Block;
-import net.digitalid.service.core.identity.annotations.Loaded;
+import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.factory.encoding.AbstractEncodingFactory;
 import net.digitalid.service.core.factory.encoding.Encodable;
 import net.digitalid.service.core.factory.encoding.Encode;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
+import net.digitalid.service.core.identity.annotations.Loaded;
 import net.digitalid.utility.annotations.math.Positive;
 import net.digitalid.utility.annotations.reference.Capturable;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -87,7 +86,7 @@ public abstract class Wrapper<W extends Wrapper<W>> implements Encodable<W, Obje
      * @return the length of the encoding block.
      */
     @Pure
-    protected abstract @Positive int determineLength();
+    public abstract @Positive int determineLength();
     
     /**
      * Encodes the data into the encoding block.
@@ -100,7 +99,7 @@ public abstract class Wrapper<W extends Wrapper<W>> implements Encodable<W, Obje
      * @require block.getLength() == determineLength() : "The block's length has to match the determined length.";
      * @require block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
      */
-    protected abstract void encode(@Encoding @Nonnull Block block);
+    public abstract void encode(@Encoding @Nonnull Block block);
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */
     

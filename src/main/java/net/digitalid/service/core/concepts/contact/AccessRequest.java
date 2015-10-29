@@ -1,19 +1,15 @@
 package net.digitalid.service.core.concepts.contact;
 
-import net.digitalid.service.core.block.Block;
-
-import net.digitalid.service.core.block.wrappers.ClientSignatureWrapper;
-import net.digitalid.service.core.block.wrappers.CredentialsSignatureWrapper;
-import net.digitalid.service.core.block.wrappers.SignatureWrapper;
-import net.digitalid.service.core.handler.core.CoreServiceActionReply;
-import net.digitalid.service.core.handler.core.CoreServiceExternalAction;
-import net.digitalid.service.core.dataservice.StateModule;
-import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
-import net.digitalid.service.core.concepts.agent.Restrictions;
-import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.service.core.block.Block;
+import net.digitalid.service.core.block.wrappers.ClientSignatureWrapper;
+import net.digitalid.service.core.block.wrappers.CredentialsSignatureWrapper;
+import net.digitalid.service.core.block.wrappers.SignatureWrapper;
+import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
+import net.digitalid.service.core.concepts.agent.Restrictions;
+import net.digitalid.service.core.dataservice.StateModule;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
@@ -22,6 +18,8 @@ import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.Method;
 import net.digitalid.service.core.handler.Reply;
+import net.digitalid.service.core.handler.core.CoreServiceActionReply;
+import net.digitalid.service.core.handler.core.CoreServiceExternalAction;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.identity.InternalPerson;
 import net.digitalid.service.core.identity.SemanticType;

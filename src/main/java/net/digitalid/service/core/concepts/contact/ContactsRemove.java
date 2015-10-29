@@ -1,22 +1,18 @@
 package net.digitalid.service.core.concepts.contact;
 
-import net.digitalid.utility.database.annotations.OnlyForClients;
-
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.SignatureWrapper;
 import net.digitalid.service.core.block.wrappers.TupleWrapper;
-import net.digitalid.service.core.handler.core.CoreServiceInternalAction;
-import net.digitalid.service.core.dataservice.StateModule;
 import net.digitalid.service.core.concepts.agent.Restrictions;
-import java.io.IOException;
-import java.sql.SQLException;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import net.digitalid.service.core.dataservice.StateModule;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.Action;
 import net.digitalid.service.core.handler.Method;
+import net.digitalid.service.core.handler.core.CoreServiceInternalAction;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -24,6 +20,7 @@ import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.annotations.freezable.Frozen;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.annotations.OnlyForClients;
 
 /**
  * Removes {@link FreezableContacts contacts} from a {@link Context context}.

@@ -1,24 +1,23 @@
 package net.digitalid.service.core.server;
 
-import net.digitalid.service.core.block.wrappers.ClientSignatureWrapper;
-import net.digitalid.service.core.block.wrappers.CredentialsSignatureWrapper;
-import net.digitalid.service.core.block.wrappers.HostSignatureWrapper;
-import net.digitalid.service.core.block.wrappers.SignatureWrapper;
-
-import net.digitalid.service.core.action.synchronizer.ActionModule;
-import net.digitalid.service.core.action.synchronizer.RequestAudit;
-import net.digitalid.service.core.action.synchronizer.ResponseAudit;
-import net.digitalid.service.core.dataservice.Service;
-import net.digitalid.service.core.cryptography.credential.Credential;
-import net.digitalid.service.core.concepts.agent.Agent;
-import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
-import net.digitalid.service.core.concepts.agent.Restrictions;
 import java.io.IOException;
 import java.net.Socket;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.service.core.action.synchronizer.ActionModule;
+import net.digitalid.service.core.action.synchronizer.RequestAudit;
+import net.digitalid.service.core.action.synchronizer.ResponseAudit;
 import net.digitalid.service.core.auxiliary.Time;
+import net.digitalid.service.core.block.wrappers.ClientSignatureWrapper;
+import net.digitalid.service.core.block.wrappers.CredentialsSignatureWrapper;
+import net.digitalid.service.core.block.wrappers.HostSignatureWrapper;
+import net.digitalid.service.core.block.wrappers.SignatureWrapper;
+import net.digitalid.service.core.concepts.agent.Agent;
+import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
+import net.digitalid.service.core.concepts.agent.Restrictions;
+import net.digitalid.service.core.cryptography.credential.Credential;
+import net.digitalid.service.core.dataservice.Service;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;

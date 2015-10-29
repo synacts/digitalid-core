@@ -1,19 +1,5 @@
 package net.digitalid.service.core.site.client;
 
-import net.digitalid.utility.database.site.Site;
-
-import net.digitalid.service.core.block.Block;
-import net.digitalid.service.core.block.wrappers.SelfcontainedWrapper;
-import net.digitalid.service.core.block.wrappers.StringWrapper;
-import net.digitalid.service.core.identity.resolution.Mapper;
-import net.digitalid.service.core.identity.resolution.Predecessor;
-import net.digitalid.service.core.action.synchronizer.ResponseAudit;
-import net.digitalid.service.core.action.synchronizer.Synchronizer;
-import net.digitalid.service.core.action.synchronizer.SynchronizerModule;
-import net.digitalid.service.core.concepts.contact.Context;
-import net.digitalid.service.core.concepts.agent.ClientAgent;
-import net.digitalid.service.core.concepts.agent.ClientAgentAccredit;
-import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -24,11 +10,21 @@ import java.sql.SQLException;
 import java.util.Random;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.service.core.action.synchronizer.ResponseAudit;
+import net.digitalid.service.core.action.synchronizer.Synchronizer;
+import net.digitalid.service.core.action.synchronizer.SynchronizerModule;
 import net.digitalid.service.core.auxiliary.Time;
+import net.digitalid.service.core.block.Block;
+import net.digitalid.service.core.block.wrappers.SelfcontainedWrapper;
+import net.digitalid.service.core.block.wrappers.StringWrapper;
 import net.digitalid.service.core.cache.Cache;
 import net.digitalid.service.core.concept.Aspect;
 import net.digitalid.service.core.concept.Instance;
 import net.digitalid.service.core.concept.Observer;
+import net.digitalid.service.core.concepts.agent.ClientAgent;
+import net.digitalid.service.core.concepts.agent.ClientAgentAccredit;
+import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
+import net.digitalid.service.core.concepts.contact.Context;
 import net.digitalid.service.core.cryptography.Element;
 import net.digitalid.service.core.cryptography.Exponent;
 import net.digitalid.service.core.cryptography.Parameters;
@@ -45,6 +41,8 @@ import net.digitalid.service.core.identity.Category;
 import net.digitalid.service.core.identity.HostIdentity;
 import net.digitalid.service.core.identity.InternalNonHostIdentity;
 import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.identity.resolution.Mapper;
+import net.digitalid.service.core.identity.resolution.Predecessor;
 import net.digitalid.service.core.service.CoreService;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
@@ -60,6 +58,7 @@ import net.digitalid.utility.database.annotations.Committing;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.configuration.Database;
+import net.digitalid.utility.database.site.Site;
 import net.digitalid.utility.system.directory.Directory;
 
 /**

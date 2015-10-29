@@ -1,19 +1,18 @@
 package net.digitalid.service.core.block.wrappers;
 
-import net.digitalid.service.core.block.annotations.Encoding;
-import net.digitalid.service.core.block.annotations.NonEncoding;
-
-import net.digitalid.service.core.block.Block;
-import net.digitalid.service.core.identity.annotations.BasedOn;
-import net.digitalid.service.core.identity.annotations.Loaded;
-import net.digitalid.service.core.factory.encoding.Encodable;
-import net.digitalid.service.core.factory.encoding.Encode;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.auxiliary.None;
+import net.digitalid.service.core.block.Block;
+import net.digitalid.service.core.block.annotations.Encoding;
+import net.digitalid.service.core.block.annotations.NonEncoding;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.factory.encoding.Encodable;
+import net.digitalid.service.core.factory.encoding.Encode;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
+import net.digitalid.service.core.identity.annotations.BasedOn;
+import net.digitalid.service.core.identity.annotations.Loaded;
 import net.digitalid.utility.annotations.math.NonNegative;
 import net.digitalid.utility.annotations.math.Positive;
 import net.digitalid.utility.annotations.reference.Captured;
@@ -318,7 +317,7 @@ public final class TupleWrapper extends BlockBasedWrapper<TupleWrapper> {
     
     @Pure
     @Override
-    protected int determineLength() {
+    public int determineLength() {
         int length = 0;
         for (final @Nullable Block element : elements) {
             if (element == null) {
@@ -334,7 +333,7 @@ public final class TupleWrapper extends BlockBasedWrapper<TupleWrapper> {
     
     @Pure
     @Override
-    protected void encode(@Nonnull @Encoding Block block) {
+    public void encode(@Nonnull @Encoding Block block) {
         assert block.getLength() == determineLength() : "The block's length has to match the determined length.";
         assert block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
         

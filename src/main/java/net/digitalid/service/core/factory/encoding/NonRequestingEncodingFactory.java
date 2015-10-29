@@ -1,13 +1,12 @@
 package net.digitalid.service.core.factory.encoding;
 
-import net.digitalid.service.core.block.annotations.NonEncoding;
-
-import net.digitalid.service.core.block.Block;
-import net.digitalid.service.core.identity.annotations.Loaded;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.service.core.block.Block;
+import net.digitalid.service.core.block.annotations.NonEncoding;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.identity.annotations.Loaded;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 

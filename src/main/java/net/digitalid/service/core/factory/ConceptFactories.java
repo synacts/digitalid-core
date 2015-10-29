@@ -16,7 +16,7 @@ import net.digitalid.utility.annotations.state.Pure;
  *            In case no external information is needed for the reconstruction of an object, declare it as an {@link Object}.
  */
 @Immutable
-public final class ConceptFactories<C extends Concept<C, E, ?>, E extends Entity<E>> extends GenericFactories<C, E, ConceptEncodingFactory<C, E, ?>, ConceptStoringFactory<C, E, ?>> {
+public final class ConceptFactories<C extends Concept<C, E, ?>, E extends Entity<E>> extends AbstractFactories<C, E, ConceptEncodingFactory<C, E, ?>, ConceptStoringFactory<C, E, ?>> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     

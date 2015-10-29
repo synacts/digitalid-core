@@ -1,23 +1,20 @@
 package net.digitalid.service.core.cache;
 
+import java.sql.SQLException;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import net.digitalid.service.core.block.Block;
-
 import net.digitalid.service.core.block.wrappers.BooleanWrapper;
 import net.digitalid.service.core.block.wrappers.CredentialsSignatureWrapper;
 import net.digitalid.service.core.block.wrappers.SignatureWrapper;
 import net.digitalid.service.core.block.wrappers.TupleWrapper;
-import net.digitalid.service.core.handler.core.CoreServiceExternalQuery;
+import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
+import net.digitalid.service.core.concepts.attribute.Attribute;
+import net.digitalid.service.core.concepts.attribute.AttributeValue;
 import net.digitalid.service.core.concepts.contact.Contact;
 import net.digitalid.service.core.concepts.contact.FreezableAttributeTypeSet;
 import net.digitalid.service.core.concepts.contact.ReadOnlyAttributeTypeSet;
 import net.digitalid.service.core.concepts.contact.ReadOnlyContactPermissions;
-import net.digitalid.service.core.concepts.attribute.Attribute;
-import net.digitalid.service.core.concepts.attribute.AttributeValue;
-import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
-import java.io.IOException;
-import java.sql.SQLException;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import net.digitalid.service.core.entity.Account;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.Role;
@@ -27,6 +24,7 @@ import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.expression.PassiveExpression;
 import net.digitalid.service.core.handler.Method;
 import net.digitalid.service.core.handler.Reply;
+import net.digitalid.service.core.handler.core.CoreServiceExternalQuery;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.identifier.InternalIdentifier;
 import net.digitalid.service.core.identity.InternalPerson;

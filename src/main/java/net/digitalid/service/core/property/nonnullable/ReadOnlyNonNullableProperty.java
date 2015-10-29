@@ -1,6 +1,5 @@
 package net.digitalid.service.core.property.nonnullable;
 
-import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.property.ReadOnlyProperty;
 import net.digitalid.service.core.property.ValueValidator;

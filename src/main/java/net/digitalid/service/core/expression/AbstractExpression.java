@@ -1,14 +1,11 @@
 package net.digitalid.service.core.expression;
 
-import net.digitalid.service.core.block.Block;
-import net.digitalid.service.core.block.Blockable;
-
-import net.digitalid.service.core.block.wrappers.StringWrapper;
-import java.io.IOException;
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.service.core.block.Block;
+import net.digitalid.service.core.block.Blockable;
+import net.digitalid.service.core.block.wrappers.StringWrapper;
 import net.digitalid.service.core.concept.NonHostConcept;
 import net.digitalid.service.core.database.SQLizable;
 import net.digitalid.service.core.entity.NonHostEntity;

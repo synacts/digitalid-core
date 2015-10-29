@@ -1,9 +1,8 @@
 package net.digitalid.service.core.site.client;
 
-import net.digitalid.service.core.block.wrappers.ClientSignatureWrapper;
-
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.auxiliary.Time;
+import net.digitalid.service.core.block.wrappers.ClientSignatureWrapper;
 import net.digitalid.service.core.cryptography.Element;
 import net.digitalid.service.core.cryptography.Exponent;
 import net.digitalid.service.core.cryptography.PublicKey;

@@ -1,21 +1,16 @@
 package net.digitalid.service.core.concepts.agent;
 
+import java.sql.SQLException;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import net.digitalid.service.core.block.Block;
-
 import net.digitalid.service.core.block.wrappers.ClientSignatureWrapper;
 import net.digitalid.service.core.block.wrappers.SignatureWrapper;
 import net.digitalid.service.core.block.wrappers.StringWrapper;
 import net.digitalid.service.core.block.wrappers.TupleWrapper;
-import net.digitalid.service.core.handler.core.CoreServiceInternalAction;
-import net.digitalid.service.core.dataservice.StateModule;
-import net.digitalid.service.core.concepts.password.Password;
 import net.digitalid.service.core.concepts.contact.Context;
-import net.digitalid.service.core.site.client.Client;
-import net.digitalid.service.core.site.client.Commitment;
-import java.io.IOException;
-import java.sql.SQLException;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import net.digitalid.service.core.concepts.settings.Settings;
+import net.digitalid.service.core.dataservice.StateModule;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NativeRole;
 import net.digitalid.service.core.exceptions.external.ExternalException;
@@ -25,9 +20,12 @@ import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.Action;
 import net.digitalid.service.core.handler.InternalAction;
 import net.digitalid.service.core.handler.Method;
+import net.digitalid.service.core.handler.core.CoreServiceInternalAction;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.packet.Response;
+import net.digitalid.service.core.site.client.Client;
+import net.digitalid.service.core.site.client.Commitment;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.freezable.FreezableArrayList;
@@ -43,7 +41,7 @@ public final class ClientAgentAccredit extends CoreServiceInternalAction {
     /**
      * Stores the semantic type {@code accredit.client.agent@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType TYPE = SemanticType.map("accredit.client.agent@core.digitalid.net").load(TupleWrapper.TYPE, Agent.TYPE, FreezableAgentPermissions.TYPE, Client.NAME, Password.TYPE);
+    private static final @Nonnull SemanticType TYPE = SemanticType.map("accredit.client.agent@core.digitalid.net").load(TupleWrapper.TYPE, Agent.TYPE, FreezableAgentPermissions.TYPE, Client.NAME, Settings.TYPE);
     
     
     /**
@@ -91,7 +89,7 @@ public final class ClientAgentAccredit extends CoreServiceInternalAction {
     public ClientAgentAccredit(@Nonnull NativeRole role, @Nonnull String password) throws AbortException, PacketException, ExternalException, NetworkException {
         super(role);
         
-        assert Password.isValid(password) : "The password is valid.";
+        assert Settings.isValid(password) : "The password is valid.";
         
         final @Nonnull Client client = role.getClient();
         this.clientAgent = new ClientAgent(role, role.getAgent().getNumber(), true);
@@ -132,13 +130,13 @@ public final class ClientAgentAccredit extends CoreServiceInternalAction {
         if (!Client.isValidName(name)) throw new InvalidEncodingException("The name is invalid.");
         
         this.password = new StringWrapper(elements.getNonNullable(3)).getString();
-        if (!Password.isValid(password)) throw new InvalidEncodingException("The password is invalid.");
+        if (!Settings.isValid(password)) throw new InvalidEncodingException("The password is invalid.");
     }
     
     @Pure
     @Override
     public @Nonnull Block toBlock() {
-        return new TupleWrapper(TYPE, clientAgent.toBlock(), permissions.toBlock(), new StringWrapper(Client.NAME, name).toBlock(), new StringWrapper(Password.TYPE, password).toBlock()).toBlock();
+        return new TupleWrapper(TYPE, clientAgent.toBlock(), permissions.toBlock(), new StringWrapper(Client.NAME, name).toBlock(), new StringWrapper(Settings.TYPE, password).toBlock()).toBlock();
     }
     
     @Pure
@@ -179,7 +177,7 @@ public final class ClientAgentAccredit extends CoreServiceInternalAction {
     @Override
     @NonCommitting
     public void executeOnHostInternalAction() throws PacketException, SQLException {
-        if (!Password.get(getNonHostAccount()).getValue().equals(password)) throw new PacketException(PacketErrorCode.AUTHORIZATION, "The password is not correct.");
+        if (!Settings.get(getNonHostAccount()).getValue().equals(password)) throw new PacketException(PacketErrorCode.AUTHORIZATION, "The password is not correct.");
         executeOnBoth();
     }
     

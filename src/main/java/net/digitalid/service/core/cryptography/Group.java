@@ -1,15 +1,14 @@
 package net.digitalid.service.core.cryptography;
 
-import net.digitalid.service.core.block.Block;
-
-import net.digitalid.service.core.identity.annotations.BasedOn;
-import net.digitalid.service.core.factory.encoding.Encodable;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.Random;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.factory.encoding.Encodable;
+import net.digitalid.service.core.identity.annotations.BasedOn;
 import net.digitalid.utility.annotations.math.Positive;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -22,7 +21,7 @@ import net.digitalid.utility.database.storing.Storable;
  * @see GroupWithUnknownOrder
  */
 @Immutable
-public abstract class Group<G extends Group<G>> implements Encodable<G,Object>, Storable<G,Object> {
+public abstract class Group<G extends Group<G>> implements Encodable<G, Object>, Storable<G, Object> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Modulus –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -130,7 +129,7 @@ public abstract class Group<G extends Group<G>> implements Encodable<G,Object>, 
         if (object == this) return true;
         if (object == null || !(object instanceof Group)) return false;
         @SuppressWarnings("rawtypes")
-		final @Nonnull Group<?> other = (Group) object;
+        final @Nonnull Group<?> other = (Group) object;
         return this.modulus.equals(other.modulus);
     }
     

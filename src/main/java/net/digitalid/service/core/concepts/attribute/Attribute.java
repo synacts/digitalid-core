@@ -1,20 +1,17 @@
 package net.digitalid.service.core.concepts.attribute;
 
-import net.digitalid.service.core.block.wrappers.BooleanWrapper;
-
-import net.digitalid.service.core.action.synchronizer.Synchronizer;
-import java.sql.SQLException;
 import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.service.core.action.synchronizer.Synchronizer;
+import net.digitalid.service.core.block.wrappers.BooleanWrapper;
 import net.digitalid.service.core.concept.GeneralConcept;
+import net.digitalid.service.core.concept.property.nullable.NullableConceptProperty;
+import net.digitalid.service.core.concept.property.nullable.NullableConceptPropertyTable;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.expression.PassiveExpression;
 import net.digitalid.service.core.identity.SemanticType;
-import net.digitalid.service.core.concept.property.nullable.NullableConceptProperty;
-import net.digitalid.service.core.concept.property.nullable.NullableConceptPropertyTable;
-import net.digitalid.utility.database.storing.Storable;
 import net.digitalid.utility.annotations.reference.Capturable;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -24,6 +21,7 @@ import net.digitalid.utility.collections.freezable.FreezableSet;
 import net.digitalid.utility.database.annotations.Committing;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.configuration.Database;
+import net.digitalid.utility.database.storing.Storable;
 
 /**
  * This class models an attribute with its value and visibility.

@@ -1,14 +1,5 @@
 package net.digitalid.service.core.block.wrappers;
 
-import net.digitalid.service.core.block.annotations.Encoded;
-import net.digitalid.service.core.block.annotations.Encoding;
-import net.digitalid.service.core.block.annotations.NonEncoding;
-
-import net.digitalid.service.core.block.Block;
-import net.digitalid.service.core.identity.annotations.BasedOn;
-import net.digitalid.service.core.identity.annotations.Loaded;
-import net.digitalid.service.core.factory.encoding.Encodable;
-import net.digitalid.service.core.factory.encoding.Encode;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.zip.DeflaterOutputStream;
@@ -17,9 +8,17 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.auxiliary.Time;
+import net.digitalid.service.core.block.Block;
+import net.digitalid.service.core.block.annotations.Encoded;
+import net.digitalid.service.core.block.annotations.Encoding;
+import net.digitalid.service.core.block.annotations.NonEncoding;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.factory.encoding.Encodable;
+import net.digitalid.service.core.factory.encoding.Encode;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
+import net.digitalid.service.core.identity.annotations.BasedOn;
+import net.digitalid.service.core.identity.annotations.Loaded;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
@@ -168,13 +167,13 @@ public final class CompressionWrapper extends BlockBasedWrapper<CompressionWrapp
     
     @Pure
     @Override
-    protected int determineLength() {
+    public int determineLength() {
         return getCache().size();
     }
     
     @Pure
     @Override
-    protected void encode(@Nonnull @Encoding Block block) {
+    public void encode(@Nonnull @Encoding Block block) {
         assert block.getLength() == determineLength() : "The block's length has to match the determined length.";
         assert block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
         

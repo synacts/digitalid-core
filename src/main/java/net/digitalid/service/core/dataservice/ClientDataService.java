@@ -1,13 +1,12 @@
 package net.digitalid.service.core.dataservice;
 
-import net.digitalid.utility.database.site.Site;
-
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.site.Site;
 
 /**
  * This interface models a collection of data with the least requirements.

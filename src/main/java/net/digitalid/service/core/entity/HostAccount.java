@@ -1,7 +1,5 @@
 package net.digitalid.service.core.entity;
 
-import net.digitalid.service.core.site.host.Host;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
@@ -12,6 +10,7 @@ import net.digitalid.service.core.concept.Observer;
 import net.digitalid.service.core.identity.HostIdentity;
 import net.digitalid.service.core.identity.Identity;
 import net.digitalid.service.core.identity.IdentityClass;
+import net.digitalid.service.core.site.host.Host;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.concurrent.ConcurrentHashMap;

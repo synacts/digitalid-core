@@ -1,29 +1,26 @@
 package net.digitalid.service.core.concept.property.nonnullable;
 
-import net.digitalid.service.core.block.Block;
-
-import net.digitalid.service.core.block.wrappers.SignatureWrapper;
-import net.digitalid.service.core.block.wrappers.TupleWrapper;
-import net.digitalid.service.core.factory.encoding.AbstractEncodingFactory;
-import net.digitalid.service.core.factory.encoding.Encode;
-import net.digitalid.service.core.dataservice.StateModule;
-import net.digitalid.service.core.concepts.agent.FreezableAgentPermissions;
-import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
-import java.io.IOException;
-import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.auxiliary.Time;
+import net.digitalid.service.core.block.Block;
+import net.digitalid.service.core.block.wrappers.SignatureWrapper;
+import net.digitalid.service.core.block.wrappers.TupleWrapper;
 import net.digitalid.service.core.concept.Concept;
+import net.digitalid.service.core.concept.property.ConceptPropertyInternalAction;
+import net.digitalid.service.core.concepts.agent.FreezableAgentPermissions;
+import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
+import net.digitalid.service.core.dataservice.StateModule;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.factory.encoding.AbstractEncodingFactory;
+import net.digitalid.service.core.factory.encoding.Encode;
 import net.digitalid.service.core.handler.Action;
 import net.digitalid.service.core.handler.Method;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.identity.SemanticType;
-import net.digitalid.service.core.concept.property.ConceptPropertyInternalAction;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
@@ -167,19 +164,19 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
     @Immutable
     static final class Factory<V, C extends Concept<C, E, ?>, E extends Entity<E>> extends Method.Factory {
         
-    	private final @Nonnull NonNullableConceptPropertyFactory<V, C, E> factory;
+        private final @Nonnull NonNullableConceptPropertyFactory<V, C, E> factory;
         
         Factory(@Nonnull NonNullableConceptPropertyFactory<V, C, E> factory) {
             this.factory = factory;
             
             Method.add(factory.getActionType(), this);
         }
-    	
+        
         @Pure
         @Override
         @NonCommitting
         protected @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException  {
-        	
+            
             return new NonNullableConceptPropertyInternalAction((E) entity.toNonHostEntity(), signature, recipient, block, factory);
         }
         

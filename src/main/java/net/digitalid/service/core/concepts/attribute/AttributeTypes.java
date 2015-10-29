@@ -1,9 +1,8 @@
 package net.digitalid.service.core.concepts.attribute;
 
-import net.digitalid.service.core.block.wrappers.StringWrapper;
-
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.auxiliary.Time;
+import net.digitalid.service.core.block.wrappers.StringWrapper;
 import net.digitalid.service.core.identity.Category;
 import net.digitalid.service.core.identity.SemanticType;
 

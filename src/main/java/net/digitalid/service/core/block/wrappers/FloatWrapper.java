@@ -1,23 +1,22 @@
 package net.digitalid.service.core.block.wrappers;
 
-import net.digitalid.service.core.block.annotations.Encoding;
-import net.digitalid.service.core.block.annotations.NonEncoding;
-
-import net.digitalid.service.core.block.Block;
-import net.digitalid.service.core.block.wrappers.ValueWrapper.ValueEncodingFactory;
-import net.digitalid.service.core.block.wrappers.ValueWrapper.ValueStoringFactory;
-import net.digitalid.service.core.identity.annotations.BasedOn;
-import net.digitalid.service.core.identity.annotations.Loaded;
-import net.digitalid.service.core.factory.Factories;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.auxiliary.None;
+import net.digitalid.service.core.block.Block;
+import net.digitalid.service.core.block.annotations.Encoding;
+import net.digitalid.service.core.block.annotations.NonEncoding;
+import net.digitalid.service.core.block.wrappers.ValueWrapper.ValueEncodingFactory;
+import net.digitalid.service.core.block.wrappers.ValueWrapper.ValueStoringFactory;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.factory.Factories;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
+import net.digitalid.service.core.identity.annotations.BasedOn;
+import net.digitalid.service.core.identity.annotations.Loaded;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.database.annotations.NonCommitting;
@@ -110,13 +109,13 @@ public final class FloatWrapper extends Wrapper<FloatWrapper> {
     
     @Pure
     @Override
-    protected int determineLength() {
+    public int determineLength() {
         return LENGTH;
     }
     
     @Pure
     @Override
-    protected void encode(@Nonnull @Encoding Block block) {
+    public void encode(@Nonnull @Encoding Block block) {
         assert block.getLength() == determineLength() : "The block's length has to match the determined length.";
         assert block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
         
@@ -177,8 +176,6 @@ public final class FloatWrapper extends Wrapper<FloatWrapper> {
         private StoringFactory(@Nonnull @Loaded @BasedOn("float@core.digitalid.net") SemanticType type) {
             super(COLUMN, type);
         }
-        
-
         
         @Override
         @NonCommitting

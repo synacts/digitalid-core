@@ -1,17 +1,14 @@
 package net.digitalid.service.core.concepts.agent;
 
-import net.digitalid.service.core.block.Block;
-import net.digitalid.service.core.block.Blockable;
-
-import net.digitalid.service.core.block.wrappers.HashWrapper;
-import net.digitalid.service.core.block.wrappers.TupleWrapper;
-import java.io.IOException;
 import java.math.BigInteger;
 import java.security.SecureRandom;
-import java.sql.SQLException;
 import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.service.core.block.Block;
+import net.digitalid.service.core.block.Blockable;
+import net.digitalid.service.core.block.wrappers.HashWrapper;
+import net.digitalid.service.core.block.wrappers.TupleWrapper;
 import net.digitalid.service.core.cryptography.Parameters;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.packet.PacketException;

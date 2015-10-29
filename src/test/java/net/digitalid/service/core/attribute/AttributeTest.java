@@ -1,17 +1,16 @@
 package net.digitalid.service.core.attribute;
 
-import net.digitalid.service.core.block.Block;
-
-import net.digitalid.service.core.block.wrappers.StringWrapper;
-import net.digitalid.service.core.concepts.attribute.Attribute;
-import net.digitalid.service.core.concepts.attribute.AttributeTypes;
-import net.digitalid.service.core.concepts.attribute.AttributeValue;
-import net.digitalid.service.core.concepts.attribute.UncertifiedAttributeValue;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.service.core.block.Block;
+import net.digitalid.service.core.block.wrappers.StringWrapper;
 import net.digitalid.service.core.cache.Cache;
+import net.digitalid.service.core.concepts.attribute.Attribute;
+import net.digitalid.service.core.concepts.attribute.AttributeTypes;
+import net.digitalid.service.core.concepts.attribute.AttributeValue;
+import net.digitalid.service.core.concepts.attribute.UncertifiedAttributeValue;
 import net.digitalid.service.core.exceptions.external.AttributeNotFoundException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;

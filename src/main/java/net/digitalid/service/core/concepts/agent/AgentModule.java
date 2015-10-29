@@ -1,24 +1,5 @@
 package net.digitalid.service.core.concepts.agent;
 
-import net.digitalid.utility.database.site.Site;
-
-import net.digitalid.service.core.block.Block;
-import net.digitalid.service.core.block.wrappers.BooleanWrapper;
-import net.digitalid.service.core.block.wrappers.Int64Wrapper;
-import net.digitalid.service.core.block.wrappers.ListWrapper;
-import net.digitalid.service.core.block.wrappers.StringWrapper;
-import net.digitalid.service.core.block.wrappers.TupleWrapper;
-import net.digitalid.service.core.identity.resolution.Mapper;
-import net.digitalid.service.core.dataservice.StateModule;
-import net.digitalid.service.core.dataservice.Service;
-import net.digitalid.service.core.concepts.contact.Contact;
-import net.digitalid.service.core.concepts.contact.Context;
-import net.digitalid.service.core.concepts.contact.ContextModule;
-import net.digitalid.service.core.site.host.Host;
-import net.digitalid.service.core.site.client.Client;
-import net.digitalid.service.core.site.client.Commitment;
-import net.digitalid.service.core.exceptions.abort.AbortException;
-import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -26,11 +7,23 @@ import java.sql.Statement;
 import java.util.HashSet;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.service.core.block.Block;
+import net.digitalid.service.core.block.wrappers.BooleanWrapper;
+import net.digitalid.service.core.block.wrappers.Int64Wrapper;
+import net.digitalid.service.core.block.wrappers.ListWrapper;
+import net.digitalid.service.core.block.wrappers.StringWrapper;
+import net.digitalid.service.core.block.wrappers.TupleWrapper;
+import net.digitalid.service.core.concepts.contact.Contact;
+import net.digitalid.service.core.concepts.contact.Context;
+import net.digitalid.service.core.concepts.contact.ContextModule;
+import net.digitalid.service.core.dataservice.Service;
+import net.digitalid.service.core.dataservice.StateModule;
 import net.digitalid.service.core.entity.EntityClass;
 import net.digitalid.service.core.entity.NonHostAccount;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.entity.NonNativeRole;
 import net.digitalid.service.core.entity.Role;
+import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
@@ -38,7 +31,11 @@ import net.digitalid.service.core.identity.Identity;
 import net.digitalid.service.core.identity.IdentityClass;
 import net.digitalid.service.core.identity.InternalNonHostIdentity;
 import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.identity.resolution.Mapper;
 import net.digitalid.service.core.service.CoreService;
+import net.digitalid.service.core.site.client.Client;
+import net.digitalid.service.core.site.client.Commitment;
+import net.digitalid.service.core.site.host.Host;
 import net.digitalid.utility.annotations.reference.Capturable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Stateless;
@@ -51,6 +48,7 @@ import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.configuration.Database;
+import net.digitalid.utility.database.site.Site;
 
 /**
  * This class provides database access to the {@link Agent agents} of the core service.
@@ -1118,7 +1116,7 @@ public final class AgentModule implements StateModule {
                 else return null;
             }
         } catch (SQLException exception) {
-        	throw AbortException.get(exception);
+            throw AbortException.get(exception);
         }
     }
     

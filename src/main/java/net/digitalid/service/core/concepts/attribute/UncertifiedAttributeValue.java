@@ -1,12 +1,9 @@
 package net.digitalid.service.core.concepts.attribute;
 
+import javax.annotation.Nonnull;
 import net.digitalid.service.core.block.Block;
-
 import net.digitalid.service.core.block.wrappers.SelfcontainedWrapper;
 import net.digitalid.service.core.block.wrappers.SignatureWrapper;
-import java.io.IOException;
-import java.sql.SQLException;
-import javax.annotation.Nonnull;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.utility.annotations.state.Immutable;

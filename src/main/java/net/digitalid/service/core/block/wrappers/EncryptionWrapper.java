@@ -1,19 +1,14 @@
 package net.digitalid.service.core.block.wrappers;
 
-import net.digitalid.service.core.block.annotations.Encoding;
-import net.digitalid.service.core.block.annotations.NonEncoding;
-
-import net.digitalid.service.core.block.Block;
-import net.digitalid.service.core.identity.annotations.BasedOn;
-import net.digitalid.service.core.identity.annotations.Loaded;
-import net.digitalid.service.core.factory.encoding.Encodable;
-import net.digitalid.service.core.factory.encoding.Encode;
 import java.math.BigInteger;
 import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.auxiliary.Time;
+import net.digitalid.service.core.block.Block;
+import net.digitalid.service.core.block.annotations.Encoding;
+import net.digitalid.service.core.block.annotations.NonEncoding;
 import net.digitalid.service.core.cache.Cache;
 import net.digitalid.service.core.cryptography.Element;
 import net.digitalid.service.core.cryptography.InitializationVector;
@@ -25,11 +20,15 @@ import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.factory.encoding.Encodable;
+import net.digitalid.service.core.factory.encoding.Encode;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.identifier.IdentifierClass;
 import net.digitalid.service.core.identity.HostIdentity;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
+import net.digitalid.service.core.identity.annotations.BasedOn;
+import net.digitalid.service.core.identity.annotations.Loaded;
 import net.digitalid.service.core.server.Server;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -341,7 +340,7 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
     @Pure
     @Locked
     @NonCommitting
-    public static @Nonnull <V extends Encodable<V,?>> EncryptionWrapper encrypt(@Nonnull @Loaded @BasedOn("encryption@core.digitalid.net") SemanticType type, @Nonnull V element, @Nullable HostIdentifier recipient, @Nullable SymmetricKey symmetricKey) throws AbortException, PacketException, ExternalException, NetworkException {
+    public static @Nonnull <V extends Encodable<V, ?>> EncryptionWrapper encrypt(@Nonnull @Loaded @BasedOn("encryption@core.digitalid.net") SemanticType type, @Nonnull V element, @Nullable HostIdentifier recipient, @Nullable SymmetricKey symmetricKey) throws AbortException, PacketException, ExternalException, NetworkException {
         return new EncryptionWrapper(type, Encode.nonNullable(element), recipient, symmetricKey);
     }
     
@@ -399,13 +398,13 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
     
     @Pure
     @Override
-    protected int determineLength() {
+    public int determineLength() {
         return getCache().getLength();
     }
     
     @Pure
     @Override
-    protected void encode(@Nonnull @Encoding Block block) {
+    public void encode(@Nonnull @Encoding Block block) {
         assert block.getLength() == determineLength() : "The block's length has to match the determined length.";
         assert block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
         
@@ -436,7 +435,6 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
         }
         
     }
-    
     
     @Pure
     @Override

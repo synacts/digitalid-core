@@ -1,14 +1,5 @@
 package net.digitalid.service.core.concepts.contact;
 
-import net.digitalid.utility.database.annotations.OnlyForClients;
-
-import net.digitalid.utility.database.site.Site;
-import net.digitalid.service.core.block.Block;
-import net.digitalid.service.core.block.Blockable;
-import net.digitalid.service.core.block.wrappers.Int64Wrapper;
-import net.digitalid.service.core.block.wrappers.StringWrapper;
-import net.digitalid.service.core.action.synchronizer.Synchronizer;
-import net.digitalid.service.core.exceptions.abort.AbortException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -19,7 +10,12 @@ import java.util.Random;
 import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.service.core.action.synchronizer.Synchronizer;
 import net.digitalid.service.core.annotations.OnlyForActions;
+import net.digitalid.service.core.block.Block;
+import net.digitalid.service.core.block.Blockable;
+import net.digitalid.service.core.block.wrappers.Int64Wrapper;
+import net.digitalid.service.core.block.wrappers.StringWrapper;
 import net.digitalid.service.core.concept.Aspect;
 import net.digitalid.service.core.concept.Instance;
 import net.digitalid.service.core.concept.NonHostConcept;
@@ -28,6 +24,7 @@ import net.digitalid.service.core.database.SQLizable;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.entity.Role;
+import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.reference.Capturable;
@@ -40,7 +37,9 @@ import net.digitalid.utility.collections.concurrent.ConcurrentMap;
 import net.digitalid.utility.database.annotations.Committing;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.annotations.OnlyForClients;
 import net.digitalid.utility.database.configuration.Database;
+import net.digitalid.utility.database.site.Site;
 
 /**
  * This class models the contexts for {@link Contact contacts}.

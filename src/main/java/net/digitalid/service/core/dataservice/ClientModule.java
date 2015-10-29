@@ -1,10 +1,10 @@
 package net.digitalid.service.core.dataservice;
 
-import net.digitalid.utility.database.configuration.Database;
 import javax.annotation.Nonnull;
+import net.digitalid.service.core.site.client.Client;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
-import net.digitalid.service.core.site.client.Client;
+import net.digitalid.utility.database.configuration.Database;
 
 /**
  * Client modules are only used on {@link Client clients}.

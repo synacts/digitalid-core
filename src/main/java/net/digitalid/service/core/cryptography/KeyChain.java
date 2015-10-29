@@ -1,15 +1,14 @@
 package net.digitalid.service.core.cryptography;
 
+import javax.annotation.Nonnull;
+import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.block.Block;
-
 import net.digitalid.service.core.block.wrappers.ListWrapper;
 import net.digitalid.service.core.block.wrappers.TupleWrapper;
+import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.factory.encoding.Encodable;
 import net.digitalid.service.core.factory.encoding.Encode;
 import net.digitalid.service.core.factory.encoding.NonRequestingEncodingFactory;
-import javax.annotation.Nonnull;
-import net.digitalid.service.core.auxiliary.Time;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -144,7 +143,7 @@ abstract class KeyChain<K extends Encodable<K, Object>, C extends KeyChain<K, C>
     @Immutable
     public static abstract class EncodingFactory<K extends Encodable<K, Object>, C extends KeyChain<K, C>> extends NonRequestingEncodingFactory<C, Object> {
         
-    	/**
+        /**
          * Stores the type of the key chain items.
          */
         private final @Nonnull SemanticType itemType;
@@ -155,7 +154,7 @@ abstract class KeyChain<K extends Encodable<K, Object>, C extends KeyChain<K, C>
         private final @Nonnull NonRequestingEncodingFactory<K, Object> factory;
         
         /**
-         * Creates a new factory with the given parameters.
+         * Creates a new encoding factory with the given parameters.
          * 
          * @param chainType the type of the key chain.
          * @param itemType the type of the key chain items.
@@ -167,6 +166,7 @@ abstract class KeyChain<K extends Encodable<K, Object>, C extends KeyChain<K, C>
             this.itemType = itemType;
             this.factory = factory;
         }
+        
         /**
          * Creates a new key chain with the given items.
          * 
@@ -178,7 +178,7 @@ abstract class KeyChain<K extends Encodable<K, Object>, C extends KeyChain<K, C>
          */
         @Pure
         protected abstract @Nonnull C createKeyChain(@Nonnull @Frozen @NonEmpty @NonNullableElements ReadOnlyList<ReadOnlyPair<Time, K>> items);
-    
+        
         @Pure
         @Override
         public final @Nonnull Block encodeNonNullable(@Nonnull C chain) {
@@ -218,5 +218,5 @@ abstract class KeyChain<K extends Encodable<K, Object>, C extends KeyChain<K, C>
     @Pure
     @Override
     public abstract @Nonnull EncodingFactory<K, C> getEncodingFactory();
-
+    
 }

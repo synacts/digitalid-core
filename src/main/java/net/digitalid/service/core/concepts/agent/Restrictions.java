@@ -1,35 +1,33 @@
 package net.digitalid.service.core.concepts.agent;
 
-import net.digitalid.utility.database.site.Site;
-
-import net.digitalid.service.core.block.Block;
-import net.digitalid.service.core.block.Blockable;
-import net.digitalid.service.core.block.wrappers.BooleanWrapper;
-import net.digitalid.service.core.block.wrappers.TupleWrapper;
-import net.digitalid.service.core.identity.resolution.Mapper;
-import net.digitalid.service.core.concepts.contact.Contact;
-import net.digitalid.service.core.concepts.contact.Context;
-import net.digitalid.service.core.exceptions.network.NetworkException;
-import net.digitalid.service.core.exceptions.abort.AbortException;
-import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.service.core.block.Block;
+import net.digitalid.service.core.block.Blockable;
+import net.digitalid.service.core.block.wrappers.BooleanWrapper;
+import net.digitalid.service.core.block.wrappers.TupleWrapper;
+import net.digitalid.service.core.concepts.contact.Contact;
+import net.digitalid.service.core.concepts.contact.Context;
 import net.digitalid.service.core.database.SQLizable;
 import net.digitalid.service.core.entity.NonHostEntity;
+import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.identity.resolution.Mapper;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.configuration.Database;
+import net.digitalid.utility.database.site.Site;
 
 /**
  * This class models the restrictions of an agent.

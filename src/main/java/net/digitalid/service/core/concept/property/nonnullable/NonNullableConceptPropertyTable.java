@@ -1,14 +1,5 @@
 package net.digitalid.service.core.concept.property.nonnullable;
 
-import net.digitalid.utility.database.site.Site;
-
-import net.digitalid.service.core.block.Block;
-import net.digitalid.service.core.block.wrappers.ListWrapper;
-import net.digitalid.service.core.block.wrappers.TupleWrapper;
-import net.digitalid.service.core.concepts.agent.Agent;
-import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
-import net.digitalid.service.core.concepts.agent.Restrictions;
-import net.digitalid.service.core.site.host.Host;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -17,12 +8,20 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.auxiliary.Time;
+import net.digitalid.service.core.block.Block;
+import net.digitalid.service.core.block.wrappers.ListWrapper;
+import net.digitalid.service.core.block.wrappers.TupleWrapper;
 import net.digitalid.service.core.concept.Concept;
+import net.digitalid.service.core.concept.property.ConceptPropertyTable;
+import net.digitalid.service.core.concepts.agent.Agent;
+import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
+import net.digitalid.service.core.concepts.agent.Restrictions;
 import net.digitalid.service.core.entity.Entity;
+import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
-import net.digitalid.service.core.concept.property.ConceptPropertyTable;
+import net.digitalid.service.core.site.host.Host;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
@@ -38,7 +37,7 @@ import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.annotations.OnMainThread;
 import net.digitalid.utility.database.configuration.Database;
-import net.digitalid.service.core.exceptions.abort.AbortException;
+import net.digitalid.utility.database.site.Site;
 
 /**
  * Description.
@@ -142,7 +141,7 @@ public final class NonNullableConceptPropertyTable<V, C extends Concept<C, E, ?>
     @Override
     @NonCommitting
     public @Nonnull Block getState(@Nonnull E entity, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws AbortException {
-        // TODO: String SQL = select(getConceptFactories(),Time.FACTORIES, getPropertyFactory().getValueFactories()).from(entity).where(factory, object).and().and().toSQL();
+        // TODO: String SQL = select(getConceptFactories(), Time.FACTORIES, getPropertyFactory().getValueFactories()).from(entity).where(factory, object).and().and().toSQL();
         // TODO: Instead of getPropertyFactory().getConceptFactories().getStoringFactory().storeNonNullable and getPropertyFactory().getConceptFactories().getStoringFactory().restoreNonNullable, one could define a store and restore method that also takes a GeneralFactories as a parameter.
         final @Nonnull String SQL = "SELECT " + getPropertyFactory().getConceptFactories().getStoringFactory().getSelection() + ", " + Time.STORING_FACTORY.getSelection() + ", " + getPropertyFactory().getValueFactories().getStoringFactory().getSelection() + " FROM " + getName(entity.getSite()) + " WHERE " + getPropertyFactory().getEntityFactories().getStoringFactory().getConditionForStatement(entity) + " AND " + getPropertyFactory().getRequiredAuthorization().getStateFilter(permissions, restrictions, agent);
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {

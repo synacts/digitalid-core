@@ -1,17 +1,15 @@
 package net.digitalid.service.core.concepts.agent;
 
-import net.digitalid.utility.database.site.Site;
-
-import net.digitalid.service.core.dataservice.ClientModule;
-import net.digitalid.service.core.dataservice.Service;
-import java.sql.SQLException;
 import java.sql.Statement;
 import javax.annotation.Nonnull;
+import net.digitalid.service.core.dataservice.ClientModule;
+import net.digitalid.service.core.dataservice.Service;
 import net.digitalid.service.core.service.CoreService;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Stateless;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.configuration.Database;
+import net.digitalid.utility.database.site.Site;
 
 /**
  * This class provides database access to the accreditation requests of the core service.

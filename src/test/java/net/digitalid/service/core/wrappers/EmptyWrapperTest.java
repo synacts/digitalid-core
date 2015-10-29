@@ -1,9 +1,8 @@
 package net.digitalid.service.core.wrappers;
 
+import javax.annotation.Nonnull;
 import net.digitalid.service.core.block.wrappers.BooleanWrapper;
 import net.digitalid.service.core.block.wrappers.EmptyWrapper;
-
-import javax.annotation.Nonnull;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.setup.DatabaseSetup;

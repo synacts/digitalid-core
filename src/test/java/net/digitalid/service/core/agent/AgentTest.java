@@ -1,24 +1,23 @@
 package net.digitalid.service.core.agent;
 
+import java.io.IOException;
+import java.sql.SQLException;
+import javax.annotation.Nonnull;
 import net.digitalid.service.core.block.Block;
-
-import net.digitalid.service.core.concepts.contact.Context;
-import net.digitalid.service.core.concepts.attribute.AttributeTypes;
 import net.digitalid.service.core.concepts.agent.Agent;
 import net.digitalid.service.core.concepts.agent.ClientAgent;
 import net.digitalid.service.core.concepts.agent.FreezableAgentPermissions;
 import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
 import net.digitalid.service.core.concepts.agent.Restrictions;
-import net.digitalid.service.core.site.client.Client;
-import net.digitalid.service.core.site.client.Commitment;
-import java.io.IOException;
-import java.sql.SQLException;
-import javax.annotation.Nonnull;
+import net.digitalid.service.core.concepts.attribute.AttributeTypes;
+import net.digitalid.service.core.concepts.contact.Context;
 import net.digitalid.service.core.entity.NativeRole;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.service.CoreService;
 import net.digitalid.service.core.setup.IdentitySetup;
+import net.digitalid.service.core.site.client.Client;
+import net.digitalid.service.core.site.client.Commitment;
 import net.digitalid.utility.database.annotations.Committing;
 import net.digitalid.utility.database.configuration.Database;
 import org.junit.After;

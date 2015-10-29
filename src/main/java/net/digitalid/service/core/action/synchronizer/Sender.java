@@ -1,8 +1,5 @@
 package net.digitalid.service.core.action.synchronizer;
 
-import net.digitalid.service.core.concepts.error.ErrorModule;
-
-import net.digitalid.service.core.dataservice.Service;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.concurrent.Callable;
@@ -10,6 +7,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.service.core.concepts.error.ErrorModule;
+import net.digitalid.service.core.dataservice.Service;
 import net.digitalid.service.core.entity.Role;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;

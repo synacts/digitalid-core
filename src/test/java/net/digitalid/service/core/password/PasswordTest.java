@@ -1,9 +1,8 @@
 package net.digitalid.service.core.password;
 
-import net.digitalid.service.core.concepts.password.Password;
-
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import net.digitalid.service.core.concepts.settings.Settings;
 import net.digitalid.service.core.setup.IdentitySetup;
 import net.digitalid.utility.database.annotations.Committing;
 import net.digitalid.utility.database.configuration.Database;
@@ -13,7 +12,7 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
 /**
- * Unit testing of the {@link Password password} with its {@link Action actions}.
+ * Unit testing of the {@link Settings password} with its {@link Action actions}.
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public final class PasswordTest extends IdentitySetup {
@@ -25,9 +24,9 @@ public final class PasswordTest extends IdentitySetup {
     public void _01_testValueReplace() throws AbortException {
         print("_01_testValueReplace");
         try {
-            final @Nonnull Password password = Password.get(getRole());
+            final @Nonnull Settings password = Settings.get(getRole());
             password.setValue(VALUE);
-            Password.reset(getRole()); // Not necessary but I want to test the database state.
+            Settings.reset(getRole()); // Not necessary but I want to test the database state.
             Assert.assertEquals(VALUE, password.getValue());
             Database.commit();
         } catch (@Nonnull SQLException exception) {

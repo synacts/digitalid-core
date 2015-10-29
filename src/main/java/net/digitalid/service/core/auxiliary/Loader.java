@@ -1,7 +1,5 @@
 package net.digitalid.service.core.auxiliary;
 
-import net.digitalid.service.core.block.wrappers.SignatureWrapper;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -15,6 +13,7 @@ import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import javax.annotation.Nonnull;
+import net.digitalid.service.core.block.wrappers.SignatureWrapper;
 import net.digitalid.service.core.cache.Cache;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.server.Server;

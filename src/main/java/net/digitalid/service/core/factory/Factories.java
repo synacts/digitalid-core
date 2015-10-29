@@ -1,9 +1,8 @@
 package net.digitalid.service.core.factory;
 
-import net.digitalid.service.core.factory.encoding.AbstractEncodingFactory;
-
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.entity.Entity;
+import net.digitalid.service.core.factory.encoding.AbstractEncodingFactory;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -17,7 +16,7 @@ import net.digitalid.utility.database.storing.AbstractStoringFactory;
  *            In case no external information is needed for the reconstruction of an object, declare it as an {@link Object}.
  */
 @Immutable
-public final class Factories<O, E> extends GenericFactories<O, E, AbstractEncodingFactory<O, E>, AbstractStoringFactory<O, E>> {
+public final class Factories<O, E> extends AbstractFactories<O, E, AbstractEncodingFactory<O, E>, AbstractStoringFactory<O, E>> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     

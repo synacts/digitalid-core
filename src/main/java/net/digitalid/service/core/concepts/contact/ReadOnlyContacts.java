@@ -1,8 +1,7 @@
 package net.digitalid.service.core.concepts.contact;
 
-import net.digitalid.service.core.block.wrappers.Blockable;
-
 import javax.annotation.Nonnull;
+import net.digitalid.service.core.block.wrappers.Blockable;
 import net.digitalid.service.core.database.SQLizable;
 import net.digitalid.utility.annotations.reference.Capturable;
 import net.digitalid.utility.annotations.state.Pure;

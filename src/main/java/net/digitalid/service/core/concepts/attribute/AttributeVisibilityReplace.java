@@ -1,18 +1,14 @@
 package net.digitalid.service.core.concepts.attribute;
 
-import net.digitalid.service.core.block.Block;
-
-import net.digitalid.service.core.block.wrappers.SignatureWrapper;
-import net.digitalid.service.core.block.wrappers.TupleWrapper;
-import net.digitalid.service.core.handler.core.CoreServiceInternalAction;
-import net.digitalid.service.core.dataservice.StateModule;
-import net.digitalid.service.core.concepts.agent.FreezableAgentPermissions;
-import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.service.core.block.Block;
+import net.digitalid.service.core.block.wrappers.SignatureWrapper;
+import net.digitalid.service.core.block.wrappers.TupleWrapper;
+import net.digitalid.service.core.concepts.agent.FreezableAgentPermissions;
+import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
+import net.digitalid.service.core.dataservice.StateModule;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
@@ -21,6 +17,7 @@ import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.expression.PassiveExpression;
 import net.digitalid.service.core.handler.Action;
 import net.digitalid.service.core.handler.Method;
+import net.digitalid.service.core.handler.core.CoreServiceInternalAction;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.identifier.IdentifierClass;
 import net.digitalid.service.core.identity.InternalPerson;

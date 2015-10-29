@@ -1,16 +1,13 @@
 package net.digitalid.service.core.identity.resolution;
 
-import net.digitalid.service.core.block.wrappers.Blockable;
-
-import net.digitalid.service.core.identity.NonHostIdentity;
-import java.io.IOException;
-import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.service.core.block.wrappers.Blockable;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.Reply;
 import net.digitalid.service.core.identifier.InternalNonHostIdentifier;
+import net.digitalid.service.core.identity.NonHostIdentity;
 import net.digitalid.utility.annotations.reference.Capturable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.annotations.elements.NonNullableElements;

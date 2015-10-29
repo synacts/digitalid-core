@@ -1,23 +1,18 @@
 package net.digitalid.service.core.auxiliary;
 
-import net.digitalid.service.core.block.Block;
-
-import net.digitalid.service.core.block.wrappers.Int64Wrapper;
-import net.digitalid.service.core.identity.annotations.BasedOn;
-import net.digitalid.service.core.factory.encoding.AbstractEncodingFactory;
-import net.digitalid.service.core.factory.encoding.Encodable;
-import net.digitalid.service.core.factory.encoding.NonRequestingEncodingFactory;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.text.DateFormat;
 import java.util.Date;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.service.core.block.Block;
+import net.digitalid.service.core.block.wrappers.Int64Wrapper;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.factory.encoding.Encodable;
+import net.digitalid.service.core.factory.encoding.NonRequestingEncodingFactory;
 import net.digitalid.service.core.identity.SemanticType;
-import net.digitalid.utility.database.storing.AbstractStoringFactory;
-import net.digitalid.utility.database.storing.Storable;
+import net.digitalid.service.core.identity.annotations.BasedOn;
 import net.digitalid.utility.annotations.reference.Capturable;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -27,6 +22,8 @@ import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.column.Column;
 import net.digitalid.utility.database.column.SQLType;
+import net.digitalid.utility.database.storing.AbstractStoringFactory;
+import net.digitalid.utility.database.storing.Storable;
 
 /**
  * This class models time in milliseconds for both dates and intervals.

@@ -1,32 +1,24 @@
 package net.digitalid.service.core.dataservice;
 
-import net.digitalid.utility.database.storing.AbstractStoringFactory;
-
-import net.digitalid.utility.database.site.Site;
-import net.digitalid.service.core.exceptions.network.NetworkException;
-import net.digitalid.service.core.exceptions.abort.AbortException;
-import net.digitalid.service.core.identity.annotations.Loaded;
-import net.digitalid.service.core.concepts.attribute.Attribute;
-import net.digitalid.service.core.concepts.attribute.AttributeValue;
-import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.cache.Cache;
+import net.digitalid.service.core.concepts.attribute.Attribute;
+import net.digitalid.service.core.concepts.attribute.AttributeValue;
 import net.digitalid.service.core.entity.Role;
+import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.identifier.IdentifierClass;
-import net.digitalid.service.core.identity.Identity;
-import net.digitalid.service.core.identity.IdentityClass;
 import net.digitalid.service.core.identity.InternalPerson;
 import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.identity.annotations.Loaded;
 import net.digitalid.service.core.service.CoreService;
-import net.digitalid.utility.database.storing.FactoryBasedStoringFactory;
-import net.digitalid.utility.database.storing.Storable;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
@@ -34,6 +26,8 @@ import net.digitalid.utility.collections.freezable.FreezableLinkedHashMap;
 import net.digitalid.utility.collections.freezable.FreezableMap;
 import net.digitalid.utility.collections.readonly.ReadOnlyCollection;
 import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.storing.FactoryBasedStoringFactory;
+import net.digitalid.utility.database.storing.Storable;
 
 /**
  * This class models a service.

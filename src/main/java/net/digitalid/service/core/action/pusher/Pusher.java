@@ -1,6 +1,5 @@
 package net.digitalid.service.core.action.pusher;
 
-import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.handler.ExternalAction;
 import net.digitalid.utility.database.annotations.NonCommitting;

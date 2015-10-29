@@ -1,16 +1,13 @@
 package net.digitalid.service.core.entity;
 
-import net.digitalid.service.core.identity.resolution.Mapper;
-
-import net.digitalid.service.core.dataservice.ClientModule;
-import net.digitalid.service.core.concepts.agent.Agent;
-import net.digitalid.service.core.site.client.Client;
-import net.digitalid.service.core.exceptions.abort.AbortException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.service.core.concepts.agent.Agent;
+import net.digitalid.service.core.dataservice.ClientModule;
+import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
@@ -19,7 +16,9 @@ import net.digitalid.service.core.identity.IdentityClass;
 import net.digitalid.service.core.identity.InternalNonHostIdentity;
 import net.digitalid.service.core.identity.InternalPerson;
 import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.identity.resolution.Mapper;
 import net.digitalid.service.core.service.CoreService;
+import net.digitalid.service.core.site.client.Client;
 import net.digitalid.utility.annotations.reference.Capturable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.freezable.FreezableLinkedList;

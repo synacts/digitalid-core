@@ -1,12 +1,11 @@
 package net.digitalid.service.core.handler;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import net.digitalid.service.core.action.synchronizer.Audit;
-
 import net.digitalid.service.core.concepts.agent.Agent;
 import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
 import net.digitalid.service.core.concepts.agent.Restrictions;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 

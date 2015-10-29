@@ -1,21 +1,21 @@
 package net.digitalid.service.core.cryptography;
 
-import net.digitalid.service.core.block.Block;
-
-import net.digitalid.service.core.block.wrappers.IntegerWrapper;
-import net.digitalid.service.core.block.wrappers.TupleWrapper;
-import net.digitalid.service.core.entity.annotations.Matching;
-import net.digitalid.service.core.identity.annotations.BasedOn;
-import net.digitalid.service.core.factory.storing.BlockBasedStoringFactory;
-import net.digitalid.service.core.factory.encoding.Encodable;
-import net.digitalid.service.core.factory.encoding.Encode;
-import net.digitalid.service.core.factory.encoding.NonRequestingEncodingFactory;
 import java.math.BigInteger;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.auxiliary.None;
+import net.digitalid.service.core.block.Block;
+import net.digitalid.service.core.block.wrappers.IntegerWrapper;
+import net.digitalid.service.core.block.wrappers.TupleWrapper;
+import net.digitalid.service.core.entity.annotations.Matching;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.factory.Factories;
+import net.digitalid.service.core.factory.encoding.Encodable;
+import net.digitalid.service.core.factory.encoding.Encode;
+import net.digitalid.service.core.factory.encoding.NonRequestingEncodingFactory;
+import net.digitalid.service.core.factory.storing.BlockBasedStoringFactory;
 import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.identity.annotations.BasedOn;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.freezable.FreezableArray;
@@ -27,7 +27,7 @@ import net.digitalid.utility.database.storing.Storable;
  * This class stores the groups and exponents of a host's private key.
  */
 @Immutable
-public final class PrivateKey implements Encodable<PrivateKey, Object>, Storable<PrivateKey,Object> {
+public final class PrivateKey implements Encodable<PrivateKey, Object>, Storable<PrivateKey, Object> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -282,10 +282,10 @@ public final class PrivateKey implements Encodable<PrivateKey, Object>, Storable
      * The encoding factory for this class.
      */
     @Immutable
-    public static final class EncodingFactory extends NonRequestingEncodingFactory<PrivateKey,Object> {
+    public static final class EncodingFactory extends NonRequestingEncodingFactory<PrivateKey, Object> {
         
         /**
-         * Creates a new encoding factory with the given type.
+         * Creates a new encoding factory.
          */
         private EncodingFactory() {
             super(TYPE);
@@ -325,7 +325,7 @@ public final class PrivateKey implements Encodable<PrivateKey, Object>, Storable
     }
     
     /**
-     * Stores the factory of this class.
+     * Stores the encoding factory of this class.
      */
     public static final @Nonnull EncodingFactory ENCODING_FACTORY = new EncodingFactory();
     
@@ -340,12 +340,19 @@ public final class PrivateKey implements Encodable<PrivateKey, Object>, Storable
     /**
      * Stores the storing factory of this class.
      */
-    public static final @Nonnull AbstractStoringFactory<PrivateKey,Object> STORING_FACTORY = BlockBasedStoringFactory.get(ENCODING_FACTORY);
+    public static final @Nonnull AbstractStoringFactory<PrivateKey, Object> STORING_FACTORY = BlockBasedStoringFactory.get(ENCODING_FACTORY);
     
     @Pure
     @Override
     public @Nonnull AbstractStoringFactory<PrivateKey, Object> getStoringFactory() {
         return STORING_FACTORY;
     }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factories –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Stores the factories of this class.
+     */
+    public static final @Nonnull Factories<PrivateKey, Object> FACTORIES = Factories.get(ENCODING_FACTORY, STORING_FACTORY);
     
 }

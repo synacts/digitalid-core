@@ -1,13 +1,11 @@
 package net.digitalid.service.core.setup;
 
-import net.digitalid.service.core.block.Block;
-
-import net.digitalid.service.core.concepts.agent.Agent;
-import net.digitalid.service.core.concepts.agent.FreezableAgentPermissions;
-import net.digitalid.service.core.site.client.Client;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import net.digitalid.service.core.block.Block;
+import net.digitalid.service.core.concepts.agent.Agent;
+import net.digitalid.service.core.concepts.agent.FreezableAgentPermissions;
 import net.digitalid.service.core.entity.NativeRole;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
@@ -16,6 +14,7 @@ import net.digitalid.service.core.identity.Category;
 import net.digitalid.service.core.identity.Identity;
 import net.digitalid.service.core.identity.NaturalPerson;
 import net.digitalid.service.core.service.CoreService;
+import net.digitalid.service.core.site.client.Client;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.database.annotations.Committing;
 import net.digitalid.utility.database.configuration.Database;

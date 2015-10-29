@@ -1,24 +1,20 @@
-package net.digitalid.service.core.concepts.password;
+package net.digitalid.service.core.concepts.settings;
 
-import net.digitalid.utility.database.site.Site;
-
-import net.digitalid.service.core.block.Block;
-import net.digitalid.service.core.block.wrappers.ListWrapper;
-import net.digitalid.service.core.block.wrappers.StringWrapper;
-import net.digitalid.service.core.block.wrappers.TupleWrapper;
-import net.digitalid.service.core.dataservice.StateModule;
-import net.digitalid.service.core.dataservice.Service;
-import net.digitalid.service.core.concepts.agent.Agent;
-import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
-import net.digitalid.service.core.concepts.agent.Restrictions;
-import net.digitalid.service.core.site.host.Host;
-import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.service.core.block.Block;
+import net.digitalid.service.core.block.wrappers.ListWrapper;
+import net.digitalid.service.core.block.wrappers.StringWrapper;
+import net.digitalid.service.core.block.wrappers.TupleWrapper;
+import net.digitalid.service.core.concepts.agent.Agent;
+import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
+import net.digitalid.service.core.concepts.agent.Restrictions;
+import net.digitalid.service.core.dataservice.Service;
+import net.digitalid.service.core.dataservice.StateModule;
 import net.digitalid.service.core.entity.Account;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.EntityClass;
@@ -30,6 +26,7 @@ import net.digitalid.service.core.identifier.IdentifierClass;
 import net.digitalid.service.core.identity.Identity;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.service.CoreService;
+import net.digitalid.service.core.site.host.Host;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Stateless;
 import net.digitalid.utility.collections.freezable.FreezableLinkedList;
@@ -38,9 +35,10 @@ import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.configuration.Database;
+import net.digitalid.utility.database.site.Site;
 
 /**
- * This class provides database access to the {@link Password passwords} of the core service.
+ * This class provides database access to the {@link Settings passwords} of the core service.
  */
 @Stateless
 public final class PasswordModule implements StateModule {
@@ -78,7 +76,7 @@ public final class PasswordModule implements StateModule {
     /**
      * Stores the semantic type {@code entry.password.module@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType MODULE_ENTRY = SemanticType.map("entry.password.module@core.digitalid.net").load(TupleWrapper.TYPE, Identity.IDENTIFIER, Password.TYPE);
+    private static final @Nonnull SemanticType MODULE_ENTRY = SemanticType.map("entry.password.module@core.digitalid.net").load(TupleWrapper.TYPE, Identity.IDENTIFIER, Settings.TYPE);
     
     /**
      * Stores the semantic type {@code password.module@core.digitalid.net}.
@@ -101,7 +99,7 @@ public final class PasswordModule implements StateModule {
             while (resultSet.next()) {
                 final @Nonnull Account account = Account.getNotNull(host, resultSet, 1);
                 final @Nonnull String password = resultSet.getString(2);
-                entries.add(new TupleWrapper(MODULE_ENTRY, account.getIdentity().getAddress(), new StringWrapper(Password.TYPE, password)).toBlock());
+                entries.add(new TupleWrapper(MODULE_ENTRY, account.getIdentity().getAddress(), new StringWrapper(Settings.TYPE, password)).toBlock());
             }
             return new ListWrapper(MODULE_FORMAT, entries.freeze()).toBlock();
         }
@@ -129,7 +127,7 @@ public final class PasswordModule implements StateModule {
     /**
      * Stores the semantic type {@code passwords.state@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType STATE_FORMAT = SemanticType.map("passwords.state@core.digitalid.net").load(TupleWrapper.TYPE, Password.TYPE);
+    private static final @Nonnull SemanticType STATE_FORMAT = SemanticType.map("passwords.state@core.digitalid.net").load(TupleWrapper.TYPE, Settings.TYPE);
     
     @Pure
     @Override
@@ -141,7 +139,7 @@ public final class PasswordModule implements StateModule {
     @Override
     @NonCommitting
     public @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws AbortException {
-        return new TupleWrapper(STATE_FORMAT, restrictions.isClient() ? new StringWrapper(Password.TYPE, get(entity)) : null).toBlock();
+        return new TupleWrapper(STATE_FORMAT, restrictions.isClient() ? new StringWrapper(Settings.TYPE, get(entity)) : null).toBlock();
     }
     
     @Override
@@ -152,7 +150,7 @@ public final class PasswordModule implements StateModule {
         final @Nullable Block element = new TupleWrapper(block).getNullableElement(0);
         if (element != null) set(entity, new StringWrapper(element).getString());
         
-        Password.reset(entity);
+        Settings.reset(entity);
     }
     
     @Override
@@ -179,7 +177,7 @@ public final class PasswordModule implements StateModule {
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
             if (resultSet.next()) {
                 final @Nonnull String value = resultSet.getString(1);
-                if (!Password.isValid(value)) throw new SQLException("The stored password is not valid.");
+                if (!Settings.isValid(value)) throw new SQLException("The stored password is not valid.");
                 return value;
             } else throw new SQLException(entity.getIdentity().getAddress() + " has no password.");
         }
@@ -195,7 +193,7 @@ public final class PasswordModule implements StateModule {
      */
     @NonCommitting
     public static void set(@Nonnull Entity entity, @Nonnull String value) throws AbortException {
-        assert Password.isValid(value) : "The value is valid.";
+        assert Settings.isValid(value) : "The value is valid.";
         
         final @Nonnull String SQL = "INSERT" + Database.getConfiguration().IGNORE() + " INTO " + entity.getSite() + "password (entity, password) VALUES (?, ?)";
         try (@Nonnull PreparedStatement preparedStatement = Database.prepareStatement(SQL)) {
@@ -218,9 +216,9 @@ public final class PasswordModule implements StateModule {
      * @require Password.isValid(newValue) : "The new value is valid.";
      */
     @NonCommitting
-    static void replace(@Nonnull Password password, @Nonnull String oldValue, @Nonnull String newValue) throws AbortException {
-        assert Password.isValid(oldValue) : "The old value is valid.";
-        assert Password.isValid(newValue) : "The new value is valid.";
+    static void replace(@Nonnull Settings password, @Nonnull String oldValue, @Nonnull String newValue) throws AbortException {
+        assert Settings.isValid(oldValue) : "The old value is valid.";
+        assert Settings.isValid(newValue) : "The new value is valid.";
         
         final @Nonnull Entity entity = password.getEntity();
         final @Nonnull String SQL = "UPDATE " + entity.getSite() + "password SET password = ? WHERE entity = ? AND password = ?";

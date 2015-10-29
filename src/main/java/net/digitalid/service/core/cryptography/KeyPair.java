@@ -1,13 +1,12 @@
 package net.digitalid.service.core.cryptography;
 
-import net.digitalid.service.core.block.Block;
-
-import net.digitalid.service.core.block.wrappers.TupleWrapper;
-import net.digitalid.service.core.factory.encoding.Encode;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.Random;
 import javax.annotation.Nonnull;
+import net.digitalid.service.core.block.Block;
+import net.digitalid.service.core.block.wrappers.TupleWrapper;
+import net.digitalid.service.core.factory.encoding.Encode;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.freezable.FreezableArray;

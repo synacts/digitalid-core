@@ -1,22 +1,14 @@
 package net.digitalid.service.core.block.wrappers;
 
-import net.digitalid.service.core.block.annotations.NonEncoding;
-
-import net.digitalid.service.core.block.Block;
-import net.digitalid.service.core.block.ch;
-import net.digitalid.service.core.identity.annotations.BasedOn;
-import net.digitalid.service.core.identity.annotations.Loaded;
-import net.digitalid.service.core.action.synchronizer.Audit;
-import net.digitalid.service.core.factory.encoding.Encodable;
-import net.digitalid.service.core.factory.encoding.Encode;
-import net.digitalid.service.core.concepts.agent.AgentModule;
-import net.digitalid.service.core.concepts.agent.ClientAgent;
-import net.digitalid.service.core.site.client.Commitment;
-import net.digitalid.service.core.site.client.SecretCommitment;
 import java.math.BigInteger;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.service.core.action.synchronizer.Audit;
 import net.digitalid.service.core.auxiliary.Time;
+import net.digitalid.service.core.block.Block;
+import net.digitalid.service.core.block.annotations.NonEncoding;
+import net.digitalid.service.core.concepts.agent.AgentModule;
+import net.digitalid.service.core.concepts.agent.ClientAgent;
 import net.digitalid.service.core.cryptography.Element;
 import net.digitalid.service.core.cryptography.Exponent;
 import net.digitalid.service.core.cryptography.Parameters;
@@ -29,8 +21,14 @@ import net.digitalid.service.core.exceptions.external.InvalidSignatureException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.factory.encoding.Encodable;
+import net.digitalid.service.core.factory.encoding.Encode;
 import net.digitalid.service.core.identifier.InternalIdentifier;
 import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.identity.annotations.BasedOn;
+import net.digitalid.service.core.identity.annotations.Loaded;
+import net.digitalid.service.core.site.client.Commitment;
+import net.digitalid.service.core.site.client.SecretCommitment;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
@@ -135,7 +133,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper {
      * @ensure return.isVerified() : "The returned signature is verified.";
      */
     @Pure
-    public static @Nonnull <V extends Encodable<V,?>> ClientSignatureWrapper sign(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nullable V element, @Nonnull InternalIdentifier<?> subject, @Nullable Audit audit, @Nonnull SecretCommitment commitment) {
+    public static @Nonnull <V extends Encodable<V, ?>> ClientSignatureWrapper sign(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nullable V element, @Nonnull InternalIdentifier<?> subject, @Nullable Audit audit, @Nonnull SecretCommitment commitment) {
         return new ClientSignatureWrapper(type, Encode.nullable(element), subject, audit, commitment);
     }
     

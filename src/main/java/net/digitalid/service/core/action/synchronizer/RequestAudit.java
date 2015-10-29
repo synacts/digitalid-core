@@ -1,11 +1,9 @@
 package net.digitalid.service.core.action.synchronizer;
 
-import net.digitalid.service.core.dataservice.Service;
-
-import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.auxiliary.Time;
+import net.digitalid.service.core.dataservice.Service;
 import net.digitalid.service.core.entity.Role;
 import net.digitalid.service.core.handler.InternalMethod;
 import net.digitalid.service.core.handler.Method;

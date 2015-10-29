@@ -1,12 +1,5 @@
 package net.digitalid.service.core.cryptography;
 
-import net.digitalid.service.core.block.Block;
-
-import net.digitalid.service.core.block.wrappers.IntegerWrapper;
-import net.digitalid.service.core.identity.annotations.BasedOn;
-import net.digitalid.service.core.factory.storing.BlockBasedStoringFactory;
-import net.digitalid.service.core.factory.encoding.Encodable;
-import net.digitalid.service.core.factory.encoding.NonRequestingEncodingFactory;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.math.BigInteger;
@@ -25,8 +18,15 @@ import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
+import net.digitalid.service.core.block.Block;
+import net.digitalid.service.core.block.wrappers.IntegerWrapper;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.factory.Factories;
+import net.digitalid.service.core.factory.encoding.Encodable;
+import net.digitalid.service.core.factory.encoding.NonRequestingEncodingFactory;
+import net.digitalid.service.core.factory.storing.BlockBasedStoringFactory;
 import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.identity.annotations.BasedOn;
 import net.digitalid.utility.annotations.math.NonNegative;
 import net.digitalid.utility.annotations.math.Positive;
 import net.digitalid.utility.annotations.reference.Capturable;
@@ -252,7 +252,7 @@ public final class SymmetricKey implements Encodable<SymmetricKey, Object>, Stor
     public static final class EncodingFactory extends NonRequestingEncodingFactory<SymmetricKey, Object> {
         
         /**
-         * Creates a new encoding factory with the given type.
+         * Creates a new encoding factory.
          */
         private EncodingFactory() {
             super(TYPE);
@@ -275,7 +275,7 @@ public final class SymmetricKey implements Encodable<SymmetricKey, Object>, Stor
     }
     
     /**
-     * Stores the factory of this class.
+     * Stores the encoding factory of this class.
      */
     public static final @Nonnull EncodingFactory ENCODING_FACTORY = new EncodingFactory();
     
@@ -297,5 +297,12 @@ public final class SymmetricKey implements Encodable<SymmetricKey, Object>, Stor
     public @Nonnull AbstractStoringFactory<SymmetricKey, Object> getStoringFactory() {
         return STORING_FACTORY;
     }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factories –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Stores the factories of this class.
+     */
+    public static final @Nonnull Factories<SymmetricKey, Object> FACTORIES = Factories.get(ENCODING_FACTORY, STORING_FACTORY);
     
 }

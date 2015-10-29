@@ -1,20 +1,15 @@
 package net.digitalid.service.core.block.wrappers;
 
-import net.digitalid.service.core.block.annotations.Encoding;
-import net.digitalid.service.core.block.annotations.NonEncoding;
-
-import net.digitalid.service.core.block.Block;
-import net.digitalid.service.core.identity.annotations.BasedOn;
-import net.digitalid.service.core.identity.annotations.Loaded;
-import net.digitalid.service.core.action.synchronizer.Audit;
-import net.digitalid.service.core.factory.encoding.Encodable;
-import net.digitalid.service.core.factory.encoding.Encode;
-import net.digitalid.service.core.concepts.agent.Agent;
 import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.service.core.action.synchronizer.Audit;
 import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.auxiliary.Time;
+import net.digitalid.service.core.block.Block;
+import net.digitalid.service.core.block.annotations.Encoding;
+import net.digitalid.service.core.block.annotations.NonEncoding;
+import net.digitalid.service.core.concepts.agent.Agent;
 import net.digitalid.service.core.cryptography.PublicKey;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostEntity;
@@ -26,11 +21,15 @@ import net.digitalid.service.core.exceptions.external.InvalidSignatureException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.factory.encoding.Encodable;
+import net.digitalid.service.core.factory.encoding.Encode;
 import net.digitalid.service.core.identifier.IdentifierClass;
 import net.digitalid.service.core.identifier.InternalIdentifier;
 import net.digitalid.service.core.identity.InternalIdentity;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
+import net.digitalid.service.core.identity.annotations.BasedOn;
+import net.digitalid.service.core.identity.annotations.Loaded;
 import net.digitalid.utility.annotations.math.Positive;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -327,7 +326,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
      * @ensure return.isVerified() : "The returned signature is verified.";
      */
     @Pure
-    public static @Nonnull <V extends Encodable<V,?>> SignatureWrapper encodeWithoutSigning(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nonnull V element, @Nullable InternalIdentifier<?> subject) {
+    public static @Nonnull <V extends Encodable<V, ?>> SignatureWrapper encodeWithoutSigning(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nonnull V element, @Nullable InternalIdentifier<?> subject) {
         return new SignatureWrapper(type, Encode.nonNullable(element), subject, null);
     }
     
@@ -439,13 +438,13 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
     
     @Pure
     @Override
-    protected final int determineLength() {
+    public final int determineLength() {
         return getCache().getLength();
     }
     
     @Pure
     @Override
-    protected void encode(@Nonnull @Encoding Block block) {
+    public void encode(@Nonnull @Encoding Block block) {
         assert block.getLength() == determineLength() : "The block's length has to match the determined length.";
         assert block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
         

@@ -1,22 +1,20 @@
 package net.digitalid.service.core.handler;
 
-import net.digitalid.service.core.block.wrappers.SignatureWrapper;
-
-import net.digitalid.service.core.handler.core.CoreServiceExternalAction;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import net.digitalid.service.core.action.pusher.Pusher;
+import net.digitalid.service.core.block.wrappers.SignatureWrapper;
 import net.digitalid.service.core.concepts.agent.Agent;
 import net.digitalid.service.core.concepts.agent.FreezableAgentPermissions;
 import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
 import net.digitalid.service.core.concepts.agent.Restrictions;
-import net.digitalid.service.core.site.host.Host;
-import net.digitalid.service.core.site.client.Client;
-import java.sql.SQLException;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostEntity;
+import net.digitalid.service.core.handler.core.CoreServiceExternalAction;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.identifier.InternalIdentifier;
+import net.digitalid.service.core.site.client.Client;
+import net.digitalid.service.core.site.host.Host;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.database.annotations.NonCommitting;

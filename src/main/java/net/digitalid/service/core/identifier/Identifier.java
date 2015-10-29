@@ -1,18 +1,18 @@
 package net.digitalid.service.core.identifier;
 
-import net.digitalid.service.core.factory.encoding.Encodable;
-
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.factory.encoding.Encodable;
 import net.digitalid.service.core.identity.Identity;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.storing.Storable;
 
 /**
  * This interface models identifiers.
@@ -21,7 +21,7 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * @see NonHostIdentifier
  */
 @Immutable
-public interface Identifier<I extends Identifier<I>> extends Encodable<I, Object> {
+public interface Identifier<I extends Identifier<I>> extends Encodable<I, Object>, Storable<I, Object> {
     
     /**
      * Returns the string of this identifier.
@@ -88,7 +88,7 @@ public interface Identifier<I extends Identifier<I>> extends Encodable<I, Object
      * @throws InvalidEncodingException if this identifier is not an instance of {@link InternalIdentifier}.
      */
     @Pure
-    public @Nonnull InternalIdentifier toInternalIdentifier() throws InvalidEncodingException;
+    public @Nonnull InternalIdentifier<?> toInternalIdentifier() throws InvalidEncodingException;
     
     /**
      * Returns this identifier as a {@link HostIdentifier}.

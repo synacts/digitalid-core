@@ -1,8 +1,7 @@
 package net.digitalid.service.core.handler;
 
-import net.digitalid.service.core.concepts.agent.Restrictions;
-
 import javax.annotation.Nonnull;
+import net.digitalid.service.core.concepts.agent.Restrictions;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 

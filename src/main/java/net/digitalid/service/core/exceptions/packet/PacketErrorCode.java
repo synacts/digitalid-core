@@ -1,13 +1,12 @@
 package net.digitalid.service.core.exceptions.packet;
 
-import net.digitalid.service.core.block.Block;
-import net.digitalid.service.core.block.Blockable;
-
-import net.digitalid.service.core.block.wrappers.Int8Wrapper;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import net.digitalid.service.core.block.Block;
+import net.digitalid.service.core.block.Blockable;
+import net.digitalid.service.core.block.wrappers.Int8Wrapper;
 import net.digitalid.service.core.database.SQLizable;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.identity.SemanticType;

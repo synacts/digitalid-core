@@ -1,12 +1,5 @@
 package net.digitalid.service.core.cryptography;
 
-import net.digitalid.service.core.block.Block;
-
-import net.digitalid.service.core.block.wrappers.BytesWrapper;
-import net.digitalid.service.core.block.wrappers.EncryptionWrapper;
-import net.digitalid.service.core.identity.annotations.BasedOn;
-import net.digitalid.service.core.factory.encoding.Encodable;
-import net.digitalid.service.core.factory.encoding.NonRequestingEncodingFactory;
 import java.security.SecureRandom;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,8 +7,15 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.crypto.spec.IvParameterSpec;
+import net.digitalid.service.core.block.Block;
+import net.digitalid.service.core.block.wrappers.BytesWrapper;
+import net.digitalid.service.core.block.wrappers.EncryptionWrapper;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.factory.Factories;
+import net.digitalid.service.core.factory.encoding.Encodable;
+import net.digitalid.service.core.factory.encoding.NonRequestingEncodingFactory;
 import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.identity.annotations.BasedOn;
 import net.digitalid.utility.annotations.reference.Capturable;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -102,10 +102,10 @@ public final class InitializationVector extends IvParameterSpec implements Encod
      * The encoding factory for this class.
      */
     @Immutable
-    public static final class EncodingFactory extends NonRequestingEncodingFactory<InitializationVector,Object> {
+    public static final class EncodingFactory extends NonRequestingEncodingFactory<InitializationVector, Object> {
         
         /**
-         * Creates a new encoding factory with the given type.
+         * Creates a new encoding factory.
          */
         private EncodingFactory() {
             super(TYPE);
@@ -129,7 +129,7 @@ public final class InitializationVector extends IvParameterSpec implements Encod
     }
     
     /**
-     * Stores the factory of this class.
+     * Stores the encoding factory of this class.
      */
     public static final @Nonnull EncodingFactory ENCODING_FACTORY = new EncodingFactory();
     
@@ -177,7 +177,7 @@ public final class InitializationVector extends IvParameterSpec implements Encod
     }
     
     /**
-     * Stores the factory of this class.
+     * Stores the storing factory of this class.
      */
     public static final @Nonnull StoringFactory STORING_FACTORY = new StoringFactory();
     
@@ -186,5 +186,12 @@ public final class InitializationVector extends IvParameterSpec implements Encod
     public @Nonnull StoringFactory getStoringFactory() {
         return STORING_FACTORY;
     }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factories –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Stores the factories of this class.
+     */
+    public static final @Nonnull Factories<InitializationVector, Object> FACTORIES = Factories.get(ENCODING_FACTORY, STORING_FACTORY);
     
 }

@@ -1,19 +1,14 @@
 package net.digitalid.service.core.cache;
 
-import net.digitalid.utility.database.annotations.OnlyForHosts;
-
-import net.digitalid.service.core.block.Block;
-import net.digitalid.service.core.block.wrappers.HostSignatureWrapper;
-import net.digitalid.service.core.block.wrappers.ListWrapper;
-import net.digitalid.service.core.handler.core.CoreServiceQueryReply;
-import net.digitalid.service.core.concepts.attribute.AttributeValue;
-import net.digitalid.service.core.concepts.attribute.CertifiedAttributeValue;
-import net.digitalid.service.core.concepts.attribute.UncertifiedAttributeValue;
-import java.io.IOException;
-import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.auxiliary.Time;
+import net.digitalid.service.core.block.Block;
+import net.digitalid.service.core.block.wrappers.HostSignatureWrapper;
+import net.digitalid.service.core.block.wrappers.ListWrapper;
+import net.digitalid.service.core.concepts.attribute.AttributeValue;
+import net.digitalid.service.core.concepts.attribute.CertifiedAttributeValue;
+import net.digitalid.service.core.concepts.attribute.UncertifiedAttributeValue;
 import net.digitalid.service.core.entity.Account;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
@@ -21,6 +16,7 @@ import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.external.InvalidSignatureException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.Reply;
+import net.digitalid.service.core.handler.core.CoreServiceQueryReply;
 import net.digitalid.service.core.identity.InternalIdentity;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -29,6 +25,7 @@ import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.annotations.OnlyForHosts;
 
 /**
  * Replies the queried attribute values of the given subject that are accessible by the requester.

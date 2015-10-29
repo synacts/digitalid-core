@@ -1,22 +1,19 @@
-package net.digitalid.service.core.concepts.password;
+package net.digitalid.service.core.concepts.settings;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import net.digitalid.service.core.block.Block;
-
 import net.digitalid.service.core.block.wrappers.SignatureWrapper;
 import net.digitalid.service.core.block.wrappers.StringWrapper;
 import net.digitalid.service.core.block.wrappers.TupleWrapper;
-import net.digitalid.service.core.handler.core.CoreServiceInternalAction;
-import net.digitalid.service.core.dataservice.StateModule;
 import net.digitalid.service.core.concepts.agent.Restrictions;
-import java.io.IOException;
-import java.sql.SQLException;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import net.digitalid.service.core.dataservice.StateModule;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.Action;
 import net.digitalid.service.core.handler.Method;
+import net.digitalid.service.core.handler.core.CoreServiceInternalAction;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -26,7 +23,7 @@ import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
- * Replaces the value of a {@link Password password}.
+ * Replaces the value of a {@link Settings password}.
  */
 @Immutable
 final class PasswordValueReplace extends CoreServiceInternalAction {
@@ -34,12 +31,12 @@ final class PasswordValueReplace extends CoreServiceInternalAction {
     /**
      * Stores the semantic type {@code old.password@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType OLD_VALUE = SemanticType.map("old.password@core.digitalid.net").load(Password.TYPE);
+    private static final @Nonnull SemanticType OLD_VALUE = SemanticType.map("old.password@core.digitalid.net").load(Settings.TYPE);
     
     /**
      * Stores the semantic type {@code new.password@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType NEW_VALUE = SemanticType.map("new.password@core.digitalid.net").load(Password.TYPE);
+    private static final @Nonnull SemanticType NEW_VALUE = SemanticType.map("new.password@core.digitalid.net").load(Settings.TYPE);
     
     /**
      * Stores the semantic type {@code replace.password@core.digitalid.net}.
@@ -50,7 +47,7 @@ final class PasswordValueReplace extends CoreServiceInternalAction {
     /**
      * Stores the password whose value is to be replaced.
      */
-    private final @Nonnull Password password;
+    private final @Nonnull Settings password;
     
     /**
      * Stores the old value of the password.
@@ -77,11 +74,11 @@ final class PasswordValueReplace extends CoreServiceInternalAction {
      * @require Password.isValid(oldValue) : "The old value is valid.";
      * @require Password.isValid(newValue) : "The new value is valid.";
      */
-    PasswordValueReplace(@Nonnull Password password, @Nonnull String oldValue, @Nonnull String newValue) {
+    PasswordValueReplace(@Nonnull Settings password, @Nonnull String oldValue, @Nonnull String newValue) {
         super(password.getRole());
         
-        assert Password.isValid(oldValue) : "The old value is valid.";
-        assert Password.isValid(newValue) : "The new value is valid.";
+        assert Settings.isValid(oldValue) : "The old value is valid.";
+        assert Settings.isValid(newValue) : "The new value is valid.";
         
         this.password = password;
         this.oldValue = oldValue;
@@ -106,7 +103,7 @@ final class PasswordValueReplace extends CoreServiceInternalAction {
         super(entity, signature, recipient);
         
         final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getNonNullableElements(2);
-        this.password = Password.get(entity.toNonHostEntity());
+        this.password = Settings.get(entity.toNonHostEntity());
         this.oldValue = new StringWrapper(elements.getNonNullable(0)).getString();
         this.newValue = new StringWrapper(elements.getNonNullable(1)).getString();
     }

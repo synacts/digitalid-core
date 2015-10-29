@@ -1,23 +1,5 @@
 package net.digitalid.service.core.handler;
 
-import net.digitalid.utility.database.annotations.OnlyForHosts;
-
-import net.digitalid.service.core.block.Block;
-import net.digitalid.service.core.block.wrappers.SignatureWrapper;
-import net.digitalid.service.core.identity.resolution.IdentityQuery;
-import net.digitalid.service.core.action.synchronizer.RequestAudit;
-import net.digitalid.service.core.cryptography.credential.ClientCredential;
-import net.digitalid.service.core.cryptography.credential.Credential;
-import net.digitalid.service.core.concepts.contact.Contact;
-import net.digitalid.service.core.concepts.contact.FreezableAuthentications;
-import net.digitalid.service.core.concepts.contact.ReadOnlyAuthentications;
-import net.digitalid.service.core.concepts.attribute.Attribute;
-import net.digitalid.service.core.concepts.attribute.AttributeValue;
-import net.digitalid.service.core.concepts.attribute.CertifiedAttributeValue;
-import net.digitalid.service.core.concepts.agent.Agent;
-import net.digitalid.service.core.concepts.agent.FreezableAgentPermissions;
-import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
-import net.digitalid.service.core.concepts.agent.Restrictions;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.sql.SQLException;
@@ -26,7 +8,22 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.service.core.action.synchronizer.RequestAudit;
 import net.digitalid.service.core.auxiliary.Time;
+import net.digitalid.service.core.block.Block;
+import net.digitalid.service.core.block.wrappers.SignatureWrapper;
+import net.digitalid.service.core.concepts.agent.Agent;
+import net.digitalid.service.core.concepts.agent.FreezableAgentPermissions;
+import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
+import net.digitalid.service.core.concepts.agent.Restrictions;
+import net.digitalid.service.core.concepts.attribute.Attribute;
+import net.digitalid.service.core.concepts.attribute.AttributeValue;
+import net.digitalid.service.core.concepts.attribute.CertifiedAttributeValue;
+import net.digitalid.service.core.concepts.contact.Contact;
+import net.digitalid.service.core.concepts.contact.FreezableAuthentications;
+import net.digitalid.service.core.concepts.contact.ReadOnlyAuthentications;
+import net.digitalid.service.core.cryptography.credential.ClientCredential;
+import net.digitalid.service.core.cryptography.credential.Credential;
 import net.digitalid.service.core.entity.Account;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostEntity;
@@ -40,6 +37,7 @@ import net.digitalid.service.core.identifier.InternalIdentifier;
 import net.digitalid.service.core.identity.Identity;
 import net.digitalid.service.core.identity.Person;
 import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.identity.resolution.IdentityQuery;
 import net.digitalid.service.core.packet.ClientRequest;
 import net.digitalid.service.core.packet.CredentialsRequest;
 import net.digitalid.service.core.packet.HostRequest;
@@ -56,6 +54,7 @@ import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyIterator;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.annotations.OnlyForHosts;
 
 /**
  * This class implements a remote method invocation mechanism.

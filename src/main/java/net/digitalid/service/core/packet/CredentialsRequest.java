@@ -1,18 +1,15 @@
 package net.digitalid.service.core.packet;
 
-import net.digitalid.service.core.block.wrappers.CompressionWrapper;
-import net.digitalid.service.core.block.wrappers.CredentialsSignatureWrapper;
-
-import net.digitalid.service.core.action.synchronizer.Audit;
-import net.digitalid.service.core.action.synchronizer.RequestAudit;
-import net.digitalid.service.core.cryptography.credential.Credential;
-import net.digitalid.service.core.concepts.attribute.CertifiedAttributeValue;
-import java.io.IOException;
 import java.math.BigInteger;
-import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.service.core.action.synchronizer.Audit;
+import net.digitalid.service.core.action.synchronizer.RequestAudit;
+import net.digitalid.service.core.block.wrappers.CompressionWrapper;
+import net.digitalid.service.core.block.wrappers.CredentialsSignatureWrapper;
+import net.digitalid.service.core.concepts.attribute.CertifiedAttributeValue;
 import net.digitalid.service.core.cryptography.SymmetricKey;
+import net.digitalid.service.core.cryptography.credential.Credential;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.Method;

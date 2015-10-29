@@ -1,11 +1,11 @@
 package net.digitalid.service.core.cryptography;
 
-import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.annotations.state.Stateless;
 
 /**
  * This class specifies the cryptographic parameters.
  */
-@Immutable
+@Stateless
 public final class Parameters {
     
     /**

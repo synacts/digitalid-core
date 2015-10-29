@@ -1,16 +1,5 @@
 package net.digitalid.service.core.block;
 
-import net.digitalid.service.core.block.annotations.Encoded;
-import net.digitalid.service.core.block.annotations.Encoding;
-import net.digitalid.service.core.block.annotations.EncodingRecipient;
-import net.digitalid.service.core.block.annotations.NonEncoded;
-import net.digitalid.service.core.block.annotations.NonEncoding;
-import net.digitalid.service.core.block.annotations.NonEncodingRecipient;
-
-import net.digitalid.service.core.block.wrappers.Wrapper;
-import net.digitalid.service.core.identity.annotations.Loaded;
-import net.digitalid.service.core.factory.encoding.Encodable;
-import net.digitalid.service.core.factory.encoding.NonRequestingEncodingFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -22,10 +11,20 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.service.core.block.annotations.Encoded;
+import net.digitalid.service.core.block.annotations.Encoding;
+import net.digitalid.service.core.block.annotations.EncodingRecipient;
+import net.digitalid.service.core.block.annotations.NonEncoded;
+import net.digitalid.service.core.block.annotations.NonEncoding;
+import net.digitalid.service.core.block.annotations.NonEncodingRecipient;
+import net.digitalid.service.core.block.wrappers.Wrapper;
 import net.digitalid.service.core.cryptography.InitializationVector;
 import net.digitalid.service.core.cryptography.SymmetricKey;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.factory.encoding.Encodable;
+import net.digitalid.service.core.factory.encoding.NonRequestingEncodingFactory;
 import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.identity.annotations.Loaded;
 import net.digitalid.utility.annotations.math.NonNegative;
 import net.digitalid.utility.annotations.math.Positive;
 import net.digitalid.utility.annotations.reference.Capturable;
@@ -219,7 +218,7 @@ public final class Block implements Encodable<Block, Object>, Storable<Block, Se
      * @ensure !isAllocated() : "This block is not yet allocated.";
      */
     @Pure
-    static @Nonnull @NonEncoded @NonEncoding Block get(@Nonnull @Loaded SemanticType type, @Nonnull Wrapper<?> wrapper) {
+    public static @Nonnull @NonEncoded @NonEncoding Block get(@Nonnull @Loaded SemanticType type, @Nonnull Wrapper<?> wrapper) {
         return new Block(type, wrapper);
     }
     
@@ -800,7 +799,7 @@ public final class Block implements Encodable<Block, Object>, Storable<Block, Se
      */
     @Pure
     @NonEncodingRecipient
-    @Nonnull Block encrypt(@Nonnull SemanticType type, @Nonnull SymmetricKey symmetricKey, @Nonnull InitializationVector initializationVector) {
+    public @Nonnull Block encrypt(@Nonnull SemanticType type, @Nonnull SymmetricKey symmetricKey, @Nonnull InitializationVector initializationVector) {
         assert !isEncoding() : "This method is not called during encoding.";
         
         encodeIfNotYetEncoded();
@@ -819,7 +818,7 @@ public final class Block implements Encodable<Block, Object>, Storable<Block, Se
      */
     @Pure
     @NonEncodingRecipient
-    @Nonnull Block decrypt(@Nonnull SemanticType type, @Nonnull SymmetricKey symmetricKey, @Nonnull InitializationVector initializationVector) throws InvalidEncodingException {
+    public @Nonnull Block decrypt(@Nonnull SemanticType type, @Nonnull SymmetricKey symmetricKey, @Nonnull InitializationVector initializationVector) throws InvalidEncodingException {
         assert !isEncoding() : "This method is not called during encoding.";
         
         encodeIfNotYetEncoded();

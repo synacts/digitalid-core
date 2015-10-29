@@ -1,13 +1,10 @@
 package net.digitalid.service.core.action.synchronizer;
 
-import net.digitalid.service.core.block.Block;
-
-import net.digitalid.service.core.block.wrappers.HostSignatureWrapper;
-import net.digitalid.service.core.dataservice.Service;
-import java.io.IOException;
-import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.service.core.block.Block;
+import net.digitalid.service.core.block.wrappers.HostSignatureWrapper;
+import net.digitalid.service.core.dataservice.Service;
 import net.digitalid.service.core.entity.NonHostAccount;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;

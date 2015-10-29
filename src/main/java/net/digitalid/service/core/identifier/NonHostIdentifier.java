@@ -1,7 +1,5 @@
 package net.digitalid.service.core.identifier;
 
-import java.io.IOException;
-import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.packet.PacketException;

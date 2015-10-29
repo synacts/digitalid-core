@@ -1,16 +1,13 @@
 package net.digitalid.service.core.concepts.contact;
 
-import net.digitalid.service.core.block.Block;
-import net.digitalid.service.core.block.Blockable;
-
-import net.digitalid.service.core.identity.resolution.Mapper;
-import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.service.core.block.Block;
+import net.digitalid.service.core.block.Blockable;
 import net.digitalid.service.core.concept.Aspect;
 import net.digitalid.service.core.concept.Instance;
 import net.digitalid.service.core.concept.NonHostConcept;
@@ -27,6 +24,7 @@ import net.digitalid.service.core.identity.IdentityClass;
 import net.digitalid.service.core.identity.InternalPerson;
 import net.digitalid.service.core.identity.Person;
 import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.identity.resolution.Mapper;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.concurrent.ConcurrentHashMap;

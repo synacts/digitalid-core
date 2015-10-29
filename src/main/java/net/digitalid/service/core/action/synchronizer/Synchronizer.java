@@ -1,9 +1,5 @@
 package net.digitalid.service.core.action.synchronizer;
 
-import net.digitalid.service.core.dataservice.StateModule;
-
-import net.digitalid.service.core.dataservice.Service;
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
@@ -14,6 +10,8 @@ import javax.annotation.Nullable;
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.collections.ConcurrentHashSet;
 import net.digitalid.service.core.collections.ConcurrentSet;
+import net.digitalid.service.core.dataservice.Service;
+import net.digitalid.service.core.dataservice.StateModule;
 import net.digitalid.service.core.entity.Role;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.packet.PacketException;

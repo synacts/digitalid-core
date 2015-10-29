@@ -1,10 +1,9 @@
 package net.digitalid.service.core.cryptography;
 
-import net.digitalid.service.core.factory.encoding.Encodable;
-
 import java.math.BigInteger;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.service.core.factory.encoding.Encodable;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.database.storing.Storable;
@@ -16,7 +15,7 @@ import net.digitalid.utility.database.storing.Storable;
  * @see Exponent
  */
 @Immutable
-public abstract class Number<E extends Number<E>> implements Encodable<E,Object>, Storable<E,Object> {
+public abstract class Number<E extends Number<E>> implements Encodable<E, Object>, Storable<E, Object> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -64,7 +63,7 @@ public abstract class Number<E extends Number<E>> implements Encodable<E,Object>
         if (object == this) return true;
         if (object == null || !(object instanceof Number)) return false;
         @SuppressWarnings("rawtypes")
-		final @Nonnull Number<?> other = (Number) object;
+        final @Nonnull Number<?> other = (Number) object;
         return value.equals(other.value);
     }
     

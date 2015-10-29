@@ -1,9 +1,5 @@
 package net.digitalid.service.core.concept;
 
-import net.digitalid.utility.database.annotations.OnlyForClients;
-import net.digitalid.utility.database.annotations.OnlyForHosts;
-
-import net.digitalid.service.core.factory.encoding.Encodable;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.concept.property.ConceptProperty;
@@ -13,6 +9,7 @@ import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.entity.Role;
 import net.digitalid.service.core.exceptions.abort.AbortException;
+import net.digitalid.service.core.factory.encoding.Encodable;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
@@ -22,6 +19,8 @@ import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.annotations.OnlyForClients;
+import net.digitalid.utility.database.annotations.OnlyForHosts;
 import net.digitalid.utility.database.configuration.Database;
 import net.digitalid.utility.database.storing.Storable;
 
