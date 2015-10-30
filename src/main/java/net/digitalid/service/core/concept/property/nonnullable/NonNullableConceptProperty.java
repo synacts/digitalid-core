@@ -8,7 +8,7 @@ import net.digitalid.service.core.concept.Concept;
 import net.digitalid.service.core.concept.property.ConceptProperty;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.exceptions.abort.AbortException;
-import net.digitalid.service.core.property.nonnullable.WriteableNonNullableProperty;
+import net.digitalid.service.core.property.nonnullable.WritableNonNullableProperty;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
 import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
@@ -22,19 +22,17 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * 
  * @invariant (time == null) == (value == null) : "The time and value are either both null or both non-null.";
  */
-public final class NonNullableConceptProperty<V, C extends Concept<C, E, ?>, E extends Entity<E>> extends WriteableNonNullableProperty<V> implements ConceptProperty<V, C, E> {
+public final class NonNullableConceptProperty<V, C extends Concept<C, E, ?>, E extends Entity<E>> extends WritableNonNullableProperty<V> implements ConceptProperty<V, C, E> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factory –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Stores the property factory that contains the required information.
+     * Stores the property setup that contains the required information.
      */
-    private final @Nonnull NonNullableConceptPropertyFactory<V, C, E> propertyFactory;
+    private final @Nonnull NonNullableConceptPropertySetup<V, C, E> propertySetup;
     
-    @Pure
-    @Override
-    public @Nonnull NonNullableConceptPropertyFactory<V, C, E> getPropertyFactory() {
-        return propertyFactory;
+    public @Nonnull NonNullableConceptPropertySetup<V, C, E> getConceptPropertySetup() {
+        return this.propertySetup;
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Concept –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -56,15 +54,19 @@ public final class NonNullableConceptProperty<V, C extends Concept<C, E, ?>, E e
      * Creates a new non-nullable concept property with the given parameters.
      * 
      * @param concept the concept to which the new property belongs.
-     * @param propertyFactory the property factory that contains the required information.
+     * @param propertySetup the property factory that contains the required information.
      */
-    NonNullableConceptProperty(@Nonnull NonNullableConceptPropertyFactory<V, C, E> propertyFactory, @Nonnull C concept) {
-        super(propertyFactory.getValueValidator());
+    NonNullableConceptProperty(@Nonnull NonNullableConceptPropertySetup<V, C, E> propertySetup, @Nonnull C concept) {
+        super(propertySetup.getValueValidator());
         
-        this.propertyFactory = propertyFactory;
+        this.propertySetup = propertySetup;
         this.concept = concept;
         
         concept.register(this);
+    }
+    
+    public static @Nonnull <V, C extends Concept<C, E, ?>, E extends Entity<E>> NonNullableConceptProperty<V, C, E> get(@Nonnull NonNullableConceptPropertySetup<V, C, E> propertySetup, @Nonnull C concept) {
+        return new NonNullableConceptProperty<V, C, E>(propertySetup, concept);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Loading –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -76,7 +78,7 @@ public final class NonNullableConceptProperty<V, C extends Concept<C, E, ?>, E e
     @Locked
     @NonCommitting
     private void load() throws AbortException {
-        final @Nonnull @NonNullableElements ReadOnlyPair<Time, V> pair = propertyFactory.getPropertyTable().load(this);
+        final @Nonnull @NonNullableElements ReadOnlyPair<Time, V> pair = propertySetup.getPropertyTable().load(this);
         this.time = pair.getNonNullableElement0();
         this.value = pair.getNonNullableElement1();
     }
@@ -145,7 +147,7 @@ public final class NonNullableConceptProperty<V, C extends Concept<C, E, ?>, E e
         assert getValueValidator().isValid(oldValue) : "The old value is valid.";
         assert getValueValidator().isValid(newValue) : "The new value is valid.";
         
-        propertyFactory.getPropertyTable().replace(this, oldTime, newTime, oldValue, newValue);
+        propertySetup.getPropertyTable().replace(this, oldTime, newTime, oldValue, newValue);
         this.time = newTime;
         this.value = newValue;
         notify(oldValue, newValue);

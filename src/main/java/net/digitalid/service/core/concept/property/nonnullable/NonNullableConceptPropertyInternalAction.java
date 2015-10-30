@@ -10,10 +10,11 @@ import net.digitalid.service.core.concept.Concept;
 import net.digitalid.service.core.concept.property.ConceptPropertyInternalAction;
 import net.digitalid.service.core.concepts.agent.FreezableAgentPermissions;
 import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
-import net.digitalid.service.core.dataservice.StateModule;
 import net.digitalid.service.core.entity.Entity;
+import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.factory.encoding.AbstractEncodingFactory;
 import net.digitalid.service.core.factory.encoding.Encode;
@@ -36,7 +37,7 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Fields –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
-    private final @Nonnull NonNullableConceptPropertyFactory<V, C, E> table;
+    private final @Nonnull NonNullableConceptPropertyTable<V, C, E> table;
     
     private final @Nonnull NonNullableConceptProperty<V, C, E> property;
     
@@ -50,10 +51,10 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructors –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
-    private NonNullableConceptPropertyInternalAction(@Nonnull NonNullableConceptPropertyFactory<V, C, E> table, @Nonnull NonNullableConceptProperty<V, C, E> property, @Nonnull Time oldTime, @Nonnull Time newTime, @Nonnull V oldValue, @Nonnull V newValue) throws AbortException {
-        super(property.getConcept().getRole(), table.getService());
+    private NonNullableConceptPropertyInternalAction(@Nonnull NonNullableConceptPropertySetup<V, C, E> setup, @Nonnull NonNullableConceptProperty<V, C, E> property, @Nonnull Time oldTime, @Nonnull Time newTime, @Nonnull V oldValue, @Nonnull V newValue) throws AbortException {
+        super(property.getConcept().getRole(), setup.getService());
         
-        this.table = table;
+        this.table = setup.getPropertyTable();
         this.property = property;
         this.oldTime = oldTime;
         this.newTime = newTime;

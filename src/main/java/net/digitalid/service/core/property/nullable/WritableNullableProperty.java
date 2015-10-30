@@ -1,6 +1,8 @@
-package net.digitalid.service.core.property.nonnullable;
+package net.digitalid.service.core.property.nullable;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import net.digitalid.service.core.concept.property.nullable.NullableConceptProperty;
 import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.property.ValueValidator;
 import net.digitalid.utility.annotations.state.Validated;
@@ -8,21 +10,21 @@ import net.digitalid.utility.database.annotations.Committing;
 import net.digitalid.utility.database.annotations.Locked;
 
 /**
- * This is the writable interface to a property that stores a non-null replaceable value.
+ * This is the writable abstract class for properties that stores a nullable replaceable value.
  * 
- * @see NonNullableSimpleProperty
- * @see NonNullableConceptProperty
+ * @see VolatileNullableProperty
+ * @see NullableConceptProperty
  */
-public abstract class WriteableNonNullableProperty<V> extends ReadOnlyNonNullableProperty<V> {
+public abstract class WritableNullableProperty<V> extends ReadOnlyNullableProperty<V> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Creates a new non-nullable replaceable property with the given validator.
+     * Creates a new nullable replaceable property with the given validator.
      * 
      * @param validator the validator used to validate the value of this property.
      */
-    protected WriteableNonNullableProperty(@Nonnull ValueValidator<? super V> validator) {
+    protected WritableNullableProperty(@Nonnull ValueValidator<? super V> validator) {
         super(validator);
     }
     
@@ -37,7 +39,7 @@ public abstract class WriteableNonNullableProperty<V> extends ReadOnlyNonNullabl
      */
     @Locked
     @Committing
-    public abstract void set(@Nonnull @Validated V newValue) throws AbortException;
+    public abstract void set(@Nullable @Validated V newValue) throws AbortException;
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Notification –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -53,7 +55,7 @@ public abstract class WriteableNonNullableProperty<V> extends ReadOnlyNonNullabl
         assert !oldValue.equals(newValue) : "The old and the new value are not the same.";
         
         if (hasObservers()) {
-            for (final @Nonnull NonNullablePropertyObserver<V> observer : getObservers()) {
+            for (final @Nonnull NullablePropertyObserver<V> observer : getObservers()) {
                 observer.replaced(this, oldValue, newValue);
             }
         }

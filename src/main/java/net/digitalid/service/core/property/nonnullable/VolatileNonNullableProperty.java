@@ -8,7 +8,7 @@ import net.digitalid.utility.annotations.state.Validated;
 /**
  * This property stores a replaceable value that cannot be null.
  */
-public final class NonNullableSimpleProperty<V> extends WriteableNonNullableProperty<V> {
+public final class VolatileNonNullableProperty<V> extends WritableNonNullableProperty<V> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -41,7 +41,7 @@ public final class NonNullableSimpleProperty<V> extends WriteableNonNullableProp
      * @param validator the validator used to validate the value of this property.
      * @param value the initial value of the new non-nullable replaceable property.
      */
-    private NonNullableSimpleProperty(@Nonnull ValueValidator<? super V> validator, @Nonnull @Validated V value) {
+    private VolatileNonNullableProperty(@Nonnull ValueValidator<? super V> validator, @Nonnull @Validated V value) {
         super(validator);
         
         assert validator.isValid(value) : "The given value is valid.";
@@ -58,8 +58,8 @@ public final class NonNullableSimpleProperty<V> extends WriteableNonNullableProp
      * @return a new non-nullable replaceable property with the given initial value.
      */
     @Pure
-    public static @Nonnull <V> WriteableNonNullableProperty<V> get(@Nonnull ValueValidator<? super V> validator, @Nonnull @Validated V value) {
-        return new NonNullableSimpleProperty<>(validator, value);
+    public static @Nonnull <V> VolatileNonNullableProperty<V> get(@Nonnull ValueValidator<? super V> validator, @Nonnull @Validated V value) {
+        return new VolatileNonNullableProperty<>(validator, value);
     }
     
     /**
@@ -70,8 +70,8 @@ public final class NonNullableSimpleProperty<V> extends WriteableNonNullableProp
      * @return a new non-nullable replaceable property with the given initial value.
      */
     @Pure
-    public static @Nonnull <V> WriteableNonNullableProperty<V> get(@Nonnull V value) {
-        return new NonNullableSimpleProperty<>(ValueValidator.DEFAULT, value);
+    public static @Nonnull <V> VolatileNonNullableProperty<V> get(@Nonnull V value) {
+        return new VolatileNonNullableProperty<>(ValueValidator.DEFAULT, value);
     }
     
 }

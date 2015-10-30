@@ -1,6 +1,7 @@
 package net.digitalid.service.core.property.nonnullable;
 
 import javax.annotation.Nonnull;
+import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.property.ReadOnlyProperty;
 import net.digitalid.service.core.property.ValueValidator;
 import net.digitalid.utility.annotations.state.Pure;
@@ -9,7 +10,7 @@ import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
- * This is the read-only interface to a property that stores a non-nullable replaceable value.
+ * This is the read-only abstract class for properties that stores a non-nullable replaceable value.
  * 
  * @see NonNullableReplaceableProperty
  */

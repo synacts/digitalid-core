@@ -12,7 +12,7 @@ import net.digitalid.utility.annotations.state.Pure;
 /**
  * Description.
  */
-public class NullableConceptProperty<V, C extends Concept> extends NullableProperty<V> implements ConceptProperty<C> {
+public class NullableConceptProperty<V, C extends Concept> extends NullableConceptProperty<V> implements ConceptProperty<C> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Concept –––––––––––––––––––––––––––––––––––––––––––––––––– */
     

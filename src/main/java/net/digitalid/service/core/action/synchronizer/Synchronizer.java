@@ -8,18 +8,19 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.auxiliary.Time;
-import net.digitalid.service.core.collections.ConcurrentHashSet;
-import net.digitalid.service.core.collections.ConcurrentSet;
 import net.digitalid.service.core.dataservice.Service;
-import net.digitalid.service.core.dataservice.StateModule;
 import net.digitalid.service.core.entity.Role;
+import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.InternalAction;
 import net.digitalid.service.core.handler.Method;
 import net.digitalid.service.core.packet.Response;
 import net.digitalid.utility.collections.concurrent.ConcurrentHashMap;
+import net.digitalid.utility.collections.concurrent.ConcurrentHashSet;
 import net.digitalid.utility.collections.concurrent.ConcurrentMap;
+import net.digitalid.utility.collections.concurrent.ConcurrentSet;
 import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.freezable.FreezableHashSet;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
@@ -59,7 +60,6 @@ public final class Synchronizer extends Thread {
         Database.commit();
         Thread.yield();
     }
-    
     
     /**
      * Stores the services that are currently suspended because a sender is using it.
@@ -213,7 +213,6 @@ public final class Synchronizer extends Thread {
             synchronized (set) { while (set.contains(service)) set.wait(); }
         }
     }
-    
     
     /**
      * The thread pool executor runs the {@link Sender senders} that send the pending {@link InternalAction internal actions}.
