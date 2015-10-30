@@ -2,6 +2,7 @@ package net.digitalid.service.core.auxiliary;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.DateFormat;
 import java.util.Date;
 import javax.annotation.Nonnull;
@@ -9,6 +10,7 @@ import javax.annotation.Nullable;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.Int64Wrapper;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.factory.Factories;
 import net.digitalid.service.core.factory.encoding.Encodable;
 import net.digitalid.service.core.factory.encoding.NonRequestingEncodingFactory;
 import net.digitalid.service.core.identity.SemanticType;
@@ -568,19 +570,19 @@ public final class Time implements Encodable<Time, Object>, Storable<Time, Objec
         return String.valueOf(value);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encodable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * The factory for this class.
+     * The encoding factory for this class.
      */
     @Immutable
-    public static final class Factory extends NonRequestingEncodingFactory<Time, Object> {
+    public static final class EncodingFactory extends NonRequestingEncodingFactory<Time, Object> {
         
         /**
-         * Creates a new factory.
+         * Creates a new encoding factory.
          */
-        private Factory() {
-            super(TYPE, Column.get("time", SQLType.BIGINT));
+        private EncodingFactory() {
+            super(TYPE);
         }
         
         @Pure
@@ -597,41 +599,72 @@ public final class Time implements Encodable<Time, Object>, Storable<Time, Objec
             return new Time(Int64Wrapper.decode(block));
         }
         
-        @Pure
-        @Override
-        public @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getValues(@Nonnull Time time) {
-            return FreezableArray.getNonNullable(time.toString());
+    }
+    
+    /**
+     * Stores the encoding factory of this class.
+     */
+    public static final @Nonnull EncodingFactory ENCODING_FACTORY = new EncodingFactory();
+    
+    @Pure
+    @Override
+    public @Nonnull EncodingFactory getEncodingFactory() {
+        return ENCODING_FACTORY;
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * The storing factory for this class.
+     */
+    @Immutable
+    public static class StoringFactory extends AbstractStoringFactory<Time, Object> {
+        
+        /**
+         * Creates a new storing factory.
+         */
+        private StoringFactory() {
+            super(Column.get("time", SQLType.BIGINT));
         }
         
         @Override
         @NonCommitting
-        public void setNonNullable(@Nonnull Time time, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws AbortException {
+        public void storeNonNullable(@Nonnull Time time, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
             preparedStatement.setLong(parameterIndex, time.value);
         }
         
         @Pure
         @Override
         @NonCommitting
-        public @Nullable Time getNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, int columnIndex) throws AbortException {
+        public @Nullable Time restoreNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
             final long value = resultSet.getLong(columnIndex);
             return resultSet.wasNull() ? null : new Time(value);
+        }
+        
+        @Pure
+        @Override
+        public @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getValues(@Nonnull Time time) {
+            return FreezableArray.getNonNullable(time.toString());
         }
         
     }
     
     /**
-     * Stores the factory of this class.
+     * Stores the storing factory of this class.
      */
-    public static final @Nonnull Factory FACTORY = new Factory();
+    public static final @Nonnull StoringFactory STORING_FACTORY = new StoringFactory();
     
     @Pure
     @Override
-    public @Nonnull Factory getFactory() {
-        return FACTORY;
+    public @Nonnull StoringFactory getStoringFactory() {
+        return STORING_FACTORY;
     }
     
-    public static @Nonnull NonRequestingEncodingFactory<Time, Object> ENCODING_FACTORY;
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factories –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
-    public static @Nonnull AbstractStoringFactory<Time, Object> STORING_FACTORY;
+    /**
+     * Stores the factories of this class.
+     */
+    public static final @Nonnull Factories<Time, Object> FACTORIES = Factories.get(ENCODING_FACTORY, STORING_FACTORY);
     
 }
