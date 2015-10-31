@@ -1,14 +1,16 @@
-package net.digitalid.service.core.dataservice;
+package net.digitalid.service.core.storage;
 
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.Loaded;
+import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Validated;
 
 /**
  * This class models a database table that contains part of an {@link Entity entity's} state.
  */
+@Immutable
 public abstract class SiteTable extends SiteTableImplementation<SiteModule> {
 
     /**

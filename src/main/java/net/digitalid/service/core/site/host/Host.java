@@ -14,7 +14,7 @@ import net.digitalid.service.core.concepts.attribute.UncertifiedAttributeValue;
 import net.digitalid.service.core.cryptography.KeyPair;
 import net.digitalid.service.core.cryptography.PrivateKeyChain;
 import net.digitalid.service.core.cryptography.PublicKeyChain;
-import net.digitalid.service.core.dataservice.Service;
+import net.digitalid.service.core.storage.Service;
 import net.digitalid.service.core.entity.HostAccount;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.packet.PacketException;

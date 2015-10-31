@@ -1,4 +1,4 @@
-package net.digitalid.service.core.dataservice;
+package net.digitalid.service.core.storage;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -19,7 +19,7 @@ import net.digitalid.utility.database.annotations.OnMainThread;
  * @see ClientModule
  * @see HostModule
  */
-public class SiteModule extends DelegatingSiteDataServiceImplementation {
+public class SiteModule extends DelegatingSiteStorageImplementation {
 
     /**
      * Creates a new site module with the given service and name.

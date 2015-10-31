@@ -1,4 +1,4 @@
-package net.digitalid.service.core.dataservice;
+package net.digitalid.service.core.storage;
 
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.block.Block;
@@ -16,13 +16,13 @@ import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
- * This class  implements a data service to export and import host tables on {@link Host hosts}.
+ * This class implements a data service to export and import a table on {@link Host hosts}.
  * 
- * @see ClientTable
- * @see SiteTable
+ * @see HostTable
+ * @see SiteTableImplementation
  */
 @Immutable
-abstract class HostTableImplementation<M extends DelegatingHostDataServiceImplementation> extends ClientTableImplementation<M> implements HostDataService {
+abstract class HostTableImplementation<M extends DelegatingHostStorageImplementation> extends ClientTableImplementation<M> implements HostStorage {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Dump Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -52,11 +52,9 @@ abstract class HostTableImplementation<M extends DelegatingHostDataServiceImplem
         super(module, name);
         
         this.dumpType = dumpType;
-        
-        module.registerHostDataService(this);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Data –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Dumps –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Locked

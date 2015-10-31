@@ -5,7 +5,7 @@ import javax.annotation.Nullable;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.HostSignatureWrapper;
 import net.digitalid.service.core.block.wrappers.SelfcontainedWrapper;
-import net.digitalid.service.core.dataservice.Service;
+import net.digitalid.service.core.storage.Service;
 import net.digitalid.service.core.dataservice.StateModule;
 import net.digitalid.service.core.entity.NonHostAccount;
 import net.digitalid.service.core.entity.NonHostEntity;

@@ -1,7 +1,7 @@
-package net.digitalid.service.core.dataservice;
+package net.digitalid.service.core.storage;
 
-import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
 import net.digitalid.utility.database.annotations.Locked;
@@ -9,13 +9,13 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.site.Site;
 
 /**
- * This interface models a collection of data with the least requirements.
+ * This interface models a storage with the least requirements.
  * 
- * @see HostDataService
+ * @see HostStorage
  * @see ClientTableImplementation
- * @see DelegatingClientDataServiceImplementation
+ * @see DelegatingClientStorageImplementation
  */
-interface ClientDataService {
+interface ClientStorage {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Fields –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -54,8 +54,8 @@ interface ClientDataService {
      */
     @Locked
     @NonCommitting
-    public void createTables(@Nonnull Site site) throws SQLException;
-
+    public void createTables(@Nonnull Site site) throws AbortException;
+    
     /**
      * Deletes the database tables of this data collection for the given site.
      * 
@@ -63,8 +63,6 @@ interface ClientDataService {
      */
     @Locked
     @NonCommitting
-    public void deleteTables(@Nonnull Site site) throws SQLException;
-
+    public void deleteTables(@Nonnull Site site) throws AbortException;
     
-
 }

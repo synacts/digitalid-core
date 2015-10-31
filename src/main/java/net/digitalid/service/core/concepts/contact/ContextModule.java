@@ -13,7 +13,7 @@ import net.digitalid.service.core.block.wrappers.TupleWrapper;
 import net.digitalid.service.core.concepts.agent.Agent;
 import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
 import net.digitalid.service.core.concepts.agent.Restrictions;
-import net.digitalid.service.core.dataservice.Service;
+import net.digitalid.service.core.storage.Service;
 import net.digitalid.service.core.dataservice.StateModule;
 import net.digitalid.service.core.entity.EntityClass;
 import net.digitalid.service.core.entity.NonHostEntity;

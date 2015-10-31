@@ -11,7 +11,7 @@ import net.digitalid.service.core.concepts.agent.FreezableAgentPermissions;
 import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
 import net.digitalid.service.core.concepts.agent.Restrictions;
 import net.digitalid.service.core.cryptography.PublicKey;
-import net.digitalid.service.core.dataservice.Service;
+import net.digitalid.service.core.storage.Service;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.Role;
 import net.digitalid.service.core.exceptions.abort.AbortException;

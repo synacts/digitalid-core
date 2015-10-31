@@ -1,4 +1,4 @@
-package net.digitalid.service.core.dataservice;
+package net.digitalid.service.core.storage;
 
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.site.client.Client;
@@ -12,7 +12,7 @@ import net.digitalid.utility.database.configuration.Database;
  * @see HostModule
  * @see SiteModule
  */
-public class ClientModule extends DelegatingClientDataServiceImplementation {
+public final class ClientModule extends DelegatingClientStorageImplementation {
 
     ClientModule(@Nonnull Service service, @Nonnull @Validated String name) {
         super(service, name);

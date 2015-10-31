@@ -1,8 +1,8 @@
-package net.digitalid.service.core.dataservice;
+package net.digitalid.service.core.storage;
 
-import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
 import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
@@ -20,7 +20,7 @@ import net.digitalid.utility.system.errors.ShouldNeverHappenError;
  * 
  * @see DelegatingHostDataServiceImplementation
  */
-class DelegatingClientDataServiceImplementation implements ClientDataService {
+class DelegatingClientStorageImplementation implements ClientStorage {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Service –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -62,7 +62,7 @@ class DelegatingClientDataServiceImplementation implements ClientDataService {
      * @param service the service to which the new module belongs.
      * @param name the name of the new module without any prefix.
      */
-    DelegatingClientDataServiceImplementation(@Nullable Service service, @Nonnull @Validated String name) {
+    DelegatingClientStorageImplementation(@Nullable Service service, @Nonnull @Validated String name) {
         if (this instanceof Service) {
             this.service = (Service) this;
             this.name = "_" + name;
@@ -81,7 +81,7 @@ class DelegatingClientDataServiceImplementation implements ClientDataService {
     /**
      * Stores the tables of this module.
      */
-    protected final @Nonnull @NonNullableElements @NonFrozen FreezableList<ClientDataService> tables = FreezableLinkedList.get();
+    protected final @Nonnull @NonNullableElements @NonFrozen FreezableList<ClientStorage> tables = FreezableLinkedList.get();
     
     /**
      * Returns the tables of this module.
@@ -89,7 +89,7 @@ class DelegatingClientDataServiceImplementation implements ClientDataService {
      * @return the tables of this module.
      */
     @Pure
-    public @Nonnull @NonNullableElements ReadOnlyList<ClientDataService> getTables() {
+    public @Nonnull @NonNullableElements ReadOnlyList<ClientStorage> getTables() {
         return tables;
     }
     
@@ -98,7 +98,7 @@ class DelegatingClientDataServiceImplementation implements ClientDataService {
      * 
      * @param table the table to be registered.
      */
-    final void registerClientDataService(@Nonnull ClientDataService table) {
+    final void registerClientDataService(@Nonnull ClientStorage table) {
         tables.add(table);
     }
     
@@ -106,8 +106,8 @@ class DelegatingClientDataServiceImplementation implements ClientDataService {
     @Locked
     @Override
     @NonCommitting
-    public final void createTables(@Nonnull Site client) throws SQLException {
-        for (final @Nonnull ClientDataService table : getTables()) {
+    public final void createTables(@Nonnull Site client) throws AbortException {
+        for (final @Nonnull ClientStorage table : getTables()) {
             table.createTables(client);
         }
     }
@@ -115,8 +115,8 @@ class DelegatingClientDataServiceImplementation implements ClientDataService {
     @Locked
     @Override
     @NonCommitting
-    public final void deleteTables(@Nonnull Site site) throws SQLException {
-        for (final @Nonnull ClientDataService table : getTables()) {
+    public final void deleteTables(@Nonnull Site site) throws AbortException {
+        for (final @Nonnull ClientStorage table : getTables()) {
             table.deleteTables(site);
         }
     }

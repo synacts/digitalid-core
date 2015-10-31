@@ -1,4 +1,4 @@
-package net.digitalid.service.core.dataservice;
+package net.digitalid.service.core.storage;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -34,7 +34,7 @@ import net.digitalid.utility.database.annotations.OnMainThread;
 /**
  * Site modules are used on both {@link Host hosts} and {@link Client clients}.
  */
-class DelegatingSiteDataServiceImplementation extends DelegatingHostDataServiceImplementation implements SiteDataService {
+class DelegatingSiteStorageImplementation extends DelegatingHostStorageImplementation implements SiteStorage {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -70,7 +70,7 @@ class DelegatingSiteDataServiceImplementation extends DelegatingHostDataServiceI
      * @param name the name of the new module without any prefix.
      */
     @OnMainThread
-    protected DelegatingSiteDataServiceImplementation(@Nullable Service service, @Nonnull @Validated String name) {
+    protected DelegatingSiteStorageImplementation(@Nullable Service service, @Nonnull @Validated String name) {
         super(service, name);
         
         final @Nonnull String identifier;
@@ -87,14 +87,14 @@ class DelegatingSiteDataServiceImplementation extends DelegatingHostDataServiceI
     /**
      * Stores the tables of this module.
      */
-    private final @Nonnull @NonNullableElements @NonFrozen FreezableMap<SemanticType, SiteDataService> tables = FreezableLinkedHashMap.get();
+    private final @Nonnull @NonNullableElements @NonFrozen FreezableMap<SemanticType, SiteStorage> tables = FreezableLinkedHashMap.get();
     
     /**
      * Registers the given table at this module.
      * 
      * @param table the table to be registered.
      */
-    final void registerSiteDataService(@Nonnull SiteDataService table) {
+    final void registerSiteDataService(@Nonnull SiteStorage table) {
         tables.put(table.getStateType(), table);
         super.registerHostDataService(table);
     }
@@ -107,7 +107,7 @@ class DelegatingSiteDataServiceImplementation extends DelegatingHostDataServiceI
     @NonCommitting
     public final @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws AbortException {
         final @Nonnull FreezableList<Block> elements = FreezableArrayList.getWithCapacity(tables.size());
-        for (final @Nonnull SiteDataService table : tables.values()) elements.add(SelfcontainedWrapper.encodeNonNullable(TABLE, table.getState(entity, permissions, restrictions, agent)));
+        for (final @Nonnull SiteStorage table : tables.values()) elements.add(SelfcontainedWrapper.encodeNonNullable(TABLE, table.getState(entity, permissions, restrictions, agent)));
         return ListWrapper.encode(stateType, elements.freeze());
     }
     
@@ -118,7 +118,7 @@ class DelegatingSiteDataServiceImplementation extends DelegatingHostDataServiceI
         final @Nonnull @NonNullableElements ReadOnlyList<Block> elements = ListWrapper.decodeNonNullableElements(block);
         for (final @Nonnull Block element : elements) {
             final @Nonnull Block selfcontained = SelfcontainedWrapper.decodeNonNullable(element);
-            final @Nullable SiteDataService table = tables.get(selfcontained.getType());
+            final @Nullable SiteStorage table = tables.get(selfcontained.getType());
             if (table == null) throw new InvalidEncodingException("There is no table for the block of type " + selfcontained.getType() + ".");
             table.addState(entity, selfcontained);
         }
@@ -128,7 +128,7 @@ class DelegatingSiteDataServiceImplementation extends DelegatingHostDataServiceI
     @Override
     @NonCommitting
     public final void removeState(@Nonnull NonHostEntity entity) throws AbortException {
-      for (final @Nonnull SiteDataService table : tables.values()) table.removeState(entity);
+      for (final @Nonnull SiteStorage table : tables.values()) table.removeState(entity);
     }
     
 }

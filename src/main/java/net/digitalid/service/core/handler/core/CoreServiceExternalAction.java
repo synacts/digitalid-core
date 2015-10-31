@@ -4,7 +4,7 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.block.wrappers.SignatureWrapper;
-import net.digitalid.service.core.dataservice.Service;
+import net.digitalid.service.core.storage.Service;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;

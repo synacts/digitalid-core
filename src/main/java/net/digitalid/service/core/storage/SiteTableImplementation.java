@@ -1,4 +1,4 @@
-package net.digitalid.service.core.dataservice;
+package net.digitalid.service.core.storage;
 
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -30,15 +30,7 @@ import net.digitalid.utility.database.configuration.Database;
  * @see HostTableImplementation
  */
 @Immutable
-abstract class SiteTableImplementation<M extends DelegatingSiteDataServiceImplementation> extends HostTableImplementation<M> implements SiteDataService {
-    
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Module –––––––––––––––––––––––––––––––––––––––––––––––––– */
-    
-    @Pure
-    @Override
-    public @Nonnull M getModule() {
-        return (M) super.getModule();
-    }
+abstract class SiteTableImplementation<M extends DelegatingSiteStorageImplementation> extends HostTableImplementation<M> implements SiteStorage {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– State Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
     

@@ -1,4 +1,4 @@
-package net.digitalid.service.core.dataservice;
+package net.digitalid.service.core.storage;
 
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.site.host.Host;
@@ -12,7 +12,7 @@ import net.digitalid.utility.database.annotations.OnMainThread;
  * @see ClientModule
  * @see SiteModule
  */
-public class HostModule extends DelegatingHostDataServiceImplementation {
+public class HostModule extends DelegatingHostStorageImplementation {
 
     /**
      * Creates a new host table with the given parameters.

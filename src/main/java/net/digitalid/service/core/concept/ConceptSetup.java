@@ -1,8 +1,8 @@
 package net.digitalid.service.core.concept;
 
 import javax.annotation.Nonnull;
-import net.digitalid.service.core.dataservice.Service;
-import net.digitalid.service.core.dataservice.SiteModule;
+import net.digitalid.service.core.storage.Service;
+import net.digitalid.service.core.storage.StateModule;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.factory.ConceptFactories;
 import net.digitalid.service.core.factory.Factories;

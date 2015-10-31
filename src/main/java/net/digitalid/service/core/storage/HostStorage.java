@@ -1,4 +1,4 @@
-package net.digitalid.service.core.dataservice;
+package net.digitalid.service.core.storage;
 
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.block.Block;
@@ -21,7 +21,7 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * @see HostTableImplementation
  * @see DelegatingHostDataServiceImplementation
  */
-interface HostDataService extends ClientDataService {
+interface HostStorage extends ClientStorage {
     
     /**
      * Returns the dump type of this data collection.

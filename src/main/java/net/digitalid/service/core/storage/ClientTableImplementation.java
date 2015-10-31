@@ -1,8 +1,11 @@
-package net.digitalid.service.core.dataservice;
+package net.digitalid.service.core.storage;
 
 import java.sql.SQLException;
 import java.sql.Statement;
 import javax.annotation.Nonnull;
+import net.digitalid.service.core.exceptions.abort.AbortException;
+import net.digitalid.service.core.site.client.Client;
+import net.digitalid.service.core.site.host.Host;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
@@ -12,14 +15,13 @@ import net.digitalid.utility.database.configuration.Database;
 import net.digitalid.utility.database.site.Site;
 
 /**
- * This class implements a data service to create and delete database table. 
- * The functionality is required on hosts and clients.
+ * This class implements a data service to create and delete a database table on {@link Host hosts} and {@link Client clients}.
  * 
- * @see HostTable
- * @see SiteTable
+ * @see ClientTable
+ * @see HostTableImplementation
  */
 @Immutable
-abstract class ClientTableImplementation<M extends DelegatingClientDataServiceImplementation> implements ClientDataService {
+abstract class ClientTableImplementation<M extends DelegatingClientStorageImplementation> implements ClientStorage {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Module –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -34,7 +36,7 @@ abstract class ClientTableImplementation<M extends DelegatingClientDataServiceIm
      * @return the module to which this table belongs.
      */
     @Pure
-    public @Nonnull M getModule() {
+    public final @Nonnull M getModule() {
         return module;
     }
     
@@ -68,7 +70,7 @@ abstract class ClientTableImplementation<M extends DelegatingClientDataServiceIm
     @Pure
     @Override
     public final @Nonnull @Validated String getName() {
-        return name; // TODO: Check whether the name consists of the service, module and property separated by an underline.
+        return name;
     }
     
     @Pure
@@ -89,8 +91,6 @@ abstract class ClientTableImplementation<M extends DelegatingClientDataServiceIm
         this.module = module;
         this.name = module.getName() + "_" + name;
         
-        module.registerClientDataService(this);
-        
         assert isValidName(this.name) : "The name is valid.";
     }
     
@@ -99,14 +99,16 @@ abstract class ClientTableImplementation<M extends DelegatingClientDataServiceIm
     @Locked
     @Override
     @NonCommitting
-    public abstract void createTables(@Nonnull Site client) throws SQLException;
+    public abstract void createTables(@Nonnull Site client) throws AbortException;
     
     @Locked
     @Override
     @NonCommitting
-    public void deleteTables(@Nonnull Site client) throws SQLException {
+    public void deleteTables(@Nonnull Site client) throws AbortException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("DROP TABLE IF EXISTS " + client + name);
+        } catch (@Nonnull SQLException exception) {
+            throw AbortException.get(exception);
         }
     }
     

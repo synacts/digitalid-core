@@ -16,7 +16,7 @@ import net.digitalid.service.core.block.wrappers.TupleWrapper;
 import net.digitalid.service.core.concepts.contact.Contact;
 import net.digitalid.service.core.concepts.contact.Context;
 import net.digitalid.service.core.concepts.contact.ContextModule;
-import net.digitalid.service.core.dataservice.Service;
+import net.digitalid.service.core.storage.Service;
 import net.digitalid.service.core.dataservice.StateModule;
 import net.digitalid.service.core.entity.EntityClass;
 import net.digitalid.service.core.entity.NonHostAccount;

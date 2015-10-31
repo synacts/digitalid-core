@@ -1,4 +1,4 @@
-package net.digitalid.service.core.dataservice;
+package net.digitalid.service.core.storage;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -29,7 +29,7 @@ import net.digitalid.utility.database.annotations.OnMainThread;
 /**
  * Host modules are only used on {@link Host hosts}.
  */
-class DelegatingHostDataServiceImplementation extends DelegatingClientDataServiceImplementation implements HostDataService {
+class DelegatingHostStorageImplementation extends DelegatingClientStorageImplementation implements HostStorage {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -65,7 +65,7 @@ class DelegatingHostDataServiceImplementation extends DelegatingClientDataServic
      * @param name the name of the new module without any prefix.
      */
     @OnMainThread
-    DelegatingHostDataServiceImplementation(@Nullable Service service, @Nonnull @Validated String name) {
+    DelegatingHostStorageImplementation(@Nullable Service service, @Nonnull @Validated String name) {
         super(service, name);
         
         final @Nonnull String identifier;
@@ -82,14 +82,14 @@ class DelegatingHostDataServiceImplementation extends DelegatingClientDataServic
     /**
      * Stores the tables of this module.
      */
-    private final @Nonnull @NonNullableElements @NonFrozen FreezableMap<SemanticType, HostDataService> tables = FreezableLinkedHashMap.get();
+    private final @Nonnull @NonNullableElements @NonFrozen FreezableMap<SemanticType, HostStorage> tables = FreezableLinkedHashMap.get();
     
     /**
      * Registers the given table at this module.
      * 
      * @param table the table to be registered.
      */
-    final void registerHostDataService(@Nonnull HostDataService table) {
+    final void registerHostDataService(@Nonnull HostStorage table) {
         tables.put(table.getDumpType(), table);
         super.registerClientDataService(table);
     }
@@ -102,7 +102,7 @@ class DelegatingHostDataServiceImplementation extends DelegatingClientDataServic
     @NonCommitting
     public final @Nonnull Block exportAll(@Nonnull Host host) throws AbortException {
         final @Nonnull FreezableList<Block> elements = FreezableArrayList.getWithCapacity(tables.size());
-        for (final @Nonnull HostDataService table : tables.values()) elements.add(SelfcontainedWrapper.encodeNonNullable(TABLE, table.exportAll(host)));
+        for (final @Nonnull HostStorage table : tables.values()) elements.add(SelfcontainedWrapper.encodeNonNullable(TABLE, table.exportAll(host)));
         return ListWrapper.encode(dumpType, elements.freeze());
     }
     
@@ -113,7 +113,7 @@ class DelegatingHostDataServiceImplementation extends DelegatingClientDataServic
         final @Nonnull @NonNullableElements ReadOnlyList<Block> elements = ListWrapper.decodeNonNullableElements(block);
         for (final @Nonnull Block element : elements) {
             final @Nonnull Block selfcontained = SelfcontainedWrapper.decodeNonNullable(element);
-            final @Nullable HostDataService table = tables.get(selfcontained.getType());
+            final @Nullable HostStorage table = tables.get(selfcontained.getType());
             if (table == null) throw new InvalidEncodingException("There is no table for the block of type " + selfcontained.getType() + ".");
             table.importAll(host, selfcontained);
         }

@@ -1,6 +1,5 @@
-package net.digitalid.service.core.dataservice;
+package net.digitalid.service.core.storage;
 
-import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.cache.Cache;
@@ -160,11 +159,11 @@ public class Service extends SiteModule implements Storable<Service, Object> {
     @NonCommitting
     public @Nonnull HostIdentifier getRecipient(@Nonnull Role role) throws AbortException {
         final @Nullable AttributeValue attributeValue = Attribute.get(role, getType()).getValue();
-        if (attributeValue == null) throw new SQLException("The role " + role.getIdentity().getAddress() + " has no attribute of type " + getType().getAddress() + ".");
+        if (attributeValue == null) throw AbortException.get("The role " + role.getIdentity().getAddress() + " has no attribute of type " + getType().getAddress() + ".");
         try {
             return IdentifierClass.create(attributeValue.getContent()).toHostIdentifier();
         } catch (@Nonnull InvalidEncodingException exception) {
-            throw new SQLException("The attribute of type " + getType().getAddress() + " of the role " + role.getIdentity().getAddress() + " does not encode a host identifier.", exception);
+            throw AbortException.get("The attribute of type " + getType().getAddress() + " of the role " + role.getIdentity().getAddress() + " does not encode a host identifier.", exception);
         }
     }
     
