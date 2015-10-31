@@ -1,15 +1,17 @@
-package net.digitalid.service.core.dataservice;
+package net.digitalid.service.core.storage;
 
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.Loaded;
+import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Validated;
 
 /**
  * This class models a database table that contains part of an {@link Entity entity's} state.
  */
-public abstract class SiteTable extends SiteTableImplementation<DelegatingSiteDataServiceImplementation> {
+@Immutable
+public abstract class SiteTable extends SiteTableImplementation<DelegatingSiteStorageImplementation> {
 
     /**
      * Creates a new site table with the given parameters.
@@ -21,7 +23,7 @@ public abstract class SiteTable extends SiteTableImplementation<DelegatingSiteDa
      * 
      * @require !(module instanceof Service) : "The module is not a service.";
      */
-    protected SiteTable(@Nonnull DelegatingSiteDataServiceImplementation module, @Nonnull @Validated String name, @Nonnull @Loaded SemanticType dumpType, @Nonnull @Loaded SemanticType stateType) {
+    protected SiteTable(@Nonnull DelegatingSiteStorageImplementation module, @Nonnull @Validated String name, @Nonnull @Loaded SemanticType dumpType, @Nonnull @Loaded SemanticType stateType) {
         super(module, name, dumpType, stateType);
     }
 

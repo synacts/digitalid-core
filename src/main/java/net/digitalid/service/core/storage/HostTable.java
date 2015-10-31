@@ -1,9 +1,10 @@
-package net.digitalid.service.core.dataservice;
+package net.digitalid.service.core.storage;
 
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.Loaded;
 import net.digitalid.service.core.site.host.Host;
+import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Validated;
 
 /**
@@ -12,8 +13,9 @@ import net.digitalid.utility.annotations.state.Validated;
  * @see ClientTable
  * @see SiteTable
  */
-public abstract class HostTable extends HostTableImplementation<DelegatingHostDataServiceImplementation> {
-
+@Immutable
+public abstract class HostTable extends HostTableImplementation<HostModule> {
+    
     /**
      * Creates a new host table with the given parameters.
      * 
@@ -23,7 +25,10 @@ public abstract class HostTable extends HostTableImplementation<DelegatingHostDa
      * 
      * @require !(module instanceof Service) : "The module is not a service.";
      */
-    protected HostTable(@Nonnull DelegatingHostDataServiceImplementation module, @Nonnull @Validated String name, @Nonnull @Loaded SemanticType dumpType) {
+    protected HostTable(@Nonnull HostModule module, @Nonnull @Validated String name, @Nonnull @Loaded SemanticType dumpType) {
         super(module, name, dumpType);
+        
+        module.registerHostDataService(this);
     }
+    
 }

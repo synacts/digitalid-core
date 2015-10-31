@@ -1,4 +1,4 @@
-package net.digitalid.service.core.dataservice;
+package net.digitalid.service.core.storage;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -25,7 +25,7 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * @see SiteTableImplementation
  * @see DelegatingSiteDataServiceImplementation
  */
-interface SiteDataService extends HostDataService {
+interface SiteStorage extends HostStorage {
     
     /**
      * Returns the state type of this data collection.
