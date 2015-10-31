@@ -2,13 +2,16 @@ package net.digitalid.service.core.identifier;
 
 import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
+import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identity.Category;
 import net.digitalid.service.core.identity.Person;
 import net.digitalid.service.core.identity.resolution.Mapper;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.annotations.state.Validated;
 import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
@@ -16,6 +19,8 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  */
 @Immutable
 public final class MobileIdentifier extends ExternalIdentifier {
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Validity –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * The pattern that valid mobile identifiers have to match.
@@ -34,20 +39,32 @@ public final class MobileIdentifier extends ExternalIdentifier {
         return ExternalIdentifier.isConforming(string) && pattern.matcher(string).matches();
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Creates a mobile identifier with the given string.
      * 
      * @param string the string of the mobile identifier.
-     * 
-     * @require isValid(string) : "The string is a valid mobile identifier.";
      */
-    public MobileIdentifier(@Nonnull String string) {
+    private MobileIdentifier(@Nonnull @Validated String string) {
         super(string);
         
         assert isValid(string) : "The string is a valid mobile identifier.";
     }
     
+    /**
+     * Returns a mobile identifier with the given string.
+     * 
+     * @param string the string of the mobile identifier.
+     * 
+     * @return a mobile identifier with the given string.
+     */
+    @Pure
+    public static @Nonnull MobileIdentifier get(@Nonnull @Validated String string) {
+        return new MobileIdentifier(string);
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Mapping –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
@@ -56,6 +73,7 @@ public final class MobileIdentifier extends ExternalIdentifier {
         return Mapper.getIdentity(this).toPerson();
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Category –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override

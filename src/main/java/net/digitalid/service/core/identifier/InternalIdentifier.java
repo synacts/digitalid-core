@@ -11,6 +11,7 @@ import net.digitalid.service.core.identity.InternalIdentity;
 import net.digitalid.service.core.identity.resolution.Mapper;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.annotations.state.Validated;
 import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
@@ -20,7 +21,9 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * @see InternalNonHostIdentifier
  */
 @Immutable
-public abstract class InternalIdentifier<I extends InternalIdentifier<I>> extends IdentifierClass<I> {
+public abstract class InternalIdentifier extends IdentifierClass {
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Validity –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * The pattern that valid internal identifiers have to match.
@@ -52,36 +55,32 @@ public abstract class InternalIdentifier<I extends InternalIdentifier<I>> extend
         return string.contains("@") ? InternalNonHostIdentifier.isValid(string) : HostIdentifier.isValid(string);
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Creates an internal identifier with the given string.
+     * 
+     * @param string the string of the internal identifier.
+     */
+    InternalIdentifier(@Nonnull @Validated String string) {
+        super(string);
+        
+        assert isValid(string) : "The string is a valid internal identifier.";
+    }
+    
     /**
      * Returns a new internal identifier with the given string.
      * 
      * @param string the string of the new internal identifier.
      * 
      * @return a new internal identifier with the given string.
-     * 
-     * @require isValid(string) : "The string is a valid internal identifier.";
      */
     @Pure
-    public static @Nonnull InternalIdentifier create(@Nonnull String string) {
-        assert isValid(string) : "The string is a valid internal identifier.";
-        
-        return string.contains("@") ? new InternalNonHostIdentifier(string) : new HostIdentifier(string);
+    public static @Nonnull InternalIdentifier get(@Nonnull @Validated String string) {
+        return string.contains("@") ? InternalNonHostIdentifier.get(string) : HostIdentifier.get(string);
     }
     
-    
-    /**
-     * Creates an internal identifier with the given string.
-     * 
-     * @param string the string of the internal identifier.
-     * 
-     * @require isValid(string) : "The string is a valid internal identifier.";
-     */
-    InternalIdentifier(@Nonnull String string) {
-        super(string);
-        
-        assert isValid(string) : "The string is a valid internal identifier.";
-    }
-    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Mapping –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
@@ -93,6 +92,7 @@ public abstract class InternalIdentifier<I extends InternalIdentifier<I>> extend
     @NonCommitting
     public abstract @Nonnull InternalIdentity getIdentity() throws AbortException, PacketException, ExternalException, NetworkException;
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Existence –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns whether an identity with this internal identifier exists.
@@ -110,6 +110,7 @@ public abstract class InternalIdentifier<I extends InternalIdentifier<I>> extend
         }
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Host Identifier –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns the host part of this internal identifier.

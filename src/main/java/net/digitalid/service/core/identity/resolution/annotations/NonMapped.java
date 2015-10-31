@@ -6,9 +6,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import net.digitalid.service.core.identifier.Identifier;
+import net.digitalid.utility.annotations.meta.TargetType;
 
 /**
- * This annotation indicates that an {@link Identifier identifier} is {@link Identifier#isNotMapped() not mapped}.
+ * This annotation indicates that an {@link Identifier identifier} is not {@link Identifier#isMapped() mapped}.
  * 
  * @see Mapped
  */

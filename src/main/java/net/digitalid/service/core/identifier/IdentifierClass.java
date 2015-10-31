@@ -3,20 +3,29 @@ package net.digitalid.service.core.identifier;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Types;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.StringWrapper;
+import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.factory.Factories;
+import net.digitalid.service.core.factory.encoding.NonRequestingEncodingFactory;
 import net.digitalid.service.core.identity.Identity;
-import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.identity.annotations.BasedOn;
 import net.digitalid.service.core.identity.resolution.Mapper;
+import net.digitalid.utility.annotations.reference.Capturable;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.annotations.state.Validated;
+import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
+import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
+import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
-import net.digitalid.utility.database.configuration.Database;
+import net.digitalid.utility.database.column.Column;
+import net.digitalid.utility.database.column.SQLType;
+import net.digitalid.utility.database.storing.AbstractStoringFactory;
 
 /**
  * This class models identifiers.
@@ -25,10 +34,13 @@ import net.digitalid.utility.database.configuration.Database;
  * @see ExternalIdentifier
  */
 @Immutable
-public abstract class IdentifierClass<I extends IdentifierClass<I>> implements Identifier<I> {
+public abstract class IdentifierClass implements Identifier {
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Validity –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns whether the given string conforms to the criteria of this class.
+     * This method is called by the validity checkers of the subtypes to prevent infinite recursion.
      *
      * @param string the string to check.
      * 
@@ -41,6 +53,7 @@ public abstract class IdentifierClass<I extends IdentifierClass<I>> implements I
     
     /**
      * Returns whether the given string is a valid identifier.
+     * This method delegates the validation to the subtypes.
      *
      * @param string the string to check.
      * 
@@ -51,73 +64,12 @@ public abstract class IdentifierClass<I extends IdentifierClass<I>> implements I
         return string.contains(":") ? ExternalIdentifier.isValid(string) : InternalIdentifier.isValid(string);
     }
     
-    /**
-     * Returns a new identifier with the given string.
-     * 
-     * @param string the string of the new identifier.
-     * 
-     * @return a new identifier with the given string.
-     * 
-     * @require isValid(string) : "The string is a valid identifier.";
-     */
-    @Pure
-    public static @Nonnull Identifier create(@Nonnull String string) {
-        assert isValid(string) : "The string is a valid identifier.";
-        
-        return string.contains(":") ? ExternalIdentifier.create(string) : InternalIdentifier.create(string);
-    }
-    
-    /**
-     * Returns a new identifier from the given block.
-     * 
-     * @param block the block containing the identifier.
-     * 
-     * @return a new identifier from the given block.
-     * 
-     * @require block.getType().isBasedOn(Identity.IDENTIFIER) : "The block is based on the identifier type.";
-     */
-    @Pure
-    public static @Nonnull Identifier create(@Nonnull Block block) throws InvalidEncodingException {
-        assert block.getType().isBasedOn(Identity.IDENTIFIER) : "The block is based on the identifier type.";
-        
-        final @Nonnull String string = new StringWrapper(block).getString();
-        if (!isValid(string)) throw new InvalidEncodingException("'" + string + "' is not a valid identifier.");
-        return create(string);
-    }
-    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– String –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the string of this identifier.
-     * 
-     * @invariant Identifier.isValid(string) : "The string is a valid identifier.";
      */
-    private final @Nonnull String string;
-    
-    /**
-     * Creates an identifier with the given string.
-     * 
-     * @param string the string of the identifier.
-     * 
-     * @require isValid(string) : "The string is a valid identifier.";
-     */
-    IdentifierClass(@Nonnull String string) {
-        assert isValid(string) : "The string is a valid identifier.";
-        
-        this.string = string;
-    }
-    
-    @Pure
-    @Override
-    public final @Nonnull SemanticType getType() {
-        return Identity.IDENTIFIER;
-    }
-    
-    @Pure
-    @Override
-    public final @Nonnull Block toBlock() {
-        return new StringWrapper(Identity.IDENTIFIER, string).toBlock();
-    }
-    
+    private final @Nonnull @Validated String string;
     
     @Pure
     @Override
@@ -125,6 +77,32 @@ public abstract class IdentifierClass<I extends IdentifierClass<I>> implements I
         return string;
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Creates an identifier with the given string.
+     * 
+     * @param string the string of the identifier.
+     */
+    IdentifierClass(@Nonnull @Validated String string) {
+        assert isValid(string) : "The string is a valid identifier.";
+        
+        this.string = string;
+    }
+    
+    /**
+     * Returns a new identifier with the given string.
+     * 
+     * @param string the string of the new identifier.
+     * 
+     * @return a new identifier with the given string.
+     */
+    @Pure
+    public static @Nonnull Identifier get(@Nonnull @Validated String string) {
+        return string.contains(":") ? ExternalIdentifier.get(string) : InternalIdentifier.get(string);
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Mapping –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Locked
@@ -134,6 +112,7 @@ public abstract class IdentifierClass<I extends IdentifierClass<I>> implements I
         return Mapper.isMapped(this);
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Casting to Non-Host Identifier –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
@@ -142,6 +121,7 @@ public abstract class IdentifierClass<I extends IdentifierClass<I>> implements I
         throw new InvalidEncodingException("" + this + " is a " + this.getClass().getSimpleName() + " and cannot be cast to NonHostIdentifier.");
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Casting to Internal Identifiers –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
@@ -164,6 +144,7 @@ public abstract class IdentifierClass<I extends IdentifierClass<I>> implements I
         throw new InvalidEncodingException("" + this + " is a " + this.getClass().getSimpleName() + " and cannot be cast to InternalNonHostIdentifier.");
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Casting to External Identifiers –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
@@ -186,47 +167,7 @@ public abstract class IdentifierClass<I extends IdentifierClass<I>> implements I
         throw new InvalidEncodingException("" + this + " is a " + this.getClass().getSimpleName() + " and cannot be cast to MobileIdentifier.");
     }
     
-    
-    /**
-     * Stores the data type used to store instances of this class in the database.
-     */
-    public static final @Nonnull String FORMAT = "VARCHAR(63) COLLATE " + Database.getConfiguration().BINARY();
-    
-    /**
-     * Returns the given column of the result set as an instance of this class.
-     * 
-     * @param resultSet the result set to retrieve the data from.
-     * @param columnIndex the index of the column containing the data.
-     * 
-     * @return the given column of the result set as an instance of this class.
-     */
-    @Pure
-    @NonCommitting
-    public static @Nonnull Identifier get(@Nonnull ResultSet resultSet, int columnIndex) throws AbortException {
-        final @Nonnull String string = resultSet.getString(columnIndex);
-        if (!isValid(string)) throw new SQLException("'" + string + "' is not a valid identifier.");
-        return create(string);
-    }
-    
-    @Override
-    @NonCommitting
-    public final void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws AbortException {
-        preparedStatement.setString(parameterIndex, string);
-    }
-    
-    /**
-     * Sets the parameter at the given index of the prepared statement to the given identifier.
-     * 
-     * @param identifier the identifier to which the parameter at the given index is to be set.
-     * @param preparedStatement the prepared statement whose parameter is to be set.
-     * @param parameterIndex the index of the parameter to set.
-     */
-    @NonCommitting
-    public static void set(@Nullable Identifier identifier, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws AbortException {
-        if (identifier == null) preparedStatement.setNull(parameterIndex, Types.VARCHAR);
-        else identifier.set(preparedStatement, parameterIndex);
-    }
-    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
@@ -247,7 +188,107 @@ public abstract class IdentifierClass<I extends IdentifierClass<I>> implements I
     @Override
     public final @Nonnull String toString() {
         return "'" + string + "'";
-//        return "\"" + string + "\""; // TODO: Can PostgreSQL be set up to work with real quotes?
     }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encodable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * The encoding factory for this class.
+     */
+    @Immutable
+    public static final class EncodingFactory extends NonRequestingEncodingFactory<Identifier, Object> {
+        
+        /**
+         * Creates a new encoding factory.
+         */
+        private EncodingFactory() {
+            super(Identity.IDENTIFIER);
+        }
+        
+        @Pure
+        @Override
+        public @Nonnull Block encodeNonNullable(@Nonnull Identifier identifier) {
+            return StringWrapper.encodeNonNullable(Identity.IDENTIFIER, identifier.getString());
+        }
+        
+        @Pure
+        @Override
+        public @Nonnull Identifier decodeNonNullable(@Nonnull Object none, @Nonnull @BasedOn("@core.digitalid.net") Block block) throws InvalidEncodingException {
+            assert block.getType().isBasedOn(getType()) : "The block is based on the type of this factory.";
+            
+            final @Nonnull String string = StringWrapper.decodeNonNullable(block);
+            if (!isValid(string)) throw new InvalidEncodingException("'" + string + "' is not a valid identifier.");
+            return get(string);
+        }
+        
+    }
+    
+    /**
+     * Stores the encoding factory of this class.
+     */
+    public static final @Nonnull EncodingFactory ENCODING_FACTORY = new EncodingFactory();
+    
+    @Pure
+    @Override
+    public final @Nonnull EncodingFactory getEncodingFactory() {
+        return ENCODING_FACTORY;
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * The storing factory for this class.
+     */
+    @Immutable
+    public static final class StoringFactory extends AbstractStoringFactory<Identifier, Object> {
+        
+        /**
+         * Creates a new storing factory.
+         */
+        private StoringFactory() {
+            super(Column.get("identifier", SQLType.VARCHAR));
+        }
+        
+        @Pure
+        @Override
+        public @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getValues(@Nonnull Identifier identifier) {
+            return FreezableArray.getNonNullable(identifier.getString());
+        }
+        
+        @Override
+        @NonCommitting
+        public void storeNonNullable(@Nonnull Identifier identifier, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+            preparedStatement.setString(parameterIndex, identifier.getString());
+        }
+        
+        @Pure
+        @Override
+        @NonCommitting
+        public @Nullable Identifier restoreNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+            final @Nullable String string = resultSet.getString(columnIndex);
+            if (string == null) { return null; }
+            if (!isValid(string)) { throw new SQLException("'" + string + "' is not a valid identifier."); }
+            return get(string);
+        }
+        
+    }
+    
+    /**
+     * Stores the storing factory of this class.
+     */
+    public static final @Nonnull StoringFactory STORING_FACTORY = new StoringFactory();
+    
+    @Pure
+    @Override
+    public final @Nonnull StoringFactory getStoringFactory() {
+        return STORING_FACTORY;
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factories –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Stores the factories of this class.
+     */
+    public static final @Nonnull Factories<Identifier, Object> FACTORIES = Factories.get(ENCODING_FACTORY, STORING_FACTORY);
     
 }

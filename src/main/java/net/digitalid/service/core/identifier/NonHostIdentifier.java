@@ -1,7 +1,9 @@
 package net.digitalid.service.core.identifier;
 
 import javax.annotation.Nonnull;
+import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identity.NonHostIdentity;
 import net.digitalid.utility.annotations.state.Immutable;

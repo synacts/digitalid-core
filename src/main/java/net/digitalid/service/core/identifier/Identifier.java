@@ -8,8 +8,10 @@ import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.factory.encoding.Encodable;
 import net.digitalid.service.core.identity.Identity;
+import net.digitalid.service.core.identity.resolution.annotations.MappedRecipient;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.annotations.state.Validated;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.storing.Storable;
@@ -21,18 +23,19 @@ import net.digitalid.utility.database.storing.Storable;
  * @see NonHostIdentifier
  */
 @Immutable
-public interface Identifier<I extends Identifier<I>> extends Encodable<I, Object>, Storable<I, Object> {
+public interface Identifier extends Encodable<Identifier, Object>, Storable<Identifier, Object> {
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– String –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns the string of this identifier.
      * 
      * @return the string of this identifier.
-     * 
-     * @ensure IdentifierClass.isValid(string) : "The returned string is a valid identifier.";
      */
     @Pure
-    public @Nonnull String getString();
+    public @Nonnull @Validated String getString();
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Mapping –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns whether this identifier is mapped.
@@ -48,12 +51,11 @@ public interface Identifier<I extends Identifier<I>> extends Encodable<I, Object
      * Returns the mapped identity of this identifier.
      * 
      * @return the mapped identity of this identifier.
-     * 
-     * @require isMapped() : "This identifier is mapped.";
      */
     @Pure
     @Locked
     @NonCommitting
+    @MappedRecipient
     public @Nonnull Identity getMappedIdentity() throws AbortException;
     
     /**
@@ -68,6 +70,7 @@ public interface Identifier<I extends Identifier<I>> extends Encodable<I, Object
     @NonCommitting
     public @Nonnull Identity getIdentity() throws AbortException, PacketException, ExternalException, NetworkException;
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Casting to Non-Host Identifier –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns this identifier as a {@link NonHostIdentifier}.
@@ -79,6 +82,7 @@ public interface Identifier<I extends Identifier<I>> extends Encodable<I, Object
     @Pure
     public @Nonnull NonHostIdentifier toNonHostIdentifier() throws InvalidEncodingException;
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Casting to Internal Identifiers –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns this identifier as an {@link InternalIdentifier}.
@@ -88,7 +92,7 @@ public interface Identifier<I extends Identifier<I>> extends Encodable<I, Object
      * @throws InvalidEncodingException if this identifier is not an instance of {@link InternalIdentifier}.
      */
     @Pure
-    public @Nonnull InternalIdentifier<?> toInternalIdentifier() throws InvalidEncodingException;
+    public @Nonnull InternalIdentifier toInternalIdentifier() throws InvalidEncodingException;
     
     /**
      * Returns this identifier as a {@link HostIdentifier}.
@@ -110,6 +114,7 @@ public interface Identifier<I extends Identifier<I>> extends Encodable<I, Object
     @Pure
     public @Nonnull InternalNonHostIdentifier toInternalNonHostIdentifier() throws InvalidEncodingException;
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Casting to External Identifiers –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns this identifier as an {@link ExternalIdentifier}.

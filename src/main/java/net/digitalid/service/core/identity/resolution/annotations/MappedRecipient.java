@@ -9,12 +9,12 @@ import net.digitalid.service.core.identifier.Identifier;
 import net.digitalid.utility.annotations.meta.TargetType;
 
 /**
- * This annotation indicates that a method should only be invoked on a non-{@link Identifier#isMapped() mapped} {@link Identifier identifier}.
+ * This annotation indicates that a method should only be invoked on a {@link Identifier#isMapped() mapped} {@link Identifier identifier}.
  * 
- * @see NonMapped
+ * @see Mapped
  */
 @Documented
 @Target(ElementType.METHOD)
 @TargetType(Identifier.class)
 @Retention(RetentionPolicy.CLASS)
-public @interface NonMappedRecipient {}
+public @interface MappedRecipient {}

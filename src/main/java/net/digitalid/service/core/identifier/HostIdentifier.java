@@ -10,6 +10,7 @@ import net.digitalid.service.core.identity.Identity;
 import net.digitalid.service.core.identity.resolution.Mapper;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.annotations.state.Validated;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.configuration.Database;
 
@@ -17,13 +18,16 @@ import net.digitalid.utility.database.configuration.Database;
  * This class models host identifiers.
  */
 @Immutable
-public final class HostIdentifier extends InternalIdentifier<HostIdentifier> {
+public final class HostIdentifier extends InternalIdentifier {
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Identifier –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the host identifier {@code core.digitalid.net}.
      */
     public final static @Nonnull HostIdentifier DIGITALID = new HostIdentifier("core.digitalid.net");
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Validity –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns whether the given string is a valid host identifier.
@@ -37,20 +41,32 @@ public final class HostIdentifier extends InternalIdentifier<HostIdentifier> {
         return InternalIdentifier.isConforming(string) && !string.contains("@");
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Creates a host identifier with the given string.
      * 
      * @param string the string of the host identifier.
-     * 
-     * @require isValid(string) : "The string is a valid host identifier.";
      */
-    public HostIdentifier(@Nonnull String string) {
+    private HostIdentifier(@Nonnull @Validated String string) {
         super(string);
         
         assert isValid(string) : "The string is a valid host identifier.";
     }
     
+    /**
+     * Returns a host identifier with the given string.
+     * 
+     * @param string the string of the host identifier.
+     * 
+     * @return a host identifier with the given string.
+     */
+    @Pure
+    public static @Nonnull HostIdentifier get(@Nonnull @Validated String string) {
+        return new HostIdentifier(string);
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Mapping –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
@@ -70,6 +86,7 @@ public final class HostIdentifier extends InternalIdentifier<HostIdentifier> {
         return Mapper.getIdentity(this).toHostIdentity();
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Host Identifier –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
@@ -77,6 +94,7 @@ public final class HostIdentifier extends InternalIdentifier<HostIdentifier> {
         return this;
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Host Name –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns this host identifier as a host name which can be used as a {@link Site#toString() prefix} in {@link Database database} tables.

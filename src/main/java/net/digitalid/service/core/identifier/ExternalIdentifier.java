@@ -1,8 +1,9 @@
 package net.digitalid.service.core.identifier;
 
-import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identity.Category;
 import net.digitalid.service.core.identity.Identity;
@@ -10,6 +11,7 @@ import net.digitalid.service.core.identity.Person;
 import net.digitalid.service.core.identity.resolution.Mapper;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.annotations.state.Validated;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 
@@ -21,6 +23,8 @@ import net.digitalid.utility.system.errors.ShouldNeverHappenError;
  */
 @Immutable
 public abstract class ExternalIdentifier extends IdentifierClass implements NonHostIdentifier {
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Validity –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns whether the given string conforms to the criteria of this class.
@@ -53,41 +57,37 @@ public abstract class ExternalIdentifier extends IdentifierClass implements NonH
         }
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Creates an external identifier with the given string.
+     * 
+     * @param string the string of the external identifier.
+     */
+    ExternalIdentifier(@Nonnull @Validated String string) {
+        super(string);
+        
+        assert isValid(string) : "The string is a valid external identifier.";
+    }
+    
     /**
      * Returns a new external identifier with the given string.
      * 
      * @param string the string of the new external identifier.
      * 
      * @return a new external identifier with the given string.
-     * 
-     * @require isValid(string) : "The string is a valid external identifier.";
      */
     @Pure
-    public static @Nonnull Identifier create(@Nonnull String string) {
-        assert isValid(string) : "The string is a valid external identifier.";
-        
+    public static @Nonnull Identifier get(@Nonnull @Validated String string) {
         final @Nonnull String scheme = string.substring(0, string.indexOf(":"));
         switch (scheme) {
-            case "email": return new EmailIdentifier(string);
-            case "mobile": return new MobileIdentifier(string);
+            case "email": return EmailIdentifier.get(string);
+            case "mobile": return MobileIdentifier.get(string);
             default: throw new ShouldNeverHappenError("The scheme '" + scheme + "' is not valid.");
         }
     }
     
-    
-    /**
-     * Creates an external identifier with the given string.
-     * 
-     * @param string the string of the external identifier.
-     * 
-     * @require isValid(string) : "The string is a valid external identifier.";
-     */
-    ExternalIdentifier(@Nonnull String string) {
-        super(string);
-        
-        assert isValid(string) : "The string is a valid external identifier.";
-    }
-    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Mapping –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
@@ -97,7 +97,7 @@ public abstract class ExternalIdentifier extends IdentifierClass implements NonH
         
         final @Nonnull Identity identity = Mapper.getMappedIdentity(this);
         if (identity instanceof Person) return (Person) identity;
-        else throw new SQLException("The mapped identity has a wrong type.");
+        else throw AbortException.get("The mapped identity has a wrong type.");
     }
     
     @Pure
@@ -105,6 +105,7 @@ public abstract class ExternalIdentifier extends IdentifierClass implements NonH
     @NonCommitting
     public abstract @Nonnull Person getIdentity() throws AbortException, PacketException, ExternalException, NetworkException;
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Category –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns the category of this external identifier.

@@ -5,14 +5,17 @@ import javax.annotation.Nonnull;
 import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.InitialDirContext;
+import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.IdentityNotFoundException;
+import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identity.Category;
 import net.digitalid.service.core.identity.Person;
 import net.digitalid.service.core.identity.resolution.Mapper;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.annotations.state.Validated;
 import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
@@ -20,6 +23,8 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  */
 @Immutable
 public final class EmailIdentifier extends ExternalIdentifier {
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Validity –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * The pattern that valid email identifiers have to match.
@@ -38,20 +43,32 @@ public final class EmailIdentifier extends ExternalIdentifier {
         return ExternalIdentifier.isConforming(string) && pattern.matcher(string).matches();
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Creates an email identifier with the given string.
      * 
      * @param string the string of the email identifier.
-     * 
-     * @require isValid(string) : "The string is a valid email identifier.";
      */
-    public EmailIdentifier(@Nonnull String string) {
+    private EmailIdentifier(@Nonnull @Validated String string) {
         super(string);
         
         assert isValid(string) : "The string is a valid email identifier.";
     }
     
+    /**
+     * Returns an email identifier with the given string.
+     * 
+     * @param string the string of the email identifier.
+     * 
+     * @return an email identifier with the given string.
+     */
+    @Pure
+    public static @Nonnull EmailIdentifier get(@Nonnull @Validated String string) {
+        return new EmailIdentifier(string);
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Mapping –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
@@ -61,6 +78,7 @@ public final class EmailIdentifier extends ExternalIdentifier {
         return Mapper.getIdentity(this).toPerson();
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Category –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
@@ -68,6 +86,7 @@ public final class EmailIdentifier extends ExternalIdentifier {
         return Category.EMAIL_PERSON;
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Existence –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns the host of this email address.

@@ -1,8 +1,9 @@
 package net.digitalid.service.core.identifier;
 
-import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identity.Identity;
 import net.digitalid.service.core.identity.InternalNonHostIdentity;
@@ -10,6 +11,7 @@ import net.digitalid.service.core.identity.Type;
 import net.digitalid.service.core.identity.resolution.Mapper;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.annotations.state.Validated;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
 
@@ -18,6 +20,8 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  */
 @Immutable
 public final class InternalNonHostIdentifier extends InternalIdentifier implements NonHostIdentifier {
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Validity –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns whether the given string is a valid non-host identifier.
@@ -31,20 +35,32 @@ public final class InternalNonHostIdentifier extends InternalIdentifier implemen
         return InternalIdentifier.isConforming(string) && string.contains("@");
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Creates a non-host identifier with the given string.
      * 
      * @param string the string of the non-host identifier.
-     * 
-     * @require isValid(string) : "The string is a valid non-host identifier.";
      */
-    public InternalNonHostIdentifier(@Nonnull String string) {
+    private InternalNonHostIdentifier(@Nonnull @Validated String string) {
         super(string);
         
         assert isValid(string) : "The string is a valid non-host identifier.";
     }
     
+    /**
+     * Returns a non-host identifier with the given string.
+     * 
+     * @param string the string of the non-host identifier.
+     * 
+     * @return a non-host identifier with the given string.
+     */
+    @Pure
+    public static @Nonnull InternalNonHostIdentifier get(@Nonnull @Validated String string) {
+        return new InternalNonHostIdentifier(string);
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Mapping –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Locked
@@ -55,7 +71,7 @@ public final class InternalNonHostIdentifier extends InternalIdentifier implemen
         
         final @Nonnull Identity identity = Mapper.getMappedIdentity(this);
         if (identity instanceof InternalNonHostIdentity) return (InternalNonHostIdentity) identity;
-        else throw new SQLException("The mapped identity has a wrong type.");
+        else throw AbortException.get("The mapped identity has a wrong type.");
     }
     
     @Pure
@@ -64,17 +80,20 @@ public final class InternalNonHostIdentifier extends InternalIdentifier implemen
     @NonCommitting
     public @Nonnull InternalNonHostIdentity getIdentity() throws AbortException, PacketException, ExternalException, NetworkException {
         final @Nonnull InternalNonHostIdentity identity = Mapper.getIdentity(this).toInternalNonHostIdentity();
+        // If the returned identity is a type, its fields need to be loaded from the type's attributes.
         if (identity instanceof Type) ((Type) identity).ensureLoaded();
         return identity;
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Host Identifier –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
     public @Nonnull HostIdentifier getHostIdentifier() {
-        return new HostIdentifier(getString().substring(getString().indexOf("@") + 1));
+        return HostIdentifier.get(getString().substring(getString().indexOf("@") + 1));
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– String with Dot –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns the string of this identifier with a leading dot or @.
