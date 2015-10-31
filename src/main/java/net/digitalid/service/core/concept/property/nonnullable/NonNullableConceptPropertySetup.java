@@ -3,11 +3,10 @@ package net.digitalid.service.core.concept.property.nonnullable;
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.block.wrappers.TupleWrapper;
 import net.digitalid.service.core.concept.Concept;
+import net.digitalid.service.core.concept.ConceptSetup;
 import net.digitalid.service.core.concept.property.ConceptPropertyInternalAction;
 import net.digitalid.service.core.concept.property.ConceptPropertySetup;
-import net.digitalid.service.core.dataservice.StateModule;
 import net.digitalid.service.core.entity.Entity;
-import net.digitalid.service.core.factory.ConceptFactories;
 import net.digitalid.service.core.factory.Factories;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.Loaded;
@@ -16,7 +15,6 @@ import net.digitalid.service.core.property.ValueValidator;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
-import net.digitalid.utility.database.site.Site;
 
 /**
  * This is the factory for non-nullable concept properties.
@@ -63,7 +61,7 @@ public final class NonNullableConceptPropertySetup<V, C extends Concept<C, E, ?>
     /**
      * Stores the type of the concept property internal action.
      */
-    private final @Nonnull @Loaded SemanticType actionType = SemanticType.map("action" + getPropertyType().getAddress().getStringWithDot()).load(TupleWrapper.TYPE, getConceptFactories().getEncodingFactory().getType(), ConceptPropertyInternalAction.OLD_TIME, ConceptPropertyInternalAction.NEW_TIME, oldValueType, newValueType);
+    private final @Nonnull @Loaded SemanticType actionType = SemanticType.map("action" + getPropertyType().getAddress().getStringWithDot()).load(TupleWrapper.TYPE, getConceptSetup().getConceptFactories().getEncodingFactory().getType(), ConceptPropertyInternalAction.OLD_TIME, ConceptPropertyInternalAction.NEW_TIME, oldValueType, newValueType);
     
     @Pure
     @Override
@@ -106,31 +104,25 @@ public final class NonNullableConceptPropertySetup<V, C extends Concept<C, E, ?>
     /**
      * Creates a new concept property factory with the given parameters.
      * 
-     * @param stateModule the module to which the property table belongs.
+     * @param conceptSetup the concept setup which is shared among concept properties.
      * @param propertyName the name of the property (unique within the module).
-     * @param entityFactories the factories to convert and reconstruct the entity.
-     * @param conceptFactories the factories to convert and reconstruct the concept.
      * @param valueFactories the factories to convert and reconstruct the value of the property.
      * @param requiredAuthorization the required authorization to set the property and see its changes.
      * @param valueValidator the value validator that checks whether the value of the property is valid.
      * @param defaultValue the default value for the properties created by this factory.
      */
-    private NonNullableConceptPropertySetup(@Nonnull StateModule stateModule, @Nonnull @Validated String propertyName, @Nonnull Factories<E, Site> entityFactories, @Nonnull ConceptFactories<C, E> conceptFactories, @Nonnull Factories<V, ? super E> valueFactories, @Nonnull RequiredAuthorization<C> requiredAuthorization, @Nonnull ValueValidator<V> valueValidator, @Nonnull V defaultValue) {
-        super(stateModule, propertyName, entityFactories, conceptFactories, valueFactories, requiredAuthorization, valueValidator);
+    private NonNullableConceptPropertySetup(@Nonnull ConceptSetup<C, E, ?> conceptSetup, @Nonnull @Validated String propertyName, @Nonnull Factories<V, ? super E> valueFactories, @Nonnull RequiredAuthorization<C> requiredAuthorization, @Nonnull ValueValidator<V> valueValidator, @Nonnull V defaultValue) {
+        super(conceptSetup, propertyName, valueFactories, requiredAuthorization, valueValidator);
         
         this.defaultValue = defaultValue;
-        this.propertyTable = new NonNullableConceptPropertyTable<>(this);
-        
-        new NonNullableConceptPropertyInternalAction.Factory<>(this);
+        this.propertyTable = new NonNullableConceptPropertyTable<V, C, E>(this);
     }
     
     /**
      * Creates a new concept property factory with the given parameters.
      * 
-     * @param stateModule the module to which the property table belongs.
+     * @param conceptSetup the concept setup which is shared among concept properties.
      * @param propertyName the name of the property (unique within the module).
-     * @param entityFactories the factories to convert and reconstruct the entity.
-     * @param conceptFactories the factories to convert and reconstruct the concept.
      * @param valueFactories the factories to convert and reconstruct the value of the property.
      * @param requiredAuthorization the required authorization to set the property and see its changes.
      * @param valueValidator the value validator that checks whether the value of the property is valid.
@@ -139,8 +131,8 @@ public final class NonNullableConceptPropertySetup<V, C extends Concept<C, E, ?>
      * @return a new non-nullable concept property factory with the given parameters.
      */
     @Pure
-    public static @Nonnull <V, C extends Concept<C, E, ?>, E extends Entity<E>> NonNullableConceptPropertySetup<V, C, E> get(@Nonnull StateModule stateModule, @Nonnull @Validated String propertyName, @Nonnull Factories<E, Site> entityFactories, @Nonnull ConceptFactories<C, E> conceptFactories, @Nonnull Factories<V, ? super E> valueFactories, @Nonnull RequiredAuthorization<C> requiredAuthorization, @Nonnull ValueValidator<V> valueValidator, @Nonnull V defaultValue) {
-        return new NonNullableConceptPropertySetup<>(stateModule, propertyName, entityFactories, conceptFactories, valueFactories, requiredAuthorization, valueValidator, defaultValue);
+    public static @Nonnull <V, C extends Concept<C, E, ?>, E extends Entity<E>> NonNullableConceptPropertySetup<V, C, E> get(@Nonnull ConceptSetup<C, E, ?> conceptSetup, @Nonnull @Validated String propertyName, @Nonnull Factories<V, ? super E> valueFactories, @Nonnull RequiredAuthorization<C> requiredAuthorization, @Nonnull ValueValidator<V> valueValidator, @Nonnull V defaultValue) {
+        return new NonNullableConceptPropertySetup<>(conceptSetup, propertyName, valueFactories, requiredAuthorization, valueValidator, defaultValue);
     }
     
 }

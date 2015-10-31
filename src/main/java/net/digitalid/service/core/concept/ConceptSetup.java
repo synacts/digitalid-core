@@ -2,7 +2,7 @@ package net.digitalid.service.core.concept;
 
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.storage.Service;
-import net.digitalid.service.core.dataservice.StateModule;
+import net.digitalid.service.core.storage.StateModule;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.factory.ConceptFactories;
 import net.digitalid.service.core.factory.Factories;
@@ -108,7 +108,7 @@ public final class ConceptSetup<C extends Concept<C, E, K>, E extends Entity<E>,
     /**
      * Stores the module to which the property table belongs.
      */
-    private final @Nonnull StateModule stateModule;
+    private final @Nonnull SiteModule stateModule;
     
     /**
      * Returns the module to which the property table belongs.
@@ -116,7 +116,7 @@ public final class ConceptSetup<C extends Concept<C, E, K>, E extends Entity<E>,
      * @return the module to which the property table belongs.
      */
     @Pure
-    public @Nonnull StateModule getStateModule() {
+    public @Nonnull SiteModule getStateModule() {
         return stateModule;
     }
     
@@ -206,7 +206,7 @@ public final class ConceptSetup<C extends Concept<C, E, K>, E extends Entity<E>,
         this.keyFactories = keyFactories;
         this.entityFactories = entityFactories;
         
-        this.stateModule = StateModule.get(service, conceptName);
+        this.stateModule = SiteModule.get(service, conceptName);
         this.conceptType = SemanticType.map(conceptName + service.getType().getAddress().getStringWithDot()).load(keyFactories.getEncodingFactory().getType());
         
         this.encodingFactory = ConceptEncodingFactory.get(keyFactories.getEncodingFactory().setType(conceptType), conceptIndex);

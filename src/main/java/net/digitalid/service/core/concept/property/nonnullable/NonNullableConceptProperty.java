@@ -8,6 +8,9 @@ import net.digitalid.service.core.concept.Concept;
 import net.digitalid.service.core.concept.property.ConceptProperty;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.exceptions.abort.AbortException;
+import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.network.NetworkException;
+import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.property.nonnullable.WritableNonNullableProperty;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
@@ -65,6 +68,13 @@ public final class NonNullableConceptProperty<V, C extends Concept<C, E, ?>, E e
         concept.register(this);
     }
     
+    /**
+     * Creates and returns a new non-nullable concept property with the given parameters.
+     * 
+     * @param concept the concept to which the new property belongs.
+     * @param propertySetup the property factory that contains the required information.
+     * @return a new non-nullable concept property with the given parameters.
+     */
     public static @Nonnull <V, C extends Concept<C, E, ?>, E extends Entity<E>> NonNullableConceptProperty<V, C, E> get(@Nonnull NonNullableConceptPropertySetup<V, C, E> propertySetup, @Nonnull C concept) {
         return new NonNullableConceptProperty<V, C, E>(propertySetup, concept);
     }
@@ -78,7 +88,7 @@ public final class NonNullableConceptProperty<V, C extends Concept<C, E, ?>, E e
     @Locked
     @NonCommitting
     private void load() throws AbortException {
-        final @Nonnull @NonNullableElements ReadOnlyPair<Time, V> pair = propertySetup.getPropertyTable().load(this);
+        final @Nonnull @NonNullableElements ReadOnlyPair<Time, V> pair = propertySetup.getPropertyTable().load(this, propertySetup);
         this.time = pair.getNonNullableElement0();
         this.value = pair.getNonNullableElement1();
     }
@@ -120,7 +130,7 @@ public final class NonNullableConceptProperty<V, C extends Concept<C, E, ?>, E e
     @Locked
     @Override
     @Committing
-    public void set(@Nonnull @Validated V newValue) throws AbortException {
+    public void set(@Nonnull @Validated V newValue) throws AbortException, PacketException, ExternalException, NetworkException {
         assert getValueValidator().isValid(newValue) : "The new value is valid.";
         
         final @Nonnull V oldValue = get();

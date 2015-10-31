@@ -189,7 +189,7 @@ public abstract class Concept<C extends Concept<C, E, K>, E extends Entity<E>, K
     @Pure
     public final @Nonnull ConceptProperty<?, C, E> getProperty(@Nonnull ConceptPropertyTable<?, C, E> table) throws AbortException {
         for (final @Nonnull ConceptProperty<?, C, E> property : properties) {
-            if (property.getTable().equals(table)) return property;
+            if (property.getConceptPropertySetup().getPropertyTable().equals(table)) return property;
         }
         throw AbortException.get("No property is registered for the given table.");
     }
@@ -259,6 +259,7 @@ public abstract class Concept<C extends Concept<C, E, K>, E extends Entity<E>, K
         if (object == this) return true;
         if (object == null) return false;
         if (!object.getClass().equals(getClass())) return false;
+        @SuppressWarnings("rawtypes")
         final @Nonnull Concept<?, ?, ?> other = (Concept) object;
         return this.getEntity().equals(other.getEntity()) && this.getKey().equals(other.getKey());
     }

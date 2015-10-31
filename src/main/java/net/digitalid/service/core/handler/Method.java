@@ -28,8 +28,10 @@ import net.digitalid.service.core.entity.Account;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.entity.Role;
+import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identifier.HostIdentifier;
@@ -104,7 +106,7 @@ public abstract class Method extends Handler {
      * @ensure hasEntity() : "This method has an entity.";
      * @ensure hasSignature() : "This handler has a signature.";
      */
-    protected Method(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) {
+    protected Method(@Nonnull Entity<?> entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) {
         super(entity, signature);
         
         this.recipient = recipient;
@@ -179,7 +181,7 @@ public abstract class Method extends Handler {
      */
     @OnlyForHosts
     @NonCommitting
-    public abstract @Nullable Reply executeOnHost() throws PacketException, SQLException;
+    public abstract @Nullable Reply executeOnHost() throws PacketException, AbortException;
     
     /**
      * Returns whether this method matches the given reply.
@@ -416,7 +418,7 @@ public abstract class Method extends Handler {
     /**
      * Each method needs to {@link #add(net.digitalid.service.core.identity.SemanticType, net.digitalid.service.core.handler.Method.Factory) register} a factory that inherits from this class.
      */
-    protected static abstract class Factory {
+    protected static abstract class Factory<E extends Entity<E>> {
         
         /**
          * Creates a method that handles contents of the indicated type.
@@ -436,7 +438,7 @@ public abstract class Method extends Handler {
          */
         @Pure
         @NonCommitting
-        protected abstract @Nonnull Method create(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException;
+        protected abstract @Nonnull Method create(@Nonnull Entity<E> entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException;
         
     }
     
