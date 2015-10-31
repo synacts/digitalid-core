@@ -24,10 +24,9 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.configuration.Database;
 
 /**
- * This class implements a data service to get, add and remove an {@link Entity entity's} state.
+ * This class implements a database table from which one can get, add and remove an {@link Entity entity's} state.
  * 
- * @see ClientTableImplementation
- * @see HostTableImplementation
+ * @see SiteTable
  */
 @Immutable
 abstract class SiteTableImplementation<M extends DelegatingSiteStorageImplementation> extends HostTableImplementation<M> implements SiteStorage {
@@ -48,21 +47,19 @@ abstract class SiteTableImplementation<M extends DelegatingSiteStorageImplementa
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Creates a new state table with the given parameters.
+     * Creates a new site table with the given parameters.
      * 
      * @param module the module to which the new table belongs.
      * @param name the name of the new table (unique within the module).
-     * @param dumpType the dump type of the new table.
-     * @param stateType the state type of the new table.
-     * 
-     * @require !(module instanceof Service) : "The module is not a service.";
+     * @param dumpType the dump type of the new host table.
+     * @param stateType the state type of the new site table.
      */
     protected SiteTableImplementation(@Nonnull M module, @Nonnull @Validated String name, @Nonnull @Loaded SemanticType dumpType, @Nonnull @Loaded SemanticType stateType) {
         super(module, name, dumpType);
         
         this.stateType = stateType;
         
-        module.registerSiteDataService(this);
+        Storage.register(this);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– State –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -82,11 +79,9 @@ abstract class SiteTableImplementation<M extends DelegatingSiteStorageImplementa
     @Override
     @NonCommitting
     public void removeState(@Nonnull NonHostEntity entity) throws AbortException {
-        try {
-            try (@Nonnull Statement statement = Database.createStatement()) {
-                statement.executeUpdate("DELETE FROM " + entity.getSite() + getName() + " WHERE entity = " + entity);
-            }
-        } catch (SQLException exception) {
+        try (@Nonnull Statement statement = Database.createStatement()) {
+            statement.executeUpdate("DELETE FROM " + entity.getSite() + getName() + " WHERE entity = " + entity);
+        } catch (@Nonnull SQLException exception) {
             throw AbortException.get(exception);
         }
     }

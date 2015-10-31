@@ -3,6 +3,7 @@ package net.digitalid.service.core.storage;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.exceptions.abort.AbortException;
+import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
 import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
@@ -12,20 +13,23 @@ import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.configuration.Database;
 import net.digitalid.utility.database.site.Site;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 
 /**
- * Implements the smallest subset of data service functionalities. The implemented data service is used on clients and hosts.
+ * This class implements a storage that delegates the creation and deletion to substorages on {@link Host hosts} and {@link Client clients}.
  * 
- * @see DelegatingHostDataServiceImplementation
+ * @see ClientModule
+ * @see DelegatingHostStorageImplementation
  */
-class DelegatingClientStorageImplementation implements ClientStorage {
+@Immutable
+abstract class DelegatingClientStorageImplementation implements ClientStorage {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Service –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Stores the service to which this module belongs.
+     * Stores the service to which this storage belongs.
      */
     private final @Nonnull Service service;
     
@@ -38,7 +42,19 @@ class DelegatingClientStorageImplementation implements ClientStorage {
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Name –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Stores the name of this module.
+     * Returns whether the given name is valid.
+     * 
+     * @param name the name to be checked.
+     * 
+     * @return whether the given name is valid.
+     */
+    @Pure
+    public static boolean isValidName(@Nonnull String name) {
+        return name.length() <= 22 && name.startsWith("_") && name.length() > 1 && Database.getConfiguration().isValidIdentifier(name);
+    }
+    
+    /**
+     * Stores the name of this storage.
      */
     private final @Nonnull @Validated String name;
     
@@ -57,12 +73,12 @@ class DelegatingClientStorageImplementation implements ClientStorage {
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
 
     /**
-     * Creates a new client module with the given service and name.
+     * Creates a new client storage with the given service and name.
      * 
-     * @param service the service to which the new module belongs.
-     * @param name the name of the new module without any prefix.
+     * @param service the service to which the new storage belongs.
+     * @param name the name of the new storage without any prefix.
      */
-    DelegatingClientStorageImplementation(@Nullable Service service, @Nonnull @Validated String name) {
+    protected DelegatingClientStorageImplementation(@Nullable Service service, @Nonnull @Validated String name) {
         if (this instanceof Service) {
             this.service = (Service) this;
             this.name = "_" + name;
@@ -73,42 +89,43 @@ class DelegatingClientStorageImplementation implements ClientStorage {
             throw new ShouldNeverHappenError("Only the service class should call this constructor with null.");
         }
         
-        assert ClientModule.isValidName(this.name) : "The name is valid.";
+        assert isValidName(this.name) : "The name is valid.";
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Tables –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Substorages –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Stores the tables of this module.
+     * Stores the substorages of this storage.
      */
-    protected final @Nonnull @NonNullableElements @NonFrozen FreezableList<ClientStorage> tables = FreezableLinkedList.get();
+    private final @Nonnull @NonNullableElements @NonFrozen FreezableList<ClientStorage> substorages = FreezableLinkedList.get();
     
     /**
-     * Returns the tables of this module.
+     * Returns the substorages of this storage.
      * 
-     * @return the tables of this module.
+     * @return the substorages of this storage.
      */
     @Pure
-    public @Nonnull @NonNullableElements ReadOnlyList<ClientStorage> getTables() {
-        return tables;
+    public final @Nonnull @NonNullableElements @NonFrozen ReadOnlyList<ClientStorage> getSubstorages() {
+        return substorages;
     }
     
     /**
-     * Registers the given table at this module.
+     * Registers the given substorage at this storage.
      * 
-     * @param table the table to be registered.
+     * @param substorage the substorage to be registered.
      */
-    final void registerClientDataService(@Nonnull ClientStorage table) {
-        tables.add(table);
+    final void registerClientStorage(@Nonnull ClientStorage substorage) {
+        substorages.add(substorage);
     }
     
-
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Creation and Deletion –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
     @Locked
     @Override
     @NonCommitting
-    public final void createTables(@Nonnull Site client) throws AbortException {
-        for (final @Nonnull ClientStorage table : getTables()) {
-            table.createTables(client);
+    public final void createTables(@Nonnull Site site) throws AbortException {
+        for (final @Nonnull ClientStorage substorage : substorages) {
+            substorage.createTables(site);
         }
     }
     
@@ -116,8 +133,9 @@ class DelegatingClientStorageImplementation implements ClientStorage {
     @Override
     @NonCommitting
     public final void deleteTables(@Nonnull Site site) throws AbortException {
-        for (final @Nonnull ClientStorage table : getTables()) {
-            table.deleteTables(site);
+        for (final @Nonnull ClientStorage substorage : substorages) {
+            substorage.deleteTables(site);
         }
     }
+    
 }

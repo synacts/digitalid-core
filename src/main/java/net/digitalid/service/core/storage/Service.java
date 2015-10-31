@@ -27,14 +27,15 @@ import net.digitalid.utility.collections.readonly.ReadOnlyCollection;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.storing.FactoryBasedStoringFactory;
 import net.digitalid.utility.database.storing.Storable;
+import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 
 /**
- * This class models a service.
+ * This class models a service of the Digital ID protocol.
  * 
  * @see CoreService
  */
 @Immutable
-public class Service extends SiteModule implements Storable<Service, Object> {
+public class Service extends DelegatingSiteStorageImplementation implements Storable<Service, Object> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Services –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -44,9 +45,9 @@ public class Service extends SiteModule implements Storable<Service, Object> {
     private static final @Nonnull FreezableMap<SemanticType, Service> services = FreezableLinkedHashMap.get();
     
     /**
-     * Returns a list of the services installed on this server.
+     * Returns a collection of the services installed on this server.
      * 
-     * @return a list of the services installed on this server.
+     * @return a collection of the services installed on this server.
      */
     @Pure
     public static @Nonnull ReadOnlyCollection<Service> getServices() {
@@ -63,8 +64,8 @@ public class Service extends SiteModule implements Storable<Service, Object> {
     @Pure
     public static @Nonnull Service getService(@Nonnull SemanticType type) throws PacketException {
         final @Nullable Service service = services.get(type);
-        if (service != null) return service;
-        throw new PacketException(PacketErrorCode.SERVICE, "No service with the type " + type.getAddress() + " is installed.");
+        if (service == null) throw new PacketException(PacketErrorCode.SERVICE, "No service with the type " + type.getAddress() + " is installed.");
+        return service;
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -212,25 +213,24 @@ public class Service extends SiteModule implements Storable<Service, Object> {
         
         @Pure
         @Override
-        public @Nonnull Service getObject(@Nonnull Object none, @Nonnull SemanticType identity) {
+        public @Nonnull Service getObject(@Nonnull Object none, @Nonnull SemanticType type) {
             try {
-                return getService(identity);
-            } catch (PacketException e) {
-                // TODO: getObject does not allow to throw any exceptions.
-                return null;
+                return getService(type);
+            } catch (@Nonnull PacketException exception) {
+                throw new ShouldNeverHappenError(exception);
             }
         }
         
     }
     
     /**
-     * Stores the factory of this class.
+     * Stores the storing factory of this class.
      */
     public static final @Nonnull StoringFactory STORING_FACTORY = new StoringFactory();
     
     @Pure
     @Override
-    public @Nonnull StoringFactory getStoringFactory() {
+    public final @Nonnull StoringFactory getStoringFactory() {
         return STORING_FACTORY;
     }
     

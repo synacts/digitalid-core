@@ -15,7 +15,7 @@ import net.digitalid.utility.database.configuration.Database;
 import net.digitalid.utility.database.site.Site;
 
 /**
- * This class implements a data service to create and delete a database table on {@link Host hosts} and {@link Client clients}.
+ * This class implements a database table that can be created and deleted on {@link Client clients} and {@link Host hosts}.
  * 
  * @see ClientTable
  * @see HostTableImplementation
@@ -58,7 +58,7 @@ abstract class ClientTableImplementation<M extends DelegatingClientStorageImplem
      * @return whether the given name is valid.
      */
     @Pure
-    public final boolean isValidName(@Nonnull String name) {
+    public static boolean isValidName(@Nonnull String name) {
         return name.length() <= 22 && name.startsWith("_") && name.length() > 1 && Database.getConfiguration().isValidIdentifier(name);
     }
     
@@ -99,14 +99,14 @@ abstract class ClientTableImplementation<M extends DelegatingClientStorageImplem
     @Locked
     @Override
     @NonCommitting
-    public abstract void createTables(@Nonnull Site client) throws AbortException;
+    public abstract void createTables(@Nonnull Site site) throws AbortException;
     
     @Locked
     @Override
     @NonCommitting
-    public void deleteTables(@Nonnull Site client) throws AbortException {
+    public void deleteTables(@Nonnull Site site) throws AbortException {
         try (@Nonnull Statement statement = Database.createStatement()) {
-            statement.executeUpdate("DROP TABLE IF EXISTS " + client + name);
+            statement.executeUpdate("DROP TABLE IF EXISTS " + site + name);
         } catch (@Nonnull SQLException exception) {
             throw AbortException.get(exception);
         }

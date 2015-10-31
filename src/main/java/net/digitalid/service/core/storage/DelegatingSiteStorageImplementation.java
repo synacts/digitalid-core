@@ -18,6 +18,7 @@ import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.Loaded;
 import net.digitalid.service.core.site.client.Client;
 import net.digitalid.service.core.site.host.Host;
+import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
 import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
@@ -32,9 +33,13 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.annotations.OnMainThread;
 
 /**
- * Site modules are used on both {@link Host hosts} and {@link Client clients}.
+ * This class implements a storage that delegates the retrieval of an {@link Entity entity's} state to substorages on {@link Host hosts} and {@link Client clients}.
+ * 
+ * @see SiteModule
+ * @see Service
  */
-class DelegatingSiteStorageImplementation extends DelegatingHostStorageImplementation implements SiteStorage {
+@Immutable
+abstract class DelegatingSiteStorageImplementation extends DelegatingHostStorageImplementation implements SiteStorage {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -64,7 +69,7 @@ class DelegatingSiteStorageImplementation extends DelegatingHostStorageImplement
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Creates a new site data service implementation with the given service and name.
+     * Creates a new site storage with the given service and name.
      * 
      * @param service the service to which the new module belongs.
      * @param name the name of the new module without any prefix.
@@ -80,34 +85,36 @@ class DelegatingSiteStorageImplementation extends DelegatingHostStorageImplement
             identifier = "state." + name + service.getType().getAddress().getStringWithDot();
         }
         this.stateType = SemanticType.map(identifier).load(STATE);
+        
+        Storage.register(this);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Tables –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Substorages –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Stores the tables of this module.
+     * Stores the substorages of this storage.
      */
-    private final @Nonnull @NonNullableElements @NonFrozen FreezableMap<SemanticType, SiteStorage> tables = FreezableLinkedHashMap.get();
+    private final @Nonnull @NonNullableElements @NonFrozen FreezableMap<SemanticType, SiteStorage> substorages = FreezableLinkedHashMap.get();
     
     /**
-     * Registers the given table at this module.
+     * Registers the given substorage at this storage.
      * 
-     * @param table the table to be registered.
+     * @param substorage the substorage to be registered.
      */
-    final void registerSiteDataService(@Nonnull SiteStorage table) {
-        tables.put(table.getStateType(), table);
-        super.registerHostDataService(table);
+    final void registerSiteStorage(@Nonnull SiteStorage substorage) {
+        substorages.put(substorage.getStateType(), substorage);
+        super.registerHostStorage(substorage);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– State –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– State Methods –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Locked
     @Override
     @NonCommitting
     public final @Nonnull Block getState(@Nonnull NonHostEntity entity, @Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent) throws AbortException {
-        final @Nonnull FreezableList<Block> elements = FreezableArrayList.getWithCapacity(tables.size());
-        for (final @Nonnull SiteStorage table : tables.values()) elements.add(SelfcontainedWrapper.encodeNonNullable(TABLE, table.getState(entity, permissions, restrictions, agent)));
+        final @Nonnull FreezableList<Block> elements = FreezableArrayList.getWithCapacity(substorages.size());
+        for (final @Nonnull SiteStorage table : substorages.values()) elements.add(SelfcontainedWrapper.encodeNonNullable(TABLE, table.getState(entity, permissions, restrictions, agent)));
         return ListWrapper.encode(stateType, elements.freeze());
     }
     
@@ -118,9 +125,9 @@ class DelegatingSiteStorageImplementation extends DelegatingHostStorageImplement
         final @Nonnull @NonNullableElements ReadOnlyList<Block> elements = ListWrapper.decodeNonNullableElements(block);
         for (final @Nonnull Block element : elements) {
             final @Nonnull Block selfcontained = SelfcontainedWrapper.decodeNonNullable(element);
-            final @Nullable SiteStorage table = tables.get(selfcontained.getType());
-            if (table == null) throw new InvalidEncodingException("There is no table for the block of type " + selfcontained.getType() + ".");
-            table.addState(entity, selfcontained);
+            final @Nullable SiteStorage substorage = substorages.get(selfcontained.getType());
+            if (substorage == null) throw new InvalidEncodingException("There is no table for the block of type " + selfcontained.getType() + ".");
+            substorage.addState(entity, selfcontained);
         }
     }
     
@@ -128,7 +135,7 @@ class DelegatingSiteStorageImplementation extends DelegatingHostStorageImplement
     @Override
     @NonCommitting
     public final void removeState(@Nonnull NonHostEntity entity) throws AbortException {
-      for (final @Nonnull SiteStorage table : tables.values()) table.removeState(entity);
+      for (final @Nonnull SiteStorage substorage : substorages.values()) substorage.removeState(entity);
     }
     
 }

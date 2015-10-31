@@ -13,6 +13,7 @@ import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.Loaded;
 import net.digitalid.service.core.site.host.Host;
+import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
 import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
@@ -27,9 +28,13 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.annotations.OnMainThread;
 
 /**
- * Host modules are only used on {@link Host hosts}.
+ * This class implements a storage that delegates the export and import to substorages on {@link Host hosts}.
+ * 
+ * @see HostModule
+ * @see DelegatingSiteStorageImplementation
  */
-class DelegatingHostStorageImplementation extends DelegatingClientStorageImplementation implements HostStorage {
+@Immutable
+abstract class DelegatingHostStorageImplementation extends DelegatingClientStorageImplementation implements HostStorage {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -46,7 +51,7 @@ class DelegatingHostStorageImplementation extends DelegatingClientStorageImpleme
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Dump Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Stores the dump type of this module.
+     * Stores the dump type of this host storage.
      */
     private final @Nonnull @Loaded SemanticType dumpType;
     
@@ -59,13 +64,13 @@ class DelegatingHostStorageImplementation extends DelegatingClientStorageImpleme
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Creates a new host module with the given service and name.
+     * Creates a new host storage with the given service and name.
      * 
      * @param service the service to which the new module belongs.
      * @param name the name of the new module without any prefix.
      */
     @OnMainThread
-    DelegatingHostStorageImplementation(@Nullable Service service, @Nonnull @Validated String name) {
+    protected DelegatingHostStorageImplementation(@Nullable Service service, @Nonnull @Validated String name) {
         super(service, name);
         
         final @Nonnull String identifier;
@@ -77,32 +82,32 @@ class DelegatingHostStorageImplementation extends DelegatingClientStorageImpleme
         this.dumpType = SemanticType.map(identifier).load(MODULE);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Tables –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Substorages –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Stores the tables of this module.
+     * Stores the substorages of this storage.
      */
-    private final @Nonnull @NonNullableElements @NonFrozen FreezableMap<SemanticType, HostStorage> tables = FreezableLinkedHashMap.get();
+    private final @Nonnull @NonNullableElements @NonFrozen FreezableMap<SemanticType, HostStorage> substorages = FreezableLinkedHashMap.get();
     
     /**
-     * Registers the given table at this module.
+     * Registers the given substorage at this storage.
      * 
-     * @param table the table to be registered.
+     * @param substorage the substorage to be registered.
      */
-    final void registerHostDataService(@Nonnull HostStorage table) {
-        tables.put(table.getDumpType(), table);
-        super.registerClientDataService(table);
+    final void registerHostStorage(@Nonnull HostStorage substorage) {
+        substorages.put(substorage.getDumpType(), substorage);
+        super.registerClientStorage(substorage);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Data –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Export and Import –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Locked
     @Override
     @NonCommitting
     public final @Nonnull Block exportAll(@Nonnull Host host) throws AbortException {
-        final @Nonnull FreezableList<Block> elements = FreezableArrayList.getWithCapacity(tables.size());
-        for (final @Nonnull HostStorage table : tables.values()) elements.add(SelfcontainedWrapper.encodeNonNullable(TABLE, table.exportAll(host)));
+        final @Nonnull FreezableList<Block> elements = FreezableArrayList.getWithCapacity(substorages.size());
+        for (final @Nonnull HostStorage substorage : substorages.values()) elements.add(SelfcontainedWrapper.encodeNonNullable(TABLE, substorage.exportAll(host)));
         return ListWrapper.encode(dumpType, elements.freeze());
     }
     
@@ -113,9 +118,9 @@ class DelegatingHostStorageImplementation extends DelegatingClientStorageImpleme
         final @Nonnull @NonNullableElements ReadOnlyList<Block> elements = ListWrapper.decodeNonNullableElements(block);
         for (final @Nonnull Block element : elements) {
             final @Nonnull Block selfcontained = SelfcontainedWrapper.decodeNonNullable(element);
-            final @Nullable HostStorage table = tables.get(selfcontained.getType());
-            if (table == null) throw new InvalidEncodingException("There is no table for the block of type " + selfcontained.getType() + ".");
-            table.importAll(host, selfcontained);
+            final @Nullable HostStorage substorage = substorages.get(selfcontained.getType());
+            if (substorage == null) throw new InvalidEncodingException("There is no substorage for the block of type " + selfcontained.getType() + ".");
+            substorage.importAll(host, selfcontained);
         }
     }
     

@@ -16,7 +16,7 @@ import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
- * This class implements a data service to export and import a table on {@link Host hosts}.
+ * This class implements a database table that can be exported and imported on {@link Host hosts}.
  * 
  * @see HostTable
  * @see SiteTableImplementation
@@ -27,7 +27,7 @@ abstract class HostTableImplementation<M extends DelegatingHostStorageImplementa
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Dump Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Stores the dump type of this table.
+     * Stores the dump type of this host table.
      */
     private final @Nonnull @Loaded SemanticType dumpType;
     
@@ -44,9 +44,7 @@ abstract class HostTableImplementation<M extends DelegatingHostStorageImplementa
      * 
      * @param module the module to which the new table belongs.
      * @param name the name of the new table (unique within the module).
-     * @param dumpType the dump type of the new table.
-     * 
-     * @require !(module instanceof Service) : "The module is not a service.";
+     * @param dumpType the dump type of the new host table.
      */
     protected HostTableImplementation(@Nonnull M module, @Nonnull @Validated String name, @Nonnull @Loaded SemanticType dumpType) {
         super(module, name);

@@ -15,30 +15,30 @@ import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
- * This interface models a collection of data that can be exported and imported on {@link Host hosts}.
+ * This interface models a storage that can be exported and imported on {@link Host hosts}.
  * 
- * @see SiteDataService
+ * @see SiteStorage
  * @see HostTableImplementation
- * @see DelegatingHostDataServiceImplementation
+ * @see DelegatingHostStorageImplementation
  */
-interface HostStorage extends ClientStorage {
+public interface HostStorage extends ClientStorage {
     
     /**
-     * Returns the dump type of this data collection.
+     * Returns the dump type of this storage.
      * 
-     * @return the dump type of this data collection.
+     * @return the dump type of this storage.
      */
     @Pure
     public @Nonnull @Loaded SemanticType getDumpType();
     
     /**
-     * Exports this data collection as a block.
+     * Exports this storage as a block.
      * 
      * @param host the host which is exported.
      * 
-     * @return this data collection as a block.
+     * @return this storage as a block.
      * 
-     * @ensure return.getType().equals(getDumpType()) : "The returned block has the dump type of this data collection.";
+     * @ensure return.getType().equals(getDumpType()) : "The returned block has the dump type of this storage.";
      */
     @Pure
     @Locked
@@ -46,13 +46,12 @@ interface HostStorage extends ClientStorage {
     public @Nonnull @NonEncoding Block exportAll(@Nonnull Host host) throws AbortException;
     
     /**
-     * Imports this data collection for the given host from the given block.
+     * Imports this storage for the given host from the given block.
      * 
-     * @param host the host for whom this data collection is to be imported.
-     * @param block the block containing the data of this collection.
-     * @throws AbortException 
+     * @param host the host for whom this storage is to be imported.
+     * @param block the block containing the data of this storage.
      * 
-     * @require block.getType().isBasedOn(getDumpType()) : "The block is based on the dump type of this data collection.";
+     * @require block.getType().isBasedOn(getDumpType()) : "The block is based on the dump type of this storage.";
      */
     @Locked
     @NonCommitting
