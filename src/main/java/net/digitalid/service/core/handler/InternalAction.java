@@ -1,6 +1,5 @@
 package net.digitalid.service.core.handler;
 
-import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.action.synchronizer.Synchronizer;
@@ -8,7 +7,9 @@ import net.digitalid.service.core.block.wrappers.SignatureWrapper;
 import net.digitalid.service.core.concepts.agent.Restrictions;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.Role;
+import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.core.CoreServiceInternalAction;
@@ -58,7 +59,7 @@ public abstract class InternalAction extends Action implements InternalMethod {
      * @ensure hasSignature() : "This handler has a signature.";
      */
     @NonCommitting
-    protected InternalAction(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws AbortException, PacketException, ExternalException, NetworkException {
+    protected InternalAction(@Nonnull Entity<?> entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) throws AbortException, PacketException, ExternalException, NetworkException {
         super(entity, signature, recipient);
         
         if (!isNonHost()) throw new PacketException(PacketErrorCode.IDENTIFIER, "Internal actions have to belong to a non-host.");
@@ -100,12 +101,12 @@ public abstract class InternalAction extends Action implements InternalMethod {
      */
     @OnlyForHosts
     @NonCommitting
-    protected abstract void executeOnHostInternalAction() throws PacketException, SQLException;
+    protected abstract void executeOnHostInternalAction() throws PacketException, AbortException;
     
     @Override
     @OnlyForHosts
     @NonCommitting
-    public final @Nullable ActionReply executeOnHost() throws PacketException, SQLException {
+    public final @Nullable ActionReply executeOnHost() throws PacketException, AbortException {
         executeOnHostInternalAction();
         return null;
     }
@@ -137,14 +138,14 @@ public abstract class InternalAction extends Action implements InternalMethod {
      */
     @Pure
     @OnlyForClients
-    public abstract @Nullable InternalAction getReverse() throws AbortException;
+    public abstract @Nullable InternalAction getReverse() throws AbortException, PacketException, ExternalException, NetworkException;
     
     /**
      * Reverses this internal action on the client if this action can be reversed.
      */
     @NonCommitting
     @OnlyForClients
-    public final void reverseOnClient() throws AbortException {
+    public final void reverseOnClient() throws AbortException, PacketException, ExternalException, NetworkException {
         assert isOnClient() : "This method is called on a client.";
         
         final @Nullable InternalAction reverse = getReverse();

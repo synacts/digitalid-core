@@ -1,5 +1,6 @@
 package net.digitalid.service.core.concept.property;
 
+import java.sql.SQLException;
 import java.sql.Statement;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -12,14 +13,17 @@ import net.digitalid.service.core.concept.Concept;
 import net.digitalid.service.core.concepts.agent.Agent;
 import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
 import net.digitalid.service.core.concepts.agent.Restrictions;
-import net.digitalid.service.core.dataservice.StateTable;
+import net.digitalid.service.core.dataservice.SiteTable;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostEntity;
+import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identity.Identity;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.Loaded;
+import net.digitalid.service.core.property.ReadOnlyProperty;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.database.annotations.Locked;
@@ -31,35 +35,37 @@ import net.digitalid.utility.database.configuration.Database;
  * This class models a database table that stores a {@link ReadOnlyProperty property} of a {@link Concept concept}.
  */
 @Immutable
-public abstract class ConceptPropertyTable<V, C extends Concept<C, E, ?>, E extends Entity<E>> extends StateTable {
+public abstract class ConceptPropertyTable<V, C extends Concept<C, E, ?>, E extends Entity<E>> extends SiteTable {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Type Mappings –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Maps the dump type of this table by deriving the identifier from the property name.
      * 
-     * @param propertyFactory the factory that contains the name and module of the property.
+     * @param propertySetup the factory that contains the name and module of the property.
      * 
      * @return the dump type of this table by deriving the identifier from the property name.
      */
     @OnMainThread
-    private static @Nonnull @Loaded SemanticType mapDumpType(@Nonnull ConceptPropertyFactory<?, ?, ?> propertyFactory) {
-        final @Nonnull String identifier = propertyFactory.getPropertyName() + propertyFactory.getStateModule().getDumpType().getAddress().getStringWithDot();
-        final @Nonnull SemanticType entry = SemanticType.map("entry." + identifier).load(TupleWrapper.TYPE, Identity.IDENTIFIER, propertyFactory.getConceptFactories().getEncodingFactory().getType(), Time.TYPE, propertyFactory.getValueFactories().getEncodingFactory().getType());
+    private static @Nonnull @Loaded SemanticType mapDumpType(@Nonnull ConceptPropertySetup<?, ?, ?> propertySetup) {
+        final @Nonnull String identifier = propertySetup.getPropertyName() + propertySetup.getPropertyTable().getModule().getDumpType().getAddress().getStringWithDot();
+        // TODO: should propertySetup.getValueFactories().getEncodingFactory().getType() be replaced with propertySetup.getPropertyType()?
+        final @Nonnull SemanticType entry = SemanticType.map("entry." + identifier).load(TupleWrapper.TYPE, Identity.IDENTIFIER, propertySetup.getConceptSetup().getEncodingFactory().getType(), Time.TYPE, propertySetup.getPropertyType());
         return SemanticType.map(identifier).load(ListWrapper.TYPE, entry);
     }
     
     /**
      * Maps the state type of this table by deriving the identifier from the property name.
      * 
-     * @param propertyFactory the factory that contains the name and module of the property.
+     * @param propertySetup the factory that contains the name and module of the property.
      * 
      * @return the state type of this table by deriving the identifier from the property name.
      */
     @OnMainThread
-    private static @Nonnull @Loaded SemanticType mapStateType(@Nonnull ConceptPropertyFactory<?, ?, ?> propertyFactory) {
-        final @Nonnull String identifier = propertyFactory.getPropertyName() + propertyFactory.getStateModule().getStateType().getAddress().getStringWithDot();
-        final @Nonnull SemanticType entry = SemanticType.map("entry." + identifier).load(TupleWrapper.TYPE, propertyFactory.getConceptFactories().getEncodingFactory().getType(), Time.TYPE, propertyFactory.getValueFactories().getEncodingFactory().getType());
+    private static @Nonnull @Loaded SemanticType mapStateType(@Nonnull ConceptPropertySetup<?, ?, ?> propertySetup) {
+        final @Nonnull String identifier = propertySetup.getPropertyName() + propertySetup.getPropertyTable().getModule().getStateType().getAddress().getStringWithDot();
+        // TODO: should propertySetup.getValueFactories().getEncodingFactory().getType() be replaced with propertySetup.getPropertyType()?
+        final @Nonnull SemanticType entry = SemanticType.map("entry." + identifier).load(TupleWrapper.TYPE, propertySetup.getConceptSetup().getEncodingFactory().getType(), Time.TYPE, propertySetup.getPropertyType());
         return SemanticType.map(identifier).load(ListWrapper.TYPE, entry);
     }
     
@@ -68,7 +74,7 @@ public abstract class ConceptPropertyTable<V, C extends Concept<C, E, ?>, E exte
     /**
      * Stores the property factory that contains the required information.
      */
-    private final @Nonnull ConceptPropertyFactory<V, C, E> propertyFactory;
+    private final @Nonnull ConceptPropertySetup<V, C, E> propertySetup;
     
     /**
      * Returns the property factory that contains the required information.
@@ -76,8 +82,9 @@ public abstract class ConceptPropertyTable<V, C extends Concept<C, E, ?>, E exte
      * @return the property factory that contains the required information.
      */
     @Pure
-    public final @Nonnull ConceptPropertyFactory<V, C, E> getPropertyFactory() {
-        return propertyFactory;
+    // TODO: rename
+    public final @Nonnull ConceptPropertySetup<V, C, E> getPropertyFactory() {
+        return propertySetup;
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -85,12 +92,12 @@ public abstract class ConceptPropertyTable<V, C extends Concept<C, E, ?>, E exte
     /**
      * Creates a new concept property table with the given property factory.
      * 
-     * @param propertyFactory the property factory that contains the required information.
+     * @param propertySetup the property factory that contains the required information.
      */
-    protected ConceptPropertyTable(@Nonnull ConceptPropertyFactory<V, C, E> propertyFactory) {
-        super(propertyFactory.getStateModule(), propertyFactory.getPropertyName(), mapDumpType(propertyFactory), mapStateType(propertyFactory));
+    protected ConceptPropertyTable(@Nonnull ConceptPropertySetup<V, C, E> propertySetup) {
+        super(propertySetup.getPropertyTable().getModule(), propertySetup.getPropertyName(), mapDumpType(propertySetup), mapStateType(propertySetup));
         
-        this.propertyFactory = propertyFactory;
+        this.propertySetup = propertySetup;
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Generic State –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -136,6 +143,8 @@ public abstract class ConceptPropertyTable<V, C extends Concept<C, E, ?>, E exte
     public void removeState(@Nonnull E entity) throws AbortException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("DELETE FROM " + entity.getSite() + getName() + " WHERE entity = " + entity);
+        } catch (SQLException exception) {
+            throw AbortException.get(exception);
         }
     }
     

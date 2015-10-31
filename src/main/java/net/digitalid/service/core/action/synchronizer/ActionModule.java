@@ -1,5 +1,7 @@
 package net.digitalid.service.core.action.synchronizer;
 
+import net.digitalid.service.core.exceptions.abort.AbortException;
+import net.digitalid.service.core.auxiliary.None;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -231,10 +233,10 @@ public final class ActionModule implements StateModule {
         
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL.toString())) {
             if (resultSet.next()) {
-                final @Nonnull Time thisTime = Time.get(resultSet, 1);
-                final @Nonnull FreezableList<Block> trail = new FreezableLinkedList<>();
+                final @Nonnull Time thisTime = Time.STORING_FACTORY.restoreNonNullable(None.OBJECT, resultSet, 1);
+                final @Nonnull FreezableList<Block> trail = FreezableLinkedList.get();
                 while (resultSet.next()) {
-                    trail.add(Block.getNotNull(Packet.SIGNATURE, resultSet, 2));
+                    trail.add(Block.STORING_FACTORY.restoreNonNullable(Packet.SIGNATURE, resultSet, 2));
                 }
                 return new ResponseAudit(lastTime, thisTime, trail.freeze());
             } else throw new SQLException("This should never happen.");

@@ -127,7 +127,7 @@ public final class Loader {
     @Committing
     public static void initialize(@Nonnull Class<?>... mainClasses) {
         Loader.loadClasses(Server.class, SemanticType.class, SignatureWrapper.class);
-        Database.addRegularPurging("general_reply", Time.TWO_YEARS);
+        Database.addRegularPurging("general_reply", Time.TWO_YEARS.getValue());
         Database.startPurging();
         Cache.initialize();
         

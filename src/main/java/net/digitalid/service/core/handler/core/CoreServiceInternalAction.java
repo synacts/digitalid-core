@@ -14,7 +14,9 @@ import net.digitalid.service.core.cryptography.PublicKey;
 import net.digitalid.service.core.dataservice.Service;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.Role;
+import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.InternalAction;
@@ -110,7 +112,7 @@ public abstract class CoreServiceInternalAction extends InternalAction {
     @Override
     @OnlyForHosts
     @NonCommitting
-    public void executeOnHostInternalAction() throws PacketException, SQLException {
+    public void executeOnHostInternalAction() throws PacketException, AbortException {
         final @Nonnull SignatureWrapper signature = getSignatureNotNull();
         if (signature instanceof CredentialsSignatureWrapper) ((CredentialsSignatureWrapper) signature).checkIsLogded();
         final @Nonnull Agent agent = signature.getAgentCheckedAndRestricted(getNonHostAccount(), getPublicKey());
@@ -119,10 +121,21 @@ public abstract class CoreServiceInternalAction extends InternalAction {
         if (!permissions.equals(FreezableAgentPermissions.NONE)) agent.getPermissions().checkCover(permissions);
         
         final @Nonnull Restrictions restrictions = getRequiredRestrictionsToExecuteMethod();
-        if (!restrictions.equals(Restrictions.MIN)) agent.getRestrictions().checkCover(restrictions);
-        
+        if (!restrictions.equals(Restrictions.MIN)) {
+            try {
+                agent.getRestrictions().checkCover(restrictions);
+            } catch (SQLException exception) {
+               throw AbortException.get(exception);
+            }
+        }
         final @Nullable Agent other = getRequiredAgentToExecuteMethod();
-        if (other != null) agent.checkCovers(other);
+        if (other != null) {
+            try {
+                agent.checkCovers(other);
+            } catch (SQLException exception) {
+                throw AbortException.get(exception);
+            }  
+        }
         
         executeOnBoth();
     }

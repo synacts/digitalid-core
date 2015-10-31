@@ -19,6 +19,15 @@ public final class InvalidEncodingException extends ExternalException {
     }
     
     /**
+     * Creates a new invalid encoding exception with the given cause.
+     * 
+     * @param cause a reference to the cause of the exception.
+     */
+    public InvalidEncodingException(@Nonnull Throwable cause) {
+        super(cause);
+    }
+    
+    /**
      * Creates a new invalid encoding exception with the given message and cause.
      * 
      * @param message a string explaining the exception that occurred.

@@ -3,7 +3,9 @@ package net.digitalid.service.core.identity;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.block.Block;
+import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.factory.encoding.Encodable;
 import net.digitalid.service.core.identifier.Identifier;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -18,7 +20,7 @@ import net.digitalid.utility.database.storing.Storable;
  * @see ExternalIdentity
  */
 @Immutable
-public interface Identity extends Storable<Identity, Object> {
+public interface Identity extends Encodable<Identity, Object>, Storable<Identity, Object> {
     
     /**
      * Stores the semantic type {@code @core.digitalid.net}.

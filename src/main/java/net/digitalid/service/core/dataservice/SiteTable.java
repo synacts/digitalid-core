@@ -9,7 +9,7 @@ import net.digitalid.utility.annotations.state.Validated;
 /**
  * This class models a database table that contains part of an {@link Entity entity's} state.
  */
-public abstract class SiteTable extends SiteTableImplementation<DelegatingSiteDataServiceImplementation> {
+public abstract class SiteTable extends SiteTableImplementation<SiteModule> {
 
     /**
      * Creates a new site table with the given parameters.
@@ -21,7 +21,7 @@ public abstract class SiteTable extends SiteTableImplementation<DelegatingSiteDa
      * 
      * @require !(module instanceof Service) : "The module is not a service.";
      */
-    protected SiteTable(@Nonnull DelegatingSiteDataServiceImplementation module, @Nonnull @Validated String name, @Nonnull @Loaded SemanticType dumpType, @Nonnull @Loaded SemanticType stateType) {
+    protected SiteTable(@Nonnull SiteModule module, @Nonnull @Validated String name, @Nonnull @Loaded SemanticType dumpType, @Nonnull @Loaded SemanticType stateType) {
         super(module, name, dumpType, stateType);
     }
 

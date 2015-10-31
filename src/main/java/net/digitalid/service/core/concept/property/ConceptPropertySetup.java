@@ -87,6 +87,23 @@ public abstract class ConceptPropertySetup<V, C extends Concept<C, E, ?>, E exte
         return valueValidator;
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Concept Setup –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Stores the setup of a concept.
+     */
+    private final @Nonnull ConceptSetup<C, E, ?> conceptSetup;
+    
+    /**
+     * Returns the concept setup.
+     * 
+     * @return the concept setup.
+     */
+    @Pure
+    public @Nonnull ConceptSetup<C, E, ?> getConceptSetup() {
+        return conceptSetup;
+    }
+    
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Concept Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
@@ -122,6 +139,8 @@ public abstract class ConceptPropertySetup<V, C extends Concept<C, E, ?>, E exte
         this.valueFactories = valueFactories;
         this.requiredAuthorization = requiredAuthorization;
         this.valueValidator = valueValidator;
+        
+        this.conceptSetup = conceptSetup;
         
         this.propertyType = SemanticType.map(propertyName + conceptSetup.getConceptType().getAddress().getStringWithDot()).load(valueFactories.getEncodingFactory().getType());
     }

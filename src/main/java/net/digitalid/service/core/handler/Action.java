@@ -1,6 +1,5 @@
 package net.digitalid.service.core.handler;
 
-import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.action.synchronizer.Audit;
@@ -9,6 +8,7 @@ import net.digitalid.service.core.concepts.agent.Agent;
 import net.digitalid.service.core.concepts.agent.FreezableAgentPermissions;
 import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
 import net.digitalid.service.core.concepts.agent.Restrictions;
+import net.digitalid.service.core.dataservice.SiteModule;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.abort.AbortException;
@@ -18,6 +18,7 @@ import net.digitalid.service.core.identifier.InternalIdentifier;
 import net.digitalid.service.core.site.client.AccountOpen;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.collections.annotations.freezable.Frozen;
 import net.digitalid.utility.collections.freezable.FreezableLinkedList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.database.annotations.NonCommitting;
@@ -60,7 +61,7 @@ public abstract class Action extends Method implements Auditable {
      * @ensure hasEntity() : "This method has an entity.";
      * @ensure hasSignature() : "This handler has a signature.";
      */
-    protected Action(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) {
+    protected Action(@Nonnull Entity<?> entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient) {
         super(entity, signature, recipient);
     }
     
@@ -74,7 +75,7 @@ public abstract class Action extends Method implements Auditable {
     
     @Override
     @NonCommitting
-    public abstract @Nullable ActionReply executeOnHost() throws PacketException, SQLException;
+    public abstract @Nullable ActionReply executeOnHost() throws PacketException, AbortException;
     
     
     /**
@@ -121,12 +122,12 @@ public abstract class Action extends Method implements Auditable {
      * @return the module on which this action operates.
      */
     @Pure
-    public abstract @Nonnull StateModule getModule();
+    public abstract @Nonnull SiteModule getModule();
     
     /**
      * Stores an empty list of modules.
      */
-    private static final @Nonnull ReadOnlyList<StateModule> emptyList = new FreezableLinkedList<StateModule>().freeze();
+    private static final @Nonnull @Frozen ReadOnlyList<SiteModule> emptyList = FreezableLinkedList.getFrozen();
     
     /**
      * Returns the modules that need to be reloaded and are thus suspended.
@@ -134,7 +135,7 @@ public abstract class Action extends Method implements Auditable {
      * @return the modules that need to be reloaded and are thus suspended.
      */
     @Pure
-    public @Nonnull ReadOnlyList<StateModule> suspendModules() {
+    public @Nonnull @Frozen ReadOnlyList<SiteModule> suspendModules() {
         return emptyList;
     }
     

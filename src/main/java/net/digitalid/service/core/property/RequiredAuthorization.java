@@ -32,4 +32,12 @@ public abstract class RequiredAuthorization<C extends Concept<C, ?, ?>> {
     @Pure
     public abstract @Nonnull ReadOnlyAgentPermissions getRequiredPermissions(C concept);
     
+    /**
+     * Returns the agent that is required to execute the method.
+     * 
+     * @return the agent required to execute the method.
+     */
+    public @Nullable Agent getRequiredAgentToExecuteMethod() {
+        return null;
+    }
 }

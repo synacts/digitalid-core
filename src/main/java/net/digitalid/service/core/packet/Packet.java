@@ -145,7 +145,7 @@ public abstract class Packet {
         this.size = size;
         this.audit = audit;
         
-        final @Nonnull FreezableList<Block> signatures = new FreezableArrayList<>(size);
+        final @Nonnull FreezableList<Block> signatures = FreezableArrayList.getWithCapacity(size);
         for (int i = 0; i < size; i++) {
             final @Nullable Block block = getBlock(i);
             final @Nullable SelfcontainedWrapper content = block == null ? null : new SelfcontainedWrapper(CONTENT, block);

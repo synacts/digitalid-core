@@ -248,7 +248,6 @@ public abstract class Handler<O, E> implements Encodable<O, E> {
      * @return the type of packets that this handler handles.
      */
     @Pure
-    @Override
     public abstract @Nonnull SemanticType getType();
     
     /**
