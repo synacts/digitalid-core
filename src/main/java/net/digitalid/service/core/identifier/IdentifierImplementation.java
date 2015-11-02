@@ -281,7 +281,7 @@ public abstract class IdentifierImplementation implements Identifier {
             assert block.getType().isBasedOn(getType()) : "The block is based on the type of this factory.";
             
             final @Nonnull String string = StringWrapper.decodeNonNullable(block);
-            if (!isValid(string)) throw new InvalidEncodingException("'" + string + "' is not a valid identifier.");
+            if (!isValid(string)) { throw new InvalidEncodingException("'" + string + "' is not a valid identifier."); }
             return caster.cast(get(string));
         }
         
