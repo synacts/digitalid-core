@@ -17,12 +17,12 @@ import net.digitalid.service.core.storage.Service;
 import net.digitalid.service.core.dataservice.StateModule;
 import net.digitalid.service.core.entity.Account;
 import net.digitalid.service.core.entity.Entity;
-import net.digitalid.service.core.entity.EntityClass;
+import net.digitalid.service.core.entity.EntityImplementation;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
-import net.digitalid.service.core.identifier.IdentifierClass;
+import net.digitalid.service.core.identifier.IdentifierImplementation;
 import net.digitalid.service.core.identity.Identity;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.service.CoreService;
@@ -58,7 +58,7 @@ public final class PasswordModule implements StateModule {
     @NonCommitting
     public void createTables(@Nonnull Site site) throws AbortException {
         try (@Nonnull Statement statement = Database.createStatement()) {
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "password (entity " + EntityClass.FORMAT + " NOT NULL, password VARCHAR(50) NOT NULL COLLATE " + Database.getConfiguration().BINARY() + ", PRIMARY KEY (entity), FOREIGN KEY (entity) " + site.getEntityReference() + ")");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "password (entity " + EntityImplementation.FORMAT + " NOT NULL, password VARCHAR(50) NOT NULL COLLATE " + Database.getConfiguration().BINARY() + ", PRIMARY KEY (entity), FOREIGN KEY (entity) " + site.getEntityReference() + ")");
             Database.onInsertIgnore(statement, site + "password", "entity");
         }
     }
@@ -115,7 +115,7 @@ public final class PasswordModule implements StateModule {
             final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(block).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getNonNullableElements(2);
-                preparedStatement.setLong(1, IdentifierClass.create(elements.getNonNullable(0)).getIdentity().toInternalNonHostIdentity().getNumber());
+                preparedStatement.setLong(1, IdentifierImplementation.create(elements.getNonNullable(0)).getIdentity().toInternalNonHostIdentity().getNumber());
                 preparedStatement.setString(2, new StringWrapper(elements.getNonNullable(1)).getString());
                 preparedStatement.addBatch();
             }

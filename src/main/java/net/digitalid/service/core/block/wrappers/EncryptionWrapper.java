@@ -23,7 +23,7 @@ import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.factory.encoding.Encodable;
 import net.digitalid.service.core.factory.encoding.Encode;
 import net.digitalid.service.core.identifier.HostIdentifier;
-import net.digitalid.service.core.identifier.IdentifierClass;
+import net.digitalid.service.core.identifier.IdentifierImplementation;
 import net.digitalid.service.core.identity.HostIdentity;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
@@ -295,7 +295,7 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
             }
         } else {
             // The encryption is part of a request.
-            this.recipient = IdentifierClass.create(tuple.getNonNullableElement(1)).toHostIdentifier();
+            this.recipient = IdentifierImplementation.create(tuple.getNonNullableElement(1)).toHostIdentifier();
             if (!Server.hasHost(recipient)) throw new InvalidEncodingException(recipient + " does not run on this server.");
             if (symmetricKey != null) throw new InvalidEncodingException("A response may not include a recipient.");
             if (encryptedKey != null) {

@@ -14,7 +14,7 @@ import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.Reply;
 import net.digitalid.service.core.handler.core.CoreServiceQueryReply;
-import net.digitalid.service.core.identifier.IdentifierClass;
+import net.digitalid.service.core.identifier.IdentifierImplementation;
 import net.digitalid.service.core.identifier.InternalNonHostIdentifier;
 import net.digitalid.service.core.identity.Category;
 import net.digitalid.service.core.identity.NonHostIdentity;
@@ -97,7 +97,7 @@ public final class IdentityReply extends CoreServiceQueryReply {
         this.category = Category.get(tuple.getNonNullableElement(0));
         if (!category.isInternalNonHostIdentity()) throw new InvalidEncodingException("The category is " + category.name() + " instead of an internal non-host identity.");
         this.predecessors = new FreezablePredecessors(tuple.getNonNullableElement(1)).freeze();
-        this.successor = tuple.isElementNull(2) ? null : IdentifierClass.create(tuple.getNonNullableElement(2)).toInternalNonHostIdentifier();
+        this.successor = tuple.isElementNull(2) ? null : IdentifierImplementation.create(tuple.getNonNullableElement(2)).toInternalNonHostIdentifier();
     }
     
     @Pure

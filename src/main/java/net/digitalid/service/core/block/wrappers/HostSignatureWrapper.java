@@ -22,7 +22,7 @@ import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.factory.encoding.Encodable;
 import net.digitalid.service.core.factory.encoding.Encode;
 import net.digitalid.service.core.identifier.HostIdentifier;
-import net.digitalid.service.core.identifier.IdentifierClass;
+import net.digitalid.service.core.identifier.IdentifierImplementation;
 import net.digitalid.service.core.identifier.InternalIdentifier;
 import net.digitalid.service.core.identity.HostIdentity;
 import net.digitalid.service.core.identity.InternalIdentity;
@@ -121,7 +121,7 @@ public final class HostSignatureWrapper extends SignatureWrapper {
         
         assert hostSignature.getType().isBasedOn(SIGNATURE) : "The signature is based on the implementation type.";
         
-        this.signer = IdentifierClass.create(TupleWrapper.decode(hostSignature).getNonNullableElement(0)).toInternalIdentifier();
+        this.signer = IdentifierImplementation.create(TupleWrapper.decode(hostSignature).getNonNullableElement(0)).toInternalIdentifier();
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Utility –––––––––––––––––––––––––––––––––––––––––––––––––– */

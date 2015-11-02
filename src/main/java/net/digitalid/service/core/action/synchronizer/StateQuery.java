@@ -22,7 +22,7 @@ import net.digitalid.service.core.handler.InternalQuery;
 import net.digitalid.service.core.handler.Method;
 import net.digitalid.service.core.handler.Reply;
 import net.digitalid.service.core.identifier.HostIdentifier;
-import net.digitalid.service.core.identity.IdentityClass;
+import net.digitalid.service.core.identity.IdentityImplementation;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.service.CoreService;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -79,7 +79,7 @@ final class StateQuery extends InternalQuery {
     private StateQuery(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
         super(entity, signature, recipient);
         
-        this.module = Service.getModule(IdentityClass.create(block).toSemanticType());
+        this.module = Service.getModule(IdentityImplementation.create(block).toSemanticType());
     }
     
     @Pure

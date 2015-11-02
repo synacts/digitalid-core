@@ -25,7 +25,7 @@ import net.digitalid.utility.system.errors.ShouldNeverHappenError;
  * @see MobileIdentifier
  */
 @Immutable
-public abstract class ExternalIdentifier extends IdentifierClass implements NonHostIdentifier {
+public abstract class ExternalIdentifier extends IdentifierImplementation implements NonHostIdentifier {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Validity –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -38,7 +38,7 @@ public abstract class ExternalIdentifier extends IdentifierClass implements NonH
      */
     @Pure
     static boolean isConforming(@Nonnull String string) {
-        return IdentifierClass.isConforming(string) && string.contains(":");
+        return IdentifierImplementation.isConforming(string) && string.contains(":");
     }
     
     /**

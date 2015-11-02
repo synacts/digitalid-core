@@ -12,7 +12,7 @@ import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identity.Identity;
-import net.digitalid.service.core.identity.IdentityClass;
+import net.digitalid.service.core.identity.IdentityImplementation;
 import net.digitalid.service.core.identity.InternalNonHostIdentity;
 import net.digitalid.service.core.identity.InternalPerson;
 import net.digitalid.service.core.identity.SemanticType;
@@ -41,7 +41,7 @@ public final class RoleModule {
     @NonCommitting
     public static void createTable(@Nonnull Client client) throws AbortException {
         try (@Nonnull Statement statement = Database.createStatement()) {
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + client + "role (role " + Database.getConfiguration().PRIMARY_KEY() + ", issuer " + Mapper.FORMAT + " NOT NULL, relation " + Mapper.FORMAT + ", recipient " + EntityClass.FORMAT + ", agent " + Agent.FORMAT + " NOT NULL, FOREIGN KEY (issuer) " + Mapper.REFERENCE + ", FOREIGN KEY (relation) " + Mapper.REFERENCE + ", FOREIGN KEY (recipient) " + client.getEntityReference() + ")");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + client + "role (role " + Database.getConfiguration().PRIMARY_KEY() + ", issuer " + Mapper.FORMAT + " NOT NULL, relation " + Mapper.FORMAT + ", recipient " + EntityImplementation.FORMAT + ", agent " + Agent.FORMAT + " NOT NULL, FOREIGN KEY (issuer) " + Mapper.REFERENCE + ", FOREIGN KEY (relation) " + Mapper.REFERENCE + ", FOREIGN KEY (recipient) " + client.getEntityReference() + ")");
             Mapper.addReference(client + "role", "issuer");
         }
     }
@@ -100,8 +100,8 @@ public final class RoleModule {
         final @Nonnull String SQL = "SELECT issuer, relation, recipient, agent FROM " + client + "role WHERE role = " + number;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
             if (resultSet.next()) {
-                final @Nonnull InternalNonHostIdentity issuer = IdentityClass.getNotNull(resultSet, 1).toInternalNonHostIdentity();
-                final @Nullable Identity identity = IdentityClass.get(resultSet, 2);
+                final @Nonnull InternalNonHostIdentity issuer = IdentityImplementation.getNotNull(resultSet, 1).toInternalNonHostIdentity();
+                final @Nullable Identity identity = IdentityImplementation.get(resultSet, 2);
                 final @Nullable SemanticType relation = identity != null ? identity.toSemanticType().checkIsRoleType() : null;
                 final @Nullable Role recipient = Role.get(client, resultSet, 3);
                 final long agentNumber = resultSet.getLong(4);
@@ -144,8 +144,8 @@ public final class RoleModule {
             final @Nonnull FreezableList<NonNativeRole> roles = new FreezableLinkedList<>();
             while (resultSet.next()) {
                 final long number = resultSet.getLong(1);
-                final @Nonnull InternalNonHostIdentity issuer = IdentityClass.getNotNull(resultSet, 2).toInternalNonHostIdentity();
-                final @Nonnull SemanticType relation = IdentityClass.getNotNull(resultSet, 3).toSemanticType();
+                final @Nonnull InternalNonHostIdentity issuer = IdentityImplementation.getNotNull(resultSet, 2).toInternalNonHostIdentity();
+                final @Nonnull SemanticType relation = IdentityImplementation.getNotNull(resultSet, 3).toSemanticType();
                 final long agentNumber = resultSet.getLong(4);
                 roles.add(NonNativeRole.get(client, number, issuer, relation, role, agentNumber));
             }
@@ -174,7 +174,7 @@ public final class RoleModule {
             final @Nonnull FreezableList<NativeRole> roles = new FreezableLinkedList<>();
             while (resultSet.next()) {
                 final long number = resultSet.getLong(1);
-                final @Nonnull InternalNonHostIdentity issuer = IdentityClass.getNotNull(resultSet, 2).toInternalNonHostIdentity();
+                final @Nonnull InternalNonHostIdentity issuer = IdentityImplementation.getNotNull(resultSet, 2).toInternalNonHostIdentity();
                 final long agentNumber = resultSet.getLong(3);
                 roles.add(NativeRole.get(client, number, issuer, agentNumber));
             }
@@ -201,7 +201,7 @@ public final class RoleModule {
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
             if (resultSet.next()) {
                 final long number = resultSet.getLong(1);
-                final @Nullable Identity identity = IdentityClass.get(resultSet, 2);
+                final @Nullable Identity identity = IdentityImplementation.get(resultSet, 2);
                 final @Nullable SemanticType relation = identity != null ? identity.toSemanticType().checkIsRoleType() : null;
                 final @Nullable Role recipient = Role.get(client, resultSet, 3);
                 final long agentNumber = resultSet.getLong(4);

@@ -17,14 +17,14 @@ import net.digitalid.service.core.concepts.agent.Restrictions;
 import net.digitalid.service.core.storage.Service;
 import net.digitalid.service.core.dataservice.StateModule;
 import net.digitalid.service.core.entity.Entity;
-import net.digitalid.service.core.entity.EntityClass;
+import net.digitalid.service.core.entity.EntityImplementation;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.expression.PassiveExpression;
 import net.digitalid.service.core.identity.Identity;
-import net.digitalid.service.core.identity.IdentityClass;
+import net.digitalid.service.core.identity.IdentityImplementation;
 import net.digitalid.service.core.identity.InternalPerson;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.resolution.Mapper;
@@ -69,8 +69,8 @@ public final class AttributeModule implements StateModule {
     @NonCommitting
     public void createTables(@Nonnull Site site) throws AbortException {
         try (@Nonnull Statement statement = Database.createStatement()) {
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "attribute_value (entity " + EntityClass.FORMAT + " NOT NULL, type " + Mapper.FORMAT + " NOT NULL, published BOOLEAN NOT NULL, value " + AttributeValue.FORMAT + " NOT NULL, PRIMARY KEY (entity, type, published), FOREIGN KEY (entity) " + site.getEntityReference() + ", FOREIGN KEY (type) " + Mapper.REFERENCE + ")");
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "attribute_visibility (entity " + EntityClass.FORMAT + " NOT NULL, type " + Mapper.FORMAT + " NOT NULL, visibility " + PassiveExpression.FORMAT + ", PRIMARY KEY (entity, type), FOREIGN KEY (entity) " + site.getEntityReference() + ", FOREIGN KEY (type) " + Mapper.REFERENCE + ")");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "attribute_value (entity " + EntityImplementation.FORMAT + " NOT NULL, type " + Mapper.FORMAT + " NOT NULL, published BOOLEAN NOT NULL, value " + AttributeValue.FORMAT + " NOT NULL, PRIMARY KEY (entity, type, published), FOREIGN KEY (entity) " + site.getEntityReference() + ", FOREIGN KEY (type) " + Mapper.REFERENCE + ")");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "attribute_visibility (entity " + EntityImplementation.FORMAT + " NOT NULL, type " + Mapper.FORMAT + " NOT NULL, visibility " + PassiveExpression.FORMAT + ", PRIMARY KEY (entity, type), FOREIGN KEY (entity) " + site.getEntityReference() + ", FOREIGN KEY (type) " + Mapper.REFERENCE + ")");
         }
     }
     
@@ -128,8 +128,8 @@ public final class AttributeModule implements StateModule {
             try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT entity, type, published, value FROM " + host + "attribute_value")) {
                 final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<>();
                 while (resultSet.next()) {
-                    final @Nonnull Identity identity = IdentityClass.getNotNull(resultSet, 1);
-                    final @Nonnull Identity type = IdentityClass.getNotNull(resultSet, 2);
+                    final @Nonnull Identity identity = IdentityImplementation.getNotNull(resultSet, 1);
+                    final @Nonnull Identity type = IdentityImplementation.getNotNull(resultSet, 2);
                     final boolean published = resultSet.getBoolean(3);
                     final @Nonnull Block value = Block.getNotNull(AttributeValue.TYPE, resultSet, 4);
                     entries.add(new TupleWrapper(VALUE_MODULE_ENTRY, identity, type.toBlockable(SemanticType.ATTRIBUTE_IDENTIFIER), new BooleanWrapper(Attribute.PUBLISHED, published), value.toBlockable()).toBlock());
@@ -140,8 +140,8 @@ public final class AttributeModule implements StateModule {
             try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT entity, type, visibility FROM " + host + "attribute_visibility")) {
                 final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<>();
                 while (resultSet.next()) {
-                    final @Nonnull Identity identity = IdentityClass.getNotNull(resultSet, 1);
-                    final @Nonnull Identity type = IdentityClass.getNotNull(resultSet, 2);
+                    final @Nonnull Identity identity = IdentityImplementation.getNotNull(resultSet, 1);
+                    final @Nonnull Identity type = IdentityImplementation.getNotNull(resultSet, 2);
                     final @Nonnull String visibility = resultSet.getString(3);
                     entries.add(new TupleWrapper(VISIBILITY_MODULE_ENTRY, identity, type.toBlockable(SemanticType.ATTRIBUTE_IDENTIFIER), new StringWrapper(PassiveExpression.TYPE, visibility)).toBlock());
                 }
@@ -164,8 +164,8 @@ public final class AttributeModule implements StateModule {
             final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNonNullable(0)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getNonNullableElements(4);
-                IdentityClass.create(elements.getNonNullable(0)).toInternalIdentity().set(preparedStatement, 1);
-                IdentityClass.create(elements.getNonNullable(1)).toSemanticType().checkIsAttributeType().set(preparedStatement, 2);
+                IdentityImplementation.create(elements.getNonNullable(0)).toInternalIdentity().set(preparedStatement, 1);
+                IdentityImplementation.create(elements.getNonNullable(1)).toSemanticType().checkIsAttributeType().set(preparedStatement, 2);
                 preparedStatement.setBoolean(3, new BooleanWrapper(elements.getNonNullable(2)).getValue());
                 elements.getNonNullable(3).set(preparedStatement, 4);
                 preparedStatement.addBatch();
@@ -177,8 +177,8 @@ public final class AttributeModule implements StateModule {
             final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNonNullable(1)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getNonNullableElements(3);
-                IdentityClass.create(elements.getNonNullable(0)).toInternalIdentity().set(preparedStatement, 1);
-                IdentityClass.create(elements.getNonNullable(1)).toSemanticType().checkIsAttributeType().set(preparedStatement, 2);
+                IdentityImplementation.create(elements.getNonNullable(0)).toInternalIdentity().set(preparedStatement, 1);
+                IdentityImplementation.create(elements.getNonNullable(1)).toSemanticType().checkIsAttributeType().set(preparedStatement, 2);
                 preparedStatement.setString(2, new StringWrapper(elements.getNonNullable(2)).getString());
                 preparedStatement.addBatch();
             }
@@ -232,7 +232,7 @@ public final class AttributeModule implements StateModule {
             try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT type, published, value FROM " + site + "attribute_value WHERE entity = " + entity + permissions.allTypesToString())) {
                 final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<>();
                 while (resultSet.next()) {
-                    final @Nonnull Identity type = IdentityClass.getNotNull(resultSet, 1);
+                    final @Nonnull Identity type = IdentityImplementation.getNotNull(resultSet, 1);
                     final boolean published = resultSet.getBoolean(2);
                     final @Nonnull Block value = Block.getNotNull(AttributeValue.TYPE, resultSet, 3);
                     entries.add(new TupleWrapper(VALUE_STATE_ENTRY, type.toBlockable(SemanticType.ATTRIBUTE_IDENTIFIER), new BooleanWrapper(Attribute.PUBLISHED, published), value.toBlockable()).toBlock());
@@ -243,7 +243,7 @@ public final class AttributeModule implements StateModule {
             try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT type, visibility FROM " + site + "attribute_visibility WHERE entity = " + entity + permissions.writeTypesToString())) {
                 final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<>();
                 while (resultSet.next()) {
-                    final @Nonnull Identity type = IdentityClass.getNotNull(resultSet, 1);
+                    final @Nonnull Identity type = IdentityImplementation.getNotNull(resultSet, 1);
                     final @Nonnull String visibility = resultSet.getString(2);
                     entries.add(new TupleWrapper(VISIBILITY_STATE_ENTRY, type.toBlockable(SemanticType.ATTRIBUTE_IDENTIFIER), new StringWrapper(PassiveExpression.TYPE, visibility)).toBlock());
                 }
@@ -273,7 +273,7 @@ public final class AttributeModule implements StateModule {
             final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNonNullable(0)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getNonNullableElements(3);
-                IdentityClass.create(elements.getNonNullable(0)).toSemanticType().checkIsAttributeFor(entity).set(preparedStatement, 2);
+                IdentityImplementation.create(elements.getNonNullable(0)).toSemanticType().checkIsAttributeFor(entity).set(preparedStatement, 2);
                 preparedStatement.setBoolean(3, new BooleanWrapper(elements.getNonNullable(1)).getValue());
                 elements.getNonNullable(2).set(preparedStatement, 4);
                 preparedStatement.addBatch();
@@ -286,7 +286,7 @@ public final class AttributeModule implements StateModule {
             final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNonNullable(1)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getNonNullableElements(2);
-                IdentityClass.create(elements.getNonNullable(0)).toSemanticType().checkIsAttributeFor(entity).set(preparedStatement, 2);
+                IdentityImplementation.create(elements.getNonNullable(0)).toSemanticType().checkIsAttributeFor(entity).set(preparedStatement, 2);
                 preparedStatement.setString(3, new StringWrapper(elements.getNonNullable(1)).getString());
                 preparedStatement.addBatch();
             }
@@ -328,7 +328,7 @@ public final class AttributeModule implements StateModule {
         final @Nonnull String SQL = "SELECT DISTINCT type FROM " + entity.getSite() + "attribute_value WHERE entity = " + entity;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
             final @Nonnull FreezableSet<Attribute> attributes = new FreezableLinkedHashSet<>();
-            while (resultSet.next()) attributes.add(Attribute.get(entity, IdentityClass.getNotNull(resultSet, 1).toSemanticType().checkIsAttributeFor(entity)));
+            while (resultSet.next()) attributes.add(Attribute.get(entity, IdentityImplementation.getNotNull(resultSet, 1).toSemanticType().checkIsAttributeFor(entity)));
             return attributes;
         } catch (@Nonnull InvalidEncodingException exception) {
             throw new SQLException("Some values returned by the database are invalid.", exception);

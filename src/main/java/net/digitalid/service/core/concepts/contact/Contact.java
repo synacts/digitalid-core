@@ -17,10 +17,10 @@ import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
-import net.digitalid.service.core.identifier.IdentifierClass;
+import net.digitalid.service.core.identifier.IdentifierImplementation;
 import net.digitalid.service.core.identity.ExternalPerson;
 import net.digitalid.service.core.identity.Identity;
-import net.digitalid.service.core.identity.IdentityClass;
+import net.digitalid.service.core.identity.IdentityImplementation;
 import net.digitalid.service.core.identity.InternalPerson;
 import net.digitalid.service.core.identity.Person;
 import net.digitalid.service.core.identity.SemanticType;
@@ -210,7 +210,7 @@ public final class Contact extends NonHostConcept implements Blockable, SQLizabl
     public static @Nonnull Contact get(@Nonnull NonHostEntity entity, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
-        return get(entity, IdentifierClass.create(block).getIdentity().toPerson());
+        return get(entity, IdentifierImplementation.create(block).getIdentity().toPerson());
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– SQLizable –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -237,7 +237,7 @@ public final class Contact extends NonHostConcept implements Blockable, SQLizabl
     @Pure
     @NonCommitting
     public static @Nullable Contact get(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int columnIndex) throws AbortException {
-        final @Nullable Identity identity = IdentityClass.get(resultSet, columnIndex);
+        final @Nullable Identity identity = IdentityImplementation.get(resultSet, columnIndex);
         if (identity == null) return null;
         if (identity instanceof Person) return get(entity, (Person) identity);
         else throw new SQLException("A non-person was stored as a contact.");
@@ -255,7 +255,7 @@ public final class Contact extends NonHostConcept implements Blockable, SQLizabl
     @Pure
     @NonCommitting
     public static @Nonnull Contact getNotNull(@Nonnull NonHostEntity entity, @Nonnull ResultSet resultSet, int columnIndex) throws AbortException {
-        final @Nonnull Identity identity = IdentityClass.getNotNull(resultSet, columnIndex);
+        final @Nonnull Identity identity = IdentityImplementation.getNotNull(resultSet, columnIndex);
         if (identity instanceof Person) return get(entity, (Person) identity);
         else throw new SQLException("A non-person was stored as a contact.");
     }

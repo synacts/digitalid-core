@@ -18,7 +18,7 @@ import net.digitalid.service.core.concepts.contact.Context;
 import net.digitalid.service.core.concepts.contact.ContextModule;
 import net.digitalid.service.core.storage.Service;
 import net.digitalid.service.core.dataservice.StateModule;
-import net.digitalid.service.core.entity.EntityClass;
+import net.digitalid.service.core.entity.EntityImplementation;
 import net.digitalid.service.core.entity.NonHostAccount;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.entity.NonNativeRole;
@@ -28,7 +28,7 @@ import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identity.Identity;
-import net.digitalid.service.core.identity.IdentityClass;
+import net.digitalid.service.core.identity.IdentityImplementation;
 import net.digitalid.service.core.identity.InternalNonHostIdentity;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.resolution.Mapper;
@@ -81,7 +81,7 @@ public final class AgentModule implements StateModule {
     @NonCommitting
     public static void createReferenceTable(@Nonnull Site site) throws AbortException {
         try (@Nonnull Statement statement = Database.createStatement()) {
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "agent (entity " + EntityClass.FORMAT + " NOT NULL, agent " + Agent.FORMAT + " NOT NULL, client BOOLEAN NOT NULL, removed BOOLEAN NOT NULL, PRIMARY KEY (entity, agent), FOREIGN KEY (entity) " + site.getEntityReference() + ")");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "agent (entity " + EntityImplementation.FORMAT + " NOT NULL, agent " + Agent.FORMAT + " NOT NULL, client BOOLEAN NOT NULL, removed BOOLEAN NOT NULL, PRIMARY KEY (entity, agent), FOREIGN KEY (entity) " + site.getEntityReference() + ")");
         }
     }
     
@@ -89,16 +89,16 @@ public final class AgentModule implements StateModule {
     @NonCommitting
     public void createTables(@Nonnull Site site) throws AbortException {
         try (@Nonnull Statement statement = Database.createStatement()) {
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "agent_permission (entity " + EntityClass.FORMAT + " NOT NULL, agent " + Agent.FORMAT + " NOT NULL, " + FreezableAgentPermissions.FORMAT_NOT_NULL + ", PRIMARY KEY (entity, agent, type), FOREIGN KEY (entity, agent) " + Agent.getReference(site) + ", " + FreezableAgentPermissions.REFERENCE + ")");
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "agent_permission_order (entity " + EntityClass.FORMAT + " NOT NULL, stronger " + Agent.FORMAT + " NOT NULL, weaker " + Agent.FORMAT + " NOT NULL, PRIMARY KEY (entity, stronger, weaker), FOREIGN KEY (entity, stronger) " + Agent.getReference(site) + ", FOREIGN KEY (entity, weaker) " + Agent.getReference(site) + ")");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "agent_permission (entity " + EntityImplementation.FORMAT + " NOT NULL, agent " + Agent.FORMAT + " NOT NULL, " + FreezableAgentPermissions.FORMAT_NOT_NULL + ", PRIMARY KEY (entity, agent, type), FOREIGN KEY (entity, agent) " + Agent.getReference(site) + ", " + FreezableAgentPermissions.REFERENCE + ")");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "agent_permission_order (entity " + EntityImplementation.FORMAT + " NOT NULL, stronger " + Agent.FORMAT + " NOT NULL, weaker " + Agent.FORMAT + " NOT NULL, PRIMARY KEY (entity, stronger, weaker), FOREIGN KEY (entity, stronger) " + Agent.getReference(site) + ", FOREIGN KEY (entity, weaker) " + Agent.getReference(site) + ")");
             
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "agent_restrictions (entity " + EntityClass.FORMAT + " NOT NULL, agent " + Agent.FORMAT + " NOT NULL, " + Restrictions.FORMAT + ", PRIMARY KEY (entity, agent), FOREIGN KEY (entity, agent) " + Agent.getReference(site) + ", " + Restrictions.getForeignKeys(site) + ")");
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "agent_restrictions_ord (entity " + EntityClass.FORMAT + " NOT NULL, stronger " + Agent.FORMAT + " NOT NULL, weaker " + Agent.FORMAT + " NOT NULL, PRIMARY KEY (entity, stronger, weaker), FOREIGN KEY (entity, stronger) " + Agent.getReference(site) + ", FOREIGN KEY (entity, weaker) " + Agent.getReference(site) + ")");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "agent_restrictions (entity " + EntityImplementation.FORMAT + " NOT NULL, agent " + Agent.FORMAT + " NOT NULL, " + Restrictions.FORMAT + ", PRIMARY KEY (entity, agent), FOREIGN KEY (entity, agent) " + Agent.getReference(site) + ", " + Restrictions.getForeignKeys(site) + ")");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "agent_restrictions_ord (entity " + EntityImplementation.FORMAT + " NOT NULL, stronger " + Agent.FORMAT + " NOT NULL, weaker " + Agent.FORMAT + " NOT NULL, PRIMARY KEY (entity, stronger, weaker), FOREIGN KEY (entity, stronger) " + Agent.getReference(site) + ", FOREIGN KEY (entity, weaker) " + Agent.getReference(site) + ")");
             Mapper.addReference(site + "agent_restrictions", "contact"); // TODO: The column 'contact' does not belong to a unique key constraint. Remove this line?
             
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "client_agent (entity " + EntityClass.FORMAT + " NOT NULL, agent " + Agent.FORMAT + " NOT NULL, " + Commitment.FORMAT + ", name VARCHAR(50) NOT NULL COLLATE " + Database.getConfiguration().BINARY() + ", PRIMARY KEY (entity, agent), FOREIGN KEY (entity, agent) " + Agent.getReference(site) + ", " + Commitment.REFERENCE + ")");
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "outgoing_role (entity " + EntityClass.FORMAT + " NOT NULL, agent " + Agent.FORMAT + " NOT NULL, relation " + Mapper.FORMAT + " NOT NULL, context " + Context.FORMAT + " NOT NULL, PRIMARY KEY (entity, agent), FOREIGN KEY (entity, agent) " + Agent.getReference(site) + ", FOREIGN KEY (relation) " + Mapper.REFERENCE + ", FOREIGN KEY (entity, context) " + Context.getReference(site) + ")");
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "incoming_role (entity " + EntityClass.FORMAT + " NOT NULL, issuer " + Mapper.FORMAT + " NOT NULL, relation " + Mapper.FORMAT + " NOT NULL, agent " + Agent.FORMAT + " NOT NULL, PRIMARY KEY (entity, issuer, relation), FOREIGN KEY (entity) " + site.getEntityReference() + ", FOREIGN KEY (issuer) " + Mapper.REFERENCE + ", FOREIGN KEY (relation) " + Mapper.REFERENCE + ")");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "client_agent (entity " + EntityImplementation.FORMAT + " NOT NULL, agent " + Agent.FORMAT + " NOT NULL, " + Commitment.FORMAT + ", name VARCHAR(50) NOT NULL COLLATE " + Database.getConfiguration().BINARY() + ", PRIMARY KEY (entity, agent), FOREIGN KEY (entity, agent) " + Agent.getReference(site) + ", " + Commitment.REFERENCE + ")");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "outgoing_role (entity " + EntityImplementation.FORMAT + " NOT NULL, agent " + Agent.FORMAT + " NOT NULL, relation " + Mapper.FORMAT + " NOT NULL, context " + Context.FORMAT + " NOT NULL, PRIMARY KEY (entity, agent), FOREIGN KEY (entity, agent) " + Agent.getReference(site) + ", FOREIGN KEY (relation) " + Mapper.REFERENCE + ", FOREIGN KEY (entity, context) " + Context.getReference(site) + ")");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "incoming_role (entity " + EntityImplementation.FORMAT + " NOT NULL, issuer " + Mapper.FORMAT + " NOT NULL, relation " + Mapper.FORMAT + " NOT NULL, agent " + Agent.FORMAT + " NOT NULL, PRIMARY KEY (entity, issuer, relation), FOREIGN KEY (entity) " + site.getEntityReference() + ", FOREIGN KEY (issuer) " + Mapper.REFERENCE + ", FOREIGN KEY (relation) " + Mapper.REFERENCE + ")");
             Mapper.addReference(site + "incoming_role", "issuer", "entity", "issuer", "relation");
         }
     }
@@ -254,7 +254,7 @@ public final class AgentModule implements StateModule {
             try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT entity, agent, client, removed FROM " + host + "agent")) {
                 final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<>();
                 while (resultSet.next()) {
-                    final @Nonnull Identity identity = IdentityClass.getNotNull(resultSet, 1);
+                    final @Nonnull Identity identity = IdentityImplementation.getNotNull(resultSet, 1);
                     final long number = resultSet.getLong(2);
                     final boolean client = resultSet.getBoolean(3);
                     final boolean removed = resultSet.getBoolean(4);
@@ -266,7 +266,7 @@ public final class AgentModule implements StateModule {
             try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT entity, agent, " + FreezableAgentPermissions.COLUMNS + " FROM " + host + "agent_permission")) {
                 final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<>();
                 while (resultSet.next()) {
-                    final @Nonnull Identity identity = IdentityClass.getNotNull(resultSet, 1);
+                    final @Nonnull Identity identity = IdentityImplementation.getNotNull(resultSet, 1);
                     final long number = resultSet.getLong(2);
                     final @Nonnull FreezableAgentPermissions permissions = FreezableAgentPermissions.getEmptyOrSingle(resultSet, 3);
                     entries.add(new TupleWrapper(AGENT_PERMISSION_MODULE_ENTRY, identity, new Int64Wrapper(Agent.NUMBER, number), permissions).toBlock());
@@ -277,7 +277,7 @@ public final class AgentModule implements StateModule {
             try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT entity, stronger, weaker FROM " + host + "agent_permission_order")) {
                 final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<>();
                 while (resultSet.next()) {
-                    final @Nonnull Identity identity = IdentityClass.getNotNull(resultSet, 1);
+                    final @Nonnull Identity identity = IdentityImplementation.getNotNull(resultSet, 1);
                     final long stronger = resultSet.getLong(2);
                     final long weaker = resultSet.getLong(3);
                     entries.add(new TupleWrapper(AGENT_PERMISSION_ORDER_MODULE_ENTRY, identity, new Int64Wrapper(AGENT_PERMISSION_ORDER_STRONGER, stronger), new Int64Wrapper(AGENT_PERMISSION_ORDER_WEAKER, weaker)).toBlock());
@@ -299,7 +299,7 @@ public final class AgentModule implements StateModule {
             try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT entity, stronger, weaker FROM " + host + "agent_restrictions_ord")) {
                 final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<>();
                 while (resultSet.next()) {
-                    final @Nonnull Identity identity = IdentityClass.getNotNull(resultSet, 1);
+                    final @Nonnull Identity identity = IdentityImplementation.getNotNull(resultSet, 1);
                     final long stronger = resultSet.getLong(2);
                     final long weaker = resultSet.getLong(3);
                     entries.add(new TupleWrapper(AGENT_RESTRICTIONS_ORDER_MODULE_ENTRY, identity, new Int64Wrapper(AGENT_RESTRICTIONS_ORDER_STRONGER, stronger), new Int64Wrapper(AGENT_RESTRICTIONS_ORDER_WEAKER, weaker)).toBlock());
@@ -310,7 +310,7 @@ public final class AgentModule implements StateModule {
             try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT entity, agent, " + Commitment.COLUMNS + ", name FROM " + host + "client")) {
                 final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<>();
                 while (resultSet.next()) {
-                    final @Nonnull Identity identity = IdentityClass.getNotNull(resultSet, 1);
+                    final @Nonnull Identity identity = IdentityImplementation.getNotNull(resultSet, 1);
                     final long number = resultSet.getLong(2);
                     final @Nonnull Commitment commitment = Commitment.get(resultSet, 3);
                     final @Nonnull String name = resultSet.getString(6);
@@ -324,7 +324,7 @@ public final class AgentModule implements StateModule {
                 while (resultSet.next()) {
                     final @Nonnull NonHostAccount account = NonHostAccount.getNotNull(host, resultSet, 1);
                     final long number = resultSet.getLong(2);
-                    final @Nonnull Identity relation = IdentityClass.getNotNull(resultSet, 3);
+                    final @Nonnull Identity relation = IdentityImplementation.getNotNull(resultSet, 3);
                     final @Nonnull Context context = Context.getNotNull(account, resultSet, 4);
                     entries.add(new TupleWrapper(OUTGOING_ROLE_MODULE_ENTRY, account.getIdentity(), new Int64Wrapper(Agent.NUMBER, number), relation.toBlockable(Role.RELATION), context).toBlock());
                 }
@@ -334,9 +334,9 @@ public final class AgentModule implements StateModule {
             try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT entity, issuer, relation, agent FROM " + host + "incoming_role")) {
                 final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<>();
                 while (resultSet.next()) {
-                    final @Nonnull Identity identity = IdentityClass.getNotNull(resultSet, 1);
-                    final @Nonnull Identity issuer = IdentityClass.getNotNull(resultSet, 2);
-                    final @Nonnull Identity relation = IdentityClass.getNotNull(resultSet, 3);
+                    final @Nonnull Identity identity = IdentityImplementation.getNotNull(resultSet, 1);
+                    final @Nonnull Identity issuer = IdentityImplementation.getNotNull(resultSet, 2);
+                    final @Nonnull Identity relation = IdentityImplementation.getNotNull(resultSet, 3);
                     final long number = resultSet.getLong(4);
                     entries.add(new TupleWrapper(INCOMING_ROLE_MODULE_ENTRY, identity, issuer.toBlockable(Role.ISSUER), relation.toBlockable(Role.RELATION), new Int64Wrapper(Role.AGENT, number)).toBlock());
                 }
@@ -359,7 +359,7 @@ public final class AgentModule implements StateModule {
             final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNonNullable(0)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getNonNullableElements(4);
-                IdentityClass.create(elements.getNonNullable(0)).toInternalNonHostIdentity().set(preparedStatement, 1);
+                IdentityImplementation.create(elements.getNonNullable(0)).toInternalNonHostIdentity().set(preparedStatement, 1);
                 preparedStatement.setLong(2, new Int64Wrapper(elements.getNonNullable(1)).getValue());
                 preparedStatement.setBoolean(3, new BooleanWrapper(elements.getNonNullable(2)).getValue());
                 preparedStatement.setBoolean(4, new BooleanWrapper(elements.getNonNullable(3)).getValue());
@@ -372,7 +372,7 @@ public final class AgentModule implements StateModule {
             final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNonNullable(1)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getNonNullableElements(3);
-                IdentityClass.create(elements.getNonNullable(0)).toInternalNonHostIdentity().set(preparedStatement, 1);
+                IdentityImplementation.create(elements.getNonNullable(0)).toInternalNonHostIdentity().set(preparedStatement, 1);
                 preparedStatement.setLong(2, new Int64Wrapper(elements.getNonNullable(1)).getValue());
                 new FreezableAgentPermissions(elements.getNonNullable(2)).checkIsSingle().setEmptyOrSingle(preparedStatement, 3);
                 preparedStatement.addBatch();
@@ -384,7 +384,7 @@ public final class AgentModule implements StateModule {
             final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNonNullable(2)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getNonNullableElements(3);
-                IdentityClass.create(elements.getNonNullable(0)).toInternalNonHostIdentity().set(preparedStatement, 1);
+                IdentityImplementation.create(elements.getNonNullable(0)).toInternalNonHostIdentity().set(preparedStatement, 1);
                 preparedStatement.setLong(2, new Int64Wrapper(elements.getNonNullable(1)).getValue());
                 preparedStatement.setLong(3, new Int64Wrapper(elements.getNonNullable(2)).getValue());
                 preparedStatement.addBatch();
@@ -396,7 +396,7 @@ public final class AgentModule implements StateModule {
             final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNonNullable(3)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getNonNullableElements(3);
-                final @Nonnull InternalNonHostIdentity identity = IdentityClass.create(elements.getNonNullable(0)).toInternalNonHostIdentity();
+                final @Nonnull InternalNonHostIdentity identity = IdentityImplementation.create(elements.getNonNullable(0)).toInternalNonHostIdentity();
                 identity.set(preparedStatement, 1);
                 preparedStatement.setLong(2, new Int64Wrapper(elements.getNonNullable(1)).getValue());
                 new Restrictions(NonHostAccount.get(host, identity), elements.getNonNullable(2)).set(preparedStatement, 3);
@@ -409,7 +409,7 @@ public final class AgentModule implements StateModule {
             final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNonNullable(4)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getNonNullableElements(3);
-                IdentityClass.create(elements.getNonNullable(0)).toInternalNonHostIdentity().set(preparedStatement, 1);
+                IdentityImplementation.create(elements.getNonNullable(0)).toInternalNonHostIdentity().set(preparedStatement, 1);
                 preparedStatement.setLong(2, new Int64Wrapper(elements.getNonNullable(1)).getValue());
                 preparedStatement.setLong(3, new Int64Wrapper(elements.getNonNullable(2)).getValue());
                 preparedStatement.addBatch();
@@ -421,7 +421,7 @@ public final class AgentModule implements StateModule {
             final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNonNullable(5)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getNonNullableElements(4);
-                IdentityClass.create(elements.getNonNullable(0)).toInternalNonHostIdentity().set(preparedStatement, 1);
+                IdentityImplementation.create(elements.getNonNullable(0)).toInternalNonHostIdentity().set(preparedStatement, 1);
                 preparedStatement.setLong(2, new Int64Wrapper(elements.getNonNullable(1)).getValue());
                 new Commitment(elements.getNonNullable(2)).set(preparedStatement, 3);
                 preparedStatement.setString(6, new StringWrapper(elements.getNonNullable(3)).getString());
@@ -434,10 +434,10 @@ public final class AgentModule implements StateModule {
             final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNonNullable(6)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getNonNullableElements(4);
-                final @Nonnull InternalNonHostIdentity identity = IdentityClass.create(elements.getNonNullable(0)).toInternalNonHostIdentity();
+                final @Nonnull InternalNonHostIdentity identity = IdentityImplementation.create(elements.getNonNullable(0)).toInternalNonHostIdentity();
                 identity.set(preparedStatement, 1);
                 preparedStatement.setLong(2, new Int64Wrapper(elements.getNonNullable(1)).getValue());
-                IdentityClass.create(elements.getNonNullable(2)).toSemanticType().checkIsRoleType().set(preparedStatement, 3);
+                IdentityImplementation.create(elements.getNonNullable(2)).toSemanticType().checkIsRoleType().set(preparedStatement, 3);
                 Context.get(NonHostAccount.get(host, identity), elements.getNonNullable(3)).set(preparedStatement, 4);
                 preparedStatement.addBatch();
             }
@@ -448,9 +448,9 @@ public final class AgentModule implements StateModule {
             final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNonNullable(7)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getNonNullableElements(4);
-                IdentityClass.create(elements.getNonNullable(0)).toInternalNonHostIdentity().set(preparedStatement, 1);
-                IdentityClass.create(elements.getNonNullable(1)).toInternalNonHostIdentity().set(preparedStatement, 2);
-                IdentityClass.create(elements.getNonNullable(2)).toSemanticType().checkIsRoleType().set(preparedStatement, 3);
+                IdentityImplementation.create(elements.getNonNullable(0)).toInternalNonHostIdentity().set(preparedStatement, 1);
+                IdentityImplementation.create(elements.getNonNullable(1)).toInternalNonHostIdentity().set(preparedStatement, 2);
+                IdentityImplementation.create(elements.getNonNullable(2)).toSemanticType().checkIsRoleType().set(preparedStatement, 3);
                 preparedStatement.setLong(4, new Int64Wrapper(elements.getNonNullable(3)).getValue());
                 preparedStatement.addBatch();
             }
@@ -588,7 +588,7 @@ public final class AgentModule implements StateModule {
                 final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<>();
                 while (resultSet.next()) {
                     final long number = resultSet.getLong(1);
-                    final @Nonnull Identity relation = IdentityClass.getNotNull(resultSet, 2);
+                    final @Nonnull Identity relation = IdentityImplementation.getNotNull(resultSet, 2);
                     final @Nonnull Context context = Context.getNotNull(entity, resultSet, 3);
                     entries.add(new TupleWrapper(OUTGOING_ROLE_STATE_ENTRY, new Int64Wrapper(Agent.NUMBER, number), relation.toBlockable(Role.RELATION), context).toBlock());
                 }
@@ -598,8 +598,8 @@ public final class AgentModule implements StateModule {
             try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT issuer, relation, agent FROM " + site + "incoming_role WHERE entity = " + entity + " AND " + restrictions.isRole())) {
                 final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<>();
                 while (resultSet.next()) {
-                    final @Nonnull Identity issuer = IdentityClass.getNotNull(resultSet, 1);
-                    final @Nonnull Identity relation = IdentityClass.getNotNull(resultSet, 2);
+                    final @Nonnull Identity issuer = IdentityImplementation.getNotNull(resultSet, 1);
+                    final @Nonnull Identity relation = IdentityImplementation.getNotNull(resultSet, 2);
                     final long number = resultSet.getLong(3);
                     entries.add(new TupleWrapper(INCOMING_ROLE_STATE_ENTRY, issuer.toBlockable(Role.ISSUER), relation.toBlockable(Role.RELATION), new Int64Wrapper(Role.AGENT, number)).toBlock());
                 }
@@ -684,7 +684,7 @@ public final class AgentModule implements StateModule {
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getNonNullableElements(3);
                 preparedStatement.setLong(2, new Int64Wrapper(elements.getNonNullable(0)).getValue());
-                IdentityClass.create(elements.getNonNullable(1)).toSemanticType().checkIsRoleType().set(preparedStatement, 3);
+                IdentityImplementation.create(elements.getNonNullable(1)).toSemanticType().checkIsRoleType().set(preparedStatement, 3);
                 Context.get(entity, elements.getNonNullable(2)).set(preparedStatement, 4);
                 preparedStatement.addBatch();
             }
@@ -696,8 +696,8 @@ public final class AgentModule implements StateModule {
             final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(tables.getNonNullable(5)).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getNonNullableElements(3);
-                IdentityClass.create(elements.getNonNullable(0)).toInternalNonHostIdentity().set(preparedStatement, 2);
-                IdentityClass.create(elements.getNonNullable(1)).toSemanticType().checkIsRoleType().set(preparedStatement, 3);
+                IdentityImplementation.create(elements.getNonNullable(0)).toInternalNonHostIdentity().set(preparedStatement, 2);
+                IdentityImplementation.create(elements.getNonNullable(1)).toSemanticType().checkIsRoleType().set(preparedStatement, 3);
                 preparedStatement.setLong(4, new Int64Wrapper(elements.getNonNullable(2)).getValue());
                 preparedStatement.addBatch();
             }
@@ -1269,7 +1269,7 @@ public final class AgentModule implements StateModule {
         final @Nonnull NonHostEntity entity = outgoingRole.getEntity();
         final @Nonnull String SQL = "SELECT relation FROM " + entity.getSite() + "outgoing_role WHERE entity = " + entity + " AND agent = " + outgoingRole;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
-            if (resultSet.next()) return IdentityClass.getNotNull(resultSet, 1).toSemanticType().checkIsRoleType();
+            if (resultSet.next()) return IdentityImplementation.getNotNull(resultSet, 1).toSemanticType().checkIsRoleType();
             else throw new SQLException("The given outgoing role has no relation.");
         } catch (@Nonnull InvalidEncodingException exception) {
             throw new SQLException("Some values returned by the database are invalid.", exception);
@@ -1398,8 +1398,8 @@ public final class AgentModule implements StateModule {
         final @Nonnull String SQL = "SELECT issuer, relation, agent FROM " + role.getSite() + "incoming_role WHERE entity = " + role;
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
             while (resultSet.next()) {
-                final @Nonnull InternalNonHostIdentity issuer = IdentityClass.getNotNull(resultSet, 1).toInternalNonHostIdentity();
-                final @Nonnull SemanticType relation = IdentityClass.getNotNull(resultSet, 2).toSemanticType().checkIsRoleType();
+                final @Nonnull InternalNonHostIdentity issuer = IdentityImplementation.getNotNull(resultSet, 1).toInternalNonHostIdentity();
+                final @Nonnull SemanticType relation = IdentityImplementation.getNotNull(resultSet, 2).toSemanticType().checkIsRoleType();
                 final long agentNumber = resultSet.getLong(3);
                 
                 boolean found = false;

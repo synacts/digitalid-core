@@ -17,7 +17,7 @@ import net.digitalid.service.core.handler.InternalQuery;
 import net.digitalid.service.core.handler.Method;
 import net.digitalid.service.core.handler.Reply;
 import net.digitalid.service.core.identifier.HostIdentifier;
-import net.digitalid.service.core.identity.IdentityClass;
+import net.digitalid.service.core.identity.IdentityImplementation;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -76,7 +76,7 @@ final class AuditQuery extends InternalQuery {
     private AuditQuery(@Nonnull Entity entity, @Nonnull @HasSubject SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull @BasedOn("query.audit@core.digitalid.net") Block block) throws AbortException, PacketException, ExternalException, NetworkException {
         super(entity.toNonHostEntity(), signature, recipient);
         
-        this.service = Service.getService(IdentityClass.create(block).toSemanticType());
+        this.service = Service.getService(IdentityImplementation.create(block).toSemanticType());
         this.permissions = FreezableAgentPermissions.NONE;
     }
     

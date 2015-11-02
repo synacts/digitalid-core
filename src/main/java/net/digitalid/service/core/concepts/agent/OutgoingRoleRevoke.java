@@ -17,7 +17,7 @@ import net.digitalid.service.core.handler.Reply;
 import net.digitalid.service.core.handler.core.CoreServiceActionReply;
 import net.digitalid.service.core.handler.core.CoreServiceExternalAction;
 import net.digitalid.service.core.identifier.HostIdentifier;
-import net.digitalid.service.core.identity.IdentityClass;
+import net.digitalid.service.core.identity.IdentityImplementation;
 import net.digitalid.service.core.identity.InternalNonHostIdentity;
 import net.digitalid.service.core.identity.InternalPerson;
 import net.digitalid.service.core.identity.SemanticType;
@@ -88,7 +88,7 @@ final class OutgoingRoleRevoke extends CoreServiceExternalAction {
             this.issuer = entity.getIdentity().toInternalNonHostIdentity();
         }
         
-        this.relation = IdentityClass.create(block).toSemanticType().checkIsRoleType();
+        this.relation = IdentityImplementation.create(block).toSemanticType().checkIsRoleType();
     }
     
     @Pure

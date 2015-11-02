@@ -11,7 +11,7 @@ import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
-import net.digitalid.service.core.identifier.IdentifierClass;
+import net.digitalid.service.core.identifier.IdentifierImplementation;
 import net.digitalid.service.core.identity.Identity;
 import net.digitalid.service.core.identity.Person;
 import net.digitalid.service.core.identity.SemanticType;
@@ -267,8 +267,8 @@ abstract class Expression extends NonHostConcept {
             if (index != -1) {
                 @Nonnull String identifier = string.substring(0, index).trim();
                 if (isQuoted(identifier)) identifier = removeQuotes(identifier);
-                if (!IdentifierClass.isValid(identifier)) throw new InvalidEncodingException("The string '" + string + "' does not start with a valid identifier.");
-                final @Nonnull SemanticType type = IdentifierClass.get(identifier).getIdentity().toSemanticType().checkIsAttributeType();
+                if (!IdentifierImplementation.isValid(identifier)) throw new InvalidEncodingException("The string '" + string + "' does not start with a valid identifier.");
+                final @Nonnull SemanticType type = IdentifierImplementation.get(identifier).getIdentity().toSemanticType().checkIsAttributeType();
                 final @Nonnull String substring = string.substring(index + symbol.length(), string.length()).trim();
                 if (isQuoted(substring) || substring.matches("\\d+")) return new RestrictionExpression(entity, type, substring, symbol);
                 else throw new InvalidEncodingException("The string '" + substring + "' is neither a quoted string nor a number.");
@@ -280,8 +280,8 @@ abstract class Expression extends NonHostConcept {
         if (string.matches("\\d+")) return new ContextExpression(entity, Context.get(entity, string));
         
         final @Nonnull String identifier = isQuoted(string) ? removeQuotes(string) : string;
-        if (IdentifierClass.isValid(string)) {
-            final @Nonnull Identity identity = IdentifierClass.get(identifier).getIdentity();
+        if (IdentifierImplementation.isValid(string)) {
+            final @Nonnull Identity identity = IdentifierImplementation.get(identifier).getIdentity();
             if (identity instanceof Person) return new ContactExpression(entity, Contact.get(entity, (Person) identity));
             if (identity instanceof SemanticType) return new RestrictionExpression(entity, ((SemanticType) identity).checkIsAttributeType(), null, null);
             throw new InvalidEncodingException("The string '" + string + "' is a valid identifier but neither a person nor a semantic type.");

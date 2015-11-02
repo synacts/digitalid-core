@@ -23,7 +23,7 @@ import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.factory.encoding.Encodable;
 import net.digitalid.service.core.factory.encoding.Encode;
-import net.digitalid.service.core.identifier.IdentifierClass;
+import net.digitalid.service.core.identifier.IdentifierImplementation;
 import net.digitalid.service.core.identifier.InternalIdentifier;
 import net.digitalid.service.core.identity.InternalIdentity;
 import net.digitalid.service.core.identity.SemanticType;
@@ -299,7 +299,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
         final @Nonnull Block content = TupleWrapper.decode(cache).getNonNullableElement(0);
         final @Nonnull TupleWrapper tuple = TupleWrapper.decode(content);
         // TODO: Rewrite the following code with the null-propagating factory methods.
-        this.subject = tuple.isElementNull(0) ? null : IdentifierClass.create(tuple.getNonNullableElement(0)).toInternalIdentifier();
+        this.subject = tuple.isElementNull(0) ? null : IdentifierImplementation.create(tuple.getNonNullableElement(0)).toInternalIdentifier();
         if (isSigned() && subject == null) throw new InvalidEncodingException("The subject may not be null if the element is signed.");
         this.time = tuple.isElementNull(1) ? null : Time.ENCODING_FACTORY.decodeNonNullable(None.OBJECT, tuple.getNonNullableElement(1));
         if (hasSubject() && time == null) throw new InvalidEncodingException("The signature time may not be null if this signature has a subject.");

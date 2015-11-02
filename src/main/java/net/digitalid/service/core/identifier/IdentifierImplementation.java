@@ -35,7 +35,7 @@ import net.digitalid.utility.database.storing.AbstractStoringFactory;
  * @see ExternalIdentifier
  */
 @Immutable
-public abstract class IdentifierClass implements Identifier {
+public abstract class IdentifierImplementation implements Identifier {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Validity –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -85,7 +85,7 @@ public abstract class IdentifierClass implements Identifier {
      * 
      * @param string the string of the identifier.
      */
-    IdentifierClass(@Nonnull @Validated String string) {
+    IdentifierImplementation(@Nonnull @Validated String string) {
         assert isValid(string) : "The string is a valid identifier.";
         
         this.string = string;
@@ -174,8 +174,8 @@ public abstract class IdentifierClass implements Identifier {
     @Override
     public final boolean equals(@Nullable Object object) {
         if (object == this) return true;
-        if (object == null || !(object instanceof IdentifierClass)) return false;
-        final @Nonnull IdentifierClass other = (IdentifierClass) object;
+        if (object == null || !(object instanceof IdentifierImplementation)) return false;
+        final @Nonnull IdentifierImplementation other = (IdentifierImplementation) object;
         return string.equals(other.string);
     }
     

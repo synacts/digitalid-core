@@ -21,7 +21,7 @@ import net.digitalid.service.core.handler.Reply;
 import net.digitalid.service.core.identifier.ExternalIdentifier;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.identifier.Identifier;
-import net.digitalid.service.core.identifier.IdentifierClass;
+import net.digitalid.service.core.identifier.IdentifierImplementation;
 import net.digitalid.service.core.identifier.InternalNonHostIdentifier;
 import net.digitalid.service.core.identifier.NonHostIdentifier;
 import net.digitalid.service.core.identity.ArtificialPerson;
@@ -155,8 +155,8 @@ public final class Mapper {
         
         try (@Nonnull Statement statement = Database.createStatement()) {
             // Make sure that no type initializations are triggered during the creation of the database tables! (This is why the format of the category column is not taken from the category class.)
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS general_identity (identity " + Database.getConfiguration().PRIMARY_KEY() + ", category " + Database.getConfiguration().TINYINT() + " NOT NULL, address " + IdentifierClass.FORMAT + " NOT NULL, reply " + Reply.FORMAT + ", FOREIGN KEY (reply) " + Reply.REFERENCE + ")");
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS general_identifier (identifier " + IdentifierClass.FORMAT + " NOT NULL, identity " + Mapper.FORMAT + " NOT NULL, PRIMARY KEY (identifier), FOREIGN KEY (identity) " + Mapper.REFERENCE + ")");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS general_identity (identity " + Database.getConfiguration().PRIMARY_KEY() + ", category " + Database.getConfiguration().TINYINT() + " NOT NULL, address " + IdentifierImplementation.FORMAT + " NOT NULL, reply " + Reply.FORMAT + ", FOREIGN KEY (reply) " + Reply.REFERENCE + ")");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS general_identifier (identifier " + IdentifierImplementation.FORMAT + " NOT NULL, identity " + Mapper.FORMAT + " NOT NULL, PRIMARY KEY (identifier), FOREIGN KEY (identity) " + Mapper.REFERENCE + ")");
             addReference("general_identifier", "identity");
         } catch (@Nonnull SQLException exception) {
             throw new InitializationError("The database tables of the mapper could not be created.", exception);
@@ -243,7 +243,7 @@ public final class Mapper {
         try (@Nonnull Statement statement = Database.createStatement(); @Nonnull ResultSet resultSet = statement.executeQuery(SQL)) {
             if (resultSet.next()) {
                 final @Nonnull Category category = Category.get(resultSet.getByte(1));
-                final @Nonnull Identifier address = IdentifierClass.get(resultSet, 2);
+                final @Nonnull Identifier address = IdentifierImplementation.get(resultSet, 2);
                 final @Nonnull Identity identity = createIdentity(category, number, address);
                 
                 numbers.put(number, identity);
@@ -300,7 +300,7 @@ public final class Mapper {
             if (resultSet.next()) {
                 final @Nonnull Category category = Category.get(resultSet, 1);
                 final long number = resultSet.getLong(2);
-                final @Nonnull Identifier address = IdentifierClass.get(resultSet, 3);
+                final @Nonnull Identifier address = IdentifierImplementation.get(resultSet, 3);
                 
                 @Nullable Identity identity = numbers.get(number);
                 if (identity instanceof InternalNonHostIdentity) {

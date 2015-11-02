@@ -13,7 +13,7 @@ import net.digitalid.service.core.handler.Action;
 import net.digitalid.service.core.handler.Method;
 import net.digitalid.service.core.handler.core.CoreServiceInternalAction;
 import net.digitalid.service.core.identifier.HostIdentifier;
-import net.digitalid.service.core.identity.IdentityClass;
+import net.digitalid.service.core.identity.IdentityImplementation;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -102,8 +102,8 @@ final class OutgoingRoleRelationReplace extends CoreServiceInternalAction {
         
         final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getNonNullableElements(3);
         this.outgoingRole = Agent.get(entity.toNonHostEntity(), elements.getNonNullable(0)).toOutgoingRole();
-        this.oldRelation = IdentityClass.create(elements.getNonNullable(1)).toSemanticType().checkIsRoleType();
-        this.newRelation = IdentityClass.create(elements.getNonNullable(2)).toSemanticType().checkIsRoleType();
+        this.oldRelation = IdentityImplementation.create(elements.getNonNullable(1)).toSemanticType().checkIsRoleType();
+        this.newRelation = IdentityImplementation.create(elements.getNonNullable(2)).toSemanticType().checkIsRoleType();
     }
     
     @Pure

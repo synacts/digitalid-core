@@ -13,7 +13,7 @@ import net.digitalid.service.core.exceptions.external.AttributeNotFoundException
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
-import net.digitalid.service.core.identifier.IdentifierClass;
+import net.digitalid.service.core.identifier.IdentifierImplementation;
 import net.digitalid.service.core.identifier.InternalNonHostIdentifier;
 import net.digitalid.service.core.identity.annotations.Loaded;
 import net.digitalid.service.core.identity.annotations.LoadedRecipient;
@@ -175,15 +175,15 @@ public final class SemanticType extends Type {
         if (!categories.isEmpty() == (cachingPeriod == null)) throw new InvalidEncodingException("If (and only if) this semantic type can be used as an attribute, the caching period may not be null.");
         
         try {
-            this.semanticBase = IdentifierClass.create(Cache.getStaleAttributeContent(this, null, SEMANTIC_BASE)).getIdentity().toSemanticType();
+            this.semanticBase = IdentifierImplementation.create(Cache.getStaleAttributeContent(this, null, SEMANTIC_BASE)).getIdentity().toSemanticType();
             this.syntacticBase = semanticBase.syntacticBase;
             this.parameters = semanticBase.parameters;
             setLoaded();
         } catch (@Nonnull AttributeNotFoundException exception) {
-            this.syntacticBase = IdentifierClass.create(Cache.getStaleAttributeContent(this, null, SYNTACTIC_BASE)).getIdentity().toSyntacticType();
+            this.syntacticBase = IdentifierImplementation.create(Cache.getStaleAttributeContent(this, null, SYNTACTIC_BASE)).getIdentity().toSyntacticType();
             final @Nonnull ReadOnlyList<Block> list = new ListWrapper(Cache.getStaleAttributeContent(this, null, PARAMETERS)).getElementsNotNull();
             final @Nonnull FreezableList<SemanticType> parameters = new FreezableArrayList<>(list.size());
-            for (final @Nonnull Block element : elements) parameters.add(Mapper.getIdentity(IdentifierClass.create(element)).toSemanticType());
+            for (final @Nonnull Block element : elements) parameters.add(Mapper.getIdentity(IdentifierImplementation.create(element)).toSemanticType());
             if (!parameters.containsDuplicates()) throw new InvalidEncodingException("The list of parameters may not contain duplicates.");
             if (!(syntacticBase.getNumberOfParameters() == -1 && parameters.size() > 0 || syntacticBase.getNumberOfParameters() == parameters.size())) throw new InvalidEncodingException("The number of required parameters must either be variable or match the given parameters.");
             this.parameters = parameters.freeze();

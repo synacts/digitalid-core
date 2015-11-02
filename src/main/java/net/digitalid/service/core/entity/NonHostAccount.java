@@ -8,7 +8,7 @@ import net.digitalid.service.core.concept.Aspect;
 import net.digitalid.service.core.concept.Instance;
 import net.digitalid.service.core.concept.Observer;
 import net.digitalid.service.core.identity.Identity;
-import net.digitalid.service.core.identity.IdentityClass;
+import net.digitalid.service.core.identity.IdentityImplementation;
 import net.digitalid.service.core.identity.InternalNonHostIdentity;
 import net.digitalid.service.core.site.host.Host;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -94,7 +94,7 @@ public final class NonHostAccount extends Account implements NonHostEntity {
     @Pure
     @NonCommitting
     public static @Nonnull NonHostAccount getNotNull(@Nonnull Host host, @Nonnull ResultSet resultSet, int columnIndex) throws AbortException {
-        final @Nonnull Identity identity = IdentityClass.getNotNull(resultSet, columnIndex);
+        final @Nonnull Identity identity = IdentityImplementation.getNotNull(resultSet, columnIndex);
         if (identity instanceof InternalNonHostIdentity) return get(host, (InternalNonHostIdentity) identity);
         else throw new SQLException("The identity of " + identity.getAddress() + " is not a non-host.");
     }

@@ -11,7 +11,7 @@ import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.QueryReply;
 import net.digitalid.service.core.handler.Reply;
-import net.digitalid.service.core.identity.IdentityClass;
+import net.digitalid.service.core.identity.IdentityImplementation;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -63,7 +63,7 @@ final class AuditReply extends QueryReply {
     private AuditReply(@Nullable NonHostEntity entity, @Nonnull HostSignatureWrapper signature, long number, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
         super(entity, signature, number);
         
-        this.service = Service.getService(IdentityClass.create(block).toSemanticType());
+        this.service = Service.getService(IdentityImplementation.create(block).toSemanticType());
     }
     
     @Pure

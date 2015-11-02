@@ -19,7 +19,7 @@ import net.digitalid.service.core.handler.Action;
 import net.digitalid.service.core.handler.Method;
 import net.digitalid.service.core.handler.core.CoreServiceInternalAction;
 import net.digitalid.service.core.identifier.HostIdentifier;
-import net.digitalid.service.core.identifier.IdentifierClass;
+import net.digitalid.service.core.identifier.IdentifierImplementation;
 import net.digitalid.service.core.identity.InternalPerson;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -116,7 +116,7 @@ final class AttributeVisibilityReplace extends CoreServiceInternalAction {
         final @Nonnull NonHostEntity nonHostEntity = entity.toNonHostEntity();
         nonHostEntity.getIdentity().toInternalPerson();
         final @Nonnull TupleWrapper tuple = new TupleWrapper(block);
-        this.attribute = Attribute.get(entity, IdentifierClass.create(tuple.getNonNullableElement(0)).getIdentity().toSemanticType().checkIsAttributeFor(entity));
+        this.attribute = Attribute.get(entity, IdentifierImplementation.create(tuple.getNonNullableElement(0)).getIdentity().toSemanticType().checkIsAttributeFor(entity));
         this.oldVisibility = tuple.isElementNotNull(1) ? new PassiveExpression(nonHostEntity, tuple.getNonNullableElement(1)) : null;
         this.newVisibility = tuple.isElementNotNull(2) ? new PassiveExpression(nonHostEntity, tuple.getNonNullableElement(2)) : null;
         if (Objects.equals(oldVisibility, newVisibility)) throw new InvalidEncodingException("The old and new visibility may not be equal.");

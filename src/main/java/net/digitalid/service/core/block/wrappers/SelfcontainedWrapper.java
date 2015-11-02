@@ -16,7 +16,7 @@ import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.factory.encoding.Encodable;
 import net.digitalid.service.core.factory.encoding.Encode;
 import net.digitalid.service.core.identifier.Identifier;
-import net.digitalid.service.core.identifier.IdentifierClass;
+import net.digitalid.service.core.identifier.IdentifierImplementation;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
@@ -109,7 +109,7 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
         
         this.tuple = Block.get(IMPLEMENTATION, block);
         final @Nonnull @NonNullableElements ReadOnlyArray<Block> elements = TupleWrapper.decode(tuple).getNonNullableElements(2);
-        final @Nonnull Identifier<?> identifier = IdentifierClass.create(elements.getNonNullable(0));
+        final @Nonnull Identifier<?> identifier = IdentifierImplementation.create(elements.getNonNullable(0));
         this.element = elements.getNonNullable(1);
         element.setType(identifier.getIdentity().toSemanticType());
     }

@@ -19,7 +19,7 @@ import net.digitalid.service.core.handler.InternalAction;
 import net.digitalid.service.core.handler.Method;
 import net.digitalid.service.core.handler.core.CoreServiceInternalAction;
 import net.digitalid.service.core.identifier.HostIdentifier;
-import net.digitalid.service.core.identifier.IdentifierClass;
+import net.digitalid.service.core.identifier.IdentifierImplementation;
 import net.digitalid.service.core.identifier.InternalNonHostIdentifier;
 import net.digitalid.service.core.identifier.NonHostIdentifier;
 import net.digitalid.service.core.identity.InternalNonHostIdentity;
@@ -80,7 +80,7 @@ public final class AccountClose extends CoreServiceInternalAction {
     private AccountClose(@Nonnull Entity entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
         super(entity, signature, recipient);
         
-        this.successor = IdentifierClass.create(block).toInternalNonHostIdentifier();
+        this.successor = IdentifierImplementation.create(block).toInternalNonHostIdentifier();
         this.restrictions = new Restrictions(true, true, true, Context.getRoot(entity.toNonHostEntity()));
     }
     

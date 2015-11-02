@@ -19,7 +19,7 @@ import net.digitalid.service.core.handler.Action;
 import net.digitalid.service.core.handler.Method;
 import net.digitalid.service.core.handler.core.CoreServiceInternalAction;
 import net.digitalid.service.core.identifier.HostIdentifier;
-import net.digitalid.service.core.identifier.IdentifierClass;
+import net.digitalid.service.core.identifier.IdentifierImplementation;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -117,7 +117,7 @@ final class AttributeValueReplace extends CoreServiceInternalAction {
         super(entity.toNonHostEntity(), signature, recipient);
         
         final @Nonnull TupleWrapper tuple = new TupleWrapper(block);
-        this.attribute = Attribute.get(entity, IdentifierClass.create(tuple.getNonNullableElement(0)).getIdentity().toSemanticType().checkIsAttributeFor(entity));
+        this.attribute = Attribute.get(entity, IdentifierImplementation.create(tuple.getNonNullableElement(0)).getIdentity().toSemanticType().checkIsAttributeFor(entity));
         this.published = new BooleanWrapper(tuple.getNonNullableElement(1)).getValue();
         this.oldValue = tuple.isElementNotNull(2) ? AttributeValue.get(tuple.getNonNullableElement(2), true).checkMatches(attribute) : null;
         this.newValue = tuple.isElementNotNull(3) ? AttributeValue.get(tuple.getNonNullableElement(3), true).checkMatches(attribute) : null;

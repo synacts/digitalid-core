@@ -18,7 +18,7 @@ import net.digitalid.service.core.handler.Reply;
 import net.digitalid.service.core.handler.core.CoreServiceActionReply;
 import net.digitalid.service.core.handler.core.CoreServiceExternalAction;
 import net.digitalid.service.core.identifier.HostIdentifier;
-import net.digitalid.service.core.identity.IdentityClass;
+import net.digitalid.service.core.identity.IdentityImplementation;
 import net.digitalid.service.core.identity.InternalNonHostIdentity;
 import net.digitalid.service.core.identity.InternalPerson;
 import net.digitalid.service.core.identity.SemanticType;
@@ -97,7 +97,7 @@ final class OutgoingRoleIssue extends CoreServiceExternalAction {
         }
         
         final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getNonNullableElements(2);
-        this.relation = IdentityClass.create(elements.getNonNullable(0)).toSemanticType().checkIsRoleType();
+        this.relation = IdentityImplementation.create(elements.getNonNullable(0)).toSemanticType().checkIsRoleType();
         this.agentNumber = new Int64Wrapper(elements.getNonNullable(1)).getValue();
     }
     

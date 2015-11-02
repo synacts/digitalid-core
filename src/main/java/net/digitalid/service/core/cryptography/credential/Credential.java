@@ -20,7 +20,7 @@ import net.digitalid.service.core.cryptography.PublicKey;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
-import net.digitalid.service.core.identifier.IdentifierClass;
+import net.digitalid.service.core.identifier.IdentifierImplementation;
 import net.digitalid.service.core.identity.InternalNonHostIdentity;
 import net.digitalid.service.core.identity.InternalPerson;
 import net.digitalid.service.core.identity.NonHostIdentity;
@@ -235,7 +235,7 @@ public abstract class Credential {
         assert i == null || i.getType().isBasedOn(Exponent.TYPE) : "The serial number is either null or based on the indicated type.";
         
         final @Nonnull TupleWrapper tuple = new TupleWrapper(exposed);
-        this.issuer = IdentifierClass.create(tuple.getNonNullableElement(0)).getIdentity().toInternalNonHostIdentity();
+        this.issuer = IdentifierImplementation.create(tuple.getNonNullableElement(0)).getIdentity().toInternalNonHostIdentity();
         this.issuance = new Time(tuple.getNonNullableElement(1));
         if (!issuance.isPositive() || !issuance.isMultipleOf(Time.HALF_HOUR)) throw new InvalidEncodingException("The issuance time has to be positive and a multiple of half an hour.");
         this.publicKey = Cache.getPublicKey(issuer.getAddress().getHostIdentifier(), issuance);
@@ -246,7 +246,7 @@ public abstract class Credential {
         } else {
             this.randomizedPermissions = new RandomizedAgentPermissions(hash);
         }
-        this.role = tuple.isElementNull(3) ? null : IdentifierClass.create(tuple.getNonNullableElement(3)).getIdentity().toSemanticType();
+        this.role = tuple.isElementNull(3) ? null : IdentifierImplementation.create(tuple.getNonNullableElement(3)).getIdentity().toSemanticType();
         if (role != null && !role.isRoleType()) throw new InvalidEncodingException("The role has to be either null or a role type");
         this.attributeContent = SelfcontainedWrapper.toElement(tuple.getNullableElement(4));
         if (role != null && attributeContent != null) throw new InvalidEncodingException("The role and the attribute may not both be not null.");

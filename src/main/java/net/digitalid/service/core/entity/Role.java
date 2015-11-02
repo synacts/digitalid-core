@@ -39,7 +39,7 @@ import net.digitalid.utility.database.configuration.Database;
  * @see NonNativeRole
  */
 @Immutable
-public abstract class Role extends EntityClass implements NonHostEntity, Observer {
+public abstract class Role extends EntityImplementation implements NonHostEntity, Observer {
     
     /**
      * Stores the aspect of a new role being added to the observed role.

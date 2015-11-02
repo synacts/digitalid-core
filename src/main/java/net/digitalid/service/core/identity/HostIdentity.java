@@ -14,7 +14,7 @@ import net.digitalid.utility.system.errors.InitializationError;
  * This class models a host identity.
  */
 @Immutable
-public final class HostIdentity extends IdentityClass implements InternalIdentity {
+public final class HostIdentity extends IdentityImplementation implements InternalIdentity {
     
     /**
      * Stores the semantic type {@code host@core.digitalid.net}.

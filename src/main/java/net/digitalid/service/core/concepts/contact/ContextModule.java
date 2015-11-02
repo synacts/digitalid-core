@@ -15,13 +15,13 @@ import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
 import net.digitalid.service.core.concepts.agent.Restrictions;
 import net.digitalid.service.core.storage.Service;
 import net.digitalid.service.core.dataservice.StateModule;
-import net.digitalid.service.core.entity.EntityClass;
+import net.digitalid.service.core.entity.EntityImplementation;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identity.Identity;
-import net.digitalid.service.core.identity.IdentityClass;
+import net.digitalid.service.core.identity.IdentityImplementation;
 import net.digitalid.service.core.identity.Person;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.resolution.Mapper;
@@ -83,7 +83,7 @@ public final class ContextModule implements StateModule {
     @NonCommitting
     public static void createReferenceTable(@Nonnull Site site) throws AbortException {
         try (@Nonnull Statement statement = Database.createStatement()) {
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "context_name (entity " + EntityClass.FORMAT + " NOT NULL, context " + Context.FORMAT + " NOT NULL, name VARCHAR(50) NOT NULL COLLATE " + Database.getConfiguration().BINARY() + ", PRIMARY KEY (entity, context), FOREIGN KEY (entity) " + site.getEntityReference() + ")");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "context_name (entity " + EntityImplementation.FORMAT + " NOT NULL, context " + Context.FORMAT + " NOT NULL, name VARCHAR(50) NOT NULL COLLATE " + Database.getConfiguration().BINARY() + ", PRIMARY KEY (entity, context), FOREIGN KEY (entity) " + site.getEntityReference() + ")");
         }
     }
     
@@ -91,12 +91,12 @@ public final class ContextModule implements StateModule {
     @NonCommitting
     public void createTables(@Nonnull Site site) throws AbortException {
         try (@Nonnull Statement statement = Database.createStatement()) {
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "context_preference (entity " + EntityClass.FORMAT + " NOT NULL, context " + Context.FORMAT + " NOT NULL, type " + Mapper.FORMAT + " NOT NULL, PRIMARY KEY (entity, context, type), FOREIGN KEY (entity, context) " + Context.getReference(site) + ", FOREIGN KEY (type) " + Mapper.REFERENCE + ")");
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "context_permission (entity " + EntityClass.FORMAT + " NOT NULL, context " + Context.FORMAT + " NOT NULL, type " + Mapper.FORMAT + " NOT NULL, PRIMARY KEY (entity, context, type), FOREIGN KEY (entity, context) " + Context.getReference(site) + ", FOREIGN KEY (type) " + Mapper.REFERENCE + ")");
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "context_authentication (entity " + EntityClass.FORMAT + " NOT NULL, context " + Context.FORMAT + " NOT NULL, type " + Mapper.FORMAT + " NOT NULL, PRIMARY KEY (entity, context, type), FOREIGN KEY (entity, context) " + Context.getReference(site) + ", FOREIGN KEY (type) " + Mapper.REFERENCE + ")");
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "context_subcontext (entity " + EntityClass.FORMAT + " NOT NULL, context " + Context.FORMAT + " NOT NULL, subcontext " + Context.FORMAT + " NOT NULL, sequence SMALLINT, PRIMARY KEY (entity, context, subcontext), FOREIGN KEY (entity, context) " + Context.getReference(site) + ", FOREIGN KEY (entity, subcontext) " + Context.getReference(site) + ")");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "context_preference (entity " + EntityImplementation.FORMAT + " NOT NULL, context " + Context.FORMAT + " NOT NULL, type " + Mapper.FORMAT + " NOT NULL, PRIMARY KEY (entity, context, type), FOREIGN KEY (entity, context) " + Context.getReference(site) + ", FOREIGN KEY (type) " + Mapper.REFERENCE + ")");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "context_permission (entity " + EntityImplementation.FORMAT + " NOT NULL, context " + Context.FORMAT + " NOT NULL, type " + Mapper.FORMAT + " NOT NULL, PRIMARY KEY (entity, context, type), FOREIGN KEY (entity, context) " + Context.getReference(site) + ", FOREIGN KEY (type) " + Mapper.REFERENCE + ")");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "context_authentication (entity " + EntityImplementation.FORMAT + " NOT NULL, context " + Context.FORMAT + " NOT NULL, type " + Mapper.FORMAT + " NOT NULL, PRIMARY KEY (entity, context, type), FOREIGN KEY (entity, context) " + Context.getReference(site) + ", FOREIGN KEY (type) " + Mapper.REFERENCE + ")");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "context_subcontext (entity " + EntityImplementation.FORMAT + " NOT NULL, context " + Context.FORMAT + " NOT NULL, subcontext " + Context.FORMAT + " NOT NULL, sequence SMALLINT, PRIMARY KEY (entity, context, subcontext), FOREIGN KEY (entity, context) " + Context.getReference(site) + ", FOREIGN KEY (entity, subcontext) " + Context.getReference(site) + ")");
             // TODO: Drop the sequence number and include a counter for how many times a subcontext is contained in a context, which is raised and lowered accordingly. (Zero means it's not a subcontext and a separate boolean indicates whether it's a direct subcontext.) Contexts form a DAG, right? Something like an order number that allows gaps might still be nice.
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "context_contact (entity " + EntityClass.FORMAT + " NOT NULL, context " + Context.FORMAT + " NOT NULL, contact " + Contact.FORMAT + " NOT NULL, PRIMARY KEY (entity, context, contact), FOREIGN KEY (entity, context) " + Context.getReference(site) + ", FOREIGN KEY (contact) " + Contact.REFERENCE + ")");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "context_contact (entity " + EntityImplementation.FORMAT + " NOT NULL, context " + Context.FORMAT + " NOT NULL, contact " + Contact.FORMAT + " NOT NULL, PRIMARY KEY (entity, context, contact), FOREIGN KEY (entity, context) " + Context.getReference(site) + ", FOREIGN KEY (contact) " + Contact.REFERENCE + ")");
             Mapper.addReference(site + "context_contact", "contact", "entity", "context", "contact");
         }
     }
@@ -214,7 +214,7 @@ public final class ContextModule implements StateModule {
                 final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<>();
                 while (resultSet.next()) {
                     final @Nonnull Context context = Context.getNotNull(entity, resultSet, 1);
-                    final @Nonnull Identity person = IdentityClass.getNotNull(resultSet, 2);
+                    final @Nonnull Identity person = IdentityImplementation.getNotNull(resultSet, 2);
                     entries.add(new TupleWrapper(CONTACT_STATE_ENTRY, context, person.toBlockable(Person.IDENTIFIER)).toBlock());
                 }
                 tables.set(1, new ListWrapper(CONTACT_STATE_TABLE, entries.freeze()).toBlock());
@@ -256,7 +256,7 @@ public final class ContextModule implements StateModule {
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(entry).getNonNullableElements(2);
                 Context.get(entity, elements.getNonNullable(0)).set(preparedStatement, 2);
-                IdentityClass.create(elements.getNonNullable(1)).toPerson().set(preparedStatement, 3);
+                IdentityImplementation.create(elements.getNonNullable(1)).toPerson().set(preparedStatement, 3);
                 preparedStatement.addBatch();
             }
             preparedStatement.executeBatch();

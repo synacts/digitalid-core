@@ -24,7 +24,7 @@ import net.digitalid.service.core.concepts.contact.Context;
 import net.digitalid.service.core.storage.Service;
 import net.digitalid.service.core.dataservice.StateModule;
 import net.digitalid.service.core.entity.Entity;
-import net.digitalid.service.core.entity.EntityClass;
+import net.digitalid.service.core.entity.EntityImplementation;
 import net.digitalid.service.core.entity.NonHostAccount;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
@@ -33,10 +33,10 @@ import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.Action;
 import net.digitalid.service.core.handler.InternalAction;
 import net.digitalid.service.core.identifier.Identifier;
-import net.digitalid.service.core.identifier.IdentifierClass;
+import net.digitalid.service.core.identifier.IdentifierImplementation;
 import net.digitalid.service.core.identity.HostIdentity;
 import net.digitalid.service.core.identity.Identity;
-import net.digitalid.service.core.identity.IdentityClass;
+import net.digitalid.service.core.identity.IdentityImplementation;
 import net.digitalid.service.core.identity.InternalNonHostIdentity;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.resolution.Mapper;
@@ -74,7 +74,7 @@ public final class ActionModule implements StateModule {
     @NonCommitting
     public void createTables(final @Nonnull Site site) throws AbortException {
         try (@Nonnull Statement statement = Database.createStatement()) {
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "action (entity " + EntityClass.FORMAT + " NOT NULL, service " + Mapper.FORMAT + " NOT NULL, time " + Time.FORMAT + " NOT NULL, " + FreezableAgentPermissions.FORMAT_NULL + ", " + Restrictions.FORMAT + ", agent " + Agent.FORMAT + ", recipient " + IdentifierClass.FORMAT + " NOT NULL, action " + Block.FORMAT + " NOT NULL, PRIMARY KEY (entity, service, time), FOREIGN KEY (entity) " + site.getEntityReference() + ", FOREIGN KEY (service) " + Mapper.REFERENCE + Database.getConfiguration().INDEX("time") + ", " + FreezableAgentPermissions.REFERENCE + ", " + Restrictions.getForeignKeys(site) + ", FOREIGN KEY (entity, agent) " + Agent.getReference(site) + ")");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "action (entity " + EntityImplementation.FORMAT + " NOT NULL, service " + Mapper.FORMAT + " NOT NULL, time " + Time.FORMAT + " NOT NULL, " + FreezableAgentPermissions.FORMAT_NULL + ", " + Restrictions.FORMAT + ", agent " + Agent.FORMAT + ", recipient " + IdentifierImplementation.FORMAT + " NOT NULL, action " + Block.FORMAT + " NOT NULL, PRIMARY KEY (entity, service, time), FOREIGN KEY (entity) " + site.getEntityReference() + ", FOREIGN KEY (service) " + Mapper.REFERENCE + Database.getConfiguration().INDEX("time") + ", " + FreezableAgentPermissions.REFERENCE + ", " + Restrictions.getForeignKeys(site) + ", FOREIGN KEY (entity, agent) " + Agent.getReference(site) + ")");
             Database.getConfiguration().createIndex(statement, site + "action", "time");
             Mapper.addReference(site + "action", "contact");
             if (site instanceof Host) Mapper.addReference(site + "action", "entity", "entity", "service", "time");
@@ -119,13 +119,13 @@ public final class ActionModule implements StateModule {
             final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<>();
             while (resultSet.next()) {
                 final @Nonnull NonHostAccount account = NonHostAccount.getNotNull(host, resultSet, 1);
-                final @Nonnull Identity service = IdentityClass.getNotNull(resultSet, 2);
+                final @Nonnull Identity service = IdentityImplementation.getNotNull(resultSet, 2);
                 final @Nonnull Time time = Time.get(resultSet, 3);
                 final @Nonnull FreezableAgentPermissions permissions = FreezableAgentPermissions.getEmptyOrSingle(resultSet, 4);
                 final @Nonnull Restrictions restrictions = Restrictions.get(account, resultSet, 6);
                 @Nullable Long number = resultSet.getLong(11);
                 if (resultSet.wasNull()) number = null;
-                final @Nonnull Identifier recipient = IdentifierClass.get(resultSet, 12);
+                final @Nonnull Identifier recipient = IdentifierImplementation.get(resultSet, 12);
                 final @Nonnull Block action = Block.getNotNull(Packet.SIGNATURE, resultSet, 13);
                 entries.add(new TupleWrapper(MODULE_ENTRY, account.getIdentity().toBlockable(InternalNonHostIdentity.IDENTIFIER), service.toBlockable(SemanticType.ATTRIBUTE_IDENTIFIER), time, permissions, restrictions, (number != null ? new Int64Wrapper(Agent.NUMBER, number) : null), recipient.toBlock().setType(HostIdentity.IDENTIFIER).toBlockable(), action.toBlockable()).toBlock());
             }
@@ -142,15 +142,15 @@ public final class ActionModule implements StateModule {
             final @Nonnull ReadOnlyList<Block> entries = new ListWrapper(block).getElementsNotNull();
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull TupleWrapper tuple = new TupleWrapper(entry);
-                final @Nonnull InternalNonHostIdentity identity = IdentityClass.create(tuple.getNonNullableElement(0)).toInternalNonHostIdentity();
+                final @Nonnull InternalNonHostIdentity identity = IdentityImplementation.create(tuple.getNonNullableElement(0)).toInternalNonHostIdentity();
                 identity.set(preparedStatement, 1);
-                IdentityClass.create(tuple.getNonNullableElement(1)).toSemanticType().set(preparedStatement, 2);
+                IdentityImplementation.create(tuple.getNonNullableElement(1)).toSemanticType().set(preparedStatement, 2);
                 new Time(tuple.getNonNullableElement(2)).set(preparedStatement, 3);
                 new FreezableAgentPermissions(tuple.getNonNullableElement(3)).checkIsSingle().setEmptyOrSingle(preparedStatement, 4);
                 new Restrictions(NonHostAccount.get(host, identity), tuple.getNonNullableElement(4)).set(preparedStatement, 6); // The entity is wrong for services but it does not matter. (Correct would be Roles.getRole(host.getClient(), identity.toInternalPerson()).)
                 if (tuple.isElementNull(5)) preparedStatement.setLong(11, new Int64Wrapper(tuple.getNonNullableElement(5)).getValue());
                 else preparedStatement.setNull(11, Types.BIGINT);
-                IdentifierClass.create(tuple.getNonNullableElement(6)).toHostIdentifier().set(preparedStatement, 12);
+                IdentifierImplementation.create(tuple.getNonNullableElement(6)).toHostIdentifier().set(preparedStatement, 12);
                 tuple.getNonNullableElement(7).set(preparedStatement, 13);
                 preparedStatement.addBatch();
             }

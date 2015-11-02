@@ -15,7 +15,7 @@ import net.digitalid.utility.database.storing.Storable;
 /**
  * An entity captures the {@link Site site} and the {@link Identity identity} of a {@link Concept concept} or {@link Handler handler}.
  * 
- * @see EntityClass
+ * @see EntityImplementation
  * @see HostEntity
  * @see NonHostEntity
  */
@@ -25,12 +25,12 @@ public interface Entity<E extends Entity<E>> extends Encodable<E, Object>, Stora
     /**
      * Stores the aspect of the observed entity being created.
      */
-    public static final @Nonnull Aspect CREATED = new Aspect(EntityClass.class, "created");
+    public static final @Nonnull Aspect CREATED = new Aspect(EntityImplementation.class, "created");
     
     /**
      * Stores the aspect of the observed entity being deleted.
      */
-    public static final @Nonnull Aspect DELETED = new Aspect(EntityClass.class, "deleted");
+    public static final @Nonnull Aspect DELETED = new Aspect(EntityImplementation.class, "deleted");
     
     
     /**

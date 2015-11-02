@@ -17,7 +17,7 @@ import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identity.Category;
 import net.digitalid.service.core.identity.Identity;
-import net.digitalid.service.core.identity.IdentityClass;
+import net.digitalid.service.core.identity.IdentityImplementation;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.AttributeType;
 import net.digitalid.service.core.identity.resolution.Mapper;
@@ -131,7 +131,7 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
         final @Nonnull ReadOnlyList<Block> elements = new ListWrapper(block).getElementsNotNull();
         for (final @Nonnull Block element : elements) {
             final @Nonnull ReadOnlyArray<Block> subelements = new TupleWrapper(element).getNonNullableElements(2);
-            final @Nonnull SemanticType type = IdentityClass.create(subelements.getNonNullable(0)).toSemanticType().checkIsAttributeType();
+            final @Nonnull SemanticType type = IdentityImplementation.create(subelements.getNonNullable(0)).toSemanticType().checkIsAttributeType();
             put(type, new BooleanWrapper(subelements.getNonNullable(1)).getValue());
         }
         
@@ -466,7 +466,7 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
         try {
             final @Nonnull FreezableAgentPermissions permissions = new FreezableAgentPermissions();
             while (resultSet.next()) {
-                final @Nonnull SemanticType type = IdentityClass.getNotNull(resultSet, startIndex).toSemanticType().checkIsAttributeType();
+                final @Nonnull SemanticType type = IdentityImplementation.getNotNull(resultSet, startIndex).toSemanticType().checkIsAttributeType();
                 final boolean writing = resultSet.getBoolean(startIndex + 1);
                 permissions.put(type, writing);
             }
@@ -489,7 +489,7 @@ public final class FreezableAgentPermissions extends FreezableLinkedHashMap<Sema
     public static @Capturable @Nonnull @NonFrozen @EmptyOrSingle FreezableAgentPermissions getEmptyOrSingle(@Nonnull ResultSet resultSet, int startIndex) throws AbortException {
         try {
             final @Nonnull FreezableAgentPermissions permissions = new FreezableAgentPermissions();
-            final @Nullable Identity identity = IdentityClass.get(resultSet, startIndex);
+            final @Nullable Identity identity = IdentityImplementation.get(resultSet, startIndex);
             if (identity != null) permissions.put(identity.toSemanticType().checkIsAttributeType(), resultSet.getBoolean(startIndex + 1));
             return permissions;
         } catch (@Nonnull InvalidEncodingException exception) {

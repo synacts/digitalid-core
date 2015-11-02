@@ -24,7 +24,7 @@ import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.Method;
 import net.digitalid.service.core.identifier.HostIdentifier;
-import net.digitalid.service.core.identifier.IdentifierClass;
+import net.digitalid.service.core.identifier.IdentifierImplementation;
 import net.digitalid.service.core.identifier.InternalIdentifier;
 import net.digitalid.service.core.identifier.InternalNonHostIdentifier;
 import net.digitalid.service.core.identity.resolution.IdentityQuery;
@@ -319,7 +319,7 @@ public class Request extends Packet {
                 final @Nonnull HostIdentifier recipient = getMethod(0).getService().equals(CoreService.SERVICE) ? address.getHostIdentifier() : getRecipient();
                 return resend(methods, recipient, address, iteration, verified);
             } else if (exception.getError() == PacketErrorCode.SERVICE && !getMethod(0).isOnHost()) {
-                final @Nonnull HostIdentifier recipient = IdentifierClass.create(Cache.getReloadedAttributeContent(subject.getIdentity(), (Role) getMethod(0).getEntity(), getMethod(0).getService().getType(), false)).toHostIdentifier();
+                final @Nonnull HostIdentifier recipient = IdentifierImplementation.create(Cache.getReloadedAttributeContent(subject.getIdentity(), (Role) getMethod(0).getEntity(), getMethod(0).getService().getType(), false)).toHostIdentifier();
                 if (this.recipient.equals(recipient)) throw new PacketException(PacketErrorCode.EXTERNAL, "The recipient after a service error is still the same.", exception);
                 return resend(methods, recipient, subject, iteration, verified);
             } else {

@@ -9,7 +9,7 @@ import net.digitalid.service.core.block.wrappers.TupleWrapper;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
-import net.digitalid.service.core.identifier.IdentifierClass;
+import net.digitalid.service.core.identifier.IdentifierImplementation;
 import net.digitalid.service.core.identifier.InternalNonHostIdentifier;
 import net.digitalid.service.core.identifier.NonHostIdentifier;
 import net.digitalid.service.core.identity.NonHostIdentity;
@@ -89,7 +89,7 @@ public final class Predecessor implements Blockable {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getNonNullableElements(2);
-        this.identifier = IdentifierClass.create(elements.getNonNullable(0)).toNonHostIdentifier();
+        this.identifier = IdentifierImplementation.create(elements.getNonNullable(0)).toNonHostIdentifier();
         this.predecessors = new FreezablePredecessors(elements.getNonNullable(1)).freeze();
     }
     

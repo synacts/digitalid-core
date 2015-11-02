@@ -38,7 +38,7 @@ public interface NonHostIdentifier extends Identifier {
     /**
      * Stores the caster that casts identifiers to this subclass.
      */
-    public static final @Nonnull IdentifierClass.Caster<NonHostIdentifier> CASTER = new IdentifierClass.Caster<NonHostIdentifier>() {
+    public static final @Nonnull IdentifierImplementation.Caster<NonHostIdentifier> CASTER = new IdentifierImplementation.Caster<NonHostIdentifier>() {
         @Pure
         @Override
         protected @Nonnull NonHostIdentifier cast(@Nonnull Identifier identifier) throws InvalidEncodingException {
@@ -49,12 +49,12 @@ public interface NonHostIdentifier extends Identifier {
     /**
      * Stores the encoding factory of this class.
      */
-    public static final @Nonnull IdentifierClass.EncodingFactory<NonHostIdentifier> ENCODING_FACTORY = new IdentifierClass.EncodingFactory<>(NonHostIdentity.IDENTIFIER, CASTER);
+    public static final @Nonnull IdentifierImplementation.EncodingFactory<NonHostIdentifier> ENCODING_FACTORY = new IdentifierImplementation.EncodingFactory<>(NonHostIdentity.IDENTIFIER, CASTER);
     
     /**
      * Stores the storing factory of this class.
      */
-    public static final @Nonnull IdentifierClass.StoringFactory<NonHostIdentifier> STORING_FACTORY = new IdentifierClass.StoringFactory<>(CASTER);
+    public static final @Nonnull IdentifierImplementation.StoringFactory<NonHostIdentifier> STORING_FACTORY = new IdentifierImplementation.StoringFactory<>(CASTER);
     
     /**
      * Stores the factories of this class.

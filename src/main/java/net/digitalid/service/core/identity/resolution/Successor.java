@@ -11,7 +11,7 @@ import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.handler.Reply;
 import net.digitalid.service.core.identifier.ExternalIdentifier;
 import net.digitalid.service.core.identifier.Identifier;
-import net.digitalid.service.core.identifier.IdentifierClass;
+import net.digitalid.service.core.identifier.IdentifierImplementation;
 import net.digitalid.service.core.identifier.InternalNonHostIdentifier;
 import net.digitalid.service.core.identifier.NonHostIdentifier;
 import net.digitalid.utility.database.annotations.NonCommitting;
@@ -29,7 +29,7 @@ public final class Successor {
         assert Database.isMainThread() : "This static block is called in the main thread.";
         
         try (@Nonnull Statement statement = Database.createStatement()) {
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS general_successor (identifier " + IdentifierClass.FORMAT + " NOT NULL, successor " + IdentifierClass.FORMAT + " NOT NULL, reply " + Reply.FORMAT + ", PRIMARY KEY (identifier), FOREIGN KEY (reply) " + Reply.REFERENCE + ")");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS general_successor (identifier " + IdentifierImplementation.FORMAT + " NOT NULL, successor " + IdentifierImplementation.FORMAT + " NOT NULL, reply " + Reply.FORMAT + ", PRIMARY KEY (identifier), FOREIGN KEY (reply) " + Reply.REFERENCE + ")");
         } catch (@Nonnull SQLException exception) {
             throw new InitializationError("The database tables of the predecessors could not be created.", exception);
         }

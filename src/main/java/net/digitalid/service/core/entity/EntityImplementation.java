@@ -20,7 +20,7 @@ import net.digitalid.utility.system.errors.ShouldNeverHappenError;
  * @see Role
  */
 @Immutable
-public abstract class EntityClass implements Entity {
+public abstract class EntityImplementation implements Entity {
     
     /**
      * Stores the data type used to reference instances of this class.

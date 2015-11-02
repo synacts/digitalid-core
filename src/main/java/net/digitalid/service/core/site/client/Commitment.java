@@ -22,9 +22,9 @@ import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identifier.HostIdentifier;
-import net.digitalid.service.core.identifier.IdentifierClass;
+import net.digitalid.service.core.identifier.IdentifierImplementation;
 import net.digitalid.service.core.identity.HostIdentity;
-import net.digitalid.service.core.identity.IdentityClass;
+import net.digitalid.service.core.identity.IdentityImplementation;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.resolution.Mapper;
 import net.digitalid.service.core.server.Server;
@@ -127,7 +127,7 @@ public class Commitment implements Blockable, SQLizable {
         assert block.getType().isBasedOn(TYPE) : "The block is based on the indicated type.";
         
         final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getNonNullableElements(3);
-        final @Nonnull HostIdentifier identifier = IdentifierClass.create(elements.getNonNullable(0)).toHostIdentifier();
+        final @Nonnull HostIdentifier identifier = IdentifierImplementation.create(elements.getNonNullable(0)).toHostIdentifier();
         this.host = identifier.getIdentity();
         this.time = new Time(elements.getNonNullable(1));
         this.publicKey = (Server.hasHost(identifier) ? Server.getHost(identifier).getPublicKeyChain() : Cache.getPublicKeyChain(host)).getKey(time);
@@ -268,7 +268,7 @@ public class Commitment implements Blockable, SQLizable {
     @NonCommitting
     public static @Nonnull Commitment get(@Nonnull ResultSet resultSet, int startIndex) throws AbortException {
         try {
-            final @Nonnull HostIdentity host = IdentityClass.getNotNull(resultSet, startIndex + 0).toHostIdentity();
+            final @Nonnull HostIdentity host = IdentityImplementation.getNotNull(resultSet, startIndex + 0).toHostIdentity();
             final @Nonnull Time time = Time.get(resultSet, startIndex + 1);
             final @Nonnull BigInteger value = new IntegerWrapper(Block.getNotNull(Element.TYPE, resultSet, startIndex + 2)).getValue();
             return new Commitment(host, time, value);

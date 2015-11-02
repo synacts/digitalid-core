@@ -34,7 +34,7 @@ import net.digitalid.service.core.handler.Method;
 import net.digitalid.service.core.handler.Reply;
 import net.digitalid.service.core.handler.core.CoreServiceInternalQuery;
 import net.digitalid.service.core.identifier.HostIdentifier;
-import net.digitalid.service.core.identity.IdentityClass;
+import net.digitalid.service.core.identity.IdentityImplementation;
 import net.digitalid.service.core.identity.InternalPerson;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.site.host.Host;
@@ -132,7 +132,7 @@ final class CredentialInternalQuery extends CoreServiceInternalQuery {
         final @Nonnull TupleWrapper tuple = new TupleWrapper(block);
         this.permissions = new RandomizedAgentPermissions(tuple.getNonNullableElement(0));
         if (tuple.isElementNull(1)) this.relation = null;
-        else this.relation = IdentityClass.create(tuple.getNonNullableElement(1)).toSemanticType().checkIsRoleType();
+        else this.relation = IdentityImplementation.create(tuple.getNonNullableElement(1)).toSemanticType().checkIsRoleType();
         if (signature instanceof ClientSignatureWrapper) this.value = ((ClientSignatureWrapper) signature).getCommitment().getValue().getValue();
         else if (signature instanceof CredentialsSignatureWrapper) this.value = ((CredentialsSignatureWrapper) signature).getValue();
         else throw new PacketException(PacketErrorCode.SIGNATURE, "A credential request must be signed by a client or with credentials.");

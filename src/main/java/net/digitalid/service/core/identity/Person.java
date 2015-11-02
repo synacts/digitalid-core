@@ -18,7 +18,7 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * @see ExternalPerson
  */
 @Immutable
-public abstract class Person extends NonHostIdentityClass {
+public abstract class Person extends NonHostIdentityImplementation {
     
     /**
      * Stores the semantic type {@code person@core.digitalid.net}.

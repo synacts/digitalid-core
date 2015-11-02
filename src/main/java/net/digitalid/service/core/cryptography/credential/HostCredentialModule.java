@@ -13,12 +13,12 @@ import net.digitalid.service.core.block.wrappers.TupleWrapper;
 import net.digitalid.service.core.cryptography.Exponent;
 import net.digitalid.service.core.storage.HostModule;
 import net.digitalid.service.core.storage.Service;
-import net.digitalid.service.core.entity.EntityClass;
+import net.digitalid.service.core.entity.EntityImplementation;
 import net.digitalid.service.core.entity.NonHostAccount;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identity.Identity;
-import net.digitalid.service.core.identity.IdentityClass;
+import net.digitalid.service.core.identity.IdentityImplementation;
 import net.digitalid.service.core.identity.InternalNonHostIdentity;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.resolution.Mapper;
@@ -55,7 +55,7 @@ public final class HostCredentialModule implements HostModule {
     @NonCommitting
     public void createTables(@Nonnull Site site) throws AbortException {
         try (@Nonnull Statement statement = Database.createStatement()) {
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "credential (time " + Time.FORMAT + " NOT NULL, entity " + EntityClass.FORMAT + " NOT NULL, e " + Exponent.FORMAT + " NOT NULL, i " + Exponent.FORMAT + " NOT NULL, v " + Exponent.FORMAT + ", signature " + Block.FORMAT + " NOT NULL, PRIMARY KEY (time), FOREIGN KEY (entity) " + site.getEntityReference() + ")");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + site + "credential (time " + Time.FORMAT + " NOT NULL, entity " + EntityImplementation.FORMAT + " NOT NULL, e " + Exponent.FORMAT + " NOT NULL, i " + Exponent.FORMAT + " NOT NULL, v " + Exponent.FORMAT + ", signature " + Block.FORMAT + " NOT NULL, PRIMARY KEY (time), FOREIGN KEY (entity) " + site.getEntityReference() + ")");
             Mapper.addReference(site + "credential", "entity");
             Database.addRegularPurging(site + "credential", Time.TROPICAL_YEAR);
         }
@@ -112,7 +112,7 @@ public final class HostCredentialModule implements HostModule {
             final @Nonnull FreezableList<Block> entries = new FreezableLinkedList<>();
             while (resultSet.next()) {
                 final @Nonnull Time time = Time.get(resultSet, 1);
-                final @Nonnull Identity identity = IdentityClass.getNotNull(resultSet, 2);
+                final @Nonnull Identity identity = IdentityImplementation.getNotNull(resultSet, 2);
                 final @Nonnull Block e = Block.getNotNull(E, resultSet, 3);
                 final @Nonnull Block i = Block.getNotNull(I, resultSet, 4);
                 final @Nullable Block v = Block.get(V, resultSet, 5);
@@ -133,7 +133,7 @@ public final class HostCredentialModule implements HostModule {
             for (final @Nonnull Block entry : entries) {
                 final @Nonnull TupleWrapper tuple = new TupleWrapper(entry);
                 new Time(tuple.getNonNullableElement(0)).set(preparedStatement, 1);
-                IdentityClass.create(tuple.getNonNullableElement(1)).toInternalNonHostIdentity().set(preparedStatement, 2);
+                IdentityImplementation.create(tuple.getNonNullableElement(1)).toInternalNonHostIdentity().set(preparedStatement, 2);
                 tuple.getNonNullableElement(2).set(preparedStatement, 3);
                 tuple.getNonNullableElement(3).set(preparedStatement, 4);
                 Block.set(tuple.getNullableElement(4), preparedStatement, 5);

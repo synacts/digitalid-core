@@ -23,7 +23,7 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * @see InternalNonHostIdentifier
  */
 @Immutable
-public abstract class InternalIdentifier extends IdentifierClass {
+public abstract class InternalIdentifier extends IdentifierImplementation {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Validity –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -42,7 +42,7 @@ public abstract class InternalIdentifier extends IdentifierClass {
      */
     @Pure
     static boolean isConforming(@Nonnull String string) {
-        return IdentifierClass.isConforming(string) && PATTERN.matcher(string).matches() && string.length() - string.indexOf("@") < 40;
+        return IdentifierImplementation.isConforming(string) && PATTERN.matcher(string).matches() && string.length() - string.indexOf("@") < 40;
     }
     
     /**

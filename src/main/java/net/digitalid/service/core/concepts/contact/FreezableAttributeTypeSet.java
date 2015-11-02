@@ -7,7 +7,7 @@ import net.digitalid.service.core.block.wrappers.ListWrapper;
 import net.digitalid.service.core.concepts.agent.FreezableAgentPermissions;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
-import net.digitalid.service.core.identity.IdentityClass;
+import net.digitalid.service.core.identity.IdentityImplementation;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.AttributeType;
 import net.digitalid.utility.annotations.reference.Capturable;
@@ -77,7 +77,7 @@ public class FreezableAttributeTypeSet extends FreezableLinkedHashSet<SemanticTy
         
         final @Nonnull ReadOnlyList<Block> elements = new ListWrapper(block).getElementsNotNull();
         for (final @Nonnull Block element : elements) {
-            final @Nonnull SemanticType type = IdentityClass.create(element).toSemanticType().checkIsAttributeType();
+            final @Nonnull SemanticType type = IdentityImplementation.create(element).toSemanticType().checkIsAttributeType();
             add(type);
         }
     }

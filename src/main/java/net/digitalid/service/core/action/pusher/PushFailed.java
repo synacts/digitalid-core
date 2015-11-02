@@ -24,7 +24,7 @@ import net.digitalid.service.core.handler.ExternalAction;
 import net.digitalid.service.core.handler.Method;
 import net.digitalid.service.core.handler.Reply;
 import net.digitalid.service.core.identifier.HostIdentifier;
-import net.digitalid.service.core.identifier.IdentifierClass;
+import net.digitalid.service.core.identifier.IdentifierImplementation;
 import net.digitalid.service.core.identifier.InternalIdentifier;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.packet.Packet;
@@ -119,8 +119,8 @@ public final class PushFailed extends ExternalAction {
         final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getNonNullableElements(4);
         this.number = new Int64Wrapper(elements.getNonNullable(0)).getValue();
         
-        final @Nonnull InternalIdentifier _subject = IdentifierClass.create(elements.getNonNullable(1)).toInternalIdentifier();
-        final @Nonnull HostIdentifier _recipient = IdentifierClass.create(elements.getNonNullable(2)).toHostIdentifier();
+        final @Nonnull InternalIdentifier _subject = IdentifierImplementation.create(elements.getNonNullable(1)).toInternalIdentifier();
+        final @Nonnull HostIdentifier _recipient = IdentifierImplementation.create(elements.getNonNullable(2)).toHostIdentifier();
         final @Nonnull Block _block = new SelfcontainedWrapper(elements.getNonNullable(3)).getElement();
         try {
             this.action = (ExternalAction) Method.get(entity, new SignatureWrapper(Packet.SIGNATURE, (Block) null, _subject), _recipient, _block);

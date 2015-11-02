@@ -16,7 +16,7 @@ import net.digitalid.service.core.handler.Method;
 import net.digitalid.service.core.handler.core.CoreServiceInternalAction;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.identity.Identity;
-import net.digitalid.service.core.identity.IdentityClass;
+import net.digitalid.service.core.identity.IdentityImplementation;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -96,7 +96,7 @@ final class OutgoingRoleCreate extends CoreServiceInternalAction {
         final @Nonnull NonHostEntity nonHostEntity = entity.toNonHostEntity();
         final @Nonnull ReadOnlyArray<Block> elements = new TupleWrapper(block).getNonNullableElements(3);
         this.outgoingRole = Agent.get(nonHostEntity, elements.getNonNullable(0)).toOutgoingRole();
-        this.relation = IdentityClass.create(elements.getNonNullable(1)).toSemanticType().checkIsRoleType();
+        this.relation = IdentityImplementation.create(elements.getNonNullable(1)).toSemanticType().checkIsRoleType();
         this.context = Context.get(nonHostEntity, elements.getNonNullable(2));
     }
     

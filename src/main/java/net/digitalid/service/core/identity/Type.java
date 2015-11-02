@@ -17,7 +17,7 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * @see SemanticType
  */
 @Immutable
-public abstract class Type extends NonHostIdentityClass implements InternalNonHostIdentity {
+public abstract class Type extends NonHostIdentityImplementation implements InternalNonHostIdentity {
     
     /**
      * Stores the semantic type {@code type@core.digitalid.net}.

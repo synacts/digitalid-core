@@ -9,7 +9,7 @@ import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
-import net.digitalid.service.core.identifier.IdentifierClass;
+import net.digitalid.service.core.identifier.IdentifierImplementation;
 import net.digitalid.service.core.identity.resolution.Mapper;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -25,7 +25,7 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * @see Mapper
  */
 @Immutable
-public abstract class IdentityClass implements Identity {
+public abstract class IdentityImplementation implements Identity {
     
     /**
      * Stores the internal number that represents and indexes this identity.
@@ -38,7 +38,7 @@ public abstract class IdentityClass implements Identity {
      * 
      * @param number the number that represents this identity.
      */
-    IdentityClass(long number) {
+    IdentityImplementation(long number) {
         this.number = number;
     }
     
@@ -96,7 +96,7 @@ public abstract class IdentityClass implements Identity {
     @Pure
     @NonCommitting
     public static @Nonnull Identity create(@Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
-        return IdentifierClass.create(block).getIdentity();
+        return IdentifierImplementation.create(block).getIdentity();
     }
     
     
@@ -158,8 +158,8 @@ public abstract class IdentityClass implements Identity {
     @Override
     public final boolean equals(@Nullable Object object) {
         if (object == this) return true;
-        if (object == null || !(object instanceof IdentityClass)) return false;
-        final @Nonnull IdentityClass other = (IdentityClass) object;
+        if (object == null || !(object instanceof IdentityImplementation)) return false;
+        final @Nonnull IdentityImplementation other = (IdentityImplementation) object;
         return this.number == other.number;
     }
     
