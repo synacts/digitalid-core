@@ -21,7 +21,7 @@ import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.identity.HostIdentity;
 import net.digitalid.service.core.identity.InternalIdentity;
-import net.digitalid.service.core.identity.resolution.Mapper;
+import net.digitalid.service.core.identity.Mapper;
 import net.digitalid.service.core.server.Server;
 import net.digitalid.service.core.service.CoreService;
 import net.digitalid.service.core.site.client.Client;

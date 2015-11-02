@@ -28,7 +28,7 @@ import net.digitalid.service.core.identifier.IdentifierImplementation;
 import net.digitalid.service.core.identifier.InternalIdentifier;
 import net.digitalid.service.core.identifier.InternalNonHostIdentifier;
 import net.digitalid.service.core.identity.resolution.IdentityQuery;
-import net.digitalid.service.core.identity.resolution.Mapper;
+import net.digitalid.service.core.identity.Mapper;
 import net.digitalid.service.core.identity.resolution.Successor;
 import net.digitalid.service.core.server.Server;
 import net.digitalid.service.core.service.CoreService;

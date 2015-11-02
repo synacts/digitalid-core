@@ -11,7 +11,7 @@ import net.digitalid.service.core.identity.Category;
 import net.digitalid.service.core.identity.ExternalIdentity;
 import net.digitalid.service.core.identity.Identity;
 import net.digitalid.service.core.identity.Person;
-import net.digitalid.service.core.identity.resolution.Mapper;
+import net.digitalid.service.core.identity.Mapper;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;

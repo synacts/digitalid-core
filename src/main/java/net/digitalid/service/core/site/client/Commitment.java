@@ -26,7 +26,7 @@ import net.digitalid.service.core.identifier.IdentifierImplementation;
 import net.digitalid.service.core.identity.HostIdentity;
 import net.digitalid.service.core.identity.IdentityImplementation;
 import net.digitalid.service.core.identity.SemanticType;
-import net.digitalid.service.core.identity.resolution.Mapper;
+import net.digitalid.service.core.identity.Mapper;
 import net.digitalid.service.core.server.Server;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;

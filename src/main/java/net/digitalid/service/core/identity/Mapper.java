@@ -1,4 +1,4 @@
-package net.digitalid.service.core.identity.resolution;
+package net.digitalid.service.core.identity;
 
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -26,21 +26,11 @@ import net.digitalid.service.core.identifier.Identifier;
 import net.digitalid.service.core.identifier.IdentifierImplementation;
 import net.digitalid.service.core.identifier.InternalNonHostIdentifier;
 import net.digitalid.service.core.identifier.NonHostIdentifier;
-import net.digitalid.service.core.identity.ArtificialPerson;
-import net.digitalid.service.core.identity.Category;
-import net.digitalid.service.core.identity.EmailPerson;
-import net.digitalid.service.core.identity.ExternalPerson;
-import net.digitalid.service.core.identity.HostIdentity;
-import net.digitalid.service.core.identity.Identity;
-import net.digitalid.service.core.identity.InternalNonHostIdentity;
-import net.digitalid.service.core.identity.InternalPerson;
-import net.digitalid.service.core.identity.MobilePerson;
-import net.digitalid.service.core.identity.NaturalPerson;
-import net.digitalid.service.core.identity.NonHostIdentity;
-import net.digitalid.service.core.identity.Person;
-import net.digitalid.service.core.identity.SemanticType;
-import net.digitalid.service.core.identity.SyntacticType;
-import net.digitalid.service.core.identity.Type;
+import net.digitalid.service.core.identity.resolution.IdentityQuery;
+import net.digitalid.service.core.identity.resolution.IdentityReply;
+import net.digitalid.service.core.identity.resolution.Predecessor;
+import net.digitalid.service.core.identity.resolution.ReadOnlyPredecessors;
+import net.digitalid.service.core.identity.resolution.Successor;
 import net.digitalid.service.core.identity.resolution.annotations.NonMapped;
 import net.digitalid.service.core.server.Server;
 import net.digitalid.service.core.site.client.AccountInitialize;
@@ -222,7 +212,7 @@ public final class Mapper {
      * @param identity the identity which is to be removed.
      */
     public static void unmap(@Nonnull Identity identity) {
-        numbers.remove(identity.getNumber());
+        numbers.remove(identity.getDatabaseID());
         identifiers.remove(identity.getAddress());
         Log.debugging("The identity of " + identity.getAddress() + " was unmapped.");
     }
@@ -269,7 +259,7 @@ public final class Mapper {
      */
     @Locked
     @NonCommitting
-    static @Nonnull Identity getIdentity(long number) throws AbortException {
+    static @Nonnull Identity getIdentity(long number) throws SQLException {
         @Nullable Identity identity = numbers.get(number);
         if (identity == null) identity = loadIdentity(number);
         try {
@@ -423,7 +413,7 @@ public final class Mapper {
         
         try {
             final @Nonnull SyntacticType type = mapIdentity(identifier, Category.SYNTACTIC_TYPE, null).toSyntacticType();
-            numbers.put(type.getNumber(), type);
+            numbers.put(type.getDatabaseID(), type);
             identifiers.put(identifier, type);
             return type;
         } catch (@Nonnull SQLException | InvalidEncodingException exception) {
@@ -444,7 +434,7 @@ public final class Mapper {
         
         try {
             final @Nonnull SemanticType type = mapIdentity(identifier, Category.SEMANTIC_TYPE, null).toSemanticType();
-            numbers.put(type.getNumber(), type);
+            numbers.put(type.getDatabaseID(), type);
             identifiers.put(identifier, type);
             return type;
         } catch (@Nonnull SQLException | InvalidEncodingException exception) {
@@ -476,10 +466,10 @@ public final class Mapper {
     @Locked
     @NonCommitting
     public static void mergeIdentities(@Nonnull ReadOnlyList<NonHostIdentity> identities, @Nonnull InternalNonHostIdentity newIdentity) throws AbortException {
-        final long newNumber = newIdentity.getNumber();
+        final long newNumber = newIdentity.getDatabaseID();
         try (@Nonnull Statement statement = Database.createStatement()) {
             for (final @Nonnull NonHostIdentity identity : identities) {
-                final long oldNumber = identity.getNumber();
+                final long oldNumber = identity.getDatabaseID();
                 if (oldNumber != newNumber) {
                     updateReferences(statement, oldNumber, newNumber);
                     statement.executeUpdate("UPDATE general_identifier SET identity = " + newNumber + " WHERE identity = " + oldNumber);

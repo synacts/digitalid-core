@@ -31,7 +31,7 @@ import net.digitalid.service.core.identity.Category;
 import net.digitalid.service.core.identity.NonHostIdentity;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.resolution.FreezablePredecessors;
-import net.digitalid.service.core.identity.resolution.Mapper;
+import net.digitalid.service.core.identity.Mapper;
 import net.digitalid.service.core.identity.resolution.Predecessor;
 import net.digitalid.service.core.identity.resolution.Successor;
 import net.digitalid.service.core.service.CoreService;

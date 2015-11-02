@@ -24,7 +24,7 @@ import net.digitalid.service.core.identity.IdentityImplementation;
 import net.digitalid.service.core.identity.InternalPerson;
 import net.digitalid.service.core.identity.Person;
 import net.digitalid.service.core.identity.SemanticType;
-import net.digitalid.service.core.identity.resolution.Mapper;
+import net.digitalid.service.core.identity.Mapper;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.concurrent.ConcurrentHashMap;
@@ -263,7 +263,7 @@ public final class Contact extends NonHostConcept implements Blockable, SQLizabl
     @Override
     @NonCommitting
     public void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws AbortException {
-        preparedStatement.setLong(parameterIndex, person.getNumber());
+        preparedStatement.setLong(parameterIndex, person.getDatabaseID());
     }
     
     /**

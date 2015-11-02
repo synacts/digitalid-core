@@ -31,7 +31,7 @@ import net.digitalid.service.core.identity.Identity;
 import net.digitalid.service.core.identity.IdentityImplementation;
 import net.digitalid.service.core.identity.InternalNonHostIdentity;
 import net.digitalid.service.core.identity.SemanticType;
-import net.digitalid.service.core.identity.resolution.Mapper;
+import net.digitalid.service.core.identity.Mapper;
 import net.digitalid.service.core.service.CoreService;
 import net.digitalid.service.core.site.client.Client;
 import net.digitalid.service.core.site.client.Commitment;

@@ -1,19 +1,10 @@
 package net.digitalid.service.core.identity;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Types;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.service.core.block.Block;
-import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.service.core.exceptions.packet.PacketException;
-import net.digitalid.service.core.identifier.IdentifierImplementation;
-import net.digitalid.service.core.identity.resolution.Mapper;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * This class models a digital identity, which can change identifiers and hosts.
@@ -27,132 +18,41 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 @Immutable
 public abstract class IdentityImplementation implements Identity {
     
-    /**
-     * Stores the internal number that represents and indexes this identity.
-     * The number remains the same after relocation but changes after merging.
-     */
-    private volatile long number;
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Database ID –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Creates a new identity with the given internal number.
-     * 
-     * @param number the number that represents this identity.
+     * Stores the database ID that represents and indexes this identity.
+     * The database ID remains the same after relocation but changes after merging.
      */
-    IdentityImplementation(long number) {
-        this.number = number;
-    }
+    private volatile long databaseID;
     
     @Pure
     @Override
-    public final long getNumber() {
-        return number;
+    public final long getDatabaseID() {
+        return databaseID;
     }
     
     /**
-     * Sets the number that represents this identity.
+     * Sets the database ID that represents this identity.
      * 
-     * @param number the new number of this identity.
+     * @param databaseID the new database ID of this identity.
      */
-    final void setNumber(long number) {
-        this.number = number;
+    final void setDatabaseID(long databaseID) {
+        this.databaseID = databaseID;
     }
     
-    
-    @Pure
-    @Override
-    public final @Nonnull SemanticType getType() {
-        return Identity.IDENTIFIER;
-    }
-    
-    @Pure
-    @Override
-    public final @Nonnull Block toBlock() {
-        return getAddress().toBlock();
-    }
-    
-    @Pure
-    @Override
-    public final @Nonnull Block toBlock(@Nonnull SemanticType type) {
-        assert type.isBasedOn(Identity.IDENTIFIER) : "The type is based on an identifier.";
-        
-        return toBlock().setType(type);
-    }
-    
-    @Pure
-    @Override
-    public final @Nonnull Blockable toBlockable(@Nonnull SemanticType type) {
-        return toBlock(type).toBlockable();
-    }
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Returns a new identity from the given block.
+     * Creates a new identity with the given database ID.
      * 
-     * @param block the block containing the identity.
-     * 
-     * @return a new identity from the given block.
-     * 
-     * @require block.getType().isBasedOn(Identity.IDENTIFIER) : "The block is based on the identifier type.";
+     * @param databaseID the database ID that represents this identity.
      */
-    @Pure
-    @NonCommitting
-    public static @Nonnull Identity create(@Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
-        return IdentifierImplementation.create(block).getIdentity();
+    IdentityImplementation(long databaseID) {
+        this.databaseID = databaseID;
     }
     
-    
-    /**
-     * Returns the given column of the result set as an instance of this class.
-     * 
-     * @param resultSet the result set to retrieve the data from.
-     * @param columnIndex the index of the column containing the data.
-     * 
-     * @return the given column of the result set as an instance of this class.
-     * 
-     * @ensure !(result instanceof Type) || ((Type) result).isLoaded() : "If the result is a type, its declaration is loaded.";
-     */
-    @Pure
-    @NonCommitting
-    public static @Nullable Identity get(@Nonnull ResultSet resultSet, int columnIndex) throws AbortException {
-        final long number = resultSet.getLong(columnIndex);
-        if (resultSet.wasNull()) return null;
-        else return Mapper.getIdentity(number);
-    }
-    
-    /**
-     * Returns the given column of the result set as an instance of this class.
-     * 
-     * @param resultSet the result set to retrieve the data from.
-     * @param columnIndex the index of the column containing the data.
-     * 
-     * @return the given column of the result set as an instance of this class.
-     * 
-     * @ensure !(result instanceof Type) || ((Type) result).isLoaded() : "If the result is a type, its declaration is loaded.";
-     */
-    @Pure
-    @NonCommitting
-    public static @Nonnull Identity getNotNull(@Nonnull ResultSet resultSet, int columnIndex) throws AbortException {
-        return Mapper.getIdentity(resultSet.getLong(columnIndex));
-    }
-    
-    @Override
-    @NonCommitting
-    public final void set(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws AbortException {
-        preparedStatement.setLong(parameterIndex, number);
-    }
-    
-    /**
-     * Sets the parameter at the given index of the prepared statement to the given identity.
-     * 
-     * @param identity the identity to which the parameter at the given index is to be set.
-     * @param preparedStatement the prepared statement whose parameter is to be set.
-     * @param parameterIndex the index of the parameter to set.
-     */
-    @NonCommitting
-    public static void set(@Nullable Identity identity, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws AbortException {
-        if (identity == null) preparedStatement.setNull(parameterIndex, Types.BIGINT);
-        else identity.set(preparedStatement, parameterIndex);
-    }
-    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
@@ -160,21 +60,22 @@ public abstract class IdentityImplementation implements Identity {
         if (object == this) return true;
         if (object == null || !(object instanceof IdentityImplementation)) return false;
         final @Nonnull IdentityImplementation other = (IdentityImplementation) object;
-        return this.number == other.number;
+        return this.databaseID == other.databaseID;
     }
     
     @Pure
     @Override
     public final int hashCode() {
-        return (int) (number ^ (number >>> 32));
+        return (int) (databaseID ^ (databaseID >>> 32));
     }
     
     @Pure
     @Override
     public final @Nonnull String toString() {
-        return String.valueOf(number);
+        return String.valueOf(databaseID);
     }
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Casting –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
@@ -281,6 +182,22 @@ public abstract class IdentityImplementation implements Identity {
     public final @Nonnull MobilePerson toMobilePerson() throws InvalidEncodingException {
         if (this instanceof MobilePerson) return (MobilePerson) this;
         throw new InvalidEncodingException("" + getAddress() + " is a " + this.getClass().getSimpleName() + " and cannot be cast to MobilePerson.");
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encodable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    @Pure
+    @Override
+    public final @Nonnull EncodingFactory<Identity> getEncodingFactory() {
+        return ENCODING_FACTORY;
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    @Pure
+    @Override
+    public final @Nonnull StoringFactory<Identity> getStoringFactory() {
+        return STORING_FACTORY;
     }
     
 }
