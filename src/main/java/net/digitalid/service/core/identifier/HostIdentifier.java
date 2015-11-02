@@ -3,8 +3,10 @@ package net.digitalid.service.core.identifier;
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.factory.Factories;
 import net.digitalid.service.core.identity.HostIdentity;
 import net.digitalid.service.core.identity.Identity;
 import net.digitalid.service.core.identity.resolution.Mapper;
@@ -109,5 +111,33 @@ public final class HostIdentifier extends InternalIdentifier {
         final @Nonnull String string = getString();
         return (Character.isDigit(string.charAt(0)) ? "_" : "") + string.replace(".", "_").replace("-", "$");
     }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factories –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Stores the caster that casts identifiers to this subclass.
+     */
+    private static final @Nonnull Caster<HostIdentifier> CASTER = new Caster<HostIdentifier>() {
+        @Pure
+        @Override
+        protected @Nonnull HostIdentifier cast(@Nonnull Identifier identifier) throws InvalidEncodingException {
+            return identifier.toHostIdentifier();
+        }
+    };
+    
+    /**
+     * Stores the encoding factory of this class.
+     */
+    public static final @Nonnull EncodingFactory<HostIdentifier> ENCODING_FACTORY = new EncodingFactory<>(HostIdentity.IDENTIFIER, CASTER);
+    
+    /**
+     * Stores the storing factory of this class.
+     */
+    public static final @Nonnull StoringFactory<HostIdentifier> STORING_FACTORY = new StoringFactory<>(CASTER);
+    
+    /**
+     * Stores the factories of this class.
+     */
+    public static final @Nonnull Factories<HostIdentifier, Object> FACTORIES = Factories.get(ENCODING_FACTORY, STORING_FACTORY);
     
 }

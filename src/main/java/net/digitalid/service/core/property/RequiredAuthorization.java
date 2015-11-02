@@ -30,14 +30,15 @@ public abstract class RequiredAuthorization<C extends Concept<C, ?, ?>> {
     public abstract @Nonnull String getStateFilter(@Nonnull ReadOnlyAgentPermissions permissions, @Nonnull Restrictions restrictions, @Nullable Agent agent);
     
     @Pure
-    public abstract @Nonnull ReadOnlyAgentPermissions getRequiredPermissions(C concept);
+    public abstract @Nonnull ReadOnlyAgentPermissions getRequiredPermissions(@Nonnull C concept);
     
     /**
      * Returns the agent that is required to execute the method.
      * 
      * @return the agent required to execute the method.
      */
-    public @Nullable Agent getRequiredAgentToExecuteMethod() {
+    public @Nullable Agent getRequiredAgentToExecuteMethod(@Nonnull C concept) {
         return null;
     }
+    
 }

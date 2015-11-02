@@ -1,11 +1,11 @@
 package net.digitalid.service.core.property.extensible;
 
-import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.property.ValueValidator;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
+import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
 import net.digitalid.utility.collections.freezable.FreezableSet;
 import net.digitalid.utility.collections.readonly.ReadOnlySet;
 
@@ -81,7 +81,7 @@ public class VolatileExtensibleProperty<V, R extends ReadOnlySet<V>, F extends F
      */
     @Pure
     public static @Nullable <V, R extends ReadOnlySet<V>, F extends FreezableSet<V>> VolatileExtensibleProperty<V, R, F> get(@Nonnull ValueValidator<? super V> valueValidator, @Nonnull @Validated F set) {
-        return new VolatileExtensibleProperty<V, R, F>(valueValidator, set);
+        return new VolatileExtensibleProperty<>(valueValidator, set);
     }
     
     /**

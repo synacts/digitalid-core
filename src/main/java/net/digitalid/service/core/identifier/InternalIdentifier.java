@@ -5,8 +5,10 @@ import javax.annotation.Nonnull;
 import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.IdentityNotFoundException;
+import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.factory.Factories;
 import net.digitalid.service.core.identity.InternalIdentity;
 import net.digitalid.service.core.identity.resolution.Mapper;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -119,5 +121,33 @@ public abstract class InternalIdentifier extends IdentifierClass {
      */
     @Pure
     public abstract @Nonnull HostIdentifier getHostIdentifier();
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factories –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Stores the caster that casts identifiers to this subclass.
+     */
+    private static final @Nonnull Caster<InternalIdentifier> CASTER = new Caster<InternalIdentifier>() {
+        @Pure
+        @Override
+        protected @Nonnull InternalIdentifier cast(@Nonnull Identifier identifier) throws InvalidEncodingException {
+            return identifier.toInternalIdentifier();
+        }
+    };
+    
+    /**
+     * Stores the encoding factory of this class.
+     */
+    public static final @Nonnull EncodingFactory<InternalIdentifier> ENCODING_FACTORY = new EncodingFactory<>(InternalIdentity.IDENTIFIER, CASTER);
+    
+    /**
+     * Stores the storing factory of this class.
+     */
+    public static final @Nonnull StoringFactory<InternalIdentifier> STORING_FACTORY = new StoringFactory<>(CASTER);
+    
+    /**
+     * Stores the factories of this class.
+     */
+    public static final @Nonnull Factories<InternalIdentifier, Object> FACTORIES = Factories.get(ENCODING_FACTORY, STORING_FACTORY);
     
 }

@@ -4,9 +4,12 @@ import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.factory.Factories;
 import net.digitalid.service.core.identity.Category;
+import net.digitalid.service.core.identity.MobilePerson;
 import net.digitalid.service.core.identity.Person;
 import net.digitalid.service.core.identity.resolution.Mapper;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -80,5 +83,33 @@ public final class MobileIdentifier extends ExternalIdentifier {
     public @Nonnull Category getCategory() {
         return Category.MOBILE_PERSON;
     }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factories –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Stores the caster that casts identifiers to this subclass.
+     */
+    private static final @Nonnull Caster<MobileIdentifier> CASTER = new Caster<MobileIdentifier>() {
+        @Pure
+        @Override
+        protected @Nonnull MobileIdentifier cast(@Nonnull Identifier identifier) throws InvalidEncodingException {
+            return identifier.toMobileIdentifier();
+        }
+    };
+    
+    /**
+     * Stores the encoding factory of this class.
+     */
+    public static final @Nonnull EncodingFactory<MobileIdentifier> ENCODING_FACTORY = new EncodingFactory<>(MobilePerson.IDENTIFIER, CASTER);
+    
+    /**
+     * Stores the storing factory of this class.
+     */
+    public static final @Nonnull StoringFactory<MobileIdentifier> STORING_FACTORY = new StoringFactory<>(CASTER);
+    
+    /**
+     * Stores the factories of this class.
+     */
+    public static final @Nonnull Factories<MobileIdentifier, Object> FACTORIES = Factories.get(ENCODING_FACTORY, STORING_FACTORY);
     
 }

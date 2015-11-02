@@ -3,9 +3,12 @@ package net.digitalid.service.core.identifier;
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.factory.Factories;
 import net.digitalid.service.core.identity.Category;
+import net.digitalid.service.core.identity.ExternalIdentity;
 import net.digitalid.service.core.identity.Identity;
 import net.digitalid.service.core.identity.Person;
 import net.digitalid.service.core.identity.resolution.Mapper;
@@ -116,5 +119,33 @@ public abstract class ExternalIdentifier extends IdentifierClass implements NonH
      */
     @Pure
     public abstract @Nonnull Category getCategory();
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factories –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Stores the caster that casts identifiers to this subclass.
+     */
+    private static final @Nonnull Caster<ExternalIdentifier> CASTER = new Caster<ExternalIdentifier>() {
+        @Pure
+        @Override
+        protected @Nonnull ExternalIdentifier cast(@Nonnull Identifier identifier) throws InvalidEncodingException {
+            return identifier.toExternalIdentifier();
+        }
+    };
+    
+    /**
+     * Stores the encoding factory of this class.
+     */
+    public static final @Nonnull EncodingFactory<ExternalIdentifier> ENCODING_FACTORY = new EncodingFactory<>(ExternalIdentity.IDENTIFIER, CASTER);
+    
+    /**
+     * Stores the storing factory of this class.
+     */
+    public static final @Nonnull StoringFactory<ExternalIdentifier> STORING_FACTORY = new StoringFactory<>(CASTER);
+    
+    /**
+     * Stores the factories of this class.
+     */
+    public static final @Nonnull Factories<ExternalIdentifier, Object> FACTORIES = Factories.get(ENCODING_FACTORY, STORING_FACTORY);
     
 }

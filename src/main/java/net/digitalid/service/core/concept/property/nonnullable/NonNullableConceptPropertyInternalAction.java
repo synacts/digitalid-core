@@ -135,7 +135,7 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
     
     @Override
     public @Nonnull NonNullableConceptPropertyInternalAction<V, C, E> getReverse() throws AbortException, PacketException, ExternalException, NetworkException {
-        return new NonNullableConceptPropertyInternalAction<V, C, E>(setup, property, newTime, oldTime, newValue, oldValue);
+        return new NonNullableConceptPropertyInternalAction<>(setup, property, newTime, oldTime, newValue, oldValue);
     }
     
     @Override
@@ -154,9 +154,6 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
         return null;
     }
     
-    // TODO: I think the following TODO is obsolete.
-    // TODO: Get the required permissions, restrictions, etc. from the concept? No, from table.getRequiredAuthorization().
-    
     @Pure
     @Override
     public @Nonnull ReadOnlyAgentPermissions getRequiredPermissionsToExecuteMethod() {
@@ -174,17 +171,14 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
     @Pure
     @Override
     public boolean equals(Object object) {
-        if (object == null) return false;
-        else if (!object.getClass().equals(this.getClass())) return false;
-        else {
-            @SuppressWarnings("unchecked")
-            NonNullableConceptPropertyInternalAction<V, C, E> other = (NonNullableConceptPropertyInternalAction<V, C, E>) object;
-            return other.property.equals(this.property) && 
-                   other.oldValue.equals(this.oldValue) && 
-                   other.oldTime.equals(this.oldTime) && 
-                   other.newValue.equals(this.newValue) && 
-                   other.newTime.equals(this.newTime);
-        }
+        if (object == this) return true;
+        if (object == null || !(object instanceof NonNullableConceptPropertyInternalAction)) return false;
+        final @Nonnull NonNullableConceptPropertyInternalAction<?, ?, ?> other = (NonNullableConceptPropertyInternalAction) object;
+        return other.property.equals(this.property) && 
+               other.oldValue.equals(this.oldValue) && 
+               other.oldTime.equals(this.oldTime) && 
+               other.newValue.equals(this.newValue) && 
+               other.newTime.equals(this.newTime);
     }
     
     @Pure
@@ -273,9 +267,9 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
         @Pure
         @Override
         @NonCommitting
-        @SuppressWarnings("unchecked") // TODO: does this really need to be casted? Why is this a host entity?
+        @SuppressWarnings("unchecked")
         protected @Nonnull Method create(@Nonnull Entity<E> entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block block) throws AbortException, InvalidEncodingException, PacketException, ExternalException, NetworkException  {
-               return new NonNullableConceptPropertyInternalAction<V, C, E>((E) entity.toHostEntity(), signature, recipient, block, setup);
+               return new NonNullableConceptPropertyInternalAction<>((E) entity.toNonHostEntity(), signature, recipient, block, setup);
         }
         
     }

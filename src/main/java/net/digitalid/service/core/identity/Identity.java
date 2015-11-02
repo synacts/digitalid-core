@@ -89,6 +89,7 @@ public interface Identity extends Encodable<Identity, Object>, Storable<Identity
      */
     public @Nonnull Blockable toBlockable(@Nonnull SemanticType type);
     
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Casting –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns this identity as an {@link InternalIdentity}.

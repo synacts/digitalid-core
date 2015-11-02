@@ -3,8 +3,10 @@ package net.digitalid.service.core.identifier;
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
+import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.factory.Factories;
 import net.digitalid.service.core.identity.Identity;
 import net.digitalid.service.core.identity.InternalNonHostIdentity;
 import net.digitalid.service.core.identity.Type;
@@ -106,5 +108,33 @@ public final class InternalNonHostIdentifier extends InternalIdentifier implemen
         final @Nonnull String string = getString();
         return (string.startsWith("@") ? "" : ".") + string;
     }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factories –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Stores the caster that casts identifiers to this subclass.
+     */
+    private static final @Nonnull Caster<InternalNonHostIdentifier> CASTER = new Caster<InternalNonHostIdentifier>() {
+        @Pure
+        @Override
+        protected @Nonnull InternalNonHostIdentifier cast(@Nonnull Identifier identifier) throws InvalidEncodingException {
+            return identifier.toInternalNonHostIdentifier();
+        }
+    };
+    
+    /**
+     * Stores the encoding factory of this class.
+     */
+    public static final @Nonnull EncodingFactory<InternalNonHostIdentifier> ENCODING_FACTORY = new EncodingFactory<>(InternalNonHostIdentity.IDENTIFIER, CASTER);
+    
+    /**
+     * Stores the storing factory of this class.
+     */
+    public static final @Nonnull StoringFactory<InternalNonHostIdentifier> STORING_FACTORY = new StoringFactory<>(CASTER);
+    
+    /**
+     * Stores the factories of this class.
+     */
+    public static final @Nonnull Factories<InternalNonHostIdentifier, Object> FACTORIES = Factories.get(ENCODING_FACTORY, STORING_FACTORY);
     
 }
