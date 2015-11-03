@@ -22,7 +22,7 @@ import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.factory.encoding.Encodable;
 import net.digitalid.service.core.factory.encoding.Encode;
 import net.digitalid.service.core.identifier.HostIdentifier;
-import net.digitalid.service.core.identifier.IdentifierImplementation;
+import net.digitalid.service.core.identifier.Identifier;
 import net.digitalid.service.core.identifier.InternalIdentifier;
 import net.digitalid.service.core.identity.HostIdentity;
 import net.digitalid.service.core.identity.InternalIdentity;
@@ -72,7 +72,7 @@ public final class HostSignatureWrapper extends SignatureWrapper {
      * Stores the identifier of the internal identity that is signing as a host.
      * (Certificates and external actions require that not only host identifiers are allowed here.)
      */
-    private final @Nonnull InternalIdentifier<?> signer;
+    private final @Nonnull InternalIdentifier signer;
     
     /**
      * Returns the identifier of the identity that is signing as a host.
@@ -80,7 +80,7 @@ public final class HostSignatureWrapper extends SignatureWrapper {
      * @return the identifier of the identity that is signing as a host.
      */
     @Pure
-    public @Nonnull InternalIdentifier<?> getSigner() {
+    public @Nonnull InternalIdentifier getSigner() {
         return signer;
     }
     
@@ -100,7 +100,7 @@ public final class HostSignatureWrapper extends SignatureWrapper {
      * 
      * @ensure isVerified() : "This signature is verified.";
      */
-    private HostSignatureWrapper(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nullable Block element, @Nonnull InternalIdentifier<?> subject, @Nullable Audit audit, @Nonnull InternalIdentifier<?> signer) {
+    private HostSignatureWrapper(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nullable Block element, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull InternalIdentifier signer) {
         super(type, element, subject, audit);
         
         assert Server.hasHost(signer.getHostIdentifier()) : "The host of the signer is running on this server.";
@@ -121,7 +121,7 @@ public final class HostSignatureWrapper extends SignatureWrapper {
         
         assert hostSignature.getType().isBasedOn(SIGNATURE) : "The signature is based on the implementation type.";
         
-        this.signer = IdentifierImplementation.create(TupleWrapper.decode(hostSignature).getNonNullableElement(0)).toInternalIdentifier();
+        this.signer = InternalIdentifier.ENCODING_FACTORY.decodeNonNullable(None.OBJECT, TupleWrapper.decode(hostSignature).getNonNullableElement(0));
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Utility –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -143,7 +143,7 @@ public final class HostSignatureWrapper extends SignatureWrapper {
      * @ensure return.isVerified() : "The returned signature is verified.";
      */
     @Pure
-    public static @Nonnull <V extends Encodable<V, ?>> HostSignatureWrapper sign(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nullable V element, @Nonnull InternalIdentifier<?> subject, @Nullable Audit audit, @Nonnull InternalIdentifier<?> signer) {
+    public static @Nonnull <V extends Encodable<V, ?>> HostSignatureWrapper sign(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nullable V element, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull InternalIdentifier signer) {
         return new HostSignatureWrapper(type, Encode.nullable(element), subject, audit, signer);
     }
     
@@ -193,7 +193,7 @@ public final class HostSignatureWrapper extends SignatureWrapper {
         final @Nonnull Time start = Time.getCurrent();
         
         final @Nonnull FreezableArray<Block> subelements = FreezableArray.get(2);
-        subelements.set(0, signer.toBlock().setType(SIGNER));
+        subelements.set(0, Encode.<Identifier>nonNullable(signer, SIGNER));
         try {
             final @Nonnull PrivateKey privateKey = Server.getHost(signer.getHostIdentifier()).getPrivateKeyChain().getKey(getNonNullableTime());
             subelements.set(1, Encode.nonNullable(privateKey.powD(elements.getNonNullable(0).getHash()), VALUE));

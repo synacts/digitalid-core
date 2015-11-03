@@ -8,9 +8,6 @@ import net.digitalid.service.core.concept.Concept;
 import net.digitalid.service.core.concept.property.ConceptProperty;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.exceptions.abort.AbortException;
-import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.network.NetworkException;
-import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.property.nonnullable.WritableNonNullableProperty;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
@@ -76,7 +73,7 @@ public final class NonNullableConceptProperty<V, C extends Concept<C, E, ?>, E e
      * @return a new non-nullable concept property with the given parameters.
      */
     public static @Nonnull <V, C extends Concept<C, E, ?>, E extends Entity<E>> NonNullableConceptProperty<V, C, E> get(@Nonnull NonNullableConceptPropertySetup<V, C, E> propertySetup, @Nonnull C concept) {
-        return new NonNullableConceptProperty<V, C, E>(propertySetup, concept);
+        return new NonNullableConceptProperty<>(propertySetup, concept);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Loading –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -130,7 +127,7 @@ public final class NonNullableConceptProperty<V, C extends Concept<C, E, ?>, E e
     @Locked
     @Override
     @Committing
-    public void set(@Nonnull @Validated V newValue) throws AbortException, PacketException, ExternalException, NetworkException {
+    public void set(@Nonnull @Validated V newValue) throws AbortException {
         assert getValueValidator().isValid(newValue) : "The new value is valid.";
         
         final @Nonnull V oldValue = get();

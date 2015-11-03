@@ -13,6 +13,7 @@ import net.digitalid.service.core.identity.annotations.Loaded;
 import net.digitalid.utility.annotations.reference.Capturable;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.annotations.state.Validated;
 import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
 import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
 import net.digitalid.utility.collections.freezable.FreezableArray;
@@ -72,11 +73,9 @@ public abstract class ValueWrapper<W extends ValueWrapper<W>> extends Wrapper<W>
          * @param value the value to wrap.
          * 
          * @return the wrapper around the value.
-         * 
-         * @require isValid(value) : "The value is valid.";
          */
         @Pure
-        protected abstract @Nonnull W wrap(@Nonnull SemanticType type, @Nonnull V value);
+        protected abstract @Nonnull W wrap(@Nonnull SemanticType type, @Nonnull @Validated V value);
         
         /**
          * Unwraps the given wrapper.
@@ -84,11 +83,9 @@ public abstract class ValueWrapper<W extends ValueWrapper<W>> extends Wrapper<W>
          * @param wrapper the wrapper to unwrap.
          * 
          * @return the value wrapped in the given wrapper.
-         * 
-         * @ensure isValid(value) : "The value is valid.";
          */
         @Pure
-        protected abstract @Nonnull V unwrap(@Nonnull W wrapper);
+        protected abstract @Nonnull @Validated V unwrap(@Nonnull W wrapper);
         
     }
     

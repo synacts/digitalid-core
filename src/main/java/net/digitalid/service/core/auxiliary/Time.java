@@ -34,13 +34,6 @@ import net.digitalid.utility.database.storing.Storable;
 @Immutable
 public final class Time implements Encodable<Time, Object>, Storable<Time, Object>, Comparable<Time> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
-    
-    /**
-     * Stores the semantic type {@code time@core.digitalid.net}.
-     */
-    public static final @Nonnull SemanticType TYPE = SemanticType.map("time@core.digitalid.net").load(Int64Wrapper.TYPE);
-    
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constants –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
@@ -573,6 +566,11 @@ public final class Time implements Encodable<Time, Object>, Storable<Time, Objec
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encodable –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
+     * Stores the semantic type {@code time@core.digitalid.net}.
+     */
+    public static final @Nonnull SemanticType TYPE = SemanticType.map("time@core.digitalid.net").load(Int64Wrapper.TYPE);
+    
+    /**
      * The encoding factory for this class.
      */
     @Immutable
@@ -627,6 +625,12 @@ public final class Time implements Encodable<Time, Object>, Storable<Time, Objec
             super(Column.get("time", SQLType.BIGINT));
         }
         
+        @Pure
+        @Override
+        public @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getValues(@Nonnull Time time) {
+            return FreezableArray.getNonNullable(time.toString());
+        }
+        
         @Override
         @NonCommitting
         public void storeNonNullable(@Nonnull Time time, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
@@ -639,12 +643,6 @@ public final class Time implements Encodable<Time, Object>, Storable<Time, Objec
         public @Nullable Time restoreNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
             final long value = resultSet.getLong(columnIndex);
             return resultSet.wasNull() ? null : new Time(value);
-        }
-        
-        @Pure
-        @Override
-        public @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getValues(@Nonnull Time time) {
-            return FreezableArray.getNonNullable(time.toString());
         }
         
     }

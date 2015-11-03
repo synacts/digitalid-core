@@ -36,7 +36,7 @@ import net.digitalid.utility.database.storing.Storable;
 /**
  * This interface models identifiers.
  * 
- * @see IdentifierClass
+ * @see IdentifierImplementation
  * @see NonHostIdentifier
  */
 @Immutable

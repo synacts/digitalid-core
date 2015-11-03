@@ -79,7 +79,7 @@ public abstract class FactoryBasedEncodingFactory<O, E, K> extends AbstractEncod
      * @return the object with the given key.
      */
     @Pure
-    public abstract @Nonnull O getObject(@Nonnull E entity, @Nonnull K key);
+    public abstract @Nonnull O getObject(@Nonnull E entity, @Nonnull K key) throws AbortException, PacketException, ExternalException, NetworkException;
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Methods –––––––––––––––––––––––––––––––––––––––––––––––––– */
     

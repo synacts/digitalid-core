@@ -16,7 +16,6 @@ import net.digitalid.service.core.handler.Reply;
 import net.digitalid.service.core.handler.core.CoreServiceQueryReply;
 import net.digitalid.service.core.identifier.IdentifierImplementation;
 import net.digitalid.service.core.identifier.InternalNonHostIdentifier;
-import net.digitalid.service.core.identity.Category;
 import net.digitalid.service.core.identity.NonHostIdentity;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;

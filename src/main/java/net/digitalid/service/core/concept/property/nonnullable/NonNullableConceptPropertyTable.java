@@ -1,8 +1,5 @@
 package net.digitalid.service.core.concept.property.nonnullable;
 
-import net.digitalid.service.core.property.ReadOnlyProperty;
-import net.digitalid.service.core.factory.ConceptFactories;
-import net.digitalid.service.core.factory.Factories;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -24,6 +21,9 @@ import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.factory.ConceptFactories;
+import net.digitalid.service.core.factory.Factories;
+import net.digitalid.service.core.property.ReadOnlyProperty;
 import net.digitalid.service.core.site.host.Host;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -65,23 +65,27 @@ public final class NonNullableConceptPropertyTable<V, C extends Concept<C, E, ?>
     @Locked
     @Override
     @NonCommitting
-    public void createTables(@Nonnull Site site) throws SQLException {
+    public void createTables(@Nonnull Site site) throws AbortException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             Factories<E, Site> entityFactories = getPropertyFactory().getConceptSetup().getEntityFactories();
             ConceptFactories<C, E> conceptFactories = getPropertyFactory().getConceptSetup().getConceptFactories();
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + getName(site) + " (" + entityFactories.getStoringFactory().getDeclaration() + ", " + conceptFactories.getStoringFactory().getDeclaration() + ", " + Time.STORING_FACTORY.getDeclaration() + ", " + getPropertyFactory().getValueFactories().getStoringFactory().getDeclaration() + ", PRIMARY KEY (" + entityFactories.getStoringFactory().getSelection() + ", " + conceptFactories.getStoringFactory().getSelection() + ")" + entityFactories.getStoringFactory().getForeignKeys(site) + conceptFactories.getStoringFactory().getForeignKeys(site) + getPropertyFactory().getValueFactories().getStoringFactory().getForeignKeys(site) + ")");
             Database.onInsertIgnore(statement, getName(site), entityFactories.getStoringFactory().getSelection(), conceptFactories.getStoringFactory().getSelection()); // TODO: There is a problem when the entity or the concept uses more than one column because the onInsertIgnore-method expects the arguments differently.
             // TODO: Shouldn't we detect here whether we need to call Mapper.addReference?
+        } catch (@Nonnull SQLException exception) {
+            throw AbortException.get(exception);
         }
     }
     
     @Locked
     @Override
     @NonCommitting
-    public void deleteTables(@Nonnull Site site) throws SQLException {
+    public void deleteTables(@Nonnull Site site) throws AbortException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             Database.onInsertNotIgnore(statement, getName(site));
             statement.executeUpdate("DROP TABLE IF EXISTS " + getName(site));
+        } catch (@Nonnull SQLException exception) {
+            throw AbortException.get(exception);
         }
     }
     
@@ -217,7 +221,7 @@ public final class NonNullableConceptPropertyTable<V, C extends Concept<C, E, ?>
             throw AbortException.get(exception);
         }
         
-        conceptFactories.getStoringFactory().getIndex().reset(entity, this);
+        getPropertyFactory().getConceptSetup().getConceptIndex().reset(entity, this);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Methods –––––––––––––––––––––––––––––––––––––––––––––––––– */

@@ -6,7 +6,7 @@ import net.digitalid.service.core.block.wrappers.ListWrapper;
 import net.digitalid.service.core.block.wrappers.TupleWrapper;
 import net.digitalid.service.core.factory.Factories;
 import net.digitalid.service.core.factory.storing.BlockBasedStoringFactory;
-import net.digitalid.service.core.identity.Category;
+import net.digitalid.service.core.identity.resolution.Category;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;

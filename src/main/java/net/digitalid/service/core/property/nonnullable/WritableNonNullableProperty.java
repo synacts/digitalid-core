@@ -3,9 +3,6 @@ package net.digitalid.service.core.property.nonnullable;
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.concept.property.nonnullable.NonNullableConceptProperty;
 import net.digitalid.service.core.exceptions.abort.AbortException;
-import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.network.NetworkException;
-import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.property.ValueValidator;
 import net.digitalid.utility.annotations.state.Validated;
 import net.digitalid.utility.database.annotations.Committing;
@@ -41,7 +38,7 @@ public abstract class WritableNonNullableProperty<V> extends ReadOnlyNonNullable
      */
     @Locked
     @Committing
-    public abstract void set(@Nonnull @Validated V newValue) throws AbortException, PacketException, ExternalException, NetworkException;
+    public abstract void set(@Nonnull @Validated V newValue) throws AbortException;
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Notification –––––––––––––––––––––––––––––––––––––––––––––––––– */
     

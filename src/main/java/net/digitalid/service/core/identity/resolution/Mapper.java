@@ -1,4 +1,4 @@
-package net.digitalid.service.core.identity;
+package net.digitalid.service.core.identity.resolution;
 
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -26,11 +26,20 @@ import net.digitalid.service.core.identifier.Identifier;
 import net.digitalid.service.core.identifier.IdentifierImplementation;
 import net.digitalid.service.core.identifier.InternalNonHostIdentifier;
 import net.digitalid.service.core.identifier.NonHostIdentifier;
-import net.digitalid.service.core.identity.resolution.IdentityQuery;
-import net.digitalid.service.core.identity.resolution.IdentityReply;
-import net.digitalid.service.core.identity.resolution.Predecessor;
-import net.digitalid.service.core.identity.resolution.ReadOnlyPredecessors;
-import net.digitalid.service.core.identity.resolution.Successor;
+import net.digitalid.service.core.identity.ArtificialPerson;
+import net.digitalid.service.core.identity.EmailPerson;
+import net.digitalid.service.core.identity.ExternalPerson;
+import net.digitalid.service.core.identity.HostIdentity;
+import net.digitalid.service.core.identity.Identity;
+import net.digitalid.service.core.identity.InternalNonHostIdentity;
+import net.digitalid.service.core.identity.InternalPerson;
+import net.digitalid.service.core.identity.MobilePerson;
+import net.digitalid.service.core.identity.NaturalPerson;
+import net.digitalid.service.core.identity.NonHostIdentity;
+import net.digitalid.service.core.identity.Person;
+import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.identity.SyntacticType;
+import net.digitalid.service.core.identity.Type;
 import net.digitalid.service.core.identity.resolution.annotations.NonMapped;
 import net.digitalid.service.core.server.Server;
 import net.digitalid.service.core.site.client.AccountInitialize;
@@ -59,6 +68,20 @@ import net.digitalid.utility.system.logger.Log;
  */
 @Stateless
 public final class Mapper {
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Key –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * The key class with a private constructor. (Methods of other classes can require a non-nullable parameter of this type to give exclusive access to this class.)
+     */
+    public static final class Key { private Key() {} }
+    
+    /**
+     * Stores the key of this class. (This object is the only instance of the key class and the reference to the object should never be captured by any other class.)
+     */
+    private static final @Nonnull Key KEY = new Key();
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Reference –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the data type used to store identities in the database.

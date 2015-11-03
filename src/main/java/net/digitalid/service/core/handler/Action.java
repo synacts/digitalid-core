@@ -127,7 +127,7 @@ public abstract class Action extends Method implements Auditable {
     /**
      * Stores an empty list of modules.
      */
-    private static final @Nonnull @Frozen ReadOnlyList<SiteModule> emptyList = FreezableLinkedList.getFrozen();
+    private static final @Nonnull @Frozen ReadOnlyList<SiteModule> emptyList = FreezableLinkedList.get().freeze();
     
     /**
      * Returns the modules that need to be reloaded and are thus suspended.

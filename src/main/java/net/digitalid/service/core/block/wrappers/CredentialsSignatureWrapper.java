@@ -375,7 +375,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
      */
     @Locked
     @NonCommitting
-    private CredentialsSignatureWrapper(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nullable Block element, @Nonnull InternalIdentifier<?> subject, @Nullable Audit audit, @Nonnull @NonNullableElements @NonEmpty @Frozen @Validated ReadOnlyList<Credential> credentials, @Nullable @NonNullableElements @NonEmpty @Frozen @Validated ReadOnlyList<CertifiedAttributeValue> certificates, boolean lodged, @Nullable BigInteger value) throws AbortException, PacketException, ExternalException, NetworkException {
+    private CredentialsSignatureWrapper(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nullable Block element, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull @NonNullableElements @NonEmpty @Frozen @Validated ReadOnlyList<Credential> credentials, @Nullable @NonNullableElements @NonEmpty @Frozen @Validated ReadOnlyList<CertifiedAttributeValue> certificates, boolean lodged, @Nullable BigInteger value) throws AbortException, PacketException, ExternalException, NetworkException {
         super(type, element, subject, audit);
         
         assert credentials.isFrozen() : "The credentials are frozen.";
@@ -416,7 +416,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
             final @Nonnull NonHostEntity nonHostEntity;
             if (entity instanceof HostEntity) {
                 final @Nonnull Host host = ((HostEntity) entity).getHost();
-                final @Nonnull InternalIdentifier<?> subject = getNonNullableSubject();
+                final @Nonnull InternalIdentifier subject = getNonNullableSubject();
                 final @Nonnull InternalPerson person = subject.getIdentity().toInternalPerson();
                 // If the subject is hosted on the given host, the entity is recreated for that subject.
                 if (host.getIdentifier().equals(subject.getHostIdentifier())) {
@@ -484,7 +484,7 @@ public final class CredentialsSignatureWrapper extends SignatureWrapper {
     @Pure
     @Locked
     @NonCommitting
-    public static @Nonnull <V extends Encodable<V, ?>> CredentialsSignatureWrapper sign(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nullable V element, @Nonnull InternalIdentifier<?> subject, @Nullable Audit audit, @Nonnull @NonNullableElements @NonEmpty @Frozen @Validated ReadOnlyList<Credential> credentials, @Nullable @NonNullableElements @NonEmpty @Frozen @Validated ReadOnlyList<CertifiedAttributeValue> certificates, boolean lodged, @Nullable BigInteger value) throws AbortException, PacketException, ExternalException, NetworkException {
+    public static @Nonnull <V extends Encodable<V, ?>> CredentialsSignatureWrapper sign(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nullable V element, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull @NonNullableElements @NonEmpty @Frozen @Validated ReadOnlyList<Credential> credentials, @Nullable @NonNullableElements @NonEmpty @Frozen @Validated ReadOnlyList<CertifiedAttributeValue> certificates, boolean lodged, @Nullable BigInteger value) throws AbortException, PacketException, ExternalException, NetworkException {
         return new CredentialsSignatureWrapper(type, Encode.nullable(element), subject, audit, credentials, certificates, lodged, value);
     }
     

@@ -6,7 +6,7 @@ import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.BooleanWrapper;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
-import net.digitalid.service.core.identity.Category;
+import net.digitalid.service.core.identity.resolution.Category;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.reference.Capturable;
 import net.digitalid.utility.annotations.state.Pure;

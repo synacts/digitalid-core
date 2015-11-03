@@ -10,7 +10,7 @@ import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.expression.PassiveExpression;
-import net.digitalid.service.core.identity.Category;
+import net.digitalid.service.core.identity.resolution.Category;
 import net.digitalid.service.core.identity.InternalNonHostIdentity;
 import net.digitalid.service.core.identity.NonHostIdentity;
 import net.digitalid.service.core.identity.SemanticType;

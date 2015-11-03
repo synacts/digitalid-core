@@ -1,5 +1,6 @@
 package net.digitalid.service.core.identity;
 
+import net.digitalid.service.core.identity.resolution.Category;
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.identifier.MobileIdentifier;
 import net.digitalid.utility.annotations.state.Immutable;

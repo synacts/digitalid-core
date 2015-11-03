@@ -23,7 +23,7 @@ import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.factory.encoding.Encodable;
 import net.digitalid.service.core.factory.encoding.Encode;
-import net.digitalid.service.core.identifier.IdentifierImplementation;
+import net.digitalid.service.core.identifier.Identifier;
 import net.digitalid.service.core.identifier.InternalIdentifier;
 import net.digitalid.service.core.identity.InternalIdentity;
 import net.digitalid.service.core.identity.SemanticType;
@@ -131,7 +131,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
     /**
      * Stores the identifier of the identity about which a statement is made or null in case of unsigned attributes.
      */
-    private final @Nullable InternalIdentifier<?> subject;
+    private final @Nullable InternalIdentifier subject;
     
     /**
      * Returns whether this signature has a subject.
@@ -151,7 +151,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
      * @ensure !isSigned() || return != null : "If this signature is signed, the returned identifier is not null.";
      */
     @Pure
-    public final @Nullable InternalIdentifier<?> getNullableSubject() {
+    public final @Nullable InternalIdentifier getNullableSubject() {
         return subject;
     }
     
@@ -163,7 +163,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
      * @require hasSubject() : "This signature has a subject.";
      */
     @Pure
-    public final @Nonnull InternalIdentifier<?> getNonNullableSubject() {
+    public final @Nonnull InternalIdentifier getNonNullableSubject() {
         assert subject != null : "This signature has a subject.";
         
         return subject;
@@ -274,7 +274,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
      * 
      * @ensure isVerified() : "This signature is verified.";
      */
-    SignatureWrapper(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nullable Block element, @Nullable InternalIdentifier<?> subject, @Nullable Audit audit) {
+    SignatureWrapper(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nullable Block element, @Nullable InternalIdentifier subject, @Nullable Audit audit) {
         super(type);
         
         assert element == null || element.getType().isBasedOn(type.getParameters().getNonNullable(0)) : "The element is either null or based on the parameter of the given type.";
@@ -298,8 +298,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
         this.cache = Block.get(IMPLEMENTATION, block);
         final @Nonnull Block content = TupleWrapper.decode(cache).getNonNullableElement(0);
         final @Nonnull TupleWrapper tuple = TupleWrapper.decode(content);
-        // TODO: Rewrite the following code with the null-propagating factory methods.
-        this.subject = tuple.isElementNull(0) ? null : IdentifierImplementation.create(tuple.getNonNullableElement(0)).toInternalIdentifier();
+        this.subject = InternalIdentifier.ENCODING_FACTORY.decodeNullable(None.OBJECT, tuple.getNullableElement(0));
         if (isSigned() && subject == null) throw new InvalidEncodingException("The subject may not be null if the element is signed.");
         this.time = tuple.isElementNull(1) ? null : Time.ENCODING_FACTORY.decodeNonNullable(None.OBJECT, tuple.getNonNullableElement(1));
         if (hasSubject() && time == null) throw new InvalidEncodingException("The signature time may not be null if this signature has a subject.");
@@ -326,7 +325,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
      * @ensure return.isVerified() : "The returned signature is verified.";
      */
     @Pure
-    public static @Nonnull <V extends Encodable<V, ?>> SignatureWrapper encodeWithoutSigning(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nonnull V element, @Nullable InternalIdentifier<?> subject) {
+    public static @Nonnull <V extends Encodable<V, ?>> SignatureWrapper encodeWithoutSigning(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nonnull V element, @Nullable InternalIdentifier subject) {
         return new SignatureWrapper(type, Encode.nonNullable(element), subject, null);
     }
     
@@ -423,7 +422,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
     final @Nonnull Block getCache() {
         if (cache == null) {
             final @Nonnull FreezableArray<Block> subelements = FreezableArray.get(4);
-            subelements.set(0, Encode.nullableWithCast(subject, SUBJECT));
+            subelements.set(0, Encode.<Identifier>nullable(subject, SUBJECT));
             subelements.set(1, Encode.nullable(time));
             subelements.set(2, element);
             subelements.set(3, Encode.nullable(audit));

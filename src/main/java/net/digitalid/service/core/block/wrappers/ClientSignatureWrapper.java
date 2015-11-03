@@ -90,7 +90,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper {
      * 
      * @ensure isVerified() : "This signature is verified.";
      */
-    private ClientSignatureWrapper(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nullable Block element, @Nonnull InternalIdentifier<?> subject, @Nullable Audit audit, @Nonnull SecretCommitment commitment) {
+    private ClientSignatureWrapper(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nullable Block element, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull SecretCommitment commitment) {
         super(type, element, subject, audit);
         
         this.commitment = commitment;
@@ -133,7 +133,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper {
      * @ensure return.isVerified() : "The returned signature is verified.";
      */
     @Pure
-    public static @Nonnull <V extends Encodable<V, ?>> ClientSignatureWrapper sign(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nullable V element, @Nonnull InternalIdentifier<?> subject, @Nullable Audit audit, @Nonnull SecretCommitment commitment) {
+    public static @Nonnull <V extends Encodable<V, ?>> ClientSignatureWrapper sign(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nullable V element, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull SecretCommitment commitment) {
         return new ClientSignatureWrapper(type, Encode.nullable(element), subject, audit, commitment);
     }
     

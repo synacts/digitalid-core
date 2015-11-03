@@ -23,7 +23,7 @@ import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.factory.encoding.Encodable;
 import net.digitalid.service.core.factory.encoding.Encode;
 import net.digitalid.service.core.identifier.HostIdentifier;
-import net.digitalid.service.core.identifier.IdentifierImplementation;
+import net.digitalid.service.core.identifier.Identifier;
 import net.digitalid.service.core.identity.HostIdentity;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
@@ -295,7 +295,7 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
             }
         } else {
             // The encryption is part of a request.
-            this.recipient = IdentifierImplementation.create(tuple.getNonNullableElement(1)).toHostIdentifier();
+            this.recipient = HostIdentifier.ENCODING_FACTORY.decodeNonNullable(None.OBJECT, tuple.getNonNullableElement(1));
             if (!Server.hasHost(recipient)) throw new InvalidEncodingException(recipient + " does not run on this server.");
             if (symmetricKey != null) throw new InvalidEncodingException("A response may not include a recipient.");
             if (encryptedKey != null) {
@@ -374,7 +374,7 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
         if (cache == null) {
             final @Nonnull FreezableArray<Block> elements = FreezableArray.get(5);
             elements.set(0, Encode.nonNullable(time));
-            elements.set(1, Encode.nullable(recipient, RECIPIENT));
+            elements.set(1, Encode.<Identifier>nullable(recipient, RECIPIENT));
             
             if (recipient != null && symmetricKey != null) {
                 assert publicKey != null : "The public key is not null because this method is only called for encoding a block.";

@@ -2,6 +2,7 @@ package net.digitalid.service.core.storage;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.cache.Cache;
 import net.digitalid.service.core.concepts.attribute.Attribute;
 import net.digitalid.service.core.concepts.attribute.AttributeValue;
@@ -13,7 +14,7 @@ import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identifier.HostIdentifier;
-import net.digitalid.service.core.identifier.IdentifierImplementation;
+import net.digitalid.service.core.identifier.Identifier;
 import net.digitalid.service.core.identity.InternalPerson;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.Loaded;
@@ -162,7 +163,7 @@ public class Service extends DelegatingSiteStorageImplementation implements Stor
         final @Nullable AttributeValue attributeValue = Attribute.get(role, getType()).getValue();
         if (attributeValue == null) throw AbortException.get("The role " + role.getIdentity().getAddress() + " has no attribute of type " + getType().getAddress() + ".");
         try {
-            return IdentifierImplementation.create(attributeValue.getContent()).toHostIdentifier();
+            return Identifier.ENCODING_FACTORY.decodeNonNullable(None.OBJECT, attributeValue.getContent()).toHostIdentifier();
         } catch (@Nonnull InvalidEncodingException exception) {
             throw AbortException.get("The attribute of type " + getType().getAddress() + " of the role " + role.getIdentity().getAddress() + " does not encode a host identifier.", exception);
         }
@@ -179,7 +180,7 @@ public class Service extends DelegatingSiteStorageImplementation implements Stor
     @Pure
     @NonCommitting
     public @Nonnull HostIdentifier getRecipient(@Nullable Role role, @Nonnull InternalPerson subject) throws AbortException, PacketException, ExternalException, NetworkException {
-        return IdentifierImplementation.create(Cache.getFreshAttributeContent(subject, role, getType(), false)).toHostIdentifier();
+        return Identifier.ENCODING_FACTORY.decodeNonNullable(None.OBJECT, Cache.getFreshAttributeContent(subject, role, getType(), false)).toHostIdentifier();
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */

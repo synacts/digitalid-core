@@ -138,14 +138,14 @@ public abstract class InternalAction extends Action implements InternalMethod {
      */
     @Pure
     @OnlyForClients
-    public abstract @Nullable InternalAction getReverse() throws AbortException, PacketException, ExternalException, NetworkException;
+    public abstract @Nullable InternalAction getReverse() throws AbortException;
     
     /**
      * Reverses this internal action on the client if this action can be reversed.
      */
     @NonCommitting
     @OnlyForClients
-    public final void reverseOnClient() throws AbortException, PacketException, ExternalException, NetworkException {
+    public final void reverseOnClient() throws AbortException {
         assert isOnClient() : "This method is called on a client.";
         
         final @Nullable InternalAction reverse = getReverse();

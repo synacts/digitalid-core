@@ -1,5 +1,7 @@
 package net.digitalid.service.core.identity;
 
+import net.digitalid.service.core.identity.resolution.Mapper;
+import net.digitalid.service.core.identity.resolution.Category;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;

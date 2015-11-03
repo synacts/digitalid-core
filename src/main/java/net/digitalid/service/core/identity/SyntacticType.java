@@ -1,5 +1,7 @@
 package net.digitalid.service.core.identity;
 
+import net.digitalid.service.core.identity.resolution.Mapper;
+import net.digitalid.service.core.identity.resolution.Category;
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.auxiliary.Time;
 import net.digitalid.service.core.block.wrappers.Int8Wrapper;

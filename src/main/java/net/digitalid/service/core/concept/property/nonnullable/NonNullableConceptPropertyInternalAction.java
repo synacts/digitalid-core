@@ -13,7 +13,6 @@ import net.digitalid.service.core.concept.property.ConceptPropertyInternalAction
 import net.digitalid.service.core.concepts.agent.Agent;
 import net.digitalid.service.core.concepts.agent.FreezableAgentPermissions;
 import net.digitalid.service.core.concepts.agent.ReadOnlyAgentPermissions;
-import net.digitalid.service.core.dataservice.SiteModule;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
@@ -27,6 +26,7 @@ import net.digitalid.service.core.handler.InternalAction;
 import net.digitalid.service.core.handler.Method;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.identity.SemanticType;
+import net.digitalid.service.core.storage.SiteModule;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
@@ -36,7 +36,7 @@ import net.digitalid.utility.collections.tuples.ReadOnlyPair;
 import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
- * This class models the {@link InternalAction internal actions} of non-nullable {@link Concept concept properties}. 
+ * This class models the {@link InternalAction internal action} of a {@link NonNullableConceptProperty non-nullable concept property}. 
  */
 @Immutable
 final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, ?>, E extends Entity<E>> extends ConceptPropertyInternalAction {
@@ -90,7 +90,7 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
      * @throws ExternalException
      * @throws NetworkException
      */
-    private NonNullableConceptPropertyInternalAction(@Nonnull NonNullableConceptPropertySetup<V, C, E> setup, @Nonnull NonNullableConceptProperty<V, C, E> property, @Nonnull Time oldTime, @Nonnull Time newTime, @Nonnull V oldValue, @Nonnull V newValue) throws AbortException, PacketException, ExternalException, NetworkException {
+    private NonNullableConceptPropertyInternalAction(@Nonnull NonNullableConceptPropertySetup<V, C, E> setup, @Nonnull NonNullableConceptProperty<V, C, E> property, @Nonnull Time oldTime, @Nonnull Time newTime, @Nonnull V oldValue, @Nonnull V newValue) throws AbortException {
         super(property.getConcept().getRole(), setup.getConceptSetup().getService());
         
         this.setup = setup;
@@ -102,8 +102,8 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
     }
     
     @Pure
-    static @Nonnull <V, C extends Concept<C, E, ?>, E extends Entity<E>> NonNullableConceptPropertyInternalAction<V, C, E> get(@Nonnull NonNullableConceptProperty<V, C, E> property, @Nonnull V oldValue, @Nonnull V newValue) throws AbortException, PacketException, ExternalException, NetworkException {
-        return new NonNullableConceptPropertyInternalAction<V, C, E>(property.getConceptPropertySetup(), property, property.getTime(), Time.getCurrent(), oldValue, newValue); // TODO: Let all the arguments be determined by the caller.
+    static @Nonnull <V, C extends Concept<C, E, ?>, E extends Entity<E>> NonNullableConceptPropertyInternalAction<V, C, E> get(@Nonnull NonNullableConceptProperty<V, C, E> property, @Nonnull V oldValue, @Nonnull V newValue) throws AbortException {
+        return new NonNullableConceptPropertyInternalAction<>(property.getConceptPropertySetup(), property, property.getTime(), Time.getCurrent(), oldValue, newValue); // TODO: Let all the arguments be determined by the caller.
     }
     
     private NonNullableConceptPropertyInternalAction(@Nonnull E entity, @Nonnull SignatureWrapper signature, @Nonnull HostIdentifier recipient, @Nonnull Block content, @Nonnull NonNullableConceptPropertySetup<V, C, E> setup) throws AbortException, PacketException, ExternalException, NetworkException {
@@ -134,7 +134,7 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
     }
     
     @Override
-    public @Nonnull NonNullableConceptPropertyInternalAction<V, C, E> getReverse() throws AbortException, PacketException, ExternalException, NetworkException {
+    public @Nonnull NonNullableConceptPropertyInternalAction<V, C, E> getReverse() throws AbortException {
         return new NonNullableConceptPropertyInternalAction<>(setup, property, newTime, oldTime, newValue, oldValue);
     }
     
@@ -158,6 +158,12 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
     @Override
     public @Nonnull ReadOnlyAgentPermissions getRequiredPermissionsToExecuteMethod() {
         return setup.getRequiredAuthorization().getRequiredPermissions(property.getConcept());
+    }
+    
+    @Pure
+    @Override
+    public @Nullable Agent getRequiredAgentToExecuteMethod() {
+        return setup.getRequiredAuthorization().getRequiredAgentToExecuteMethod(property.getConcept());
     }
     
     @Pure
@@ -272,11 +278,6 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
                return new NonNullableConceptPropertyInternalAction<>((E) entity.toNonHostEntity(), signature, recipient, block, setup);
         }
         
-    }
-
-    @Override
-    public @Nullable Agent getRequiredAgentToExecuteMethod() {
-        return setup.getRequiredAuthorization().getRequiredAgentToExecuteMethod();
     }
     
 }

@@ -4,7 +4,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.service.core.identity.Mapper;
+import net.digitalid.service.core.identity.resolution.Mapper;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
@@ -18,7 +18,7 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * @see ExternalIdentifier
  */
 @Immutable
-abstract class IdentifierImplementation implements Identifier {
+public abstract class IdentifierImplementation implements Identifier {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Validity –––––––––––––––––––––––––––––––––––––––––––––––––– */
     

@@ -8,6 +8,8 @@ import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.annotations.Encoding;
 import net.digitalid.service.core.block.annotations.NonEncoding;
+import net.digitalid.service.core.block.wrappers.exceptions.UnexpectedEndOfFileException;
+import net.digitalid.service.core.block.wrappers.exceptions.UnsupportedBlockLengthException;
 import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
@@ -16,13 +18,11 @@ import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.factory.encoding.Encodable;
 import net.digitalid.service.core.factory.encoding.Encode;
 import net.digitalid.service.core.identifier.Identifier;
-import net.digitalid.service.core.identifier.IdentifierImplementation;
+import net.digitalid.service.core.identity.Identity;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
 import net.digitalid.service.core.identity.annotations.Loaded;
-import net.digitalid.service.core.block.wrappers.exceptions.UnexpectedEndOfFileException;
-import net.digitalid.service.core.block.wrappers.exceptions.UnsupportedBlockLengthException;
 import net.digitalid.utility.annotations.math.NonNegative;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -93,7 +93,7 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
     private SelfcontainedWrapper(@Nonnull @BasedOn("selfcontained@core.digitalid.net") SemanticType type, @Nonnull @NonEncoding Block element) {
         super(type);
         
-        this.tuple = TupleWrapper.encode(IMPLEMENTATION, element.getType().toBlock(SemanticType.IDENTIFIER), element);
+        this.tuple = TupleWrapper.encode(IMPLEMENTATION, Encode.<Identity>nonNullable(element.getType(), SemanticType.IDENTIFIER), element);
         this.element = element;
     }
     
@@ -109,7 +109,7 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
         
         this.tuple = Block.get(IMPLEMENTATION, block);
         final @Nonnull @NonNullableElements ReadOnlyArray<Block> elements = TupleWrapper.decode(tuple).getNonNullableElements(2);
-        final @Nonnull Identifier<?> identifier = IdentifierImplementation.create(elements.getNonNullable(0));
+        final @Nonnull Identifier identifier = Identifier.ENCODING_FACTORY.decodeNonNullable(None.OBJECT, elements.getNonNullable(0));
         this.element = elements.getNonNullable(1);
         element.setType(identifier.getIdentity().toSemanticType());
     }

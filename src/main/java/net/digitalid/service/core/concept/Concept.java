@@ -187,7 +187,7 @@ public abstract class Concept<C extends Concept<C, E, K>, E extends Entity<E>, K
      * @return the property of this concept with the given table.
      */
     @Pure
-    public final @Nonnull ConceptProperty<?, C, E> getProperty(@Nonnull ConceptPropertyTable<?, C, E> table) throws AbortException {
+    public final @Nonnull ConceptProperty<?, C, E> getProperty(@Nonnull ConceptPropertyTable<?, C, E> table) throws AbortException { // TODO: Change the parameter to ConceptPropertySetup!
         for (final @Nonnull ConceptProperty<?, C, E> property : properties) {
             if (property.getConceptPropertySetup().getPropertyTable().equals(table)) return property;
         }
