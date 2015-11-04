@@ -13,7 +13,7 @@ import net.digitalid.service.core.block.wrappers.EncryptionWrapper;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.factory.Factories;
 import net.digitalid.service.core.factory.encoding.Encodable;
-import net.digitalid.service.core.factory.encoding.NonRequestingEncodingFactory;
+import net.digitalid.service.core.factory.encoding.AbstractNonRequestingEncodingFactory;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
 import net.digitalid.utility.annotations.reference.Capturable;
@@ -102,7 +102,7 @@ public final class InitializationVector extends IvParameterSpec implements Encod
      * The encoding factory for this class.
      */
     @Immutable
-    public static final class EncodingFactory extends NonRequestingEncodingFactory<InitializationVector, Object> {
+    public static final class EncodingFactory extends AbstractNonRequestingEncodingFactory<InitializationVector, Object> {
         
         /**
          * Creates a new encoding factory.

@@ -7,7 +7,7 @@ import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 
 /**
- * This class implements an encoding factory that subtypes on another encoding factory.
+ * This class implements a non-requesting encoding factory that subtypes on another non-requesting encoding factory.
  * 
  * @param <O> the type of the objects that this factory can encode and decode, which is typically the surrounding class.
  * @param <E> the type of the external object that is needed to decode a block, which is quite often an {@link Entity}.
@@ -16,7 +16,7 @@ import net.digitalid.utility.annotations.state.Pure;
  * @see ObjectBasedObjectFactory
  */
 @Immutable
-public final class SubtypingEncodingFactory<O, E> extends FactoryBasedEncodingFactory<O, E, O> {
+public final class SubtypingNonRequestingEncodingFactory<O, E> extends FactoryBasedNonRequestingEncodingFactory<O, E, O> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -28,7 +28,7 @@ public final class SubtypingEncodingFactory<O, E> extends FactoryBasedEncodingFa
      * 
      * @require type.isBasedOn(factory.getType()) : "The given type is based on the type of the factory.";
      */
-    private SubtypingEncodingFactory(@Nonnull SemanticType type, @Nonnull AbstractEncodingFactory<O, E> factory) {
+    private SubtypingNonRequestingEncodingFactory(@Nonnull SemanticType type, @Nonnull AbstractNonRequestingEncodingFactory<O, E> factory) {
         super(type, ObjectBasedObjectFactory.<O>get(), factory);
     }
     
@@ -43,8 +43,8 @@ public final class SubtypingEncodingFactory<O, E> extends FactoryBasedEncodingFa
      * @require type.isBasedOn(factory.getType()) : "The given type is based on the type of the factory.";
      */
     @Pure
-    public static @Nonnull <O, E> SubtypingEncodingFactory<O, E> get(@Nonnull SemanticType type, @Nonnull AbstractEncodingFactory<O, E> factory) {
-        return new SubtypingEncodingFactory<>(type, factory);
+    public static @Nonnull <O, E> SubtypingNonRequestingEncodingFactory<O, E> get(@Nonnull SemanticType type, @Nonnull AbstractNonRequestingEncodingFactory<O, E> factory) {
+        return new SubtypingNonRequestingEncodingFactory<>(type, factory);
     }
     
 }

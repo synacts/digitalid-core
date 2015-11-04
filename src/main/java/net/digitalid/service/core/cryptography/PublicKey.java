@@ -9,7 +9,7 @@ import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.factory.Factories;
 import net.digitalid.service.core.factory.encoding.Encodable;
 import net.digitalid.service.core.factory.encoding.Encode;
-import net.digitalid.service.core.factory.encoding.NonRequestingEncodingFactory;
+import net.digitalid.service.core.factory.encoding.AbstractNonRequestingEncodingFactory;
 import net.digitalid.service.core.factory.storing.BlockBasedStoringFactory;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
@@ -574,7 +574,7 @@ public final class PublicKey implements Encodable<PublicKey, Object>, Storable<P
      * The encoding factory for this class.
      */
     @Immutable
-    public static final class EncodingFactory extends NonRequestingEncodingFactory<PublicKey, Object> {
+    public static final class EncodingFactory extends AbstractNonRequestingEncodingFactory<PublicKey, Object> {
         
         /**
          * Creates a new encoding factory.

@@ -15,7 +15,15 @@ import net.digitalid.utility.annotations.state.Pure;
  * This factory does not allow file, network and database requests during {@link #decodeNonNullable(java.lang.Object, net.digitalid.service.core.block.Block) decoding}.
  */
 @Immutable
-public abstract class NonRequestingEncodingFactory<O, E> extends AbstractEncodingFactory<O, E> {
+public abstract class AbstractNonRequestingEncodingFactory<O, E> extends AbstractEncodingFactory<O, E> {
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    @Pure
+    @Override
+    public @Nonnull AbstractNonRequestingEncodingFactory<O, E> setType(@Nonnull SemanticType type) {
+        return SubtypingNonRequestingEncodingFactory.get(type, this);
+    }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Decoding –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -32,11 +40,11 @@ public abstract class NonRequestingEncodingFactory<O, E> extends AbstractEncodin
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Creates a new non-requesting encoding factory with the given type.
+     * Creates a new abstract non-requesting encoding factory with the given type.
      * 
      * @param type the semantic type that corresponds to the encodable class.
      */
-    protected NonRequestingEncodingFactory(@Nonnull @Loaded SemanticType type) {
+    protected AbstractNonRequestingEncodingFactory(@Nonnull @Loaded SemanticType type) {
         super(type);
     }
     

@@ -3,9 +3,9 @@ package net.digitalid.service.core.factory.object;
 /**
  * Description.
  */
-public class NonRequestingObjectFactory {
+public class ObjectCaster {
     
-    public NonRequestingObjectFactory() {
+    public ObjectCaster() {
         
     }
     

@@ -14,7 +14,7 @@ import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.factory.Factories;
 import net.digitalid.service.core.factory.encoding.Encodable;
-import net.digitalid.service.core.factory.encoding.NonRequestingEncodingFactory;
+import net.digitalid.service.core.factory.encoding.AbstractNonRequestingEncodingFactory;
 import net.digitalid.service.core.identity.Identity;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
@@ -220,7 +220,7 @@ public interface Identifier extends Encodable<Identifier, Object>, Storable<Iden
      * The encoding factory for this class.
      */
     @Immutable
-    public static final class EncodingFactory<I extends Identifier> extends NonRequestingEncodingFactory<I, Object> {
+    public static final class EncodingFactory<I extends Identifier> extends AbstractNonRequestingEncodingFactory<I, Object> {
         
         /**
          * Stores the caster that casts identifiers to the right subclass.

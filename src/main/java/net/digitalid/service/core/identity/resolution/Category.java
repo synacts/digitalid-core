@@ -10,7 +10,7 @@ import net.digitalid.service.core.block.wrappers.Int8Wrapper;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.factory.Factories;
 import net.digitalid.service.core.factory.encoding.Encodable;
-import net.digitalid.service.core.factory.encoding.NonRequestingEncodingFactory;
+import net.digitalid.service.core.factory.encoding.AbstractNonRequestingEncodingFactory;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
 import net.digitalid.utility.annotations.reference.Capturable;
@@ -214,7 +214,7 @@ public enum Category implements Encodable<Category, Object>, Storable<Category, 
      * The encoding factory for this class.
      */
     @Immutable
-    public static final class EncodingFactory extends NonRequestingEncodingFactory<Category, Object> {
+    public static final class EncodingFactory extends AbstractNonRequestingEncodingFactory<Category, Object> {
         
         /**
          * Creates a new encoding factory.

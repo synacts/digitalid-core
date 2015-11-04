@@ -20,7 +20,7 @@ import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.factory.encoding.Encode;
-import net.digitalid.service.core.factory.encoding.NonRequestingEncodingFactory;
+import net.digitalid.service.core.factory.encoding.AbstractNonRequestingEncodingFactory;
 import net.digitalid.service.core.handler.Action;
 import net.digitalid.service.core.handler.InternalAction;
 import net.digitalid.service.core.handler.Method;
@@ -206,7 +206,7 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
      */
     // TODO: must be re-done and merged with Method.Factory.
     @Immutable
-    public static final class EncodingFactory<V, C extends Concept<C, E, ?>, E extends Entity<E>> extends NonRequestingEncodingFactory<NonNullableConceptPropertyInternalAction<V, C, E>, ReadOnlyPair<E, NonNullableConceptPropertySetup<V, C, E>>> {
+    public static final class EncodingFactory<V, C extends Concept<C, E, ?>, E extends Entity<E>> extends AbstractNonRequestingEncodingFactory<NonNullableConceptPropertyInternalAction<V, C, E>, ReadOnlyPair<E, NonNullableConceptPropertySetup<V, C, E>>> {
         
         /**
          * Creates a new encoding factory.

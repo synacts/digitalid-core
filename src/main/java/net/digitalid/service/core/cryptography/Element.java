@@ -7,7 +7,7 @@ import net.digitalid.service.core.block.wrappers.IntegerWrapper;
 import net.digitalid.service.core.entity.annotations.Matching;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.factory.Factories;
-import net.digitalid.service.core.factory.encoding.NonRequestingEncodingFactory;
+import net.digitalid.service.core.factory.encoding.AbstractNonRequestingEncodingFactory;
 import net.digitalid.service.core.factory.storing.BlockBasedStoringFactory;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
@@ -212,7 +212,7 @@ public final class Element extends Number<Element> {
      * The encoding factory for this class.
      */
     @Immutable
-    public static final class EncodingFactory extends NonRequestingEncodingFactory<Element, Object> {
+    public static final class EncodingFactory extends AbstractNonRequestingEncodingFactory<Element, Object> {
         
         /**
          * Creates a new encoding factory.

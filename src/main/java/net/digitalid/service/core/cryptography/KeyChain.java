@@ -8,7 +8,7 @@ import net.digitalid.service.core.block.wrappers.TupleWrapper;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.factory.encoding.Encodable;
 import net.digitalid.service.core.factory.encoding.Encode;
-import net.digitalid.service.core.factory.encoding.NonRequestingEncodingFactory;
+import net.digitalid.service.core.factory.encoding.AbstractNonRequestingEncodingFactory;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -141,7 +141,7 @@ abstract class KeyChain<K extends Encodable<K, Object>, C extends KeyChain<K, C>
      * The encoding factory for this class.
      */
     @Immutable
-    public static abstract class EncodingFactory<K extends Encodable<K, Object>, C extends KeyChain<K, C>> extends NonRequestingEncodingFactory<C, Object> {
+    public static abstract class EncodingFactory<K extends Encodable<K, Object>, C extends KeyChain<K, C>> extends AbstractNonRequestingEncodingFactory<C, Object> {
         
         /**
          * Stores the type of the key chain items.
@@ -151,7 +151,7 @@ abstract class KeyChain<K extends Encodable<K, Object>, C extends KeyChain<K, C>
         /**
          * Stores the factory that retrieves a key from a block.
          */
-        private final @Nonnull NonRequestingEncodingFactory<K, Object> factory;
+        private final @Nonnull AbstractNonRequestingEncodingFactory<K, Object> factory;
         
         /**
          * Creates a new encoding factory with the given parameters.
@@ -160,7 +160,7 @@ abstract class KeyChain<K extends Encodable<K, Object>, C extends KeyChain<K, C>
          * @param itemType the type of the key chain items.
          * @param factory the factory that retrieves a key from a block.
          */
-        protected EncodingFactory(@Nonnull SemanticType chainType, @Nonnull SemanticType itemType, @Nonnull NonRequestingEncodingFactory<K, Object> factory) {
+        protected EncodingFactory(@Nonnull SemanticType chainType, @Nonnull SemanticType itemType, @Nonnull AbstractNonRequestingEncodingFactory<K, Object> factory) {
             super(chainType);
             
             this.itemType = itemType;

@@ -2,40 +2,36 @@ package net.digitalid.service.core.factory.encoding;
 
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.block.Block;
-import net.digitalid.service.core.exceptions.abort.AbortException;
-import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.service.core.exceptions.network.NetworkException;
-import net.digitalid.service.core.exceptions.packet.PacketException;
-import net.digitalid.service.core.factory.object.AbstractObjectFactory;
+import net.digitalid.service.core.factory.object.AbstractNonRequestingObjectFactory;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 
 /**
- * This class implements an encoding factory that is based on another encoding factory.
+ * This class implements a non-requesting encoding factory that is based on another non-requesting encoding factory.
  * 
  * @param <O> the type of the objects that this factory can encode and decode, which is typically the surrounding class.
  * @param <E> the type of the external object that is needed to decode a block, which is quite often an {@link Entity}.
  *            In case no external information is needed for the decoding of a block, declare it as an {@link Object}.
  * @param <K> the type of the objects that the other factory encodes and decodes (usually as a key for the objects of this factory).
  * 
- * @see SubtypingEncodingFactory
+ * @see SubtypingNonRequestingEncodingFactory
  */
 @Immutable
-public class FactoryBasedEncodingFactory<O, E, K> extends AbstractEncodingFactory<O, E> {
+public class FactoryBasedNonRequestingEncodingFactory<O, E, K> extends AbstractNonRequestingEncodingFactory<O, E> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factories –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the factory used to transform and reconstruct the object.
      */
-    private final @Nonnull AbstractObjectFactory<O, ? super E, K> objectFactory;
+    private final @Nonnull AbstractNonRequestingObjectFactory<O, ? super E, K> objectFactory;
     
     /**
      * Stores the factory used to encode and decode the key.
      */
-    private final @Nonnull AbstractEncodingFactory<K, E> keyFactory;
+    private final @Nonnull AbstractNonRequestingEncodingFactory<K, E> keyFactory;
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -48,7 +44,7 @@ public class FactoryBasedEncodingFactory<O, E, K> extends AbstractEncodingFactor
      * 
      * @require type.isBasedOn(keyFactory.getType()) : "The given type is based on the type of the key factory.";
      */
-    protected FactoryBasedEncodingFactory(@Nonnull SemanticType type, @Nonnull AbstractObjectFactory<O, ? super E, K> objectFactory, @Nonnull AbstractEncodingFactory<K, E> keyFactory) {
+    protected FactoryBasedNonRequestingEncodingFactory(@Nonnull SemanticType type, @Nonnull AbstractNonRequestingObjectFactory<O, ? super E, K> objectFactory, @Nonnull AbstractNonRequestingEncodingFactory<K, E> keyFactory) {
         super(type);
         
         assert type.isBasedOn(keyFactory.getType()) : "The given type is based on the type of the factory.";
@@ -64,8 +60,8 @@ public class FactoryBasedEncodingFactory<O, E, K> extends AbstractEncodingFactor
      * @param keyFactory the factory used to encode and decode the object's key.
      */
     @Pure
-    public static @Nonnull <O, E, K> FactoryBasedEncodingFactory<O, E, K> get(@Nonnull AbstractObjectFactory<O, ? super E, K> objectFactory, @Nonnull AbstractEncodingFactory<K, E> keyFactory) {
-        return new FactoryBasedEncodingFactory<>(keyFactory.getType(), objectFactory, keyFactory);
+    public static @Nonnull <O, E, K> FactoryBasedNonRequestingEncodingFactory<O, E, K> get(@Nonnull AbstractNonRequestingObjectFactory<O, ? super E, K> objectFactory, @Nonnull AbstractNonRequestingEncodingFactory<K, E> keyFactory) {
+        return new FactoryBasedNonRequestingEncodingFactory<>(keyFactory.getType(), objectFactory, keyFactory);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Methods –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -78,7 +74,7 @@ public class FactoryBasedEncodingFactory<O, E, K> extends AbstractEncodingFactor
     
     @Pure
     @Override
-    public final @Nonnull O decodeNonNullable(@Nonnull E entity, @Nonnull Block block) throws AbortException, PacketException, ExternalException, NetworkException {
+    public final @Nonnull O decodeNonNullable(@Nonnull E entity, @Nonnull Block block) throws InvalidEncodingException {
         assert block.getType().isBasedOn(getType()) : "The block is based on the type of this factory.";
         
         final @Nonnull K key = keyFactory.decodeNonNullable(entity, block);

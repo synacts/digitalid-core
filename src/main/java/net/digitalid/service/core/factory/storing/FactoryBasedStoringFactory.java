@@ -5,6 +5,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.factory.object.AbstractNonRequestingObjectFactory;
 import net.digitalid.utility.annotations.reference.Capturable;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -23,9 +25,14 @@ import net.digitalid.utility.database.storing.AbstractStoringFactory;
  * @param <K> the type of the objects that the other factory stores and restores (usually as a key for the objects of this factory).
  */
 @Immutable
-public abstract class FactoryBasedStoringFactory<O, E, K> extends AbstractStoringFactory<O, E> {
+public final class FactoryBasedStoringFactory<O, E, K> extends AbstractStoringFactory<O, E> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factory –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factories –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Stores the factory used to transform and reconstruct the object.
+     */
+    private final @Nonnull AbstractNonRequestingObjectFactory<O, ? super E, K> objectFactory;
     
     /**
      * Stores the factory used to store and restore the key.
@@ -35,51 +42,30 @@ public abstract class FactoryBasedStoringFactory<O, E, K> extends AbstractStorin
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Creates a new factory based storing factory with the given key factory.
+     * Creates a new factory-based storing factory with the given factories.
      * 
+     * @param objectFactory the factory used to transform and reconstruct the object.
      * @param keyFactory the factory used to store and restore the object's key.
      */
-    protected FactoryBasedStoringFactory(@Nonnull AbstractStoringFactory<K, E> keyFactory) {
+    protected FactoryBasedStoringFactory(@Nonnull AbstractNonRequestingObjectFactory<O, ? super E, K> objectFactory, @Nonnull AbstractStoringFactory<K, E> keyFactory) {
         super(keyFactory.getColumns());
         
+        this.objectFactory = objectFactory;
         this.keyFactory = keyFactory;
     }
-    
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Abstract –––––––––––––––––––––––––––––––––––––––––––––––––– */
-    
-    /**
-     * Returns the key of the given object.
-     * 
-     * @param object the object whose key is to be returned.
-     * 
-     * @return the key of the given object.
-     */
-    @Pure
-    public abstract @Nonnull K getKey(@Nonnull O object);
-    
-    /**
-     * Returns the object with the given key.
-     * 
-     * @param entity the entity needed to restore the object.
-     * @param key the key which denotes the returned object.
-     * 
-     * @return the object with the given key.
-     */
-    @Pure
-    public abstract @Nonnull O getObject(@Nonnull E entity, @Nonnull K key);
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Methods –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
     public final @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getValues(@Nonnull O object) {
-        return keyFactory.getValues(getKey(object));
+        return keyFactory.getValues(objectFactory.getKey(object));
     }
     
     @Override
     @NonCommitting
     public final void storeNonNullable(@Nonnull O object, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
-        keyFactory.storeNonNullable(getKey(object), preparedStatement, parameterIndex);
+        keyFactory.storeNonNullable(objectFactory.getKey(object), preparedStatement, parameterIndex);
     }
     
     @Pure
@@ -87,7 +73,13 @@ public abstract class FactoryBasedStoringFactory<O, E, K> extends AbstractStorin
     @NonCommitting
     public final @Nullable O restoreNullable(@Nonnull E entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
         final @Nullable K key = keyFactory.restoreNullable(entity, resultSet, columnIndex);
-        return key == null ? null : getObject(entity, key);
+        if (key == null) return null;
+        try {
+            if (!objectFactory.isValid(key)) throw new InvalidEncodingException("The restored key '" + key + "' is invalid.");
+            return  objectFactory.getObject(entity, key);
+        } catch (@Nonnull InvalidEncodingException exception) {
+            throw new SQLException(exception);
+        }
     }
     
 }

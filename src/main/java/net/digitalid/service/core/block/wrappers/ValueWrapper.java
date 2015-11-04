@@ -8,6 +8,7 @@ import javax.annotation.Nullable;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.annotations.NonEncoding;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.factory.encoding.AbstractNonRequestingEncodingFactory;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.Loaded;
 import net.digitalid.utility.annotations.reference.Capturable;
@@ -95,7 +96,7 @@ public abstract class ValueWrapper<W extends ValueWrapper<W>> extends Wrapper<W>
      * The factory for encoding and decoding values.
      */
     @Immutable
-    public final static class ValueEncodingFactory<V, W extends Wrapper<W>> extends net.digitalid.service.core.factory.encoding.NonRequestingEncodingFactory<V, Object> {
+    public final static class ValueEncodingFactory<V, W extends Wrapper<W>> extends AbstractNonRequestingEncodingFactory<V, Object> {
         
         /**
          * Stores the factory to wrap and unwrap the values.
