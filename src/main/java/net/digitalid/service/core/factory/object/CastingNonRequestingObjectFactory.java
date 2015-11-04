@@ -1,10 +1,7 @@
 package net.digitalid.service.core.factory.object;
 
 import javax.annotation.Nonnull;
-import net.digitalid.service.core.exceptions.abort.AbortException;
-import net.digitalid.service.core.exceptions.external.ExternalException;
-import net.digitalid.service.core.exceptions.network.NetworkException;
-import net.digitalid.service.core.exceptions.packet.PacketException;
+import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
@@ -19,7 +16,7 @@ import net.digitalid.utility.annotations.state.Validated;
  * @param <S> the supertype from which the objects returned by the abstract (and thus overridden) method are downcast.
  */
 @Immutable
-public abstract class CastingObjectFactory<O extends S, E, K, S> extends AbstractObjectFactory<O, E, K> {
+public abstract class CastingNonRequestingObjectFactory<O extends S, E, K, S> extends AbstractNonRequestingObjectFactory<O, E, K> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Caster –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -35,7 +32,7 @@ public abstract class CastingObjectFactory<O extends S, E, K, S> extends Abstrac
      * 
      * @param caster the caster that allows to cast objects to the specified subtype.
      */
-    protected CastingObjectFactory(@Nonnull ObjectCaster<S, O> caster) {
+    protected CastingNonRequestingObjectFactory(@Nonnull ObjectCaster<S, O> caster) {
         this.caster = caster;
     }
     
@@ -50,13 +47,13 @@ public abstract class CastingObjectFactory<O extends S, E, K, S> extends Abstrac
      * @return the object of the supertype with the given key.
      */
     @Pure
-    protected abstract @Nonnull S getObjectOfSupertype(@Nonnull E entity, @Nonnull @Validated K key) throws AbortException, PacketException, ExternalException, NetworkException;
+    protected abstract @Nonnull S getObjectOfSupertype(@Nonnull E entity, @Nonnull @Validated K key) throws InvalidEncodingException;
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Method –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
-    public final @Nonnull O getObject(@Nonnull E entity, @Nonnull K key) throws AbortException, PacketException, ExternalException, NetworkException {
+    public final @Nonnull O getObject(@Nonnull E entity, @Nonnull K key) throws InvalidEncodingException {
         return caster.cast(getObjectOfSupertype(entity, key));
     }
     
