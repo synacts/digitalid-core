@@ -2,16 +2,15 @@ package net.digitalid.service.core.concept;
 
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.entity.Entity;
+import net.digitalid.service.core.factory.object.AbstractNonRequestingObjectFactory;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.database.storing.AbstractStoringFactory;
-import net.digitalid.service.core.factory.storing.FactoryBasedStoringFactory;
 
 /**
- * The storing factory for {@link Concept concepts}.
+ * Description.
  */
 @Immutable
-public final class ConceptStoringFactory<C extends Concept<C, E, K>, E extends Entity<E>, K> extends FactoryBasedStoringFactory<C, E, K> {
+public final class ConceptFactory<C extends Concept<C, E, K>, E extends Entity<E>, K> extends AbstractNonRequestingObjectFactory<C, E, K> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Index –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -30,31 +29,27 @@ public final class ConceptStoringFactory<C extends Concept<C, E, K>, E extends E
         return index;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructors –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Creates a new storing factory based on the given key factory.
+     * Creates a new concept factory with the given index.
      * 
-     * @param keyFactory the factory to store and restore the key of the concept.
      * @param index the index that caches existing concepts and creates new ones.
      */
-    private ConceptStoringFactory(@Nonnull AbstractStoringFactory<K, E> keyFactory, @Nonnull Index<C, E, K> index) {
-        super(keyFactory);
-        
+    private ConceptFactory(@Nonnull Index<C, E, K> index) {
         this.index = index;
     }
     
     /**
-     * Creates a new storing factory based on the given key factory.
+     * Creates a new concept factory with the given index.
      * 
-     * @param keyFactory the factory to store and restore the key of the concept.
      * @param index the index that caches existing concepts and creates new ones.
      * 
-     * @return a new storing factory based on the given key factory.
+     * @return a new concept factory with the given index.
      */
     @Pure
-    public static @Nonnull <C extends Concept<C, E, K>, E extends Entity<E>, K> ConceptStoringFactory<C, E, K> get(@Nonnull AbstractStoringFactory<K, E> keyFactory, @Nonnull Index<C, E, K> index) {
-        return new ConceptStoringFactory<>(keyFactory, index);
+    public static @Nonnull <C extends Concept<C, E, K>, E extends Entity<E>, K> ConceptFactory<C, E, K> get(@Nonnull Index<C, E, K> index) {
+        return new ConceptFactory<>(index);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Conversions –––––––––––––––––––––––––––––––––––––––––––––––––– */
