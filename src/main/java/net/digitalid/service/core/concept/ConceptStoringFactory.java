@@ -5,7 +5,7 @@ import net.digitalid.service.core.entity.Entity;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.database.storing.AbstractStoringFactory;
-import net.digitalid.utility.database.storing.FactoryBasedStoringFactory;
+import net.digitalid.service.core.factory.storing.FactoryBasedStoringFactory;
 
 /**
  * The storing factory for {@link Concept concepts}.

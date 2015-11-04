@@ -8,6 +8,7 @@ import javax.annotation.Nullable;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.Int8Wrapper;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
+import net.digitalid.service.core.factory.Factories;
 import net.digitalid.service.core.factory.encoding.Encodable;
 import net.digitalid.service.core.factory.encoding.NonRequestingEncodingFactory;
 import net.digitalid.service.core.identity.SemanticType;
@@ -306,5 +307,12 @@ public enum Category implements Encodable<Category, Object>, Storable<Category, 
     public @Nonnull String toString() {
         return String.valueOf(value);
     }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factories –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Stores the factories of this class.
+     */
+    public static final @Nonnull Factories<Category, Object> FACTORIES = Factories.get(ENCODING_FACTORY, STORING_FACTORY);
     
 }

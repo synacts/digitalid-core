@@ -14,7 +14,6 @@ import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
 import net.digitalid.service.core.identifier.HostIdentifier;
-import net.digitalid.service.core.identifier.Identifier;
 import net.digitalid.service.core.identity.InternalPerson;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.Loaded;
@@ -26,7 +25,7 @@ import net.digitalid.utility.collections.freezable.FreezableLinkedHashMap;
 import net.digitalid.utility.collections.freezable.FreezableMap;
 import net.digitalid.utility.collections.readonly.ReadOnlyCollection;
 import net.digitalid.utility.database.annotations.NonCommitting;
-import net.digitalid.utility.database.storing.FactoryBasedStoringFactory;
+import net.digitalid.service.core.factory.storing.FactoryBasedStoringFactory;
 import net.digitalid.utility.database.storing.Storable;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 
@@ -163,7 +162,7 @@ public class Service extends DelegatingSiteStorageImplementation implements Stor
         final @Nullable AttributeValue attributeValue = Attribute.get(role, getType()).getValue();
         if (attributeValue == null) throw AbortException.get("The role " + role.getIdentity().getAddress() + " has no attribute of type " + getType().getAddress() + ".");
         try {
-            return Identifier.ENCODING_FACTORY.decodeNonNullable(None.OBJECT, attributeValue.getContent()).toHostIdentifier();
+            return HostIdentifier.ENCODING_FACTORY.decodeNonNullable(None.OBJECT, attributeValue.getContent());
         } catch (@Nonnull InvalidEncodingException exception) {
             throw AbortException.get("The attribute of type " + getType().getAddress() + " of the role " + role.getIdentity().getAddress() + " does not encode a host identifier.", exception);
         }
@@ -180,7 +179,7 @@ public class Service extends DelegatingSiteStorageImplementation implements Stor
     @Pure
     @NonCommitting
     public @Nonnull HostIdentifier getRecipient(@Nullable Role role, @Nonnull InternalPerson subject) throws AbortException, PacketException, ExternalException, NetworkException {
-        return Identifier.ENCODING_FACTORY.decodeNonNullable(None.OBJECT, Cache.getFreshAttributeContent(subject, role, getType(), false)).toHostIdentifier();
+        return HostIdentifier.ENCODING_FACTORY.decodeNonNullable(None.OBJECT, Cache.getFreshAttributeContent(subject, role, getType(), false));
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Object –––––––––––––––––––––––––––––––––––––––––––––––––– */
