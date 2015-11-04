@@ -14,9 +14,45 @@ import net.digitalid.utility.database.storing.AbstractStoringFactory;
  * @param <O> the type of the objects that the factories can convert, which is typically the surrounding class.
  * @param <E> the type of the external object that is needed to reconstruct an object, which is quite often an {@link Entity}.
  *            In case no external information is needed for the reconstruction of an object, declare it as an {@link Object}.
+ * 
+ * @see NonRequestingFactories
  */
 @Immutable
-public final class Factories<O, E> extends AbstractFactories<O, E, AbstractEncodingFactory<O, E>, AbstractStoringFactory<O, E>> {
+public class Factories<O, E> {
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encoding Factory –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Stores the encoding factory.
+     */
+    private final @Nonnull AbstractEncodingFactory<O, E> encodingFactory;
+    
+    /**
+     * Returns the encoding factory.
+     * 
+     * @return the encoding factory.
+     */
+    @Pure
+    public @Nonnull AbstractEncodingFactory<O, E> getEncodingFactory() {
+        return encodingFactory;
+    }
+    
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storing Factory –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    
+    /**
+     * Stores the storing factory.
+     */
+    private final @Nonnull AbstractStoringFactory<O, E> storingFactory;
+    
+    /**
+     * Returns the storing factory.
+     * 
+     * @return the storing factory.
+     */
+    @Pure
+    public final @Nonnull AbstractStoringFactory<O, E> getStoringFactory() {
+        return storingFactory;
+    }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -26,8 +62,9 @@ public final class Factories<O, E> extends AbstractFactories<O, E, AbstractEncod
      * @param encodingFactory the encoding factory.
      * @param storingFactory the storing factory.
      */
-    private Factories(@Nonnull AbstractEncodingFactory<O, E> encodingFactory, @Nonnull AbstractStoringFactory<O, E> storingFactory) {
-        super(encodingFactory, storingFactory);
+    protected Factories(@Nonnull AbstractEncodingFactory<O, E> encodingFactory, @Nonnull AbstractStoringFactory<O, E> storingFactory) {
+        this.encodingFactory = encodingFactory;
+        this.storingFactory = storingFactory;
     }
     
     /**
@@ -53,7 +90,7 @@ public final class Factories<O, E> extends AbstractFactories<O, E, AbstractEncod
      * @require type.isBasedOn(getEncodingFactory().getType()) : "The given type is based on the type of the encoding factory.";
      */
     @Pure
-    public final @Nonnull Factories<O, E> setType(@Nonnull SemanticType type) {
+    public @Nonnull Factories<O, E> setType(@Nonnull SemanticType type) {
         return new Factories<>(getEncodingFactory().setType(type), getStoringFactory());
     }
     
