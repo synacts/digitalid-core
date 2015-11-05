@@ -164,7 +164,7 @@ public final class BooleanWrapper extends ValueWrapper<BooleanWrapper> {
     @Pure
     @Override
     public @Nonnull XDFConverter getXDFConverter() {
-         return new XDFConverter(getSemanticType());
+        return new XDFConverter(getSemanticType());
     }
     
     /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
