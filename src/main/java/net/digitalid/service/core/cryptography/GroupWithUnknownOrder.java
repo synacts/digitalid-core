@@ -51,7 +51,7 @@ public final class GroupWithUnknownOrder extends Group<GroupWithUnknownOrder> {
         return new GroupWithUnknownOrder(modulus);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encodable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * The XDF converter for this class.

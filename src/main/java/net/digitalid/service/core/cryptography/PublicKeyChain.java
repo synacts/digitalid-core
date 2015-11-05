@@ -83,7 +83,7 @@ public final class PublicKeyChain extends KeyChain<PublicKey, PublicKeyChain> {
         return new PublicKeyChain(items.freeze());
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encodable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * The XDF converter for this class.

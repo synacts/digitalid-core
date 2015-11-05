@@ -13,7 +13,7 @@ import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 
 /**
- * This class implements an XDF converter that is based on another XDF converter.
+ * This class implements an XDF converter that converts an object to its key and this key to XDF with another converter.
  * 
  * @param <O> the type of the objects that this converter can encode and decode, which is typically the surrounding class.
  * @param <E> the type of the external object that is needed to decode a block, which is quite often an {@link Entity}.

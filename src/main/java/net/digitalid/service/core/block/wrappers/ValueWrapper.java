@@ -7,8 +7,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.annotations.NonEncoding;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
+import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.Loaded;
 import net.digitalid.utility.annotations.reference.Capturable;
@@ -41,7 +41,7 @@ public abstract class ValueWrapper<W extends ValueWrapper<W>> extends Wrapper<W>
         super(semanticType);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encodable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
@@ -53,7 +53,7 @@ public abstract class ValueWrapper<W extends ValueWrapper<W>> extends Wrapper<W>
      * The factory for wrappers.
      */
     @Immutable
-    public abstract static class Factory<V, W extends Wrapper<W>> {
+    public abstract static class Factory<V, W extends ValueWrapper<W>> {
         
         /**
          * Returns whether the given value is valid.
@@ -96,7 +96,7 @@ public abstract class ValueWrapper<W extends ValueWrapper<W>> extends Wrapper<W>
      * The factory for encoding and decoding values.
      */
     @Immutable
-    public final static class ValueXDFConverter<V, W extends Wrapper<W>> extends AbstractNonRequestingXDFConverter<V, Object> {
+    public final static class ValueXDFConverter<V, W extends ValueWrapper<W>> extends AbstractNonRequestingXDFConverter<V, Object> {
         
         /**
          * Stores the factory to wrap and unwrap the values.
@@ -145,7 +145,7 @@ public abstract class ValueWrapper<W extends ValueWrapper<W>> extends Wrapper<W>
      * The factory for storing and restoring values.
      */
     @Immutable
-    public final static class ValueSQLConverter<V, W extends Wrapper<W>> extends AbstractSQLConverter<V, Object> {
+    public final static class ValueSQLConverter<V, W extends ValueWrapper<W>> extends AbstractSQLConverter<V, Object> {
         
         /**
          * Stores the factory to wrap and unwrap the values.

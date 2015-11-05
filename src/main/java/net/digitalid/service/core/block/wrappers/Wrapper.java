@@ -5,10 +5,10 @@ import javax.annotation.Nullable;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.annotations.Encoding;
 import net.digitalid.service.core.block.annotations.NonEncoding;
-import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.converter.xdf.AbstractXDFConverter;
-import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.converter.xdf.ConvertToXDF;
+import net.digitalid.service.core.converter.xdf.XDF;
+import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
 import net.digitalid.service.core.identity.annotations.Loaded;
@@ -140,7 +140,10 @@ public abstract class Wrapper<W extends Wrapper<W>> implements XDF<W, Object>, S
         @Pure
         @Override
         public final @Nonnull @NonEncoding Block encodeNonNullable(@Nonnull W wrapper) {
-            return Block.get(getType(), wrapper);
+            // The following implementation violates the postcondition of this method.
+            // The correct implementation would be 'Block.get(getType(), wrapper)'.
+            // However, we use static XDF converters for performance reasons.
+            return Block.get(wrapper.getSemanticType(), wrapper);
         }
         
     }

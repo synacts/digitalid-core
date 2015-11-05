@@ -104,7 +104,7 @@ public final class GroupWithKnownOrder extends Group<GroupWithKnownOrder> {
         return new GroupWithKnownOrder(modulus, order);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encodable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * The XDF converter for this class.
