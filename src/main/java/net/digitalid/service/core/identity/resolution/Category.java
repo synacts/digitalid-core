@@ -8,9 +8,9 @@ import javax.annotation.Nullable;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.Int8Wrapper;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.service.core.factory.Factories;
-import net.digitalid.service.core.factory.encoding.Encodable;
-import net.digitalid.service.core.factory.encoding.AbstractNonRequestingEncodingFactory;
+import net.digitalid.service.core.converter.Converters;
+import net.digitalid.service.core.converter.xdf.XDF;
+import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
 import net.digitalid.utility.annotations.reference.Capturable;
@@ -26,15 +26,15 @@ import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.column.Column;
 import net.digitalid.utility.database.column.SQLType;
-import net.digitalid.utility.database.storing.AbstractStoringFactory;
-import net.digitalid.utility.database.storing.Storable;
+import net.digitalid.utility.database.converter.AbstractSQLConverter;
+import net.digitalid.utility.database.converter.SQL;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 
 /**
  * This class enumerates the various categories of digital identities.
  */
 @Immutable
-public enum Category implements Encodable<Category, Object>, Storable<Category, Object> {
+public enum Category implements XDF<Category, Object>, SQL<Category, Object> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Categories –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -203,7 +203,7 @@ public enum Category implements Encodable<Category, Object>, Storable<Category, 
         return this == HOST || isInternalNonHostIdentity();
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encodable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the semantic type {@code category@core.digitalid.net}.
@@ -214,7 +214,7 @@ public enum Category implements Encodable<Category, Object>, Storable<Category, 
      * The encoding factory for this class.
      */
     @Immutable
-    public static final class EncodingFactory extends AbstractNonRequestingEncodingFactory<Category, Object> {
+    public static final class EncodingFactory extends AbstractNonRequestingXDFConverter<Category, Object> {
         
         /**
          * Creates a new encoding factory.
@@ -252,13 +252,13 @@ public enum Category implements Encodable<Category, Object>, Storable<Category, 
         return ENCODING_FACTORY;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– SQL –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * The storing factory for this class.
      */
     @Immutable
-    public static class StoringFactory extends AbstractStoringFactory<Category, Object> {
+    public static class StoringFactory extends AbstractSQLConverter<Category, Object> {
         
         /**
          * Creates a new storing factory.
@@ -308,11 +308,11 @@ public enum Category implements Encodable<Category, Object>, Storable<Category, 
         return String.valueOf(value);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factories –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the factories of this class.
      */
-    public static final @Nonnull Factories<Category, Object> FACTORIES = Factories.get(ENCODING_FACTORY, STORING_FACTORY);
+    public static final @Nonnull Converters<Category, Object> FACTORIES = Converters.get(ENCODING_FACTORY, STORING_FACTORY);
     
 }

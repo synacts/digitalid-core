@@ -10,9 +10,9 @@ import javax.annotation.Nullable;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.Int64Wrapper;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.service.core.factory.Factories;
-import net.digitalid.service.core.factory.encoding.Encodable;
-import net.digitalid.service.core.factory.encoding.AbstractNonRequestingEncodingFactory;
+import net.digitalid.service.core.converter.Converters;
+import net.digitalid.service.core.converter.xdf.XDF;
+import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
 import net.digitalid.utility.annotations.reference.Capturable;
@@ -24,15 +24,15 @@ import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.column.Column;
 import net.digitalid.utility.database.column.SQLType;
-import net.digitalid.utility.database.storing.AbstractStoringFactory;
-import net.digitalid.utility.database.storing.Storable;
+import net.digitalid.utility.database.converter.AbstractSQLConverter;
+import net.digitalid.utility.database.converter.SQL;
 
 /**
  * This class models time in milliseconds for both dates and intervals.
  * Dates are calculated as milliseconds since 1 January 1970, 00:00:00 GMT.
  */
 @Immutable
-public final class Time implements Encodable<Time, Object>, Storable<Time, Object>, Comparable<Time> {
+public final class Time implements XDF<Time, Object>, SQL<Time, Object>, Comparable<Time> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constants –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -563,7 +563,7 @@ public final class Time implements Encodable<Time, Object>, Storable<Time, Objec
         return String.valueOf(value);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encodable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the semantic type {@code time@core.digitalid.net}.
@@ -574,7 +574,7 @@ public final class Time implements Encodable<Time, Object>, Storable<Time, Objec
      * The encoding factory for this class.
      */
     @Immutable
-    public static final class EncodingFactory extends AbstractNonRequestingEncodingFactory<Time, Object> {
+    public static final class EncodingFactory extends AbstractNonRequestingXDFConverter<Time, Object> {
         
         /**
          * Creates a new encoding factory.
@@ -610,13 +610,13 @@ public final class Time implements Encodable<Time, Object>, Storable<Time, Objec
         return ENCODING_FACTORY;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– SQL –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * The storing factory for this class.
      */
     @Immutable
-    public static class StoringFactory extends AbstractStoringFactory<Time, Object> {
+    public static class StoringFactory extends AbstractSQLConverter<Time, Object> {
         
         /**
          * Creates a new storing factory.
@@ -658,11 +658,11 @@ public final class Time implements Encodable<Time, Object>, Storable<Time, Objec
         return STORING_FACTORY;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factories –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the factories of this class.
      */
-    public static final @Nonnull Factories<Time, Object> FACTORIES = Factories.get(ENCODING_FACTORY, STORING_FACTORY);
+    public static final @Nonnull Converters<Time, Object> FACTORIES = Converters.get(ENCODING_FACTORY, STORING_FACTORY);
     
 }

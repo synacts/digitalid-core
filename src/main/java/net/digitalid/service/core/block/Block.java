@@ -21,8 +21,8 @@ import net.digitalid.service.core.block.wrappers.Wrapper;
 import net.digitalid.service.core.cryptography.InitializationVector;
 import net.digitalid.service.core.cryptography.SymmetricKey;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.service.core.factory.encoding.Encodable;
-import net.digitalid.service.core.factory.encoding.AbstractNonRequestingEncodingFactory;
+import net.digitalid.service.core.converter.xdf.XDF;
+import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.Loaded;
 import net.digitalid.utility.annotations.math.NonNegative;
@@ -39,8 +39,8 @@ import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.database.column.Column;
 import net.digitalid.utility.database.column.SQLType;
 import net.digitalid.utility.database.configuration.Database;
-import net.digitalid.utility.database.storing.AbstractStoringFactory;
-import net.digitalid.utility.database.storing.Storable;
+import net.digitalid.utility.database.converter.AbstractSQLConverter;
+import net.digitalid.utility.database.converter.SQL;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 
 /**
@@ -58,7 +58,7 @@ import net.digitalid.utility.system.errors.ShouldNeverHappenError;
  * @invariant !isEncoded() || isAllocated() : "If the block is encoded, it is also allocated.";
  */
 @Immutable
-public final class Block implements Encodable<Block, Object>, Storable<Block, SemanticType>, Cloneable {
+public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>, Cloneable {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Invariant –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -694,13 +694,13 @@ public final class Block implements Encodable<Block, Object>, Storable<Block, Se
         return toString(bytes, offset, length);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encodable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * The encoding factory for this class.
      */
     @Immutable
-    public static class EncodingFactory extends AbstractNonRequestingEncodingFactory<Block, Object> {
+    public static class EncodingFactory extends AbstractNonRequestingXDFConverter<Block, Object> {
         
         /**
          * Creates a new encoding factory with the given type.
@@ -731,13 +731,13 @@ public final class Block implements Encodable<Block, Object>, Storable<Block, Se
         return new EncodingFactory(type);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– SQL –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * The storing factory for this class.
      */
     @Immutable
-    public static class StoringFactory extends AbstractStoringFactory<Block, SemanticType> {
+    public static class StoringFactory extends AbstractSQLConverter<Block, SemanticType> {
         
         /**
          * Stores the column for blocks.

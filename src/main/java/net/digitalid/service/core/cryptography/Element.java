@@ -6,14 +6,14 @@ import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.IntegerWrapper;
 import net.digitalid.service.core.entity.annotations.Matching;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.service.core.factory.Factories;
-import net.digitalid.service.core.factory.encoding.AbstractNonRequestingEncodingFactory;
-import net.digitalid.service.core.factory.storing.BlockBasedStoringFactory;
+import net.digitalid.service.core.converter.Converters;
+import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
+import net.digitalid.service.core.converter.sql.XDFBasedSQLConverter;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.database.storing.AbstractStoringFactory;
+import net.digitalid.utility.database.converter.AbstractSQLConverter;
 
 /**
  * An element is a number in a certain group.
@@ -212,7 +212,7 @@ public final class Element extends Number<Element> {
      * The encoding factory for this class.
      */
     @Immutable
-    public static final class EncodingFactory extends AbstractNonRequestingEncodingFactory<Element, Object> {
+    public static final class EncodingFactory extends AbstractNonRequestingXDFConverter<Element, Object> {
         
         /**
          * Creates a new encoding factory.
@@ -253,19 +253,19 @@ public final class Element extends Number<Element> {
     /**
      * Stores the storing factory of this class.
      */
-    public static final @Nonnull AbstractStoringFactory<Element, Object> STORING_FACTORY = BlockBasedStoringFactory.get(ENCODING_FACTORY);
+    public static final @Nonnull AbstractSQLConverter<Element, Object> STORING_FACTORY = XDFBasedSQLConverter.get(ENCODING_FACTORY);
     
     @Pure
     @Override
-    public @Nonnull AbstractStoringFactory<Element, Object> getStoringFactory() {
+    public @Nonnull AbstractSQLConverter<Element, Object> getStoringFactory() {
         return STORING_FACTORY;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factories –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the factories of this class.
      */
-    public static final @Nonnull Factories<Element, Object> FACTORIES = Factories.get(ENCODING_FACTORY, STORING_FACTORY);
+    public static final @Nonnull Converters<Element, Object> FACTORIES = Converters.get(ENCODING_FACTORY, STORING_FACTORY);
     
 }

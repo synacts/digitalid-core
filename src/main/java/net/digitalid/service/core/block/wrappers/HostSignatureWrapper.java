@@ -19,8 +19,8 @@ import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.external.InvalidSignatureException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
-import net.digitalid.service.core.factory.encoding.Encodable;
-import net.digitalid.service.core.factory.encoding.Encode;
+import net.digitalid.service.core.converter.xdf.XDF;
+import net.digitalid.service.core.converter.xdf.ConvertToXDF;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.identifier.Identifier;
 import net.digitalid.service.core.identifier.InternalIdentifier;
@@ -143,8 +143,8 @@ public final class HostSignatureWrapper extends SignatureWrapper {
      * @ensure return.isVerified() : "The returned signature is verified.";
      */
     @Pure
-    public static @Nonnull <V extends Encodable<V, ?>> HostSignatureWrapper sign(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nullable V element, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull InternalIdentifier signer) {
-        return new HostSignatureWrapper(type, Encode.nullable(element), subject, audit, signer);
+    public static @Nonnull <V extends XDF<V, ?>> HostSignatureWrapper sign(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nullable V element, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull InternalIdentifier signer) {
+        return new HostSignatureWrapper(type, ConvertToXDF.nullable(element), subject, audit, signer);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Checks –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -193,10 +193,10 @@ public final class HostSignatureWrapper extends SignatureWrapper {
         final @Nonnull Time start = Time.getCurrent();
         
         final @Nonnull FreezableArray<Block> subelements = FreezableArray.get(2);
-        subelements.set(0, Encode.<Identifier>nonNullable(signer, SIGNER));
+        subelements.set(0, ConvertToXDF.<Identifier>nonNullable(signer, SIGNER));
         try {
             final @Nonnull PrivateKey privateKey = Server.getHost(signer.getHostIdentifier()).getPrivateKeyChain().getKey(getNonNullableTime());
-            subelements.set(1, Encode.nonNullable(privateKey.powD(elements.getNonNullable(0).getHash()), VALUE));
+            subelements.set(1, ConvertToXDF.nonNullable(privateKey.powD(elements.getNonNullable(0).getHash()), VALUE));
         } catch (@Nonnull InvalidEncodingException exception) {
             throw new ShouldNeverHappenError("There should always be a key for the current time.", exception);
         }

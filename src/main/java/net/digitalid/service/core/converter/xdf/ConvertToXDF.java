@@ -1,4 +1,4 @@
-package net.digitalid.service.core.factory.encoding;
+package net.digitalid.service.core.converter.xdf;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -12,7 +12,7 @@ import net.digitalid.utility.annotations.state.Stateless;
  * This is a utility class to encode encodable objects.
  */
 @Stateless
-public final class Encode {
+public final class ConvertToXDF {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Normal Encoding –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -24,7 +24,7 @@ public final class Encode {
      * @return the given non-nullable encodable as a block.
      */
     @Pure
-    public static @Nonnull <O extends Encodable<O, ?>> Block nonNullable(@Nonnull O encodable) {
+    public static @Nonnull <O extends XDF<O, ?>> Block nonNullable(@Nonnull O encodable) {
         return encodable.getEncodingFactory().encodeNonNullable(encodable);
     }
     
@@ -36,7 +36,7 @@ public final class Encode {
      * @return the given nullable encodable as a block.
      */
     @Pure
-    public static @Nullable <O extends Encodable<O, ?>> Block nullable(@Nullable O encodable) {
+    public static @Nullable <O extends XDF<O, ?>> Block nullable(@Nullable O encodable) {
         return encodable == null ? null : nonNullable(encodable);
     }
     
@@ -51,7 +51,7 @@ public final class Encode {
      * @require type.isBasedOn(encodable.getFactory().getType()) : "The given type is based on the type of the encodable object.";
      */
     @Pure
-    public static @Nonnull <O extends Encodable<O, ?>> Block nonNullable(@Nonnull O encodable, @Nonnull @Loaded SemanticType type) {
+    public static @Nonnull <O extends XDF<O, ?>> Block nonNullable(@Nonnull O encodable, @Nonnull @Loaded SemanticType type) {
         return nonNullable(encodable).setType(type);
     }
     
@@ -66,7 +66,7 @@ public final class Encode {
      * @require encodable == null || type.isBasedOn(encodable.getFactory().getType()) : "If the encodable object is not null, the given type is based on its type.";
      */
     @Pure
-    public static @Nullable <O extends Encodable<O, ?>> Block nullable(@Nullable O encodable, @Nonnull @Loaded SemanticType type) {
+    public static @Nullable <O extends XDF<O, ?>> Block nullable(@Nullable O encodable, @Nonnull @Loaded SemanticType type) {
         return encodable == null ? null : nonNullable(encodable).setType(type);
     }
     
@@ -82,7 +82,7 @@ public final class Encode {
      * @return the given non-null encodable as a block.
      */
     @Pure
-    public static @Nonnull <O extends Encodable<?, ?>> Block nonNullableWithCast(@Nonnull O encodable) {
+    public static @Nonnull <O extends XDF<?, ?>> Block nonNullableWithCast(@Nonnull O encodable) {
         return encodable.getEncodingFactory().encodeNonNullableWithCast(encodable);
     }
     
@@ -96,7 +96,7 @@ public final class Encode {
      * @return the given nullable encodable as a block or null if the encodable was null.
      */
     @Pure
-    public static @Nullable <O extends Encodable<?, ?>> Block nullableWithCast(@Nullable O encodable) {
+    public static @Nullable <O extends XDF<?, ?>> Block nullableWithCast(@Nullable O encodable) {
         return encodable == null ? null : nonNullableWithCast(encodable);
     }
 
@@ -113,7 +113,7 @@ public final class Encode {
      * @require type.isBasedOn(encodable.getFactory().getType()) : "The given type is based on the type of the encodable object.";
      */
     @Pure
-    public static @Nonnull <O extends Encodable<?, ?>> Block nonNullableWithCast(@Nonnull O encodable, @Nonnull @Loaded SemanticType type) {
+    public static @Nonnull <O extends XDF<?, ?>> Block nonNullableWithCast(@Nonnull O encodable, @Nonnull @Loaded SemanticType type) {
         return nonNullableWithCast(encodable).setType(type);
     }
     
@@ -130,7 +130,7 @@ public final class Encode {
      * @require encodable == null || type.isBasedOn(encodable.getFactory().getType()) : "If the encodable object is not null, the given type is based on its type.";
      */
     @Pure
-    public static @Nullable <O extends Encodable<?, ?>> Block nullableWithCast(@Nullable O encodable, @Nonnull @Loaded SemanticType type) {
+    public static @Nullable <O extends XDF<?, ?>> Block nullableWithCast(@Nullable O encodable, @Nonnull @Loaded SemanticType type) {
         return encodable == null ? null : nonNullableWithCast(encodable, type);
     }
     

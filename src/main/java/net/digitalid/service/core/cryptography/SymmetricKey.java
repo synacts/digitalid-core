@@ -21,10 +21,10 @@ import javax.crypto.spec.SecretKeySpec;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.IntegerWrapper;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.service.core.factory.Factories;
-import net.digitalid.service.core.factory.encoding.Encodable;
-import net.digitalid.service.core.factory.encoding.AbstractNonRequestingEncodingFactory;
-import net.digitalid.service.core.factory.storing.BlockBasedStoringFactory;
+import net.digitalid.service.core.converter.Converters;
+import net.digitalid.service.core.converter.xdf.XDF;
+import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
+import net.digitalid.service.core.converter.sql.XDFBasedSQLConverter;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
 import net.digitalid.utility.annotations.math.NonNegative;
@@ -33,8 +33,8 @@ import net.digitalid.utility.annotations.reference.Capturable;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.annotations.size.NonEmpty;
-import net.digitalid.utility.database.storing.AbstractStoringFactory;
-import net.digitalid.utility.database.storing.Storable;
+import net.digitalid.utility.database.converter.AbstractSQLConverter;
+import net.digitalid.utility.database.converter.SQL;
 import net.digitalid.utility.system.errors.InitializationError;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 
@@ -42,7 +42,7 @@ import net.digitalid.utility.system.errors.ShouldNeverHappenError;
  * Symmetric keys are used to encrypt and decrypt byte arrays with the Advanced Encryption Standard (AES).
  */
 @Immutable
-public final class SymmetricKey implements Encodable<SymmetricKey, Object>, Storable<SymmetricKey, Object> {
+public final class SymmetricKey implements XDF<SymmetricKey, Object>, SQL<SymmetricKey, Object> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -243,13 +243,13 @@ public final class SymmetricKey implements Encodable<SymmetricKey, Object>, Stor
         return this.value.hashCode();
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encodable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * The encoding factory for this class.
      */
     @Immutable
-    public static final class EncodingFactory extends AbstractNonRequestingEncodingFactory<SymmetricKey, Object> {
+    public static final class EncodingFactory extends AbstractNonRequestingXDFConverter<SymmetricKey, Object> {
         
         /**
          * Creates a new encoding factory.
@@ -285,24 +285,24 @@ public final class SymmetricKey implements Encodable<SymmetricKey, Object>, Stor
         return ENCODING_FACTORY;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– SQL –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the storing factory of this class.
      */
-    public static final @Nonnull AbstractStoringFactory<SymmetricKey, Object> STORING_FACTORY = BlockBasedStoringFactory.get(ENCODING_FACTORY);
+    public static final @Nonnull AbstractSQLConverter<SymmetricKey, Object> STORING_FACTORY = XDFBasedSQLConverter.get(ENCODING_FACTORY);
     
     @Pure
     @Override
-    public @Nonnull AbstractStoringFactory<SymmetricKey, Object> getStoringFactory() {
+    public @Nonnull AbstractSQLConverter<SymmetricKey, Object> getStoringFactory() {
         return STORING_FACTORY;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factories –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the factories of this class.
      */
-    public static final @Nonnull Factories<SymmetricKey, Object> FACTORIES = Factories.get(ENCODING_FACTORY, STORING_FACTORY);
+    public static final @Nonnull Converters<SymmetricKey, Object> FACTORIES = Converters.get(ENCODING_FACTORY, STORING_FACTORY);
     
 }

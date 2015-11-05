@@ -20,8 +20,8 @@ import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
-import net.digitalid.service.core.factory.encoding.Encodable;
-import net.digitalid.service.core.factory.encoding.Encode;
+import net.digitalid.service.core.converter.xdf.XDF;
+import net.digitalid.service.core.converter.xdf.ConvertToXDF;
 import net.digitalid.service.core.identifier.HostIdentifier;
 import net.digitalid.service.core.identifier.Identifier;
 import net.digitalid.service.core.identity.HostIdentity;
@@ -97,7 +97,7 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
         @Nullable Block key = encryptions.get(pair);
         if (key == null) {
             final @Nonnull Time start = Time.getCurrent();
-            key = Encode.nonNullable(publicKey.getCompositeGroup().getElement(symmetricKey.getValue()).pow(publicKey.getE()), KEY);
+            key = ConvertToXDF.nonNullable(publicKey.getCompositeGroup().getElement(symmetricKey.getValue()).pow(publicKey.getE()), KEY);
             encryptions.put(pair, key);
             Log.verbose("Symmetric key encrypted in " + start.ago().getValue() + " ms.");
         }
@@ -340,8 +340,8 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
     @Pure
     @Locked
     @NonCommitting
-    public static @Nonnull <V extends Encodable<V, ?>> EncryptionWrapper encrypt(@Nonnull @Loaded @BasedOn("encryption@core.digitalid.net") SemanticType type, @Nonnull V element, @Nullable HostIdentifier recipient, @Nullable SymmetricKey symmetricKey) throws AbortException, PacketException, ExternalException, NetworkException {
-        return new EncryptionWrapper(type, Encode.nonNullable(element), recipient, symmetricKey);
+    public static @Nonnull <V extends XDF<V, ?>> EncryptionWrapper encrypt(@Nonnull @Loaded @BasedOn("encryption@core.digitalid.net") SemanticType type, @Nonnull V element, @Nullable HostIdentifier recipient, @Nullable SymmetricKey symmetricKey) throws AbortException, PacketException, ExternalException, NetworkException {
+        return new EncryptionWrapper(type, ConvertToXDF.nonNullable(element), recipient, symmetricKey);
     }
     
     /**
@@ -373,15 +373,15 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
     private @Nonnull Block getCache() {
         if (cache == null) {
             final @Nonnull FreezableArray<Block> elements = FreezableArray.get(5);
-            elements.set(0, Encode.nonNullable(time));
-            elements.set(1, Encode.<Identifier>nullable(recipient, RECIPIENT));
+            elements.set(0, ConvertToXDF.nonNullable(time));
+            elements.set(1, ConvertToXDF.<Identifier>nullable(recipient, RECIPIENT));
             
             if (recipient != null && symmetricKey != null) {
                 assert publicKey != null : "The public key is not null because this method is only called for encoding a block.";
                 elements.set(2, encrypt(publicKey, symmetricKey));
             }
             
-            elements.set(3, Encode.nullable(initializationVector));
+            elements.set(3, ConvertToXDF.nullable(initializationVector));
             
             if (symmetricKey != null && initializationVector != null) {
                 final @Nonnull Time start = Time.getCurrent();
@@ -411,7 +411,7 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
         getCache().writeTo(block);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encodable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * The encoding factory for this class.

@@ -9,7 +9,7 @@ import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.entity.Role;
 import net.digitalid.service.core.exceptions.abort.AbortException;
-import net.digitalid.service.core.factory.encoding.Encodable;
+import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
@@ -22,7 +22,7 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.annotations.OnlyForClients;
 import net.digitalid.utility.database.annotations.OnlyForHosts;
 import net.digitalid.utility.database.configuration.Database;
-import net.digitalid.utility.database.storing.Storable;
+import net.digitalid.utility.database.converter.SQL;
 
 /**
  * This class models a concept in the {@link Database database}.
@@ -33,7 +33,7 @@ import net.digitalid.utility.database.storing.Storable;
  *            (The type has to be a supertype of {@link NonHostEntity}, which cannot be declared in Java, unfortunately!)
  * @param <K> the type of the key which identifies an instance among all instances of a concept at the same entity.
  */
-public abstract class Concept<C extends Concept<C, E, K>, E extends Entity<E>, K> implements Encodable<C, E>, Storable<C, E> {
+public abstract class Concept<C extends Concept<C, E, K>, E extends Entity<E>, K> implements XDF<C, E>, SQL<C, E> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Entity –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -235,7 +235,7 @@ public abstract class Concept<C extends Concept<C, E, K>, E extends Entity<E>, K
         
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encodable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
         
     @Pure
     @Override
@@ -243,7 +243,7 @@ public abstract class Concept<C extends Concept<C, E, K>, E extends Entity<E>, K
         return setup.getEncodingFactory();
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– SQL –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override

@@ -13,10 +13,10 @@ import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
-import net.digitalid.service.core.factory.Factories;
-import net.digitalid.service.core.factory.encoding.AbstractEncodingFactory;
-import net.digitalid.service.core.factory.encoding.Encodable;
-import net.digitalid.service.core.factory.encoding.Encode;
+import net.digitalid.service.core.converter.Converters;
+import net.digitalid.service.core.converter.xdf.AbstractXDFConverter;
+import net.digitalid.service.core.converter.xdf.XDF;
+import net.digitalid.service.core.converter.xdf.ConvertToXDF;
 import net.digitalid.service.core.identifier.Identifier;
 import net.digitalid.service.core.identity.annotations.BasedOn;
 import net.digitalid.utility.annotations.reference.Capturable;
@@ -29,8 +29,8 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.column.Column;
 import net.digitalid.utility.database.column.GeneralReference;
 import net.digitalid.utility.database.column.SQLType;
-import net.digitalid.utility.database.storing.AbstractStoringFactory;
-import net.digitalid.utility.database.storing.Storable;
+import net.digitalid.utility.database.converter.AbstractSQLConverter;
+import net.digitalid.utility.database.converter.SQL;
 
 /**
  * This interface models a digital identity.
@@ -40,7 +40,7 @@ import net.digitalid.utility.database.storing.Storable;
  * @see ExternalIdentity
  */
 @Immutable
-public interface Identity extends Encodable<Identity, Object>, Storable<Identity, Object> {
+public interface Identity extends XDF<Identity, Object>, SQL<Identity, Object> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -296,13 +296,13 @@ public interface Identity extends Encodable<Identity, Object>, Storable<Identity
         }
     };
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encodable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * The encoding factory for this class.
      */
     @Immutable
-    public static final class EncodingFactory<I extends Identity> extends AbstractEncodingFactory<I, Object> {
+    public static final class EncodingFactory<I extends Identity> extends AbstractXDFConverter<I, Object> {
         
         /**
          * Stores the caster that casts identities to the right subclass.
@@ -326,7 +326,7 @@ public interface Identity extends Encodable<Identity, Object>, Storable<Identity
         @Pure
         @Override
         public @Nonnull Block encodeNonNullable(@Nonnull I identity) {
-            return Encode.nonNullable(identity.getAddress(), getType());
+            return ConvertToXDF.nonNullable(identity.getAddress(), getType());
         }
         
         @Pure
@@ -344,13 +344,13 @@ public interface Identity extends Encodable<Identity, Object>, Storable<Identity
      */
     public static final @Nonnull EncodingFactory<Identity> ENCODING_FACTORY = new EncodingFactory<>(Identity.IDENTIFIER, CASTER);
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– SQL –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * The storing factory for this class.
      */
     @Immutable
-    public static final class StoringFactory<I extends Identity> extends AbstractStoringFactory<I, Object> {
+    public static final class StoringFactory<I extends Identity> extends AbstractSQLConverter<I, Object> {
         
         /**
          * Stores the column of this storing factory.
@@ -400,11 +400,11 @@ public interface Identity extends Encodable<Identity, Object>, Storable<Identity
      */
     public static final @Nonnull StoringFactory<Identity> STORING_FACTORY = new StoringFactory<>(CASTER);
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factories –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the factories of this class.
      */
-    public static final @Nonnull Factories<Identity, Object> FACTORIES = Factories.get(ENCODING_FACTORY, STORING_FACTORY);
+    public static final @Nonnull Converters<Identity, Object> FACTORIES = Converters.get(ENCODING_FACTORY, STORING_FACTORY);
     
 }

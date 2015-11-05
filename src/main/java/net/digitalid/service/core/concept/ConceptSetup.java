@@ -3,7 +3,7 @@ package net.digitalid.service.core.concept;
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.factory.ConceptFactories;
-import net.digitalid.service.core.factory.Factories;
+import net.digitalid.service.core.converter.Converters;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.storage.Service;
 import net.digitalid.service.core.storage.SiteModule;
@@ -52,12 +52,12 @@ public final class ConceptSetup<C extends Concept<C, E, K>, E extends Entity<E>,
         return conceptName;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Concept Index –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Concept ConceptIndex –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the index used to cache instances of the concept.
      */
-    private final @Nonnull Index<C, E, K> conceptIndex;
+    private final @Nonnull ConceptIndex<C, E, K> conceptIndex;
     
     /**
      * Returns the index used to cache instances of the concept.
@@ -65,16 +65,16 @@ public final class ConceptSetup<C extends Concept<C, E, K>, E extends Entity<E>,
      * @return the index used to cache instances of the concept.
      */
     @Pure
-    public @Nonnull Index<C, E, K> getConceptIndex() {
+    public @Nonnull ConceptIndex<C, E, K> getConceptIndex() {
         return conceptIndex;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Key Factories –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Key Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the factories to convert and reconstruct the key.
      */
-    private final @Nonnull Factories<K, E> keyFactories;
+    private final @Nonnull Converters<K, E> keyFactories;
     
     /**
      * Returns the factories to convert and reconstruct the key.
@@ -82,16 +82,16 @@ public final class ConceptSetup<C extends Concept<C, E, K>, E extends Entity<E>,
      * @return the factories to convert and reconstruct the key.
      */
     @Pure
-    public @Nonnull Factories<K, E> getKeyFactories() {
+    public @Nonnull Converters<K, E> getKeyFactories() {
         return keyFactories;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Entity Factories –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Entity Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the factories to convert and reconstruct the entity.
      */
-    private final @Nonnull Factories<E, Site> entityFactories;
+    private final @Nonnull Converters<E, Site> entityFactories;
     
     /**
      * Returns the factories to convert and reconstruct the entity.
@@ -99,7 +99,7 @@ public final class ConceptSetup<C extends Concept<C, E, K>, E extends Entity<E>,
      * @return the factories to convert and reconstruct the entity.
      */
     @Pure
-    public @Nonnull Factories<E, Site> getEntityFactories() {
+    public @Nonnull Converters<E, Site> getEntityFactories() {
         return entityFactories;
     }
     
@@ -171,7 +171,7 @@ public final class ConceptSetup<C extends Concept<C, E, K>, E extends Entity<E>,
         return storingFactory;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Concept Factories –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Concept Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the factories to convert and reconstruct the concept.
@@ -199,7 +199,7 @@ public final class ConceptSetup<C extends Concept<C, E, K>, E extends Entity<E>,
      * @param keyFactories the factories to convert and reconstruct the key.
      * @param entityFactories the factories to convert and reconstruct the entity.
      */
-    private ConceptSetup(@Nonnull Service service, @Nonnull @Validated String conceptName, @Nonnull Index<C, E, K> conceptIndex, @Nonnull Factories<K, E> keyFactories, @Nonnull Factories<E, Site> entityFactories) {
+    private ConceptSetup(@Nonnull Service service, @Nonnull @Validated String conceptName, @Nonnull ConceptIndex<C, E, K> conceptIndex, @Nonnull Converters<K, E> keyFactories, @Nonnull Converters<E, Site> entityFactories) {
         this.service = service;
         this.conceptName = conceptName;
         this.conceptIndex = conceptIndex;
@@ -226,7 +226,7 @@ public final class ConceptSetup<C extends Concept<C, E, K>, E extends Entity<E>,
      * @return a new concept setup with the given parameters.
      */
     @Pure
-    public static @Nonnull <C extends Concept<C, E, K>, E extends Entity<E>, K> ConceptSetup<C, E, K> get(@Nonnull Service service, @Nonnull @Validated String conceptName, @Nonnull Index<C, E, K> conceptIndex, @Nonnull Factories<K, E> keyFactories, @Nonnull Factories<E, Site> entityFactories) {
+    public static @Nonnull <C extends Concept<C, E, K>, E extends Entity<E>, K> ConceptSetup<C, E, K> get(@Nonnull Service service, @Nonnull @Validated String conceptName, @Nonnull ConceptIndex<C, E, K> conceptIndex, @Nonnull Converters<K, E> keyFactories, @Nonnull Converters<E, Site> entityFactories) {
         return new ConceptSetup<>(service, conceptName, conceptIndex, keyFactories, entityFactories);
     }
     

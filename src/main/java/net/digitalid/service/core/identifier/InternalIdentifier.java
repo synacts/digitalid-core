@@ -8,7 +8,7 @@ import net.digitalid.service.core.exceptions.external.IdentityNotFoundException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
-import net.digitalid.service.core.factory.Factories;
+import net.digitalid.service.core.converter.Converters;
 import net.digitalid.service.core.identity.InternalIdentity;
 import net.digitalid.service.core.identity.resolution.Mapper;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -122,7 +122,7 @@ public abstract class InternalIdentifier extends IdentifierImplementation {
     @Pure
     public abstract @Nonnull HostIdentifier getHostIdentifier();
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factories –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the caster that casts identifiers to this subclass.
@@ -148,6 +148,6 @@ public abstract class InternalIdentifier extends IdentifierImplementation {
     /**
      * Stores the factories of this class.
      */
-    public static final @Nonnull Factories<InternalIdentifier, Object> FACTORIES = Factories.get(ENCODING_FACTORY, STORING_FACTORY);
+    public static final @Nonnull Converters<InternalIdentifier, Object> FACTORIES = Converters.get(ENCODING_FACTORY, STORING_FACTORY);
     
 }

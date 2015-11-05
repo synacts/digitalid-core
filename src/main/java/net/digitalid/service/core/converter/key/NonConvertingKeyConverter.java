@@ -1,7 +1,7 @@
-package net.digitalid.service.core.factory.object;
+package net.digitalid.service.core.converter.key;
 
 import javax.annotation.Nonnull;
-import net.digitalid.service.core.factory.encoding.SubtypingEncodingFactory;
+import net.digitalid.service.core.converter.xdf.SubtypingXDFConverter;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Stateless;
 
@@ -10,17 +10,17 @@ import net.digitalid.utility.annotations.state.Stateless;
  * 
  * @param <O> the type of the objects that this factory can transform and reconstruct.
  * 
- * @see SubtypingEncodingFactory
+ * @see SubtypingXDFConverter
  */
 @Stateless
-public final class ObjectBasedObjectFactory<O> extends AbstractNonRequestingObjectFactory<O, Object, O> {
+public final class NonConvertingKeyConverter<O> extends AbstractNonRequestingKeyConverter<O, Object, O> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Creates a new object-based object factory.
      */
-    private ObjectBasedObjectFactory() {}
+    private NonConvertingKeyConverter() {}
     
     /**
      * Returns a new object-based object factory.
@@ -28,8 +28,8 @@ public final class ObjectBasedObjectFactory<O> extends AbstractNonRequestingObje
      * @return a new object-based object factory.
      */
     @Pure
-    public static @Nonnull <O> ObjectBasedObjectFactory<O> get() {
-        return new ObjectBasedObjectFactory<>();
+    public static @Nonnull <O> NonConvertingKeyConverter<O> get() {
+        return new NonConvertingKeyConverter<>();
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Methods –––––––––––––––––––––––––––––––––––––––––––––––––– */

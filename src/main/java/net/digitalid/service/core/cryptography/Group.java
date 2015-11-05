@@ -7,12 +7,12 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.service.core.factory.encoding.Encodable;
+import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.identity.annotations.BasedOn;
 import net.digitalid.utility.annotations.math.Positive;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.database.storing.Storable;
+import net.digitalid.utility.database.converter.SQL;
 
 /**
  * This class models a multiplicative group.
@@ -21,7 +21,7 @@ import net.digitalid.utility.database.storing.Storable;
  * @see GroupWithUnknownOrder
  */
 @Immutable
-public abstract class Group<G extends Group<G>> implements Encodable<G, Object>, Storable<G, Object> {
+public abstract class Group<G extends Group<G>> implements XDF<G, Object>, SQL<G, Object> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Modulus –––––––––––––––––––––––––––––––––––––––––––––––––– */
     

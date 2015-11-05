@@ -5,14 +5,14 @@ import javax.annotation.Nonnull;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.IntegerWrapper;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.service.core.factory.Factories;
-import net.digitalid.service.core.factory.encoding.AbstractNonRequestingEncodingFactory;
-import net.digitalid.service.core.factory.storing.BlockBasedStoringFactory;
+import net.digitalid.service.core.converter.Converters;
+import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
+import net.digitalid.service.core.converter.sql.XDFBasedSQLConverter;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.database.storing.AbstractStoringFactory;
+import net.digitalid.utility.database.converter.AbstractSQLConverter;
 
 /**
  * An exponent is a number that raises elements of an arbitrary group.
@@ -136,7 +136,7 @@ public final class Exponent extends Number<Exponent> {
      * The encoding factory for this class.
      */
     @Immutable
-    public static final class EncodingFactory extends AbstractNonRequestingEncodingFactory<Exponent, Object> {
+    public static final class EncodingFactory extends AbstractNonRequestingXDFConverter<Exponent, Object> {
         
         /**
          * Creates a new encoding factory.
@@ -177,19 +177,19 @@ public final class Exponent extends Number<Exponent> {
     /**
      * Stores the storing factory of this class.
      */
-    public static final @Nonnull AbstractStoringFactory<Exponent, Object> STORING_FACTORY = BlockBasedStoringFactory.get(ENCODING_FACTORY);
+    public static final @Nonnull AbstractSQLConverter<Exponent, Object> STORING_FACTORY = XDFBasedSQLConverter.get(ENCODING_FACTORY);
     
     @Pure
     @Override
-    public @Nonnull AbstractStoringFactory<Exponent, Object> getStoringFactory() {
+    public @Nonnull AbstractSQLConverter<Exponent, Object> getStoringFactory() {
         return STORING_FACTORY;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factories –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the factories of this class.
      */
-    public static final @Nonnull Factories<Exponent, Object> FACTORIES = Factories.get(ENCODING_FACTORY, STORING_FACTORY);
+    public static final @Nonnull Converters<Exponent, Object> FACTORIES = Converters.get(ENCODING_FACTORY, STORING_FACTORY);
     
 }

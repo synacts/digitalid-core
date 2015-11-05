@@ -21,14 +21,14 @@ import net.digitalid.utility.database.configuration.Database;
  * This class indexes the instances of a {@link Concept concept} by their {@link Entity entity} and key.
  */
 @Immutable
-public final class Index<C extends Concept<C, E, K>, E extends Entity<E>, K> {
+public final class ConceptIndex<C extends Concept<C, E, K>, E extends Entity<E>, K> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Removal –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores a list of all the indexes that were created.
      */
-    private static final @Nonnull @NonNullableElements List<Index<?, ? extends Entity<?>, ?>> indexes = new LinkedList<>();
+    private static final @Nonnull @NonNullableElements List<ConceptIndex<?, ? extends Entity<?>, ?>> indexes = new LinkedList<>();
     
     /**
      * Removes the entries of the given entity from all indexes.
@@ -39,7 +39,7 @@ public final class Index<C extends Concept<C, E, K>, E extends Entity<E>, K> {
     public static void remove(@Nonnull Entity<?> entity) {
         assert Database.isSingleAccess() : "The database is in single-access mode.";
         
-        for (final @Nonnull Index<?, ? extends Entity<?>, ?> index : indexes) {
+        for (final @Nonnull ConceptIndex<?, ? extends Entity<?>, ?> index : indexes) {
             index.concepts.remove(entity);
         }
     }
@@ -58,7 +58,7 @@ public final class Index<C extends Concept<C, E, K>, E extends Entity<E>, K> {
      * 
      * @param factory the factory that can produce a new concept instance.
      */
-    private Index(@Nonnull Concept.Factory<C, E, K> factory) {
+    private ConceptIndex(@Nonnull Concept.Factory<C, E, K> factory) {
         this.factory = factory;
         indexes.add(this);
     }
@@ -71,8 +71,8 @@ public final class Index<C extends Concept<C, E, K>, E extends Entity<E>, K> {
      * @return a new index with the given concept factory.
      */
     @Pure
-    public static @Nonnull <C extends Concept<C, E, K>, E extends Entity<E>, K> Index<C, E, K> get(@Nonnull Concept.Factory<C, E, K> factory) {
-        return new Index<>(factory);
+    public static @Nonnull <C extends Concept<C, E, K>, E extends Entity<E>, K> ConceptIndex<C, E, K> get(@Nonnull Concept.Factory<C, E, K> factory) {
+        return new ConceptIndex<>(factory);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Concepts –––––––––––––––––––––––––––––––––––––––––––––––––– */

@@ -6,16 +6,16 @@ import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.IntegerWrapper;
 import net.digitalid.service.core.block.wrappers.TupleWrapper;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.service.core.factory.Factories;
-import net.digitalid.service.core.factory.encoding.AbstractNonRequestingEncodingFactory;
-import net.digitalid.service.core.factory.storing.BlockBasedStoringFactory;
+import net.digitalid.service.core.converter.Converters;
+import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
+import net.digitalid.service.core.converter.sql.XDFBasedSQLConverter;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
 import net.digitalid.utility.annotations.math.Positive;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.freezable.FreezableArray;
-import net.digitalid.utility.database.storing.AbstractStoringFactory;
+import net.digitalid.utility.database.converter.AbstractSQLConverter;
 
 /**
  * This class models a multiplicative group with known order.
@@ -110,7 +110,7 @@ public final class GroupWithKnownOrder extends Group<GroupWithKnownOrder> {
      * The encoding factory for this class.
      */
     @Immutable
-    public static final class EncodingFactory extends AbstractNonRequestingEncodingFactory<GroupWithKnownOrder, Object> {
+    public static final class EncodingFactory extends AbstractNonRequestingXDFConverter<GroupWithKnownOrder, Object> {
         
         /**
          * Creates a new encoding factory.
@@ -162,19 +162,19 @@ public final class GroupWithKnownOrder extends Group<GroupWithKnownOrder> {
     /**
      * Stores the storing factory of this class.
      */
-    public static final @Nonnull AbstractStoringFactory<GroupWithKnownOrder, Object> STORING_FACTORY = BlockBasedStoringFactory.get(ENCODING_FACTORY);
+    public static final @Nonnull AbstractSQLConverter<GroupWithKnownOrder, Object> STORING_FACTORY = XDFBasedSQLConverter.get(ENCODING_FACTORY);
     
     @Pure
     @Override
-    public @Nonnull AbstractStoringFactory<GroupWithKnownOrder, Object> getStoringFactory() {
+    public @Nonnull AbstractSQLConverter<GroupWithKnownOrder, Object> getStoringFactory() {
         return STORING_FACTORY;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factories –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the factories of this class.
      */
-    public static final @Nonnull Factories<GroupWithKnownOrder, Object> FACTORIES = Factories.get(ENCODING_FACTORY, STORING_FACTORY);
+    public static final @Nonnull Converters<GroupWithKnownOrder, Object> FACTORIES = Converters.get(ENCODING_FACTORY, STORING_FACTORY);
     
 }

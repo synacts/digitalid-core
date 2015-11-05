@@ -25,8 +25,8 @@ import net.digitalid.utility.collections.freezable.FreezableLinkedHashMap;
 import net.digitalid.utility.collections.freezable.FreezableMap;
 import net.digitalid.utility.collections.readonly.ReadOnlyCollection;
 import net.digitalid.utility.database.annotations.NonCommitting;
-import net.digitalid.service.core.factory.storing.FactoryBasedStoringFactory;
-import net.digitalid.utility.database.storing.Storable;
+import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
+import net.digitalid.utility.database.converter.SQL;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 
 /**
@@ -35,7 +35,7 @@ import net.digitalid.utility.system.errors.ShouldNeverHappenError;
  * @see CoreService
  */
 @Immutable
-public class Service extends DelegatingSiteStorageImplementation implements Storable<Service, Object> {
+public class Service extends DelegatingSiteStorageImplementation implements SQL<Service, Object> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Services –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -190,13 +190,13 @@ public class Service extends DelegatingSiteStorageImplementation implements Stor
         return getType().toString();
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– SQL –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * The storing factory for this class.
      */
     @Immutable
-    public static final class StoringFactory extends FactoryBasedStoringFactory<Service, Object, SemanticType> {
+    public static final class StoringFactory extends ChainingSQLConverter<Service, Object, SemanticType> {
         
         /**
          * Creates a new storing factory.

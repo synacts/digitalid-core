@@ -1,4 +1,4 @@
-package net.digitalid.service.core.factory.encoding;
+package net.digitalid.service.core.converter.xdf;
 
 import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.state.Pure;
@@ -10,7 +10,7 @@ import net.digitalid.utility.annotations.state.Pure;
  * @param <E> the type of the external object that is needed to decode an object, which is quite often an {@link Entity}.
  *            In case no external information is needed for the decoding of an object, declare it as an {@link Object}.
  */
-public interface Encodable<O, E> {
+public interface XDF<O, E> {
     
     /**
      * Returns the factory to encode and decode objects of this class.
@@ -18,6 +18,6 @@ public interface Encodable<O, E> {
      * @return the factory to encode and decode objects of this class.
      */
     @Pure
-    public @Nonnull AbstractEncodingFactory<O, E> getEncodingFactory();
+    public @Nonnull AbstractXDFConverter<O, E> getEncodingFactory();
     
 }

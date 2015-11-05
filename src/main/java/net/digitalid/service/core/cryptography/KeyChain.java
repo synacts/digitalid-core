@@ -6,9 +6,9 @@ import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.ListWrapper;
 import net.digitalid.service.core.block.wrappers.TupleWrapper;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.service.core.factory.encoding.Encodable;
-import net.digitalid.service.core.factory.encoding.Encode;
-import net.digitalid.service.core.factory.encoding.AbstractNonRequestingEncodingFactory;
+import net.digitalid.service.core.converter.xdf.XDF;
+import net.digitalid.service.core.converter.xdf.ConvertToXDF;
+import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -24,7 +24,7 @@ import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.collections.tuples.FreezablePair;
 import net.digitalid.utility.collections.tuples.ReadOnlyPair;
-import net.digitalid.utility.database.storing.Storable;
+import net.digitalid.utility.database.converter.SQL;
 
 /**
  * A key chain contains several items to support the rotation of host keys.
@@ -33,7 +33,7 @@ import net.digitalid.utility.database.storing.Storable;
  * @see PrivateKeyChain
  */
 @Immutable
-abstract class KeyChain<K extends Encodable<K, Object>, C extends KeyChain<K, C>> implements Encodable<C, Object>, Storable<C, Object> {
+abstract class KeyChain<K extends XDF<K, Object>, C extends KeyChain<K, C>> implements XDF<C, Object>, SQL<C, Object> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Items –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -135,13 +135,13 @@ abstract class KeyChain<K extends Encodable<K, Object>, C extends KeyChain<K, C>
         return items.toString();
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encodable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * The encoding factory for this class.
      */
     @Immutable
-    public static abstract class EncodingFactory<K extends Encodable<K, Object>, C extends KeyChain<K, C>> extends AbstractNonRequestingEncodingFactory<C, Object> {
+    public static abstract class EncodingFactory<K extends XDF<K, Object>, C extends KeyChain<K, C>> extends AbstractNonRequestingXDFConverter<C, Object> {
         
         /**
          * Stores the type of the key chain items.
@@ -151,7 +151,7 @@ abstract class KeyChain<K extends Encodable<K, Object>, C extends KeyChain<K, C>
         /**
          * Stores the factory that retrieves a key from a block.
          */
-        private final @Nonnull AbstractNonRequestingEncodingFactory<K, Object> factory;
+        private final @Nonnull AbstractNonRequestingXDFConverter<K, Object> factory;
         
         /**
          * Creates a new encoding factory with the given parameters.
@@ -160,7 +160,7 @@ abstract class KeyChain<K extends Encodable<K, Object>, C extends KeyChain<K, C>
          * @param itemType the type of the key chain items.
          * @param factory the factory that retrieves a key from a block.
          */
-        protected EncodingFactory(@Nonnull SemanticType chainType, @Nonnull SemanticType itemType, @Nonnull AbstractNonRequestingEncodingFactory<K, Object> factory) {
+        protected EncodingFactory(@Nonnull SemanticType chainType, @Nonnull SemanticType itemType, @Nonnull AbstractNonRequestingXDFConverter<K, Object> factory) {
             super(chainType);
             
             this.itemType = itemType;
@@ -186,8 +186,8 @@ abstract class KeyChain<K extends Encodable<K, Object>, C extends KeyChain<K, C>
             final @Nonnull FreezableArrayList<Block> elements = FreezableArrayList.getWithCapacity(items.size());
             for (final @Nonnull ReadOnlyPair<Time, K> item : items) {
                 final @Nonnull FreezableArray<Block> pair = FreezableArray.get(2);
-                pair.set(0, Encode.nonNullable(item.getNonNullableElement0()));
-                pair.set(1, Encode.nonNullable(item.getNonNullableElement1()));
+                pair.set(0, ConvertToXDF.nonNullable(item.getNonNullableElement0()));
+                pair.set(1, ConvertToXDF.nonNullable(item.getNonNullableElement1()));
                 elements.add(TupleWrapper.encode(itemType, pair.freeze()));
             }
             return ListWrapper.encode(getType(), elements.freeze());

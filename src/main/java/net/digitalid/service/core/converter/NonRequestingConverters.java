@@ -1,11 +1,11 @@
-package net.digitalid.service.core.factory;
+package net.digitalid.service.core.converter;
 
 import javax.annotation.Nonnull;
-import net.digitalid.service.core.factory.encoding.AbstractNonRequestingEncodingFactory;
+import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.database.storing.AbstractStoringFactory;
+import net.digitalid.utility.database.converter.AbstractSQLConverter;
 
 /**
  * This class allows to store several non-requesting factories in a single object.
@@ -15,14 +15,14 @@ import net.digitalid.utility.database.storing.AbstractStoringFactory;
  *            In case no external information is needed for the reconstruction of an object, declare it as an {@link Object}.
  */
 @Immutable
-public final class NonRequestingFactories<O, E> extends Factories<O, E> {
+public final class NonRequestingConverters<O, E> extends Converters<O, E> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encoding Factory –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
-    public @Nonnull AbstractNonRequestingEncodingFactory<O, E> getEncodingFactory() {
-        return (AbstractNonRequestingEncodingFactory<O, E>) super.getEncodingFactory();
+    public @Nonnull AbstractNonRequestingXDFConverter<O, E> getEncodingFactory() {
+        return (AbstractNonRequestingXDFConverter<O, E>) super.getEncodingFactory();
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -33,7 +33,7 @@ public final class NonRequestingFactories<O, E> extends Factories<O, E> {
      * @param encodingFactory the encoding factory.
      * @param storingFactory the storing factory.
      */
-    private NonRequestingFactories(@Nonnull AbstractNonRequestingEncodingFactory<O, E> encodingFactory, @Nonnull AbstractStoringFactory<O, E> storingFactory) {
+    private NonRequestingConverters(@Nonnull AbstractNonRequestingXDFConverter<O, E> encodingFactory, @Nonnull AbstractSQLConverter<O, E> storingFactory) {
         super(encodingFactory, storingFactory);
     }
     
@@ -46,16 +46,16 @@ public final class NonRequestingFactories<O, E> extends Factories<O, E> {
      * @return a new object with the given factories.
      */
     @Pure
-    public static @Nonnull <O, E> NonRequestingFactories<O, E> get(@Nonnull AbstractNonRequestingEncodingFactory<O, E> encodingFactory, @Nonnull AbstractStoringFactory<O, E> storingFactory) {
-        return new NonRequestingFactories<>(encodingFactory, storingFactory);
+    public static @Nonnull <O, E> NonRequestingConverters<O, E> get(@Nonnull AbstractNonRequestingXDFConverter<O, E> encodingFactory, @Nonnull AbstractSQLConverter<O, E> storingFactory) {
+        return new NonRequestingConverters<>(encodingFactory, storingFactory);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Subtyping –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
-    public @Nonnull NonRequestingFactories<O, E> setType(@Nonnull SemanticType type) {
-        return new NonRequestingFactories<>(getEncodingFactory().setType(type), getStoringFactory());
+    public @Nonnull NonRequestingConverters<O, E> setType(@Nonnull SemanticType type) {
+        return new NonRequestingConverters<>(getEncodingFactory().setType(type), getStoringFactory());
     }
     
 }

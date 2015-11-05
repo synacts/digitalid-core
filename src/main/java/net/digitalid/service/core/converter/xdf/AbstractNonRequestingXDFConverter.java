@@ -1,4 +1,4 @@
-package net.digitalid.service.core.factory.encoding;
+package net.digitalid.service.core.converter.xdf;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -11,18 +11,18 @@ import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 
 /**
- * This class is like {@link AbstractEncodingFactory} except that the decoding of {@link Block blocks} throws less exceptions.
+ * This class is like {@link AbstractXDFConverter} except that the decoding of {@link Block blocks} throws less exceptions.
  * This factory does not allow file, network and database requests during {@link #decodeNonNullable(java.lang.Object, net.digitalid.service.core.block.Block) decoding}.
  */
 @Immutable
-public abstract class AbstractNonRequestingEncodingFactory<O, E> extends AbstractEncodingFactory<O, E> {
+public abstract class AbstractNonRequestingXDFConverter<O, E> extends AbstractXDFConverter<O, E> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     @Pure
     @Override
-    public @Nonnull AbstractNonRequestingEncodingFactory<O, E> setType(@Nonnull SemanticType type) {
-        return SubtypingNonRequestingEncodingFactory.get(type, this);
+    public @Nonnull AbstractNonRequestingXDFConverter<O, E> setType(@Nonnull SemanticType type) {
+        return SubtypingNonRequestingXDFConverter.get(type, this);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Decoding –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -44,7 +44,7 @@ public abstract class AbstractNonRequestingEncodingFactory<O, E> extends Abstrac
      * 
      * @param type the semantic type that corresponds to the encodable class.
      */
-    protected AbstractNonRequestingEncodingFactory(@Nonnull @Loaded SemanticType type) {
+    protected AbstractNonRequestingXDFConverter(@Nonnull @Loaded SemanticType type) {
         super(type);
     }
     

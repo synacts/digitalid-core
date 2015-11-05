@@ -11,7 +11,7 @@ import net.digitalid.service.core.exceptions.external.IdentityNotFoundException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
-import net.digitalid.service.core.factory.Factories;
+import net.digitalid.service.core.converter.Converters;
 import net.digitalid.service.core.identity.resolution.Category;
 import net.digitalid.service.core.identity.EmailPerson;
 import net.digitalid.service.core.identity.Person;
@@ -117,7 +117,7 @@ public final class EmailIdentifier extends ExternalIdentifier {
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factories –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the caster that casts identifiers to this subclass.
@@ -143,6 +143,6 @@ public final class EmailIdentifier extends ExternalIdentifier {
     /**
      * Stores the factories of this class.
      */
-    public static final @Nonnull Factories<EmailIdentifier, Object> FACTORIES = Factories.get(ENCODING_FACTORY, STORING_FACTORY);
+    public static final @Nonnull Converters<EmailIdentifier, Object> FACTORIES = Converters.get(ENCODING_FACTORY, STORING_FACTORY);
     
 }

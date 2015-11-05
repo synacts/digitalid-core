@@ -6,19 +6,19 @@ import net.digitalid.service.core.auxiliary.None;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.TupleWrapper;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.service.core.factory.Factories;
-import net.digitalid.service.core.factory.encoding.Encodable;
-import net.digitalid.service.core.factory.encoding.Encode;
-import net.digitalid.service.core.factory.encoding.AbstractNonRequestingEncodingFactory;
-import net.digitalid.service.core.factory.storing.BlockBasedStoringFactory;
+import net.digitalid.service.core.converter.Converters;
+import net.digitalid.service.core.converter.xdf.XDF;
+import net.digitalid.service.core.converter.xdf.ConvertToXDF;
+import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
+import net.digitalid.service.core.converter.sql.XDFBasedSQLConverter;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
-import net.digitalid.utility.database.storing.AbstractStoringFactory;
-import net.digitalid.utility.database.storing.Storable;
+import net.digitalid.utility.database.converter.AbstractSQLConverter;
+import net.digitalid.utility.database.converter.SQL;
 
 /**
  * This class stores the groups, elements and exponents of a host's public key.
@@ -26,7 +26,7 @@ import net.digitalid.utility.database.storing.Storable;
  * @invariant verifySubgroupProof() : "The elements au, ai, av and ao are in the subgroup of ab.";
  */
 @Immutable
-public final class PublicKey implements Encodable<PublicKey, Object>, Storable<PublicKey, Object> {
+public final class PublicKey implements XDF<PublicKey, Object>, SQL<PublicKey, Object> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -315,7 +315,7 @@ public final class PublicKey implements Encodable<PublicKey, Object>, Storable<P
         final @Nonnull Element tv = ab.pow(sv).multiply(av.pow(t));
         final @Nonnull Element to = ab.pow(so).multiply(ao.pow(t));
         
-        final @Nonnull FreezableArray<Block> elements = FreezableArray.getNonNullable(Encode.nonNullable(tu, PublicKey.TU), Encode.nonNullable(ti, PublicKey.TI), Encode.nonNullable(tv, PublicKey.TV), Encode.nonNullable(to, PublicKey.TO));
+        final @Nonnull FreezableArray<Block> elements = FreezableArray.getNonNullable(ConvertToXDF.nonNullable(tu, PublicKey.TU), ConvertToXDF.nonNullable(ti, PublicKey.TI), ConvertToXDF.nonNullable(tv, PublicKey.TV), ConvertToXDF.nonNullable(to, PublicKey.TO));
         return t.getValue().equals(TupleWrapper.encode(TUPLE, elements.freeze()).getHash());
     }
     
@@ -508,8 +508,8 @@ public final class PublicKey implements Encodable<PublicKey, Object>, Storable<P
     @Pure
     public @Nonnull @BasedOn("verifiable.encryption@core.digitalid.net") Block getVerifiableEncryption(@Nonnull Exponent m, @Nonnull Exponent r) {
         final @Nonnull FreezableArray<Block> elements = FreezableArray.get(2);
-        elements.set(0, Encode.nonNullable(y.pow(r).multiply(zPlus1.pow(m)), W1));
-        elements.set(1, Encode.nonNullable(g.pow(r), W2));
+        elements.set(0, ConvertToXDF.nonNullable(y.pow(r).multiply(zPlus1.pow(m)), W1));
+        elements.set(1, ConvertToXDF.nonNullable(g.pow(r), W2));
         return TupleWrapper.encode(VERIFIABLE_ENCRYPTION, elements.freeze());
     }
     
@@ -568,13 +568,13 @@ public final class PublicKey implements Encodable<PublicKey, Object>, Storable<P
         return "Public Key [n = " + compositeGroup.getModulus() + ", e = " + e + ", z^2 = " + squareGroup.getModulus() + ", g = " + g + ", y = " + y + "]";
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encodable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * The encoding factory for this class.
      */
     @Immutable
-    public static final class EncodingFactory extends AbstractNonRequestingEncodingFactory<PublicKey, Object> {
+    public static final class EncodingFactory extends AbstractNonRequestingXDFConverter<PublicKey, Object> {
         
         /**
          * Creates a new encoding factory.
@@ -587,22 +587,22 @@ public final class PublicKey implements Encodable<PublicKey, Object>, Storable<P
         @Override
         public @Nonnull Block encodeNonNullable(@Nonnull PublicKey publicKey) {
             final @Nonnull FreezableArray<Block> elements = FreezableArray.get(16);
-            elements.set(0, Encode.nonNullable(publicKey.compositeGroup, COMPOSITE_GROUP));
-            elements.set(1, Encode.nonNullable(publicKey.e, E));
-            elements.set(2, Encode.nonNullable(publicKey.ab, AB));
-            elements.set(3, Encode.nonNullable(publicKey.au, AU));
-            elements.set(4, Encode.nonNullable(publicKey.ai, AI));
-            elements.set(5, Encode.nonNullable(publicKey.av, AV));
-            elements.set(6, Encode.nonNullable(publicKey.ao, AO));
-            elements.set(7, Encode.nonNullable(publicKey.t, T));
-            elements.set(8, Encode.nonNullable(publicKey.su, SU));
-            elements.set(9, Encode.nonNullable(publicKey.si, SI));
-            elements.set(10, Encode.nonNullable(publicKey.sv, SV));
-            elements.set(11, Encode.nonNullable(publicKey.so, SO));
-            elements.set(12, Encode.nonNullable(publicKey.squareGroup, SQUARE_GROUP));
-            elements.set(13, Encode.nonNullable(publicKey.g, G));
-            elements.set(14, Encode.nonNullable(publicKey.y, Y));
-            elements.set(15, Encode.nonNullable(publicKey.zPlus1, Z));
+            elements.set(0, ConvertToXDF.nonNullable(publicKey.compositeGroup, COMPOSITE_GROUP));
+            elements.set(1, ConvertToXDF.nonNullable(publicKey.e, E));
+            elements.set(2, ConvertToXDF.nonNullable(publicKey.ab, AB));
+            elements.set(3, ConvertToXDF.nonNullable(publicKey.au, AU));
+            elements.set(4, ConvertToXDF.nonNullable(publicKey.ai, AI));
+            elements.set(5, ConvertToXDF.nonNullable(publicKey.av, AV));
+            elements.set(6, ConvertToXDF.nonNullable(publicKey.ao, AO));
+            elements.set(7, ConvertToXDF.nonNullable(publicKey.t, T));
+            elements.set(8, ConvertToXDF.nonNullable(publicKey.su, SU));
+            elements.set(9, ConvertToXDF.nonNullable(publicKey.si, SI));
+            elements.set(10, ConvertToXDF.nonNullable(publicKey.sv, SV));
+            elements.set(11, ConvertToXDF.nonNullable(publicKey.so, SO));
+            elements.set(12, ConvertToXDF.nonNullable(publicKey.squareGroup, SQUARE_GROUP));
+            elements.set(13, ConvertToXDF.nonNullable(publicKey.g, G));
+            elements.set(14, ConvertToXDF.nonNullable(publicKey.y, Y));
+            elements.set(15, ConvertToXDF.nonNullable(publicKey.zPlus1, Z));
             return TupleWrapper.encode(TYPE, elements.freeze());
         }
         
@@ -634,7 +634,7 @@ public final class PublicKey implements Encodable<PublicKey, Object>, Storable<P
             final @Nonnull Element tv = ab.pow(sv).multiply(av.pow(t));
             final @Nonnull Element to = ab.pow(so).multiply(ao.pow(t));
             
-            if (!t.getValue().equals(TupleWrapper.encode(TUPLE, Encode.nonNullable(tu, PublicKey.TU), Encode.nonNullable(ti, PublicKey.TI), Encode.nonNullable(tv, PublicKey.TV), Encode.nonNullable(to, PublicKey.TO)).getHash())) throw new InvalidEncodingException("The proof that au, ai, av and ao are in the subgroup of ab is invalid.");
+            if (!t.getValue().equals(TupleWrapper.encode(TUPLE, ConvertToXDF.nonNullable(tu, PublicKey.TU), ConvertToXDF.nonNullable(ti, PublicKey.TI), ConvertToXDF.nonNullable(tv, PublicKey.TV), ConvertToXDF.nonNullable(to, PublicKey.TO)).getHash())) throw new InvalidEncodingException("The proof that au, ai, av and ao are in the subgroup of ab is invalid.");
             
             return new PublicKey(compositeGroup, e, ab, au, ai, av, ao, t, su, si, sv, so, squareGroup, g, y, zPlus1);
         }
@@ -652,24 +652,24 @@ public final class PublicKey implements Encodable<PublicKey, Object>, Storable<P
         return ENCODING_FACTORY;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– SQL –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the storing factory of this class.
      */
-    public static final @Nonnull AbstractStoringFactory<PublicKey, Object> STORING_FACTORY = BlockBasedStoringFactory.get(ENCODING_FACTORY);
+    public static final @Nonnull AbstractSQLConverter<PublicKey, Object> STORING_FACTORY = XDFBasedSQLConverter.get(ENCODING_FACTORY);
     
     @Pure
     @Override
-    public @Nonnull AbstractStoringFactory<PublicKey, Object> getStoringFactory() {
+    public @Nonnull AbstractSQLConverter<PublicKey, Object> getStoringFactory() {
         return STORING_FACTORY;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factories –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the factories of this class.
      */
-    public static final @Nonnull Factories<PublicKey, Object> FACTORIES = Factories.get(ENCODING_FACTORY, STORING_FACTORY);
+    public static final @Nonnull Converters<PublicKey, Object> FACTORIES = Converters.get(ENCODING_FACTORY, STORING_FACTORY);
     
 }

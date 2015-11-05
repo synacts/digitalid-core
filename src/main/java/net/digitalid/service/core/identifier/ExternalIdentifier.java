@@ -6,7 +6,7 @@ import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
-import net.digitalid.service.core.factory.Factories;
+import net.digitalid.service.core.converter.Converters;
 import net.digitalid.service.core.identity.resolution.Category;
 import net.digitalid.service.core.identity.ExternalIdentity;
 import net.digitalid.service.core.identity.Identity;
@@ -120,7 +120,7 @@ public abstract class ExternalIdentifier extends IdentifierImplementation implem
     @Pure
     public abstract @Nonnull Category getCategory();
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factories –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the caster that casts identifiers to this subclass.
@@ -146,6 +146,6 @@ public abstract class ExternalIdentifier extends IdentifierImplementation implem
     /**
      * Stores the factories of this class.
      */
-    public static final @Nonnull Factories<ExternalIdentifier, Object> FACTORIES = Factories.get(ENCODING_FACTORY, STORING_FACTORY);
+    public static final @Nonnull Converters<ExternalIdentifier, Object> FACTORIES = Converters.get(ENCODING_FACTORY, STORING_FACTORY);
     
 }

@@ -14,7 +14,7 @@ import net.digitalid.service.core.block.wrappers.ValueWrapper.ValueEncodingFacto
 import net.digitalid.service.core.block.wrappers.ValueWrapper.ValueStoringFactory;
 import net.digitalid.service.core.cryptography.Parameters;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.service.core.factory.Factories;
+import net.digitalid.service.core.converter.Converters;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
@@ -285,7 +285,7 @@ public final class HashWrapper extends Wrapper<HashWrapper> {
      */
     private static final @Nonnull Factory FACTORY = new Factory();
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value Factories –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns the value encoding factory of this wrapper.
@@ -319,8 +319,8 @@ public final class HashWrapper extends Wrapper<HashWrapper> {
      * @return the value factories of this wrapper.
      */
     @Pure
-    public static @Nonnull Factories<BigInteger, Object> getValueFactories(@Nonnull @BasedOn("hash@core.digitalid.net") SemanticType type) {
-        return Factories.get(getValueEncodingFactory(type), getValueStoringFactory(type));
+    public static @Nonnull Converters<BigInteger, Object> getValueFactories(@Nonnull @BasedOn("hash@core.digitalid.net") SemanticType type) {
+        return Converters.get(getValueEncodingFactory(type), getValueStoringFactory(type));
     }
     
 }

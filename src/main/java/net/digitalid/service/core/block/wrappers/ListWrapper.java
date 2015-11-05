@@ -7,8 +7,8 @@ import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.annotations.Encoding;
 import net.digitalid.service.core.block.annotations.NonEncoding;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.service.core.factory.encoding.Encodable;
-import net.digitalid.service.core.factory.encoding.Encode;
+import net.digitalid.service.core.converter.xdf.XDF;
+import net.digitalid.service.core.converter.xdf.ConvertToXDF;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
@@ -158,9 +158,9 @@ public final class ListWrapper extends BlockBasedWrapper<ListWrapper> {
      */
     @Pure
     @SuppressWarnings("unchecked")
-    public static @Nonnull @NonEncoding <V extends Encodable<V, ?>> Block encode(@Nonnull @Loaded @BasedOn("list@core.digitalid.net") SemanticType type, @Nonnull V... elements) {
+    public static @Nonnull @NonEncoding <V extends XDF<V, ?>> Block encode(@Nonnull @Loaded @BasedOn("list@core.digitalid.net") SemanticType type, @Nonnull V... elements) {
         final @Nonnull FreezableList<Block> list = FreezableArrayList.getWithCapacity(elements.length);
-        for (final @Nullable V element : elements) list.add(Encode.nullable(element));
+        for (final @Nullable V element : elements) list.add(ConvertToXDF.nullable(element));
         return encode(type, list.freeze());
     }
     
@@ -233,7 +233,7 @@ public final class ListWrapper extends BlockBasedWrapper<ListWrapper> {
         assert offset == block.getLength() : "The whole block should now be encoded.";
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encodable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * The encoding factory for this class.

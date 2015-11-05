@@ -10,7 +10,7 @@ import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
-import net.digitalid.service.core.factory.encoding.Encode;
+import net.digitalid.service.core.converter.xdf.ConvertToXDF;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.Loaded;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -18,7 +18,7 @@ import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.column.Column;
 import net.digitalid.utility.database.column.SQLType;
-import net.digitalid.utility.database.storing.Store;
+import net.digitalid.utility.database.converter.ConvertToSQL;
 
 /**
  * This class implements methods that all wrappers whose storable mechanisms use a {@link Block block} share.
@@ -71,7 +71,7 @@ public abstract class BlockBasedWrapper<W extends BlockBasedWrapper<W>> extends 
         @Override
         @NonCommitting
         public final void storeNonNullable(@Nonnull W wrapper, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
-            Store.nonNullable(Encode.nonNullable(wrapper), preparedStatement, parameterIndex);
+            ConvertToSQL.nonNullable(ConvertToXDF.nonNullable(wrapper), preparedStatement, parameterIndex);
         }
         
         @Pure
@@ -96,7 +96,7 @@ public abstract class BlockBasedWrapper<W extends BlockBasedWrapper<W>> extends 
     @Override
     @SuppressWarnings("unchecked")
     public final @Nonnull String toString() {
-        return Encode.nonNullable((W) this).toString();
+        return ConvertToXDF.nonNullable((W) this).toString();
     }
     
 }

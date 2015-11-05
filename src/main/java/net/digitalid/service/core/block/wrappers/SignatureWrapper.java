@@ -21,8 +21,8 @@ import net.digitalid.service.core.exceptions.external.InvalidSignatureException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
-import net.digitalid.service.core.factory.encoding.Encodable;
-import net.digitalid.service.core.factory.encoding.Encode;
+import net.digitalid.service.core.converter.xdf.XDF;
+import net.digitalid.service.core.converter.xdf.ConvertToXDF;
 import net.digitalid.service.core.identifier.Identifier;
 import net.digitalid.service.core.identifier.InternalIdentifier;
 import net.digitalid.service.core.identity.InternalIdentity;
@@ -325,8 +325,8 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
      * @ensure return.isVerified() : "The returned signature is verified.";
      */
     @Pure
-    public static @Nonnull <V extends Encodable<V, ?>> SignatureWrapper encodeWithoutSigning(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nonnull V element, @Nullable InternalIdentifier subject) {
-        return new SignatureWrapper(type, Encode.nonNullable(element), subject, null);
+    public static @Nonnull <V extends XDF<V, ?>> SignatureWrapper encodeWithoutSigning(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nonnull V element, @Nullable InternalIdentifier subject) {
+        return new SignatureWrapper(type, ConvertToXDF.nonNullable(element), subject, null);
     }
     
     /**
@@ -422,10 +422,10 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
     final @Nonnull Block getCache() {
         if (cache == null) {
             final @Nonnull FreezableArray<Block> subelements = FreezableArray.get(4);
-            subelements.set(0, Encode.<Identifier>nullable(subject, SUBJECT));
-            subelements.set(1, Encode.nullable(time));
+            subelements.set(0, ConvertToXDF.<Identifier>nullable(subject, SUBJECT));
+            subelements.set(1, ConvertToXDF.nullable(time));
             subelements.set(2, element);
-            subelements.set(3, Encode.nullable(audit));
+            subelements.set(3, ConvertToXDF.nullable(audit));
             
             final @Nonnull FreezableArray<Block> elements = FreezableArray.get(4);
             elements.set(0, TupleWrapper.encode(CONTENT, subelements.freeze()));
@@ -450,7 +450,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
         getCache().writeTo(block);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encodable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * The encoding factory for this class.

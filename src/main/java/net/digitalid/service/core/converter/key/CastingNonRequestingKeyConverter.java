@@ -1,4 +1,4 @@
-package net.digitalid.service.core.factory.object;
+package net.digitalid.service.core.converter.key;
 
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
@@ -16,7 +16,7 @@ import net.digitalid.utility.annotations.state.Validated;
  * @param <S> the supertype from which the objects returned by the abstract (and thus overridden) method are downcast.
  */
 @Immutable
-public abstract class CastingNonRequestingObjectFactory<O extends S, E, K, S> extends AbstractNonRequestingObjectFactory<O, E, K> {
+public abstract class CastingNonRequestingKeyConverter<O extends S, E, K, S> extends AbstractNonRequestingKeyConverter<O, E, K> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Caster –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -32,7 +32,7 @@ public abstract class CastingNonRequestingObjectFactory<O extends S, E, K, S> ex
      * 
      * @param caster the caster that allows to cast objects to the specified subtype.
      */
-    protected CastingNonRequestingObjectFactory(@Nonnull ObjectCaster<S, O> caster) {
+    protected CastingNonRequestingKeyConverter(@Nonnull ObjectCaster<S, O> caster) {
         this.caster = caster;
     }
     

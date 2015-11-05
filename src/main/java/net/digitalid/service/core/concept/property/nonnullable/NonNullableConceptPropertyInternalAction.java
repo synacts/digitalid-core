@@ -19,8 +19,8 @@ import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
-import net.digitalid.service.core.factory.encoding.Encode;
-import net.digitalid.service.core.factory.encoding.AbstractNonRequestingEncodingFactory;
+import net.digitalid.service.core.converter.xdf.ConvertToXDF;
+import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
 import net.digitalid.service.core.handler.Action;
 import net.digitalid.service.core.handler.InternalAction;
 import net.digitalid.service.core.handler.Method;
@@ -206,7 +206,7 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
      */
     // TODO: must be re-done and merged with Method.Factory.
     @Immutable
-    public static final class EncodingFactory<V, C extends Concept<C, E, ?>, E extends Entity<E>> extends AbstractNonRequestingEncodingFactory<NonNullableConceptPropertyInternalAction<V, C, E>, ReadOnlyPair<E, NonNullableConceptPropertySetup<V, C, E>>> {
+    public static final class EncodingFactory<V, C extends Concept<C, E, ?>, E extends Entity<E>> extends AbstractNonRequestingXDFConverter<NonNullableConceptPropertyInternalAction<V, C, E>, ReadOnlyPair<E, NonNullableConceptPropertySetup<V, C, E>>> {
         
         /**
          * Creates a new encoding factory.
@@ -218,7 +218,7 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
         @Pure
         @Override
         public @Nonnull Block encodeNonNullable(@Nonnull NonNullableConceptPropertyInternalAction<V, C, E> internalAction) {
-            return TupleWrapper.encode(internalAction.getType(), internalAction.property.getConcept(), Encode.nonNullable(internalAction.oldTime, OLD_TIME), Encode.nonNullable(internalAction.newTime, NEW_TIME), internalAction.setup.getValueFactories().getEncodingFactory().encodeNonNullable(internalAction.oldValue).setType(internalAction.setup.getOldValueType()), internalAction.setup.getValueFactories().getEncodingFactory().encodeNonNullable(internalAction.newValue).setType(internalAction.setup.getNewValueType()));
+            return TupleWrapper.encode(internalAction.getType(), internalAction.property.getConcept(), ConvertToXDF.nonNullable(internalAction.oldTime, OLD_TIME), ConvertToXDF.nonNullable(internalAction.newTime, NEW_TIME), internalAction.setup.getValueFactories().getEncodingFactory().encodeNonNullable(internalAction.oldValue).setType(internalAction.setup.getOldValueType()), internalAction.setup.getValueFactories().getEncodingFactory().encodeNonNullable(internalAction.newValue).setType(internalAction.setup.getNewValueType()));
         }
         
         @Pure

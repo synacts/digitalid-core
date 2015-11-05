@@ -1,4 +1,4 @@
-package net.digitalid.service.core.factory.storing;
+package net.digitalid.service.core.converter.sql;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.service.core.factory.object.AbstractNonRequestingObjectFactory;
+import net.digitalid.service.core.converter.key.AbstractNonRequestingKeyConverter;
 import net.digitalid.utility.annotations.reference.Capturable;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -14,7 +14,7 @@ import net.digitalid.utility.collections.annotations.elements.NonNullableElement
 import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.database.annotations.NonCommitting;
-import net.digitalid.utility.database.storing.AbstractStoringFactory;
+import net.digitalid.utility.database.converter.AbstractSQLConverter;
 
 /**
  * This class implements a storing factory that is based on another storing factory.
@@ -25,19 +25,19 @@ import net.digitalid.utility.database.storing.AbstractStoringFactory;
  * @param <K> the type of the objects that the other factory stores and restores (usually as a key for the objects of this factory).
  */
 @Immutable
-public final class FactoryBasedStoringFactory<O, E, K> extends AbstractStoringFactory<O, E> {
+public final class ChainingSQLConverter<O, E, K> extends AbstractSQLConverter<O, E> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factories –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the factory used to transform and reconstruct the object.
      */
-    private final @Nonnull AbstractNonRequestingObjectFactory<O, ? super E, K> objectFactory;
+    private final @Nonnull AbstractNonRequestingKeyConverter<O, ? super E, K> objectFactory;
     
     /**
      * Stores the factory used to store and restore the key.
      */
-    private final @Nonnull AbstractStoringFactory<K, E> keyFactory;
+    private final @Nonnull AbstractSQLConverter<K, E> keyFactory;
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -47,7 +47,7 @@ public final class FactoryBasedStoringFactory<O, E, K> extends AbstractStoringFa
      * @param objectFactory the factory used to transform and reconstruct the object.
      * @param keyFactory the factory used to store and restore the object's key.
      */
-    protected FactoryBasedStoringFactory(@Nonnull AbstractNonRequestingObjectFactory<O, ? super E, K> objectFactory, @Nonnull AbstractStoringFactory<K, E> keyFactory) {
+    protected ChainingSQLConverter(@Nonnull AbstractNonRequestingKeyConverter<O, ? super E, K> objectFactory, @Nonnull AbstractSQLConverter<K, E> keyFactory) {
         super(keyFactory.getColumns());
         
         this.objectFactory = objectFactory;

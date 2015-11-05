@@ -10,7 +10,7 @@ import net.digitalid.service.core.entity.Entity;
 import net.digitalid.service.core.entity.NonHostAccount;
 import net.digitalid.service.core.entity.NonHostEntity;
 import net.digitalid.service.core.entity.Role;
-import net.digitalid.service.core.factory.encoding.Encodable;
+import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.identifier.InternalIdentifier;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -23,7 +23,7 @@ import net.digitalid.utility.annotations.state.Pure;
  * @see Reply
  */
 @Immutable
-public abstract class Handler<O, E> implements Encodable<O, E> {
+public abstract class Handler<O, E> implements XDF<O, E> {
     
     /**
      * Stores the entity to which this handler belongs or null if it is impersonal.

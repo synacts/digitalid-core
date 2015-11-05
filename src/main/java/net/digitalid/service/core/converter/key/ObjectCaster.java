@@ -1,4 +1,4 @@
-package net.digitalid.service.core.factory.object;
+package net.digitalid.service.core.converter.key;
 
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;

@@ -3,19 +3,19 @@ package net.digitalid.service.core.cryptography;
 import java.math.BigInteger;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.service.core.factory.encoding.Encodable;
+import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.database.storing.Storable;
+import net.digitalid.utility.database.converter.SQL;
 
 /**
- * A number has a value and is {@link Storable storable}.
+ * A number has a value and is {@link SQL storable}.
  * 
  * @see Element
  * @see Exponent
  */
 @Immutable
-public abstract class Number<E extends Number<E>> implements Encodable<E, Object>, Storable<E, Object> {
+public abstract class Number<E extends Number<E>> implements XDF<E, Object>, SQL<E, Object> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value –––––––––––––––––––––––––––––––––––––––––––––––––– */
     

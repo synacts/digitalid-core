@@ -30,7 +30,7 @@ import net.digitalid.utility.database.annotations.Committing;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.annotations.OnlyForClients;
 import net.digitalid.utility.database.site.Site;
-import net.digitalid.utility.database.storing.Storable;
+import net.digitalid.utility.database.converter.SQL;
 
 /**
  * This class models an agent that acts on behalf of an {@link Identity identity}.
@@ -41,7 +41,7 @@ import net.digitalid.utility.database.storing.Storable;
  * @see AgentModule
  */
 @Immutable
-public abstract class Agent extends NonHostConcept implements Storable<Agent> {
+public abstract class Agent extends NonHostConcept implements SQL<Agent> {
     
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Aspects –––––––––––––––––––––––––––––––––––––––––––––––––– */

@@ -7,8 +7,8 @@ import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.annotations.Encoding;
 import net.digitalid.service.core.block.annotations.NonEncoding;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.service.core.factory.encoding.Encodable;
-import net.digitalid.service.core.factory.encoding.Encode;
+import net.digitalid.service.core.converter.xdf.XDF;
+import net.digitalid.service.core.converter.xdf.ConvertToXDF;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
@@ -295,9 +295,9 @@ public final class TupleWrapper extends BlockBasedWrapper<TupleWrapper> {
      * @require basedOnParameters(type, elements.toBlock()) : "Each element is either null or based on the corresponding parameter of the given type.";
      */
     @Pure
-    public static @Nonnull @NonEncoding Block encode(@Nonnull @Loaded @BasedOn("tuple@core.digitalid.net") SemanticType type, @Nonnull Encodable<?, ?>... elements) {
+    public static @Nonnull @NonEncoding Block encode(@Nonnull @Loaded @BasedOn("tuple@core.digitalid.net") SemanticType type, @Nonnull XDF<?, ?>... elements) {
         final @Nonnull FreezableArray<Block> array = FreezableArray.get(elements.length);
-        for (int i = 0; i < elements.length; i++) array.set(i, Encode.nullableWithCast(elements[i]));
+        for (int i = 0; i < elements.length; i++) array.set(i, ConvertToXDF.nullableWithCast(elements[i]));
         return encode(type, array.freeze());
     }
     
@@ -356,7 +356,7 @@ public final class TupleWrapper extends BlockBasedWrapper<TupleWrapper> {
         assert offset == block.getLength() : "The whole block should now be encoded.";
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encodable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * The encoding factory for this class.

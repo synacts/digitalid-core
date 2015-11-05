@@ -21,7 +21,7 @@ import net.digitalid.utility.collections.freezable.FreezableSet;
 import net.digitalid.utility.database.annotations.Committing;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.configuration.Database;
-import net.digitalid.utility.database.storing.Storable;
+import net.digitalid.utility.database.converter.SQL;
 
 /**
  * This class models an attribute with its value and visibility.
@@ -29,7 +29,7 @@ import net.digitalid.utility.database.storing.Storable;
  * @see AttributeModule
  */
 @Immutable
-public final class Attribute extends GeneralConcept implements Storable<Attribute> {
+public final class Attribute extends GeneralConcept implements SQL<Attribute> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
     

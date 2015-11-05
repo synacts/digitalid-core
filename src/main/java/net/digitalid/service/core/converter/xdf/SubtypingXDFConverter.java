@@ -1,22 +1,22 @@
-package net.digitalid.service.core.factory.encoding;
+package net.digitalid.service.core.converter.xdf;
 
 import javax.annotation.Nonnull;
-import net.digitalid.service.core.factory.object.ObjectBasedObjectFactory;
+import net.digitalid.service.core.converter.key.NonConvertingKeyConverter;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 
 /**
- * This class implements a non-requesting encoding factory that subtypes on another non-requesting encoding factory.
+ * This class implements an encoding factory that subtypes on another encoding factory.
  * 
  * @param <O> the type of the objects that this factory can encode and decode, which is typically the surrounding class.
  * @param <E> the type of the external object that is needed to decode a block, which is quite often an {@link Entity}.
  *            In case no external information is needed for the decoding of a block, declare it as an {@link Object}.
  * 
- * @see ObjectBasedObjectFactory
+ * @see NonConvertingKeyConverter
  */
 @Immutable
-public final class SubtypingNonRequestingEncodingFactory<O, E> extends FactoryBasedNonRequestingEncodingFactory<O, E, O> {
+public final class SubtypingXDFConverter<O, E> extends ChainingXDFConverter<O, E, O> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -28,8 +28,8 @@ public final class SubtypingNonRequestingEncodingFactory<O, E> extends FactoryBa
      * 
      * @require type.isBasedOn(factory.getType()) : "The given type is based on the type of the factory.";
      */
-    private SubtypingNonRequestingEncodingFactory(@Nonnull SemanticType type, @Nonnull AbstractNonRequestingEncodingFactory<O, E> factory) {
-        super(type, ObjectBasedObjectFactory.<O>get(), factory);
+    private SubtypingXDFConverter(@Nonnull SemanticType type, @Nonnull AbstractXDFConverter<O, E> factory) {
+        super(type, NonConvertingKeyConverter.<O>get(), factory);
     }
     
     /**
@@ -43,8 +43,8 @@ public final class SubtypingNonRequestingEncodingFactory<O, E> extends FactoryBa
      * @require type.isBasedOn(factory.getType()) : "The given type is based on the type of the factory.";
      */
     @Pure
-    public static @Nonnull <O, E> SubtypingNonRequestingEncodingFactory<O, E> get(@Nonnull SemanticType type, @Nonnull AbstractNonRequestingEncodingFactory<O, E> factory) {
-        return new SubtypingNonRequestingEncodingFactory<>(type, factory);
+    public static @Nonnull <O, E> SubtypingXDFConverter<O, E> get(@Nonnull SemanticType type, @Nonnull AbstractXDFConverter<O, E> factory) {
+        return new SubtypingXDFConverter<>(type, factory);
     }
     
 }

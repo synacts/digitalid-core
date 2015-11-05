@@ -9,25 +9,25 @@ import net.digitalid.service.core.block.wrappers.IntegerWrapper;
 import net.digitalid.service.core.block.wrappers.TupleWrapper;
 import net.digitalid.service.core.entity.annotations.Matching;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.service.core.factory.Factories;
-import net.digitalid.service.core.factory.encoding.Encodable;
-import net.digitalid.service.core.factory.encoding.Encode;
-import net.digitalid.service.core.factory.encoding.AbstractNonRequestingEncodingFactory;
-import net.digitalid.service.core.factory.storing.BlockBasedStoringFactory;
+import net.digitalid.service.core.converter.Converters;
+import net.digitalid.service.core.converter.xdf.XDF;
+import net.digitalid.service.core.converter.xdf.ConvertToXDF;
+import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
+import net.digitalid.service.core.converter.sql.XDFBasedSQLConverter;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
-import net.digitalid.utility.database.storing.AbstractStoringFactory;
-import net.digitalid.utility.database.storing.Storable;
+import net.digitalid.utility.database.converter.AbstractSQLConverter;
+import net.digitalid.utility.database.converter.SQL;
 
 /**
  * This class stores the groups and exponents of a host's private key.
  */
 @Immutable
-public final class PrivateKey implements Encodable<PrivateKey, Object>, Storable<PrivateKey, Object> {
+public final class PrivateKey implements XDF<PrivateKey, Object>, SQL<PrivateKey, Object> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Types –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -276,13 +276,13 @@ public final class PrivateKey implements Encodable<PrivateKey, Object>, Storable
         return "Private Key [n = " + compositeGroup.getModulus() + ", p = " + p + ", q = " + q + ", d = " + d + ", z^2 = " + squareGroup.getModulus() + ", x = " + x + "]";
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encodable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * The encoding factory for this class.
      */
     @Immutable
-    public static final class EncodingFactory extends AbstractNonRequestingEncodingFactory<PrivateKey, Object> {
+    public static final class EncodingFactory extends AbstractNonRequestingXDFConverter<PrivateKey, Object> {
         
         /**
          * Creates a new encoding factory.
@@ -295,12 +295,12 @@ public final class PrivateKey implements Encodable<PrivateKey, Object>, Storable
         @Override
         public @Nonnull Block encodeNonNullable(@Nonnull PrivateKey privateKey) {
             final @Nonnull FreezableArray<Block> elements = FreezableArray.get(6);
-            elements.set(0, Encode.nonNullable(privateKey.compositeGroup, COMPOSITE_GROUP));
+            elements.set(0, ConvertToXDF.nonNullable(privateKey.compositeGroup, COMPOSITE_GROUP));
             elements.set(1, IntegerWrapper.encodeNonNullable(P, privateKey.p));
             elements.set(2, IntegerWrapper.encodeNonNullable(Q, privateKey.q));
-            elements.set(3, Encode.nonNullable(privateKey.d, D));
-            elements.set(4, Encode.nonNullable(privateKey.squareGroup, SQUARE_GROUP));
-            elements.set(5, Encode.nonNullable(privateKey.x, X));
+            elements.set(3, ConvertToXDF.nonNullable(privateKey.d, D));
+            elements.set(4, ConvertToXDF.nonNullable(privateKey.squareGroup, SQUARE_GROUP));
+            elements.set(5, ConvertToXDF.nonNullable(privateKey.x, X));
             return TupleWrapper.encode(TYPE, elements.freeze());
         }
         
@@ -335,24 +335,24 @@ public final class PrivateKey implements Encodable<PrivateKey, Object>, Storable
         return ENCODING_FACTORY;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– SQL –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the storing factory of this class.
      */
-    public static final @Nonnull AbstractStoringFactory<PrivateKey, Object> STORING_FACTORY = BlockBasedStoringFactory.get(ENCODING_FACTORY);
+    public static final @Nonnull AbstractSQLConverter<PrivateKey, Object> STORING_FACTORY = XDFBasedSQLConverter.get(ENCODING_FACTORY);
     
     @Pure
     @Override
-    public @Nonnull AbstractStoringFactory<PrivateKey, Object> getStoringFactory() {
+    public @Nonnull AbstractSQLConverter<PrivateKey, Object> getStoringFactory() {
         return STORING_FACTORY;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factories –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the factories of this class.
      */
-    public static final @Nonnull Factories<PrivateKey, Object> FACTORIES = Factories.get(ENCODING_FACTORY, STORING_FACTORY);
+    public static final @Nonnull Converters<PrivateKey, Object> FACTORIES = Converters.get(ENCODING_FACTORY, STORING_FACTORY);
     
 }

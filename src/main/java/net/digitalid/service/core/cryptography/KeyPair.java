@@ -6,7 +6,7 @@ import java.util.Random;
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.TupleWrapper;
-import net.digitalid.service.core.factory.encoding.Encode;
+import net.digitalid.service.core.converter.xdf.ConvertToXDF;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.freezable.FreezableArray;
@@ -102,7 +102,7 @@ public final class KeyPair {
         final @Nonnull Exponent ro = compositeGroup.getRandomExponent();
         final @Nonnull Element to = ab.pow(ro);
         
-        final @Nonnull FreezableArray<Block> elements = FreezableArray.getNonNullable(Encode.nonNullable(tu, PublicKey.TU), Encode.nonNullable(ti, PublicKey.TI), Encode.nonNullable(tv, PublicKey.TV), Encode.nonNullable(to, PublicKey.TO));
+        final @Nonnull FreezableArray<Block> elements = FreezableArray.getNonNullable(ConvertToXDF.nonNullable(tu, PublicKey.TU), ConvertToXDF.nonNullable(ti, PublicKey.TI), ConvertToXDF.nonNullable(tv, PublicKey.TV), ConvertToXDF.nonNullable(to, PublicKey.TO));
         final @Nonnull Exponent t = Exponent.get(TupleWrapper.encode(PublicKey.TUPLE, elements.freeze()).getHash());
         
         final @Nonnull Exponent su = ru.subtract(t.multiply(eu));

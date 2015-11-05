@@ -10,7 +10,7 @@ import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.annotations.Encoding;
 import net.digitalid.service.core.block.annotations.NonEncoding;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.service.core.factory.Factories;
+import net.digitalid.service.core.converter.Converters;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
@@ -229,7 +229,7 @@ public final class Int16Wrapper extends ValueWrapper<Int16Wrapper> {
      */
     private static final @Nonnull Factory FACTORY = new Factory();
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value Factories –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Returns the value encoding factory of this wrapper.
@@ -263,8 +263,8 @@ public final class Int16Wrapper extends ValueWrapper<Int16Wrapper> {
      * @return the value factories of this wrapper.
      */
     @Pure
-    public static @Nonnull Factories<Short, Object> getValueFactories(@Nonnull @BasedOn("int16@core.digitalid.net") SemanticType type) {
-        return Factories.get(getValueEncodingFactory(type), getValueStoringFactory(type));
+    public static @Nonnull Converters<Short, Object> getValueFactories(@Nonnull @BasedOn("int16@core.digitalid.net") SemanticType type) {
+        return Converters.get(getValueEncodingFactory(type), getValueStoringFactory(type));
     }
     
 }

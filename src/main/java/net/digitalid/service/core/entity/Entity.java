@@ -3,14 +3,14 @@ package net.digitalid.service.core.entity;
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.concept.Concept;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.service.core.factory.encoding.Encodable;
+import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.handler.Handler;
 import net.digitalid.service.core.identity.Identity;
 import net.digitalid.service.core.identity.InternalIdentity;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.database.site.Site;
-import net.digitalid.utility.database.storing.Storable;
+import net.digitalid.utility.database.converter.SQL;
 
 /**
  * An entity captures the {@link Site site} and the {@link Identity identity} of a {@link Concept concept} or {@link Handler handler}.
@@ -20,7 +20,7 @@ import net.digitalid.utility.database.storing.Storable;
  * @see NonHostEntity
  */
 @Immutable
-public interface Entity<E extends Entity<E>> extends Encodable<E, Object>, Storable<E, Object> {
+public interface Entity<E extends Entity<E>> extends XDF<E, Object>, SQL<E, Object> {
     
     /**
      * Stores the aspect of the observed entity being created.

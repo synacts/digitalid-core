@@ -7,7 +7,7 @@ import net.digitalid.service.core.concept.ConceptSetup;
 import net.digitalid.service.core.concept.property.ConceptPropertyInternalAction;
 import net.digitalid.service.core.concept.property.ConceptPropertySetup;
 import net.digitalid.service.core.entity.Entity;
-import net.digitalid.service.core.factory.Factories;
+import net.digitalid.service.core.converter.Converters;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.Loaded;
 import net.digitalid.service.core.property.RequiredAuthorization;
@@ -111,7 +111,7 @@ public final class NonNullableConceptPropertySetup<V, C extends Concept<C, E, ?>
      * @param valueValidator the value validator that checks whether the value of the property is valid.
      * @param defaultValue the default value for the properties created by this factory.
      */
-    private NonNullableConceptPropertySetup(@Nonnull ConceptSetup<C, E, ?> conceptSetup, @Nonnull @Validated String propertyName, @Nonnull Factories<V, ? super E> valueFactories, @Nonnull RequiredAuthorization<C> requiredAuthorization, @Nonnull ValueValidator<V> valueValidator, @Nonnull V defaultValue) {
+    private NonNullableConceptPropertySetup(@Nonnull ConceptSetup<C, E, ?> conceptSetup, @Nonnull @Validated String propertyName, @Nonnull Converters<V, ? super E> valueFactories, @Nonnull RequiredAuthorization<C> requiredAuthorization, @Nonnull ValueValidator<V> valueValidator, @Nonnull V defaultValue) {
         super(conceptSetup, propertyName, valueFactories, requiredAuthorization, valueValidator);
         
         this.defaultValue = defaultValue;
@@ -131,7 +131,7 @@ public final class NonNullableConceptPropertySetup<V, C extends Concept<C, E, ?>
      * @return a new non-nullable concept property factory with the given parameters.
      */
     @Pure
-    public static @Nonnull <V, C extends Concept<C, E, ?>, E extends Entity<E>> NonNullableConceptPropertySetup<V, C, E> get(@Nonnull ConceptSetup<C, E, ?> conceptSetup, @Nonnull @Validated String propertyName, @Nonnull Factories<V, ? super E> valueFactories, @Nonnull RequiredAuthorization<C> requiredAuthorization, @Nonnull ValueValidator<V> valueValidator, @Nonnull V defaultValue) {
+    public static @Nonnull <V, C extends Concept<C, E, ?>, E extends Entity<E>> NonNullableConceptPropertySetup<V, C, E> get(@Nonnull ConceptSetup<C, E, ?> conceptSetup, @Nonnull @Validated String propertyName, @Nonnull Converters<V, ? super E> valueFactories, @Nonnull RequiredAuthorization<C> requiredAuthorization, @Nonnull ValueValidator<V> valueValidator, @Nonnull V defaultValue) {
         return new NonNullableConceptPropertySetup<>(conceptSetup, propertyName, valueFactories, requiredAuthorization, valueValidator, defaultValue);
     }
     

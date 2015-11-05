@@ -1,4 +1,4 @@
-package net.digitalid.service.core.factory.object;
+package net.digitalid.service.core.converter.key;
 
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
@@ -17,7 +17,7 @@ import net.digitalid.utility.annotations.state.Validated;
  * @see IdentityObjectFactory
  */
 @Stateless
-public abstract class AbstractNonRequestingObjectFactory<O, E, K> extends AbstractObjectFactory<O, E, K> {
+public abstract class AbstractNonRequestingKeyConverter<O, E, K> extends AbstractKeyConverter<O, E, K> {
     
     @Pure
     @Override

@@ -6,7 +6,7 @@ import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.ListWrapper;
 import net.digitalid.service.core.block.wrappers.TupleWrapper;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.service.core.factory.encoding.Encodable;
+import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.packet.Packet;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -21,7 +21,7 @@ import net.digitalid.utility.collections.readonly.ReadOnlyList;
  * @see ResponseAudit
  */
 @Immutable
-public abstract class Audit implements Encodable<Audit, Object> {
+public abstract class Audit implements XDF<Audit, Object> {
     
     /**
      * Stores the semantic type {@code last.time.audit@core.digitalid.net}.

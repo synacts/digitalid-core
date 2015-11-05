@@ -6,9 +6,9 @@ import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.annotations.Encoding;
 import net.digitalid.service.core.block.annotations.NonEncoding;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.service.core.factory.encoding.AbstractEncodingFactory;
-import net.digitalid.service.core.factory.encoding.Encodable;
-import net.digitalid.service.core.factory.encoding.Encode;
+import net.digitalid.service.core.converter.xdf.AbstractXDFConverter;
+import net.digitalid.service.core.converter.xdf.XDF;
+import net.digitalid.service.core.converter.xdf.ConvertToXDF;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
 import net.digitalid.service.core.identity.annotations.Loaded;
@@ -20,8 +20,8 @@ import net.digitalid.utility.collections.annotations.elements.NonNullableElement
 import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.database.column.Column;
-import net.digitalid.utility.database.storing.AbstractStoringFactory;
-import net.digitalid.utility.database.storing.Storable;
+import net.digitalid.utility.database.converter.AbstractSQLConverter;
+import net.digitalid.utility.database.converter.SQL;
 
 /**
  * Values and elements are wrapped by separate objects as the native types do not support encoding and decoding.
@@ -29,7 +29,7 @@ import net.digitalid.utility.database.storing.Storable;
  * @see Block
  */
 @Immutable
-public abstract class Wrapper<W extends Wrapper<W>> implements Encodable<W, Object>, Storable<W, Object> {
+public abstract class Wrapper<W extends Wrapper<W>> implements XDF<W, Object>, SQL<W, Object> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Semantic Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -110,23 +110,23 @@ public abstract class Wrapper<W extends Wrapper<W>> implements Encodable<W, Obje
         if (object == this) return true;
         if (object == null || !(object instanceof Wrapper)) return false;
         final @Nonnull Wrapper<?> other = (Wrapper<?>) object;
-        return this.getClass().equals(other.getClass()) && Encode.nonNullable((W) this).equals(Encode.nonNullable((W) other));
+        return this.getClass().equals(other.getClass()) && ConvertToXDF.nonNullable((W) this).equals(ConvertToXDF.nonNullable((W) other));
     }
     
     @Pure
     @Override
     @SuppressWarnings("unchecked")
     public final int hashCode() {
-        return Encode.nonNullable((W) this).hashCode();
+        return ConvertToXDF.nonNullable((W) this).hashCode();
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encodable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * The encoding factory for wrappers.
      */
     @Immutable
-    public abstract static class EncodingFactory<W extends Wrapper<W>> extends AbstractEncodingFactory<W, Object> {
+    public abstract static class EncodingFactory<W extends Wrapper<W>> extends AbstractXDFConverter<W, Object> {
         
         /**
          * Creates a new encoding factory with the given type.
@@ -176,13 +176,13 @@ public abstract class Wrapper<W extends Wrapper<W>> implements Encodable<W, Obje
     @Override
     public abstract @Nonnull EncodingFactory<W> getEncodingFactory();
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– SQL –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * The storing factory for wrappers.
      */
     @Immutable
-    public abstract static class StoringFactory<W extends Wrapper<W>> extends AbstractStoringFactory<W, Object> {
+    public abstract static class StoringFactory<W extends Wrapper<W>> extends AbstractSQLConverter<W, Object> {
         
         /**
          * Stores the semantic type of the restored wrappers.

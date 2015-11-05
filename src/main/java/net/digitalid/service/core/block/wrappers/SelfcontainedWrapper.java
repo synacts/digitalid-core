@@ -15,8 +15,8 @@ import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
-import net.digitalid.service.core.factory.encoding.Encodable;
-import net.digitalid.service.core.factory.encoding.Encode;
+import net.digitalid.service.core.converter.xdf.XDF;
+import net.digitalid.service.core.converter.xdf.ConvertToXDF;
 import net.digitalid.service.core.identifier.Identifier;
 import net.digitalid.service.core.identity.Identity;
 import net.digitalid.service.core.identity.SemanticType;
@@ -93,7 +93,7 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
     private SelfcontainedWrapper(@Nonnull @BasedOn("selfcontained@core.digitalid.net") SemanticType type, @Nonnull @NonEncoding Block element) {
         super(type);
         
-        this.tuple = TupleWrapper.encode(IMPLEMENTATION, Encode.<Identity>nonNullable(element.getType(), SemanticType.IDENTIFIER), element);
+        this.tuple = TupleWrapper.encode(IMPLEMENTATION, ConvertToXDF.<Identity>nonNullable(element.getType(), SemanticType.IDENTIFIER), element);
         this.element = element;
     }
     
@@ -125,8 +125,8 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
      * @return a new non-nullable selfcontained block containing the given element.
      */
     @Pure
-    public static @Nonnull @NonEncoding <V extends Encodable<V, Object>> Block encodeNonNullable(@Nonnull @BasedOn("selfcontained@core.digitalid.net") SemanticType type, @Nonnull V element) {
-        return new EncodingFactory(type).encodeNonNullable(new SelfcontainedWrapper(type, Encode.nonNullable(element)));
+    public static @Nonnull @NonEncoding <V extends XDF<V, Object>> Block encodeNonNullable(@Nonnull @BasedOn("selfcontained@core.digitalid.net") SemanticType type, @Nonnull V element) {
+        return new EncodingFactory(type).encodeNonNullable(new SelfcontainedWrapper(type, ConvertToXDF.nonNullable(element)));
     }
     
     /**
@@ -138,7 +138,7 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
      * @return a new nullable selfcontained block containing the given element.
      */
     @Pure
-    public static @Nullable @NonEncoding <V extends Encodable<V, Object>> Block encodeNullable(@Nonnull @BasedOn("selfcontained@core.digitalid.net") SemanticType type, @Nullable V element) {
+    public static @Nullable @NonEncoding <V extends XDF<V, Object>> Block encodeNullable(@Nonnull @BasedOn("selfcontained@core.digitalid.net") SemanticType type, @Nullable V element) {
         return element == null ? null : encodeNonNullable(type, element);
     }
     
@@ -206,7 +206,7 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
         tuple.writeTo(block);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encodable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * The encoding factory for this class.

@@ -8,7 +8,7 @@ import javax.annotation.Nullable;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.annotations.NonEncoding;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.service.core.factory.encoding.AbstractNonRequestingEncodingFactory;
+import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.Loaded;
 import net.digitalid.utility.annotations.reference.Capturable;
@@ -20,7 +20,7 @@ import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
-import net.digitalid.utility.database.storing.AbstractStoringFactory;
+import net.digitalid.utility.database.converter.AbstractSQLConverter;
 
 /**
  * A value wrapper wraps a primitive value.
@@ -96,7 +96,7 @@ public abstract class ValueWrapper<W extends ValueWrapper<W>> extends Wrapper<W>
      * The factory for encoding and decoding values.
      */
     @Immutable
-    public final static class ValueEncodingFactory<V, W extends Wrapper<W>> extends AbstractNonRequestingEncodingFactory<V, Object> {
+    public final static class ValueEncodingFactory<V, W extends Wrapper<W>> extends AbstractNonRequestingXDFConverter<V, Object> {
         
         /**
          * Stores the factory to wrap and unwrap the values.
@@ -145,7 +145,7 @@ public abstract class ValueWrapper<W extends ValueWrapper<W>> extends Wrapper<W>
      * The factory for storing and restoring values.
      */
     @Immutable
-    public final static class ValueStoringFactory<V, W extends Wrapper<W>> extends AbstractStoringFactory<V, Object> {
+    public final static class ValueStoringFactory<V, W extends Wrapper<W>> extends AbstractSQLConverter<V, Object> {
         
         /**
          * Stores the factory to wrap and unwrap the values.

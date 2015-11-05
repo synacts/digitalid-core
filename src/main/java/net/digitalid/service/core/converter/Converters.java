@@ -1,12 +1,12 @@
-package net.digitalid.service.core.factory;
+package net.digitalid.service.core.converter;
 
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.entity.Entity;
-import net.digitalid.service.core.factory.encoding.AbstractEncodingFactory;
+import net.digitalid.service.core.converter.xdf.AbstractXDFConverter;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.database.storing.AbstractStoringFactory;
+import net.digitalid.utility.database.converter.AbstractSQLConverter;
 
 /**
  * This class allows to store several factories in a single object.
@@ -18,14 +18,14 @@ import net.digitalid.utility.database.storing.AbstractStoringFactory;
  * @see NonRequestingFactories
  */
 @Immutable
-public class Factories<O, E> {
+public class Converters<O, E> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encoding Factory –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the encoding factory.
      */
-    private final @Nonnull AbstractEncodingFactory<O, E> encodingFactory;
+    private final @Nonnull AbstractXDFConverter<O, E> encodingFactory;
     
     /**
      * Returns the encoding factory.
@@ -33,7 +33,7 @@ public class Factories<O, E> {
      * @return the encoding factory.
      */
     @Pure
-    public @Nonnull AbstractEncodingFactory<O, E> getEncodingFactory() {
+    public @Nonnull AbstractXDFConverter<O, E> getEncodingFactory() {
         return encodingFactory;
     }
     
@@ -42,7 +42,7 @@ public class Factories<O, E> {
     /**
      * Stores the storing factory.
      */
-    private final @Nonnull AbstractStoringFactory<O, E> storingFactory;
+    private final @Nonnull AbstractSQLConverter<O, E> storingFactory;
     
     /**
      * Returns the storing factory.
@@ -50,7 +50,7 @@ public class Factories<O, E> {
      * @return the storing factory.
      */
     @Pure
-    public final @Nonnull AbstractStoringFactory<O, E> getStoringFactory() {
+    public final @Nonnull AbstractSQLConverter<O, E> getStoringFactory() {
         return storingFactory;
     }
     
@@ -62,7 +62,7 @@ public class Factories<O, E> {
      * @param encodingFactory the encoding factory.
      * @param storingFactory the storing factory.
      */
-    protected Factories(@Nonnull AbstractEncodingFactory<O, E> encodingFactory, @Nonnull AbstractStoringFactory<O, E> storingFactory) {
+    protected Converters(@Nonnull AbstractXDFConverter<O, E> encodingFactory, @Nonnull AbstractSQLConverter<O, E> storingFactory) {
         this.encodingFactory = encodingFactory;
         this.storingFactory = storingFactory;
     }
@@ -76,8 +76,8 @@ public class Factories<O, E> {
      * @return a new object with the given factories.
      */
     @Pure
-    public static @Nonnull <O, E> Factories<O, E> get(@Nonnull AbstractEncodingFactory<O, E> encodingFactory, @Nonnull AbstractStoringFactory<O, E> storingFactory) {
-        return new Factories<>(encodingFactory, storingFactory);
+    public static @Nonnull <O, E> Converters<O, E> get(@Nonnull AbstractXDFConverter<O, E> encodingFactory, @Nonnull AbstractSQLConverter<O, E> storingFactory) {
+        return new Converters<>(encodingFactory, storingFactory);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Subtyping –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -90,8 +90,8 @@ public class Factories<O, E> {
      * @require type.isBasedOn(getEncodingFactory().getType()) : "The given type is based on the type of the encoding factory.";
      */
     @Pure
-    public @Nonnull Factories<O, E> setType(@Nonnull SemanticType type) {
-        return new Factories<>(getEncodingFactory().setType(type), getStoringFactory());
+    public @Nonnull Converters<O, E> setType(@Nonnull SemanticType type) {
+        return new Converters<>(getEncodingFactory().setType(type), getStoringFactory());
     }
     
 }

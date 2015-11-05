@@ -1,4 +1,4 @@
-package net.digitalid.service.core.factory.storing;
+package net.digitalid.service.core.converter.sql;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -10,8 +10,8 @@ import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
-import net.digitalid.service.core.factory.encoding.AbstractEncodingFactory;
-import net.digitalid.service.core.factory.encoding.Encodable;
+import net.digitalid.service.core.converter.xdf.AbstractXDFConverter;
+import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.utility.annotations.reference.Capturable;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -22,8 +22,8 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.column.Column;
 import net.digitalid.utility.database.column.SQLType;
 import net.digitalid.utility.database.configuration.Database;
-import net.digitalid.utility.database.storing.AbstractStoringFactory;
-import net.digitalid.utility.database.storing.Store;
+import net.digitalid.utility.database.converter.AbstractSQLConverter;
+import net.digitalid.utility.database.converter.ConvertToSQL;
 
 /**
  * This class implements the methods that all storing factories which store their data as a {@link Block block} in the {@link Database database} share.
@@ -33,7 +33,7 @@ import net.digitalid.utility.database.storing.Store;
  *            In case no external information is needed for the restoration of an object, declare it as an {@link Object}.
  */
 @Immutable
-public final class BlockBasedStoringFactory<O, E> extends AbstractStoringFactory<O, E> {
+public final class XDFBasedSQLConverter<O, E> extends AbstractSQLConverter<O, E> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Column –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -47,7 +47,7 @@ public final class BlockBasedStoringFactory<O, E> extends AbstractStoringFactory
     /**
      * Stores the encoding factory used to encode and decode the block.
      */
-    private final @Nonnull AbstractEncodingFactory<O, E> encodingFactory;
+    private final @Nonnull AbstractXDFConverter<O, E> encodingFactory;
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -56,7 +56,7 @@ public final class BlockBasedStoringFactory<O, E> extends AbstractStoringFactory
      * 
      * @param encodingFactory the encoding factory used to encode and decode the block.
      */
-    private BlockBasedStoringFactory(@Nonnull AbstractEncodingFactory<O, E> encodingFactory) {
+    private XDFBasedSQLConverter(@Nonnull AbstractXDFConverter<O, E> encodingFactory) {
         super(COLUMN);
         
         this.encodingFactory = encodingFactory;
@@ -70,8 +70,8 @@ public final class BlockBasedStoringFactory<O, E> extends AbstractStoringFactory
      * @return a new block-based storing factory with the given encoding factory.
      */
     @Pure
-    public static @Nonnull <O extends Encodable<O, E>, E> BlockBasedStoringFactory<O, E> get(@Nonnull AbstractEncodingFactory<O, E> encodingFactory) {
-        return new BlockBasedStoringFactory<>(encodingFactory);
+    public static @Nonnull <O extends XDF<O, E>, E> XDFBasedSQLConverter<O, E> get(@Nonnull AbstractXDFConverter<O, E> encodingFactory) {
+        return new XDFBasedSQLConverter<>(encodingFactory);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storing –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -85,7 +85,7 @@ public final class BlockBasedStoringFactory<O, E> extends AbstractStoringFactory
     @Override
     @NonCommitting
     public void storeNonNullable(@Nonnull O object, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
-        Store.nonNullable(encodingFactory.encodeNonNullable(object), preparedStatement, parameterIndex);
+        ConvertToSQL.nonNullable(encodingFactory.encodeNonNullable(object), preparedStatement, parameterIndex);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Retrieving –––––––––––––––––––––––––––––––––––––––––––––––––– */

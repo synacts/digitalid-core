@@ -4,7 +4,7 @@ import javax.annotation.Nonnull;
 import net.digitalid.service.core.concept.Concept;
 import net.digitalid.service.core.concept.ConceptSetup;
 import net.digitalid.service.core.entity.Entity;
-import net.digitalid.service.core.factory.Factories;
+import net.digitalid.service.core.converter.Converters;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.Loaded;
 import net.digitalid.service.core.property.RequiredAuthorization;
@@ -36,12 +36,12 @@ public abstract class ConceptPropertySetup<V, C extends Concept<C, E, ?>, E exte
         return propertyName;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value Factories –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Value Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the factories to convert and reconstruct the value of the property.
      */
-    private final @Nonnull Factories<V, ? super E> valueFactories;
+    private final @Nonnull Converters<V, ? super E> valueFactories;
     
     /**
      * Returns the factories to convert and reconstruct the value of the property.
@@ -49,7 +49,7 @@ public abstract class ConceptPropertySetup<V, C extends Concept<C, E, ?>, E exte
      * @return the factories to convert and reconstruct the value of the property.
      */
     @Pure
-    public final @Nonnull Factories<V, ? super E> getValueFactories() {
+    public final @Nonnull Converters<V, ? super E> getValueFactories() {
         return valueFactories;
     }
     
@@ -134,7 +134,7 @@ public abstract class ConceptPropertySetup<V, C extends Concept<C, E, ?>, E exte
      * @param requiredAuthorization the required authorization to set the property and see its changes.
      * @param valueValidator the value validator that checks whether the value of the property is valid.
      */
-    protected ConceptPropertySetup(@Nonnull ConceptSetup<C, E, ?> conceptSetup, @Nonnull @Validated String propertyName, @Nonnull Factories<V, ? super E> valueFactories, @Nonnull RequiredAuthorization<C> requiredAuthorization, @Nonnull ValueValidator<V> valueValidator) {
+    protected ConceptPropertySetup(@Nonnull ConceptSetup<C, E, ?> conceptSetup, @Nonnull @Validated String propertyName, @Nonnull Converters<V, ? super E> valueFactories, @Nonnull RequiredAuthorization<C> requiredAuthorization, @Nonnull ValueValidator<V> valueValidator) {
         this.propertyName = propertyName;
         this.valueFactories = valueFactories;
         this.requiredAuthorization = requiredAuthorization;

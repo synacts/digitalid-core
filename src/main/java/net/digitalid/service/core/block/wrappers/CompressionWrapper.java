@@ -13,8 +13,8 @@ import net.digitalid.service.core.block.annotations.Encoded;
 import net.digitalid.service.core.block.annotations.Encoding;
 import net.digitalid.service.core.block.annotations.NonEncoding;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
-import net.digitalid.service.core.factory.encoding.Encodable;
-import net.digitalid.service.core.factory.encoding.Encode;
+import net.digitalid.service.core.converter.xdf.XDF;
+import net.digitalid.service.core.converter.xdf.ConvertToXDF;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.SyntacticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
@@ -95,8 +95,8 @@ public final class CompressionWrapper extends BlockBasedWrapper<CompressionWrapp
      * @require element.getFactory().getType().isBasedOn(type.getParameters().getNonNullable(0)) : "The element is based on the parameter of the given type.";
      */
     @Pure
-    public static @Nonnull @NonEncoding <V extends Encodable<V, ?>> Block compressNonNullable(@Nonnull @Loaded @BasedOn("compression@core.digitalid.net") SemanticType type, @Nonnull V element) {
-        return new EncodingFactory(type).encodeNonNullable(new CompressionWrapper(type, Encode.nonNullable(element)));
+    public static @Nonnull @NonEncoding <V extends XDF<V, ?>> Block compressNonNullable(@Nonnull @Loaded @BasedOn("compression@core.digitalid.net") SemanticType type, @Nonnull V element) {
+        return new EncodingFactory(type).encodeNonNullable(new CompressionWrapper(type, ConvertToXDF.nonNullable(element)));
     }
     
     /**
@@ -110,7 +110,7 @@ public final class CompressionWrapper extends BlockBasedWrapper<CompressionWrapp
      * @require element.getFactory().getType().isBasedOn(type.getParameters().getNonNullable(0)) : "The element is based on the parameter of the given type.";
      */
     @Pure
-    public static @Nullable @NonEncoding <V extends Encodable<V, ?>> Block compressNullable(@Nonnull @Loaded @BasedOn("compression@core.digitalid.net") SemanticType type, @Nullable V element) {
+    public static @Nullable @NonEncoding <V extends XDF<V, ?>> Block compressNullable(@Nonnull @Loaded @BasedOn("compression@core.digitalid.net") SemanticType type, @Nullable V element) {
         return element == null ? null : compressNonNullable(type, element);
     }
     
@@ -184,7 +184,7 @@ public final class CompressionWrapper extends BlockBasedWrapper<CompressionWrapp
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encodable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * The encoding factory for this class.

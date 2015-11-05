@@ -1,4 +1,4 @@
 /**
  * Provides classes for transforming objects into their keys and reconstructing them again.
  */
-package net.digitalid.service.core.factory.object;
+package net.digitalid.service.core.converter.key;

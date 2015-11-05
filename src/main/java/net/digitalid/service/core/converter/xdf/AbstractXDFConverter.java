@@ -1,4 +1,4 @@
-package net.digitalid.service.core.factory.encoding;
+package net.digitalid.service.core.converter.xdf;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -28,7 +28,7 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * @see FactoryBasedEncodingFactory
  */
 @Immutable
-public abstract class AbstractEncodingFactory<O, E> {
+public abstract class AbstractXDFConverter<O, E> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Type –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -55,8 +55,8 @@ public abstract class AbstractEncodingFactory<O, E> {
      * @require type.isBasedOn(getType()) : "The given type is based on the type of this factory.";
      */
     @Pure
-    public @Nonnull AbstractEncodingFactory<O, E> setType(@Nonnull SemanticType type) {
-        return SubtypingEncodingFactory.get(type, this);
+    public @Nonnull AbstractXDFConverter<O, E> setType(@Nonnull SemanticType type) {
+        return SubtypingXDFConverter.get(type, this);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encoding –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -163,7 +163,7 @@ public abstract class AbstractEncodingFactory<O, E> {
      * 
      * @param type the semantic type that corresponds to the encodable class.
      */
-    protected AbstractEncodingFactory(@Nonnull @Loaded SemanticType type) {
+    protected AbstractXDFConverter(@Nonnull @Loaded SemanticType type) {
         this.type = type;
     }
     

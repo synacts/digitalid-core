@@ -7,7 +7,7 @@ import net.digitalid.service.core.block.wrappers.EmptyWrapper;
 import net.digitalid.service.core.block.wrappers.StringWrapper;
 import net.digitalid.service.core.concept.Concept;
 import net.digitalid.service.core.concept.ConceptSetup;
-import net.digitalid.service.core.concept.Index;
+import net.digitalid.service.core.concept.ConceptIndex;
 import net.digitalid.service.core.concept.property.nonnullable.NonNullableConceptProperty;
 import net.digitalid.service.core.concept.property.nonnullable.NonNullableConceptPropertySetup;
 import net.digitalid.service.core.concepts.agent.Agent;
@@ -56,12 +56,12 @@ public final class Settings extends Concept<Settings, NonHostEntity, Object> {
         
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Index –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– ConceptIndex –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the index of this concept.
      */
-    private static final @Nonnull Index<Settings, NonHostEntity, Object> INDEX = Index.get(new Factory());
+    private static final @Nonnull ConceptIndex<Settings, NonHostEntity, Object> INDEX = ConceptIndex.get(new Factory());
     
     /**
      * Returns a potentially cached password that might not yet exist in the database.

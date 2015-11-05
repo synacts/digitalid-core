@@ -21,8 +21,8 @@ import net.digitalid.service.core.exceptions.external.InvalidSignatureException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketErrorCode;
 import net.digitalid.service.core.exceptions.packet.PacketException;
-import net.digitalid.service.core.factory.encoding.Encodable;
-import net.digitalid.service.core.factory.encoding.Encode;
+import net.digitalid.service.core.converter.xdf.XDF;
+import net.digitalid.service.core.converter.xdf.ConvertToXDF;
 import net.digitalid.service.core.identifier.InternalIdentifier;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
@@ -133,8 +133,8 @@ public final class ClientSignatureWrapper extends SignatureWrapper {
      * @ensure return.isVerified() : "The returned signature is verified.";
      */
     @Pure
-    public static @Nonnull <V extends Encodable<V, ?>> ClientSignatureWrapper sign(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nullable V element, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull SecretCommitment commitment) {
-        return new ClientSignatureWrapper(type, Encode.nullable(element), subject, audit, commitment);
+    public static @Nonnull <V extends XDF<V, ?>> ClientSignatureWrapper sign(@Nonnull @Loaded @BasedOn("signature@core.digitalid.net") SemanticType type, @Nullable V element, @Nonnull InternalIdentifier subject, @Nullable Audit audit, @Nonnull SecretCommitment commitment) {
+        return new ClientSignatureWrapper(type, ConvertToXDF.nullable(element), subject, audit, commitment);
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Checks –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -164,7 +164,7 @@ public final class ClientSignatureWrapper extends SignatureWrapper {
         final @Nonnull Exponent s = Exponent.get(elements.getNonNullable(2));
         final @Nonnull BigInteger h = t.xor(hash);
         final @Nonnull Element value = commitment.getPublicKey().getAu().pow(s).multiply(commitment.getValue().pow(h));
-        if (!t.equals(Encode.nonNullable(value).getHash()) || s.getBitLength() > Parameters.RANDOM_EXPONENT) throw new InvalidSignatureException("The client signature is invalid.");
+        if (!t.equals(ConvertToXDF.nonNullable(value).getHash()) || s.getBitLength() > Parameters.RANDOM_EXPONENT) throw new InvalidSignatureException("The client signature is invalid.");
         
         Log.verbose("Signature verified in " + start.ago().getValue() + " ms.");
         
@@ -181,11 +181,11 @@ public final class ClientSignatureWrapper extends SignatureWrapper {
         final @Nonnull SecretCommitment commitment = (SecretCommitment) this.commitment;
         subelements.set(0, commitment.toBlock());
         final @Nonnull Exponent r = commitment.getPublicKey().getCompositeGroup().getRandomExponent(Parameters.RANDOM_EXPONENT);
-        final @Nonnull BigInteger t = Encode.nonNullable(commitment.getPublicKey().getAu().pow(r)).getHash();
+        final @Nonnull BigInteger t = ConvertToXDF.nonNullable(commitment.getPublicKey().getAu().pow(r)).getHash();
         subelements.set(1, HashWrapper.encodeNonNullable(HASH, t));
         final @Nonnull Exponent h = Exponent.get(t.xor(elements.getNonNullable(0).getHash()));
         final @Nonnull Exponent s = r.subtract(commitment.getSecret().multiply(h));
-        subelements.set(2, Encode.nonNullable(s));
+        subelements.set(2, ConvertToXDF.nonNullable(s));
         elements.set(2, TupleWrapper.encode(SIGNATURE, subelements.freeze()));
         
         Log.verbose("Element signed in " + start.ago().getValue() + " ms.");

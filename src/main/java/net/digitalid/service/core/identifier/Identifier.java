@@ -12,9 +12,9 @@ import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
-import net.digitalid.service.core.factory.Factories;
-import net.digitalid.service.core.factory.encoding.Encodable;
-import net.digitalid.service.core.factory.encoding.AbstractNonRequestingEncodingFactory;
+import net.digitalid.service.core.converter.Converters;
+import net.digitalid.service.core.converter.xdf.XDF;
+import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
 import net.digitalid.service.core.identity.Identity;
 import net.digitalid.service.core.identity.SemanticType;
 import net.digitalid.service.core.identity.annotations.BasedOn;
@@ -30,8 +30,8 @@ import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.column.Column;
 import net.digitalid.utility.database.column.SQLType;
-import net.digitalid.utility.database.storing.AbstractStoringFactory;
-import net.digitalid.utility.database.storing.Storable;
+import net.digitalid.utility.database.converter.AbstractSQLConverter;
+import net.digitalid.utility.database.converter.SQL;
 
 /**
  * This interface models identifiers.
@@ -40,7 +40,7 @@ import net.digitalid.utility.database.storing.Storable;
  * @see NonHostIdentifier
  */
 @Immutable
-public interface Identifier extends Encodable<Identifier, Object>, Storable<Identifier, Object> {
+public interface Identifier extends XDF<Identifier, Object>, SQL<Identifier, Object> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– String –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -214,13 +214,13 @@ public interface Identifier extends Encodable<Identifier, Object>, Storable<Iden
         }
     };
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Encodable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– XDF –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * The encoding factory for this class.
      */
     @Immutable
-    public static final class EncodingFactory<I extends Identifier> extends AbstractNonRequestingEncodingFactory<I, Object> {
+    public static final class EncodingFactory<I extends Identifier> extends AbstractNonRequestingXDFConverter<I, Object> {
         
         /**
          * Stores the caster that casts identifiers to the right subclass.
@@ -264,13 +264,13 @@ public interface Identifier extends Encodable<Identifier, Object>, Storable<Iden
      */
     public static final @Nonnull EncodingFactory<Identifier> ENCODING_FACTORY = new EncodingFactory<>(Identity.IDENTIFIER, CASTER);
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storable –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– SQL –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * The storing factory for this class.
      */
     @Immutable
-    public static final class StoringFactory<I extends Identifier> extends AbstractStoringFactory<I, Object> {
+    public static final class StoringFactory<I extends Identifier> extends AbstractSQLConverter<I, Object> {
         
         /**
          * Stores the caster that casts identifiers to the right subclass.
@@ -317,11 +317,11 @@ public interface Identifier extends Encodable<Identifier, Object>, Storable<Iden
      */
     public static final @Nonnull StoringFactory<Identifier> STORING_FACTORY = new StoringFactory<>(CASTER);
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factories –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Converters –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
      * Stores the factories of this class.
      */
-    public static final @Nonnull Factories<Identifier, Object> FACTORIES = Factories.get(ENCODING_FACTORY, STORING_FACTORY);
+    public static final @Nonnull Converters<Identifier, Object> FACTORIES = Converters.get(ENCODING_FACTORY, STORING_FACTORY);
     
 }
