@@ -23,6 +23,7 @@ import net.digitalid.utility.annotations.reference.Capturable;
 import net.digitalid.utility.annotations.reference.Captured;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.annotations.state.Validated;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.column.Column;
 import net.digitalid.utility.database.column.SQLType;
@@ -44,9 +45,9 @@ public final class BytesWrapper extends ValueWrapper<BytesWrapper> {
     public static final @Nonnull SyntacticType TYPE = SyntacticType.map("bytes@core.digitalid.net").load(0);
 
     /**
-     * Stores the syntactic type {@code semantic.int64@core.digitalid.net}.
+     * Stores the syntactic type {@code semantic.bytes@core.digitalid.net}.
      */
-    private static final @Nonnull SemanticType SEMANTIC = SemanticType.map("semantic.int64@core.digitalid.net").load(TYPE);
+    private static final @Nonnull SemanticType SEMANTIC = SemanticType.map("semantic.bytes@core.digitalid.net").load(TYPE);
 
     @Pure
     @Override
@@ -124,7 +125,12 @@ public final class BytesWrapper extends ValueWrapper<BytesWrapper> {
     }
     
     /* -------------------------------------------------- Utility -------------------------------------------------- */
-    
+
+    /**
+     * Stores a static XDF converter for performance reasons.
+     */
+    private static final @Nonnull XDFConverter XDF_CONVERTER = new XDFConverter(SEMANTIC);
+
     /**
      * Encodes the given non-nullable bytes into a new block of the given type.
      * 
@@ -135,7 +141,7 @@ public final class BytesWrapper extends ValueWrapper<BytesWrapper> {
      */
     @Pure
     public static @Nonnull @NonEncoding Block encodeNonNullable(@Nonnull @Loaded @BasedOn("bytes@core.digitalid.net") SemanticType type, @Captured @Nonnull byte[] bytes) {
-        return new XDFConverter(type).encodeNonNullable(new BytesWrapper(type, bytes));
+        return XDF_CONVERTER.encodeNonNullable(new BytesWrapper(type, bytes));
     }
     
     /**
@@ -160,7 +166,7 @@ public final class BytesWrapper extends ValueWrapper<BytesWrapper> {
      */
     @Pure
     public static @Capturable @Nonnull byte[] decodeNonNullable(@Nonnull @NonEncoding @BasedOn("bytes@core.digitalid.net") Block block) throws InvalidEncodingException {
-        return new XDFConverter(block.getType()).decodeNonNullable(None.OBJECT, block).getBytes();
+        return XDF_CONVERTER.decodeNonNullable(None.OBJECT, block).getBytes();
     }
     
     /**
@@ -184,7 +190,7 @@ public final class BytesWrapper extends ValueWrapper<BytesWrapper> {
      */
     @Pure
     public static @Capturable @Nonnull InputStream decodeNonNullableAsInputStream(@Nonnull @NonEncoding @BasedOn("bytes@core.digitalid.net") Block block) throws InvalidEncodingException {
-        return new XDFConverter(block.getType()).decodeNonNullable(None.OBJECT, block).getBytesAsInputStream();
+        return XDF_CONVERTER.decodeNonNullable(None.OBJECT, block).getBytesAsInputStream();
     }
     
     /**
@@ -264,19 +270,14 @@ public final class BytesWrapper extends ValueWrapper<BytesWrapper> {
      */
     @Immutable
     public static final class SQLConverter extends Wrapper.SQLConverter<BytesWrapper> {
-        
+
         /**
-         * Stores the column for the wrapper.
+         * Creates a new SQL converter with the given column name.
+         *
+         * @param columnName the name of the database column.
          */
-        private static final @Nonnull Column COLUMN = Column.get("bytes", SQLType.BLOB);
-        
-        /**
-         * Creates a new factory with the given type.
-         * 
-         * @param type the semantic type of the wrapper.
-         */
-        private SQLConverter(@Nonnull @Loaded @BasedOn("bytes@core.digitalid.net") SemanticType type) {
-            super(COLUMN, type);
+        private SQLConverter(@Nonnull @Validated String columnName) {
+            super(Column.get(columnName, SQLType.BLOB), SEMANTIC);
         }
         
         @Override
@@ -303,7 +304,7 @@ public final class BytesWrapper extends ValueWrapper<BytesWrapper> {
     @Pure
     @Override
     public @Nonnull SQLConverter getSQLConverter() {
-        return new SQLConverter(getSemanticType());
+        return new SQLConverter("value");
     }
     
     @Pure
@@ -361,25 +362,26 @@ public final class BytesWrapper extends ValueWrapper<BytesWrapper> {
     /**
      * Returns the value SQL converter of this wrapper.
      * 
-     * @param type any semantic type that is based on the syntactic type of this wrapper.
-     * 
+     * @param columnName the name of the database column.
+     *
      * @return the value SQL converter of this wrapper.
      */
     @Pure
-    public static @Nonnull ValueSQLConverter<byte[], BytesWrapper> getValueSQLConverter(@Nonnull @BasedOn("bytes@core.digitalid.net") SemanticType type) {
-        return new ValueSQLConverter<>(FACTORY, new SQLConverter(type));
+    public static @Nonnull ValueSQLConverter<byte[], BytesWrapper> getValueSQLConverter(@Nonnull @Validated String columnName) {
+        return new ValueSQLConverter<>(FACTORY, new SQLConverter(columnName));
     }
     
     /**
      * Returns the value converters of this wrapper.
      * 
      * @param type the semantic type of the encoded blocks.
-     * 
+     * @param columnName the name of the database column.
+     *
      * @return the value converters of this wrapper.
      */
     @Pure
-    public static @Nonnull Converters<byte[], Object> getValueConverters(@Nonnull @BasedOn("bytes@core.digitalid.net") SemanticType type) {
-        return Converters.get(getValueXDFConverter(type), getValueSQLConverter(type));
+    public static @Nonnull Converters<byte[], Object> getValueConverters(@Nonnull @BasedOn("bytes@core.digitalid.net") SemanticType type, @Nonnull @Validated String columnName) {
+        return Converters.get(getValueXDFConverter(type), getValueSQLConverter(columnName));
     }
     
 }

@@ -19,6 +19,7 @@ import net.digitalid.service.core.identity.annotations.BasedOn;
 import net.digitalid.service.core.identity.annotations.Loaded;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.annotations.state.Validated;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.column.Column;
 import net.digitalid.utility.database.column.SQLType;
@@ -80,7 +81,12 @@ public final class BooleanWrapper extends ValueWrapper<BooleanWrapper> {
     }
     
     /* -------------------------------------------------- Utility -------------------------------------------------- */
-    
+
+    /**
+     * Stores a static XDF converter for performance reasons.
+     */
+    private static final @Nonnull XDFConverter XDF_CONVERTER = new XDFConverter(SEMANTIC);
+
     /**
      * Encodes the given value into a new block of the given type.
      * 
@@ -91,7 +97,7 @@ public final class BooleanWrapper extends ValueWrapper<BooleanWrapper> {
      */
     @Pure
     public static @Nonnull @NonEncoding Block encode(@Nonnull @Loaded @BasedOn("boolean@core.digitalid.net") SemanticType type, boolean value) {
-        return new XDFConverter(type).encodeNonNullable(new BooleanWrapper(type, value));
+        return XDF_CONVERTER.encodeNonNullable(new BooleanWrapper(type, value));
     }
     
     /**
@@ -103,7 +109,7 @@ public final class BooleanWrapper extends ValueWrapper<BooleanWrapper> {
      */
     @Pure
     public static boolean decode(@Nonnull @NonEncoding @BasedOn("boolean@core.digitalid.net") Block block) throws InvalidEncodingException {
-        return new XDFConverter(block.getType()).decodeNonNullable(None.OBJECT, block).value;
+        return XDF_CONVERTER.decodeNonNullable(None.OBJECT, block).value;
     }
     
     /* -------------------------------------------------- Encoding -------------------------------------------------- */
@@ -158,7 +164,7 @@ public final class BooleanWrapper extends ValueWrapper<BooleanWrapper> {
     @Pure
     @Override
     public @Nonnull XDFConverter getXDFConverter() {
-        return new XDFConverter(getSemanticType());
+         return new XDFConverter(getSemanticType());
     }
     
     /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
@@ -170,17 +176,12 @@ public final class BooleanWrapper extends ValueWrapper<BooleanWrapper> {
     public static final class SQLConverter extends Wrapper.SQLConverter<BooleanWrapper> {
         
         /**
-         * Stores the column for the wrapper.
+         * Creates a new SQL converter with the given column name.
+         *
+         * @param columnName the name of the database column.
          */
-        private static final @Nonnull Column COLUMN = Column.get("value", SQLType.BOOLEAN);
-        
-        /**
-         * Creates a new SQL converter with the given type.
-         * 
-         * @param type the semantic type of the restored wrappers.
-         */
-        private SQLConverter(@Nonnull @Loaded @BasedOn("boolean@core.digitalid.net") SemanticType type) {
-            super(COLUMN, type);
+        private SQLConverter(@Nonnull @Validated String columnName) {
+            super(Column.get(columnName, SQLType.BOOLEAN), SEMANTIC);
         }
         
         @Override
@@ -203,7 +204,7 @@ public final class BooleanWrapper extends ValueWrapper<BooleanWrapper> {
     @Pure
     @Override
     public @Nonnull SQLConverter getSQLConverter() {
-        return new SQLConverter(getSemanticType());
+        return new SQLConverter("value");
     }
     
     @Pure
@@ -231,7 +232,7 @@ public final class BooleanWrapper extends ValueWrapper<BooleanWrapper> {
         protected @Nonnull Boolean unwrap(@Nonnull BooleanWrapper wrapper) {
             return wrapper.value;
         }
-        
+
     }
     
     /**
@@ -256,25 +257,26 @@ public final class BooleanWrapper extends ValueWrapper<BooleanWrapper> {
     /**
      * Returns the value SQL converter of this wrapper.
      * 
-     * @param type any semantic type that is based on the syntactic type of this wrapper.
-     * 
+     * @param columnName the name of the database column.
+     *
      * @return the value SQL converter of this wrapper.
      */
     @Pure
-    public static @Nonnull ValueSQLConverter<Boolean, BooleanWrapper> getValueSQLConverter(@Nonnull @BasedOn("boolean@core.digitalid.net") SemanticType type) {
-        return new ValueSQLConverter<>(FACTORY, new SQLConverter(type));
+    public static @Nonnull ValueSQLConverter<Boolean, BooleanWrapper> getValueSQLConverter(@Nonnull @Validated String columnName) {
+        return new ValueSQLConverter<>(FACTORY, new SQLConverter(columnName));
     }
     
     /**
      * Returns the value converters of this wrapper.
      * 
      * @param type the semantic type of the encoded blocks.
-     * 
+     * @param columnName the name of the database column.
+     *
      * @return the value converters of this wrapper.
      */
     @Pure
-    public static @Nonnull Converters<Boolean, Object> getValueConverters(@Nonnull @BasedOn("boolean@core.digitalid.net") SemanticType type) {
-        return Converters.get(getValueXDFConverter(type), getValueSQLConverter(type));
+    public static @Nonnull Converters<Boolean, Object> getValueConverters(@Nonnull @BasedOn("boolean@core.digitalid.net") SemanticType type, @Nonnull @Validated String columnName) {
+        return Converters.get(getValueXDFConverter(type), getValueSQLConverter(columnName));
     }
     
 }

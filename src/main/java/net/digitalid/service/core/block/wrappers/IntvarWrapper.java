@@ -20,6 +20,7 @@ import net.digitalid.service.core.identity.annotations.Loaded;
 import net.digitalid.utility.annotations.math.NonNegative;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.annotations.state.Validated;
 import net.digitalid.utility.collections.annotations.size.NonEmpty;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.column.Column;
@@ -95,7 +96,12 @@ public final class IntvarWrapper extends ValueWrapper<IntvarWrapper> {
     }
     
     /* -------------------------------------------------- Utility -------------------------------------------------- */
-    
+
+    /**
+     * Stores a static XDF converter for performance reasons.
+     */
+    private static final @Nonnull XDFConverter XDF_CONVERTER = new XDFConverter(SEMANTIC);
+
     /**
      * Encodes the given value into a new block of the given type.
      * 
@@ -108,7 +114,7 @@ public final class IntvarWrapper extends ValueWrapper<IntvarWrapper> {
      */
     @Pure
     public static @Nonnull @NonEncoding Block encode(@Nonnull @Loaded @BasedOn("intvar@core.digitalid.net") SemanticType type, @NonNegative long value) {
-        return new XDFConverter(type).encodeNonNullable(new IntvarWrapper(type, value));
+        return XDF_CONVERTER.encodeNonNullable(new IntvarWrapper(type, value));
     }
     
     /**
@@ -122,7 +128,7 @@ public final class IntvarWrapper extends ValueWrapper<IntvarWrapper> {
      */
     @Pure
     public static @NonNegative long decode(@Nonnull @NonEncoding @BasedOn("intvar@core.digitalid.net") Block block) throws InvalidEncodingException {
-        return new XDFConverter(block.getType()).decodeNonNullable(None.OBJECT, block).value;
+        return XDF_CONVERTER.decodeNonNullable(None.OBJECT, block).value;
     }
     
     /* -------------------------------------------------- Encoding -------------------------------------------------- */
@@ -346,12 +352,12 @@ public final class IntvarWrapper extends ValueWrapper<IntvarWrapper> {
         private static final @Nonnull Column COLUMN = Column.get("value", SQLType.BIGINT);
         
         /**
-         * Creates a new factory with the given type.
-         * 
-         * @param type the semantic type of the wrapper.
+         * Creates a new SQL converter with the given column name.
+         *
+         * @param columnName the name of the database column.
          */
-        private SQLConverter(@Nonnull @Loaded @BasedOn("intvar@core.digitalid.net") SemanticType type) {
-            super(COLUMN, type);
+        private SQLConverter(@Nonnull @Validated String columnName) {
+            super(Column.get(columnName, SQLType.BIGINT), SEMANTIC);
         }
         
         @Override
@@ -375,7 +381,7 @@ public final class IntvarWrapper extends ValueWrapper<IntvarWrapper> {
     @Pure
     @Override
     public @Nonnull SQLConverter getSQLConverter() {
-        return new SQLConverter(getSemanticType());
+        return new SQLConverter("value");
     }
     
     @Pure
@@ -436,25 +442,26 @@ public final class IntvarWrapper extends ValueWrapper<IntvarWrapper> {
     /**
      * Returns the value SQL converter of this wrapper.
      * 
-     * @param type any semantic type that is based on the syntactic type of this wrapper.
-     * 
+     * @param columnName the name of the database column.
+     *
      * @return the value SQL converter of this wrapper.
      */
     @Pure
-    public static @Nonnull ValueSQLConverter<Long, IntvarWrapper> getValueSQLConverter(@Nonnull @BasedOn("intvar@core.digitalid.net") SemanticType type) {
-        return new ValueSQLConverter<>(FACTORY, new SQLConverter(type));
+    public static @Nonnull ValueSQLConverter<Long, IntvarWrapper> getValueSQLConverter(@Nonnull @Validated String columnName) {
+        return new ValueSQLConverter<>(FACTORY, new SQLConverter(columnName));
     }
     
     /**
      * Returns the value converters of this wrapper.
      * 
      * @param type the semantic type of the encoded blocks.
-     * 
+     * @param columnName the name of the database column.
+     *
      * @return the value converters of this wrapper.
      */
     @Pure
-    public static @Nonnull Converters<Long, Object> getValueConverters(@Nonnull @BasedOn("intvar@core.digitalid.net") SemanticType type) {
-        return Converters.get(getValueXDFConverter(type), getValueSQLConverter(type));
+    public static @Nonnull Converters<Long, Object> getValueConverters(@Nonnull @BasedOn("intvar@core.digitalid.net") SemanticType type, @Nonnull @Validated String columnName) {
+        return Converters.get(getValueXDFConverter(type), getValueSQLConverter(columnName));
     }
     
 }

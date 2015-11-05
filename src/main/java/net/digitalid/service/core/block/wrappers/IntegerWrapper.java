@@ -200,7 +200,7 @@ public final class IntegerWrapper extends ValueWrapper<IntegerWrapper> {
     public static final class SQLConverter extends Wrapper.SQLConverter<IntegerWrapper> {
 
         /**
-         * Creates a new SQL converter with the given type.
+         * Creates a new SQL converter with the given column name.
          *
          * @param columnName the name of the database column.
          */

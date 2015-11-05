@@ -20,6 +20,7 @@ import net.digitalid.service.core.identity.annotations.BasedOn;
 import net.digitalid.service.core.identity.annotations.Loaded;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.annotations.state.Validated;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.column.Column;
 import net.digitalid.utility.database.column.SQLType;
@@ -40,7 +41,12 @@ public final class StringWrapper extends ValueWrapper<StringWrapper> {
      * Stores the syntactic type {@code string@core.digitalid.net}.
      */
     public static final @Nonnull SyntacticType TYPE = SyntacticType.map("string@core.digitalid.net").load(0);
-    
+
+    /**
+     * Stores the syntactic type {@code semantic.string@core.digitalid.net}.
+     */
+    private static final @Nonnull SemanticType SEMANTIC = SemanticType.map("semantic.string@core.digitalid.net").load(TYPE);
+
     @Pure
     @Override
     public @Nonnull SyntacticType getSyntacticType() {
@@ -103,7 +109,12 @@ public final class StringWrapper extends ValueWrapper<StringWrapper> {
     }
     
     /* -------------------------------------------------- Utility -------------------------------------------------- */
-    
+
+    /**
+     * Stores a static XDF converter for performance reasons.
+     */
+    private static final @Nonnull XDFConverter XDF_CONVERTER = new XDFConverter(SEMANTIC);
+
     /**
      * Encodes the given non-nullable value into a new block of the given type.
      * 
@@ -114,7 +125,7 @@ public final class StringWrapper extends ValueWrapper<StringWrapper> {
      */
     @Pure
     public static @Nonnull @NonEncoding Block encodeNonNullable(@Nonnull @Loaded @BasedOn("string@core.digitalid.net") SemanticType type, @Nonnull String value) {
-        return new XDFConverter(type).encodeNonNullable(new StringWrapper(type, value));
+        return XDF_CONVERTER.encodeNonNullable(new StringWrapper(type, value));
     }
     
     /**
@@ -139,7 +150,7 @@ public final class StringWrapper extends ValueWrapper<StringWrapper> {
      */
     @Pure
     public static @Nonnull String decodeNonNullable(@Nonnull @NonEncoding @BasedOn("string@core.digitalid.net") Block block) throws InvalidEncodingException {
-        return new XDFConverter(block.getType()).decodeNonNullable(None.OBJECT, block).value;
+        return XDF_CONVERTER.decodeNonNullable(None.OBJECT, block).value;
     }
     
     /**
@@ -184,7 +195,7 @@ public final class StringWrapper extends ValueWrapper<StringWrapper> {
          * 
          * @param type the semantic type of the encoded blocks and decoded wrappers.
          */
-        private XDFConverter(@Nonnull @BasedOn("string@core.digitalid.net") SemanticType type) {
+        private XDFConverter(@Nonnull @Loaded @BasedOn("string@core.digitalid.net") SemanticType type) {
             super(type);
         }
         
@@ -217,12 +228,12 @@ public final class StringWrapper extends ValueWrapper<StringWrapper> {
         private static final @Nonnull Column COLUMN = Column.get("value", SQLType.STRING);
         
         /**
-         * Creates a new SQL converter with the given type.
-         * 
-         * @param type the semantic type of the restored wrappers.
+         * Creates a new SQL converter with the given column name.
+         *
+         * @param columnName the name of the database column.
          */
-        private SQLConverter(@Nonnull @BasedOn("string@core.digitalid.net") SemanticType type) {
-            super(COLUMN, type);
+        private SQLConverter(@Nonnull @Validated String columnName) {
+            super(Column.get(columnName, SQLType.STRING), SEMANTIC);
         }
         
         @Override
@@ -244,7 +255,7 @@ public final class StringWrapper extends ValueWrapper<StringWrapper> {
     @Pure
     @Override
     public @Nonnull SQLConverter getSQLConverter() {
-        return new SQLConverter(getSemanticType());
+        return new SQLConverter("value");
     }
     
     @Pure
@@ -298,25 +309,26 @@ public final class StringWrapper extends ValueWrapper<StringWrapper> {
     /**
      * Returns the value SQL converter of this wrapper.
      * 
-     * @param type any semantic type that is based on the syntactic type of this wrapper.
-     * 
+     * @param columnName the name of the database column.
+     *
      * @return the value SQL converter of this wrapper.
      */
     @Pure
-    public static @Nonnull ValueSQLConverter<String, StringWrapper> getValueSQLConverter(@Nonnull @BasedOn("string@core.digitalid.net") SemanticType type) {
-        return new ValueSQLConverter<>(FACTORY, new SQLConverter(type));
+    public static @Nonnull ValueSQLConverter<String, StringWrapper> getValueSQLConverter(@Nonnull @Validated String columnName) {
+        return new ValueSQLConverter<>(FACTORY, new SQLConverter(columnName));
     }
     
     /**
      * Returns the value converters of this wrapper.
      * 
      * @param type the semantic type of the encoded blocks.
-     * 
+     * @param columnName the name of the database column.
+     *
      * @return the value converters of this wrapper.
      */
     @Pure
-    public static @Nonnull Converters<String, Object> getValueConverters(@Nonnull @BasedOn("string@core.digitalid.net") SemanticType type) {
-        return Converters.get(getValueXDFConverter(type), getValueSQLConverter(type));
+    public static @Nonnull Converters<String, Object> getValueConverters(@Nonnull @BasedOn("string@core.digitalid.net") SemanticType type, @Nonnull @Validated String columnName) {
+        return Converters.get(getValueXDFConverter(type), getValueSQLConverter(columnName));
     }
     
 }
