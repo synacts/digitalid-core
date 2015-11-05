@@ -2,20 +2,26 @@ package net.digitalid.service.core.identifier;
 
 import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
+import net.digitalid.service.core.block.wrappers.StringWrapper;
+import net.digitalid.service.core.converter.NonRequestingConverters;
+import net.digitalid.service.core.converter.key.Caster;
+import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
+import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
+import net.digitalid.service.core.converter.xdf.ChainingNonRequestingXDFConverter;
 import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
-import net.digitalid.service.core.converter.Converters;
-import net.digitalid.service.core.identity.resolution.Category;
 import net.digitalid.service.core.identity.MobilePerson;
 import net.digitalid.service.core.identity.Person;
+import net.digitalid.service.core.identity.resolution.Category;
 import net.digitalid.service.core.identity.resolution.Mapper;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
 import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.converter.AbstractSQLConverter;
 
 /**
  * This class models mobile identifiers.
@@ -84,12 +90,12 @@ public final class MobileIdentifier extends ExternalIdentifier {
         return Category.MOBILE_PERSON;
     }
     
-    /* -------------------------------------------------- Converters -------------------------------------------------- */
+    /* -------------------------------------------------- Caster -------------------------------------------------- */
     
     /**
      * Stores the caster that casts identifiers to this subclass.
      */
-    private static final @Nonnull Caster<MobileIdentifier> CASTER = new Caster<MobileIdentifier>() {
+    public static final @Nonnull Caster<Identifier, MobileIdentifier> CASTER = new Caster<Identifier, MobileIdentifier>() {
         @Pure
         @Override
         protected @Nonnull MobileIdentifier cast(@Nonnull Identifier identifier) throws InvalidEncodingException {
@@ -97,19 +103,26 @@ public final class MobileIdentifier extends ExternalIdentifier {
         }
     };
     
+    /* -------------------------------------------------- Converters -------------------------------------------------- */
+    
+    /**
+     * Stores the key converter of this class.
+     */
+    public static final @Nonnull Identifier.StringConverter<MobileIdentifier> KEY_CONVERTER = new Identifier.StringConverter<>(CASTER);
+    
     /**
      * Stores the XDF converter of this class.
      */
-    public static final @Nonnull XDFConverter<MobileIdentifier> XDF_CONVERTER = new XDFConverter<>(MobilePerson.IDENTIFIER, CASTER);
+    public static final @Nonnull AbstractNonRequestingXDFConverter<MobileIdentifier, Object> XDF_CONVERTER = ChainingNonRequestingXDFConverter.get(KEY_CONVERTER, StringWrapper.getValueXDFConverter(MobilePerson.IDENTIFIER));
     
     /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull SQLConverter<MobileIdentifier> SQL_CONVERTER = new SQLConverter<>(CASTER);
+    public static final @Nonnull AbstractSQLConverter<MobileIdentifier, Object> SQL_CONVERTER = ChainingSQLConverter.get(KEY_CONVERTER, StringWrapper.getValueSQLConverter("mobile_identifier"));
     
     /**
      * Stores the converters of this class.
      */
-    public static final @Nonnull Converters<MobileIdentifier, Object> CONVERTERS = Converters.get(XDF_CONVERTER, SQL_CONVERTER);
+    public static final @Nonnull NonRequestingConverters<MobileIdentifier, Object> CONVERTERS = NonRequestingConverters.get(XDF_CONVERTER, SQL_CONVERTER);
     
 }

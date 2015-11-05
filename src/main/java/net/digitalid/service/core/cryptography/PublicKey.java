@@ -568,7 +568,7 @@ public final class PublicKey implements XDF<PublicKey, Object>, SQL<PublicKey, O
         return "Public Key [n = " + compositeGroup.getModulus() + ", e = " + e + ", z^2 = " + squareGroup.getModulus() + ", g = " + g + ", y = " + y + "]";
     }
     
-    /* -------------------------------------------------- XDF -------------------------------------------------- */
+    /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
     
     /**
      * The XDF converter for this class.
@@ -652,7 +652,7 @@ public final class PublicKey implements XDF<PublicKey, Object>, SQL<PublicKey, O
         return XDF_CONVERTER;
     }
     
-    /* -------------------------------------------------- SQL -------------------------------------------------- */
+    /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
     
     /**
      * Stores the SQL converter of this class.

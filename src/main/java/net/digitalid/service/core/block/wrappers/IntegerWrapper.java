@@ -159,7 +159,7 @@ public final class IntegerWrapper extends ValueWrapper<IntegerWrapper> {
         block.setBytes(0, bytes);
     }
     
-    /* -------------------------------------------------- XDF -------------------------------------------------- */
+    /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
     
     /**
      * The XDF converter for this class.
@@ -191,7 +191,7 @@ public final class IntegerWrapper extends ValueWrapper<IntegerWrapper> {
         return new XDFConverter(getSemanticType());
     }
     
-    /* -------------------------------------------------- SQL -------------------------------------------------- */
+    /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
     
     /**
      * The SQL converter for this class.

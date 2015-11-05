@@ -120,7 +120,7 @@ public abstract class Wrapper<W extends Wrapper<W>> implements XDF<W, Object>, S
         return ConvertToXDF.nonNullable((W) this).hashCode();
     }
     
-    /* -------------------------------------------------- XDF -------------------------------------------------- */
+    /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
     
     /**
      * The XDF converter for wrappers.
@@ -179,7 +179,7 @@ public abstract class Wrapper<W extends Wrapper<W>> implements XDF<W, Object>, S
     @Override
     public abstract @Nonnull XDFConverter<W> getXDFConverter();
     
-    /* -------------------------------------------------- SQL -------------------------------------------------- */
+    /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
     
     /**
      * The SQL converter for wrappers.

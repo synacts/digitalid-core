@@ -206,7 +206,7 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
         tuple.writeTo(block);
     }
     
-    /* -------------------------------------------------- XDF -------------------------------------------------- */
+    /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
     
     /**
      * The XDF converter for this class.
@@ -239,7 +239,7 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
         return new XDFConverter(getSemanticType());
     }
     
-    /* -------------------------------------------------- SQL -------------------------------------------------- */
+    /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
     
     @Pure
     @Override

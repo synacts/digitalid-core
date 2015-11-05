@@ -104,7 +104,7 @@ public final class GroupWithKnownOrder extends Group<GroupWithKnownOrder> {
         return new GroupWithKnownOrder(modulus, order);
     }
     
-    /* -------------------------------------------------- XDF -------------------------------------------------- */
+    /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
     
     /**
      * The XDF converter for this class.
@@ -157,7 +157,7 @@ public final class GroupWithKnownOrder extends Group<GroupWithKnownOrder> {
         return XDF_CONVERTER;
     }
 
-    /* -------------------------------------------------- SQL -------------------------------------------------- */
+    /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
     
     /**
      * Stores the SQL converter of this class.

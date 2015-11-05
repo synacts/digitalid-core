@@ -184,7 +184,7 @@ public abstract class IdentityImplementation implements Identity {
         throw new InvalidEncodingException("" + getAddress() + " is a " + this.getClass().getSimpleName() + " and cannot be cast to MobilePerson.");
     }
     
-    /* -------------------------------------------------- XDF -------------------------------------------------- */
+    /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
     
     @Pure
     @Override
@@ -192,7 +192,7 @@ public abstract class IdentityImplementation implements Identity {
         return XDF_CONVERTER;
     }
     
-    /* -------------------------------------------------- SQL -------------------------------------------------- */
+    /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
     
     @Pure
     @Override

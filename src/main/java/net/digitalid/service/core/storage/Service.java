@@ -190,7 +190,7 @@ public class Service extends DelegatingSiteStorageImplementation implements SQL<
         return getType().toString();
     }
     
-    /* -------------------------------------------------- SQL -------------------------------------------------- */
+    /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
     
     /**
      * The SQL converter for this class.

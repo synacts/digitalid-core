@@ -450,7 +450,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
         getCache().writeTo(block);
     }
     
-    /* -------------------------------------------------- XDF -------------------------------------------------- */
+    /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
     
     /**
      * The XDF converter for this class.
@@ -481,7 +481,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
         return new XDFConverter(getSemanticType());
     }
     
-    /* -------------------------------------------------- SQL -------------------------------------------------- */
+    /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
     
     @Pure
     @Override

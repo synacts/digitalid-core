@@ -2,19 +2,25 @@ package net.digitalid.service.core.identifier;
 
 import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
+import net.digitalid.service.core.block.wrappers.StringWrapper;
+import net.digitalid.service.core.converter.NonRequestingConverters;
+import net.digitalid.service.core.converter.key.Caster;
+import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
+import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
+import net.digitalid.service.core.converter.xdf.ChainingNonRequestingXDFConverter;
 import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.IdentityNotFoundException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
-import net.digitalid.service.core.converter.Converters;
 import net.digitalid.service.core.identity.InternalIdentity;
 import net.digitalid.service.core.identity.resolution.Mapper;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
 import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.converter.AbstractSQLConverter;
 
 /**
  * This class models internal identifiers.
@@ -122,12 +128,12 @@ public abstract class InternalIdentifier extends IdentifierImplementation {
     @Pure
     public abstract @Nonnull HostIdentifier getHostIdentifier();
     
-    /* -------------------------------------------------- Converters -------------------------------------------------- */
+    /* -------------------------------------------------- Caster -------------------------------------------------- */
     
     /**
      * Stores the caster that casts identifiers to this subclass.
      */
-    private static final @Nonnull Caster<InternalIdentifier> CASTER = new Caster<InternalIdentifier>() {
+    public static final @Nonnull Caster<Identifier, InternalIdentifier> CASTER = new Caster<Identifier, InternalIdentifier>() {
         @Pure
         @Override
         protected @Nonnull InternalIdentifier cast(@Nonnull Identifier identifier) throws InvalidEncodingException {
@@ -135,19 +141,26 @@ public abstract class InternalIdentifier extends IdentifierImplementation {
         }
     };
     
+    /* -------------------------------------------------- Converters -------------------------------------------------- */
+    
+    /**
+     * Stores the key converter of this class.
+     */
+    public static final @Nonnull Identifier.StringConverter<InternalIdentifier> KEY_CONVERTER = new Identifier.StringConverter<>(CASTER);
+    
     /**
      * Stores the XDF converter of this class.
      */
-    public static final @Nonnull XDFConverter<InternalIdentifier> XDF_CONVERTER = new XDFConverter<>(InternalIdentity.IDENTIFIER, CASTER);
+    public static final @Nonnull AbstractNonRequestingXDFConverter<InternalIdentifier, Object> XDF_CONVERTER = ChainingNonRequestingXDFConverter.get(KEY_CONVERTER, StringWrapper.getValueXDFConverter(InternalIdentity.IDENTIFIER));
     
     /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull SQLConverter<InternalIdentifier> SQL_CONVERTER = new SQLConverter<>(CASTER);
+    public static final @Nonnull AbstractSQLConverter<InternalIdentifier, Object> SQL_CONVERTER = ChainingSQLConverter.get(KEY_CONVERTER, StringWrapper.getValueSQLConverter("internal_identifier"));
     
     /**
      * Stores the converters of this class.
      */
-    public static final @Nonnull Converters<InternalIdentifier, Object> CONVERTERS = Converters.get(XDF_CONVERTER, SQL_CONVERTER);
+    public static final @Nonnull NonRequestingConverters<InternalIdentifier, Object> CONVERTERS = NonRequestingConverters.get(XDF_CONVERTER, SQL_CONVERTER);
     
 }

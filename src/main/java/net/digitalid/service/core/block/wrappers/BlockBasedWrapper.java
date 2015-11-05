@@ -39,7 +39,7 @@ public abstract class BlockBasedWrapper<W extends BlockBasedWrapper<W>> extends 
         super(semanticType);
     }
     
-    /* -------------------------------------------------- SQL -------------------------------------------------- */
+    /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
     
     /**
      * The SQL converter for block-based wrappers.

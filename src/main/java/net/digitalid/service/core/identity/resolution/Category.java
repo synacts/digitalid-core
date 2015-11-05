@@ -2,7 +2,7 @@ package net.digitalid.service.core.identity.resolution;
 
 import javax.annotation.Nonnull;
 import net.digitalid.service.core.block.wrappers.Int8Wrapper;
-import net.digitalid.service.core.converter.Converters;
+import net.digitalid.service.core.converter.NonRequestingConverters;
 import net.digitalid.service.core.converter.key.AbstractNonRequestingKeyConverter;
 import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
 import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
@@ -196,7 +196,7 @@ public enum Category implements XDF<Category, Object>, SQL<Category, Object> {
     /* -------------------------------------------------- Key Converter -------------------------------------------------- */
     
     /**
-     * Stores the key converter for this class.
+     * Stores the key converter of this class.
      */
     private static final @Nonnull AbstractNonRequestingKeyConverter<Category, Object, Byte> KEY_CONVERTER = new AbstractNonRequestingKeyConverter<Category, Object, Byte>() {
         
@@ -220,7 +220,7 @@ public enum Category implements XDF<Category, Object>, SQL<Category, Object> {
         
     };
     
-    /* -------------------------------------------------- XDF -------------------------------------------------- */
+    /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
     
     /**
      * Stores the semantic type {@code category@core.digitalid.net}.
@@ -238,7 +238,7 @@ public enum Category implements XDF<Category, Object>, SQL<Category, Object> {
         return XDF_CONVERTER;
     }
     
-    /* -------------------------------------------------- SQL -------------------------------------------------- */
+    /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
     
     /**
      * Stores the SQL converter of this class.
@@ -262,6 +262,6 @@ public enum Category implements XDF<Category, Object>, SQL<Category, Object> {
     /**
      * Stores the converters of this class.
      */
-    public static final @Nonnull Converters<Category, Object> CONVERTERS = Converters.get(XDF_CONVERTER, SQL_CONVERTER);
+    public static final @Nonnull NonRequestingConverters<Category, Object> CONVERTERS = NonRequestingConverters.get(XDF_CONVERTER, SQL_CONVERTER);
     
 }

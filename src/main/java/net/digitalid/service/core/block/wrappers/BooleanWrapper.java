@@ -128,7 +128,7 @@ public final class BooleanWrapper extends ValueWrapper<BooleanWrapper> {
         block.setByte(0, (byte) (value ? 1 : 0));
     }
     
-    /* -------------------------------------------------- XDF -------------------------------------------------- */
+    /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
     
     /**
      * The XDF converter for this class.
@@ -161,7 +161,7 @@ public final class BooleanWrapper extends ValueWrapper<BooleanWrapper> {
         return new XDFConverter(getSemanticType());
     }
     
-    /* -------------------------------------------------- SQL -------------------------------------------------- */
+    /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
     
     /**
      * The SQL converter for this class.

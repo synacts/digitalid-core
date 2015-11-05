@@ -88,7 +88,7 @@ public final class EmptyWrapper extends ValueWrapper<EmptyWrapper> {
         assert block.getType().isBasedOn(getSyntacticType()) : "The block is based on the indicated syntactic type.";
     }
     
-    /* -------------------------------------------------- XDF -------------------------------------------------- */
+    /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
     
     /**
      * The XDF converter for this class.
@@ -121,7 +121,7 @@ public final class EmptyWrapper extends ValueWrapper<EmptyWrapper> {
         return new XDFConverter(getSemanticType());
     }
     
-    /* -------------------------------------------------- SQL -------------------------------------------------- */
+    /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
     
     /**
      * The SQL converter for this class.

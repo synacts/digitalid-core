@@ -127,7 +127,7 @@ public final class FloatWrapper extends ValueWrapper<FloatWrapper> {
         block.encodeValue(Float.floatToRawIntBits(value));
     }
     
-    /* -------------------------------------------------- XDF -------------------------------------------------- */
+    /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
     
     /**
      * The XDF converter for this class.
@@ -160,7 +160,7 @@ public final class FloatWrapper extends ValueWrapper<FloatWrapper> {
         return new XDFConverter(getSemanticType());
     }
     
-    /* -------------------------------------------------- SQL -------------------------------------------------- */
+    /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
     
     /**
      * The SQL converter for this class.

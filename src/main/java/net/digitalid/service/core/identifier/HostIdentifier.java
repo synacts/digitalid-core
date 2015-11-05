@@ -1,12 +1,17 @@
 package net.digitalid.service.core.identifier;
 
 import javax.annotation.Nonnull;
+import net.digitalid.service.core.block.wrappers.StringWrapper;
+import net.digitalid.service.core.converter.NonRequestingConverters;
+import net.digitalid.service.core.converter.key.Caster;
+import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
+import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
+import net.digitalid.service.core.converter.xdf.ChainingNonRequestingXDFConverter;
 import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
-import net.digitalid.service.core.converter.Converters;
 import net.digitalid.service.core.identity.HostIdentity;
 import net.digitalid.service.core.identity.Identity;
 import net.digitalid.service.core.identity.resolution.Mapper;
@@ -15,6 +20,7 @@ import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.configuration.Database;
+import net.digitalid.utility.database.converter.AbstractSQLConverter;
 
 /**
  * This class models host identifiers.
@@ -112,12 +118,12 @@ public final class HostIdentifier extends InternalIdentifier {
         return (Character.isDigit(string.charAt(0)) ? "_" : "") + string.replace(".", "_").replace("-", "$");
     }
     
-    /* -------------------------------------------------- Converters -------------------------------------------------- */
+    /* -------------------------------------------------- Caster -------------------------------------------------- */
     
     /**
      * Stores the caster that casts identifiers to this subclass.
      */
-    private static final @Nonnull Caster<HostIdentifier> CASTER = new Caster<HostIdentifier>() {
+    public static final @Nonnull Caster<Identifier, HostIdentifier> CASTER = new Caster<Identifier, HostIdentifier>() {
         @Pure
         @Override
         protected @Nonnull HostIdentifier cast(@Nonnull Identifier identifier) throws InvalidEncodingException {
@@ -125,19 +131,26 @@ public final class HostIdentifier extends InternalIdentifier {
         }
     };
     
+    /* -------------------------------------------------- Converters -------------------------------------------------- */
+    
+    /**
+     * Stores the key converter of this class.
+     */
+    public static final @Nonnull Identifier.StringConverter<HostIdentifier> KEY_CONVERTER = new Identifier.StringConverter<>(CASTER);
+    
     /**
      * Stores the XDF converter of this class.
      */
-    public static final @Nonnull XDFConverter<HostIdentifier> XDF_CONVERTER = new XDFConverter<>(HostIdentity.IDENTIFIER, CASTER);
+    public static final @Nonnull AbstractNonRequestingXDFConverter<HostIdentifier, Object> XDF_CONVERTER = ChainingNonRequestingXDFConverter.get(KEY_CONVERTER, StringWrapper.getValueXDFConverter(HostIdentity.IDENTIFIER));
     
     /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull SQLConverter<HostIdentifier> SQL_CONVERTER = new SQLConverter<>(CASTER);
+    public static final @Nonnull AbstractSQLConverter<HostIdentifier, Object> SQL_CONVERTER = ChainingSQLConverter.get(KEY_CONVERTER, StringWrapper.getValueSQLConverter("host_identifier"));
     
     /**
      * Stores the converters of this class.
      */
-    public static final @Nonnull Converters<HostIdentifier, Object> CONVERTERS = Converters.get(XDF_CONVERTER, SQL_CONVERTER);
+    public static final @Nonnull NonRequestingConverters<HostIdentifier, Object> CONVERTERS = NonRequestingConverters.get(XDF_CONVERTER, SQL_CONVERTER);
     
 }

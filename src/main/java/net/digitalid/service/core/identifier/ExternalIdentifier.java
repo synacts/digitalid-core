@@ -1,21 +1,27 @@
 package net.digitalid.service.core.identifier;
 
 import javax.annotation.Nonnull;
+import net.digitalid.service.core.block.wrappers.StringWrapper;
+import net.digitalid.service.core.converter.NonRequestingConverters;
+import net.digitalid.service.core.converter.key.Caster;
+import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
+import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
+import net.digitalid.service.core.converter.xdf.ChainingNonRequestingXDFConverter;
 import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
-import net.digitalid.service.core.converter.Converters;
-import net.digitalid.service.core.identity.resolution.Category;
 import net.digitalid.service.core.identity.ExternalIdentity;
 import net.digitalid.service.core.identity.Identity;
 import net.digitalid.service.core.identity.Person;
+import net.digitalid.service.core.identity.resolution.Category;
 import net.digitalid.service.core.identity.resolution.Mapper;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
 import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.converter.AbstractSQLConverter;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 
 /**
@@ -120,12 +126,12 @@ public abstract class ExternalIdentifier extends IdentifierImplementation implem
     @Pure
     public abstract @Nonnull Category getCategory();
     
-    /* -------------------------------------------------- Converters -------------------------------------------------- */
+    /* -------------------------------------------------- Caster -------------------------------------------------- */
     
     /**
      * Stores the caster that casts identifiers to this subclass.
      */
-    private static final @Nonnull Caster<ExternalIdentifier> CASTER = new Caster<ExternalIdentifier>() {
+    public static final @Nonnull Caster<Identifier, ExternalIdentifier> CASTER = new Caster<Identifier, ExternalIdentifier>() {
         @Pure
         @Override
         protected @Nonnull ExternalIdentifier cast(@Nonnull Identifier identifier) throws InvalidEncodingException {
@@ -133,19 +139,26 @@ public abstract class ExternalIdentifier extends IdentifierImplementation implem
         }
     };
     
+    /* -------------------------------------------------- Converters -------------------------------------------------- */
+    
+    /**
+     * Stores the key converter of this class.
+     */
+    public static final @Nonnull Identifier.StringConverter<ExternalIdentifier> KEY_CONVERTER = new Identifier.StringConverter<>(CASTER);
+    
     /**
      * Stores the XDF converter of this class.
      */
-    public static final @Nonnull XDFConverter<ExternalIdentifier> XDF_CONVERTER = new XDFConverter<>(ExternalIdentity.IDENTIFIER, CASTER);
+    public static final @Nonnull AbstractNonRequestingXDFConverter<ExternalIdentifier, Object> XDF_CONVERTER = ChainingNonRequestingXDFConverter.get(KEY_CONVERTER, StringWrapper.getValueXDFConverter(ExternalIdentity.IDENTIFIER));
     
     /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull SQLConverter<ExternalIdentifier> SQL_CONVERTER = new SQLConverter<>(CASTER);
+    public static final @Nonnull AbstractSQLConverter<ExternalIdentifier, Object> SQL_CONVERTER = ChainingSQLConverter.get(KEY_CONVERTER, StringWrapper.getValueSQLConverter("external_identifier"));
     
     /**
      * Stores the converters of this class.
      */
-    public static final @Nonnull Converters<ExternalIdentifier, Object> CONVERTERS = Converters.get(XDF_CONVERTER, SQL_CONVERTER);
+    public static final @Nonnull NonRequestingConverters<ExternalIdentifier, Object> CONVERTERS = NonRequestingConverters.get(XDF_CONVERTER, SQL_CONVERTER);
     
 }

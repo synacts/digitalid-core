@@ -296,7 +296,7 @@ public final class IntvarWrapper extends ValueWrapper<IntvarWrapper> {
         block.setByte(offset, (byte) (shifter | (Integer.numberOfTrailingZeros(length) << 6)));
     }
     
-    /* -------------------------------------------------- XDF -------------------------------------------------- */
+    /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
     
     /**
      * The XDF converter for this class.
@@ -332,7 +332,7 @@ public final class IntvarWrapper extends ValueWrapper<IntvarWrapper> {
         return new XDFConverter(getSemanticType());
     }
     
-    /* -------------------------------------------------- SQL -------------------------------------------------- */
+    /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
     
     /**
      * The SQL converter for this class.

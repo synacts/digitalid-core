@@ -124,7 +124,7 @@ public final class Int16Wrapper extends ValueWrapper<Int16Wrapper> {
         block.encodeValue(value);
     }
     
-    /* -------------------------------------------------- XDF -------------------------------------------------- */
+    /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
     
     /**
      * The XDF converter for this class.
@@ -157,7 +157,7 @@ public final class Int16Wrapper extends ValueWrapper<Int16Wrapper> {
         return new XDFConverter(getSemanticType());
     }
     
-    /* -------------------------------------------------- SQL -------------------------------------------------- */
+    /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
     
     /**
      * The SQL converter for this class.

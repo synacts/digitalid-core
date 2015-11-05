@@ -1,35 +1,26 @@
 package net.digitalid.service.core.identifier;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.StringWrapper;
+import net.digitalid.service.core.converter.NonRequestingConverters;
+import net.digitalid.service.core.converter.key.Caster;
+import net.digitalid.service.core.converter.key.CastingNonRequestingKeyConverter;
+import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
+import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
+import net.digitalid.service.core.converter.xdf.ChainingNonRequestingXDFConverter;
+import net.digitalid.service.core.converter.xdf.XDF;
 import net.digitalid.service.core.exceptions.abort.AbortException;
 import net.digitalid.service.core.exceptions.external.ExternalException;
 import net.digitalid.service.core.exceptions.external.InvalidEncodingException;
 import net.digitalid.service.core.exceptions.network.NetworkException;
 import net.digitalid.service.core.exceptions.packet.PacketException;
-import net.digitalid.service.core.converter.Converters;
-import net.digitalid.service.core.converter.xdf.XDF;
-import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
 import net.digitalid.service.core.identity.Identity;
-import net.digitalid.service.core.identity.SemanticType;
-import net.digitalid.service.core.identity.annotations.BasedOn;
 import net.digitalid.service.core.identity.resolution.annotations.MappedRecipient;
-import net.digitalid.utility.annotations.reference.Capturable;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
-import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
-import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
-import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
-import net.digitalid.utility.database.column.Column;
-import net.digitalid.utility.database.column.SQLType;
 import net.digitalid.utility.database.converter.AbstractSQLConverter;
 import net.digitalid.utility.database.converter.SQL;
 
@@ -163,50 +154,49 @@ public interface Identifier extends XDF<Identifier, Object>, SQL<Identifier, Obj
     @Pure
     public @Nonnull MobileIdentifier toMobileIdentifier() throws InvalidEncodingException;
     
-    /* -------------------------------------------------- Caster -------------------------------------------------- */
+    /* -------------------------------------------------- Key Converter -------------------------------------------------- */
     
     /**
-     * This class allows to cast identifiers to the right subclass.
+     * This class allows to convert an identifier to its string and recover it again by downcasting the identifier returned by the overridden method with the given caster.
      */
     @Immutable
-    public static abstract class Caster<I extends Identifier> {
+    public static final class StringConverter<I extends Identifier> extends CastingNonRequestingKeyConverter<I, Object, String, Identifier> {
         
         /**
-         * Casts the given identifier to the generic type.
+         * Creates a new identifier-string converter with the given caster.
          * 
-         * @param identifier the identifier which is to be casted.
-         * 
-         * @return the given identifier casted to the generic type.
-         * 
-         * @throws InvalidEncodingException if the identifier is not an instance of the generic type.
+         * @param caster the caster that allows to cast objects to the specified subtype.
          */
-        @Pure
-        protected abstract @Nonnull I cast(@Nonnull Identifier identifier) throws InvalidEncodingException;
+        protected StringConverter(@Nonnull Caster<Identifier, I> caster) {
+            super(caster);
+        }
         
-        /**
-         * Casts the given identifier to the generic type.
-         * 
-         * @param identifier the identifier which is to be casted.
-         * 
-         * @return the given identifier casted to the generic type.
-         * 
-         * @throws SQLException if the identifier is not an instance of the generic type.
-         */
         @Pure
-        final @Nonnull I castWithSQLException(@Nonnull Identifier identifier) throws SQLException {
-            try {
-                return cast(identifier);
-            } catch (@Nonnull InvalidEncodingException exception) {
-                throw new SQLException(exception);
-            }
+        @Override
+        public boolean isValid(@Nonnull String string) {
+            return IdentifierImplementation.isValid(string);
+        }
+        
+        @Pure
+        @Override
+        public @Nonnull String convert(@Nonnull I identifier) {
+            return identifier.getString();
+        }
+        
+        @Pure
+        @Override
+        public @Nonnull Identifier recoverSupertype(@Nonnull Object none, @Nonnull String string) throws InvalidEncodingException {
+            return IdentifierImplementation.get(string);
         }
         
     }
     
+    /* -------------------------------------------------- Caster -------------------------------------------------- */
+    
     /**
      * Stores the caster that casts identifiers to this subclass.
      */
-    public static final @Nonnull Caster<Identifier> CASTER = new Caster<Identifier>() {
+    public static final @Nonnull Caster<Identifier, Identifier> CASTER = new Caster<Identifier, Identifier>() {
         @Pure
         @Override
         protected @Nonnull Identifier cast(@Nonnull Identifier identifier) throws InvalidEncodingException {
@@ -214,114 +204,30 @@ public interface Identifier extends XDF<Identifier, Object>, SQL<Identifier, Obj
         }
     };
     
-    /* -------------------------------------------------- XDF -------------------------------------------------- */
-    
     /**
-     * The XDF converter for this class.
+     * Stores the key converter of this class.
      */
-    @Immutable
-    public static final class XDFConverter<I extends Identifier> extends AbstractNonRequestingXDFConverter<I, Object> {
-        
-        /**
-         * Stores the caster that casts identifiers to the right subclass.
-         */
-        private final @Nonnull Caster<I> caster;
-        
-        /**
-         * Creates a new XDF converter with the given type and caster.
-         * 
-         * @param type the semantic type that corresponds to the encodable class.
-         * @param caster the caster that casts identifiers to the right subclass.
-         */
-        XDFConverter(@Nonnull @BasedOn("@core.digitalid.net") SemanticType type, @Nonnull Caster<I> caster) {
-            super(type);
-            
-            assert type.isBasedOn(Identity.IDENTIFIER) : "The given type is based on the identifier type.";
-            
-            this.caster = caster;
-        }
-        
-        @Pure
-        @Override
-        public @Nonnull Block encodeNonNullable(@Nonnull I identifier) {
-            return StringWrapper.encodeNonNullable(getType(), identifier.getString());
-        }
-        
-        @Pure
-        @Override
-        public @Nonnull I decodeNonNullable(@Nonnull Object none, @Nonnull @BasedOn("@core.digitalid.net") Block block) throws InvalidEncodingException {
-            assert block.getType().isBasedOn(getType()) : "The block is based on the type of this converter.";
-            
-            final @Nonnull String string = StringWrapper.decodeNonNullable(block);
-            if (!IdentifierImplementation.isValid(string)) { throw new InvalidEncodingException("'" + string + "' is not a valid identifier."); }
-            return caster.cast(IdentifierImplementation.get(string));
-        }
-        
-    }
+    public static final @Nonnull Identifier.StringConverter<Identifier> KEY_CONVERTER = new Identifier.StringConverter<>(CASTER);
+    
+    /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
     
     /**
      * Stores the XDF converter of this class.
      */
-    public static final @Nonnull XDFConverter<Identifier> XDF_CONVERTER = new XDFConverter<>(Identity.IDENTIFIER, CASTER);
+    public static final @Nonnull AbstractNonRequestingXDFConverter<Identifier, Object> XDF_CONVERTER = ChainingNonRequestingXDFConverter.get(KEY_CONVERTER, StringWrapper.getValueXDFConverter(Identity.IDENTIFIER));
     
-    /* -------------------------------------------------- SQL -------------------------------------------------- */
-    
-    /**
-     * The SQL converter for this class.
-     */
-    @Immutable
-    public static final class SQLConverter<I extends Identifier> extends AbstractSQLConverter<I, Object> {
-        
-        /**
-         * Stores the caster that casts identifiers to the right subclass.
-         */
-        private final @Nonnull Caster<I> caster;
-        
-        /**
-         * Creates a new SQL converter with the given caster.
-         * 
-         * @param caster the caster that casts identifiers to the right subclass.
-         */
-        SQLConverter(@Nonnull Caster<I> caster) {
-            super(Column.get("identifier", SQLType.VARCHAR));
-            
-            this.caster = caster;
-        }
-        
-        @Pure
-        @Override
-        public @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getValues(@Nonnull I identifier) {
-            return FreezableArray.getNonNullable(identifier.getString());
-        }
-        
-        @Override
-        @NonCommitting
-        public void storeNonNullable(@Nonnull I identifier, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
-            preparedStatement.setString(parameterIndex, identifier.getString());
-        }
-        
-        @Pure
-        @Override
-        @NonCommitting
-        public @Nullable I restoreNullable(@Nonnull Object none, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
-            final @Nullable String string = resultSet.getString(columnIndex);
-            if (string == null) { return null; }
-            if (!IdentifierImplementation.isValid(string)) { throw new SQLException("'" + string + "' is not a valid identifier."); }
-            return caster.castWithSQLException(IdentifierImplementation.get(string));
-        }
-        
-    }
+    /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
     
     /**
      * Stores the SQL converter of this class.
      */
-    public static final @Nonnull SQLConverter<Identifier> SQL_CONVERTER = new SQLConverter<>(CASTER);
+    public static final @Nonnull AbstractSQLConverter<Identifier, Object> SQL_CONVERTER = ChainingSQLConverter.get(KEY_CONVERTER, StringWrapper.getValueSQLConverter("identifier"));
     
     /* -------------------------------------------------- Converters -------------------------------------------------- */
     
     /**
      * Stores the converters of this class.
      */
-    public static final @Nonnull Converters<Identifier, Object> CONVERTERS = Converters.get(XDF_CONVERTER, SQL_CONVERTER);
+    public static final @Nonnull NonRequestingConverters<Identifier, Object> CONVERTERS = NonRequestingConverters.get(XDF_CONVERTER, SQL_CONVERTER);
     
 }

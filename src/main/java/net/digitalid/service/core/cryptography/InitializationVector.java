@@ -6,7 +6,7 @@ import javax.crypto.spec.IvParameterSpec;
 import net.digitalid.service.core.block.Block;
 import net.digitalid.service.core.block.wrappers.BytesWrapper;
 import net.digitalid.service.core.block.wrappers.EncryptionWrapper;
-import net.digitalid.service.core.converter.Converters;
+import net.digitalid.service.core.converter.NonRequestingConverters;
 import net.digitalid.service.core.converter.key.AbstractNonRequestingKeyConverter;
 import net.digitalid.service.core.converter.sql.ChainingSQLConverter;
 import net.digitalid.service.core.converter.xdf.AbstractNonRequestingXDFConverter;
@@ -83,7 +83,7 @@ public final class InitializationVector extends IvParameterSpec implements XDF<I
     /* -------------------------------------------------- Key Converter -------------------------------------------------- */
     
     /**
-     * Stores the key converter for this class.
+     * Stores the key converter of this class.
      */
     private static final @Nonnull AbstractNonRequestingKeyConverter<InitializationVector, Object, byte[]> KEY_CONVERTER = new AbstractNonRequestingKeyConverter<InitializationVector, Object, byte[]>() {
         
@@ -107,7 +107,7 @@ public final class InitializationVector extends IvParameterSpec implements XDF<I
         
     };
     
-    /* -------------------------------------------------- XDF -------------------------------------------------- */
+    /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
     
     /**
      * Stores the semantic type {@code initialization.vector@core.digitalid.net}.
@@ -125,7 +125,7 @@ public final class InitializationVector extends IvParameterSpec implements XDF<I
         return XDF_CONVERTER;
     }
     
-    /* -------------------------------------------------- SQL -------------------------------------------------- */
+    /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
     
     /**
      * Stores the SQL converter of this class.
@@ -143,6 +143,6 @@ public final class InitializationVector extends IvParameterSpec implements XDF<I
     /**
      * Stores the converters of this class.
      */
-    public static final @Nonnull Converters<InitializationVector, Object> CONVERTERS = Converters.get(XDF_CONVERTER, SQL_CONVERTER);
+    public static final @Nonnull NonRequestingConverters<InitializationVector, Object> CONVERTERS = NonRequestingConverters.get(XDF_CONVERTER, SQL_CONVERTER);
     
 }

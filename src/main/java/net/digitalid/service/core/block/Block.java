@@ -694,7 +694,7 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
         return toString(bytes, offset, length);
     }
     
-    /* -------------------------------------------------- XDF -------------------------------------------------- */
+    /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
     
     /**
      * The XDF converter for this class.
@@ -731,7 +731,7 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
         return new XDFConverter(type);
     }
     
-    /* -------------------------------------------------- SQL -------------------------------------------------- */
+    /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
     
     /**
      * The SQL converter for this class.

@@ -131,7 +131,7 @@ public final class CharWrapper extends ValueWrapper<CharWrapper> {
         block.encodeValue(value);
     }
     
-    /* -------------------------------------------------- XDF -------------------------------------------------- */
+    /* -------------------------------------------------- XDF Converter -------------------------------------------------- */
     
     /**
      * The XDF converter for this class.
@@ -164,7 +164,7 @@ public final class CharWrapper extends ValueWrapper<CharWrapper> {
         return new XDFConverter(getSemanticType());
     }
     
-    /* -------------------------------------------------- SQL -------------------------------------------------- */
+    /* -------------------------------------------------- SQL Converter -------------------------------------------------- */
     
     /**
      * The SQL converter for this class.
