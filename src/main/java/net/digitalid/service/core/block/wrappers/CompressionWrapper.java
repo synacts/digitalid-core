@@ -221,7 +221,7 @@ public final class CompressionWrapper extends BlockBasedWrapper<CompressionWrapp
     
     @Pure
     @Override
-    public @Nonnull EncodingFactory getEncodingFactory() {
+    public @Nonnull EncodingFactory getXDFConverter() {
         return new EncodingFactory(getSemanticType());
     }
     
@@ -230,7 +230,7 @@ public final class CompressionWrapper extends BlockBasedWrapper<CompressionWrapp
     @Pure
     @Override
     public @Nonnull StoringFactory<CompressionWrapper> getSQLConverter() {
-        return new StoringFactory<>(getEncodingFactory());
+        return new StoringFactory<>(getXDFConverter());
     }
     
 }

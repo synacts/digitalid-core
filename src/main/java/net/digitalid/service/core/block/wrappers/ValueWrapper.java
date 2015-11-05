@@ -45,7 +45,7 @@ public abstract class ValueWrapper<W extends ValueWrapper<W>> extends Wrapper<W>
     
     @Pure
     @Override
-    public abstract @Nonnull Wrapper.NonRequestingEncodingFactory<W> getEncodingFactory();
+    public abstract @Nonnull Wrapper.NonRequestingEncodingFactory<W> getXDFConverter();
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Factory –––––––––––––––––––––––––––––––––––––––––––––––––– */
     

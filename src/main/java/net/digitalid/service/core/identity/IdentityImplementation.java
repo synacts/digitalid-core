@@ -188,7 +188,7 @@ public abstract class IdentityImplementation implements Identity {
     
     @Pure
     @Override
-    public final @Nonnull EncodingFactory<Identity> getEncodingFactory() {
+    public final @Nonnull EncodingFactory<Identity> getXDFConverter() {
         return ENCODING_FACTORY;
     }
     

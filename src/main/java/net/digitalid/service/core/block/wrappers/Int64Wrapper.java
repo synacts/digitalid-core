@@ -151,7 +151,7 @@ public final class Int64Wrapper extends Wrapper<Int64Wrapper> {
     
     @Pure
     @Override
-    public @Nonnull EncodingFactory getEncodingFactory() {
+    public @Nonnull EncodingFactory getXDFConverter() {
         return new EncodingFactory(getSemanticType());
     }
     

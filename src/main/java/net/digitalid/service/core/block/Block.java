@@ -727,7 +727,7 @@ public final class Block implements XDF<Block, Object>, SQL<Block, SemanticType>
     
     @Pure
     @Override
-    public @Nonnull EncodingFactory getEncodingFactory() {
+    public @Nonnull EncodingFactory getXDFConverter() {
         return new EncodingFactory(type);
     }
     

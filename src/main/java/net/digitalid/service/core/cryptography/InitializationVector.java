@@ -135,7 +135,7 @@ public final class InitializationVector extends IvParameterSpec implements XDF<I
     
     @Pure
     @Override
-    public @Nonnull EncodingFactory getEncodingFactory() {
+    public @Nonnull EncodingFactory getXDFConverter() {
         return ENCODING_FACTORY;
     }
     

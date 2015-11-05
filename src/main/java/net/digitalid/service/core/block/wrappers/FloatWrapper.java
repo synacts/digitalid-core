@@ -151,7 +151,7 @@ public final class FloatWrapper extends Wrapper<FloatWrapper> {
     
     @Pure
     @Override
-    public @Nonnull EncodingFactory getEncodingFactory() {
+    public @Nonnull EncodingFactory getXDFConverter() {
         return new EncodingFactory(getSemanticType());
     }
     

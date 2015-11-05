@@ -168,7 +168,7 @@ public final class Exponent extends Number<Exponent> {
     
     @Pure
     @Override
-    public @Nonnull EncodingFactory getEncodingFactory() {
+    public @Nonnull EncodingFactory getXDFConverter() {
         return ENCODING_FACTORY;
     }
     

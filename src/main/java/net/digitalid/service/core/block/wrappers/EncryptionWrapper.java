@@ -438,7 +438,7 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
     
     @Pure
     @Override
-    public @Nonnull EncodingFactory getEncodingFactory() {
+    public @Nonnull EncodingFactory getXDFConverter() {
         return new EncodingFactory(getSemanticType());
     }
     
@@ -447,7 +447,7 @@ public final class EncryptionWrapper extends BlockBasedWrapper<EncryptionWrapper
     @Pure
     @Override
     public @Nonnull StoringFactory<EncryptionWrapper> getSQLConverter() {
-        return new StoringFactory<>(getEncodingFactory());
+        return new StoringFactory<>(getXDFConverter());
     }
     
 }

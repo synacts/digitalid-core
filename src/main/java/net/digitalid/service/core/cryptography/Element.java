@@ -244,7 +244,7 @@ public final class Element extends Number<Element> {
     
     @Pure
     @Override
-    public @Nonnull EncodingFactory getEncodingFactory() {
+    public @Nonnull EncodingFactory getXDFConverter() {
         return ENCODING_FACTORY;
     }
     

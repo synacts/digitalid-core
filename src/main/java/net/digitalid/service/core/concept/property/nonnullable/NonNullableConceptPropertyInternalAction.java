@@ -250,7 +250,7 @@ final class NonNullableConceptPropertyInternalAction<V, C extends Concept<C, E, 
     
     @Pure
     @Override
-    public @Nonnull EncodingFactory<V, C, E> getEncodingFactory() {
+    public @Nonnull EncodingFactory<V, C, E> getXDFConverter() {
         return new EncodingFactory<>(setup.getActionType());
     }
     

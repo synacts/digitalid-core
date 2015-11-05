@@ -25,7 +25,7 @@ public final class ConvertToXDF {
      */
     @Pure
     public static @Nonnull <O extends XDF<O, ?>> Block nonNullable(@Nonnull O encodable) {
-        return encodable.getEncodingFactory().encodeNonNullable(encodable);
+        return encodable.getXDFConverter().encodeNonNullable(encodable);
     }
     
     /**
@@ -83,7 +83,7 @@ public final class ConvertToXDF {
      */
     @Pure
     public static @Nonnull <O extends XDF<?, ?>> Block nonNullableWithCast(@Nonnull O encodable) {
-        return encodable.getEncodingFactory().encodeNonNullableWithCast(encodable);
+        return encodable.getXDFConverter().encodeNonNullableWithCast(encodable);
     }
     
     /**

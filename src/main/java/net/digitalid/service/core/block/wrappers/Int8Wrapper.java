@@ -151,7 +151,7 @@ public final class Int8Wrapper extends Wrapper<Int8Wrapper> {
     
     @Pure
     @Override
-    public @Nonnull EncodingFactory getEncodingFactory() {
+    public @Nonnull EncodingFactory getXDFConverter() {
         return new EncodingFactory(getSemanticType());
     }
     

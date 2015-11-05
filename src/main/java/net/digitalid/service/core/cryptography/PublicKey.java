@@ -648,7 +648,7 @@ public final class PublicKey implements XDF<PublicKey, Object>, SQL<PublicKey, O
     
     @Pure
     @Override
-    public @Nonnull EncodingFactory getEncodingFactory() {
+    public @Nonnull EncodingFactory getXDFConverter() {
         return ENCODING_FACTORY;
     }
     

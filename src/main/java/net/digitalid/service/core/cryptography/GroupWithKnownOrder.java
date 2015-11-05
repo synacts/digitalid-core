@@ -153,7 +153,7 @@ public final class GroupWithKnownOrder extends Group<GroupWithKnownOrder> {
     
     @Pure
     @Override
-    public @Nonnull EncodingFactory getEncodingFactory() {
+    public @Nonnull EncodingFactory getXDFConverter() {
         return ENCODING_FACTORY;
     }
 

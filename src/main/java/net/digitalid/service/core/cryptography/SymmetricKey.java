@@ -281,7 +281,7 @@ public final class SymmetricKey implements XDF<SymmetricKey, Object>, SQL<Symmet
     
     @Pure
     @Override
-    public @Nonnull EncodingFactory getEncodingFactory() {
+    public @Nonnull EncodingFactory getXDFConverter() {
         return ENCODING_FACTORY;
     }
     

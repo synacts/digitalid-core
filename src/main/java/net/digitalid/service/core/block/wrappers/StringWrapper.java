@@ -199,7 +199,7 @@ public final class StringWrapper extends Wrapper<StringWrapper> {
     
     @Pure
     @Override
-    public @Nonnull EncodingFactory getEncodingFactory() {
+    public @Nonnull EncodingFactory getXDFConverter() {
         return new EncodingFactory(getSemanticType());
     }
     

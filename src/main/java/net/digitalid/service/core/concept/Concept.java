@@ -239,7 +239,7 @@ public abstract class Concept<C extends Concept<C, E, K>, E extends Entity<E>, K
         
     @Pure
     @Override
-    public final @Nonnull ConceptEncodingFactory<C, E, K> getEncodingFactory() {
+    public final @Nonnull ConceptEncodingFactory<C, E, K> getXDFConverter() {
         return setup.getEncodingFactory();
     }
     

@@ -148,7 +148,7 @@ public final class Int16Wrapper extends ValueWrapper<Int16Wrapper> {
     
     @Pure
     @Override
-    public @Nonnull EncodingFactory getEncodingFactory() {
+    public @Nonnull EncodingFactory getXDFConverter() {
         return new EncodingFactory(getSemanticType());
     }
     

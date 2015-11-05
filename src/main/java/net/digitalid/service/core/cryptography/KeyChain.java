@@ -111,7 +111,7 @@ abstract class KeyChain<K extends XDF<K, Object>, C extends KeyChain<K, C>> impl
                 break;
             }
         }
-        return getEncodingFactory().createKeyChain(copy.freeze());
+        return getXDFConverter().createKeyChain(copy.freeze());
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -217,6 +217,6 @@ abstract class KeyChain<K extends XDF<K, Object>, C extends KeyChain<K, C>> impl
     
     @Pure
     @Override
-    public abstract @Nonnull EncodingFactory<K, C> getEncodingFactory();
+    public abstract @Nonnull EncodingFactory<K, C> getXDFConverter();
     
 }

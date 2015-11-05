@@ -91,7 +91,7 @@ public final class GroupWithUnknownOrder extends Group<GroupWithUnknownOrder> {
     
     @Pure
     @Override
-    public @Nonnull EncodingFactory getEncodingFactory() {
+    public @Nonnull EncodingFactory getXDFConverter() {
         return ENCODING_FACTORY;
     }
 

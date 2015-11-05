@@ -174,7 +174,7 @@ public abstract class Wrapper<W extends Wrapper<W>> implements XDF<W, Object>, S
     
     @Pure
     @Override
-    public abstract @Nonnull EncodingFactory<W> getEncodingFactory();
+    public abstract @Nonnull EncodingFactory<W> getXDFConverter();
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– SQL –––––––––––––––––––––––––––––––––––––––––––––––––– */
     

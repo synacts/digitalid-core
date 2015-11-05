@@ -113,7 +113,7 @@ public final class PublicKeyChain extends KeyChain<PublicKey, PublicKeyChain> {
     
     @Pure
     @Override
-    public @Nonnull EncodingFactory getEncodingFactory() {
+    public @Nonnull EncodingFactory getXDFConverter() {
         return ENCODING_FACTORY;
     }
     

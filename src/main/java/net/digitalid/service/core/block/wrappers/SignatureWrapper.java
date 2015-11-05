@@ -477,7 +477,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
     
     @Pure
     @Override
-    public @Nonnull EncodingFactory getEncodingFactory() {
+    public @Nonnull EncodingFactory getXDFConverter() {
         return new EncodingFactory(getSemanticType());
     }
     
@@ -486,7 +486,7 @@ public class SignatureWrapper extends BlockBasedWrapper<SignatureWrapper> {
     @Pure
     @Override
     public @Nonnull StoringFactory<SignatureWrapper> getSQLConverter() {
-        return new StoringFactory<>(getEncodingFactory());
+        return new StoringFactory<>(getXDFConverter());
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Casting –––––––––––––––––––––––––––––––––––––––––––––––––– */

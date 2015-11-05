@@ -248,7 +248,7 @@ public enum Category implements XDF<Category, Object>, SQL<Category, Object> {
     
     @Pure
     @Override
-    public @Nonnull EncodingFactory getEncodingFactory() {
+    public @Nonnull EncodingFactory getXDFConverter() {
         return ENCODING_FACTORY;
     }
     

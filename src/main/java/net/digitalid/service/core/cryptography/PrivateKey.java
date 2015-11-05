@@ -331,7 +331,7 @@ public final class PrivateKey implements XDF<PrivateKey, Object>, SQL<PrivateKey
     
     @Pure
     @Override
-    public @Nonnull EncodingFactory getEncodingFactory() {
+    public @Nonnull EncodingFactory getXDFConverter() {
         return ENCODING_FACTORY;
     }
     

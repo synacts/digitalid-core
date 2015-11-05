@@ -178,7 +178,7 @@ public abstract class IdentifierImplementation implements Identifier {
     
     @Pure
     @Override
-    public final @Nonnull EncodingFactory<Identifier> getEncodingFactory() {
+    public final @Nonnull EncodingFactory<Identifier> getXDFConverter() {
         return ENCODING_FACTORY;
     }
     

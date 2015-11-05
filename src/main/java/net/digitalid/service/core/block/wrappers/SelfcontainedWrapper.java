@@ -235,7 +235,7 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
     
     @Pure
     @Override
-    public @Nonnull EncodingFactory getEncodingFactory() {
+    public @Nonnull EncodingFactory getXDFConverter() {
         return new EncodingFactory(getSemanticType());
     }
     
@@ -244,7 +244,7 @@ public final class SelfcontainedWrapper extends BlockBasedWrapper<SelfcontainedW
     @Pure
     @Override
     public @Nonnull StoringFactory<SelfcontainedWrapper> getSQLConverter() {
-        return new StoringFactory<>(getEncodingFactory());
+        return new StoringFactory<>(getXDFConverter());
     }
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Reading –––––––––––––––––––––––––––––––––––––––––––––––––– */

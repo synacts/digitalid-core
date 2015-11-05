@@ -282,7 +282,7 @@ public final class ListWrapper extends BlockBasedWrapper<ListWrapper> {
     
     @Pure
     @Override
-    public @Nonnull EncodingFactory getEncodingFactory() {
+    public @Nonnull EncodingFactory getXDFConverter() {
         return new EncodingFactory(getSemanticType());
     }
     
@@ -292,7 +292,7 @@ public final class ListWrapper extends BlockBasedWrapper<ListWrapper> {
     @Pure
     @Override
     public @Nonnull StoringFactory<ListWrapper> getSQLConverter() {
-        return new StoringFactory<>(getEncodingFactory());
+        return new StoringFactory<>(getXDFConverter());
     }
     
 }

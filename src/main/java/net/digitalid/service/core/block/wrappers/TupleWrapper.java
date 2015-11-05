@@ -402,7 +402,7 @@ public final class TupleWrapper extends BlockBasedWrapper<TupleWrapper> {
     
     @Pure
     @Override
-    public @Nonnull EncodingFactory getEncodingFactory() {
+    public @Nonnull EncodingFactory getXDFConverter() {
         return new EncodingFactory(getSemanticType());
     }
     
@@ -411,7 +411,7 @@ public final class TupleWrapper extends BlockBasedWrapper<TupleWrapper> {
     @Pure
     @Override
     public @Nonnull StoringFactory<TupleWrapper> getSQLConverter() {
-        return new StoringFactory<>(getEncodingFactory());
+        return new StoringFactory<>(getXDFConverter());
     }
     
 }
